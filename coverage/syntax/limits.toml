@@ -83296,3 +83296,843 @@ anchor = "doc.constructs.semantic_view / Syntax"
 sql = "SELECT * FROM SEMANTIC_VIEW ( v1 DIMENSIONS 1 METRICS 1 ) ;"
 context = "raw"
 expect = "observe"
+
+# The ON form of JOIN has the same read-order clause after ON. Its derived read-order cases have no ON,
+# so Snowflake reads FIRST ( v1 ) there as a table alias (errno 2003); these rows carry ON TRUE.
+
+[[suppress]]
+form = "sf.query.join.join"
+kind = "alternative"
+target = "{ FIRST | LAST } → FIRST"
+reason = "without ON or USING the generated case reads FIRST ( v1 ) as a table alias (errno 2003, not 1868); the row below carries ON so the read-order clause is parsed"
+
+[[limit]]
+form = "sf.query.join.join"
+kind = "alternative"
+target = "{ FIRST | LAST } → FIRST"
+note = "FIRST after ON, a read-order clause"
+anchor = "doc.constructs.join / Usage notes"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 ON TRUE FIRST ( v1 ) ;"
+context = "raw"
+expect = "accept"
+
+[[suppress]]
+form = "sf.query.join.join"
+kind = "alternative"
+target = "{ FIRST | LAST } → LAST"
+reason = "without ON or USING the generated case reads LAST ( v1 ) as a table alias; the row below carries ON"
+
+[[limit]]
+form = "sf.query.join.join"
+kind = "alternative"
+target = "{ FIRST | LAST } → LAST"
+note = "LAST after ON, a read-order clause"
+anchor = "doc.constructs.join / Usage notes"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 ON TRUE LAST ( v1 ) ;"
+context = "raw"
+expect = "accept"
+
+[[suppress]]
+form = "sf.query.join.join"
+kind = "required_operand_missing"
+target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
+reason = "without ON or USING the generated case is an empty column-alias list; the row below carries ON"
+
+[[limit]]
+form = "sf.query.join.join"
+kind = "required_operand_missing"
+target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
+note = "omit <alias> in a read-order clause after ON"
+anchor = "doc.constructs.join / Syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 ON TRUE FIRST ( ) ;"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "sf.query.join.join"
+kind = "negative_neighbour"
+target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
+note = "a string literal in place of <alias>"
+reason = "without ON or USING the generated case is a literal in a column-alias list; the row below carries ON"
+
+[[limit]]
+form = "sf.query.join.join"
+kind = "negative_neighbour"
+target = "<alias> in [ { FIRST | LAST } ( <alias> ) ]"
+note = "a string literal in place of <alias> in a read-order clause after ON"
+anchor = "doc.constructs.join / Syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 ON TRUE FIRST ( 'v1' ) ;"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "sf.query.join.join"
+kind = "negative_neighbour"
+note = "the form without its required ( in [ { FIRST | LAST } ( <alias> ) ]"
+reason = "without ON or USING the generated case does not reach a read-order clause; the row below carries ON"
+
+[[limit]]
+form = "sf.query.join.join"
+kind = "negative_neighbour"
+note = "a read-order clause after ON without its ("
+anchor = "doc.constructs.join / Syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 ON TRUE FIRST v1 ) ;"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "sf.query.join.join"
+kind = "negative_neighbour"
+note = "the form without its required ) in [ { FIRST | LAST } ( <alias> ) ]"
+reason = "without ON or USING the generated case is an unclosed column-alias list; the row below carries ON"
+
+[[limit]]
+form = "sf.query.join.join"
+kind = "negative_neighbour"
+note = "a read-order clause after ON without its )"
+anchor = "doc.constructs.join / Syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 ON TRUE FIRST ( v1 ;"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "sf.query.join.join"
+kind = "identifier_class"
+target = "<alias>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "without ON or USING the generated case is a quoted column alias; the row below carries ON"
+
+[[limit]]
+form = "sf.query.join.join"
+kind = "identifier_class"
+target = "<alias>"
+note = "quoted <alias> in a read-order clause after ON"
+anchor = "doc.identifiers-syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 ON TRUE FIRST ( \"v1 Q\" ) ;"
+context = "raw"
+expect = "accept"
+
+[[suppress]]
+form = "sf.query.join.join"
+kind = "identifier_class"
+target = "<alias>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "without ON or USING the generated cases are column aliases; the row below carries ON"
+
+[[limit]]
+form = "sf.query.join.join"
+kind = "identifier_class"
+target = "<alias>"
+note = "reserved <alias> in a read-order clause after ON, unquoted and double-quoted"
+anchor = "doc.identifiers-syntax"
+sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 ON TRUE FIRST ( SELECT ) ;"
+context = "raw"
+expect = "reject"
+also_sql = "SELECT * FROM t1 INNER DIRECTED JOIN t2 ON TRUE FIRST ( \"SELECT\" ) ;"
+also_expect = "accept"
+
+# CREATE OR ALTER WAREHOUSE: the truncated alternative list names the three _x86 resource constraints, but
+# the derived case writes v1 for all three (errno 1422, an invalid value). These rows name each constraint.
+
+[[suppress]]
+form = "sf.ddl.create-warehouse.create-or-alter-warehouse"
+kind = "alternative"
+target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_1X_x86"
+reason = "the derived case writes v1 instead of MEMORY_1X_x86; the row below names it"
+
+[[limit]]
+form = "sf.ddl.create-warehouse.create-or-alter-warehouse"
+kind = "alternative"
+target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_1X_x86"
+note = "RESOURCE_CONSTRAINT = MEMORY_1X_x86"
+anchor = "doc.sql.create-warehouse / Parameters"
+sql = "CREATE OR ALTER WAREHOUSE v1 RESOURCE_CONSTRAINT = MEMORY_1X_x86 ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-warehouse.create-or-alter-warehouse"
+kind = "alternative"
+target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_16X_x86"
+reason = "the derived case writes v1 instead of MEMORY_16X_x86; the row below names it"
+
+[[limit]]
+form = "sf.ddl.create-warehouse.create-or-alter-warehouse"
+kind = "alternative"
+target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_16X_x86"
+note = "RESOURCE_CONSTRAINT = MEMORY_16X_x86"
+anchor = "doc.sql.create-warehouse / Parameters"
+sql = "CREATE OR ALTER WAREHOUSE v1 RESOURCE_CONSTRAINT = MEMORY_16X_x86 ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-warehouse.create-or-alter-warehouse"
+kind = "alternative"
+target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_64X_x86"
+reason = "the derived case writes v1 instead of MEMORY_64X_x86; the row below names it"
+
+[[limit]]
+form = "sf.ddl.create-warehouse.create-or-alter-warehouse"
+kind = "alternative"
+target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_64X_x86"
+note = "RESOURCE_CONSTRAINT = MEMORY_64X_x86"
+anchor = "doc.sql.create-warehouse / Parameters"
+sql = "CREATE OR ALTER WAREHOUSE v1 RESOURCE_CONSTRAINT = MEMORY_64X_x86 ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+# CREATE MODEL MONITOR: each *_COLUMNS value is an array of column-name strings, ( 'col' [ , ... ] ). The
+# derived cases write a bare name or string, which Snowflake refuses as an invalid value (errno 1421 or 1008),
+# and the base case that combines OR REPLACE with IF NOT EXISTS fails first (errno 1004). These rows write
+# arrays on the plain base. Identifier classes do not apply to an array of strings, so those are withdrawn.
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ ID_COLUMNS = <id_column_name_array> ]"
+reason = "the derived case writes a bare value where ID_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ ID_COLUMNS = <id_column_name_array> ]"
+note = "ID_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 ID_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where ID_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
+note = "ID_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 ID_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+reason = "the derived case writes a bare value where PREDICTION_CLASS_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+note = "PREDICTION_CLASS_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 PREDICTION_CLASS_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where PREDICTION_CLASS_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+note = "PREDICTION_CLASS_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 PREDICTION_CLASS_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ PREDICTION_SCORE_COLUMNS = <prediction_column-name_array> ]"
+reason = "the derived case writes a bare value where PREDICTION_SCORE_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ PREDICTION_SCORE_COLUMNS = <prediction_column-name_array> ]"
+note = "PREDICTION_SCORE_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 PREDICTION_SCORE_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<prediction_column-name_array> in [ PREDICTION_SCORE_COLUMNS = <prediction_column-name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where PREDICTION_SCORE_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<prediction_column-name_array> in [ PREDICTION_SCORE_COLUMNS = <prediction_column-name_array> ]"
+note = "PREDICTION_SCORE_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 PREDICTION_SCORE_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+reason = "the derived case writes a bare value where ACTUAL_CLASS_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+note = "ACTUAL_CLASS_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 ACTUAL_CLASS_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where ACTUAL_CLASS_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+note = "ACTUAL_CLASS_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 ACTUAL_CLASS_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ ACTUAL_SCORE_COLUMNS = <actual_column_name_array> ]"
+reason = "the derived case writes a bare value where ACTUAL_SCORE_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ ACTUAL_SCORE_COLUMNS = <actual_column_name_array> ]"
+note = "ACTUAL_SCORE_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 ACTUAL_SCORE_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<actual_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_column_name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where ACTUAL_SCORE_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<actual_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_column_name_array> ]"
+note = "ACTUAL_SCORE_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 ACTUAL_SCORE_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ SEGMENT_COLUMNS = <segment_column_name_array> ]"
+reason = "the derived case writes a bare value where SEGMENT_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ SEGMENT_COLUMNS = <segment_column_name_array> ]"
+note = "SEGMENT_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 SEGMENT_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<segment_column_name_array> in [ SEGMENT_COLUMNS = <segment_column_name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where SEGMENT_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<segment_column_name_array> in [ SEGMENT_COLUMNS = <segment_column_name_array> ]"
+note = "SEGMENT_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 SEGMENT_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ CUSTOM_METRIC_COLUMNS = <custom_metric_column_name_array> ]"
+reason = "the derived case writes a bare value where CUSTOM_METRIC_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "option_present"
+target = "[ CUSTOM_METRIC_COLUMNS = <custom_metric_column_name_array> ]"
+note = "CUSTOM_METRIC_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 CUSTOM_METRIC_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<custom_metric_column_name_array> in [ CUSTOM_METRIC_COLUMNS = <custom_metric_column_name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where CUSTOM_METRIC_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "operand_type_class"
+target = "<custom_metric_column_name_array> in [ CUSTOM_METRIC_COLUMNS = <custom_metric_column_name_array> ]"
+note = "CUSTOM_METRIC_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Model version monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 VERSION = 'm' FUNCTION = 'm' SOURCE = v1 WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' TIMESTAMP_COLUMN = v1 CUSTOM_METRIC_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<id_column_name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<id_column_name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<prediction_class_column_name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<prediction_class_column_name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<prediction_column-name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<prediction_column-name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<actual_class_column_name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<actual_class_column_name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<actual_column_name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<actual_column_name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<segment_column_name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<segment_column_name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<custom_metric_column_name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.version-function-source-warehouse"
+kind = "identifier_class"
+target = "<custom_metric_column_name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ ID_COLUMNS = <id_column_name_array> ]"
+reason = "the derived case writes a bare value where ID_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ ID_COLUMNS = <id_column_name_array> ]"
+note = "ID_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' ID_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where ID_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<id_column_name_array> in [ ID_COLUMNS = <id_column_name_array> ]"
+note = "ID_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' ID_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+reason = "the derived case writes a bare value where PREDICTION_CLASS_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+note = "PREDICTION_CLASS_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' PREDICTION_CLASS_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where PREDICTION_CLASS_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<prediction_class_column_name_array> in [ PREDICTION_CLASS_COLUMNS = <prediction_class_column_name_array> ]"
+note = "PREDICTION_CLASS_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' PREDICTION_CLASS_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ PREDICTION_SCORE_COLUMNS = <prediction_score_column_name_array> ]"
+reason = "the derived case writes a bare value where PREDICTION_SCORE_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ PREDICTION_SCORE_COLUMNS = <prediction_score_column_name_array> ]"
+note = "PREDICTION_SCORE_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' PREDICTION_SCORE_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<prediction_score_column_name_array> in [ PREDICTION_SCORE_COLUMNS = <prediction_score_column_name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where PREDICTION_SCORE_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<prediction_score_column_name_array> in [ PREDICTION_SCORE_COLUMNS = <prediction_score_column_name_array> ]"
+note = "PREDICTION_SCORE_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' PREDICTION_SCORE_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+reason = "the derived case writes a bare value where ACTUAL_CLASS_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+note = "ACTUAL_CLASS_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' ACTUAL_CLASS_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where ACTUAL_CLASS_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<actual_class_column_name_array> in [ ACTUAL_CLASS_COLUMNS = <actual_class_column_name_array> ]"
+note = "ACTUAL_CLASS_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' ACTUAL_CLASS_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ ACTUAL_SCORE_COLUMNS = <actual_score_column_name_array> ]"
+reason = "the derived case writes a bare value where ACTUAL_SCORE_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "option_present"
+target = "[ ACTUAL_SCORE_COLUMNS = <actual_score_column_name_array> ]"
+note = "ACTUAL_SCORE_COLUMNS as a one-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' ACTUAL_SCORE_COLUMNS = ( 'c1' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<actual_score_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_score_column_name_array> ]"
+note = "a valid identifier"
+reason = "the derived case writes a bare value where ACTUAL_SCORE_COLUMNS takes an array of strings; the row below writes one"
+
+[[limit]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "operand_type_class"
+target = "<actual_score_column_name_array> in [ ACTUAL_SCORE_COLUMNS = <actual_score_column_name_array> ]"
+note = "ACTUAL_SCORE_COLUMNS as a two-element array of column-name strings"
+anchor = "doc.sql.create-model-monitor / Syntax / Gateway model monitor"
+sql = "CREATE MODEL MONITOR v1 WITH MODEL = v1 GATEWAY = v1 FUNCTION = 'm' WAREHOUSE = v1 REFRESH_INTERVAL = '1 minute' AGGREGATION_WINDOW = '1 days' ACTUAL_SCORE_COLUMNS = ( 'c1' , 'c2' ) ;"
+context = "raw"
+expect = "accept"
+stage = "semantic"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "identifier_class"
+target = "<id_column_name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "identifier_class"
+target = "<id_column_name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "identifier_class"
+target = "<prediction_class_column_name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "identifier_class"
+target = "<prediction_class_column_name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "identifier_class"
+target = "<prediction_score_column_name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "identifier_class"
+target = "<prediction_score_column_name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "identifier_class"
+target = "<actual_class_column_name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "identifier_class"
+target = "<actual_class_column_name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "identifier_class"
+target = "<actual_score_column_name_array>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "the value is an array of column-name strings, not an identifier"
+
+[[suppress]]
+form = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval"
+kind = "identifier_class"
+target = "<actual_score_column_name_array>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "the value is an array of column-name strings, not an identifier"
+
+# CREATE ONLINE FEATURE TABLE: shapes the grammar review asked Snowflake about. The page example orders
+# its clauses differently from the syntax block, and the usage note names IF NOT EXISTS, so each
+# shape whose syntax or semantic split is unknown is observed.
+
+[[limit]]
+form = "sf.ddl.create-online-feature-table"
+kind = "positive"
+note = "the page's example, whose clause order differs from the syntax block"
+anchor = "doc.sql.create-online-feature-table / Examples"
+sql = "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) TIMESTAMP_COLUMN = 'TS' TARGET_LAG = '30 seconds' WAREHOUSE = v1 FROM t2 ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.ddl.create-online-feature-table"
+kind = "positive"
+note = "an optional clause before TARGET_LAG"
+anchor = "doc.sql.create-online-feature-table / Syntax"
+sql = "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) REFRESH_MODE = AUTO TARGET_LAG = '1 minute' WAREHOUSE = v1 FROM t2 ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.ddl.create-online-feature-table"
+kind = "negative_neighbour"
+note = "the form without its required TARGET_LAG clause"
+anchor = "doc.sql.create-online-feature-table / Syntax"
+sql = "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) WAREHOUSE = v1 FROM t2 ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.ddl.create-online-feature-table"
+kind = "negative_neighbour"
+note = "the form without its required WAREHOUSE clause"
+anchor = "doc.sql.create-online-feature-table / Syntax"
+sql = "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) TARGET_LAG = '1 minute' FROM t2 ;"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "sf.ddl.create-online-feature-table"
+kind = "required_operand_missing"
+target = "<num> { seconds | minutes | hours | days }"
+note = "omit the TARGET_LAG value"
+anchor = "doc.sql.create-online-feature-table / Syntax"
+sql = "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) TARGET_LAG = WAREHOUSE = v1 FROM t2 ;"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "sf.ddl.create-online-feature-table"
+kind = "positive"
+note = "IF NOT EXISTS, named by the usage note but absent from the syntax block"
+anchor = "doc.sql.create-online-feature-table / Usage notes"
+sql = "CREATE ONLINE FEATURE TABLE IF NOT EXISTS v1 PRIMARY KEY ( v1 ) TARGET_LAG = '1 minute' WAREHOUSE = v1 FROM t2 ;"
+context = "raw"
+expect = "observe"
