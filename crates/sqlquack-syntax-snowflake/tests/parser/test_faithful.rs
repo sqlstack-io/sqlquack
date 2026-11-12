@@ -279,6 +279,30 @@ fn given_snowflake_derived_tables_join_aliases_and_semantic_views_when_parsing_t
             pointer: "/0/select/from/expressions/0/semantic_view/dimensions/tuple/expressions/0/alias/alias_explicit_as",
             expected_value: json!(false),
         },
+        ProjectionTestCase {
+            description: "DIMENSIONS written before METRICS puts its columns first",
+            sql: "SELECT * FROM SEMANTIC_VIEW ( v1 DIMENSIONS 1 METRICS 1 ) ;",
+            pointer: "/0/select/from/expressions/0/semantic_view/dimensions_first",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "DIMENSIONS written before FACTS puts its columns first",
+            sql: "SELECT * FROM SEMANTIC_VIEW ( v1 DIMENSIONS 1 FACTS 1 ) ;",
+            pointer: "/0/select/from/expressions/0/semantic_view/dimensions_first",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "METRICS before DIMENSIONS records no order",
+            sql: "SELECT * FROM SEMANTIC_VIEW ( v1 METRICS 1 DIMENSIONS 1 ) ;",
+            pointer: "/0/select/from/expressions/0/semantic_view/dimensions_first",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "DIMENSIONS alone records no order",
+            sql: "SELECT * FROM SEMANTIC_VIEW ( v1 DIMENSIONS 1 ) ;",
+            pointer: "/0/select/from/expressions/0/semantic_view/dimensions_first",
+            expected_value: json!(null),
+        },
     ];
     for test_case in test_cases {
         assert_eq!(
