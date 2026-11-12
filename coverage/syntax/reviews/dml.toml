@@ -72,3 +72,23 @@ note = "Re-read after the Snowflake parser batch at 552b9c1b6. The definition is
 
 [review.definitions]
 "sf.dml.insert" = "bad9b5d87ae130a845de65c5f83951140610f12c8fc401de7ce02655598fe694"
+
+[[review]]
+id = "dml-005"
+family = "dml"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T13:29:00Z"
+verdict = "approved"
+forms = [
+  "sf.dml.insert-multi-table.all-intoclause",
+  "sf.dml.insert-multi-table.first-all-when-then",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at feat/syntax-class-commands 5da5226c7299; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.dml.insert-multi-table.all-intoclause" = "c30ccb81b6f9db31485a71b380ae10df3fdaeef4dce04c4ffd33cd554fec175f"
+"sf.dml.insert-multi-table.first-all-when-then" = "2201d8b1488f032d36070359d83be30b63dd900a2479986a2cef952d00399dd2"
+
+[review.definitions]
+"sf.dml.insert-multi-table.all-intoclause" = "ae75822dff04ebf57b8c2cc0bf22d0f4a2aa340b9862c5f9f019fa054516db5d"
+"sf.dml.insert-multi-table.first-all-when-then" = "a079e76802663f30c07c025634cc3c8ed9d82342c2055289117dcddf33ecc865"

@@ -178,3 +178,20 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.transaction_session.desc-result" = "2128a9b1b7fab1f24e8eebb4c77e28baff1adf4ef6ac1d4699caf8577edf8c3c"
+
+[[review]]
+id = "transaction-session-010"
+family = "transaction_session"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T13:29:00Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.alter-session.set-sessionparams",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at feat/syntax-class-commands 5da5226c7299; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.alter-session.set-sessionparams" = "7dc3a535a1ba4d04c819f709f14680cb142d3ac0772faea89359e52bda78a106"
+
+[review.definitions]
+"sf.transaction_session.alter-session.set-sessionparams" = "4c007d28e1a6c817f01c37def65476e052fbbd6bbe64708e61a3ea93793e72b7"

@@ -397,3 +397,23 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.classes.classification-profile.commands.show-classification-profile" = "830810c2c45743599371412ea8822b0acd56c7a181b9981987c0c03b6794d05b"
+
+[[review]]
+id = "classes-007"
+family = "classes"
+parser_tree = "582bdba8f75e43db2dfbf7d7ba7b39411f31a8fb"
+reviewed_utc = "2026-11-12T13:29:00Z"
+verdict = "approved"
+forms = [
+  "sf.classes.anomaly-insights.methods.add-notification-integration",
+  "sf.classes.anomaly-insights.methods.remove-notification-integration",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at feat/syntax-class-commands 5da5226c7299; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.classes.anomaly-insights.methods.add-notification-integration" = "1504e9b2d02ca63baee0f30b539cdcf87938f8fc7df3e01b49619670a7dde124"
+"sf.classes.anomaly-insights.methods.remove-notification-integration" = "9e636e4481124e64c94e2e3f4eb55c362b36583f50af1ac766258b02c14f87d4"
+
+[review.definitions]
+"sf.classes.anomaly-insights.methods.add-notification-integration" = "a0a6c4362f4fc4f32e7e739a1109d029f8a650f5c4d97c4b0d9cd0ddb15d3fff"
+"sf.classes.anomaly-insights.methods.remove-notification-integration" = "1b2a0c4bab93d1ac1e265ab3b5890743294de3a147f18bbfc064aa40951e0997"
