@@ -2,8 +2,8 @@ use serde_json::json;
 
 use sqlquack_syntax::Dialect;
 
-use crate::helpers::{accepted, statement_at};
-use crate::test_types::{AcceptanceTestCase, ProjectionTestCase};
+use crate::helpers::{accepted, snowflake_kind, statement_at};
+use crate::test_types::{AcceptanceTestCase, ProjectionTestCase, SnowflakeVerdictTestCase};
 
 #[test]
 fn given_a_snowflake_execute_of_a_job_notebook_dbt_or_code_bundle_when_parsing_then_receipted_forms_are_accepted(
@@ -77,6 +77,85 @@ fn given_a_snowflake_execute_of_a_job_service_when_parsing_then_the_tree_keeps_i
         assert_eq!(
             statement_at(test_case.sql, test_case.pointer),
             test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_dcm_project_plan_deploy_or_preview_when_parsing_then_its_grammar_is_checked() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a plan from a configuration with an environment and an output path",
+            sql: "EXECUTE DCM PROJECT v1 PLAN DELTA USING CONFIGURATION v1 ENVIRONMENT ( ? ) FROM 'm' OUTPUT_PATH 'm' ;",
+            expected_kind: Some("execute_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a plan from the latest deployment (recorded OK)",
+            sql: "EXECUTE DCM PROJECT v1 PLAN FROM DEPLOYMENT LATEST ;",
+            expected_kind: Some("execute_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a deploy with a quoted alias from a quoted deployment (recorded OK)",
+            sql: "EXECUTE DCM PROJECT v1 DEPLOY AS \"d1\" FROM DEPLOYMENT \"SELECT\" ;",
+            expected_kind: Some("execute_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a preview with an environment and a row limit (recorded OK)",
+            sql: "EXECUTE DCM PROJECT v1 PREVIEW v1 USING CONFIGURATION v1 ENVIRONMENT ( ? ) FROM 'm' LIMIT 1 ;",
+            expected_kind: Some("execute_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a source path that is not a string (recorded errno 1003)",
+            sql: "EXECUTE DCM PROJECT v1 PLAN FROM m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "USING with neither a configuration nor values (recorded errno 1003)",
+            sql: "EXECUTE DCM PROJECT v1 DEPLOY USING v1 FROM 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "configuration values in parentheses, which the page documents (recorded errno 1003)",
+            sql: "EXECUTE DCM PROJECT v1 PLAN USING CONFIGURATION v1 ( 1 ) FROM 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty environment (recorded errno 1003)",
+            sql: "EXECUTE DCM PROJECT v1 DEPLOY ENVIRONMENT ( ) FROM 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a deployment named by a string (recorded errno 1003)",
+            sql: "EXECUTE DCM PROJECT v1 PLAN FROM DEPLOYMENT 'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an output path that is not a string (recorded errno 1003)",
+            sql: "EXECUTE DCM PROJECT v1 PLAN FROM 'm' OUTPUT_PATH m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a preview without its configuration (recorded errno 1003)",
+            sql: "EXECUTE DCM PROJECT v1 PREVIEW v1 USING v1 FROM 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a preview limit that is not a number (recorded errno 1003)",
+            sql: "EXECUTE DCM PROJECT v1 PREVIEW v1 USING CONFIGURATION v1 FROM 'm' LIMIT 'x' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a plan with no source (recorded errno 1003)",
+            sql: "EXECUTE DCM PROJECT v1 PLAN ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
             "{}",
             test_case.description
         );
