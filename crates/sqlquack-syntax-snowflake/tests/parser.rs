@@ -48,6 +48,8 @@ mod test_snowflake_grant;
 mod test_snowflake_postgres_instance;
 #[path = "parser/test_snowflake_procedures.rs"]
 mod test_snowflake_procedures;
+#[path = "parser/test_snowflake_receipted_objects.rs"]
+mod test_snowflake_receipted_objects;
 #[path = "parser/test_snowflake_recorded.rs"]
 mod test_snowflake_recorded;
 #[path = "parser/test_snowflake_sequences.rs"]

@@ -1625,6 +1625,12 @@ impl Parser {
                 let stmt = self.parse_statement()?;
                 function.body = Some(FunctionBody::Expression(stmt));
                 function = record_function_property(function, FunctionPropertyKind::As);
+            } else if self.is_snowflake()
+                && self.check(TokenType::From)
+                && self.check_next_identifier("EXPERIMENT")
+            {
+                let source = self.parse_experiment_run_source()?;
+                function.snowflake_properties.push(source);
             } else if let Some(property) = self.parse_snowflake_routine_property()? {
                 function.snowflake_properties.push(property);
             } else {

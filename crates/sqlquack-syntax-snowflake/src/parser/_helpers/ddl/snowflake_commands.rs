@@ -2,6 +2,7 @@
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::constants::EXECUTE_DCM_PROJECT;
+use crate::parser::constants::SNOWFLAKE_DEFINE_OPAQUE_KINDS;
 use crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -17,6 +18,68 @@ use sqlquack_syntax::tokens::types::Result;
 use sqlquack_syntax::traversal::types::ExpressionWalk;
 
 impl Parser {
+    /// In Snowflake, refuse an EXECUTE IMMEDIATE, read after EXECUTE, that is neither `IMMEDIATE <source> [ USING ( <variable> [ , ... ] ) ]` nor `IMMEDIATE FROM <location> [ USING ( <name> => <value> [ , ... ] ) ] [ DRY_RUN = { TRUE | FALSE } ]`; the cursor ends where it started.
+    pub(crate) fn check_execute_immediate(&mut self) -> Result<()> {
+        if !self.applies_snowflake_context_rules() {
+            return Ok(());
+        }
+        let start = self.current;
+        let checked = self.check_execute_immediate_parts();
+        self.current = start;
+        checked
+    }
+
+    fn check_execute_immediate_parts(&mut self) -> Result<()> {
+        self.skip();
+        let from = self.match_token(TokenType::From);
+        if from {
+            if !self.check(TokenType::String) && !self.is_stage_path() {
+                return Err(self.parse_error("Expected a stage path or a string"));
+            }
+            self.parse_location_value()?;
+        } else if self.check(TokenType::Dollar) {
+            let end = self.peek().span.end;
+            self.skip();
+            if !self.is_identifier_token() || self.peek().span.start != end {
+                return Err(self.parse_error("Expected a session variable's name"));
+            }
+            self.skip();
+        } else if self.check(TokenType::String)
+            || self.check(TokenType::DollarString)
+            || (self.is_identifier_token()
+                && !self.is_snowflake_reserved_keyword()
+                && !self.peek_text().starts_with('@'))
+        {
+            self.skip();
+        } else {
+            return Err(self.parse_error("Expected the statement to execute"));
+        }
+        if self.match_token(TokenType::Using) {
+            self.expect_token(TokenType::LParen)?;
+            loop {
+                if from {
+                    self.expect_identifier_or_keyword()?;
+                    self.expect_token(TokenType::FArrow)?;
+                }
+                self.parse_expression()?;
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+            }
+            self.expect_token(TokenType::RParen)?;
+        }
+        if from && self.match_identifier("DRY_RUN") {
+            self.expect_token(TokenType::Eq)?;
+            if !self.match_token(TokenType::True) && !self.match_token(TokenType::False) {
+                return Err(self.parse_error("Expected TRUE or FALSE"));
+            }
+        }
+        match self.is_statement_end_at(0) {
+            true => Ok(()),
+            false => Err(self.parse_error("Expected the end of EXECUTE IMMEDIATE")),
+        }
+    }
+
     /// In Snowflake, refuse an unquoted reserved keyword in any dotted part of a COMMENT ON name.
     pub(super) fn check_snowflake_comment_name(&self) -> Result<()> {
         if !self.is_snowflake() {
@@ -411,7 +474,16 @@ impl Parser {
 
     /// Snowflake DCM `DEFINE`, refused for kinds kept as opaque text or not yet checked closely; a database's or schema's properties are checked word by word before they are kept as text.
     pub(crate) fn parse_snowflake_define(&mut self) -> Result<Expression> {
+        let start = self.current;
+        self.skip();
+        let opaque_kind = SNOWFLAKE_DEFINE_OPAQUE_KINDS
+            .iter()
+            .any(|words| self.check_text_seq(words));
+        self.current = start;
         let definition = self.parse_create()?;
+        if opaque_kind && matches!(definition, Expression::Raw(_)) {
+            return Ok(definition);
+        }
         let unchecked_kind = matches!(definition, Expression::CreateTable(_));
         let mut unchecked = definition.clone();
         match &mut unchecked {

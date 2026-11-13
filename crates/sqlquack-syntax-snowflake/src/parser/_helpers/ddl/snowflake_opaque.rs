@@ -18,11 +18,61 @@ impl Parser {
             return Ok(());
         }
         let start = self.current;
-        let checked = self
-            .check_opaque_head(create)
-            .and_then(|()| self.check_opaque_options());
+        let checked = match create && self.check_text_seq(&["AI", "FUNCTION"]) {
+            true => self.check_ai_function(),
+            false => self
+                .check_opaque_head(create)
+                .and_then(|()| self.check_opaque_shape(create, start))
+                .and_then(|()| self.check_opaque_options()),
+        };
         self.current = start;
         checked
+    }
+
+    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle, and AS COPY for a pipe's body; the cursor stays after the name.
+    fn check_opaque_shape(&mut self, create: bool, kind_at: usize) -> Result<()> {
+        if !create {
+            return Ok(());
+        }
+        let after_name = self.current;
+        let checked = match self.tokens[kind_at].text.to_ascii_uppercase().as_str() {
+            "CODE" if !self.check(TokenType::From) => Err(self.parse_error("Expected FROM")),
+            "PIPE" => self.check_pipe_body(),
+            _ => Ok(()),
+        };
+        self.current = after_name;
+        checked
+    }
+
+    /// A pipe's options up to `AS`, which a COPY statement follows.
+    fn check_pipe_body(&mut self) -> Result<()> {
+        let mut depth = 0usize;
+        while !self.is_statement_end_at(0) {
+            match self.peek().token_type {
+                TokenType::LParen => depth += 1,
+                TokenType::RParen => depth = depth.saturating_sub(1),
+                TokenType::As if depth == 0 => {
+                    self.skip();
+                    return match self.check(TokenType::Copy) {
+                        true => Ok(()),
+                        false => Err(self.parse_error("Expected a COPY statement after AS")),
+                    };
+                }
+                _ => {}
+            }
+            self.skip();
+        }
+        Err(self.parse_error("Expected AS and a COPY statement"))
+    }
+
+    /// Refuse a CREATE AI FUNCTION whose text after AI a CREATE FUNCTION would refuse.
+    fn check_ai_function(&mut self) -> Result<()> {
+        self.skip();
+        self.parse_create_function(false, false, false, false)?;
+        match self.is_statement_end_at(0) {
+            true => Ok(()),
+            false => Err(self.parse_error("Expected the end of the AI function")),
+        }
     }
 
     /// An ALTER with no structured grammar after its checks: the rest of the statement as raw text.
