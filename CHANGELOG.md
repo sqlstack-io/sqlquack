@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.11.3](https://github.com/sqlstack-io/sqlquack/compare/v0.11.2...v0.11.3) (2026-11-13)
+
+
+### Bug Fixes
+
+* **syntax-receipts:** place errno 921 parse errors as syntax errors ([e770e16](https://github.com/sqlstack-io/sqlquack/commit/e770e16beac6afe81defd78e9399c49c444c8dfe))
+* **syntax-receipts:** place errors that show Snowflake read an object statement as semantic ([ecce335](https://github.com/sqlstack-io/sqlquack/commit/ecce335b9df74428d744bc25ea78799e7ad66ef5))
+* **syntax:** accept documented EXECUTE IMMEDIATE sources and keep DEFINE in DEFINE text ([4938fa7](https://github.com/sqlstack-io/sqlquack/commit/4938fa7b51f1e13c79f7f6345c4ee329ba28a741))
+* **syntax:** check external agents, connector versions, root task lists and organization user groups ([55b02e6](https://github.com/sqlstack-io/sqlquack/commit/55b02e67f20e515d6a31d34dc7b92357236daba5))
+* **syntax:** check SHOW SERVICES, service snapshots and DEFINE FILE FORMAT modifiers ([50f569d](https://github.com/sqlstack-io/sqlquack/commit/50f569d8e0bf0042f74ded8033b89f539163d179))
+* **syntax:** keep INCREMENT = to Snowflake and read SET INCREMENT as an integer ([f2d1e81](https://github.com/sqlstack-io/sqlquack/commit/f2d1e81880d6c66c18d0d1d997b4910f88ee1c95))
+* **syntax:** need a user name to rename, enroll MFA, or set a user policy or tag ([a2386f9](https://github.com/sqlstack-io/sqlquack/commit/a2386f97d6abf18d571e4597e21fe1ec5a3677e9))
+* **syntax:** read ALTER DYNAMIC TABLE actions the way Snowflake records them ([6a6e004](https://github.com/sqlstack-io/sqlquack/commit/6a6e004333ebad90e6b94f3879892d7e7781d881))
+* **syntax:** read ALTER SEQUENCE SET and the smallest sequence START ([5516f15](https://github.com/sqlstack-io/sqlquack/commit/5516f15c124b08cf9301aaed0ab6b3c5b0bb17da))
+* **syntax:** read CREATE and ALTER POSTGRES INSTANCE as Snowflake does ([94cc0c8](https://github.com/sqlstack-io/sqlquack/commit/94cc0c8f59868dc3d8ab2850e2046c1725335694))
+* **syntax:** read dynamic table clones, SET and event routing rules as the probe batch recorded ([5e87a78](https://github.com/sqlstack-io/sqlquack/commit/5e87a78bb61cb5d0e7d1e972b00a5c074e8b7707))
+* **syntax:** read external consumers, AI functions, EXECUTE IMMEDIATE and DEFINE of tags, pipes and code bundles as Snowflake does ([81d9549](https://github.com/sqlstack-io/sqlquack/commit/81d954981779ad4567309fb7a0c62407d4121a86))
+* **syntax:** read notebook projects, organization profiles and group name properties as Snowflake does ([6559625](https://github.com/sqlstack-io/sqlquack/commit/65596259af720e99f3531535b94346cd07c87074))
+* **syntax:** read Snowflake GRANT, REVOKE and SHOW GRANTS as Snowflake does ([9e31fde](https://github.com/sqlstack-io/sqlquack/commit/9e31fde5144880b820abb7f2ed8dcbcbb9d708ef))
+* **syntax:** read the object statement shapes the probe batch settled ([7d2a329](https://github.com/sqlstack-io/sqlquack/commit/7d2a329a10b0357c690068a57e61867a78b34f1f))
+
 ## [0.11.2](https://github.com/sqlstack-io/sqlquack/compare/v0.11.1...v0.11.2) (2026-11-13)
 
 
