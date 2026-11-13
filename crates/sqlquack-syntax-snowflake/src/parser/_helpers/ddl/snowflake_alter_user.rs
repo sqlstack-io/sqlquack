@@ -74,9 +74,12 @@ impl Parser {
         if unnamed && named_only {
             return Err(self.parse_error(format!("Expected a user name before {action}")));
         }
+        let mut existence = (false, false);
         let (action, parts): Action = match action.as_str() {
             "RENAME TO" => (action, (vec![self.parse_user_operand()?], vec![])),
-            "ADD" | "MODIFY" | "REMOVE" | "ROTATE" => self.parse_user_credential_action(action)?,
+            "ADD" | "MODIFY" | "REMOVE" | "ROTATE" => {
+                self.parse_user_credential_action(action, &mut existence)?
+            }
             "SET" | "UNSET" => self.parse_user_set(action)?,
             _ => (action, (vec![], vec![])),
         };
@@ -86,11 +89,16 @@ impl Parser {
             return Err(self.parse_error("Expected an ALTER statement"));
         };
         alter.name = name;
+        (alter.operand_if_exists, alter.operand_if_not_exists) = existence;
         Ok(Expression::AlterObject(alter))
     }
 
-    /// The object of ADD, MODIFY, REMOVE or ROTATE: a credential, an MFA method or a delegated authorization.
-    fn parse_user_credential_action(&mut self, mut action: String) -> Result<Action> {
+    /// The object of ADD, MODIFY, REMOVE or ROTATE: a credential, an MFA method or a delegated authorization; a token's IF [NOT] EXISTS goes to `existence`.
+    fn parse_user_credential_action(
+        &mut self,
+        mut action: String,
+        existence: &mut (bool, bool),
+    ) -> Result<Action> {
         let verb = action.clone();
         if self.match_text_seq(&["MFA", "METHOD"]) {
             action.push_str(" MFA METHOD");
@@ -111,9 +119,9 @@ impl Parser {
         let token = matches!(kind.as_str(), "PROGRAMMATIC ACCESS TOKEN");
         if token && matches!(verb.as_str(), "ADD") && self.check(TokenType::If) {
             self.expect_alter_words(&[&["IF", "NOT", "EXISTS"]])?;
-            action.push_str(" IF NOT EXISTS");
+            existence.1 = true;
         } else if token && self.match_keywords(&[TokenType::If, TokenType::Exists]) {
-            action.push_str(" IF EXISTS");
+            existence.0 = true;
         }
         let operands = vec![self.parse_user_operand()?];
         let properties = match verb.as_str() {

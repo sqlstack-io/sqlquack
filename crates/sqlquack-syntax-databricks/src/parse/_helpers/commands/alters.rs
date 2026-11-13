@@ -915,6 +915,8 @@ impl Parser<'_> {
             arguments: Vec::new(),
             if_exists: false,
             action,
+            operand_if_exists: false,
+            operand_if_not_exists: false,
             operands,
             properties: Vec::new(),
         })))

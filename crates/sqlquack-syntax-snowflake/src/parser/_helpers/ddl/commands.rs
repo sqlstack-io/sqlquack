@@ -370,7 +370,7 @@ impl Parser {
         Ok(Expression::Grant(Box::new(Grant {
             privileges,
             kind,
-            securable,
+            securable: Some(securable),
             function_params,
             principals,
             grant_option,
@@ -462,7 +462,7 @@ impl Parser {
         Ok(Expression::Revoke(Box::new(Revoke {
             privileges,
             kind,
-            securable,
+            securable: Some(securable),
             function_params,
             principals,
             grant_option,

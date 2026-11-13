@@ -832,19 +832,22 @@ impl Parser {
     }
 }
 
-/// An ALTER of `kind` on the named object, with its action, operands and properties.
+/// An ALTER of `kind` on the named object, with its action, operands and properties; an empty unquoted name, for a statement that names no object, becomes None.
 pub(super) fn alter_object(
     kind: &str,
     (name, if_exists): (TableRef, bool),
     action: String,
     (operands, properties): (Vec<Expression>, Vec<ObjectProperty>),
 ) -> Expression {
+    let named = !name.name.name.is_empty() || name.name.quoted;
     Expression::AlterObject(Box::new(AlterObject {
         kind: kind.to_owned(),
-        name: Some(name),
+        name: named.then_some(name),
         arguments: Vec::new(),
         if_exists,
         action,
+        operand_if_exists: false,
+        operand_if_not_exists: false,
         operands,
         properties,
     }))

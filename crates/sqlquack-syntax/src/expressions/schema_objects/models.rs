@@ -1187,6 +1187,12 @@ pub struct AlterObject {
     pub if_exists: bool,
     /// The action's keywords, e.g. "RESUME", "MODIFY RUN", "UNSET TAG"
     pub action: String,
+    /// IF EXISTS on the action's own object, as in Snowflake's `MODIFY PAT IF EXISTS t1 SET ...`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub operand_if_exists: bool,
+    /// IF NOT EXISTS on the action's own object, as in Snowflake's `ADD PAT IF NOT EXISTS t1`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub operand_if_not_exists: bool,
     /// The action's operands in order: names, values, a condition or a statement
     #[serde(default)]
     pub operands: Vec<Expression>,
@@ -1295,8 +1301,8 @@ pub struct Grant {
     pub privileges: Vec<Privilege>,
     /// Object kind (TABLE, SCHEMA, FUNCTION, etc.)
     pub kind: Option<String>,
-    /// The object to grant on
-    pub securable: Identifier,
+    /// The object to grant on; None when the kind names it alone, as Snowflake's ON ACCOUNT
+    pub securable: Option<Identifier>,
     /// Function parameter types (for FUNCTION kind)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub function_params: Vec<String>,
@@ -1328,8 +1334,8 @@ pub struct Revoke {
     pub privileges: Vec<Privilege>,
     /// Object kind (TABLE, SCHEMA, FUNCTION, etc.)
     pub kind: Option<String>,
-    /// The object to revoke from
-    pub securable: Identifier,
+    /// The object to revoke from; None when the kind names it alone, as Snowflake's ON ACCOUNT
+    pub securable: Option<Identifier>,
     /// Function parameter types (for FUNCTION kind)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub function_params: Vec<String>,

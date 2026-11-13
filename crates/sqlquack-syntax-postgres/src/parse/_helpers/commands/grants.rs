@@ -152,7 +152,7 @@ impl Parser<'_> {
         Ok(Expression::Grant(Box::new(Grant {
             privileges: privileges.list,
             kind: target.kind,
-            securable: Identifier::new(""),
+            securable: Some(Identifier::new("")),
             function_params: Vec::new(),
             principals,
             grant_option,
@@ -253,7 +253,7 @@ impl Parser<'_> {
         Ok(Expression::Grant(Box::new(Grant {
             privileges: privileges.list,
             kind: target.kind,
-            securable: Identifier::new(""),
+            securable: Some(Identifier::new("")),
             function_params: Vec::new(),
             principals,
             grant_option,
@@ -458,7 +458,7 @@ fn revoke(
     Expression::Revoke(Box::new(Revoke {
         privileges,
         kind: target.kind,
-        securable: Identifier::new(""),
+        securable: Some(Identifier::new("")),
         function_params: Vec::new(),
         principals,
         grant_option,
