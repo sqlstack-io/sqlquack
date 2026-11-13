@@ -32,16 +32,19 @@ impl Parser {
         checked
     }
 
-    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, a snapshot's service volume, an external agent's version, a variable's type, AS COPY for a pipe's body, and an Openflow connector's added version; the cursor stays after the name.
+    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, a snapshot's service volume, an external agent's version, a variable's type, AS COPY for a pipe's body, an Openflow connector's added version and push, and a warehouse's actions; the cursor stays after the name.
     fn check_opaque_shape(&mut self, create: bool, kind_at: usize) -> Result<()> {
         let after_name = self.current;
         let kind = self.tokens[kind_at].text.to_ascii_uppercase();
         let second = self.tokens[kind_at + 1].text.to_ascii_uppercase();
         if !create {
             let connector = matches!((kind.as_str(), second.as_str()), ("OPENFLOW", "CONNECTOR"));
-            let checked = match connector && self.check_text_seq(&["ADD"]) {
-                true => self.check_connector_version(),
-                false => Ok(()),
+            let warehouse = matches!(kind.as_str(), "WAREHOUSE");
+            let checked = match (connector, warehouse) {
+                (true, _) if self.check_text_seq(&["ADD"]) => self.check_connector_version(),
+                (true, _) if self.check_text_seq(&["PUSH"]) => self.check_connector_push(),
+                (_, true) => self.check_warehouse_action(self.current == kind_at + 1),
+                _ => Ok(()),
             };
             self.current = after_name;
             return checked;
@@ -122,6 +125,64 @@ impl Parser {
         match self.is_statement_end_at(0) {
             true => Ok(()),
             false => Err(self.parse_error("Expected the end of the variable")),
+        }
+    }
+
+    /// A warehouse action after its name, which `unnamed` says was left out: ABORT ALL QUERIES, a named warehouse's tables, rename or tags, and unquoted names to UNSET.
+    fn check_warehouse_action(&mut self, unnamed: bool) -> Result<()> {
+        let tag = self
+            .peek_nth(1)
+            .is_some_and(|token| token.text.eq_ignore_ascii_case("TAG"))
+            && !self
+                .peek_nth(2)
+                .is_some_and(|token| token.token_type == TokenType::Eq);
+        let tables = self.check_text_seq(&["ADD"]) || self.check_text_seq(&["DROP"]);
+        let tagging = tag && (self.check_text_seq(&["SET"]) || self.check_text_seq(&["UNSET"]));
+        if unnamed && (tables || tagging || self.check_text_seq(&["RENAME"])) {
+            return Err(self.parse_error("Expected a warehouse name before the action"));
+        }
+        if self.match_text_seq(&["ABORT"]) && !self.match_text_seq(&["ALL", "QUERIES"]) {
+            return Err(self.parse_error("Expected ALL QUERIES after ABORT"));
+        }
+        if self.match_text_seq(&["UNSET"]) {
+            self.match_text_seq(&["TAG"]);
+            return match self.check(TokenType::String) {
+                true => Err(self.parse_error("Expected a name to unset, not a string")),
+                false => Ok(()),
+            };
+        }
+        match tables {
+            true => self.check_warehouse_tables(),
+            false => Ok(()),
+        }
+    }
+
+    /// `{ ADD | DROP } TABLES ( <name> [ , ... ] )` after a warehouse's name.
+    fn check_warehouse_tables(&mut self) -> Result<()> {
+        self.skip();
+        if !self.match_text_seq(&["TABLES"]) || !self.match_token(TokenType::LParen) {
+            return Err(self.parse_error("Expected TABLES and a parenthesised list"));
+        }
+        loop {
+            if self.check(TokenType::String) || self.check(TokenType::RParen) {
+                return Err(self.parse_error("Expected a table name"));
+            }
+            self.parse_object_name()?;
+            if !self.match_token(TokenType::Comma) {
+                return Ok(());
+            }
+        }
+    }
+
+    /// `PUSH [ TO '<location>' ]` after an Openflow connector's name, which properties follow.
+    fn check_connector_push(&mut self) -> Result<()> {
+        self.skip();
+        if self.match_token(TokenType::To) && !self.match_token(TokenType::String) {
+            return Err(self.parse_error("Expected a location string after TO"));
+        }
+        match self.check(TokenType::Eq) {
+            true => Err(self.parse_error("Expected a property name")),
+            false => Ok(()),
         }
     }
 
