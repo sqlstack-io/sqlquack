@@ -803,6 +803,16 @@ pub(crate) const SNOWFLAKE_DESCRIBE_KINDS: &[&[&str]] = &[
     &["SECURITY", "INTEGRATION"],
     &["STORAGE", "INTEGRATION"],
     &["INTEGRATION"],
+    &["MODEL"],
+];
+
+/// Words Snowflake reads as a kind after DESCRIBE or DROP where no longer kind matches, without making a longer kind they start name its last word.
+pub(crate) const SNOWFLAKE_LONE_KINDS: &[&[&str]] = &[
+    &["ARTIFACT"],
+    &["DEPLOYMENT"],
+    &["EVENT", "TABLE"],
+    &["SERVER"],
+    &["VOLUME"],
 ];
 
 /// The kinds the shared DESCRIBE reads for Snowflake.
@@ -829,6 +839,14 @@ pub(crate) const SNOWFLAKE_SHOW_KINDS: &[&[&str]] = &[
     &["MAINTENANCE", "POLICIES"],
     &["COMPUTE", "POOL", "INSTANCE", "FAMILIES"],
     &["DELEGATED", "AUTHORIZATIONS", "BY", "USER"],
+    &["DELEGATED", "AUTHORIZATIONS", "BY"],
+    &[
+        "DELEGATED",
+        "AUTHORIZATIONS",
+        "TO",
+        "SECURITY",
+        "INTEGRATION",
+    ],
     &["MULTI", "PARTY", "APPROVAL", "POLICIES"],
     &["OPENFLOW", "DATA", "PLANE", "INTEGRATIONS"],
     &["USER", "FUNCTIONS"],
@@ -991,6 +1009,7 @@ pub(crate) const SNOWFLAKE_SHOW_KINDS: &[&[&str]] = &[
     &["VARIABLES"],
     &["VERSIONS"],
     &["VIEWS"],
+    &["VOLUMES"],
     &["WAREHOUSES"],
     &["WORKSPACES"],
 ];
@@ -1043,6 +1062,7 @@ pub(crate) const SNOWFLAKE_SHOW_CONTAINERS: &[&[&str]] = &[
     &["DATABASE"],
     &["DATASET"],
     &["EXPERIMENT"],
+    &["GATEWAY"],
     &["GRAPH"],
     &["LISTING"],
     &["MODEL"],
@@ -1068,6 +1088,8 @@ pub(crate) const SNOWFLAKE_SHOW_GENERAL_CONTAINERS: &[&str] = &[
 /// Further containers some Snowflake SHOW kinds may name.
 pub(crate) const SNOWFLAKE_SHOW_EXTRA_CONTAINERS: &[(&str, &[&str])] = &[
     ("COMMITTED TASKS", &["GRAPH"]),
+    ("DEPLOYMENTS", &["DCM PROJECT"]),
+    ("MODEL MONITORS", &["GATEWAY"]),
     ("DATABASES", &["FAILOVER GROUP", "REPLICATION GROUP"]),
     ("FUNCTIONS", &["MODEL"]),
     ("LISTINGS", &["FAILOVER GROUP"]),
@@ -1076,6 +1098,7 @@ pub(crate) const SNOWFLAKE_SHOW_EXTRA_CONTAINERS: &[(&str, &[&str])] = &[
     ("SERVICES", &["COMPUTE POOL"]),
     ("SHARES", &["FAILOVER GROUP", "REPLICATION GROUP"]),
     ("SNAPSHOTS", &["SNAPSHOT SET"]),
+    ("VOLUMES", &["SERVICE"]),
 ];
 
 /// Snowflake SHOW kinds that need IN and one of these containers; "" is a bare name.
@@ -1084,8 +1107,7 @@ pub(crate) const SNOWFLAKE_SHOW_REQUIRED_CONTAINERS: &[(&str, &[&str])] = &[
     ("AVAILABLE OFFERS", &["LISTING"]),
     ("BACKUPS", &["BACKUP SET"]),
     ("DATABASE ROLES", &["DATABASE", ""]),
-    ("DEPLOYMENTS", &["DCM PROJECT"]),
-    ("ENDPOINTS", &["SERVICE"]),
+    ("ENDPOINTS", &["SERVICE", ""]),
     ("ENTITIES", &["DCM PROJECT"]),
     ("FILES", &["ARTIFACT REPOSITORY"]),
     ("GIT BRANCHES", &["GIT REPOSITORY", ""]),
@@ -1102,16 +1124,18 @@ pub(crate) const SNOWFLAKE_SHOW_REQUIRED_CONTAINERS: &[(&str, &[&str])] = &[
     ("RUN METRICS", &["EXPERIMENT"]),
     ("RUN PARAMETERS", &["EXPERIMENT"]),
     ("RUNS", &["EXPERIMENT"]),
-    ("SCHEMA VARIABLES", &["SCHEMA"]),
+    ("SCHEMA VARIABLES", &["SCHEMA", ""]),
     ("SERVICE CONTAINERS", &["SERVICE"]),
     ("SERVICE INSTANCES", &["SERVICE"]),
     ("SERVICE VOLUMES", &["SERVICE"]),
-    ("SHARED CONTENT", &["APPLICATION PACKAGE"]),
+    ("SHARED CONTENT", &["APPLICATION PACKAGE", "APPLICATION"]),
     ("TELEMETRY EVENT DEFINITIONS", &["APPLICATION"]),
     (
         "VERSIONS",
         &[
+            "",
             "APPLICATION PACKAGE",
+            "APPLICATION",
             "ARTIFACT REPOSITORY",
             "DATASET",
             "DBT PROJECT",

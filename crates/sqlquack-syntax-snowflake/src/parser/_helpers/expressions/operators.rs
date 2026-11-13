@@ -362,9 +362,11 @@ impl Parser {
             } else if self.match_token(TokenType::Returns) {
                 self.check_snowflake_table_columns()?;
                 return_type = Some(self.parse_data_type()?);
-                if self.match_keywords(&[TokenType::Not, TokenType::Null]) {
-                } else {
-                    self.match_token(TokenType::Null);
+                match self.match_snowflake_return_nullability() {
+                    Some(nullability) => with_options.push(nullability),
+                    None => {
+                        self.match_token(TokenType::Null);
+                    }
                 }
             } else if self.match_identifier("EXECUTE") || self.match_token(TokenType::Execute) {
                 if self.match_token(TokenType::As) {
@@ -445,6 +447,8 @@ impl Parser {
             or_replace,
             or_alter,
             if_not_exists,
+            temporary: false,
+            secure: false,
             language,
             security,
             return_type,
@@ -1296,7 +1300,11 @@ impl Parser {
     }
 
     /// Parses Snowflake CREATE [OR REPLACE] TASK [IF NOT EXISTS] name [...] AS statement.
-    pub(crate) fn parse_create_task(&mut self, or_replace: bool) -> Result<Expression> {
+    pub(crate) fn parse_create_task(
+        &mut self,
+        or_replace: bool,
+        or_alter: bool,
+    ) -> Result<Expression> {
         self.skip();
         let graph = self.is_snowflake()
             && self.check_identifier("GRAPH")
@@ -1311,7 +1319,7 @@ impl Parser {
             });
         if graph {
             self.skip();
-            return self.parse_snowflake_create_task_graph(or_replace);
+            return self.parse_snowflake_create_task_graph(or_replace, or_alter);
         }
 
         let if_not_exists =
@@ -1335,6 +1343,7 @@ impl Parser {
                 return Ok(Expression::CreateTask(Box::new(
                     sqlquack_syntax::expressions::statements::models::CreateTask {
                         or_replace,
+                        or_alter,
                         if_not_exists,
                         name,
                         properties: String::new(),
@@ -1365,6 +1374,23 @@ impl Parser {
         }
 
         let props_start = self.current;
+        if self.is_snowflake()
+            && (self.is_at_end() || self.check(TokenType::Semicolon))
+            && !name.eq_ignore_ascii_case("GRAPH")
+        {
+            return Ok(Expression::CreateTask(Box::new(
+                sqlquack_syntax::expressions::statements::models::CreateTask {
+                    or_replace,
+                    or_alter,
+                    if_not_exists,
+                    name,
+                    properties: String::new(),
+                    body: None,
+                    clone_source: None,
+                    graph: false,
+                },
+            )));
+        }
         if self.is_snowflake() {
             self.check_snowflake_task_properties(false)?;
         }
@@ -1382,6 +1408,7 @@ impl Parser {
         Ok(Expression::CreateTask(Box::new(
             sqlquack_syntax::expressions::statements::models::CreateTask {
                 or_replace,
+                or_alter,
                 if_not_exists,
                 name,
                 properties,

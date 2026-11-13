@@ -402,7 +402,7 @@ fn given_a_snowflake_create_or_alter_kept_as_text_when_parsing_then_its_head_and
         SnowflakeVerdictTestCase {
             description: "START, a reserved keyword, as the action (recorded OK)",
             sql: "ALTER OPENFLOW CONNECTOR v1 START ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a reserved keyword written against a stage path (recorded OK)",
@@ -432,7 +432,7 @@ fn given_a_snowflake_create_or_alter_kept_as_text_when_parsing_then_its_head_and
         SnowflakeVerdictTestCase {
             description: "an unreserved operand word as a new name",
             sql: "ALTER ROLE v1 RENAME TO template ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an alert condition comparing with a quantified subquery",

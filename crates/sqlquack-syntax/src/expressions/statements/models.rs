@@ -444,6 +444,9 @@ pub struct Kill {
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct CreateTask {
     pub or_replace: bool,
+    /// Whether this is Snowflake's `CREATE OR ALTER TASK`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_alter: bool,
     pub if_not_exists: bool,
     /// Task name (possibly qualified: db.schema.task)
     pub name: String,
@@ -786,6 +789,9 @@ pub struct Show {
     /// WITH PRIVILEGES clause (Snowflake: SHOW ... WITH PRIVILEGES USAGE, MODIFY)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub privileges: Vec<String>,
+    /// Snowflake SHOW TASKS ... ROOT ONLY, which lists only root tasks
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub root_only: bool,
 }
 
 impl Show {
@@ -806,6 +812,7 @@ impl Show {
             target: None,
             mutex: None,
             privileges: Vec::new(),
+            root_only: false,
         }
     }
 }
