@@ -756,6 +756,12 @@ fn given_a_snowflake_external_agent_or_filtered_show_when_parsing_then_the_tree_
             expected_value: json!(true),
         },
         StatementTestCase {
+            description: "SHOW TASKS with ROOT ONLY keeps TASKS as its kind",
+            sql: "SHOW TASKS STARTS WITH 'm' ROOT ONLY ;",
+            pointer: "/0/show/this",
+            expected_value: json!("TASKS"),
+        },
+        StatementTestCase {
             description: "SHOW SERVICES keeps its filters in its kind",
             sql: "SHOW SERVICES OF TYPE USER , JOB IN COMPUTE POOL v1 LIMIT 1 ;",
             pointer: "/0/show/this",
@@ -1282,6 +1288,116 @@ fn given_snowflake_listing_filters_or_a_volatile_file_format_when_parsing_then_t
             sql: "CREATE OR ALTER VOLATILE FILE FORMAT v1 ;",
             pointer: "/0/create_object/modifier",
             expected_value: json!("VOLATILE"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_numeric_operands_given_a_string_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "SEQUENCE_NUMBER takes a number (recorded semantic error)",
+            sql: "ALTER APPLICATION v1 APPROVE SPECIFICATION v1 SEQUENCE_NUMBER = 1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "SEQUENCE_NUMBER refuses a string (recorded errno 1003)",
+            sql: "ALTER APPLICATION v1 APPROVE SPECIFICATION v1 SEQUENCE_NUMBER = 'x' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "GROUP LIMIT refuses a string (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ADD DATA METRIC FUNCTION v1 ON ( v1 ) WITHIN GROUP ( v1 ) GROUP LIMIT 'x' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SHOW AVAILABLE LISTINGS LIMIT refuses a string (recorded errno 1003)",
+            sql: "SHOW AVAILABLE LISTINGS LIMIT 'x' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "MAX_BATCH_ROWS reads a string (recorded semantic error)",
+            sql: "CREATE EXTERNAL FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = v1 MAX_BATCH_ROWS = 'x' AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "BATCH_TIMEOUT_SECS reads a string (recorded semantic error)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT SERVICE = v1 ENDPOINT = e1 BATCH_TIMEOUT_SECS = 'x' AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a semantic view reads MAX_STALENESS as a string (recorded semantic error)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) MAX_STALENESS = 'x' ;",
+            expected_kind: Some("create_object"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_semantic_view_max_staleness_when_parsing_then_it_is_kept() {
+    assert_eq!(
+        statement_at(
+            "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) MAX_STALENESS = 120 COMMENT = 'm' ;",
+            "/0/create_object/properties/1"
+        )["kind"],
+        json!("MAX_STALENESS")
+    );
+}
+
+#[test]
+fn given_snowflake_routine_modifiers_or_a_snapshot_named_policy_when_parsing_then_they_are_kept() {
+    let test_cases = [
+        StatementTestCase {
+            description: "a function keeps SECURE",
+            sql: "CREATE SECURE EXTERNAL FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = v1 AS 'm' ;",
+            pointer: "/0/create_function/secure",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a function keeps EXTERNAL",
+            sql: "CREATE SECURE EXTERNAL FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = v1 AS 'm' ;",
+            pointer: "/0/create_function/external",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a procedure keeps SECURE",
+            sql: "CREATE TEMPORARY SECURE PROCEDURE v1 ( ) RETURNS INT LANGUAGE SQL AS 'm' ;",
+            pointer: "/0/create_procedure/secure",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a procedure keeps TEMPORARY",
+            sql: "CREATE TEMPORARY SECURE PROCEDURE v1 ( ) RETURNS INT LANGUAGE SQL AS 'm' ;",
+            pointer: "/0/create_procedure/temporary",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "SET COMMENT after SNAPSHOT POLICY alters a snapshot named POLICY (recorded errno 2003)",
+            sql: "ALTER SNAPSHOT POLICY SET COMMENT = 'm' ;",
+            pointer: "/0/alter_object/kind",
+            expected_value: json!("SNAPSHOT"),
+        },
+        StatementTestCase {
+            description: "another SET after SNAPSHOT POLICY stays a snapshot policy",
+            sql: "ALTER SNAPSHOT POLICY SET EXPIRE_AFTER_DAYS = 7 ;",
+            pointer: "/0/alter_object/kind",
+            expected_value: json!("SNAPSHOT POLICY"),
         },
     ];
     for test_case in test_cases {
