@@ -117,10 +117,13 @@ impl Parser {
         words == ["EVENT"] && ends(2)
     }
 
-    /// The properties of an event table: those a table takes after its columns.
+    /// The properties of an event table: those a table takes after its columns, except CONTACT.
     fn parse_event_table_properties(&mut self) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
+            if self.check_text_seq(&["WITH", "CONTACT"]) || self.check_text_seq(&["CONTACT"]) {
+                return Err(self.parse_error("An event table takes no CONTACT"));
+            }
             properties.extend(self.parse_checked_table_property(SnowflakeTableKind::Table)?);
         }
         Ok(properties)
