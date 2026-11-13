@@ -502,9 +502,9 @@ pub struct CreateFunction {
     /// PARAMETER STYLE clause (e.g., PANDAS for Databricks)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameter_style: Option<String>,
-    /// Snowflake properties such as IMPORTS, SECRETS or SERVICE, each kept as its source text
+    /// Snowflake properties such as IMPORTS, SECRETS or SERVICE, and phrases such as COPY GRANTS or NOT NULL, each with its value
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub snowflake_properties: Vec<String>,
+    pub snowflake_properties: Vec<ObjectProperty>,
     /// DuckDB: a macro's further overloads, each a `CreateFunction` with only its parameters, body and `is_table_function`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub overloads: Vec<Expression>,
@@ -724,6 +724,9 @@ pub struct CreateProcedure {
     /// TSQL WITH options (ENCRYPTION, RECOMPILE, SCHEMABINDING, etc.)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub with_options: Vec<String>,
+    /// Snowflake properties such as HANDLER, IMPORTS or COMMENT, and phrases such as COPY GRANTS or NOT NULL, each with its value
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub snowflake_properties: Vec<ObjectProperty>,
     /// Whether the parameter list had parentheses (false for TSQL procedures without parens)
     #[serde(default = "default_true", skip_serializing_if = "is_true")]
     pub has_parens: bool,
@@ -751,6 +754,7 @@ impl CreateProcedure {
             return_type: None,
             execute_as: None,
             with_options: Vec::new(),
+            snowflake_properties: Vec::new(),
             has_parens: true,
             use_proc_keyword: false,
             returns_table: None,

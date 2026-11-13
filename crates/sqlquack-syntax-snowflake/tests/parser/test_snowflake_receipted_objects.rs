@@ -1480,6 +1480,24 @@ fn given_snowflake_routine_modifiers_staleness_or_a_snapshot_named_policy_when_p
             expected_value: json!(true),
         },
         StatementTestCase {
+            description: "a function property keeps its name's quoting",
+            sql: "CREATE EXTERNAL FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = \"i 1\" AS 'm' ;",
+            pointer: "/0/create_function/snowflake_properties/0/value/table/name/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a map property keeps each key with its value",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.12' HANDLER = 'h' SECRETS = ( 'k' = s1 ) AS 'm' ;",
+            pointer: "/0/create_function/snowflake_properties/0/value/tuple/expressions/0/eq/right/table/name/name",
+            expected_value: json!("s1"),
+        },
+        StatementTestCase {
+            description: "a procedure option phrase is its own property",
+            sql: "CREATE PROCEDURE v1 ( ) COPY GRANTS RETURNS INT NOT NULL LANGUAGE SQL AS 'm' ;",
+            pointer: "/0/create_procedure/snowflake_properties/1/kind",
+            expected_value: json!("NOT NULL"),
+        },
+        StatementTestCase {
             description: "a function keeps EXTERNAL",
             sql: "CREATE SECURE EXTERNAL FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = v1 AS 'm' ;",
             pointer: "/0/create_function/external",

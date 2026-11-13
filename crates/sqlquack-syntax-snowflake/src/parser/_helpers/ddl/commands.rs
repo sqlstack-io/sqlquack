@@ -1,5 +1,6 @@
 //! Parser ddl: commands.
 
+use crate::parser::_helpers::ddl::snowflake_routines::nullability_property;
 use crate::parser::constants::FUNCTION;
 use crate::parser::constants::PROCEDURE;
 use crate::parser::constants::QUALIFIED_NAME_PARTS;
@@ -1518,7 +1519,10 @@ impl Parser {
             runtime_version: None,
             packages: None,
             parameter_style: None,
-            snowflake_properties: return_nullability.into_iter().collect(),
+            snowflake_properties: return_nullability
+                .into_iter()
+                .map(nullability_property)
+                .collect(),
             overloads: Vec::new(),
         };
         function = self.parse_create_function_properties(function)?;
@@ -1545,7 +1549,9 @@ impl Parser {
             } else if self.match_token(TokenType::Returns) {
                 function.return_type = Some(self.parse_data_type()?);
                 if let Some(nullability) = self.match_snowflake_return_nullability() {
-                    function.snowflake_properties.push(nullability);
+                    function
+                        .snowflake_properties
+                        .push(nullability_property(nullability));
                 }
             } else if self.match_token(TokenType::Language) {
                 function.language = Some(self.expect_identifier_or_keyword()?);
