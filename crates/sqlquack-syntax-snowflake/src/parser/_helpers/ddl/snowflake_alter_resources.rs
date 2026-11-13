@@ -39,6 +39,7 @@ const RESOURCE_KINDS: &[&[&str]] = &[
     &["RESTRICTED", "SESSION", "SCOPE"],
     &["ARTIFACT", "REPOSITORY"],
     &["EXTERNAL", "VOLUME"],
+    &["POSTGRES", "INSTANCE"],
     &["MATERIALIZED", "VIEW"],
     &["COMPUTE", "POOL"],
     &["DBT", "PROJECT"],
@@ -85,6 +86,14 @@ fn resource_actions(kind: &str) -> &'static [&'static [&'static str]] {
         "DBT PROJECT" => &[&["DEPLOY", "FROM"], &["RENAME", "TO"], &["SET"], &["UNSET"]],
         "DCM PROJECT" => &[&["DROP", "DEPLOYMENT"], &["SET"], &["UNSET"]],
         "SECRET" => &[&["SET"]],
+        "POSTGRES INSTANCE" => &[
+            &["RENAME"],
+            &["RESET", "ACCESS", "FOR"],
+            &["SUSPEND"],
+            &["RESUME"],
+            &["SET"],
+            &["UNSET"],
+        ],
         "EVENT ROUTING TABLE" => &[
             &["MODIFY", "RULE"],
             &["RENAME", "TO"],
@@ -364,7 +373,9 @@ impl Parser {
                 "RENAME TO" | "SWAP WITH" | "DROP DEPLOYMENT" | "DROP VERSION" | "UNSET RULE"
                 | "FORCE UNSET RULE",
             )
-            | ("EXTERNAL AGENT", "ADD VERSION") => (vec![self.parse_name_operand()?], vec![]),
+            | ("EXTERNAL AGENT", "ADD VERSION")
+            | ("POSTGRES INSTANCE", "RENAME") => (vec![self.parse_name_operand()?], vec![]),
+            ("POSTGRES INSTANCE", "RESET ACCESS FOR") => (vec![self.parse_string_value()?], vec![]),
             (_, "DEPLOY FROM" | "DROP PARTITION LOCATION") => {
                 (vec![self.parse_location_value()?], vec![])
             }

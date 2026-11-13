@@ -410,11 +410,6 @@ fn given_a_snowflake_create_or_alter_kept_as_text_when_parsing_then_its_head_and
             expected_kind: Some("raw"),
         },
         SnowflakeVerdictTestCase {
-            description: "a Postgres instance renamed without TO (recorded OK)",
-            sql: "ALTER POSTGRES INSTANCE v1 RENAME v1 ;",
-            expected_kind: Some("raw"),
-        },
-        SnowflakeVerdictTestCase {
             description: "a property before the body (recorded OK)",
             sql: "CREATE PIPE v1 INTEGRATION = m1 AS COPY INTO t1 FROM @s1 ;",
             expected_kind: Some("raw"),

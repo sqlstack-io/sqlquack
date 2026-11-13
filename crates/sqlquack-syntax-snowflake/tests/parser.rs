@@ -44,6 +44,8 @@ mod test_snowflake_execute;
 mod test_snowflake_fixes;
 #[path = "parser/test_snowflake_grant.rs"]
 mod test_snowflake_grant;
+#[path = "parser/test_snowflake_postgres_instance.rs"]
+mod test_snowflake_postgres_instance;
 #[path = "parser/test_snowflake_procedures.rs"]
 mod test_snowflake_procedures;
 #[path = "parser/test_snowflake_recorded.rs"]
