@@ -1127,3 +1127,395 @@ note = "Re-approved after the parenthesized-list fix changed only these fingerpr
 "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri" = "e313e9c5116e7d3150dcd86e4b0fffc3d9c5ed346c67b92c4f0e0fe8d74f306a"
 "sf.security_admin.create-security-integration-oidc.oidc-allowed-msft-tenants" = "f3e17170e68165fe44572c34d06ec0243a0a1cf5782bae59e695a3c917aa15e9"
 "sf.security_admin.create-session-policy" = "c6e0d5e5ae9e9a8561b4a4f7d9213e39f69fa43fe1d0165a791d6284cf9036c8"
+
+[[review]]
+id = "security-admin-015"
+family = "security_admin"
+parser_tree = "e4c5015c6be45602859aa5366c26b7b470e2cc9c"
+reviewed_utc = "2026-11-13T14:09:29Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-account.set-contact",
+  "sf.security_admin.alter-account.set-data-movement-policy",
+  "sf.security_admin.alter-account.set-feature-policy-for",
+  "sf.security_admin.alter-account.set-feature-policy-for-2",
+  "sf.security_admin.alter-account.set-tag",
+  "sf.security_admin.alter-account.unset",
+  "sf.security_admin.alter-account.unset-contact",
+  "sf.security_admin.alter-account.unset-data-movement-policy",
+  "sf.security_admin.alter-account.unset-feature-policy-for",
+  "sf.security_admin.alter-account.unset-feature-policy-for-2",
+  "sf.security_admin.alter-account.unset-maintenance-policy-for",
+  "sf.security_admin.alter-account.unset-tag",
+  "sf.security_admin.alter-aggregation-policy.set-body",
+  "sf.security_admin.alter-failover-group.set",
+  "sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh",
+  "sf.security_admin.alter-join-policy.set-body",
+  "sf.security_admin.alter-masking-policy.set-body",
+  "sf.security_admin.alter-network-policy.add-allowed-network-rule-list-blocked-network-rule-list",
+  "sf.security_admin.alter-network-policy.remove-allowed-network-rule-list-blocked-network-rule-list",
+  "sf.security_admin.alter-organization-profile.add-version-from",
+  "sf.security_admin.alter-organization-user-group.set-visibility-all-accounts",
+  "sf.security_admin.alter-privacy-policy.rename-to",
+  "sf.security_admin.alter-privacy-policy.set-body",
+  "sf.security_admin.alter-privacy-policy.set-comment",
+  "sf.security_admin.alter-privacy-policy.unset-comment",
+  "sf.security_admin.alter-projection-policy.rename-to",
+  "sf.security_admin.alter-projection-policy.set-body",
+  "sf.security_admin.alter-projection-policy.set-comment",
+  "sf.security_admin.alter-projection-policy.unset-comment",
+  "sf.security_admin.alter-replication-group.add-to-allowed-databases",
+  "sf.security_admin.alter-replication-group.add-to-allowed-external-volumes",
+  "sf.security_admin.alter-replication-group.add-to-allowed-shares",
+  "sf.security_admin.alter-replication-group.move-databases-to-replication",
+  "sf.security_admin.alter-replication-group.move-external-volumes-to",
+  "sf.security_admin.alter-replication-group.move-shares-to-replication",
+  "sf.security_admin.alter-replication-group.refresh",
+  "sf.security_admin.alter-replication-group.remove-from-allowed-databases",
+  "sf.security_admin.alter-replication-group.remove-from-allowed-external-volumes",
+  "sf.security_admin.alter-replication-group.remove-from-allowed-shares",
+  "sf.security_admin.alter-replication-group.rename-to",
+  "sf.security_admin.alter-replication-group.resume",
+  "sf.security_admin.alter-replication-group.set",
+  "sf.security_admin.alter-replication-group.set-comment",
+  "sf.security_admin.alter-replication-group.set-error-integration",
+  "sf.security_admin.alter-replication-group.set-object-types-integrations-allowed-integration-types",
+  "sf.security_admin.alter-replication-group.suspend",
+  "sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration",
+  "sf.security_admin.alter-row-access-policy.rename-to",
+  "sf.security_admin.alter-row-access-policy.set-body",
+  "sf.security_admin.alter-row-access-policy.set-comment",
+  "sf.security_admin.alter-row-access-policy.unset-comment",
+  "sf.security_admin.alter-secret.set",
+  "sf.security_admin.alter-secret.set-2",
+  "sf.security_admin.alter-secret.set-3",
+  "sf.security_admin.alter-secret.set-4",
+  "sf.security_admin.alter-secret.set.syntax",
+  "sf.security_admin.alter-user-add-key-pair",
+  "sf.security_admin.alter-user-add-programmatic-access-token",
+  "sf.security_admin.alter-user-add-workload-identity",
+  "sf.security_admin.alter-user-modify-key-pair.rename-to",
+  "sf.security_admin.alter-user-modify-key-pair.set",
+  "sf.security_admin.alter-user-modify-key-pair.unset",
+  "sf.security_admin.alter-user-modify-programmatic-access-token.rename-to",
+  "sf.security_admin.alter-user-modify-programmatic-access-token.set",
+  "sf.security_admin.alter-user-modify-programmatic-access-token.unset",
+  "sf.security_admin.alter-user-modify-workload-identity.rename-to",
+  "sf.security_admin.alter-user-modify-workload-identity.set",
+  "sf.security_admin.alter-user-remove-key-pair",
+  "sf.security_admin.alter-user-remove-programmatic-access-token",
+  "sf.security_admin.alter-user-remove-workload-identity",
+  "sf.security_admin.alter-user-rotate-key-pair",
+  "sf.security_admin.alter-user-rotate-programmatic-access-token",
+  "sf.security_admin.alter-user-set-ingress-policy.set-ingress-policy",
+  "sf.security_admin.alter-user-set-ingress-policy.unset-ingress-policy",
+  "sf.security_admin.alter-user.abort-all-queries",
+  "sf.security_admin.alter-user.reset-password",
+  "sf.security_admin.alter-user.unset",
+  "sf.security_admin.create-aggregation-policy",
+  "sf.security_admin.create-application-role.application-role",
+  "sf.security_admin.create-application-role.or-alter-application-role",
+  "sf.security_admin.create-catalog-integration-delta-sharing",
+  "sf.security_admin.create-catalog-integration-rest",
+  "sf.security_admin.create-data-movement-policy",
+  "sf.security_admin.create-database-role.create-or-alter-database",
+  "sf.security_admin.create-join-policy",
+  "sf.security_admin.create-maintenance-policy",
+  "sf.security_admin.create-masking-policy.masking-policy-as-returns",
+  "sf.security_admin.create-masking-policy.or-alter-masking-policy",
+  "sf.security_admin.create-network-policy.define-network-policy",
+  "sf.security_admin.create-network-rule.define-network-rule",
+  "sf.security_admin.create-notification-integration-multi-queue",
+  "sf.security_admin.create-organization-user-group",
+  "sf.security_admin.create-packages-policy",
+  "sf.security_admin.create-privacy-policy",
+  "sf.security_admin.create-projection-policy",
+  "sf.security_admin.create-role.create-or-alter-role",
+  "sf.security_admin.create-role.create-role",
+  "sf.security_admin.create-role.define-role",
+  "sf.security_admin.create-row-access-policy.or-alter-row-access",
+  "sf.security_admin.create-row-access-policy.row-access-policy-as",
+  "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri",
+  "sf.security_admin.create-security-integration-oidc.oidc-allowed-google-hosted-domains",
+  "sf.security_admin.create-security-integration-oidc.oidc-issuer-oidc-client-id-oidc-client-secret-oidc-token-user-mapping-claim",
+  "sf.security_admin.create-security-integration-saml2",
+  "sf.security_admin.create-share.create-or-alter-share",
+  "sf.security_admin.create-share.create-share",
+  "sf.security_admin.create-snapshot-policy",
+  "sf.security_admin.create-storage-lifecycle-policy",
+  "sf.security_admin.desc-integration",
+  "sf.security_admin.drop-integration",
+  "sf.security_admin.grant-caller.all-inherited-caller-privileges",
+  "sf.security_admin.grant-caller.inherited-caller-on-all",
+  "sf.security_admin.grant-ownership.all-in-database-schema",
+  "sf.security_admin.revoke-caller.all-inherited-caller-privileges",
+  "sf.security_admin.revoke-caller.inherited-caller-on-all",
+  "sf.security_admin.show-application-roles",
+  "sf.security_admin.show-caller-grants",
+  "sf.security_admin.show-grants.future-grants-in-database",
+  "sf.security_admin.show-grants.grants-of-share",
+  "sf.security_admin.show-integrations",
+  "sf.security_admin.show-masking-policies",
+  "sf.security_admin.show-roles",
+  "sf.security_admin.show-secrets",
+  "sf.security_admin.show-user-functions",
+  "sf.security_admin.show-user-procedures",
+  "sf.security_admin.show-user-programmatic-access-tokens",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 1fdf28bc5; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-account.set-contact" = "d73a0b9224363112424318eb7087310cda84e9d4fe91a8321986a7e1afef117b"
+"sf.security_admin.alter-account.set-data-movement-policy" = "0f9add9dbf3ee8b2776c0fb2776afb24d613ec7085416e0eb0bff14f637de471"
+"sf.security_admin.alter-account.set-feature-policy-for" = "2583b0ccc5822fbc3712e9abebe84ae73d6e4609378f5186f624e048e282f7da"
+"sf.security_admin.alter-account.set-feature-policy-for-2" = "681b74b873eb89d08891ff4150b917148656658285a4ff063fc119d90e9aa2ea"
+"sf.security_admin.alter-account.set-tag" = "5f86af4ed5f0222675827a81af19545d6b4aff1130b368d6d65d65e980f46a52"
+"sf.security_admin.alter-account.unset" = "6bef9249deef3652e7cfd99dd30ea75698fad22f0cb8e26995d6fcaae33f77e2"
+"sf.security_admin.alter-account.unset-contact" = "4e93e8094ebf28b5a03e8b4549a38e4895d23c410cb1e71690828a28d20f8215"
+"sf.security_admin.alter-account.unset-data-movement-policy" = "c103e3f273b91378c031da056cad709c2af431c07b779f40a701c17c51665d38"
+"sf.security_admin.alter-account.unset-feature-policy-for" = "784322ff7e825777ed0187386968cc131b1f204c114df46599b8118ed512cdb8"
+"sf.security_admin.alter-account.unset-feature-policy-for-2" = "576b8c45867d3f42f47ae31d8803a1a2d39a9837660314202b3fcba7df069ed3"
+"sf.security_admin.alter-account.unset-maintenance-policy-for" = "dc6f552a241014eea69b433c0a02cd6da9f554930c02f8506cd7ba59cd8ba947"
+"sf.security_admin.alter-account.unset-tag" = "5d3b8583311af34744423e36c537132ba4a08f9a91f6f1112f6d515ad1b29e79"
+"sf.security_admin.alter-aggregation-policy.set-body" = "228bb49ae1950b4df46c7fb198695e3c03c880bd5f84505a5fae438bc4876c63"
+"sf.security_admin.alter-failover-group.set" = "9a1e313a2d39e8e6ab96e46c421cbc098458cc3bc0ad39ea6a171db8a28829ed"
+"sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh" = "21186d5fc815b29f73590db7be8a8e3218c8253e341b3928d1491dda4e74193e"
+"sf.security_admin.alter-join-policy.set-body" = "e898adeb4f7c4e95084913b05fd9556c17c757b36d5d7445d3dc1a757acfb654"
+"sf.security_admin.alter-masking-policy.set-body" = "aca585e674c2d7562b29da41105a4c5e2e6adc7f91835cc030af24876271df4b"
+"sf.security_admin.alter-network-policy.add-allowed-network-rule-list-blocked-network-rule-list" = "78badec323ede26c22fe884877fc9cc9e0b82c4b327aa5e48efb8de90968b5d8"
+"sf.security_admin.alter-network-policy.remove-allowed-network-rule-list-blocked-network-rule-list" = "30380fcd0a9ceaa79d8a67ce52a63311674e72bc1907d71e15b3c518269a5613"
+"sf.security_admin.alter-organization-profile.add-version-from" = "6340daaac3874aac95386d116df4ba2375056c01f290c7088258f97753b6661f"
+"sf.security_admin.alter-organization-user-group.set-visibility-all-accounts" = "4bfcad70e4bc88d18450f46ecc14354085746e3c92a805cf3b6c58ff57af6e32"
+"sf.security_admin.alter-privacy-policy.rename-to" = "245ab6432981bb217228bb9b269577e545818d00676b89356604ae123126c289"
+"sf.security_admin.alter-privacy-policy.set-body" = "b2560ce9034eb510ce0bb853a0909cfb5aab1ae71902b51644fd588c13da7d94"
+"sf.security_admin.alter-privacy-policy.set-comment" = "40b7d0c13eed9cfffb56574678b2aa24609a3d9b80f5d74500c72275316d39f3"
+"sf.security_admin.alter-privacy-policy.unset-comment" = "cad8fa971e7117e426288bc6127a7023ec7111288acb0ea960be5f47c7e6ba10"
+"sf.security_admin.alter-projection-policy.rename-to" = "38a8d61c93219ba5821be2b76c63654c9677d6fc45c15c0f4b614ecf79ae1b6b"
+"sf.security_admin.alter-projection-policy.set-body" = "32e836ebe38607cca3990dfe9518e8a83a75099ef5331b7465855713c8527bec"
+"sf.security_admin.alter-projection-policy.set-comment" = "1de496446f6ee3345a41e12ef21c5c12fbb9338a836ceb8d0eae606d7a5e52a0"
+"sf.security_admin.alter-projection-policy.unset-comment" = "aca0439c6dfc5d291885f4f68061cf42842affd31c08a36a34cd39fcc8812b7f"
+"sf.security_admin.alter-replication-group.add-to-allowed-databases" = "21551abe8dc179681bcf592b5a104b3bb795210f23f4d4c172da6b65b2c98d87"
+"sf.security_admin.alter-replication-group.add-to-allowed-external-volumes" = "92f0ed90865f44392c2e328feee3e65d1ae336f3c65b0501eef2f20a5c51eafa"
+"sf.security_admin.alter-replication-group.add-to-allowed-shares" = "544ac7f1d4f7a91c3c84a200cc7be4d5be37f42d01d79e929c234fe515467bef"
+"sf.security_admin.alter-replication-group.move-databases-to-replication" = "b203eacaa3f037a1dcec6601b31bfd1670076a5517e4744e88ca341be80d202d"
+"sf.security_admin.alter-replication-group.move-external-volumes-to" = "eaf5549d635be7a7f3aa964539f2597e8f6ccb53ee18855000a26a1f829c1f58"
+"sf.security_admin.alter-replication-group.move-shares-to-replication" = "aef14a9b779c759ba45810531d3e1c92b9424176b89caecb0c165a8839c3c6b2"
+"sf.security_admin.alter-replication-group.refresh" = "fa7fab1e5b94a1a0ff9e444dee2010490b242d5d1d4ae6e7617b91acf69c76f0"
+"sf.security_admin.alter-replication-group.remove-from-allowed-databases" = "407974d8e7e99eec3214df3b678a96e7f3defc216284b116da69d8965fba50c4"
+"sf.security_admin.alter-replication-group.remove-from-allowed-external-volumes" = "43c3bdd53aae980087b1c3bb81c04791e23098ea5908dd02ef05dcf09802e21b"
+"sf.security_admin.alter-replication-group.remove-from-allowed-shares" = "f5d104cf62102397c67ce5bd3fdaa0466bb7551b47665bdf3dc32664b9886183"
+"sf.security_admin.alter-replication-group.rename-to" = "021c1226babd7d80672a51b1c8593c3653ce67b804ba0346bb1ced4347bab593"
+"sf.security_admin.alter-replication-group.resume" = "e070b4979bcbc7c67e7f16fd9d03025622e5332be65dd7464e1f26b6a5f110cb"
+"sf.security_admin.alter-replication-group.set" = "b1814d5c8c203707342bc60053d4181a931aa0bbb300fa2e428742292fb67ca5"
+"sf.security_admin.alter-replication-group.set-comment" = "0eef40c1ad83c285ba8e2ed3dff777d44ae533c013e425a541e26a22c5f22df6"
+"sf.security_admin.alter-replication-group.set-error-integration" = "43f999fb2f49c6de6a2e447c6f9145ee829e76f98a88d73ded55edc5ebf401fa"
+"sf.security_admin.alter-replication-group.set-object-types-integrations-allowed-integration-types" = "36c9f3b1e43513d3531d158b2f0acc373cc28b17baf6980fed353199020741a7"
+"sf.security_admin.alter-replication-group.suspend" = "f7f9cf7939877554978f55e9171b6649d37166a48ed769e3c471d014c9d31096"
+"sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration" = "be0744082b1db539f5abb15038233a04791a2f80a6dd67378c7835f6626429f7"
+"sf.security_admin.alter-row-access-policy.rename-to" = "6335e1ea100f4edc0217946f5f5a6d733e998d3ab5cf1f3c39f61c2dce473b5c"
+"sf.security_admin.alter-row-access-policy.set-body" = "387e855cf5bd688846b082b10972d03642ba1e2b6bcce4448638d471470782db"
+"sf.security_admin.alter-row-access-policy.set-comment" = "f466b23194c01e290c7863ffa0818416c32a478692c44044e23db86729b4be19"
+"sf.security_admin.alter-row-access-policy.unset-comment" = "050b3c2eb2b654b6d99d83576bfd0f54e69c2023e832602946300a171894d045"
+"sf.security_admin.alter-secret.set" = "43654a098d5320c611c5af589bfaa3256c6f236827d990fd6ac480b94f701b6e"
+"sf.security_admin.alter-secret.set-2" = "8b5d9bd7a627a948958be679ee836822a4544023cc24d2bc3d518d63e43ab2e1"
+"sf.security_admin.alter-secret.set-3" = "91dde3f8be88c2e75fca3ede648d343ba02c45dafd9f36106e309ff366c0f880"
+"sf.security_admin.alter-secret.set-4" = "9314bc065758d4eb8f8ef6f3731fbec6f8aeb0742ca5089705dd26791260f327"
+"sf.security_admin.alter-secret.set.syntax" = "1e2b675b97eeadfa73184d53c836a3cb2a7e827a38675b7e0962342af0f41aba"
+"sf.security_admin.alter-user-add-key-pair" = "10f55e010dba86894b6fa884b978584f931c2489a72e88f73b5868243d9d23b8"
+"sf.security_admin.alter-user-add-programmatic-access-token" = "ac57a427c53fd65aff1191396fe22594911b42063cbaf3c0ebf30c8acd4ed194"
+"sf.security_admin.alter-user-add-workload-identity" = "a6252b13ce20fe3418164b2376b6bdd1c1abc79e8e12fcdba242d791c8603b09"
+"sf.security_admin.alter-user-modify-key-pair.rename-to" = "7389398755c5eed4c700a7a9a766df0b3d7cdd365d9ed1b8a70ff81fd9904999"
+"sf.security_admin.alter-user-modify-key-pair.set" = "7f90cba971b200e7ab3de5432e76278ba486d78e7581da0fef3f257dd4d93866"
+"sf.security_admin.alter-user-modify-key-pair.unset" = "4ee4b82597a8cb536a0573f5735b056a628bee589897cdee0789f49d4e27c8ec"
+"sf.security_admin.alter-user-modify-programmatic-access-token.rename-to" = "0784ec7439f917224a039043bc6a24d6a12c0151ebbb1b1cc999c5bae5869bbb"
+"sf.security_admin.alter-user-modify-programmatic-access-token.set" = "1021287a5ca02f4ce3f69bf80ef9e93bdc89770d5b639315879c83a2bfc2477f"
+"sf.security_admin.alter-user-modify-programmatic-access-token.unset" = "a6b06142771a3b3a7bb328dda5f42e6cd4338f931c5f31ff5a70cda9d4abad02"
+"sf.security_admin.alter-user-modify-workload-identity.rename-to" = "a65be5b535584426682ad0db9f726a9f10ff8a659b28e01796e6027c625ca6ff"
+"sf.security_admin.alter-user-modify-workload-identity.set" = "4a506c276d4c4960c248ecbd81a89ba0f2fb54a2988dd409d9162137398cba2f"
+"sf.security_admin.alter-user-remove-key-pair" = "a5906f8ce1d87b3171309edbf879d7fd5dade51ecab29d2f3968f566a7687820"
+"sf.security_admin.alter-user-remove-programmatic-access-token" = "d5e4de80fe761503ea52e1a8561d63b68ddfffbb14f8583c16b99ef0db52934f"
+"sf.security_admin.alter-user-remove-workload-identity" = "586169c7d4f090c01d42086705d330c4c0c59ec27a43a23a5338cd408635f936"
+"sf.security_admin.alter-user-rotate-key-pair" = "8cae833f3bfa7c40dfaa30ce41a62f3b7e2b5fd367d67be677d16d2eeddf610d"
+"sf.security_admin.alter-user-rotate-programmatic-access-token" = "e8855c9c48d8f137e33f4f8dc9d198af2b899ffe30c7f2c4db8f6de0239208b9"
+"sf.security_admin.alter-user-set-ingress-policy.set-ingress-policy" = "26b3aee91be35b8169dd93033257e2840aafcafaa049e9f3fe7e479e4b61b17e"
+"sf.security_admin.alter-user-set-ingress-policy.unset-ingress-policy" = "6e85f6c25c0181987dbd2b95032523e473db6e7c6eff1339edd5ff07d4154f57"
+"sf.security_admin.alter-user.abort-all-queries" = "b406d5e8f68405088969ff683454c622a1e19995c6989a8a43e29fec2e52702e"
+"sf.security_admin.alter-user.reset-password" = "042a82e27e82830c29227a308a249d9c630c75ef29991091e0cd911fdf219307"
+"sf.security_admin.alter-user.unset" = "13a9af41dc1aada7c44e5bb19e2c5fd04c29668b94846fa460bb4e09258ff646"
+"sf.security_admin.create-aggregation-policy" = "d791d21078d0e07a08f0c3a708af112cfeb84e12c07da7648b729acbdb1651fb"
+"sf.security_admin.create-application-role.application-role" = "34ee335ef224a1aa643e8d504e81bb8c7dcdcc3d4bc8cb9d28b8034a4519df81"
+"sf.security_admin.create-application-role.or-alter-application-role" = "dfc994a5b16e6683a3ad818e48213f824b97e89bd8b7427d5d959a5a9bf772bd"
+"sf.security_admin.create-catalog-integration-delta-sharing" = "4b4fee480876358f4dfde0505d6dd6e398bb1c91bcc2e99748355fbe54af6a1d"
+"sf.security_admin.create-catalog-integration-rest" = "7f341b949af27b6b478a463cc76761c296014a37af400c09131ee34af0c24d4b"
+"sf.security_admin.create-data-movement-policy" = "735318d39d1fd83d08daab8491b644f9ac53f88b63a26240e107e84796589c00"
+"sf.security_admin.create-database-role.create-or-alter-database" = "1421297627b60e13dc2ea211312c057cbd351edd7a9b0b891c93469b97be2459"
+"sf.security_admin.create-join-policy" = "a7a809db17166cddbf8028b48ab50252d7dd03b88eaa3bee587c235aa86a9947"
+"sf.security_admin.create-maintenance-policy" = "a1d6adac972dd70d048dbdbcf2c0e54fef9dcab6c938816308db999f9801e21b"
+"sf.security_admin.create-masking-policy.masking-policy-as-returns" = "618d8b76aaaf31f5212c931e1510d7b5a53289cbcdc3e5af9e9aedfc6e799943"
+"sf.security_admin.create-masking-policy.or-alter-masking-policy" = "778166fdb1941baac33222acc9cc28d62a0cad1d256a0f9641292a3f5b1140ac"
+"sf.security_admin.create-network-policy.define-network-policy" = "2d7d72eae2f03e96772d3ede9603905b905d3646404a2c432b44416c031c56c2"
+"sf.security_admin.create-network-rule.define-network-rule" = "ffeb8296c9b9c40f32e97a1bda1deb5a323a8815a92ca0e2cf2d4987c962ce8c"
+"sf.security_admin.create-notification-integration-multi-queue" = "589ecf47f0696ac6dfe19a397aa7a9a69d01361227e930578318f7a487aa3d66"
+"sf.security_admin.create-organization-user-group" = "6f7c803316930d723a5fcbfc10f94c988d557bd651edd103d23cb1d090c545b1"
+"sf.security_admin.create-packages-policy" = "9d5d0b304b3e87a04e4ca8200df3abee7026e5760fcfe2d94d58510312fb2583"
+"sf.security_admin.create-privacy-policy" = "e6de18a2a00b1e205ef72e2c6e704a55eb1fbf2ebfe92558d4fbbeccfc624e6c"
+"sf.security_admin.create-projection-policy" = "8e9cfe75b91f65199f83cd778e2e21783814257f247836c4e5ccc1d29c7ea3da"
+"sf.security_admin.create-role.create-or-alter-role" = "512cdfa59503022548ad4cc3025c1cfba526d93a42a665daf38f06717013d08b"
+"sf.security_admin.create-role.create-role" = "44fbedf5e3e60f1bb22355c3350b879a89597082a94459d859719b1f1666c1b8"
+"sf.security_admin.create-role.define-role" = "1032b33fa750ec65f14dc661a223b18c9febbeede16c305328aad204977b8bae"
+"sf.security_admin.create-row-access-policy.or-alter-row-access" = "ec5aec42fa50a4c64410ebfa620767ff304fe26c140edddebd184367eb5a6eaf"
+"sf.security_admin.create-row-access-policy.row-access-policy-as" = "1c856c1e3be8c9a0257f1bc166e1f96e108b4aa6b2f62056f859b6ba316fe556"
+"sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri" = "59c297be0992acf979a9b65f3b29f70c048d4122c05ff40972e88706a0a1842e"
+"sf.security_admin.create-security-integration-oidc.oidc-allowed-google-hosted-domains" = "17158f35ae3b6018971f4b4d5e35665f306dcb2f04b862f6b05bb682ad7ea79a"
+"sf.security_admin.create-security-integration-oidc.oidc-issuer-oidc-client-id-oidc-client-secret-oidc-token-user-mapping-claim" = "fc70821ed298e6d3df99e258d07145905e9290c043126e19c6fd6b77c9078efd"
+"sf.security_admin.create-security-integration-saml2" = "38a6b7c9e37e48ec87c2a7a4861c5a2d895bec951b7a811db4f44475830822a5"
+"sf.security_admin.create-share.create-or-alter-share" = "ea0fea902fc0d80188479c6c799c5170d18b29f000ab35434d619c5246fecb0d"
+"sf.security_admin.create-share.create-share" = "1d2e431eded3d0ee0ea036948e5d0cfc0787b884b429aa1826552c42fdb3a01e"
+"sf.security_admin.create-snapshot-policy" = "977b3a045c753bcd3f64fae537d5cebab041d1056b54a6376119cd00bc0b8b8b"
+"sf.security_admin.create-storage-lifecycle-policy" = "539187b3b15b927ed9b8390bbffb6090f678023650d1343ecb7d00fb3be06a31"
+"sf.security_admin.desc-integration" = "6e906f165787c6d8db57dde2822267b8c07ad07e92e1f36f892da99de4bfa59f"
+"sf.security_admin.drop-integration" = "8cc98c62945e98e4bb5a89c737b676423d2ed777669dbe4dcda1590af955a27a"
+"sf.security_admin.grant-caller.all-inherited-caller-privileges" = "518f7e6321f0ebca6cde476937a01210e04f8a44f711589017565f73de92c360"
+"sf.security_admin.grant-caller.inherited-caller-on-all" = "d4c449ed5849189289907347af3aed8c631c83877156c4593ed0067fd7dedf66"
+"sf.security_admin.grant-ownership.all-in-database-schema" = "7ac42b90acd26310965422922f20141b06b81b7e4432cddbab885bdd2fc8c6bd"
+"sf.security_admin.revoke-caller.all-inherited-caller-privileges" = "b7fad91d52cc8d410c269ea3297ab2029a018e29a328058069f690a4aa276e96"
+"sf.security_admin.revoke-caller.inherited-caller-on-all" = "018748fbf7597cc5d6415e5ca7ee6a2e3397d2c124e21df43d400cd041a494fe"
+"sf.security_admin.show-application-roles" = "f43e3ac267efac7353fcec76801bb7047be097c4ee0b0743619348d2695afe39"
+"sf.security_admin.show-caller-grants" = "6da29661d31cf7d1c8c111fb56a37b4b06fc8cc65f67df8d9a334bcf1df0c744"
+"sf.security_admin.show-grants.future-grants-in-database" = "7196954cea79f8a06c5d69db2db62e5b33d9a17718d846a0fd10dd68ecf8387e"
+"sf.security_admin.show-grants.grants-of-share" = "70c85a50472189c61b49c63e6a07cd0a5eac5a08737bf29f1ade31c1058c1d38"
+"sf.security_admin.show-integrations" = "a774769145b9ce875dac363ae88b1d0cc3662330cff2a9b85bc156e9674ede6d"
+"sf.security_admin.show-masking-policies" = "aad4b3b8f4171c980a013c03d4f6e59833353002f45e83e40d5d2f214db64695"
+"sf.security_admin.show-roles" = "99b9aa087ea57e719c8d193bdd0fd84fcd3f81425e234fce0257373f7024db9e"
+"sf.security_admin.show-secrets" = "b6e9207f2d5e87f80c50eff0ff6ba21c145bdcae51000cd6ebdcd6ba1afa5ce0"
+"sf.security_admin.show-user-functions" = "fc347cb4a71802e6091e4d3ca8466e0de4cb8575dbc100036baa24ffe7e2593b"
+"sf.security_admin.show-user-procedures" = "949b52770dc344147850a9a1ca1e942204369a667af6313f6b484585b18b2302"
+"sf.security_admin.show-user-programmatic-access-tokens" = "1336b2003c6111b58fbe8a8680736e3b87a24c050cd3db47bc929d4315968baf"
+
+[review.definitions]
+"sf.security_admin.alter-account.set-contact" = "76e29c446defd5f3bd10f987b88d67e7d8ba991e925a64e4ce2716e96389508d"
+"sf.security_admin.alter-account.set-data-movement-policy" = "6cceb827bc5dffabd09bb57b398e33410d66497a1a741d21864a5edef333bf36"
+"sf.security_admin.alter-account.set-feature-policy-for" = "808878a0491177a939d0fb15b198ec0f7b4e18b5fea92b198516a302bb1a13d4"
+"sf.security_admin.alter-account.set-feature-policy-for-2" = "d8a88b1132a3d51f67508a1aee93f1723b5be246293c869cb834dc436a350b75"
+"sf.security_admin.alter-account.set-tag" = "04ba20cedb6dd22aea4bcc9d7d751701afcc48549ae1a54bffc56a6a9a27c18e"
+"sf.security_admin.alter-account.unset" = "2220bf504ac98778ebb1699e5e0f5df1fe1c7e7114bf96d84b6630d0eb4f2976"
+"sf.security_admin.alter-account.unset-contact" = "d138b85424fae46d6c9f4884305e5a15d0167dd802641f4f6ec60e3efb194690"
+"sf.security_admin.alter-account.unset-data-movement-policy" = "4716d4090c70ce8693b451b1195e3747881ec3d190dd95dd109a463712fee4e6"
+"sf.security_admin.alter-account.unset-feature-policy-for" = "8453d8ca4ab2500dcd916b0f205fbb82210c77303a4de02e1e9712233d42686a"
+"sf.security_admin.alter-account.unset-feature-policy-for-2" = "6a81cc0253920b5286cbe6572ed2b6de462800d11e9c6bbd1129838dfdca0f05"
+"sf.security_admin.alter-account.unset-maintenance-policy-for" = "994d6a5da1aa135911012915782c5fd1b8e863e4c7a9eb7a4d191c6bd5126e81"
+"sf.security_admin.alter-account.unset-tag" = "5b5e0b31e6af0a20cf791c41ca8cc5f2c3ffc905b5a58c8b8d5bfeb439a19fb1"
+"sf.security_admin.alter-aggregation-policy.set-body" = "1bbe040ba3aa96601b71af9575cbe35e8f677c56575e12654683f194fc9c4b81"
+"sf.security_admin.alter-failover-group.set" = "d11a6c72c5b7beffda18c717300429596104c009632d316ae75c284a7b5e206a"
+"sf.security_admin.alter-failover-group.unset-comment-replication-schedule-optimized-refresh" = "6f9982b2a0e009477d1cafe3517a29a5681c25b262e677b995140bea3987b6ed"
+"sf.security_admin.alter-join-policy.set-body" = "bdfb90b6e646aa501616e5ff211ca5fd23140dfe5a33cf79c02e1a3c659acb8d"
+"sf.security_admin.alter-masking-policy.set-body" = "5b170ad0232d655a467856d6fae44cfa4bbc7ac0a36d0e460b33bc3b3923a7d5"
+"sf.security_admin.alter-network-policy.add-allowed-network-rule-list-blocked-network-rule-list" = "66a757992e861d96de969fcd540aa6c688432d72165b57fd767264578546e03d"
+"sf.security_admin.alter-network-policy.remove-allowed-network-rule-list-blocked-network-rule-list" = "3b1151cc4cc26e531501649e4182788eeebb8a4f369bc7a269fda5fdcc295fda"
+"sf.security_admin.alter-organization-profile.add-version-from" = "2b73fd4e8df4cb80fe575cf1669b45cff2cea5b75a5d2a92551f446bd4e8be67"
+"sf.security_admin.alter-organization-user-group.set-visibility-all-accounts" = "0cf861ff74565aba2b32a64eaa22a02272b8e276e490ecb9c7851c0fb13c3862"
+"sf.security_admin.alter-privacy-policy.rename-to" = "15cb7478ab9baf39e0c3c4bb895c9740bd63c25be21e057e60ec34eb03c71fdd"
+"sf.security_admin.alter-privacy-policy.set-body" = "4f346997c52e0c194369976d8babcbd46f6bbc172f3b593f514b3ef4dfd86d76"
+"sf.security_admin.alter-privacy-policy.set-comment" = "1c689108457d16b7dad43d6bfbeef51369efc5f9fd8a721dc25faa3c515fe49b"
+"sf.security_admin.alter-privacy-policy.unset-comment" = "43467036f3332504db062bc0a142629cc7e2babace87d1384dd36628d0f892cd"
+"sf.security_admin.alter-projection-policy.rename-to" = "8abe01a4cab60176892366875bb9957ce366ad30f7b9968803c80d058390e1ae"
+"sf.security_admin.alter-projection-policy.set-body" = "41037a70547d014a3a9a6296f1a66f91b92b51e669d40d82c6b64d9d15c81203"
+"sf.security_admin.alter-projection-policy.set-comment" = "79e44a517e1fa0089a85a01b494cfa3ca21d15370da1fc9baf2f840960be0b70"
+"sf.security_admin.alter-projection-policy.unset-comment" = "d4a4a6fb22c39fbed7d95625961dfc6699a08d8b6d1fe45cd9e9da42f615160d"
+"sf.security_admin.alter-replication-group.add-to-allowed-databases" = "a2b05ac3fbb938ab2fc2a0398f38ee3d602d9565ba1d927cdfc1a68154ae4bb4"
+"sf.security_admin.alter-replication-group.add-to-allowed-external-volumes" = "43cd3ab12f44d6f037df6a4b81c4275ec76fc4840aa82199058d668b2b8b472b"
+"sf.security_admin.alter-replication-group.add-to-allowed-shares" = "121a37a4b4d2fb6f461d8a20326ca522dd752c0a7943651e9d687d3b9e084212"
+"sf.security_admin.alter-replication-group.move-databases-to-replication" = "e9b71f40fac6ab569c85682cd1298506487886266fa4ca5f0d5bc4354a189197"
+"sf.security_admin.alter-replication-group.move-external-volumes-to" = "f107a8e69a733669ea264dc6b244ce2d322e056a95aa0ed531dfadc45adf1f56"
+"sf.security_admin.alter-replication-group.move-shares-to-replication" = "92f4afd724eb659c12a330b0baca5f7d174f0e9ec880622e779d57c8340bf622"
+"sf.security_admin.alter-replication-group.refresh" = "d100b97ad5bf60b8aab0455fa8b4b5364d1eb303f2c1842d9ce30d38be717229"
+"sf.security_admin.alter-replication-group.remove-from-allowed-databases" = "f1cd274b71cf8b9b0a48f0aed1b73ba21a2d82311d85d4fe3376adf1942dbb65"
+"sf.security_admin.alter-replication-group.remove-from-allowed-external-volumes" = "3eb362b3947a87665897f9a23c7ef61213ceb7f1c85239203601ecb857d540b0"
+"sf.security_admin.alter-replication-group.remove-from-allowed-shares" = "c8d98129f043ad4d9bf824933d2b11ae5709b13bf2bd31c06f2afc474abc43b5"
+"sf.security_admin.alter-replication-group.rename-to" = "b9c4cd0b2efa376bb5bb87ba6e6b490bdad61fec986326fd00aa0aacc336154a"
+"sf.security_admin.alter-replication-group.resume" = "261d4f7198ed020adb76b7ba64094d2d11dc8add6349adb28799e240c2a1b7f0"
+"sf.security_admin.alter-replication-group.set" = "8a2c2a49e0f09d846fcfdb87f27fe8f23afb5682707038e25230916e391e0d96"
+"sf.security_admin.alter-replication-group.set-comment" = "ee7e41c78ae52b16946648ccdcf382925db6eaabcc1d2461e7796fa9063bc658"
+"sf.security_admin.alter-replication-group.set-error-integration" = "89694afd7c87af27f086b466b01d0359a6216a574a1803b0ee6c1ff691c76003"
+"sf.security_admin.alter-replication-group.set-object-types-integrations-allowed-integration-types" = "d98a073728949b23a9596fe34ccd85138ba2f4f7c8eb481ef5abf0c23dda11b7"
+"sf.security_admin.alter-replication-group.suspend" = "f566f9d5b360956ff11b65fc82a74195fd7a77691b6b810fb46547893b89a72e"
+"sf.security_admin.alter-replication-group.unset-comment-replication-schedule-error-integration" = "49461ee650f18412ba1a6b2e49886916864e757d9eabc6844fa4c2bc5c852aa1"
+"sf.security_admin.alter-row-access-policy.rename-to" = "f6eea32a15e1a8dde360ce994e6a73593a221b5bc4c5cc4a4ebb560b7090d4be"
+"sf.security_admin.alter-row-access-policy.set-body" = "1f3ba845c9bbd8c95c2425abd647ff0f73113c06863dce3f2b273f524be825f7"
+"sf.security_admin.alter-row-access-policy.set-comment" = "e02383de62b67d46c37cb96c26065455aabf26c5438b03441e86e443939fbd46"
+"sf.security_admin.alter-row-access-policy.unset-comment" = "e81835ffb9b12e32c291f8d123aae52a0000b82bf7d292f003cb263e37d6d18c"
+"sf.security_admin.alter-secret.set" = "a82135d3d55e9196778e07dc5489d88a41f56bc151c6d50b6f96199b6d3a0d3d"
+"sf.security_admin.alter-secret.set-2" = "17a7f1d6659e6b66ccc632130d255c00b19ef57d05a6185fc8088035ff2f956d"
+"sf.security_admin.alter-secret.set-3" = "4b0d76e71997c56c6f0e4cd1d24491f24fb17a3e2f009f1e28c60754e4c54351"
+"sf.security_admin.alter-secret.set-4" = "dfcd54819894df029fd4599342f9eed0f9762bdeeebacf8db322d4bac0ee0b74"
+"sf.security_admin.alter-secret.set.syntax" = "f06d802d0b5841a343d7efc4856850fecbc9186d37beaa657db3d3566fb01802"
+"sf.security_admin.alter-user-add-key-pair" = "b0759c58f1fba7b968cfd432a0242ccd34e8c5684becd89c5d67f61d2682b8e6"
+"sf.security_admin.alter-user-add-programmatic-access-token" = "7df20c46adcf91f53f83fd1e23e8ff7a457f455ee561d9e05d2d19a552dc228f"
+"sf.security_admin.alter-user-add-workload-identity" = "b68a483c6428c8cf01e42e7f4388a0f34710f4275be9b65f5728cd35c89f54a9"
+"sf.security_admin.alter-user-modify-key-pair.rename-to" = "6d0e49d9604a7c50df99c8a57bedb63a524c01705f4ab89f87df36bce107c2a0"
+"sf.security_admin.alter-user-modify-key-pair.set" = "8d60590a30b7c47b741987fe02fb4d6fcb3bd6b265084405bd30dfea06e8d5d7"
+"sf.security_admin.alter-user-modify-key-pair.unset" = "5e35e3b633c8c8b5538dc429ef466a35f8bc0087d4051b68d4978d3d2a337c0a"
+"sf.security_admin.alter-user-modify-programmatic-access-token.rename-to" = "cd64f608ce8631449eeecd44b34e70ea6ac94e692ebc60f8b29ab969b41e41a0"
+"sf.security_admin.alter-user-modify-programmatic-access-token.set" = "66a3e82e44720e66d8d130a09d335585e2310aa3a480dfecdec7db48d7565f2a"
+"sf.security_admin.alter-user-modify-programmatic-access-token.unset" = "8fb40c3fb0d8c7021e8ed4797d7a96b441107650b4a5e0d66edaf001f6f2fe11"
+"sf.security_admin.alter-user-modify-workload-identity.rename-to" = "cae401a90eab4f8d1e26522db5d6ecaf5dda556d98934bebaa1bf9131c727408"
+"sf.security_admin.alter-user-modify-workload-identity.set" = "4186f0016558a1d1c128984f8878e69d42927269f28200f1448f8688605608f1"
+"sf.security_admin.alter-user-remove-key-pair" = "321119d096081c4d4928c9af93b811ec45845f46c4603751a90573c8298266b7"
+"sf.security_admin.alter-user-remove-programmatic-access-token" = "90ef6b5ef46d82197fc786377ba3054f38796488e7d80bf6b7c129af30429e15"
+"sf.security_admin.alter-user-remove-workload-identity" = "89e950cd77247c7e82000d588a0c5105c495739a5effff6d98c58bb7be651b6d"
+"sf.security_admin.alter-user-rotate-key-pair" = "45aa8eeed2dc7300ce835c3c5c22fb622dafb6056d3200773a7a32afd3cf4755"
+"sf.security_admin.alter-user-rotate-programmatic-access-token" = "714b565cee6d3ef1966afed70a3a3c5eb0dc1ebdf7038f44b00648768e529a04"
+"sf.security_admin.alter-user-set-ingress-policy.set-ingress-policy" = "cf4f78492210b6916befad5c95c80c0983edd50fcc0d831fecce1971140a6d12"
+"sf.security_admin.alter-user-set-ingress-policy.unset-ingress-policy" = "3148f39309588ef730d65d22b0ebac658cb730fcdfc63c967c32ae24fb76da1f"
+"sf.security_admin.alter-user.abort-all-queries" = "b9b225f326bffb046109e8c64407ec95676861937e574bb3075c097f1e6c423d"
+"sf.security_admin.alter-user.reset-password" = "c0579f940b2823424e632c9529769f98d174b8bcaa656375c8eeceb806731b0b"
+"sf.security_admin.alter-user.unset" = "03f1076d9f5b5a75292a8d80e4aebe5466f29e5955d0e669966aabd9501ae280"
+"sf.security_admin.create-aggregation-policy" = "eb05704303528b7fcea01fd28b42a04832acb4a30094a8e47589e0e6648050b0"
+"sf.security_admin.create-application-role.application-role" = "25cd3575193d371de2a77b2bd61838e8fb0ea7c24179467866f6b22da16c6980"
+"sf.security_admin.create-application-role.or-alter-application-role" = "82f4c881e39b5688a31cdcf050b71a0e6a74607e8fcf7e8e22bc36139b11feb3"
+"sf.security_admin.create-catalog-integration-delta-sharing" = "c19ae7885e17163433f7c9de82dffaa3fe364187bbd9b37d0070e28707e95b8d"
+"sf.security_admin.create-catalog-integration-rest" = "1824dec3d7925db5d9a384216a96569758385e73934ab79191c925fb7cf27337"
+"sf.security_admin.create-data-movement-policy" = "184dd3c5bc51f38f1ba474ff171d0efce94d3fcbd585b19b1cf6b4514b3726e2"
+"sf.security_admin.create-database-role.create-or-alter-database" = "e9a1cff50a67acfa41a8d8d22620ed6130374edb1c6970cb680b2cd6f25017fd"
+"sf.security_admin.create-join-policy" = "96ed87d4ee6bc57059da015f2c43e3e8785c7df49b76b19c759b541cbb74b973"
+"sf.security_admin.create-maintenance-policy" = "54133eb49f9da2c50a0c791a1a1a35694c9d0553670d49e201002d8bd1475c3c"
+"sf.security_admin.create-masking-policy.masking-policy-as-returns" = "a6514185d3f36ba1783469f7bd04e4d698ddd308c5159a3b2ffbcb97f6ce8e4d"
+"sf.security_admin.create-masking-policy.or-alter-masking-policy" = "5662c5ec1bd79edec00dc4f967fd3208187f4017a1e4e74dcb3017fd7d7a425c"
+"sf.security_admin.create-network-policy.define-network-policy" = "7a88f2749bee60686d8edfe6b79f0507bbf9b6e1599372576282418d9024e380"
+"sf.security_admin.create-network-rule.define-network-rule" = "f821f0f4dd33e03908de764a6f1d24e382e07d5db8f0adf25737b6eacddcf541"
+"sf.security_admin.create-notification-integration-multi-queue" = "2f6df99c95b86d874441b01d1a7ea18f5a5e66122b04474bfb3986b6c4f79d71"
+"sf.security_admin.create-organization-user-group" = "f6b4cffbb2852cf8c52db707c621d1f77de7688cd0e05c03b2d63dceaf34b51d"
+"sf.security_admin.create-packages-policy" = "bb2edfc7003ca746c8e61d9dc3ba9393fa3734d01b202eb9087ee7d6648c3ad7"
+"sf.security_admin.create-privacy-policy" = "29c1bd06d3932fcabc084bdcd36729f7a57fc6d3368e5a10f9332a8b1bd5f569"
+"sf.security_admin.create-projection-policy" = "0ab83bd3a200e9121b3cb92debeb1310b8cb3397b71e8efb9d38b2ddf2242d60"
+"sf.security_admin.create-role.create-or-alter-role" = "394b762a0c8724a8f25aa75bd4526b5b49bd5fec569f832adcf1403728ce6f4b"
+"sf.security_admin.create-role.create-role" = "aab885cc247443481cb0423d7a3893b89fbd871df5790501d633a247a9c33ab9"
+"sf.security_admin.create-role.define-role" = "f8f97fd510d6ca2736ff53de808d7c74fb09d8ecc2ea81df08dbeea56c5ef4b6"
+"sf.security_admin.create-row-access-policy.or-alter-row-access" = "5f86bdd8bb6ef043b84c07ceab69799def30b556857260ddbe6479d0f247f3d9"
+"sf.security_admin.create-row-access-policy.row-access-policy-as" = "9afcb577c042b7759aeed857bc986e8197090de112437160b14fff7e25a1c017"
+"sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri" = "32d292256ad88af85aa707d5d32a1d86e5cd479d702ea45ab84589e171219d34"
+"sf.security_admin.create-security-integration-oidc.oidc-allowed-google-hosted-domains" = "bfadb9225237c429ef1cdf64c9627c85ed0cdcd10de071504e5447a6632ad80d"
+"sf.security_admin.create-security-integration-oidc.oidc-issuer-oidc-client-id-oidc-client-secret-oidc-token-user-mapping-claim" = "b3facf499849d1988078a2d36e92f711eee2463110f6a670e8e37a3c432d17a9"
+"sf.security_admin.create-security-integration-saml2" = "27019974db16bacce81710c1e08aa7fc383ebb6b100312271ac36da7b4c3e5c1"
+"sf.security_admin.create-share.create-or-alter-share" = "5b49d0fb0ea1a0a2bb476fe51fbbaf81af45ef2694a580633e883be13fa03291"
+"sf.security_admin.create-share.create-share" = "d094bab19491aaf8e7885c3342aa9a197693bd526b09e5209586b05256a17cc1"
+"sf.security_admin.create-snapshot-policy" = "52f92b002f84f8d4f1759210a0a48b82aa11fec3c10d3c185a65fcec769f6e70"
+"sf.security_admin.create-storage-lifecycle-policy" = "06abbee2f689dd8b0091c42e672562704eacfea2de0bc2f9befc70e35eb2484a"
+"sf.security_admin.desc-integration" = "34cc802cb395653fc8223153017c2e42e40fe99745ae5ec3dd1abf1536fa28f6"
+"sf.security_admin.drop-integration" = "12cf3c808e70354e813da9e669fff1aefe68b4717ce5f68fe5e7c1e4b79092e3"
+"sf.security_admin.grant-caller.all-inherited-caller-privileges" = "49675303e2c92aa1b87dd5822d4dfd7600eec30101f8807ed3520a63c6899b5e"
+"sf.security_admin.grant-caller.inherited-caller-on-all" = "cb44699be91d1a672abf6086b3e8e1f43ae2566ac9a8b7c05caaf965ce54ddf8"
+"sf.security_admin.grant-ownership.all-in-database-schema" = "347899ef60b7f7803f708faef5a33697556134312fae9101f5ad09504c13f802"
+"sf.security_admin.revoke-caller.all-inherited-caller-privileges" = "7b3b61823ce86f44ff53fc095292929a497e47a81c3f576401b1aa0c2fe84d20"
+"sf.security_admin.revoke-caller.inherited-caller-on-all" = "d9a08b6f044593b80e8196f671cfeeec09a2fa7519ecc8c538c2bb936274f3e7"
+"sf.security_admin.show-application-roles" = "884218e4e57453804f49258515ba3185a8a907b700053c2beac1323596f09428"
+"sf.security_admin.show-caller-grants" = "ee9ea8baadef5311cdae77272c6f3bbc25ba97dd2de2c1502a87bce1976eee58"
+"sf.security_admin.show-grants.future-grants-in-database" = "575ed04e273fc56c1cab6823ba842b4fa2782713aee2b4b189711915fb81da4f"
+"sf.security_admin.show-grants.grants-of-share" = "2ec94a5de363c9a12ccd29abc513f393853d104aa8f4b69986cbb36438b2677d"
+"sf.security_admin.show-integrations" = "18b7d00f9cbe10c0c2191285bb34e68d6d30adbb48949cd31f3b9e0b8f72fab2"
+"sf.security_admin.show-masking-policies" = "3f8ec7d13624cf127726e6c6162e77b3b818186023e020b2805d5f9f0a29f10c"
+"sf.security_admin.show-roles" = "b9d7fcf80f524ff7817e8105dd7b4cc59037651b2830ebd7111d08152f24451b"
+"sf.security_admin.show-secrets" = "bf6d710900f4d148bf8c0abdf2b6a6375c6703771cc34f690d6b0b657bfab49c"
+"sf.security_admin.show-user-functions" = "c08332fc903f337ceb3803d79fc1b9a7c5363f8c830c4d91e2f5cbc0a896e0ce"
+"sf.security_admin.show-user-procedures" = "6af1bdf02e98b2d3a245fe75527d2149f14c6025fd9d4f7348ebba59828b195d"
+"sf.security_admin.show-user-programmatic-access-tokens" = "4bd072dd5622d1f22e358845fe7dd54aa965aed79bee2bbea319f6e26f8b70cd"

@@ -164,3 +164,20 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.scripting.declare.declare" = "d1a2db11ffc5ddcaad2d03f47571b6ecfced8545b9d56406ac984f1ffed6a459"
+
+[[review]]
+id = "scripting-006"
+family = "scripting"
+parser_tree = "e4c5015c6be45602859aa5366c26b7b470e2cc9c"
+reviewed_utc = "2026-11-13T14:09:29Z"
+verdict = "approved"
+forms = [
+  "sf.scripting.let.let-resultset-default",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 1fdf28bc5; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.scripting.let.let-resultset-default" = "d60c314284e3f16e671d18a638f7eebe3c445c4eba1050281ca8a405bd6bb463"
+
+[review.definitions]
+"sf.scripting.let.let-resultset-default" = "aa4a4bc9c009cc62520630531fb61a3b770ae8f619bbff1bb414fbc020bc204a"

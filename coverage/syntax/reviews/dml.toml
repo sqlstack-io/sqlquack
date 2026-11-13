@@ -109,3 +109,20 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.dml.merge" = "7199cb1b8a75bbd9be1b5b6185d63a4e1c3e2ac6d98dec6995cb9c56df84e900"
+
+[[review]]
+id = "dml-007"
+family = "dml"
+parser_tree = "e4c5015c6be45602859aa5366c26b7b470e2cc9c"
+reviewed_utc = "2026-11-13T14:09:29Z"
+verdict = "approved"
+forms = [
+  "sf.dml.delete",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 1fdf28bc5; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.dml.delete" = "a908891254313f3bedbd6a61840fdffd3d496f43694dc75d79f7f2c3d588aff1"
+
+[review.definitions]
+"sf.dml.delete" = "259d0f1581f4aa78ea444d97b9682bdc89bc74a18edc0cb279162c2921c68ac6"
