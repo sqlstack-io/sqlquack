@@ -25033,6 +25033,20 @@ anchor = "doc.sql.alter-dynamic-table / Syntax"
 note = "omit <col_name>, observed"
 
 [[obligation]]
+id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o312"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "a column UNSET MASKING POLICY without COLUMN, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction.o313"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "a column UNSET PROJECTION POLICY without COLUMN, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-dynamic-table.refresh.o001"
 kind = "positive"
 required = true
@@ -26473,6 +26487,55 @@ required = true
 target = "<name>"
 anchor = "doc.sql.alter-dynamic-table / Syntax"
 note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o122"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "SET CONTACT without parentheses, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o123"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "a parenthesized CONTACT after another property, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o124"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "a property after USE SECONDARY ROLES, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o125"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "a property after EXECUTE AS USER, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o126"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "EXECUTE AS USER after another property, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o127"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "FROZEN WHERE after another property, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o128"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+note = "a property after FROZEN WHERE, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.set-unset-comment.o001"
@@ -28106,6 +28169,20 @@ required = true
 target = "<account_name>"
 anchor = "doc.sql.alter-event-routing-table / Syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o055"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "SET RULE with a string region group, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o056"
+kind = "positive"
+required = true
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+note = "SET RULE with an assigned parenthesized body, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o002"
@@ -124305,6 +124382,48 @@ anchor = "doc.sql.create-dynamic-table / Parameters"
 note = "TARGET_LAG = '61 seconds' against the documented minimum of 60 seconds"
 
 [[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o082"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+note = "a clone with COPY GRANTS alone, observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o083"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+note = "a clone with COPY TAGS alone, observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o084"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+note = "a clone with a COPY list alone, observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o085"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+note = "a clone with TARGET_LAG alone, observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o086"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+note = "a clone with WAREHOUSE alone, observed"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o087"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+note = "a clone with EXECUTE AS USER alone, observed"
+
+[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-table-from.o001"
 kind = "positive"
 required = true
@@ -130650,6 +130769,48 @@ required = true
 target = "<rule_name>"
 anchor = "doc.sql.create-event-routing-table / Syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o112"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "an event routing table with no rules, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o113"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a rule with a string region group, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o114"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a rule with a string destination account, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o115"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a rule with a one-part destination account, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o116"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a rule with no commas between its properties, observed"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o117"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-event-routing-table / Syntax"
+note = "a parenthesized rule list, observed"
 
 [[obligation]]
 id = "sf.ddl.create-event-table.table.o001"

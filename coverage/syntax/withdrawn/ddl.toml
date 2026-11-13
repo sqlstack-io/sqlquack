@@ -758,6 +758,15 @@ valid_as = "sf.ddl.create-clone.table-clone positive the documented form with ev
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+kind = "positive"
+target = ""
+note = "a clone with TARGET_LAG and WAREHOUSE, observed"
+sql = "CREATE DYNAMIC TABLE v1 CLONE v1 TARGET_LAG = '1 minute' WAREHOUSE = v1 ;"
+valid_as = "sf.ddl.create-clone.dynamic-table-clone alternative { '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } → '<num> { seconds | minutes | hours | days }'"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.create-dynamic-table.create-dynamic-table-from"
 kind = "negative_neighbour"
 target = ""
