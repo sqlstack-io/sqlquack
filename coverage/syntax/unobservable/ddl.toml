@@ -3988,9 +3988,9 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-openflow-runtime.o028"
+obligation = "sf.ddl.create-openflow-runtime.o080"
 form = "sf.ddl.create-openflow-runtime"
-construct = "a valid operand: CREATE OPENFLOW RUNTIME v1 IN DEPLOYMENT v1 NODE_TYPE = SMALL MIN_NODES = 1 MAX_NODES = 1 EXECUTE_AS_ROLE = v1 ;"
+construct = "a valid integer_literal: CREATE OPENFLOW RUNTIME v1 IN DEPLOYMENT v1 NODE_TYPE = SMALL MIN_NODES = 1 MAX_NODES = 1 EXECUTE_AS_ROLE = v1 ;"
 reason = "not submitted: held by the capture guard in chunk ux-06: CREATE of an account-level or unvetted kind (OPENFLOW RUNTIME v1)"
 cause = "not_submitted"
 cases = [
@@ -4012,9 +4012,9 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-openflow-runtime.o030"
+obligation = "sf.ddl.create-openflow-runtime.o082"
 form = "sf.ddl.create-openflow-runtime"
-construct = "a valid operand: CREATE OPENFLOW RUNTIME v1 IN DEPLOYMENT v1 NODE_TYPE = SMALL MIN_NODES = 1 MAX_NODES = 1 EXECUTE_AS_ROLE = v1 ;"
+construct = "a valid integer_literal: CREATE OPENFLOW RUNTIME v1 IN DEPLOYMENT v1 NODE_TYPE = SMALL MIN_NODES = 1 MAX_NODES = 1 EXECUTE_AS_ROLE = v1 ;"
 reason = "not submitted: held by the capture guard in chunk ux-06: CREATE of an account-level or unvetted kind (OPENFLOW RUNTIME v1)"
 cause = "not_submitted"
 cases = [

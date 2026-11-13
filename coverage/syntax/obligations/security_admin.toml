@@ -136730,14 +136730,14 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-multi-party-approval-policies.policies.o041"
+id = "sf.security_admin.show-multi-party-approval-policies.policies.o043"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
 note = "a valid integer_literal"
 
 [[obligation]]
-id = "sf.security_admin.show-multi-party-approval-policies.policies.o042"
+id = "sf.security_admin.show-multi-party-approval-policies.policies.o044"
 kind = "negative_neighbour"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
