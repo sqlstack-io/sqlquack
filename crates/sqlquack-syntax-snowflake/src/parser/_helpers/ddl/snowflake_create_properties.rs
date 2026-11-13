@@ -2,8 +2,8 @@
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::constants::{
-    SNOWFLAKE_BODY_POLICY_KINDS, SNOWFLAKE_KIND_WORDS_ALONE, SNOWFLAKE_PROPERTY_KINDS,
-    SNOWFLAKE_TAGS_LAST_KINDS,
+    SNOWFLAKE_BODY_POLICY_KINDS, SNOWFLAKE_GROUP_NAME_PROPERTIES, SNOWFLAKE_KIND_WORDS_ALONE,
+    SNOWFLAKE_PROPERTY_KINDS, SNOWFLAKE_TAGS_LAST_KINDS,
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -118,6 +118,9 @@ impl Parser {
                 continue;
             }
             let tags = self.check_identifier("TAG") && self.check_next(TokenType::LParen);
+            if matches!(parts.as_slice(), ["FAILOVER" | "REPLICATION", "GROUP"]) {
+                self.check_group_name_value()?;
+            }
             properties.extend(self.parse_create_property_item()?);
             self.match_token(TokenType::Comma);
             if tags
@@ -139,6 +142,28 @@ impl Parser {
             operands: Vec::new(),
             properties,
         }))))
+    }
+
+    /// Refuse a string as the first value of a group property that names objects, and a quoted integration type.
+    fn check_group_name_value(&self) -> Result<()> {
+        let key = self.peek_text().to_ascii_uppercase();
+        if !self.check_next(TokenType::Eq)
+            || !SNOWFLAKE_GROUP_NAME_PROPERTIES.contains(&key.as_str())
+        {
+            return Ok(());
+        }
+        let refused = matches!(
+            (self.peek_nth(2).map(|token| token.token_type), key.as_str()),
+            (Some(TokenType::String), _)
+                | (
+                    Some(TokenType::QuotedIdentifier),
+                    "ALLOWED_INTEGRATION_TYPES"
+                )
+        );
+        match refused {
+            true => Err(self.parse_error(format!("Expected a name as the value of {key}"))),
+            false => Ok(()),
+        }
     }
 
     /// A Snowflake CREATE of a body policy, `<kind> <name> AS ( <signature> ) RETURNS <type> -> <body> [ <property> ... ]`; None for any other kind.

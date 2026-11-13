@@ -674,6 +674,7 @@ impl Parser {
         }
         let partial = self.check_identifier("PROFILE")
             || self.check_identifier("POLICY")
+            || self.check_identifier("PROJECT")
             || (self.check_identifier("PACKAGES") && !self.check_next_identifier("POLICY"));
         if partial {
             return Err(self.parse_error("Expected a complete object kind"));
