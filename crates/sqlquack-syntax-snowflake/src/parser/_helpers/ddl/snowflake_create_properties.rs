@@ -68,6 +68,9 @@ impl Parser {
         if let Some(rule) = self.parse_snowflake_create_movement_rule(or_replace, or_alter)? {
             return Ok(Some(rule));
         }
+        if let Some(variable) = self.parse_snowflake_create_variable(or_replace, or_alter)? {
+            return Ok(Some(variable));
+        }
         if let Some(instance) =
             self.parse_snowflake_create_postgres_instance(or_replace, or_alter)?
         {
@@ -293,6 +296,61 @@ impl Parser {
                 TokenType::Var | TokenType::Identifier | TokenType::QuotedIdentifier
             )
         })
+    }
+
+    /// A Snowflake CREATE VARIABLE: its name, its type as the operand, then DEFAULT and COMMENT; None for any other CREATE.
+    fn parse_snowflake_create_variable(
+        &mut self,
+        or_replace: bool,
+        or_alter: bool,
+    ) -> Result<Option<Expression>> {
+        let start = self.current;
+        if or_alter
+            || !self.applies_snowflake_context_rules()
+            || !self.match_text_seq(&["VARIABLE"])
+        {
+            return Ok(None);
+        }
+        let if_not_exists = self.check(TokenType::If);
+        if if_not_exists
+            && !self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists])
+        {
+            return Err(self.parse_error("Expected IF NOT EXISTS"));
+        }
+        let name = self.parse_object_name()?;
+        if self.check(TokenType::String) || self.is_statement_end_at(0) {
+            return Err(self.parse_error("Expected the variable's type"));
+        }
+        let operands = vec![Expression::DataType(self.parse_data_type()?)];
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        if self.match_token(TokenType::Default) {
+            if self.is_statement_end_at(0) {
+                return Err(self.parse_error("Expected a default value"));
+            }
+            properties.push(property("DEFAULT", None, Some(self.parse_expression()?)));
+        }
+        if self.match_text_seq(&["COMMENT"]) {
+            self.expect_token(TokenType::Eq)?;
+            if !self.check(TokenType::String) {
+                return Err(self.parse_error("Expected a string after COMMENT ="));
+            }
+            properties.push(property("COMMENT", None, Some(self.parse_object_value()?)));
+        }
+        if !self.is_statement_end_at(0) {
+            self.current = start;
+            return Ok(None);
+        }
+        Ok(Some(Expression::CreateObject(Box::new(CreateObject {
+            kind: "VARIABLE".to_owned(),
+            modifier: None,
+            or_replace,
+            or_alter,
+            if_not_exists,
+            name,
+            source: String::new(),
+            operands,
+            properties,
+        }))))
     }
 
     /// One item: TAG ( <name> = <value> , ... ), TRIGGERS ON <n> PERCENT DO <action> ..., a tag's ALLOWED_VALUES <value> , ..., AS <body>, IGNORE EDITION CHECK, or <property> = <value>.
