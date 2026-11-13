@@ -597,7 +597,6 @@ other_receipts_contradicted = [
   "k60b30999315b",
 ]
 "sf.ddl.create-data-metric-function.create-data-metric-function" = ["kea9728d63542"]
-"sf.ddl.create-data-movement-rule" = ["k6f6db7222610"]
 "sf.ddl.create-database.create-database" = ["k3c0dc0ce5fe8"]
 "sf.ddl.create-dataset" = [
   "k6d9683d78996",
@@ -1056,20 +1055,9 @@ other_receipts_contradicted = [
   "k6afd8149f941",
 ]
 "sf.ddl.alter-application-package.unset-tag" = ["k5644b443d7e5"]
-"sf.ddl.alter-application-service.set" = [
-  "k4a18bf69e446",
-  "k64a38f0937ad",
-]
+"sf.ddl.alter-application-service.set" = ["k4a18bf69e446"]
 "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations" = ["kfb484a65ec95"]
 "sf.ddl.alter-application-service.upgrade" = ["kc85da493a3fd"]
-"sf.ddl.alter-application-set-app-spec.connection-label-description-server-application" = ["k4a5084201761"]
-"sf.ddl.alter-application-set-app-spec.external-access-label-description-host-ports" = ["kebff96640c06"]
-"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type" = ["k8e0433f2ffdf"]
-"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-authorization-code" = ["kae7996539906"]
-"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-jwt-bearer" = ["k5c4bd2dbb6d6"]
-"sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles" = ["k7c39a18481f4"]
-"sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description" = ["k4fad38cd0772"]
-"sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles" = ["k815816bab51f"]
 "sf.ddl.alter-application-unset-configuration" = ["k2404a5f73908"]
 "sf.ddl.alter-backup-set.set-comment" = ["k10731c961186"]
 "sf.ddl.alter-backup-set.set-tag" = ["k48c3d869d40c"]
@@ -1103,10 +1091,6 @@ other_receipts_contradicted = [
   "kc7651bdbe18c",
 ]
 "sf.ddl.alter-stage.set.syntax" = ["kd30e04e36906"]
-"sf.ddl.alter-streamlit.set" = [
-  "k6c26d910a22f",
-  "kbf77fd1dc039",
-]
 "sf.ddl.create-ai-function.from-experiment-run" = ["k67bb99e4b1b2"]
 "sf.ddl.create-code-bundle.define-code-bundle" = [
   "k0f0f79a244fa",
@@ -1142,7 +1126,6 @@ other_receipts_contradicted = [
   "k8d7745ab446f",
   "kecdb5bc99739",
 ]
-"sf.ddl.create-function.create-function-returns-table.sql-handler" = ["k8b9c5f0c513c"]
 "sf.ddl.create-function.define-function" = [
   "k2402be4e8da2",
   "k30430b73f3ff",
@@ -1162,7 +1145,6 @@ other_receipts_contradicted = [
   "k9f59fb2ac987",
   "ka2ae0cb9c3a7",
 ]
-"sf.ddl.create-procedure.create-procedure-scoped-temp" = ["kdf6dd5e39836"]
 "sf.ddl.create-sequence.create-or-alter-sequence" = [
   "k20fca8f5f88e",
   "k78ac458e2742",
