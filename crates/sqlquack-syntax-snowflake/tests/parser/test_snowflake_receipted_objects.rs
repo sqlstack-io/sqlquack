@@ -478,3 +478,62 @@ fn given_a_snowflake_service_snapshot_when_parsing_then_recorded_verdicts_hold()
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_alter_user_without_a_name_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "TAG is a property name before = (recorded semantic error)",
+            sql: "ALTER USER SET TAG = 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "TAG is a property name to unset (recorded semantic error)",
+            sql: "ALTER USER UNSET TAG ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a named user sets tags",
+            sql: "ALTER USER v1 SET TAG v1 = 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "setting a tag needs a user name (recorded errno 1003)",
+            sql: "ALTER USER SET TAG v1 = 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "unsetting a tag needs a user name (recorded errno 1003)",
+            sql: "ALTER USER UNSET TAG v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "setting a policy needs a user name (recorded errno 1003)",
+            sql: "ALTER USER SET AUTHENTICATION POLICY v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "renaming needs a user name (recorded errno 1003)",
+            sql: "ALTER USER RENAME TO v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a named user sets a policy",
+            sql: "ALTER USER v1 SET AUTHENTICATION POLICY v1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "the current user resets its password (recorded acceptance)",
+            sql: "ALTER USER RESET PASSWORD ;",
+            expected_kind: Some("alter_object"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
