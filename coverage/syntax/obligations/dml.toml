@@ -7769,11 +7769,18 @@ target = "<element> in [ . <element> ]"
 note = "omit <element>"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o028"
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o628"
 kind = "operand_type_class"
 required = true
 target = "<element> in [ . <element> ]"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o629"
+kind = "negative_neighbour"
+required = true
+target = "<element> in [ . <element> ]"
+note = "a string literal in place of <element>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o029"
@@ -11121,6 +11128,22 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o630"
+kind = "identifier_class"
+required = true
+target = "<element>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o631"
+kind = "identifier_class"
+required = true
+target = "<element>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o599"
 kind = "identifier_class"
 required = true
@@ -11924,11 +11947,18 @@ target = "<target_table>"
 note = "omit <target_table>"
 
 [[obligation]]
-id = "sf.dml.insert.o005"
+id = "sf.dml.insert.o065"
 kind = "operand_type_class"
 required = true
 target = "<target_table>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.insert.o066"
+kind = "negative_neighbour"
+required = true
+target = "<target_table>"
+note = "a string literal in place of <target_table>"
 
 [[obligation]]
 id = "sf.dml.insert.o006"
@@ -12170,6 +12200,22 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
+id = "sf.dml.insert.o067"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.dml.insert.o068"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.dml.insert.o032"
 kind = "identifier_class"
 required = true
@@ -12249,11 +12295,18 @@ target = "<target_table>"
 note = "omit <target_table>"
 
 [[obligation]]
-id = "sf.dml.insert-multi-table.all-intoclause.o012"
+id = "sf.dml.insert-multi-table.all-intoclause.o046"
 kind = "operand_type_class"
 required = true
 target = "<target_table>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.all-intoclause.o047"
+kind = "negative_neighbour"
+required = true
+target = "<target_table>"
+note = "a string literal in place of <target_table>"
 
 [[obligation]]
 id = "sf.dml.insert-multi-table.all-intoclause.o013"
@@ -12371,11 +12424,18 @@ target = "<target_table> in [ INTO <target_table> ]"
 note = "omit <target_table>"
 
 [[obligation]]
-id = "sf.dml.insert-multi-table.all-intoclause.o032"
+id = "sf.dml.insert-multi-table.all-intoclause.o048"
 kind = "operand_type_class"
 required = true
 target = "<target_table> in [ INTO <target_table> ]"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.all-intoclause.o049"
+kind = "negative_neighbour"
+required = true
+target = "<target_table> in [ INTO <target_table> ]"
+note = "a string literal in place of <target_table>"
 
 [[obligation]]
 id = "sf.dml.insert-multi-table.all-intoclause.o006"
@@ -12433,6 +12493,22 @@ id = "sf.dml.insert-multi-table.all-intoclause.o038"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.all-intoclause.o050"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.all-intoclause.o051"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.insert-multi-table.all-intoclause.o039"
@@ -12550,11 +12626,18 @@ target = "<target_table>"
 note = "omit <target_table>"
 
 [[obligation]]
-id = "sf.dml.insert-multi-table.first-all-when-then.o024"
+id = "sf.dml.insert-multi-table.first-all-when-then.o070"
 kind = "operand_type_class"
 required = true
 target = "<target_table>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.first-all-when-then.o071"
+kind = "negative_neighbour"
+required = true
+target = "<target_table>"
+note = "a string literal in place of <target_table>"
 
 [[obligation]]
 id = "sf.dml.insert-multi-table.first-all-when-then.o025"
@@ -12672,11 +12755,18 @@ target = "<target_table> in [ INTO <target_table> ]"
 note = "omit <target_table>"
 
 [[obligation]]
-id = "sf.dml.insert-multi-table.first-all-when-then.o044"
+id = "sf.dml.insert-multi-table.first-all-when-then.o072"
 kind = "operand_type_class"
 required = true
 target = "<target_table> in [ INTO <target_table> ]"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.first-all-when-then.o073"
+kind = "negative_neighbour"
+required = true
+target = "<target_table> in [ INTO <target_table> ]"
+note = "a string literal in place of <target_table>"
 
 [[obligation]]
 id = "sf.dml.insert-multi-table.first-all-when-then.o045"
@@ -12712,11 +12802,18 @@ target = "<target_table> in [ WHEN <condition> THEN INTO <target_table> ]"
 note = "omit <target_table>"
 
 [[obligation]]
-id = "sf.dml.insert-multi-table.first-all-when-then.o050"
+id = "sf.dml.insert-multi-table.first-all-when-then.o074"
 kind = "operand_type_class"
 required = true
 target = "<target_table> in [ WHEN <condition> THEN INTO <target_table> ]"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.first-all-when-then.o075"
+kind = "negative_neighbour"
+required = true
+target = "<target_table> in [ WHEN <condition> THEN INTO <target_table> ]"
+note = "a string literal in place of <target_table>"
 
 [[obligation]]
 id = "sf.dml.insert-multi-table.first-all-when-then.o051"
@@ -12738,11 +12835,18 @@ target = "<target_table> in [ ELSE INTO <target_table> ]"
 note = "omit <target_table>"
 
 [[obligation]]
-id = "sf.dml.insert-multi-table.first-all-when-then.o054"
+id = "sf.dml.insert-multi-table.first-all-when-then.o076"
 kind = "operand_type_class"
 required = true
 target = "<target_table> in [ ELSE INTO <target_table> ]"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.first-all-when-then.o077"
+kind = "negative_neighbour"
+required = true
+target = "<target_table> in [ ELSE INTO <target_table> ]"
+note = "a string literal in place of <target_table>"
 
 [[obligation]]
 id = "sf.dml.insert-multi-table.first-all-when-then.o015"
@@ -12836,6 +12940,22 @@ id = "sf.dml.insert-multi-table.first-all-when-then.o021"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.first-all-when-then.o078"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.first-all-when-then.o079"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.insert-multi-table.first-all-when-then.o064"
@@ -13493,11 +13613,18 @@ target = "<target_table>"
 note = "omit <target_table>"
 
 [[obligation]]
-id = "sf.dml.merge.o003"
+id = "sf.dml.merge.o107"
 kind = "operand_type_class"
 required = true
 target = "<target_table>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.merge.o108"
+kind = "negative_neighbour"
+required = true
+target = "<target_table>"
+note = "a string literal in place of <target_table>"
 
 [[obligation]]
 id = "sf.dml.merge.o004"
@@ -14039,6 +14166,22 @@ id = "sf.dml.merge.o090"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.dml.merge.o109"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.dml.merge.o110"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.merge.o081"
@@ -15249,11 +15392,18 @@ target = "<target_table>"
 note = "omit <target_table>"
 
 [[obligation]]
-id = "sf.dml.update.o003"
+id = "sf.dml.update.o024"
 kind = "operand_type_class"
 required = true
 target = "<target_table>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.update.o025"
+kind = "negative_neighbour"
+required = true
+target = "<target_table>"
+note = "a string literal in place of <target_table>"
 
 [[obligation]]
 id = "sf.dml.update.o004"
@@ -15366,6 +15516,22 @@ id = "sf.dml.update.o020"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.dml.update.o026"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.dml.update.o027"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.dml.update.o021"

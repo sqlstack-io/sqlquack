@@ -891,11 +891,18 @@ target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> )
 note = "omit <fractional_seconds_precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o038"
+id = "sf.expressions.data-types-datetime.interval.o107"
 kind = "operand_type_class"
 required = true
 target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o108"
+kind = "negative_neighbour"
+required = true
+target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ]"
+note = "a string literal in place of <fractional_seconds_precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o039"
@@ -974,11 +981,18 @@ target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> )
 note = "omit <fractional_seconds_precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o050"
+id = "sf.expressions.data-types-datetime.interval.o109"
 kind = "operand_type_class"
 required = true
 target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ] #2"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o110"
+kind = "negative_neighbour"
+required = true
+target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ] #2"
+note = "a string literal in place of <fractional_seconds_precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o051"
@@ -1045,11 +1059,18 @@ target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> )
 note = "omit <fractional_seconds_precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o060"
+id = "sf.expressions.data-types-datetime.interval.o111"
 kind = "operand_type_class"
 required = true
 target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ] #3"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o112"
+kind = "negative_neighbour"
+required = true
+target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ] #3"
+note = "a string literal in place of <fractional_seconds_precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o062"
@@ -1090,6 +1111,13 @@ kind = "required_operand_missing"
 required = true
 target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
 note = "omit <fractional_seconds_precision>"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o113"
+kind = "negative_neighbour"
+required = true
+target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
+note = "a string literal in place of <fractional_seconds_precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o069"
@@ -1457,11 +1485,18 @@ target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> )
 note = "omit <fractional_seconds_precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o035"
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o112"
 kind = "operand_type_class"
 required = true
 target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o113"
+kind = "negative_neighbour"
+required = true
+target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ]"
+note = "a string literal in place of <fractional_seconds_precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o036"
@@ -1540,11 +1575,18 @@ target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> )
 note = "omit <fractional_seconds_precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o047"
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o114"
 kind = "operand_type_class"
 required = true
 target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ] #2"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o115"
+kind = "negative_neighbour"
+required = true
+target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ] #2"
+note = "a string literal in place of <fractional_seconds_precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o048"
@@ -1611,11 +1653,18 @@ target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> )
 note = "omit <fractional_seconds_precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o057"
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o116"
 kind = "operand_type_class"
 required = true
 target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ] #3"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o117"
+kind = "negative_neighbour"
+required = true
+target = "<fractional_seconds_precision> in [ ( <fractional_seconds_precision> ) ] #3"
+note = "a string literal in place of <fractional_seconds_precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o058"
@@ -1662,6 +1711,13 @@ kind = "required_operand_missing"
 required = true
 target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
 note = "omit <fractional_seconds_precision>"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o118"
+kind = "negative_neighbour"
+required = true
+target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
+note = "a string literal in place of <fractional_seconds_precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o092"
@@ -4337,11 +4393,18 @@ target = "<input_table> in [ <input_table> [ [ AS ] <alias_1> ] , ]"
 note = "omit <input_table>"
 
 [[obligation]]
-id = "sf.expressions.functions-table.o005"
+id = "sf.expressions.functions-table.o036"
 kind = "operand_type_class"
 required = true
 target = "<input_table> in [ <input_table> [ [ AS ] <alias_1> ] , ]"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.expressions.functions-table.o037"
+kind = "negative_neighbour"
+required = true
+target = "<input_table> in [ <input_table> [ [ AS ] <alias_1> ] , ]"
+note = "a string literal in place of <input_table>"
 
 [[obligation]]
 id = "sf.expressions.functions-table.o006"
@@ -4506,6 +4569,22 @@ id = "sf.expressions.functions-table.o029"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.expressions.functions-table.o038"
+kind = "identifier_class"
+required = true
+target = "<input_table>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.expressions.functions-table.o039"
+kind = "identifier_class"
+required = true
+target = "<input_table>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.expressions.functions-table.o030"

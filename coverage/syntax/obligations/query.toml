@@ -15,11 +15,18 @@ target = "<left_table>"
 note = "omit <left_table>"
 
 [[obligation]]
-id = "sf.query.asof-join.o003"
+id = "sf.query.asof-join.o045"
 kind = "operand_type_class"
 required = true
 target = "<left_table>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.asof-join.o046"
+kind = "negative_neighbour"
+required = true
+target = "<left_table>"
+note = "a string literal in place of <left_table>"
 
 [[obligation]]
 id = "sf.query.asof-join.o004"
@@ -29,11 +36,18 @@ target = "<right_table>"
 note = "omit <right_table>"
 
 [[obligation]]
-id = "sf.query.asof-join.o005"
+id = "sf.query.asof-join.o047"
 kind = "operand_type_class"
 required = true
 target = "<right_table>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.asof-join.o048"
+kind = "negative_neighbour"
+required = true
+target = "<right_table>"
+note = "a string literal in place of <right_table>"
 
 [[obligation]]
 id = "sf.query.asof-join.o006"
@@ -219,6 +233,38 @@ id = "sf.query.asof-join.o031"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ON <table.col> = <table.col> [ AND ... ] | USING ( <column_list> ) ]"
+
+[[obligation]]
+id = "sf.query.asof-join.o049"
+kind = "identifier_class"
+required = true
+target = "<left_table>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.query.asof-join.o050"
+kind = "identifier_class"
+required = true
+target = "<left_table>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.query.asof-join.o051"
+kind = "identifier_class"
+required = true
+target = "<right_table>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.query.asof-join.o052"
+kind = "identifier_class"
+required = true
+target = "<right_table>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.query.asof-join.o032"
@@ -4623,11 +4669,18 @@ target = "<object_ref1>"
 note = "omit <object_ref1>"
 
 [[obligation]]
-id = "sf.query.join.join.o003"
+id = "sf.query.join.join.o044"
 kind = "operand_type_class"
 required = true
 target = "<object_ref1>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.join.join.o045"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref1>"
+note = "a string literal in place of <object_ref1>"
 
 [[obligation]]
 id = "sf.query.join.join.o004"
@@ -4703,11 +4756,18 @@ target = "<object_ref2>"
 note = "omit <object_ref2>"
 
 [[obligation]]
-id = "sf.query.join.join.o016"
+id = "sf.query.join.join.o046"
 kind = "operand_type_class"
 required = true
 target = "<object_ref2>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.join.join.o047"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref2>"
+note = "a string literal in place of <object_ref2>"
 
 [[obligation]]
 id = "sf.query.join.join.o017"
@@ -4765,6 +4825,38 @@ id = "sf.query.join.join.o032"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.query.join.join.o048"
+kind = "identifier_class"
+required = true
+target = "<object_ref1>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.query.join.join.o049"
+kind = "identifier_class"
+required = true
+target = "<object_ref1>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.query.join.join.o050"
+kind = "identifier_class"
+required = true
+target = "<object_ref2>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.query.join.join.o051"
+kind = "identifier_class"
+required = true
+target = "<object_ref2>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.query.join.join.o035"
@@ -4849,11 +4941,18 @@ target = "<object_ref1>"
 note = "omit <object_ref1>"
 
 [[obligation]]
-id = "sf.query.join.join-2.o003"
+id = "sf.query.join.join-2.o025"
 kind = "operand_type_class"
 required = true
 target = "<object_ref1>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.join.join-2.o026"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref1>"
+note = "a string literal in place of <object_ref1>"
 
 [[obligation]]
 id = "sf.query.join.join-2.o004"
@@ -4965,17 +5064,56 @@ target = "<object_ref2>"
 note = "omit <object_ref2>"
 
 [[obligation]]
-id = "sf.query.join.join-2.o022"
+id = "sf.query.join.join-2.o027"
 kind = "operand_type_class"
 required = true
 target = "<object_ref2>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.join.join-2.o028"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref2>"
+note = "a string literal in place of <object_ref2>"
 
 [[obligation]]
 id = "sf.query.join.join-2.o023"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FROM"
+
+[[obligation]]
+id = "sf.query.join.join-2.o029"
+kind = "identifier_class"
+required = true
+target = "<object_ref1>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.query.join.join-2.o030"
+kind = "identifier_class"
+required = true
+target = "<object_ref1>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.query.join.join-2.o031"
+kind = "identifier_class"
+required = true
+target = "<object_ref2>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.query.join.join-2.o032"
+kind = "identifier_class"
+required = true
+target = "<object_ref2>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.query.join.join-2.o024"
@@ -4998,11 +5136,18 @@ target = "<object_ref1>"
 note = "omit <object_ref1>"
 
 [[obligation]]
-id = "sf.query.join.join.syntax.o003"
+id = "sf.query.join.join.syntax.o052"
 kind = "operand_type_class"
 required = true
 target = "<object_ref1>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o053"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref1>"
+note = "a string literal in place of <object_ref1>"
 
 [[obligation]]
 id = "sf.query.join.join.syntax.o004"
@@ -5078,11 +5223,18 @@ target = "<object_ref2>"
 note = "omit <object_ref2>"
 
 [[obligation]]
-id = "sf.query.join.join.syntax.o016"
+id = "sf.query.join.join.syntax.o054"
 kind = "operand_type_class"
 required = true
 target = "<object_ref2>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o055"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref2>"
+note = "a string literal in place of <object_ref2>"
 
 [[obligation]]
 id = "sf.query.join.join.syntax.o017"
@@ -5159,6 +5311,38 @@ id = "sf.query.join.join.syntax.o035"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o056"
+kind = "identifier_class"
+required = true
+target = "<object_ref1>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o057"
+kind = "identifier_class"
+required = true
+target = "<object_ref1>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o058"
+kind = "identifier_class"
+required = true
+target = "<object_ref2>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o059"
+kind = "identifier_class"
+required = true
+target = "<object_ref2>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.query.join.join.syntax.o036"
@@ -5773,11 +5957,18 @@ target = "<symbol> in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { 
 note = "omit <symbol>"
 
 [[obligation]]
-id = "sf.query.match-recognize.match-recognize-pattern-define-as.o044"
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o136"
 kind = "operand_type_class"
 required = true
 target = "<symbol> in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ]"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o137"
+kind = "negative_neighbour"
+required = true
+target = "<symbol> in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ]"
+note = "a string literal in place of <symbol>"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o103"
@@ -5801,11 +5992,18 @@ target = "<symbol>"
 note = "omit <symbol>"
 
 [[obligation]]
-id = "sf.query.match-recognize.match-recognize-pattern-define-as.o049"
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o138"
 kind = "operand_type_class"
 required = true
 target = "<symbol>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o139"
+kind = "negative_neighbour"
+required = true
+target = "<symbol>"
+note = "a string literal in place of <symbol>"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o050"
@@ -6057,6 +6255,22 @@ id = "sf.query.match-recognize.match-recognize-pattern-define-as.o077"
 kind = "identifier_class"
 required = true
 target = "<alias>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o140"
+kind = "identifier_class"
+required = true
+target = "<symbol>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o141"
+kind = "identifier_class"
+required = true
+target = "<symbol>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 

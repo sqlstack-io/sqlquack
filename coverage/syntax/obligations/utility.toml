@@ -9404,18 +9404,32 @@ target = "<db> in [ <db> . <schema> . ]"
 note = "omit <db>"
 
 [[obligation]]
-id = "sf.utility.execute-inference-job-service.o027"
+id = "sf.utility.execute-inference-job-service.o098"
 kind = "operand_type_class"
 required = true
 target = "<db> in [ <db> . <schema> . ]"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
-id = "sf.utility.execute-inference-job-service.o029"
+id = "sf.utility.execute-inference-job-service.o099"
+kind = "negative_neighbour"
+required = true
+target = "<db> in [ <db> . <schema> . ]"
+note = "a string literal in place of <db>"
+
+[[obligation]]
+id = "sf.utility.execute-inference-job-service.o100"
 kind = "operand_type_class"
 required = true
 target = "<schema> in [ <db> . <schema> . ]"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.execute-inference-job-service.o101"
+kind = "negative_neighbour"
+required = true
+target = "<schema> in [ <db> . <schema> . ]"
+note = "a string literal in place of <schema>"
 
 [[obligation]]
 id = "sf.utility.execute-inference-job-service.o030"
@@ -9536,18 +9550,32 @@ target = "<db> in [ <db> . <schema> . ] #2"
 note = "omit <db>"
 
 [[obligation]]
-id = "sf.utility.execute-inference-job-service.o048"
+id = "sf.utility.execute-inference-job-service.o102"
 kind = "operand_type_class"
 required = true
 target = "<db> in [ <db> . <schema> . ] #2"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
-id = "sf.utility.execute-inference-job-service.o050"
+id = "sf.utility.execute-inference-job-service.o103"
+kind = "negative_neighbour"
+required = true
+target = "<db> in [ <db> . <schema> . ] #2"
+note = "a string literal in place of <db>"
+
+[[obligation]]
+id = "sf.utility.execute-inference-job-service.o104"
 kind = "operand_type_class"
 required = true
 target = "<schema> in [ <db> . <schema> . ] #2"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.execute-inference-job-service.o105"
+kind = "negative_neighbour"
+required = true
+target = "<schema> in [ <db> . <schema> . ] #2"
+note = "a string literal in place of <schema>"
 
 [[obligation]]
 id = "sf.utility.execute-inference-job-service.o051"
@@ -9728,6 +9756,38 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.utility.execute-inference-job-service.o106"
+kind = "identifier_class"
+required = true
+target = "<db>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.utility.execute-inference-job-service.o107"
+kind = "identifier_class"
+required = true
+target = "<db>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.utility.execute-inference-job-service.o108"
+kind = "identifier_class"
+required = true
+target = "<schema>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.utility.execute-inference-job-service.o109"
+kind = "identifier_class"
+required = true
+target = "<schema>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.utility.execute-inference-job-service.o083"
 kind = "identifier_class"
 required = true
@@ -9901,11 +9961,18 @@ required = true
 target = "{ FROM @ <stage> SPECIFICATION_FILE =… → FROM @ <stage> SPECIFICATION_FILE = '<yaml_file_stage_path>'"
 
 [[obligation]]
-id = "sf.utility.execute-job-service.o067"
+id = "sf.utility.execute-job-service.o130"
 kind = "operand_type_class"
 required = true
 target = "<stage>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o131"
+kind = "negative_neighbour"
+required = true
+target = "<stage>"
+note = "a string literal in place of <stage>"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o114"
@@ -9967,11 +10034,18 @@ required = true
 target = "{ FROM @ <stage> SPECIFICATION_TEMPLATE_FILE =… → FROM @ <stage> SPECIFICATION_TEMPLATE_FILE = '<yaml_file_stage_path>'"
 
 [[obligation]]
-id = "sf.utility.execute-job-service.o076"
+id = "sf.utility.execute-job-service.o132"
 kind = "operand_type_class"
 required = true
 target = "<stage> #2"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o133"
+kind = "negative_neighbour"
+required = true
+target = "<stage> #2"
+note = "a string literal in place of <stage>"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o119"
@@ -10127,11 +10201,18 @@ target = "<db> in [ <db> . <schema> . ]"
 note = "omit <db>"
 
 [[obligation]]
-id = "sf.utility.execute-job-service.o014"
+id = "sf.utility.execute-job-service.o134"
 kind = "operand_type_class"
 required = true
 target = "<db> in [ <db> . <schema> . ]"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o135"
+kind = "negative_neighbour"
+required = true
+target = "<db> in [ <db> . <schema> . ]"
+note = "a string literal in place of <db>"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o015"
@@ -10141,11 +10222,18 @@ target = "<schema> in [ <db> . <schema> . ]"
 note = "omit <schema>"
 
 [[obligation]]
-id = "sf.utility.execute-job-service.o016"
+id = "sf.utility.execute-job-service.o136"
 kind = "operand_type_class"
 required = true
 target = "<schema> in [ <db> . <schema> . ]"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o137"
+kind = "negative_neighbour"
+required = true
+target = "<schema> in [ <db> . <schema> . ]"
+note = "a string literal in place of <schema>"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o017"
@@ -10469,6 +10557,54 @@ id = "sf.utility.execute-job-service.o057"
 kind = "identifier_class"
 required = true
 target = "<compute_pool_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o138"
+kind = "identifier_class"
+required = true
+target = "<stage>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o139"
+kind = "identifier_class"
+required = true
+target = "<stage>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o140"
+kind = "identifier_class"
+required = true
+target = "<db>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o141"
+kind = "identifier_class"
+required = true
+target = "<db>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o142"
+kind = "identifier_class"
+required = true
+target = "<schema>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o143"
+kind = "identifier_class"
+required = true
+target = "<schema>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
