@@ -276,12 +276,7 @@ impl Parser {
                 self.parse_iceberg_object_name()?,
             ))];
             if self.match_text_seq(&["USE", "SECONDARY", "ROLES"]) {
-                expressions.push(match self.match_token(TokenType::All) {
-                    true => Expression::Var(Box::new(Var {
-                        this: "ALL".to_owned(),
-                    })),
-                    false => Expression::Table(Box::new(self.parse_iceberg_object_name()?)),
-                });
+                expressions.extend(self.parse_secondary_roles()?);
             }
             let value = Expression::Tuple(Box::new(Tuple { expressions }));
             return Ok((None, vec![property("EXECUTE AS USER", None, Some(value))]));
@@ -370,5 +365,22 @@ impl Parser {
             return Err(self.parse_error("Expected a value"));
         }
         Ok(Expression::Identifier(self.parse_external_name()?))
+    }
+    /// The roles after USE SECONDARY ROLES: ALL, NONE, or one or more role names.
+    pub(crate) fn parse_secondary_roles(&mut self) -> Result<Vec<Expression>> {
+        if self.match_token(TokenType::All) || self.match_text_seq(&["NONE"]) {
+            return Ok(vec![Expression::Var(Box::new(Var {
+                this: self.previous_text().to_ascii_uppercase(),
+            }))]);
+        }
+        let mut roles = vec![Expression::Table(Box::new(
+            self.parse_iceberg_object_name()?,
+        ))];
+        while self.match_token(TokenType::Comma) {
+            roles.push(Expression::Table(Box::new(
+                self.parse_iceberg_object_name()?,
+            )));
+        }
+        Ok(roles)
     }
 }
