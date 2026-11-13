@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.12.0](https://github.com/sqlstack-io/sqlquack/compare/v0.11.3...v0.12.0) (2026-11-13)
+
+
+### Features
+
+* **syntax:** parse Snowflake EXECUTE IMMEDIATE into a structured node ([5cfcbe0](https://github.com/sqlstack-io/sqlquack/commit/5cfcbe0f053fb914c41e9c81c99c94bc95c7e581))
+
+
+### Bug Fixes
+
+* **syntax:** check a CREATE VARIABLE's type, default and comment ([66f09a0](https://github.com/sqlstack-io/sqlquack/commit/66f09a09390ca6dc60c878c3de7292cdbcf25694))
+* **syntax:** check DESCRIBE FUNCTION TABLE arguments ([f556c0f](https://github.com/sqlstack-io/sqlquack/commit/f556c0fc4c368bbcb9185fb2f7ef2b1d1c24a99f))
+* **syntax:** check warehouse table lists, ABORT, unnamed actions and connector PUSH ([f4ec2d3](https://github.com/sqlstack-io/sqlquack/commit/f4ec2d3ca597cb8ed7edcccc4a30db1d7130ba5f))
+* **syntax:** follow the recorded RESULTSET, notebook name and SHOW SERVICES verdicts ([f0799e7](https://github.com/sqlstack-io/sqlquack/commit/f0799e716d8700e5c86c50d4b3e3a75d406d6546))
+* **syntax:** read a lone APPLICATION, CLASS or grantee kind in Snowflake SHOW as a name ([1c7b1bf](https://github.com/sqlstack-io/sqlquack/commit/1c7b1bffe6854e7b6361adb1b8cb50bfe4095f0b))
+* **syntax:** read a notebook named PROJECT with options and an unnamed ALTER WAREHOUSE IF EXISTS ([908ad5b](https://github.com/sqlstack-io/sqlquack/commit/908ad5b33c5d4f306c3df36503a8c487e5b2a818))
+* **syntax:** read SHOW WITH PRIVILEGES as documented privileges ([8565bf4](https://github.com/sqlstack-io/sqlquack/commit/8565bf4c678097cbf698a6c3e7b9616550dfdaee))
+* **syntax:** refuse CONTACT on an event table ([de1fa67](https://github.com/sqlstack-io/sqlquack/commit/de1fa67039eec211627d9cc6d3940067c915de89))
+
 ## [0.11.3](https://github.com/sqlstack-io/sqlquack/compare/v0.11.2...v0.11.3) (2026-11-13)
 
 
