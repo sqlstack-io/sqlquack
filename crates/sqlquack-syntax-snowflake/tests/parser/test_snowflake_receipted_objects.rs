@@ -99,6 +99,44 @@ fn given_a_snowflake_external_consumer_when_parsing_then_the_tree_keeps_its_kind
 }
 
 #[test]
+fn given_a_snowflake_tag_connection_or_dcm_project_when_parsing_then_the_tree_keeps_its_parts() {
+    let test_cases = [
+        StatementTestCase {
+            description: "a tag's allowed values are one list, not loose text",
+            sql: "CREATE TAG t1 ALLOWED_VALUES 'a' , 'b' COMMENT = 'c' ;",
+            pointer: "/0/create_object/properties/0/value/tuple/expressions/1/literal/value",
+            expected_value: json!("b"),
+        },
+        StatementTestCase {
+            description: "CREATE OR ALTER TAG keeps OR ALTER",
+            sql: "CREATE OR ALTER TAG t1 ;",
+            pointer: "/0/create_object/or_alter",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a connection keeps its quoted name",
+            sql: "CREATE CONNECTION \"c 1\" ;",
+            pointer: "/0/create_object/name/name/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a DCM project keeps its log level",
+            sql: "CREATE DCM PROJECT p1 LOG_LEVEL = WARN ;",
+            pointer: "/0/create_object/properties/0/kind",
+            expected_value: json!("LOG_LEVEL"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_a_snowflake_ai_function_when_parsing_then_recorded_verdicts_hold() {
     let test_cases = [
         SnowflakeVerdictTestCase {
@@ -293,7 +331,7 @@ fn given_a_snowflake_define_of_a_tag_pipe_or_code_bundle_when_parsing_then_recor
         SnowflakeVerdictTestCase {
             description: "a tag with allowed values (recorded success)",
             sql: "DEFINE TAG d1.s1.v1 ALLOWED_VALUES 'm' , 'm' , 'm' COMMENT = 'm' ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a tag needs its allowed values (recorded errno 1003)",
@@ -622,6 +660,38 @@ fn given_a_snowflake_alter_user_without_a_name_when_parsing_then_recorded_verdic
         assert_eq!(
             snowflake_kind(test_case.sql),
             test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_alter_user_without_a_name_when_parsing_then_the_tree_names_no_user() {
+    let test_cases = [
+        StatementTestCase {
+            description: "an omitted user is no name, not an empty one",
+            sql: "ALTER USER ADD KEY PAIR v1 PUBLIC_KEY = 'm' ;",
+            pointer: "/0/alter_object/name",
+            expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "an omitted user before a token action is no name",
+            sql: "ALTER USER ROTATE PROGRAMMATIC ACCESS TOKEN v1 ;",
+            pointer: "/0/alter_object/name",
+            expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "a named user keeps its name",
+            sql: "ALTER USER u1 ADD KEY PAIR v1 PUBLIC_KEY = 'm' ;",
+            pointer: "/0/alter_object/name/name/name",
+            expected_value: json!("u1"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
             "{}",
             test_case.description
         );

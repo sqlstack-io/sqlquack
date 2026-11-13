@@ -417,7 +417,7 @@ fn given_a_snowflake_create_or_alter_kept_as_text_when_parsing_then_its_head_and
         SnowflakeVerdictTestCase {
             description: "an unreserved operand word as the whole name",
             sql: "CREATE TAG version ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an unreserved operand word as the last part of a name",

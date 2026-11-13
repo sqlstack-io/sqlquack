@@ -838,7 +838,7 @@ pub(super) fn alter_object(
 ) -> Expression {
     Expression::AlterObject(Box::new(AlterObject {
         kind: kind.to_owned(),
-        name,
+        name: Some(name),
         arguments: Vec::new(),
         if_exists,
         action,
