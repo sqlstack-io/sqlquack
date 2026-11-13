@@ -411,6 +411,11 @@ impl Parser {
     }
 
     pub(crate) fn parse_function_argument_value(&mut self) -> Result<Expression> {
+        let stage = self.check(TokenType::DAt)
+            || (self.check(TokenType::Var) && self.peek_text().starts_with('@'));
+        if self.is_snowflake() && stage {
+            return Err(self.parse_error("A named argument takes a quoted stage location"));
+        }
         if matches!(
             self.config.dialect,
             Some(sqlquack_syntax::tokens::models::DialectType::Snowflake)

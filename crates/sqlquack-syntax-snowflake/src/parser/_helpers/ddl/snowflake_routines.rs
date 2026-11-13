@@ -4,8 +4,8 @@ use crate::parser::constants::{
     SNOWFLAKE_RESERVED_KEYWORDS, SNOWFLAKE_ROUTINE_NAME_LIST_PROPERTIES,
     SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES, SNOWFLAKE_ROUTINE_NAME_PROPERTIES,
     SNOWFLAKE_ROUTINE_NUMBER_PROPERTIES, SNOWFLAKE_ROUTINE_TEXT_LIST_PROPERTIES,
-    SNOWFLAKE_ROUTINE_TEXT_MAP_PROPERTIES, SNOWFLAKE_ROUTINE_TEXT_NAME_PROPERTIES,
-    SNOWFLAKE_ROUTINE_TEXT_PROPERTIES, SNOWFLAKE_ROUTINE_WORD_PROPERTIES,
+    SNOWFLAKE_ROUTINE_TEXT_NAME_PROPERTIES, SNOWFLAKE_ROUTINE_TEXT_PROPERTIES,
+    SNOWFLAKE_ROUTINE_WORD_PROPERTIES,
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::ColumnDef;
@@ -129,8 +129,6 @@ impl Parser {
                 |parser| parser.skip_routine_list(Self::skip_snowflake_name)
             } else if listed(SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES) {
                 |parser| parser.skip_routine_list(Self::skip_routine_name_entry)
-            } else if listed(SNOWFLAKE_ROUTINE_TEXT_MAP_PROPERTIES) {
-                |parser| parser.skip_routine_list(Self::skip_routine_text_entry)
             } else {
                 return Ok(None);
             };
@@ -232,13 +230,6 @@ impl Parser {
         self.expect_routine_key()?;
         self.expect_token(TokenType::Eq)?;
         self.skip_routine_name_or_text()
-    }
-
-    /// `'<key>' = '<value>'`.
-    fn skip_routine_text_entry(&mut self) -> Result<()> {
-        self.expect_routine_text()?;
-        self.expect_token(TokenType::Eq)?;
-        self.expect_routine_text()
     }
 
     /// In a Snowflake parse, refuses an object name with a reserved word or a string as a part.

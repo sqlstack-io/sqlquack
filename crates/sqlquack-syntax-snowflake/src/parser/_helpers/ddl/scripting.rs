@@ -377,6 +377,8 @@ impl Parser {
             None
         };
 
+        let listing_filters = self.parse_show_listing_filters(&this)?;
+
         let mut from = if self.match_token(TokenType::From) {
             Some(self.parse_primary()?)
         } else {
@@ -423,6 +425,7 @@ impl Parser {
             mutex,
             privileges,
             root_only: false,
+            listing_filters,
         })))
     }
 
@@ -469,6 +472,9 @@ impl Parser {
                 break;
             }
             let joined_check = this_parts.join(" ");
+            if self.is_snowflake() && joined_check == crate::parser::constants::AVAILABLE_LISTINGS {
+                break;
+            }
             if joined_check == PLAN && current.token_type == TokenType::Number {
                 let id = self.advance_text()?;
                 target = Some(Expression::Literal(Box::new(Literal::Number(id))));

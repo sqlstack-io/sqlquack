@@ -177,6 +177,10 @@ impl Parser {
         temporary: bool,
     ) -> Result<Option<Expression>> {
         let start = self.current;
+        let volatile_or_temporary = match start.checked_sub(1).map(|at| &self.tokens[at]) {
+            Some(token) if token.text.eq_ignore_ascii_case("VOLATILE") => "VOLATILE",
+            _ => "TEMPORARY",
+        };
         let kind = if self.check_identifier("STAGE") {
             self.skip();
             "STAGE"
@@ -228,7 +232,7 @@ impl Parser {
         }
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
             kind: kind.to_owned(),
-            modifier: temporary.then(|| "TEMPORARY".to_owned()),
+            modifier: temporary.then(|| volatile_or_temporary.to_owned()),
             or_replace,
             or_alter,
             if_not_exists,

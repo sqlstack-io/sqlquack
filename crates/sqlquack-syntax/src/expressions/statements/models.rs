@@ -792,6 +792,9 @@ pub struct Show {
     /// Snowflake SHOW TASKS ... ROOT ONLY, which lists only root tasks
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub root_only: bool,
+    /// Snowflake SHOW AVAILABLE LISTINGS filters set to TRUE, such as IS_IMPORTED, in source order
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub listing_filters: Vec<String>,
 }
 
 impl Show {
@@ -813,6 +816,7 @@ impl Show {
             mutex: None,
             privileges: Vec::new(),
             root_only: false,
+            listing_filters: Vec::new(),
         }
     }
 }
