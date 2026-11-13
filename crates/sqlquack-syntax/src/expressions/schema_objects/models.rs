@@ -1177,8 +1177,8 @@ impl DropType {
 pub struct AlterObject {
     /// The object kind, e.g. "TASK", "TASK GRAPH", "SNAPSHOT SET"
     pub kind: String,
-    /// The object name
-    pub name: TableRef,
+    /// The object name; none when the statement leaves it out, as ALTER USER does for the current user
+    pub name: Option<TableRef>,
     /// The argument types that identify a function or procedure; a TABLE( ... ) argument is a tuple
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub arguments: Vec<Expression>,

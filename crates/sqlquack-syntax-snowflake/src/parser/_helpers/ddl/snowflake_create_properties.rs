@@ -295,7 +295,7 @@ impl Parser {
         })
     }
 
-    /// One item: TAG ( <name> = <value> , ... ), TRIGGERS ON <n> PERCENT DO <action> ..., AS <body>, IGNORE EDITION CHECK, or <property> = <value>.
+    /// One item: TAG ( <name> = <value> , ... ), TRIGGERS ON <n> PERCENT DO <action> ..., a tag's ALLOWED_VALUES <value> , ..., AS <body>, IGNORE EDITION CHECK, or <property> = <value>.
     pub(super) fn parse_create_property_item(&mut self) -> Result<Vec<ObjectProperty>> {
         if self.check_identifier("TAG") && self.check_next(TokenType::LParen) {
             self.skip();
@@ -335,6 +335,20 @@ impl Parser {
                 return Err(self.parse_error("Expected ON <percent> PERCENT DO <action>"));
             }
             return Ok(triggers);
+        }
+        if self.check_identifier("ALLOWED_VALUES") && !self.check_next(TokenType::Eq) {
+            self.skip();
+            let mut values: Vec<Expression> = vec![self.parse_object_value()?];
+            while self.match_token(TokenType::Comma) {
+                values.push(self.parse_object_value()?);
+            }
+            return Ok(vec![property(
+                "ALLOWED_VALUES",
+                None,
+                Some(Expression::Tuple(Box::new(Tuple {
+                    expressions: values,
+                }))),
+            )]);
         }
         if self.check(TokenType::As) {
             self.skip();

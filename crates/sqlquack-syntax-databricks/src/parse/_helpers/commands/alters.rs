@@ -911,7 +911,7 @@ impl Parser<'_> {
         };
         Ok(Expression::AlterObject(Box::new(AlterObject {
             kind: "SCHEMA".to_owned(),
-            name,
+            name: Some(name),
             arguments: Vec::new(),
             if_exists: false,
             action,

@@ -166,7 +166,7 @@ pub(crate) fn alter(
     let (kind, name, if_exists) = target;
     Expression::AlterObject(Box::new(AlterObject {
         kind: kind.to_owned(),
-        name,
+        name: Some(name),
         arguments: Vec::new(),
         if_exists,
         action: action.to_owned(),

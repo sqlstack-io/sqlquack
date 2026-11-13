@@ -47,8 +47,8 @@ impl Parser {
                 .text_at(1)
                 .is_some_and(|word| USER_ACTIONS.contains(&word.as_str()));
         let name = match unnamed {
-            true => TableRef::new(""),
-            false => self.parse_object_name()?,
+            true => None,
+            false => Some(self.parse_object_name()?),
         };
         let action = self.expect_alter_words(&[
             &["ABORT", "ALL", "QUERIES"],
@@ -80,7 +80,13 @@ impl Parser {
             "SET" | "UNSET" => self.parse_user_set(action)?,
             _ => (action, (vec![], vec![])),
         };
-        Ok(alter_object("USER", (name, if_exists), action, parts))
+        let Expression::AlterObject(mut alter) =
+            alter_object("USER", (TableRef::new(""), if_exists), action, parts)
+        else {
+            return Err(self.parse_error("Expected an ALTER statement"));
+        };
+        alter.name = name;
+        Ok(Expression::AlterObject(alter))
     }
 
     /// The object of ADD, MODIFY, REMOVE or ROTATE: a credential, an MFA method or a delegated authorization.

@@ -48,7 +48,7 @@ pub(crate) fn altered(
 ) -> Expression {
     Expression::AlterObject(Box::new(AlterObject {
         kind: kind.to_owned(),
-        name,
+        name: Some(name),
         arguments: Vec::new(),
         if_exists,
         action: String::new(),
