@@ -296,13 +296,26 @@ impl Parser {
         }
     }
 
-    /// A scalar value; an ASYNC child job is only structured for RESULTSET declarations.
+    /// A scalar value, or a parenthesised EXECUTE IMMEDIATE; an ASYNC child job is only structured for RESULTSET declarations.
     fn parse_scripting_value(&mut self) -> Result<Expression> {
         if self.check_text_seq(&["ASYNC"]) && self.check_next(TokenType::LParen) {
             return Err(self
                 .parse_error("SCRIPTING_PENDING: ASYNC is parsed only in RESULTSET declarations"));
         }
-        self.parse_expression()
+        let immediate = self.check(TokenType::LParen)
+            && self
+                .peek_nth(1)
+                .is_some_and(|token| token.token_type == TokenType::Execute)
+            && self
+                .peek_nth(2)
+                .is_some_and(|token| token.text.eq_ignore_ascii_case("IMMEDIATE"));
+        if !immediate {
+            return self.parse_expression();
+        }
+        self.skip();
+        let statement = self.parse_scripting_sql_statement()?;
+        self.expect_token(TokenType::RParen)?;
+        Ok(statement)
     }
 
     /// An ordinary statement member, spanned like a top-level one; never empty or bare.

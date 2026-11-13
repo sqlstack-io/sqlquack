@@ -166,6 +166,16 @@ fn given_a_snowflake_execute_immediate_when_parsing_then_recorded_verdicts_hold(
             expected_kind: Some("scripting_block"),
         },
         SnowflakeVerdictTestCase {
+            description: "an assignment without LET may take EXECUTE IMMEDIATE in parentheses",
+            sql: "BEGIN r1 := ( EXECUTE IMMEDIATE :q1 USING ( v1 ) ) ; END ;",
+            expected_kind: Some("scripting_block"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an assignment's EXECUTE IMMEDIATE needs its closing parenthesis",
+            sql: "BEGIN r1 := ( EXECUTE IMMEDIATE :q1 ; END ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
             description: "a closing parenthesis with nothing to close is no end",
             sql: "EXECUTE IMMEDIATE :q1 ) ;",
             expected_kind: None,
@@ -173,7 +183,7 @@ fn given_a_snowflake_execute_immediate_when_parsing_then_recorded_verdicts_hold(
         SnowflakeVerdictTestCase {
             description: "a source may concatenate strings and variables, as Snowflake documents",
             sql: "EXECUTE IMMEDIATE v2 || ',(80)' || ',(84)' ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("execute_immediate"),
         },
         SnowflakeVerdictTestCase {
             description: "a concatenation needs its right operand",
@@ -183,7 +193,7 @@ fn given_a_snowflake_execute_immediate_when_parsing_then_recorded_verdicts_hold(
         SnowflakeVerdictTestCase {
             description: "a session variable with bind variables (recorded semantic error)",
             sql: "EXECUTE IMMEDIATE $v1 USING ( v1 , v1 ) ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("execute_immediate"),
         },
         SnowflakeVerdictTestCase {
             description: "a dollar sign alone (recorded errno 1003)",
@@ -208,7 +218,7 @@ fn given_a_snowflake_execute_immediate_when_parsing_then_recorded_verdicts_hold(
         SnowflakeVerdictTestCase {
             description: "a file with arguments and a dry run (recorded semantic error)",
             sql: "EXECUTE IMMEDIATE FROM @v1.s1/p1/f1.sql USING ( v1 => 1 , v1 => 1 ) DRY_RUN = TRUE ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("execute_immediate"),
         },
         SnowflakeVerdictTestCase {
             description: "a file needs FROM (recorded errno 1003)",
@@ -677,6 +687,36 @@ fn given_a_snowflake_external_agent_or_filtered_show_when_parsing_then_the_tree_
             sql: "CREATE EXTERNAL AGENT v1 WITH VERSION v1 ;",
             pointer: "/0/raw/sql",
             expected_value: json!("CREATE EXTERNAL AGENT v1 WITH VERSION v1"),
+        },
+        StatementTestCase {
+            description: "EXECUTE IMMEDIATE keeps a bound variable as its source",
+            sql: "EXECUTE IMMEDIATE :q1 USING ( v1 , v2 ) ;",
+            pointer: "/0/execute_immediate/source/parameter/name",
+            expected_value: json!("q1"),
+        },
+        StatementTestCase {
+            description: "EXECUTE IMMEDIATE keeps each USING variable",
+            sql: "EXECUTE IMMEDIATE :q1 USING ( v1 , v2 ) ;",
+            pointer: "/0/execute_immediate/using/1/column/name/name",
+            expected_value: json!("v2"),
+        },
+        StatementTestCase {
+            description: "EXECUTE IMMEDIATE joins a concatenated source left to right",
+            sql: "EXECUTE IMMEDIATE v2 || ',(80)' || $s1 ;",
+            pointer: "/0/execute_immediate/source/concat/right/parameter/style",
+            expected_value: json!("Dollar"),
+        },
+        StatementTestCase {
+            description: "EXECUTE IMMEDIATE FROM keeps its named arguments and dry run",
+            sql: "EXECUTE IMMEDIATE FROM @v1.s1/p1/f1.sql USING ( v1 => 1 ) DRY_RUN = FALSE ;",
+            pointer: "/0/execute_immediate/dry_run",
+            expected_value: json!(false),
+        },
+        StatementTestCase {
+            description: "a RESULTSET keeps EXECUTE IMMEDIATE as a node",
+            sql: "BEGIN LET r1 RESULTSET := ( EXECUTE IMMEDIATE :q1 ) ; END ;",
+            pointer: "/0/scripting_block/body/0/let/declaration/resultset/default/statement/execute_immediate/source/parameter/name",
+            expected_value: json!("q1"),
         },
         StatementTestCase {
             description: "a DEFINE kept as text says DEFINE",
