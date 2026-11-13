@@ -170,14 +170,15 @@ that edits or removes a committed one.
   `unsupported_feature`.
 - `phase_basis`: why the importer chose the phase. The importer applies these rules in order:
   1. An uncaught exception raised while a block ran is a `runtime_error`, unless its errno is
-     1002 or 1003, which is refused.
+     921, 1002 or 1003, which is refused.
   2. Errno 2 `Unsupported feature` is an `unsupported_feature`.
   3. An errno of 100000 or more is a `runtime_error`, unless its SQLSTATE is in class 42. Then it
      is refused unless the errno is a reviewed one, which is a `semantic_error`.
   4. Errno 1003 under the `SQL compilation error` prefix is a `syntax_error`. Any other errno
      under that prefix except 1002 is a `semantic_error`, a compilation error after parsing.
-  5. Errno 1002 is a `syntax_error` when its message itself starts with `syntax error`, in any
-     case and whatever its SQLSTATE; any other errno 1002 is refused.
+  5. Errno 1002 is a `syntax_error` when its message itself starts with `syntax error`, and errno
+     921 when its message starts with `parse error`, in any case and whatever its SQLSTATE; any
+     other errno 1002 or 921 is refused.
   6. Any other error is refused unless its errno is a reviewed one, which is a `semantic_error`.
 
   A reviewed errno is one whose message shows that Snowflake parsed the statement and then

@@ -11,6 +11,8 @@ from scripts.syntax_receipts.constants import (
     MISSING_OBJECT,
     MISSING_OBJECT_MESSAGE,
     OTHER_REASON,
+    PARSE_ERRNO,
+    PARSE_MESSAGE_PREFIX,
     PARSER_SYNTAX_ERRNO,
     REASON_BY_ERRNO,
     RECEIPT_FORMAT,
@@ -34,7 +36,7 @@ def classify(
 ) -> tuple[str, str] | None:
     """The phase of a Snowflake error, or None when the recorded fields do not establish one."""
     if message.startswith(UNCAUGHT_PREFIX):
-        if errno in (SYNTAX_ERRNO, PARSER_SYNTAX_ERRNO):
+        if errno in (SYNTAX_ERRNO, PARSER_SYNTAX_ERRNO, PARSE_ERRNO):
             return None
         return "runtime_error", "uncaught exception raised while the block ran"
     if errno == UNSUPPORTED_ERRNO and message.startswith(UNSUPPORTED_PREFIX):
@@ -51,6 +53,10 @@ def classify(
     if errno == PARSER_SYNTAX_ERRNO:
         if message.lower().startswith(SYNTAX_MESSAGE_PREFIX):
             return "syntax_error", "errno 1002 parser syntax error"
+        return None
+    if errno == PARSE_ERRNO:
+        if message.lower().startswith(PARSE_MESSAGE_PREFIX):
+            return "syntax_error", "errno 921 parse error"
         return None
     if errno is not None and compiled:
         return "semantic_error", f"errno {errno} compilation error after parsing"

@@ -225,6 +225,27 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             expected_classification=("syntax_error", "errno 1002 parser syntax error"),
         ),
         ClassifyTestCase(
+            description="errno 921 whose message says parse error is a syntax error",
+            errno=921,
+            sqlstate="42601",
+            message="parse error line 1 at position 44 unexpected end of SQL statement.",
+            expected_classification=("syntax_error", "errno 921 parse error"),
+        ),
+        ClassifyTestCase(
+            description="errno 921 with any other message is not established",
+            errno=921,
+            sqlstate="42601",
+            message="Invalid argument for the operation.",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
+            description="errno 921 raised while a block runs is not established",
+            errno=921,
+            sqlstate="42601",
+            message="Uncaught exception of type 'STATEMENT_ERROR' : parse error line 1",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
             description="errno 1002 under the compilation prefix is not established",
             errno=1002,
             sqlstate="42601",
