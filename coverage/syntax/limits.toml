@@ -91249,3 +91249,497 @@ sql = "SELECT * FROM TABLE ( DBT_PROJECT_EXECUTION_HISTORY ( OBJECT_TYPE = PROJE
 expect = "observe"
 context = "raw"
 
+
+[[suppress]]
+form = "sf.ddl.alter-database-catalog-linked.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-database-catalog-linked.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-database-catalog-linked / Syntax"
+sql = "ALTER DATABASE v1 SET CONTACT 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-database.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE v1 SET CONTACT 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE v1 UNSET CONTACT 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-schema.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-schema.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-schema / Syntax"
+sql = "ALTER SCHEMA v1 SET CONTACT 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
+kind = "negative_neighbour"
+target = "<purpose> #2"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days"
+kind = "negative_neighbour"
+target = "<purpose> #2"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-schema / Syntax"
+sql = "ALTER SCHEMA v1 UNSET CONTACT 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-table-event-table.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-table-event-table.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-table-event-table / Syntax"
+sql = "ALTER TABLE v1 SET CONTACT 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-table-event-table / Syntax"
+sql = "ALTER TABLE v1 UNSET CONTACT 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-table.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-table.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-table / Syntax"
+sql = "ALTER TABLE v1 SET CONTACT 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-table / Syntax"
+sql = "ALTER TABLE v1 UNSET CONTACT 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-task-graph.set-contact"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-task-graph.set-contact"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+sql = "ALTER TASK GRAPH v1 SET CONTACT 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-task-graph.unset-contact"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-task-graph.unset-contact"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+sql = "ALTER TASK GRAPH v1 UNSET CONTACT 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-task.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-task.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-task / Syntax"
+sql = "ALTER TASK v1 SET CONTACT 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-task.unset"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-task.unset"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-task / Syntax"
+sql = "ALTER TASK v1 UNSET CONTACT 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-view.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-view.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-view / Syntax"
+sql = "ALTER VIEW v1 SET CONTACT 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-view.unset"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-view.unset"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-view / Syntax"
+sql = "ALTER VIEW v1 UNSET CONTACT 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-database.create-database"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-database.create-database"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-database / Syntax"
+sql = "CREATE DATABASE v1 WITH CONTACT ( 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-iceberg-table-aws-glue"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-iceberg-table-aws-glue"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-iceberg-table-aws-glue / Syntax"
+sql = "CREATE ICEBERG TABLE v1 CATALOG_TABLE_NAME = 'm' WITH CONTACT ( 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-iceberg-table.table"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-iceberg-table.table"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-iceberg-table / Syntax / Snowflake as the Iceberg catalog"
+sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) WITH CONTACT ( 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-iceberg-table.table-base-location"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-iceberg-table.table-base-location"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Delta files"
+sql = "CREATE ICEBERG TABLE v1 BASE_LOCATION = 'm' WITH CONTACT ( 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-iceberg-table.table-catalog-table-name"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-iceberg-table.table-catalog-table-name"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST (including Snowflake Open Catalog)"
+sql = "CREATE ICEBERG TABLE v1 CATALOG_TABLE_NAME = 'm' WITH CONTACT ( 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-iceberg-table.table-metadata-file-path"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-iceberg-table.table-metadata-file-path"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg files in object storage"
+sql = "CREATE ICEBERG TABLE v1 METADATA_FILE_PATH = 'm' WITH CONTACT ( 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-materialized-view"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-materialized-view"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-materialized-view / Syntax"
+sql = "CREATE MATERIALIZED VIEW v1 ( v1 ) WITH CONTACT ( 'v1' = v1 ) AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-schema.create-schema"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-schema.create-schema"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-schema / Syntax"
+sql = "CREATE SCHEMA v1 WITH CONTACT ( 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-table.create-table"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-table.create-table"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-table / Syntax"
+sql = "CREATE TABLE v1 ( v1 INT ) WITH CONTACT ( 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-task-graph.create-task-graph"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-task-graph.create-task-graph"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-task-graph / Syntax"
+sql = "CREATE TASK GRAPH v1 WITH CONTACT ( 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-task.create-task-as"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-task.create-task-as"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-task / Syntax"
+sql = "CREATE TASK v1 WITH CONTACT ( 'v1' = v1 ) AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-view.create-view-as"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-view.create-view-as"
+kind = "negative_neighbour"
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-view / Syntax"
+sql = "CREATE VIEW v1 WITH CONTACT ( 'v1' = v1 ) AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.set-contact"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.set-contact"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT SET CONTACT 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.unset-contact"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 511710 SQLSTATE 22023, phase runtime_error, import-20261113-36), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.unset-contact"
+kind = "negative_neighbour"
+target = "<purpose>"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT UNSET CONTACT 'v1' ;"
+expect = "observe"
+context = "raw"
+

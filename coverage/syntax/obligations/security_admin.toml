@@ -3937,13 +3937,6 @@ target = "<purpose>"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set-contact.o017"
-kind = "negative_neighbour"
-required = true
-target = "<purpose>"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.security_admin.alter-account.set-contact.o004"
 kind = "required_operand_missing"
 required = true
@@ -4019,6 +4012,14 @@ required = true
 target = "<purpose>"
 anchor = "doc.sql.alter-account / Syntax / Altering the current account"
 note = "omit <purpose>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set-contact.o018"
+kind = "negative_neighbour"
+required = true
+target = "<purpose>"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set-data-movement-policy.o001"
@@ -5335,13 +5336,6 @@ target = "<purpose>"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.unset-contact.o010"
-kind = "negative_neighbour"
-required = true
-target = "<purpose>"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.security_admin.alter-account.unset-contact.o004"
 kind = "negative_neighbour"
 required = true
@@ -5367,6 +5361,14 @@ required = true
 target = "<purpose>"
 anchor = "doc.sql.alter-account / Syntax / Altering the current account"
 note = "omit <purpose>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.unset-contact.o011"
+kind = "negative_neighbour"
+required = true
+target = "<purpose>"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.unset-data-movement-policy.o001"
