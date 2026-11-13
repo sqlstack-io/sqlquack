@@ -910,6 +910,27 @@ target = "'<scala_or_java_runtime_version>'"
 note = "an unquoted identifier in place of '<scala_or_java_runtime_version>'"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o157"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "omit 'com.snowflake:snowpark:<version>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o158"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o159"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark:<version>'"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o038"
 kind = "option_present"
 required = true
@@ -1755,6 +1776,27 @@ target = "'<scala_or_java_runtime_version>'"
 note = "an unquoted identifier in place of '<scala_or_java_runtime_version>'"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o152"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "omit 'com.snowflake:snowpark:<version>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o153"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o154"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark:<version>'"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o038"
 kind = "option_present"
 required = true
@@ -2559,6 +2601,27 @@ kind = "negative_neighbour"
 required = true
 target = "'<python_version>'"
 note = "an unquoted identifier in place of '<python_version>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o156"
+kind = "required_operand_missing"
+required = true
+target = "'snowflake-snowpark-python[==<version>]'"
+note = "omit 'snowflake-snowpark-python[==<version>]'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o157"
+kind = "operand_type_class"
+required = true
+target = "'snowflake-snowpark-python[==<version>]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o158"
+kind = "negative_neighbour"
+required = true
+target = "'snowflake-snowpark-python[==<version>]'"
+note = "an unquoted identifier in place of 'snowflake-snowpark-python[==<version>]'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o037"
@@ -3401,6 +3464,27 @@ target = "'<python_version>'"
 note = "an unquoted identifier in place of '<python_version>'"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o148"
+kind = "required_operand_missing"
+required = true
+target = "'snowflake-snowpark-python[==<version>]'"
+note = "omit 'snowflake-snowpark-python[==<version>]'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o149"
+kind = "operand_type_class"
+required = true
+target = "'snowflake-snowpark-python[==<version>]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o150"
+kind = "negative_neighbour"
+required = true
+target = "'snowflake-snowpark-python[==<version>]'"
+note = "an unquoted identifier in place of 'snowflake-snowpark-python[==<version>]'"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o037"
 kind = "option_present"
 required = true
@@ -3458,6 +3542,27 @@ id = "sf.utility.call-with.table-language-python-runtime-version.python.o045"
 kind = "option_absent"
 required = true
 target = "[ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o151"
+kind = "required_operand_missing"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "omit '<module_file_name>.<function_name>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o152"
+kind = "operand_type_class"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o153"
+kind = "negative_neighbour"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "an unquoted identifier in place of '<module_file_name>.<function_name>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o047"
@@ -4190,6 +4295,27 @@ kind = "negative_neighbour"
 required = true
 target = "'<scala_runtime_version>'"
 note = "an unquoted identifier in place of '<scala_runtime_version>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o157"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "omit 'com.snowflake:snowpark_<scala_version>:<version>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o158"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o159"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark_<scala_version>:<version>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o038"
@@ -5035,6 +5161,27 @@ kind = "negative_neighbour"
 required = true
 target = "'<scala_or_java_runtime_version>'"
 note = "an unquoted identifier in place of '<scala_or_java_runtime_version>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o152"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "omit 'com.snowflake:snowpark_<scala_version>:<version>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o153"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o154"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark_<scala_version>:<version>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o038"
@@ -8745,6 +8892,62 @@ kind = "negative_neighbour"
 required = true
 target = "<filename>"
 note = "a string literal in place of <filename>"
+
+[[obligation]]
+id = "sf.utility.execute-immediate-from.o064"
+kind = "operand_type_class"
+required = true
+target = "'<path>/<filename>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.execute-immediate-from.o065"
+kind = "negative_neighbour"
+required = true
+target = "'<path>/<filename>'"
+note = "an unquoted identifier in place of '<path>/<filename>'"
+
+[[obligation]]
+id = "sf.utility.execute-immediate-from.o066"
+kind = "operand_type_class"
+required = true
+target = "'/<path>/<filename>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.execute-immediate-from.o067"
+kind = "negative_neighbour"
+required = true
+target = "'/<path>/<filename>'"
+note = "an unquoted identifier in place of '/<path>/<filename>'"
+
+[[obligation]]
+id = "sf.utility.execute-immediate-from.o068"
+kind = "operand_type_class"
+required = true
+target = "'./<path>/<filename>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.execute-immediate-from.o069"
+kind = "negative_neighbour"
+required = true
+target = "'./<path>/<filename>'"
+note = "an unquoted identifier in place of './<path>/<filename>'"
+
+[[obligation]]
+id = "sf.utility.execute-immediate-from.o070"
+kind = "operand_type_class"
+required = true
+target = "'../<path>/<filename>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.execute-immediate-from.o071"
+kind = "negative_neighbour"
+required = true
+target = "'../<path>/<filename>'"
+note = "an unquoted identifier in place of '../<path>/<filename>'"
 
 [[obligation]]
 id = "sf.utility.execute-immediate-from.o006"

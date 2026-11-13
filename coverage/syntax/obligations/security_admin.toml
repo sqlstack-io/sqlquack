@@ -8734,6 +8734,27 @@ required = true
 target = "[ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' ]"
 
 [[obligation]]
+id = "sf.security_admin.alter-backup-policy.set.o030"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "omit '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.security_admin.alter-backup-policy.set.o031"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-backup-policy.set.o032"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "an unquoted identifier in place of '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
 id = "sf.security_admin.alter-backup-policy.set.o012"
 kind = "option_present"
 required = true
@@ -15957,6 +15978,27 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.set-replication-schedule.o017"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+note = "omit '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.set-replication-schedule.o018"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-failover-group.set-replication-schedule.o019"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+note = "an unquoted identifier in place of '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
 
 [[obligation]]
 id = "sf.security_admin.alter-failover-group.set-replication-schedule.o007"
@@ -32997,6 +33039,27 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
+id = "sf.security_admin.alter-replication-group.set-replication-schedule.o017"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+note = "omit '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.set-replication-schedule.o018"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-replication-group.set-replication-schedule.o019"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+note = "an unquoted identifier in place of '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
 id = "sf.security_admin.alter-replication-group.set-replication-schedule.o007"
 kind = "negative_neighbour"
 required = true
@@ -46124,6 +46187,27 @@ required = true
 target = "[ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' ]"
 
 [[obligation]]
+id = "sf.security_admin.alter-snapshot-policy.set.o033"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "omit '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.security_admin.alter-snapshot-policy.set.o034"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-snapshot-policy.set.o035"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "an unquoted identifier in place of '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
 id = "sf.security_admin.alter-snapshot-policy.set.o012"
 kind = "option_present"
 required = true
@@ -46913,6 +46997,27 @@ required = true
 target = "[ STORAGE_ALLOWED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ , '<cloud>://<bucket>/<path>/' ... ] ) ]"
 
 [[obligation]]
+id = "sf.security_admin.alter-storage-integration.set.o074"
+kind = "required_operand_missing"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ STORAGE_ALLOWED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ ,…"
+note = "omit '<cloud>://<bucket>/<path>/'"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.set.o075"
+kind = "operand_type_class"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ STORAGE_ALLOWED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ ,…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.set.o076"
+kind = "negative_neighbour"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ STORAGE_ALLOWED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ ,…"
+note = "an unquoted identifier in place of '<cloud>://<bucket>/<path>/'"
+
+[[obligation]]
 id = "sf.security_admin.alter-storage-integration.set.o047"
 kind = "option_present"
 required = true
@@ -46936,6 +47041,27 @@ id = "sf.security_admin.alter-storage-integration.set.o050"
 kind = "option_absent"
 required = true
 target = "[ STORAGE_BLOCKED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ , '<cloud>://<bucket>/<path>/' ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.set.o077"
+kind = "required_operand_missing"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ STORAGE_BLOCKED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ ,…"
+note = "omit '<cloud>://<bucket>/<path>/'"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.set.o078"
+kind = "operand_type_class"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ STORAGE_BLOCKED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ ,…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.set.o079"
+kind = "negative_neighbour"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ STORAGE_BLOCKED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ ,…"
+note = "an unquoted identifier in place of '<cloud>://<bucket>/<path>/'"
 
 [[obligation]]
 id = "sf.security_admin.alter-storage-integration.set.o051"
@@ -58999,6 +59125,27 @@ target = "git_https_api"
 note = "a valid operand"
 
 [[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.o047"
+kind = "required_operand_missing"
+required = true
+target = "'https://github.com/<...>'"
+note = "omit 'https://github.com/<...>'"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.o048"
+kind = "operand_type_class"
+required = true
+target = "'https://github.com/<...>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.o049"
+kind = "negative_neighbour"
+required = true
+target = "'https://github.com/<...>'"
+note = "an unquoted identifier in place of 'https://github.com/<...>'"
+
+[[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.o011"
 kind = "option_present"
 required = true
@@ -59294,6 +59441,27 @@ kind = "operand_type_class"
 required = true
 target = "git_https_api"
 note = "a valid operand"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository.o050"
+kind = "required_operand_missing"
+required = true
+target = "'https://example.com/<...>'"
+note = "omit 'https://example.com/<...>'"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository.o051"
+kind = "operand_type_class"
+required = true
+target = "'https://example.com/<...>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository.o052"
+kind = "negative_neighbour"
+required = true
+target = "'https://example.com/<...>'"
+note = "an unquoted identifier in place of 'https://example.com/<...>'"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository.o011"
@@ -62651,6 +62819,27 @@ required = true
 target = "[ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' ]"
 
 [[obligation]]
+id = "sf.security_admin.create-backup-policy.backup-policy.o060"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "omit '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.security_admin.create-backup-policy.backup-policy.o061"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-backup-policy.backup-policy.o062"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "an unquoted identifier in place of '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
 id = "sf.security_admin.create-backup-policy.backup-policy.o025"
 kind = "option_present"
 required = true
@@ -62938,6 +63127,27 @@ required = true
 target = "[ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' ]"
 
 [[obligation]]
+id = "sf.security_admin.create-backup-policy.or-alter-backup-policy.o035"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "omit '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.security_admin.create-backup-policy.or-alter-backup-policy.o036"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-backup-policy.or-alter-backup-policy.o037"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "an unquoted identifier in place of '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
 id = "sf.security_admin.create-backup-policy.or-alter-backup-policy.o009"
 kind = "option_present"
 required = true
@@ -63182,6 +63392,27 @@ target = "'<delta_sharing_endpoint_url>'"
 note = "an unquoted identifier in place of '<delta_sharing_endpoint_url>'"
 
 [[obligation]]
+id = "sf.security_admin.create-catalog-integration-delta-sharing.o078"
+kind = "required_operand_missing"
+required = true
+target = "'shares/<share_name>'"
+note = "omit 'shares/<share_name>'"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-delta-sharing.o079"
+kind = "operand_type_class"
+required = true
+target = "'shares/<share_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-delta-sharing.o080"
+kind = "negative_neighbour"
+required = true
+target = "'shares/<share_name>'"
+note = "an unquoted identifier in place of 'shares/<share_name>'"
+
+[[obligation]]
 id = "sf.security_admin.create-catalog-integration-delta-sharing.o012"
 kind = "alternative"
 required = true
@@ -63297,6 +63528,27 @@ kind = "negative_neighbour"
 required = true
 target = "'<oauth_client_secret>'"
 note = "an unquoted identifier in place of '<oauth_client_secret>'"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-delta-sharing.o081"
+kind = "required_operand_missing"
+required = true
+target = "'https://<token_server_uri>'"
+note = "omit 'https://<token_server_uri>'"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-delta-sharing.o082"
+kind = "operand_type_class"
+required = true
+target = "'https://<token_server_uri>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-delta-sharing.o083"
+kind = "negative_neighbour"
+required = true
+target = "'https://<token_server_uri>'"
+note = "an unquoted identifier in place of 'https://<token_server_uri>'"
 
 [[obligation]]
 id = "sf.security_admin.create-catalog-integration-delta-sharing.o030"
@@ -64890,6 +65142,27 @@ required = true
 target = "[ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ]"
 
 [[obligation]]
+id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth.o087"
+kind = "required_operand_missing"
+required = true
+target = "'https://<token_server_uri>' in [ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ]"
+note = "omit 'https://<token_server_uri>'"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth.o088"
+kind = "operand_type_class"
+required = true
+target = "'https://<token_server_uri>' in [ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth.o089"
+kind = "negative_neighbour"
+required = true
+target = "'https://<token_server_uri>' in [ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ]"
+note = "an unquoted identifier in place of 'https://<token_server_uri>'"
+
+[[obligation]]
 id = "sf.security_admin.create-catalog-integration-open-catalog.catalog-name-rest-authentication-type-oauth.o032"
 kind = "required_operand_missing"
 required = true
@@ -65581,6 +65854,27 @@ id = "sf.security_admin.create-catalog-integration-rest.o054"
 kind = "option_absent"
 required = true
 target = "[ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-rest.o128"
+kind = "required_operand_missing"
+required = true
+target = "'https://<token_server_uri>' in [ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ]"
+note = "omit 'https://<token_server_uri>'"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-rest.o129"
+kind = "operand_type_class"
+required = true
+target = "'https://<token_server_uri>' in [ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-catalog-integration-rest.o130"
+kind = "negative_neighbour"
+required = true
+target = "'https://<token_server_uri>' in [ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ]"
+note = "an unquoted identifier in place of 'https://<token_server_uri>'"
 
 [[obligation]]
 id = "sf.security_admin.create-catalog-integration-rest.o055"
@@ -68241,6 +68535,27 @@ required = true
 target = "[ REPLICATION_SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
 
 [[obligation]]
+id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o111"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ REPLICATION_SCHEDULE = '{ <num> MINUTE | USING CRON <expr>…"
+note = "omit '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o112"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ REPLICATION_SCHEDULE = '{ <num> MINUTE | USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o113"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ REPLICATION_SCHEDULE = '{ <num> MINUTE | USING CRON <expr>…"
+note = "an unquoted identifier in place of '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
 id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o052"
 kind = "option_present"
 required = true
@@ -69413,6 +69728,27 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.create-maintenance-policy.o026"
+kind = "required_operand_missing"
+required = true
+target = "'USING CRON <cron_spec> <timezone>'"
+note = "omit 'USING CRON <cron_spec> <timezone>'"
+
+[[obligation]]
+id = "sf.security_admin.create-maintenance-policy.o027"
+kind = "operand_type_class"
+required = true
+target = "'USING CRON <cron_spec> <timezone>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-maintenance-policy.o028"
+kind = "negative_neighbour"
+required = true
+target = "'USING CRON <cron_spec> <timezone>'"
+note = "an unquoted identifier in place of 'USING CRON <cron_spec> <timezone>'"
 
 [[obligation]]
 id = "sf.security_admin.create-maintenance-policy.o009"
@@ -78513,6 +78849,27 @@ id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o
 kind = "option_absent"
 required = true
 target = "[ REPLICATION_SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+
+[[obligation]]
+id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o106"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ REPLICATION_SCHEDULE = '{ <num> MINUTE | USING CRON <expr>…"
+note = "omit '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o107"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ REPLICATION_SCHEDULE = '{ <num> MINUTE | USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o108"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ REPLICATION_SCHEDULE = '{ <num> MINUTE | USING CRON <expr>…"
+note = "an unquoted identifier in place of '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
 
 [[obligation]]
 id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o052"
@@ -91842,6 +92199,27 @@ required = true
 target = "[ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' ]"
 
 [[obligation]]
+id = "sf.security_admin.create-snapshot-policy.o064"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "omit '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.security_admin.create-snapshot-policy.o065"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-snapshot-policy.o066"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | <num> HOUR | USING…"
+note = "an unquoted identifier in place of '{ <num> MINUTE | <num> HOUR | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
 id = "sf.security_admin.create-snapshot-policy.o025"
 kind = "option_present"
 required = true
@@ -92362,6 +92740,27 @@ required = true
 target = "{ TRUE | FALSE } → FALSE #3"
 
 [[obligation]]
+id = "sf.security_admin.create-storage-integration.o082"
+kind = "required_operand_missing"
+required = true
+target = "'<cloud>://<bucket>/<path>/'"
+note = "omit '<cloud>://<bucket>/<path>/'"
+
+[[obligation]]
+id = "sf.security_admin.create-storage-integration.o083"
+kind = "operand_type_class"
+required = true
+target = "'<cloud>://<bucket>/<path>/'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-storage-integration.o084"
+kind = "negative_neighbour"
+required = true
+target = "'<cloud>://<bucket>/<path>/'"
+note = "an unquoted identifier in place of '<cloud>://<bucket>/<path>/'"
+
+[[obligation]]
 id = "sf.security_admin.create-storage-integration.o041"
 kind = "option_present"
 required = true
@@ -92385,6 +92784,27 @@ id = "sf.security_admin.create-storage-integration.o044"
 kind = "option_absent"
 required = true
 target = "[ STORAGE_BLOCKED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ , '<cloud>://<bucket>/<path>/' ... ] ) ]"
+
+[[obligation]]
+id = "sf.security_admin.create-storage-integration.o085"
+kind = "required_operand_missing"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ STORAGE_BLOCKED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ ,…"
+note = "omit '<cloud>://<bucket>/<path>/'"
+
+[[obligation]]
+id = "sf.security_admin.create-storage-integration.o086"
+kind = "operand_type_class"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ STORAGE_BLOCKED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ ,…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-storage-integration.o087"
+kind = "negative_neighbour"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ STORAGE_BLOCKED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' [ ,…"
+note = "an unquoted identifier in place of '<cloud>://<bucket>/<path>/'"
 
 [[obligation]]
 id = "sf.security_admin.create-storage-integration.o045"

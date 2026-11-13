@@ -187,6 +187,13 @@ target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_nam
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o063"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
+note = "a string literal in place of <tag_name>"
+
+[[obligation]]
 id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o034"
 kind = "required_operand_missing"
 required = true
@@ -199,6 +206,13 @@ kind = "operand_type_class"
 required = true
 target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
 note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o064"
+kind = "negative_neighbour"
+required = true
+target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
+note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
 id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o037"
@@ -488,6 +502,13 @@ target = "<pattern> in [ LIKE <pattern> ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o040"
+kind = "negative_neighbour"
+required = true
+target = "<pattern> in [ LIKE <pattern> ]"
+note = "an unquoted identifier in place of <pattern>"
+
+[[obligation]]
 id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o009"
 kind = "option_present"
 required = true
@@ -693,6 +714,13 @@ target = "<model_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.anomaly-detection.methods.detect-anomalies.o031"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
+
+[[obligation]]
 id = "sf.classes.anomaly-detection.methods.detect-anomalies.o005"
 kind = "required_operand_missing"
 required = true
@@ -863,6 +891,13 @@ kind = "operand_type_class"
 required = true
 target = "<model_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.methods.show-evaluation-metrics.show-evaluation-metrics-input-data-timestamp-colname-target-colname.o035"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
 
 [[obligation]]
 id = "sf.classes.anomaly-detection.methods.show-evaluation-metrics.show-evaluation-metrics-input-data-timestamp-colname-target-colname.o005"
@@ -2379,6 +2414,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.set-account-notification-emails.o009"
+kind = "operand_type_class"
+required = true
+target = "'<email_address> [, <email_address> ... ]'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.set-account-notification-emails.o003"
 kind = "negative_neighbour"
 required = true
@@ -2438,6 +2480,20 @@ target = "'<alias>'"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.set-monitor-notification-emails.o013"
+kind = "required_operand_missing"
+required = true
+target = "'<email_address> [, <email_address> ... ]'"
+note = "omit '<email_address> [, <email_address> ... ]'"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.set-monitor-notification-emails.o014"
+kind = "operand_type_class"
+required = true
+target = "'<email_address> [, <email_address> ... ]'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.set-monitor-notification-emails.o006"
 kind = "negative_neighbour"
 required = true
@@ -2489,6 +2545,13 @@ id = "sf.classes.anomaly-insights.methods.set-org-notification-emails.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.set-org-notification-emails.o009"
+kind = "operand_type_class"
+required = true
+target = "'<email_address> [, <email_address> ... ]'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.set-org-notification-emails.o003"
@@ -3563,6 +3626,13 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.classes.budget.commands.show-budget.o051"
+kind = "negative_neighbour"
+required = true
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "an unquoted identifier in place of '<pattern>'"
+
+[[obligation]]
 id = "sf.classes.budget.commands.show-budget.o009"
 kind = "option_present"
 required = true
@@ -3872,6 +3942,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.add-custom-action.o028"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.add-custom-action.o005"
 kind = "alternative"
 required = true
@@ -4021,6 +4098,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.add-notification-integration.o013"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.add-notification-integration.o006"
 kind = "operand_type_class"
 required = true
@@ -4080,6 +4164,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.add-resource.o016"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.add-resource.o005"
@@ -4160,6 +4251,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.add-resource-tag.o019"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.add-resource-tag.o005"
@@ -4260,6 +4358,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.add-shared-resource.o025"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.add-shared-resource.o006"
@@ -4367,6 +4472,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.add-tag.o019"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.add-tag.o005"
 kind = "alternative"
 required = true
@@ -4467,6 +4579,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.confirm-custom-actions-access.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.confirm-custom-actions-access.o005"
 kind = "negative_neighbour"
 required = true
@@ -4559,6 +4678,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.get-budget-scope.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.get-budget-scope.o005"
 kind = "negative_neighbour"
 required = true
@@ -4611,6 +4737,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.get-config.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.get-config.o005"
@@ -4667,6 +4800,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.get-custom-actions.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.get-custom-actions.o005"
 kind = "negative_neighbour"
 required = true
@@ -4719,6 +4859,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.get-cycle-start-action.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.get-cycle-start-action.o005"
@@ -4775,6 +4922,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.get-linked-resources.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.get-linked-resources.o005"
 kind = "negative_neighbour"
 required = true
@@ -4827,6 +4981,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.get-linked-tags.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.get-linked-tags.o005"
@@ -4883,6 +5044,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.get-measurement-table.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.get-measurement-table.o005"
 kind = "negative_neighbour"
 required = true
@@ -4935,6 +5103,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.get-notification-email.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.get-notification-email.o005"
@@ -4991,6 +5166,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.get-notification-integration-name.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.get-notification-integration-name.o005"
 kind = "negative_neighbour"
 required = true
@@ -5043,6 +5225,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.get-notification-integrations.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.get-notification-integrations.o005"
@@ -5099,6 +5288,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.get-notification-mute-flag.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.get-notification-mute-flag.o005"
 kind = "negative_neighbour"
 required = true
@@ -5151,6 +5347,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.get-notification-threshold.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.get-notification-threshold.o005"
@@ -5207,6 +5410,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.get-refresh-tier.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.get-refresh-tier.o005"
 kind = "negative_neighbour"
 required = true
@@ -5261,6 +5471,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.get-resource-tags.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.get-resource-tags.o005"
 kind = "negative_neighbour"
 required = true
@@ -5313,6 +5530,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.get-service-type-usage.o028"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.get-service-type-usage.o005"
@@ -5469,6 +5693,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.get-service-type-usage-v2.o016"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.get-service-type-usage-v2.o005"
 kind = "required_operand_missing"
 required = true
@@ -5551,6 +5782,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.get-shared-resources.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.get-shared-resources.o005"
 kind = "negative_neighbour"
 required = true
@@ -5603,6 +5841,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.get-spending-history.o017"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.get-spending-history.o005"
@@ -5705,6 +5950,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.get-spending-limit.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.get-spending-limit.o005"
 kind = "negative_neighbour"
 required = true
@@ -5757,6 +6009,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.refresh-usage.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.refresh-usage.o005"
@@ -5813,6 +6072,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions.o005"
 kind = "negative_neighbour"
 required = true
@@ -5865,6 +6131,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions-2.o016"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions-2.o005"
@@ -5949,6 +6222,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions.syntax.o012"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions.syntax.o011"
 kind = "operand_type_class"
 required = true
@@ -6010,6 +6290,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.remove-cycle-start-action.o010"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.remove-cycle-start-action.o005"
 kind = "negative_neighbour"
 required = true
@@ -6062,6 +6349,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.remove-notification-integration.o013"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.remove-notification-integration.o006"
@@ -6123,6 +6417,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.remove-resource.o016"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.remove-resource.o005"
@@ -6203,6 +6504,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.remove-resource-tag.o018"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.remove-resource-tag.o005"
@@ -6303,6 +6611,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.remove-shared-resource.o025"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.remove-shared-resource.o006"
@@ -6410,6 +6725,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.remove-tag.o018"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.remove-tag.o005"
 kind = "alternative"
 required = true
@@ -6508,6 +6830,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.set-cycle-start-action.o021"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.set-cycle-start-action.o005"
@@ -6628,6 +6957,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.set-email-notifications.o017"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.set-email-notifications.o005"
 kind = "option_present"
 required = true
@@ -6723,6 +7059,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.set-notification-mute-flag.o013"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.set-notification-mute-flag.o005"
 kind = "alternative"
 required = true
@@ -6789,6 +7132,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.set-notification-threshold.o013"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.set-notification-threshold.o012"
 kind = "operand_type_class"
 required = true
@@ -6850,6 +7200,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.set-refresh-tier.o013"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.set-refresh-tier.o006"
 kind = "operand_type_class"
 required = true
@@ -6909,6 +7266,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.set-resource-tags.o015"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.set-resource-tags.o005"
@@ -6993,6 +7357,13 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.budget.methods.set-spending-limit.o013"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
+
+[[obligation]]
 id = "sf.classes.budget.methods.set-spending-limit.o006"
 kind = "operand_type_class"
 required = true
@@ -7052,6 +7423,13 @@ kind = "operand_type_class"
 required = true
 target = "<budget_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.methods.set-user-tags.o015"
+kind = "negative_neighbour"
+required = true
+target = "<budget_name>"
+note = "a string literal in place of <budget_name>"
 
 [[obligation]]
 id = "sf.classes.budget.methods.set-user-tags.o005"
@@ -7365,6 +7743,13 @@ target = "<pattern> in [ LIKE <pattern> ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.classes.classification-profile.commands.show-classification-profile.o031"
+kind = "negative_neighbour"
+required = true
+target = "<pattern> in [ LIKE <pattern> ]"
+note = "an unquoted identifier in place of <pattern>"
+
+[[obligation]]
 id = "sf.classes.classification-profile.commands.show-classification-profile.o007"
 kind = "option_present"
 required = true
@@ -7531,6 +7916,13 @@ target = "<classification_profile_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification-profile.methods.describe.o011"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
+
+[[obligation]]
 id = "sf.classes.classification-profile.methods.describe.o005"
 kind = "negative_neighbour"
 required = true
@@ -7593,6 +7985,13 @@ target = "<classification_profile_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification-profile.methods.enable-auto-scheduling-mode.o010"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
+
+[[obligation]]
 id = "sf.classes.classification-profile.methods.enable-auto-scheduling-mode.o005"
 kind = "negative_neighbour"
 required = true
@@ -7645,6 +8044,13 @@ kind = "operand_type_class"
 required = true
 target = "<classification_profile_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification-profile.methods.set-ai-mode.o012"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
 
 [[obligation]]
 id = "sf.classes.classification-profile.methods.set-ai-mode.o006"
@@ -7708,6 +8114,13 @@ target = "<classification_profile_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification-profile.methods.set-auto-tag.o012"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
+
+[[obligation]]
 id = "sf.classes.classification-profile.methods.set-auto-tag.o006"
 kind = "operand_type_class"
 required = true
@@ -7767,6 +8180,13 @@ kind = "operand_type_class"
 required = true
 target = "<classification_profile_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification-profile.methods.set-classify-views.o012"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
 
 [[obligation]]
 id = "sf.classes.classification-profile.methods.set-classify-views.o006"
@@ -7830,6 +8250,13 @@ target = "<classification_profile_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification-profile.methods.set-custom-classifiers.o012"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
+
+[[obligation]]
 id = "sf.classes.classification-profile.methods.set-custom-classifiers.o006"
 kind = "operand_type_class"
 required = true
@@ -7889,6 +8316,13 @@ kind = "operand_type_class"
 required = true
 target = "<classification_profile_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification-profile.methods.set-enable-tag-based-sensitive-data-exclusion.o012"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
 
 [[obligation]]
 id = "sf.classes.classification-profile.methods.set-enable-tag-based-sensitive-data-exclusion.o006"
@@ -7952,6 +8386,13 @@ target = "<classification_profile_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification-profile.methods.set-maximum-classification-validity-days.o013"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
+
+[[obligation]]
 id = "sf.classes.classification-profile.methods.set-maximum-classification-validity-days.o012"
 kind = "operand_type_class"
 required = true
@@ -8011,6 +8452,13 @@ kind = "operand_type_class"
 required = true
 target = "<classification_profile_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification-profile.methods.set-minimum-object-age-for-classification-days.o013"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
 
 [[obligation]]
 id = "sf.classes.classification-profile.methods.set-minimum-object-age-for-classification-days.o012"
@@ -8074,6 +8522,13 @@ target = "<classification_profile_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification-profile.methods.set-snowflake-semantic-categories.o012"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
+
+[[obligation]]
 id = "sf.classes.classification-profile.methods.set-snowflake-semantic-categories.o006"
 kind = "operand_type_class"
 required = true
@@ -8133,6 +8588,13 @@ kind = "operand_type_class"
 required = true
 target = "<classification_profile_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification-profile.methods.set-tag-map.o012"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
 
 [[obligation]]
 id = "sf.classes.classification-profile.methods.set-tag-map.o006"
@@ -8196,6 +8658,13 @@ target = "<classification_profile_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification-profile.methods.unset-custom-classifiers.o010"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
+
+[[obligation]]
 id = "sf.classes.classification-profile.methods.unset-custom-classifiers.o005"
 kind = "negative_neighbour"
 required = true
@@ -8248,6 +8717,13 @@ kind = "operand_type_class"
 required = true
 target = "<classification_profile_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification-profile.methods.unset-maximum-classification-validity-days.o010"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
 
 [[obligation]]
 id = "sf.classes.classification-profile.methods.unset-maximum-classification-validity-days.o005"
@@ -8304,6 +8780,13 @@ target = "<classification_profile_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification-profile.methods.unset-snowflake-semantic-categories.o010"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
+
+[[obligation]]
 id = "sf.classes.classification-profile.methods.unset-snowflake-semantic-categories.o005"
 kind = "negative_neighbour"
 required = true
@@ -8356,6 +8839,13 @@ kind = "operand_type_class"
 required = true
 target = "<classification_profile_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification-profile.methods.unset-tag-map.o010"
+kind = "negative_neighbour"
+required = true
+target = "<classification_profile_name>"
+note = "a string literal in place of <classification_profile_name>"
 
 [[obligation]]
 id = "sf.classes.classification-profile.methods.unset-tag-map.o005"
@@ -9173,6 +9663,13 @@ target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_nam
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification.commands.create-classification.o055"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ) ]"
+note = "a string literal in place of <tag_name>"
+
+[[obligation]]
 id = "sf.classes.classification.commands.create-classification.o025"
 kind = "required_operand_missing"
 required = true
@@ -9185,6 +9682,13 @@ kind = "operand_type_class"
 required = true
 target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ) ]"
 note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.classification.commands.create-classification.o056"
+kind = "negative_neighbour"
+required = true
+target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ] ) ]"
+note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
 id = "sf.classes.classification.commands.create-classification.o028"
@@ -9480,6 +9984,13 @@ target = "<pattern> in [ LIKE <pattern> ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.classes.classification.commands.show-classification.o040"
+kind = "negative_neighbour"
+required = true
+target = "<pattern> in [ LIKE <pattern> ]"
+note = "an unquoted identifier in place of <pattern>"
+
+[[obligation]]
 id = "sf.classes.classification.commands.show-classification.o009"
 kind = "option_present"
 required = true
@@ -9685,6 +10196,13 @@ target = "<model_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification.methods.predict.o017"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
+
+[[obligation]]
 id = "sf.classes.classification.methods.predict.o005"
 kind = "required_operand_missing"
 required = true
@@ -9785,6 +10303,13 @@ target = "<model_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification.methods.show-confusion-matrix.o010"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
+
+[[obligation]]
 id = "sf.classes.classification.methods.show-confusion-matrix.o005"
 kind = "negative_neighbour"
 required = true
@@ -9837,6 +10362,13 @@ kind = "operand_type_class"
 required = true
 target = "<model_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification.methods.show-evaluation-metrics.o010"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
 
 [[obligation]]
 id = "sf.classes.classification.methods.show-evaluation-metrics.o005"
@@ -9893,6 +10425,13 @@ target = "<model_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification.methods.show-feature-importance.o010"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
+
+[[obligation]]
 id = "sf.classes.classification.methods.show-feature-importance.o005"
 kind = "negative_neighbour"
 required = true
@@ -9947,6 +10486,13 @@ target = "<model_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.classification.methods.show-global-evaluation-metrics.o010"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
+
+[[obligation]]
 id = "sf.classes.classification.methods.show-global-evaluation-metrics.o005"
 kind = "negative_neighbour"
 required = true
@@ -9999,6 +10545,13 @@ kind = "operand_type_class"
 required = true
 target = "<model_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification.methods.show-threshold-metrics.o010"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
 
 [[obligation]]
 id = "sf.classes.classification.methods.show-threshold-metrics.o005"
@@ -10281,6 +10834,13 @@ target = "<pattern> in [ LIKE <pattern> ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o040"
+kind = "negative_neighbour"
+required = true
+target = "<pattern> in [ LIKE <pattern> ]"
+note = "an unquoted identifier in place of <pattern>"
+
+[[obligation]]
 id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o009"
 kind = "option_present"
 required = true
@@ -10484,6 +11044,13 @@ kind = "operand_type_class"
 required = true
 target = "<custom_classifier>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.methods.add-regex.o041"
+kind = "negative_neighbour"
+required = true
+target = "<custom_classifier>"
+note = "a string literal in place of <custom_classifier>"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.methods.add-regex.o004"
@@ -10712,6 +11279,13 @@ target = "<custom_classifier>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.custom-classifier.methods.delete-category.o013"
+kind = "negative_neighbour"
+required = true
+target = "<custom_classifier>"
+note = "a string literal in place of <custom_classifier>"
+
+[[obligation]]
 id = "sf.classes.custom-classifier.methods.delete-category.o005"
 kind = "operand_type_class"
 required = true
@@ -10764,6 +11338,13 @@ kind = "operand_type_class"
 required = true
 target = "<custom_classifier>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.methods.list.o011"
+kind = "negative_neighbour"
+required = true
+target = "<custom_classifier>"
+note = "a string literal in place of <custom_classifier>"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.methods.list.o004"
@@ -11121,6 +11702,13 @@ target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_nam
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o063"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
+note = "a string literal in place of <tag_name>"
+
+[[obligation]]
 id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o033"
 kind = "required_operand_missing"
 required = true
@@ -11133,6 +11721,13 @@ kind = "operand_type_class"
 required = true
 target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
 note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o064"
+kind = "negative_neighbour"
+required = true
+target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
+note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
 id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o036"
@@ -11428,6 +12023,13 @@ target = "<pattern> in [ LIKE <pattern> ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.classes.forecast.commands.show-forecast.o040"
+kind = "negative_neighbour"
+required = true
+target = "<pattern> in [ LIKE <pattern> ]"
+note = "an unquoted identifier in place of <pattern>"
+
+[[obligation]]
 id = "sf.classes.forecast.commands.show-forecast.o009"
 kind = "option_present"
 required = true
@@ -11633,6 +12235,13 @@ target = "<model_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.forecast.methods.explain-feature-importance.o010"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
+
+[[obligation]]
 id = "sf.classes.forecast.methods.explain-feature-importance.o005"
 kind = "negative_neighbour"
 required = true
@@ -11685,6 +12294,13 @@ kind = "operand_type_class"
 required = true
 target = "<name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.forecast.methods.forecast.forecasting-periods.o018"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
 
 [[obligation]]
 id = "sf.classes.forecast.methods.forecast.forecasting-periods.o005"
@@ -11785,6 +12401,13 @@ kind = "operand_type_class"
 required = true
 target = "<name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.forecast.methods.forecast.input-data-timestamp-colname.o021"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
 
 [[obligation]]
 id = "sf.classes.forecast.methods.forecast.input-data-timestamp-colname.o005"
@@ -11907,6 +12530,13 @@ target = "<name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.forecast.methods.forecast.series-value-forecasting-periods.o021"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
+
+[[obligation]]
 id = "sf.classes.forecast.methods.forecast.series-value-forecasting-periods.o005"
 kind = "required_operand_missing"
 required = true
@@ -12025,6 +12655,13 @@ kind = "operand_type_class"
 required = true
 target = "<name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname.o030"
+kind = "negative_neighbour"
+required = true
+target = "<name>"
+note = "a string literal in place of <name>"
 
 [[obligation]]
 id = "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname.o005"
@@ -12187,6 +12824,13 @@ target = "<model_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.forecast.methods.show-evaluation-metrics.show-evaluation-metrics.o010"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
+
+[[obligation]]
 id = "sf.classes.forecast.methods.show-evaluation-metrics.show-evaluation-metrics.o005"
 kind = "negative_neighbour"
 required = true
@@ -12239,6 +12883,13 @@ kind = "operand_type_class"
 required = true
 target = "<model_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.forecast.methods.show-evaluation-metrics.show-evaluation-metrics-input-data-timestamp-colname-target-colname.o031"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
 
 [[obligation]]
 id = "sf.classes.forecast.methods.show-evaluation-metrics.show-evaluation-metrics-input-data-timestamp-colname-target-colname.o005"
@@ -12413,6 +13064,13 @@ target = "<model_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.forecast.methods.show-training-logs.o010"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
+
+[[obligation]]
 id = "sf.classes.forecast.methods.show-training-logs.o005"
 kind = "negative_neighbour"
 required = true
@@ -12536,6 +13194,13 @@ target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_nam
 note = "a valid identifier"
 
 [[obligation]]
+id = "sf.classes.top-insights.commands.create-top-insights.o043"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
+note = "a string literal in place of <tag_name>"
+
+[[obligation]]
 id = "sf.classes.top-insights.commands.create-top-insights.o016"
 kind = "required_operand_missing"
 required = true
@@ -12548,6 +13213,13 @@ kind = "operand_type_class"
 required = true
 target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
 note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.create-top-insights.o044"
+kind = "negative_neighbour"
+required = true
+target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
+note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
 id = "sf.classes.top-insights.commands.create-top-insights.o019"
@@ -12825,6 +13497,13 @@ target = "<pattern> in [ LIKE <pattern> ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.classes.top-insights.commands.show-top-insights.o040"
+kind = "negative_neighbour"
+required = true
+target = "<pattern> in [ LIKE <pattern> ]"
+note = "an unquoted identifier in place of <pattern>"
+
+[[obligation]]
 id = "sf.classes.top-insights.commands.show-top-insights.o009"
 kind = "option_present"
 required = true
@@ -13028,6 +13707,13 @@ kind = "operand_type_class"
 required = true
 target = "<model_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.top-insights.methods.get-drivers.o021"
+kind = "negative_neighbour"
+required = true
+target = "<model_name>"
+note = "a string literal in place of <model_name>"
 
 [[obligation]]
 id = "sf.classes.top-insights.methods.get-drivers.o005"

@@ -18,6 +18,7 @@ from scripts.grammar_obligations.constants import (
     NODE_TOKEN,
     OPEN_CHOICE,
     OPEN_OPTIONAL,
+    PLACEHOLDER_IN_LITERAL,
     QUOTED_PLACEHOLDER,
     TOKEN,
     TOKEN_BRACKET,
@@ -29,6 +30,10 @@ from scripts.grammar_obligations.constants import (
     VALUE_TOKENS,
 )
 from scripts.grammar_obligations.models import Node
+
+TEMPLATE_OPERANDS: bool = False
+"""Whether a quoted value built from placeholders is a string operand; a dialect's install sets
+it."""
 
 
 def tokens(production: str) -> list[tuple[str, str]]:
@@ -161,6 +166,16 @@ def placeholder_name(node: Node) -> str:
     if node.token_kind == TOKEN_LITERAL and quoted:
         return quoted.group(1).lower()
     return ""
+
+
+def template_name(node: Node) -> str:
+    """A quoted value built from placeholders, such as `'<num> MINUTE'`, lower-cased without its
+    quotes when TEMPLATE_OPERANDS is set; empty for anything else, a lone `'<name>'` included."""
+    if not TEMPLATE_OPERANDS or node.kind != NODE_TOKEN or node.token_kind != TOKEN_LITERAL:
+        return ""
+    if QUOTED_PLACEHOLDER.fullmatch(node.text) or not PLACEHOLDER_IN_LITERAL.search(node.text):
+        return ""
+    return node.text.strip("'").lower()
 
 
 def operand_class(name: str) -> str:
