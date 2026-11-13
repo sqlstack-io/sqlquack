@@ -245,7 +245,7 @@ impl Parser {
             }
             let mut contacts: Vec<ObjectProperty> = Vec::new();
             loop {
-                let purpose = self.parse_external_name()?;
+                let purpose = self.parse_contact_purpose(Self::parse_external_name)?;
                 self.expect_token(TokenType::Eq)?;
                 let contact = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
                 contacts.push(property("CONTACT", Some(purpose), Some(contact)));
@@ -322,7 +322,7 @@ impl Parser {
                     && !self.check(TokenType::Semicolon)
                     && !self.check(TokenType::Comma)
                 {
-                    true => Some(self.parse_external_name()?),
+                    true => Some(self.parse_contact_purpose(Self::parse_external_name)?),
                     false => None,
                 };
                 properties.push(property("CONTACT", purpose, None));

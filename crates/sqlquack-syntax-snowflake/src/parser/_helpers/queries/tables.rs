@@ -1413,14 +1413,19 @@ impl Parser {
         prev_token.span.end == curr_token.span.start
     }
 
-    /// An object name after DROP, UNDROP or TRUNCATE; Snowflake rejects unquoted reserved words.
+    /// An object name after DROP, UNDROP, TRUNCATE, MERGE INTO or LIKE; Snowflake rejects unquoted reserved words.
     pub(crate) fn parse_object_name_ref(&mut self) -> Result<TableRef> {
         let name = self.parse_table_ref()?;
+        self.reject_reserved_table_ref(&name)?;
+        Ok(name)
+    }
+
+    /// Fails when any part of an object name is an unquoted Snowflake reserved word in a Snowflake parse.
+    pub(crate) fn reject_reserved_table_ref(&self, name: &TableRef) -> Result<()> {
         for part in [&name.catalog, &name.schema].into_iter().flatten() {
             self.reject_reserved_name_part(part)?;
         }
-        self.reject_reserved_name_part(&name.name)?;
-        Ok(name)
+        self.reject_reserved_name_part(&name.name)
     }
 
     /// Fails on an unquoted Snowflake reserved word used as a name part in a Snowflake parse.

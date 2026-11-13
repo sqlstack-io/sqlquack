@@ -88,8 +88,10 @@ impl Parser {
                 self.expect_token(TokenType::Eq)?;
                 let value = if self.match_text_seq(&["DOWNSTREAM"]) {
                     Expression::Identifier(Identifier::new("DOWNSTREAM"))
-                } else {
+                } else if self.check(TokenType::String) {
                     self.parse_string_value()?
+                } else {
+                    Expression::Identifier(self.parse_simple_name()?)
                 };
                 properties.push(property("TARGET_LAG", None, Some(value)));
             } else if dynamic && self.match_text_seq(&["WAREHOUSE"]) {

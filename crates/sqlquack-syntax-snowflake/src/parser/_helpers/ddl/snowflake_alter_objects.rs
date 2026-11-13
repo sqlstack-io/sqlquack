@@ -249,7 +249,7 @@ impl Parser {
                     let name = if kind == TAG {
                         self.parse_simple_qualified_name()?
                     } else {
-                        self.parse_simple_name()?
+                        self.parse_contact_purpose(Self::parse_simple_name)?
                     };
                     let value = if !set {
                         None

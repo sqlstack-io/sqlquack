@@ -612,7 +612,7 @@ impl Parser {
         } = leading;
 
         self.skip();
-        let source_ref = self.parse_table_ref()?;
+        let source_ref = self.parse_object_name_ref()?;
         Ok(Expression::CreateTable(Box::new(CreateTable {
             name,
             on_cluster: on_cluster.clone(),

@@ -1074,6 +1074,152 @@ fn given_a_snowflake_event_table_with_a_contact_when_parsing_then_recorded_verdi
 }
 
 #[test]
+fn given_a_snowflake_contact_purpose_or_reserved_name_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a quoted contact purpose on ALTER TABLE SET (recorded semantic error)",
+            sql: "ALTER TABLE v1 SET CONTACT 'v1' = v1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted contact purpose on ALTER DATABASE UNSET (recorded semantic error)",
+            sql: "ALTER DATABASE v1 UNSET CONTACT 'v1' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted contact purpose on ALTER ACCOUNT SET (recorded semantic error)",
+            sql: "ALTER ACCOUNT SET CONTACT 'v1' = v1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted contact purpose on ALTER TASK GRAPH UNSET (recorded semantic error)",
+            sql: "ALTER TASK GRAPH v1 UNSET CONTACT 'v1' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted contact purpose in a view's WITH CONTACT (recorded semantic error)",
+            sql: "CREATE VIEW v1 WITH CONTACT ( 'v1' = v1 ) AS SELECT 1 ;",
+            expected_kind: Some("create_view"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted contact purpose in a schema's WITH CONTACT (recorded semantic error)",
+            sql: "CREATE SCHEMA v1 WITH CONTACT ( 'v1' = v1 ) ;",
+            expected_kind: Some("create_schema"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted contact purpose in an Iceberg table's WITH CONTACT (recorded semantic error)",
+            sql: "CREATE ICEBERG TABLE v1 BASE_LOCATION = 'm' WITH CONTACT ( 'v1' = v1 ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "ALTER MATERIALIZED VIEW takes no quoted contact purpose (recorded errno 1003)",
+            sql: "ALTER MATERIALIZED VIEW v1 SET CONTACT 'v1' = v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ALTER DYNAMIC TABLE takes no quoted contact purpose (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 UNSET CONTACT 'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a dynamic table clone takes a named TARGET_LAG (recorded semantic error)",
+            sql: "CREATE DYNAMIC TABLE v1 CLONE v1 TARGET_LAG = m1 WAREHOUSE = v1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a dynamic table clone needs a TARGET_LAG value (recorded errno 1003)",
+            sql: "CREATE DYNAMIC TABLE v1 CLONE v1 TARGET_LAG = WAREHOUSE = v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "LIKE takes no unquoted reserved word (recorded errno 1003)",
+            sql: "CREATE TABLE v1 LIKE SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "LIKE takes a quoted reserved word",
+            sql: "CREATE TABLE v1 LIKE \"SELECT\" ;",
+            expected_kind: Some("create_table"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a hybrid table's LIKE takes no unquoted reserved word (recorded errno 1003)",
+            sql: "CREATE HYBRID TABLE v1 LIKE SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "INSERT INTO takes no unquoted reserved word (recorded errno 1003)",
+            sql: "INSERT INTO SELECT VALUES ( 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "INSERT INTO takes a quoted reserved word",
+            sql: "INSERT INTO \"SELECT\" VALUES ( 1 ) ;",
+            expected_kind: Some("insert"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "MERGE INTO takes no unquoted reserved word (recorded errno 1003)",
+            sql: "MERGE INTO SELECT USING t2 ON v1.c1 = t2.c1 WHEN MATCHED THEN UPDATE ALL BY NAME ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET ( ... ) takes no unquoted reserved word (recorded errno 1003)",
+            sql: "SET ( SELECT ) = ( 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET ( ... ) takes no string (recorded errno 1003)",
+            sql: "SET ( 'v1' ) = ( 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "UNSET takes no unquoted reserved word (recorded errno 1003)",
+            sql: "UNSET SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "UNSET ( ... ) takes a quoted reserved word",
+            sql: "UNSET ( v1 , \"SELECT\" ) ;",
+            expected_kind: Some("unset_statement"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_quoted_contact_purpose_or_set_variable_when_parsing_then_the_tree_keeps_its_quotes(
+) {
+    let test_cases = [
+        StatementTestCase {
+            description: "a quoted contact purpose keeps its quotes",
+            sql: "ALTER TABLE v1 SET CONTACT 'v1' = v1 ;",
+            pointer: "/0/alter_object/properties/0/name/name",
+            expected_value: json!("'v1'"),
+        },
+        StatementTestCase {
+            description: "a quoted SET variable stays quoted",
+            sql: "SET ( v1 , \"v1 Q\" ) = ( 1 , 2 ) ;",
+            pointer: "/0/set_statement/items/0/name/tuple/expressions/1/column/name/quoted",
+            expected_value: json!(true),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_a_snowflake_lone_kind_word_or_omitted_name_when_parsing_then_recorded_verdicts_hold() {
     let test_cases = [
         SnowflakeVerdictTestCase {

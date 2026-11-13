@@ -60,10 +60,10 @@ impl Parser {
     fn check_container_pairs(&mut self, contact: bool) -> Result<()> {
         self.expect_token(TokenType::LParen)?;
         loop {
-            if !self.check(TokenType::QuotedIdentifier) {
-                self.expect_external_name()?;
-            } else {
+            if self.check(TokenType::QuotedIdentifier) || contact && self.check(TokenType::String) {
                 self.skip();
+            } else {
+                self.expect_external_name()?;
             }
             self.expect_token(TokenType::Eq)?;
             if contact && self.check(TokenType::String) {
