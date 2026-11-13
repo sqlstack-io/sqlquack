@@ -2218,3 +2218,176 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.ddl.show-workspaces" = "54689b106dfdaf33b12f74279635f5960d15b9a23bf9dc2ab935157f4375902b"
 "sf.ddl.undrop-dynamic-table" = "f969a64cbba33c5c62fb63b6c6ee1447d756a225eab80ee9f569436696b128e8"
 "sf.ddl.undrop-iceberg-table" = "40a906504a6da9ff953145855620410f0be4b1bee0703765db4a9b1a8105b104"
+
+[[review]]
+id = "ddl-028"
+family = "ddl"
+parser_tree = "4d40d1f1d5584dd340a3a98d1d42fd5b0ac659df"
+reviewed_utc = "2026-11-13T16:54:29Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-application-package.rename-to",
+  "sf.ddl.alter-application-package.set-tag",
+  "sf.ddl.alter-application-package.unset-tag",
+  "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations",
+  "sf.ddl.alter-application-service.upgrade",
+  "sf.ddl.alter-backup-set.set-comment",
+  "sf.ddl.alter-backup-set.set-tag",
+  "sf.ddl.alter-backup-set.unset-comment",
+  "sf.ddl.alter-backup-set.unset-tag",
+  "sf.ddl.alter-openflow-connector.abort",
+  "sf.ddl.alter-openflow-connector.add-version-from",
+  "sf.ddl.alter-openflow-connector.commit",
+  "sf.ddl.alter-openflow-connector.pull",
+  "sf.ddl.alter-openflow-connector.push-username-password-name",
+  "sf.ddl.alter-openflow-connector.set",
+  "sf.ddl.alter-openflow-connector.set-default-version-first-last",
+  "sf.ddl.alter-openflow-connector.start",
+  "sf.ddl.alter-openflow-connector.stop",
+  "sf.ddl.alter-openflow-connector.terminate",
+  "sf.ddl.alter-openflow-deployment.terminate",
+  "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table",
+  "sf.ddl.alter-openflow-deployment.upgrade",
+  "sf.ddl.alter-openflow-runtime.restart",
+  "sf.ddl.alter-openflow-runtime.resume",
+  "sf.ddl.alter-openflow-runtime.suspend",
+  "sf.ddl.alter-openflow-runtime.terminate",
+  "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment",
+  "sf.ddl.alter-openflow-runtime.upgrade",
+  "sf.ddl.create-clone.alert-file-format-sequence",
+  "sf.ddl.desc-artifact-repository",
+  "sf.ddl.desc-external-table",
+  "sf.ddl.desc-external-volume",
+  "sf.ddl.desc-iceberg-table",
+  "sf.ddl.desc-mcp-server",
+  "sf.ddl.desc-model-monitor",
+  "sf.ddl.desc-openflow-deployment",
+  "sf.ddl.desc-table",
+  "sf.ddl.drop-artifact-repository",
+  "sf.ddl.drop-event-routing-table",
+  "sf.ddl.drop-external-volume",
+  "sf.ddl.drop-mcp-server",
+  "sf.ddl.drop-openflow-deployment",
+  "sf.ddl.show-endpoints",
+  "sf.ddl.show-external-volumes",
+  "sf.ddl.show-functions-in-model",
+  "sf.ddl.show-model-monitors",
+  "sf.ddl.show-primary-keys",
+  "sf.ddl.show-schema-variables",
+  "sf.ddl.show-service-volumes-in-service",
+  "sf.ddl.show-shared-content",
+  "sf.ddl.show-snapshots-in-snapshot-set",
+  "sf.ddl.show-versions",
+  "sf.ddl.show-versions-in-model",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 7eb0b602d; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-application-package.rename-to" = "e9c5b39ded659923f05fae56204ff7b1f57a41dc0028bbbbc862fcc1c65a712f"
+"sf.ddl.alter-application-package.set-tag" = "a81c5c17a591afe8dddaea6b648e5162bf9119666112a06d7e4386482c14e0fb"
+"sf.ddl.alter-application-package.unset-tag" = "e0b066f13824ae17974e02306906ddbd47ff5de9675e8d03296e6700b7c60f0f"
+"sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations" = "6678435e530a525320af80d07b281b370c2259c5d89bb6c4fa3984aa1fe3d969"
+"sf.ddl.alter-application-service.upgrade" = "9e404284b5d7e966bdaa308141c52430a975256da84d5345c6b9a45c4ca3db64"
+"sf.ddl.alter-backup-set.set-comment" = "307aae6e593f7ea19a7b091ef4899a61a2a9422af8388db4220c3b6a7c900add"
+"sf.ddl.alter-backup-set.set-tag" = "de24c5f0082ed07cf77e977fdac7cf0ae3f55bd5d550adc232cbdc16747e25e4"
+"sf.ddl.alter-backup-set.unset-comment" = "e78885acd6a0e315600e88f50981149beb271c0785f25efb7bbc602bd7664f78"
+"sf.ddl.alter-backup-set.unset-tag" = "fd1b907ad59a6cee1c87ad50a6282c8b65d06c98e76c485f0bcfb88e9f1f11f3"
+"sf.ddl.alter-openflow-connector.abort" = "6431616e9b9cbe8acdbd59a215a9a640b0f828b9be9c7fcff16a07b6e179f1e1"
+"sf.ddl.alter-openflow-connector.add-version-from" = "c2692a866296b919dc8800def00dc07df381e644f4073e4be8fed8cc15c79385"
+"sf.ddl.alter-openflow-connector.commit" = "f1edb1947d30ce19519c874fa22be757ae974814e420da65ee11486c4a0a014b"
+"sf.ddl.alter-openflow-connector.pull" = "aa4cde918c9cb7a573a0e03ff8565b595f12e8a23ac6c864946c99574e97a8d3"
+"sf.ddl.alter-openflow-connector.push-username-password-name" = "2ac8c29b7483b2ccf4a2136e8614a8d1fcf1671ab15655e6d5397ffe8f59b3f7"
+"sf.ddl.alter-openflow-connector.set" = "fde414726faf675290f87d8563fa9e29c06f230d8996f2aca9808a52ffad9b6c"
+"sf.ddl.alter-openflow-connector.set-default-version-first-last" = "df44c0bf484e48ed5de815716f447ef76f4debf62b1ad8cebba71877cc2f451b"
+"sf.ddl.alter-openflow-connector.start" = "1748e8e7c86bab0a0891bed2533e54b68e47d1a49bdde3b0d4bc3ebeddf636fa"
+"sf.ddl.alter-openflow-connector.stop" = "7ffacbc14dd6225ad7e6fa6429d0c281a4fd9584bface3d06d0841bd56005bc8"
+"sf.ddl.alter-openflow-connector.terminate" = "0b77c8dfcf823a32b1fbf226b6082fc391d7e83f99b91e51dc9458bfcb06b90d"
+"sf.ddl.alter-openflow-deployment.terminate" = "d425510ce7fad9b97012fdcd9628cb5b11f3c1db584e058c3be61412e1766523"
+"sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table" = "5b66778c3209e40c59fee212201b31104ab6786da6df288a510899152ed34132"
+"sf.ddl.alter-openflow-deployment.upgrade" = "61fd57e98a33d0c395ed8adb0546a8c5d4cf511c65b3138dbfd5e14b8b45bef5"
+"sf.ddl.alter-openflow-runtime.restart" = "83aafd09180607a6a6b6b0c28d529e113ea6b4c77acbfb27d1231fab95ef9ba4"
+"sf.ddl.alter-openflow-runtime.resume" = "f78355e0ea2f94a548c36c85666b5d536d3f72785818bdc9d2ee7419ec428995"
+"sf.ddl.alter-openflow-runtime.suspend" = "7ba8a0b4214512a241524aeefa46d83190bd146f1a1b08b7521cdaa930e0a1b9"
+"sf.ddl.alter-openflow-runtime.terminate" = "998e4665b641608855dc03786abd189dcc8b8a8da66b19834bd3f33c82de8a63"
+"sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment" = "3394a5e68e0736382e8bc1a5b0483730196f1e1e3c045255a91f84d64ea39c70"
+"sf.ddl.alter-openflow-runtime.upgrade" = "0d7bb33145861bcd7e8f6bfc4818402d70b26efd6c0946a81e8591ffef6197e2"
+"sf.ddl.create-clone.alert-file-format-sequence" = "aebae8ef819f58e95e2d3f48b7c53752d9c6e3bd5997574ad61714a9442c6e0d"
+"sf.ddl.desc-artifact-repository" = "f39b9779a62fd03affdd78bddc704915c15c6200387445d8f8b0798ac30fff1f"
+"sf.ddl.desc-external-table" = "35b8c48d206383aed818fad024b2647387d8fb9c38bb267f1c877bd0bd315b30"
+"sf.ddl.desc-external-volume" = "05d779d2cebde4850217173cd0b8c4dce11a051c2554e45ddc630bb800712093"
+"sf.ddl.desc-iceberg-table" = "afd69c12f8d13887b04e26b4705ca8d426a3cbb4749ea97d66e1f7dee9ca97e1"
+"sf.ddl.desc-mcp-server" = "f83238590760312bdd025ced76fc1e5194721f596d8ab5f461f523e413db4657"
+"sf.ddl.desc-model-monitor" = "af2dccf3570acdfe42f530789999d4c2be2f6aab2da39202e463b003d1e16f46"
+"sf.ddl.desc-openflow-deployment" = "4a775f6b5be1917db8806597a8164a44ccb9f5905bf83c2fa3c031bdafbaae32"
+"sf.ddl.desc-table" = "908d1323ddcd62d6d4c3ff016536d72529ff51369ca3456a096b72f3a5110ea0"
+"sf.ddl.drop-artifact-repository" = "a57c1593c59563e78a25943172217b3e04cde1e93825d8ec5634f0bbff92fd37"
+"sf.ddl.drop-event-routing-table" = "585efd5fba22e8c920586ff3ce31d477bddd72110177785eedeef114a6010ed1"
+"sf.ddl.drop-external-volume" = "db091dc5be67ec2543763500cdb953f269c345e42a98604b1d86e014cf71b566"
+"sf.ddl.drop-mcp-server" = "526719596357b66ed45f161b702a82008f46d79caa2e91230d567886ea29b098"
+"sf.ddl.drop-openflow-deployment" = "1ebdfdeb432bc8c3288acd1afe6f93dd96a893c80a9e669ff64fa1ba15f19864"
+"sf.ddl.show-endpoints" = "ee11ee9cdebae6729f0f3509d1abbf9be47fb85952c11e2366d6f0f2d01fb583"
+"sf.ddl.show-external-volumes" = "233c591bd25c6e80e20383df497253ff91890d2eca4a870e5683e41b8e2799f7"
+"sf.ddl.show-functions-in-model" = "f66b9214a284ccbb648fabe5d5e23cc3ce9fc9fea3fd310c40348b43223c17fe"
+"sf.ddl.show-model-monitors" = "046f318a2cdb0acafcd06bf797469ddbfb24547db25bfbc20f4f167ba51ab81d"
+"sf.ddl.show-primary-keys" = "d440545c3eb77dbde56e2a0e4de93f2cf56ab0adfd493b2530a07133b1e8ad16"
+"sf.ddl.show-schema-variables" = "8de758aebb1ba54bb0ce339288e30d00dafe92f01bc85dbe6eb98068b09ffb6c"
+"sf.ddl.show-service-volumes-in-service" = "a9c3d8755129cf08af372bb7a94e0c3e4288641f982062d49a803ee03aa0ec4a"
+"sf.ddl.show-shared-content" = "ee10b75c4524496af21c56823e74eab03c7187fce00f5ce052d25593917f4aa8"
+"sf.ddl.show-snapshots-in-snapshot-set" = "7b5d17efcb0a77c4e3a34239eeafb982ad645b62c2d3fbd47612cb65d7d166d4"
+"sf.ddl.show-versions" = "d46de9d0681414f0b1e84ae58d539e754975aa2b95156fe235e8d4c56f74ad50"
+"sf.ddl.show-versions-in-model" = "a81d91b93c389f78b2a485560f1f222d95146394a81c349c066f91185aed5f8a"
+
+[review.definitions]
+"sf.ddl.alter-application-package.rename-to" = "07def714badd16d93eb971efb449b957b249acc6b942363beb3471813a2f41c2"
+"sf.ddl.alter-application-package.set-tag" = "f7847eae947efc67f20ed6cc898e1e55b7dbb459fcee84396039f01070192ac7"
+"sf.ddl.alter-application-package.unset-tag" = "c3364f22166e1b38dba94b92e2a2ba6f0effa3d89f0491032dca1965d2f19a1a"
+"sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations" = "6271a82872d47cc3fe5bd6c0ba0e7a6db9252684c6ff9f1bce27364291779e1c"
+"sf.ddl.alter-application-service.upgrade" = "904c7f099dbf19959aaa2503f70e3d48bbcc393c0a1bf2484c8660fd7b78b896"
+"sf.ddl.alter-backup-set.set-comment" = "adcc7f7d15e10379660f67c36a189530276bbb72d473c594b0ee0c7b39ba4206"
+"sf.ddl.alter-backup-set.set-tag" = "5b78c5b9f2cdc320287074e3546ed2444d5c01308c827bcfb2d363d11eeb4720"
+"sf.ddl.alter-backup-set.unset-comment" = "c8eaf333ed4193bd449951976b214085841b48262cff97954a86c72832eda077"
+"sf.ddl.alter-backup-set.unset-tag" = "4eba712100701cfeb19e6e8edba7ee4cc564378140c039677b28b6d60797cafa"
+"sf.ddl.alter-openflow-connector.abort" = "4e306e457c485dad0eb67f8d07dacedc163fb67ed482925a9ab74d311ebb8fa9"
+"sf.ddl.alter-openflow-connector.add-version-from" = "1173c91cc3617f76ff3f3fa9a6b17a55bcdeeb67e66ab7effe6bf73784da72c8"
+"sf.ddl.alter-openflow-connector.commit" = "2abe980d1e4fc3dae7b92f4d17f0c94604b587882ccab2898381ab2f79ef406d"
+"sf.ddl.alter-openflow-connector.pull" = "78ce02270ffc7c41a9555b442e6bd27d20f0a860eec2eb919c1c011ec6088d59"
+"sf.ddl.alter-openflow-connector.push-username-password-name" = "a2cbf6f1eb4cb7879be039ed1164049c19e9cea5f7505402955f22a3cb6968ac"
+"sf.ddl.alter-openflow-connector.set" = "7ac55ae077366f9b42ad09adb46161b1f29399d3021b40340c06161f4dfd42b3"
+"sf.ddl.alter-openflow-connector.set-default-version-first-last" = "94fc9ff3d930f4e3f16126e1e06407835409611a9c70dad43e14a0f5dbf40f30"
+"sf.ddl.alter-openflow-connector.start" = "94247651ef3a8ca1b8ff9231d20eef8aa6d9e6121f6d494eba81f6e40cb593ac"
+"sf.ddl.alter-openflow-connector.stop" = "11394d08026ee949c995db26410155dc55a4e3c721785b0dc38653265136630e"
+"sf.ddl.alter-openflow-connector.terminate" = "0fe0c13e846c592fc950acd35cdafc50080202742a223c6b7ef89fe73ee54f9f"
+"sf.ddl.alter-openflow-deployment.terminate" = "2c57a6cc1cffd75d66caf19e6bf0dfda64483e683a1a912adeb688c429ef50ee"
+"sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table" = "01cea13ec082aa9117dc9064ba6c3b9638942596c61c72241cbd5db3ec6e2712"
+"sf.ddl.alter-openflow-deployment.upgrade" = "d136bed54fbe50d0b71037e06a4c182f621c8f05a5544d9428775f54449a82f6"
+"sf.ddl.alter-openflow-runtime.restart" = "c10574a25ec57218adefd328da35744fe7fe1c73fd109a55736f698a1dfe7188"
+"sf.ddl.alter-openflow-runtime.resume" = "cffa95fda164677c29158376b0170ebb6fddf0a3cc5f03dbf11d37a2559f33fc"
+"sf.ddl.alter-openflow-runtime.suspend" = "61b6730acbc52987dd2ea2f3d459cbe7b10ea0dd69d45e0161543b0dc006a2f4"
+"sf.ddl.alter-openflow-runtime.terminate" = "51adf4d74a8bccb8ac93263578f129f8834bb89cf84bfebcd6b90d7522c2e9a0"
+"sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment" = "fb554a4c858ae6fc864d426b898a075f26dd12faca57631aedfd031a5531a926"
+"sf.ddl.alter-openflow-runtime.upgrade" = "de3cdc898d6bf9645c4af6e07e170378307e818990f763965deda7a8205b8d95"
+"sf.ddl.create-clone.alert-file-format-sequence" = "049b5a83b3f9034607f2c6f9c9bd1b439e8a17879ce8111b554c0b10e2177553"
+"sf.ddl.desc-artifact-repository" = "cddceb10232a5e1237ddb95c8942bdaf35770f21b3b597f7cd6eee391b2f0b45"
+"sf.ddl.desc-external-table" = "73ffc7ab2321630a42fc00d8a0ef8e511940508a0002c5e789ada11c7d552f58"
+"sf.ddl.desc-external-volume" = "aa61c19fc25c5e4f169ce190322d65b6e19310a76d37ebc04826c156f6cf742c"
+"sf.ddl.desc-iceberg-table" = "482245893d3b6cc9706efc346d56a2171cf582840231368cdd7c12c7a59cdf1d"
+"sf.ddl.desc-mcp-server" = "7d82fe2adc9fd7d1797aab898e6e00af934deda749a80bde6af2f12ae557ab16"
+"sf.ddl.desc-model-monitor" = "b5738c2de1a762bece2921f0789d2a45b5ffec69aec55c5ec8370ba330558386"
+"sf.ddl.desc-openflow-deployment" = "9f3fa56ed8f02e2a7dd78526ac859147bef683f2237c4257f8abb3ccbaa6cfad"
+"sf.ddl.desc-table" = "722c79d0f30d220c103e957b2763d8d5399154b57d6b93ff4ee92fcf5d18fe46"
+"sf.ddl.drop-artifact-repository" = "b59ae8af396f746aaceaf9fe0da76a235920372e9e6b437d6c984624528481fb"
+"sf.ddl.drop-event-routing-table" = "20d4e9537b29f4976a1d536f3d6d98732f93a97293d7d9bd2e20ab7fda7ca431"
+"sf.ddl.drop-external-volume" = "242fc83aa7647b14e7204628d39e2427c0d3d7b482b600527060085dbd5b5484"
+"sf.ddl.drop-mcp-server" = "47f8c73c59e1b05b100fe8c4394b8aa6273bd4459373141ac7effa74fc06102f"
+"sf.ddl.drop-openflow-deployment" = "efbd0dfabe3f6897f9bef8f38ba96a3f25ded997ec86ff49b5bda3d89bc9a4e2"
+"sf.ddl.show-endpoints" = "28f987e0e72974c57262208b3a3d9fe7349b7954998940310a079d27244be70f"
+"sf.ddl.show-external-volumes" = "e8f558fb12b6b6f308c562e5c2c15807accbd681f0cca717259588053dd12461"
+"sf.ddl.show-functions-in-model" = "c16833b57b7d440fa56ed4c14004c4e5a1fda8540e6514e02fd2851b830b9a67"
+"sf.ddl.show-model-monitors" = "860515ffc732e4ae4cac7e1d2f25987fdeed9fe151ff471c7c926aa5593882e7"
+"sf.ddl.show-primary-keys" = "51f096287cbfa9cb4e9864c539248cfab8266cd3850e219e0c84e5826f2fa622"
+"sf.ddl.show-schema-variables" = "7544f8668165a86c0ca284bbcecad502b8cf44516376845577f105edc046717f"
+"sf.ddl.show-service-volumes-in-service" = "7159ce79e720598991ae3569de69308cd36018f4ba4fab20ae9bb88fbcba2fe0"
+"sf.ddl.show-shared-content" = "32a47eb6129addaa211edf4c21b531934a4ba7d93e206e20d76d57a414f3b931"
+"sf.ddl.show-snapshots-in-snapshot-set" = "6d8ba84b7a13bb8b307d4cbc2bfcd49f77bca6f381d437343a3ffbbf56bc6274"
+"sf.ddl.show-versions" = "957793baa3556aa26f77b930ca233a6c977582839cf5b15945d0da94f527d9e1"
+"sf.ddl.show-versions-in-model" = "1c2ea13167b02fbdce2e76b271b81f0034a2e6dd0bb5e9a22af76e778721dc25"

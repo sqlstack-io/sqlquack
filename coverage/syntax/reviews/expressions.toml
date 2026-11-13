@@ -489,3 +489,23 @@ note = "Re-read under the fingerprint formula with expect, stage and phase, afte
 
 [review.definitions]
 "sf.expressions.data-types-datetime.date-time-constant" = "fbe8e08957ddc0bbb254581eaf8c532e8548f136ac6a9cb543093e1edb71810e"
+
+[[review]]
+id = "expressions-020"
+family = "expressions"
+parser_tree = "4d40d1f1d5584dd340a3a98d1d42fd5b0ac659df"
+reviewed_utc = "2026-11-13T16:54:29Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-numeric.double",
+  "sf.expressions.session-variables",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 7eb0b602d; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-numeric.double" = "1fc9244a6b580cbb5cac04b2c4454412943ca7bebe7ab3b7499a1b36134b1cf7"
+"sf.expressions.session-variables" = "81dbeb582b9227ca8be78c5e9c688c05eb2230e0c7fb95bc8ca2012cd70a7cc0"
+
+[review.definitions]
+"sf.expressions.data-types-numeric.double" = "cd170cfb1fb48182a05f9eefd0fd8894702643170c411e1bef39fa3d7b54d8c6"
+"sf.expressions.session-variables" = "8573a0e59e429ea859738d85870558b78b87f47d47decb80b7881ad1a0926280"
