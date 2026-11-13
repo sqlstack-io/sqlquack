@@ -117,12 +117,6 @@ other_receipts_contradicted = [
   "sf.ddl.alter-application-package.unset.k803533d89767",
   "sf.ddl.alter-application-package.unset.kacb814473434",
   "sf.ddl.alter-application-package.unset.kef85ada3c5be",
-  "sf.ddl.alter-dynamic-table.searchoptimizationaction.k29f2d73ea2ed",
-  "sf.ddl.alter-dynamic-table.searchoptimizationaction.k61ee3d5475b0",
-  "sf.ddl.alter-dynamic-table.searchoptimizationaction.k6936fbcc3bab",
-  "sf.ddl.alter-dynamic-table.searchoptimizationaction.k97c12c0086c7",
-  "sf.ddl.alter-dynamic-table.searchoptimizationaction.kddacf3a3e49b",
-  "sf.ddl.alter-dynamic-table.searchoptimizationaction.kf25216d535a4",
   "sf.ddl.alter-iceberg-table.set.k1b45ae0957e4",
   "sf.ddl.alter-iceberg-table.set.k6524711a5a35",
   "sf.ddl.alter-iceberg-table.set.kbfb3b393ea34",
@@ -363,30 +357,6 @@ other_receipts_contradicted = [
   "k08a5ac10d24c",
   "k4a5bcb72e4bd",
   "k5c0f60c6cde2",
-]
-"sf.ddl.alter-dynamic-table.datagovnpolicytagaction" = [
-  "k04414c486d92",
-  "k9684da587a46",
-  "kb47a8f2cd158",
-  "kcdd0fba0517c",
-  "ke4bf5939bb0e",
-  "kf11eedf60196",
-]
-"sf.ddl.alter-dynamic-table.searchoptimizationaction" = [
-  "k18c7b7faeeb0",
-  "k37906ea4b561",
-  "k47ed95dbc4ef",
-  "k566439fa6884",
-  "k8277268b2822",
-  "kbff7908944d1",
-  "kdf416f6850bb",
-  "ke360b48bfae0",
-]
-"sf.ddl.alter-dynamic-table.set" = [
-  "k3a40ac0d49f2",
-  "k5e4dc29ca63d",
-  "k7401d0e40bc9",
-  "k94330604c5cc",
 ]
 "sf.ddl.alter-event-routing-table.set-rule-region-group-regions" = [
   "k1f424edf2bfe",
@@ -1065,12 +1035,6 @@ other_receipts_contradicted = [
 "sf.ddl.alter-database-catalog-linked.set" = ["k944dd061d9ca"]
 "sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact" = ["k3fbf8ee747f4"]
 "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = ["k87a9b9ccc841"]
-"sf.ddl.alter-dynamic-table.set" = [
-  "k880b86bfa60d",
-  "kcf06b3f247ff",
-  "ke5999ad48a16",
-  "ke91c22962d91",
-]
 "sf.ddl.alter-external-volume.set-allow-writes-true-false" = ["k1043b085dfad"]
 "sf.ddl.alter-external-volume.set-comment" = ["k55283f91e8bc"]
 "sf.ddl.alter-online-feature-table.table-set" = ["k56f6bb4df5ba"]
@@ -1105,8 +1069,6 @@ other_receipts_contradicted = [
   "kf17853d8e491",
 ]
 "sf.ddl.create-database-catalog-linked" = ["kd7f8a471f88a"]
-"sf.ddl.create-dynamic-table.create-dynamic-iceberg-table" = ["k31ecf5db111a"]
-"sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table" = ["kddec0cb4b97e"]
 "sf.ddl.create-external-function.function-returns-api-integration-as" = [
   "k007dcc7f5614",
   "k4114dc0df61e",
