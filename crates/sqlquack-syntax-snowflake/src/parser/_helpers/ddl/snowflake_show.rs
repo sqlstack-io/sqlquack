@@ -199,15 +199,26 @@ impl Parser {
         Ok(Expression::Table(Box::new(self.parse_object_name()?)))
     }
 
-    /// The container after IN and its name; ACCOUNT, DATABASE and SCHEMA may stand alone.
+    /// Whether the scope after IN ends `offset` tokens ahead: at the end of the statement, LIKE, LIMIT or STARTS WITH.
+    fn ends_show_scope_at(&self, offset: usize) -> bool {
+        self.peek_nth(offset).is_none_or(|token| {
+            matches!(
+                token.token_type,
+                TokenType::Eof | TokenType::Semicolon | TokenType::Like | TokenType::Limit
+            ) || (matches!(token.token_type, TokenType::Identifier | TokenType::Var)
+                && token.text.eq_ignore_ascii_case("STARTS"))
+        })
+    }
+
+    /// The container after IN and its name, which ACCOUNT, DATABASE or SCHEMA may lack; a lone APPLICATION or CLASS is one.
     fn parse_show_container(&mut self, kind: &str) -> Result<(Option<String>, Option<Expression>)> {
-        let Some(container) = SNOWFLAKE_SHOW_CONTAINERS
+        let Some(words) = SNOWFLAKE_SHOW_CONTAINERS
             .iter()
-            .find(|container| self.match_text_seq(container))
-            .map(|container| container.join(" "))
+            .find(|container| self.check_text_seq(container))
         else {
             return Ok((None, Some(self.parse_show_name()?)));
         };
+        let container = words.join(" ");
         let groups = matches!(kind, "FAILOVER GROUPS" | "REPLICATION GROUPS");
         let optional = match container.as_str() {
             "ACCOUNT" => !groups,
@@ -223,11 +234,14 @@ impl Parser {
             "ORGANIZATION PROFILE" => true,
             _ => false,
         };
-        let ends = self.is_at_end()
-            || self.check(TokenType::Semicolon)
-            || self.check(TokenType::Like)
-            || self.check(TokenType::Limit)
-            || self.check_identifier("STARTS");
+        if optional
+            && matches!(container.as_str(), "APPLICATION" | "CLASS")
+            && self.ends_show_scope_at(1)
+        {
+            return Ok((None, Some(self.parse_show_name()?)));
+        }
+        self.match_text_seq(words);
+        let ends = self.ends_show_scope_at(0);
         let name = match (container.as_str(), optional && ends) {
             ("ACCOUNT", _) if self.is_limit_name() => Some(self.parse_show_name()?),
             (_, true) => None,
@@ -328,15 +342,11 @@ impl Parser {
         }
         let mut show = Show::new("CALLER GRANTS".to_owned());
         let kinds: &[&[&str]] = &[&["DATABASE", "ROLE"], &["ROLE"], &["DATABASE"]];
-        let kind = kinds.iter().find(|words| self.match_text_seq(words));
-        show.scope_kind = Some(match kind {
+        show.scope_kind = Some(match self.match_grantee_kind(kinds) {
             Some(words) => format!("TO {}", words.join(" ")),
             None => "TO".to_owned(),
         });
-        let bare_role = kind.is_some_and(|words| words == &["ROLE"]) && self.is_statement_end_at(0);
-        if !bare_role {
-            show.scope = Some(self.parse_show_name()?);
-        }
+        show.scope = Some(self.parse_show_name()?);
         Ok(Expression::Show(Box::new(show)))
     }
 
@@ -366,7 +376,7 @@ impl Parser {
                 &["ROLE"],
                 &["SHARE"],
             ];
-            match kinds.iter().find(|words| self.match_text_seq(words)) {
+            match self.match_grantee_kind(kinds) {
                 Some(words) => (Some(format!("OF {}", words.join(" "))), show),
                 None => (Some("OF".to_owned()), show),
             }
@@ -377,19 +387,7 @@ impl Parser {
             (None, show)
         };
         if let Some(clause) = clause {
-            let bare = !future
-                && self.is_statement_end_at(0)
-                && matches!(
-                    clause.as_str(),
-                    "TO USER"
-                        | "TO ROLE"
-                        | "TO SHARE"
-                        | "TO APPLICATION"
-                        | "TO APPLICATION ROLE"
-                        | "OF ROLE"
-                        | "OF SHARE"
-                );
-            if show.scope.is_none() && clause != ON_ACCOUNT && !bare {
+            if show.scope.is_none() && clause != ON_ACCOUNT {
                 show.scope = Some(match clause.as_str() {
                     "TO SERVICE ROLE" | "OF SERVICE ROLE" => self.parse_show_instance_role()?,
                     "TO ROLE" | "OF ROLE" if self.check_next(TokenType::Exclamation) => {
@@ -468,7 +466,7 @@ impl Parser {
             &["SHARE"],
             &["USER"],
         ];
-        if let Some(words) = GRANTEES.iter().find(|words| self.match_text_seq(words)) {
+        if let Some(words) = self.match_grantee_kind(GRANTEES) {
             return Ok((format!("TO {}", words.join(" ")), show));
         }
         show.target = Some(self.parse_show_name()?);
@@ -479,6 +477,15 @@ impl Parser {
         self.expect_alter_words(&[&["ROLE"]])?;
         show.scope = Some(self.parse_show_instance_role()?);
         Ok(("TO INSTANCE ROLE".to_owned(), show))
+    }
+
+    /// The first grantee kind a name follows; a kind ending the statement is its last word as the name, as `TO v1`.
+    fn match_grantee_kind<'k>(&mut self, kinds: &[&'k [&'k str]]) -> Option<&'k [&'k str]> {
+        let words = *kinds
+            .iter()
+            .find(|words| self.check_text_seq(words) && !self.is_statement_end_at(words.len()))?;
+        self.match_text_seq(words);
+        Some(words)
     }
 
     /// `<instance_name>!<role_name>`, as a pair.
