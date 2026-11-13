@@ -715,3 +715,47 @@ fn given_a_snowflake_show_with_privileges_when_parsing_then_recorded_verdicts_ho
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_variable_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a variable with its type, default and comment (recorded semantic error)",
+            sql: "CREATE OR REPLACE VARIABLE IF NOT EXISTS v1 INT DEFAULT 1 COMMENT = 'm' ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a variable needs a type (recorded errno 1003)",
+            sql: "CREATE VARIABLE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a type is not a string (recorded errno 1003)",
+            sql: "CREATE VARIABLE v1 'INT' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "DEFAULT needs a value (recorded errno 1003)",
+            sql: "CREATE VARIABLE v1 INT DEFAULT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a comment is a string (recorded errno 1003)",
+            sql: "CREATE VARIABLE v1 INT COMMENT = m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a variable kept as text may flow into the next statement",
+            sql: "CREATE VARIABLE v1 INT DEFAULT 1 ->> SELECT 1 ;",
+            expected_kind: Some("raw"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
