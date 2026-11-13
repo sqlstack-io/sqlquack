@@ -170,6 +170,8 @@ pub(crate) fn alter(
         arguments: Vec::new(),
         if_exists,
         action: action.to_owned(),
+        operand_if_exists: false,
+        operand_if_not_exists: false,
         operands,
         properties: Vec::new(),
     }))

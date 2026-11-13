@@ -246,6 +246,18 @@ fn given_a_snowflake_grant_or_revoke_when_parsing_then_the_tree_keeps_its_parts(
             expected_value: json!("INHERITED CALLER SELECT"),
         },
         ProjectionTestCase {
+            description: "ON ACCOUNT names no securable",
+            sql: "GRANT CREATE DATABASE ON ACCOUNT TO ROLE r1",
+            pointer: "/0/grant/securable",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "IN ACCOUNT names no securable",
+            sql: "REVOKE INHERITED CALLER USAGE ON ALL TABLES IN ACCOUNT FROM ROLE r1",
+            pointer: "/0/revoke/securable",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
             description: "a service role keeps the quoting of each part",
             sql: "GRANT SERVICE ROLE \"s 1\"!r1 TO ROLE r2",
             pointer: "/0/grant/securable/name",

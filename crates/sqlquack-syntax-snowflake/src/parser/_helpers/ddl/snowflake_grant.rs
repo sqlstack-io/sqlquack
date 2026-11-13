@@ -69,9 +69,13 @@ impl Parser {
                     let service = self.parse_grant_securable()?;
                     self.expect_token(TokenType::Exclamation)?;
                     let role = self.parse_grant_name_part()?;
-                    Identifier::new(format!("{}!{}", written(&service), written(&role)))
+                    Some(Identifier::new(format!(
+                        "{}!{}",
+                        written(&service),
+                        written(&role)
+                    )))
                 } else {
-                    self.parse_grant_securable()?
+                    Some(self.parse_grant_securable()?)
                 };
                 (
                     Vec::new(),
@@ -215,10 +219,13 @@ impl Parser {
     }
 
     /// The target after ON: ACCOUNT, { ALL | FUTURE } <plural> IN <container>, or [ <kind> ] <name>; IN ACCOUNT takes an INHERITED privilege, and an unlisted kind is one word that neither starts a listed kind of several words nor is a refused tail of one.
-    fn parse_grant_target(&mut self, inherited: bool) -> Result<(Option<String>, Identifier)> {
+    fn parse_grant_target(
+        &mut self,
+        inherited: bool,
+    ) -> Result<(Option<String>, Option<Identifier>)> {
         if self.check_identifier("ACCOUNT") && self.check_grant_end(1) {
             self.skip();
-            return Ok((Some("ACCOUNT".to_string()), Identifier::new("")));
+            return Ok((Some("ACCOUNT".to_string()), None));
         }
         let future = self.check_identifier("FUTURE");
         if future || self.check_text_seq(&["ALL"]) {
@@ -234,7 +241,7 @@ impl Parser {
             if !future && inherited && self.check_identifier("ACCOUNT") {
                 self.skip();
                 words.push("ACCOUNT".to_string());
-                return Ok((Some(words.join(" ")), Identifier::new("")));
+                return Ok((Some(words.join(" ")), None));
             }
             let containers: &[&str] = if future {
                 &["DATABASE", "SCHEMA"]
@@ -245,7 +252,7 @@ impl Parser {
                 return Err(self.parse_error("Expected DATABASE or SCHEMA"));
             };
             words.push(container);
-            return Ok((Some(words.join(" ")), self.parse_grant_securable()?));
+            return Ok((Some(words.join(" ")), Some(self.parse_grant_securable()?)));
         }
         let kind = self.match_grant_kind(SNOWFLAKE_GRANT_KINDS).or_else(|| {
             let generic = self.check_grant_name_start(0)
@@ -269,7 +276,7 @@ impl Parser {
                 word
             })
         });
-        Ok((kind, self.parse_grant_securable()?))
+        Ok((kind, Some(self.parse_grant_securable()?)))
     }
 
     /// The grantee after TO or FROM: one of `kinds` and its name, or a bare role name when `bare`.

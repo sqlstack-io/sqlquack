@@ -187,6 +187,24 @@ fn given_snowflake_table_actions_and_method_calls_when_parsing_then_the_tree_kee
             expected_value: json!("ADD PROGRAMMATIC ACCESS TOKEN"),
         },
         ProjectionTestCase {
+            description: "a token's IF NOT EXISTS is a flag, not part of the action",
+            sql: "ALTER USER ADD PAT IF NOT EXISTS t1",
+            pointer: "/0/alter_object/operand_if_not_exists",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a token's IF EXISTS is a flag apart from the user's",
+            sql: "ALTER USER IF EXISTS u1 MODIFY PAT IF EXISTS t1 RENAME TO t2",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("MODIFY PROGRAMMATIC ACCESS TOKEN RENAME TO"),
+        },
+        ProjectionTestCase {
+            description: "the user's IF EXISTS stays on the user",
+            sql: "ALTER USER IF EXISTS u1 MODIFY PAT IF EXISTS t1 RENAME TO t2",
+            pointer: "/0/alter_object/operand_if_exists",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
             description: "a modified credential keeps its change",
             sql: "ALTER USER u1 MODIFY KEY PAIR k1 UNSET DISABLED , COMMENT",
             pointer: "/0/alter_object/properties/1/kind",
@@ -308,10 +326,10 @@ fn given_snowflake_policy_and_integration_alters_without_a_name_when_parsing_the
 ) {
     let test_cases = [
         ProjectionTestCase {
-            description: "an omitted name is empty",
+            description: "an omitted name is null, not an empty name",
             sql: "ALTER MASKING POLICY SET COMMENT = 'm'",
-            pointer: "/0/alter_object/name/name/name",
-            expected_value: json!(""),
+            pointer: "/0/alter_object/name",
+            expected_value: json!(null),
         },
         ProjectionTestCase {
             description: "the omitted name's SET keeps its property",
