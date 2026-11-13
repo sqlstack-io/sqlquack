@@ -37,7 +37,7 @@ type ActionParts = (Vec<Expression>, Vec<ObjectProperty>);
 type Action = (String, ActionParts);
 
 impl Parser {
-    /// Parse ALTER USER after its kind; the name may be left out for the current user.
+    /// Parse ALTER USER after its kind; the name may be left out for the current user, except to rename, enroll MFA, or set or unset a policy or tags.
     pub(super) fn parse_alter_user(&mut self) -> Result<Expression> {
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
         let unnamed = self
@@ -62,6 +62,18 @@ impl Parser {
             &["SET"],
             &["UNSET"],
         ])?;
+        let tag = self.check_identifier("TAG")
+            && !self.check_next(TokenType::Eq)
+            && !self.is_statement_end_at(1);
+        let policy = USER_POLICIES.iter().any(|words| self.check_text_seq(words));
+        let named_only = match action.as_str() {
+            "RENAME TO" | "ENROLL MFA" => true,
+            "SET" | "UNSET" => tag || policy,
+            _ => false,
+        };
+        if unnamed && named_only {
+            return Err(self.parse_error(format!("Expected a user name before {action}")));
+        }
         let (action, parts): Action = match action.as_str() {
             "RENAME TO" => (action, (vec![self.parse_user_operand()?], vec![])),
             "ADD" | "MODIFY" | "REMOVE" | "ROTATE" => self.parse_user_credential_action(action)?,
