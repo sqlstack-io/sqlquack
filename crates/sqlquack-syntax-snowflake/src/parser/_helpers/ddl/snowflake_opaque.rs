@@ -32,17 +32,19 @@ impl Parser {
         checked
     }
 
-    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, and AS COPY for a pipe's body; the cursor stays after the name.
+    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, a snapshot's service volume, and AS COPY for a pipe's body; the cursor stays after the name.
     fn check_opaque_shape(&mut self, create: bool, kind_at: usize) -> Result<()> {
         if !create {
             return Ok(());
         }
         let after_name = self.current;
         let kind = self.tokens[kind_at].text.to_ascii_uppercase();
-        let project = self.tokens[kind_at + 1]
-            .text
-            .eq_ignore_ascii_case("PROJECT");
+        let second = self.tokens[kind_at + 1].text.to_ascii_uppercase();
+        let project = matches!(second.as_str(), "PROJECT");
         let checked = match kind.as_str() {
+            "SNAPSHOT" if !matches!(second.as_str(), "SET" | "POLICY") => {
+                self.check_snapshot_source()
+            }
             "CODE" if !self.check(TokenType::From) => Err(self.parse_error("Expected FROM")),
             "NOTEBOOK" if project && !self.check(TokenType::From) => {
                 Err(self.parse_error("Expected FROM"))
@@ -52,6 +54,25 @@ impl Parser {
         };
         self.current = after_name;
         checked
+    }
+
+    /// `FROM SERVICE <name> VOLUME <name> INSTANCE <number>` after a snapshot's name, which options follow without a bare parenthesised list.
+    fn check_snapshot_source(&mut self) -> Result<()> {
+        if !self.match_text_seq(&["FROM", "SERVICE"]) {
+            return Err(self.parse_error("Expected FROM SERVICE"));
+        }
+        self.parse_object_name()?;
+        if !self.match_text_seq(&["VOLUME"]) {
+            return Err(self.parse_error("Expected VOLUME"));
+        }
+        self.parse_object_name()?;
+        if !self.match_text_seq(&["INSTANCE"]) || !self.match_token(TokenType::Number) {
+            return Err(self.parse_error("Expected INSTANCE and a number"));
+        }
+        match self.check(TokenType::LParen) {
+            true => Err(self.parse_error("Expected an option")),
+            false => Ok(()),
+        }
     }
 
     /// A pipe's options up to `AS`, which a COPY statement follows.
