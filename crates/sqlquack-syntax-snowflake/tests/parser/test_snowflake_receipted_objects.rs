@@ -898,7 +898,7 @@ fn given_a_snowflake_variable_when_parsing_then_recorded_verdicts_hold() {
         SnowflakeVerdictTestCase {
             description: "a variable with its type, default and comment (recorded semantic error)",
             sql: "CREATE OR REPLACE VARIABLE IF NOT EXISTS v1 INT DEFAULT 1 COMMENT = 'm' ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a variable needs a type (recorded errno 1003)",
@@ -971,12 +971,12 @@ fn given_a_snowflake_warehouse_or_connector_action_when_parsing_then_recorded_ve
         SnowflakeVerdictTestCase {
             description: "a named warehouse adds tables (recorded semantic error)",
             sql: "ALTER WAREHOUSE v1 ADD TABLES ( v1 ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "the current warehouse aborts its queries (recorded acceptance)",
             sql: "ALTER WAREHOUSE ABORT ALL QUERIES ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "adding tables needs a warehouse name (recorded errno 1002)",
@@ -1021,7 +1021,7 @@ fn given_a_snowflake_warehouse_or_connector_action_when_parsing_then_recorded_ve
         SnowflakeVerdictTestCase {
             description: "IF EXISTS may still alter the current warehouse",
             sql: "ALTER WAREHOUSE IF EXISTS SUSPEND ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an unset tag is named (recorded errno 1003)",
