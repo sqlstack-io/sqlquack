@@ -368,6 +368,9 @@ impl Parser {
         };
 
         let limit = if self.match_token(TokenType::Limit) {
+            if self.is_snowflake() && !self.check(TokenType::Number) {
+                return Err(self.parse_error("Expected a row count after LIMIT"));
+            }
             Some(Box::new(Limit {
                 this: self.parse_expression()?,
                 percent: false,

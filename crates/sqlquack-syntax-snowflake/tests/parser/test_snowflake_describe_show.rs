@@ -303,6 +303,12 @@ fn given_a_snowflake_show_when_parsing_then_the_tree_keeps_kind_container_and_op
             expected_value: json!("BY"),
         },
         ProjectionTestCase {
+            description: "a lone USER after BY is kept as the scope's name",
+            sql: "SHOW DELEGATED AUTHORIZATIONS BY USER",
+            pointer: "/0/show/scope/table/name/name",
+            expected_value: json!("USER"),
+        },
+        ProjectionTestCase {
             description: "a delegated authorization's TO SECURITY INTEGRATION is its scope kind",
             sql: "SHOW DELEGATED AUTHORIZATIONS TO SECURITY INTEGRATION i1",
             pointer: "/0/show/scope_kind",

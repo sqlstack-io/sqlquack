@@ -223,6 +223,16 @@ impl Parser {
         Ok(property(name, None, Some(self.parse_alter_value()?)))
     }
 
+    /// Parse `<name> = <number>` for one required name; Snowflake refuses a string there (errno 1003).
+    fn parse_required_number_option(&mut self, name: &str) -> Result<ObjectProperty> {
+        self.expect_alter_words(&[&[name]])?;
+        self.expect_token(TokenType::Eq)?;
+        if !self.check(TokenType::Number) {
+            return Err(self.parse_error(format!("Expected a number after {name} =")));
+        }
+        Ok(property(name, None, Some(self.parse_primary()?)))
+    }
+
     /// Parse the properties of a SET (`set`) or UNSET: TAG and CONTACT lists, PRIMARY KEY, or named properties.
     pub(super) fn parse_alter_settings(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
@@ -501,7 +511,7 @@ impl Parser {
                 let name = self.object_operand()?;
                 (
                     vec![name],
-                    vec![self.parse_required_option("SEQUENCE_NUMBER")?],
+                    vec![self.parse_required_number_option("SEQUENCE_NUMBER")?],
                 )
             }
             _ => (vec![], vec![]),

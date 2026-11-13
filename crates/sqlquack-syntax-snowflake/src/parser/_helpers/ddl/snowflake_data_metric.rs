@@ -222,6 +222,9 @@ impl Parser {
                 return Err(self.parse_error("WITHIN GROUP takes columns"));
             }
             let limit = if self.match_text_seq(&["GROUP", "LIMIT"]) {
+                if !self.check(TokenType::Number) {
+                    return Err(self.parse_error("Expected a row count after GROUP LIMIT"));
+                }
                 Some(self.parse_primary()?)
             } else {
                 None

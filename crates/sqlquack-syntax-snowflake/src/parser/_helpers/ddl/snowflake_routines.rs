@@ -122,7 +122,7 @@ impl Parser {
             } else if listed(SNOWFLAKE_ROUTINE_NAME_PROPERTIES) {
                 Self::skip_snowflake_name
             } else if listed(SNOWFLAKE_ROUTINE_NUMBER_PROPERTIES) {
-                |parser| parser.expect_token(TokenType::Number).map(|_| ())
+                Self::expect_routine_number_or_text
             } else if listed(SNOWFLAKE_ROUTINE_TEXT_LIST_PROPERTIES) {
                 |parser| parser.skip_routine_list(Self::expect_routine_text)
             } else if listed(SNOWFLAKE_ROUTINE_NAME_LIST_PROPERTIES) {
@@ -230,6 +230,14 @@ impl Parser {
         self.expect_routine_key()?;
         self.expect_token(TokenType::Eq)?;
         self.skip_routine_name_or_text()
+    }
+
+    /// A number, or a string Snowflake reads as one (a string is a semantic error, not errno 1003).
+    fn expect_routine_number_or_text(&mut self) -> Result<()> {
+        if self.match_token(TokenType::String) {
+            return Ok(());
+        }
+        self.expect_token(TokenType::Number).map(|_| ())
     }
 
     /// In a Snowflake parse, refuses an object name with a reserved word or a string as a part.
