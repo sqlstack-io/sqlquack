@@ -788,3 +788,72 @@ fn given_a_snowflake_describe_of_a_metric_function_when_parsing_then_recorded_ve
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_warehouse_or_connector_action_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a named warehouse adds tables (recorded semantic error)",
+            sql: "ALTER WAREHOUSE v1 ADD TABLES ( v1 ) ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "the current warehouse aborts its queries (recorded acceptance)",
+            sql: "ALTER WAREHOUSE ABORT ALL QUERIES ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "adding tables needs a warehouse name (recorded errno 1002)",
+            sql: "ALTER WAREHOUSE ADD TABLES ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "dropping tables needs TABLES (recorded errno 1003)",
+            sql: "ALTER WAREHOUSE v1 DROP ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a table list is not empty (recorded errno 1003)",
+            sql: "ALTER WAREHOUSE v1 ADD TABLES ( ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a table is named, not a string (recorded errno 1003)",
+            sql: "ALTER WAREHOUSE v1 DROP TABLES ( 'v1' ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ABORT needs ALL QUERIES (recorded errno 1003)",
+            sql: "ALTER WAREHOUSE ABORT QUERIES ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "renaming needs a warehouse name (recorded errno 1003)",
+            sql: "ALTER WAREHOUSE RENAME TO v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unset tag is named (recorded errno 1003)",
+            sql: "ALTER WAREHOUSE v1 UNSET TAG 'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a connector pushes to a location (recorded semantic error)",
+            sql: "ALTER OPENFLOW CONNECTOR v1 PUSH TO 'm' USERNAME = 'm' PASSWORD = 'm' NAME = 'm' EMAIL = 'm' ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a push location is a string (recorded errno 1003)",
+            sql: "ALTER OPENFLOW CONNECTOR v1 PUSH TO m1 USERNAME = 'm' PASSWORD = 'm' NAME = 'm' EMAIL = 'm' ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
