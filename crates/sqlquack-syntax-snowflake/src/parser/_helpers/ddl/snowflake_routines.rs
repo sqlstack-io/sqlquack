@@ -75,6 +75,19 @@ impl Parser {
         }))))
     }
 
+    /// A function's `FROM EXPERIMENT <name> RUN <name>` source, as its text.
+    pub(crate) fn parse_experiment_run_source(&mut self) -> Result<String> {
+        let start = self.current;
+        self.expect_token(TokenType::From)?;
+        self.skip();
+        self.skip_snowflake_name()?;
+        if !self.match_identifier("RUN") {
+            return Err(self.parse_error("Expected RUN"));
+        }
+        self.skip_snowflake_name()?;
+        Ok(self.tokens_to_sql(start, self.current))
+    }
+
     /// One Snowflake routine property or option phrase as its source text; None when the next tokens are not one.
     pub(crate) fn parse_snowflake_routine_property(&mut self) -> Result<Option<String>> {
         if !self.is_snowflake() {

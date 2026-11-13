@@ -46,6 +46,7 @@ const RESOURCE_KINDS: &[&[&str]] = &[
     &["DCM", "PROJECT"],
     &["EVENT", "ROUTING", "TABLE"],
     &["EXTERNAL", "AGENT"],
+    &["EXTERNAL", "CONSUMER"],
     &["EXTERNAL", "TABLE"],
     &["FILE", "FORMAT"],
     &["GIT", "REPOSITORY"],
@@ -105,6 +106,14 @@ fn resource_actions(kind: &str) -> &'static [&'static [&'static str]] {
             &["UNSET", "RULE"],
         ],
         "EXTERNAL AGENT" => &[&["ADD", "VERSION"], &["SET"], &["UNSET"]],
+        "EXTERNAL CONSUMER" => &[
+            &["ADD"],
+            &["MODIFY"],
+            &["REMOVE"],
+            &["ROTATE"],
+            &["SET"],
+            &["UNSET"],
+        ],
         "EXTERNAL TABLE" => &[
             &["ADD", "FILES"],
             &["REMOVE", "FILES"],
@@ -366,6 +375,9 @@ impl Parser {
             ("DATA MOVEMENT RULE", "SET") if self.check_identifier("MAX_ROWS") => {
                 (vec![], vec![self.parse_max_rows_body()?])
             }
+            ("EXTERNAL CONSUMER", "ADD" | "MODIFY" | "REMOVE" | "ROTATE") => {
+                return self.parse_consumer_token(action);
+            }
             (_, "SET" | "MODIFY LIVE VERSION SET") => (vec![], self.parse_resource_set()?),
             (_, "UNSET") => (vec![], self.parse_resource_unset()?),
             (
@@ -444,6 +456,29 @@ impl Parser {
             operands.push(self.parse_expression()?);
         }
         Ok((action, (operands, self.parse_resource_properties()?)))
+    }
+
+    /// An external consumer's token action after its keyword: `{ PROGRAMMATIC ACCESS TOKEN | PAT } <name>`, then MODIFY's `SET <property> ...` or ADD and ROTATE's properties, with no IF [ NOT ] EXISTS.
+    fn parse_consumer_token(&mut self, mut action: String) -> Result<(String, ActionParts)> {
+        if !self.match_text_seq(&["PROGRAMMATIC", "ACCESS", "TOKEN"])
+            && !self.match_identifier("PAT")
+        {
+            return Err(self.parse_error("Expected PROGRAMMATIC ACCESS TOKEN or PAT"));
+        }
+        action.push_str(" PROGRAMMATIC ACCESS TOKEN");
+        let operands = vec![self.parse_name_operand()?];
+        let properties = match action.as_str() {
+            "MODIFY PROGRAMMATIC ACCESS TOKEN" => {
+                if !self.match_token(TokenType::Set) {
+                    return Err(self.parse_error("Expected SET"));
+                }
+                action.push_str(" SET");
+                self.parse_resource_set()?
+            }
+            "REMOVE PROGRAMMATIC ACCESS TOKEN" => Vec::new(),
+            _ => self.parse_resource_properties()?,
+        };
+        Ok((action, (operands, properties)))
     }
 
     /// Parse `( <expr> [ , ... ] )` as one tuple.
@@ -622,7 +657,7 @@ impl Parser {
     }
 
     /// Parse a location: a stage path or a string.
-    pub(super) fn parse_location_value(&mut self) -> Result<Expression> {
+    pub(crate) fn parse_location_value(&mut self) -> Result<Expression> {
         if self.is_stage_path() {
             return self.parse_stage_path();
         }
@@ -638,7 +673,7 @@ impl Parser {
     }
 
     /// Whether the current token starts a stage path.
-    pub(super) fn is_stage_path(&self) -> bool {
+    pub(crate) fn is_stage_path(&self) -> bool {
         !self.is_at_end() && self.peek_text().starts_with('@')
     }
 
