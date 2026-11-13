@@ -52,6 +52,9 @@ impl Parser {
         if let Some(listing) = self.parse_snowflake_create_listing(or_replace, or_alter)? {
             return Ok(Some(listing));
         }
+        if let Some(app) = self.parse_snowflake_create_streamlit(or_replace, or_alter)? {
+            return Ok(Some(app));
+        }
         if self.check(TokenType::Alter) || self.check(TokenType::String) {
             return Err(self.parse_error("Expected an object kind after CREATE"));
         }

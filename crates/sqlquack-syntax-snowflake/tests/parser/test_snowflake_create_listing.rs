@@ -6,7 +6,7 @@ use crate::helpers::{accepted, statements};
 use crate::test_types::{AcceptanceTestCase, ProjectionTestCase};
 
 #[test]
-fn given_a_snowflake_external_or_organization_listing_create_when_parsing_then_only_what_snowflake_parses_is_accepted(
+fn given_a_snowflake_listing_or_streamlit_create_when_parsing_then_only_what_snowflake_parses_is_accepted(
 ) {
     let test_cases = [
         AcceptanceTestCase {
@@ -61,6 +61,30 @@ fn given_a_snowflake_external_or_organization_listing_create_when_parsing_then_o
         AcceptanceTestCase {
             description: "a comment needs its value (recorded syntax error)",
             sql: "CREATE EXTERNAL LISTING v1 AS 'm' COMMENT = ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a Streamlit app from a source location (recorded parse)",
+            sql: "CREATE OR REPLACE STREAMLIT IF NOT EXISTS v1 FROM '@d1.s1.st1' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 SECRETS = ( 'm' = d1.s1.v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a Streamlit app defined with bare-word and empty-list values (recorded parse)",
+            sql: "DEFINE STREAMLIT d1.s1.v1 MAIN_FILE = m1 IMPORTS = ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "FROM needs a source location (recorded syntax error)",
+            sql: "CREATE STREAMLIT v1 FROM ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a secret needs its key (recorded syntax error)",
+            sql: "CREATE STREAMLIT v1 SECRETS = ( = v1 ) ;",
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
