@@ -351,11 +351,6 @@ other_receipts_contradicted = [
   "k5c0f60c6cde2",
 ]
 "sf.ddl.alter-iceberg-table.unset" = ["ke33c9a12af90"]
-"sf.ddl.alter-openflow-connector.push-username-password-name" = [
-  "k17cce82d6804",
-  "k848f558ff405",
-  "k8d011b9d08e8",
-]
 "sf.ddl.alter-openflow-deployment.rename-to" = ["k1dd7f9ba81fc"]
 "sf.ddl.alter-openflow-deployment.terminate" = ["kf3b26f2f6a13"]
 "sf.ddl.alter-openflow-deployment.upgrade" = ["k8f0dad70d584"]
@@ -371,26 +366,6 @@ other_receipts_contradicted = [
 "sf.ddl.alter-task.set" = [
   "k40c1b10b46dd",
   "k98072043c837",
-]
-"sf.ddl.alter-warehouse.abort-all-queries" = ["k71191b2fbfe6"]
-"sf.ddl.alter-warehouse.add-tables" = [
-  "k0add3b7ab01d",
-  "k22a4a06e0b15",
-  "k82c79cc80548",
-  "kd23873c7924c",
-]
-"sf.ddl.alter-warehouse.drop-tables" = [
-  "k0467ae54bde3",
-  "k18cd7b807795",
-  "k83d39159180e",
-  "kb199babc8141",
-]
-"sf.ddl.alter-warehouse.rename-to" = ["kacbfb3c46117"]
-"sf.ddl.alter-warehouse.set-tag" = ["k5929dd7f75d5"]
-"sf.ddl.alter-warehouse.unset" = ["kf2a072236596"]
-"sf.ddl.alter-warehouse.unset-tag" = [
-  "k1d78d7976e06",
-  "k806f1c1561f7",
 ]
 "sf.ddl.comment.is" = ["ke40ebb8a5793"]
 "sf.ddl.create-agent" = [
@@ -419,13 +394,6 @@ other_receipts_contradicted = [
 "sf.ddl.create-dbt-project" = [
   "k5122c8e1ce71",
   "ka1910fdd6a39",
-]
-"sf.ddl.create-event-table.table" = [
-  "k3db3965dad10",
-  "ka4565655794b",
-  "kb2b289150635",
-  "kbeab4331574d",
-  "ke81a17d6f572",
 ]
 "sf.ddl.create-file-format.create-file-format" = ["k157043357740"]
 "sf.ddl.create-file-format.create-or-alter-file" = ["k63c67a765cde"]
@@ -486,24 +454,11 @@ other_receipts_contradicted = [
 "sf.ddl.create-table.define-table" = ["ke1f3c185cda6"]
 "sf.ddl.create-task-graph.create-or-alter-task" = ["k6122231c287a"]
 "sf.ddl.create-task-graph.create-task-graph" = ["ka874e1616f5f"]
-"sf.ddl.create-variable" = [
-  "k1a1d69c5fb25",
-  "k8b65a378a2fb",
-  "ka0c8ed100821",
-  "kc4bd146749db",
-  "kfe10f90fd69b",
-]
 "sf.ddl.create-versioned-schema" = [
   "ke67978ccde94",
   "kec07de1bbc4f",
 ]
 "sf.ddl.desc-external-table" = ["kcc6e9e00e915"]
-"sf.ddl.desc-function-dmf" = [
-  "k358fb74c2360",
-  "k42c557d0bde0",
-  "k437132777c20",
-  "kaa2c81b91f40",
-]
 "sf.ddl.desc-table" = ["k377b2974e7ea"]
 "sf.ddl.drop-iceberg-table" = ["k0c6d88e813a7"]
 "sf.ddl.show-cortex-search" = [
@@ -517,12 +472,6 @@ other_receipts_contradicted = [
   "k5e02277ae099",
 ]
 "sf.ddl.show-schema-variables" = ["k9212c756ceed"]
-"sf.ddl.show-warehouses" = [
-  "k60bb276ffb47",
-  "k9b013a14443f",
-  "ka3980f8f2cf6",
-  "kb3ccb1d89a97",
-]
 "sf.expressions.data-types-numeric.double" = ["kcf1c9c4b00d8"]
 "sf.expressions.data-types-text.string" = ["kaa398b570613"]
 "sf.expressions.session-variables" = ["ka6236ae06564"]
