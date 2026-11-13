@@ -72,7 +72,7 @@ impl Parser {
         } else if iceberg {
             Ok(None)
         } else if self.match_token(TokenType::Sequence) {
-            self.parse_alter_kind_extension("SEQUENCE", &[&["RENAME", "TO"], &["UNSET"]])
+            self.parse_alter_kind_extension("SEQUENCE", &[&["RENAME", "TO"], &["UNSET"], &["SET"]])
         } else if self.match_token(TokenType::View) {
             self.parse_alter_view_extension()
         } else if self.match_identifier("SHARE") {
@@ -362,9 +362,42 @@ impl Parser {
                 self.expect_alter_words(&[&["COMMENT"]])?;
                 (vec![], vec![property("COMMENT", None, None)])
             }
+            "SET" => (vec![], self.parse_sequence_set()?),
             _ => (vec![self.parse_tag_operand()?], vec![]),
         };
         Ok(Some(alter_object(kind, head, action, parts)))
+    }
+
+    /// A Snowflake ALTER SEQUENCE SET: at least one of INCREMENT [ BY ] [ = ] <n>, ORDER, NOORDER and COMMENT = <value>.
+    fn parse_sequence_set(&mut self) -> Result<Vec<ObjectProperty>> {
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        while !self.is_statement_end_at(0) {
+            if self.match_token(TokenType::Increment) || self.match_identifier("INCREMENT") {
+                self.match_token(TokenType::By);
+                self.match_token(TokenType::Eq);
+                if !self.check(TokenType::Number) && !self.check(TokenType::Dash) {
+                    return Err(self.parse_error("Expected the increment"));
+                }
+                properties.push(property(
+                    "INCREMENT",
+                    None,
+                    Some(self.parse_object_value()?),
+                ));
+            } else if self.match_token(TokenType::Order) {
+                properties.push(property("ORDER", None, None));
+            } else if self.match_identifier("NOORDER") {
+                properties.push(property("NOORDER", None, None));
+            } else if self.match_token(TokenType::Comment) || self.match_identifier("COMMENT") {
+                self.expect_token(TokenType::Eq)?;
+                properties.push(property("COMMENT", None, Some(self.parse_object_value()?)));
+            } else {
+                return Err(self.parse_error("Expected INCREMENT, ORDER, NOORDER or COMMENT"));
+            }
+        }
+        if properties.is_empty() {
+            return Err(self.parse_error("Expected a property to set"));
+        }
+        Ok(properties)
     }
 
     /// Parse a name operand: an identifier, never a string or an unquoted reserved keyword.
