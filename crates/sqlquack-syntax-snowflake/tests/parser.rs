@@ -24,6 +24,8 @@ mod test_snowflake_alter_table;
 mod test_snowflake_create_clone;
 #[path = "parser/test_snowflake_create_properties.rs"]
 mod test_snowflake_create_properties;
+#[path = "parser/test_snowflake_create_search.rs"]
+mod test_snowflake_create_search;
 #[path = "parser/test_snowflake_create_sets.rs"]
 mod test_snowflake_create_sets;
 #[path = "parser/test_snowflake_describe_show.rs"]
