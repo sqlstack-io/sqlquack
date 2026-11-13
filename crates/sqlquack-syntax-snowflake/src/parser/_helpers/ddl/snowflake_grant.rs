@@ -1,6 +1,8 @@
 //! Snowflake GRANT and REVOKE of privileges, roles and service roles, as Snowflake parses them.
 
-use crate::parser::constants::{SNOWFLAKE_GRANT_KINDS, SNOWFLAKE_GRANT_PRIVILEGES};
+use crate::parser::constants::{
+    SNOWFLAKE_GRANT_KINDS, SNOWFLAKE_GRANT_KIND_TAILS, SNOWFLAKE_GRANT_PRIVILEGES,
+};
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::schema_objects::models::{
@@ -26,7 +28,14 @@ const ROLE_GRANTS: &[(&str, &[&str])] = &[
     ("ROLE", &["ROLE", "USER"]),
     (
         "DATABASE ROLE",
-        &["DATABASE ROLE", "APPLICATION", "ROLE", "SHARE", "USER"],
+        &[
+            "DATABASE ROLE",
+            "APPLICATION",
+            "DATABASE",
+            "ROLE",
+            "SHARE",
+            "USER",
+        ],
     ),
     (
         "APPLICATION ROLE",
@@ -34,7 +43,13 @@ const ROLE_GRANTS: &[(&str, &[&str])] = &[
     ),
     (
         "SERVICE ROLE",
-        &["APPLICATION ROLE", "DATABASE ROLE", "ROLE"],
+        &[
+            "APPLICATION ROLE",
+            "APPLICATION",
+            "DATABASE ROLE",
+            "DATABASE",
+            "ROLE",
+        ],
     ),
 ];
 
@@ -199,7 +214,7 @@ impl Parser {
         Ok(privilege(words.join(" ")))
     }
 
-    /// The target after ON: ACCOUNT, { ALL | FUTURE } <plural> IN <container>, or [ <kind> ] <name>; IN ACCOUNT takes an INHERITED privilege.
+    /// The target after ON: ACCOUNT, { ALL | FUTURE } <plural> IN <container>, or [ <kind> ] <name>; IN ACCOUNT takes an INHERITED privilege, and an unlisted kind is one word that neither starts a listed kind of several words nor is a refused tail of one.
     fn parse_grant_target(&mut self, inherited: bool) -> Result<(Option<String>, Identifier)> {
         if self.check_identifier("ACCOUNT") && self.check_grant_end(1) {
             self.skip();
@@ -211,7 +226,7 @@ impl Parser {
             while !self.check(TokenType::In) {
                 words.push(self.parse_grant_name_part()?.name.to_ascii_uppercase());
             }
-            if words.len() == 1 {
+            if words.len() == 1 || words.last().is_some_and(|word| !word.ends_with('S')) {
                 return Err(self.parse_error("Expected the plural of an object kind"));
             }
             self.expect_token(TokenType::In)?;
@@ -236,6 +251,9 @@ impl Parser {
             let generic = self.check_grant_name_start(0)
                 && self.check_grant_name_start(1)
                 && !self.check_at(2, TokenType::Dot)
+                && !SNOWFLAKE_GRANT_KIND_TAILS
+                    .iter()
+                    .any(|word| self.check_identifier(word))
                 && !SNOWFLAKE_GRANT_KINDS.iter().any(|kind| {
                     kind.split(' ')
                         .next()

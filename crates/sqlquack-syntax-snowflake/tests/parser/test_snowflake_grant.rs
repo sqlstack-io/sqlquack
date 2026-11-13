@@ -122,6 +122,66 @@ fn given_a_snowflake_grant_or_revoke_when_parsing_then_only_what_snowflake_parse
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "the single-word create and import privileges Snowflake reads (recorded semantic errors)",
+            sql: "GRANT CREATE VOLUME , CREATE POLICY , CREATE REPLICATION , IMPORT LISTING , IMPORT ORGANIZATION ON ACCOUNT TO v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a word of a longer create privilege is no privilege (recorded errno 1003)",
+            sql: "GRANT CREATE POOL ON ACCOUNT TO v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a data exchange is a kind (recorded semantic error)",
+            sql: "REVOKE ATTACH LISTING ON DATA EXCHANGE v1 FROM v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a one-word kind that only ends a longer kind is refused (recorded errno 1003)",
+            sql: "GRANT MODIFY ON POOL v1 TO APPLICATION v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an unlisted one-word kind stays accepted (recorded semantic error)",
+            sql: "GRANT MODIFY ON VOLUME v1 TO v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "ALL needs a plural (recorded errno 1003)",
+            sql: "GRANT REFERENCE_USAGE ON ALL ICEBERG IN SCHEMA v1 TO SHARE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a database role grants to a database (recorded semantic error)",
+            sql: "GRANT DATABASE ROLE v1 TO DATABASE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a service role grants to an application (recorded semantic error)",
+            sql: "GRANT SERVICE ROLE v1!v1 TO APPLICATION v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SHOW GRANTS OF a class instance role (recorded semantic error)",
+            sql: "SHOW GRANTS OF ROLE v1!v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "SHOW GRANTS TO a bare name (recorded semantic error)",
+            sql: "SHOW GRANTS TO v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
     ];
 
     for test_case in test_cases {
