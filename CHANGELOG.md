@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.12.1](https://github.com/sqlstack-io/sqlquack/compare/v0.12.0...v0.12.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* **syntax-coverage:** give numeric Snowflake operands a wrong-kind case ([4c8dfa6](https://github.com/sqlstack-io/sqlquack/commit/4c8dfa65d803151df0a0e87274017284135d8d33))
+* **syntax:** keep a SHOW DELEGATED AUTHORIZATIONS clause as its scope ([fb725bf](https://github.com/sqlstack-io/sqlquack/commit/fb725bfdc7a2f63da1359ad624970d3a3316b55b))
+* **syntax:** match recorded Snowflake verdicts and keep SHOW, task and routine modifiers in the tree ([d4ca770](https://github.com/sqlstack-io/sqlquack/commit/d4ca77041337a9f30f5a15827684a8f4ac4aefb7))
+* **syntax:** match recorded Snowflake verdicts for listing filters, routine maps, Iceberg versions and partial CREATE kinds ([3bd7322](https://github.com/sqlstack-io/sqlquack/commit/3bd73222493fae27e6095de30763a489f8b553bc))
+* **syntax:** match recorded Snowflake verdicts for numeric operands given a string ([e8ab1f7](https://github.com/sqlstack-io/sqlquack/commit/e8ab1f7e10cd7bf55dbd6f369b9fe707a86bc990))
+* **syntax:** refuse a malformed CREATE INTERACTIVE WAREHOUSE and read MAX_STALENESS as a string ([cfe1e85](https://github.com/sqlstack-io/sqlquack/commit/cfe1e85b00222b956414d07b1a80505cac051126))
+* **syntax:** structure a lone Snowflake table contact and read SNAPSHOT POLICY before SET as a snapshot name ([721eb8f](https://github.com/sqlstack-io/sqlquack/commit/721eb8ffb3815cbce7b53a5f7f3620cbddd27b19))
+
 ## [0.12.0](https://github.com/sqlstack-io/sqlquack/compare/v0.11.3...v0.12.0) (2026-11-13)
 
 
