@@ -1461,7 +1461,7 @@ impl Parser {
         };
 
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {
-            let params = self.parse_function_parameters()?;
+            let params = self.parse_function_parameters(false)?;
             self.expect_token(TokenType::RParen)?;
             (params, true)
         } else {
