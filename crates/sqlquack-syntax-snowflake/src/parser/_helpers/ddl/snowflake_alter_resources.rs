@@ -773,7 +773,12 @@ impl Parser {
             if let Some(word) = pairs {
                 self.skip();
                 loop {
-                    let name = self.parse_simple_qualified_name()?;
+                    let name = match word {
+                        "CONTACT" => {
+                            self.parse_contact_purpose(Self::parse_simple_qualified_name)?
+                        }
+                        _ => self.parse_simple_qualified_name()?,
+                    };
                     self.expect_token(TokenType::Eq)?;
                     let value = match word {
                         "CONTACT" => self.parse_name_operand()?,
@@ -814,7 +819,12 @@ impl Parser {
             if let Some(word) = pairs {
                 self.skip();
                 loop {
-                    let name = self.parse_simple_qualified_name()?;
+                    let name = match word {
+                        "CONTACT" => {
+                            self.parse_contact_purpose(Self::parse_simple_qualified_name)?
+                        }
+                        _ => self.parse_simple_qualified_name()?,
+                    };
                     properties.push(property(word, Some(name), None));
                     if !self.match_token(TokenType::Comma) {
                         break;

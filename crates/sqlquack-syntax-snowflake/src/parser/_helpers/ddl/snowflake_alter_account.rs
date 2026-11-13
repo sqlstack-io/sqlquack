@@ -344,7 +344,7 @@ impl Parser {
     fn parse_account_contacts(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
-            let purpose = self.parse_simple_name()?;
+            let purpose = self.parse_contact_purpose(Self::parse_simple_name)?;
             let value = match set {
                 true => {
                     self.expect_token(TokenType::Eq)?;

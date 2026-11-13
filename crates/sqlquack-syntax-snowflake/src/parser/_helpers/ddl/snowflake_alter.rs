@@ -231,6 +231,17 @@ impl Parser {
         self.expect_identifier_or_safe_keyword_with_quoted()
     }
 
+    /// Parse a contact purpose: a name read by `name`, or a string, which Snowflake also admits; a string keeps its quotes.
+    pub(super) fn parse_contact_purpose(
+        &mut self,
+        name: fn(&mut Self) -> Result<Identifier>,
+    ) -> Result<Identifier> {
+        match self.check(TokenType::String) {
+            true => Ok(Identifier::new(format!("'{}'", self.advance_text()?))),
+            false => name(self),
+        }
+    }
+
     /// Parse a property value: a literal, TRUE, FALSE or a name.
     pub(super) fn parse_object_value(&mut self) -> Result<Expression> {
         if self.check(TokenType::String)
@@ -324,7 +335,7 @@ impl Parser {
                 && self.match_identifier("CONTACT")
             {
                 loop {
-                    let purpose = self.parse_simple_name()?;
+                    let purpose = self.parse_contact_purpose(Self::parse_simple_name)?;
                     let value = if set {
                         self.expect_token(TokenType::Eq)?;
                         Some(Expression::Table(Box::new(self.parse_object_name()?)))

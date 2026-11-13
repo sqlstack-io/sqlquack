@@ -749,6 +749,9 @@ impl Parser {
         while parenthesized && self.match_token(TokenType::Comma) {
             names.push(self.expect_identifier_or_keyword_with_quoted()?);
         }
+        for name in &names {
+            self.reject_reserved_name_part(name)?;
+        }
         if parenthesized {
             self.expect_token(TokenType::RParen)?;
         }
@@ -1051,9 +1054,10 @@ impl Parser {
                 self.skip();
                 let mut vars: Vec<Expression> = Vec::new();
                 loop {
-                    let var_name = self.advance_text()?;
+                    let var_name = self.expect_identifier_or_keyword_with_quoted()?;
+                    self.reject_reserved_name_part(&var_name)?;
                     vars.push(Expression::Column(Box::new(Column {
-                        name: Identifier::new(var_name),
+                        name: var_name,
                         table: None,
                         join_mark: false,
                         trailing_comments: Vec::new(),

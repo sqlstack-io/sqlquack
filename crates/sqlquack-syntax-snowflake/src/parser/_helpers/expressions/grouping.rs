@@ -630,7 +630,7 @@ impl Parser {
             return Err(self.parse_error("Expected INTO after MERGE"));
         }
 
-        let mut target = Expression::Table(Box::new(self.parse_table_ref()?));
+        let mut target = Expression::Table(Box::new(self.parse_object_name_ref()?));
 
         if self.check(TokenType::With) && self.check_next(TokenType::LParen) {
             if let Expression::Table(ref mut table) = target {
