@@ -247,6 +247,14 @@ NON_CALL_KEYWORDS: frozenset[str] = frozenset(
     {"ON", "AS", "IN", "USING", "VALUES", "FROM", "WHERE", "SELECT", "AND", "OR", "NOT"}
 )
 
+COMMAND_FAMILIES: frozenset[str] = frozenset({"classes"})
+"""Expression-argument families of commands and methods: a leading instance name and a LIKE pattern
+are operands there, not call arguments, and a TAG list is a clause, not a call."""
+
+COMMAND_NON_CALL_KEYWORDS: frozenset[str] = frozenset({"TAG"})
+
+PLACEHOLDER_IN_LITERAL: re.Pattern[str] = re.compile(r"<[^<>]+>")
+
 STATEMENT_TERMINATOR: str = ";"
 
 RESERVED_WORD: str = "SELECT"
