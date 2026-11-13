@@ -9,8 +9,9 @@ use crate::parser::constants::{
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::ColumnDef;
-use sqlquack_syntax::expressions::names::models::TableRef;
-use sqlquack_syntax::expressions::schema_objects::models::CreateObject;
+use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
+use sqlquack_syntax::expressions::operators::models::BinaryOp;
+use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
 use sqlquack_syntax::expressions::tables::models::ConstraintType;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::{DataType, Tuple};
@@ -76,20 +77,22 @@ impl Parser {
     }
 
     /// A function's `FROM EXPERIMENT <name> RUN <name>` source, as its text.
-    pub(crate) fn parse_experiment_run_source(&mut self) -> Result<String> {
-        let start = self.current;
+    pub(crate) fn parse_experiment_run_source(&mut self) -> Result<ObjectProperty> {
         self.expect_token(TokenType::From)?;
         self.skip();
-        self.skip_snowflake_name()?;
+        let experiment = self.parse_checked_routine_name()?;
         if !self.match_identifier("RUN") {
             return Err(self.parse_error("Expected RUN"));
         }
-        self.skip_snowflake_name()?;
-        Ok(self.tokens_to_sql(start, self.current))
+        let run = self.parse_checked_routine_name()?;
+        let names = Expression::Tuple(Box::new(Tuple {
+            expressions: vec![experiment, run],
+        }));
+        Ok(routine_property("FROM EXPERIMENT RUN", Some(names)))
     }
 
-    /// One Snowflake routine property or option phrase as its source text; None when the next tokens are not one.
-    pub(crate) fn parse_snowflake_routine_property(&mut self) -> Result<Option<String>> {
+    /// One Snowflake routine property, `KEY = value` or an option phrase such as COPY GRANTS; None when the next tokens are not one.
+    pub(crate) fn parse_snowflake_routine_property(&mut self) -> Result<Option<ObjectProperty>> {
         if !self.is_snowflake() {
             return Ok(None);
         }
@@ -102,7 +105,12 @@ impl Parser {
             || self.match_identifier("IMMUTABLE")
             || self.match_identifier("MEMOIZABLE");
         if phrase {
-            return Ok(Some(self.tokens_to_sql(start, self.current)));
+            let words = self.tokens[start..self.current]
+                .iter()
+                .map(|token| token.text.to_ascii_uppercase())
+                .collect::<Vec<_>>()
+                .join(" ");
+            return Ok(Some(routine_property(&words, None)));
         }
         if !self.check_next(TokenType::Eq) {
             return Ok(None);
@@ -134,8 +142,68 @@ impl Parser {
             };
         self.skip();
         self.skip();
+        let value_start = self.current;
         value(self)?;
-        Ok(Some(self.tokens_to_sql(start, self.current)))
+        let end = self.current;
+        self.current = value_start;
+        let tree = self.parse_routine_value_tree()?;
+        if self.current != end {
+            return Err(self.parse_error("Expected the end of the property value"));
+        }
+        Ok(Some(routine_property(&key, Some(tree))))
+    }
+
+    /// A routine property value its check accepted: a literal, a name, or a parenthesized list whose `key = value` entries stay pairs.
+    fn parse_routine_value_tree(&mut self) -> Result<Expression> {
+        if !self.match_token(TokenType::LParen) {
+            return self.parse_routine_value_item();
+        }
+        let mut items: Vec<Expression> = Vec::new();
+        while !self.match_token(TokenType::RParen) {
+            let item = self.parse_routine_value_item()?;
+            items.push(match self.match_token(TokenType::Eq) {
+                true => {
+                    let value = self.parse_routine_value_item()?;
+                    Expression::Eq(Box::new(BinaryOp::new(item, value)))
+                }
+                false => item,
+            });
+            self.match_token(TokenType::Comma);
+        }
+        Ok(Expression::Tuple(Box::new(Tuple { expressions: items })))
+    }
+
+    /// A name `skip_snowflake_name` accepts, as a tree.
+    fn parse_checked_routine_name(&mut self) -> Result<Expression> {
+        let start = self.current;
+        self.skip_snowflake_name()?;
+        self.current = start;
+        self.parse_routine_value_item()
+    }
+
+    /// A literal, or a dotted name whose parts keep their quoting.
+    fn parse_routine_value_item(&mut self) -> Result<Expression> {
+        if self.check(TokenType::String)
+            || self.check(TokenType::Number)
+            || self.check(TokenType::DollarString)
+        {
+            return self.parse_primary();
+        }
+        let mut parts: Vec<Identifier> = Vec::new();
+        loop {
+            let quoted = self.check(TokenType::QuotedIdentifier);
+            let mut part = Identifier::new(self.advance_text()?);
+            part.quoted = quoted;
+            parts.push(part);
+            if !self.match_token(TokenType::Dot) {
+                break;
+            }
+        }
+        let mut name = TableRef::new("");
+        name.name = parts.pop().unwrap_or_else(|| Identifier::new(""));
+        name.schema = parts.pop();
+        name.catalog = parts.pop();
+        Ok(Expression::Table(Box::new(name)))
     }
 
     /// A string value.
@@ -309,4 +377,18 @@ impl Parser {
         }
         Ok(has_as)
     }
+}
+
+/// One routine property of kind `kind`, with its value when it has one.
+fn routine_property(kind: &str, value: Option<Expression>) -> ObjectProperty {
+    ObjectProperty {
+        kind: kind.to_owned(),
+        name: None,
+        value,
+    }
+}
+
+/// A function or procedure's NULL or NOT NULL return as a property.
+pub(crate) fn nullability_property(nullability: String) -> ObjectProperty {
+    routine_property(&nullability.to_ascii_uppercase(), None)
 }
