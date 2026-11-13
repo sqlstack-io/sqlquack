@@ -7589,6 +7589,13 @@ anchor = "doc.sql.alter-application-service / Syntax"
 note = "a string literal in place of <integration_name>, observed"
 
 [[obligation]]
+id = "sf.ddl.alter-application-service.set.o058"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-application-service / Syntax"
+note = "an empty integration list, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-application-service.suspend-resume.o001"
 kind = "positive"
 required = true
@@ -37156,6 +37163,13 @@ required = true
 target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , <integration_name> ... ] ) ]"
 anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
 note = "a string literal in place of <integration_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set.o058"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+note = "an empty integration list, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-function.set-api-integration.o001"
@@ -104544,6 +104558,27 @@ anchor = "doc.sql.create-alert / Parameters"
 note = "a RUNBOOK of 2,049 characters against the documented maximum of 2,048"
 
 [[obligation]]
+id = "sf.ddl.create-alert.create-alert-if-exists.o082"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-alert / Syntax"
+note = "a CALL as the condition, observed"
+
+[[obligation]]
+id = "sf.ddl.create-alert.create-alert-if-exists.o083"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-alert / Syntax"
+note = "a SHOW command as the condition, observed"
+
+[[obligation]]
+id = "sf.ddl.create-alert.create-alert-if-exists.o084"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-alert / Syntax"
+note = "a scripting block as the action, observed"
+
+[[obligation]]
 id = "sf.ddl.create-alert.create-or-alter-alert.o001"
 kind = "positive"
 required = true
@@ -106740,6 +106775,13 @@ required = true
 target = "<version_alias>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-application-service.or-alter-application-service.o042"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-application-service / Variant syntax / CREATE OR ALTER APPLICATION SERVICE"
+note = "COMMENT after SPECIFICATION, observed"
 
 [[obligation]]
 id = "sf.ddl.create-application.application-package.o001"
@@ -114812,6 +114854,20 @@ anchor = "doc.sql.create-cortex-search / Parameters"
 note = "AUTO_SUSPEND = 1,801 against the documented minimum of 1,800"
 
 [[obligation]]
+id = "sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag.o094"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-cortex-search / Syntax"
+note = "the form without its required ATTRIBUTES, observed"
+
+[[obligation]]
+id = "sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag.o095"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-cortex-search / Syntax"
+note = "TARGET_LAG before WAREHOUSE, observed"
+
+[[obligation]]
 id = "sf.ddl.create-cortex-search.text-indexes-vector-indexes.o001"
 kind = "positive"
 required = true
@@ -116751,6 +116807,20 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-data-movement-rule.o038"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-data-movement-rule / Syntax"
+note = "a bare word as TYPE, observed"
+
+[[obligation]]
+id = "sf.ddl.create-data-movement-rule.o039"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-data-movement-rule / Syntax"
+note = "MAX_ROWS before TYPE, observed"
 
 [[obligation]]
 id = "sf.ddl.create-database-catalog-linked.o001"
@@ -156998,6 +157068,13 @@ anchor = "doc.sql.create-function / Syntax / SQL handler"
 note = "omit <col_name>, observed"
 
 [[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table.sql-handler.o084"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-function / Syntax / SQL handler"
+note = "a procedure argument mode on a function argument, observed"
+
+[[obligation]]
 id = "sf.ddl.create-function.define-function.o001"
 kind = "positive"
 required = true
@@ -179521,12 +179598,6 @@ target = "'<string>' in [ COMMENT = '<string>' ]"
 note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
-id = "sf.ddl.create-listing.as.o033"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL"
-
-[[obligation]]
 id = "sf.ddl.create-listing.as.o034"
 kind = "negative_neighbour"
 required = true
@@ -179633,6 +179704,27 @@ required = true
 target = "<package_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-listing.as.o050"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-listing / Syntax"
+note = "LISTING without EXTERNAL or ORGANIZATION, observed"
+
+[[obligation]]
+id = "sf.ddl.create-listing.as.o051"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-listing / Syntax"
+note = "LISTING without EXTERNAL or ORGANIZATION, with a share, observed"
+
+[[obligation]]
+id = "sf.ddl.create-listing.as.o052"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-listing / Syntax"
+note = "ORGANIZATION LISTING with REVIEW, observed"
 
 [[obligation]]
 id = "sf.ddl.create-listing.from.o001"
@@ -179921,6 +180013,13 @@ required = true
 target = "<package_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-listing.from.o045"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-listing / Syntax"
+note = "an unquoted stage path as the manifest location, observed"
 
 [[obligation]]
 id = "sf.ddl.create-materialized-view.o001"
@@ -194874,6 +194973,34 @@ anchor = "doc.sql.create-procedure / Syntax / Snowflake Scripting handler"
 note = "omit <arg_data_type>, observed"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler.o147"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-procedure / Syntax / Snowflake Scripting handler"
+note = "an IN argument with a DEFAULT, as the grammar writes it, observed"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler.o148"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-procedure / Syntax / Snowflake Scripting handler"
+note = "an OUT argument with a DEFAULT, observed"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler.o149"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-procedure / Syntax / Snowflake Scripting handler"
+note = "two defaulted arguments with every option and no mode, observed"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler.o150"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-procedure / Syntax / Snowflake Scripting handler"
+note = "an argument with a type and no name, observed"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-scoped-temp.o001"
 kind = "positive"
 required = true
@@ -195059,6 +195186,13 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-procedure / Syntax / Procedure-scoped temporary tables (Snowflake Scripting)"
 note = "the form without its required PROCEDURE, observed"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-scoped-temp.o030"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-procedure / Syntax / Procedure-scoped temporary tables (Snowflake Scripting)"
+note = "a column constraint in a procedure-scoped table, observed"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o001"
@@ -215940,6 +216074,27 @@ required = true
 target = "<stage> #2"
 anchor = "doc.sql.create-service / Syntax"
 note = "omit <stage>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-service.o230"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-service / Syntax"
+note = "every option without a tag list, observed"
+
+[[obligation]]
+id = "sf.ddl.create-service.o231"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-service / Syntax"
+note = "a tag list after COMMENT, observed"
+
+[[obligation]]
+id = "sf.ddl.create-service.o232"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-service / Syntax"
+note = "an inline specification in single quotes, observed"
 
 [[obligation]]
 id = "sf.ddl.create-snapshot.o001"
@@ -242905,6 +243060,13 @@ required = true
 target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]"
 anchor = "doc.sql.create-streamlit / Syntax"
 note = "a string literal in place of <integration_name>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-streamlit.create-streamlit.o086"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-streamlit / Syntax"
+note = "an unquoted stage path as the source location, observed"
 
 [[obligation]]
 id = "sf.ddl.create-streamlit.create-streamlit-root-location-main-file.o001"

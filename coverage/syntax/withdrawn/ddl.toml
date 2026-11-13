@@ -1415,6 +1415,15 @@ valid_as = "sf.ddl.create-warehouse.create-warehouse positive the documented for
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.create-listing.as"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required EXTERNAL"
+sql = "CREATE LISTING v1 AS 'm' ;"
+valid_as = "sf.ddl.create-listing.as negative_neighbour LISTING without EXTERNAL or ORGANIZATION, observed"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
+
+[[withdrawn]]
 form = "sf.ddl.create-materialized-view"
 kind = "negative_neighbour"
 target = ""

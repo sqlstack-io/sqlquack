@@ -84383,3 +84383,223 @@ sql = "CREATE OR REPLACE MODEL MONITOR IF NOT EXISTS v1 WITH MODEL = v1 VERSION 
 context = "raw"
 expect = "accept"
 stage = "semantic"
+
+# Probes for the object statements the parser now reads as Snowflake does: DEFAULT after a procedure
+# argument mode, bare LISTING, manifest and source locations as stage paths, option order, and empty
+# integration lists. Each is observed; the recorded verdict decides the parser.
+
+[[limit]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler"
+kind = "positive"
+note = "an IN argument with a DEFAULT, as the grammar writes it, observed"
+anchor = "doc.sql.create-procedure / Syntax / Snowflake Scripting handler"
+sql = "CREATE PROCEDURE v1 ( v1 IN INT DEFAULT 1 ) RETURNS INT LANGUAGE SQL AS $$ BEGIN RETURN 1 ; END $$ ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler"
+kind = "positive"
+note = "an OUT argument with a DEFAULT, observed"
+anchor = "doc.sql.create-procedure / Syntax / Snowflake Scripting handler"
+sql = "CREATE PROCEDURE v1 ( v1 OUT INT DEFAULT 1 ) RETURNS INT LANGUAGE SQL AS $$ BEGIN RETURN 1 ; END $$ ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler"
+kind = "positive"
+note = "two defaulted arguments with every option and no mode, observed"
+anchor = "doc.sql.create-procedure / Syntax / Snowflake Scripting handler"
+sql = "CREATE PROCEDURE v1 ( v1 INT DEFAULT 1 , v2 INT DEFAULT 1 ) COPY GRANTS RETURNS INT NOT NULL LANGUAGE SQL CALLED ON NULL INPUT VOLATILE COMMENT = 'm' COPY = ( GRANTS ) EXECUTE AS OWNER AS $$ BEGIN RETURN 1 ; END $$ ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler"
+kind = "negative_neighbour"
+note = "an argument with a type and no name, observed"
+anchor = "doc.sql.create-procedure / Syntax / Snowflake Scripting handler"
+sql = "CREATE PROCEDURE v1 ( v1 INT , INT ) RETURNS INT LANGUAGE SQL AS $$ BEGIN RETURN 1 ; END $$ ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-function.create-function-returns-table.sql-handler"
+kind = "negative_neighbour"
+note = "a procedure argument mode on a function argument, observed"
+anchor = "doc.sql.create-function / Syntax / SQL handler"
+sql = "CREATE FUNCTION v1 ( v1 IN INT ) RETURNS INT AS '1' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-listing.as"
+kind = "negative_neighbour"
+note = "LISTING without EXTERNAL or ORGANIZATION, observed"
+anchor = "doc.sql.create-listing / Syntax"
+sql = "CREATE LISTING v1 AS 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-listing.as"
+kind = "negative_neighbour"
+note = "LISTING without EXTERNAL or ORGANIZATION, with a share, observed"
+anchor = "doc.sql.create-listing / Syntax"
+sql = "CREATE LISTING v1 SHARE v1 AS 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-listing.from"
+kind = "negative_neighbour"
+note = "an unquoted stage path as the manifest location, observed"
+anchor = "doc.sql.create-listing / Syntax"
+sql = "CREATE EXTERNAL LISTING v1 FROM @st1/dir ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-listing.as"
+kind = "negative_neighbour"
+note = "ORGANIZATION LISTING with REVIEW, observed"
+anchor = "doc.sql.create-listing / Syntax"
+sql = "CREATE ORGANIZATION LISTING v1 AS 'm' REVIEW = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag"
+kind = "negative_neighbour"
+note = "the form without its required ATTRIBUTES, observed"
+anchor = "doc.sql.create-cortex-search / Syntax"
+sql = "CREATE CORTEX SEARCH SERVICE v1 ON v1 WAREHOUSE = v1 TARGET_LAG = '1 minute' AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag"
+kind = "negative_neighbour"
+note = "TARGET_LAG before WAREHOUSE, observed"
+anchor = "doc.sql.create-cortex-search / Syntax"
+sql = "CREATE CORTEX SEARCH SERVICE v1 ON v1 ATTRIBUTES v1 TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-service"
+kind = "positive"
+note = "every option without a tag list, observed"
+anchor = "doc.sql.create-service / Syntax"
+sql = "CREATE SERVICE IF NOT EXISTS v1 IN COMPUTE POOL v1 FROM SPECIFICATION_FILE = 'm' AUTO_SUSPEND_SECS = 1 EXTERNAL_ACCESS_INTEGRATIONS = ( v1 , v1 ) AUTO_RESUME = TRUE MIN_INSTANCES = 1 MIN_READY_INSTANCES = 1 MAX_INSTANCES = 1 LOG_LEVEL = 'm' QUERY_WAREHOUSE = v1 COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-service"
+kind = "positive"
+note = "a tag list after COMMENT, observed"
+anchor = "doc.sql.create-service / Syntax"
+sql = "CREATE SERVICE v1 IN COMPUTE POOL v1 FROM SPECIFICATION_FILE = 'm' COMMENT = 'm' WITH TAG ( v1 = 'm' ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-service"
+kind = "negative_neighbour"
+note = "an inline specification in single quotes, observed"
+anchor = "doc.sql.create-service / Syntax"
+sql = "CREATE SERVICE v1 IN COMPUTE POOL v1 FROM SPECIFICATION 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-application-service.or-alter-application-service"
+kind = "negative_neighbour"
+note = "COMMENT after SPECIFICATION, observed"
+anchor = "doc.sql.create-application-service / Variant syntax / CREATE OR ALTER APPLICATION SERVICE"
+sql = "CREATE OR ALTER APPLICATION SERVICE v1 FROM ARTIFACT REPOSITORY v1 PACKAGE v1 SPECIFICATION = 'm' COMMENT = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-procedure.create-procedure-scoped-temp"
+kind = "negative_neighbour"
+note = "a column constraint in a procedure-scoped table, observed"
+anchor = "doc.sql.create-procedure / Syntax / Procedure-scoped temporary tables (Snowflake Scripting)"
+sql = "CREATE PROCEDURE SCOPED TEMP TABLE v1 ( v1 INT NOT NULL ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-alert.create-alert-if-exists"
+kind = "negative_neighbour"
+note = "a CALL as the condition, observed"
+anchor = "doc.sql.create-alert / Syntax"
+sql = "CREATE ALERT v1 IF ( EXISTS ( CALL p1 ( ) ) ) THEN SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-alert.create-alert-if-exists"
+kind = "negative_neighbour"
+note = "a SHOW command as the condition, observed"
+anchor = "doc.sql.create-alert / Syntax"
+sql = "CREATE ALERT v1 IF ( EXISTS ( SHOW TABLES ) ) THEN SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-alert.create-alert-if-exists"
+kind = "negative_neighbour"
+note = "a scripting block as the action, observed"
+anchor = "doc.sql.create-alert / Syntax"
+sql = "CREATE ALERT v1 IF ( EXISTS ( SELECT 1 ) ) THEN BEGIN SELECT 1 ; END ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-streamlit.create-streamlit"
+kind = "negative_neighbour"
+note = "an unquoted stage path as the source location, observed"
+anchor = "doc.sql.create-streamlit / Syntax"
+sql = "CREATE STREAMLIT v1 FROM @d1.s1.st1/dir MAIN_FILE = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-data-movement-rule"
+kind = "negative_neighbour"
+note = "a bare word as TYPE, observed"
+anchor = "doc.sql.create-data-movement-rule / Syntax"
+sql = "CREATE DATA MOVEMENT RULE v1 TYPE = m1 MAX_ROWS AS ( ) RETURNS INTEGER -> ( 1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-data-movement-rule"
+kind = "negative_neighbour"
+note = "MAX_ROWS before TYPE, observed"
+anchor = "doc.sql.create-data-movement-rule / Syntax"
+sql = "CREATE DATA MOVEMENT RULE v1 MAX_ROWS AS ( ) RETURNS INTEGER -> ( 1 ) TYPE = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-application-service.set"
+kind = "negative_neighbour"
+note = "an empty integration list, observed"
+anchor = "doc.sql.alter-application-service / Syntax"
+sql = "ALTER APPLICATION SERVICE v1 SET EXTERNAL_ACCESS_INTEGRATIONS = ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-function.set"
+kind = "negative_neighbour"
+note = "an empty integration list, observed"
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+sql = "ALTER FUNCTION v1 ( INT ) SET EXTERNAL_ACCESS_INTEGRATIONS = ( ) ;"
+expect = "observe"
+context = "raw"
