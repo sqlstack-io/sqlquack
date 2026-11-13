@@ -973,10 +973,18 @@ impl Parser {
 
     /// Parses a generic command with no specific parser.
     pub(crate) fn parse_command(&mut self) -> Result<Option<Expression>> {
+        self.parse_command_before(None)
+    }
+
+    /// Parses a generic command up to the next `;`, or up to the token at `end` when it is given.
+    pub(crate) fn parse_command_before(&mut self, end: Option<usize>) -> Result<Option<Expression>> {
         let command_text = self.previous_text().to_ascii_uppercase();
 
         let mut tokens: Vec<(String, TokenType)> = vec![(command_text, TokenType::Var)];
-        while !self.is_at_end() && !self.check(TokenType::Semicolon) {
+        while !self.is_at_end()
+            && !self.check(TokenType::Semicolon)
+            && end.is_none_or(|end| self.current < end)
+        {
             let token = self.advance()?;
             let text = if token.token_type == TokenType::QuotedIdentifier {
                 let quote_char = { '"' };

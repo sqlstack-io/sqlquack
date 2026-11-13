@@ -156,6 +156,21 @@ fn given_a_snowflake_execute_immediate_when_parsing_then_recorded_verdicts_hold(
             expected_kind: Some("scripting_block"),
         },
         SnowflakeVerdictTestCase {
+            description: "a RESULTSET may take what EXECUTE IMMEDIATE returns (recorded semantic error)",
+            sql: "BEGIN LET r1 RESULTSET := ( EXECUTE IMMEDIATE :q1 USING ( v1 ) ) ; END ;",
+            expected_kind: Some("scripting_block"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a RESULTSET may take EXECUTE IMMEDIATE without USING (recorded semantic error)",
+            sql: "BEGIN LET r1 RESULTSET := ( EXECUTE IMMEDIATE :q1 ) ; END ;",
+            expected_kind: Some("scripting_block"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a closing parenthesis with nothing to close is no end",
+            sql: "EXECUTE IMMEDIATE :q1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
             description: "a source may concatenate strings and variables, as Snowflake documents",
             sql: "EXECUTE IMMEDIATE v2 || ',(80)' || ',(84)' ;",
             expected_kind: Some("command"),
@@ -321,6 +336,16 @@ fn given_a_snowflake_notebook_project_or_organization_profile_when_parsing_then_
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
+            description: "a notebook may be named PROJECT (recorded runtime error)",
+            sql: "CREATE NOTEBOOK project ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a notebook named PROJECT may come from a stage (recorded runtime error)",
+            sql: "CREATE NOTEBOOK project FROM '@d1.s1.st1' ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
             description: "PROJECT alone is no kind (recorded errno 1003)",
             sql: "CREATE PROJECT v1 . v1 . v1 FROM '@d1.s1.st1' ;",
             expected_kind: None,
@@ -424,9 +449,14 @@ fn given_a_snowflake_show_services_when_parsing_then_recorded_verdicts_hold() {
             expected_kind: Some("show"),
         },
         SnowflakeVerdictTestCase {
-            description: "OF TYPE comes last, after the documented clauses",
-            sql: "SHOW SERVICES LIKE 'm' IN COMPUTE POOL v1 OF TYPE USER ;",
+            description: "LIMIT may follow OF TYPE (recorded acceptance)",
+            sql: "SHOW SERVICES OF TYPE USER LIMIT 1 ;",
             expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "OF TYPE comes straight after SERVICES, not after IN (recorded errno 1003)",
+            sql: "SHOW SERVICES IN COMPUTE POOL v1 OF TYPE USER ;",
+            expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "OF TYPE needs a type (recorded errno 1003)",
@@ -657,9 +687,9 @@ fn given_a_snowflake_external_agent_or_filtered_show_when_parsing_then_the_tree_
         },
         StatementTestCase {
             description: "SHOW SERVICES keeps its filters in its kind",
-            sql: "SHOW SERVICES EXCLUDE JOBS IN COMPUTE POOL v1 LIMIT 1 OF TYPE USER , JOB ;",
+            sql: "SHOW SERVICES OF TYPE USER , JOB IN COMPUTE POOL v1 LIMIT 1 ;",
             pointer: "/0/show/this",
-            expected_value: json!("SERVICES EXCLUDE JOBS OF TYPE USER, JOB"),
+            expected_value: json!("SERVICES OF TYPE USER, JOB"),
         },
     ];
     for test_case in test_cases {
