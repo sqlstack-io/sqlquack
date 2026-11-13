@@ -1003,9 +1003,9 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.security_admin.drop-account.o008"
+obligation = "sf.security_admin.drop-account.o020"
 form = "sf.security_admin.drop-account"
-construct = "a valid operand: DROP ACCOUNT v1 GRACE_PERIOD_IN_DAYS = 1 ;"
+construct = "a valid integer_literal: DROP ACCOUNT v1 GRACE_PERIOD_IN_DAYS = 1 ;"
 reason = "not submitted: held by capture guard f0fdce1 in chunk sa-30: billable or out-of-account: account"
 cause = "not_submitted"
 cases = [
