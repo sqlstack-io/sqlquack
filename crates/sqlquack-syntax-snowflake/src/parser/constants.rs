@@ -975,6 +975,7 @@ pub(crate) const SNOWFLAKE_SHOW_KINDS: &[&[&str]] = &[
     &["SCHEMAS"],
     &["SECRETS"],
     &["SEQUENCES"],
+    &["SERVICES"],
     &["SHARES"],
     &["SNAPSHOTS"],
     &["SPECIFICATIONS"],
@@ -1016,7 +1017,6 @@ pub(crate) const SHARED_SHOW_KINDS: &[&[&str]] = &[
     &["AVAILABLE", "LISTINGS"],
     &["JOB"],
     &["PARAMETERS"],
-    &["SERVICES"],
 ];
 
 /// The containers a Snowflake SHOW ... IN names, each before any container it prefixes.
@@ -1073,6 +1073,7 @@ pub(crate) const SNOWFLAKE_SHOW_EXTRA_CONTAINERS: &[(&str, &[&str])] = &[
     ("LISTINGS", &["FAILOVER GROUP"]),
     ("ORGANIZATION USERS", &["ORGANIZATION USER GROUP"]),
     ("ROLES", &["SERVICE"]),
+    ("SERVICES", &["COMPUTE POOL"]),
     ("SHARES", &["FAILOVER GROUP", "REPLICATION GROUP"]),
     ("SNAPSHOTS", &["SNAPSHOT SET"]),
 ];

@@ -484,6 +484,10 @@ impl Parser {
         if opaque_kind && matches!(definition, Expression::Raw(_)) {
             return Ok(definition);
         }
+        if matches!(&definition, Expression::CreateObject(create) if matches!(create.kind.as_str(), "FILE FORMAT") && create.modifier.is_some())
+        {
+            return Err(self.parse_error("DEFINE FILE FORMAT takes no TEMPORARY or VOLATILE"));
+        }
         let unchecked_kind = matches!(definition, Expression::CreateTable(_));
         let mut unchecked = definition.clone();
         match &mut unchecked {
