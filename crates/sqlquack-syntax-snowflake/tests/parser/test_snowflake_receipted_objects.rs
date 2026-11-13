@@ -1178,3 +1178,41 @@ fn given_a_snowflake_put_to_a_table_stage_after_a_dot_when_parsing_then_the_targ
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_lone_contact_or_unnamed_snapshot_policy_when_parsing_then_the_tree_is_structured(
+) {
+    let test_cases = [
+        StatementTestCase {
+            description: "a single table contact keeps its purpose",
+            sql: "ALTER TABLE v1 SET CONTACT STEWARD = \"v1 Q\" ;",
+            pointer: "/0/alter_object/properties/0/name/name",
+            expected_value: json!("STEWARD"),
+        },
+        StatementTestCase {
+            description: "a single table contact keeps its quoted name",
+            sql: "ALTER TABLE v1 SET CONTACT STEWARD = \"v1 Q\" ;",
+            pointer: "/0/alter_object/properties/0/value/table/name/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "SNAPSHOT POLICY before SET names a snapshot (recorded errno 2003)",
+            sql: "ALTER SNAPSHOT POLICY SET COMMENT = 'm' ;",
+            pointer: "/0/alter_object/name/name/name",
+            expected_value: json!("POLICY"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+    assert_eq!(
+        snowflake_kind("ALTER SNAPSHOT POLICY UNSET COMMENT ;"),
+        None,
+        "a snapshot only sets its comment (recorded errno 1003)"
+    );
+}
