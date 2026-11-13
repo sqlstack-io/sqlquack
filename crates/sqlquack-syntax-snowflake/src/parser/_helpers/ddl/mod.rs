@@ -22,6 +22,7 @@ pub(crate) mod snowflake_containers;
 pub(crate) mod snowflake_copy;
 pub(crate) mod snowflake_create_clone;
 pub(crate) mod snowflake_create_from;
+pub(crate) mod snowflake_create_listing;
 pub(crate) mod snowflake_create_properties;
 pub(crate) mod snowflake_create_search;
 pub(crate) mod snowflake_create_service;
