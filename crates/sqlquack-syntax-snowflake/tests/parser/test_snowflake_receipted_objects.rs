@@ -676,12 +676,12 @@ fn given_a_snowflake_external_agent_task_list_or_user_group_when_parsing_then_re
         SnowflakeVerdictTestCase {
             description: "a connector adds its live version from LAST (recorded semantic error)",
             sql: "ALTER OPENFLOW CONNECTOR v1 ADD LIVE VERSION FROM LAST COMMENT = 'm' ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a connector adds a version from a location (recorded semantic error)",
             sql: "ALTER OPENFLOW CONNECTOR v1 ADD VERSION FROM 'm' ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a live version comes from LAST (recorded errno 1003)",
@@ -750,10 +750,10 @@ fn given_a_snowflake_external_agent_or_filtered_show_when_parsing_then_the_tree_
             expected_value: json!("DEFINE CODE BUNDLE v1 . v1 . v1 FROM 'asset://a1/'"),
         },
         StatementTestCase {
-            description: "SHOW TASKS keeps ROOT ONLY in its kind",
+            description: "SHOW TASKS keeps ROOT ONLY as a filter, not in its kind",
             sql: "SHOW TASKS STARTS WITH 'm' ROOT ONLY ;",
-            pointer: "/0/show/this",
-            expected_value: json!("TASKS ROOT ONLY"),
+            pointer: "/0/show/root_only",
+            expected_value: json!(true),
         },
         StatementTestCase {
             description: "SHOW SERVICES keeps its filters in its kind",
@@ -955,7 +955,7 @@ fn given_a_snowflake_warehouse_or_connector_action_when_parsing_then_recorded_ve
         SnowflakeVerdictTestCase {
             description: "a connector pushes to a location (recorded semantic error)",
             sql: "ALTER OPENFLOW CONNECTOR v1 PUSH TO 'm' USERNAME = 'm' PASSWORD = 'm' NAME = 'm' EMAIL = 'm' ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a push location is a string (recorded errno 1003)",
@@ -991,6 +991,188 @@ fn given_a_snowflake_event_table_with_a_contact_when_parsing_then_recorded_verdi
         assert_eq!(
             snowflake_kind(test_case.sql),
             test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_lone_kind_word_or_omitted_name_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a lone BACKUP SET container has no name (recorded semantic error)",
+            sql: "SHOW BACKUPS IN BACKUP SET ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a lone GRAPH is a name (recorded semantic error)",
+            sql: "SHOW COMMITTED TASKS IN GRAPH ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "VERSIONS takes a bare name (recorded unsupported feature)",
+            sql: "SHOW VERSIONS IN v1 ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a DCM PROJECT container still needs its name (recorded errno 1003)",
+            sql: "SHOW DEPLOYMENTS IN DCM PROJECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "VOLUMES alone is a kind (recorded semantic error)",
+            sql: "SHOW VOLUMES ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "BY takes a user name without USER (recorded runtime error)",
+            sql: "SHOW DELEGATED AUTHORIZATIONS BY v1 ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an unquoted reserved keyword is no SHOW scope (recorded errno 1003)",
+            sql: "SHOW PRIMARY KEYS IN SCHEMA SELECT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ARTIFACT alone is a DESCRIBE kind (recorded semantic error)",
+            sql: "DESC ARTIFACT v1 ;",
+            expected_kind: Some("describe"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "DESC ARTIFACT REPOSITORY still needs its name (recorded errno 1003)",
+            sql: "DESC ARTIFACT REPOSITORY ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty TYPE = is refused (recorded errno 1003)",
+            sql: "DESCRIBE TABLE v1 TYPE = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "EVENT TABLE is a DROP kind (recorded semantic error)",
+            sql: "DROP EVENT TABLE v1 ;",
+            expected_kind: Some("drop_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an online feature table's name may be left out before SET (recorded semantic error)",
+            sql: "ALTER ONLINE FEATURE TABLE SET COMMENT = 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a role's comment is set (recorded semantic error)",
+            sql: "ALTER ROLE v1 SET COMMENT = 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a deployment without OPENFLOW is not renamed (recorded errno 1003)",
+            sql: "ALTER DEPLOYMENT v1 RENAME TO v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an empty ROOTS list (recorded OK)",
+            sql: "CREATE TASK GRAPH v1 ROOTS = ( ) ;",
+            expected_kind: Some("create_task"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a task with no properties (recorded semantic error)",
+            sql: "CREATE TASK v1 ;",
+            expected_kind: Some("create_task"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "FORMAT alone is no CREATE kind (recorded errno 1003)",
+            sql: "CREATE FORMAT v1 CLONE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "GRAPH alone is no EXECUTE kind (recorded errno 1003)",
+            sql: "EXECUTE GRAPH v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "PRECISION alone is no type (recorded errno 1003)",
+            sql: "SELECT CAST ( NULL AS PRECISION ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "DOUBLE PRECISION is a type (documented)",
+            sql: "SELECT CAST ( NULL AS DOUBLE PRECISION ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a session variable's name is not quoted (recorded errno 1003)",
+            sql: "SELECT $\"v1 Q\" ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET needs a variable name (recorded errno 1003)",
+            sql: "SET CURRENT = 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an index is not on a reserved keyword (recorded errno 1003)",
+            sql: "CREATE INDEX v1 ON SELECT ( v1 ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_create_or_alter_task_when_parsing_then_or_alter_is_kept() {
+    let test_cases = [
+        StatementTestCase {
+            description: "CREATE OR ALTER TASK keeps OR ALTER",
+            sql: "CREATE OR ALTER TASK v1 WAREHOUSE = w1 AS SELECT 1 ;",
+            pointer: "/0/create_task/or_alter",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "CREATE OR ALTER TASK GRAPH keeps OR ALTER",
+            sql: "CREATE OR ALTER TASK GRAPH v1 ROOTS = ( ) ;",
+            pointer: "/0/create_task/or_alter",
+            expected_value: json!(true),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_put_to_a_table_stage_after_a_dot_when_parsing_then_the_target_is_whole() {
+    let test_cases = [
+        StatementTestCase {
+            description:
+                "the current schema's table stage keeps its table name (recorded acceptance)",
+            sql: "PUT file:///tmp/f1 @.%v1 OVERWRITE = TRUE ;",
+            pointer: "/0/put/target/literal/value",
+            expected_value: json!("@.%v1"),
+        },
+        StatementTestCase {
+            description: "the table name is not read as a parameter",
+            sql: "PUT file:///tmp/f1 @.%v1 OVERWRITE = TRUE ;",
+            pointer: "/0/put/params/0/name",
+            expected_value: json!("OVERWRITE"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
             "{}",
             test_case.description
         );

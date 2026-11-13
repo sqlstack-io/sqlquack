@@ -1831,7 +1831,8 @@ impl Parser {
                 && self.peek().token_type.is_keyword()
         {
             if self.applies_snowflake_context_rules()
-                && self.peek().span.start != self.tokens[self.current - 1].span.end
+                && (self.peek().span.start != self.tokens[self.current - 1].span.end
+                    || self.check(TokenType::QuotedIdentifier))
             {
                 return Err(self.parse_error("Invalid expression / Unexpected token"));
             }

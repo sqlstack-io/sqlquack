@@ -11,6 +11,7 @@ use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::Literal;
+use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
 use sqlquack_syntax::expressions::operators::models::Placeholder;
 use sqlquack_syntax::expressions::queries::models::Limit;
@@ -145,6 +146,11 @@ impl Parser {
                 {
                     let name = self.advance_text()?.to_lowercase();
                     if self.match_token(TokenType::Eq) {
+                        if self.is_snowflake() && self.is_statement_end_at(0) {
+                            return Err(
+                                self.parse_error(format!("Expected a value after {name} ="))
+                            );
+                        }
                         let value = self.advance_text()?;
                         properties.push((name, value));
                     } else {
@@ -416,6 +422,7 @@ impl Parser {
             target,
             mutex,
             privileges,
+            root_only: false,
         })))
     }
 
@@ -656,6 +663,14 @@ impl Parser {
         })
     }
 
+    /// A SHOW scope's name; Snowflake refuses an unquoted reserved keyword there.
+    fn parse_show_scope_ref(&mut self) -> Result<TableRef> {
+        if self.is_snowflake_reserved_keyword() {
+            return Err(self.parse_error("Expected a name, not a reserved keyword"));
+        }
+        self.parse_table_ref()
+    }
+
     fn parse_show_scope(&mut self, this: &str) -> Result<(Option<String>, Option<Expression>)> {
         Ok(if self.match_token(TokenType::In) {
             let (kind, scope_obj) = if self.match_keyword("ACCOUNT") {
@@ -667,7 +682,7 @@ impl Parser {
                     && !self.check(TokenType::Semicolon)
                     && !self.check_keyword_text("STARTS")
                 {
-                    let table = self.parse_table_ref()?;
+                    let table = self.parse_show_scope_ref()?;
                     Some(Expression::Table(Box::new(table)))
                 } else {
                     None
@@ -680,7 +695,7 @@ impl Parser {
                     && !self.check(TokenType::Semicolon)
                     && !self.check_keyword_text("STARTS")
                 {
-                    let table = self.parse_table_ref()?;
+                    let table = self.parse_show_scope_ref()?;
                     Some(Expression::Table(Box::new(table)))
                 } else {
                     None
@@ -693,7 +708,7 @@ impl Parser {
                     && !self.check(TokenType::Semicolon)
                     && !self.check_keyword_text("STARTS")
                 {
-                    let table = self.parse_table_ref()?;
+                    let table = self.parse_show_scope_ref()?;
                     Some(Expression::Table(Box::new(table)))
                 } else {
                     None
@@ -706,7 +721,7 @@ impl Parser {
                     && !self.check(TokenType::Semicolon)
                     && !self.check_keyword_text("STARTS")
                 {
-                    let table = self.parse_table_ref()?;
+                    let table = self.parse_show_scope_ref()?;
                     Some(Expression::Table(Box::new(table)))
                 } else {
                     None
@@ -714,7 +729,7 @@ impl Parser {
                 (Some("VIEW".to_string()), scope_obj)
             } else if self.match_keyword("CLASS") {
                 let scope_obj = if !self.is_at_end() {
-                    let table = self.parse_table_ref()?;
+                    let table = self.parse_show_scope_ref()?;
                     Some(Expression::Table(Box::new(table)))
                 } else {
                     None
@@ -727,14 +742,14 @@ impl Parser {
                     "APPLICATION".to_string()
                 };
                 let scope_obj = if !self.is_at_end() {
-                    let table = self.parse_table_ref()?;
+                    let table = self.parse_show_scope_ref()?;
                     Some(Expression::Table(Box::new(table)))
                 } else {
                     None
                 };
                 (Some(kind), scope_obj)
             } else {
-                let table = self.parse_table_ref()?;
+                let table = self.parse_show_scope_ref()?;
                 let inferred_kind = match this {
                     "SCHEMAS" | "DATABASES" => None,
                     "OBJECTS" | "TABLES" | "VIEWS" | "SEQUENCES" | "UNIQUE KEYS"
@@ -1708,109 +1723,71 @@ impl Parser {
             } else if self.check(TokenType::Tilde) {
                 stage_path.push('~');
                 self.skip();
-                while self.check(TokenType::Slash) {
-                    self.skip();
-                    stage_path.push('/');
-                    while (self.check(TokenType::Var)
-                        || self.check_keyword()
-                        || self.is_identifier_token()
-                        || self.check(TokenType::Number)
-                        || self.check(TokenType::Dash))
-                        && !self.check_next(TokenType::Eq)
-                    {
-                        stage_path.push_str(&self.advance_text()?);
-                    }
-                }
+                stage_path.push_str(&self.stage_path_segments()?);
                 return Ok(Expression::Literal(Box::new(Literal::String(stage_path))));
             }
-
-            if self.check(TokenType::QuotedIdentifier) {
-                let text = &self.peek_text();
-                stage_path.push('"');
-                stage_path.push_str(text);
-                stage_path.push('"');
-                self.skip();
-            } else if self.check(TokenType::Var)
-                || self.check_keyword()
-                || self.check(TokenType::Identifier)
-            {
-                stage_path.push_str(&self.advance_text()?);
-            }
-
-            while self.check(TokenType::Dot) {
-                self.skip();
-                stage_path.push('.');
-                if self.check(TokenType::QuotedIdentifier) {
-                    let text = &self.peek_text();
-                    stage_path.push('"');
-                    stage_path.push_str(text);
-                    stage_path.push('"');
-                    self.skip();
-                } else if self.check(TokenType::Var)
-                    || self.check_keyword()
-                    || self.check(TokenType::Identifier)
-                {
-                    stage_path.push_str(&self.advance_text()?);
-                }
-            }
-
-            while self.check(TokenType::Slash) {
-                self.skip();
-                stage_path.push('/');
-                while (self.check(TokenType::Var)
-                    || self.check_keyword()
-                    || self.is_identifier_token()
-                    || self.check(TokenType::Number)
-                    || self.check(TokenType::Dash))
-                    && !self.check_next(TokenType::Eq)
-                {
-                    stage_path.push_str(&self.advance_text()?);
-                }
-            }
+            stage_path.push_str(&self.stage_name_part()?);
+            stage_path.push_str(&self.stage_dotted_parts()?);
+            stage_path.push_str(&self.stage_path_segments()?);
             return Ok(Expression::Literal(Box::new(Literal::String(stage_path))));
         }
 
         if self.check(TokenType::Var) && self.peek_text().starts_with('@') {
             let mut stage_path = self.advance_text()?;
-
-            while self.check(TokenType::Dot) {
-                self.skip();
-                stage_path.push('.');
-                if self.check(TokenType::Percent) || self.check(TokenType::Mod) {
-                    stage_path.push('%');
-                    self.skip();
-                }
-                if self.check(TokenType::QuotedIdentifier) {
-                    let text = &self.peek_text();
-                    stage_path.push('"');
-                    stage_path.push_str(text);
-                    stage_path.push('"');
-                    self.skip();
-                } else if self.check(TokenType::Var)
-                    || self.check_keyword()
-                    || self.check(TokenType::Identifier)
-                {
-                    stage_path.push_str(&self.advance_text()?);
-                }
-            }
-
-            while self.check(TokenType::Slash) {
-                self.skip();
-                stage_path.push('/');
-                while (self.check(TokenType::Var)
-                    || self.check_keyword()
-                    || self.is_identifier_token()
-                    || self.check(TokenType::Number)
-                    || self.check(TokenType::Dash))
-                    && !self.check_next(TokenType::Eq)
-                {
-                    stage_path.push_str(&self.advance_text()?);
-                }
-            }
+            stage_path.push_str(&self.stage_dotted_parts()?);
+            stage_path.push_str(&self.stage_path_segments()?);
             return Ok(Expression::Literal(Box::new(Literal::String(stage_path))));
         }
 
         Err(self.parse_error("Expected stage reference starting with @"))
+    }
+
+    /// One stage name part, quoted or not, or nothing when the current token is not one.
+    fn stage_name_part(&mut self) -> Result<String> {
+        if self.check(TokenType::QuotedIdentifier) {
+            let text = format!("\"{}\"", self.peek_text());
+            self.skip();
+            return Ok(text);
+        }
+        match self.check(TokenType::Var)
+            || self.check_keyword()
+            || self.check(TokenType::Identifier)
+        {
+            true => self.advance_text(),
+            false => Ok(String::new()),
+        }
+    }
+
+    /// Each `.part` of a stage name, where a part may be a table stage `%name`.
+    fn stage_dotted_parts(&mut self) -> Result<String> {
+        let mut parts = String::new();
+        while self.match_token(TokenType::Dot) {
+            parts.push('.');
+            if self.check(TokenType::Percent) || self.check(TokenType::Mod) {
+                parts.push('%');
+                self.skip();
+            }
+            parts.push_str(&self.stage_name_part()?);
+        }
+        Ok(parts)
+    }
+
+    /// Each `/segment` of a stage path.
+    fn stage_path_segments(&mut self) -> Result<String> {
+        let mut segments = String::new();
+        while self.match_token(TokenType::Slash) {
+            segments.push('/');
+            while (self.check(TokenType::Var)
+                || self.check_keyword()
+                || self.is_identifier_token()
+                || self.check(TokenType::Number)
+                || self.check(TokenType::Dash))
+                && !self.check_next(TokenType::Eq)
+            {
+                segments.push_str(&self.advance_text()?);
+            }
+        }
+        Ok(segments)
     }
 
     /// Parses Snowflake PUT file://path @stage [options].

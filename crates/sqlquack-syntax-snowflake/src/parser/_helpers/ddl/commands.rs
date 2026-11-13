@@ -177,7 +177,10 @@ impl Parser {
             {
                 return self.parse_execute_using_policy_context();
             }
-            if self.current + 1 >= self.tokens.len() || self.check_next(TokenType::Semicolon) {
+            if self.applies_snowflake_context_rules()
+                || self.current + 1 >= self.tokens.len()
+                || self.check_next(TokenType::Semicolon)
+            {
                 return Err(self.parse_error("Expected an object kind and name after EXECUTE"));
             }
         }
@@ -845,6 +848,7 @@ impl Parser {
                 break;
             }
 
+            self.reject_snowflake_set_name()?;
             let name = self.parse_set_item_name()?;
 
             if self.match_token(TokenType::Eq)
@@ -1492,6 +1496,8 @@ impl Parser {
             or_alter,
             if_not_exists,
             temporary,
+            secure: false,
+            external: false,
             language,
             deterministic: None,
             returns_null_on_null_input: None,

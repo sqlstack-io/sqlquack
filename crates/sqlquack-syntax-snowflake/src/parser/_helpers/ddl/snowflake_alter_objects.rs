@@ -23,6 +23,21 @@ const UPGRADE_OPTIONS: &[&str] = &[
 
 type Parts = (Vec<Expression>, Vec<ObjectProperty>);
 
+/// The words that start an ALTER APPLICATION PACKAGE action.
+const PACKAGE_ACTIONS: &[&str] = &[
+    "RENAME",
+    "ADD",
+    "REGISTER",
+    "DEREGISTER",
+    "DROP",
+    "MODIFY",
+    "SET",
+    "UNSET",
+];
+
+/// The words that start an ALTER APPLICATION SERVICE action.
+const SERVICE_ACTIONS: &[&str] = &["SET", "UNSET", "SUSPEND", "RESUME", "UPGRADE"];
+
 impl Parser {
     /// Parse a Snowflake ALTER of a kind this module owns, or None when the next words name another kind.
     pub(crate) fn parse_alter_snowflake_objects(&mut self) -> Result<Option<Expression>> {
@@ -38,10 +53,12 @@ impl Parser {
                     .map(Some);
             }
         }
-        if self.match_text_seq(&["APPLICATION", "PACKAGE"]) {
+        if self.is_alter_kind("PACKAGE", PACKAGE_ACTIONS) {
+            self.current += 2;
             return self.parse_alter_application_package().map(Some);
         }
-        if self.match_text_seq(&["APPLICATION", "SERVICE"]) {
+        if self.is_alter_kind("SERVICE", SERVICE_ACTIONS) {
+            self.current += 2;
             return self.parse_alter_application_service().map(Some);
         }
         if self.match_text_seq(&["APPLICATION"]) {
@@ -82,7 +99,7 @@ impl Parser {
     }
 
     /// Parse an object name as an operand.
-    fn object_operand(&mut self) -> Result<Expression> {
+    pub(super) fn object_operand(&mut self) -> Result<Expression> {
         Ok(Expression::Table(Box::new(self.parse_object_name()?)))
     }
 
@@ -140,7 +157,7 @@ impl Parser {
     }
 
     /// Parse a property value: a parenthesized list, NULL, a literal or a name.
-    fn parse_alter_value(&mut self) -> Result<Expression> {
+    pub(super) fn parse_alter_value(&mut self) -> Result<Expression> {
         if self.match_token(TokenType::LParen) {
             let mut items: Vec<Expression> = Vec::new();
             if self.match_token(TokenType::RParen) {
@@ -207,7 +224,7 @@ impl Parser {
     }
 
     /// Parse the properties of a SET (`set`) or UNSET: TAG and CONTACT lists, PRIMARY KEY, or named properties.
-    fn parse_alter_settings(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
+    pub(super) fn parse_alter_settings(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         let mut contact_list_ends_set = false;
         loop {
@@ -273,7 +290,7 @@ impl Parser {
     }
 
     /// Parse `SET ...` or `UNSET ...` after the word.
-    fn parse_alter_set(&mut self, set: bool) -> Result<Parts> {
+    pub(super) fn parse_alter_set(&mut self, set: bool) -> Result<Parts> {
         Ok((vec![], self.parse_alter_settings(set)?))
     }
 
@@ -288,9 +305,20 @@ impl Parser {
         Ok(((vec![policy], vec![]), suffix.to_owned()))
     }
 
+    /// Whether APPLICATION `word` starts that kind; before an application action the next word cannot start, `word` names an application.
+    fn is_alter_kind(&self, word: &str, actions: &[&str]) -> bool {
+        let application_action = self
+            .text_at(2)
+            .is_some_and(|next| matches!(next.as_str(), "RENAME" | "SET" | "UNSET" | "UPGRADE"));
+        let kind_action = self
+            .text_at(3)
+            .is_some_and(|next| actions.contains(&next.as_str()));
+        self.check_text_seq(&["APPLICATION", word]) && (!application_action || kind_action)
+    }
+
     /// Parse ALTER DATABASE after its kind.
     fn parse_alter_database(&mut self) -> Result<Expression> {
-        let head = self.parse_alter_object_head()?;
+        let head = self.parse_alter_head_or_omitted("DATABASE")?;
         let mut action = self.expect_alter_words(&[
             &["RENAME"],
             &["SWAP"],
@@ -435,6 +463,13 @@ impl Parser {
             "SET CONFIGURATION" => {
                 let name = self.object_operand()?;
                 (vec![name], vec![self.parse_required_option("VALUE")?])
+            }
+            "UNSET CONFIGURATION"
+                if self.is_statement_end_at(0) || self.check(TokenType::Comma) =>
+            {
+                self.current -= 1;
+                action = "UNSET".to_owned();
+                self.parse_alter_set(false)?
             }
             "UNSET CONFIGURATION" => (vec![self.object_operand()?], vec![]),
             "UNSET REFERENCES" => {
@@ -657,10 +692,8 @@ impl Parser {
             &["RENAME"],
             &["RESUME", "BACKUP"],
             &["SUSPEND", "BACKUP"],
-            &["SET", "COMMENT"],
-            &["UNSET", "COMMENT"],
-            &["SET", "TAG"],
-            &["UNSET", "TAG"],
+            &["SET"],
+            &["UNSET"],
         ])?;
         let parts = match action.as_str() {
             "APPLY BACKUP POLICY" => {
@@ -695,16 +728,8 @@ impl Parser {
                 action.push_str(" POLICY");
                 (vec![], vec![])
             }
-            "SET COMMENT" => {
-                self.expect_token(TokenType::Eq)?;
-                let comment = self.parse_string_value()?;
-                (vec![], vec![property("COMMENT", None, Some(comment))])
-            }
-            "SET TAG" | "UNSET TAG" => {
-                self.current -= 1;
-                action.truncate(action.len() - " TAG".len());
-                self.parse_alter_set(matches!(action.as_str(), "SET"))?
-            }
+            "SET" => self.parse_alter_set(true)?,
+            "UNSET" => self.parse_alter_set(false)?,
             _ => (vec![], vec![]),
         };
         Ok(alter_object("BACKUP SET", head, action, parts))

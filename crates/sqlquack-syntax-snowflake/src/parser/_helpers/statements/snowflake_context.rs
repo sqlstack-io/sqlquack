@@ -10,6 +10,20 @@ impl Parser {
         self.config.dialect == Some(sqlquack_syntax::tokens::models::DialectType::Snowflake)
     }
 
+    /// Refuses a SET target that Snowflake does not read as a variable name: a string, a reserved keyword or punctuation.
+    pub(crate) fn reject_snowflake_set_name(&self) -> Result<()> {
+        use sqlquack_syntax::tokens::models::TokenType;
+        let refused = self.applies_snowflake_context_rules()
+            && !self.check(TokenType::LParen)
+            && (self.check(TokenType::String)
+                || self.is_snowflake_reserved_keyword()
+                || !(self.is_identifier_token() || self.check_keyword()));
+        match refused {
+            true => Err(self.parse_error("Expected a variable name after SET")),
+            false => Ok(()),
+        }
+    }
+
     /// Refuses a backtick-quoted identifier, which Snowflake does not tokenize, in its faithful modes.
     pub(crate) fn reject_snowflake_backticks(&mut self) -> Result<()> {
         if !self.applies_snowflake_context_rules() {

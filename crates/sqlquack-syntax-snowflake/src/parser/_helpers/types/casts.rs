@@ -366,6 +366,17 @@ impl Parser {
 
     /// Parse a data type.
     pub(crate) fn parse_data_type(&mut self) -> Result<DataType> {
+        if self.applies_snowflake_context_rules()
+            && matches!(
+                self.peek().token_type,
+                TokenType::Var | TokenType::Identifier
+            )
+            && ["PRECISION", "VARYING"]
+                .iter()
+                .any(|word| self.peek().text.eq_ignore_ascii_case(word))
+        {
+            return Err(self.parse_error("Expected a data type, not PRECISION or VARYING alone"));
+        }
         let data_type = self.with_parser_depth(|parser| parser.parse_data_type_inner())?;
         self.within_type_depth(data_type.nesting_depth())?;
         Ok(self.normalize_dialect_data_type(data_type))

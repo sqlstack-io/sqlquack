@@ -22,6 +22,13 @@ impl Parser {
         or_alter: bool,
     ) -> Result<Option<Expression>> {
         let start = self.current;
+        if self.peek().token_type != TokenType::QuotedIdentifier
+            && ["DEPLOYMENT", "FORMAT", "GRAPH"]
+                .iter()
+                .any(|word| self.peek().text.eq_ignore_ascii_case(word))
+        {
+            return Err(self.parse_error("Expected a complete object kind after CREATE"));
+        }
         if let Some(class) = self.parse_snowflake_create_class(or_replace, or_alter)? {
             return Ok(Some(class));
         }

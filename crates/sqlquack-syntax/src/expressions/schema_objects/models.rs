@@ -444,6 +444,12 @@ pub struct CreateFunction {
     pub or_alter: bool,
     pub if_not_exists: bool,
     pub temporary: bool,
+    /// Snowflake `CREATE SECURE FUNCTION`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub secure: bool,
+    /// Snowflake `CREATE EXTERNAL FUNCTION`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub external: bool,
     pub language: Option<String>,
     pub deterministic: Option<bool>,
     pub returns_null_on_null_input: Option<bool>,
@@ -642,6 +648,8 @@ impl CreateFunction {
             or_alter: false,
             if_not_exists: false,
             temporary: false,
+            secure: false,
+            external: false,
             language: None,
             deterministic: None,
             returns_null_on_null_input: None,
@@ -699,6 +707,12 @@ pub struct CreateProcedure {
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub or_alter: bool,
     pub if_not_exists: bool,
+    /// Snowflake `CREATE { TEMP | TEMPORARY } PROCEDURE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub temporary: bool,
+    /// Snowflake `CREATE SECURE PROCEDURE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub secure: bool,
     pub language: Option<String>,
     pub security: Option<FunctionSecurity>,
     /// Return type (Snowflake: RETURNS OBJECT, RETURNS VARCHAR, etc.)
@@ -730,6 +744,8 @@ impl CreateProcedure {
             or_replace: false,
             or_alter: false,
             if_not_exists: false,
+            temporary: false,
+            secure: false,
             language: None,
             security: None,
             return_type: None,
