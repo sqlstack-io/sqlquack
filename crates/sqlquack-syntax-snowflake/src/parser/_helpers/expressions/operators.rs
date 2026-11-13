@@ -686,11 +686,13 @@ impl Parser {
     pub(crate) fn parse_signed_integer(&mut self) -> Result<i64> {
         let negative = self.match_token(TokenType::Dash);
         let tok = self.expect_token(TokenType::Number)?;
-        let value: i64 = tok
-            .text
-            .parse()
-            .map_err(|_| self.parse_error(format!("Invalid integer: {}", tok.text)))?;
-        Ok(if negative { -value } else { value })
+        let text = if negative {
+            format!("-{}", tok.text)
+        } else {
+            tok.text.to_string()
+        };
+        text.parse()
+            .map_err(|_| self.parse_error(format!("Invalid integer: {text}")))
     }
 
     /// Parse DROP SEQUENCE statement
@@ -731,9 +733,15 @@ impl Parser {
             owned_by: None,
         };
 
+        if self.applies_snowflake_context_rules()
+            && (self.is_at_end() || self.check(TokenType::Semicolon))
+        {
+            return Err(self.parse_error("Expected an ALTER SEQUENCE action"));
+        }
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
             if self.match_token(TokenType::Increment) || self.match_identifier("INCREMENT") {
                 self.match_token(TokenType::By);
+                self.match_token(TokenType::Eq);
                 seq.increment = Some(self.parse_signed_integer()?);
             } else if self.match_token(TokenType::Minvalue) {
                 seq.minvalue = Some(SequenceBound::Value(self.parse_signed_integer()?));

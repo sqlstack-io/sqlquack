@@ -50,6 +50,8 @@ mod test_snowflake_postgres_instance;
 mod test_snowflake_procedures;
 #[path = "parser/test_snowflake_recorded.rs"]
 mod test_snowflake_recorded;
+#[path = "parser/test_snowflake_sequences.rs"]
+mod test_snowflake_sequences;
 #[path = "parser/test_snowflake_tables.rs"]
 mod test_snowflake_tables;
 #[path = "parser/test_snowflake_views.rs"]
