@@ -1,7 +1,7 @@
 //! Parser ddl: constraints.
 
 use crate::parser::constants::AT_SIGN;
-use crate::parser::constants::SNOWFLAKE_DROP_KINDS;
+use crate::parser::constants::{SNOWFLAKE_DROP_KINDS, SNOWFLAKE_LONE_KINDS};
 use crate::parser::models::Parser;
 use crate::parser::models::ViewModifiers;
 use sqlquack_syntax::expressions::columns::main::split_mysql_table_index_key_parts::split_mysql_table_index_key_parts;
@@ -1155,7 +1155,10 @@ impl Parser {
             self.expect_identifier_with_quoted()?
         };
         self.expect_token(TokenType::On)?;
-        let table = self.parse_table_ref()?;
+        let table = match self.applies_snowflake_context_rules() {
+            true => self.parse_object_name()?,
+            false => self.parse_table_ref()?,
+        };
 
         let using = if self.match_token(TokenType::Using) {
             Some(self.expect_identifier()?)
@@ -1450,12 +1453,10 @@ impl Parser {
                 })))
             }
             _ => {
-                if matches!(
-                    self.config.dialect,
-                    Some(sqlquack_syntax::tokens::models::DialectType::Snowflake)
-                ) {
+                if self.is_snowflake() {
                     if let Some(kind) = SNOWFLAKE_DROP_KINDS
                         .iter()
+                        .chain(SNOWFLAKE_LONE_KINDS)
                         .find(|kind| self.match_text_seq(kind))
                     {
                         let shorter = &kind[..kind.len() - 1];

@@ -1,6 +1,8 @@
 //! Snowflake's rules on session, transaction, EXPLAIN and SHOW statements.
 
-use crate::parser::constants::{SHARED_DESCRIBE_KINDS, SNOWFLAKE_DESCRIBE_KINDS};
+use crate::parser::constants::{
+    SHARED_DESCRIBE_KINDS, SNOWFLAKE_DESCRIBE_KINDS, SNOWFLAKE_LONE_KINDS,
+};
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::functions::models::Operator;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -103,6 +105,12 @@ impl Parser {
                 }
                 kind.join(" ")
             })
+            .or_else(|| {
+                SNOWFLAKE_LONE_KINDS
+                    .iter()
+                    .find(|kind| self.match_text_seq(kind))
+                    .map(|kind| kind.join(" "))
+            })
         else {
             let shared = SHARED_DESCRIBE_KINDS
                 .iter()
@@ -175,7 +183,7 @@ impl Parser {
         name: &str,
         choices: &[&str],
     ) -> Result<Vec<(String, String)>> {
-        if !self.match_identifier(name) {
+        if !self.match_text_seq(&[name]) {
             return Ok(Vec::new());
         }
         self.expect_token(TokenType::Eq)?;

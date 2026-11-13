@@ -1,5 +1,6 @@
 //! Snowflake ALTER of object kinds that have no statement of their own, such as TASK, TAG or ALERT.
 
+use crate::parser::constants::ONLINE_FEATURE_TABLE;
 use crate::parser::constants::SNOWFLAKE_ALTER_KINDS;
 use crate::parser::constants::TASK_ACTIONS;
 use crate::parser::models::Parser;
@@ -15,12 +16,14 @@ use sqlquack_syntax::tokens::types::Result;
 /// The kinds whose ALTER Snowflake parses without a name, and before which actions; recorded receipts refuse the omission for other kinds, such as BACKUP POLICY or SECRET, and for SNAPSHOT POLICY's UNSET.
 const OMITTED_NAME_ACTIONS: &[(&str, &[&str])] = &[
     ("AGGREGATION POLICY", &["SET", "UNSET"]),
+    ("DATABASE", &["SET", "UNSET"]),
     ("AUTHENTICATION POLICY", &["SET", "UNSET"]),
     ("FEATURE POLICY", &["SET", "UNSET"]),
     ("JOIN POLICY", &["SET", "UNSET"]),
     ("MAINTENANCE POLICY", &["SET", "UNSET"]),
     ("MASKING POLICY", &["SET", "UNSET"]),
     ("NETWORK POLICY", &["SET", "UNSET"]),
+    ("ONLINE FEATURE TABLE", &["SET"]),
     ("PACKAGES POLICY", &["SET", "UNSET"]),
     ("PASSWORD POLICY", &["SET", "UNSET"]),
     ("SESSION POLICY", &["SET", "UNSET"]),
@@ -41,6 +44,9 @@ impl Parser {
             return self.parse_alter_snowflake_class(&kind).map(Some);
         }
         if let Some(expr) = self.parse_alter_snowflake_objects()? {
+            return Ok(Some(expr));
+        }
+        if let Some(expr) = self.parse_alter_openflow_or_role()? {
             return Ok(Some(expr));
         }
         if self.check_identifier("TASK")
@@ -647,7 +653,7 @@ impl Parser {
 
     /// Parse ALTER ONLINE FEATURE TABLE after its kind.
     fn parse_alter_online_feature_table(&mut self) -> Result<Expression> {
-        let head = self.parse_alter_object_head()?;
+        let head = self.parse_alter_head_or_omitted(ONLINE_FEATURE_TABLE)?;
         let action = self.expect_alter_words(&[
             &["SUSPEND"],
             &["RESUME"],

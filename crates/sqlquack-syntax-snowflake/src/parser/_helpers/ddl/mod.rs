@@ -13,6 +13,7 @@ pub(crate) mod snowflake_alter_add;
 pub(crate) mod snowflake_alter_dynamic;
 pub(crate) mod snowflake_alter_governance;
 pub(crate) mod snowflake_alter_objects;
+pub(crate) mod snowflake_alter_openflow;
 pub(crate) mod snowflake_alter_resources;
 pub(crate) mod snowflake_alter_tables;
 pub(crate) mod snowflake_alter_user;

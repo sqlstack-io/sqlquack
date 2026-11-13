@@ -518,12 +518,17 @@ impl Parser {
             TokenType::Index => self.parse_create_index_with_clustered(false, None),
             TokenType::Schema => self.parse_create_schema(leading_comments, or_replace),
             TokenType::Database => self.parse_create_database(or_replace),
-            TokenType::Function => {
-                self.parse_create_function(or_replace, or_alter, temporary, false)
-            }
+            TokenType::Function => self
+                .parse_create_function(or_replace, or_alter, temporary, false)
+                .map(|function| {
+                    let external = table_modifier.as_deref() == Some("EXTERNAL");
+                    with_routine_modifiers(function, secure, temporary, external)
+                }),
             TokenType::Procedure => match self.parse_scoped_temp_table(or_replace, or_alter)? {
                 Some(table) => Ok(table),
-                None => self.parse_create_procedure(or_replace, or_alter),
+                None => self
+                    .parse_create_procedure(or_replace, or_alter)
+                    .map(|procedure| with_routine_modifiers(procedure, secure, temporary, false)),
             },
             TokenType::Sequence => self.parse_create_sequence(temporary, or_replace),
             TokenType::Trigger => {
@@ -584,7 +589,7 @@ impl Parser {
             return self.parse_create_stream(or_replace);
         }
         if self.check_identifier("TASK") {
-            return self.parse_create_task(or_replace);
+            return self.parse_create_task(or_replace, or_alter);
         }
         if (self.check_identifier("FILE") || self.check(TokenType::File)) && {
             let next = self.current + 1;
@@ -906,4 +911,25 @@ impl Parser {
             }
         }
     }
+}
+
+/// Records SECURE, TEMPORARY and EXTERNAL on a created function or procedure, which are read before its kind.
+fn with_routine_modifiers(
+    mut routine: Expression,
+    secure: bool,
+    temporary: bool,
+    external: bool,
+) -> Expression {
+    match &mut routine {
+        Expression::CreateFunction(create) => {
+            create.secure = secure;
+            create.external = external;
+        }
+        Expression::CreateProcedure(create) => {
+            create.secure = secure;
+            create.temporary = temporary;
+        }
+        _ => {}
+    }
+    routine
 }

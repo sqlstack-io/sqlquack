@@ -621,12 +621,19 @@ impl Parser {
         }
     }
 
-    /// Skips a task property value: a string, a signed number, a boolean, a name or a parenthesized name list.
+    /// Skips a task property value: a string, a signed number, a boolean, a name or a parenthesized list of names and strings, which may be empty.
     fn skip_snowflake_task_value(&mut self) -> Result<()> {
         if self.match_token(TokenType::LParen) {
-            self.skip_snowflake_name()?;
-            while self.match_token(TokenType::Comma) {
-                self.skip_snowflake_name()?;
+            if self.match_token(TokenType::RParen) {
+                return Ok(());
+            }
+            loop {
+                if !self.match_token(TokenType::String) {
+                    self.skip_snowflake_name()?;
+                }
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
             }
             self.expect_token(TokenType::RParen)?;
             return Ok(());
@@ -667,6 +674,7 @@ impl Parser {
     pub(crate) fn parse_snowflake_create_task_graph(
         &mut self,
         or_replace: bool,
+        or_alter: bool,
     ) -> Result<Expression> {
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
@@ -677,6 +685,7 @@ impl Parser {
         self.check_snowflake_task_properties(true)?;
         Ok(Expression::CreateTask(Box::new(CreateTask {
             or_replace,
+            or_alter,
             if_not_exists,
             name,
             properties: self.tokens_to_sql(properties_start, self.current),

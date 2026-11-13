@@ -69,7 +69,11 @@ impl Parser {
         if matches!(kind.as_str(), "OPENFLOW DATA PLANE INTEGRATIONS") {
             return Ok(Some(Expression::Show(Box::new(show))));
         }
-        if matches!(kind.as_str(), "DELEGATED AUTHORIZATIONS BY USER") {
+        if kind.starts_with("DELEGATED AUTHORIZATIONS ") {
+            if kind.ends_with(" USER") && self.is_statement_end_at(0) {
+                self.current -= 1;
+                show.this = "DELEGATED AUTHORIZATIONS BY".to_owned();
+            }
             show.for_target = Some(self.parse_show_name()?);
             return Ok(Some(Expression::Show(Box::new(show))));
         }
@@ -98,29 +102,8 @@ impl Parser {
         if self.match_token(TokenType::Like) {
             show.like = Some(self.parse_show_string("LIKE")?);
         }
-        let mut show = self.parse_show_on_user(&kind, show)?;
-        let required = SNOWFLAKE_SHOW_REQUIRED_CONTAINERS
-            .iter()
-            .find(|(name, _)| *name == kind)
-            .map(|(_, containers)| *containers);
-        if show.scope_kind.is_none() && (required.is_some() || self.check(TokenType::In)) {
-            self.expect_token(TokenType::In)?;
-            let (container, name) = self.parse_show_container(&kind)?;
-            let allowed = |container: &str| match required {
-                Some(required) => required.contains(&container),
-                None => {
-                    SNOWFLAKE_SHOW_GENERAL_CONTAINERS.contains(&container)
-                        || SNOWFLAKE_SHOW_EXTRA_CONTAINERS
-                            .iter()
-                            .any(|(name, extra)| *name == kind && extra.contains(&container))
-                }
-            };
-            if !allowed(container.as_deref().unwrap_or("")) {
-                return Err(self.parse_error(format!("Expected a container {kind} is shown in")));
-            }
-            show.scope_kind = container;
-            show.scope = name;
-        }
+        let show = self.parse_show_on_user(&kind, show)?;
+        let show = self.parse_show_in(&kind, show)?;
         let show = self.parse_show_follow_up(&kind, show)?;
         let mut show = self.parse_show_starts_and_limit(&kind, show)?;
         if self.match_token(TokenType::With) {
@@ -145,6 +128,37 @@ impl Parser {
         Ok(Some(Expression::Show(Box::new(show))))
     }
 
+    /// `IN <container> [ <name> ]`, which some kinds require and VARIABLES never takes.
+    fn parse_show_in(&mut self, kind: &str, mut show: Show) -> Result<Show> {
+        let required = SNOWFLAKE_SHOW_REQUIRED_CONTAINERS
+            .iter()
+            .find(|(name, _)| *name == kind)
+            .map(|(_, containers)| *containers);
+        let takes_in = !matches!(kind, "VARIABLES");
+        if show.scope_kind.is_none()
+            && takes_in
+            && (required.is_some() || self.check(TokenType::In))
+        {
+            self.expect_token(TokenType::In)?;
+            let (container, name) = self.parse_show_container(&kind)?;
+            let allowed = |container: &str| match required {
+                Some(required) => required.contains(&container),
+                None => {
+                    SNOWFLAKE_SHOW_GENERAL_CONTAINERS.contains(&container)
+                        || SNOWFLAKE_SHOW_EXTRA_CONTAINERS
+                            .iter()
+                            .any(|(name, extra)| *name == kind && extra.contains(&container))
+                }
+            };
+            if !allowed(container.as_deref().unwrap_or("")) {
+                return Err(self.parse_error(format!("Expected a container {kind} is shown in")));
+            }
+            show.scope_kind = container;
+            show.scope = name;
+        }
+        Ok(show)
+    }
+
     /// `[ STARTS WITH '<prefix>' ]`, then ROOT ONLY for tasks, then `[ LIMIT <rows> [ FROM '<name>' ] ]`.
     fn parse_show_starts_and_limit(&mut self, kind: &str, mut show: Show) -> Result<Show> {
         if self.match_identifier("STARTS") {
@@ -152,7 +166,7 @@ impl Parser {
             show.starts_with = Some(self.parse_show_string("STARTS WITH")?);
         }
         if matches!(kind, "TASKS") && self.match_text_seq(&["ROOT", "ONLY"]) {
-            show.this.push_str(" ROOT ONLY");
+            show.root_only = true;
         }
         if self.match_token(TokenType::Limit) {
             if !self.check(TokenType::Number) {
@@ -210,7 +224,7 @@ impl Parser {
         })
     }
 
-    /// The container after IN and its name, which ACCOUNT, DATABASE or SCHEMA may lack; a lone APPLICATION or CLASS is one.
+    /// The container after IN and its name, which ACCOUNT, DATABASE or SCHEMA may lack; a lone APPLICATION, CLASS, DATASET, GATEWAY, GRAPH, LISTING or MODEL is one.
     fn parse_show_container(&mut self, kind: &str) -> Result<(Option<String>, Option<Expression>)> {
         let Some(words) = SNOWFLAKE_SHOW_CONTAINERS
             .iter()
@@ -222,7 +236,7 @@ impl Parser {
         let groups = matches!(kind, "FAILOVER GROUPS" | "REPLICATION GROUPS");
         let optional = match container.as_str() {
             "ACCOUNT" => !groups,
-            "DATABASE" | "SCHEMA" => !matches!(kind, "SCHEMA VARIABLES"),
+            "DATABASE" | "SCHEMA" => true,
             "APPLICATION" => !matches!(
                 kind,
                 "PRIVILEGES" | "REFERENCES" | "TELEMETRY EVENT DEFINITIONS"
@@ -231,13 +245,15 @@ impl Parser {
             "REPLICATION GROUP" | "FAILOVER GROUP" => matches!(kind, "DATABASES" | "SHARES"),
             "SERVICE" => matches!(kind, "ROLES" | "ENDPOINTS"),
             "CLASS" => matches!(kind, "ROLES" | "FUNCTIONS" | "PROCEDURES"),
-            "ORGANIZATION PROFILE" => true,
+            "ORGANIZATION PROFILE" | "BACKUP SET" | "SNAPSHOT SET" => true,
             _ => false,
         };
-        if optional
-            && matches!(container.as_str(), "APPLICATION" | "CLASS")
-            && self.ends_show_scope_at(1)
-        {
+        let lone_name = match container.as_str() {
+            "APPLICATION" | "CLASS" => optional,
+            "DATASET" | "GATEWAY" | "GRAPH" | "LISTING" | "MODEL" => true,
+            _ => false,
+        };
+        if lone_name && self.ends_show_scope_at(1) {
             return Ok((None, Some(self.parse_show_name()?)));
         }
         self.match_text_seq(words);
