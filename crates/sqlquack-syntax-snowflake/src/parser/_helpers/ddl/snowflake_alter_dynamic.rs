@@ -113,10 +113,9 @@ impl Parser {
                 self.expect_token(TokenType::RParen)?;
                 (vec![tuple(keys)], vec![])
             }
-            "ADD SEARCH OPTIMIZATION"
-            | "DROP SEARCH OPTIMIZATION"
-            | "SUSPEND SEARCH OPTIMIZATION"
-            | "RESUME SEARCH OPTIMIZATION" => (self.parse_search_targets(action)?, vec![]),
+            "ADD SEARCH OPTIMIZATION" | "DROP SEARCH OPTIMIZATION" => {
+                (self.parse_search_targets(action)?, vec![])
+            }
             "ADD STORAGE LIFECYCLE POLICY" => {
                 let policy = self.policy_operand()?;
                 self.expect_token(TokenType::On)?;
@@ -264,24 +263,24 @@ impl Parser {
             } else if self.match_text_seq(&["EXECUTE"]) {
                 self.expect_alter_words(&[&["AS", "USER"]])?;
                 let value = if set {
-                    Some(self.policy_operand()?)
+                    let user = self.policy_operand()?;
+                    match self.match_text_seq(&["USE", "SECONDARY", "ROLES"]) {
+                        true => {
+                            let mut expressions = vec![user];
+                            expressions.extend(self.parse_secondary_roles()?);
+                            if !self.is_at_end() && !self.check(TokenType::Semicolon) {
+                                return Err(self.parse_error(
+                                    "Expected the end of the statement after USE SECONDARY ROLES",
+                                ));
+                            }
+                            Some(tuple(expressions))
+                        }
+                        false => Some(user),
+                    }
                 } else {
                     None
                 };
                 properties.push(property("EXECUTE AS USER", None, value));
-            } else if set && self.check_identifier("CONTACT") && self.check_next(TokenType::LParen)
-            {
-                self.current += 2;
-                loop {
-                    let purpose = self.parse_simple_name()?;
-                    self.expect_token(TokenType::Eq)?;
-                    let contact = self.policy_operand()?;
-                    properties.push(property("CONTACT", Some(purpose), Some(contact)));
-                    if !self.match_token(TokenType::Comma) {
-                        break;
-                    }
-                }
-                self.expect_token(TokenType::RParen)?;
             } else {
                 let name = self.parse_simple_name()?;
                 let value = if set {
@@ -304,8 +303,11 @@ impl Parser {
         let parenthesized = self.match_token(TokenType::LParen);
         let mut columns: Vec<Expression> = Vec::new();
         loop {
-            self.match_token(TokenType::Column);
+            let column_word = self.match_token(TokenType::Column);
             let column = Expression::Identifier(self.parse_simple_name()?);
+            if !column_word && self.check_text_seq(&["UNSET", "TAG"]) {
+                return Err(self.parse_error("Expected COLUMN before a column that unsets a tag"));
+            }
             let action = self.expect_alter_words(&[
                 &["COMMENT"],
                 &["UNSET", "COMMENT"],
