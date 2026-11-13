@@ -77,6 +77,24 @@ fn given_a_snowflake_listing_or_streamlit_create_when_parsing_then_only_what_sno
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "an altered Streamlit app takes an empty imports list (recorded parse)",
+            sql: "ALTER STREAMLIT v1 SET IMPORTS = ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an application service takes an empty integration list (recorded parse)",
+            sql: "ALTER APPLICATION SERVICE v1 SET EXTERNAL_ACCESS_INTEGRATIONS = ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an empty list still needs its closing parenthesis",
+            sql: "ALTER APPLICATION SERVICE v1 SET EXTERNAL_ACCESS_INTEGRATIONS = ( ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "FROM needs a source location (recorded syntax error)",
             sql: "CREATE STREAMLIT v1 FROM ;",
             dialect: Dialect::Snowflake,

@@ -11,13 +11,14 @@ use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::ColumnDef;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::schema_objects::models::CreateObject;
+use sqlquack_syntax::expressions::tables::models::ConstraintType;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::{DataType, Tuple};
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
 impl Parser {
-    /// A Snowflake CREATE PROCEDURE SCOPED { TEMP | TEMPORARY } TABLE <name> ( <column> <type> [ , ... ] ) from PROCEDURE; None when SCOPED TEMP does not follow it.
+    /// A Snowflake CREATE PROCEDURE SCOPED { TEMP | TEMPORARY } TABLE <name> ( <column> <type> [ [ NOT ] NULL ] [ , ... ] ) from PROCEDURE; None when SCOPED TEMP does not follow it.
     pub(crate) fn parse_scoped_temp_table(
         &mut self,
         or_replace: bool,
@@ -46,6 +47,13 @@ impl Parser {
                 return Err(self.parse_error("Expected a data type"));
             }
             column.data_type = self.parse_data_type()?;
+            if self.match_keywords(&[TokenType::Not, TokenType::Null]) {
+                column.nullable = Some(false);
+                column.constraint_order.push(ConstraintType::NotNull);
+            } else if self.match_token(TokenType::Null) {
+                column.nullable = Some(true);
+                column.constraint_order.push(ConstraintType::Null);
+            }
             columns.push(Expression::ColumnDef(Box::new(column)));
             if !self.match_token(TokenType::Comma) {
                 break;

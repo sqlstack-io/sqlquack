@@ -143,6 +143,9 @@ impl Parser {
     fn parse_alter_value(&mut self) -> Result<Expression> {
         if self.match_token(TokenType::LParen) {
             let mut items: Vec<Expression> = Vec::new();
+            if self.match_token(TokenType::RParen) {
+                return Ok(tuple(items));
+            }
             loop {
                 let item = self.parse_object_value()?;
                 if self.match_token(TokenType::Eq) {
