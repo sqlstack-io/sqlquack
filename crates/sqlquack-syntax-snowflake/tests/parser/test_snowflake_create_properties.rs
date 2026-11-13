@@ -442,7 +442,7 @@ fn given_a_snowflake_create_or_alter_kept_as_text_when_parsing_then_its_head_and
         SnowflakeVerdictTestCase {
             description: "an alert condition comparing with a quantified subquery",
             sql: "CREATE ALERT v1 WAREHOUSE = v1 SCHEDULE = '1 minute' IF ( EXISTS ( SELECT 1 FROM t1 WHERE c1 = ANY ( SELECT c1 FROM t2 ) ) ) THEN CALL p1 ( ) ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a property with no value (recorded errno 1003)",
