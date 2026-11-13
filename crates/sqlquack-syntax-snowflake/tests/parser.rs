@@ -22,6 +22,8 @@ mod test_snowflake_alter_governance;
 mod test_snowflake_alter_table;
 #[path = "parser/test_snowflake_create_clone.rs"]
 mod test_snowflake_create_clone;
+#[path = "parser/test_snowflake_create_listing.rs"]
+mod test_snowflake_create_listing;
 #[path = "parser/test_snowflake_create_properties.rs"]
 mod test_snowflake_create_properties;
 #[path = "parser/test_snowflake_create_search.rs"]
