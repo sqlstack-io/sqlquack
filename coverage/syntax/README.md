@@ -22,6 +22,8 @@ translation-equivalence measure.
 - `aliases.toml`: old form ids that were split, merged or folded, with the forms that now carry
   their grammar. The old id stays catalogued as `absent_from_source` and is never reused. An id
   removed as a fragment (not a form) has no alias.
+- `review-brief.md`: the frozen, versioned brief each independent form review applies. Reviewers
+  judge the declared obligations and its fixed criteria only; a new criterion is a new version.
 - `reviews/exclusions.toml`: the reviewed reason for every page that catalogues no form
   (`out_of_scope` and `no_syntax_block`), bound to the sha256 of `sources.toml`.
 - `census/<family>.jsonl`: for each counted case that `sqlquack convert` refuses only

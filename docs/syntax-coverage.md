@@ -309,6 +309,10 @@ lists; no mark excuses a case its receipt contradicts (see Receipt disagreements
 
 ## Reviews (`reviews/*.toml`)
 
+Each form review applies the frozen brief in `coverage/syntax/review-brief.md`, which judges the
+obligations a form declares and fixed criteria for grammar, wrong-kind fills and parse trees. A gap
+no declared obligation covers is proposed as a new obligation kind, not used to reject a form.
+
 A `[[review]]` has these fields:
 
 - `id` and `family`.
