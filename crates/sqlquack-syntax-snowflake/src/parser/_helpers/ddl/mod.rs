@@ -20,6 +20,7 @@ pub(crate) mod snowflake_classes;
 pub(crate) mod snowflake_commands;
 pub(crate) mod snowflake_containers;
 pub(crate) mod snowflake_copy;
+pub(crate) mod snowflake_create_alert;
 pub(crate) mod snowflake_create_clone;
 pub(crate) mod snowflake_create_from;
 pub(crate) mod snowflake_create_listing;
