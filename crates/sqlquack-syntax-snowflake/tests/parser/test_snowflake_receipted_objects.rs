@@ -1206,6 +1206,30 @@ fn given_a_snowflake_lone_kind_word_or_omitted_name_when_parsing_then_recorded_v
 fn given_a_snowflake_create_or_alter_task_when_parsing_then_or_alter_is_kept() {
     let test_cases = [
         StatementTestCase {
+            description: "each task property is its own property",
+            sql: "CREATE TASK v1 WAREHOUSE = w1 SCHEDULE = '1 MINUTE' AS SELECT 1 ;",
+            pointer: "/0/create_task/task_properties/1/kind",
+            expected_value: json!("SCHEDULE"),
+        },
+        StatementTestCase {
+            description: "a property value keeps its literal",
+            sql: "CREATE TASK v1 WAREHOUSE = w1 SCHEDULE = '1 MINUTE' AS SELECT 1 ;",
+            pointer: "/0/create_task/task_properties/1/value/literal/value",
+            expected_value: json!("1 MINUTE"),
+        },
+        StatementTestCase {
+            description: "a contact pair keeps its purpose",
+            sql: "CREATE TASK GRAPH v1 WITH CONTACT ( steward = c1 ) ;",
+            pointer: "/0/create_task/task_properties/0/name/name",
+            expected_value: json!("steward"),
+        },
+        StatementTestCase {
+            description: "AFTER lists its predecessors",
+            sql: "CREATE TASK v1 AFTER t1 , t2 AS SELECT 1 ;",
+            pointer: "/0/create_task/task_properties/0/value/tuple/expressions/1/table/name/name",
+            expected_value: json!("t2"),
+        },
+        StatementTestCase {
             description: "CREATE OR ALTER TASK keeps OR ALTER",
             sql: "CREATE OR ALTER TASK v1 WAREHOUSE = w1 AS SELECT 1 ;",
             pointer: "/0/create_task/or_alter",

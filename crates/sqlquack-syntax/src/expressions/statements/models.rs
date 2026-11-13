@@ -450,8 +450,12 @@ pub struct CreateTask {
     pub if_not_exists: bool,
     /// Task name (possibly qualified: db.schema.task)
     pub name: String,
-    /// Raw text of properties between name and AS (WAREHOUSE, SCHEDULE, etc.)
+    /// Raw text of the properties between the name and AS, for a dialect whose properties are not read one by one
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub properties: String,
+    /// Snowflake: each property between the name and AS: assignments, TAG, CONTACT and TASK_DEFAULTS pairs, AFTER, EXECUTE AS USER, WHEN, STARTED or SUSPENDED
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub task_properties: Vec<crate::expressions::schema_objects::models::ObjectProperty>,
     /// The SQL statement body after AS; absent for `CLONE source`
     pub body: Option<Expression>,
     /// Source task of `CREATE TASK name CLONE source`

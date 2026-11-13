@@ -1,6 +1,6 @@
 //! Snowflake's rules on COMMENT ON names and values, stage commands, task properties, DEFINE and class instance method calls.
 
-use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_alter::{property, property_kind};
 use crate::parser::constants::EXECUTE_DCM_PROJECT;
 use crate::parser::constants::SNOWFLAKE_DEFINE_OPAQUE_KINDS;
 use crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS;
@@ -566,16 +566,19 @@ impl Parser {
         {
             self.match_token(TokenType::With);
             if self.match_identifier("TAG") {
-                self.skip_snowflake_task_assignments(|parser| {
-                    if parser.match_token(TokenType::String) {
-                        return Ok(());
-                    }
-                    parser.skip_snowflake_name()
-                })?;
+                self.skip_snowflake_task_assignments(
+                    |parser| {
+                        if parser.match_token(TokenType::String) {
+                            return Ok(());
+                        }
+                        parser.skip_snowflake_name()
+                    },
+                    false,
+                )?;
             } else if self.match_identifier("CONTACT") {
-                self.skip_snowflake_task_assignments(Self::skip_snowflake_name)?;
+                self.skip_snowflake_task_assignments(Self::skip_snowflake_name, true)?;
             } else if self.match_identifier("TASK_DEFAULTS") {
-                self.skip_snowflake_task_assignments(Self::skip_snowflake_task_value)?;
+                self.skip_snowflake_task_assignments(Self::skip_snowflake_task_value, false)?;
             } else if self.match_token(TokenType::After) {
                 if executes_as {
                     return Err(self.parse_error("AFTER comes before EXECUTE AS USER"));
@@ -604,6 +607,92 @@ impl Parser {
             }
         }
         Ok(())
+    }
+
+    /// The CREATE TASK properties that `check_snowflake_task_properties` accepts, one by one.
+    pub(crate) fn parse_snowflake_task_properties(
+        &mut self,
+        graph: bool,
+    ) -> Result<Vec<ObjectProperty>> {
+        let start = self.current;
+        self.check_snowflake_task_properties(graph)?;
+        let end = self.current;
+        self.current = start;
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        while self.current < end {
+            self.match_token(TokenType::With);
+            if let Some(kind) = ["TAG", "CONTACT", "TASK_DEFAULTS"]
+                .into_iter()
+                .find(|kind| self.match_identifier(kind))
+            {
+                self.expect_token(TokenType::LParen)?;
+                loop {
+                    let name = match self.check(TokenType::String) {
+                        true => Identifier::new(format!("'{}'", self.advance_text()?)),
+                        false => self.parse_simple_qualified_name()?,
+                    };
+                    self.expect_token(TokenType::Eq)?;
+                    let value = self.parse_snowflake_task_value()?;
+                    properties.push(property(kind, Some(name), Some(value)));
+                    if !self.match_token(TokenType::Comma) {
+                        break;
+                    }
+                }
+                self.expect_token(TokenType::RParen)?;
+            } else if self.match_token(TokenType::After) {
+                let mut tasks = vec![Expression::Table(Box::new(self.parse_object_name()?))];
+                while self.match_token(TokenType::Comma) {
+                    tasks.push(Expression::Table(Box::new(self.parse_object_name()?)));
+                }
+                let tasks = Expression::Tuple(Box::new(Tuple { expressions: tasks }));
+                properties.push(property("AFTER", None, Some(tasks)));
+            } else if self.match_text_seq(&["EXECUTE", "AS", "USER"]) {
+                let user = Expression::Table(Box::new(self.parse_object_name()?));
+                properties.push(property("EXECUTE AS USER", None, Some(user)));
+            } else if self.match_token(TokenType::When) {
+                properties.push(property("WHEN", None, Some(self.parse_expression()?)));
+            } else if let Some(state) = ["STARTED", "SUSPENDED"]
+                .into_iter()
+                .find(|state| self.match_identifier(state))
+            {
+                properties.push(property(state, None, None));
+            } else {
+                let name = self.parse_simple_name()?;
+                self.expect_token(TokenType::Eq)?;
+                let value = self.parse_snowflake_task_value()?;
+                properties.push(property(&property_kind(&name), None, Some(value)));
+                self.match_token(TokenType::Comma);
+            }
+        }
+        Ok(properties)
+    }
+
+    /// A task property value as `skip_snowflake_task_value` reads it: a parenthesized list, a literal or a name.
+    fn parse_snowflake_task_value(&mut self) -> Result<Expression> {
+        if self.match_token(TokenType::LParen) {
+            let mut items: Vec<Expression> = Vec::new();
+            while !self.match_token(TokenType::RParen) {
+                items.push(match self.check(TokenType::String) {
+                    true => self.parse_primary()?,
+                    false => Expression::Table(Box::new(self.parse_object_name()?)),
+                });
+                self.match_token(TokenType::Comma);
+            }
+            return Ok(Expression::Tuple(Box::new(Tuple { expressions: items })));
+        }
+        if self.check(TokenType::Dash) {
+            return self.parse_unary();
+        }
+        if self.check(TokenType::String)
+            || self.check(TokenType::DollarString)
+            || self.check(TokenType::HeredocString)
+            || self.check(TokenType::Number)
+            || self.check(TokenType::True)
+            || self.check(TokenType::False)
+        {
+            return self.parse_primary();
+        }
+        Ok(Expression::Table(Box::new(self.parse_object_name()?)))
     }
 
     /// Skips one name part or a dotted name, refusing strings and Snowflake reserved words.
@@ -652,14 +741,17 @@ impl Parser {
         self.skip_snowflake_name()
     }
 
-    /// Skips `( <name> = <value> , ... )`, reading each value with `value`.
+    /// Skips `( <name> = <value> , ... )`, reading each value with `value`; `quoted_name` also admits a string name, as Snowflake does for a contact purpose.
     fn skip_snowflake_task_assignments(
         &mut self,
         value: fn(&mut Self) -> Result<()>,
+        quoted_name: bool,
     ) -> Result<()> {
         self.expect_token(TokenType::LParen)?;
         loop {
-            self.skip_snowflake_name()?;
+            if !(quoted_name && self.match_token(TokenType::String)) {
+                self.skip_snowflake_name()?;
+            }
             self.expect_token(TokenType::Eq)?;
             value(self)?;
             if !self.match_token(TokenType::Comma) {
@@ -681,14 +773,14 @@ impl Parser {
         let name_start = self.current;
         self.skip_snowflake_name()?;
         let name = self.tokens_to_sql(name_start, self.current);
-        let properties_start = self.current;
-        self.check_snowflake_task_properties(true)?;
+        let task_properties = self.parse_snowflake_task_properties(true)?;
         Ok(Expression::CreateTask(Box::new(CreateTask {
             or_replace,
             or_alter,
             if_not_exists,
             name,
-            properties: self.tokens_to_sql(properties_start, self.current),
+            properties: String::new(),
+            task_properties,
             body: None,
             clone_source: None,
             graph: true,
