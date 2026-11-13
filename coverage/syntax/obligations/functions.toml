@@ -6257,11 +6257,11 @@ target = "<element>"
 note = "omit <element>"
 
 [[obligation]]
-id = "sf.functions.array-repeat.o003"
+id = "sf.functions.array-repeat.o009"
 kind = "operand_type_class"
 required = true
 target = "<element>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.functions.array-repeat.o004"
@@ -6288,6 +6288,22 @@ id = "sf.functions.array-repeat.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.array-repeat.o010"
+kind = "identifier_class"
+required = true
+target = "<element>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.array-repeat.o011"
+kind = "identifier_class"
+required = true
+target = "<element>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.array-reverse.o001"
@@ -14894,11 +14910,11 @@ required = true
 target = "[ <fract_sec_precision> ]"
 
 [[obligation]]
-id = "sf.functions.current-time.current-time.o004"
+id = "sf.functions.current-time.current-time.o007"
 kind = "operand_type_class"
 required = true
 target = "<fract_sec_precision> in [ <fract_sec_precision> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.current-time.current-time.o005"
@@ -14937,11 +14953,11 @@ required = true
 target = "[ <fract_sec_precision> ]"
 
 [[obligation]]
-id = "sf.functions.current-timestamp.current-timestamp.o004"
+id = "sf.functions.current-timestamp.current-timestamp.o007"
 kind = "operand_type_class"
 required = true
 target = "<fract_sec_precision> in [ <fract_sec_precision> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.current-timestamp.current-timestamp.o005"
@@ -26546,11 +26562,18 @@ target = "<target_table>"
 note = "omit <target_table>"
 
 [[obligation]]
-id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o003"
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o035"
 kind = "operand_type_class"
 required = true
 target = "<target_table>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o036"
+kind = "negative_neighbour"
+required = true
+target = "<target_table>"
+note = "a string literal in place of <target_table>"
 
 [[obligation]]
 id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o005"
@@ -26574,11 +26597,11 @@ target = "<source_table>"
 note = "omit <source_table>"
 
 [[obligation]]
-id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o008"
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o037"
 kind = "operand_type_class"
 required = true
 target = "<source_table>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o027"
@@ -26685,6 +26708,22 @@ required = true
 note = "the form without its required ) #3"
 
 [[obligation]]
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o038"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o039"
+kind = "identifier_class"
+required = true
+target = "<target_table>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o023"
 kind = "identifier_class"
 required = true
@@ -26697,6 +26736,22 @@ id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o024"
 kind = "identifier_class"
 required = true
 target = "<target_column>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o040"
+kind = "identifier_class"
+required = true
+target = "<source_table>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.dmf-source-target-lag.alter-table-add-data.o041"
+kind = "identifier_class"
+required = true
+target = "<source_table>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -28498,12 +28553,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.email-integration-config.o027"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required NOTIFICATION after ."
-
-[[obligation]]
 id = "sf.functions.email-integration-config.o028"
 kind = "negative_neighbour"
 required = true
@@ -28515,6 +28564,13 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.functions.email_integration_config / Syntax"
 note = "the form without its required NOTIFICATION, observed"
+
+[[obligation]]
+id = "sf.functions.email-integration-config.o029"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.email_integration_config / Syntax"
+note = "the form without its required NOTIFICATION after ., observed"
 
 [[obligation]]
 id = "sf.functions.embed-text-1024-snowflake-cortex.o001"
@@ -32586,11 +32642,11 @@ target = "<database>"
 note = "omit <database>"
 
 [[obligation]]
-id = "sf.functions.get-ai-evaluation-data-snowflake-local.o003"
+id = "sf.functions.get-ai-evaluation-data-snowflake-local.o024"
 kind = "operand_type_class"
 required = true
 target = "<database>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.functions.get-ai-evaluation-data-snowflake-local.o004"
@@ -32600,11 +32656,11 @@ target = "<schema>"
 note = "omit <schema>"
 
 [[obligation]]
-id = "sf.functions.get-ai-evaluation-data-snowflake-local.o005"
+id = "sf.functions.get-ai-evaluation-data-snowflake-local.o025"
 kind = "operand_type_class"
 required = true
 target = "<schema>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.functions.get-ai-evaluation-data-snowflake-local.o006"
@@ -32667,6 +32723,38 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.get-ai-evaluation-data-snowflake-local.o026"
+kind = "identifier_class"
+required = true
+target = "<database>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.get-ai-evaluation-data-snowflake-local.o027"
+kind = "identifier_class"
+required = true
+target = "<database>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.get-ai-evaluation-data-snowflake-local.o028"
+kind = "identifier_class"
+required = true
+target = "<schema>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.get-ai-evaluation-data-snowflake-local.o029"
+kind = "identifier_class"
+required = true
+target = "<schema>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.functions.get-ai-evaluation-data-snowflake-local.o019"
 kind = "identifier_class"
 required = true
@@ -32719,11 +32807,11 @@ target = "<database>"
 note = "omit <database>"
 
 [[obligation]]
-id = "sf.functions.get-ai-observability-events-snowflake-local.o003"
+id = "sf.functions.get-ai-observability-events-snowflake-local.o019"
 kind = "operand_type_class"
 required = true
 target = "<database>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.functions.get-ai-observability-events-snowflake-local.o004"
@@ -32733,11 +32821,11 @@ target = "<schema>"
 note = "omit <schema>"
 
 [[obligation]]
-id = "sf.functions.get-ai-observability-events-snowflake-local.o005"
+id = "sf.functions.get-ai-observability-events-snowflake-local.o020"
 kind = "operand_type_class"
 required = true
 target = "<schema>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.functions.get-ai-observability-events-snowflake-local.o006"
@@ -32786,6 +32874,38 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.get-ai-observability-events-snowflake-local.o021"
+kind = "identifier_class"
+required = true
+target = "<database>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.get-ai-observability-events-snowflake-local.o022"
+kind = "identifier_class"
+required = true
+target = "<database>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.get-ai-observability-events-snowflake-local.o023"
+kind = "identifier_class"
+required = true
+target = "<schema>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.get-ai-observability-events-snowflake-local.o024"
+kind = "identifier_class"
+required = true
+target = "<schema>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.functions.get-ai-observability-events-snowflake-local.o016"
 kind = "identifier_class"
 required = true
@@ -32822,11 +32942,11 @@ target = "<database>"
 note = "omit <database>"
 
 [[obligation]]
-id = "sf.functions.get-ai-observability-logs-snowflake-local.o003"
+id = "sf.functions.get-ai-observability-logs-snowflake-local.o019"
 kind = "operand_type_class"
 required = true
 target = "<database>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.functions.get-ai-observability-logs-snowflake-local.o004"
@@ -32836,11 +32956,11 @@ target = "<schema>"
 note = "omit <schema>"
 
 [[obligation]]
-id = "sf.functions.get-ai-observability-logs-snowflake-local.o005"
+id = "sf.functions.get-ai-observability-logs-snowflake-local.o020"
 kind = "operand_type_class"
 required = true
 target = "<schema>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.functions.get-ai-observability-logs-snowflake-local.o006"
@@ -32889,6 +33009,38 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.functions.get-ai-observability-logs-snowflake-local.o021"
+kind = "identifier_class"
+required = true
+target = "<database>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.get-ai-observability-logs-snowflake-local.o022"
+kind = "identifier_class"
+required = true
+target = "<database>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.get-ai-observability-logs-snowflake-local.o023"
+kind = "identifier_class"
+required = true
+target = "<schema>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.get-ai-observability-logs-snowflake-local.o024"
+kind = "identifier_class"
+required = true
+target = "<schema>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.functions.get-ai-observability-logs-snowflake-local.o016"
 kind = "identifier_class"
 required = true
@@ -32925,11 +33077,11 @@ target = "<database>"
 note = "omit <database>"
 
 [[obligation]]
-id = "sf.functions.get-ai-record-trace-snowflake-local.o003"
+id = "sf.functions.get-ai-record-trace-snowflake-local.o021"
 kind = "operand_type_class"
 required = true
 target = "<database>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.functions.get-ai-record-trace-snowflake-local.o004"
@@ -32939,11 +33091,11 @@ target = "<schema>"
 note = "omit <schema>"
 
 [[obligation]]
-id = "sf.functions.get-ai-record-trace-snowflake-local.o005"
+id = "sf.functions.get-ai-record-trace-snowflake-local.o022"
 kind = "operand_type_class"
 required = true
 target = "<schema>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.functions.get-ai-record-trace-snowflake-local.o006"
@@ -33004,6 +33156,38 @@ id = "sf.functions.get-ai-record-trace-snowflake-local.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.functions.get-ai-record-trace-snowflake-local.o023"
+kind = "identifier_class"
+required = true
+target = "<database>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.get-ai-record-trace-snowflake-local.o024"
+kind = "identifier_class"
+required = true
+target = "<database>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.functions.get-ai-record-trace-snowflake-local.o025"
+kind = "identifier_class"
+required = true
+target = "<schema>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.functions.get-ai-record-trace-snowflake-local.o026"
+kind = "identifier_class"
+required = true
+target = "<schema>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.functions.get-ai-record-trace-snowflake-local.o018"
@@ -42785,11 +42969,11 @@ required = true
 target = "[ <fract_sec_precision> ]"
 
 [[obligation]]
-id = "sf.functions.localtimestamp.localtimestamp.o004"
+id = "sf.functions.localtimestamp.localtimestamp.o007"
 kind = "operand_type_class"
 required = true
 target = "<fract_sec_precision> in [ <fract_sec_precision> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.localtimestamp.localtimestamp.o005"

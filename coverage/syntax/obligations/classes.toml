@@ -259,12 +259,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o046"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o047"
 kind = "negative_neighbour"
 required = true
@@ -363,6 +357,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o062"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-detection.commands.create-anomaly-detection / Syntax"
+note = "the form without its required ML, observed"
+
+[[obligation]]
 id = "sf.classes.anomaly-detection.commands.drop-anomaly-detection.o001"
 kind = "positive"
 required = true
@@ -408,12 +409,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.anomaly-detection.commands.drop-anomaly-detection.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.anomaly-detection.commands.drop-anomaly-detection.o009"
 kind = "negative_neighbour"
 required = true
@@ -440,6 +435,13 @@ required = true
 target = "<model_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.drop-anomaly-detection.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-detection.commands.drop-anomaly-detection / Syntax"
+note = "the form without its required ML, observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o001"
@@ -606,18 +608,6 @@ required = true
 note = "the form without its required SNOWFLAKE after SHOW"
 
 [[obligation]]
-id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o036"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after ."
-
-[[obligation]]
-id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o037"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ANOMALY_DETECTION after ."
-
-[[obligation]]
 id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o026"
 kind = "negative_neighbour"
 required = true
@@ -667,6 +657,20 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.classes.anomaly-detection.commands.show-anomaly-detection / Syntax"
 note = "the form without its required ML, observed"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o038"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-detection.commands.show-anomaly-detection / Syntax"
+note = "the form without its required ML after ., observed"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.show-anomaly-detection.o039"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.anomaly-detection.commands.show-anomaly-detection / Syntax"
+note = "the form without its required ANOMALY_DETECTION after ., observed"
 
 [[obligation]]
 id = "sf.classes.anomaly-detection.methods.detect-anomalies.o001"
@@ -1111,11 +1115,11 @@ target = "<config>"
 note = "omit <config>"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config.o003"
+id = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config.o016"
 kind = "operand_type_class"
 required = true
 target = "<config>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config.o004"
@@ -1170,6 +1174,22 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config.o017"
+kind = "identifier_class"
+required = true
+target = "<config>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config.o018"
+kind = "identifier_class"
+required = true
+target = "<config>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config.o015"
 kind = "negative_neighbour"
 required = true
@@ -1204,11 +1224,11 @@ target = "<config>"
 note = "omit <config>"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.create-monitor.o006"
+id = "sf.classes.anomaly-insights.methods.create-monitor.o013"
 kind = "operand_type_class"
 required = true
 target = "<config>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.create-monitor.o008"
@@ -1233,6 +1253,22 @@ id = "sf.classes.anomaly-insights.methods.create-monitor.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.create-monitor.o014"
+kind = "identifier_class"
+required = true
+target = "<config>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.create-monitor.o015"
+kind = "identifier_class"
+required = true
+target = "<config>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.create-monitor.o012"
@@ -2521,11 +2557,11 @@ target = "<config>"
 note = "omit <config>"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.update-monitor-config.o006"
+id = "sf.classes.anomaly-insights.methods.update-monitor-config.o013"
 kind = "operand_type_class"
 required = true
 target = "<config>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.update-monitor-config.o008"
@@ -2550,6 +2586,22 @@ id = "sf.classes.anomaly-insights.methods.update-monitor-config.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.update-monitor-config.o014"
+kind = "identifier_class"
+required = true
+target = "<config>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.classes.anomaly-insights.methods.update-monitor-config.o015"
+kind = "identifier_class"
+required = true
+target = "<config>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.update-monitor-config.o012"
@@ -2625,12 +2677,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.budget.commands.alter-budget.rename-to.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE"
-
-[[obligation]]
 id = "sf.classes.budget.commands.alter-budget.rename-to.o012"
 kind = "negative_neighbour"
 required = true
@@ -2685,6 +2731,13 @@ required = true
 target = "<new_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.rename-to.o020"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.alter-budget / Syntax"
+note = "the form without its required CORE, observed"
 
 [[obligation]]
 id = "sf.classes.budget.commands.alter-budget.set-comment.o001"
@@ -2753,12 +2806,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.budget.commands.alter-budget.set-comment.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE"
-
-[[obligation]]
 id = "sf.classes.budget.commands.alter-budget.set-comment.o012"
 kind = "negative_neighbour"
 required = true
@@ -2799,6 +2846,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.classes.budget.commands.alter-budget.set-comment.o018"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.alter-budget / Syntax"
+note = "the form without its required CORE, observed"
+
+[[obligation]]
 id = "sf.classes.budget.commands.alter-budget.set-tag.o001"
 kind = "positive"
 required = true
@@ -2836,13 +2890,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.classes.budget.commands.alter-budget.set-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.classes.budget.commands.alter-budget.set-tag.o008"
@@ -2899,12 +2946,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.budget.commands.alter-budget.set-tag.o016"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE"
-
-[[obligation]]
 id = "sf.classes.budget.commands.alter-budget.set-tag.o017"
 kind = "negative_neighbour"
 required = true
@@ -2921,12 +2962,6 @@ id = "sf.classes.budget.commands.alter-budget.set-tag.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
-
-[[obligation]]
-id = "sf.classes.budget.commands.alter-budget.set-tag.o020"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
 
 [[obligation]]
 id = "sf.classes.budget.commands.alter-budget.set-tag.o025"
@@ -2965,6 +3000,28 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.set-tag.o026"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.classes.budget.commands.alter-budget / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.set-tag.o027"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.alter-budget / Syntax"
+note = "the form without its required CORE, observed"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.set-tag.o028"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.alter-budget / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.classes.budget.commands.alter-budget.unset-comment.o001"
@@ -3012,12 +3069,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.budget.commands.alter-budget.unset-comment.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE"
-
-[[obligation]]
 id = "sf.classes.budget.commands.alter-budget.unset-comment.o009"
 kind = "negative_neighbour"
 required = true
@@ -3056,6 +3107,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.unset-comment.o015"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.alter-budget / Syntax"
+note = "the form without its required CORE, observed"
 
 [[obligation]]
 id = "sf.classes.budget.commands.alter-budget.unset-tag.o001"
@@ -3097,13 +3155,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.classes.budget.commands.alter-budget.unset-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.classes.budget.commands.alter-budget.unset-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -3137,12 +3188,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.budget.commands.alter-budget.unset-tag.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE"
-
-[[obligation]]
 id = "sf.classes.budget.commands.alter-budget.unset-tag.o014"
 kind = "negative_neighbour"
 required = true
@@ -3159,12 +3204,6 @@ id = "sf.classes.budget.commands.alter-budget.unset-tag.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
-
-[[obligation]]
-id = "sf.classes.budget.commands.alter-budget.unset-tag.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
 
 [[obligation]]
 id = "sf.classes.budget.commands.alter-budget.unset-tag.o022"
@@ -3203,6 +3242,28 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.unset-tag.o023"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.classes.budget.commands.alter-budget / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.unset-tag.o024"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.alter-budget / Syntax"
+note = "the form without its required CORE, observed"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.unset-tag.o025"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.alter-budget / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.classes.budget.commands.create-budget.o001"
@@ -3313,12 +3374,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.budget.commands.create-budget.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE"
-
-[[obligation]]
 id = "sf.classes.budget.commands.create-budget.o019"
 kind = "negative_neighbour"
 required = true
@@ -3377,6 +3432,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.classes.budget.commands.create-budget.o028"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.create-budget / Syntax"
+note = "the form without its required CORE, observed"
+
+[[obligation]]
 id = "sf.classes.budget.commands.drop-budget.o001"
 kind = "positive"
 required = true
@@ -3422,12 +3484,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.budget.commands.drop-budget.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE"
-
-[[obligation]]
 id = "sf.classes.budget.commands.drop-budget.o009"
 kind = "negative_neighbour"
 required = true
@@ -3454,6 +3510,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.budget.commands.drop-budget.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.drop-budget / Syntax"
+note = "the form without its required CORE, observed"
 
 [[obligation]]
 id = "sf.classes.budget.commands.show-budget.o001"
@@ -3686,18 +3749,6 @@ required = true
 note = "the form without its required SNOWFLAKE after SHOW"
 
 [[obligation]]
-id = "sf.classes.budget.commands.show-budget.o045"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE after ."
-
-[[obligation]]
-id = "sf.classes.budget.commands.show-budget.o046"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required BUDGET after ."
-
-[[obligation]]
 id = "sf.classes.budget.commands.show-budget.o035"
 kind = "negative_neighbour"
 required = true
@@ -3747,6 +3798,20 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.classes.budget.commands.show-budget / Syntax"
 note = "the form without its required CORE, observed"
+
+[[obligation]]
+id = "sf.classes.budget.commands.show-budget.o049"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.show-budget / Syntax"
+note = "the form without its required CORE after ., observed"
+
+[[obligation]]
+id = "sf.classes.budget.commands.show-budget.o050"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.budget.commands.show-budget / Syntax"
+note = "the form without its required BUDGET after ., observed"
 
 [[obligation]]
 id = "sf.classes.budget.methods.activate.o001"
@@ -3883,11 +3948,11 @@ required = true
 target = "{ 'ACTUAL' | 'PROJECTED' } → 'PROJECTED'"
 
 [[obligation]]
-id = "sf.classes.budget.methods.add-custom-action.o019"
+id = "sf.classes.budget.methods.add-custom-action.o027"
 kind = "operand_type_class"
 required = true
 target = "<threshold>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.classes.budget.methods.add-custom-action.o020"
@@ -5809,11 +5874,11 @@ target = "<threshold>"
 note = "omit <threshold>"
 
 [[obligation]]
-id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions-2.o006"
+id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions-2.o015"
 kind = "operand_type_class"
 required = true
 target = "<threshold>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions-2.o007"
@@ -5884,11 +5949,11 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions.syntax.o005"
+id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions.syntax.o011"
 kind = "operand_type_class"
 required = true
 target = "<threshold>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.classes.budget.methods.remove-custom-actions.remove-custom-actions.syntax.o006"
@@ -6724,11 +6789,11 @@ target = "<budget_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.classes.budget.methods.set-notification-threshold.o006"
+id = "sf.classes.budget.methods.set-notification-threshold.o012"
 kind = "operand_type_class"
 required = true
 target = "<threshold_percent>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.classes.budget.methods.set-notification-threshold.o007"
@@ -6867,11 +6932,11 @@ target = "<operation_mode>"
 note = "omit <operation_mode>"
 
 [[obligation]]
-id = "sf.classes.budget.methods.set-resource-tags.o008"
+id = "sf.classes.budget.methods.set-resource-tags.o014"
 kind = "operand_type_class"
 required = true
 target = "<operation_mode>"
-note = "a valid operand"
+note = "a valid word"
 
 [[obligation]]
 id = "sf.classes.budget.methods.set-resource-tags.o009"
@@ -7010,11 +7075,11 @@ target = "<operation_mode>"
 note = "omit <operation_mode>"
 
 [[obligation]]
-id = "sf.classes.budget.methods.set-user-tags.o008"
+id = "sf.classes.budget.methods.set-user-tags.o014"
 kind = "operand_type_class"
 required = true
 target = "<operation_mode>"
-note = "a valid operand"
+note = "a valid word"
 
 [[obligation]]
 id = "sf.classes.budget.methods.set-user-tags.o009"
@@ -7102,13 +7167,6 @@ target = "<classification_profile_name>"
 note = "a string literal in place of <classification_profile_name>"
 
 [[obligation]]
-id = "sf.classes.classification-profile.commands.create-classification-profile.o009"
-kind = "required_operand_missing"
-required = true
-target = "<config_object>"
-note = "omit <config_object>"
-
-[[obligation]]
 id = "sf.classes.classification-profile.commands.create-classification-profile.o010"
 kind = "operand_type_class"
 required = true
@@ -7126,12 +7184,6 @@ id = "sf.classes.classification-profile.commands.create-classification-profile.o
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE"
-
-[[obligation]]
-id = "sf.classes.classification-profile.commands.create-classification-profile.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY"
 
 [[obligation]]
 id = "sf.classes.classification-profile.commands.create-classification-profile.o014"
@@ -7186,6 +7238,21 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.classes.classification-profile.commands.create-classification-profile.o022"
+kind = "required_operand_missing"
+required = true
+target = "<config_object>"
+anchor = "doc.classes.classification_profile.commands.create-classification-profile / Syntax"
+note = "omit <config_object>, observed"
+
+[[obligation]]
+id = "sf.classes.classification-profile.commands.create-classification-profile.o023"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification_profile.commands.create-classification-profile / Syntax"
+note = "the form without its required DATA_PRIVACY, observed"
+
+[[obligation]]
 id = "sf.classes.classification-profile.commands.drop-classification-profile.o001"
 kind = "positive"
 required = true
@@ -7231,12 +7298,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.classification-profile.commands.drop-classification-profile.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY"
-
-[[obligation]]
 id = "sf.classes.classification-profile.commands.drop-classification-profile.o009"
 kind = "negative_neighbour"
 required = true
@@ -7263,6 +7324,13 @@ required = true
 target = "<classification_profile_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.classification-profile.commands.drop-classification-profile.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification_profile.commands.drop-classification-profile / Syntax"
+note = "the form without its required DATA_PRIVACY, observed"
 
 [[obligation]]
 id = "sf.classes.classification-profile.commands.show-classification-profile.o001"
@@ -7884,11 +7952,11 @@ target = "<classification_profile_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.classes.classification-profile.methods.set-maximum-classification-validity-days.o006"
+id = "sf.classes.classification-profile.methods.set-maximum-classification-validity-days.o012"
 kind = "operand_type_class"
 required = true
 target = "<days>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.classes.classification-profile.methods.set-maximum-classification-validity-days.o007"
@@ -7945,11 +8013,11 @@ target = "<classification_profile_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.classes.classification-profile.methods.set-minimum-object-age-for-classification-days.o006"
+id = "sf.classes.classification-profile.methods.set-minimum-object-age-for-classification-days.o012"
 kind = "operand_type_class"
 required = true
 target = "<days>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.classes.classification-profile.methods.set-minimum-object-age-for-classification-days.o007"
@@ -8502,12 +8570,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.classification.commands.alter-classification.set-comment.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.classification.commands.alter-classification.set-comment.o012"
 kind = "negative_neighbour"
 required = true
@@ -8548,6 +8610,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.classes.classification.commands.alter-classification.set-comment.o018"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification.commands.alter-classification / Syntax"
+note = "the form without its required ML, observed"
+
+[[obligation]]
 id = "sf.classes.classification.commands.alter-classification.set-tag.o001"
 kind = "positive"
 required = true
@@ -8585,13 +8654,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.classes.classification.commands.alter-classification.set-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.classes.classification.commands.alter-classification.set-tag.o008"
@@ -8648,12 +8710,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.classification.commands.alter-classification.set-tag.o016"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.classification.commands.alter-classification.set-tag.o017"
 kind = "negative_neighbour"
 required = true
@@ -8670,12 +8726,6 @@ id = "sf.classes.classification.commands.alter-classification.set-tag.o019"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
-
-[[obligation]]
-id = "sf.classes.classification.commands.alter-classification.set-tag.o020"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
 
 [[obligation]]
 id = "sf.classes.classification.commands.alter-classification.set-tag.o025"
@@ -8714,6 +8764,28 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.set-tag.o026"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.classes.classification.commands.alter-classification / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.set-tag.o027"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification.commands.alter-classification / Syntax"
+note = "the form without its required ML, observed"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.set-tag.o028"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification.commands.alter-classification / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.classes.classification.commands.alter-classification.unset-comment.o001"
@@ -8761,12 +8833,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.classification.commands.alter-classification.unset-comment.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.classification.commands.alter-classification.unset-comment.o009"
 kind = "negative_neighbour"
 required = true
@@ -8805,6 +8871,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.unset-comment.o015"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification.commands.alter-classification / Syntax"
+note = "the form without its required ML, observed"
 
 [[obligation]]
 id = "sf.classes.classification.commands.alter-classification.unset-tag.o001"
@@ -8846,13 +8919,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.classes.classification.commands.alter-classification.unset-tag.o007"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.classes.classification.commands.alter-classification.unset-tag.o008"
 kind = "operand_type_class"
 required = true
@@ -8886,12 +8952,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.classification.commands.alter-classification.unset-tag.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.classification.commands.alter-classification.unset-tag.o014"
 kind = "negative_neighbour"
 required = true
@@ -8908,12 +8968,6 @@ id = "sf.classes.classification.commands.alter-classification.unset-tag.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
-
-[[obligation]]
-id = "sf.classes.classification.commands.alter-classification.unset-tag.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
 
 [[obligation]]
 id = "sf.classes.classification.commands.alter-classification.unset-tag.o022"
@@ -8952,6 +9006,28 @@ required = true
 target = "<tag_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.unset-tag.o023"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.classes.classification.commands.alter-classification / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.unset-tag.o024"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification.commands.alter-classification / Syntax"
+note = "the form without its required ML, observed"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.unset-tag.o025"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification.commands.alter-classification / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.classes.classification.commands.create-classification.o001"
@@ -9169,12 +9245,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.classification.commands.create-classification.o037"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.classification.commands.create-classification.o038"
 kind = "negative_neighbour"
 required = true
@@ -9279,6 +9349,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.classes.classification.commands.create-classification.o054"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification.commands.create-classification / Syntax"
+note = "the form without its required ML, observed"
+
+[[obligation]]
 id = "sf.classes.classification.commands.drop-classification.o001"
 kind = "positive"
 required = true
@@ -9324,12 +9401,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.classification.commands.drop-classification.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.classification.commands.drop-classification.o009"
 kind = "negative_neighbour"
 required = true
@@ -9356,6 +9427,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.classification.commands.drop-classification.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification.commands.drop-classification / Syntax"
+note = "the form without its required ML, observed"
 
 [[obligation]]
 id = "sf.classes.classification.commands.show-classification.o001"
@@ -9522,18 +9600,6 @@ required = true
 note = "the form without its required SNOWFLAKE after SHOW"
 
 [[obligation]]
-id = "sf.classes.classification.commands.show-classification.o036"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after ."
-
-[[obligation]]
-id = "sf.classes.classification.commands.show-classification.o037"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CLASSIFICATION after ."
-
-[[obligation]]
 id = "sf.classes.classification.commands.show-classification.o026"
 kind = "negative_neighbour"
 required = true
@@ -9583,6 +9649,20 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.classes.classification.commands.show-classification / Syntax"
 note = "the form without its required ML, observed"
+
+[[obligation]]
+id = "sf.classes.classification.commands.show-classification.o038"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification.commands.show-classification / Syntax"
+note = "the form without its required ML after ., observed"
+
+[[obligation]]
+id = "sf.classes.classification.commands.show-classification.o039"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.classification.commands.show-classification / Syntax"
+note = "the form without its required CLASSIFICATION after ., observed"
 
 [[obligation]]
 id = "sf.classes.classification.methods.predict.o001"
@@ -10018,12 +10098,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.custom-classifier.commands.create-custom-classifier.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY"
-
-[[obligation]]
 id = "sf.classes.custom-classifier.commands.create-custom-classifier.o012"
 kind = "negative_neighbour"
 required = true
@@ -10076,6 +10150,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.classes.custom-classifier.commands.create-custom-classifier.o020"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.custom_classifier.commands.create-custom-classifier / Syntax"
+note = "the form without its required DATA_PRIVACY, observed"
+
+[[obligation]]
 id = "sf.classes.custom-classifier.commands.drop-custom-classifier.o001"
 kind = "positive"
 required = true
@@ -10121,12 +10202,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.custom-classifier.commands.drop-custom-classifier.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY"
-
-[[obligation]]
 id = "sf.classes.custom-classifier.commands.drop-custom-classifier.o009"
 kind = "negative_neighbour"
 required = true
@@ -10153,6 +10228,13 @@ required = true
 target = "<custom_classifier_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.commands.drop-custom-classifier.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.custom_classifier.commands.drop-custom-classifier / Syntax"
+note = "the form without its required DATA_PRIVACY, observed"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o001"
@@ -10319,18 +10401,6 @@ required = true
 note = "the form without its required SNOWFLAKE after SHOW"
 
 [[obligation]]
-id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o036"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY after ."
-
-[[obligation]]
-id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o037"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CUSTOM_CLASSIFIER after ."
-
-[[obligation]]
 id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o026"
 kind = "negative_neighbour"
 required = true
@@ -10382,6 +10452,20 @@ anchor = "doc.classes.custom_classifier.commands.show-custom-classifiers / Synta
 note = "the form without its required DATA_PRIVACY, observed"
 
 [[obligation]]
+id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o038"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.custom_classifier.commands.show-custom-classifiers / Syntax"
+note = "the form without its required DATA_PRIVACY after ., observed"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.commands.show-custom-classifiers.o039"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.custom_classifier.commands.show-custom-classifiers / Syntax"
+note = "the form without its required CUSTOM_CLASSIFIER after ., observed"
+
+[[obligation]]
 id = "sf.classes.custom-classifier.methods.add-regex.o001"
 kind = "positive"
 required = true
@@ -10395,11 +10479,11 @@ target = "<custom_classifier>"
 note = "omit <custom_classifier>"
 
 [[obligation]]
-id = "sf.classes.custom-classifier.methods.add-regex.o003"
+id = "sf.classes.custom-classifier.methods.add-regex.o038"
 kind = "operand_type_class"
 required = true
 target = "<custom_classifier>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.methods.add-regex.o004"
@@ -10592,6 +10676,22 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
+id = "sf.classes.custom-classifier.methods.add-regex.o039"
+kind = "identifier_class"
+required = true
+target = "<custom_classifier>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.methods.add-regex.o040"
+kind = "identifier_class"
+required = true
+target = "<custom_classifier>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.classes.custom-classifier.methods.delete-category.o001"
 kind = "positive"
 required = true
@@ -10605,11 +10705,11 @@ target = "<custom_classifier>"
 note = "omit <custom_classifier>"
 
 [[obligation]]
-id = "sf.classes.custom-classifier.methods.delete-category.o003"
+id = "sf.classes.custom-classifier.methods.delete-category.o010"
 kind = "operand_type_class"
 required = true
 target = "<custom_classifier>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.methods.delete-category.o005"
@@ -10637,17 +10737,33 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.classes.custom-classifier.methods.delete-category.o011"
+kind = "identifier_class"
+required = true
+target = "<custom_classifier>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.methods.delete-category.o012"
+kind = "identifier_class"
+required = true
+target = "<custom_classifier>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
 id = "sf.classes.custom-classifier.methods.list.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.classes.custom-classifier.methods.list.o003"
+id = "sf.classes.custom-classifier.methods.list.o008"
 kind = "operand_type_class"
 required = true
 target = "<custom_classifier>"
-note = "a valid operand"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.methods.list.o004"
@@ -10666,6 +10782,22 @@ id = "sf.classes.custom-classifier.methods.list.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.methods.list.o009"
+kind = "identifier_class"
+required = true
+target = "<custom_classifier>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.classes.custom-classifier.methods.list.o010"
+kind = "identifier_class"
+required = true
+target = "<custom_classifier>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.methods.list.o007"
@@ -10765,12 +10897,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.forecast.commands.create-forecast.forecast.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.forecast.commands.create-forecast.forecast.o019"
 kind = "negative_neighbour"
 required = true
@@ -10803,6 +10929,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.create-forecast.forecast.o024"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.forecast.commands.create-forecast / Syntax"
+note = "the form without its required ML, observed"
 
 [[obligation]]
 id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o001"
@@ -11060,12 +11193,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o045"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o046"
 kind = "negative_neighbour"
 required = true
@@ -11170,6 +11297,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o062"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.forecast.commands.create-forecast / Syntax"
+note = "the form without its required ML, observed"
+
+[[obligation]]
 id = "sf.classes.forecast.commands.drop-forecast.o001"
 kind = "positive"
 required = true
@@ -11215,12 +11349,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.forecast.commands.drop-forecast.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.forecast.commands.drop-forecast.o009"
 kind = "negative_neighbour"
 required = true
@@ -11247,6 +11375,13 @@ required = true
 target = "<model_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.drop-forecast.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.forecast.commands.drop-forecast / Syntax"
+note = "the form without its required ML, observed"
 
 [[obligation]]
 id = "sf.classes.forecast.commands.show-forecast.o001"
@@ -11413,18 +11548,6 @@ required = true
 note = "the form without its required SNOWFLAKE after SHOW"
 
 [[obligation]]
-id = "sf.classes.forecast.commands.show-forecast.o036"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after ."
-
-[[obligation]]
-id = "sf.classes.forecast.commands.show-forecast.o037"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FORECAST after ."
-
-[[obligation]]
 id = "sf.classes.forecast.commands.show-forecast.o026"
 kind = "negative_neighbour"
 required = true
@@ -11474,6 +11597,20 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.classes.forecast.commands.show-forecast / Syntax"
 note = "the form without its required ML, observed"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.show-forecast.o038"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.forecast.commands.show-forecast / Syntax"
+note = "the form without its required ML after ., observed"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.show-forecast.o039"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.forecast.commands.show-forecast / Syntax"
+note = "the form without its required FORECAST after ., observed"
 
 [[obligation]]
 id = "sf.classes.forecast.methods.explain-feature-importance.o001"
@@ -11557,11 +11694,11 @@ target = "<forecasting_periods>"
 note = "omit <forecasting_periods>"
 
 [[obligation]]
-id = "sf.classes.forecast.methods.forecast.forecasting-periods.o006"
+id = "sf.classes.forecast.methods.forecast.forecasting-periods.o017"
 kind = "operand_type_class"
 required = true
 target = "<forecasting_periods>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.classes.forecast.methods.forecast.forecasting-periods.o007"
@@ -11791,11 +11928,11 @@ target = "<forecasting_periods>"
 note = "omit <forecasting_periods>"
 
 [[obligation]]
-id = "sf.classes.forecast.methods.forecast.series-value-forecasting-periods.o008"
+id = "sf.classes.forecast.methods.forecast.series-value-forecasting-periods.o020"
 kind = "operand_type_class"
 required = true
 target = "<forecasting_periods>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.classes.forecast.methods.forecast.series-value-forecasting-periods.o009"
@@ -12471,12 +12608,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.top-insights.commands.create-top-insights.o028"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.top-insights.commands.create-top-insights.o029"
 kind = "negative_neighbour"
 required = true
@@ -12563,6 +12694,13 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
+id = "sf.classes.top-insights.commands.create-top-insights.o042"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.top-insights.commands.create-top-insights / Syntax"
+note = "the form without its required ML, observed"
+
+[[obligation]]
 id = "sf.classes.top-insights.commands.drop-top-insights.o001"
 kind = "positive"
 required = true
@@ -12608,12 +12746,6 @@ required = true
 note = "the form without its required SNOWFLAKE"
 
 [[obligation]]
-id = "sf.classes.top-insights.commands.drop-top-insights.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML"
-
-[[obligation]]
 id = "sf.classes.top-insights.commands.drop-top-insights.o009"
 kind = "negative_neighbour"
 required = true
@@ -12640,6 +12772,13 @@ required = true
 target = "<instance_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.drop-top-insights.o013"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.top-insights.commands.drop-top-insights / Syntax"
+note = "the form without its required ML, observed"
 
 [[obligation]]
 id = "sf.classes.top-insights.commands.show-top-insights.o001"
@@ -12806,18 +12945,6 @@ required = true
 note = "the form without its required SNOWFLAKE after SHOW"
 
 [[obligation]]
-id = "sf.classes.top-insights.commands.show-top-insights.o036"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after ."
-
-[[obligation]]
-id = "sf.classes.top-insights.commands.show-top-insights.o037"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TOP_INSIGHTS after ."
-
-[[obligation]]
 id = "sf.classes.top-insights.commands.show-top-insights.o026"
 kind = "negative_neighbour"
 required = true
@@ -12867,6 +12994,20 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.classes.top-insights.commands.show-top-insights / Syntax"
 note = "the form without its required ML, observed"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.show-top-insights.o038"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.top-insights.commands.show-top-insights / Syntax"
+note = "the form without its required ML after ., observed"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.show-top-insights.o039"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.classes.top-insights.commands.show-top-insights / Syntax"
+note = "the form without its required TOP_INSIGHTS after ., observed"
 
 [[obligation]]
 id = "sf.classes.top-insights.methods.get-drivers.o001"

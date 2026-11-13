@@ -1715,11 +1715,18 @@ target = "<var>"
 note = "omit <var>"
 
 [[obligation]]
-id = "sf.transaction_session.set.set.o003"
+id = "sf.transaction_session.set.set.o014"
 kind = "operand_type_class"
 required = true
 target = "<var>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.o015"
+kind = "negative_neighbour"
+required = true
+target = "<var>"
+note = "a string literal in place of <var>"
 
 [[obligation]]
 id = "sf.transaction_session.set.set.o004"
@@ -1734,6 +1741,22 @@ kind = "operand_type_class"
 required = true
 target = "<expr>"
 note = "a valid expression"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.o016"
+kind = "identifier_class"
+required = true
+target = "<var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.o017"
+kind = "identifier_class"
+required = true
+target = "<var>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.transaction_session.set.set.o006"
@@ -1811,11 +1834,18 @@ target = "<var>"
 note = "omit <var>"
 
 [[obligation]]
-id = "sf.transaction_session.set.set.syntax.o003"
+id = "sf.transaction_session.set.set.syntax.o017"
 kind = "operand_type_class"
 required = true
 target = "<var>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.syntax.o018"
+kind = "negative_neighbour"
+required = true
+target = "<var>"
+note = "a string literal in place of <var>"
 
 [[obligation]]
 id = "sf.transaction_session.set.set.syntax.o004"
@@ -1886,6 +1916,22 @@ id = "sf.transaction_session.set.set.syntax.o016"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.syntax.o019"
+kind = "identifier_class"
+required = true
+target = "<var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.syntax.o020"
+kind = "identifier_class"
+required = true
+target = "<var>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.transaction_session.set.set.syntax.o012"
@@ -2261,11 +2307,34 @@ target = "<var>"
 note = "omit <var>"
 
 [[obligation]]
-id = "sf.transaction_session.unset.unset.o003"
+id = "sf.transaction_session.unset.unset.o004"
 kind = "operand_type_class"
 required = true
 target = "<var>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.transaction_session.unset.unset.o005"
+kind = "negative_neighbour"
+required = true
+target = "<var>"
+note = "a string literal in place of <var>"
+
+[[obligation]]
+id = "sf.transaction_session.unset.unset.o006"
+kind = "identifier_class"
+required = true
+target = "<var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.transaction_session.unset.unset.o007"
+kind = "identifier_class"
+required = true
+target = "<var>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.transaction_session.unset.unset.syntax.o001"
@@ -2281,11 +2350,18 @@ target = "<var>"
 note = "omit <var>"
 
 [[obligation]]
-id = "sf.transaction_session.unset.unset.syntax.o003"
+id = "sf.transaction_session.unset.unset.syntax.o009"
 kind = "operand_type_class"
 required = true
 target = "<var>"
-note = "a valid operand"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.transaction_session.unset.unset.syntax.o010"
+kind = "negative_neighbour"
+required = true
+target = "<var>"
+note = "a string literal in place of <var>"
 
 [[obligation]]
 id = "sf.transaction_session.unset.unset.syntax.o004"
@@ -2311,6 +2387,22 @@ id = "sf.transaction_session.unset.unset.syntax.o007"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.transaction_session.unset.unset.syntax.o011"
+kind = "identifier_class"
+required = true
+target = "<var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.transaction_session.unset.unset.syntax.o012"
+kind = "identifier_class"
+required = true
+target = "<var>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
 id = "sf.transaction_session.unset.unset.syntax.o008"

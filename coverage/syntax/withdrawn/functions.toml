@@ -11,13 +11,13 @@ reason = "a whole argument of an ordinary function call is an <expr> to the pars
 [[withdrawn_class]]
 class = "identifier"
 derived_negative = "a string literal in place of an operand of class identifier"
-count = 80
+count = 90
 reason = "a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under the lexical-distinctness rule; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
 class = "integer_literal"
 derived_negative = "a string literal in place of an operand of class integer_literal"
-count = 92
+count = 95
 reason = "a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under the lexical-distinctness rule; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]

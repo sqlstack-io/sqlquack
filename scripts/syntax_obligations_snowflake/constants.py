@@ -29,4 +29,22 @@ LIMITS_FILE: str = "limits.toml"
 LIMITS_TABLES: tuple[str, ...] = ("limit", "suppress", "reading")
 
 INTEGER_CLASS: str = "integer_literal"
-INTEGER_NAMES: str = r"_num$|(^|_)integer$|^rows$|^precision$|^scale$|^length$|_seconds$"
+INTEGER_NAMES: str = (
+    r"_num$|(^|_)integer$|^rows$|precision$|^scale$|^length$|(^|_)seconds$|^days$|^threshold"
+    r"|^storage_gb$|^hour_of_day$|^budget_in_bytes$|^sequence_interval$|^forecasting_periods$"
+)
+IDENTIFIER_CLASS: str = "identifier"
+IDENTIFIER_NAMES: str = (
+    r"^(account|app|app_role\d*|application|application_role|backup_set|config|consumer_account"
+    r"|custom_classifier|database|db|eai|element|fact|input_table|left_table|listing|metric"
+    r"|object_ref\d|org_user|org_user_group|provider_account|release_channel|release_directive"
+    r"|right_table|role|schema|secret|security_integration|server_app|snowflake_secret"
+    r"|source_(alert|database|dynamic_iceberg_table|dynamic_table|event_table|hybrid_table"
+    r"|iceberg_table|instance|schema|stage|stream|table|task)|stage|symbol"
+    r"|target_table|user|var|warehouse_to_run_[a-z_]+)$"
+)
+WORD_CLASS: str = "word"
+WORD_NAMES: str = (
+    r"^(interface|log_event_level|log_level|mfa_method|object_privilege|object_type_plural"
+    r"|operation_mode|partner_application|property|purpose|session_parameter)$"
+)

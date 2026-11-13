@@ -1,4 +1,4 @@
-"""Numeric operands of every Snowflake spelling get the integer class and its wrong-kind negative."""
+"""Snowflake operands named as numbers, objects or words get their class and its wrong-kind negative."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ CATALOGUE: str = """
 id = "sf.transaction_session.show-transactions"
 family = "transaction_session"
 kind = "statement"
-grammar = ["SHOW TRANSACTIONS [ LIMIT <rows> ] [ TIMEOUT = <timeout_seconds> ] [ SIZE = <max_integer> ] [ NAME = <rows_name> ]"]
+grammar = ["SHOW TRANSACTIONS [ LIMIT <rows> ] [ TIMEOUT = <timeout_seconds> ] [ SIZE = <max_integer> ] [ NAME = <rows_name> ] [ PURPOSE = <purpose> ] [ OWNER = <role> ] [ AGE = <days> ] [ SCALE = <fractional_seconds_precision> ] [ TAG = <purposes> ]"]
 uses = []
 status = "catalogued"
 """
@@ -54,10 +54,42 @@ status = "catalogued"
                 {"a valid identifier", "a string literal in place of <rows_name>"}
             ),
         ),
+        OperandClassTestCase(
+            description="a contact purpose is a bare word",
+            target="<purpose> in [ PURPOSE = <purpose> ]",
+            expected_notes=frozenset({"a valid word", "a string literal in place of <purpose>"}),
+        ),
+        OperandClassTestCase(
+            description="a role the page names without a _name suffix is an identifier",
+            target="<role> in [ OWNER = <role> ]",
+            expected_notes=frozenset({"a valid identifier", "a string literal in place of <role>"}),
+        ),
+        OperandClassTestCase(
+            description="a number of days is an integer",
+            target="<days> in [ AGE = <days> ]",
+            expected_notes=frozenset(
+                {"a valid integer_literal", "a string literal in place of <days>"}
+            ),
+        ),
+        OperandClassTestCase(
+            description="a prefixed precision is an integer",
+            target="<fractional_seconds_precision> in [ SCALE = <fractional_seconds_precision> ]",
+            expected_notes=frozenset(
+                {
+                    "a valid integer_literal",
+                    "a string literal in place of <fractional_seconds_precision>",
+                }
+            ),
+        ),
+        OperandClassTestCase(
+            description="a name that only starts with a word name stays unclassified",
+            target="<purposes> in [ TAG = <purposes> ]",
+            expected_notes=frozenset({"a valid operand", ""}),
+        ),
     ),
     ids=lambda case: case.description,
 )
-def test_given_a_numeric_operand_when_building_then_it_has_an_integer_and_a_wrong_kind_case(
+def test_given_a_named_operand_when_building_then_it_has_its_class_and_a_wrong_kind_case(
     tmp_path: Path, test_case: OperandClassTestCase
 ) -> None:
     (tmp_path / "catalogue").mkdir()

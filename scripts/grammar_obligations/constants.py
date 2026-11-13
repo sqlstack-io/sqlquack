@@ -167,6 +167,7 @@ LEXICALLY_DISTINCT_WRONG_FILL: dict[str, str] = {
     "string_literal": "m1",
     "data_type": "'INT'",
     "object_kind": "'TABLE'",
+    "word": "'v1'",
     "statement": "1",
     "query": "1",
 }
@@ -177,6 +178,7 @@ LEXICAL_WRONG: dict[str, str] = {
     "string_literal": "an unquoted identifier",
     "data_type": "a string literal",
     "object_kind": "a string literal",
+    "word": "a string literal",
     "statement": "a bare literal",
     "query": "a bare literal",
 }
@@ -264,6 +266,7 @@ CLASS_FILL: dict[str, str] = {
     "string_literal": "'m'",
     "expression": "1",
     "identifier": "v1",
+    "word": "v1",
     "operand": "v1",
 }
 
