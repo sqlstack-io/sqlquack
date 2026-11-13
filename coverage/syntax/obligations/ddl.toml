@@ -18390,13 +18390,6 @@ target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <con
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-database-catalog-linked.set.o082"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.set.o021"
 kind = "required_operand_missing"
 required = true
@@ -18608,6 +18601,14 @@ required = true
 target = "<name>"
 anchor = "doc.sql.alter-database-catalog-linked / Syntax"
 note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-database-catalog-linked.set.o083"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-database-catalog-linked / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.suspend-discovery.o001"
@@ -21472,13 +21473,6 @@ target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <con
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-database.set.o303"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-database.set.o128"
 kind = "required_operand_missing"
 required = true
@@ -21829,6 +21823,14 @@ required = true
 target = "<name>"
 anchor = "doc.sql.alter-database / Syntax"
 note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-database.set.o304"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-database / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-database.set-feature-policy.o001"
@@ -22442,13 +22444,6 @@ target = "<purpose>"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o063"
-kind = "negative_neighbour"
-required = true
-target = "<purpose>"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o036"
 kind = "option_present"
 required = true
@@ -22559,6 +22554,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-database / Syntax"
 note = "the form without its required CONTACT after UNSET, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o065"
+kind = "negative_neighbour"
+required = true
+target = "<purpose>"
+anchor = "doc.sql.alter-database / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-database.unset-feature-policy.o001"
@@ -63159,13 +63162,6 @@ target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <con
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-schema.set.o273"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-schema.set.o114"
 kind = "required_operand_missing"
 required = true
@@ -63469,6 +63465,14 @@ required = true
 target = "<name>"
 anchor = "doc.sql.alter-schema / Syntax"
 note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.set.o274"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-schema / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.set-tag.o001"
@@ -63966,13 +63970,6 @@ target = "<purpose> #2"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o059"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> #2"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o036"
 kind = "option_present"
 required = true
@@ -64087,6 +64084,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-schema / Syntax"
 note = "the form without its required CONTACT after UNSET #2, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days.o061"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> #2"
+anchor = "doc.sql.alter-schema / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.unset-tag.o001"
@@ -80313,13 +80318,6 @@ target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <con
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-table-event-table.set.o074"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-table-event-table.set.o023"
 kind = "required_operand_missing"
 required = true
@@ -80465,6 +80463,14 @@ anchor = "doc.sql.alter-table-event-table / Syntax"
 note = "every independent option of one production together, with the page's combination rules applied"
 
 [[obligation]]
+id = "sf.ddl.alter-table-event-table.set.o075"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-table-event-table / Syntax"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o001"
 kind = "positive"
 required = true
@@ -80541,13 +80547,6 @@ target = "<purpose>"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o025"
-kind = "negative_neighbour"
-required = true
-target = "<purpose>"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o015"
 kind = "negative_neighbour"
 required = true
@@ -80601,6 +80600,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-table-event-table / Syntax"
 note = "the form without its required CONTACT after UNSET, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o027"
+kind = "negative_neighbour"
+required = true
+target = "<purpose>"
+anchor = "doc.sql.alter-table-event-table / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-table.add-storage-lifecycle-policy.o001"
@@ -88584,13 +88591,6 @@ target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <con
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-table.set.o113"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-table.set.o041"
 kind = "required_operand_missing"
 required = true
@@ -88776,6 +88776,14 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-table / Syntax"
 note = "every independent option of one production together, with the page's combination rules applied"
+
+[[obligation]]
+id = "sf.ddl.alter-table.set.o114"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-table / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-table.swap-with.o001"
@@ -90581,13 +90589,6 @@ target = "<purpose>"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o031"
-kind = "negative_neighbour"
-required = true
-target = "<purpose>"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o019"
 kind = "option_present"
 required = true
@@ -90660,6 +90661,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-table / Syntax"
 note = "the form without its required CONTACT after UNSET, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking.o033"
+kind = "negative_neighbour"
+required = true
+target = "<purpose>"
+anchor = "doc.sql.alter-table / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-tag.add-drop-allowed-values.o001"
@@ -92602,13 +92611,6 @@ target = "<purpose>"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-task-graph.set-contact.o026"
-kind = "negative_neighbour"
-required = true
-target = "<purpose>"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-task-graph.set-contact.o009"
 kind = "required_operand_missing"
 required = true
@@ -92712,6 +92714,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
 note = "the form without its required CONTACT, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.set-contact.o027"
+kind = "negative_neighbour"
+required = true
+target = "<purpose>"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-task-graph.set-tag.o001"
@@ -93251,13 +93261,6 @@ target = "<purpose>"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-task-graph.unset-contact.o021"
-kind = "negative_neighbour"
-required = true
-target = "<purpose>"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-task-graph.unset-contact.o009"
 kind = "option_present"
 required = true
@@ -93324,6 +93327,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
 note = "the form without its required CONTACT, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.unset-contact.o022"
+kind = "negative_neighbour"
+required = true
+target = "<purpose>"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-task-graph.unset-tag.o001"
@@ -94793,13 +94804,6 @@ target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <con
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-task.set.o200"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-task.set.o091"
 kind = "required_operand_missing"
 required = true
@@ -95005,6 +95009,14 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.sql.alter-task / Syntax"
 note = "every independent option of one production together, with the page's combination rules applied, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o208"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-task / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-task.set-finalize.o001"
@@ -95453,13 +95465,6 @@ target = "<purpose>"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-task.unset.o122"
-kind = "negative_neighbour"
-required = true
-target = "<purpose>"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-task.unset.o090"
 kind = "option_present"
 required = true
@@ -95571,6 +95576,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-task / Syntax"
 note = "the form without its required CONTACT after UNSET, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-task.unset.o124"
+kind = "negative_neighbour"
+required = true
+target = "<purpose>"
+anchor = "doc.sql.alter-task / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-task.unset-finalize.o001"
@@ -102005,13 +102018,6 @@ target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <con
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-view.set.o060"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-view.set.o017"
 kind = "required_operand_missing"
 required = true
@@ -102165,6 +102171,14 @@ anchor = "doc.sql.alter-view / Syntax"
 note = "omit <name>, observed"
 
 [[obligation]]
+id = "sf.ddl.alter-view.set.o061"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-view / Syntax"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-view.unset.o001"
 kind = "positive"
 required = true
@@ -102227,13 +102241,6 @@ kind = "operand_type_class"
 required = true
 target = "<purpose>"
 note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.alter-view.unset.o059"
-kind = "negative_neighbour"
-required = true
-target = "<purpose>"
-note = "a string literal in place of <purpose>"
 
 [[obligation]]
 id = "sf.ddl.alter-view.unset.o053"
@@ -102310,6 +102317,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-view / Syntax"
 note = "the form without its required CONTACT after UNSET, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-view.unset.o061"
+kind = "negative_neighbour"
+required = true
+target = "<purpose>"
+anchor = "doc.sql.alter-view / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-warehouse.abort-all-queries.o001"
@@ -120681,13 +120696,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-database.create-database.o313"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-database.create-database.o120"
 kind = "required_operand_missing"
 required = true
@@ -121179,6 +121187,14 @@ required = true
 target = "[ IGNORE TABLES WITH INSUFFICIENT DATA RETENTION ]"
 anchor = "doc.sql.create-database / Syntax"
 note = "option present [ IGNORE TABLES WITH INSUFFICIENT DATA RETENTION ], observed"
+
+[[obligation]]
+id = "sf.ddl.create-database.create-database.o316"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-database / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-database.create-database-as-replica.o001"
@@ -168293,13 +168309,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table-aws-glue.o086"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table-aws-glue.o056"
 kind = "required_operand_missing"
 required = true
@@ -168494,6 +168503,14 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.create-iceberg-table-aws-glue / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table-aws-glue.o087"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-iceberg-table-aws-glue / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table-rest.table-as-select.o001"
@@ -171978,13 +171995,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.o975"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table.o204"
 kind = "required_operand_missing"
 required = true
@@ -173172,6 +173182,14 @@ anchor = "doc.sql.create-iceberg-table / Syntax / Snowflake as the Iceberg catal
 note = "the form without its required HOUR after ( in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…, observed"
 
 [[obligation]]
+id = "sf.ddl.create-iceberg-table.table.o982"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-iceberg-table / Syntax / Snowflake as the Iceberg catalog"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
 id = "sf.ddl.create-iceberg-table.table-as-select.o001"
 kind = "positive"
 required = true
@@ -173962,13 +173980,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table-base-location.o078"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table-base-location.o051"
 kind = "required_operand_missing"
 required = true
@@ -174139,6 +174150,14 @@ required = true
 target = "<contact_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table-base-location.o079"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Delta files"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table-base-location.parquet-files.o001"
@@ -177684,13 +177703,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table-catalog-table-name.o114"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table-catalog-table-name.o075"
 kind = "required_operand_missing"
 required = true
@@ -177891,6 +177903,14 @@ required = true
 target = "<contact_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table-catalog-table-name.o115"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST (including Snowflake Open Catalog)"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table-like.o001"
@@ -178475,13 +178495,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table-metadata-file-path.o073"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table-metadata-file-path.o047"
 kind = "required_operand_missing"
 required = true
@@ -178646,6 +178659,14 @@ required = true
 target = "<contact_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table-metadata-file-path.o074"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg files in object storage"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o001"
@@ -184273,13 +184294,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-materialized-view.o343"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-materialized-view.o111"
 kind = "required_operand_missing"
 required = true
@@ -184933,6 +184947,14 @@ required = true
 target = "<cond_col1> in [ USING ( <col1> , <cond_col1> , ... ) ]"
 anchor = "doc.sql.create-materialized-view / Syntax"
 note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.create-materialized-view.o344"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-materialized-view / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-mcp-server.o001"
@@ -207842,13 +207864,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-schema.create-schema.o197"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-schema.create-schema.o134"
 kind = "required_operand_missing"
 required = true
@@ -208209,6 +208224,14 @@ required = true
 target = "'<tag_value>'"
 anchor = "doc.sql.create-schema / Parameters"
 note = "a tag value of 257 characters against the documented maximum of 256"
+
+[[obligation]]
+id = "sf.ddl.create-schema.create-schema.o200"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-schema / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-schema.create-schema-clone.o001"
@@ -258909,13 +258932,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-table.o764"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-table.create-table.o247"
 kind = "required_operand_missing"
 required = true
@@ -259875,6 +259891,14 @@ required = true
 target = "[ FOREIGN KEY ] #2"
 anchor = "doc.sql.create-table / Syntax"
 note = "option present [ FOREIGN KEY ] #2, observed"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table.o765"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-table / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table-as.o001"
@@ -264855,13 +264879,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-task-graph.create-task-graph.o130"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-task-graph.create-task-graph.o025"
 kind = "required_operand_missing"
 required = true
@@ -265573,6 +265590,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-task-graph / Syntax"
 note = "the form without its required GRAPH, observed"
+
+[[obligation]]
+id = "sf.ddl.create-task-graph.create-task-graph.o135"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-task-graph / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-task-graph.define-task-graph.o001"
@@ -267242,13 +267267,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-task.create-task-as.o269"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-task.create-task-as.o023"
 kind = "required_operand_missing"
 required = true
@@ -268571,6 +268589,14 @@ required = true
 target = "AFTER <task_name> [ , <task_name> , ... ]"
 anchor = "doc.sql.create-task / Usage notes"
 note = "101 predecessor tasks against the documented maximum of 100"
+
+[[obligation]]
+id = "sf.ddl.create-task.create-task-as.o279"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-task / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-task.create-task-clone.o001"
@@ -271402,13 +271428,6 @@ target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose>
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-view.create-view-as.o450"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-view.create-view-as.o165"
 kind = "required_operand_missing"
 required = true
@@ -272155,6 +272174,14 @@ required = true
 target = "[ , <tag_name> = '<tag_value>' , ... ]"
 anchor = "doc.sql.create-view / Syntax"
 note = "the list continued at least once, observed"
+
+[[obligation]]
+id = "sf.ddl.create-view.create-view-as.o451"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-view / Syntax"
+note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-view.define-view.o001"
