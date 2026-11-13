@@ -52,6 +52,8 @@ pub(crate) fn altered(
         arguments: Vec::new(),
         if_exists,
         action: String::new(),
+        operand_if_exists: false,
+        operand_if_not_exists: false,
         operands,
         properties: Vec::new(),
     }))
