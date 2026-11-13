@@ -64,7 +64,13 @@ impl Parser {
         if self.match_text_seq(&["SNAPSHOT", "SET"]) {
             return self.parse_alter_snapshot_set().map(Some);
         }
-        if self.check_identifier("SNAPSHOT") && !self.check_next_identifier("POLICY") {
+        let policy_named = self.tokens.get(self.current + 2).is_some_and(|token| {
+            token.token_type != TokenType::QuotedIdentifier
+                && matches!(token.text.to_ascii_uppercase().as_str(), "SET" | "UNSET")
+        });
+        if self.check_identifier("SNAPSHOT")
+            && (!self.check_next_identifier("POLICY") || policy_named)
+        {
             self.skip();
             let head = self.parse_alter_object_head()?;
             let action = self.expect_alter_words(&[&["SET", "COMMENT"]])?;
