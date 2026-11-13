@@ -4,8 +4,9 @@ use crate::parser::constants::ACCOUNT;
 use crate::parser::constants::ON_ACCOUNT;
 use crate::parser::constants::USER;
 use crate::parser::constants::{
-    SHARED_SHOW_KINDS, SNOWFLAKE_SHOW_CONTAINERS, SNOWFLAKE_SHOW_EXTRA_CONTAINERS,
-    SNOWFLAKE_SHOW_GENERAL_CONTAINERS, SNOWFLAKE_SHOW_KINDS, SNOWFLAKE_SHOW_REQUIRED_CONTAINERS,
+    SHARED_SHOW_KINDS, SNOWFLAKE_GRANT_PRIVILEGES, SNOWFLAKE_SHOW_CONTAINERS,
+    SNOWFLAKE_SHOW_EXTRA_CONTAINERS, SNOWFLAKE_SHOW_GENERAL_CONTAINERS, SNOWFLAKE_SHOW_KINDS,
+    SNOWFLAKE_SHOW_REQUIRED_CONTAINERS,
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::queries::models::Limit;
@@ -263,7 +264,7 @@ impl Parser {
         Ok(show)
     }
 
-    /// `WITH PRIVILEGES <privilege> [ , ... ]`, or `WITH PRIMARY <account>.<database>`.
+    /// `WITH PRIVILEGES <privilege> [ , ... ]` with documented privileges, or `WITH PRIMARY <account>.<database>`.
     fn parse_show_with(&mut self, kind: &str, mut show: Show) -> Result<Show> {
         if matches!(kind, "REPLICATION DATABASES") && self.match_text_seq(&["PRIMARY"]) {
             show.target = Some(self.parse_show_name()?);
@@ -273,11 +274,22 @@ impl Parser {
             return Err(self.parse_error("Expected PRIVILEGES after WITH"));
         }
         loop {
-            if !(self.is_identifier_token() || self.check_keyword()) {
+            let found = SNOWFLAKE_GRANT_PRIVILEGES
+                .iter()
+                .map(|name| name.split(' ').collect::<Vec<_>>())
+                .filter(|parts| {
+                    self.check_text_seq(parts)
+                        && (self
+                            .peek_nth(parts.len())
+                            .is_some_and(|token| token.token_type == TokenType::Comma)
+                            || self.is_statement_end_at(parts.len()))
+                })
+                .max_by_key(Vec::len);
+            let Some(parts) = found else {
                 return Err(self.parse_error("Expected a privilege"));
-            }
-            show.privileges
-                .push(self.advance_text()?.to_ascii_uppercase());
+            };
+            self.match_text_seq(&parts);
+            show.privileges.push(parts.join(" "));
             if !self.match_token(TokenType::Comma) {
                 return Ok(show);
             }
