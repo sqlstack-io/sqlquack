@@ -18,9 +18,12 @@ impl Parser {
             return Ok(());
         }
         let start = self.current;
-        let checked = match create && self.check_text_seq(&["AI", "FUNCTION"]) {
-            true => self.check_ai_function(),
-            false => self
+        let checked = match create {
+            true if self.check_text_seq(&["AI", "FUNCTION"]) => self.check_ai_function(),
+            true if self.check_text_seq(&["ORGANIZATION", "PROFILE"]) => {
+                self.check_organization_profile()
+            }
+            _ => self
                 .check_opaque_head(create)
                 .and_then(|()| self.check_opaque_shape(create, start))
                 .and_then(|()| self.check_opaque_options()),
@@ -29,14 +32,21 @@ impl Parser {
         checked
     }
 
-    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle, and AS COPY for a pipe's body; the cursor stays after the name.
+    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, and AS COPY for a pipe's body; the cursor stays after the name.
     fn check_opaque_shape(&mut self, create: bool, kind_at: usize) -> Result<()> {
         if !create {
             return Ok(());
         }
         let after_name = self.current;
-        let checked = match self.tokens[kind_at].text.to_ascii_uppercase().as_str() {
+        let kind = self.tokens[kind_at].text.to_ascii_uppercase();
+        let project = self.tokens[kind_at + 1]
+            .text
+            .eq_ignore_ascii_case("PROJECT");
+        let checked = match kind.as_str() {
             "CODE" if !self.check(TokenType::From) => Err(self.parse_error("Expected FROM")),
+            "NOTEBOOK" if project && !self.check(TokenType::From) => {
+                Err(self.parse_error("Expected FROM"))
+            }
             "PIPE" => self.check_pipe_body(),
             _ => Ok(()),
         };
@@ -63,6 +73,43 @@ impl Parser {
             self.skip();
         }
         Err(self.parse_error("Expected AS and a COPY statement"))
+    }
+
+    /// CREATE ORGANIZATION PROFILE `[ [ IF NOT EXISTS ] <name> [ AS '<manifest>' | FROM <stage path> [ VERSION <name> ] ] [ PUBLISH = { TRUE | FALSE } ] ]`.
+    fn check_organization_profile(&mut self) -> Result<()> {
+        self.current += 2;
+        if self.is_statement_end_at(0) {
+            return Ok(());
+        }
+        if self.check(TokenType::If)
+            && !self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists])
+        {
+            return Err(self.parse_error("Expected IF NOT EXISTS"));
+        }
+        self.parse_object_name()?;
+        if self.match_token(TokenType::As) {
+            if !self.match_token(TokenType::String) {
+                return Err(self.parse_error("Expected the manifest as a string"));
+            }
+        } else if self.match_token(TokenType::From) {
+            if !self.is_stage_path() {
+                return Err(self.parse_error("Expected a stage path"));
+            }
+            self.parse_stage_path()?;
+            if self.match_identifier("VERSION") {
+                self.skip_snowflake_name()?;
+            }
+        }
+        if self.match_identifier("PUBLISH") {
+            self.expect_token(TokenType::Eq)?;
+            if !self.match_token(TokenType::True) && !self.match_token(TokenType::False) {
+                return Err(self.parse_error("Expected TRUE or FALSE"));
+            }
+        }
+        match self.is_statement_end_at(0) {
+            true => Ok(()),
+            false => Err(self.parse_error("Expected the end of the organization profile")),
+        }
     }
 
     /// Refuse a CREATE AI FUNCTION whose text after AI a CREATE FUNCTION would refuse.
@@ -103,7 +150,7 @@ impl Parser {
                 .is_some_and(|next| next.text.eq_ignore_ascii_case("VERSION")))
     }
 
-    /// The kind, `IF [ NOT ] EXISTS` and name of a kind the opaque check knows, then an ALTER's action; nothing for another kind.
+    /// The kind, `IF [ NOT ] EXISTS` and name of a kind the opaque check knows, a notebook project's name with its database left out, then an ALTER's action; nothing for another kind.
     fn check_opaque_head(&mut self, create: bool) -> Result<()> {
         let kind = SNOWFLAKE_OPAQUE_KINDS
             .iter()
@@ -134,6 +181,9 @@ impl Parser {
             }
         }
         if create {
+            if kind == ["NOTEBOOK", "PROJECT"] {
+                self.match_token(TokenType::Dot);
+            }
             return self.parse_object_name().map(|_| ());
         }
         if kind == SNOWFLAKE_OPAQUE_UNNAMED_KIND && self.is_opaque_action_at(0) {

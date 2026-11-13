@@ -280,3 +280,112 @@ fn given_a_snowflake_define_of_a_tag_pipe_or_code_bundle_when_parsing_then_recor
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_notebook_project_or_organization_profile_when_parsing_then_recorded_verdicts_hold(
+) {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a notebook project from a workspace (recorded semantic error)",
+            sql: "CREATE NOTEBOOK PROJECT v1 . v1 . v1 FROM 'snow://workspace/w1' COMMENT = m1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a notebook project's name may leave out its database (recorded semantic error)",
+            sql: "CREATE NOTEBOOK PROJECT . v1 . v1 FROM '@d1.s1.st1' ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a notebook project's source follows FROM (recorded errno 1003)",
+            sql: "CREATE NOTEBOOK PROJECT v1 . v1 . v1 '@d1.s1.st1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a notebook project takes no IF EXISTS (recorded errno 1003)",
+            sql: "CREATE NOTEBOOK PROJECT IF EXISTS v1 . v1 . v1 FROM '@d1.s1.st1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "PROJECT alone is no kind (recorded errno 1003)",
+            sql: "CREATE PROJECT v1 . v1 . v1 FROM '@d1.s1.st1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a profile from a stage with a version (recorded semantic error)",
+            sql: "CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a profile's manifest is a string (recorded errno 1003)",
+            sql: "CREATE ORGANIZATION PROFILE v1 AS m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "only a staged profile takes a version (recorded errno 1003)",
+            sql: "CREATE ORGANIZATION PROFILE v1 AS 'm' VERSION \"v1 Q\" ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a profile version is named, not a string (recorded errno 1003)",
+            sql: "CREATE ORGANIZATION PROFILE v1 FROM @d1.s1.st1/p1 VERSION 'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "PUBLISH needs a value (recorded errno 1003)",
+            sql: "CREATE ORGANIZATION PROFILE v1 AS 'm' PUBLISH = ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_failover_or_replication_group_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "allowed objects are named (recorded semantic error)",
+            sql: "CREATE FAILOVER GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_DATABASES = \"v1 Q\" ALLOWED_ACCOUNTS = v1 . v1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an integration type is two words (recorded semantic error)",
+            sql: "CREATE REPLICATION GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = v1 . v1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an allowed database is no string (recorded errno 1003)",
+            sql: "CREATE FAILOVER GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_DATABASES = 'v1' ALLOWED_ACCOUNTS = v1 . v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an object type is no string (recorded errno 1003)",
+            sql: "CREATE REPLICATION GROUP v1 OBJECT_TYPES = 'TABLE' ALLOWED_ACCOUNTS = v1 . v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an integration type is not quoted (recorded errno 1003)",
+            sql: "CREATE FAILOVER GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_INTEGRATION_TYPES = \"SELECT\" ALLOWED_ACCOUNTS = v1 . v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an error integration is no string (recorded errno 1003)",
+            sql: "CREATE REPLICATION GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 ERROR_INTEGRATION = 'v1' ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

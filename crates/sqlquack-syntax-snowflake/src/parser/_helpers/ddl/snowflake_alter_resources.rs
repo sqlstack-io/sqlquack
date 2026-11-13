@@ -678,7 +678,7 @@ impl Parser {
     }
 
     /// Parse a stage path, which like Snowflake's ends at the first whitespace; a quoted string that starts with @ stays a string.
-    pub(super) fn parse_stage_path(&mut self) -> Result<Expression> {
+    pub(crate) fn parse_stage_path(&mut self) -> Result<Expression> {
         if self.check(TokenType::String) || self.check(TokenType::DollarString) {
             let text = self.peek_text().to_owned();
             self.skip();

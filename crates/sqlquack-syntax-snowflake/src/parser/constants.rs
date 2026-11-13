@@ -546,6 +546,7 @@ pub(crate) const SNOWFLAKE_OPAQUE_KINDS: &[&[&str]] = &[
     &["AI", "FUNCTION"],
     &["CODE", "BUNDLE"],
     &["EXTERNAL", "LISTING"],
+    &["NOTEBOOK", "PROJECT"],
     &["OPENFLOW", "DATA", "PLANE", "INTEGRATION"],
     &["ORGANIZATION", "ACCOUNT"],
     &["ORGANIZATION", "LISTING"],
@@ -1460,6 +1461,16 @@ pub(crate) const SNOWFLAKE_KIND_WORDS_ALONE: &[&str] = &["MODEL", "VOLUME"];
 
 /// Property-list kinds whose tag list must end the statement: Snowflake refuses any property after it.
 pub(crate) const SNOWFLAKE_TAGS_LAST_KINDS: &[&str] = &["ARTIFACT REPOSITORY", "COMPUTE POOL"];
+
+/// The failover and replication group properties whose values are names, which Snowflake refuses as strings.
+pub(crate) const SNOWFLAKE_GROUP_NAME_PROPERTIES: &[&str] = &[
+    "ALLOWED_DATABASES",
+    "ALLOWED_EXTERNAL_VOLUMES",
+    "ALLOWED_INTEGRATION_TYPES",
+    "ALLOWED_SHARES",
+    "ERROR_INTEGRATION",
+    "OBJECT_TYPES",
+];
 
 /// The Snowflake kinds a CREATE defines only by `<property> = <value>` lists.
 pub(crate) const SNOWFLAKE_PROPERTY_KINDS: &[&str] = &[
