@@ -346,24 +346,29 @@ impl Parser {
         let mut return_type = None;
         let mut execute_as = None;
         let mut with_options: Vec<String> = Vec::new();
+        let mut snowflake_properties = Vec::new();
         let mut null_or_volatility = false;
 
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
             if let Some(property) = self.parse_snowflake_routine_property()? {
                 null_or_volatility |= matches!(
-                    property.to_ascii_uppercase().as_str(),
+                    property.kind.as_str(),
                     "CALLED ON NULL INPUT"
                         | "RETURNS NULL ON NULL INPUT"
                         | "STRICT"
                         | "VOLATILE"
                         | "IMMUTABLE"
                 );
-                with_options.push(property);
+                snowflake_properties.push(property);
             } else if self.match_token(TokenType::Returns) {
                 self.check_snowflake_table_columns()?;
                 return_type = Some(self.parse_data_type()?);
                 match self.match_snowflake_return_nullability() {
-                    Some(nullability) => with_options.push(nullability),
+                    Some(nullability) => snowflake_properties.push(
+                        crate::parser::_helpers::ddl::snowflake_routines::nullability_property(
+                            nullability,
+                        ),
+                    ),
                     None => {
                         self.match_token(TokenType::Null);
                     }
@@ -454,6 +459,7 @@ impl Parser {
             return_type,
             execute_as,
             with_options,
+            snowflake_properties,
             has_parens,
             use_proc_keyword,
             returns_table: None,
