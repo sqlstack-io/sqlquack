@@ -549,6 +549,7 @@ pub(crate) const SNOWFLAKE_OPAQUE_KINDS: &[&[&str]] = &[
     &["AI", "FUNCTION"],
     &["CODE", "BUNDLE"],
     &["EXTERNAL", "LISTING"],
+    &["INTERACTIVE", "WAREHOUSE"],
     &["NOTEBOOK", "PROJECT"],
     &["OPENFLOW", "DATA", "PLANE", "INTEGRATION"],
     &["ORGANIZATION", "ACCOUNT"],

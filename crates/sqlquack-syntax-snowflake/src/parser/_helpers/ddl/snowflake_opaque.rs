@@ -32,7 +32,7 @@ impl Parser {
         checked
     }
 
-    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, a snapshot's service volume, an external agent's version, a variable's type, AS COPY for a pipe's body, an Openflow connector's added version and push, and a warehouse's actions; the cursor stays after the name.
+    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, a snapshot's service volume, an external agent's version, a variable's type, AS COPY for a pipe's body, no bare list after an interactive warehouse's name, an Openflow connector's added version and push, and a warehouse's actions; the cursor stays after the name.
     fn check_opaque_shape(&mut self, create: bool, kind_at: usize) -> Result<()> {
         let after_name = self.current;
         let kind = self.tokens[kind_at].text.to_ascii_uppercase();
@@ -68,6 +68,9 @@ impl Parser {
                 Err(self.parse_error("Expected FROM"))
             }
             "PIPE" => self.check_pipe_body(),
+            "INTERACTIVE" if self.check(TokenType::LParen) => {
+                Err(self.parse_error("Expected a property after the warehouse name"))
+            }
             _ => Ok(()),
         };
         self.current = after_name;
