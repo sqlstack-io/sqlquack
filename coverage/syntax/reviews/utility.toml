@@ -153,3 +153,23 @@ note = "Re-approved after stage paths became stage references: of the 104 cases 
 
 [review.definitions]
 "sf.utility.execute-job-service" = "f0d2489a4725394b38014d90c6c4832d295b389f79a5b19581c111ddc4237c64"
+
+[[review]]
+id = "utility-008"
+family = "utility"
+parser_tree = "e4c5015c6be45602859aa5366c26b7b470e2cc9c"
+reviewed_utc = "2026-11-13T14:09:29Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-immediate.immediate-2",
+  "sf.utility.execute-immediate.immediate.syntax",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 1fdf28bc5; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-immediate.immediate-2" = "32d01d688de37a84656c934f935eada4567fbaf781036162a0cb9d3808129e01"
+"sf.utility.execute-immediate.immediate.syntax" = "394fd9bca3f35d694991b0a478cb303186d8693c589d25532ad388c6a7734069"
+
+[review.definitions]
+"sf.utility.execute-immediate.immediate-2" = "3416aeb205558b4247bfd90128e0c794bcc6107c0b5f687312ae897706f926be"
+"sf.utility.execute-immediate.immediate.syntax" = "473a9693f23b0879c4dcf7de1358a00cc8180d19977ee8adb151e3dcce2fcab1"
