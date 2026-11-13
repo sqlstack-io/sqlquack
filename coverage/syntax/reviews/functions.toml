@@ -4534,3 +4534,91 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.functions.storage-lifecycle-policy-history.policy-name" = "5874eb6811a2c0ee52e38034e4682cf3d5bfa740699111538928981a6d002f43"
 "sf.functions.storage-lifecycle-policy-history.ref-entity-name-ref-entity-domain" = "6f97860f116a889500c863075189ae8c6ded58001f45aec1ec2b437ad92a5146"
 "sf.functions.to-timestamp" = "d3bdd1fc1924c46e2b53c3896edf797aac91ef445270ddde0d6bde4e059fd712"
+
+[[review]]
+id = "functions-023"
+family = "functions"
+parser_tree = "4f7d2e5d71780111239df9cd32fb6a9b4156b9f4"
+reviewed_utc = "2026-11-13T23:17:58Z"
+verdict = "approved"
+forms = [
+  "sf.functions.array-repeat",
+  "sf.functions.as-decimal-number.as-decimal",
+  "sf.functions.as-decimal-number.as-number",
+  "sf.functions.current-time.current-time",
+  "sf.functions.current-timestamp.current-timestamp",
+  "sf.functions.localtimestamp.localtimestamp",
+  "sf.functions.regexp-instr",
+  "sf.functions.regexp-substr",
+  "sf.functions.regexp-substr-all",
+  "sf.functions.st-geogfromgeohash",
+  "sf.functions.st-geohash",
+  "sf.functions.st-geomfromgeohash",
+  "sf.functions.to-decimal.to-decimal",
+  "sf.functions.to-decimal.to-number",
+  "sf.functions.to-decimal.to-numeric",
+  "sf.functions.try-to-decimal.try-to-decimal",
+  "sf.functions.try-to-decimal.try-to-number",
+  "sf.functions.try-to-decimal.try-to-numeric",
+]
+note = "Read in full under review brief version 1, with a stricter coverage rule, against the documentation page, the obligations, the cases and the parse trees; the trees are unchanged at 82a89e06f, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.array-repeat" = "bb66f85c3cb10bfba1c8c25beb3ed5926bc45304a016781e14c1a535009cbc2a"
+"sf.functions.as-decimal-number.as-decimal" = "517bacb78370b4707f9b05f98666653beaa507829168dbbde700b5e35ab8ca8e"
+"sf.functions.as-decimal-number.as-number" = "d91173b583b59d760461bfb595345b3e4e96fb1911f3840666c0ef2421471005"
+"sf.functions.current-time.current-time" = "7dc180faba1e626332fe6a297b918b8764413d66b7cad17e77e76767971bf2e0"
+"sf.functions.current-timestamp.current-timestamp" = "76936189b06b4cdeccda78f163caa86beae2015e33be4bb867863b1fe434a35c"
+"sf.functions.localtimestamp.localtimestamp" = "36ba44dd4ad160b70feb6f7f51e5e236e5b4e4690351f863b2c9eae29ff38a6d"
+"sf.functions.regexp-instr" = "30fcae1a2be14b03b8ab7ddd290c8a5327641bad913b531f036aa770a8060be2"
+"sf.functions.regexp-substr" = "cd5f4326d92d91ff6a2a89f7842f19e72969e992339078c3f786f7dbf7b16793"
+"sf.functions.regexp-substr-all" = "75e05527954eca8e306f7677c05e93b7442c753dec7d37b55f7ec75d58a105f4"
+"sf.functions.st-geogfromgeohash" = "c96ef73879414a5b1831aef2df817025b29b0e09730184af1e1f4d531fdebc47"
+"sf.functions.st-geohash" = "00d29677c19f19dc525d4ef84932a409a9b070464dba50409aaba5b300497ccf"
+"sf.functions.st-geomfromgeohash" = "7c3946f60fa51dc0c50c9531ba4ce3d47e9437a9ccd49b1ad727e706ae986784"
+"sf.functions.to-decimal.to-decimal" = "bfb3ada7f3be0d1c60e011fb1da4381a26bfa92ae5c581feda45ea524d0ef112"
+"sf.functions.to-decimal.to-number" = "7d45352e88b18b1e47e70f232901a608df285ee22104b179f2348fb53f793892"
+"sf.functions.to-decimal.to-numeric" = "479b28e4a2c073f28f78be9e7ff5e203c9ec2408f67ea3b69477800cb3059255"
+"sf.functions.try-to-decimal.try-to-decimal" = "be44fa6da0ae2d60d0265c19c0c9f6e21a0557a16c0f5dbbf1984454ffeb5f2e"
+"sf.functions.try-to-decimal.try-to-number" = "fce3faf08dd79f0ec529db9845501b9c3e401ce80365267b9fe52d18f1d1f2a5"
+"sf.functions.try-to-decimal.try-to-numeric" = "0b73d5997e6b0960535294325f92b73233b73e4b4b093d0d69d67901190d08fc"
+
+[review.definitions]
+"sf.functions.array-repeat" = "3a554695ef6e4e7d20cac665606d5124cbd5e6a9fd80b39a08a74136e4ad7cc9"
+"sf.functions.as-decimal-number.as-decimal" = "8821f29737244dcd86b0981c5dfb7653d0cdcd5991829391c765c95d1501884e"
+"sf.functions.as-decimal-number.as-number" = "936d92e3cfa870f86cf32ac25919d3e0776ba966da067cdbe0c91c4b90dd5983"
+"sf.functions.current-time.current-time" = "e98cc66f77ccf720cd38b8e99c81174536b77eecd0541ccb7639a28106c73934"
+"sf.functions.current-timestamp.current-timestamp" = "ab437109656893594e67c6d8e2de85a6766e90bc09b592dec1ce786896b01619"
+"sf.functions.localtimestamp.localtimestamp" = "c9b68c2fd11348b4f2a129b8be557ed1855ec1e10762fbef2ef3ce410f61e23b"
+"sf.functions.regexp-instr" = "ab48acbffc4aa235e6985ca5b563209c0bb0b1de64230d83b36c1748cb2fae36"
+"sf.functions.regexp-substr" = "dbc3d92a5cc16719e1ab00d3956d4117330f5a85cc4ce5e5d01dfca0ae03986e"
+"sf.functions.regexp-substr-all" = "a810ca68cdf1bb06014bf15bc05fe587716afdcd4b970d8e4b1e5e40b7e75f36"
+"sf.functions.st-geogfromgeohash" = "9e83476bb5fe2a9049dbb4ea03c8b0570203ecfda49e29672c7a4ca73ef829c1"
+"sf.functions.st-geohash" = "100140d5984a15f2acb5020a89a148e6344132bf8c0213835ab3c937d2465bb7"
+"sf.functions.st-geomfromgeohash" = "1e4880b43f3bc0a211730722090888a36e28539b3e934b317e131c07569e69ee"
+"sf.functions.to-decimal.to-decimal" = "1ea444d6b370192b2acca1bfaa52974e33989c4512792fa66c0028baaa3f0cb5"
+"sf.functions.to-decimal.to-number" = "62065ccad8c18a6d00030e6104821fe9a1176f0e2b90387b00b7bef04288e7e4"
+"sf.functions.to-decimal.to-numeric" = "2c07a36a1758cd5d2ca29494fcec1a0fc7ee54a49ddb57bf119d7b8a530f6027"
+"sf.functions.try-to-decimal.try-to-decimal" = "5efaf9efcdfbf83d0bebf7b1d38dfacf1735a46cd00febbd13414f13ad4bae55"
+"sf.functions.try-to-decimal.try-to-number" = "7e4c6df56f78fe9cd5519451be2dd680254c108a571841081bfcedfbe6d1c6e2"
+"sf.functions.try-to-decimal.try-to-numeric" = "191f2abc3923ac5ebf0ba40f70df9398a57f912719064d29b4c6e5932f023960"
+
+[[review]]
+id = "functions-024"
+family = "functions"
+parser_tree = "4f7d2e5d71780111239df9cd32fb6a9b4156b9f4"
+reviewed_utc = "2026-11-13T23:40:09Z"
+verdict = "approved"
+forms = [
+  "sf.functions.system-clustering-information",
+  "sf.functions.system-initiate-move-organization-account",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 80e896e67; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.system-clustering-information" = "4f40cba26276b1aa0f683387bb7aecf21e26fb5686cceca86151e4601d77e5f8"
+"sf.functions.system-initiate-move-organization-account" = "62e38df452e89a9ccf6df4ab6369893e2e7d1fde58257a2f53b382561790daab"
+
+[review.definitions]
+"sf.functions.system-clustering-information" = "826579718cd00489f8caddd0fe39f21ff9f7a76552e17e65105e2e9c5f598629"
+"sf.functions.system-initiate-move-organization-account" = "8b9f89d223f28fd8e77fca15a7e1b222f9b358f98325eccb8dd86a092453de9b"
