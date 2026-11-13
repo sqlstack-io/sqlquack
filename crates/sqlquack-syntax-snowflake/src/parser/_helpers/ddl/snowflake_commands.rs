@@ -409,12 +409,18 @@ impl Parser {
         Ok(())
     }
 
-    /// Snowflake DCM `DEFINE`, refused for kinds kept as opaque text or not yet checked closely.
+    /// Snowflake DCM `DEFINE`, refused for kinds kept as opaque text or not yet checked closely; a database's or schema's properties are checked word by word before they are kept as text.
     pub(crate) fn parse_snowflake_define(&mut self) -> Result<Expression> {
         let definition = self.parse_create()?;
         let unchecked_kind = matches!(definition, Expression::CreateTable(_));
+        let mut unchecked = definition.clone();
+        match &mut unchecked {
+            Expression::CreateDatabase(database) => database.properties.clear(),
+            Expression::CreateSchema(schema) => schema.properties.clear(),
+            _ => {}
+        }
         if unchecked_kind
-            || definition
+            || unchecked
                 .contains(|node| matches!(node, Expression::Command(_) | Expression::Raw(_)))
         {
             return Err(self.parse_error("Unsupported DEFINE object definition"));
