@@ -4613,11 +4613,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o250"
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o726"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o727"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o251"
@@ -7729,11 +7736,11 @@ target = "<file_col_num>"
 note = "omit <file_col_num>"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o023"
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o625"
 kind = "operand_type_class"
 required = true
 target = "<file_col_num>"
-note = "a valid identifier"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o024"
@@ -8419,11 +8426,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o181"
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o626"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o627"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o182"
@@ -11684,11 +11698,18 @@ target = "<integer> in [ PARALLEL = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.dml.get.o011"
+id = "sf.dml.get.o081"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PARALLEL = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.dml.get.o082"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PARALLEL = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.dml.get.o051"
@@ -14307,11 +14328,18 @@ target = "<integer> in [ PARALLEL = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.dml.put.o014"
+id = "sf.dml.put.o118"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PARALLEL = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.dml.put.o119"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PARALLEL = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.dml.put.o039"

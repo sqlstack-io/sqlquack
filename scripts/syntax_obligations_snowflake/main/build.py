@@ -11,6 +11,7 @@ from scripts.grammar_obligations._helpers.cases import sync_outputs
 from scripts.grammar_obligations._helpers.elisions import elision_outputs
 from scripts.grammar_obligations._helpers.obligations import family_obligations, obligation_rows
 from scripts.syntax_obligations_snowflake._helpers.changed import changed_families
+from scripts.syntax_obligations_snowflake._helpers.rules import install
 from scripts.syntax_obligations_snowflake.constants import (
     DEFAULT_ROOT,
     WITHDRAWN_CLASS_HEADER,
@@ -20,6 +21,7 @@ from scripts.syntax_obligations_snowflake.constants import (
 
 def run_build(argv: list[str] | None = None) -> int:
     """Regenerate the obligations of the named families, or with --check compare them."""
+    install()
     parser: argparse.ArgumentParser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=DEFAULT_ROOT)
     parser.add_argument(

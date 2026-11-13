@@ -55877,7 +55877,7 @@ context = "raw"
 form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
 kind = "operand_type_class"
 target = "<integer> in [ MAX_STALENESS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error at position 195 (the WITH of WITH TAG after COMMENT = 'm', inside the first TABLES item, which starts at offset 33); Snowflake requires COMMENT last in a TABLES item (probe svtag-ddl) (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject"
 
 [[limit]]
@@ -55965,7 +55965,7 @@ context = "raw"
 form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
 kind = "operand_type_class"
 target = "<integer> in [ MAX_STALENESS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error at position 211 (the WITH of WITH TAG after COMMENT = 'm', inside the first TABLES item, which starts at offset 49); Snowflake requires COMMENT last in a TABLES item (probe svtag-ddl) (errno 1003 SQLSTATE 42000, import-20261104-51); observed, not flipped to reject"
 
 [[limit]]
@@ -69825,7 +69825,7 @@ context = "raw"
 form = "sf.security_admin.show-oflow-data-plane-integration"
 kind = "operand_type_class"
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
 
 [[limit]]
@@ -70078,7 +70078,7 @@ context = "raw"
 form = "sf.security_admin.show-row-access-policies"
 kind = "operand_type_class"
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import-20261104-110); observed, not flipped to reject"
 
 [[limit]]
@@ -72626,7 +72626,7 @@ context = "raw"
 form = "sf.ddl.create-file-format.define-file-format"
 kind = "operand_type_class"
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error (errno 1003 SQLSTATE 42000, import 20261104-134); observed, not flipped to reject"
 
 [[limit]]
@@ -80322,7 +80322,7 @@ context = "raw"
 form = "sf.ddl.create-semantic-view.define-semantic-view"
 kind = "operand_type_class"
 target = "<integer> in [ MAX_STALENESS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 reason = "[documented but Snowflake disagrees]: the page documents this SQL and the rendering follows the page, but Snowflake rejects it as a syntax error at definition position 198 (the WITH of WITH TAG after COMMENT = 'm', inside the first TABLES item); Snowflake requires COMMENT last in a TABLES item (probe svtag-ddl) (errno 1003 SQLSTATE 42000, import 20261104-140); observed, not flipped to reject"
 
 [[limit]]

@@ -18,10 +18,12 @@ from scripts.grammar_obligations._helpers.cases import (
 )
 from scripts.grammar_obligations.models import ReceiptView
 from scripts.grammar_obligations.types import Row
+from scripts.syntax_obligations_snowflake._helpers.rules import install
 
 
 def run_cases(argv: list[str] | None = None) -> int:
     """Regenerate the cases of the named families and list those that need a capture."""
+    install()
     arguments: argparse.Namespace = _parse_args(argv)
     receipts: ReceiptView = ReceiptView(
         phases=receipt_phases(arguments.receipts),

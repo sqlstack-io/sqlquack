@@ -3609,11 +3609,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.classes.budget.commands.show-budget.o026"
+id = "sf.classes.budget.commands.show-budget.o047"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.classes.budget.commands.show-budget.o048"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.classes.budget.commands.show-budget.o027"

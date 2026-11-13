@@ -3168,11 +3168,11 @@ target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.alert-history.o013"
+id = "sf.functions.alert-history.o025"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.alert-history.o014"
@@ -7131,11 +7131,11 @@ target = "<precision> in [ , <precision> [ , <scale> ] ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.as-decimal-number.as-decimal.o007"
+id = "sf.functions.as-decimal-number.as-decimal.o014"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> [ , <scale> ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.as-decimal-number.as-decimal.o008"
@@ -7157,11 +7157,11 @@ target = "<scale> in [ , <scale> ]"
 note = "omit <scale>"
 
 [[obligation]]
-id = "sf.functions.as-decimal-number.as-decimal.o011"
+id = "sf.functions.as-decimal-number.as-decimal.o015"
 kind = "operand_type_class"
 required = true
 target = "<scale> in [ , <scale> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.as-decimal-number.as-decimal.o012"
@@ -7208,11 +7208,11 @@ target = "<precision> in [ , <precision> [ , <scale> ] ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.as-decimal-number.as-number.o007"
+id = "sf.functions.as-decimal-number.as-number.o014"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> [ , <scale> ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.as-decimal-number.as-number.o008"
@@ -7234,11 +7234,11 @@ target = "<scale> in [ , <scale> ]"
 note = "omit <scale>"
 
 [[obligation]]
-id = "sf.functions.as-decimal-number.as-number.o011"
+id = "sf.functions.as-decimal-number.as-number.o015"
 kind = "operand_type_class"
 required = true
 target = "<scale> in [ , <scale> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.as-decimal-number.as-number.o012"
@@ -11722,11 +11722,11 @@ target = "<integer> in [ RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.complete-task-graphs.o005"
+id = "sf.functions.complete-task-graphs.o027"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.complete-task-graphs.o006"
@@ -12887,11 +12887,11 @@ target = "<integer> in [ , LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.cortex-search-batch.o023"
+id = "sf.functions.cortex-search-batch.o040"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.cortex-search-batch.o024"
@@ -13131,11 +13131,11 @@ target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.cortex-search-refresh-history.o018"
+id = "sf.functions.cortex-search-refresh-history.o025"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.cortex-search-refresh-history.o019"
@@ -14787,11 +14787,11 @@ target = "<integer> in [ RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.current-task-graphs.o005"
+id = "sf.functions.current-task-graphs.o021"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.current-task-graphs.o006"
@@ -16768,11 +16768,11 @@ target = "<integer> in [ , RESULT_LIMIT = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.dbt-project-execution-history.o022"
+id = "sf.functions.dbt-project-execution-history.o064"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.dbt-project-execution-history.o023"
@@ -17123,11 +17123,11 @@ target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.dcm-deployment-history.o018"
+id = "sf.functions.dcm-deployment-history.o025"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.dcm-deployment-history.o019"
@@ -28010,11 +28010,11 @@ target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.dynamic-table-refresh-history.o013"
+id = "sf.functions.dynamic-table-refresh-history.o037"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.dynamic-table-refresh-history.o014"
@@ -28224,11 +28224,11 @@ target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.dynamic-tables.o014"
+id = "sf.functions.dynamic-tables.o026"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.dynamic-tables.o015"
@@ -29108,11 +29108,11 @@ target = "<integer> in [ , LOOKBACK_DAYS => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.evaluate-candidate-network-policy.o008"
+id = "sf.functions.evaluate-candidate-network-policy.o023"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , LOOKBACK_DAYS => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.evaluate-candidate-network-policy.o009"
@@ -33480,11 +33480,11 @@ target = "<integer> in [ RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.get-job-history.o023"
+id = "sf.functions.get-job-history.o024"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.get-job-history.o015"
@@ -46664,11 +46664,11 @@ target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.notification-history.o018"
+id = "sf.functions.notification-history.o025"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.notification-history.o019"
@@ -48512,11 +48512,11 @@ target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.online-feature-table-refresh-history.o013"
+id = "sf.functions.online-feature-table-refresh-history.o037"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.online-feature-table-refresh-history.o014"
@@ -52015,11 +52015,11 @@ target = "<length>"
 note = "omit <length>"
 
 [[obligation]]
-id = "sf.functions.randstr.o003"
+id = "sf.functions.randstr.o008"
 kind = "operand_type_class"
 required = true
 target = "<length>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.randstr.o004"
@@ -52407,11 +52407,11 @@ target = "<integer>"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.recommend-network-policy.o003"
+id = "sf.functions.recommend-network-policy.o016"
 kind = "operand_type_class"
 required = true
 target = "<integer>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.recommend-network-policy.o004"
@@ -52854,11 +52854,11 @@ target = "<group_num> in [ , <group_num> ]"
 note = "omit <group_num>"
 
 [[obligation]]
-id = "sf.functions.regexp-instr.o027"
+id = "sf.functions.regexp-instr.o030"
 kind = "operand_type_class"
 required = true
 target = "<group_num> in [ , <group_num> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.regexp-instr.o028"
@@ -53205,11 +53205,11 @@ target = "<group_num> in [ , <group_num> ]"
 note = "omit <group_num>"
 
 [[obligation]]
-id = "sf.functions.regexp-substr.o023"
+id = "sf.functions.regexp-substr.o026"
 kind = "operand_type_class"
 required = true
 target = "<group_num> in [ , <group_num> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.regexp-substr.o024"
@@ -53348,11 +53348,11 @@ target = "<group_num> in [ , <group_num> ]"
 note = "omit <group_num>"
 
 [[obligation]]
-id = "sf.functions.regexp-substr-all.o023"
+id = "sf.functions.regexp-substr-all.o026"
 kind = "operand_type_class"
 required = true
 target = "<group_num> in [ , <group_num> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.regexp-substr-all.o024"
@@ -55755,11 +55755,11 @@ target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.rest-event-history.o013"
+id = "sf.functions.rest-event-history.o021"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.rest-event-history.o014"
@@ -60496,11 +60496,11 @@ target = "<precision> in [ , <precision> ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.st-geogfromgeohash.o007"
+id = "sf.functions.st-geogfromgeohash.o010"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.st-geogfromgeohash.o008"
@@ -61082,11 +61082,11 @@ target = "<precision> in [ , <precision> ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.st-geohash.o007"
+id = "sf.functions.st-geohash.o016"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.st-geohash.o009"
@@ -61115,11 +61115,11 @@ target = "<precision> in [ , <precision> ] #2"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.st-geohash.o013"
+id = "sf.functions.st-geohash.o017"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> ] #2"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.st-geohash.o014"
@@ -61926,11 +61926,11 @@ target = "<precision> in [ , <precision> ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.st-geomfromgeohash.o007"
+id = "sf.functions.st-geomfromgeohash.o010"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.st-geomfromgeohash.o008"
@@ -64199,11 +64199,11 @@ target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.storage-lifecycle-policy-history.policy-name.o016"
+id = "sf.functions.storage-lifecycle-policy-history.policy-name.o024"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.storage-lifecycle-policy-history.policy-name.o017"
@@ -64353,11 +64353,11 @@ target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.storage-lifecycle-policy-history.ref-entity-name-ref-entity-domain.o019"
+id = "sf.functions.storage-lifecycle-policy-history.ref-entity-name-ref-entity-domain.o028"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.storage-lifecycle-policy-history.ref-entity-name-ref-entity-domain.o020"
@@ -76717,11 +76717,11 @@ target = "<timeout_seconds>"
 note = "omit <timeout_seconds>"
 
 [[obligation]]
-id = "sf.functions.system-wait-for-openflow-connector-status.o003"
+id = "sf.functions.system-wait-for-openflow-connector-status.o016"
 kind = "operand_type_class"
 required = true
 target = "<timeout_seconds>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.system-wait-for-openflow-connector-status.o004"
@@ -76790,11 +76790,11 @@ target = "<timeout_seconds>"
 note = "omit <timeout_seconds>"
 
 [[obligation]]
-id = "sf.functions.system-wait-for-openflow-deployment-status.o003"
+id = "sf.functions.system-wait-for-openflow-deployment-status.o016"
 kind = "operand_type_class"
 required = true
 target = "<timeout_seconds>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.system-wait-for-openflow-deployment-status.o004"
@@ -76863,11 +76863,11 @@ target = "<timeout_seconds>"
 note = "omit <timeout_seconds>"
 
 [[obligation]]
-id = "sf.functions.system-wait-for-openflow-runtime-status.o003"
+id = "sf.functions.system-wait-for-openflow-runtime-status.o016"
 kind = "operand_type_class"
 required = true
 target = "<timeout_seconds>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.system-wait-for-openflow-runtime-status.o004"
@@ -76988,11 +76988,11 @@ target = "<timeout_seconds>"
 note = "omit <timeout_seconds>"
 
 [[obligation]]
-id = "sf.functions.system-wait-for-stable-openflow-connectors.o003"
+id = "sf.functions.system-wait-for-stable-openflow-connectors.o013"
 kind = "operand_type_class"
 required = true
 target = "<timeout_seconds>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.system-wait-for-stable-openflow-connectors.o005"
@@ -77047,11 +77047,11 @@ target = "<timeout_seconds>"
 note = "omit <timeout_seconds>"
 
 [[obligation]]
-id = "sf.functions.system-wait-for-stable-openflow-deployments.o003"
+id = "sf.functions.system-wait-for-stable-openflow-deployments.o013"
 kind = "operand_type_class"
 required = true
 target = "<timeout_seconds>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.system-wait-for-stable-openflow-deployments.o005"
@@ -77106,11 +77106,11 @@ target = "<timeout_seconds>"
 note = "omit <timeout_seconds>"
 
 [[obligation]]
-id = "sf.functions.system-wait-for-stable-openflow-runtimes.o003"
+id = "sf.functions.system-wait-for-stable-openflow-runtimes.o013"
 kind = "operand_type_class"
 required = true
 target = "<timeout_seconds>"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.system-wait-for-stable-openflow-runtimes.o005"
@@ -77558,11 +77558,11 @@ target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.functions.task-history.o013"
+id = "sf.functions.task-history.o055"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ , RESULT_LIMIT => <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.task-history.o014"
@@ -79571,11 +79571,11 @@ target = "<precision> in [ , <precision> [ , <scale> ] ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.to-decimal.to-decimal.o012"
+id = "sf.functions.to-decimal.to-decimal.o020"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> [ , <scale> ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.to-decimal.to-decimal.o013"
@@ -79597,11 +79597,11 @@ target = "<scale> in [ , <scale> ]"
 note = "omit <scale>"
 
 [[obligation]]
-id = "sf.functions.to-decimal.to-decimal.o016"
+id = "sf.functions.to-decimal.to-decimal.o021"
 kind = "operand_type_class"
 required = true
 target = "<scale> in [ , <scale> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.to-decimal.to-decimal.o017"
@@ -79673,11 +79673,11 @@ target = "<precision> in [ , <precision> [ , <scale> ] ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.to-decimal.to-number.o012"
+id = "sf.functions.to-decimal.to-number.o020"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> [ , <scale> ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.to-decimal.to-number.o013"
@@ -79699,11 +79699,11 @@ target = "<scale> in [ , <scale> ]"
 note = "omit <scale>"
 
 [[obligation]]
-id = "sf.functions.to-decimal.to-number.o016"
+id = "sf.functions.to-decimal.to-number.o021"
 kind = "operand_type_class"
 required = true
 target = "<scale> in [ , <scale> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.to-decimal.to-number.o017"
@@ -79775,11 +79775,11 @@ target = "<precision> in [ , <precision> [ , <scale> ] ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.to-decimal.to-numeric.o012"
+id = "sf.functions.to-decimal.to-numeric.o020"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> [ , <scale> ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.to-decimal.to-numeric.o013"
@@ -79801,11 +79801,11 @@ target = "<scale> in [ , <scale> ]"
 note = "omit <scale>"
 
 [[obligation]]
-id = "sf.functions.to-decimal.to-numeric.o016"
+id = "sf.functions.to-decimal.to-numeric.o021"
 kind = "operand_type_class"
 required = true
 target = "<scale> in [ , <scale> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.to-decimal.to-numeric.o017"
@@ -80669,11 +80669,11 @@ target = "<scale> in [ , <scale> ]"
 note = "omit <scale>"
 
 [[obligation]]
-id = "sf.functions.to-timestamp.o010"
+id = "sf.functions.to-timestamp.o081"
 kind = "operand_type_class"
 required = true
 target = "<scale> in [ , <scale> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.to-timestamp.o061"
@@ -82168,11 +82168,11 @@ target = "<precision> in [ , <precision> [ , <scale> ] ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.try-to-decimal.try-to-decimal.o013"
+id = "sf.functions.try-to-decimal.try-to-decimal.o021"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> [ , <scale> ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.try-to-decimal.try-to-decimal.o014"
@@ -82194,11 +82194,11 @@ target = "<scale> in [ , <scale> ]"
 note = "omit <scale>"
 
 [[obligation]]
-id = "sf.functions.try-to-decimal.try-to-decimal.o017"
+id = "sf.functions.try-to-decimal.try-to-decimal.o022"
 kind = "operand_type_class"
 required = true
 target = "<scale> in [ , <scale> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.try-to-decimal.try-to-decimal.o018"
@@ -82270,11 +82270,11 @@ target = "<precision> in [ , <precision> [ , <scale> ] ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.try-to-decimal.try-to-number.o013"
+id = "sf.functions.try-to-decimal.try-to-number.o021"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> [ , <scale> ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.try-to-decimal.try-to-number.o014"
@@ -82296,11 +82296,11 @@ target = "<scale> in [ , <scale> ]"
 note = "omit <scale>"
 
 [[obligation]]
-id = "sf.functions.try-to-decimal.try-to-number.o017"
+id = "sf.functions.try-to-decimal.try-to-number.o022"
 kind = "operand_type_class"
 required = true
 target = "<scale> in [ , <scale> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.try-to-decimal.try-to-number.o018"
@@ -82372,11 +82372,11 @@ target = "<precision> in [ , <precision> [ , <scale> ] ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.functions.try-to-decimal.try-to-numeric.o013"
+id = "sf.functions.try-to-decimal.try-to-numeric.o021"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ , <precision> [ , <scale> ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.try-to-decimal.try-to-numeric.o014"
@@ -82398,11 +82398,11 @@ target = "<scale> in [ , <scale> ]"
 note = "omit <scale>"
 
 [[obligation]]
-id = "sf.functions.try-to-decimal.try-to-numeric.o017"
+id = "sf.functions.try-to-decimal.try-to-numeric.o022"
 kind = "operand_type_class"
 required = true
 target = "<scale> in [ , <scale> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
 
 [[obligation]]
 id = "sf.functions.try-to-decimal.try-to-numeric.o018"
