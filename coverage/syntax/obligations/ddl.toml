@@ -131581,6 +131581,13 @@ anchor = "doc.sql.create-event-table / Syntax"
 note = "the list continued at least once, observed"
 
 [[obligation]]
+id = "sf.ddl.create-event-table.table.o195"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-event-table / Syntax"
+note = "CONTACT without WITH on an event table, observed"
+
+[[obligation]]
 id = "sf.ddl.create-event-table.table-clone.o001"
 kind = "positive"
 required = true
@@ -183835,6 +183842,27 @@ required = true
 target = "IDLE_AUTO_SHUTDOWN_TIME_SECONDS = <number_of_seconds>"
 anchor = "doc.sql.create-notebook / Parameters"
 note = "IDLE_AUTO_SHUTDOWN_TIME_SECONDS = 259,201 against the documented range 60 to 259,200"
+
+[[obligation]]
+id = "sf.ddl.create-notebook.o060"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-notebook / Syntax"
+note = "a notebook named project, from a stage location string"
+
+[[obligation]]
+id = "sf.ddl.create-notebook.o061"
+kind = "positive"
+required = true
+anchor = "doc.sql.create-notebook / Syntax"
+note = "a notebook named project, without FROM"
+
+[[obligation]]
+id = "sf.ddl.create-notebook.o062"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-notebook / Syntax"
+note = "FROM an unquoted stage path in place of '<source_location>'"
 
 [[obligation]]
 id = "sf.ddl.create-notebook-project.from.o001"
@@ -299578,6 +299606,27 @@ required = true
 target = "<compute_pool_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> |…"
 anchor = "doc.sql.show-services / Syntax"
 note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.ddl.show-services.o069"
+kind = "positive"
+required = true
+anchor = "doc.sql.show-services / Syntax"
+note = "OF TYPE after IN COMPUTE POOL"
+
+[[obligation]]
+id = "sf.ddl.show-services.o070"
+kind = "positive"
+required = true
+anchor = "doc.sql.show-services / Syntax"
+note = "OF TYPE with a list of types"
+
+[[obligation]]
+id = "sf.ddl.show-services.o071"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-services / Syntax"
+note = "OF TYPE before LIMIT, observed"
 
 [[obligation]]
 id = "sf.ddl.show-shared-content.o001"
