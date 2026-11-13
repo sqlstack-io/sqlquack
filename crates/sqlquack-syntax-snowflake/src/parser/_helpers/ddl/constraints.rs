@@ -1665,7 +1665,7 @@ impl Parser {
         }
     }
 
-    /// The structured tree of a governance ALTER that passed its grammar check, when it covers the same tokens and no name after the object is quoted (tag and row access policy actions drop the quotes; a contact keeps them); the Raw statement otherwise.
+    /// The structured tree of a governance ALTER that passed its grammar check, when it covers the same tokens and no name after the object is quoted (tag and row access policy actions drop the quotes; a contact keeps them, and a lone contact the shared ALTER TABLE leaves raw keeps the governance tree); the Raw statement otherwise.
     fn structured_governance_or_raw(
         &mut self,
         target: usize,
@@ -1691,6 +1691,12 @@ impl Parser {
         self.current = target;
         match named && !quoted {
             true => match self.parse_alter_after_kind_modifier(alter_table_modifier) {
+                Ok(Expression::AlterTable(table))
+                    if contact && matches!(table.actions[..], [AlterTableAction::Raw { .. }]) =>
+                {
+                    self.current = end;
+                    raw
+                }
                 Ok(tree) if self.current == end => tree,
                 _ => {
                     self.current = end;
