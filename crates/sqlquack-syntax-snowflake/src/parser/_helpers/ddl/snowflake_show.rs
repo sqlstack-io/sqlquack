@@ -72,12 +72,16 @@ impl Parser {
         if matches!(kind.as_str(), "OPENFLOW DATA PLANE INTEGRATIONS") {
             return Ok(Some(Expression::Show(Box::new(show))));
         }
-        if kind.starts_with("DELEGATED AUTHORIZATIONS ") {
-            if kind.ends_with(" USER") && self.is_statement_end_at(0) {
+        if let Some(clause) = kind.strip_prefix("DELEGATED AUTHORIZATIONS ") {
+            let clause = if clause == "BY USER" && self.is_statement_end_at(0) {
                 self.current -= 1;
-                show.this = "DELEGATED AUTHORIZATIONS BY".to_owned();
-            }
-            show.for_target = Some(self.parse_show_name()?);
+                "BY"
+            } else {
+                clause
+            };
+            show.this = "DELEGATED AUTHORIZATIONS".to_owned();
+            show.scope_kind = Some(clause.to_owned());
+            show.scope = Some(self.parse_show_name()?);
             return Ok(Some(Expression::Show(Box::new(show))));
         }
         if matches!(kind.as_str(), "OBJECTS")
