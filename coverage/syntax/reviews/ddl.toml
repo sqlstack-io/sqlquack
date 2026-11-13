@@ -2391,3 +2391,23 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.ddl.show-snapshots-in-snapshot-set" = "6d8ba84b7a13bb8b307d4cbc2bfcd49f77bca6f381d437343a3ffbbf56bc6274"
 "sf.ddl.show-versions" = "957793baa3556aa26f77b930ca233a6c977582839cf5b15945d0da94f527d9e1"
 "sf.ddl.show-versions-in-model" = "1c2ea13167b02fbdce2e76b271b81f0034a2e6dd0bb5e9a22af76e778721dc25"
+
+[[review]]
+id = "ddl-029"
+family = "ddl"
+parser_tree = "3abd08d7af377fc780f56a1afb120ac87c29a66f"
+reviewed_utc = "2026-11-13T18:05:12Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.show-run-in-experiment.metrics-in-experiment",
+  "sf.ddl.show-run-in-experiment.parameters-in-experiment",
+]
+note = "Re-read against criterion (b) only, after the numeric operands gained wrong-kind obligations: every operand has a missing and a wrong-kind case, and every scored case agrees with its Snowflake receipt; the rest of the earlier full review stands."
+
+[review.fingerprints]
+"sf.ddl.show-run-in-experiment.metrics-in-experiment" = "618c95010cc61dcda351e2ed47a76593bbe7dcd1fc46e44f16a4eacaf70f8d14"
+"sf.ddl.show-run-in-experiment.parameters-in-experiment" = "1103f798266cbc6e77f1eec8551f8132de0d6e149dedcd476c62afbb7f25b631"
+
+[review.definitions]
+"sf.ddl.show-run-in-experiment.metrics-in-experiment" = "5e068c988afe99c9ef62f3d096263df2dc1c6daff7b997757ec8bdad50f4fc9c"
+"sf.ddl.show-run-in-experiment.parameters-in-experiment" = "ca01b8e469c56a7ea821b870d1b5e85e5c948b2e3614496471189fcb0f5fe36b"
