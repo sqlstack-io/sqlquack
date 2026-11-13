@@ -48,7 +48,10 @@ use sqlquack_syntax::tokens::types::Result;
 
 impl Parser {
     /// Parse function parameters
-    pub(crate) fn parse_function_parameters(&mut self) -> Result<Vec<FunctionParameter>> {
+    pub(crate) fn parse_function_parameters(
+        &mut self,
+        procedure: bool,
+    ) -> Result<Vec<FunctionParameter>> {
         let mut params: Vec<FunctionParameter> = Vec::new();
 
         if self.check(TokenType::RParen) {
@@ -142,8 +145,20 @@ impl Parser {
                     (None, self.identifier_to_datatype(&first_ident.name)?)
                 } else {
                     self.match_token(TokenType::As);
-                    let dt = self.parse_data_type()?;
-                    (Some(first_ident), dt)
+                    if let Some((after_name, text)) = self.match_argument_mode(procedure)? {
+                        mode = Some(after_name);
+                        mode_text = Some(text);
+                        let dt = self.parse_data_type()?;
+                        if self.check(TokenType::Default) {
+                            return Err(
+                                self.parse_error("Expected no DEFAULT after an argument mode")
+                            );
+                        }
+                        (Some(first_ident), dt)
+                    } else {
+                        let dt = self.parse_data_type()?;
+                        (Some(first_ident), dt)
+                    }
                 }
             };
 
@@ -169,6 +184,28 @@ impl Parser {
         }
 
         Ok(params)
+    }
+
+    /// A Snowflake procedure argument's mode after its name, IN, INPUT, OUT or OUTPUT, when its type follows.
+    fn match_argument_mode(&mut self, procedure: bool) -> Result<Option<(ParameterMode, String)>> {
+        if !procedure || !self.is_snowflake() {
+            return Ok(None);
+        }
+        let mode = if self.check(TokenType::In) || self.check(TokenType::Input) {
+            ParameterMode::In
+        } else if self.check(TokenType::Output) || self.check_identifier("OUT") {
+            ParameterMode::Out
+        } else {
+            return Ok(None);
+        };
+        if self.check_next(TokenType::Comma)
+            || self.check_next(TokenType::RParen)
+            || self.check_next(TokenType::Default)
+        {
+            return Ok(None);
+        }
+        let text = self.advance_text()?.to_ascii_uppercase();
+        Ok(Some((mode, text)))
     }
 
     /// Parses TSQL unparenthesized procedure parameters `@p1 TYPE, @p2 TYPE ... AS`.
@@ -296,7 +333,7 @@ impl Parser {
         let name = self.parse_table_ref()?;
 
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {
-            let params = self.parse_function_parameters()?;
+            let params = self.parse_function_parameters(true)?;
             self.expect_token(TokenType::RParen)?;
             (params, true)
         } else if self.check(TokenType::Var) && !self.check(TokenType::As) {

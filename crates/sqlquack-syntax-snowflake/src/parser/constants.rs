@@ -1169,14 +1169,21 @@ pub(crate) const SNOWFLAKE_ROUTINE_NAME_LIST_PROPERTIES: &[&str] =
 /// Snowflake function and procedure properties whose names, in a single value, a list or a map, may also be strings.
 pub(crate) const SNOWFLAKE_ROUTINE_TEXT_NAME_PROPERTIES: &[&str] = &[
     "API_INTEGRATION",
+    "ARTIFACT_REPOSITORY",
     "EXTERNAL_ACCESS_INTEGRATIONS",
     "SECRETS",
     "SERVICE",
 ];
 
 /// Snowflake function and procedure string properties, and string list properties, whose values may also be bare words.
-pub(crate) const SNOWFLAKE_ROUTINE_WORD_PROPERTIES: &[&str] =
-    &["COMMENT", "HANDLER", "IMPORTS", "TARGET_PATH"];
+pub(crate) const SNOWFLAKE_ROUTINE_WORD_PROPERTIES: &[&str] = &[
+    "COMMENT",
+    "HANDLER",
+    "IMPORTS",
+    "PACKAGES",
+    "RUNTIME_VERSION",
+    "TARGET_PATH",
+];
 
 /// Snowflake function and procedure properties whose value is a `( '<key>' = <name> , ... )` map.
 pub(crate) const SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES: &[&str] = &["SECRETS"];

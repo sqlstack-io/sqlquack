@@ -521,7 +521,10 @@ impl Parser {
             TokenType::Function => {
                 self.parse_create_function(or_replace, or_alter, temporary, false)
             }
-            TokenType::Procedure => self.parse_create_procedure(or_replace, or_alter),
+            TokenType::Procedure => match self.parse_scoped_temp_table(or_replace, or_alter)? {
+                Some(table) => Ok(table),
+                None => self.parse_create_procedure(or_replace, or_alter),
+            },
             TokenType::Sequence => self.parse_create_sequence(temporary, or_replace),
             TokenType::Trigger => {
                 self.parse_create_trigger(or_replace, or_alter, false, create_pos)
