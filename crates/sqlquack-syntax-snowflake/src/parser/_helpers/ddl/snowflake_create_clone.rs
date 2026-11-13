@@ -77,7 +77,11 @@ impl Parser {
                         Some(Expression::Tuple(Box::new(Tuple { expressions: kinds }))),
                     ));
                 } else {
-                    let kind = self.expect_alter_words(&[&["GRANTS"], &["TAGS"]])?;
+                    let kinds: &[&[&str]] = match dynamic {
+                        true => &[&["GRANTS"]],
+                        false => &[&["GRANTS"], &["TAGS"]],
+                    };
+                    let kind = self.expect_alter_words(kinds)?;
                     properties.push(property(&format!("COPY {kind}"), None, None));
                 }
             } else if dynamic && self.match_text_seq(&["TARGET_LAG"]) {
