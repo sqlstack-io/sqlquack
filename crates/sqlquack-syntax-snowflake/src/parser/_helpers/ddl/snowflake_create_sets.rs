@@ -79,14 +79,17 @@ impl Parser {
             }
             properties.extend(self.parse_create_property_item()?);
         }
-        Ok(Some(create_object(
-            kind.join(" "),
-            (or_replace, or_alter, if_not_exists),
+        Ok(Some(Expression::CreateObject(Box::new(CreateObject {
+            kind: kind.join(" "),
+            modifier: None,
+            or_replace,
+            or_alter,
+            if_not_exists,
             name,
-            format!("FOR {target}"),
+            source: format!("FOR {target}"),
             operands,
             properties,
-        )))
+        }))))
     }
 
     /// Whether APPLICATION at the cursor starts CREATE APPLICATION rather than APPLICATION PACKAGE, ROLE or SERVICE: a name follows those words only when FROM comes next.
@@ -124,14 +127,17 @@ impl Parser {
             }
             properties.extend(self.parse_create_property_item()?);
         }
-        Ok(create_object(
-            "APPLICATION".to_owned(),
-            (or_replace, or_alter, if_not_exists),
+        Ok(Expression::CreateObject(Box::new(CreateObject {
+            kind: "APPLICATION".to_owned(),
+            modifier: None,
+            or_replace,
+            or_alter,
+            if_not_exists,
             name,
-            format!("FROM {source}"),
+            source: format!("FROM {source}"),
             operands,
             properties,
-        ))
+        })))
     }
 
     /// The application's USING after USING: VERSION <version> [ PATCH <number> ], RELEASE CHANNEL <channel>, or a version directory path.
@@ -143,20 +149,23 @@ impl Parser {
                 Some(self.parse_string_value()?),
             )]);
         }
-        let using = self.expect_alter_words(&[&["VERSION"], &["RELEASE", "CHANNEL"]])?;
-        let value = match self.check_text_seq(&["DEFAULT"]) && using == "RELEASE CHANNEL" {
+        let release_channel = self.match_text_seq(&["RELEASE", "CHANNEL"]);
+        if !release_channel && !self.match_text_seq(&["VERSION"]) {
+            return Err(self.parse_error("Expected VERSION or RELEASE CHANNEL"));
+        }
+        let value = match release_channel && self.check_text_seq(&["DEFAULT"]) {
             true => {
                 self.skip();
                 Identifier::new("DEFAULT".to_owned())
             }
             false => self.parse_simple_name()?,
         };
-        let mut properties = vec![property(
-            &format!("USING {using}"),
-            None,
-            Some(Expression::Identifier(value)),
-        )];
-        if using == "VERSION" && self.match_text_seq(&["PATCH"]) {
+        let using = match release_channel {
+            true => "USING RELEASE CHANNEL",
+            false => "USING VERSION",
+        };
+        let mut properties = vec![property(using, None, Some(Expression::Identifier(value)))];
+        if !release_channel && self.match_text_seq(&["PATCH"]) {
             if !self.check(TokenType::Number) {
                 return Err(self.parse_error("Expected a patch number"));
             }
@@ -175,26 +184,4 @@ impl Parser {
             false => Err(self.parse_error("Expected IF NOT EXISTS")),
         }
     }
-}
-
-/// A CreateObject of `kind` with the given OR REPLACE, OR ALTER and IF NOT EXISTS flags.
-fn create_object(
-    kind: String,
-    (or_replace, or_alter, if_not_exists): (bool, bool, bool),
-    name: sqlquack_syntax::expressions::names::models::TableRef,
-    source: String,
-    operands: Vec<Expression>,
-    properties: Vec<ObjectProperty>,
-) -> Expression {
-    Expression::CreateObject(Box::new(CreateObject {
-        kind,
-        modifier: None,
-        or_replace,
-        or_alter,
-        if_not_exists,
-        name,
-        source,
-        operands,
-        properties,
-    }))
 }
