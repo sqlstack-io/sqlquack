@@ -604,9 +604,6 @@ pub(crate) const SNOWFLAKE_OPAQUE_OPERAND_WORDS: &[&str] = &[
     "WITH",
 ];
 
-/// The opaque ALTER kinds whose RENAME may leave out TO.
-pub(crate) const SNOWFLAKE_OPAQUE_RENAME_WITHOUT_TO: &[&[&str]] = &[&["POSTGRES", "INSTANCE"]];
-
 /// The opaque ALTER kind whose name may be left out for the current object.
 pub(crate) const SNOWFLAKE_OPAQUE_UNNAMED_KIND: &[&str] = &["WAREHOUSE"];
 
@@ -648,6 +645,7 @@ pub(crate) const SNOWFLAKE_DROP_KINDS: &[&[&str]] = &[
     &["GIT", "REPOSITORY"],
     &["IMAGE", "REPOSITORY"],
     &["INGRESS", "POLICY"],
+    &["INSTANCE"],
     &["INTEGRATION"],
     &["JOIN", "POLICY"],
     &["LISTING"],
@@ -737,6 +735,7 @@ pub(crate) const SNOWFLAKE_DESCRIBE_KINDS: &[&[&str]] = &[
     &["GATEWAY"],
     &["GIT", "REPOSITORY"],
     &["ICEBERG", "TABLE"],
+    &["INSTANCE"],
     &["LISTING"],
     &["MATERIALIZED", "VIEW"],
     &["MCP", "SERVER"],

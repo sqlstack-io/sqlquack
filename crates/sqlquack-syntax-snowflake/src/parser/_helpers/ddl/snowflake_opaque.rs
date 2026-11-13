@@ -3,8 +3,7 @@
 use crate::parser::_helpers::statements::analyze::snowflake_reserved_word;
 use crate::parser::constants::{
     SNOWFLAKE_DROP_KINDS, SNOWFLAKE_OPAQUE_ALTER_ACTIONS, SNOWFLAKE_OPAQUE_KINDS,
-    SNOWFLAKE_OPAQUE_OPERAND_WORDS, SNOWFLAKE_OPAQUE_RENAME_WITHOUT_TO,
-    SNOWFLAKE_OPAQUE_UNNAMED_KIND, SUSPENDED,
+    SNOWFLAKE_OPAQUE_OPERAND_WORDS, SNOWFLAKE_OPAQUE_UNNAMED_KIND, SUSPENDED,
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::statements::models::Raw;
@@ -21,7 +20,7 @@ impl Parser {
         let start = self.current;
         let checked = self
             .check_opaque_head(create)
-            .and_then(|kind| self.check_opaque_options(kind));
+            .and_then(|()| self.check_opaque_options());
         self.current = start;
         checked
     }
@@ -54,8 +53,8 @@ impl Parser {
                 .is_some_and(|next| next.text.eq_ignore_ascii_case("VERSION")))
     }
 
-    /// The kind, `IF [ NOT ] EXISTS` and name of a kind the opaque check knows, then an ALTER's action; nothing for another kind. Returns the kind.
-    fn check_opaque_head(&mut self, create: bool) -> Result<Option<&'static [&'static str]>> {
+    /// The kind, `IF [ NOT ] EXISTS` and name of a kind the opaque check knows, then an ALTER's action; nothing for another kind.
+    fn check_opaque_head(&mut self, create: bool) -> Result<()> {
         let kind = SNOWFLAKE_OPAQUE_KINDS
             .iter()
             .chain(SNOWFLAKE_DROP_KINDS)
@@ -65,12 +64,12 @@ impl Parser {
                         && self.model_name_ends_at(self.current + 2))
             });
         let Some(&kind) = kind else {
-            return self.check_opaque_unknown_kind().map(|()| None);
+            return self.check_opaque_unknown_kind();
         };
         self.current += kind.len();
         if !create && self.check(TokenType::If) && self.is_opaque_action_at(1) {
             self.skip();
-            return Ok(Some(kind));
+            return Ok(());
         }
         if self.check(TokenType::If) {
             let exists = match create {
@@ -85,14 +84,14 @@ impl Parser {
             }
         }
         if create {
-            return self.parse_object_name().map(|_| Some(kind));
+            return self.parse_object_name().map(|_| ());
         }
         if kind == SNOWFLAKE_OPAQUE_UNNAMED_KIND && self.is_opaque_action_at(0) {
-            return Ok(Some(kind));
+            return Ok(());
         }
         self.parse_object_name()?;
         match self.is_opaque_action_at(0) {
-            true => Ok(Some(kind)),
+            true => Ok(()),
             false => Err(self.parse_error("Expected an action after the name")),
         }
     }
@@ -136,9 +135,7 @@ impl Parser {
     }
 
     /// The tokens after the head up to a body: balanced parentheses, a name and a value around each `=`, a well-formed tag list, an operand after SET and UNSET, TO and a name after RENAME, no reserved keyword as a list item, only EXISTS, NOT EXISTS or an alert condition in `( )`, which it skips, after IF, and no word that needs an operand at the end.
-    fn check_opaque_options(&mut self, kind: Option<&[&str]>) -> Result<()> {
-        let rename_without_to =
-            kind.is_some_and(|kind| SNOWFLAKE_OPAQUE_RENAME_WITHOUT_TO.contains(&kind));
+    fn check_opaque_options(&mut self) -> Result<()> {
         let mut named_end = self.current;
         let mut depth = 0usize;
         while !self.is_statement_end_at(0) {
@@ -167,7 +164,7 @@ impl Parser {
                 }
                 _ if self.check_text_seq(&["RENAME"]) => {
                     self.skip();
-                    if !self.match_token(TokenType::To) && !rename_without_to {
+                    if !self.match_token(TokenType::To) {
                         return Err(self.parse_error("Expected TO after RENAME"));
                     }
                     self.parse_object_name()?;
