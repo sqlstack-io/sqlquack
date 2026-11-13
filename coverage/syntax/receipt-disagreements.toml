@@ -457,31 +457,6 @@ other_receipts_contradicted = [
 "sf.ddl.alter-openflow-deployment.upgrade" = ["k8f0dad70d584"]
 "sf.ddl.alter-openflow-runtime.add-external-access-integrations" = ["k321a5bc12fbc"]
 "sf.ddl.alter-openflow-runtime.remove-external-access-integrations" = ["k836e23a21602"]
-"sf.ddl.alter-postgres-instance.rename-to" = [
-  "k142b4144e9b7",
-  "k33c81b96cd7b",
-  "k34ef0cd1143e",
-  "k63ca59abd9f6",
-  "k70e95903f326",
-  "k7c1b32af8dc9",
-]
-"sf.ddl.alter-postgres-instance.reset-access-for" = [
-  "k43cb26b7d35f",
-  "k56dfa81e336f",
-]
-"sf.ddl.alter-postgres-instance.set" = [
-  "k20d58c108a82",
-  "k236fd744805e",
-  "k497594a91159",
-  "k51b522ae7ba6",
-  "k971b2da52e20",
-  "ke3742e01cc13",
-  "ke38930ea7924",
-  "keeee6359e00f",
-  "kfa07d4a39803",
-  "kfb942e142d58",
-]
-"sf.ddl.alter-postgres-instance.unset-tag" = ["k5dd7424a2e19"]
 "sf.ddl.alter-sequence.sequence" = [
   "k3cb7f778e7e3",
   "k6b24929220ed",
@@ -723,27 +698,6 @@ other_receipts_contradicted = [
 "sf.ddl.create-pipe.create-pipe-as" = [
   "kab170451c2c9",
   "ke8207fa6805d",
-]
-"sf.ddl.create-postgres-instance.compute-family-storage-size-gb-authentication-authority-postgres" = [
-  "k03623b2d6be5",
-  "k21a4941b5c9b",
-  "k3347dbe6d453",
-  "k8c4ee07bdacd",
-  "k9bef372fad14",
-  "kb4e37f2e11d5",
-  "kd81ee8dad3cd",
-]
-"sf.ddl.create-postgres-instance.fork" = [
-  "k039b05544a41",
-  "k08bafd44b021",
-  "k3105151e8da1",
-  "k5d4cd20ef03f",
-  "k79086085669b",
-  "k9d6b771a9722",
-  "kb64693ecd74f",
-  "kc72f4651a890",
-  "kf065852242d0",
-  "kf1f0c43ea1a1",
 ]
 "sf.ddl.create-procedure.create-procedure" = [
   "k58d3939e981a",
@@ -1164,14 +1118,12 @@ other_receipts_contradicted = [
   "kc8e9213704c7",
 ]
 "sf.ddl.desc-openflow-deployment" = ["kdf4759378ee6"]
-"sf.ddl.desc-postgres-instance" = ["kf631a8c0ffa5"]
 "sf.ddl.drop-artifact-repository" = ["k9782bade16e1"]
 "sf.ddl.drop-event-routing-table" = ["k76f52e59636d"]
 "sf.ddl.drop-external-volume" = ["kd1b18519a410"]
 "sf.ddl.drop-iceberg-table" = ["k519a5435fa2a"]
 "sf.ddl.drop-mcp-server" = ["k44146118c910"]
 "sf.ddl.drop-openflow-deployment" = ["k048ebf4d8cf9"]
-"sf.ddl.drop-postgres-instance" = ["k672647a823f1"]
 "sf.ddl.show-available-listings.listings.syntax" = ["kc27d889cba34"]
 "sf.ddl.show-backups-in-backup-set" = ["kb9855fb78979"]
 "sf.ddl.show-channels" = [
