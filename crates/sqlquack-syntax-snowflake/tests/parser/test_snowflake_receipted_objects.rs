@@ -356,6 +356,11 @@ fn given_a_snowflake_notebook_project_or_organization_profile_when_parsing_then_
             expected_kind: Some("raw"),
         },
         SnowflakeVerdictTestCase {
+            description: "a notebook named PROJECT may take options",
+            sql: "CREATE NOTEBOOK project QUERY_WAREHOUSE = w1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
             description: "a reserved word is no notebook project's name",
             sql: "CREATE NOTEBOOK PROJECT set FROM 'snow://workspace/w1' ;",
             expected_kind: None,
@@ -906,6 +911,21 @@ fn given_a_snowflake_warehouse_or_connector_action_when_parsing_then_recorded_ve
             description: "renaming needs a warehouse name (recorded errno 1003)",
             sql: "ALTER WAREHOUSE RENAME TO v1 ;",
             expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "IF EXISTS does not name the warehouse to rename",
+            sql: "ALTER WAREHOUSE IF EXISTS RENAME TO v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "IF EXISTS does not name the warehouse to add tables to",
+            sql: "ALTER WAREHOUSE IF EXISTS ADD TABLES ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "IF EXISTS may still alter the current warehouse",
+            sql: "ALTER WAREHOUSE IF EXISTS SUSPEND ;",
+            expected_kind: Some("raw"),
         },
         SnowflakeVerdictTestCase {
             description: "an unset tag is named (recorded errno 1003)",
