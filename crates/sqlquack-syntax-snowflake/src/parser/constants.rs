@@ -537,6 +537,10 @@ pub(crate) const TASK_ACTIONS: &[&str] = &[
     "ADD", "MODIFY", "REMOVE", "RESUME", "SET", "SUSPEND", "UNSET",
 ];
 
+/// The kinds a Snowflake DEFINE takes as the opaque text of the CREATE it mirrors, after that CREATE's checks.
+pub(crate) const SNOWFLAKE_DEFINE_OPAQUE_KINDS: &[&[&str]] =
+    &[&["CODE", "BUNDLE"], &["PIPE"], &["TAG"]];
+
 /// Snowflake CREATE and ALTER kinds an opaque statement may name that DROP does not, each before any kind it prefixes; the opaque check tries them before the DROP kinds.
 pub(crate) const SNOWFLAKE_OPAQUE_KINDS: &[&[&str]] = &[
     &["AI", "FUNCTION"],
@@ -1470,6 +1474,7 @@ pub(crate) const SNOWFLAKE_PROPERTY_KINDS: &[&str] = &[
     "CONTACT",
     "DATA MOVEMENT POLICY",
     "EXTERNAL ACCESS INTEGRATION",
+    "EXTERNAL CONSUMER",
     "EXTERNAL VOLUME",
     "FAILOVER GROUP",
     "FEATURE POLICY",
