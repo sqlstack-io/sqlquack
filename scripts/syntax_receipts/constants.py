@@ -17,14 +17,20 @@ RUNTIME_ERRNO_FLOOR: int = 100000
 SYNTAX_OR_ACCESS_SQLSTATE_CLASS: str = "42"
 REVIEWED_SEMANTIC_ERRNOS: frozenset[int] = frozenset(
     {
+        1480,
         3001,
         3078,
         3172,
         90025,
+        90201,
+        90227,
+        92804,
         93171,
         98620,
+        99133,
         391858,
         392002,
+        392030,
         393941,
         506005,
         506034,

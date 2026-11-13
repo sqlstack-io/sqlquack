@@ -188,6 +188,26 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             ),
         ),
         ClassifyTestCase(
+            description="a missing argument name reported with the resolved type is semantic",
+            errno=90201,
+            sqlstate="42601",
+            message="Missing name for argument 'NUMBER(38,0)'",
+            expected_classification=(
+                "semantic_error",
+                "errno 90201 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="a rule on what an alert condition calls is semantic",
+            errno=392030,
+            sqlstate="42601",
+            message="Streaming alert condition must not call a stored procedure or query from a VALUES clause",
+            expected_classification=(
+                "semantic_error",
+                "errno 392030 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
             description="an unreviewed errno without the compilation prefix is not established",
             errno=926,
             sqlstate="42601",
