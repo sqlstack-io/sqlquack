@@ -58,6 +58,9 @@ impl Parser {
         if let Some(alert) = self.parse_snowflake_create_alert(or_replace, or_alter)? {
             return Ok(Some(alert));
         }
+        if let Some(rule) = self.parse_snowflake_create_movement_rule(or_replace, or_alter)? {
+            return Ok(Some(rule));
+        }
         if self.check(TokenType::Alter) || self.check(TokenType::String) {
             return Err(self.parse_error("Expected an object kind after CREATE"));
         }

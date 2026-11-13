@@ -6,7 +6,8 @@ use crate::helpers::{accepted, statements};
 use crate::test_types::{AcceptanceTestCase, ProjectionTestCase};
 
 #[test]
-fn given_a_snowflake_alert_create_when_parsing_then_only_what_snowflake_parses_is_accepted() {
+fn given_a_snowflake_alert_or_data_movement_rule_when_parsing_then_only_what_snowflake_parses_is_accepted(
+) {
     let test_cases = [
         AcceptanceTestCase {
             description: "an alert with its condition and action (recorded parse, then semantic error)",
@@ -67,6 +68,36 @@ fn given_a_snowflake_alert_create_when_parsing_then_only_what_snowflake_parses_i
             sql: "CREATE ALERT v1 FROM TEMPLATE v1 ( v1 = 'm' ) ;",
             dialect: Dialect::Snowflake,
             expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a data movement rule with its type and row limit (recorded parse)",
+            sql: "CREATE DATA MOVEMENT RULE \"v1 Q\" TYPE = 'm' MAX_ROWS AS ( ) RETURNS INTEGER -> ( 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a data movement rule needs its name (recorded syntax error)",
+            sql: "CREATE DATA MOVEMENT RULE TYPE = 'm' MAX_ROWS AS ( ) RETURNS INTEGER -> ( 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a data movement rule's comment is a string (recorded syntax error)",
+            sql: "CREATE DATA MOVEMENT RULE v1 TYPE = 'm' MAX_ROWS AS ( ) RETURNS INTEGER -> ( 1 ) COMMENT = m1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a data movement rule's row limit is altered (recorded parse)",
+            sql: "ALTER DATA MOVEMENT RULE IF EXISTS v1 SET MAX_ROWS AS ( ) RETURNS INTEGER -> ( 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a data movement rule is renamed (recorded parse)",
+            sql: "ALTER DATA MOVEMENT RULE v1 RENAME TO \"SELECT\" ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
         },
     ];
     for test_case in test_cases {

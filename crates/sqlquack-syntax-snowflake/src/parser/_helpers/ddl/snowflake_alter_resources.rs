@@ -19,6 +19,7 @@ const RESOURCE_KINDS: &[&[&str]] = &[
     &["ROW", "ACCESS", "POLICY"],
     &["STORAGE", "LIFECYCLE", "POLICY"],
     &["DATA", "MOVEMENT", "POLICY"],
+    &["DATA", "MOVEMENT", "RULE"],
     &["AGGREGATION", "POLICY"],
     &["AUTHENTICATION", "POLICY"],
     &["BACKUP", "POLICY"],
@@ -197,6 +198,18 @@ fn resource_actions(kind: &str) -> &'static [&'static [&'static str]] {
 }
 
 impl Parser {
+    /// A data movement rule's `MAX_ROWS AS ( ) RETURNS <type> -> <expression>`.
+    pub(super) fn parse_max_rows_body(&mut self) -> Result<ObjectProperty> {
+        self.skip();
+        self.expect_token(TokenType::As)?;
+        self.expect_token(TokenType::LParen)?;
+        self.expect_token(TokenType::RParen)?;
+        self.expect_token(TokenType::Returns)?;
+        self.parse_data_type()?;
+        self.expect_token(TokenType::Arrow)?;
+        Ok(property("MAX_ROWS", None, Some(self.parse_expression()?)))
+    }
+
     /// Whether `MODEL MONITOR` here starts `ALTER MODEL <name>` with a name or schema called monitor: a dot or a whole ALTER MODEL action follows.
     fn alters_model_named_monitor(&self) -> bool {
         if !(self.check_identifier("MODEL") && self.check_next_identifier("MONITOR")) {
@@ -340,6 +353,9 @@ impl Parser {
                     vec![],
                     vec![property("BODY", None, Some(self.parse_expression()?))],
                 )
+            }
+            ("DATA MOVEMENT RULE", "SET") if self.check_identifier("MAX_ROWS") => {
+                (vec![], vec![self.parse_max_rows_body()?])
             }
             (_, "SET" | "MODIFY LIVE VERSION SET") => (vec![], self.parse_resource_set()?),
             (_, "UNSET") => (vec![], self.parse_resource_unset()?),
