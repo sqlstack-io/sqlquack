@@ -305,6 +305,24 @@ impl Parser {
         self.parse_expression()
     }
 
+    /// The value after `<variable> :=`: a scalar value, or a parenthesised EXECUTE IMMEDIATE.
+    fn parse_scripting_assignment_value(&mut self) -> Result<Expression> {
+        let immediate = self.check(TokenType::LParen)
+            && self
+                .peek_nth(1)
+                .is_some_and(|token| token.token_type == TokenType::Execute)
+            && self
+                .peek_nth(2)
+                .is_some_and(|token| token.text.eq_ignore_ascii_case("IMMEDIATE"));
+        if !immediate {
+            return self.parse_scripting_value();
+        }
+        self.skip();
+        let statement = self.parse_scripting_sql_statement()?;
+        self.expect_token(TokenType::RParen)?;
+        Ok(statement)
+    }
+
     /// An ordinary statement member, spanned like a top-level one; never empty or bare.
     fn parse_scripting_sql_statement(&mut self) -> Result<Expression> {
         if self.is_at_end() || self.check(TokenType::Semicolon) {
@@ -352,7 +370,7 @@ impl Parser {
         if self.is_identifier_or_keyword_token() && self.check_next(TokenType::ColonEq) {
             let target = self.expect_identifier_or_keyword_with_quoted()?;
             self.skip();
-            let value = self.parse_scripting_value()?;
+            let value = self.parse_scripting_assignment_value()?;
             return Ok(ScriptingStatement::Assignment(ScriptingAssignment {
                 span: self.source_range(start),
                 target,
