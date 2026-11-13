@@ -1542,3 +1542,92 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.security_admin.alter-role.rename-to" = "0b242a8d75b4c85f4f4554609448fae268746bda53d9545a8eba6a1d511d9248"
 "sf.security_admin.alter-role.set-comment" = "02a2aac016b99fa9d774c68d4d259ca3aebd1c76274d62c5c56c25d18e3e2186"
 "sf.security_admin.alter-role.unset-comment" = "9febe062a9e79ae8757c06b6fa01615427f932a48ffc75b10cb0854280237174"
+
+[[review]]
+id = "security-admin-017"
+family = "security_admin"
+parser_tree = "3abd08d7af377fc780f56a1afb120ac87c29a66f"
+reviewed_utc = "2026-11-13T19:39:02Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.create-password-policy",
+  "sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer",
+  "sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow",
+  "sf.security_admin.create-session-policy",
+  "sf.security_admin.create-snapshot-policy",
+  "sf.security_admin.show-application-roles",
+  "sf.security_admin.show-authentication-policies",
+  "sf.security_admin.show-database-roles",
+  "sf.security_admin.show-grants-in-dcm-project.future-grants-in-dcm",
+  "sf.security_admin.show-grants-in-dcm-project.grants-in-dcm-project",
+  "sf.security_admin.show-grants.future-grants-in-database",
+  "sf.security_admin.show-grants.future-grants-in-schema",
+  "sf.security_admin.show-grants.future-grants-to-role",
+  "sf.security_admin.show-grants.grants",
+  "sf.security_admin.show-grants.grants-of-share",
+  "sf.security_admin.show-grants.grants-on",
+  "sf.security_admin.show-grants.grants-on-account",
+  "sf.security_admin.show-ingress-policies",
+  "sf.security_admin.show-multi-party-approval-policies.policies",
+  "sf.security_admin.show-network-rules",
+  "sf.security_admin.show-password-policies",
+  "sf.security_admin.show-roles",
+  "sf.security_admin.show-session-policies",
+  "sf.security_admin.show-shares",
+  "sf.security_admin.show-users",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 0a00bf46a; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.create-password-policy" = "1b872dccf05832a9009cb65e0811bf6264f86eb65e6d48d4246dc1fd7af532ab"
+"sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer" = "769b1eb6fc72dca642d21a0d3f12f51bddbb282db8c7b026edc903a410aae27f"
+"sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow" = "0ad2caf8d6636701330eddbb2800f186ee91a454cb52cf023ddb3cb21b6dd03b"
+"sf.security_admin.create-session-policy" = "0b875a71489f72a962f5ac1e20e7276d68e79deb8bdea94a5f2cfaacb71207f2"
+"sf.security_admin.create-snapshot-policy" = "cd12172b8ff7203f339530c6f36c12c58d7bd9ee675429ff22c6cf63370aaed2"
+"sf.security_admin.show-application-roles" = "3d2bcc1ed4fa1418363aca04b873625665e97624aa1e21e050782587fbc680f9"
+"sf.security_admin.show-authentication-policies" = "27405e8810c03df6e767fdb79bc70904cd6bc3a5520c2c4571c2a549103d8d83"
+"sf.security_admin.show-database-roles" = "de93a8e11da3c0ddccffdcd7ecd2bb213ec9a0bf30f1178c81aef42bbc3da5f2"
+"sf.security_admin.show-grants-in-dcm-project.future-grants-in-dcm" = "55bd10dfe8d2c6dcccd83704c3c822cb26a0fc438b4a4a26511afa8c830531b1"
+"sf.security_admin.show-grants-in-dcm-project.grants-in-dcm-project" = "1ce852bd52902646efbf7c73e3dbfb4174214a439cf6f076a691bb13bce00b7c"
+"sf.security_admin.show-grants.future-grants-in-database" = "fd55982e6a7e0daf76e1bce363cf6a571dac08ced2cb4ce191a412778404f2e6"
+"sf.security_admin.show-grants.future-grants-in-schema" = "0a6440ee372b98063cbf36f6822f7ffaf3817c9ebebe519e788ab70354e5f155"
+"sf.security_admin.show-grants.future-grants-to-role" = "80735fd2de868b67a24e5d1d0821af89bd4aa48f63c12227cf7805a49313b09d"
+"sf.security_admin.show-grants.grants" = "d418e7c7a83a6ed32c9b38f113d60b229520bff96f0442175dd9217c2e8ea201"
+"sf.security_admin.show-grants.grants-of-share" = "3e4daa01661124e3d427d4c5b4fcad6240d9fdd4cc28b83565bcbb2fb86fd5b9"
+"sf.security_admin.show-grants.grants-on" = "a4525cc1166726b69099282e30dd1c5f8341e1f75785afaa7dfed3639d57f3b1"
+"sf.security_admin.show-grants.grants-on-account" = "66b9163f69efe413d6af00cae11d927db51f001b9c04e083ffd7bd363358120d"
+"sf.security_admin.show-ingress-policies" = "3cd136249e8962f44d606efd2597ac7d21e461a52a8f3c2fb1b64c1746fdd0d4"
+"sf.security_admin.show-multi-party-approval-policies.policies" = "ccb29703f99b11d3221c85ac64d58734acbed6794f37e93f9b00bb5f83ff10b1"
+"sf.security_admin.show-network-rules" = "6e55480894f772043efd53ac7cae6ec687f685b7f09fd7484b8e44212cd7d101"
+"sf.security_admin.show-password-policies" = "c1300e0fa1279b1b3b7114d0c0f6c72f5f6712b7a035262ab90b536da9e2daac"
+"sf.security_admin.show-roles" = "3ef10ea75fc27b92e42d9a4cdfcb8ba443f24ed16462f1a0e4f9b009cce582a0"
+"sf.security_admin.show-session-policies" = "574aff14e37347fb3915cd0ebee9a5493e7683a807f4220f00022c1df98e85d8"
+"sf.security_admin.show-shares" = "b23cbb079655ccba9c7385260dfdf5416e678206d8bef0d111e76c4c3d5fc042"
+"sf.security_admin.show-users" = "7d2a94aab3c2046f312cb6a74c9bdf8ca74e5a63de61f85eef3a89f53eabf7b2"
+
+[review.definitions]
+"sf.security_admin.create-password-policy" = "f77f0f4888d18a727f2495c03c2618c7513479c35c55ed1fbb8ef1a423bea61b"
+"sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer" = "3e7c861660719eb02fb478fa7586152a205e763de2dab26b8ba6ff7574c8d99f"
+"sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow" = "3801208f4e79690ca9c8e34f54382a6cf339151f9585e494086567dfc3498043"
+"sf.security_admin.create-session-policy" = "39e8d2af8f489fd00f6062473d280cc7d9b00cbb0efef19fa76f680b52c91ecb"
+"sf.security_admin.create-snapshot-policy" = "c9e5a1f68cc13789ae0e5c5c7f6d14d4d2cd9e097b44a2ab13ceac70b0ed7e2a"
+"sf.security_admin.show-application-roles" = "8ff31ef85da0338b2992eedec246d6df4c9b11f7dbf8f1ef6090501131eacaec"
+"sf.security_admin.show-authentication-policies" = "d0875a41b074b682dc5320ee581a5c6bc16b8c23b8c25561bd3190d52e0781c0"
+"sf.security_admin.show-database-roles" = "ad4beae76f21b8a4eecaa0c91a764ae1ea1a1009044d35bc9a3489831a59fc58"
+"sf.security_admin.show-grants-in-dcm-project.future-grants-in-dcm" = "09e3880cadea990660bfdfadff856734bf884ecb657bc4190b5aeceaf6c44af1"
+"sf.security_admin.show-grants-in-dcm-project.grants-in-dcm-project" = "9000909e758711f9889053fa3766baed1e8c12f12a9022c0470f500dbaa8c922"
+"sf.security_admin.show-grants.future-grants-in-database" = "59bc67e4455e8b64ed11f1227712853617487568d358093fcf14552d90a4bc2b"
+"sf.security_admin.show-grants.future-grants-in-schema" = "fc6062fa1d17f6de751ccd96655e94f1a01185ee499eaafb011157a29ba176d4"
+"sf.security_admin.show-grants.future-grants-to-role" = "21271f73d7b965a676a43db8d814c2095b21119f3fa6931934949a2a5fba4927"
+"sf.security_admin.show-grants.grants" = "fcfb232e15c6985354147b611f698cef8c2f10ae20824fe9849af3aee90ae1e2"
+"sf.security_admin.show-grants.grants-of-share" = "03323957aa8877264b3f98bb3c7cd41d2a6f92e7f15afee7875f0de10c2d9c86"
+"sf.security_admin.show-grants.grants-on" = "89926f4422f90a9dd4f0e67049f1f2cb8fbe9fa22b9717c9022f24a368f4bf30"
+"sf.security_admin.show-grants.grants-on-account" = "8a1adce7548d64c63e2446c5aacc5074905fefde912968f6311cc29c68902c20"
+"sf.security_admin.show-ingress-policies" = "eb4ee94f993fbac5b08f33a6e8c3836c967a03cf1faf1476ae86dedd2e6c9215"
+"sf.security_admin.show-multi-party-approval-policies.policies" = "4f1db830050653a79b3ff1f01b40d5625a9370cac7e155c5ffc2ffadd3997e9f"
+"sf.security_admin.show-network-rules" = "8295533eb3208c7a75ee21487b869628e8606943f6a3ac75503f76275940c8a9"
+"sf.security_admin.show-password-policies" = "14febfbb5e0dc063e09f408d8a3783fa539eb77de1993a22cb2b063ee696974b"
+"sf.security_admin.show-roles" = "84d5015ca0b8714e4becfc201e4a0f62e08f2eb9183c39d9c8f8abc70256dd1e"
+"sf.security_admin.show-session-policies" = "1eb43dbfd8f6e0aa1290e49ac847668e63a7ff61be83b71b594c08d88a813aab"
+"sf.security_admin.show-shares" = "62332231af80937704604f831977ce73ba32f7632c7e208065da2f29852c9327"
+"sf.security_admin.show-users" = "26d2c31a5ee03d37dc3d55aa614f8d4c0c20fcb71f45b93952bc601c2242295f"

@@ -4481,3 +4481,56 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.functions.system-wait-for-services" = "958c9c6d758321c89e94508adbb8d17c255df86440518d0d3e2ba4f1e3213ebe"
 "sf.functions.to-timestamp" = "0dde869a76996ffb7971a6d3acf2b7ea6f00423dd4fd73f118c2af3ff6245604"
 "sf.functions.try-to-timestamp" = "48da47f57371860d581749d54cfb1f17e2a9be8889d7ea7015561898f568cd86"
+
+[[review]]
+id = "functions-022"
+family = "functions"
+parser_tree = "3abd08d7af377fc780f56a1afb120ac87c29a66f"
+reviewed_utc = "2026-11-13T19:39:02Z"
+verdict = "approved"
+forms = [
+  "sf.functions.alert-history",
+  "sf.functions.cortex-search-batch",
+  "sf.functions.cortex-search-refresh-history",
+  "sf.functions.dcm-deployment-history",
+  "sf.functions.dynamic-table-refresh-history",
+  "sf.functions.dynamic-tables",
+  "sf.functions.notification-history",
+  "sf.functions.online-feature-table-refresh-history",
+  "sf.functions.randstr",
+  "sf.functions.rest-event-history",
+  "sf.functions.storage-lifecycle-policy-history.policy-name",
+  "sf.functions.storage-lifecycle-policy-history.ref-entity-name-ref-entity-domain",
+  "sf.functions.to-timestamp",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 0a00bf46a; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.alert-history" = "0fa440ba503239bf3e5eec1b87d520dde1752ae99b513291af93fd61c2779599"
+"sf.functions.cortex-search-batch" = "5ea11d9c1a7531f7b49932153da996736310fbb19524f82cc4f344e262ce16ae"
+"sf.functions.cortex-search-refresh-history" = "4375442bc9c8d4ba9a2b59ad2b0d673846d3a5f06b1a9859befffa489fe6fa6d"
+"sf.functions.dcm-deployment-history" = "4cdf54537b0a29850d9726c3c628443a9d8420cf0ba0aebe97109ce9628c7577"
+"sf.functions.dynamic-table-refresh-history" = "226e73cd704522f84ffa2e5f6d9e674dd7f4fb0a8b181f98b4dd00dd913f894f"
+"sf.functions.dynamic-tables" = "07957e0a23a4a8af0a97668e7a968fc87fad2373bf7f028fad1d2aa6c8bdbfab"
+"sf.functions.notification-history" = "5f1e795efc6f76078d2bc3465c0c1295fc1ebcbb22027e747c49c25fe4eeb0c7"
+"sf.functions.online-feature-table-refresh-history" = "235ebe9db61d7d0fbb2cb6b14932d63d395bd3c6aea53f61cffb718c98b401e7"
+"sf.functions.randstr" = "77a51539079dd925029c29922a5886231a1b28a753e221731c690d5750ea4824"
+"sf.functions.rest-event-history" = "278e7e813c66ad612a6cab0377128ea76f0ee41f58ce70786e0354785d914eb0"
+"sf.functions.storage-lifecycle-policy-history.policy-name" = "5c6060b90381a7599e8d3523179f54775ab45b1b20a8f8e2384e005614f28b6d"
+"sf.functions.storage-lifecycle-policy-history.ref-entity-name-ref-entity-domain" = "6acfe8ef38ec5c516fbc533ff28b6faff84a4fabcf41a9fdbf4712b9103b32f1"
+"sf.functions.to-timestamp" = "fdb031ceee955a4085bf9c531c2c44676c7438184153656df1ed9e55e8918dba"
+
+[review.definitions]
+"sf.functions.alert-history" = "f3cd831b97ebd7e46d0134d09eaa96c6c2aa25e37537be52340ad21816e7f895"
+"sf.functions.cortex-search-batch" = "cf0dac1723ea64a9f15f053a5d7b6cb76a68c1bbfaa422d91f191bcddb3d3351"
+"sf.functions.cortex-search-refresh-history" = "99d3ac6cc1034eefaf7620d357233df6dca2d60a40096874944bb8bd3c2200fd"
+"sf.functions.dcm-deployment-history" = "2572a92329eb17a995e8c7d86fd259e7c027afef9b2a48f0b8f7f6823e7fa44e"
+"sf.functions.dynamic-table-refresh-history" = "4abca22006b9b343814785dbf8da23b75a486b6d4fc71a911625b44f25d108bd"
+"sf.functions.dynamic-tables" = "ba3888529aedebfd7620149993ff36852ddc64f6276c1a4ffa4984c86d318710"
+"sf.functions.notification-history" = "dd893362f37f371527491447c548f93976666362b26192f125db2b0f631ebf41"
+"sf.functions.online-feature-table-refresh-history" = "469c9cc9065165cd1578353c5f60d18f16ab0915f0a01ff6a804f63dcc46301b"
+"sf.functions.randstr" = "90cc45d212dc174861ff9990d2da0e4534c1e219b8d3687dc4b822f1b4bbe10d"
+"sf.functions.rest-event-history" = "167334da3322206af22d01986072fe77b4a13089121cbc2c99bc20edd15b0e3e"
+"sf.functions.storage-lifecycle-policy-history.policy-name" = "5874eb6811a2c0ee52e38034e4682cf3d5bfa740699111538928981a6d002f43"
+"sf.functions.storage-lifecycle-policy-history.ref-entity-name-ref-entity-domain" = "6f97860f116a889500c863075189ae8c6ded58001f45aec1ec2b437ad92a5146"
+"sf.functions.to-timestamp" = "d3bdd1fc1924c46e2b53c3896edf797aac91ef445270ddde0d6bde4e059fd712"

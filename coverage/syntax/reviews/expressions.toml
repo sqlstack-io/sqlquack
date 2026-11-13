@@ -509,3 +509,38 @@ note = "Read in full against the documentation page, the obligations, the cases 
 [review.definitions]
 "sf.expressions.data-types-numeric.double" = "cd170cfb1fb48182a05f9eefd0fd8894702643170c411e1bef39fa3d7b54d8c6"
 "sf.expressions.session-variables" = "8573a0e59e429ea859738d85870558b78b87f47d47decb80b7881ad1a0926280"
+
+[[review]]
+id = "expressions-021"
+family = "expressions"
+parser_tree = "3abd08d7af377fc780f56a1afb120ac87c29a66f"
+reviewed_utc = "2026-11-13T19:39:02Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.time",
+  "sf.expressions.data-types-datetime.timestamp",
+  "sf.expressions.data-types-numeric.decimal",
+  "sf.expressions.data-types-text.binary",
+  "sf.expressions.data-types-text.char",
+  "sf.expressions.data-types-text.varbinary",
+  "sf.expressions.data-types-text.varchar",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 0a00bf46a; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.time" = "1b13392b808447dc8734bd28da404f91d9abdb268518d6b90cacebcce332a20d"
+"sf.expressions.data-types-datetime.timestamp" = "68189d3eabf1cee2a7f0aee78039bac9161d41722a53c02d79fa03db8cc1fb13"
+"sf.expressions.data-types-numeric.decimal" = "9d94b3d6a2c80dcc410b531fbb681fb98074b156d710ed8ea41efb960a613b2a"
+"sf.expressions.data-types-text.binary" = "4b47b8913fcd8688f239abfb04712a66478f9c2b476a4d071837bc6eb2ce2ed3"
+"sf.expressions.data-types-text.char" = "d919ffee72e68aa3fed9e5f00b28ebda43e6c37af1a82bda4dd07e6dffb62958"
+"sf.expressions.data-types-text.varbinary" = "70f81d2e903c1551382b8382a44a79f4cd60292705034de3668f04ec9e71e71b"
+"sf.expressions.data-types-text.varchar" = "ac4f56bf1d0ddf46bde8fc9262cc1c68c083497bb996059b5ba6c41d8bd30aea"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.time" = "b37dba0a67db017f09d1d419b2824120a4bf8f9264cca55b78f68ed763df9018"
+"sf.expressions.data-types-datetime.timestamp" = "36381a5e6644ce902b576516754bf008cabcdf9b9876140c7699318d196c3636"
+"sf.expressions.data-types-numeric.decimal" = "2788192cce2378437f024be98b8392514a873978963241edf00f67ae9e095ca2"
+"sf.expressions.data-types-text.binary" = "0e825196c5aa374d9d9d11317c7f30214fdf7a6469c7b31db5afada5f5a6b1ab"
+"sf.expressions.data-types-text.char" = "83de4b36b68fcd774a3db7858359e80f809d9b0ef0fd68b21a3634247334de36"
+"sf.expressions.data-types-text.varbinary" = "ed7adfb75793223136cfd331e9c871d349a4768afb29456d87c3629b04b1adaa"
+"sf.expressions.data-types-text.varchar" = "92a54f5f286ce2a651bc4b74b82280acabfa7754b66fc4138e0201eb914591b4"
