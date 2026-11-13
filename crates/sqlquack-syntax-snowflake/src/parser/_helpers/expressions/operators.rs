@@ -1347,6 +1347,7 @@ impl Parser {
                         if_not_exists,
                         name,
                         properties: String::new(),
+                        task_properties: Vec::new(),
                         body: None,
                         clone_source: Some(clone_source),
                         graph: false,
@@ -1385,19 +1386,24 @@ impl Parser {
                     if_not_exists,
                     name,
                     properties: String::new(),
+                    task_properties: Vec::new(),
                     body: None,
                     clone_source: None,
                     graph: false,
                 },
             )));
         }
-        if self.is_snowflake() {
-            self.check_snowflake_task_properties(false)?;
-        }
+        let task_properties = match self.is_snowflake() {
+            true => self.parse_snowflake_task_properties(false)?,
+            false => Vec::new(),
+        };
         while !self.is_at_end() && !self.check(TokenType::Semicolon) && !self.check(TokenType::As) {
             self.skip();
         }
-        let properties = self.tokens_to_sql(props_start, self.current);
+        let properties = match self.is_snowflake() {
+            true => String::new(),
+            false => self.tokens_to_sql(props_start, self.current),
+        };
 
         if !self.match_token(TokenType::As) {
             return Err(self.parse_error("Expected AS keyword in CREATE TASK"));
@@ -1412,6 +1418,7 @@ impl Parser {
                 if_not_exists,
                 name,
                 properties,
+                task_properties,
                 body: Some(body),
                 clone_source: None,
                 graph: false,
