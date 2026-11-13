@@ -239,7 +239,10 @@ impl Parser {
         {
             return self.parse_primary();
         }
-        if self.check(TokenType::True) || self.check(TokenType::False) {
+        if self.check(TokenType::True)
+            || self.check(TokenType::False)
+            || self.check(TokenType::Null)
+        {
             return self.parse_primary();
         }
         if self.check(TokenType::Dash)
