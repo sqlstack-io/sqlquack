@@ -6,40 +6,103 @@ use crate::parser::constants::SNOWFLAKE_DEFINE_OPAQUE_KINDS;
 use crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::operators::models::BinaryOp;
 use sqlquack_syntax::expressions::operators::models::Call;
+use sqlquack_syntax::expressions::operators::models::NamedArgSeparator;
+use sqlquack_syntax::expressions::operators::models::NamedArgument;
+use sqlquack_syntax::expressions::operators::models::Parameter;
+use sqlquack_syntax::expressions::operators::models::ParameterStyle;
 use sqlquack_syntax::expressions::schema_objects::models::ExecuteObject;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::statements::models::CreateTask;
+use sqlquack_syntax::expressions::statements::models::ExecuteImmediate;
 use sqlquack_syntax::expressions::statements::models::ExecuteUsingPolicyContext;
 use sqlquack_syntax::expressions::statements::models::Raw;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::Tuple;
+use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 use sqlquack_syntax::traversal::types::ExpressionWalk;
 
 impl Parser {
-    /// In Snowflake, refuse an EXECUTE IMMEDIATE, read after EXECUTE, that is neither `IMMEDIATE <source> [ USING ( <variable> [ , ... ] ) ]` nor `IMMEDIATE FROM <location> [ USING ( <name> => <value> [ , ... ] ) ] [ DRY_RUN = { TRUE | FALSE } ]`, and return the index of the token that ends it, a `)` closing an enclosing assignment included; the cursor ends where it started.
-    pub(crate) fn check_execute_immediate(&mut self) -> Result<Option<usize>> {
-        if !self.applies_snowflake_context_rules() {
-            return Ok(None);
+    /// Snowflake's `IMMEDIATE <source> [ USING ( <variable> [ , ... ] ) ]` or `IMMEDIATE FROM <location> [ USING ( <name> => <value> [ , ... ] ) ] [ DRY_RUN = { TRUE | FALSE } ]`, read after EXECUTE up to the statement end or a `)` closing an enclosing assignment.
+    pub(crate) fn parse_execute_immediate(&mut self) -> Result<Expression> {
+        self.skip();
+        let from = self.match_token(TokenType::From);
+        let source = match from {
+            true if !self.check(TokenType::String) && !self.is_stage_path() => {
+                return Err(self.parse_error("Expected a stage path or a string"));
+            }
+            true => self.parse_location_value()?,
+            false => self.parse_execute_source()?,
+        };
+        let mut using: Vec<Expression> = Vec::new();
+        if self.match_token(TokenType::Using) {
+            self.expect_token(TokenType::LParen)?;
+            loop {
+                using.push(match from {
+                    true => self.parse_execute_argument()?,
+                    false => self.parse_expression()?,
+                });
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+            }
+            self.expect_token(TokenType::RParen)?;
         }
-        let start = self.current;
-        let checked = self.check_execute_immediate_parts();
-        self.current = start;
-        checked
+        let mut dry_run = None;
+        if from && self.match_identifier("DRY_RUN") {
+            self.expect_token(TokenType::Eq)?;
+            dry_run = Some(match () {
+                () if self.match_token(TokenType::True) => true,
+                () if self.match_token(TokenType::False) => false,
+                () => return Err(self.parse_error("Expected TRUE or FALSE")),
+            });
+        }
+        if !self.is_statement_end_at(0) && !self.check(TokenType::RParen) {
+            return Err(self.parse_error("Expected the end of EXECUTE IMMEDIATE"));
+        }
+        Ok(Expression::ExecuteImmediate(Box::new(ExecuteImmediate {
+            source,
+            from,
+            using,
+            dry_run,
+        })))
+    }
+
+    /// The text EXECUTE IMMEDIATE runs: operands joined by `||`, left to right.
+    fn parse_execute_source(&mut self) -> Result<Expression> {
+        let mut source = self.parse_execute_operand()?;
+        while self.match_token(TokenType::DPipe) {
+            let right = self.parse_execute_operand()?;
+            source = Expression::Concat(Box::new(BinaryOp::new(source, right)));
+        }
+        Ok(source)
     }
 
     /// One part of the text EXECUTE IMMEDIATE runs: a string, a `$session` or `:bound` variable, or a variable's name.
-    fn check_execute_operand(&mut self) -> Result<()> {
-        if self.check(TokenType::Dollar) || self.check(TokenType::Colon) {
+    fn parse_execute_operand(&mut self) -> Result<Expression> {
+        let style = match self.peek().token_type {
+            TokenType::Dollar => Some(ParameterStyle::Dollar),
+            TokenType::Colon => Some(ParameterStyle::Colon),
+            _ => None,
+        };
+        if let Some(style) = style {
             let end = self.peek().span.end;
             self.skip();
             if !self.is_identifier_token() || self.peek().span.start != end {
                 return Err(self.parse_error("Expected a variable's name"));
             }
-            self.skip();
-            return Ok(());
+            return Ok(Expression::Parameter(Box::new(Parameter {
+                name: Some(self.advance_text()?),
+                index: None,
+                style,
+                quoted: false,
+                string_quoted: false,
+                expression: None,
+                span: SourceSpan::default(),
+            })));
         }
         if self.check(TokenType::String)
             || self.check(TokenType::DollarString)
@@ -47,50 +110,25 @@ impl Parser {
                 && !self.is_snowflake_reserved_keyword()
                 && !self.peek_text().starts_with('@'))
         {
-            self.skip();
-            return Ok(());
+            let start = self.current;
+            let operand = self.parse_primary()?;
+            if self.current == start + 1 {
+                return Ok(operand);
+            }
         }
         Err(self.parse_error("Expected the statement to execute"))
     }
 
-    fn check_execute_immediate_parts(&mut self) -> Result<Option<usize>> {
-        self.skip();
-        let from = self.match_token(TokenType::From);
-        if from {
-            if !self.check(TokenType::String) && !self.is_stage_path() {
-                return Err(self.parse_error("Expected a stage path or a string"));
-            }
-            self.parse_location_value()?;
-        } else {
-            self.check_execute_operand()?;
-            while self.match_token(TokenType::DPipe) {
-                self.check_execute_operand()?;
-            }
-        }
-        if self.match_token(TokenType::Using) {
-            self.expect_token(TokenType::LParen)?;
-            loop {
-                if from {
-                    self.expect_identifier_or_keyword()?;
-                    self.expect_token(TokenType::FArrow)?;
-                }
-                self.parse_expression()?;
-                if !self.match_token(TokenType::Comma) {
-                    break;
-                }
-            }
-            self.expect_token(TokenType::RParen)?;
-        }
-        if from && self.match_identifier("DRY_RUN") {
-            self.expect_token(TokenType::Eq)?;
-            if !self.match_token(TokenType::True) && !self.match_token(TokenType::False) {
-                return Err(self.parse_error("Expected TRUE or FALSE"));
-            }
-        }
-        match self.is_statement_end_at(0) || self.check(TokenType::RParen) {
-            true => Ok(Some(self.current)),
-            false => Err(self.parse_error("Expected the end of EXECUTE IMMEDIATE")),
-        }
+    /// `<name> => <value>`, one argument of a file EXECUTE IMMEDIATE FROM runs.
+    fn parse_execute_argument(&mut self) -> Result<Expression> {
+        let token = self.peek().span;
+        let name = self.expect_identifier_or_keyword()?;
+        self.expect_token(TokenType::FArrow)?;
+        Ok(Expression::NamedArgument(Box::new(NamedArgument {
+            name: Identifier::new(name).with_span(token),
+            value: self.parse_expression()?,
+            separator: NamedArgSeparator::DArrow,
+        })))
     }
 
     /// In Snowflake, refuse an unquoted reserved keyword in any dotted part of a COMMENT ON name.

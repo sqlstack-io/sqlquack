@@ -396,6 +396,22 @@ pub struct ExecuteUsingPolicyContext {
     pub query: Expression,
 }
 
+/// Snowflake `EXECUTE IMMEDIATE <source> [ USING ( <variable> , ... ) ]`, or `EXECUTE IMMEDIATE FROM <location> [ USING ( <name> => <value> , ... ) ] [ DRY_RUN = <bool> ]`.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ExecuteImmediate {
+    /// The text to run: a string, a variable or a `||` concatenation of them, or the location after FROM.
+    pub source: Expression,
+    /// Whether the source is a file read FROM a location.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub from: bool,
+    /// USING's bind variables, or its named arguments after FROM.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub using: Vec<Expression>,
+    /// DRY_RUN after FROM, when given.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub dry_run: Option<bool>,
+}
+
 /// Named parameter in EXEC statement: @name=value
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ExecuteParameter {

@@ -392,6 +392,7 @@ use crate::expressions::statements::models::Delete;
 use crate::expressions::statements::models::Describe;
 use crate::expressions::statements::models::Detach;
 use crate::expressions::statements::models::DropPartition;
+use crate::expressions::statements::models::ExecuteImmediate;
 use crate::expressions::statements::models::ExecuteStatement;
 use crate::expressions::statements::models::ExecuteUsingPolicyContext;
 use crate::expressions::statements::models::Get;
@@ -1235,6 +1236,7 @@ pub enum Expression {
     Execute(Box<ExecuteStatement>),
     ExecuteObject(Box<ExecuteObject>),
     ExecuteUsingPolicyContext(Box<ExecuteUsingPolicyContext>),
+    ExecuteImmediate(Box<ExecuteImmediate>),
 
     /// Snowflake CREATE TASK statement
     CreateTask(Box<CreateTask>),
