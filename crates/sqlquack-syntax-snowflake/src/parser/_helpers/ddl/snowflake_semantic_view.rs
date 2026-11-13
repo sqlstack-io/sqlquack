@@ -103,6 +103,13 @@ impl Parser {
                 return Ok(property(kind, None, Some(self.parse_semantic_string()?)));
             }
         }
+        if self.match_text_seq(&["MAX_STALENESS"]) {
+            self.expect_token(TokenType::Eq)?;
+            if !self.check(TokenType::Number) && !self.check(TokenType::String) {
+                return Err(self.parse_error("Expected a number after MAX_STALENESS ="));
+            }
+            return Ok(property("MAX_STALENESS", None, Some(self.parse_primary()?)));
+        }
         if self.match_text_seq(&["COPY", "GRANTS"]) {
             return Ok(property("COPY GRANTS", None, None));
         }
