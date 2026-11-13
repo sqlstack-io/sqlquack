@@ -62,3 +62,10 @@ class StrayElisionTestCase:
     arguments: tuple[str, ...]
     expected_code: int
     expected_text: str
+
+
+@dataclass(frozen=True)
+class OperandClassTestCase:
+    description: str
+    target: str
+    expected_notes: frozenset[str]
