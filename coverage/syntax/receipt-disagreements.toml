@@ -141,7 +141,6 @@ other_receipts_contradicted = [
   "sf.ddl.create-iceberg-table.table.k8850641ddea7",
   "sf.ddl.create-iceberg-table.table.kda298ce19f1a",
   "sf.ddl.create-iceberg-table.table.kdeb38bc667b1",
-  "sf.ddl.show-services.k3174190a193b",
   "sf.expressions.snowflake-db-classes.k9eccc2186fa2",
   "sf.functions.abs.k6169455e23b9",
   "sf.functions.abs.k93f76764032f",
@@ -433,10 +432,8 @@ other_receipts_contradicted = [
 ]
 "sf.ddl.create-dbt-project" = [
   "k5122c8e1ce71",
-  "k7420b177ddb4",
   "ka1910fdd6a39",
 ]
-"sf.ddl.create-dcm-project" = ["kc8ee341c5b3e"]
 "sf.ddl.create-event-table.table" = [
   "k3db3965dad10",
   "ka4565655794b",
@@ -454,16 +451,6 @@ other_receipts_contradicted = [
 ]
 "sf.ddl.create-file-format.create-file-format" = ["k157043357740"]
 "sf.ddl.create-file-format.create-or-alter-file" = ["k63c67a765cde"]
-"sf.ddl.create-file-format.define-file-format" = [
-  "k06c4ef24b229",
-  "k3bc7372317c1",
-  "k4ecd2ac5d585",
-  "k6442d50cbfb5",
-  "kc5e0a42f9d6d",
-  "kd410e9d1ce59",
-  "keb7c459323d2",
-  "kf5bc37436718",
-]
 "sf.ddl.create-hybrid-table.table" = ["k5069c51ae2f1"]
 "sf.ddl.create-iceberg-table-rest.table-as-select" = [
   "k46e441bba1ae",
@@ -490,29 +477,6 @@ other_receipts_contradicted = [
   "kdecdca528b66",
 ]
 "sf.ddl.create-notebook" = ["kf71b1b4702de"]
-"sf.ddl.create-notebook-project.from" = [
-  "k04157e0cae3b",
-  "k3bd37bb0d8aa",
-  "k470aedeb20d7",
-  "k56bd519c75d8",
-  "k5b725ec34778",
-  "k8175a0ed8b3f",
-  "k86fbd598aabe",
-  "k93e38cf94ad6",
-  "kf2e7fa986161",
-]
-"sf.ddl.create-notebook-project.from.syntax" = [
-  "k0389cf97c10d",
-  "k0d30173c2ba0",
-  "k0effcc870265",
-  "k16b326a23343",
-  "k4262b7c0ffc8",
-  "k658652e955b7",
-  "k7369a7e89683",
-  "k7a4c473742b6",
-  "kf1cac88ec727",
-  "kf871d563763e",
-]
 "sf.ddl.create-openflow-connector.from" = ["kfe0f922d5519"]
 "sf.ddl.create-openflow-connector.from-definition" = ["kf967b8f327bb"]
 "sf.ddl.create-openflow-deployment" = ["ka98182f56d37"]
@@ -530,16 +494,6 @@ other_receipts_contradicted = [
 "sf.ddl.create-semantic-view.create-or-alter-semantic" = ["kde5a57ccc35a"]
 "sf.ddl.create-semantic-view.create-semantic-view-tables" = ["kf0a8b4db490a"]
 "sf.ddl.create-service" = ["k8b4a7178f15e"]
-"sf.ddl.create-snapshot" = [
-  "k34b887d52e66",
-  "k38a6624d17a3",
-  "k3cd820508098",
-  "k509245477194",
-  "k6058d7d92612",
-  "k77d75cfb0c86",
-  "kaaf3fd132d61",
-  "kf7601bdcc20e",
-]
 "sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk" = ["k7de2438283a3"]
 "sf.ddl.create-table-constraint.create-table" = ["k0afaf3657a86"]
 "sf.ddl.create-table.create-or-alter-table" = ["k808bd6a0f704"]
@@ -585,16 +539,6 @@ other_receipts_contradicted = [
   "k5e02277ae099",
 ]
 "sf.ddl.show-schema-variables" = ["k9212c756ceed"]
-"sf.ddl.show-services" = [
-  "k5921aec5ad1a",
-  "k5ce91e02cf1b",
-  "k842a61ea4b47",
-  "k84cce40e4bf5",
-  "k924b5283f23d",
-  "kbce8ef49cc6c",
-  "kcdd9d23758af",
-  "kfaf3e64ab034",
-]
 "sf.ddl.show-warehouses" = [
   "k60bb276ffb47",
   "k9b013a14443f",
@@ -620,80 +564,11 @@ other_receipts_contradicted = [
 ]
 "sf.security_admin.alter-account.set-maintenance-policy-for" = ["kd79fe523c612"]
 "sf.security_admin.alter-role.unset-tag" = ["kd58424974186"]
-"sf.security_admin.alter-user-set-ingress-policy.set-ingress-policy" = ["k1d01376f27f6"]
-"sf.security_admin.alter-user-set-ingress-policy.unset-ingress-policy" = ["k588ed0aecd5b"]
-"sf.security_admin.alter-user.mfaactions" = ["k6186bb25df2e"]
-"sf.security_admin.alter-user.rename-to" = [
-  "k26355b409ada",
-  "k38918a533a59",
-  "ka67ec5bfe390",
-]
-"sf.security_admin.alter-user.set-authentication-password-session" = [
-  "k30c7494b8c05",
-  "k3ac7de91e492",
-  "k48bfd1fc7a39",
-  "k6e241e9bb51b",
-  "kd976483d1648",
-]
-"sf.security_admin.alter-user.set-tag" = [
-  "k4979b9603b61",
-  "k5d4b12e543e9",
-  "k5fbeae66bc8a",
-  "k683e212bb859",
-  "ka7599865bc83",
-  "kd62fa0e1a7af",
-  "kfbf9f5021177",
-]
-"sf.security_admin.alter-user.unset-authentication-password-session" = [
-  "k7d87991ce237",
-  "ka38e9b463160",
-  "kc513ab2fdb46",
-]
-"sf.security_admin.alter-user.unset-tag" = [
-  "k0db93acc0ec3",
-  "k496c5a250952",
-  "kaecbd1b078df",
-]
-"sf.security_admin.create-failover-group.object-types-allowed-accounts" = [
-  "k25daf8b03298",
-  "k40f1b8459345",
-  "k66ce4127e8c3",
-  "k8b530877d45f",
-  "k9502de03e4c4",
-  "kba3bc0a0fbe3",
-  "kc5a9dd4ce6cb",
-  "kefd7bd616c18",
-]
 "sf.security_admin.create-organization-listing.from" = [
   "k477815e83d52",
   "k7357ac165c3b",
 ]
-"sf.security_admin.create-organization-profile.profile-as" = [
-  "k0e5d1e9d9399",
-  "k1bd6bbfd7a96",
-  "k536e5d66e2ae",
-  "k7db2a804c4f5",
-  "k80723af13019",
-  "k8edd876b75c4",
-  "kb380684328a2",
-  "kf2822a75310e",
-  "kf80edd8d5116",
-]
-"sf.security_admin.create-organization-profile.profile-from" = [
-  "k31e5b9e5154b",
-  "k4291f05a67b7",
-  "k9abf4f053670",
-]
-"sf.security_admin.create-replication-group.object-types-allowed-accounts" = [
-  "k2d19a83b3f28",
-  "k30422b84a729",
-  "k8cae29c318a0",
-  "kaba2b028a525",
-  "kb0a6a4672646",
-  "kbfc9d3c14a5c",
-  "kde1d41ae84b1",
-  "ke0291e2a6a65",
-]
+"sf.security_admin.create-organization-profile.profile-from" = ["k4291f05a67b7"]
 "sf.transaction_session.set.set" = [
   "k76b3c8f13e37",
   "ke5addf54c855",
@@ -846,11 +721,6 @@ other_receipts_contradicted = [
   "ke226f34d7639",
 ]
 "sf.ddl.show-service-volumes-in-service" = ["k1a90530e5a33"]
-"sf.ddl.show-services" = [
-  "k76505eb618f0",
-  "kbef7e93eb07c",
-  "kc253f69002b8",
-]
 "sf.ddl.show-shared-content" = ["k651e594c686e"]
 "sf.ddl.show-snapshots-in-snapshot-set" = ["ke9163e3b7b28"]
 "sf.ddl.show-tasks" = [
