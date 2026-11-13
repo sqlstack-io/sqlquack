@@ -43,7 +43,14 @@ impl Parser {
             let checked = match (connector, warehouse) {
                 (true, _) if self.check_text_seq(&["ADD"]) => self.check_connector_version(),
                 (true, _) if self.check_text_seq(&["PUSH"]) => self.check_connector_push(),
-                (_, true) => self.check_warehouse_action(self.current == kind_at + 1),
+                (_, true) => {
+                    let exists = self.tokens[kind_at + 1].token_type == TokenType::If
+                        && self.tokens.get(kind_at + 2).map(|token| token.token_type)
+                            == Some(TokenType::Exists);
+                    let unnamed =
+                        self.current == kind_at + 1 || (exists && self.current == kind_at + 3);
+                    self.check_warehouse_action(unnamed)
+                }
                 _ => Ok(()),
             };
             self.current = after_name;
@@ -343,10 +350,18 @@ impl Parser {
         }
     }
 
-    /// Whether the token `offset` tokens ahead ends a notebook's name: the statement end or FROM, so `CREATE NOTEBOOK project FROM @s1` names the notebook PROJECT.
+    /// Whether the token `offset` tokens ahead ends a notebook's name: the statement end, FROM or an unquoted `<property> =`, so `CREATE NOTEBOOK project FROM @s1` names the notebook PROJECT.
     fn notebook_name_ends_at(&self, offset: usize) -> bool {
-        self.peek_nth(offset)
-            .is_none_or(|token| matches!(token.token_type, TokenType::From | TokenType::Semicolon))
+        let property = self
+            .peek_nth(offset)
+            .is_some_and(|token| token.token_type != TokenType::QuotedIdentifier)
+            && self
+                .peek_nth(offset + 1)
+                .is_some_and(|token| token.token_type == TokenType::Eq);
+        property
+            || self.peek_nth(offset).is_none_or(|token| {
+                matches!(token.token_type, TokenType::From | TokenType::Semicolon)
+            })
     }
 
     /// Refuse a kind whose first word starts a kind the check knows but whose next words complete none, as `ALTER OPENFLOW v1` does.
