@@ -76,6 +76,12 @@ fn given_a_snowflake_alert_or_data_movement_rule_when_parsing_then_only_what_sno
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "a data movement rule's type comes before its row limit (recorded syntax error)",
+            sql: "CREATE DATA MOVEMENT RULE v1 MAX_ROWS AS ( ) RETURNS INTEGER -> ( 1 ) TYPE = 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "a data movement rule needs its name (recorded syntax error)",
             sql: "CREATE DATA MOVEMENT RULE TYPE = 'm' MAX_ROWS AS ( ) RETURNS INTEGER -> ( 1 ) ;",
             dialect: Dialect::Snowflake,

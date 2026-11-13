@@ -27,11 +27,16 @@ impl Parser {
         }
         let name = self.parse_object_name()?;
         let mut properties: Vec<ObjectProperty> = Vec::new();
+        let mut typed = false;
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
             if self.check_identifier("MAX_ROWS") && self.check_next(TokenType::As) {
+                if !typed {
+                    return Err(self.parse_error("Expected TYPE before MAX_ROWS"));
+                }
                 properties.push(self.parse_max_rows_body()?);
                 continue;
             }
+            typed |= self.peek_text().eq_ignore_ascii_case("TYPE");
             if self.check(TokenType::Comment) && self.check_next(TokenType::Eq) {
                 self.skip();
                 self.skip();

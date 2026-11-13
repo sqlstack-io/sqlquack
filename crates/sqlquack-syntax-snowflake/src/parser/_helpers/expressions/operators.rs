@@ -48,10 +48,7 @@ use sqlquack_syntax::tokens::types::Result;
 
 impl Parser {
     /// Parse function parameters
-    pub(crate) fn parse_function_parameters(
-        &mut self,
-        procedure: bool,
-    ) -> Result<Vec<FunctionParameter>> {
+    pub(crate) fn parse_function_parameters(&mut self) -> Result<Vec<FunctionParameter>> {
         let mut params: Vec<FunctionParameter> = Vec::new();
 
         if self.check(TokenType::RParen) {
@@ -145,7 +142,7 @@ impl Parser {
                     (None, self.identifier_to_datatype(&first_ident.name)?)
                 } else {
                     self.match_token(TokenType::As);
-                    if let Some((after_name, text)) = self.match_argument_mode(procedure)? {
+                    if let Some((after_name, text)) = self.match_argument_mode()? {
                         mode = Some(after_name);
                         mode_text = Some(text);
                         let dt = self.parse_data_type()?;
@@ -186,9 +183,9 @@ impl Parser {
         Ok(params)
     }
 
-    /// A Snowflake procedure argument's mode after its name, IN, INPUT, OUT or OUTPUT, when its type follows.
-    fn match_argument_mode(&mut self, procedure: bool) -> Result<Option<(ParameterMode, String)>> {
-        if !procedure || !self.is_snowflake() {
+    /// A Snowflake procedure or function argument's mode after its name, IN, INPUT, OUT or OUTPUT, when its type follows.
+    fn match_argument_mode(&mut self) -> Result<Option<(ParameterMode, String)>> {
+        if !self.is_snowflake() {
             return Ok(None);
         }
         let mode = if self.check(TokenType::In) || self.check(TokenType::Input) {
@@ -333,7 +330,7 @@ impl Parser {
         let name = self.parse_table_ref()?;
 
         let (parameters, has_parens) = if self.match_token(TokenType::LParen) {
-            let params = self.parse_function_parameters(true)?;
+            let params = self.parse_function_parameters()?;
             self.expect_token(TokenType::RParen)?;
             (params, true)
         } else if self.check(TokenType::Var) && !self.check(TokenType::As) {
