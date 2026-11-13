@@ -1216,3 +1216,80 @@ fn given_a_snowflake_lone_contact_or_unnamed_snapshot_policy_when_parsing_then_t
         "a snapshot only sets its comment (recorded errno 1003)"
     );
 }
+
+#[test]
+fn given_snowflake_listing_filters_routine_maps_and_iceberg_versions_when_parsing_then_recorded_verdicts_hold(
+) {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an Iceberg table reads at a version tag (recorded errno 2003)",
+            sql: "SELECT 1 FROM t1 AT ( VERSION_TAG => 'm' ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "external function headers may use bare words (recorded errno 2169)",
+            sql: "CREATE EXTERNAL FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = v1 HEADERS = ( m1 = 'm' ) AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a request translator may be a string (recorded semantic error)",
+            sql: "CREATE EXTERNAL FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = v1 REQUEST_TRANSLATOR = 'v1' AS 'm' ;",
+            expected_kind: Some("create_function"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a named argument does not take an unquoted stage (recorded errno 1003)",
+            sql: "SELECT * FROM TABLE ( INFER_SCHEMA ( LOCATION => @s1 , FILE_FORMAT => 'm' ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "METRIC alone is not a kind (recorded errno 1003)",
+            sql: "CREATE METRIC FUNCTION v1 ( v1 TABLE ( v1 INT ) ) RETURNS NUMBER AS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "IF after a kind starts IF NOT EXISTS (recorded errno 1003)",
+            sql: "CREATE OR ALTER v1 IF ( EXISTS ( SELECT 1 ) ) THEN SELECT 1 ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_listing_filters_or_a_volatile_file_format_when_parsing_then_they_are_kept() {
+    let test_cases = [
+        StatementTestCase {
+            description: "listing filters are kept in order",
+            sql: "SHOW TERSE AVAILABLE LISTINGS LIMIT 1 IS_IMPORTED = TRUE IS_SHARED_WITH_ME = TRUE ;",
+            pointer: "/0/show/listing_filters",
+            expected_value: json!(["IS_IMPORTED", "IS_SHARED_WITH_ME"]),
+        },
+        StatementTestCase {
+            description: "a listing filter needs no LIMIT before it",
+            sql: "SHOW AVAILABLE LISTINGS IS_ORGANIZATION = TRUE ;",
+            pointer: "/0/show/listing_filters",
+            expected_value: json!(["IS_ORGANIZATION"]),
+        },
+        StatementTestCase {
+            description: "a volatile file format keeps VOLATILE",
+            sql: "CREATE OR ALTER VOLATILE FILE FORMAT v1 ;",
+            pointer: "/0/create_object/modifier",
+            expected_value: json!("VOLATILE"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}

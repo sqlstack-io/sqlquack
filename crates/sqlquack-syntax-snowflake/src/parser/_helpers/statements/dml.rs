@@ -337,7 +337,7 @@ impl Parser {
         Ok((using, joins))
     }
 
-    /// Skips LOCAL or GLOBAL before TEMP, TEMPORARY or VOLATILE, then VOLATILE before TABLE; whether it skipped VOLATILE, which makes the table temporary.
+    /// Skips LOCAL or GLOBAL before TEMP, TEMPORARY or VOLATILE, then VOLATILE before TABLE or FILE FORMAT; whether it skipped VOLATILE, which makes the object temporary.
     fn match_snowflake_temporary_scope(&mut self) -> bool {
         let scoped = matches!(
             self.snowflake_word_at(0).as_deref(),
@@ -350,7 +350,9 @@ impl Parser {
             self.skip();
         }
         let volatile = self.snowflake_word_at(0).as_deref() == Some(VOLATILE)
-            && self.snowflake_word_at(1).as_deref() == Some(TABLE_KEYWORD);
+            && (self.snowflake_word_at(1).as_deref() == Some(TABLE_KEYWORD)
+                || (self.snowflake_word_at(1).as_deref() == Some("FILE")
+                    && self.snowflake_word_at(2).as_deref() == Some("FORMAT")));
         if volatile {
             self.skip();
         }
@@ -658,7 +660,7 @@ impl Parser {
         }
     }
 
-    /// Refuse a Snowflake CREATE with no kind before its name, a partial kind, or an APPLICATION with no source, as recorded syntax errors (errno 1003).
+    /// Refuse a Snowflake CREATE with no kind before its name, a partial kind, IF not starting IF NOT EXISTS after the kind, or an APPLICATION with no source, as recorded syntax errors (errno 1003).
     fn check_snowflake_create_kind(&self) -> Result<()> {
         let token_type_at = |offset: usize| {
             self.tokens
@@ -671,6 +673,11 @@ impl Parser {
         if ends_at(1) {
             return Err(self.parse_error("Expected an object kind and a name"));
         }
+        if token_type_at(1) == Some(TokenType::If)
+            && !matches!(token_type_at(2), Some(TokenType::Not | TokenType::Exists))
+        {
+            return Err(self.parse_error("Expected IF NOT EXISTS after the object kind"));
+        }
         if token_type_at(2) == Some(TokenType::Eq) {
             let property = self.tokens[self.current + 1].text.to_ascii_uppercase();
             return Err(self.parse_error(format!(
@@ -678,6 +685,7 @@ impl Parser {
             )));
         }
         let partial = self.check_identifier("PROFILE")
+            || self.check_identifier("METRIC")
             || self.check_identifier("POLICY")
             || self.check_identifier("PROJECT")
             || (self.check_identifier("PACKAGES") && !self.check_next_identifier("POLICY"));
