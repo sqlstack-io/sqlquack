@@ -857,3 +857,27 @@ fn given_a_snowflake_warehouse_or_connector_action_when_parsing_then_recorded_ve
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_event_table_with_a_contact_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an event table copies grants (recorded acceptance)",
+            sql: "CREATE EVENT TABLE v1 COPY = ( GRANTS ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an event table takes no CONTACT (recorded errno 1003)",
+            sql: "CREATE EVENT TABLE v1 WITH CONTACT ( STEWARD = v1 ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
