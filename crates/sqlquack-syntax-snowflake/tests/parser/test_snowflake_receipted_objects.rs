@@ -671,3 +671,47 @@ fn given_a_snowflake_external_agent_or_filtered_show_when_parsing_then_the_tree_
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_show_with_privileges_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a documented privilege (recorded acceptance)",
+            sql: "SHOW DATABASES WITH PRIVILEGES USAGE , USAGE ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a privilege of several words",
+            sql: "SHOW SCHEMAS WITH PRIVILEGES USAGE , CREATE TABLE ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a name that is no privilege (recorded errno 1003)",
+            sql: "SHOW WAREHOUSES WITH PRIVILEGES v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a trailing comma (recorded errno 1003)",
+            sql: "SHOW SCHEMAS WITH PRIVILEGES USAGE , ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a privilege list may end a RESULTSET's query",
+            sql: "BEGIN LET r1 RESULTSET := ( SHOW DATABASES WITH PRIVILEGES USAGE ) ; END ;",
+            expected_kind: Some("scripting_block"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a privilege list may flow into the next statement",
+            sql: "SHOW DATABASES WITH PRIVILEGES USAGE ->> SELECT 1 ;",
+            expected_kind: Some("operator"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
