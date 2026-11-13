@@ -643,6 +643,21 @@ fn given_snowflake_iceberg_and_dynamic_tables_when_parsing_then_their_grammar_is
             expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
+            description: "a DCM definition of a database with a property (recorded OK)",
+            sql: "DEFINE DATABASE v1 ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO' ;",
+            expected_kind: Some("create_database"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a DCM definition of a schema with a bare-word comment (recorded OK)",
+            sql: "DEFINE SCHEMA d1.v1 COMMENT = m1 ;",
+            expected_kind: Some("create_schema"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a DCM definition of a database still checks its properties",
+            sql: "DEFINE DATABASE v1 COMMENT = ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
             description: "OR ALTER on an iceberg table (recorded errno 1003)",
             sql: "CREATE OR ALTER ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;",
             expected_kind: None,
