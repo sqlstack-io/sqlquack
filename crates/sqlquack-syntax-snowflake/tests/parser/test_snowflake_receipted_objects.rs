@@ -389,3 +389,92 @@ fn given_a_snowflake_failover_or_replication_group_when_parsing_then_recorded_ve
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_show_services_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "OF TYPE names a service type (recorded acceptance)",
+            sql: "SHOW SERVICES OF TYPE USER ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "IN COMPUTE POOL names a pool (recorded semantic error)",
+            sql: "SHOW SERVICES IN COMPUTE POOL v1 ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "EXCLUDE JOBS keeps the documented clauses after it",
+            sql: "SHOW SERVICES EXCLUDE JOBS LIKE 'm' IN COMPUTE POOL v1 STARTS WITH 'm' LIMIT 1 FROM 'm' ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "OF TYPE needs a type (recorded errno 1003)",
+            sql: "SHOW SERVICES OF TYPE ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "EXCLUDE needs JOBS (recorded errno 1003)",
+            sql: "SHOW SERVICES EXCLUDE ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "COMPUTE POOL needs a name (recorded errno 1003)",
+            sql: "SHOW SERVICES IN COMPUTE POOL ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "STARTS WITH takes a string (recorded errno 1003)",
+            sql: "SHOW SERVICES STARTS WITH m1 ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_service_snapshot_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description:
+                "a snapshot names its service, volume and instance (recorded semantic error)",
+            sql: "CREATE SNAPSHOT v1 FROM SERVICE v1 VOLUME \"d1\" INSTANCE 0 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a snapshot set is not a service snapshot (recorded semantic error)",
+            sql: "CREATE SNAPSHOT SET v1 FOR TABLE v1 ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a snapshot needs SERVICE after FROM (recorded errno 1003)",
+            sql: "CREATE SNAPSHOT v1 FROM v1 VOLUME \"d1\" INSTANCE 0 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a snapshot needs VOLUME (recorded errno 1003)",
+            sql: "CREATE SNAPSHOT v1 FROM SERVICE v1 \"d1\" INSTANCE 0 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a snapshot's tags need TAG (recorded errno 1003)",
+            sql: "CREATE SNAPSHOT v1 FROM SERVICE v1 VOLUME \"d1\" INSTANCE 0 ( v1 = 'm' ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

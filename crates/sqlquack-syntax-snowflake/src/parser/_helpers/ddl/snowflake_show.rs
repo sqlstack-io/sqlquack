@@ -48,6 +48,9 @@ impl Parser {
         show.target = target;
         show.terse = terse;
         show.history = self.match_identifier("HISTORY");
+        if matches!(kind.as_str(), "SERVICES") {
+            show = self.parse_show_services_filters(show)?;
+        }
         if matches!(kind.as_str(), "OPENFLOW DATA PLANE INTEGRATIONS") {
             return Ok(Some(Expression::Show(Box::new(show))));
         }
@@ -141,6 +144,21 @@ impl Parser {
             show.for_target = Some(self.parse_show_name()?);
         }
         Ok(Some(Expression::Show(Box::new(show))))
+    }
+
+    /// `[ EXCLUDE JOBS ] [ OF TYPE <type> ]` after SHOW SERVICES, kept in the kind as written.
+    fn parse_show_services_filters(&mut self, mut show: Show) -> Result<Show> {
+        if self.match_text_seq(&["EXCLUDE", "JOBS"]) {
+            show.this.push_str(" EXCLUDE JOBS");
+        }
+        if self.match_text_seq(&["OF", "TYPE"]) {
+            if !(self.is_identifier_token() || self.check_keyword()) {
+                return Err(self.parse_error("Expected a service type after OF TYPE"));
+            }
+            let service_type = self.advance_text()?.to_ascii_uppercase();
+            show.this = format!("{} OF TYPE {service_type}", show.this);
+        }
+        Ok(show)
     }
 
     /// A documented object kind, such as `TABLES`.

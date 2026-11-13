@@ -774,9 +774,9 @@ fn given_a_snowflake_stage_or_file_format_when_parsing_then_its_options_need_val
             expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
-            description: "keeps DEFINE TEMPORARY FILE FORMAT d1.s1.v1 ;",
+            description: "DEFINE FILE FORMAT takes no modifier (recorded errno 1003)",
             sql: "DEFINE TEMPORARY FILE FORMAT d1.s1.v1 ;",
-            expected_kind: Some("create_object"),
+            expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "keeps CREATE FILE FORMAT v1 TYPE = JSON NULL_IF = ( m1 ) ;",
