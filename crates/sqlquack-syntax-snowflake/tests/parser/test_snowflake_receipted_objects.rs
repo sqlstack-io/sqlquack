@@ -744,3 +744,32 @@ fn given_a_snowflake_variable_when_parsing_then_recorded_verdicts_hold() {
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_describe_of_a_metric_function_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "TABLE arguments with column types (recorded semantic error)",
+            sql: "DESC FUNCTION v1 ( TABLE ( INT ) , TABLE ( INT , INT ) ) ;",
+            expected_kind: Some("describe"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a TABLE argument needs a column type (recorded errno 1003)",
+            sql: "DESC FUNCTION v1 ( TABLE ( INT ) , TABLE ( ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an argument does not open with a parenthesis (recorded errno 1003)",
+            sql: "DESC FUNCTION v1 ( TABLE ( INT ) , ( INT ) ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

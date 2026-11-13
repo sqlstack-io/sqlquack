@@ -156,6 +156,19 @@ impl Parser {
         }))))
     }
 
+    /// Refuse a Snowflake DESCRIBE argument that opens with a bare parenthesis, or a TABLE argument without column types.
+    pub(super) fn check_describe_argument_start(&self) -> Result<()> {
+        let empty_table = self.check(TokenType::Table)
+            && self.check_next(TokenType::LParen)
+            && self
+                .peek_nth(2)
+                .is_some_and(|token| token.token_type == TokenType::RParen);
+        match self.check(TokenType::LParen) || empty_table {
+            true => Err(self.parse_error("Expected an argument data type")),
+            false => Ok(()),
+        }
+    }
+
     /// An optional `<name> = <choice>` after a DESCRIBE target, as the shared DESCRIBE keeps one.
     fn parse_describe_choice(
         &mut self,
