@@ -173,3 +173,20 @@ note = "Read in full against the documentation page, the obligations, the cases 
 [review.definitions]
 "sf.utility.execute-immediate.immediate-2" = "3416aeb205558b4247bfd90128e0c794bcc6107c0b5f687312ae897706f926be"
 "sf.utility.execute-immediate.immediate.syntax" = "473a9693f23b0879c4dcf7de1358a00cc8180d19977ee8adb151e3dcce2fcab1"
+
+[[review]]
+id = "utility-009"
+family = "utility"
+parser_tree = "4d40d1f1d5584dd340a3a98d1d42fd5b0ac659df"
+reviewed_utc = "2026-11-13T16:54:29Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-task-graph.graph",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 7eb0b602d; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-task-graph.graph" = "98fac086c686c57124247805601497a3c2cdcccc94248f5e76c8775ef92b3209"
+
+[review.definitions]
+"sf.utility.execute-task-graph.graph" = "0b96bc845f3c1b9d1e70b7a2888bb16ae8aca3c55c4298468fbb254e49141b0c"

@@ -1519,3 +1519,26 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.security_admin.show-user-functions" = "c08332fc903f337ceb3803d79fc1b9a7c5363f8c830c4d91e2f5cbc0a896e0ce"
 "sf.security_admin.show-user-procedures" = "6af1bdf02e98b2d3a245fe75527d2149f14c6025fd9d4f7348ebba59828b195d"
 "sf.security_admin.show-user-programmatic-access-tokens" = "4bd072dd5622d1f22e358845fe7dd54aa965aed79bee2bbea319f6e26f8b70cd"
+
+[[review]]
+id = "security-admin-016"
+family = "security_admin"
+parser_tree = "4d40d1f1d5584dd340a3a98d1d42fd5b0ac659df"
+reviewed_utc = "2026-11-13T16:54:29Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-role.rename-to",
+  "sf.security_admin.alter-role.set-comment",
+  "sf.security_admin.alter-role.unset-comment",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 7eb0b602d; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-role.rename-to" = "119a5809054018540a75a502a178b447726a185ac77066e9cb44a69141d061ec"
+"sf.security_admin.alter-role.set-comment" = "64f25674b62028c60bdfbdf45923262b58ac1bd945e64e560de54169be78d71e"
+"sf.security_admin.alter-role.unset-comment" = "168ac9464e5fde531c1937e793ba11b90f0796bf8cd656986594faead68ba332"
+
+[review.definitions]
+"sf.security_admin.alter-role.rename-to" = "0b242a8d75b4c85f4f4554609448fae268746bda53d9545a8eba6a1d511d9248"
+"sf.security_admin.alter-role.set-comment" = "02a2aac016b99fa9d774c68d4d259ca3aebd1c76274d62c5c56c25d18e3e2186"
+"sf.security_admin.alter-role.unset-comment" = "9febe062a9e79ae8757c06b6fa01615427f932a48ffc75b10cb0854280237174"
