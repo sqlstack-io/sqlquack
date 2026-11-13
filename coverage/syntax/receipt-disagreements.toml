@@ -457,12 +457,6 @@ other_receipts_contradicted = [
 "sf.ddl.alter-openflow-deployment.upgrade" = ["k8f0dad70d584"]
 "sf.ddl.alter-openflow-runtime.add-external-access-integrations" = ["k321a5bc12fbc"]
 "sf.ddl.alter-openflow-runtime.remove-external-access-integrations" = ["k836e23a21602"]
-"sf.ddl.alter-sequence.sequence" = [
-  "k3cb7f778e7e3",
-  "k6b24929220ed",
-  "k77c530586b6e",
-  "ke10211f9b40f",
-]
 "sf.ddl.alter-table.constraintaction" = [
   "k14f89fb0eef9",
   "k428be0eccccf",
@@ -876,46 +870,6 @@ other_receipts_contradicted = [
   "kde1d41ae84b1",
   "ke0291e2a6a65",
 ]
-"sf.security_admin.grant-privilege-application" = [
-  "k488f6248b05b",
-  "k5b19bcfaddc4",
-  "kfa65f9fdcfe5",
-]
-"sf.security_admin.grant-privilege-share" = [
-  "k0206f0a89d90",
-  "k8fbe693d62b9",
-  "kd85b9fa2e7cb",
-]
-"sf.security_admin.grant-privilege-user" = [
-  "kc4684d6ae876",
-  "kc5fb55f51b61",
-]
-"sf.security_admin.grant-privilege.globalprivileges-all-on-account" = [
-  "k75ef83ab101d",
-  "ka08d5ce6f484",
-  "kce9f4a286bf3",
-]
-"sf.security_admin.revoke-privilege-application" = [
-  "k1ce8f9b036a7",
-  "kf70ba8f1b9b4",
-]
-"sf.security_admin.revoke-privilege-share" = [
-  "k000713d782cd",
-  "k311d6f2f1a57",
-  "kaab28a4a7b93",
-]
-"sf.security_admin.revoke-privilege-user" = [
-  "k7c8fbbdd5fb5",
-  "kb155baeca699",
-]
-"sf.security_admin.revoke-privilege.create-schema-modify-monitor" = [
-  "k06c8c16715c9",
-  "k65d1453d8c37",
-]
-"sf.security_admin.revoke-privilege.globalprivileges-all-on-account" = [
-  "k7b3c7361edd4",
-  "ka656e1d1f0d3",
-]
 "sf.transaction_session.set.set" = [
   "k76b3c8f13e37",
   "ke5addf54c855",
@@ -995,19 +949,6 @@ other_receipts_contradicted = [
 "sf.ddl.alter-online-feature-table.table-set-comment" = ["ke7fec7c4938e"]
 "sf.ddl.alter-schema.set" = ["kac592c009c45"]
 "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = ["k220a7aefbc24"]
-"sf.ddl.alter-sequence.sequence" = [
-  "k274b1fe6e8dd",
-  "k5db0636cfc5d",
-]
-"sf.ddl.alter-sequence.sequence-set" = [
-  "k1e8684186268",
-  "k28a58bae81d5",
-  "k454dfb1dbccf",
-  "k5f4adc521b98",
-  "k8e061f25d0c2",
-  "k94bfd09b2390",
-  "kc7651bdbe18c",
-]
 "sf.ddl.alter-stage.set.syntax" = ["kd30e04e36906"]
 "sf.ddl.create-ai-function.from-experiment-run" = ["k67bb99e4b1b2"]
 "sf.ddl.create-code-bundle.define-code-bundle" = [
@@ -1063,19 +1004,16 @@ other_receipts_contradicted = [
 ]
 "sf.ddl.create-sequence.create-or-alter-sequence" = [
   "k20fca8f5f88e",
-  "k78ac458e2742",
   "k99f5b3f8173f",
   "kbecb9a758ed2",
 ]
 "sf.ddl.create-sequence.create-sequence" = [
   "k113b14e42a63",
   "k26917441077c",
-  "kd7d86689a723",
   "ke9e8b52768f8",
 ]
 "sf.ddl.create-sequence.define-sequence" = [
   "k4060b7e901a5",
-  "k53f85e4c758b",
   "k5781f7b98b4d",
   "kdce8646cffb5",
 ]
@@ -1221,51 +1159,6 @@ other_receipts_contradicted = [
   "kb041a193514d",
 ]
 "sf.security_admin.create-replication-group.as-replica-of" = ["k28cad1926c65"]
-"sf.security_admin.grant-database-role.database-role-role" = ["k5ca3929e61bd"]
-"sf.security_admin.grant-privilege.create-schema-modify-monitor" = [
-  "kae7a39f3be4c",
-  "kea24dbc998fd",
-]
-"sf.security_admin.grant-privilege.globalprivileges-all-on-account" = [
-  "k06f0fda76be8",
-  "k0c578af4c348",
-  "k48e5afb3529d",
-  "k65c7bff0697c",
-  "k917579f65cb3",
-  "kb16a60a866b4",
-  "kd08475cb63d7",
-  "kd2403e5813b2",
-]
-"sf.security_admin.grant-service-role" = [
-  "k61a4ddb18815",
-  "k848a36ab352d",
-]
-"sf.security_admin.revoke-database-role.role-database-role" = ["k12c9125f8ea7"]
-"sf.security_admin.revoke-privilege.create-schema-modify-monitor" = [
-  "k0aa46f9bdadb",
-  "k66836a0daf60",
-  "kaf41528807da",
-  "kc0cc9e12ccb3",
-  "kc7a932f38b67",
-  "kcd40b67d600d",
-  "kf3af0967983d",
-]
-"sf.security_admin.revoke-privilege.globalprivileges-all-on-account" = [
-  "k0733b942dedd",
-  "k20fbd341faca",
-  "k5127779d9b05",
-  "k5c306a5c2f23",
-  "k8b369880de96",
-  "kaa84ab6f9505",
-  "kc41608d05a98",
-  "kf7af79757651",
-]
-"sf.security_admin.revoke-service-role" = [
-  "k254fd1690ffd",
-  "k405cad2594fe",
-]
-"sf.security_admin.show-grants.grants-of-application-role" = ["k45092262edd7"]
-"sf.security_admin.show-grants.grants-to-application-application" = ["keea36f3775b4"]
 "sf.transaction_session.show-parameters" = [
   "k44dd24422f48",
   "k561fb9993b62",
