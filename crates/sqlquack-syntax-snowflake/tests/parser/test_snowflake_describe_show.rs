@@ -179,6 +179,18 @@ fn given_a_snowflake_show_when_parsing_then_its_kind_and_clauses_follow_the_gram
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "a kind with no plain name refuses a bare APPLICATION (recorded errno 1003)",
+            sql: "SHOW PRIVILEGES IN APPLICATION ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "future grants take no plain grantee, so a bare ROLE is refused (recorded errno 1003)",
+            sql: "SHOW FUTURE GRANTS TO ROLE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
     ];
 
     for test_case in test_cases {
@@ -235,6 +247,42 @@ fn given_a_snowflake_show_when_parsing_then_the_tree_keeps_kind_container_and_op
             sql: "SHOW REPLICATION DATABASES WITH PRIMARY a1.\"d 1\"",
             pointer: "/0/show/target/table/name/quoted",
             expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a bare APPLICATION is a schema's name, as IN v1 (recorded errno 2043 for both)",
+            sql: "SHOW TABLES IN APPLICATION ;",
+            pointer: "/0/show/scope/table/name/name",
+            expected_value: json!("APPLICATION"),
+        },
+        ProjectionTestCase {
+            description: "a bare APPLICATION names no container kind",
+            sql: "SHOW TABLES IN APPLICATION ;",
+            pointer: "/0/show/scope_kind",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "a bare CLASS is a schema's name (recorded errno 2003, as IN v1, not 398014 as IN CLASS v1)",
+            sql: "SHOW FUNCTIONS IN CLASS ;",
+            pointer: "/0/show/scope/table/name/name",
+            expected_value: json!("CLASS"),
+        },
+        ProjectionTestCase {
+            description: "a bare grantee kind is the grantee's name (recorded errno 3044, as TO v1)",
+            sql: "SHOW GRANTS TO ROLE ;",
+            pointer: "/0/show/scope/table/name/name",
+            expected_value: json!("ROLE"),
+        },
+        ProjectionTestCase {
+            description: "the word ending a grantee kind is the name after the shorter kind",
+            sql: "SHOW GRANTS TO APPLICATION ROLE ;",
+            pointer: "/0/show/scope_kind",
+            expected_value: json!("TO APPLICATION"),
+        },
+        ProjectionTestCase {
+            description: "a caller grant's bare ROLE is the owner's name",
+            sql: "SHOW CALLER GRANTS TO ROLE ;",
+            pointer: "/0/show/scope/table/name/name",
+            expected_value: json!("ROLE"),
         },
     ];
 
