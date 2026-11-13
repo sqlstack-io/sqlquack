@@ -15,6 +15,9 @@ use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
+/// The filters SHOW AVAILABLE LISTINGS takes after LIMIT, each `= TRUE`, in their documented order.
+const LISTING_FILTERS: &[&str] = &["IS_IMPORTED", "IS_ORGANIZATION", "IS_SHARED_WITH_ME"];
+
 impl Parser {
     /// A Snowflake SHOW after SHOW and TERSE; None leaves the kinds the shared SHOW reads to it.
     pub(crate) fn parse_snowflake_show(&mut self, terse: bool) -> Result<Option<Expression>> {
@@ -140,7 +143,7 @@ impl Parser {
             && (required.is_some() || self.check(TokenType::In))
         {
             self.expect_token(TokenType::In)?;
-            let (container, name) = self.parse_show_container(&kind)?;
+            let (container, name) = self.parse_show_container(kind)?;
             let allowed = |container: &str| match required {
                 Some(required) => required.contains(&container),
                 None => {
@@ -182,6 +185,22 @@ impl Parser {
             }
         }
         Ok(show)
+    }
+
+    /// SHOW AVAILABLE LISTINGS' `[ IS_IMPORTED = TRUE ] [ IS_ORGANIZATION = TRUE ] [ IS_SHARED_WITH_ME = TRUE ]` after LIMIT.
+    pub(crate) fn parse_show_listing_filters(&mut self, kind: &str) -> Result<Vec<String>> {
+        let mut filters: Vec<String> = Vec::new();
+        if !self.is_snowflake() || kind != crate::parser::constants::AVAILABLE_LISTINGS {
+            return Ok(filters);
+        }
+        for filter in LISTING_FILTERS {
+            if self.match_text_seq(&[filter]) {
+                self.expect_token(TokenType::Eq)?;
+                self.expect_token(TokenType::True)?;
+                filters.push((*filter).to_owned());
+            }
+        }
+        Ok(filters)
     }
 
     /// A documented object kind, such as `TABLES`.

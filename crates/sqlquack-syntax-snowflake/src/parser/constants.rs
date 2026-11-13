@@ -276,6 +276,9 @@ pub(crate) const SNOWFLAKE_FROM_CALLS: &[&str] = &[
     "TABLE",
 ];
 
+/// The SHOW kind "AVAILABLE LISTINGS", as comparisons test it.
+pub(crate) const AVAILABLE_LISTINGS: &str = "AVAILABLE LISTINGS";
+
 /// The text "VOLATILE", as comparisons test it.
 pub(crate) const VOLATILE: &str = "VOLATILE";
 
@@ -1199,7 +1202,10 @@ pub(crate) const SNOWFLAKE_ROUTINE_NAME_LIST_PROPERTIES: &[&str] =
 pub(crate) const SNOWFLAKE_ROUTINE_TEXT_NAME_PROPERTIES: &[&str] = &[
     "API_INTEGRATION",
     "ARTIFACT_REPOSITORY",
+    "COMPRESSION",
     "EXTERNAL_ACCESS_INTEGRATIONS",
+    "REQUEST_TRANSLATOR",
+    "RESPONSE_TRANSLATOR",
     "SECRETS",
     "SERVICE",
 ];
@@ -1215,10 +1221,7 @@ pub(crate) const SNOWFLAKE_ROUTINE_WORD_PROPERTIES: &[&str] = &[
 ];
 
 /// Snowflake function and procedure properties whose value is a `( '<key>' = <name> , ... )` map.
-pub(crate) const SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES: &[&str] = &["SECRETS"];
-
-/// Snowflake function and procedure properties whose value is a `( '<key>' = '<value>' , ... )` map.
-pub(crate) const SNOWFLAKE_ROUTINE_TEXT_MAP_PROPERTIES: &[&str] = &["HEADERS"];
+pub(crate) const SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES: &[&str] = &["HEADERS", "SECRETS"];
 /// The privileges a Snowflake GRANT or REVOKE names besides ALL, CREATE SNOWFLAKE classes and USE AI FUNCTION.
 pub(crate) const SNOWFLAKE_GRANT_PRIVILEGES: &[&str] = &[
     "ADD SEARCH OPTIMIZATION",

@@ -115,7 +115,15 @@ impl Parser {
             return Ok(None);
         }
 
-        let kind = if self.match_texts(&["OFFSET", "STATEMENT", "STREAM", "TIMESTAMP", "VERSION"]) {
+        let kind = if self.match_texts(&[
+            "OFFSET",
+            "STATEMENT",
+            "STREAM",
+            "TIMESTAMP",
+            "VERSION",
+            "VERSION_TAG",
+            "VERSION_REF",
+        ]) {
             self.previous_text().to_ascii_uppercase()
         } else {
             self.current = start_index;
