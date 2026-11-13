@@ -84603,3 +84603,223 @@ anchor = "doc.sql.alter-function / Syntax / User-defined and external functions 
 sql = "ALTER FUNCTION v1 ( INT ) SET EXTERNAL_ACCESS_INTEGRATIONS = ( ) ;"
 expect = "observe"
 context = "raw"
+
+# Probes for the dynamic table and event routing table questions the recorded cases leave open: clone options one at a
+# time, SET CONTACT and SET property combinations, column policy UNSET without COLUMN, and each part of a routing rule.
+# Each is observed; the recorded verdict decides the parser.
+
+[[limit]]
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+kind = "positive"
+note = "a clone with COPY GRANTS alone, observed"
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+sql = "CREATE DYNAMIC TABLE v1 CLONE v1 COPY GRANTS ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+kind = "positive"
+note = "a clone with COPY TAGS alone, observed"
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+sql = "CREATE DYNAMIC TABLE v1 CLONE v1 COPY TAGS ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+kind = "positive"
+note = "a clone with a COPY list alone, observed"
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+sql = "CREATE DYNAMIC TABLE v1 CLONE v1 COPY = ( COMMENTS ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+kind = "positive"
+note = "a clone with TARGET_LAG alone, observed"
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+sql = "CREATE DYNAMIC TABLE v1 CLONE v1 TARGET_LAG = '1 minute' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+kind = "positive"
+note = "a clone with WAREHOUSE alone, observed"
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+sql = "CREATE DYNAMIC TABLE v1 CLONE v1 WAREHOUSE = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+kind = "positive"
+note = "a clone with EXECUTE AS USER alone, observed"
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+sql = "CREATE DYNAMIC TABLE v1 CLONE v1 EXECUTE AS USER v1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-dynamic-table.create-dynamic-table-clone"
+kind = "positive"
+note = "a clone with TARGET_LAG and WAREHOUSE, observed"
+anchor = "doc.sql.create-dynamic-table / Variant syntax / CREATE DYNAMIC TABLE ... CLONE"
+sql = "CREATE DYNAMIC TABLE v1 CLONE v1 TARGET_LAG = '1 minute' WAREHOUSE = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "positive"
+note = "SET CONTACT without parentheses, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 SET CONTACT STEWARD = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "negative_neighbour"
+note = "a parenthesized CONTACT after another property, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 SET TARGET_LAG = DOWNSTREAM CONTACT ( STEWARD = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction"
+kind = "positive"
+note = "a column UNSET MASKING POLICY without COLUMN, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 ALTER v1 UNSET MASKING POLICY ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.datagovnpolicytagaction"
+kind = "positive"
+note = "a column UNSET PROJECTION POLICY without COLUMN, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 MODIFY v1 UNSET PROJECTION POLICY ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "negative_neighbour"
+note = "a property after USE SECONDARY ROLES, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 SET EXECUTE AS USER v1 USE SECONDARY ROLES ALL ROW_TIMESTAMP = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "positive"
+note = "a property after EXECUTE AS USER, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 SET EXECUTE AS USER v1 ROW_TIMESTAMP = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "positive"
+note = "EXECUTE AS USER after another property, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 SET TARGET_LAG = '1 minute' EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "positive"
+note = "FROZEN WHERE after another property, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 SET TARGET_LAG = '1 minute' FROZEN WHERE ( 1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-dynamic-table.set"
+kind = "positive"
+note = "a property after FROZEN WHERE, observed"
+anchor = "doc.sql.alter-dynamic-table / Syntax"
+sql = "ALTER DYNAMIC TABLE v1 SET FROZEN WHERE ( 1 ) ROW_TIMESTAMP = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "positive"
+note = "an event routing table with no rules, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "positive"
+note = "a rule with a string region group, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = 'g1' , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "positive"
+note = "a rule with a string destination account, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = 'v1.v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "positive"
+note = "a rule with a one-part destination account, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "positive"
+note = "a rule with no commas between its properties, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = 'g1' REGIONS = ( 'm' ) DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-event-routing-table"
+kind = "positive"
+note = "a parenthesized rule list, observed"
+anchor = "doc.sql.create-event-routing-table / Syntax"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES ( v1 = ( REGION_GROUP = 'g1' , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "positive"
+note = "SET RULE with a string region group, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = 'g1' REGIONS = ( 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions"
+kind = "positive"
+note = "SET RULE with an assigned parenthesized body, observed"
+anchor = "doc.sql.alter-event-routing-table / Syntax"
+sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 = ( REGION_GROUP = 'g1' , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+expect = "observe"
+context = "raw"
