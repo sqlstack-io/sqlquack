@@ -375,9 +375,9 @@ impl Parser {
             if self.match_token(TokenType::Increment) || self.match_identifier("INCREMENT") {
                 self.match_token(TokenType::By);
                 self.match_token(TokenType::Eq);
-                if !self.check(TokenType::Number) && !self.check(TokenType::Dash) {
-                    return Err(self.parse_error("Expected the increment"));
-                }
+                let start = self.current;
+                self.parse_signed_integer()?;
+                self.current = start;
                 properties.push(property(
                     "INCREMENT",
                     None,

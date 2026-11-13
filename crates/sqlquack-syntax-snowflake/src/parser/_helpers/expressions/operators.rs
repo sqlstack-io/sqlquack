@@ -741,7 +741,9 @@ impl Parser {
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
             if self.match_token(TokenType::Increment) || self.match_identifier("INCREMENT") {
                 self.match_token(TokenType::By);
-                self.match_token(TokenType::Eq);
+                if self.applies_snowflake_context_rules() {
+                    self.match_token(TokenType::Eq);
+                }
                 seq.increment = Some(self.parse_signed_integer()?);
             } else if self.match_token(TokenType::Minvalue) {
                 seq.minvalue = Some(SequenceBound::Value(self.parse_signed_integer()?));

@@ -175,7 +175,8 @@ that edits or removes a committed one.
   3. An errno of 100000 or more is a `runtime_error`, unless its SQLSTATE is in class 42. Then it
      is refused unless the errno is a reviewed one, which is a `semantic_error`.
   4. Errno 1003 under the `SQL compilation error` prefix is a `syntax_error`. Any other errno
-     under that prefix except 1002 is a `semantic_error`, a compilation error after parsing.
+     under that prefix except 1002 and 921 is a `semantic_error`, a compilation error after
+     parsing.
   5. Errno 1002 is a `syntax_error` when its message itself starts with `syntax error`, and errno
      921 when its message starts with `parse error`, in any case and whatever its SQLSTATE; any
      other errno 1002 or 921 is refused.
