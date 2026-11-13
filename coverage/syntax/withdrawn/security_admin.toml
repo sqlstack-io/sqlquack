@@ -1022,6 +1022,15 @@ reason = "the rejection renders SQL a hand row observes because Snowflake parses
 form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
 kind = "negative_neighbour"
 target = ""
+note = "the form without its required SCHEMA after ON"
+sql = "GRANT ADD SEARCH OPTIMIZATION ON v1 TO v1 ;"
+valid_as = "sf.security_admin.grant-privilege-user negative_neighbour the form without its required SCHEMA after ON, observed"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
+
+[[withdrawn]]
+form = "sf.security_admin.grant-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+target = ""
 note = "the form without its required APPLICATION after CREATE #3"
 sql = "GRANT CREATE SERVICE ON FUTURE SCHEMAS IN DATABASE v1 TO v1 ;"
 valid_as = "sf.security_admin.grant-privilege.globalprivileges-all-on-account alternative { AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC… → SERVICE #2"
@@ -1673,6 +1682,15 @@ target = ""
 note = "the form without its required TABLE after CREATE"
 sql = "REVOKE CREATE ON SCHEMA v1 FROM v1 ;"
 valid_as = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account negative_neighbour the form without its required VIEW, observed"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
+
+[[withdrawn]]
+form = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA after ON"
+sql = "REVOKE ADD SEARCH OPTIMIZATION ON v1 FROM v1 ;"
+valid_as = "sf.security_admin.revoke-privilege-user negative_neighbour the form without its required SCHEMA after ON, observed"
 reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
 
 [[withdrawn]]
