@@ -8,11 +8,65 @@ use crate::parser::constants::{
     SNOWFLAKE_ROUTINE_TEXT_PROPERTIES, SNOWFLAKE_ROUTINE_WORD_PROPERTIES,
 };
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::columns::models::ColumnDef;
 use sqlquack_syntax::expressions::names::models::TableRef;
+use sqlquack_syntax::expressions::schema_objects::models::CreateObject;
+use sqlquack_syntax::expressions::tree::models::Expression;
+use sqlquack_syntax::expressions::types::models::{DataType, Tuple};
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
 impl Parser {
+    /// A Snowflake CREATE PROCEDURE SCOPED { TEMP | TEMPORARY } TABLE <name> ( <column> <type> [ , ... ] ) from PROCEDURE; None when SCOPED TEMP does not follow it.
+    pub(crate) fn parse_scoped_temp_table(
+        &mut self,
+        or_replace: bool,
+        or_alter: bool,
+    ) -> Result<Option<Expression>> {
+        if !self.applies_snowflake_context_rules()
+            || !self.check(TokenType::Procedure)
+            || self.text_at(1).as_deref() != Some("SCOPED")
+            || !["TEMP", "TEMPORARY"]
+                .iter()
+                .any(|word| self.text_at(2).as_deref() == Some(*word))
+        {
+            return Ok(None);
+        }
+        self.skip();
+        self.skip();
+        self.skip();
+        self.expect_token(TokenType::Table)?;
+        let name = self.parse_iceberg_object_name()?;
+        self.expect_token(TokenType::LParen)?;
+        let mut columns: Vec<Expression> = Vec::new();
+        loop {
+            let mut column = ColumnDef::new("", DataType::Unknown);
+            column.name = self.parse_iceberg_object_name()?.name;
+            if self.check(TokenType::String) {
+                return Err(self.parse_error("Expected a data type"));
+            }
+            column.data_type = self.parse_data_type()?;
+            columns.push(Expression::ColumnDef(Box::new(column)));
+            if !self.match_token(TokenType::Comma) {
+                break;
+            }
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(Some(Expression::CreateObject(Box::new(CreateObject {
+            kind: "PROCEDURE SCOPED TEMPORARY TABLE".to_owned(),
+            modifier: None,
+            or_replace,
+            or_alter,
+            if_not_exists: false,
+            name,
+            source: String::new(),
+            operands: vec![Expression::Tuple(Box::new(Tuple {
+                expressions: columns,
+            }))],
+            properties: Vec::new(),
+        }))))
+    }
+
     /// One Snowflake routine property or option phrase as its source text; None when the next tokens are not one.
     pub(crate) fn parse_snowflake_routine_property(&mut self) -> Result<Option<String>> {
         if !self.is_snowflake() {
