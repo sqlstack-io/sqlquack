@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.11.2](https://github.com/sqlstack-io/sqlquack/compare/v0.11.1...v0.11.2) (2026-11-13)
+
+
+### Bug Fixes
+
+* **syntax:** accept DEFINE DATABASE and SCHEMA with properties ([f8193fd](https://github.com/sqlstack-io/sqlquack/commit/f8193fd548594162300c580d23374ad4a96a14d0))
+* **syntax:** read CREATE and ALTER DATA MOVEMENT RULE as Snowflake does ([71aaa30](https://github.com/sqlstack-io/sqlquack/commit/71aaa3075142e03a910bb16d3dcbe2daaa2c608c))
+* **syntax:** read CREATE and DEFINE ALERT as Snowflake does ([16d0f5e](https://github.com/sqlstack-io/sqlquack/commit/16d0f5e694478d7e8e63357112fcb75b71a7d353))
+* **syntax:** read CREATE and DEFINE STREAMLIT as Snowflake does ([02610d6](https://github.com/sqlstack-io/sqlquack/commit/02610d6756ecc608cbe6aacfa9b0a4524148b4c3))
+* **syntax:** read CREATE BACKUP SET, SNAPSHOT SET and APPLICATION as Snowflake does ([3457610](https://github.com/sqlstack-io/sqlquack/commit/34576100b797b61a30bd6f78178625e1cb2ab650))
+* **syntax:** read CREATE CORTEX SEARCH SERVICE as Snowflake does ([9f5f666](https://github.com/sqlstack-io/sqlquack/commit/9f5f666e5bcda9d1908b9f6f1e11e58e86149b9e))
+* **syntax:** read CREATE EXTERNAL and ORGANIZATION LISTING as Snowflake does ([cf25d86](https://github.com/sqlstack-io/sqlquack/commit/cf25d864c2f1575e6d1449478a245707d4139515))
+* **syntax:** read CREATE SERVICE and APPLICATION SERVICE as Snowflake does ([d8725e4](https://github.com/sqlstack-io/sqlquack/commit/d8725e40f090d9c508921671b8d136f615ac5069))
+* **syntax:** read Snowflake procedure modes, handler words and scoped tables ([e4b5543](https://github.com/sqlstack-io/sqlquack/commit/e4b55437511e463d5c0eb636386913c373e1ac77))
+
 ## [0.11.1](https://github.com/sqlstack-io/sqlquack/compare/v0.11.0...v0.11.1) (2026-11-13)
 
 
