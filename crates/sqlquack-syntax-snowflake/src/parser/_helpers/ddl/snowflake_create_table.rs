@@ -159,9 +159,9 @@ impl Parser {
         let mut operands: Vec<Expression> = Vec::new();
         let mut properties: Vec<ObjectProperty> = Vec::new();
         if like {
-            operands.push(Expression::Table(Box::new(
-                self.parse_iceberg_object_name()?,
-            )));
+            let source = self.parse_iceberg_object_name()?;
+            self.reject_reserved_table_ref(&source)?;
+            operands.push(Expression::Table(Box::new(source)));
         } else if template {
             operands.push(self.parse_external_template()?);
         } else if columns {
@@ -797,7 +797,7 @@ impl Parser {
         self.expect_token(TokenType::LParen)?;
         let mut contacts: Vec<ObjectProperty> = Vec::new();
         loop {
-            let purpose = self.parse_external_name()?;
+            let purpose = self.parse_contact_purpose(Self::parse_external_name)?;
             self.expect_token(TokenType::Eq)?;
             let contact = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
             contacts.push(property("CONTACT", Some(purpose), Some(contact)));

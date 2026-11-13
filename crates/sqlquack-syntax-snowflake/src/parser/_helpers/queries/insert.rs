@@ -76,6 +76,9 @@ impl Parser {
             self.expect_identifier_or_keyword_with_quoted()?
         };
         let table = self.parse_insert_table(table_name)?;
+        if function_target.is_none() {
+            self.reject_reserved_table_ref(&table)?;
+        }
 
         let (alias, alias_explicit_as) = self.parse_insert_alias()?;
 

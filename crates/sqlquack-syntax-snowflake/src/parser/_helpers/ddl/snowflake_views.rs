@@ -275,7 +275,7 @@ impl Parser {
         self.expect_token(TokenType::LParen)?;
         let mut contacts: Vec<Expression> = Vec::new();
         loop {
-            let purpose = self.parse_external_name()?;
+            let purpose = self.parse_contact_purpose(Self::parse_external_name)?;
             self.expect_token(TokenType::Eq)?;
             let contact = self.parse_external_name()?;
             contacts.push(Expression::PropertyEQ(Box::new(BinaryOp::new(
