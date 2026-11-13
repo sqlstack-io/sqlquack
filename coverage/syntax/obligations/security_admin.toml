@@ -99,12 +99,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-account-set-ingress-policy.unset-ingress-policy.o004"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required INGRESS"
-
-[[obligation]]
 id = "sf.security_admin.alter-account-set-ingress-policy.unset-ingress-policy.o006"
 kind = "negative_neighbour"
 required = true
@@ -5187,12 +5181,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.unset-authentication-session-policy.o010"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { AUTHENTICATION | SESSION }"
-
-[[obligation]]
 id = "sf.security_admin.alter-account.unset-authentication-session-policy.o017"
 kind = "negative_neighbour"
 required = true
@@ -5630,12 +5618,6 @@ id = "sf.security_admin.alter-account.unset-packages-password-multi.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required APPROVAL"
-
-[[obligation]]
-id = "sf.security_admin.alter-account.unset-packages-password-multi.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { PACKAGES | PASSWORD | MULTI PARTY APPROVAL }"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.unset-packages-password-multi.o011"
@@ -26157,12 +26139,6 @@ kind = "negative_neighbour"
 required = true
 target = "'<string>' in [ COMMENT = '<string>' ]"
 note = "an unquoted identifier in place of '<string>'"
-
-[[obligation]]
-id = "sf.security_admin.alter-organization-user.set.o043"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ORGANIZATION"
 
 [[obligation]]
 id = "sf.security_admin.alter-organization-user.set.o044"
@@ -55704,18 +55680,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.unset-authentication-password-session.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { AUTHENTICATION | PASSWORD | SESSION }"
-
-[[obligation]]
-id = "sf.security_admin.alter-user.unset-authentication-password-session.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required POLICY"
-
-[[obligation]]
 id = "sf.security_admin.alter-user.unset-authentication-password-session.o016"
 kind = "interaction_all_options"
 required = true
@@ -55787,13 +55751,6 @@ kind = "negative_neighbour"
 required = true
 target = "<name> in [ <name> ]"
 note = "a string literal in place of <name>"
-
-[[obligation]]
-id = "sf.security_admin.alter-user.unset-tag.o008"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.unset-tag.o009"
@@ -66728,13 +66685,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.security_admin.create-database-role.define-database-role.o002"
-kind = "required_operand_missing"
-required = true
-target = "<name>"
-note = "omit <name>"
-
-[[obligation]]
 id = "sf.security_admin.create-database-role.define-database-role.o003"
 kind = "operand_type_class"
 required = true
@@ -68035,22 +67985,6 @@ id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o093
 kind = "identifier_class"
 required = true
 target = "<share_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o094"
-kind = "identifier_class"
-required = true
-target = "<integration_type_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.security_admin.create-failover-group.object-types-allowed-accounts.o095"
-kind = "identifier_class"
-required = true
-target = "<integration_type_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -78215,22 +78149,6 @@ id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o
 kind = "identifier_class"
 required = true
 target = "<share_name>"
-anchor = "doc.identifiers-syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o089"
-kind = "identifier_class"
-required = true
-target = "<integration_type_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "sf.security_admin.create-replication-group.object-types-allowed-accounts.o090"
-kind = "identifier_class"
-required = true
-target = "<integration_type_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -109460,12 +109378,6 @@ required = true
 note = "the form without its required TO"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.create-schema-modify-monitor.o476"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE after TO"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.create-schema-modify-monitor.o326"
 kind = "negative_neighbour"
 required = true
@@ -125477,12 +125389,6 @@ required = true
 note = "the form without its required FROM"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o742"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE after FROM"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o743"
 kind = "negative_neighbour"
 required = true
@@ -131320,24 +131226,6 @@ required = true
 note = "the form without its required POLICIES"
 
 [[obligation]]
-id = "sf.security_admin.show-authentication-policies.o062"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
-
-[[obligation]]
-id = "sf.security_admin.show-authentication-policies.o063"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
-
-[[obligation]]
-id = "sf.security_admin.show-authentication-policies.o064"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
-
-[[obligation]]
 id = "sf.security_admin.show-authentication-policies.o065"
 kind = "negative_neighbour"
 required = true
@@ -135098,18 +134986,6 @@ required = true
 note = "the form without its required POLICIES"
 
 [[obligation]]
-id = "sf.security_admin.show-ingress-policies.o049"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } | ON { ACCOUNT | USER…"
-
-[[obligation]]
-id = "sf.security_admin.show-ingress-policies.o050"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } | ON { ACCOUNT | USER…"
-
-[[obligation]]
 id = "sf.security_admin.show-ingress-policies.o036"
 kind = "negative_neighbour"
 required = true
@@ -136253,18 +136129,6 @@ id = "sf.security_admin.show-multi-party-approval-policies.policies.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required POLICIES"
-
-[[obligation]]
-id = "sf.security_admin.show-multi-party-approval-policies.policies.o041"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } ]"
-
-[[obligation]]
-id = "sf.security_admin.show-multi-party-approval-policies.policies.o042"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } ]"
 
 [[obligation]]
 id = "sf.security_admin.show-multi-party-approval-policies.policies.o031"
@@ -137494,24 +137358,6 @@ id = "sf.security_admin.show-password-policies.o043"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required POLICIES"
-
-[[obligation]]
-id = "sf.security_admin.show-password-policies.o062"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
-
-[[obligation]]
-id = "sf.security_admin.show-password-policies.o063"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
-
-[[obligation]]
-id = "sf.security_admin.show-password-policies.o064"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
 
 [[obligation]]
 id = "sf.security_admin.show-password-policies.o065"
@@ -139461,24 +139307,6 @@ id = "sf.security_admin.show-session-policies.o043"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required POLICIES"
-
-[[obligation]]
-id = "sf.security_admin.show-session-policies.o062"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
-
-[[obligation]]
-id = "sf.security_admin.show-session-policies.o063"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
-
-[[obligation]]
-id = "sf.security_admin.show-session-policies.o064"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
 
 [[obligation]]
 id = "sf.security_admin.show-session-policies.o065"

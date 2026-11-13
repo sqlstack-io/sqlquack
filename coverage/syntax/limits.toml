@@ -84922,3 +84922,172 @@ anchor = "doc.sql.show-services / Syntax"
 sql = "SHOW SERVICES OF TYPE USER LIMIT 1 ;"
 expect = "observe"
 context = "raw"
+
+# Wrong-outcome obligations of security_admin whose remainder is another documented form, or whose
+# target is a documented keyword list rather than an identifier. Recorded by the docs check of L.
+
+[[suppress]]
+form = "sf.security_admin.alter-account-set-ingress-policy.unset-ingress-policy"
+kind = "negative_neighbour"
+note = "the form without its required INGRESS"
+reason = "ALTER ACCOUNT UNSET <param_name> [ , ... ] is documented on the ALTER ACCOUNT page, so ALTER ACCOUNT UNSET POLICY unsets a parameter named POLICY (https://docs.snowflake.com/en/sql-reference/sql/alter-account)"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.unset-authentication-session-policy"
+kind = "negative_neighbour"
+note = "the form without its required { AUTHENTICATION | SESSION }"
+reason = "ALTER ACCOUNT UNSET <param_name> [ , ... ] is documented on the ALTER ACCOUNT page, so ALTER ACCOUNT UNSET POLICY unsets a parameter named POLICY (https://docs.snowflake.com/en/sql-reference/sql/alter-account)"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.unset-packages-password-multi"
+kind = "negative_neighbour"
+note = "the form without its required { PACKAGES | PASSWORD | MULTI PARTY APPROVAL }"
+reason = "ALTER ACCOUNT UNSET <param_name> [ , ... ] is documented on the ALTER ACCOUNT page, so ALTER ACCOUNT UNSET POLICY unsets a parameter named POLICY (https://docs.snowflake.com/en/sql-reference/sql/alter-account)"
+
+[[suppress]]
+form = "sf.security_admin.alter-organization-user.set"
+kind = "negative_neighbour"
+note = "the form without its required ORGANIZATION"
+reason = "without ORGANIZATION the remainder is ALTER USER <name> SET COMMENT = '<string>', documented on the ALTER USER page (https://docs.snowflake.com/en/sql-reference/sql/alter-user)"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.unset-authentication-password-session"
+kind = "negative_neighbour"
+note = "the form without its required { AUTHENTICATION | PASSWORD | SESSION }"
+reason = "ALTER USER [ IF EXISTS ] [ <name> ] UNSET { <object_property_name> | <object_param_name> | <session_param_name> } [ , ... ] is documented with the name optional, so the remainder unsets a property of the current user (https://docs.snowflake.com/en/sql-reference/sql/alter-user)"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.unset-authentication-password-session"
+kind = "negative_neighbour"
+note = "the form without its required POLICY"
+reason = "ALTER USER [ IF EXISTS ] [ <name> ] UNSET { <object_property_name> | <object_param_name> | <session_param_name> } [ , ... ] is documented with the name optional, so the remainder unsets a property of the current user (https://docs.snowflake.com/en/sql-reference/sql/alter-user)"
+
+[[suppress]]
+form = "sf.security_admin.alter-user.unset-tag"
+kind = "required_operand_missing"
+target = "<tag_name>"
+reason = "ALTER USER [ IF EXISTS ] [ <name> ] UNSET { <object_property_name> | <object_param_name> | <session_param_name> } [ , ... ] is documented with the name optional, so the remainder unsets a property of the current user (https://docs.snowflake.com/en/sql-reference/sql/alter-user)"
+
+[[suppress]]
+form = "sf.security_admin.create-database-role.define-database-role"
+kind = "required_operand_missing"
+target = "<name>"
+reason = "DEFINE DATABASE ROLE ; is DEFINE DATABASE <name> with the database named ROLE; DEFINE DATABASE takes the CREATE OR ALTER DATABASE syntax (https://docs.snowflake.com/en/sql-reference/sql/create-database)"
+
+[[suppress]]
+form = "sf.security_admin.create-failover-group.object-types-allowed-accounts"
+kind = "identifier_class"
+target = "<integration_type_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "<integration_type_name> is a documented keyword list (SECURITY INTEGRATIONS, API INTEGRATIONS, ...), not an identifier, so identifier-class cases do not apply (https://docs.snowflake.com/en/sql-reference/sql/create-failover-group)"
+
+[[suppress]]
+form = "sf.security_admin.create-failover-group.object-types-allowed-accounts"
+kind = "identifier_class"
+target = "<integration_type_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "<integration_type_name> is a documented keyword list (SECURITY INTEGRATIONS, API INTEGRATIONS, ...), not an identifier, so identifier-class cases do not apply (https://docs.snowflake.com/en/sql-reference/sql/create-failover-group)"
+
+[[suppress]]
+form = "sf.security_admin.create-replication-group.object-types-allowed-accounts"
+kind = "identifier_class"
+target = "<integration_type_name>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "<integration_type_name> is a documented keyword list (SECURITY INTEGRATIONS, API INTEGRATIONS, ...), not an identifier, so identifier-class cases do not apply (https://docs.snowflake.com/en/sql-reference/sql/create-replication-group)"
+
+[[suppress]]
+form = "sf.security_admin.create-replication-group.object-types-allowed-accounts"
+kind = "identifier_class"
+target = "<integration_type_name>"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+reason = "<integration_type_name> is a documented keyword list (SECURITY INTEGRATIONS, API INTEGRATIONS, ...), not an identifier, so identifier-class cases do not apply (https://docs.snowflake.com/en/sql-reference/sql/create-replication-group)"
+
+[[suppress]]
+form = "sf.security_admin.grant-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE after TO"
+reason = "without DATABASE after TO the remainder is { accountObjectPrivileges } ON DATABASE <object_name> TO [ ROLE ] <role_name>, the documented account-role grant on the same page (https://docs.snowflake.com/en/sql-reference/sql/grant-privilege)"
+
+[[suppress]]
+form = "sf.security_admin.revoke-privilege.create-schema-modify-monitor"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE after FROM"
+reason = "without DATABASE after FROM the remainder is { accountObjectPrivileges } ON DATABASE <object_name> FROM [ ROLE ] <role_name>, the documented account-role revoke on the same page (https://docs.snowflake.com/en/sql-reference/sql/revoke-privilege)"
+
+[[suppress]]
+form = "sf.security_admin.show-authentication-policies"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-authentication-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-authentication-policies"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-authentication-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-authentication-policies"
+kind = "negative_neighbour"
+note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-authentication-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-ingress-policies"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } | ON { ACCOUNT | USER…"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-ingress-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-ingress-policies"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } | ON { ACCOUNT | USER…"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-ingress-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-multi-party-approval-policies.policies"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } ]"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-multi-party-approval-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-multi-party-approval-policies.policies"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> } ]"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-multi-party-approval-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-password-policies"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-password-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-password-policies"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-password-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-password-policies"
+kind = "negative_neighbour"
+note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-password-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-session-policies"
+kind = "negative_neighbour"
+note = "the form without its required DATABASE after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-session-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-session-policies"
+kind = "negative_neighbour"
+note = "the form without its required SCHEMA after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-session-policies)"
+
+[[suppress]]
+form = "sf.security_admin.show-session-policies"
+kind = "negative_neighbour"
+note = "the form without its required APPLICATION after IN in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | APPLICATION <application_name> |…"
+reason = "SCHEMA is optional if a database is in use or if you specify the fully qualified schema_name (Parameters), so IN <name> is the documented IN [ SCHEMA ] <schema_name> (https://docs.snowflake.com/en/sql-reference/sql/show-session-policies)"
