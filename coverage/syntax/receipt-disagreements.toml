@@ -333,16 +333,9 @@ other_receipts_contradicted = [
   "sf.utility.call-with.table-language-sql-as.ka7269b961fa3",
   "sf.utility.call-with.table-language-sql-as.kafb4de9a3867",
   "sf.utility.call-with.table-language-sql-as.ke9b659be230c",
-  "sf.utility.execute-immediate.immediate.k1f5b5037c3eb",
-  "sf.utility.execute-immediate.immediate.k2f0d186160af",
   "sf.utility.execute-immediate.immediate.k42c85e0ddade",
-  "sf.utility.execute-immediate.immediate.k4c2e8ed4465f",
   "sf.utility.execute-immediate.immediate.syntax.k04540ac49cb9",
-  "sf.utility.execute-immediate.immediate.syntax.k06a69d68712c",
   "sf.utility.execute-immediate.immediate.syntax.k860c11df8345",
-  "sf.utility.execute-immediate.immediate.syntax.k9714bc072a8e",
-  "sf.utility.execute-immediate.immediate.syntax.kda0824c75af0",
-  "sf.utility.execute-immediate.immediate.syntax.kec53303b088a",
   "sf.utility.execute-immediate.immediate.syntax.kefb9dd2ba59e",
 ]
 
@@ -357,54 +350,6 @@ other_receipts_contradicted = [
   "k08a5ac10d24c",
   "k4a5bcb72e4bd",
   "k5c0f60c6cde2",
-]
-"sf.ddl.alter-external-consumer-add-programmatic-access-token" = [
-  "k01043333dc7b",
-  "k4229bbebf36f",
-  "k4fc244dee7c0",
-  "k53f597a53a84",
-  "k8715fc00bfcd",
-  "k8ade9857c2bf",
-  "ke2a3318037e5",
-]
-"sf.ddl.alter-external-consumer-modify-programmatic-access-token" = [
-  "k24fc3409d07f",
-  "k27473d142f2e",
-  "k281ddccda703",
-  "k2e93f3eb60d7",
-  "k4abf2b33cb4e",
-  "k6ff5e53d24fa",
-  "k7c62625314a4",
-  "k80752baf07f1",
-  "k970a9914447d",
-  "kbf052fbdf9ea",
-  "kdfb113d30d27",
-  "ke1b8e582433f",
-  "kfa6aba050fbe",
-]
-"sf.ddl.alter-external-consumer-remove-programmatic-access-token" = [
-  "k1a25722df397",
-  "k1f9c1c3df062",
-  "k8ab81ab1d36f",
-  "kc54ffdc29743",
-  "kcbc71d9cc406",
-  "kd36821dacfa4",
-]
-"sf.ddl.alter-external-consumer-rotate-programmatic-access-token" = [
-  "k37241e2aecc5",
-  "k880d9f172fbe",
-  "ka1336a5ed2c8",
-  "kac0ae1b0722d",
-  "kbfe824049a4e",
-  "kc7862ab3e96a",
-]
-"sf.ddl.alter-external-consumer.rename-to" = [
-  "k1b5bc09f85f0",
-  "k6474cfcc762b",
-  "k845df53e4389",
-  "kaa016bfbe9ec",
-  "kcde35a12fc0e",
-  "kd688541592e0",
 ]
 "sf.ddl.alter-iceberg-table.unset" = ["ke33c9a12af90"]
 "sf.ddl.alter-openflow-connector.add-live-version-from" = [
@@ -469,31 +414,6 @@ other_receipts_contradicted = [
   "k79a45e536ad2",
   "kbe42b930d9a4",
 ]
-"sf.ddl.create-ai-function.as" = [
-  "k14d9f2bfcafb",
-  "k7f0084fe876b",
-  "k840fd42a53f0",
-  "kbd8e88504834",
-  "ke21fc72b1d30",
-  "ke92e48841366",
-  "kf76390587007",
-]
-"sf.ddl.create-ai-function.from-experiment-run" = [
-  "k05ae75261673",
-  "k1059b885c585",
-  "k11aad8ef6451",
-  "k48f09212eb62",
-  "k4e4b7bd5c6d1",
-  "k51c1624abe9a",
-  "k7483d5bbbb71",
-  "k7b11673205c0",
-  "k932affb4187a",
-  "ka3ae695d8817",
-  "ka8457d30f6d4",
-  "kcc9799e3d51e",
-  "kdb17efeadd3d",
-  "kf24cd5326b31",
-]
 "sf.ddl.create-alert.create-alert-if-exists" = ["k6fe8118f456f"]
 "sf.ddl.create-alert.create-or-alter-alert" = ["k0361e88359d1"]
 "sf.ddl.create-application-package" = [
@@ -501,14 +421,8 @@ other_receipts_contradicted = [
   "k56df100400d3",
 ]
 "sf.ddl.create-clone.alert-file-format-sequence" = ["k8f41aa1b568a"]
-"sf.ddl.create-code-bundle.create-code-bundle-from" = [
-  "k863f7a02918a",
-  "kc49b47e49c6a",
-]
-"sf.ddl.create-code-bundle.create-code-bundle-from.syntax" = [
-  "k1ba8b686d81b",
-  "k60b30999315b",
-]
+"sf.ddl.create-code-bundle.create-code-bundle-from" = ["k863f7a02918a"]
+"sf.ddl.create-code-bundle.create-code-bundle-from.syntax" = ["k1ba8b686d81b"]
 "sf.ddl.create-data-metric-function.create-data-metric-function" = ["kea9728d63542"]
 "sf.ddl.create-database.create-database" = ["k3c0dc0ce5fe8"]
 "sf.ddl.create-dataset" = [
@@ -538,7 +452,6 @@ other_receipts_contradicted = [
   "kbc488403dcc0",
   "ke5461079151e",
 ]
-"sf.ddl.create-external-consumer" = ["kb6e056b75838"]
 "sf.ddl.create-file-format.create-file-format" = ["k157043357740"]
 "sf.ddl.create-file-format.create-or-alter-file" = ["k63c67a765cde"]
 "sf.ddl.create-file-format.define-file-format" = [
@@ -604,14 +517,6 @@ other_receipts_contradicted = [
 "sf.ddl.create-openflow-connector.from-definition" = ["kf967b8f327bb"]
 "sf.ddl.create-openflow-deployment" = ["ka98182f56d37"]
 "sf.ddl.create-openflow-runtime" = ["k4b5b90059d17"]
-"sf.ddl.create-pipe.create-or-alter-pipe" = [
-  "k4e93f09dfc2e",
-  "kaa41741ea55e",
-]
-"sf.ddl.create-pipe.create-pipe-as" = [
-  "kab170451c2c9",
-  "ke8207fa6805d",
-]
 "sf.ddl.create-procedure.create-procedure" = [
   "k58d3939e981a",
   "k7296023045b7",
@@ -801,40 +706,6 @@ other_receipts_contradicted = [
   "k6c239c1dee59",
   "kbf0a65216900",
 ]
-"sf.utility.execute-immediate-from" = [
-  "k011231c1687a",
-  "k18372c75ec13",
-  "k21f6cd921934",
-  "k45ef82b9bd00",
-  "k78796a33bcf1",
-  "k795ed8aa638a",
-  "kb470f7b8b69e",
-  "kc0b53ddaff08",
-  "kcb01e57acf63",
-  "kd038cb2e0f4d",
-  "kd06bbf769d46",
-  "ke3db3c0b0b5d",
-  "ked3b2561e78b",
-]
-"sf.utility.execute-immediate.immediate" = [
-  "k0eaaaa01b89b",
-  "k2e3521c49745",
-  "k8a30475fbc6d",
-  "ke0ad9286b2dc",
-]
-"sf.utility.execute-immediate.immediate-2" = [
-  "k14a1b7ee8df3",
-  "k7ee894923594",
-  "k91e4178007ca",
-  "kee94b79d2d9b",
-]
-"sf.utility.execute-immediate.immediate.syntax" = [
-  "k2a8d5daaec36",
-  "k2d01af8f6bf7",
-  "k530cabaf0366",
-  "k885f7952cc09",
-  "kbd4d30ef365a",
-]
 "sf.utility.execute-inference-job-service" = [
   "kd484841cc87f",
   "kfa70a352f258",
@@ -869,19 +740,6 @@ other_receipts_contradicted = [
 "sf.ddl.alter-schema.set" = ["kac592c009c45"]
 "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = ["k220a7aefbc24"]
 "sf.ddl.alter-stage.set.syntax" = ["kd30e04e36906"]
-"sf.ddl.create-ai-function.from-experiment-run" = ["k67bb99e4b1b2"]
-"sf.ddl.create-code-bundle.define-code-bundle" = [
-  "k0f0f79a244fa",
-  "k137093b200f9",
-  "k2158b776d542",
-  "k5e329a46b47e",
-  "k709bdc1e872d",
-  "ka45a326faa4d",
-  "kb484d772fb26",
-  "kbd3c84686a4b",
-  "kd95a74d046f2",
-  "kf17853d8e491",
-]
 "sf.ddl.create-database-catalog-linked" = ["kd7f8a471f88a"]
 "sf.ddl.create-external-function.function-returns-api-integration-as" = [
   "k007dcc7f5614",
@@ -909,18 +767,6 @@ other_receipts_contradicted = [
   "kce6561bba051",
 ]
 "sf.ddl.create-index" = ["k06f98b76fca1"]
-"sf.ddl.create-pipe.define-pipe" = [
-  "k1c187f19f9d8",
-  "k217f3d05af47",
-  "k363a4a9a085f",
-  "k4c68f59bf2c0",
-  "k666d47caf289",
-  "k767d28c25434",
-  "k789a45db3f6b",
-  "k85a1157458eb",
-  "k9f59fb2ac987",
-  "ka2ae0cb9c3a7",
-]
 "sf.ddl.create-sequence.create-or-alter-sequence" = [
   "k20fca8f5f88e",
   "k99f5b3f8173f",
@@ -937,20 +783,6 @@ other_receipts_contradicted = [
   "kdce8646cffb5",
 ]
 "sf.ddl.create-table.define-table" = ["k2f29257e44ce"]
-"sf.ddl.create-tag.define-tag" = [
-  "k0149a40a8a33",
-  "k065d758bd044",
-  "k1c53f053be3d",
-  "k42d0e6ef0cec",
-  "k519c12fbd86f",
-  "k574773c45eaf",
-  "k94db13f7d73c",
-  "kb5fa60c4810b",
-  "kc393ffbb87e9",
-  "kc6139436e0a1",
-  "kdd22350a8118",
-  "kf241975bb1b1",
-]
 "sf.ddl.create-task-graph.create-or-alter-task" = [
   "k809070602a72",
   "kea33d2a87c8f",
