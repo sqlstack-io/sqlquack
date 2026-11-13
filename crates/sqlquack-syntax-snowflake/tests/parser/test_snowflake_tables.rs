@@ -769,3 +769,52 @@ fn given_snowflake_dynamic_table_secondary_roles_when_parsing_then_the_list_is_r
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_event_routing_rule_when_parsing_then_the_probed_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a rule with a string region group (recorded semantic error)",
+            sql: "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = 'g1' , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a rule's region group is a string, not a name (recorded errno 1003)",
+            sql: "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a parenthesized rule needs its commas (recorded errno 1003)",
+            sql: "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = 'g1' REGIONS = ( 'm' ) DESTINATION_ACCOUNT = v1 . v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an event routing table needs its rules (recorded errno 1003)",
+            sql: "CREATE EVENT ROUTING TABLE v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SET RULE with a string region group and no commas (recorded semantic error)",
+            sql: "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = 'g1' REGIONS = ( 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET RULE takes no assigned body (recorded errno 921)",
+            sql: "ALTER EVENT ROUTING TABLE v1 SET RULE v1 = ( REGION_GROUP = 'g1' , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET RULES needs a string region group (recorded errno 1003)",
+            sql: "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

@@ -126,7 +126,7 @@ impl Parser {
         Ok(properties)
     }
 
-    /// `WITH RULES <rule> = ( REGION_GROUP = <group> , REGIONS = ( <region> , ... ) , DESTINATION_ACCOUNT = <org>.<account> ) [ ... ]`, one RULE property per rule.
+    /// `WITH RULES <rule> = ( <fields> ) [ ... ]`, one RULE property per rule.
     fn parse_event_routing_rules(&mut self) -> Result<Vec<ObjectProperty>> {
         if !self.match_text_seq(&["WITH", "RULES"]) {
             return Err(self.parse_error("Expected WITH RULES"));
@@ -136,35 +136,40 @@ impl Parser {
             let rule = self.parse_external_name()?;
             self.expect_token(TokenType::Eq)?;
             self.expect_token(TokenType::LParen)?;
-            let mut fields: Vec<Expression> = Vec::new();
-            for (position, field) in ROUTING_RULE_FIELDS.iter().enumerate() {
-                if position > 0 {
-                    self.expect_token(TokenType::Comma)?;
-                }
-                if !self.match_text_seq(&[field]) {
-                    return Err(self.parse_error(format!("Expected {field}")));
-                }
-                self.expect_token(TokenType::Eq)?;
-                let value = match *field {
-                    "REGIONS" => self.parse_routing_regions()?,
-                    "DESTINATION_ACCOUNT" => self.parse_routing_account()?,
-                    _ => Expression::Identifier(self.parse_external_name()?),
-                };
-                fields.push(Expression::PropertyEQ(Box::new(BinaryOp::new(
-                    Expression::Identifier(Identifier::new(*field)),
-                    value,
-                ))));
-            }
+            let value = self.parse_routing_rule_fields(true)?;
             self.expect_token(TokenType::RParen)?;
-            let value = Expression::Tuple(Box::new(Tuple {
-                expressions: fields,
-            }));
             rules.push(property("RULE", Some(rule), Some(value)));
         }
         if rules.is_empty() {
             return Err(self.parse_error("Expected a rule after WITH RULES"));
         }
         Ok(rules)
+    }
+
+    /// A routing rule's `REGION_GROUP = '<group>' , REGIONS = ( <region> , ... ) , DESTINATION_ACCOUNT = <org>.<account>`, in that order; the commas are required when `commas`, as in a parenthesized rule, and optional otherwise.
+    pub(super) fn parse_routing_rule_fields(&mut self, commas: bool) -> Result<Expression> {
+        let mut fields: Vec<Expression> = Vec::new();
+        for (position, field) in ROUTING_RULE_FIELDS.iter().enumerate() {
+            if position > 0 && !self.match_token(TokenType::Comma) && commas {
+                return Err(self.parse_error(format!("Expected , before {field}")));
+            }
+            if !self.match_text_seq(&[field]) {
+                return Err(self.parse_error(format!("Expected {field}")));
+            }
+            self.expect_token(TokenType::Eq)?;
+            let value = match *field {
+                "REGIONS" => self.parse_routing_regions()?,
+                "DESTINATION_ACCOUNT" => self.parse_routing_account()?,
+                _ => self.parse_string_value()?,
+            };
+            fields.push(Expression::PropertyEQ(Box::new(BinaryOp::new(
+                Expression::Identifier(Identifier::new(*field)),
+                value,
+            ))));
+        }
+        Ok(Expression::Tuple(Box::new(Tuple {
+            expressions: fields,
+        })))
     }
 
     /// `( <region> [ , ... ] )`, each a string or a name; the list may be empty.

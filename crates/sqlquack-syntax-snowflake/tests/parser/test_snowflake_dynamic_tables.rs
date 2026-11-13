@@ -270,3 +270,67 @@ fn given_a_snowflake_dynamic_iceberg_or_interactive_table_when_parsing_then_reco
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_dynamic_table_clone_or_set_when_parsing_then_the_probed_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a dynamic table clone copies grants (recorded semantic error)",
+            sql: "CREATE DYNAMIC TABLE v1 CLONE v1 COPY GRANTS ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a dynamic table clone copies no tags (recorded errno 1003)",
+            sql: "CREATE DYNAMIC TABLE v1 CLONE v1 COPY TAGS ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a dynamic table clone takes a COPY list (recorded semantic error)",
+            sql: "CREATE DYNAMIC TABLE v1 CLONE v1 COPY = ( COMMENTS ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "keeps SET EXECUTE AS USER with secondary roles alone (recorded semantic error)",
+            sql: "ALTER DYNAMIC TABLE v1 SET EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "EXECUTE AS USER after another property (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 SET TARGET_LAG = '1 minute' EXECUTE AS USER v1 USE SECONDARY ROLES ALL ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a property after EXECUTE AS USER (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 SET EXECUTE AS USER v1 ROW_TIMESTAMP = TRUE ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "FROZEN WHERE after another property (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 SET TARGET_LAG = '1 minute' FROZEN WHERE ( 1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a property after FROZEN WHERE (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 SET FROZEN WHERE ( 1 ) ROW_TIMESTAMP = TRUE ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ALTER of a column without COLUMN unsets no masking policy (recorded errno 1003)",
+            sql: "ALTER DYNAMIC TABLE v1 ALTER v1 UNSET MASKING POLICY ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "MODIFY of a column without COLUMN unsets a projection policy (recorded semantic error)",
+            sql: "ALTER DYNAMIC TABLE v1 MODIFY v1 UNSET PROJECTION POLICY ;",
+            expected_kind: Some("alter_object"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}

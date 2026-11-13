@@ -153,7 +153,8 @@ impl Parser {
             }
             "SET TAG" | "UNSET TAG" => (vec![], self.parse_tag_list(action == SET_TAG)?),
             "SET" | "UNSET" => (vec![], self.parse_dynamic_table_properties(action == SET)?),
-            "ALTER" | "MODIFY" => (self.parse_dynamic_column_actions()?, vec![]),
+            "ALTER" => (self.parse_dynamic_column_actions(false)?, vec![]),
+            "MODIFY" => (self.parse_dynamic_column_actions(true)?, vec![]),
             _ => (vec![], vec![]),
         })
     }
@@ -246,10 +247,17 @@ impl Parser {
         }
     }
 
-    /// Parse the properties of a SET (`set`) or UNSET action.
+    /// Parse the properties of a SET (`set`) or UNSET action; a SET of FROZEN WHERE or EXECUTE AS USER sets nothing else.
     fn parse_dynamic_table_properties(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
+            let alone = set
+                && (self.check_text_seq(&["FROZEN", "WHERE"]) || self.check_text_seq(&["EXECUTE"]));
+            if alone && !properties.is_empty() {
+                return Err(
+                    self.parse_error("FROZEN WHERE and EXECUTE AS USER are set on their own")
+                );
+            }
             if self.match_text_seq(&["FROZEN", "WHERE"]) {
                 let value = if set {
                     self.expect_token(TokenType::LParen)?;
@@ -268,11 +276,6 @@ impl Parser {
                         true => {
                             let mut expressions = vec![user];
                             expressions.extend(self.parse_secondary_roles()?);
-                            if !self.is_at_end() && !self.check(TokenType::Semicolon) {
-                                return Err(self.parse_error(
-                                    "Expected the end of the statement after USE SECONDARY ROLES",
-                                ));
-                            }
                             Some(tuple(expressions))
                         }
                         false => Some(user),
@@ -291,6 +294,11 @@ impl Parser {
                 };
                 properties.push(property(&name.name.to_ascii_uppercase(), None, value));
             }
+            if alone && !self.is_at_end() && !self.check(TokenType::Semicolon) {
+                return Err(
+                    self.parse_error("FROZEN WHERE and EXECUTE AS USER are set on their own")
+                );
+            }
             let comma = self.match_token(TokenType::Comma);
             if self.is_at_end() || self.check(TokenType::Semicolon) || !set && !comma {
                 return Ok(properties);
@@ -298,8 +306,8 @@ impl Parser {
         }
     }
 
-    /// Parse the column actions of `{ ALTER | MODIFY } [ ( ] [ COLUMN ] <col> <action> [ , ... ] [ ) ]`, each as one operand.
-    fn parse_dynamic_column_actions(&mut self) -> Result<Vec<Expression>> {
+    /// Parse the column actions of `{ ALTER | MODIFY } [ ( ] [ COLUMN ] <col> <action> [ , ... ] [ ) ]`, each as one operand; without COLUMN, no column unsets a tag and ALTER (`modify` false) unsets no masking policy.
+    fn parse_dynamic_column_actions(&mut self, modify: bool) -> Result<Vec<Expression>> {
         let parenthesized = self.match_token(TokenType::LParen);
         let mut columns: Vec<Expression> = Vec::new();
         loop {
@@ -307,6 +315,11 @@ impl Parser {
             let column = Expression::Identifier(self.parse_simple_name()?);
             if !column_word && self.check_text_seq(&["UNSET", "TAG"]) {
                 return Err(self.parse_error("Expected COLUMN before a column that unsets a tag"));
+            }
+            if !column_word && !modify && self.check_text_seq(&["UNSET", "MASKING", "POLICY"]) {
+                return Err(self.parse_error(
+                    "Expected COLUMN before a column that ALTER unsets a masking policy on",
+                ));
             }
             let action = self.expect_alter_words(&[
                 &["COMMENT"],

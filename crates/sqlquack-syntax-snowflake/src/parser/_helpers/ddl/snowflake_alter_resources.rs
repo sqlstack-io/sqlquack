@@ -541,7 +541,10 @@ impl Parser {
             loop {
                 let rule = self.parse_simple_name()?;
                 self.expect_token(TokenType::Eq)?;
-                properties.push(property("RULE", Some(rule), Some(self.parse_value_list()?)));
+                self.expect_token(TokenType::LParen)?;
+                let fields = self.parse_routing_rule_fields(true)?;
+                self.expect_token(TokenType::RParen)?;
+                properties.push(property("RULE", Some(rule), Some(fields)));
                 if !self.match_token(TokenType::Comma) {
                     return Ok((action, (vec![], properties)));
                 }
@@ -554,7 +557,8 @@ impl Parser {
             operands.push(self.parse_name_operand()?);
             return Ok((action, (operands, vec![])));
         }
-        Ok((action, (operands, self.parse_resource_set()?)))
+        operands.push(self.parse_routing_rule_fields(false)?);
+        Ok((action, (operands, vec![])))
     }
 
     /// Parse the rest of the remaining actions: STOP ALL, EXECUTE AS, segment columns, partitions and volumes.
