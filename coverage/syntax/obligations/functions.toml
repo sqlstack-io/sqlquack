@@ -15063,6 +15063,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.data-agent-run-snowflake-cortex.o016"
+kind = "operand_type_class"
+required = true
+target = "'<agent_name>[!<version>]'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.data-agent-run-snowflake-cortex.o003"
 kind = "operand_type_class"
 required = true
@@ -48841,6 +48848,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.functions.parse-document-snowflake-cortex.o015"
+kind = "operand_type_class"
+required = true
+target = "'@<stage>'"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.parse-document-snowflake-cortex.o002"
 kind = "required_operand_missing"
 required = true
@@ -66970,6 +66984,13 @@ required = true
 target = "{ '( <expr1> [ , <expr2> ... ] )' | <number_of_errors> } → <number_of_errors>"
 
 [[obligation]]
+id = "sf.functions.system-clustering-information.o014"
+kind = "operand_type_class"
+required = true
+target = "'( <expr1> [ , <expr2> ... ] )' in [ , { '( <expr1> [ , <expr2> ... ] )' | <number_of_errors> } ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.system-clustering-information.o009"
 kind = "operand_type_class"
 required = true
@@ -71502,6 +71523,13 @@ id = "sf.functions.system-initiate-move-organization-account.o009"
 kind = "alternative"
 required = true
 target = "{ 'ALL' | '<object> [, <object> ...]' } → '<object> [, <object> ...]'"
+
+[[obligation]]
+id = "sf.functions.system-initiate-move-organization-account.o013"
+kind = "operand_type_class"
+required = true
+target = "'<object> [, <object> ...]'"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-initiate-move-organization-account.o010"

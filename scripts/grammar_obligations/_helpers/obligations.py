@@ -167,10 +167,17 @@ def family_obligations(
         drafts += found
         argument_classes.update(skipped)
     suppressed: list[Row] = suppressions(path=root / "limits.toml")
-    drafts = [d for d in drafts if not _suppressed(draft=d, rows=suppressed)]
-    drafts += limit_drafts(
+    limits: list[Draft] = limit_drafts(
         path=root / "limits.toml", family=family, forms={str(form["id"]) for form in forms}
     )
+    written: set[tuple[str, str, str, str]] = {(d.form, d.kind, d.target, d.note) for d in limits}
+    drafts = [
+        d
+        for d in drafts
+        if not _suppressed(draft=d, rows=suppressed)
+        and (d.form, d.kind, d.target, d.note) not in written
+    ]
+    drafts += limits
     drafts.sort(key=lambda draft: draft.form)
     drafts, withdrawn = _without_coincident_negatives(drafts=drafts, trees=trees, family=family)
     drafts, arity = _without_arity(drafts=drafts, trees=trees, family=family)

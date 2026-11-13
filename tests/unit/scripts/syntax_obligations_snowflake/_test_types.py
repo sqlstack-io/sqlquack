@@ -69,3 +69,4 @@ class OperandClassTestCase:
     description: str
     target: str
     expected_notes: frozenset[str]
+    family: str = "transaction_session"

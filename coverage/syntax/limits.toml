@@ -88483,16 +88483,8 @@ note = "reserved: a reserved keyword, unquoted (expected rejection) and double-q
 anchor = "doc.sql.alter-service / Syntax"
 sql = "ALTER SERVICE v1 FROM @SELECT SPECIFICATION_FILE = 'm' ;"
 expect = "observe"
-context = "raw"
-
-[[limit]]
-form = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate"
-kind = "identifier_class"
-target = "<stage>"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-anchor = "doc.sql.alter-service / Syntax"
-sql = "ALTER SERVICE v1 FROM @\"SELECT\" SPECIFICATION_FILE = 'm' ;"
-expect = "observe"
+also_sql = "ALTER SERVICE v1 FROM @\"SELECT\" SPECIFICATION_FILE = 'm' ;"
+also_expect = "accept"
 context = "raw"
 
 [[suppress]]

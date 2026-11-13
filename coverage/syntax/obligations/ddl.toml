@@ -622,6 +622,27 @@ required = true
 target = "[ SCHEDULE = '{ <number> MINUTE | USING CRON <expr> <time_zone> }' ]"
 
 [[obligation]]
+id = "sf.ddl.alter-alert.from-template-set.o047"
+kind = "required_operand_missing"
+required = true
+target = "'{ <number> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <number> MINUTE | USING CRON <expr>…"
+note = "omit '{ <number> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.ddl.alter-alert.from-template-set.o048"
+kind = "operand_type_class"
+required = true
+target = "'{ <number> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <number> MINUTE | USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-alert.from-template-set.o049"
+kind = "negative_neighbour"
+required = true
+target = "'{ <number> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <number> MINUTE | USING CRON <expr>…"
+note = "an unquoted identifier in place of '{ <number> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
 id = "sf.ddl.alter-alert.from-template-set.o016"
 kind = "option_present"
 required = true
@@ -1201,6 +1222,27 @@ id = "sf.ddl.alter-alert.set.o013"
 kind = "option_absent"
 required = true
 target = "[ SCHEDULE = '{ <number> MINUTE | USING CRON <expr> <time_zone> }' ]"
+
+[[obligation]]
+id = "sf.ddl.alter-alert.set.o043"
+kind = "required_operand_missing"
+required = true
+target = "'{ <number> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <number> MINUTE | USING CRON <expr>…"
+note = "omit '{ <number> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.ddl.alter-alert.set.o044"
+kind = "operand_type_class"
+required = true
+target = "'{ <number> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <number> MINUTE | USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-alert.set.o045"
+kind = "negative_neighbour"
+required = true
+target = "'{ <number> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <number> MINUTE | USING CRON <expr>…"
+note = "an unquoted identifier in place of '{ <number> MINUTE | USING CRON <expr> <time_zone> }'"
 
 [[obligation]]
 id = "sf.ddl.alter-alert.set.o014"
@@ -16362,6 +16404,20 @@ required = true
 target = "{ '<num> { seconds | minutes | hours | days }' } → '<num> { seconds | minutes | hours | days }'"
 
 [[obligation]]
+id = "sf.ddl.alter-cortex-search.set.o094"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = { '<num> { seconds | minutes | hours | days }' } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-cortex-search.set.o095"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = { '<num> { seconds | minutes | hours | days }' } ]"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
 id = "sf.ddl.alter-cortex-search.set.o081"
 kind = "option_present"
 required = true
@@ -26750,6 +26806,20 @@ required = true
 target = "{ '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } → DOWNSTREAM"
 
 [[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o138"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = { '<num> { seconds | minutes | hours | days }' |…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o139"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = { '<num> { seconds | minutes | hours | days }' |…"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
 id = "sf.ddl.alter-dynamic-table.set.o011"
 kind = "option_present"
 required = true
@@ -32493,6 +32563,27 @@ target = "'<iam_role>'"
 note = "an unquoted identifier in place of '<iam_role>'"
 
 [[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o094"
+kind = "required_operand_missing"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "omit '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o095"
+kind = "operand_type_class"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o096"
+kind = "negative_neighbour"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "an unquoted identifier in place of '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o029"
 kind = "option_present"
 required = true
@@ -32655,6 +32746,27 @@ required = true
 target = "{ STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL =… → STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://<bucket>[/<path>/]' [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } ) ]"
 
 [[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o097"
+kind = "required_operand_missing"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "omit 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o098"
+kind = "operand_type_class"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o099"
+kind = "negative_neighbour"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "an unquoted identifier in place of 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o055"
 kind = "option_present"
 required = true
@@ -32785,6 +32897,27 @@ id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams
 kind = "alternative"
 required = true
 target = "{ TRUE | FALSE } → FALSE #2"
+
+[[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o100"
+kind = "required_operand_missing"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "omit 'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o101"
+kind = "operand_type_class"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o102"
+kind = "negative_neighbour"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "an unquoted identifier in place of 'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
 
 [[obligation]]
 id = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams.o012"
@@ -50264,6 +50397,34 @@ required = true
 target = "{ '<num> MINUTE' | 'USING CRON <expr> <time_zone>' } → 'USING CRON <expr> <time_zone>'"
 
 [[obligation]]
+id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o015"
+kind = "operand_type_class"
+required = true
+target = "'<num> MINUTE'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o016"
+kind = "negative_neighbour"
+required = true
+target = "'<num> MINUTE'"
+note = "an unquoted identifier in place of '<num> MINUTE'"
+
+[[obligation]]
+id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o017"
+kind = "operand_type_class"
+required = true
+target = "'USING CRON <expr> <time_zone>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o018"
+kind = "negative_neighbour"
+required = true
+target = "'USING CRON <expr> <time_zone>'"
+note = "an unquoted identifier in place of 'USING CRON <expr> <time_zone>'"
+
+[[obligation]]
 id = "sf.ddl.alter-materialized-view.set-data-metric-schedule.o005"
 kind = "negative_neighbour"
 required = true
@@ -53420,6 +53581,27 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
+id = "sf.ddl.alter-oflow-data-plane.o013"
+kind = "required_operand_missing"
+required = true
+target = "'<database>.<schema>.<tablename>'"
+note = "omit '<database>.<schema>.<tablename>'"
+
+[[obligation]]
+id = "sf.ddl.alter-oflow-data-plane.o014"
+kind = "operand_type_class"
+required = true
+target = "'<database>.<schema>.<tablename>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-oflow-data-plane.o015"
+kind = "negative_neighbour"
+required = true
+target = "'<database>.<schema>.<tablename>'"
+note = "an unquoted identifier in place of '<database>.<schema>.<tablename>'"
+
+[[obligation]]
 id = "sf.ddl.alter-oflow-data-plane.o005"
 kind = "negative_neighbour"
 required = true
@@ -53961,6 +54143,27 @@ id = "sf.ddl.alter-online-feature-table.table-set.o008"
 kind = "option_absent"
 required = true
 target = "[ TARGET_LAG = '<num> { seconds | minutes | hours | days }' ]"
+
+[[obligation]]
+id = "sf.ddl.alter-online-feature-table.table-set.o025"
+kind = "required_operand_missing"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = '<num> { seconds | minutes | hours | days }' ]"
+note = "omit '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
+id = "sf.ddl.alter-online-feature-table.table-set.o026"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = '<num> { seconds | minutes | hours | days }' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-online-feature-table.table-set.o027"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = '<num> { seconds | minutes | hours | days }' ]"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
 
 [[obligation]]
 id = "sf.ddl.alter-online-feature-table.table-set.o009"
@@ -55893,6 +56096,20 @@ id = "sf.ddl.alter-openflow-deployment.set.o020"
 kind = "alternative"
 required = true
 target = "{ '<database>.<schema>.<tablename>' | NONE } → NONE"
+
+[[obligation]]
+id = "sf.ddl.alter-openflow-deployment.set.o030"
+kind = "operand_type_class"
+required = true
+target = "'<database>.<schema>.<tablename>' in [ EVENT_TABLE = { '<database>.<schema>.<tablename>' | NONE } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-openflow-deployment.set.o031"
+kind = "negative_neighbour"
+required = true
+target = "'<database>.<schema>.<tablename>' in [ EVENT_TABLE = { '<database>.<schema>.<tablename>' | NONE } ]"
+note = "an unquoted identifier in place of '<database>.<schema>.<tablename>'"
 
 [[obligation]]
 id = "sf.ddl.alter-openflow-deployment.set.o022"
@@ -66423,14 +66640,6 @@ anchor = "doc.sql.alter-service / Syntax"
 note = "the specification without its required FROM, observed"
 
 [[obligation]]
-id = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate.o099"
-kind = "identifier_class"
-required = true
-target = "<stage>"
-anchor = "doc.sql.alter-service / Syntax"
-note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-
-[[obligation]]
 id = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate.o100"
 kind = "identifier_class"
 required = true
@@ -72149,6 +72358,27 @@ required = true
 target = "{ URL = '<protocol>://<bucket>[/<path>/]' [… → URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>' ] [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } | { AWS_ROLE = '<string>' } } ) } ] [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] MASTER_KEY = '<string>' | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]"
 
 [[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o622"
+kind = "required_operand_missing"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]' in [ { { URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>'…"
+note = "omit '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o623"
+kind = "operand_type_class"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]' in [ { { URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>'…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o624"
+kind = "negative_neighbour"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]' in [ { { URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>'…"
+note = "an unquoted identifier in place of '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.alter-stage.set.syntax.o050"
 kind = "option_present"
 required = true
@@ -72503,6 +72733,27 @@ required = true
 target = "[ URL = 'gcs://<bucket>[/<path>/]' ]"
 
 [[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o625"
+kind = "required_operand_missing"
+required = true
+target = "'gcs://<bucket>[/<path>/]' in [ URL = 'gcs://<bucket>[/<path>/]' ]"
+note = "omit 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o626"
+kind = "operand_type_class"
+required = true
+target = "'gcs://<bucket>[/<path>/]' in [ URL = 'gcs://<bucket>[/<path>/]' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o627"
+kind = "negative_neighbour"
+required = true
+target = "'gcs://<bucket>[/<path>/]' in [ URL = 'gcs://<bucket>[/<path>/]' ]"
+note = "an unquoted identifier in place of 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.alter-stage.set.syntax.o575"
 kind = "option_present"
 required = true
@@ -72609,6 +72860,27 @@ id = "sf.ddl.alter-stage.set.syntax.o120"
 kind = "option_absent"
 required = true
 target = "[ URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' ]"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o628"
+kind = "required_operand_missing"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]' in [ URL =…"
+note = "omit 'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o629"
+kind = "operand_type_class"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]' in [ URL =…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o630"
+kind = "negative_neighbour"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]' in [ URL =…"
+note = "an unquoted identifier in place of 'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
 
 [[obligation]]
 id = "sf.ddl.alter-stage.set.syntax.o121"
@@ -84033,6 +84305,34 @@ required = true
 target = "{ '<num> MINUTE' | 'USING CRON <expr> <time_zone>' | 'TRIGGER_ON_CHANGES' } → 'TRIGGER_ON_CHANGES'"
 
 [[obligation]]
+id = "sf.ddl.alter-table.datametricfunctionaction.o803"
+kind = "operand_type_class"
+required = true
+target = "'<num> MINUTE'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datametricfunctionaction.o804"
+kind = "negative_neighbour"
+required = true
+target = "'<num> MINUTE'"
+note = "an unquoted identifier in place of '<num> MINUTE'"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datametricfunctionaction.o805"
+kind = "operand_type_class"
+required = true
+target = "'USING CRON <expr> <time_zone>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datametricfunctionaction.o806"
+kind = "negative_neighbour"
+required = true
+target = "'USING CRON <expr> <time_zone>'"
+note = "an unquoted identifier in place of 'USING CRON <expr> <time_zone>'"
+
+[[obligation]]
 id = "sf.ddl.alter-table.datametricfunctionaction.o025"
 kind = "required_operand_missing"
 required = true
@@ -94002,6 +94302,34 @@ required = true
 target = "{ '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr> <time_zone>' } → 'USING CRON <expr> <time_zone>'"
 
 [[obligation]]
+id = "sf.ddl.alter-task.set.o201"
+kind = "operand_type_class"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o202"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of '<num> { HOURS | MINUTES | SECONDS }'"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o203"
+kind = "operand_type_class"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o204"
+kind = "negative_neighbour"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of 'USING CRON <expr> <time_zone>'"
+
+[[obligation]]
 id = "sf.ddl.alter-task.set.o162"
 kind = "option_present"
 required = true
@@ -94399,6 +94727,27 @@ id = "sf.ddl.alter-task.set.o082"
 kind = "option_absent"
 required = true
 target = "[ TARGET_COMPLETION_INTERVAL = '<num> { HOURS | MINUTES | SECONDS }' ]"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o205"
+kind = "required_operand_missing"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ TARGET_COMPLETION_INTERVAL = '<num> { HOURS | MINUTES | SECONDS }' ]"
+note = "omit '<num> { HOURS | MINUTES | SECONDS }'"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o206"
+kind = "operand_type_class"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ TARGET_COMPLETION_INTERVAL = '<num> { HOURS | MINUTES | SECONDS }' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o207"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ TARGET_COMPLETION_INTERVAL = '<num> { HOURS | MINUTES | SECONDS }' ]"
+note = "an unquoted identifier in place of '<num> { HOURS | MINUTES | SECONDS }'"
 
 [[obligation]]
 id = "sf.ddl.alter-task.set.o186"
@@ -98286,6 +98635,34 @@ id = "sf.ddl.alter-view.datametricfunctionaction.o021"
 kind = "alternative"
 required = true
 target = "{ '<num> MINUTE' | 'USING CRON <expr> <time_zone>' | 'TRIGGER_ON_CHANGES' } → 'TRIGGER_ON_CHANGES'"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o801"
+kind = "operand_type_class"
+required = true
+target = "'<num> MINUTE'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o802"
+kind = "negative_neighbour"
+required = true
+target = "'<num> MINUTE'"
+note = "an unquoted identifier in place of '<num> MINUTE'"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o803"
+kind = "operand_type_class"
+required = true
+target = "'USING CRON <expr> <time_zone>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o804"
+kind = "negative_neighbour"
+required = true
+target = "'USING CRON <expr> <time_zone>'"
+note = "an unquoted identifier in place of 'USING CRON <expr> <time_zone>'"
 
 [[obligation]]
 id = "sf.ddl.alter-view.datametricfunctionaction.o022"
@@ -105402,6 +105779,27 @@ required = true
 target = "[ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
 
 [[obligation]]
+id = "sf.ddl.create-alert.create-alert-from-template.o075"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "omit '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.ddl.create-alert.create-alert-from-template.o076"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-alert.create-alert-from-template.o077"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "an unquoted identifier in place of '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
 id = "sf.ddl.create-alert.create-alert-from-template.o030"
 kind = "option_present"
 required = true
@@ -105854,6 +106252,27 @@ id = "sf.ddl.create-alert.create-alert-if-exists.o022"
 kind = "option_absent"
 required = true
 target = "[ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+
+[[obligation]]
+id = "sf.ddl.create-alert.create-alert-if-exists.o085"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "omit '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.ddl.create-alert.create-alert-if-exists.o086"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-alert.create-alert-if-exists.o087"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "an unquoted identifier in place of '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
 
 [[obligation]]
 id = "sf.ddl.create-alert.create-alert-if-exists.o023"
@@ -106319,6 +106738,27 @@ required = true
 target = "[ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
 
 [[obligation]]
+id = "sf.ddl.create-alert.create-or-alter-alert.o057"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "omit '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.ddl.create-alert.create-or-alter-alert.o058"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-alert.create-or-alter-alert.o059"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "an unquoted identifier in place of '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
 id = "sf.ddl.create-alert.create-or-alter-alert.o007"
 kind = "option_present"
 required = true
@@ -106695,6 +107135,27 @@ id = "sf.ddl.create-alert.define-alert.o006"
 kind = "option_absent"
 required = true
 target = "[ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+
+[[obligation]]
+id = "sf.ddl.create-alert.define-alert.o059"
+kind = "required_operand_missing"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "omit '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+
+[[obligation]]
+id = "sf.ddl.create-alert.define-alert.o060"
+kind = "operand_type_class"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-alert.define-alert.o061"
+kind = "negative_neighbour"
+required = true
+target = "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' in [ SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }' ]"
+note = "an unquoted identifier in place of '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
 
 [[obligation]]
 id = "sf.ddl.create-alert.define-alert.o007"
@@ -113574,6 +114035,20 @@ required = true
 target = "{ '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } → DOWNSTREAM"
 
 [[obligation]]
+id = "sf.ddl.create-clone.dynamic-table-clone.o049"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = { '<num> { seconds | minutes | hours | days }' |…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-clone.dynamic-table-clone.o050"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = { '<num> { seconds | minutes | hours | days }' |…"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
 id = "sf.ddl.create-clone.dynamic-table-clone.o026"
 kind = "required_operand_missing"
 required = true
@@ -114636,6 +115111,27 @@ target = "<bundle_name>"
 note = "a string literal in place of <bundle_name>"
 
 [[obligation]]
+id = "sf.ddl.create-code-bundle.create-code-bundle-from.o034"
+kind = "required_operand_missing"
+required = true
+target = "'snow://workspace/<workspace_path>'"
+note = "omit 'snow://workspace/<workspace_path>'"
+
+[[obligation]]
+id = "sf.ddl.create-code-bundle.create-code-bundle-from.o035"
+kind = "operand_type_class"
+required = true
+target = "'snow://workspace/<workspace_path>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-code-bundle.create-code-bundle-from.o036"
+kind = "negative_neighbour"
+required = true
+target = "'snow://workspace/<workspace_path>'"
+note = "an unquoted identifier in place of 'snow://workspace/<workspace_path>'"
+
+[[obligation]]
 id = "sf.ddl.create-code-bundle.create-code-bundle-from.o015"
 kind = "option_present"
 required = true
@@ -114853,6 +115349,27 @@ target = "<bundle_name>"
 note = "a string literal in place of <bundle_name>"
 
 [[obligation]]
+id = "sf.ddl.create-code-bundle.create-code-bundle-from.syntax.o034"
+kind = "required_operand_missing"
+required = true
+target = "'@<database_name>.<schema_name>.<stage_name>'"
+note = "omit '@<database_name>.<schema_name>.<stage_name>'"
+
+[[obligation]]
+id = "sf.ddl.create-code-bundle.create-code-bundle-from.syntax.o035"
+kind = "operand_type_class"
+required = true
+target = "'@<database_name>.<schema_name>.<stage_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-code-bundle.create-code-bundle-from.syntax.o036"
+kind = "negative_neighbour"
+required = true
+target = "'@<database_name>.<schema_name>.<stage_name>'"
+note = "an unquoted identifier in place of '@<database_name>.<schema_name>.<stage_name>'"
+
+[[obligation]]
 id = "sf.ddl.create-code-bundle.create-code-bundle-from.syntax.o015"
 kind = "option_present"
 required = true
@@ -115044,6 +115561,27 @@ kind = "negative_neighbour"
 required = true
 target = "<bundle_name>"
 note = "a string literal in place of <bundle_name>"
+
+[[obligation]]
+id = "sf.ddl.create-code-bundle.define-code-bundle.o026"
+kind = "required_operand_missing"
+required = true
+target = "'asset://<asset_path>'"
+note = "omit 'asset://<asset_path>'"
+
+[[obligation]]
+id = "sf.ddl.create-code-bundle.define-code-bundle.o027"
+kind = "operand_type_class"
+required = true
+target = "'asset://<asset_path>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-code-bundle.define-code-bundle.o028"
+kind = "negative_neighbour"
+required = true
+target = "'asset://<asset_path>'"
+note = "an unquoted identifier in place of 'asset://<asset_path>'"
 
 [[obligation]]
 id = "sf.ddl.create-code-bundle.define-code-bundle.o011"
@@ -116207,6 +116745,27 @@ target = "<warehouse_name>"
 note = "a string literal in place of <warehouse_name>"
 
 [[obligation]]
+id = "sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag.o096"
+kind = "required_operand_missing"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "omit '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
+id = "sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag.o097"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag.o098"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
 id = "sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag.o027"
 kind = "option_present"
 required = true
@@ -116874,6 +117433,27 @@ kind = "negative_neighbour"
 required = true
 target = "<warehouse_name>"
 note = "a string literal in place of <warehouse_name>"
+
+[[obligation]]
+id = "sf.ddl.create-cortex-search.text-indexes-vector-indexes.o095"
+kind = "required_operand_missing"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "omit '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
+id = "sf.ddl.create-cortex-search.text-indexes-vector-indexes.o096"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-cortex-search.text-indexes-vector-indexes.o097"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
 
 [[obligation]]
 id = "sf.ddl.create-cortex-search.text-indexes-vector-indexes.o032"
@@ -123523,6 +124103,20 @@ required = true
 target = "{ '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } → DOWNSTREAM"
 
 [[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o452"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o453"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o055"
 kind = "required_operand_missing"
 required = true
@@ -125493,6 +126087,20 @@ required = true
 target = "{ '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } → DOWNSTREAM"
 
 [[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o088"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ COPY GRANTS COPY TAGS COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ]…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o089"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ COPY GRANTS COPY TAGS COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ]…"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.create-dynamic-iceberg-table.o031"
 kind = "required_operand_missing"
 required = true
@@ -126062,6 +126670,20 @@ id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o032"
 kind = "alternative"
 required = true
 target = "{ '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } → DOWNSTREAM"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o096"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ COPY GRANTS COPY TAGS COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ]…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o097"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ COPY GRANTS COPY TAGS COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ]…"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-table-clone.o033"
@@ -127028,6 +127650,20 @@ id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o074"
 kind = "alternative"
 required = true
 target = "{ '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } → DOWNSTREAM"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o374"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o375"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o075"
@@ -128981,6 +129617,20 @@ required = true
 target = "{ '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } → DOWNSTREAM"
 
 [[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o220"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o221"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o033"
 kind = "option_present"
 required = true
@@ -130147,6 +130797,20 @@ id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o052"
 kind = "alternative"
 required = true
 target = "{ '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } → DOWNSTREAM"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o459"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o460"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o053"
@@ -131563,6 +132227,20 @@ id = "sf.ddl.create-dynamic-table.define-dynamic-table.o032"
 kind = "alternative"
 required = true
 target = "{ '<num> { seconds | minutes | hours | days }' | DOWNSTREAM } → DOWNSTREAM"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.define-dynamic-table.o197"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.define-dynamic-table.o198"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.define-dynamic-table.o033"
@@ -134507,6 +135185,27 @@ id = "sf.ddl.create-external-consumer.o010"
 kind = "option_absent"
 required = true
 target = "[ REGION = '<region_group>.<snowflake_region>' ]"
+
+[[obligation]]
+id = "sf.ddl.create-external-consumer.o029"
+kind = "required_operand_missing"
+required = true
+target = "'<region_group>.<snowflake_region>' in [ REGION = '<region_group>.<snowflake_region>' ]"
+note = "omit '<region_group>.<snowflake_region>'"
+
+[[obligation]]
+id = "sf.ddl.create-external-consumer.o030"
+kind = "operand_type_class"
+required = true
+target = "'<region_group>.<snowflake_region>' in [ REGION = '<region_group>.<snowflake_region>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-external-consumer.o031"
+kind = "negative_neighbour"
+required = true
+target = "'<region_group>.<snowflake_region>' in [ REGION = '<region_group>.<snowflake_region>' ]"
+note = "an unquoted identifier in place of '<region_group>.<snowflake_region>'"
 
 [[obligation]]
 id = "sf.ddl.create-external-consumer.o011"
@@ -143905,6 +144604,27 @@ target = "'<iam_role>'"
 note = "an unquoted identifier in place of '<iam_role>'"
 
 [[obligation]]
+id = "sf.ddl.create-external-volume.o136"
+kind = "required_operand_missing"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "omit '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-external-volume.o137"
+kind = "operand_type_class"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-external-volume.o138"
+kind = "negative_neighbour"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "an unquoted identifier in place of '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.create-external-volume.o050"
 kind = "option_present"
 required = true
@@ -144100,6 +144820,27 @@ required = true
 target = "{ STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL =… → STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://<bucket>[/<path>/]' [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } ) ]"
 
 [[obligation]]
+id = "sf.ddl.create-external-volume.o139"
+kind = "required_operand_missing"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "omit 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-external-volume.o140"
+kind = "operand_type_class"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-external-volume.o141"
+kind = "negative_neighbour"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "an unquoted identifier in place of 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.create-external-volume.o079"
 kind = "option_present"
 required = true
@@ -144230,6 +144971,27 @@ id = "sf.ddl.create-external-volume.o099"
 kind = "alternative"
 required = true
 target = "{ TRUE | FALSE } → FALSE #2"
+
+[[obligation]]
+id = "sf.ddl.create-external-volume.o142"
+kind = "required_operand_missing"
+required = true
+target = "'s3compat://<bucket>[/<path>/]'"
+note = "omit 's3compat://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-external-volume.o143"
+kind = "operand_type_class"
+required = true
+target = "'s3compat://<bucket>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-external-volume.o144"
+kind = "negative_neighbour"
+required = true
+target = "'s3compat://<bucket>[/<path>/]'"
+note = "an unquoted identifier in place of 's3compat://<bucket>[/<path>/]'"
 
 [[obligation]]
 id = "sf.ddl.create-external-volume.o100"
@@ -156176,6 +156938,27 @@ required = true
 target = "[ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
 
 [[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table-2.o150"
+kind = "required_operand_missing"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
+note = "omit '<package_name>[==<version>]'"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table-2.o151"
+kind = "operand_type_class"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table-2.o152"
+kind = "negative_neighbour"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
+note = "an unquoted identifier in place of '<package_name>[==<version>]'"
+
+[[obligation]]
 id = "sf.ddl.create-function.create-function-returns-table-2.o080"
 kind = "option_present"
 required = true
@@ -156187,6 +156970,27 @@ id = "sf.ddl.create-function.create-function-returns-table-2.o081"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #4"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table-2.o153"
+kind = "required_operand_missing"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "omit '<module_file_name>.<function_name>'"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table-2.o154"
+kind = "operand_type_class"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table-2.o155"
+kind = "negative_neighbour"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "an unquoted identifier in place of '<module_file_name>.<function_name>'"
 
 [[obligation]]
 id = "sf.ddl.create-function.create-function-returns-table-2.o082"
@@ -158573,6 +159377,27 @@ id = "sf.ddl.create-function.create-function-returns-table.python-handler.o076"
 kind = "option_absent"
 required = true
 target = "[ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table.python-handler.o158"
+kind = "required_operand_missing"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
+note = "omit '<package_name>[==<version>]'"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table.python-handler.o159"
+kind = "operand_type_class"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-function.create-function-returns-table.python-handler.o160"
+kind = "negative_neighbour"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
+note = "an unquoted identifier in place of '<package_name>[==<version>]'"
 
 [[obligation]]
 id = "sf.ddl.create-function.create-function-returns-table.python-handler.o077"
@@ -161591,6 +162416,27 @@ required = true
 target = "[ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
 
 [[obligation]]
+id = "sf.ddl.create-function.define-function.o827"
+kind = "required_operand_missing"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
+note = "omit '<package_name>[==<version>]'"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o828"
+kind = "operand_type_class"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o829"
+kind = "negative_neighbour"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]"
+note = "an unquoted identifier in place of '<package_name>[==<version>]'"
+
+[[obligation]]
 id = "sf.ddl.create-function.define-function.o311"
 kind = "option_present"
 required = true
@@ -161602,6 +162448,27 @@ id = "sf.ddl.create-function.define-function.o312"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #15"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o830"
+kind = "required_operand_missing"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "omit '<module_file_name>.<function_name>'"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o831"
+kind = "operand_type_class"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o832"
+kind = "negative_neighbour"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "an unquoted identifier in place of '<module_file_name>.<function_name>'"
 
 [[obligation]]
 id = "sf.ddl.create-function.define-function.o313"
@@ -163052,6 +163919,27 @@ id = "sf.ddl.create-function.define-function.o542"
 kind = "option_absent"
 required = true
 target = "[ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ] #2"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o833"
+kind = "required_operand_missing"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ] #2"
+note = "omit '<package_name>[==<version>]'"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o834"
+kind = "operand_type_class"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ] #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-function.define-function.o835"
+kind = "negative_neighbour"
+required = true
+target = "'<package_name>[==<version>]' in [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ] #2"
+note = "an unquoted identifier in place of '<package_name>[==<version>]'"
 
 [[obligation]]
 id = "sf.ddl.create-function.define-function.o543"
@@ -179736,6 +180624,27 @@ required = true
 target = "[ TARGET_LAG = '<num> { seconds | minutes | hours | days }' ]"
 
 [[obligation]]
+id = "sf.ddl.create-interactive-table.as.o331"
+kind = "required_operand_missing"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = '<num> { seconds | minutes | hours | days }' ]"
+note = "omit '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
+id = "sf.ddl.create-interactive-table.as.o332"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = '<num> { seconds | minutes | hours | days }' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-interactive-table.as.o333"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }' in [ TARGET_LAG = '<num> { seconds | minutes | hours | days }' ]"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
 id = "sf.ddl.create-interactive-table.as.o257"
 kind = "option_present"
 required = true
@@ -181027,6 +181936,27 @@ id = "sf.ddl.create-interactive-table.target-lag-warehouse-as.o010"
 kind = "option_absent"
 required = true
 target = "[ , <expr> , ... ]"
+
+[[obligation]]
+id = "sf.ddl.create-interactive-table.target-lag-warehouse-as.o047"
+kind = "required_operand_missing"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "omit '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
+id = "sf.ddl.create-interactive-table.target-lag-warehouse-as.o048"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-interactive-table.target-lag-warehouse-as.o049"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
 
 [[obligation]]
 id = "sf.ddl.create-interactive-table.target-lag-warehouse-as.o011"
@@ -184257,6 +185187,48 @@ target = "<warehouse_name>"
 note = "a string literal in place of <warehouse_name>"
 
 [[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o104"
+kind = "required_operand_missing"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "omit '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o105"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o106"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o107"
+kind = "required_operand_missing"
+required = true
+target = "'<num> { hours | days }'"
+note = "omit '<num> { hours | days }'"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o108"
+kind = "operand_type_class"
+required = true
+target = "'<num> { hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o109"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { hours | days }'"
+note = "an unquoted identifier in place of '<num> { hours | days }'"
+
+[[obligation]]
 id = "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval.o022"
 kind = "option_absent"
 required = true
@@ -184804,6 +185776,48 @@ kind = "negative_neighbour"
 required = true
 target = "<warehouse_name>"
 note = "a string literal in place of <warehouse_name>"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o135"
+kind = "required_operand_missing"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "omit '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o136"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o137"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o138"
+kind = "required_operand_missing"
+required = true
+target = "'<num> days'"
+note = "omit '<num> days'"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o139"
+kind = "operand_type_class"
+required = true
+target = "'<num> days'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o140"
+kind = "negative_neighbour"
+required = true
+target = "'<num> days'"
+note = "an unquoted identifier in place of '<num> days'"
 
 [[obligation]]
 id = "sf.ddl.create-model-monitor.version-function-source-warehouse.o024"
@@ -186542,6 +187556,27 @@ target = "<project_name>"
 note = "a string literal in place of <project_name>"
 
 [[obligation]]
+id = "sf.ddl.create-notebook-project.from.o028"
+kind = "required_operand_missing"
+required = true
+target = "'snow://workspace/<workspace_path>'"
+note = "omit 'snow://workspace/<workspace_path>'"
+
+[[obligation]]
+id = "sf.ddl.create-notebook-project.from.o029"
+kind = "operand_type_class"
+required = true
+target = "'snow://workspace/<workspace_path>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-notebook-project.from.o030"
+kind = "negative_neighbour"
+required = true
+target = "'snow://workspace/<workspace_path>'"
+note = "an unquoted identifier in place of 'snow://workspace/<workspace_path>'"
+
+[[obligation]]
 id = "sf.ddl.create-notebook-project.from.o011"
 kind = "option_present"
 required = true
@@ -186723,6 +187758,27 @@ kind = "negative_neighbour"
 required = true
 target = "<project_name>"
 note = "a string literal in place of <project_name>"
+
+[[obligation]]
+id = "sf.ddl.create-notebook-project.from.syntax.o033"
+kind = "required_operand_missing"
+required = true
+target = "'@<database_name>.<schema_name>.<stage_name>'"
+note = "omit '@<database_name>.<schema_name>.<stage_name>'"
+
+[[obligation]]
+id = "sf.ddl.create-notebook-project.from.syntax.o034"
+kind = "operand_type_class"
+required = true
+target = "'@<database_name>.<schema_name>.<stage_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-notebook-project.from.syntax.o035"
+kind = "negative_neighbour"
+required = true
+target = "'@<database_name>.<schema_name>.<stage_name>'"
+note = "an unquoted identifier in place of '@<database_name>.<schema_name>.<stage_name>'"
 
 [[obligation]]
 id = "sf.ddl.create-notebook-project.from.syntax.o013"
@@ -186930,6 +187986,27 @@ id = "sf.ddl.create-online-feature-table.o011"
 kind = "option_absent"
 required = true
 target = "[ , <col_name> , ... ]"
+
+[[obligation]]
+id = "sf.ddl.create-online-feature-table.o080"
+kind = "required_operand_missing"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "omit '<num> { seconds | minutes | hours | days }'"
+
+[[obligation]]
+id = "sf.ddl.create-online-feature-table.o081"
+kind = "operand_type_class"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-online-feature-table.o082"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { seconds | minutes | hours | days }'"
+note = "an unquoted identifier in place of '<num> { seconds | minutes | hours | days }'"
 
 [[obligation]]
 id = "sf.ddl.create-online-feature-table.o012"
@@ -188063,6 +189140,20 @@ id = "sf.ddl.create-openflow-deployment.o041"
 kind = "alternative"
 required = true
 target = "{ '<database>.<schema>.<tablename>' | NONE } → NONE"
+
+[[obligation]]
+id = "sf.ddl.create-openflow-deployment.o054"
+kind = "operand_type_class"
+required = true
+target = "'<database>.<schema>.<tablename>' in [ EVENT_TABLE = { '<database>.<schema>.<tablename>' | NONE } ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-openflow-deployment.o055"
+kind = "negative_neighbour"
+required = true
+target = "'<database>.<schema>.<tablename>' in [ EVENT_TABLE = { '<database>.<schema>.<tablename>' | NONE } ]"
+note = "an unquoted identifier in place of '<database>.<schema>.<tablename>'"
 
 [[obligation]]
 id = "sf.ddl.create-openflow-deployment.o042"
@@ -191840,6 +192931,27 @@ target = "'<java_runtime_version>'"
 note = "an unquoted identifier in place of '<java_runtime_version>'"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.o183"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "omit 'com.snowflake:snowpark:<version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.o184"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.o185"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark:<version>'"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table.o051"
 kind = "option_present"
 required = true
@@ -192989,6 +194101,27 @@ required = true
 target = "[ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table-2.o185"
+kind = "required_operand_missing"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "omit '<module_file_name>.<function_name>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table-2.o186"
+kind = "operand_type_class"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table-2.o187"
+kind = "negative_neighbour"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "an unquoted identifier in place of '<module_file_name>.<function_name>'"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table-2.o068"
 kind = "option_present"
 required = true
@@ -193871,6 +195004,27 @@ target = "'<scala_runtime_version>'"
 note = "an unquoted identifier in place of '<scala_runtime_version>'"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table-3.o195"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "omit 'com.snowflake:snowpark_<scala_version>:<version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table-3.o196"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table-3.o197"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark_<scala_version>:<version>'"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table-3.o158"
 kind = "option_present"
 required = true
@@ -194676,6 +195830,27 @@ kind = "negative_neighbour"
 required = true
 target = "'<java_runtime_version>'"
 note = "an unquoted identifier in place of '<java_runtime_version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler.o174"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "omit 'com.snowflake:snowpark:<version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler.o175"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler.o176"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark:<version>'"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler.o051"
@@ -196709,6 +197884,27 @@ target = "'<scala_runtime_version>'"
 note = "an unquoted identifier in place of '<scala_runtime_version>'"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler.o208"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "omit 'com.snowflake:snowpark_<scala_version>:<version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler.o209"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler.o210"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark_<scala_version>:<version>'"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler.o169"
 kind = "option_present"
 required = true
@@ -198709,6 +199905,27 @@ target = "'<java_runtime_version>'"
 note = "an unquoted identifier in place of '<java_runtime_version>'"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1205"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "omit 'com.snowflake:snowpark:<version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1206"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1207"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark:<version>'"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark:<version>'"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o105"
 kind = "option_absent"
 required = true
@@ -199193,6 +200410,27 @@ required = true
 target = "[ , '<stage_path_and_directory_or_file_name_to_read>' ... ] #2"
 
 [[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1208"
+kind = "required_operand_missing"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "omit '<module_file_name>.<function_name>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1209"
+kind = "operand_type_class"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1210"
+kind = "negative_neighbour"
+required = true
+target = "'<module_file_name>.<function_name>'"
+note = "an unquoted identifier in place of '<module_file_name>.<function_name>'"
+
+[[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o228"
 kind = "option_absent"
 required = true
@@ -199497,6 +200735,27 @@ kind = "negative_neighbour"
 required = true
 target = "'<scala_runtime_version>'"
 note = "an unquoted identifier in place of '<scala_runtime_version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1211"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "omit 'com.snowflake:snowpark_<scala_version>:<version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1212"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1213"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>'"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark_<scala_version>:<version>'"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o310"
@@ -199815,6 +201074,27 @@ kind = "negative_neighbour"
 required = true
 target = "'<java_runtime_version>' #2"
 note = "an unquoted identifier in place of '<java_runtime_version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1214"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark:<version>' #2"
+note = "omit 'com.snowflake:snowpark:<version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1215"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark:<version>' #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1216"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark:<version>' #2"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark:<version>'"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o391"
@@ -200612,6 +201892,27 @@ kind = "negative_neighbour"
 required = true
 target = "'<scala_runtime_version>' #2"
 note = "an unquoted identifier in place of '<scala_runtime_version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1217"
+kind = "required_operand_missing"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>' #2"
+note = "omit 'com.snowflake:snowpark_<scala_version>:<version>'"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1218"
+kind = "operand_type_class"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>' #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-procedure.define-procedure.o1219"
+kind = "negative_neighbour"
+required = true
+target = "'com.snowflake:snowpark_<scala_version>:<version>' #2"
+note = "an unquoted identifier in place of 'com.snowflake:snowpark_<scala_version>:<version>'"
 
 [[obligation]]
 id = "sf.ddl.create-procedure.define-procedure.o596"
@@ -209882,6 +211183,27 @@ required = true
 target = "[ VERIFIED_BY '( <purpose> = <contact> )' ]"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o541"
+kind = "required_operand_missing"
+required = true
+target = "'( <purpose> = <contact> )' in [ VERIFIED_BY '( <purpose> = <contact> )' ]"
+note = "omit '( <purpose> = <contact> )'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o542"
+kind = "operand_type_class"
+required = true
+target = "'( <purpose> = <contact> )' in [ VERIFIED_BY '( <purpose> = <contact> )' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o543"
+kind = "negative_neighbour"
+required = true
+target = "'( <purpose> = <contact> )' in [ VERIFIED_BY '( <purpose> = <contact> )' ]"
+note = "an unquoted identifier in place of '( <purpose> = <contact> )'"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o377"
 kind = "required_operand_missing"
 required = true
@@ -213046,6 +214368,27 @@ required = true
 target = "[ VERIFIED_BY '( <purpose> = <contact> )' ]"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o564"
+kind = "required_operand_missing"
+required = true
+target = "'( <purpose> = <contact> )' in [ VERIFIED_BY '( <purpose> = <contact> )' ]"
+note = "omit '( <purpose> = <contact> )'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o565"
+kind = "operand_type_class"
+required = true
+target = "'( <purpose> = <contact> )' in [ VERIFIED_BY '( <purpose> = <contact> )' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o566"
+kind = "negative_neighbour"
+required = true
+target = "'( <purpose> = <contact> )' in [ VERIFIED_BY '( <purpose> = <contact> )' ]"
+note = "an unquoted identifier in place of '( <purpose> = <contact> )'"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o390"
 kind = "required_operand_missing"
 required = true
@@ -215483,6 +216826,27 @@ id = "sf.ddl.create-semantic-view.define-semantic-view.o331"
 kind = "option_absent"
 required = true
 target = "[ VERIFIED_BY '( <purpose> = <contact> )' ]"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o621"
+kind = "required_operand_missing"
+required = true
+target = "'( <purpose> = <contact> )' in [ VERIFIED_BY '( <purpose> = <contact> )' ]"
+note = "omit '( <purpose> = <contact> )'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o622"
+kind = "operand_type_class"
+required = true
+target = "'( <purpose> = <contact> )' in [ VERIFIED_BY '( <purpose> = <contact> )' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o623"
+kind = "negative_neighbour"
+required = true
+target = "'( <purpose> = <contact> )' in [ VERIFIED_BY '( <purpose> = <contact> )' ]"
+note = "an unquoted identifier in place of '( <purpose> = <contact> )'"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o332"
@@ -219526,6 +220890,27 @@ kind = "negative_neighbour"
 required = true
 target = "<service_name>"
 note = "a string literal in place of <service_name>"
+
+[[obligation]]
+id = "sf.ddl.create-snapshot.o052"
+kind = "required_operand_missing"
+required = true
+target = "\"<volume_name>\""
+note = "omit \"<volume_name>\""
+
+[[obligation]]
+id = "sf.ddl.create-snapshot.o053"
+kind = "operand_type_class"
+required = true
+target = "\"<volume_name>\""
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-snapshot.o054"
+kind = "negative_neighbour"
+required = true
+target = "\"<volume_name>\""
+note = "an unquoted identifier in place of \"<volume_name>\""
 
 [[obligation]]
 id = "sf.ddl.create-snapshot.o012"
@@ -223824,6 +225209,27 @@ required = true
 target = "{ URL = '<protocol>://<bucket>[/<path>/]' [… → URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>' ] [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } | { AWS_ROLE = '<string>' } } ) } ] [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] MASTER_KEY = '<string>' | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ AWS_SNS_TOPIC = '<sns_topic_arn>' ] ) ]"
 
 [[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o725"
+kind = "required_operand_missing"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "omit '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o726"
+kind = "operand_type_class"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o727"
+kind = "negative_neighbour"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "an unquoted identifier in place of '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o051"
 kind = "option_present"
 required = true
@@ -224358,6 +225764,27 @@ required = true
 target = "{ URL = 'gcs://<bucket>[/<path>/]' [ STORAGE_INTEGRATION =… → URL = 'gcs://<bucket>[/<path>/]' [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( { TYPE = 'GCS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ AUTO_REFRESH = { TRUE | FALSE } ] [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ]"
 
 [[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o728"
+kind = "required_operand_missing"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "omit 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o729"
+kind = "operand_type_class"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o730"
+kind = "negative_neighbour"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "an unquoted identifier in place of 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o133"
 kind = "option_present"
 required = true
@@ -224581,6 +226008,27 @@ id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o168"
 kind = "alternative"
 required = true
 target = "{ URL =… → URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o731"
+kind = "required_operand_missing"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "omit 'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o732"
+kind = "operand_type_class"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o733"
+kind = "negative_neighbour"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "an unquoted identifier in place of 'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
 
 [[obligation]]
 id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o169"
@@ -224851,6 +226299,27 @@ id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o211"
 kind = "alternative"
 required = true
 target = "{ URL =… → URL = 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' } ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o734"
+kind = "required_operand_missing"
+required = true
+target = "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+note = "omit 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o735"
+kind = "operand_type_class"
+required = true
+target = "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o736"
+kind = "negative_neighbour"
+required = true
+target = "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+note = "an unquoted identifier in place of 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
 
 [[obligation]]
 id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o212"
@@ -228283,6 +229752,27 @@ required = true
 target = "{ URL = '<protocol>://<bucket>[/<path>/]' [… → URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>' ] [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } | { AWS_ROLE = '<string>' } } ) } ] [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] MASTER_KEY = '<string>' | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ AWS_SNS_TOPIC = '<sns_topic_arn>' ] ) ]"
 
 [[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o750"
+kind = "required_operand_missing"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "omit '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o751"
+kind = "operand_type_class"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o752"
+kind = "negative_neighbour"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "an unquoted identifier in place of '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o073"
 kind = "option_present"
 required = true
@@ -228817,6 +230307,27 @@ required = true
 target = "{ URL = 'gcs://<bucket>[/<path>/]' [ STORAGE_INTEGRATION =… → URL = 'gcs://<bucket>[/<path>/]' [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( { TYPE = 'GCS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ AUTO_REFRESH = { TRUE | FALSE } ] [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ]"
 
 [[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o753"
+kind = "required_operand_missing"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "omit 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o754"
+kind = "operand_type_class"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o755"
+kind = "negative_neighbour"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "an unquoted identifier in place of 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o155"
 kind = "option_present"
 required = true
@@ -229040,6 +230551,27 @@ id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.
 kind = "alternative"
 required = true
 target = "{ URL =… → URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o756"
+kind = "required_operand_missing"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "omit 'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o757"
+kind = "operand_type_class"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o758"
+kind = "negative_neighbour"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "an unquoted identifier in place of 'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
 
 [[obligation]]
 id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o191"
@@ -229310,6 +230842,27 @@ id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.
 kind = "alternative"
 required = true
 target = "{ URL =… → URL = 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' } ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o759"
+kind = "required_operand_missing"
+required = true
+target = "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+note = "omit 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o760"
+kind = "operand_type_class"
+required = true
+target = "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o761"
+kind = "negative_neighbour"
+required = true
+target = "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+note = "an unquoted identifier in place of 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
 
 [[obligation]]
 id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o234"
@@ -237843,6 +239396,27 @@ required = true
 target = "{ URL = '<protocol>://<bucket>[/<path>/]' [… → URL = '<protocol>://<bucket>[/<path>/]' [ AWS_ACCESS_POINT_ARN = '<string>' ] [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( { { AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] } | { AWS_ROLE = '<string>' } } ) } ] [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] MASTER_KEY = '<string>' | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ AWS_SNS_TOPIC = '<sns_topic_arn>' ] ) ]"
 
 [[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1133"
+kind = "required_operand_missing"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "omit '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1134"
+kind = "operand_type_class"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1135"
+kind = "negative_neighbour"
+required = true
+target = "'<protocol>://<bucket>[/<path>/]'"
+note = "an unquoted identifier in place of '<protocol>://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.create-stage.define-stage.o361"
 kind = "option_present"
 required = true
@@ -238377,6 +239951,27 @@ required = true
 target = "{ URL = 'gcs://<bucket>[/<path>/]' [ STORAGE_INTEGRATION =… → URL = 'gcs://<bucket>[/<path>/]' [ STORAGE_INTEGRATION = <integration_name> ] [ ENCRYPTION = ( { TYPE = 'GCS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ AUTO_REFRESH = { TRUE | FALSE } ] [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ]"
 
 [[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1136"
+kind = "required_operand_missing"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "omit 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1137"
+kind = "operand_type_class"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1138"
+kind = "negative_neighbour"
+required = true
+target = "'gcs://<bucket>[/<path>/]'"
+note = "an unquoted identifier in place of 'gcs://<bucket>[/<path>/]'"
+
+[[obligation]]
 id = "sf.ddl.create-stage.define-stage.o444"
 kind = "option_present"
 required = true
@@ -238600,6 +240195,27 @@ id = "sf.ddl.create-stage.define-stage.o479"
 kind = "alternative"
 required = true
 target = "{ URL =… → URL = 'azure://<account>.blob.core.windows.net/<container>[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' } ) ] [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ] [ DIRECTORY = ( ENABLE = { TRUE | FALSE } [ REFRESH_ON_CREATE = { TRUE | FALSE } ] [ AUTO_REFRESH = { TRUE | FALSE } ] [ NOTIFICATION_INTEGRATION = '<notification_integration_name>' ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1139"
+kind = "required_operand_missing"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "omit 'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1140"
+kind = "operand_type_class"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1141"
+kind = "negative_neighbour"
+required = true
+target = "'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
+note = "an unquoted identifier in place of 'azure://<account>.blob.core.windows.net/<container>[/<path>/]'"
 
 [[obligation]]
 id = "sf.ddl.create-stage.define-stage.o480"
@@ -238870,6 +240486,27 @@ id = "sf.ddl.create-stage.define-stage.o522"
 kind = "alternative"
 required = true
 target = "{ URL =… → URL = 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]' [ { STORAGE_INTEGRATION = <integration_name> } | { CREDENTIALS = ( [ AZURE_SAS_TOKEN = '<string>' ] ) } ] [ ENCRYPTION = ( { TYPE = 'AZURE_CSE' MASTER_KEY = '<string>' | TYPE = 'NONE' } ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1142"
+kind = "required_operand_missing"
+required = true
+target = "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+note = "omit 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1143"
+kind = "operand_type_class"
+required = true
+target = "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1144"
+kind = "negative_neighbour"
+required = true
+target = "'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
+note = "an unquoted identifier in place of 'azure://onelake.blob.fabric.microsoft.com/<workspace_id>/<item_id>/Files[/<path>/]'"
 
 [[obligation]]
 id = "sf.ddl.create-stage.define-stage.o523"
@@ -246982,6 +248619,27 @@ id = "sf.ddl.create-streamlit.define-streamlit.o006"
 kind = "option_absent"
 required = true
 target = "[ FROM 'asset://<asset_path>' ]"
+
+[[obligation]]
+id = "sf.ddl.create-streamlit.define-streamlit.o081"
+kind = "required_operand_missing"
+required = true
+target = "'asset://<asset_path>' in [ FROM 'asset://<asset_path>' ]"
+note = "omit 'asset://<asset_path>'"
+
+[[obligation]]
+id = "sf.ddl.create-streamlit.define-streamlit.o082"
+kind = "operand_type_class"
+required = true
+target = "'asset://<asset_path>' in [ FROM 'asset://<asset_path>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-streamlit.define-streamlit.o083"
+kind = "negative_neighbour"
+required = true
+target = "'asset://<asset_path>' in [ FROM 'asset://<asset_path>' ]"
+note = "an unquoted identifier in place of 'asset://<asset_path>'"
 
 [[obligation]]
 id = "sf.ddl.create-streamlit.define-streamlit.o007"
@@ -262460,6 +264118,34 @@ required = true
 target = "{ '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr> <time_zone>' } → 'USING CRON <expr> <time_zone>'"
 
 [[obligation]]
+id = "sf.ddl.create-task-graph.create-or-alter-task.o093"
+kind = "operand_type_class"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task-graph.create-or-alter-task.o094"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of '<num> { HOURS | MINUTES | SECONDS }'"
+
+[[obligation]]
+id = "sf.ddl.create-task-graph.create-or-alter-task.o095"
+kind = "operand_type_class"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task-graph.create-or-alter-task.o096"
+kind = "negative_neighbour"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of 'USING CRON <expr> <time_zone>'"
+
+[[obligation]]
 id = "sf.ddl.create-task-graph.create-or-alter-task.o009"
 kind = "option_present"
 required = true
@@ -263234,6 +264920,34 @@ required = true
 target = "{ '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr> <time_zone>' } → 'USING CRON <expr> <time_zone>'"
 
 [[obligation]]
+id = "sf.ddl.create-task-graph.create-task-graph.o131"
+kind = "operand_type_class"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task-graph.create-task-graph.o132"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of '<num> { HOURS | MINUTES | SECONDS }'"
+
+[[obligation]]
+id = "sf.ddl.create-task-graph.create-task-graph.o133"
+kind = "operand_type_class"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task-graph.create-task-graph.o134"
+kind = "negative_neighbour"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of 'USING CRON <expr> <time_zone>'"
+
+[[obligation]]
 id = "sf.ddl.create-task-graph.create-task-graph.o034"
 kind = "option_present"
 required = true
@@ -263912,6 +265626,34 @@ required = true
 target = "{ '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr> <time_zone>' } → 'USING CRON <expr> <time_zone>'"
 
 [[obligation]]
+id = "sf.ddl.create-task-graph.define-task-graph.o090"
+kind = "operand_type_class"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task-graph.define-task-graph.o091"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of '<num> { HOURS | MINUTES | SECONDS }'"
+
+[[obligation]]
+id = "sf.ddl.create-task-graph.define-task-graph.o092"
+kind = "operand_type_class"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task-graph.define-task-graph.o093"
+kind = "negative_neighbour"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of 'USING CRON <expr> <time_zone>'"
+
+[[obligation]]
 id = "sf.ddl.create-task-graph.define-task-graph.o009"
 kind = "option_present"
 required = true
@@ -264579,6 +266321,34 @@ id = "sf.ddl.create-task.create-or-alter-task.o020"
 kind = "alternative"
 required = true
 target = "{ '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr> <time_zone>' } → 'USING CRON <expr> <time_zone>'"
+
+[[obligation]]
+id = "sf.ddl.create-task.create-or-alter-task.o161"
+kind = "operand_type_class"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task.create-or-alter-task.o162"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of '<num> { HOURS | MINUTES | SECONDS }'"
+
+[[obligation]]
+id = "sf.ddl.create-task.create-or-alter-task.o163"
+kind = "operand_type_class"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task.create-or-alter-task.o164"
+kind = "negative_neighbour"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of 'USING CRON <expr> <time_zone>'"
 
 [[obligation]]
 id = "sf.ddl.create-task.create-or-alter-task.o021"
@@ -265615,6 +267385,34 @@ required = true
 target = "{ '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr> <time_zone>' } → 'USING CRON <expr> <time_zone>'"
 
 [[obligation]]
+id = "sf.ddl.create-task.create-task-as.o272"
+kind = "operand_type_class"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task.create-task-as.o273"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of '<num> { HOURS | MINUTES | SECONDS }'"
+
+[[obligation]]
+id = "sf.ddl.create-task.create-task-as.o274"
+kind = "operand_type_class"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task.create-task-as.o275"
+kind = "negative_neighbour"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of 'USING CRON <expr> <time_zone>'"
+
+[[obligation]]
 id = "sf.ddl.create-task.create-task-as.o044"
 kind = "option_present"
 required = true
@@ -266045,6 +267843,27 @@ id = "sf.ddl.create-task.create-task-as.o108"
 kind = "option_absent"
 required = true
 target = "[ TARGET_COMPLETION_INTERVAL = '<num> { HOURS | MINUTES | SECONDS }' ]"
+
+[[obligation]]
+id = "sf.ddl.create-task.create-task-as.o276"
+kind = "required_operand_missing"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ TARGET_COMPLETION_INTERVAL = '<num> { HOURS | MINUTES | SECONDS }' ]"
+note = "omit '<num> { HOURS | MINUTES | SECONDS }'"
+
+[[obligation]]
+id = "sf.ddl.create-task.create-task-as.o277"
+kind = "operand_type_class"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ TARGET_COMPLETION_INTERVAL = '<num> { HOURS | MINUTES | SECONDS }' ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task.create-task-as.o278"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ TARGET_COMPLETION_INTERVAL = '<num> { HOURS | MINUTES | SECONDS }' ]"
+note = "an unquoted identifier in place of '<num> { HOURS | MINUTES | SECONDS }'"
 
 [[obligation]]
 id = "sf.ddl.create-task.create-task-as.o109"
@@ -266991,6 +268810,34 @@ id = "sf.ddl.create-task.define-task.o020"
 kind = "alternative"
 required = true
 target = "{ '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr> <time_zone>' } → 'USING CRON <expr> <time_zone>'"
+
+[[obligation]]
+id = "sf.ddl.create-task.define-task.o143"
+kind = "operand_type_class"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task.define-task.o144"
+kind = "negative_neighbour"
+required = true
+target = "'<num> { HOURS | MINUTES | SECONDS }' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of '<num> { HOURS | MINUTES | SECONDS }'"
+
+[[obligation]]
+id = "sf.ddl.create-task.define-task.o145"
+kind = "operand_type_class"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-task.define-task.o146"
+kind = "negative_neighbour"
+required = true
+target = "'USING CRON <expr> <time_zone>' in [ SCHEDULE = { '<num> { HOURS | MINUTES | SECONDS }' | 'USING CRON <expr>…"
+note = "an unquoted identifier in place of 'USING CRON <expr> <time_zone>'"
 
 [[obligation]]
 id = "sf.ddl.create-task.define-task.o021"

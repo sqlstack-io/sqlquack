@@ -11,6 +11,7 @@ from scripts.grammar_obligations._helpers.grammar import (
     operand_class,
     placeholder_name,
     render,
+    template_name,
 )
 from scripts.grammar_obligations.constants import (
     ACTION_ALL_OPTIONS,
@@ -27,6 +28,8 @@ from scripts.grammar_obligations.constants import (
     CALLEE_STARTS,
     CLAUSE_CALLEES,
     CLOSE_PAREN,
+    COMMAND_FAMILIES,
+    COMMAND_NON_CALL_KEYWORDS,
     EXPECT_OBSERVE,
     EXPECT_REJECT,
     EXPRESSION_ARGUMENT_FAMILIES,
@@ -82,6 +85,7 @@ class Walk:
         self.chosen: tuple[tuple[int, int], ...] = ()
         self.expression_arguments: bool = form.split(".")[1] in EXPRESSION_ARGUMENT_FAMILIES
         self.statements: bool = form.split(".")[1] in TOP_LEVEL_FAMILIES
+        self.commands: bool = form.split(".")[1] in COMMAND_FAMILIES
         self.calls: list[bool] = []
         self.callees: list[str] = []
         self.named: bool = False
@@ -189,6 +193,7 @@ class Walk:
             bool(self.previous)
             and (self.previous[0].isalpha() or self.previous[0] in CALLEE_STARTS)
             and self.previous.upper() not in NON_CALL_KEYWORDS
+            and not (self.commands and self.previous.upper() in COMMAND_NON_CALL_KEYWORDS)
         )
 
     def _unsure(self, *, spec: Spec, after: frozenset[str]) -> Spec:
@@ -215,7 +220,7 @@ class Walk:
         if not self.expression_arguments:
             return False
         if not self.previous or self.previous.upper() in OPERAND_KEYWORDS:
-            return True
+            return not self.commands
         return bool(self.calls) and self.calls[-1] and self._argument_start()
 
     @staticmethod
@@ -228,7 +233,7 @@ class Walk:
 
     def token(self, *, node: Node, where: str, omission_is_absence: bool) -> None:
         """Operand drafts; a lone operand of an option or branch gets no missing-operand case."""
-        name: str = placeholder_name(node)
+        name: str = placeholder_name(node) or template_name(node)
         if not name:
             return
         label: str = STRING_CLASS if node.token_kind == TOKEN_LITERAL else operand_class(name)
