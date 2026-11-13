@@ -2411,3 +2411,191 @@ note = "Re-read against criterion (b) only, after the numeric operands gained wr
 [review.definitions]
 "sf.ddl.show-run-in-experiment.metrics-in-experiment" = "5e068c988afe99c9ef62f3d096263df2dc1c6daff7b997757ec8bdad50f4fc9c"
 "sf.ddl.show-run-in-experiment.parameters-in-experiment" = "ca01b8e469c56a7ea821b870d1b5e85e5c948b2e3614496471189fcb0f5fe36b"
+
+[[review]]
+id = "ddl-030"
+family = "ddl"
+parser_tree = "3abd08d7af377fc780f56a1afb120ac87c29a66f"
+reviewed_utc = "2026-11-13T19:39:02Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-application-sequence-number",
+  "sf.ddl.create-database.create-database-as-replica",
+  "sf.ddl.create-file-format.create-file-format",
+  "sf.ddl.create-file-format.create-or-alter-file",
+  "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row",
+  "sf.ddl.create-stage.create-or-alter-stage",
+  "sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams",
+  "sf.ddl.show-alerts",
+  "sf.ddl.show-application-packages",
+  "sf.ddl.show-application-services",
+  "sf.ddl.show-applications",
+  "sf.ddl.show-artifact-repositories",
+  "sf.ddl.show-available-listings.listings.syntax",
+  "sf.ddl.show-backups-in-backup-set",
+  "sf.ddl.show-classes",
+  "sf.ddl.show-committed-tasks",
+  "sf.ddl.show-compute-pools",
+  "sf.ddl.show-contacts",
+  "sf.ddl.show-cortex-base-models",
+  "sf.ddl.show-dbt-projects",
+  "sf.ddl.show-dcm-projects",
+  "sf.ddl.show-delegated-authorizations.authorizations-by-user",
+  "sf.ddl.show-delegated-authorizations.authorizations-to-security-integration",
+  "sf.ddl.show-deployments-in-dcm-project",
+  "sf.ddl.show-dynamic-tables",
+  "sf.ddl.show-entities-in-dcm-project.in-dcm-project",
+  "sf.ddl.show-entities-in-dcm-project.in-dcm-project-limit",
+  "sf.ddl.show-event-tables",
+  "sf.ddl.show-external-tables",
+  "sf.ddl.show-files-in-artifact-repository",
+  "sf.ddl.show-gateways",
+  "sf.ddl.show-git-repositories",
+  "sf.ddl.show-hybrid-tables",
+  "sf.ddl.show-iceberg-tables",
+  "sf.ddl.show-indexes",
+  "sf.ddl.show-interactive-tables",
+  "sf.ddl.show-listings",
+  "sf.ddl.show-notebooks",
+  "sf.ddl.show-objects",
+  "sf.ddl.show-online-feature-tables",
+  "sf.ddl.show-openflow-connector-definitions",
+  "sf.ddl.show-openflow-connectors",
+  "sf.ddl.show-openflow-deployments",
+  "sf.ddl.show-openflow-runtimes",
+  "sf.ddl.show-packages-in-artifact-repository",
+  "sf.ddl.show-postgres-instances",
+  "sf.ddl.show-semantic-dimensions-for-metric",
+  "sf.ddl.show-semantic-views",
+  "sf.ddl.show-snapshots",
+  "sf.ddl.show-streamlits",
+  "sf.ddl.show-streams",
+  "sf.ddl.show-tables",
+  "sf.ddl.show-task-graphs",
+  "sf.ddl.show-tasks",
+  "sf.ddl.show-versions-in-artifact-repository",
+  "sf.ddl.show-versions-in-dataset",
+  "sf.ddl.show-versions-in-listing",
+  "sf.ddl.show-views",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees of the parser at 0a00bf46a; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-application-sequence-number" = "7c7d7237c042927dfe1b2154ff731a6711b3251816a39ddfb28033f5cd9d55cd"
+"sf.ddl.create-database.create-database-as-replica" = "c11fa68c63e2d532d32df3c117e4dd5ade255ee078ab7a02765428a5a2ecc2c9"
+"sf.ddl.create-file-format.create-file-format" = "909f9181b2d86221c0adf576914163fd8082f19ea634836beee744fbba7e7353"
+"sf.ddl.create-file-format.create-or-alter-file" = "2edbe39cadf0bf34096f151dbeb54a327574063f1c7d8ed42ca5c848703df58a"
+"sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row" = "73717a17e4795dc503cb5fa09990b0feed9a9e008281f7d4b493482755591e6a"
+"sf.ddl.create-stage.create-or-alter-stage" = "946f5f356d956a5d612e1e682aef03e3eb9de9d99899fede6ad819a677d87ae1"
+"sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams" = "ad78ec071cc5fe7876a52e1597bff4b38c7e6db58378ac721e096f3151df20f8"
+"sf.ddl.show-alerts" = "9bd23fed29a4e75a7010355d106b8af47513abf3d949c5a7ee454951c7a395f5"
+"sf.ddl.show-application-packages" = "cfe86e57a66c88cafc0ab5e2bc2d2079f1db114a1d5376bca9448e1bd0cefa89"
+"sf.ddl.show-application-services" = "30cbcb75020e921f5df5c2ff829dedff15e46c176b69a0f6e948566bd653957f"
+"sf.ddl.show-applications" = "9328e68df09f1b13d111c0648617e90225c3375b1de9a24e8b266fda9ac986f5"
+"sf.ddl.show-artifact-repositories" = "cbe8b4f635460c6b083c8bc9d432536cdd87896f7a191278bf560958d28beab5"
+"sf.ddl.show-available-listings.listings.syntax" = "880f49effd28fd115eb31e1313c4c0eb0aa344a6eaa881eae6bc5d7feea898e9"
+"sf.ddl.show-backups-in-backup-set" = "73d30d15704b3470b67ed74c809daccf7d13d1aea17579bf1889f176a0910a94"
+"sf.ddl.show-classes" = "80139871f71ff0105ecc1acad9d09cbe77ec99bf95e09feaa72932a0691712c2"
+"sf.ddl.show-committed-tasks" = "1f549b4e9f890e74689591369f13db547ab2d5694f07467f9b0458719d144460"
+"sf.ddl.show-compute-pools" = "c49eb9a68a60e70bf8cbddfbcbfc8d7ea6a418230db0d057ef237a110e9732dc"
+"sf.ddl.show-contacts" = "fbc0a7b31c7737bb3bebd2f9446e5aec722d8e4b60bb56176ce1918e5e8f8334"
+"sf.ddl.show-cortex-base-models" = "cb473ca3c73d0549ea369dc6c3a5013bdfc988663ce80d4664b75c212c30bdba"
+"sf.ddl.show-dbt-projects" = "68a12083b9e26b1ffe1db2281a6b39b63ec3fa61fec1dd6adace6488b09fb169"
+"sf.ddl.show-dcm-projects" = "2a3a07a0318e7598aae187b1af4f4e5bbf0635bfcfd2004a6c4523860b324282"
+"sf.ddl.show-delegated-authorizations.authorizations-by-user" = "eef42a4b4f77cb8e71fa0ede31dfe3405cbe633e5b5b7bc20919dfb58c66d8be"
+"sf.ddl.show-delegated-authorizations.authorizations-to-security-integration" = "553725858acf541597e2d183475d3f4f25172b1d2575e60fbd19093b2329ec73"
+"sf.ddl.show-deployments-in-dcm-project" = "35414e5e92b7eca94244ecdf80da9b7e32577738c5ed2f96ce3793945c0d6d1a"
+"sf.ddl.show-dynamic-tables" = "4a6ab3588e9eb36d871e09cb238ad48cefcea1110fee1ef08431ea85f6840f1d"
+"sf.ddl.show-entities-in-dcm-project.in-dcm-project" = "7680f66d2096b900d071d6d08ab8deb17d381568f61991549ad874e3de5d2d6e"
+"sf.ddl.show-entities-in-dcm-project.in-dcm-project-limit" = "c21eacd05ff7e4d706321f57e3f7d895d9e82e323bf8ac7fad15cc02bf73b4d8"
+"sf.ddl.show-event-tables" = "a24103b2786cd055fccad8285ccca3ae82320b6e44f83e98b512acf3dff3ebec"
+"sf.ddl.show-external-tables" = "d1e7c1079ace90cc49565f3ce415a837e03a01a6f2aedf6f4a62deb1e6d55ee4"
+"sf.ddl.show-files-in-artifact-repository" = "8c84b0ed57c4fcca2ec138def5811ba3f332362df9ddf9d7b06cedc0251c4668"
+"sf.ddl.show-gateways" = "472af26133247060be0eb7c2bf33dded3bdd7e6b62c0ec31a426df6028685861"
+"sf.ddl.show-git-repositories" = "4b239262a5ef0447c5807913a66f15e7e7451bf0cbb6d3bfa2e603e77ffeedb9"
+"sf.ddl.show-hybrid-tables" = "892c597da5472e7845ec2040635f66158256a7a567f8b95db9c2c40a72f1aac4"
+"sf.ddl.show-iceberg-tables" = "14b8676549da6dea69ad5ed399dbb22b68f36cf0b29d0851193943410ecc4de0"
+"sf.ddl.show-indexes" = "14447354b3928188417d14d81c4eed67fa8125ce8c85365d7d6ba96d0e54058a"
+"sf.ddl.show-interactive-tables" = "01fbc39bb2102d54f4aefff58e12a401d4d905359d41d03375e828b6157433d3"
+"sf.ddl.show-listings" = "b18b87349b91759cc04fa849f0f417321fe679e2dad42c46dbdd12af1d107162"
+"sf.ddl.show-notebooks" = "14417e280e7d2f64b445e21be6a5a5b1d20a77957296b30716dbf34cb72c7f2f"
+"sf.ddl.show-objects" = "2c5f4506ba8392f002ae76a243b843b2070c72638d42de6a7cf2d6b5be39b177"
+"sf.ddl.show-online-feature-tables" = "dc06098f7f5c4a769b03c74ef69a36800ef35fa7c26155b449d344d1e46ce7c4"
+"sf.ddl.show-openflow-connector-definitions" = "132615343d9341400457df25e780d9d75666e42585f777f8e75738dbfec69386"
+"sf.ddl.show-openflow-connectors" = "bb8830ef7c6f0f2aebee5f221cced181509dad225cf17d1c9143cf7c47990dc7"
+"sf.ddl.show-openflow-deployments" = "6cb08376a0e840e8fc0eba943b61be54f684b858b223d223a2e23ef1ab41c4dd"
+"sf.ddl.show-openflow-runtimes" = "ec8cd258f183b5a6efb28d3ec3d43e4b0abd664c114d863510fc0efcf5db990f"
+"sf.ddl.show-packages-in-artifact-repository" = "b0d29880937785bfafb4b031271c2fbc1d8184a882d1875bde608e7a7cd7c4e6"
+"sf.ddl.show-postgres-instances" = "0eb6bb5de970562d3bd7f219cd3d197be68086ebf2475c9b914136e24e2293f3"
+"sf.ddl.show-semantic-dimensions-for-metric" = "cb044b265db3bc520af9cdf69d42d516dbec645a450ff4beda82a4147c78b1ad"
+"sf.ddl.show-semantic-views" = "b5e99b9c64200af9dc1219b169b04870da38697d7dca740ff8be2afd15486192"
+"sf.ddl.show-snapshots" = "8db82959ce6dc56ed285739dde95fa8884b0a189063d493faeb1f35b72cc5ec4"
+"sf.ddl.show-streamlits" = "d913b501dfdaabb81f005c53a759708652d058ead4b25b7c23f654d102059cde"
+"sf.ddl.show-streams" = "b205cf5aca1f5260431734671a1c83de931591800feaa39e8a332e67da63fd26"
+"sf.ddl.show-tables" = "1767593ab3547efc9c3b1c337188bf0a265fa08f5650d18ba328f6b82ee59ef8"
+"sf.ddl.show-task-graphs" = "7b7d6295c7d25b57648b5a911aa38fc18a29f090e91df81bcd706c2652625415"
+"sf.ddl.show-tasks" = "47c48a9837cf5660f9df1ff24e48d2a57f55934fb79e0e4480536bef6b2ac1a5"
+"sf.ddl.show-versions-in-artifact-repository" = "b08d6ec4948ae37edc9e6f2d855a0f9a47b0b2d5d1da92513bea7468fd0b44e1"
+"sf.ddl.show-versions-in-dataset" = "afd1da62be9929caa87f8158867e519bbc5ab05cb64cc5eb5a4c14ffc5008b80"
+"sf.ddl.show-versions-in-listing" = "b37496e7c539e191cd5ab4d791df87ec028df3b6f33338d2388c7eae5003f3d0"
+"sf.ddl.show-views" = "d67b3143008d8bb5aa738bfd5392744290a14e18c9a9201bdc09feba7f550799"
+
+[review.definitions]
+"sf.ddl.alter-application-sequence-number" = "857a28187462c486fe180c8e212beaee1768ae8bdfba89bbf62338b0c5c65265"
+"sf.ddl.create-database.create-database-as-replica" = "20948acb95a8ca38c5fe0bd4b32857cf4ef1360e9101ad8d2b8e8bfdceb3fb5d"
+"sf.ddl.create-file-format.create-file-format" = "4932050e2b56e490303b1232f3d8f0faec7077798bc720ab6a466982ab43589d"
+"sf.ddl.create-file-format.create-or-alter-file" = "cc4aecbb878388a30b5a845db5861ab8260e9dd3cc0d4c5a08c331e5d3fd9962"
+"sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row" = "859fe2fc18574e806d3a267a244b6b8568ef1a3561ecd1bbad3aa9672829d7ac"
+"sf.ddl.create-stage.create-or-alter-stage" = "8172e78075d9303e852da37aa9b5e014739dc38c62c7eeb9c96abe9ef9169ae1"
+"sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams" = "8e45d8437aa5938dc751a8ee77172b4222a3946f42998a6a9e37de1a56bde7b1"
+"sf.ddl.show-alerts" = "96380fb94cddc6a008944ff421280ae214b841af3b682edfe5ee3ad17d7066c2"
+"sf.ddl.show-application-packages" = "d096efdf8d12d66af73e14a64fcaf88ae6bada0c6026762f58f8086582c52007"
+"sf.ddl.show-application-services" = "0d196b87d2775e9e72380e0fd14d1299a16a10ceb136926c1be995c577fae25b"
+"sf.ddl.show-applications" = "a08e510c63d9c42fbb1f1164aca08cef649486652237fce82b78bfd826f4790a"
+"sf.ddl.show-artifact-repositories" = "be2e72aaca47770c9943f079677db894121a5c0670796bb7a80344e057eed6ee"
+"sf.ddl.show-available-listings.listings.syntax" = "d414c1e2d79ec36caaff48b87c7fa831004048e173b16f932860fcf9e5d1b7b5"
+"sf.ddl.show-backups-in-backup-set" = "7e9476e5d2ed66a1124e90e6e50fa4c5bac3d66b2958e9d47c1f1894bda58bca"
+"sf.ddl.show-classes" = "64964ade4689ce4297e3220cfc8b75bd10123fb0a3bc02a6d4b867bb469d9ac7"
+"sf.ddl.show-committed-tasks" = "da6a81ef0556fc0322ea567e85126086d551ebdb1c6e7ef86781daeab4a206b9"
+"sf.ddl.show-compute-pools" = "0a31d8aa90afe7b82b13b30a6e9ad3b3b9a23f930d761e87f36ae3b5a8ef7824"
+"sf.ddl.show-contacts" = "1340d980fe12094cf9999f45ba6d44208098a71b53c7f62a2fba94489875141c"
+"sf.ddl.show-cortex-base-models" = "d6315e010a4e3a31e3ec91385dcfc3bab472515dae9effe3e37088d8552b9c65"
+"sf.ddl.show-dbt-projects" = "85d78c06721708017fa88a4fc9e63eabcf7197000fa8e856d3cc2410bf56c5f1"
+"sf.ddl.show-dcm-projects" = "2670d596ea14fe9baa052a71e26379bf9ae8eeae8dd629cb3da86b0f7c1ffbbe"
+"sf.ddl.show-delegated-authorizations.authorizations-by-user" = "e76908a7da30af53f6e2ee0409d344fe31b2f671d14033bd08c8326833a24ece"
+"sf.ddl.show-delegated-authorizations.authorizations-to-security-integration" = "8c3b7acb04ad2bc701e587301bd865e0fd0cd3617dcefb3e3a338c7d5ce899ad"
+"sf.ddl.show-deployments-in-dcm-project" = "a4d5913bd50ca05336c7d3926aa5e0f9695a273998113c77da3d56119c5771f5"
+"sf.ddl.show-dynamic-tables" = "9f4ac1f8397e200988ba4631a99c66216a95494d02c431b08908b98a958a455c"
+"sf.ddl.show-entities-in-dcm-project.in-dcm-project" = "a9ee4a326ca118beefb97cdfcca7e44be98279eb8bb8821aff56ce0fb0749664"
+"sf.ddl.show-entities-in-dcm-project.in-dcm-project-limit" = "e5a2f6b2c3f65a45c04fc386a113bbe834ddedcdb59e6c31ae51651c25483591"
+"sf.ddl.show-event-tables" = "b8efa7296011a533f61258c823a7def757f6f9a0c2eb65b713dcba7936afb05f"
+"sf.ddl.show-external-tables" = "63818429eda88a03895db286ba1e8eb2cba3c89182b29a1cbcb4741cda08d595"
+"sf.ddl.show-files-in-artifact-repository" = "9ef642285cd535ddf34a8791e9e6ea13b60aa95f93d6c29bd184c0f0ba7b5e04"
+"sf.ddl.show-gateways" = "17d1a15cf009f6895fbdd5f42df202b4f9a952ce53efa49414cba5eb05b9e743"
+"sf.ddl.show-git-repositories" = "ee19b677b30884a340408bbed3ef7b6dd6ddf964b1503bc0a8dbd4a077f31767"
+"sf.ddl.show-hybrid-tables" = "aaa3ea9a9572c6046fa4e17e1f99d6bacf500fa08b76ea6883dbb298a9999cc6"
+"sf.ddl.show-iceberg-tables" = "041c03b020055c776c618e450dd2985fb57e6724f139b4b1dfe011cd62d8f0dc"
+"sf.ddl.show-indexes" = "44f32fd0a97f764b025db3ce482f80244a8e82de00109e65bfc09dc4c6813f4e"
+"sf.ddl.show-interactive-tables" = "2e16369595e863af4a25d654c414e10e3a9cd1e12c0ee2de33bf9959904bd351"
+"sf.ddl.show-listings" = "486ed96e1b805a0ddb88b3bf184160fd6a3fe479c7c2fc06c81d9297122c1651"
+"sf.ddl.show-notebooks" = "8a0792a06b5d899b69da93da8cd74de9f4f7d81687d59a06d72968b432afb8ae"
+"sf.ddl.show-objects" = "3cd48e63992a2fe04de1c076afcb6c090e22398ccb12a0a433bdd0002f616cba"
+"sf.ddl.show-online-feature-tables" = "556d2ead51f62bf8bb57ae157d4ad4d551048e96e513d2092cb111490d10eedd"
+"sf.ddl.show-openflow-connector-definitions" = "a70c8416ab8b66298d23483c7bd56a942aa2271835205b940e9ed6b5b7dbab07"
+"sf.ddl.show-openflow-connectors" = "65cedc10106631bf339f44d8762b5f9aba75d0f1dd58e658e1f7c5ad65ee13d3"
+"sf.ddl.show-openflow-deployments" = "6177a28a4e762a3e2f04e26f3c84f3c1e5756a468fae8cd9fcb86871ce84d8d0"
+"sf.ddl.show-openflow-runtimes" = "7d71cb4721e50b5c63f463993daea872a883d0cdfa27ea690eacd3bc526d6c0e"
+"sf.ddl.show-packages-in-artifact-repository" = "9303cc26c9dd319b945f95a8f529f0f554dc63767a51e9e6e809c19075b7e647"
+"sf.ddl.show-postgres-instances" = "85b5c751611f2685e00f1469156583eb6acd6e1962261300e0b8fc0723a0921c"
+"sf.ddl.show-semantic-dimensions-for-metric" = "368761547d30531f58fae0b940dfb5b10037da7db8c689cd5212edf3c60f8b8a"
+"sf.ddl.show-semantic-views" = "d9d41e38f6aa8509c0272c3caf25e0940dd6460d0e19db6b721242f3b62fcd8f"
+"sf.ddl.show-snapshots" = "3ea712c7923b4c906b1bd63ca2329ee265197573831fd985da3eb1e0a6d4f35d"
+"sf.ddl.show-streamlits" = "c7c920a7dd1e7bb6e9af8c6272a9f3d7bcd64c5313c1698a3353b85369b64301"
+"sf.ddl.show-streams" = "19978fc068d006ea5c2f4f2ebe70a88c02118cefe523e8c84fd79e879b4e4942"
+"sf.ddl.show-tables" = "93892abeac6fb4a3505fc1c87502b01fb2d0c9b9018cf51978dcbc95fdcf185f"
+"sf.ddl.show-task-graphs" = "4114668258fe4f322d3dada037c67312453eb497e516f45e414dcd874745fade"
+"sf.ddl.show-tasks" = "e48be5e70706e36128444f54b97c24eb5bfc6fe1361c558f615a6e3d41367b06"
+"sf.ddl.show-versions-in-artifact-repository" = "10cd402fe45e94f0568379baf6ec5d137519e0696ec621f569aa4533e835a337"
+"sf.ddl.show-versions-in-dataset" = "2498f33f887d9506e2b4b9fcad984e9471ffd797cb70778e14db4780cff3e245"
+"sf.ddl.show-versions-in-listing" = "eb339946088c60c4443442bf1f0a5bf8f79b0864b1d6070836c0d1aeab062686"
+"sf.ddl.show-views" = "9fb72235746feef0535a8cf30c450d342763f3c3b67624fccbbf3e823cb9a487"

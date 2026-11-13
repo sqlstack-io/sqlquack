@@ -301,8 +301,6 @@ other_receipts_contradicted = [
   "sf.query.limit.fetch.k80465529ad6b",
   "sf.query.operators-query.except.k5a8b5eec3643",
   "sf.query.select.select.selecting-specific-columns.k2883fa022666",
-  "sf.query.select.select.selecting-specific-columns.k55f777334a7d",
-  "sf.query.select.select.selecting-specific-columns.k91c6eb89f8e0",
   "sf.scripting.begin.k0fb78add2575",
   "sf.scripting.exception.kf79e3fec46e4",
   "sf.security_admin.create-resource-monitor.k1a411efdd4d8",
@@ -351,11 +349,6 @@ other_receipts_contradicted = [
   "k5c0f60c6cde2",
 ]
 "sf.ddl.alter-iceberg-table.unset" = ["ke33c9a12af90"]
-"sf.ddl.alter-openflow-deployment.rename-to" = ["k1dd7f9ba81fc"]
-"sf.ddl.alter-openflow-deployment.terminate" = ["kf3b26f2f6a13"]
-"sf.ddl.alter-openflow-deployment.upgrade" = ["k8f0dad70d584"]
-"sf.ddl.alter-openflow-runtime.add-external-access-integrations" = ["k321a5bc12fbc"]
-"sf.ddl.alter-openflow-runtime.remove-external-access-integrations" = ["k836e23a21602"]
 "sf.ddl.alter-table.constraintaction" = [
   "k14f89fb0eef9",
   "k428be0eccccf",
@@ -374,16 +367,12 @@ other_receipts_contradicted = [
   "k79a45e536ad2",
   "kbe42b930d9a4",
 ]
-"sf.ddl.create-alert.create-alert-if-exists" = ["k6fe8118f456f"]
-"sf.ddl.create-alert.create-or-alter-alert" = ["k0361e88359d1"]
 "sf.ddl.create-application-package" = [
   "k5586129821dd",
   "k56df100400d3",
 ]
-"sf.ddl.create-clone.alert-file-format-sequence" = ["k8f41aa1b568a"]
 "sf.ddl.create-code-bundle.create-code-bundle-from" = ["k863f7a02918a"]
 "sf.ddl.create-code-bundle.create-code-bundle-from.syntax" = ["k1ba8b686d81b"]
-"sf.ddl.create-data-metric-function.create-data-metric-function" = ["kea9728d63542"]
 "sf.ddl.create-database.create-database" = ["k3c0dc0ce5fe8"]
 "sf.ddl.create-dataset" = [
   "k6d9683d78996",
@@ -395,8 +384,6 @@ other_receipts_contradicted = [
   "k5122c8e1ce71",
   "ka1910fdd6a39",
 ]
-"sf.ddl.create-file-format.create-file-format" = ["k157043357740"]
-"sf.ddl.create-file-format.create-or-alter-file" = ["k63c67a765cde"]
 "sf.ddl.create-hybrid-table.table" = ["k5069c51ae2f1"]
 "sf.ddl.create-iceberg-table-rest.table-as-select" = [
   "k46e441bba1ae",
@@ -409,7 +396,6 @@ other_receipts_contradicted = [
 "sf.ddl.create-iceberg-table.table" = ["k85d5253abb15"]
 "sf.ddl.create-iceberg-table.table-base-location.parquet-files" = ["k656d4111d435"]
 "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database" = ["ke76e03514474"]
-"sf.ddl.create-index" = ["k51438fa25dc3"]
 "sf.ddl.create-listing.from" = ["k7357ac165c3b"]
 "sf.ddl.create-mcp-server" = [
   "kbc9e13925f95",
@@ -425,7 +411,6 @@ other_receipts_contradicted = [
 "sf.ddl.create-notebook" = ["kf71b1b4702de"]
 "sf.ddl.create-openflow-connector.from" = ["kfe0f922d5519"]
 "sf.ddl.create-openflow-connector.from-definition" = ["kf967b8f327bb"]
-"sf.ddl.create-openflow-deployment" = ["ka98182f56d37"]
 "sf.ddl.create-openflow-runtime" = ["k4b5b90059d17"]
 "sf.ddl.create-procedure.create-procedure" = [
   "k58d3939e981a",
@@ -452,29 +437,16 @@ other_receipts_contradicted = [
   "k4e50633e4032",
 ]
 "sf.ddl.create-table.define-table" = ["ke1f3c185cda6"]
-"sf.ddl.create-task-graph.create-or-alter-task" = ["k6122231c287a"]
-"sf.ddl.create-task-graph.create-task-graph" = ["ka874e1616f5f"]
 "sf.ddl.create-versioned-schema" = [
   "ke67978ccde94",
   "kec07de1bbc4f",
 ]
-"sf.ddl.desc-external-table" = ["kcc6e9e00e915"]
-"sf.ddl.desc-table" = ["k377b2974e7ea"]
 "sf.ddl.drop-iceberg-table" = ["k0c6d88e813a7"]
 "sf.ddl.show-cortex-search" = [
   "k71bbf0e325e7",
   "kd5cbccd5e6d3",
   "kf65aa4035d09",
 ]
-"sf.ddl.show-primary-keys" = [
-  "k1edfa6806924",
-  "k2b9e878033da",
-  "k5e02277ae099",
-]
-"sf.ddl.show-schema-variables" = ["k9212c756ceed"]
-"sf.expressions.data-types-numeric.double" = ["kcf1c9c4b00d8"]
-"sf.expressions.data-types-text.string" = ["kaa398b570613"]
-"sf.expressions.session-variables" = ["ka6236ae06564"]
 "sf.functions.ai-function-evaluation.create-experiment-type-from" = [
   "k4f10b3e05548",
   "kf21f2fea79e9",
@@ -483,73 +455,33 @@ other_receipts_contradicted = [
   "k5fea67ae70f2",
   "k936096400225",
 ]
-"sf.functions.infer-schema" = ["k600b2541e9bd"]
 "sf.functions.system-explain-plan-json" = ["k34b4a27a76b5"]
 "sf.functions.to-query" = [
   "k52f4b25a2004",
   "kdfe11763c33e",
 ]
 "sf.security_admin.alter-account.set-maintenance-policy-for" = ["kd79fe523c612"]
-"sf.security_admin.alter-role.unset-tag" = ["kd58424974186"]
 "sf.security_admin.create-organization-listing.from" = [
   "k477815e83d52",
   "k7357ac165c3b",
 ]
 "sf.security_admin.create-organization-profile.profile-from" = ["k4291f05a67b7"]
-"sf.transaction_session.set.set" = [
-  "k76b3c8f13e37",
-  "ke5addf54c855",
-]
-"sf.transaction_session.show-parameters" = [
-  "k087afefdac13",
-  "kb7f28048487e",
-]
-"sf.utility.execute-dbt-project.project" = [
-  "k6c239c1dee59",
-  "kbf0a65216900",
-]
+"sf.transaction_session.show-parameters" = ["k087afefdac13"]
 "sf.utility.execute-inference-job-service" = [
   "kd484841cc87f",
   "kfa70a352f258",
 ]
-"sf.utility.execute-task-graph.graph" = ["k4c95c7ca1c5a"]
 
 [parsed_cases_refused]
 "sf.classes.classification-profile.methods.describe" = ["ke3b4c5082645"]
 "sf.classes.custom-classifier.methods.list" = ["k47bd3252e9ba"]
-"sf.ddl.alter-application-package.rename-to" = ["k87e7379604dc"]
-"sf.ddl.alter-application-package.set" = ["k837ec878fa7d"]
-"sf.ddl.alter-application-package.set-tag" = ["kc456a824a91c"]
-"sf.ddl.alter-application-package.unset" = [
-  "k1575bbebeba5",
-  "k6afd8149f941",
-]
-"sf.ddl.alter-application-package.unset-tag" = ["k5644b443d7e5"]
-"sf.ddl.alter-application-service.set" = ["k4a18bf69e446"]
-"sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations" = ["kfb484a65ec95"]
-"sf.ddl.alter-application-service.upgrade" = ["kc85da493a3fd"]
-"sf.ddl.alter-application-unset-configuration" = ["k2404a5f73908"]
-"sf.ddl.alter-backup-set.set-comment" = ["k10731c961186"]
-"sf.ddl.alter-backup-set.set-tag" = ["k48c3d869d40c"]
-"sf.ddl.alter-backup-set.unset-tag" = ["kc7ecbb894db9"]
-"sf.ddl.alter-database-catalog-linked.set" = ["k944dd061d9ca"]
-"sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact" = ["k3fbf8ee747f4"]
-"sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = ["k87a9b9ccc841"]
+"sf.ddl.alter-application-package.unset" = ["k1575bbebeba5"]
 "sf.ddl.alter-external-volume.set-allow-writes-true-false" = ["k1043b085dfad"]
 "sf.ddl.alter-external-volume.set-comment" = ["k55283f91e8bc"]
-"sf.ddl.alter-online-feature-table.table-set" = ["k56f6bb4df5ba"]
-"sf.ddl.alter-online-feature-table.table-set-comment" = ["ke7fec7c4938e"]
 "sf.ddl.alter-schema.set" = ["kac592c009c45"]
 "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = ["k220a7aefbc24"]
 "sf.ddl.alter-stage.set.syntax" = ["kd30e04e36906"]
 "sf.ddl.create-database-catalog-linked" = ["kd7f8a471f88a"]
-"sf.ddl.create-external-function.function-returns-api-integration-as" = [
-  "k007dcc7f5614",
-  "k4114dc0df61e",
-  "k96790db21363",
-  "kdee0df08988d",
-  "kfca8a1df779c",
-]
 "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format" = [
   "k56514bd9c52e",
   "k713a9732b882",
@@ -585,87 +517,16 @@ other_receipts_contradicted = [
   "kdce8646cffb5",
 ]
 "sf.ddl.create-table.define-table" = ["k2f29257e44ce"]
-"sf.ddl.create-task-graph.create-or-alter-task" = [
-  "k809070602a72",
-  "kea33d2a87c8f",
-  "kf3117edb8a3b",
-]
-"sf.ddl.create-task-graph.create-task-graph" = [
-  "k83604a89b019",
-  "kc687c7eff48e",
-  "kd13126acf55e",
-]
-"sf.ddl.create-task-graph.define-task-graph" = [
-  "k5cd0dde827c9",
-  "k8e6162f9a5c1",
-]
-"sf.ddl.desc-artifact-repository" = ["k9335d9e88b41"]
-"sf.ddl.desc-external-table" = ["kc7239ad11afd"]
-"sf.ddl.desc-external-volume" = ["k8281ca3b2f50"]
-"sf.ddl.desc-iceberg-table" = ["k9625ac9edcba"]
-"sf.ddl.desc-mcp-server" = ["ke25b5a1e7257"]
-"sf.ddl.desc-model-monitor" = [
-  "k8d852ca13b93",
-  "kc8e9213704c7",
-]
-"sf.ddl.desc-openflow-deployment" = ["kdf4759378ee6"]
-"sf.ddl.drop-artifact-repository" = ["k9782bade16e1"]
-"sf.ddl.drop-event-routing-table" = ["k76f52e59636d"]
-"sf.ddl.drop-external-volume" = ["kd1b18519a410"]
 "sf.ddl.drop-iceberg-table" = ["k519a5435fa2a"]
-"sf.ddl.drop-mcp-server" = ["k44146118c910"]
-"sf.ddl.drop-openflow-deployment" = ["k048ebf4d8cf9"]
-"sf.ddl.show-available-listings.listings.syntax" = ["kc27d889cba34"]
-"sf.ddl.show-backups-in-backup-set" = ["kb9855fb78979"]
 "sf.ddl.show-channels" = [
   "k3fba86e29428",
   "k42ea6a819df3",
   "k6fa8b444a77d",
   "kb1a407c223a5",
 ]
-"sf.ddl.show-committed-tasks" = ["k70ad113506b6"]
-"sf.ddl.show-delegated-authorizations.authorizations-by-user" = [
-  "k2c586bb1bc39",
-  "kc03e6ae3a481",
-]
-"sf.ddl.show-delegated-authorizations.authorizations-to-security-integration" = [
-  "k053995b25845",
-  "k426492d27890",
-  "kd1da85a44361",
-]
-"sf.ddl.show-endpoints" = ["kce3fdb87e2da"]
-"sf.ddl.show-external-volumes" = ["k571aa0a0f744"]
-"sf.ddl.show-functions-in-model" = ["k8e18092131fc"]
-"sf.ddl.show-model-monitors" = [
-  "k0e44610a578a",
-  "k3e5d89f16eda",
-  "ka19cfe0d41f8",
-  "ke38a1b977401",
-]
-"sf.ddl.show-openflow-deployments" = ["kc7578f6dc3e1"]
-"sf.ddl.show-schema-variables" = [
-  "k1568ecae945d",
-  "ke226f34d7639",
-]
-"sf.ddl.show-service-volumes-in-service" = ["k1a90530e5a33"]
-"sf.ddl.show-shared-content" = ["k651e594c686e"]
-"sf.ddl.show-snapshots-in-snapshot-set" = ["ke9163e3b7b28"]
-"sf.ddl.show-versions" = ["k4929e4763764"]
-"sf.ddl.show-versions-in-dataset" = [
-  "k165cb3d799e8",
-  "k41c85feb1805",
-]
-"sf.ddl.show-versions-in-listing" = ["k48dbbfc4b2a6"]
-"sf.ddl.show-versions-in-model" = ["kae37a160c500"]
 "sf.ddl.undrop-external-volume" = ["kb557e7ff4586"]
 "sf.functions.spcs-cancel-job" = ["kffa979cc1d0a"]
 "sf.functions.spcs-wait-for" = ["kf2fa04c919eb"]
-"sf.query.at-before.iceberg-version" = [
-  "k35ecf1ef8327",
-  "k7b5a4bb05e5f",
-  "k7ebd7095f3c3",
-  "k85af61357785",
-]
 "sf.query.match-recognize.match-recognize-pattern-define-as" = ["k8a7c1367e4f3"]
 "sf.security_admin.alter-notification-integration-email.set" = ["k6fc325a7e16a"]
 "sf.security_admin.alter-notification-integration-multi-queue.set-active" = ["keefd85df01aa"]

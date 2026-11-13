@@ -711,18 +711,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.security_admin.create-organization-listing.as.o024"
-form = "sf.security_admin.create-organization-listing.as"
-construct = "the form without its required ORGANIZATION: CREATE LISTING v1 AS 'm' ;"
-reason = "not submitted: held by capture guard f0fdce1 in chunk sa-23: billable or out-of-account: listing or external sharing"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.security_admin.create-organization-listing.as.kebad82b88d79", sql_sha256 = "ebad82b88d798b49c0ecd5e605968e12c0e1da11ca308eebc42766655a4d1a86" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.security_admin.create-organization-listing.as.o030"
 form = "sf.security_admin.create-organization-listing.as"
 construct = "the form without its required { TRUE | FALSE } in [ PUBLISH = { TRUE | FALSE } ]: CREATE ORGANIZATION LISTING v1 AS 'm' PUBLISH = ;"
