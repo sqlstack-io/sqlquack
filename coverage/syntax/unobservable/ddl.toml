@@ -2111,18 +2111,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-listing.as.o033"
-form = "sf.ddl.create-listing.as"
-construct = "the form without its required EXTERNAL: CREATE LISTING v1 AS 'm' ;"
-reason = "not submitted: held by the capture guard in chunk ux-06: CREATE of an account-level or unvetted kind (LISTING v1 AS)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-listing.as.kebad82b88d79", sql_sha256 = "ebad82b88d798b49c0ecd5e605968e12c0e1da11ca308eebc42766655a4d1a86" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-listing.as.o039"
 form = "sf.ddl.create-listing.as"
 construct = "the form without its required { TRUE | FALSE } in [ PUBLISH = { TRUE | FALSE } ]: CREATE EXTERNAL LISTING v1 AS 'm' PUBLISH = ;"
