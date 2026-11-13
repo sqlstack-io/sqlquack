@@ -1263,10 +1263,12 @@ pub(crate) const SNOWFLAKE_GRANT_PRIVILEGES: &[&str] = &[
     "CREATE PACKAGES POLICY",
     "CREATE PASSWORD POLICY",
     "CREATE PIPE",
+    "CREATE POLICY",
     "CREATE PREVIEW APPLICATION",
     "CREATE PRIVACY POLICY",
     "CREATE PROCEDURE",
     "CREATE PROJECTION POLICY",
+    "CREATE REPLICATION",
     "CREATE REPLICATION GROUP",
     "CREATE ROLE",
     "CREATE ROW ACCESS POLICY",
@@ -1290,6 +1292,7 @@ pub(crate) const SNOWFLAKE_GRANT_PRIVILEGES: &[&str] = &[
     "CREATE TYPE",
     "CREATE USER",
     "CREATE VIEW",
+    "CREATE VOLUME",
     "CREATE WAREHOUSE",
     "CREATE WORKSPACE",
     "DELETE",
@@ -1305,6 +1308,8 @@ pub(crate) const SNOWFLAKE_GRANT_PRIVILEGES: &[&str] = &[
     "FAILOVER",
     "IMPERSONATE",
     "IMPORT",
+    "IMPORT LISTING",
+    "IMPORT ORGANIZATION",
     "IMPORT ORGANIZATION LISTING",
     "IMPORT SHARE",
     "IMPORTED PRIVILEGES",
@@ -1363,6 +1368,9 @@ pub(crate) const SNOWFLAKE_GRANT_PRIVILEGES: &[&str] = &[
     "WRITE",
 ];
 
+/// The words that end a kind in SNOWFLAKE_GRANT_KINDS and that Snowflake refuses as a kind of their own, as in `ON POOL <name>`.
+pub(crate) const SNOWFLAKE_GRANT_KIND_TAILS: &[&str] = &["MONITOR", "PACKAGE", "POOL"];
+
 /// The object kinds a Snowflake GRANT or REVOKE of privileges names before its object.
 pub(crate) const SNOWFLAKE_GRANT_KINDS: &[&str] = &[
     "AGENT",
@@ -1377,6 +1385,7 @@ pub(crate) const SNOWFLAKE_GRANT_KINDS: &[&str] = &[
     "CONNECTION",
     "CONTACT",
     "CORTEX SEARCH SERVICE",
+    "DATA EXCHANGE",
     "DATA EXCHANGE LISTING",
     "DATA METRIC FUNCTION",
     "DATABASE",

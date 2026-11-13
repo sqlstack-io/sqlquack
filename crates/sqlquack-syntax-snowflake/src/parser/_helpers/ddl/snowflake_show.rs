@@ -352,7 +352,7 @@ impl Parser {
             if show.scope.is_none() && clause != ON_ACCOUNT && !bare {
                 show.scope = Some(match clause.as_str() {
                     "TO SERVICE ROLE" | "OF SERVICE ROLE" => self.parse_show_instance_role()?,
-                    "TO ROLE" if self.check_next(TokenType::Exclamation) => {
+                    "TO ROLE" | "OF ROLE" if self.check_next(TokenType::Exclamation) => {
                         self.parse_show_instance_role()?
                     }
                     "TO APPLICATION ROLE" if self.match_token(TokenType::Dot) => {
@@ -417,7 +417,7 @@ impl Parser {
         Ok((format!("ON {}", kind.join(" ")), show))
     }
 
-    /// The grantee after SHOW GRANTS TO; a class instance role names its class as the target.
+    /// The grantee after SHOW GRANTS TO: a grantee kind, a bare name, or a class instance role, which names its class as the target.
     fn parse_show_grants_to(&mut self, mut show: Show) -> Result<(String, Show)> {
         const GRANTEES: &[&[&str]] = &[
             &["APPLICATION", "ROLE"],
@@ -432,6 +432,10 @@ impl Parser {
             return Ok((format!("TO {}", words.join(" ")), show));
         }
         show.target = Some(self.parse_show_name()?);
+        if self.is_statement_end_at(0) {
+            show.scope = show.target.take();
+            return Ok(("TO".to_owned(), show));
+        }
         self.expect_alter_words(&[&["ROLE"]])?;
         show.scope = Some(self.parse_show_instance_role()?);
         Ok(("TO INSTANCE ROLE".to_owned(), show))
