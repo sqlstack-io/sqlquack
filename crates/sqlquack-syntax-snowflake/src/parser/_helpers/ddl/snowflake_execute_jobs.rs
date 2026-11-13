@@ -299,7 +299,7 @@ impl Parser {
     }
 
     /// The specification text: a dollar-quoted or quoted string.
-    fn parse_execute_specification(&mut self) -> Result<Expression> {
+    pub(super) fn parse_execute_specification(&mut self) -> Result<Expression> {
         if !(self.check(TokenType::DollarString) || self.check(TokenType::String)) {
             return Err(self.parse_error("Expected the specification text"));
         }
@@ -332,7 +332,7 @@ impl Parser {
     }
 
     /// `( <name> => <value> [ , ... ] )` after USING.
-    fn parse_execute_using(&mut self) -> Result<Expression> {
+    pub(super) fn parse_execute_using(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::LParen)?;
         let mut items: Vec<Expression> = Vec::new();
         loop {
