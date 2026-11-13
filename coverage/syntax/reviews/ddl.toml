@@ -2599,3 +2599,249 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.ddl.show-versions-in-dataset" = "2498f33f887d9506e2b4b9fcad984e9471ffd797cb70778e14db4780cff3e245"
 "sf.ddl.show-versions-in-listing" = "eb339946088c60c4443442bf1f0a5bf8f79b0864b1d6070836c0d1aeab062686"
 "sf.ddl.show-views" = "9fb72235746feef0535a8cf30c450d342763f3c3b67624fccbbf3e823cb9a487"
+
+[[review]]
+id = "ddl-031"
+family = "ddl"
+parser_tree = "4f7d2e5d71780111239df9cd32fb6a9b4156b9f4"
+reviewed_utc = "2026-11-13T23:17:58Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-application-package-release-channel.modify-release-channel-unset",
+  "sf.ddl.alter-application-package-release-directive.unset-release-directive",
+  "sf.ddl.alter-application-unset-configuration",
+  "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type",
+  "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields",
+  "sf.ddl.alter-pipe.set",
+  "sf.ddl.create-database.create-database-from-share",
+  "sf.ddl.create-dcm-project",
+  "sf.ddl.create-tag.create-or-alter-tag",
+  "sf.ddl.create-tag.create-tag",
+  "sf.ddl.desc-configuration",
+  "sf.ddl.experiment.show-experiments",
+  "sf.ddl.show-agents",
+  "sf.ddl.show-available-offers",
+  "sf.ddl.show-backup-sets",
+  "sf.ddl.show-configurations",
+  "sf.ddl.show-datasets",
+  "sf.ddl.show-external-functions",
+  "sf.ddl.show-mfa-methods",
+  "sf.ddl.show-offers",
+  "sf.ddl.show-pricing-plans",
+  "sf.ddl.show-release-directives",
+  "sf.ddl.show-schemas",
+  "sf.ddl.show-semantic-dimensions",
+  "sf.ddl.show-semantic-facts",
+  "sf.ddl.show-semantic-metrics",
+  "sf.ddl.show-snapshot-sets",
+]
+note = "Read in full under review brief version 1, with a stricter coverage rule, against the documentation page, the obligations, the cases and the parse trees; the trees are unchanged at 82a89e06f, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-application-package-release-channel.modify-release-channel-unset" = "8b7bf791931b5b876b0e42ad96f763d90a893b8277c62818422f0e801c7a4d7a"
+"sf.ddl.alter-application-package-release-directive.unset-release-directive" = "bbaeb5010d9ce05c14fc6476d42d0bd3421b98541603b1018fa41c453bd5ed4f"
+"sf.ddl.alter-application-unset-configuration" = "28f9959f205a4c6051d091e40aafb53e9c0ffcb1deb83a5815af68b434dc51b8"
+"sf.ddl.alter-iceberg-table-alter-column-set-data-type.type" = "e6c2a3da28a63ab524b28dc7787ede1355594a1b0168df00d85f56bd51e91b68"
+"sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields" = "2a1d548d689ccdaafdfece8d55fef1ec90ab909c2314b1a46c82d441494e3b03"
+"sf.ddl.alter-pipe.set" = "30941ad9b93ece6889c4cc0bc72c26860b9bbe7f07599011f6d24c1f153c6329"
+"sf.ddl.create-database.create-database-from-share" = "e4837283b1a51976f041b821deccc24f447700e065390ca334766d7f389564d1"
+"sf.ddl.create-dcm-project" = "09ad5f2d8152a589a7f0d96902de6e2f70d4e6a386809b3d96019b5a094179c2"
+"sf.ddl.create-tag.create-or-alter-tag" = "0ab361b19f95eb79ccd213001010d26ac289ca06e4d03d961b3b767e39e8c92e"
+"sf.ddl.create-tag.create-tag" = "de309cabda9a6cceddc40c8c37d42033d7fca3d31ee9e8c6220a37fce2732d09"
+"sf.ddl.desc-configuration" = "fbe6dfa9483fbeff16ab627cb5c928848b629a42cbef2b2a9a2efdbd545469ec"
+"sf.ddl.experiment.show-experiments" = "9a85c7007d2eeb350cca7061ab31a531c6e634fe449924c4a71c1efdb6b43b1d"
+"sf.ddl.show-agents" = "6e892da5cb21c3cd50abb37687ef6af3e23f4fd7b79c7d107d975b65c2a23913"
+"sf.ddl.show-available-offers" = "8d6d42e34ba9a5524959c1884ffcb032febba967d74d3cffa02172f394eda890"
+"sf.ddl.show-backup-sets" = "2d04d2f9dc6d05745387010e1658965dbad589ab0bde76a9d3b3d307ddfd42f0"
+"sf.ddl.show-configurations" = "473ddb860fb026cf36c2e4fccb307695184b87abc1a9f8f6fd8d44bc768f75ef"
+"sf.ddl.show-datasets" = "cf3a8489441d5a3c2330bc9e754528ee3ec00de8684a4dbd80c62a9723577348"
+"sf.ddl.show-external-functions" = "06f4455db025c01621820658325823eff46d452e457cbdee8a13a75cf6ee81b3"
+"sf.ddl.show-mfa-methods" = "e11ea610ee40be9d7f25ecb52e64ea6ccaf842e694246828d2dc223643541748"
+"sf.ddl.show-offers" = "df5c176e4bf9adf4b3b3c253718198814dc52e27657e090b5c9bb603df88e562"
+"sf.ddl.show-pricing-plans" = "66749a7fc16fe0876544b4962fdd36e0f465c5d0da6f78dc91d9ba47e72092d5"
+"sf.ddl.show-release-directives" = "a85ce7244c4c5c2801cf13f0faf4d011d2db7504bb2307320a64addb3e8273ec"
+"sf.ddl.show-schemas" = "4fc1e47615c81d796fe8f1160fff1dbf42dc4a092034221e6d0b1652d6ee430d"
+"sf.ddl.show-semantic-dimensions" = "ea9d5eee02e02b36ee7671e60ac24a5f21f2caed4ff492bed766e61b8effa34d"
+"sf.ddl.show-semantic-facts" = "6538660afab81f048fd4491c5932b1a4c0a7afadc91e5f5d2da8296189cdb51a"
+"sf.ddl.show-semantic-metrics" = "c4eb45adb25942182fce0fd122979a854708cc856479e8152eae3cd3d4417d8c"
+"sf.ddl.show-snapshot-sets" = "52c65fa3b011ca6125c52a708cec11ea831f7f41a633c8f7d9cbe446c6a2918b"
+
+[review.definitions]
+"sf.ddl.alter-application-package-release-channel.modify-release-channel-unset" = "64f84e8424403c30318b6e0806821ca62fe4628c7d3ab5003d0fb5aa424eeaef"
+"sf.ddl.alter-application-package-release-directive.unset-release-directive" = "6b1931261682c63339e08eb17ae8ca154d6a229f601538f60854d1fbcfd816a9"
+"sf.ddl.alter-application-unset-configuration" = "b83b0de51831fa16796b05ccfa81d31f575a03dc652fe002806647e865a110a1"
+"sf.ddl.alter-iceberg-table-alter-column-set-data-type.type" = "bcd44b5c5436e96753e5157b157d1a114317c2bc22a0a347914d72fa967eb1b9"
+"sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields" = "ed30c99e17d992feb029f0a5901430cbfbf9dc4395c13a079d7568f99f206378"
+"sf.ddl.alter-pipe.set" = "fbc4501e985f2ad9edc083629f11559b8e658d58d9ba654def8444dcee1b9091"
+"sf.ddl.create-database.create-database-from-share" = "9e81929c17fa7370d679c575b304bddb607fedb0829ea0c4b4d15408630e58c4"
+"sf.ddl.create-dcm-project" = "4338dd7d5c75cc5e362ecc13c1b4a094452c59544ed4bebbe0556acebb50245e"
+"sf.ddl.create-tag.create-or-alter-tag" = "b83eb8a7ad2e1ce076268e12bc3c7f2bb36e367586031948aed834938153df28"
+"sf.ddl.create-tag.create-tag" = "4a2e51f4eacc788f6c7095a2280fb287c8a83385b6e6aef122ceaada6c5272cf"
+"sf.ddl.desc-configuration" = "9b7afa18e30ba1ec716a29c4c54631700d50970aa8855521633ba984390ecde8"
+"sf.ddl.experiment.show-experiments" = "42db576231fd8a712d72b25ce5168ea4d311dbe6e5e768963772fb0ba8a950f7"
+"sf.ddl.show-agents" = "2006302e4f1db99bf118b6cd69e8722b01a04293a6fcb53c463f6b89b618db85"
+"sf.ddl.show-available-offers" = "21c87ac183c13e0760bc6a322a6e6e18cb013ec401969df2f844ff24eedc5ad6"
+"sf.ddl.show-backup-sets" = "98a27e339a4415576ede8621c7813d4ade6ac63fb2eb11a90e9949edfccd3ec6"
+"sf.ddl.show-configurations" = "f8410d9f571d9c6a65f639fb15861dd3fbdc58875c23d0d735d37201bc5be9ac"
+"sf.ddl.show-datasets" = "a2c14661587ff73466b616b687077487afa6de12347350c63cfb6256b77d8841"
+"sf.ddl.show-external-functions" = "29554dc8852b102b0bdb65b886de83f0c48e83fafb90a42e0800f28ea9875299"
+"sf.ddl.show-mfa-methods" = "c059f25330cc22ed165cefe8cd74a87cdf5cc6d15430f7c95e3e2e1d4e740786"
+"sf.ddl.show-offers" = "38d3ae20448b5e1e5f397f7774ead6bca1306c09fece8a2210ece87bb6c71881"
+"sf.ddl.show-pricing-plans" = "ac59afff9b6a589d3080e1f73dee6900ea982e995c0058ae152c48f61fe6637b"
+"sf.ddl.show-release-directives" = "550f6e04a7574b58d3063db1e7dcf3d66b742730a198496be80f395b4260aca3"
+"sf.ddl.show-schemas" = "b23e2e7252168592ac20047cadf02bd66196216dc43dba6134740e736ce98ad3"
+"sf.ddl.show-semantic-dimensions" = "b0dd38c52f3533d714b64c64cc6d46c968411da78c8d268f9c1a9a27e1c81a9e"
+"sf.ddl.show-semantic-facts" = "d8d0a6384e73772124584c8e02a1e7a3fbfde0068c4c56602c5961701601ff47"
+"sf.ddl.show-semantic-metrics" = "1463bc73712625309bbd984aceca5c873837f64e62b552baed98940a6ad53f85"
+"sf.ddl.show-snapshot-sets" = "7f6d0f7cbacdbd005fb7ad4c231c17eb874e2da0c63977531b86206626cb10c0"
+
+[[review]]
+id = "ddl-032"
+family = "ddl"
+parser_tree = "4f7d2e5d71780111239df9cd32fb6a9b4156b9f4"
+reviewed_utc = "2026-11-13T23:40:09Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-alert.from-template-set",
+  "sf.ddl.alter-alert.set",
+  "sf.ddl.alter-application-drop-app-spec",
+  "sf.ddl.alter-application-drop-configuration-definition",
+  "sf.ddl.alter-application-set-app-spec.external-access-label-description-host-ports",
+  "sf.ddl.alter-application-set-app-spec.listing-label-description-target-accounts",
+  "sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type",
+  "sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-authorization-code",
+  "sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-jwt-bearer",
+  "sf.ddl.alter-application-set-app-spec.setting-label-description-setting",
+  "sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles",
+  "sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description",
+  "sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles",
+  "sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact",
+  "sf.ddl.alter-online-feature-table.table-set",
+  "sf.ddl.alter-online-feature-table.table-set-comment",
+  "sf.ddl.alter-openflow-deployment.set",
+  "sf.ddl.alter-warehouse.abort-all-queries",
+  "sf.ddl.alter-warehouse.enable-disable",
+  "sf.ddl.alter-warehouse.rename-to",
+  "sf.ddl.alter-warehouse.set-tag",
+  "sf.ddl.alter-warehouse.suspend-resume",
+  "sf.ddl.alter-warehouse.unset-tag",
+  "sf.ddl.create-clone.alert-file-format-sequence",
+  "sf.ddl.create-external-function.function",
+  "sf.ddl.create-external-function.function-returns-api-integration-as",
+  "sf.ddl.create-function-spcs.function-returns-service-endpoint",
+  "sf.ddl.create-function.create-function-returns-language.scala-handler",
+  "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval",
+  "sf.ddl.create-model-monitor.version-function-source-warehouse",
+  "sf.ddl.create-procedure.create-procedure-returns-language",
+  "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage",
+  "sf.ddl.create-task.create-task-clone",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 80e896e67; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-alert.from-template-set" = "128d0b8591f4735eb88157114f4a17dd28cf52306b54a387ee9d72cbd8ff838f"
+"sf.ddl.alter-alert.set" = "cf8caadede7a1a0ff363c6f2c9ea2bb6aa0169a8556f5805823cf63db6ec8906"
+"sf.ddl.alter-application-drop-app-spec" = "90ad74bdbe2a9228ac08821d081c4f8a91df84e8610b427e8a642c2597eb02cf"
+"sf.ddl.alter-application-drop-configuration-definition" = "a793945541cea9c685dfae140735ac46c7f6bad03de43cb1f6d4e1cdd204c440"
+"sf.ddl.alter-application-set-app-spec.external-access-label-description-host-ports" = "501e38afd7800d6e2325649ad46f2dc4a387998d277ea68029c5f53bfd172e18"
+"sf.ddl.alter-application-set-app-spec.listing-label-description-target-accounts" = "de21183dd62500bb74db5836941c63a7a93bd8401685c6179be070af31613b24"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type" = "c0271a74fe5da1f0f9e46ffd24cdb4c0b46040614a523128f1db68ca78b3c216"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-authorization-code" = "6c10b57b0fd4ce2025da2015a2a1c31baeeb9c91a5940656e295aea1d4d3d4c1"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-jwt-bearer" = "837d688a748af3e9ce46edad588bc1b35230778867683feb99164a4875ef3abc"
+"sf.ddl.alter-application-set-app-spec.setting-label-description-setting" = "99c363d5b4ff707c65484dcfa0f4c578cfb6d04cdc362d833538ed9ca26a39aa"
+"sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles" = "91786b0bc081cc87c196352e63f43599050716a2ec76298ac7af56ed6d41ae02"
+"sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description" = "17671103f882fed211036d6c7b67a7af328472f906e039f0b9dc96dabeb2f25a"
+"sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles" = "c1bbdd5a0eb16e668a7f1f8a07a070411fefb2b7132f72612e9b989394f047a9"
+"sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact" = "161daeaf5d64b56509df8fd176a63967b44a82b008099c1ffd9e9aae73464839"
+"sf.ddl.alter-online-feature-table.table-set" = "4fea576c28b3f6901d0ee3ccadca4ad6f4a2cc2c1807734f357be654eba94cc2"
+"sf.ddl.alter-online-feature-table.table-set-comment" = "af0f4de8414b263748a42373f527c8ae83ad00bffa5837df309c9f758ebb3ad6"
+"sf.ddl.alter-openflow-deployment.set" = "76f286f6362617c1484f1f416b231d75e0d3fda8092ec564a281b5d8b9f7898c"
+"sf.ddl.alter-warehouse.abort-all-queries" = "679096849f62fbeb5a6b386c8b85f5136aa390b27985a2bc78e23d5438ba7834"
+"sf.ddl.alter-warehouse.enable-disable" = "2f592eba80fdcadc70e893bb94b61bed57538c86d43b640dbb093af3babc91c8"
+"sf.ddl.alter-warehouse.rename-to" = "29661b2a8646bd502927a96d11af394ec5034172f091652f7d044e95b7398d86"
+"sf.ddl.alter-warehouse.set-tag" = "cf0967664ec8a9badf200519faf22f31c8c442fd33813e9e3e144ecee5dffc55"
+"sf.ddl.alter-warehouse.suspend-resume" = "ec60f10f74e38955d406a9601d44415e40b11069b322c952cc96a4f50d057e75"
+"sf.ddl.alter-warehouse.unset-tag" = "dfcfbfe0227723c7db5635cacf9e5404a2dd10b4efdbecbadc2d0ed0508bfce2"
+"sf.ddl.create-clone.alert-file-format-sequence" = "6e422b2141d48efee3cf2933de153fc3d1c8a64540c2bbb2fbfb476b8c9cca56"
+"sf.ddl.create-external-function.function" = "e14297085c2b695c603b8d3ea8873afc6e938d29198803d24fe55ad7e5bc0732"
+"sf.ddl.create-external-function.function-returns-api-integration-as" = "b51bc35870899b142c8ff25da93a2ad81941473ad7c090544911d121b950dacf"
+"sf.ddl.create-function-spcs.function-returns-service-endpoint" = "0b8c4b35acd0da82e53216d36ef8d297d1c34dce6781c5cb13575dfe5cbc8e38"
+"sf.ddl.create-function.create-function-returns-language.scala-handler" = "96a10af4bf21f37d419da8d197d5b6c8f9f5e5e48248151beadb9c09628071d7"
+"sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval" = "ec82a2457a321e9cba9576d9c9141feefff9c3a66a61d07a5da75a25493408fc"
+"sf.ddl.create-model-monitor.version-function-source-warehouse" = "5350bae2fe1394701c34861ea48586dc9a20dcf7e1d75094bd263859a3d1ed97"
+"sf.ddl.create-procedure.create-procedure-returns-language" = "cc8dd73be0ffc00413a9c560afb6c7b7114e4a4798fd0ea709554ec4d441ea85"
+"sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage" = "14c96fe0dd7dede290683798dc0aae646cbff2e42677a948a1fff722396005a9"
+"sf.ddl.create-task.create-task-clone" = "3d45bb64886e4593dcfc25383696bb99fc70a83aacf9ee7f4c8c2bf8cd123746"
+
+[review.definitions]
+"sf.ddl.alter-alert.from-template-set" = "cfcd2102488b7b9479fdd4cbd172ffe130448c197e698da4d40e2bdb87a13b85"
+"sf.ddl.alter-alert.set" = "93fb0ea9b780a9784b889a50849ddff6a309622e96299a1b5b77ea4993c8823f"
+"sf.ddl.alter-application-drop-app-spec" = "21193c0c5e0271960d22268dcda8aa9bc74c7829cb2bfa0a6e736c2e8cb34661"
+"sf.ddl.alter-application-drop-configuration-definition" = "c3ade34a5dd13818db97840cba543ea87da5cf84b8434478f384d59a27d6d14b"
+"sf.ddl.alter-application-set-app-spec.external-access-label-description-host-ports" = "19d693b7d1505e64071471a9a0390365495a96d6975393c787901c26ab61aa21"
+"sf.ddl.alter-application-set-app-spec.listing-label-description-target-accounts" = "8184752002ee81f1f80c37e7ece8602275212d103533537f813ddfe842fdc0bc"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type" = "b6411c0776a645f276c04e48e7760e030a5ddc66ebdf3b2397a8de46088555fe"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-authorization-code" = "353612eeb5a020d995956de2f438db4ce4c26e1182bfdfcbbf8ca24990c6954b"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-jwt-bearer" = "71f254d013d80227cbbd7517891b87eb12aca1ffd9f01f001c40938c835a2f15"
+"sf.ddl.alter-application-set-app-spec.setting-label-description-setting" = "2694bd78b6f3b41a08a8a5fed8cb7689d1c726f6692c9797fdade96d9fd2696b"
+"sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles" = "80da6350b0d6708b56eddaab1f861dc3f2d5337c92083316614eae707698c04c"
+"sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description" = "7ba726102cdde099ddb5b8723f7d07c7920044182f2437a96260ae9b7dfe0619"
+"sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles" = "f2cccd961bea05e6cb4a82a66593f5f55dcb4c7d8e801c664bd747855bb6f738"
+"sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact" = "b7ae2f47a94dfc804a76f28c128b38985d71cdf31bd7618de639a2be23d6007b"
+"sf.ddl.alter-online-feature-table.table-set" = "8e965e810f45c8929772e208043f49ce8919d7cf55ac07848419099fe5a3e902"
+"sf.ddl.alter-online-feature-table.table-set-comment" = "34c8b05b96e6a89e0e76f999b2f09f324c9255b21198ab288435f620b10772cc"
+"sf.ddl.alter-openflow-deployment.set" = "c94efdc7d76fe23e31b950c974ccadb2ae187dea6a0cff6b00a394d657edda52"
+"sf.ddl.alter-warehouse.abort-all-queries" = "3ba0bb671a5e4684a733c418222251ec9fab286407a7f5f8a23eed344a986d3d"
+"sf.ddl.alter-warehouse.enable-disable" = "89aeefec03c1c32032dc3bdb00abd182d8a2f9f84ffd4464ace8a4f900624d41"
+"sf.ddl.alter-warehouse.rename-to" = "1260ea316e373ee5449383d920a15661e9adfdf50ae0170b820d49ba92f5b205"
+"sf.ddl.alter-warehouse.set-tag" = "0f9a07a56af89e197a719decda3906a7bc618416384e1b9c14a27b20f33ab0ef"
+"sf.ddl.alter-warehouse.suspend-resume" = "5e31fdecde46092b112583ed276d781c88b04716898522f05312764d7b03c688"
+"sf.ddl.alter-warehouse.unset-tag" = "d8407b65430b0c18ff5014b842c973649bad7c361009b6070bd47edde7f6f0a3"
+"sf.ddl.create-clone.alert-file-format-sequence" = "049b5a83b3f9034607f2c6f9c9bd1b439e8a17879ce8111b554c0b10e2177553"
+"sf.ddl.create-external-function.function" = "b31fa0ff15a0909d8134484f8ea64dc62da68b00fc3a663057f5b851e061dee7"
+"sf.ddl.create-external-function.function-returns-api-integration-as" = "9fdca62e47ed0e1f2892f79d50cb4b500b43460ad6d7baff756cabff4c288255"
+"sf.ddl.create-function-spcs.function-returns-service-endpoint" = "642738fd181de11d9dda55ebd28c4212c00982566643d372bd666490f935c7aa"
+"sf.ddl.create-function.create-function-returns-language.scala-handler" = "df47f8270c73c5365713cfe8fcfaf6b77c66ca89cf1dff10f2e6d29b45b44527"
+"sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval" = "5c8076af8ee77859fb7adae11afce9d91ce50e2c99f1777d34b6505329bb0d43"
+"sf.ddl.create-model-monitor.version-function-source-warehouse" = "e6c683f9022328c8705cff92c08bf8214e8884d33f2f28c18e904bd58fb08ecf"
+"sf.ddl.create-procedure.create-procedure-returns-language" = "14a78f6bf90e55c84e4565f3987f295376649dc8f7f2197b61ce74785eb5ef04"
+"sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage" = "41f3c8d59684a1e2b76cd4307993411b4800c10ed7a683ede4a4e6c817faea78"
+"sf.ddl.create-task.create-task-clone" = "ab4db05761a910dff06bbc7ac40456c537b27930ea60acbd70b400cc26dee42b"
+
+[[review]]
+id = "ddl-033"
+family = "ddl"
+parser_tree = "4f7d2e5d71780111239df9cd32fb6a9b4156b9f4"
+reviewed_utc = "2026-11-13T23:40:09Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-application-package-release-channel.modify-release-channel-add.syntax",
+  "sf.ddl.alter-application-package-release-channel.modify-release-channel-remove",
+  "sf.ddl.alter-application-package-release-channel.modify-release-channel-set",
+  "sf.ddl.alter-openflow-runtime.add-external-access-integrations",
+  "sf.ddl.alter-openflow-runtime.remove-external-access-integrations",
+  "sf.ddl.alter-postgres-instance.set-tag",
+  "sf.ddl.alter-postgres-instance.unset-tag",
+  "sf.ddl.alter-task-graph.unset",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees, then re-reviewed for coverage alone under review brief version 1; the trees are unchanged at 80e896e67, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-application-package-release-channel.modify-release-channel-add.syntax" = "52f1e29d745adc47522dce09618416e3258fc1c9ec93ad17a47d08f8d3243f64"
+"sf.ddl.alter-application-package-release-channel.modify-release-channel-remove" = "be596a509fc731d3c27e54675e603c4a95e80d0cb25a433dc141590b3ebb16a5"
+"sf.ddl.alter-application-package-release-channel.modify-release-channel-set" = "95bca9162a8271b121cde028f6bcf33f23126c031a499fb213e7a7d6d51c1c50"
+"sf.ddl.alter-openflow-runtime.add-external-access-integrations" = "8e44c27149164c8b55cb1ed38d23a7c901c2f2ba5d08cfdd4b8ee95c54ae806e"
+"sf.ddl.alter-openflow-runtime.remove-external-access-integrations" = "7992a0ccf974ffa3ee6eeae4228a26b29e7beca93cc8d93a2ee5bf199db43359"
+"sf.ddl.alter-postgres-instance.set-tag" = "b7fbe4a1cfe5f3ba016230071e4deac058c9a9c8028e904fca85123f7363de74"
+"sf.ddl.alter-postgres-instance.unset-tag" = "4bc0150047ca3ab2351646b3c7fb45b79029af5506c752fb6624628acdb0390f"
+"sf.ddl.alter-task-graph.unset" = "7bba0a21ec82f6c9fd4b78e907b297312affb608d1be0eb09e709dc206259e58"
+
+[review.definitions]
+"sf.ddl.alter-application-package-release-channel.modify-release-channel-add.syntax" = "f32dc1a3523ca363265668ab06ab7aa9a1caf1ec6853e9575a09062c43bb59a7"
+"sf.ddl.alter-application-package-release-channel.modify-release-channel-remove" = "641ca4e61706b4896d8104cdb517b3c7f167b7968e1c76b066a278c2a20abcb3"
+"sf.ddl.alter-application-package-release-channel.modify-release-channel-set" = "c238180b65af39080f43719b9daaf8a38c8984fb11449af3df197f701e96c078"
+"sf.ddl.alter-openflow-runtime.add-external-access-integrations" = "bfe6bb5b783d5a2d7ef720efe9191c353dd810adad62ce9b4c0c33d42fc36ec5"
+"sf.ddl.alter-openflow-runtime.remove-external-access-integrations" = "3fed67614a299fcfac43dfdce6408357ce11fb68e93d08b2cc9b0d64506b8351"
+"sf.ddl.alter-postgres-instance.set-tag" = "9aa06522fb2b6a5c8a98673a9f4da941bbfd8694db09985e690503433741fa2f"
+"sf.ddl.alter-postgres-instance.unset-tag" = "547d2c4ae4cc178d42813415a92b8f635474a3f068f72b58f4bcdcb32963d6ca"
+"sf.ddl.alter-task-graph.unset" = "88d7423e1f59d77e778774f1b65271ff93a0d2e75026916ff0098e9ecce3a373"

@@ -126,3 +126,23 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.dml.delete" = "259d0f1581f4aa78ea444d97b9682bdc89bc74a18edc0cb279162c2921c68ac6"
+
+[[review]]
+id = "dml-008"
+family = "dml"
+parser_tree = "4f7d2e5d71780111239df9cd32fb6a9b4156b9f4"
+reviewed_utc = "2026-11-13T23:40:09Z"
+verdict = "approved"
+forms = [
+  "sf.dml.insert-multi-table.all-intoclause",
+  "sf.dml.update",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees, then re-reviewed for coverage alone under review brief version 1; the trees are unchanged at 80e896e67, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.dml.insert-multi-table.all-intoclause" = "ae91fd3e3f000e7db526882cddac8e7b1d2b130a4311edfcc7cfc370a53e21a1"
+"sf.dml.update" = "8c072873f21e890b1ee08e18e9ecfd81f06e555aa57949f5ac1fec2a6544b77b"
+
+[review.definitions]
+"sf.dml.insert-multi-table.all-intoclause" = "3fd872493163133262bbeebb6182796b2c74f2e265099af83832abb29251197a"
+"sf.dml.update" = "527330c7abf1ded85ddecdf5377f17c5fbad2de67bbf01efdf746d499acc8934"
