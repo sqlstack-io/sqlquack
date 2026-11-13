@@ -22,13 +22,6 @@ target = "<left_table>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.asof-join.o046"
-kind = "negative_neighbour"
-required = true
-target = "<left_table>"
-note = "a string literal in place of <left_table>"
-
-[[obligation]]
 id = "sf.query.asof-join.o004"
 kind = "required_operand_missing"
 required = true
@@ -41,13 +34,6 @@ kind = "operand_type_class"
 required = true
 target = "<right_table>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.query.asof-join.o048"
-kind = "negative_neighbour"
-required = true
-target = "<right_table>"
-note = "a string literal in place of <right_table>"
 
 [[obligation]]
 id = "sf.query.asof-join.o006"
@@ -288,6 +274,22 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.constructs.asof-join / Syntax"
 note = "= in MATCH_CONDITION, which the page documents as unsupported"
+
+[[obligation]]
+id = "sf.query.asof-join.o053"
+kind = "negative_neighbour"
+required = true
+target = "<left_table>"
+anchor = "doc.constructs.asof-join / Syntax"
+note = "a string literal in place of <left_table>, observed"
+
+[[obligation]]
+id = "sf.query.asof-join.o054"
+kind = "negative_neighbour"
+required = true
+target = "<right_table>"
+anchor = "doc.constructs.asof-join / Syntax"
+note = "a string literal in place of <right_table>, observed"
 
 [[obligation]]
 id = "sf.query.at-before.o001"
@@ -2521,18 +2523,6 @@ required = true
 note = "the form without its required ) in [ ( FILE_FORMAT => <format_name> , PATTERN => '<regex_pattern>' ) ]"
 
 [[obligation]]
-id = "sf.query.from.o166"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DIRECTORY after FROM"
-
-[[obligation]]
-id = "sf.query.from.o167"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DYNAMIC_TABLE_REFRESH_BOUNDARY after FROM"
-
-[[obligation]]
 id = "sf.query.from.o133"
 kind = "negative_neighbour"
 required = true
@@ -2756,6 +2746,20 @@ kind = "interaction_all_options"
 required = true
 anchor = "doc.constructs.from / Syntax"
 note = "every independent option of one production together, observed"
+
+[[obligation]]
+id = "sf.query.from.o168"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.from / Syntax"
+note = "the form without its required DIRECTORY after FROM, observed"
+
+[[obligation]]
+id = "sf.query.from.o169"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.from / Syntax"
+note = "the form without its required DYNAMIC_TABLE_REFRESH_BOUNDARY after FROM, observed"
 
 [[obligation]]
 id = "sf.query.group-by-cube.o001"
@@ -4676,13 +4680,6 @@ target = "<object_ref1>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.join.join.o045"
-kind = "negative_neighbour"
-required = true
-target = "<object_ref1>"
-note = "a string literal in place of <object_ref1>"
-
-[[obligation]]
 id = "sf.query.join.join.o004"
 kind = "option_present"
 required = true
@@ -4761,13 +4758,6 @@ kind = "operand_type_class"
 required = true
 target = "<object_ref2>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.query.join.join.o047"
-kind = "negative_neighbour"
-required = true
-target = "<object_ref2>"
-note = "a string literal in place of <object_ref2>"
 
 [[obligation]]
 id = "sf.query.join.join.o017"
@@ -4928,6 +4918,22 @@ anchor = "doc.identifiers-syntax"
 note = "reserved <alias> in a read-order clause after ON, unquoted and double-quoted"
 
 [[obligation]]
+id = "sf.query.join.join.o052"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref1>"
+anchor = "doc.constructs.join / Syntax"
+note = "a string literal in place of <object_ref1>, observed"
+
+[[obligation]]
+id = "sf.query.join.join.o053"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref2>"
+anchor = "doc.constructs.join / Syntax"
+note = "a string literal in place of <object_ref2>, observed"
+
+[[obligation]]
 id = "sf.query.join.join-2.o001"
 kind = "positive"
 required = true
@@ -4946,13 +4952,6 @@ kind = "operand_type_class"
 required = true
 target = "<object_ref1>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.query.join.join-2.o026"
-kind = "negative_neighbour"
-required = true
-target = "<object_ref1>"
-note = "a string literal in place of <object_ref1>"
 
 [[obligation]]
 id = "sf.query.join.join-2.o004"
@@ -5071,13 +5070,6 @@ target = "<object_ref2>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.join.join-2.o028"
-kind = "negative_neighbour"
-required = true
-target = "<object_ref2>"
-note = "a string literal in place of <object_ref2>"
-
-[[obligation]]
 id = "sf.query.join.join-2.o023"
 kind = "negative_neighbour"
 required = true
@@ -5123,6 +5115,22 @@ anchor = "doc.constructs.join / Syntax"
 note = "a NATURAL join followed by a CROSS join, observed"
 
 [[obligation]]
+id = "sf.query.join.join-2.o033"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref1>"
+anchor = "doc.constructs.join / Syntax"
+note = "a string literal in place of <object_ref1>, observed"
+
+[[obligation]]
+id = "sf.query.join.join-2.o034"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref2>"
+anchor = "doc.constructs.join / Syntax"
+note = "a string literal in place of <object_ref2>, observed"
+
+[[obligation]]
 id = "sf.query.join.join.syntax.o001"
 kind = "positive"
 required = true
@@ -5141,13 +5149,6 @@ kind = "operand_type_class"
 required = true
 target = "<object_ref1>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.query.join.join.syntax.o053"
-kind = "negative_neighbour"
-required = true
-target = "<object_ref1>"
-note = "a string literal in place of <object_ref1>"
 
 [[obligation]]
 id = "sf.query.join.join.syntax.o004"
@@ -5228,13 +5229,6 @@ kind = "operand_type_class"
 required = true
 target = "<object_ref2>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.query.join.join.syntax.o055"
-kind = "negative_neighbour"
-required = true
-target = "<object_ref2>"
-note = "a string literal in place of <object_ref2>"
 
 [[obligation]]
 id = "sf.query.join.join.syntax.o017"
@@ -5449,6 +5443,22 @@ kind = "positive"
 required = true
 anchor = "doc.constructs.join / Usage notes"
 note = "a bare FIRST as a table alias; FIRST is not reserved"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o060"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref1>"
+anchor = "doc.constructs.join / Syntax"
+note = "a string literal in place of <object_ref1>, observed"
+
+[[obligation]]
+id = "sf.query.join.join.syntax.o061"
+kind = "negative_neighbour"
+required = true
+target = "<object_ref2>"
+anchor = "doc.constructs.join / Syntax"
+note = "a string literal in place of <object_ref2>, observed"
 
 [[obligation]]
 id = "sf.query.limit.fetch.o001"
@@ -6183,12 +6193,6 @@ required = true
 note = "the form without its required NEXT in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ]"
 
 [[obligation]]
-id = "sf.query.match-recognize.match-recognize-pattern-define-as.o134"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ROW after NEXT in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ]"
-
-[[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o135"
 kind = "negative_neighbour"
 required = true
@@ -6448,6 +6452,13 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.constructs.match_recognize / Syntax"
 note = "FINAL in DEFINE; the page allows FINAL only in MEASURES"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o142"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.match_recognize / Syntax"
+note = "the form without its required ROW after NEXT in [ AFTER MATCH SKIP { PAST LAST ROW | TO NEXT ROW | TO [ { FIRST | LAST } ] <symbol> } ], observed"
 
 [[obligation]]
 id = "sf.query.operators-query.except.o001"
