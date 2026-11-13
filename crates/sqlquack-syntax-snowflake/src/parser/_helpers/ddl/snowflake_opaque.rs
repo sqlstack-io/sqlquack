@@ -32,7 +32,7 @@ impl Parser {
         checked
     }
 
-    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, a snapshot's service volume, an external agent's version, AS COPY for a pipe's body, and an Openflow connector's added version; the cursor stays after the name.
+    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, a snapshot's service volume, an external agent's version, a variable's type, AS COPY for a pipe's body, and an Openflow connector's added version; the cursor stays after the name.
     fn check_opaque_shape(&mut self, create: bool, kind_at: usize) -> Result<()> {
         let after_name = self.current;
         let kind = self.tokens[kind_at].text.to_ascii_uppercase();
@@ -49,6 +49,7 @@ impl Parser {
         let project = matches!(second.as_str(), "PROJECT");
         let checked = match kind.as_str() {
             "EXTERNAL" if matches!(second.as_str(), "AGENT") => self.check_external_agent_tail(),
+            "VARIABLE" => self.check_variable_tail(),
             "SNAPSHOT" if !matches!(second.as_str(), "SET" | "POLICY") => {
                 self.check_snapshot_source()
             }
@@ -98,6 +99,29 @@ impl Parser {
             false => {
                 Err(self.parse_error("Expected LAST for a live version, or a location string"))
             }
+        }
+    }
+
+    /// A variable's `<type> [ DEFAULT <value> ] [ COMMENT = '<string>' ]` after its name.
+    fn check_variable_tail(&mut self) -> Result<()> {
+        if self.check(TokenType::String) || self.is_statement_end_at(0) {
+            return Err(self.parse_error("Expected the variable's type"));
+        }
+        self.parse_data_type()?;
+        if self.match_token(TokenType::Default) {
+            if self.is_statement_end_at(0) {
+                return Err(self.parse_error("Expected a default value"));
+            }
+            self.parse_expression()?;
+        }
+        if self.match_text_seq(&["COMMENT"])
+            && !(self.match_token(TokenType::Eq) && self.match_token(TokenType::String))
+        {
+            return Err(self.parse_error("Expected = and a string after COMMENT"));
+        }
+        match self.is_statement_end_at(0) || self.check(TokenType::DArrow) {
+            true => Ok(()),
+            false => Err(self.parse_error("Expected the end of the variable")),
         }
     }
 
