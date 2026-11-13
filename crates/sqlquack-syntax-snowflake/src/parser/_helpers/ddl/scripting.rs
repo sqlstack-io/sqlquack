@@ -260,6 +260,9 @@ impl Parser {
                 let mut type_args: Vec<String> = Vec::new();
                 if !self.check(TokenType::RParen) {
                     loop {
+                        if self.is_snowflake() {
+                            self.check_describe_argument_start()?;
+                        }
                         let mut parts: Vec<String> = Vec::new();
                         let mut paren_depth = 0usize;
                         while !self.is_at_end() {
