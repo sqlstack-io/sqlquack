@@ -27,3 +27,6 @@ FAMILY_FILE_SUFFIX: str = ".toml"
 FAMILY_FILE_DEPTH: int = 2
 LIMITS_FILE: str = "limits.toml"
 LIMITS_TABLES: tuple[str, ...] = ("limit", "suppress", "reading")
+
+INTEGER_CLASS: str = "integer_literal"
+INTEGER_NAMES: str = r"_num$|(^|_)integer$|^rows$|^precision$|^scale$|^length$|_seconds$"

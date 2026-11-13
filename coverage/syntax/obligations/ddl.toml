@@ -2585,11 +2585,18 @@ target = "<patch_num>"
 note = "omit <patch_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-modify.o013"
+id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-modify.o044"
 kind = "operand_type_class"
 required = true
 target = "<patch_num>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-modify.o045"
+kind = "negative_neighbour"
+required = true
+target = "<patch_num>"
+note = "a string literal in place of <patch_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-modify.o014"
@@ -3320,11 +3327,18 @@ target = "<patch_num>"
 note = "omit <patch_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set-2.o021"
+id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set-2.o059"
 kind = "operand_type_class"
 required = true
 target = "<patch_num>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set-2.o060"
+kind = "negative_neighbour"
+required = true
+target = "<patch_num>"
+note = "a string literal in place of <patch_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set-2.o022"
@@ -3640,11 +3654,18 @@ target = "<patch_num>"
 note = "omit <patch_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set.syntax.o011"
+id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set.syntax.o043"
 kind = "operand_type_class"
 required = true
 target = "<patch_num>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set.syntax.o044"
+kind = "negative_neighbour"
+required = true
+target = "<patch_num>"
+note = "a string literal in place of <patch_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package-release-channel.modify-release-channel-set.syntax.o012"
@@ -4303,11 +4324,18 @@ target = "<patch_num> in [ VERSION = <version_identifier> PATCH = <patch_num> ]"
 note = "omit <patch_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-add.o026"
+id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-add.o052"
 kind = "operand_type_class"
 required = true
 target = "<patch_num> in [ VERSION = <version_identifier> PATCH = <patch_num> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-add.o053"
+kind = "negative_neighbour"
+required = true
+target = "<patch_num> in [ VERSION = <version_identifier> PATCH = <patch_num> ]"
+note = "a string literal in place of <patch_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-add.o027"
@@ -4649,11 +4677,18 @@ target = "<patch_num> in [ VERSION = <version_identifier> PATCH = <patch_num> ]"
 note = "omit <patch_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-remove.o026"
+id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-remove.o050"
 kind = "operand_type_class"
 required = true
 target = "<patch_num> in [ VERSION = <version_identifier> PATCH = <patch_num> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-remove.o051"
+kind = "negative_neighbour"
+required = true
+target = "<patch_num> in [ VERSION = <version_identifier> PATCH = <patch_num> ]"
+note = "a string literal in place of <patch_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-remove.o027"
@@ -4883,11 +4918,18 @@ target = "<patch_num>"
 note = "omit <patch_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-version.o011"
+id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-version.o039"
 kind = "operand_type_class"
 required = true
 target = "<patch_num>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-version.o040"
+kind = "negative_neighbour"
+required = true
+target = "<patch_num>"
+note = "a string literal in place of <patch_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package-release-directive.modify-release-directive-version.o012"
@@ -5121,11 +5163,18 @@ target = "<patch_num>"
 note = "omit <patch_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package-release-directive.set-default-release-directive.o009"
+id = "sf.ddl.alter-application-package-release-directive.set-default-release-directive.o038"
 kind = "operand_type_class"
 required = true
 target = "<patch_num>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package-release-directive.set-default-release-directive.o039"
+kind = "negative_neighbour"
+required = true
+target = "<patch_num>"
+note = "a string literal in place of <patch_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package-release-directive.set-default-release-directive.o010"
@@ -5434,11 +5483,18 @@ target = "<patch_num>"
 note = "omit <patch_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package-release-directive.set-release-directive-accounts.o019"
+id = "sf.ddl.alter-application-package-release-directive.set-release-directive-accounts.o056"
 kind = "operand_type_class"
 required = true
 target = "<patch_num>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package-release-directive.set-release-directive-accounts.o057"
+kind = "negative_neighbour"
+required = true
+target = "<patch_num>"
+note = "a string literal in place of <patch_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package-release-directive.set-release-directive-accounts.o020"
@@ -6430,11 +6486,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.set.o070"
+id = "sf.ddl.alter-application-package.set.o084"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.set.o085"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.set.o071"
@@ -6456,11 +6519,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-package.set.o072"
+id = "sf.ddl.alter-application-package.set.o086"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application-package.set.o087"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-package.set.o073"
@@ -7167,11 +7237,18 @@ target = "<sequence_num>"
 note = "omit <sequence_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-application-sequence-number.o011"
+id = "sf.ddl.alter-application-sequence-number.o020"
 kind = "operand_type_class"
 required = true
 target = "<sequence_num>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application-sequence-number.o021"
+kind = "negative_neighbour"
+required = true
+target = "<sequence_num>"
+note = "a string literal in place of <sequence_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-sequence-number.o012"
@@ -11821,11 +11898,18 @@ target = "<patch_num> in [ PATCH <patch_num> ]"
 note = "omit <patch_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-application.upgrade-using-version.o011"
+id = "sf.ddl.alter-application.upgrade-using-version.o020"
 kind = "operand_type_class"
 required = true
 target = "<patch_num> in [ PATCH <patch_num> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-application.upgrade-using-version.o021"
+kind = "negative_neighbour"
+required = true
+target = "<patch_num> in [ PATCH <patch_num> ]"
+note = "a string literal in place of <patch_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-application.upgrade-using-version.o012"
@@ -17563,11 +17647,18 @@ target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-database-catalog-linked.set.o075"
+id = "sf.ddl.alter-database-catalog-linked.set.o079"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-database-catalog-linked.set.o080"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.set.o076"
@@ -19794,11 +19885,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-database.set.o238"
+id = "sf.ddl.alter-database.set.o294"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-database.set.o295"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-database.set.o239"
@@ -19820,11 +19918,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-database.set.o240"
+id = "sf.ddl.alter-database.set.o296"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-database.set.o297"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-database.set.o241"
@@ -19846,11 +19951,18 @@ target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-database.set.o242"
+id = "sf.ddl.alter-database.set.o298"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-database.set.o299"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-database.set.o243"
@@ -19971,11 +20083,18 @@ target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-database.set.o250"
+id = "sf.ddl.alter-database.set.o300"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-database.set.o301"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-database.set.o251"
@@ -25963,11 +26082,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-dynamic-table.set.o028"
+id = "sf.ddl.alter-dynamic-table.set.o129"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o130"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.set.o029"
@@ -25989,11 +26115,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-dynamic-table.set.o032"
+id = "sf.ddl.alter-dynamic-table.set.o131"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-dynamic-table.set.o132"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-dynamic-table.set.o033"
@@ -29379,11 +29512,18 @@ target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer-add-programmatic-access-token.o015"
+id = "sf.ddl.alter-external-consumer-add-programmatic-access-token.o035"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-external-consumer-add-programmatic-access-token.o036"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-external-consumer-add-programmatic-access-token.o016"
@@ -29614,11 +29754,18 @@ target = "<integer> in [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_l
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o044"
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o055"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o056"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SET { DAYS_TO_EXPIRY = <integer> [ COMMENT = '<string_literal>' ] | COMMENT = '<string_literal>' } ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-external-consumer-modify-programmatic-access-token.o018"
@@ -30064,11 +30211,18 @@ target = "<integer> in [ EXPIRE_ROTATED_TOKEN_AFTER_HOURS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-external-consumer-rotate-programmatic-access-token.o015"
+id = "sf.ddl.alter-external-consumer-rotate-programmatic-access-token.o029"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ EXPIRE_ROTATED_TOKEN_AFTER_HOURS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-external-consumer-rotate-programmatic-access-token.o030"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ EXPIRE_ROTATED_TOKEN_AFTER_HOURS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-external-consumer-rotate-programmatic-access-token.o016"
@@ -32903,11 +33057,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-file-format.set.o064"
+id = "sf.ddl.alter-file-format.set.o250"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-file-format.set.o251"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-file-format.set.o065"
@@ -35780,11 +35941,18 @@ target = "<integer>"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-function-spcs.set-batch-timeout-secs.o010"
+id = "sf.ddl.alter-function-spcs.set-batch-timeout-secs.o026"
 kind = "operand_type_class"
 required = true
 target = "<integer>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-function-spcs.set-batch-timeout-secs.o027"
+kind = "negative_neighbour"
+required = true
+target = "<integer>"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-function-spcs.set-batch-timeout-secs.o011"
@@ -36225,11 +36393,18 @@ target = "<integer>"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-function-spcs.set-max-batch-retries.o010"
+id = "sf.ddl.alter-function-spcs.set-max-batch-retries.o020"
 kind = "operand_type_class"
 required = true
 target = "<integer>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-function-spcs.set-max-batch-retries.o021"
+kind = "negative_neighbour"
+required = true
+target = "<integer>"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-function-spcs.set-max-batch-retries.o011"
@@ -37938,11 +38113,18 @@ target = "<integer>"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-function.set-max-batch-rows.o010"
+id = "sf.ddl.alter-function.set-max-batch-rows.o020"
 kind = "operand_type_class"
 required = true
 target = "<integer>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set-max-batch-rows.o021"
+kind = "negative_neighbour"
+required = true
+target = "<integer>"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-function.set-max-batch-rows.o011"
@@ -45773,11 +45955,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.set.o019"
+id = "sf.ddl.alter-iceberg-table.set.o149"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.set.o150"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.set.o020"
@@ -55807,11 +55996,18 @@ target = "<integer> in [ MIN_NODES = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-openflow-runtime.set.o015"
+id = "sf.ddl.alter-openflow-runtime.set.o053"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MIN_NODES = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-openflow-runtime.set.o054"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MIN_NODES = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-openflow-runtime.set.o016"
@@ -55833,11 +56029,18 @@ target = "<integer> in [ MAX_NODES = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-openflow-runtime.set.o019"
+id = "sf.ddl.alter-openflow-runtime.set.o055"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_NODES = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-openflow-runtime.set.o056"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_NODES = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-openflow-runtime.set.o020"
@@ -61031,11 +61234,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-schema.set.o213"
+id = "sf.ddl.alter-schema.set.o264"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.set.o265"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.set.o214"
@@ -61057,11 +61267,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-schema.set.o215"
+id = "sf.ddl.alter-schema.set.o266"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.set.o267"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.set.o216"
@@ -61083,11 +61300,18 @@ target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-schema.set.o217"
+id = "sf.ddl.alter-schema.set.o268"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.set.o269"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.set.o218"
@@ -61208,11 +61432,18 @@ target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-schema.set.o225"
+id = "sf.ddl.alter-schema.set.o270"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-schema.set.o271"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-schema.set.o226"
@@ -63626,11 +63857,18 @@ target = "<integer>"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o013"
+id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o027"
 kind = "operand_type_class"
 required = true
 target = "<integer>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o028"
+kind = "negative_neighbour"
+required = true
+target = "<integer>"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-semantic-view.set-comment-max-staleness.o015"
@@ -68109,11 +68347,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-stage.set.o097"
+id = "sf.ddl.alter-stage.set.o454"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.o455"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-stage.set.o098"
@@ -69792,11 +70037,18 @@ target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-stage.set.o027"
+id = "sf.ddl.alter-stage.set.o456"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.o457"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-stage.set.o028"
@@ -71765,11 +72017,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-stage.set.syntax.o200"
+id = "sf.ddl.alter-stage.set.syntax.o620"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o621"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-stage.set.syntax.o201"
@@ -78558,11 +78817,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-table-event-table.set.o059"
+id = "sf.ddl.alter-table-event-table.set.o069"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-table-event-table.set.o070"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-table-event-table.set.o060"
@@ -78584,11 +78850,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-table-event-table.set.o061"
+id = "sf.ddl.alter-table-event-table.set.o071"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-table-event-table.set.o072"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-table-event-table.set.o062"
@@ -82742,11 +83015,18 @@ target = "<integer> in [ GROUP LIMIT <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-table.datametricfunctionaction.o592"
+id = "sf.ddl.alter-table.datametricfunctionaction.o799"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ GROUP LIMIT <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datametricfunctionaction.o800"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ GROUP LIMIT <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-table.datametricfunctionaction.o593"
@@ -83128,11 +83408,18 @@ target = "<integer> in [ GROUP LIMIT <integer> ] #2"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-table.datametricfunctionaction.o619"
+id = "sf.ddl.alter-table.datametricfunctionaction.o801"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ GROUP LIMIT <integer> ] #2"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-table.datametricfunctionaction.o802"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ GROUP LIMIT <integer> ] #2"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-table.datametricfunctionaction.o620"
@@ -86626,11 +86913,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-table.set.o091"
+id = "sf.ddl.alter-table.set.o108"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-table.set.o109"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-table.set.o092"
@@ -86652,11 +86946,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-table.set.o093"
+id = "sf.ddl.alter-table.set.o110"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-table.set.o111"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-table.set.o094"
@@ -87379,11 +87680,18 @@ target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMEN
 note = "omit <start_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-table.tablecolumnaction.o051"
+id = "sf.ddl.alter-table.tablecolumnaction.o261"
 kind = "operand_type_class"
 required = true
 target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
-note = "a valid expression"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-table.tablecolumnaction.o262"
+kind = "negative_neighbour"
+required = true
+target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
+note = "a string literal in place of <start_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-table.tablecolumnaction.o052"
@@ -87393,11 +87701,18 @@ target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT
 note = "omit <step_num>"
 
 [[obligation]]
-id = "sf.ddl.alter-table.tablecolumnaction.o053"
+id = "sf.ddl.alter-table.tablecolumnaction.o263"
 kind = "operand_type_class"
 required = true
 target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-table.tablecolumnaction.o264"
+kind = "negative_neighbour"
+required = true
+target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
+note = "a string literal in place of <step_num>"
 
 [[obligation]]
 id = "sf.ddl.alter-table.tablecolumnaction.o054"
@@ -96870,11 +97185,18 @@ target = "<integer> in [ GROUP LIMIT <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-view.datametricfunctionaction.o589"
+id = "sf.ddl.alter-view.datametricfunctionaction.o797"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ GROUP LIMIT <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o798"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ GROUP LIMIT <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-view.datametricfunctionaction.o590"
@@ -97256,11 +97578,18 @@ target = "<integer> in [ GROUP LIMIT <integer> ] #2"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.alter-view.datametricfunctionaction.o616"
+id = "sf.ddl.alter-view.datametricfunctionaction.o799"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ GROUP LIMIT <integer> ] #2"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-view.datametricfunctionaction.o800"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ GROUP LIMIT <integer> ] #2"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.alter-view.datametricfunctionaction.o617"
@@ -105482,11 +105811,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-application-package.o010"
+id = "sf.ddl.create-application-package.o075"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-application-package.o076"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-application-package.o011"
@@ -105508,11 +105844,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-application-package.o014"
+id = "sf.ddl.create-application-package.o077"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-application-package.o078"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-application-package.o015"
@@ -107889,11 +108232,18 @@ target = "<patch_num> in [ PATCH <patch_num> ]"
 note = "omit <patch_num>"
 
 [[obligation]]
-id = "sf.ddl.create-application.application-package-using-version.o014"
+id = "sf.ddl.create-application.application-package-using-version.o080"
 kind = "operand_type_class"
 required = true
 target = "<patch_num> in [ PATCH <patch_num> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-application.application-package-using-version.o081"
+kind = "negative_neighbour"
+required = true
+target = "<patch_num> in [ PATCH <patch_num> ]"
+note = "a string literal in place of <patch_num>"
 
 [[obligation]]
 id = "sf.ddl.create-application.application-package-using-version.o015"
@@ -117789,11 +118139,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-database.create-database.o255"
+id = "sf.ddl.create-database.create-database.o302"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-database.create-database.o303"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-database.create-database.o256"
@@ -117815,11 +118172,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-database.create-database.o257"
+id = "sf.ddl.create-database.create-database.o304"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-database.create-database.o305"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-database.create-database.o258"
@@ -117841,11 +118205,18 @@ target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-database.create-database.o259"
+id = "sf.ddl.create-database.create-database.o306"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-database.create-database.o307"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-database.create-database.o260"
@@ -117966,11 +118337,18 @@ target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-database.create-database.o267"
+id = "sf.ddl.create-database.create-database.o308"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-database.create-database.o309"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-database.create-database.o268"
@@ -118901,11 +119279,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-database.create-database-as-replica.o014"
+id = "sf.ddl.create-database.create-database-as-replica.o025"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-database.create-database-as-replica.o026"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-database.create-database-as-replica.o015"
@@ -119457,11 +119842,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-database.create-or-alter-database.o010"
+id = "sf.ddl.create-database.create-or-alter-database.o096"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-database.create-or-alter-database.o097"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-database.create-or-alter-database.o011"
@@ -119483,11 +119875,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-database.create-or-alter-database.o014"
+id = "sf.ddl.create-database.create-or-alter-database.o098"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-database.create-or-alter-database.o099"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-database.create-or-alter-database.o015"
@@ -119608,11 +120007,18 @@ target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-database.create-or-alter-database.o033"
+id = "sf.ddl.create-database.create-or-alter-database.o100"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-database.create-or-alter-database.o101"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-database.create-or-alter-database.o034"
@@ -120073,11 +120479,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-database.define-database.o010"
+id = "sf.ddl.create-database.define-database.o094"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-database.define-database.o095"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-database.define-database.o011"
@@ -120099,11 +120512,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-database.define-database.o014"
+id = "sf.ddl.create-database.define-database.o096"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-database.define-database.o097"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-database.define-database.o015"
@@ -120224,11 +120644,18 @@ target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-database.define-database.o033"
+id = "sf.ddl.create-database.define-database.o098"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-database.define-database.o099"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-database.define-database.o034"
@@ -121877,11 +122304,18 @@ target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o085"
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o442"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o443"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o086"
@@ -122034,11 +122468,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o110"
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o444"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o445"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o111"
@@ -122060,11 +122501,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o114"
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o446"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o447"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table.o115"
@@ -125160,11 +125608,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o107"
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o363"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o364"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o108"
@@ -125186,11 +125641,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o111"
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o365"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o366"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag.o112"
@@ -127067,11 +127529,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o065"
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o210"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o211"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o066"
@@ -127093,11 +127562,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o069"
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o212"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o213"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic.o070"
@@ -128249,11 +128725,18 @@ target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o402"
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o449"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o450"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o403"
@@ -128406,11 +128889,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o411"
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o451"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o452"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o412"
@@ -128432,11 +128922,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o413"
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o453"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o454"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table.o414"
@@ -129563,11 +130060,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.define-dynamic-table.o065"
+id = "sf.ddl.create-dynamic-table.define-dynamic-table.o186"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.define-dynamic-table.o187"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.define-dynamic-table.o066"
@@ -129589,11 +130093,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-dynamic-table.define-dynamic-table.o069"
+id = "sf.ddl.create-dynamic-table.define-dynamic-table.o188"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-dynamic-table.define-dynamic-table.o189"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-dynamic-table.define-dynamic-table.o070"
@@ -130922,11 +131433,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-event-table.table.o159"
+id = "sf.ddl.create-event-table.table.o196"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-event-table.table.o197"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-event-table.table.o160"
@@ -130948,11 +131466,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-event-table.table.o161"
+id = "sf.ddl.create-event-table.table.o198"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-event-table.table.o199"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-event-table.table.o162"
@@ -132905,11 +133430,18 @@ target = "<integer> in [ MAX_BATCH_ROWS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-external-function.function-returns-api-integration-as.o063"
+id = "sf.ddl.create-external-function.function-returns-api-integration-as.o117"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_BATCH_ROWS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-external-function.function-returns-api-integration-as.o118"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_BATCH_ROWS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-external-function.function-returns-api-integration-as.o064"
@@ -134195,11 +134727,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o266"
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o508"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o509"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.o267"
@@ -136840,11 +137379,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o248"
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o486"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o487"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.o249"
@@ -139436,11 +139982,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax.o251"
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax.o488"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax.o489"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax.o252"
@@ -142608,11 +143161,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-file-format.create-file-format.o085"
+id = "sf.ddl.create-file-format.create-file-format.o435"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-file-format.create-file-format.o436"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-file-format.create-file-format.o086"
@@ -145190,11 +145750,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-file-format.create-or-alter-file.o080"
+id = "sf.ddl.create-file-format.create-or-alter-file.o430"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-file-format.create-or-alter-file.o431"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-file-format.create-or-alter-file.o081"
@@ -147671,6 +148238,13 @@ kind = "required_operand_missing"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
+
+[[obligation]]
+id = "sf.ddl.create-file-format.define-file-format.o509"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-file-format.define-file-format.o058"
@@ -150471,11 +151045,18 @@ target = "<integer> in [ MAX_BATCH_ROWS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o053"
+id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o104"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_BATCH_ROWS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o105"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_BATCH_ROWS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o054"
@@ -150497,11 +151078,18 @@ target = "<integer> in [ MAX_BATCH_RETRIES = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o057"
+id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o106"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_BATCH_RETRIES = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o107"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_BATCH_RETRIES = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o058"
@@ -150547,11 +151135,18 @@ target = "<integer> in [ BATCH_TIMEOUT_SECS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o065"
+id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o108"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ BATCH_TIMEOUT_SECS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o109"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ BATCH_TIMEOUT_SECS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o066"
@@ -163140,11 +163735,18 @@ target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMEN
 note = "omit <start_num>"
 
 [[obligation]]
-id = "sf.ddl.create-hybrid-table.table.o305"
+id = "sf.ddl.create-hybrid-table.table.o394"
 kind = "operand_type_class"
 required = true
 target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
-note = "a valid expression"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-hybrid-table.table.o395"
+kind = "negative_neighbour"
+required = true
+target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
+note = "a string literal in place of <start_num>"
 
 [[obligation]]
 id = "sf.ddl.create-hybrid-table.table.o029"
@@ -163154,11 +163756,18 @@ target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT
 note = "omit <step_num>"
 
 [[obligation]]
-id = "sf.ddl.create-hybrid-table.table.o306"
+id = "sf.ddl.create-hybrid-table.table.o396"
 kind = "operand_type_class"
 required = true
 target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-hybrid-table.table.o397"
+kind = "negative_neighbour"
+required = true
+target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
+note = "a string literal in place of <step_num>"
 
 [[obligation]]
 id = "sf.ddl.create-hybrid-table.table.o031"
@@ -166142,11 +166751,18 @@ target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row.o037"
+id = "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row.o087"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row.o088"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row.o038"
@@ -168092,11 +168708,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.o873"
+id = "sf.ddl.create-iceberg-table.table.o968"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.o969"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table.o874"
@@ -168118,11 +168741,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.o875"
+id = "sf.ddl.create-iceberg-table.table.o970"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.o971"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table.o876"
@@ -168292,11 +168922,18 @@ target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.o885"
+id = "sf.ddl.create-iceberg-table.table.o972"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.o973"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table.o886"
@@ -170047,11 +170684,18 @@ target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table-as-select.o043"
+id = "sf.ddl.create-iceberg-table.table-as-select.o075"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table-as-select.o076"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table-as-select.o044"
@@ -175676,11 +176320,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o063"
+id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o326"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o327"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o064"
@@ -175801,11 +176452,18 @@ target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o084"
+id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o328"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o329"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database.o085"
@@ -185692,11 +186350,18 @@ target = "<integer>"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-openflow-runtime.o028"
+id = "sf.ddl.create-openflow-runtime.o080"
 kind = "operand_type_class"
 required = true
 target = "<integer>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-openflow-runtime.o081"
+kind = "negative_neighbour"
+required = true
+target = "<integer>"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-openflow-runtime.o029"
@@ -185706,11 +186371,18 @@ target = "<integer> #2"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-openflow-runtime.o030"
+id = "sf.ddl.create-openflow-runtime.o082"
 kind = "operand_type_class"
 required = true
 target = "<integer> #2"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-openflow-runtime.o083"
+kind = "negative_neighbour"
+required = true
+target = "<integer> #2"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-openflow-runtime.o031"
@@ -202349,11 +203021,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-schema.create-or-alter-schema.o012"
+id = "sf.ddl.create-schema.create-or-alter-schema.o092"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-schema.create-or-alter-schema.o093"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-schema.create-or-alter-schema.o013"
@@ -202375,11 +203054,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-schema.create-or-alter-schema.o016"
+id = "sf.ddl.create-schema.create-or-alter-schema.o094"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-schema.create-or-alter-schema.o095"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-schema.create-or-alter-schema.o017"
@@ -202500,11 +203186,18 @@ target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-schema.create-or-alter-schema.o035"
+id = "sf.ddl.create-schema.create-or-alter-schema.o096"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-schema.create-or-alter-schema.o097"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-schema.create-or-alter-schema.o036"
@@ -203095,11 +203788,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-schema.create-schema.o037"
+id = "sf.ddl.create-schema.create-schema.o186"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-schema.create-schema.o187"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-schema.create-schema.o038"
@@ -203121,11 +203821,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-schema.create-schema.o041"
+id = "sf.ddl.create-schema.create-schema.o188"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-schema.create-schema.o189"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-schema.create-schema.o042"
@@ -203147,11 +203854,18 @@ target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-schema.create-schema.o045"
+id = "sf.ddl.create-schema.create-schema.o190"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-schema.create-schema.o191"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-schema.create-schema.o046"
@@ -203272,11 +203986,18 @@ target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-schema.create-schema.o064"
+id = "sf.ddl.create-schema.create-schema.o192"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-schema.create-schema.o193"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-schema.create-schema.o065"
@@ -204361,11 +205082,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-schema.define-schema.o012"
+id = "sf.ddl.create-schema.define-schema.o090"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-schema.define-schema.o091"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-schema.define-schema.o013"
@@ -204387,11 +205115,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-schema.define-schema.o016"
+id = "sf.ddl.create-schema.define-schema.o092"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-schema.define-schema.o093"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-schema.define-schema.o017"
@@ -204512,11 +205247,18 @@ target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-schema.define-schema.o035"
+id = "sf.ddl.create-schema.define-schema.o094"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-schema.define-schema.o095"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-schema.define-schema.o036"
@@ -206770,6 +207512,13 @@ kind = "required_operand_missing"
 required = true
 target = "<integer> in [ MAX_STALENESS = <integer> ]"
 note = "omit <integer>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o526"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_STALENESS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.create-or-alter-semantic.o044"
@@ -209867,6 +210616,13 @@ target = "<integer> in [ MAX_STALENESS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o549"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_STALENESS = <integer> ]"
+note = "a string literal in place of <integer>"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.create-semantic-view-tables.o048"
 kind = "option_present"
 required = true
@@ -212307,6 +213063,13 @@ kind = "required_operand_missing"
 required = true
 target = "<integer> in [ MAX_STALENESS = <integer> ]"
 note = "omit <integer>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o609"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_STALENESS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o305"
@@ -218235,11 +218998,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-stage.create-or-alter-stage.o109"
+id = "sf.ddl.create-stage.create-or-alter-stage.o475"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.o476"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-stage.create-or-alter-stage.o110"
@@ -222134,11 +222904,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o285"
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o723"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o724"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage.o286"
@@ -226563,11 +227340,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o307"
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o748"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o749"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-stage.create-stage-externalstageparams-directorytableparams.o308"
@@ -229890,11 +230674,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams.o135"
+id = "sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams.o504"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams.o505"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams.o136"
@@ -231573,11 +232364,18 @@ target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams.o037"
+id = "sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams.o506"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams.o507"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams.o038"
@@ -232830,11 +233628,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-stage.define-stage.o073"
+id = "sf.ddl.create-stage.define-stage.o1129"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1130"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-stage.define-stage.o074"
@@ -236095,11 +236900,18 @@ target = "<integer> in [ SKIP_HEADER = <integer> ] #2"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-stage.define-stage.o596"
+id = "sf.ddl.create-stage.define-stage.o1131"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SKIP_HEADER = <integer> ] #2"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-stage.define-stage.o1132"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ] #2"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-stage.define-stage.o597"
@@ -250780,11 +251592,18 @@ target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMEN
 note = "omit <start_num>"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-or-alter-table.o043"
+id = "sf.ddl.create-table.create-or-alter-table.o295"
 kind = "operand_type_class"
 required = true
 target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
-note = "a valid expression"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-or-alter-table.o296"
+kind = "negative_neighbour"
+required = true
+target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
+note = "a string literal in place of <start_num>"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-or-alter-table.o044"
@@ -250794,11 +251613,18 @@ target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT
 note = "omit <step_num>"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-or-alter-table.o045"
+id = "sf.ddl.create-table.create-or-alter-table.o297"
 kind = "operand_type_class"
 required = true
 target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-or-alter-table.o298"
+kind = "negative_neighbour"
+required = true
+target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
+note = "a string literal in place of <step_num>"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-or-alter-table.o046"
@@ -251269,11 +252095,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-or-alter-table.o086"
+id = "sf.ddl.create-table.create-or-alter-table.o299"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-or-alter-table.o300"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-or-alter-table.o087"
@@ -251295,11 +252128,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-or-alter-table.o090"
+id = "sf.ddl.create-table.create-or-alter-table.o301"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-or-alter-table.o302"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-or-alter-table.o091"
@@ -252436,11 +253276,18 @@ target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMEN
 note = "omit <start_num>"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-table.o618"
+id = "sf.ddl.create-table.create-table.o755"
 kind = "operand_type_class"
 required = true
 target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
-note = "a valid expression"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table.o756"
+kind = "negative_neighbour"
+required = true
+target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
+note = "a string literal in place of <start_num>"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table.o057"
@@ -252450,11 +253297,18 @@ target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT
 note = "omit <step_num>"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-table.o619"
+id = "sf.ddl.create-table.create-table.o757"
 kind = "operand_type_class"
 required = true
 target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table.o758"
+kind = "negative_neighbour"
+required = true
+target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
+note = "a string literal in place of <step_num>"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table.o059"
@@ -253198,11 +254052,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-table.o681"
+id = "sf.ddl.create-table.create-table.o759"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table.o760"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table.o682"
@@ -253224,11 +254085,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-table.o683"
+id = "sf.ddl.create-table.create-table.o761"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table.o762"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table.o684"
@@ -257046,11 +257914,18 @@ target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMEN
 note = "omit <start_num>"
 
 [[obligation]]
-id = "sf.ddl.create-table.define-table.o066"
+id = "sf.ddl.create-table.define-table.o247"
 kind = "operand_type_class"
 required = true
 target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
-note = "a valid expression"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.define-table.o248"
+kind = "negative_neighbour"
+required = true
+target = "<start_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
+note = "a string literal in place of <start_num>"
 
 [[obligation]]
 id = "sf.ddl.create-table.define-table.o067"
@@ -257060,11 +257935,18 @@ target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT
 note = "omit <step_num>"
 
 [[obligation]]
-id = "sf.ddl.create-table.define-table.o068"
+id = "sf.ddl.create-table.define-table.o249"
 kind = "operand_type_class"
 required = true
 target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.define-table.o250"
+kind = "negative_neighbour"
+required = true
+target = "<step_num> in [ { ( <start_num> , <step_num> ) | START <num> INCREMENT <num> } ]"
+note = "a string literal in place of <step_num>"
 
 [[obligation]]
 id = "sf.ddl.create-table.define-table.o069"
@@ -257606,11 +258488,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-table.define-table.o159"
+id = "sf.ddl.create-table.define-table.o251"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.define-table.o252"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-table.define-table.o160"
@@ -257632,11 +258521,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-table.define-table.o163"
+id = "sf.ddl.create-table.define-table.o253"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-table.define-table.o254"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-table.define-table.o164"
@@ -264616,11 +265512,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-versioned-schema.o032"
+id = "sf.ddl.create-versioned-schema.o037"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-versioned-schema.o038"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-versioned-schema.o033"
@@ -264642,11 +265545,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.ddl.create-versioned-schema.o036"
+id = "sf.ddl.create-versioned-schema.o039"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.create-versioned-schema.o040"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.ddl.create-versioned-schema.o011"
@@ -279818,11 +280728,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<string_from>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-agents.o031"
+id = "sf.ddl.show-agents.o049"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<string_from>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-agents.o050"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<string_from>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-agents.o032"
@@ -280182,11 +281099,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-alerts.o040"
+id = "sf.ddl.show-alerts.o073"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-alerts.o074"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-alerts.o041"
@@ -280415,11 +281339,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-application-packages.o015"
+id = "sf.ddl.show-application-packages.o025"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-application-packages.o026"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-application-packages.o016"
@@ -280619,11 +281550,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-application-services.o023"
+id = "sf.ddl.show-application-services.o033"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-application-services.o034"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-application-services.o024"
@@ -280779,11 +281717,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-applications.o015"
+id = "sf.ddl.show-applications.o024"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-applications.o025"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-applications.o016"
@@ -280977,11 +281922,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-artifact-repositories.o023"
+id = "sf.ddl.show-artifact-repositories.o034"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-artifact-repositories.o035"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-artifact-repositories.o024"
@@ -281101,11 +282053,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-available-listings.listings.syntax.o007"
+id = "sf.ddl.show-available-listings.listings.syntax.o019"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-available-listings.listings.syntax.o020"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-available-listings.listings.syntax.o008"
@@ -281406,11 +282365,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-backup-sets.o026"
+id = "sf.ddl.show-backup-sets.o038"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-backup-sets.o039"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-backup-sets.o027"
@@ -281533,11 +282499,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-backups-in-backup-set.o008"
+id = "sf.ddl.show-backups-in-backup-set.o015"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-backups-in-backup-set.o016"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-backups-in-backup-set.o009"
@@ -281998,11 +282971,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-classes.o016"
+id = "sf.ddl.show-classes.o041"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-classes.o042"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-classes.o017"
@@ -282923,11 +283903,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-committed-tasks.o034"
+id = "sf.ddl.show-committed-tasks.o066"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-committed-tasks.o067"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-committed-tasks.o035"
@@ -283176,11 +284163,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-compute-pools.o026"
+id = "sf.ddl.show-compute-pools.o032"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-compute-pools.o033"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-compute-pools.o027"
@@ -283467,11 +284461,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-contacts.o033"
+id = "sf.ddl.show-contacts.o047"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-contacts.o048"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-contacts.o034"
@@ -283678,11 +284679,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-cortex-base-models.o019"
+id = "sf.ddl.show-cortex-base-models.o027"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-cortex-base-models.o028"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-cortex-base-models.o020"
@@ -283805,11 +284813,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-cortex-search.o041"
+id = "sf.ddl.show-cortex-search.o047"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-cortex-search.o048"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-cortex-search.o042"
@@ -284435,11 +285450,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-databases.o019"
+id = "sf.ddl.show-databases.o041"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-databases.o042"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-databases.o020"
@@ -284721,11 +285743,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-datasets.o026"
+id = "sf.ddl.show-datasets.o044"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-datasets.o045"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-datasets.o027"
@@ -285026,11 +286055,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-dbt-projects.o033"
+id = "sf.ddl.show-dbt-projects.o048"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-dbt-projects.o049"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-dbt-projects.o034"
@@ -285288,11 +286324,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-dcm-projects.o026"
+id = "sf.ddl.show-dcm-projects.o035"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-dcm-projects.o036"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-dcm-projects.o027"
@@ -285557,11 +286600,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-deployments-in-dcm-project.o008"
+id = "sf.ddl.show-deployments-in-dcm-project.o015"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-deployments-in-dcm-project.o016"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-deployments-in-dcm-project.o009"
@@ -285785,11 +286835,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-dynamic-tables.o029"
+id = "sf.ddl.show-dynamic-tables.o043"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-dynamic-tables.o044"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-dynamic-tables.o030"
@@ -285990,11 +287047,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-entities-in-dcm-project.in-dcm-project.o008"
+id = "sf.ddl.show-entities-in-dcm-project.in-dcm-project.o015"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-entities-in-dcm-project.in-dcm-project.o016"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-entities-in-dcm-project.in-dcm-project.o009"
@@ -286071,11 +287135,18 @@ target = "<rows>"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-entities-in-dcm-project.in-dcm-project-limit.o022"
+id = "sf.ddl.show-entities-in-dcm-project.in-dcm-project-limit.o026"
 kind = "operand_type_class"
 required = true
 target = "<rows>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-entities-in-dcm-project.in-dcm-project-limit.o027"
+kind = "negative_neighbour"
+required = true
+target = "<rows>"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-entities-in-dcm-project.in-dcm-project-limit.o023"
@@ -286541,11 +287612,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-event-tables.o030"
+id = "sf.ddl.show-event-tables.o046"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-event-tables.o047"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-event-tables.o031"
@@ -287474,11 +288552,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-external-tables.o040"
+id = "sf.ddl.show-external-tables.o073"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-external-tables.o074"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-external-tables.o041"
@@ -288025,11 +289110,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-files-in-artifact-repository.o013"
+id = "sf.ddl.show-files-in-artifact-repository.o021"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-files-in-artifact-repository.o022"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-files-in-artifact-repository.o014"
@@ -288626,11 +289718,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-gateways.o029"
+id = "sf.ddl.show-gateways.o043"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-gateways.o044"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-gateways.o030"
@@ -288988,11 +290087,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-git-repositories.o024"
+id = "sf.ddl.show-git-repositories.o038"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-git-repositories.o039"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-git-repositories.o025"
@@ -289393,11 +290499,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-hybrid-tables.o032"
+id = "sf.ddl.show-hybrid-tables.o048"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-hybrid-tables.o049"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-hybrid-tables.o033"
@@ -289706,11 +290819,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-iceberg-tables.o033"
+id = "sf.ddl.show-iceberg-tables.o047"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-iceberg-tables.o048"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-iceberg-tables.o034"
@@ -290265,11 +291385,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-indexes.o034"
+id = "sf.ddl.show-indexes.o052"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-indexes.o053"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-indexes.o035"
@@ -290625,11 +291752,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-interactive-tables.o029"
+id = "sf.ddl.show-interactive-tables.o043"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-interactive-tables.o044"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-interactive-tables.o030"
@@ -290812,11 +291946,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-listings.o015"
+id = "sf.ddl.show-listings.o024"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-listings.o025"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-listings.o016"
@@ -291856,11 +292997,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-nodes-compute-pool.o029"
+id = "sf.ddl.show-nodes-compute-pool.o032"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-nodes-compute-pool.o033"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-nodes-compute-pool.o014"
@@ -292329,11 +293477,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-notebooks.o033"
+id = "sf.ddl.show-notebooks.o047"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-notebooks.o048"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-notebooks.o034"
@@ -292665,11 +293820,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-objects.o040"
+id = "sf.ddl.show-objects.o073"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-objects.o074"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-objects.o041"
@@ -293126,11 +294288,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-online-feature-tables.o029"
+id = "sf.ddl.show-online-feature-tables.o045"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-online-feature-tables.o046"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-online-feature-tables.o030"
@@ -293325,11 +294494,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-connector-definitions.o015"
+id = "sf.ddl.show-openflow-connector-definitions.o026"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-openflow-connector-definitions.o027"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-openflow-connector-definitions.o016"
@@ -293594,11 +294770,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-connectors.o030"
+id = "sf.ddl.show-openflow-connectors.o056"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-openflow-connectors.o057"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-openflow-connectors.o031"
@@ -293799,11 +294982,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-deployments.o015"
+id = "sf.ddl.show-openflow-deployments.o026"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-openflow-deployments.o027"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-openflow-deployments.o016"
@@ -294063,11 +295253,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-openflow-runtimes.o030"
+id = "sf.ddl.show-openflow-runtimes.o056"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-openflow-runtimes.o057"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-openflow-runtimes.o031"
@@ -294256,11 +295453,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-packages-in-artifact-repository.o013"
+id = "sf.ddl.show-packages-in-artifact-repository.o021"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-packages-in-artifact-repository.o022"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-packages-in-artifact-repository.o014"
@@ -294672,11 +295876,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-postgres-instances.o015"
+id = "sf.ddl.show-postgres-instances.o025"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-postgres-instances.o026"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-postgres-instances.o016"
@@ -296318,11 +297529,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM <name_string> ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-run-in-experiment.metrics-in-experiment.o018"
+id = "sf.ddl.show-run-in-experiment.metrics-in-experiment.o033"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM <name_string> ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-run-in-experiment.metrics-in-experiment.o034"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM <name_string> ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-run-in-experiment.metrics-in-experiment.o019"
@@ -296532,11 +297750,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM <name_string> ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-run-in-experiment.parameters-in-experiment.o018"
+id = "sf.ddl.show-run-in-experiment.parameters-in-experiment.o033"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM <name_string> ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-run-in-experiment.parameters-in-experiment.o034"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM <name_string> ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-run-in-experiment.parameters-in-experiment.o019"
@@ -297111,11 +298336,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-schemas.o035"
+id = "sf.ddl.show-schemas.o066"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-schemas.o067"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-schemas.o036"
@@ -297529,11 +298761,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-semantic-dimensions.o033"
+id = "sf.ddl.show-semantic-dimensions.o046"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-semantic-dimensions.o047"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-semantic-dimensions.o034"
@@ -297753,11 +298992,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-semantic-dimensions-for-metric.o021"
+id = "sf.ddl.show-semantic-dimensions-for-metric.o033"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-semantic-dimensions-for-metric.o034"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-semantic-dimensions-for-metric.o022"
@@ -298043,11 +299289,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-semantic-facts.o033"
+id = "sf.ddl.show-semantic-facts.o046"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-semantic-facts.o047"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-semantic-facts.o034"
@@ -298343,11 +299596,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-semantic-metrics.o033"
+id = "sf.ddl.show-semantic-metrics.o046"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-semantic-metrics.o047"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-semantic-metrics.o034"
@@ -298627,11 +299887,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-semantic-views.o031"
+id = "sf.ddl.show-semantic-views.o045"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-semantic-views.o046"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-semantic-views.o032"
@@ -299401,11 +300668,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-services.o037"
+id = "sf.ddl.show-services.o072"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-services.o073"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-services.o038"
@@ -299913,11 +301187,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-snapshot-sets.o024"
+id = "sf.ddl.show-snapshot-sets.o049"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-snapshot-sets.o050"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-snapshot-sets.o025"
@@ -300208,11 +301489,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-snapshots.o030"
+id = "sf.ddl.show-snapshots.o055"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-snapshots.o056"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-snapshots.o031"
@@ -300908,11 +302196,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-streamlits.o056"
+id = "sf.ddl.show-streamlits.o058"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-streamlits.o059"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-streamlits.o026"
@@ -301256,11 +302551,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-streams.o040"
+id = "sf.ddl.show-streams.o079"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-streams.o080"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-streams.o041"
@@ -301662,11 +302964,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-tables.o042"
+id = "sf.ddl.show-tables.o075"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-tables.o076"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-tables.o043"
@@ -302275,11 +303584,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-task-graphs.o030"
+id = "sf.ddl.show-task-graphs.o056"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-task-graphs.o057"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-task-graphs.o031"
@@ -302659,11 +303975,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-tasks.o042"
+id = "sf.ddl.show-tasks.o082"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-tasks.o083"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-tasks.o043"
@@ -303404,11 +304727,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-versions-in-artifact-repository.o016"
+id = "sf.ddl.show-versions-in-artifact-repository.o028"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-versions-in-artifact-repository.o029"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-versions-in-artifact-repository.o017"
@@ -303557,11 +304887,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-versions-in-dataset.o013"
+id = "sf.ddl.show-versions-in-dataset.o022"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-versions-in-dataset.o023"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-versions-in-dataset.o014"
@@ -303752,11 +305089,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-versions-in-listing.o008"
+id = "sf.ddl.show-versions-in-listing.o016"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-versions-in-listing.o017"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-versions-in-listing.o009"
@@ -304223,11 +305567,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.ddl.show-views.o040"
+id = "sf.ddl.show-views.o079"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.show-views.o080"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.ddl.show-views.o041"

@@ -750,11 +750,18 @@ target = "<precision> in [ ( <precision> ) ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o019"
+id = "sf.expressions.data-types-datetime.interval.o095"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o096"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ]"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o020"
@@ -788,11 +795,18 @@ target = "<precision> in [ ( <precision> ) ] #2"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o025"
+id = "sf.expressions.data-types-datetime.interval.o097"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ] #2"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o098"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ] #2"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o026"
@@ -814,11 +828,18 @@ target = "<precision> in [ ( <precision> ) ] #3"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o029"
+id = "sf.expressions.data-types-datetime.interval.o099"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ] #3"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o100"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ] #3"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o030"
@@ -896,11 +917,18 @@ target = "<precision> in [ ( <precision> ) ] #4"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o042"
+id = "sf.expressions.data-types-datetime.interval.o101"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ] #4"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o102"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ] #4"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o043"
@@ -972,11 +1000,18 @@ target = "<precision> in [ ( <precision> ) ] #5"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o054"
+id = "sf.expressions.data-types-datetime.interval.o103"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ] #5"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o104"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ] #5"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o055"
@@ -1030,11 +1065,18 @@ target = "<precision> in [ ( <precision> ) [ , ( <fractional_seconds_precision> 
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o064"
+id = "sf.expressions.data-types-datetime.interval.o105"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o106"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o066"
@@ -1274,11 +1316,18 @@ target = "<precision> in [ ( <precision> ) ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o016"
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o100"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o101"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ]"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o017"
@@ -1312,11 +1361,18 @@ target = "<precision> in [ ( <precision> ) ] #2"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o022"
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o102"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ] #2"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o103"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ] #2"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o023"
@@ -1338,11 +1394,18 @@ target = "<precision> in [ ( <precision> ) ] #3"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o026"
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o104"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ] #3"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o105"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ] #3"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o027"
@@ -1420,11 +1483,18 @@ target = "<precision> in [ ( <precision> ) ] #4"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o039"
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o106"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ] #4"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o107"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ] #4"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o040"
@@ -1496,11 +1566,18 @@ target = "<precision> in [ ( <precision> ) ] #5"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o051"
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o108"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ] #5"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o109"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ] #5"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o052"
@@ -1560,11 +1637,18 @@ target = "<precision> in [ ( <precision> ) [ , ( <fractional_seconds_precision> 
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o061"
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o110"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o111"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) [ , ( <fractional_seconds_precision> ) ] ]"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o063"
@@ -1872,11 +1956,18 @@ target = "<precision> in [ ( <precision> ) ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.time.o005"
+id = "sf.expressions.data-types-datetime.time.o010"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.time.o011"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ]"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.time.o006"
@@ -1934,11 +2025,18 @@ target = "<precision> in [ ( <precision> ) ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.timestamp.o005"
+id = "sf.expressions.data-types-datetime.timestamp.o010"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.timestamp.o011"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ]"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp.o006"
@@ -2050,11 +2148,18 @@ target = "<precision> in [ ( <precision> ) ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.timestamp-variations.o014"
+id = "sf.expressions.data-types-datetime.timestamp-variations.o031"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.timestamp-variations.o032"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> ) ]"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.timestamp-variations.o023"
@@ -2291,11 +2396,18 @@ target = "<precision> in [ ( <precision> [ , <scale> ] ) ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-numeric.decimal.o008"
+id = "sf.expressions.data-types-numeric.decimal.o020"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> [ , <scale> ] ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-numeric.decimal.o021"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> [ , <scale> ] ) ]"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.decimal.o009"
@@ -2317,11 +2429,18 @@ target = "<scale> in [ , <scale> ]"
 note = "omit <scale>"
 
 [[obligation]]
-id = "sf.expressions.data-types-numeric.decimal.o012"
+id = "sf.expressions.data-types-numeric.decimal.o022"
 kind = "operand_type_class"
 required = true
 target = "<scale> in [ , <scale> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-numeric.decimal.o023"
+kind = "negative_neighbour"
+required = true
+target = "<scale> in [ , <scale> ]"
+note = "a string literal in place of <scale>"
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.decimal.o013"
@@ -2499,11 +2618,18 @@ target = "<precision> in [ ( <precision> [ , <scale> ] ) ]"
 note = "omit <precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-numeric.number.o005"
+id = "sf.expressions.data-types-numeric.number.o017"
 kind = "operand_type_class"
 required = true
 target = "<precision> in [ ( <precision> [ , <scale> ] ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-numeric.number.o018"
+kind = "negative_neighbour"
+required = true
+target = "<precision> in [ ( <precision> [ , <scale> ] ) ]"
+note = "a string literal in place of <precision>"
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.number.o006"
@@ -2525,11 +2651,18 @@ target = "<scale> in [ , <scale> ]"
 note = "omit <scale>"
 
 [[obligation]]
-id = "sf.expressions.data-types-numeric.number.o009"
+id = "sf.expressions.data-types-numeric.number.o019"
 kind = "operand_type_class"
 required = true
 target = "<scale> in [ , <scale> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-numeric.number.o020"
+kind = "negative_neighbour"
+required = true
+target = "<scale> in [ , <scale> ]"
+note = "a string literal in place of <scale>"
 
 [[obligation]]
 id = "sf.expressions.data-types-numeric.number.o010"
@@ -3372,11 +3505,18 @@ target = "<length> in [ ( <length> ) ]"
 note = "omit <length>"
 
 [[obligation]]
-id = "sf.expressions.data-types-text.binary.o005"
+id = "sf.expressions.data-types-text.binary.o010"
 kind = "operand_type_class"
 required = true
 target = "<length> in [ ( <length> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-text.binary.o011"
+kind = "negative_neighbour"
+required = true
+target = "<length> in [ ( <length> ) ]"
+note = "a string literal in place of <length>"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.binary.o006"
@@ -3445,11 +3585,18 @@ required = true
 target = "[ ( <length> ) ]"
 
 [[obligation]]
-id = "sf.expressions.data-types-text.char.o008"
+id = "sf.expressions.data-types-text.char.o014"
 kind = "operand_type_class"
 required = true
 target = "<length> in [ ( <length> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-text.char.o015"
+kind = "negative_neighbour"
+required = true
+target = "<length> in [ ( <length> ) ]"
+note = "a string literal in place of <length>"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.char.o009"
@@ -3768,11 +3915,18 @@ required = true
 target = "[ ( <length> ) ]"
 
 [[obligation]]
-id = "sf.expressions.data-types-text.string.o012"
+id = "sf.expressions.data-types-text.string.o020"
 kind = "operand_type_class"
 required = true
 target = "<length> in [ ( <length> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-text.string.o021"
+kind = "negative_neighbour"
+required = true
+target = "<length> in [ ( <length> ) ]"
+note = "a string literal in place of <length>"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.string.o018"
@@ -3850,11 +4004,18 @@ target = "<length> in [ ( <length> ) ]"
 note = "omit <length>"
 
 [[obligation]]
-id = "sf.expressions.data-types-text.varbinary.o005"
+id = "sf.expressions.data-types-text.varbinary.o010"
 kind = "operand_type_class"
 required = true
 target = "<length> in [ ( <length> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-text.varbinary.o011"
+kind = "negative_neighbour"
+required = true
+target = "<length> in [ ( <length> ) ]"
+note = "a string literal in place of <length>"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.varbinary.o006"
@@ -3905,11 +4066,18 @@ required = true
 target = "[ ( <length> ) ]"
 
 [[obligation]]
-id = "sf.expressions.data-types-text.varchar.o005"
+id = "sf.expressions.data-types-text.varchar.o011"
 kind = "operand_type_class"
 required = true
 target = "<length> in [ ( <length> ) ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.expressions.data-types-text.varchar.o012"
+kind = "negative_neighbour"
+required = true
+target = "<length> in [ ( <length> ) ]"
+note = "a string literal in place of <length>"
 
 [[obligation]]
 id = "sf.expressions.data-types-text.varchar.o006"

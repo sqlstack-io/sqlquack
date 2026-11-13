@@ -673,11 +673,18 @@ target = "<integer> in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set.o026"
+id = "sf.security_admin.alter-account.set.o494"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' }…"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o495"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' }…"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o027"
@@ -953,11 +960,18 @@ target = "<integer> in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set.o070"
+id = "sf.security_admin.alter-account.set.o496"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' }… #2"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o497"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' }… #2"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o071"
@@ -967,11 +981,18 @@ target = "<integer> in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set.o072"
+id = "sf.security_admin.alter-account.set.o498"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' }… #3"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o499"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ALLOW_ID_TOKEN = { TRUE | FALSE } ALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' }… #3"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o073"
@@ -1279,11 +1300,18 @@ target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set.o121"
+id = "sf.security_admin.alter-account.set.o500"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o501"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o122"
@@ -1719,11 +1747,18 @@ target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set.o190"
+id = "sf.security_admin.alter-account.set.o502"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o503"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ ICEBERG_VERSION_DEFAULT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o191"
@@ -1811,11 +1846,18 @@ target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set.o204"
+id = "sf.security_admin.alter-account.set.o504"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o505"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o205"
@@ -2065,11 +2107,18 @@ target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set.o244"
+id = "sf.security_admin.alter-account.set.o506"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set.o507"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-account.set.o245"
@@ -8660,11 +8709,18 @@ target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
 note = "omit <days_integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-backup-policy.set.o015"
+id = "sf.security_admin.alter-backup-policy.set.o028"
 kind = "operand_type_class"
 required = true
 target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-backup-policy.set.o029"
+kind = "negative_neighbour"
+required = true
+target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
+note = "a string literal in place of <days_integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-backup-policy.set.o016"
@@ -27084,11 +27140,18 @@ target = "<integer> in [ PASSWORD_MIN_LENGTH = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o010"
+id = "sf.security_admin.alter-password-policy.set.o127"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_LENGTH = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o128"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_LENGTH = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o011"
@@ -27110,11 +27173,18 @@ target = "<integer> in [ PASSWORD_MAX_LENGTH = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o014"
+id = "sf.security_admin.alter-password-policy.set.o129"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MAX_LENGTH = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o130"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MAX_LENGTH = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o015"
@@ -27136,11 +27206,18 @@ target = "<integer> in [ PASSWORD_MIN_UPPER_CASE_CHARS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o018"
+id = "sf.security_admin.alter-password-policy.set.o131"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_UPPER_CASE_CHARS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o132"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_UPPER_CASE_CHARS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o019"
@@ -27162,11 +27239,18 @@ target = "<integer> in [ PASSWORD_MIN_LOWER_CASE_CHARS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o022"
+id = "sf.security_admin.alter-password-policy.set.o133"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_LOWER_CASE_CHARS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o134"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_LOWER_CASE_CHARS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o023"
@@ -27188,11 +27272,18 @@ target = "<integer> in [ PASSWORD_MIN_NUMERIC_CHARS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o026"
+id = "sf.security_admin.alter-password-policy.set.o135"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_NUMERIC_CHARS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o136"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_NUMERIC_CHARS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o027"
@@ -27214,11 +27305,18 @@ target = "<integer> in [ PASSWORD_MIN_SPECIAL_CHARS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o030"
+id = "sf.security_admin.alter-password-policy.set.o137"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_SPECIAL_CHARS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o138"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_SPECIAL_CHARS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o031"
@@ -27240,11 +27338,18 @@ target = "<integer> in [ PASSWORD_MIN_AGE_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o034"
+id = "sf.security_admin.alter-password-policy.set.o139"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_AGE_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o140"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_AGE_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o035"
@@ -27266,11 +27371,18 @@ target = "<integer> in [ PASSWORD_MAX_AGE_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o038"
+id = "sf.security_admin.alter-password-policy.set.o141"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MAX_AGE_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o142"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MAX_AGE_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o039"
@@ -27292,11 +27404,18 @@ target = "<integer> in [ PASSWORD_MAX_RETRIES = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o042"
+id = "sf.security_admin.alter-password-policy.set.o143"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MAX_RETRIES = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o144"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MAX_RETRIES = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o043"
@@ -27318,11 +27437,18 @@ target = "<integer> in [ PASSWORD_LOCKOUT_TIME_MINS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o046"
+id = "sf.security_admin.alter-password-policy.set.o145"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_LOCKOUT_TIME_MINS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o146"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_LOCKOUT_TIME_MINS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o047"
@@ -27344,11 +27470,18 @@ target = "<integer> in [ PASSWORD_HISTORY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-password-policy.set.o050"
+id = "sf.security_admin.alter-password-policy.set.o147"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_HISTORY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-password-policy.set.o148"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_HISTORY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-password-policy.set.o051"
@@ -36875,11 +37008,18 @@ target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.o033"
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.o057"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.o058"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.o034"
@@ -37258,11 +37398,18 @@ target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o038"
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o057"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o058"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o039"
@@ -37284,11 +37431,18 @@ target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o042"
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o059"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o060"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow.o043"
@@ -37642,11 +37796,18 @@ target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o043"
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o062"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o063"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o044"
@@ -37668,11 +37829,18 @@ target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o047"
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o064"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o065"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow.o048"
@@ -39189,11 +39357,18 @@ target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o025"
+id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o094"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o095"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o026"
@@ -39215,11 +39390,18 @@ target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o029"
+id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o096"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o097"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.o030"
@@ -40080,11 +40262,18 @@ target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o070"
+id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o146"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o147"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o071"
@@ -40106,11 +40295,18 @@ target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o074"
+id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o148"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o149"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax.o075"
@@ -43658,11 +43854,18 @@ target = "<integer> in [ SESSION_IDLE_TIMEOUT_MINS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.set.o010"
+id = "sf.security_admin.alter-session-policy.set.o148"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SESSION_IDLE_TIMEOUT_MINS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-session-policy.set.o149"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SESSION_IDLE_TIMEOUT_MINS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-session-policy.set.o011"
@@ -43684,11 +43887,18 @@ target = "<integer> in [ SESSION_UI_IDLE_TIMEOUT_MINS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.set.o014"
+id = "sf.security_admin.alter-session-policy.set.o150"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SESSION_UI_IDLE_TIMEOUT_MINS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-session-policy.set.o151"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SESSION_UI_IDLE_TIMEOUT_MINS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-session-policy.set.o015"
@@ -43710,11 +43920,18 @@ target = "<integer> in [ SESSION_MAX_LIFESPAN_MINS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.set.o018"
+id = "sf.security_admin.alter-session-policy.set.o152"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SESSION_MAX_LIFESPAN_MINS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-session-policy.set.o153"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SESSION_MAX_LIFESPAN_MINS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-session-policy.set.o019"
@@ -43736,11 +43953,18 @@ target = "<integer> in [ SESSION_UI_MAX_LIFESPAN_MINS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-session-policy.set.o022"
+id = "sf.security_admin.alter-session-policy.set.o154"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SESSION_UI_MAX_LIFESPAN_MINS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-session-policy.set.o155"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SESSION_UI_MAX_LIFESPAN_MINS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-session-policy.set.o023"
@@ -45722,11 +45946,18 @@ target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
 note = "omit <days_integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-snapshot-policy.set.o015"
+id = "sf.security_admin.alter-snapshot-policy.set.o031"
 kind = "operand_type_class"
 required = true
 target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-snapshot-policy.set.o032"
+kind = "negative_neighbour"
+required = true
+target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
+note = "a string literal in place of <days_integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-snapshot-policy.set.o016"
@@ -47911,11 +48142,18 @@ target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-add-key-pair.o022"
+id = "sf.security_admin.alter-user-add-key-pair.o040"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-add-key-pair.o041"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-add-key-pair.o023"
@@ -48167,11 +48405,18 @@ target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-add-programmatic-access-token.o023"
+id = "sf.security_admin.alter-user-add-programmatic-access-token.o060"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-add-programmatic-access-token.o061"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-add-programmatic-access-token.o024"
@@ -48193,11 +48438,18 @@ target = "<integer> in [ MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT = <integer> ]
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-add-programmatic-access-token.o027"
+id = "sf.security_admin.alter-user-add-programmatic-access-token.o062"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-add-programmatic-access-token.o063"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-add-programmatic-access-token.o028"
@@ -49711,11 +49963,18 @@ target = "<integer> in [ MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT = <integer> ]
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o022"
+id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o050"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o051"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-programmatic-access-token.set.o023"
@@ -51245,11 +51504,18 @@ target = "<integer> in [ EXPIRE_ROTATED_KEY_PAIR_AFTER_HOURS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-rotate-key-pair.o017"
+id = "sf.security_admin.alter-user-rotate-key-pair.o030"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ EXPIRE_ROTATED_KEY_PAIR_AFTER_HOURS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-rotate-key-pair.o031"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ EXPIRE_ROTATED_KEY_PAIR_AFTER_HOURS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-rotate-key-pair.o018"
@@ -51435,11 +51701,18 @@ target = "<integer> in [ EXPIRE_ROTATED_TOKEN_AFTER_HOURS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user-rotate-programmatic-access-token.o018"
+id = "sf.security_admin.alter-user-rotate-programmatic-access-token.o033"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ EXPIRE_ROTATED_TOKEN_AFTER_HOURS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-rotate-programmatic-access-token.o034"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ EXPIRE_ROTATED_TOKEN_AFTER_HOURS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-rotate-programmatic-access-token.o019"
@@ -53377,11 +53650,18 @@ target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.set.o061"
+id = "sf.security_admin.alter-user.set.o319"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.set.o320"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.set.o062"
@@ -53403,11 +53683,18 @@ target = "<integer> in [ MINS_TO_UNLOCK = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.set.o065"
+id = "sf.security_admin.alter-user.set.o321"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MINS_TO_UNLOCK = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.set.o322"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MINS_TO_UNLOCK = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.set.o066"
@@ -53540,11 +53827,18 @@ target = "<integer> in [ MINS_TO_BYPASS_MFA = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.set.o086"
+id = "sf.security_admin.alter-user.set.o323"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MINS_TO_BYPASS_MFA = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.set.o324"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MINS_TO_BYPASS_MFA = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.set.o087"
@@ -57886,11 +58180,18 @@ target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.o039"
+id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.o079"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.o080"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.external-mcp-api-allowed-prefixes-api-user-authentication-type.o040"
@@ -62154,11 +62455,18 @@ target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
 note = "omit <days_integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-backup-policy.backup-policy.o028"
+id = "sf.security_admin.create-backup-policy.backup-policy.o058"
 kind = "operand_type_class"
 required = true
 target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-backup-policy.backup-policy.o059"
+kind = "negative_neighbour"
+required = true
+target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
+note = "a string literal in place of <days_integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-backup-policy.backup-policy.o029"
@@ -62434,11 +62742,18 @@ target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
 note = "omit <days_integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-backup-policy.or-alter-backup-policy.o012"
+id = "sf.security_admin.create-backup-policy.or-alter-backup-policy.o033"
 kind = "operand_type_class"
 required = true
 target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-backup-policy.or-alter-backup-policy.o034"
+kind = "negative_neighbour"
+required = true
+target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
+note = "a string literal in place of <days_integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-backup-policy.or-alter-backup-policy.o013"
@@ -76133,11 +76448,18 @@ target = "<integer> in [ PASSWORD_MIN_LENGTH = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-password-policy.o012"
+id = "sf.security_admin.create-password-policy.o129"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_LENGTH = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-password-policy.o130"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_LENGTH = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-password-policy.o013"
@@ -76159,11 +76481,18 @@ target = "<integer> in [ PASSWORD_MAX_LENGTH = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-password-policy.o016"
+id = "sf.security_admin.create-password-policy.o131"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MAX_LENGTH = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-password-policy.o132"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MAX_LENGTH = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-password-policy.o017"
@@ -76185,11 +76514,18 @@ target = "<integer> in [ PASSWORD_MIN_UPPER_CASE_CHARS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-password-policy.o020"
+id = "sf.security_admin.create-password-policy.o133"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_UPPER_CASE_CHARS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-password-policy.o134"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_UPPER_CASE_CHARS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-password-policy.o021"
@@ -76211,11 +76547,18 @@ target = "<integer> in [ PASSWORD_MIN_LOWER_CASE_CHARS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-password-policy.o024"
+id = "sf.security_admin.create-password-policy.o135"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_LOWER_CASE_CHARS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-password-policy.o136"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_LOWER_CASE_CHARS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-password-policy.o025"
@@ -76237,11 +76580,18 @@ target = "<integer> in [ PASSWORD_MIN_NUMERIC_CHARS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-password-policy.o028"
+id = "sf.security_admin.create-password-policy.o137"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_NUMERIC_CHARS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-password-policy.o138"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_NUMERIC_CHARS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-password-policy.o029"
@@ -76263,11 +76613,18 @@ target = "<integer> in [ PASSWORD_MIN_SPECIAL_CHARS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-password-policy.o032"
+id = "sf.security_admin.create-password-policy.o139"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_SPECIAL_CHARS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-password-policy.o140"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_SPECIAL_CHARS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-password-policy.o033"
@@ -76289,11 +76646,18 @@ target = "<integer> in [ PASSWORD_MIN_AGE_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-password-policy.o036"
+id = "sf.security_admin.create-password-policy.o141"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MIN_AGE_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-password-policy.o142"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MIN_AGE_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-password-policy.o037"
@@ -76315,11 +76679,18 @@ target = "<integer> in [ PASSWORD_MAX_AGE_DAYS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-password-policy.o040"
+id = "sf.security_admin.create-password-policy.o143"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MAX_AGE_DAYS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-password-policy.o144"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MAX_AGE_DAYS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-password-policy.o041"
@@ -76341,11 +76712,18 @@ target = "<integer> in [ PASSWORD_MAX_RETRIES = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-password-policy.o044"
+id = "sf.security_admin.create-password-policy.o145"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_MAX_RETRIES = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-password-policy.o146"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_MAX_RETRIES = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-password-policy.o045"
@@ -76367,11 +76745,18 @@ target = "<integer> in [ PASSWORD_LOCKOUT_TIME_MINS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-password-policy.o048"
+id = "sf.security_admin.create-password-policy.o147"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_LOCKOUT_TIME_MINS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-password-policy.o148"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_LOCKOUT_TIME_MINS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-password-policy.o049"
@@ -76393,11 +76778,18 @@ target = "<integer> in [ PASSWORD_HISTORY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-password-policy.o052"
+id = "sf.security_admin.create-password-policy.o149"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ PASSWORD_HISTORY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-password-policy.o150"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ PASSWORD_HISTORY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-password-policy.o053"
@@ -83851,11 +84243,18 @@ target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-security-integration-api-auth.false.o031"
+id = "sf.security_admin.create-security-integration-api-auth.false.o058"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-security-integration-api-auth.false.o059"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-security-integration-api-auth.false.o032"
@@ -84272,11 +84671,18 @@ target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer.o039"
+id = "sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer.o062"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer.o063"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer.o040"
@@ -84298,11 +84704,18 @@ target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer.o043"
+id = "sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer.o064"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer.o065"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-security-integration-api-auth.false-oauth-assertion-issuer.o044"
@@ -84646,11 +85059,18 @@ target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow.o036"
+id = "sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow.o058"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow.o059"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow.o037"
@@ -84672,11 +85092,18 @@ target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow.o040"
+id = "sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow.o060"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow.o061"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-security-integration-api-auth.false.oauth-authorization-code-grant-flow.o041"
@@ -86298,11 +86725,18 @@ target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri.o078"
+id = "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri.o154"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri.o155"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri.o079"
@@ -86324,11 +86758,18 @@ target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri.o082"
+id = "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri.o156"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri.o157"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri.o083"
@@ -86948,11 +87389,18 @@ target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri.o025"
+id = "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri.o101"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri.o102"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri.o026"
@@ -86974,11 +87422,18 @@ target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri.o029"
+id = "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri.o103"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri.o104"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri.o030"
@@ -90031,11 +90486,18 @@ target = "<integer> in [ SESSION_IDLE_TIMEOUT_MINS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-session-policy.o012"
+id = "sf.security_admin.create-session-policy.o150"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SESSION_IDLE_TIMEOUT_MINS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-session-policy.o151"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SESSION_IDLE_TIMEOUT_MINS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-session-policy.o013"
@@ -90057,11 +90519,18 @@ target = "<integer> in [ SESSION_UI_IDLE_TIMEOUT_MINS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-session-policy.o016"
+id = "sf.security_admin.create-session-policy.o152"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SESSION_UI_IDLE_TIMEOUT_MINS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-session-policy.o153"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SESSION_UI_IDLE_TIMEOUT_MINS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-session-policy.o017"
@@ -90083,11 +90552,18 @@ target = "<integer> in [ SESSION_MAX_LIFESPAN_MINS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-session-policy.o020"
+id = "sf.security_admin.create-session-policy.o154"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SESSION_MAX_LIFESPAN_MINS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-session-policy.o155"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SESSION_MAX_LIFESPAN_MINS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-session-policy.o021"
@@ -90109,11 +90585,18 @@ target = "<integer> in [ SESSION_UI_MAX_LIFESPAN_MINS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-session-policy.o024"
+id = "sf.security_admin.create-session-policy.o156"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ SESSION_UI_MAX_LIFESPAN_MINS = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-session-policy.o157"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ SESSION_UI_MAX_LIFESPAN_MINS = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-session-policy.o025"
@@ -91139,11 +91622,18 @@ target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
 note = "omit <days_integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-snapshot-policy.o028"
+id = "sf.security_admin.create-snapshot-policy.o062"
 kind = "operand_type_class"
 required = true
 target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-snapshot-policy.o063"
+kind = "negative_neighbour"
+required = true
+target = "<days_integer> in [ EXPIRE_AFTER_DAYS = <days_integer> ]"
+note = "a string literal in place of <days_integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-snapshot-policy.o029"
@@ -92948,11 +93438,18 @@ target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-user.o061"
+id = "sf.security_admin.create-user.o314"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-user.o315"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ DAYS_TO_EXPIRY = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-user.o062"
@@ -92974,11 +93471,18 @@ target = "<integer> in [ MINS_TO_UNLOCK = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-user.o065"
+id = "sf.security_admin.create-user.o316"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MINS_TO_UNLOCK = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-user.o317"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MINS_TO_UNLOCK = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-user.o066"
@@ -93123,11 +93627,18 @@ target = "<integer> in [ MINS_TO_BYPASS_MFA = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.create-user.o088"
+id = "sf.security_admin.create-user.o318"
 kind = "operand_type_class"
 required = true
 target = "<integer> in [ MINS_TO_BYPASS_MFA = <integer> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.create-user.o319"
+kind = "negative_neighbour"
+required = true
+target = "<integer> in [ MINS_TO_BYPASS_MFA = <integer> ]"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.create-user.o089"
@@ -96727,11 +97238,18 @@ target = "<integer>"
 note = "omit <integer>"
 
 [[obligation]]
-id = "sf.security_admin.drop-account.o008"
+id = "sf.security_admin.drop-account.o020"
 kind = "operand_type_class"
 required = true
 target = "<integer>"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.drop-account.o021"
+kind = "negative_neighbour"
+required = true
+target = "<integer>"
+note = "a string literal in place of <integer>"
 
 [[obligation]]
 id = "sf.security_admin.drop-account.o009"
@@ -130858,11 +131376,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-application-roles.o013"
+id = "sf.security_admin.show-application-roles.o029"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-application-roles.o030"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-application-roles.o014"
@@ -131207,11 +131732,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-authentication-policies.o041"
+id = "sf.security_admin.show-authentication-policies.o067"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-authentication-policies.o068"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-authentication-policies.o042"
@@ -131546,11 +132078,18 @@ required = true
 target = "[ LIMIT <rows> ]"
 
 [[obligation]]
-id = "sf.security_admin.show-backup-policies.o026"
+id = "sf.security_admin.show-backup-policies.o039"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-backup-policies.o040"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-backup-policies.o027"
@@ -132145,11 +132684,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-database-roles.o008"
+id = "sf.security_admin.show-database-roles.o023"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-database-roles.o024"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-database-roles.o009"
@@ -133136,11 +133682,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants-in-dcm-project.future-grants-in-dcm.o008"
+id = "sf.security_admin.show-grants-in-dcm-project.future-grants-in-dcm.o015"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-grants-in-dcm-project.future-grants-in-dcm.o016"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants-in-dcm-project.future-grants-in-dcm.o009"
@@ -133229,11 +133782,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants-in-dcm-project.grants-in-dcm-project.o008"
+id = "sf.security_admin.show-grants-in-dcm-project.grants-in-dcm-project.o015"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-grants-in-dcm-project.grants-in-dcm-project.o016"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants-in-dcm-project.grants-in-dcm-project.o009"
@@ -133321,11 +133881,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.future-grants-in-database.o008"
+id = "sf.security_admin.show-grants.future-grants-in-database.o016"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.future-grants-in-database.o017"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.future-grants-in-database.o009"
@@ -133419,11 +133986,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.future-grants-in-schema.o008"
+id = "sf.security_admin.show-grants.future-grants-in-schema.o016"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.future-grants-in-schema.o017"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.future-grants-in-schema.o009"
@@ -133586,11 +134160,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.future-grants-to-role.o008"
+id = "sf.security_admin.show-grants.future-grants-to-role.o014"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.future-grants-to-role.o015"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.future-grants-to-role.o009"
@@ -133652,11 +134233,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants.o005"
+id = "sf.security_admin.show-grants.grants.o007"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants.o008"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants.o006"
@@ -133785,11 +134373,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-of-application-role.o020"
+id = "sf.security_admin.show-grants.grants-of-application-role.o038"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-of-application-role.o039"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-of-application-role.o021"
@@ -133955,11 +134550,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-of-share.o008"
+id = "sf.security_admin.show-grants.grants-of-share.o016"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-of-share.o017"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-of-share.o009"
@@ -134065,11 +134667,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-on.o011"
+id = "sf.security_admin.show-grants.grants-on.o018"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-on.o019"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-on.o012"
@@ -134126,11 +134735,18 @@ required = true
 target = "[ LIMIT <rows> ]"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-on-account.o005"
+id = "sf.security_admin.show-grants.grants-on-account.o010"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-on-account.o011"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-on-account.o006"
@@ -134440,11 +135056,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o052"
+id = "sf.security_admin.show-grants.grants-to-application-application.o097"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o098"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o053"
@@ -134967,11 +135590,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-ingress-policies.o033"
+id = "sf.security_admin.show-ingress-policies.o052"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-ingress-policies.o053"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-ingress-policies.o034"
@@ -136100,11 +136730,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-multi-party-approval-policies.policies.o026"
+id = "sf.security_admin.show-multi-party-approval-policies.policies.o041"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-multi-party-approval-policies.policies.o042"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-multi-party-approval-policies.policies.o027"
@@ -136464,11 +137101,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-network-rules.o032"
+id = "sf.security_admin.show-network-rules.o049"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-network-rules.o050"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-network-rules.o033"
@@ -136680,6 +137324,13 @@ kind = "required_operand_missing"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
+
+[[obligation]]
+id = "sf.security_admin.show-oflow-data-plane-integration.o042"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-oflow-data-plane-integration.o018"
@@ -137341,11 +137992,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-password-policies.o041"
+id = "sf.security_admin.show-password-policies.o067"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-password-policies.o068"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-password-policies.o042"
@@ -138223,11 +138881,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-roles.o022"
+id = "sf.security_admin.show-roles.o036"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-roles.o037"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-roles.o023"
@@ -138412,6 +139077,13 @@ kind = "required_operand_missing"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
+
+[[obligation]]
+id = "sf.security_admin.show-row-access-policies.o069"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-row-access-policies.o012"
@@ -139290,11 +139962,18 @@ target = "<rows> in [ LIMIT <rows> ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-session-policies.o041"
+id = "sf.security_admin.show-session-policies.o067"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-session-policies.o068"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-session-policies.o042"
@@ -139548,11 +140227,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-shares.o010"
+id = "sf.security_admin.show-shares.o024"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-shares.o025"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-shares.o011"
@@ -139903,11 +140589,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-snapshot-policies.o026"
+id = "sf.security_admin.show-snapshot-policies.o043"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-snapshot-policies.o044"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-snapshot-policies.o027"
@@ -141142,11 +141835,18 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
-id = "sf.security_admin.show-users.o017"
+id = "sf.security_admin.show-users.o026"
 kind = "operand_type_class"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-note = "a valid operand"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.security_admin.show-users.o027"
+kind = "negative_neighbour"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a string literal in place of <rows>"
 
 [[obligation]]
 id = "sf.security_admin.show-users.o018"
