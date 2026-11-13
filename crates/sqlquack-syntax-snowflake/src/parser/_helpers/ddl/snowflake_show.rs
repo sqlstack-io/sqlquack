@@ -48,8 +48,8 @@ impl Parser {
         show.target = target;
         show.terse = terse;
         show.history = self.match_identifier("HISTORY");
-        if matches!(kind.as_str(), "SERVICES") {
-            show = self.parse_show_services_filters(show)?;
+        if matches!(kind.as_str(), "SERVICES") && self.match_text_seq(&["EXCLUDE", "JOBS"]) {
+            show.this.push_str(" EXCLUDE JOBS");
         }
         if matches!(kind.as_str(), "OPENFLOW DATA PLANE INTEGRATIONS") {
             return Ok(Some(Expression::Show(Box::new(show))));
@@ -130,22 +130,7 @@ impl Parser {
         Ok(Some(Expression::Show(Box::new(show))))
     }
 
-    /// `[ EXCLUDE JOBS ] [ OF TYPE <type> ]` after SHOW SERVICES, kept in the kind as written.
-    fn parse_show_services_filters(&mut self, mut show: Show) -> Result<Show> {
-        if self.match_text_seq(&["EXCLUDE", "JOBS"]) {
-            show.this.push_str(" EXCLUDE JOBS");
-        }
-        if self.match_text_seq(&["OF", "TYPE"]) {
-            if !(self.is_identifier_token() || self.check_keyword()) {
-                return Err(self.parse_error("Expected a service type after OF TYPE"));
-            }
-            let service_type = self.advance_text()?.to_ascii_uppercase();
-            show.this = format!("{} OF TYPE {service_type}", show.this);
-        }
-        Ok(show)
-    }
-
-    /// `[ STARTS WITH '<prefix>' ]`, then ROOT ONLY for tasks, then `[ LIMIT <rows> [ FROM '<name>' ] ]`.
+    /// `[ STARTS WITH '<prefix>' ]`, then ROOT ONLY for tasks, then `[ LIMIT <rows> [ FROM '<name>' ] ]`, then a service list's `OF TYPE <type> [ , ... ]`.
     fn parse_show_starts_and_limit(&mut self, kind: &str, mut show: Show) -> Result<Show> {
         if self.match_identifier("STARTS") {
             self.expect_token(TokenType::With)?;
@@ -165,6 +150,20 @@ impl Parser {
             }));
             if self.match_token(TokenType::From) {
                 show.from = Some(self.parse_show_string("FROM")?);
+            }
+        }
+        if matches!(kind, "SERVICES") && self.match_text_seq(&["OF", "TYPE"]) {
+            show.this.push_str(" OF TYPE ");
+            loop {
+                if !(self.is_identifier_token() || self.check_keyword()) {
+                    return Err(self.parse_error("Expected a service type after OF TYPE"));
+                }
+                show.this
+                    .push_str(&self.advance_text()?.to_ascii_uppercase());
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+                show.this.push_str(", ");
             }
         }
         Ok(show)

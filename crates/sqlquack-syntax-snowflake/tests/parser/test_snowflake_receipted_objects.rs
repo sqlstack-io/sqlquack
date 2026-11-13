@@ -151,6 +151,21 @@ fn given_a_snowflake_ai_function_when_parsing_then_recorded_verdicts_hold() {
 fn given_a_snowflake_execute_immediate_when_parsing_then_recorded_verdicts_hold() {
     let test_cases = [
         SnowflakeVerdictTestCase {
+            description: "a bound variable is a source, as Snowflake documents",
+            sql: "BEGIN EXECUTE IMMEDIATE :q USING ( v1 ) ; END ;",
+            expected_kind: Some("scripting_block"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a source may concatenate strings and variables, as Snowflake documents",
+            sql: "EXECUTE IMMEDIATE v2 || ',(80)' || ',(84)' ;",
+            expected_kind: Some("command"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a concatenation needs its right operand",
+            sql: "EXECUTE IMMEDIATE v2 || ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
             description: "a session variable with bind variables (recorded semantic error)",
             sql: "EXECUTE IMMEDIATE $v1 USING ( v1 , v1 ) ;",
             expected_kind: Some("command"),
@@ -409,6 +424,11 @@ fn given_a_snowflake_show_services_when_parsing_then_recorded_verdicts_hold() {
             expected_kind: Some("show"),
         },
         SnowflakeVerdictTestCase {
+            description: "OF TYPE comes last, after the documented clauses",
+            sql: "SHOW SERVICES LIKE 'm' IN COMPUTE POOL v1 OF TYPE USER ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
             description: "OF TYPE needs a type (recorded errno 1003)",
             sql: "SHOW SERVICES OF TYPE ;",
             expected_kind: None,
@@ -624,6 +644,12 @@ fn given_a_snowflake_external_agent_or_filtered_show_when_parsing_then_the_tree_
             expected_value: json!("CREATE EXTERNAL AGENT v1 WITH VERSION v1"),
         },
         StatementTestCase {
+            description: "a DEFINE kept as text says DEFINE",
+            sql: "DEFINE CODE BUNDLE v1 . v1 . v1 FROM 'asset://a1/' ;",
+            pointer: "/0/raw/sql",
+            expected_value: json!("DEFINE CODE BUNDLE v1 . v1 . v1 FROM 'asset://a1/'"),
+        },
+        StatementTestCase {
             description: "SHOW TASKS keeps ROOT ONLY in its kind",
             sql: "SHOW TASKS STARTS WITH 'm' ROOT ONLY ;",
             pointer: "/0/show/this",
@@ -631,9 +657,9 @@ fn given_a_snowflake_external_agent_or_filtered_show_when_parsing_then_the_tree_
         },
         StatementTestCase {
             description: "SHOW SERVICES keeps its filters in its kind",
-            sql: "SHOW SERVICES EXCLUDE JOBS OF TYPE USER IN COMPUTE POOL v1 ;",
+            sql: "SHOW SERVICES EXCLUDE JOBS IN COMPUTE POOL v1 LIMIT 1 OF TYPE USER , JOB ;",
             pointer: "/0/show/this",
-            expected_value: json!("SERVICES EXCLUDE JOBS OF TYPE USER"),
+            expected_value: json!("SERVICES EXCLUDE JOBS OF TYPE USER, JOB"),
         },
     ];
     for test_case in test_cases {

@@ -11,6 +11,7 @@ use sqlquack_syntax::expressions::schema_objects::models::ExecuteObject;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::statements::models::CreateTask;
 use sqlquack_syntax::expressions::statements::models::ExecuteUsingPolicyContext;
+use sqlquack_syntax::expressions::statements::models::Raw;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
@@ -29,6 +30,29 @@ impl Parser {
         checked
     }
 
+    /// One part of the text EXECUTE IMMEDIATE runs: a string, a `$session` or `:bound` variable, or a variable's name.
+    fn check_execute_operand(&mut self) -> Result<()> {
+        if self.check(TokenType::Dollar) || self.check(TokenType::Colon) {
+            let end = self.peek().span.end;
+            self.skip();
+            if !self.is_identifier_token() || self.peek().span.start != end {
+                return Err(self.parse_error("Expected a variable's name"));
+            }
+            self.skip();
+            return Ok(());
+        }
+        if self.check(TokenType::String)
+            || self.check(TokenType::DollarString)
+            || (self.is_identifier_token()
+                && !self.is_snowflake_reserved_keyword()
+                && !self.peek_text().starts_with('@'))
+        {
+            self.skip();
+            return Ok(());
+        }
+        Err(self.parse_error("Expected the statement to execute"))
+    }
+
     fn check_execute_immediate_parts(&mut self) -> Result<()> {
         self.skip();
         let from = self.match_token(TokenType::From);
@@ -37,22 +61,11 @@ impl Parser {
                 return Err(self.parse_error("Expected a stage path or a string"));
             }
             self.parse_location_value()?;
-        } else if self.check(TokenType::Dollar) {
-            let end = self.peek().span.end;
-            self.skip();
-            if !self.is_identifier_token() || self.peek().span.start != end {
-                return Err(self.parse_error("Expected a session variable's name"));
-            }
-            self.skip();
-        } else if self.check(TokenType::String)
-            || self.check(TokenType::DollarString)
-            || (self.is_identifier_token()
-                && !self.is_snowflake_reserved_keyword()
-                && !self.peek_text().starts_with('@'))
-        {
-            self.skip();
         } else {
-            return Err(self.parse_error("Expected the statement to execute"));
+            self.check_execute_operand()?;
+            while self.match_token(TokenType::DPipe) {
+                self.check_execute_operand()?;
+            }
         }
         if self.match_token(TokenType::Using) {
             self.expect_token(TokenType::LParen)?;
@@ -481,8 +494,11 @@ impl Parser {
             .any(|words| self.check_text_seq(words));
         self.current = start;
         let definition = self.parse_create()?;
-        if opaque_kind && matches!(definition, Expression::Raw(_)) {
-            return Ok(definition);
+        if let (true, Expression::Raw(raw)) = (opaque_kind, &definition) {
+            let text = raw.sql.strip_prefix("CREATE").unwrap_or(&raw.sql);
+            return Ok(Expression::Raw(Raw {
+                sql: format!("DEFINE{text}"),
+            }));
         }
         if matches!(&definition, Expression::CreateObject(create) if matches!(create.kind.as_str(), "FILE FORMAT") && create.modifier.is_some())
         {
