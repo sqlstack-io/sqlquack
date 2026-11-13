@@ -537,3 +537,111 @@ fn given_a_snowflake_alter_user_without_a_name_when_parsing_then_recorded_verdic
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_external_agent_task_list_or_user_group_when_parsing_then_recorded_verdicts_hold(
+) {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an external agent takes WITH VERSION (recorded acceptance)",
+            sql: "CREATE EXTERNAL AGENT v1 WITH VERSION v1 ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an external agent takes no COMMENT (recorded errno 1003)",
+            sql: "CREATE EXTERNAL AGENT v1 COMMENT = 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an external agent's version is named (recorded errno 1003)",
+            sql: "CREATE EXTERNAL AGENT v1 WITH VERSION 'v1' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "WITH needs VERSION (recorded errno 1003)",
+            sql: "CREATE EXTERNAL AGENT v1 WITH v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ROOT ONLY follows STARTS WITH (recorded acceptance)",
+            sql:
+                "SHOW TERSE TASKS LIKE 'm' IN ACCOUNT STARTS WITH 'm' ROOT ONLY LIMIT 1 FROM 'm' ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "ROOT needs ONLY (recorded errno 1003)",
+            sql: "SHOW TASKS ROOT ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an organization user group takes properties (recorded semantic error)",
+            sql: "CREATE ORGANIZATION USER GROUP IF NOT EXISTS v1 IS_GRANTABLE = TRUE ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an organization user group needs a name (recorded errno 1003)",
+            sql: "CREATE ORGANIZATION USER GROUP ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a connector adds its live version from LAST (recorded semantic error)",
+            sql: "ALTER OPENFLOW CONNECTOR v1 ADD LIVE VERSION FROM LAST COMMENT = 'm' ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a connector adds a version from a location (recorded semantic error)",
+            sql: "ALTER OPENFLOW CONNECTOR v1 ADD VERSION FROM 'm' ;",
+            expected_kind: Some("raw"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a live version comes from LAST (recorded errno 1003)",
+            sql: "ALTER OPENFLOW CONNECTOR v1 ADD LIVE VERSION FROM v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a version comes from a location, not LAST (recorded errno 1003)",
+            sql: "ALTER OPENFLOW CONNECTOR v1 ADD VERSION FROM LAST ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_external_agent_or_filtered_show_when_parsing_then_the_tree_keeps_its_words() {
+    let test_cases = [
+        StatementTestCase {
+            description: "an external agent's text keeps EXTERNAL",
+            sql: "CREATE EXTERNAL AGENT v1 WITH VERSION v1 ;",
+            pointer: "/0/raw/sql",
+            expected_value: json!("CREATE EXTERNAL AGENT v1 WITH VERSION v1"),
+        },
+        StatementTestCase {
+            description: "SHOW TASKS keeps ROOT ONLY in its kind",
+            sql: "SHOW TASKS STARTS WITH 'm' ROOT ONLY ;",
+            pointer: "/0/show/this",
+            expected_value: json!("TASKS ROOT ONLY"),
+        },
+        StatementTestCase {
+            description: "SHOW SERVICES keeps its filters in its kind",
+            sql: "SHOW SERVICES EXCLUDE JOBS OF TYPE USER IN COMPUTE POOL v1 ;",
+            pointer: "/0/show/this",
+            expected_value: json!("SERVICES EXCLUDE JOBS OF TYPE USER"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
