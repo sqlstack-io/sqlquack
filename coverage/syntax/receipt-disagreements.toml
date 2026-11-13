@@ -26,8 +26,6 @@ other_receipts_contradicted = [
   "9e0236c7836f-0",
   "a-ddl-02816966fd63",
   "a-ddl-03dd2c1c8914",
-  "a-ddl-0984351703ac",
-  "a-ddl-0a00caac55f6",
   "a-ddl-0d7894fbbd2a",
   "a-ddl-112db8b67c9b",
   "a-ddl-149fa39ca483",
@@ -35,7 +33,6 @@ other_receipts_contradicted = [
   "a-ddl-15e3d3d2e2c6",
   "a-ddl-171969cf06b7",
   "a-ddl-17b56ffb5988",
-  "a-ddl-1a43fc932451",
   "a-ddl-2019b94b5ae5",
   "a-ddl-28cca5f996e6",
   "a-ddl-2a0d60ba1ae3",
@@ -69,10 +66,7 @@ other_receipts_contradicted = [
   "a-ddl-9713066cc1e0",
   "a-ddl-9a4cf38366d2",
   "a-ddl-9d778eb05fac",
-  "a-ddl-9e989ae50fb9",
-  "a-ddl-b12bde2daed1",
   "a-ddl-b40ca61304ed",
-  "a-ddl-b7d2454875a7",
   "a-ddl-b91311f04e66",
   "a-ddl-bb05c3111514",
   "a-ddl-bfe050fe8d6e",
@@ -153,7 +147,6 @@ other_receipts_contradicted = [
   "sf.ddl.create-iceberg-table.table.k8850641ddea7",
   "sf.ddl.create-iceberg-table.table.kda298ce19f1a",
   "sf.ddl.create-iceberg-table.table.kdeb38bc667b1",
-  "sf.ddl.create-service.kdb43087a568b",
   "sf.ddl.show-services.k3174190a193b",
   "sf.expressions.snowflake-db-classes.k9eccc2186fa2",
   "sf.functions.abs.k6169455e23b9",
@@ -588,168 +581,11 @@ other_receipts_contradicted = [
   "kdb17efeadd3d",
   "kf24cd5326b31",
 ]
-"sf.ddl.create-alert.create-alert-from-template" = [
-  "k169aa0b3bf2e",
-  "k9b123416dfe0",
-  "kbaf73249aafa",
-]
-"sf.ddl.create-alert.create-alert-if-exists" = [
-  "k122264858310",
-  "k2ae81ac20dfb",
-  "k35179549de0d",
-  "k6fe8118f456f",
-  "k99b1c06d31d9",
-  "keeeaf4c660a9",
-]
-"sf.ddl.create-alert.create-or-alter-alert" = [
-  "k0361e88359d1",
-  "k8b39823a62ba",
-  "k8d787050a77e",
-  "kd5c15448444f",
-  "ke13ca8a05c1f",
-]
+"sf.ddl.create-alert.create-alert-if-exists" = ["k6fe8118f456f"]
+"sf.ddl.create-alert.create-or-alter-alert" = ["k0361e88359d1"]
 "sf.ddl.create-application-package" = [
   "k5586129821dd",
   "k56df100400d3",
-]
-"sf.ddl.create-application-service.application-service-from-artifact" = [
-  "k0d0fef215089",
-  "k275bee2de686",
-  "k2dd1389fda8f",
-  "k65d6cd23ee8d",
-  "k93e83903bfd5",
-  "kb33e3c2dae88",
-  "kbe6deacdec5a",
-  "ke3035e5054db",
-  "ke3a9f5899aea",
-  "ke43df0d2da08",
-  "kfc02244f8260",
-]
-"sf.ddl.create-application-service.or-alter-application-service" = [
-  "k09ed6190d360",
-  "k0d82dad0f242",
-  "k11d6a00a3ba4",
-  "k1dc317c04ea0",
-  "k26e70c20763c",
-  "k49d538237e95",
-  "k6532749b3afa",
-  "k904b5263d957",
-  "k9591a5bdc985",
-  "ka05d4bfbd90b",
-  "kd18996515a74",
-  "kdf3c9903e182",
-  "ke4adb4b6807c",
-  "ke859e2c7ab98",
-  "kee3a001d9c0f",
-  "kf3bad4331a67",
-]
-"sf.ddl.create-application.application-package" = [
-  "k0c67e0f2e14a",
-  "k2071e05014f4",
-  "k21e2f9d87aeb",
-  "k22f4fd71c53d",
-  "k4327a9512303",
-  "k51278a0aca75",
-  "k522417787fad",
-  "k6226e30cac3c",
-  "k709f993cafba",
-  "kabb342c5b918",
-  "kf9b10c3105e5",
-]
-"sf.ddl.create-application.application-package-using" = [
-  "k2962ad55d94f",
-  "k301fc7ede15b",
-  "k36a09a4f591d",
-  "k601fbd65f121",
-  "k803203f35658",
-  "k9cd186abda0c",
-  "kaf4b984400c8",
-  "kbb77a2dcce72",
-  "kca89f42e09de",
-  "kd2870328afaf",
-  "kf15a20accdfa",
-  "kf5fc11233fce",
-]
-"sf.ddl.create-application.application-package-using-version" = [
-  "k06eb729a5326",
-  "k095aecaf26be",
-  "k18e258ccfb85",
-  "k25724010661b",
-  "k39931f711202",
-  "k41027bfa6b57",
-  "k76e3ad6785cc",
-  "k822389a47de9",
-  "k836a5ed3e0a1",
-  "k94a073d7f722",
-  "k9c2a84ef72aa",
-  "kbf036fcad2c3",
-  "kcc0a363156c3",
-  "kdb4d50a0799b",
-  "kfaa99e2046c4",
-]
-"sf.ddl.create-application.listing" = [
-  "k13e8abe6661c",
-  "k1cc5c28b7be4",
-  "k53c412c12375",
-  "k6e4f304dca49",
-  "k93517b1101df",
-  "kcc4b57c6033d",
-  "kcfd9bc61bcf9",
-  "kd9ba44c9e100",
-  "kfafc0fdc83cc",
-]
-"sf.ddl.create-backup-set.backup-set-for-database" = [
-  "k16c154a094a1",
-  "k1d3dfe130646",
-  "k660cefe9d7a1",
-  "ka5303273c649",
-  "kbb6c0f76dbb4",
-  "kbef34978fd48",
-  "ke791e98d4e52",
-  "ke903d9a36863",
-]
-"sf.ddl.create-backup-set.backup-set-for-schema" = [
-  "k0bcc1151ca8d",
-  "k56f49e7deb6d",
-  "ka1e3c422b6e3",
-  "ka727ae05cdd8",
-  "kb5319816cd44",
-  "kb753995c933e",
-  "kdd08fd93285f",
-]
-"sf.ddl.create-backup-set.backup-set-for-table" = [
-  "k36d82670d270",
-  "k418194b59dc2",
-  "k49200bbca2ab",
-  "k9d91ca5a72a0",
-  "ka0eb82fe0906",
-  "ka9657e0622d4",
-  "kbe0e104c90d9",
-]
-"sf.ddl.create-backup-set.or-alter-backup-set" = [
-  "k058a3f97a3eb",
-  "k131f66c50fde",
-  "k482386934ddf",
-  "k6daae17d681e",
-  "k7f4748b5bf53",
-  "kc2a70ef8fd3f",
-  "kf152fda41a0d",
-]
-"sf.ddl.create-backup-set.or-alter-backup-set-2" = [
-  "k0a32b97dbef8",
-  "k21adcd2c4641",
-  "k4a8dc109e105",
-  "k752049eba6bd",
-  "k8c03134aad94",
-  "keb431b35953c",
-]
-"sf.ddl.create-backup-set.or-alter-backup-set.create-or-alter-backup-set" = [
-  "k1f2572913146",
-  "k2ac19b86bc22",
-  "k7a469dc8aabf",
-  "k8e4e21e75a93",
-  "ka91a56316571",
-  "keed43ca01f05",
 ]
 "sf.ddl.create-clone.alert-file-format-sequence" = ["k8f41aa1b568a"]
 "sf.ddl.create-code-bundle.create-code-bundle-from" = [
@@ -760,50 +596,7 @@ other_receipts_contradicted = [
   "k1ba8b686d81b",
   "k60b30999315b",
 ]
-"sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag" = [
-  "k3a4dd317c773",
-  "k5f0d2470f624",
-  "k89fbcc8f8458",
-  "k8a016d4a961a",
-  "k93163363b2fc",
-  "k94ab6a2218c7",
-  "k98bf4dddc865",
-  "ka4f66f31ff3b",
-  "kaaae16756370",
-  "kbe05a4279ec4",
-  "kc214a7f111a8",
-  "kc54449bc4735",
-  "ke29bf9a6c53d",
-  "ke4d0a07ee022",
-]
-"sf.ddl.create-cortex-search.text-indexes-vector-indexes" = [
-  "k0d7f659bf481",
-  "k1673083b15e1",
-  "k1b58d7bb4455",
-  "k262d811585d9",
-  "k2b13b3179cb4",
-  "k312cbaa75a09",
-  "k410662e21813",
-  "k481f05e6895b",
-  "k4d965cd8840b",
-  "k4df76f37e94e",
-  "k60c8fa887378",
-  "k82b73692142c",
-  "k941d35e76376",
-  "ka0caf9f0e069",
-  "ka3e53860b04e",
-  "kc0eb402c6ccc",
-  "kc67575e29f00",
-  "kcf04d83626a8",
-  "kf045d59093fe",
-  "kfa839a3bec8e",
-  "kffdcb1367e80",
-]
 "sf.ddl.create-data-metric-function.create-data-metric-function" = ["kea9728d63542"]
-"sf.ddl.create-data-movement-rule" = [
-  "k1efe1aa3b632",
-  "k4454f9b99776",
-]
 "sf.ddl.create-database.create-database" = ["k3c0dc0ce5fe8"]
 "sf.ddl.create-dataset" = [
   "k6d9683d78996",
@@ -913,33 +706,7 @@ other_receipts_contradicted = [
 "sf.ddl.create-iceberg-table.table-base-location.parquet-files" = ["k656d4111d435"]
 "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database" = ["ke76e03514474"]
 "sf.ddl.create-index" = ["k51438fa25dc3"]
-"sf.ddl.create-listing.as" = [
-  "k0843ac0196eb",
-  "k247db5827df5",
-  "k42746e71b9a6",
-  "k5c300e4358c5",
-  "k662693c7b105",
-  "k75cf40a2e66b",
-  "k79763e8de7a9",
-  "k93542f5cad4a",
-  "kb4d164e86369",
-  "kcaa39f0634ec",
-  "kce4f63ce92b6",
-  "kef92fede9b23",
-]
-"sf.ddl.create-listing.from" = [
-  "k1aeeadc3e380",
-  "k1f61e3f97d34",
-  "k21facf7e96dd",
-  "k4b5a372d4904",
-  "k4df679476d62",
-  "k7357ac165c3b",
-  "k8118144049a2",
-  "kb17d621c990a",
-  "kbb804a87fbbe",
-  "kd75e5cd0f64a",
-  "ke908544d0246",
-]
+"sf.ddl.create-listing.from" = ["k7357ac165c3b"]
 "sf.ddl.create-mcp-server" = [
   "kbc9e13925f95",
   "kf38317833568",
@@ -1020,35 +787,7 @@ other_receipts_contradicted = [
 ]
 "sf.ddl.create-semantic-view.create-or-alter-semantic" = ["kde5a57ccc35a"]
 "sf.ddl.create-semantic-view.create-semantic-view-tables" = ["kf0a8b4db490a"]
-"sf.ddl.create-service" = [
-  "k01b923f68ce9",
-  "k0ed6e0f1327f",
-  "k13d6f6b21ce2",
-  "k19dfb97e2d9c",
-  "k1be7ebb78ebb",
-  "k2477beacd90e",
-  "k35fb046a2482",
-  "k437adfbcf872",
-  "k48ddeaf0e6d8",
-  "k4dafd9be21a2",
-  "k71a957fdf18b",
-  "k8b4a7178f15e",
-  "k9543da1929eb",
-  "kaa6b671f234c",
-  "kab91ba2bd61d",
-  "kadf864396997",
-  "kb27dad983405",
-  "kbce06f424540",
-  "kc33cd70ad67a",
-  "kc6038106c8e2",
-  "kce0f86ccf43b",
-  "kd2f6648d9756",
-  "ke1a9bbd5c2b7",
-  "ke3660e28ad5a",
-  "kf0aa03ab0917",
-  "kf69eebf57dd1",
-  "kf6e34726b4f1",
-]
+"sf.ddl.create-service" = ["k8b4a7178f15e"]
 "sf.ddl.create-snapshot" = [
   "k34b887d52e66",
   "k38a6624d17a3",
@@ -1059,35 +798,6 @@ other_receipts_contradicted = [
   "kaaf3fd132d61",
   "kf7601bdcc20e",
 ]
-"sf.ddl.create-snapshot-set.database" = [
-  "k138db906b172",
-  "k2f9e8a7985cd",
-  "k49e35b2e1ad1",
-  "k5a3103822ddf",
-  "k72cfa4470097",
-  "kb74886a5480f",
-  "kd0afdfbe071b",
-  "kd4db0b9d29a6",
-]
-"sf.ddl.create-snapshot-set.schema" = [
-  "k19265bbc8bab",
-  "k62b949ae20ec",
-  "kba787feb9cdf",
-  "kca79bd5978ce",
-  "kce263c151f05",
-  "kdcbaad5bb1a9",
-  "kfc9ab4e31cab",
-]
-"sf.ddl.create-snapshot-set.table" = [
-  "k1cf74983a047",
-  "k2cbcdf518555",
-  "k9d0be4c50091",
-  "ka7fcce93e630",
-  "kad477f53880b",
-  "ke0726bcc170a",
-  "kee23211956ef",
-]
-"sf.ddl.create-streamlit.create-streamlit" = ["k5107fbfe7d6a"]
 "sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk" = ["k7de2438283a3"]
 "sf.ddl.create-table-constraint.create-table" = ["k0afaf3657a86"]
 "sf.ddl.create-table.create-or-alter-table" = ["k808bd6a0f704"]
@@ -1212,32 +922,9 @@ other_receipts_contradicted = [
   "kc5a9dd4ce6cb",
   "kefd7bd616c18",
 ]
-"sf.security_admin.create-organization-listing.as" = [
-  "k1b2002b98375",
-  "k2b3630435104",
-  "k74b81029f05d",
-  "k75b780ebec8a",
-  "ka20bdaa03d0f",
-  "ka875bd2216c7",
-  "kb49d7146b4cc",
-  "kcb30c2c6e17a",
-  "kcb5ed9e4cbca",
-  "kcc3bb70d7370",
-  "kd55b0389444a",
-]
 "sf.security_admin.create-organization-listing.from" = [
-  "k1b276c57b845",
-  "k20f9620ff43e",
   "k477815e83d52",
-  "k4d58da5fa41f",
-  "k6f9a56ba363d",
-  "k723274c2f913",
-  "k72d08493740f",
   "k7357ac165c3b",
-  "k75960aea0eb1",
-  "k9b52a1768ccf",
-  "kca2b130ed93f",
-  "kf99c905b4072",
 ]
 "sf.security_admin.create-organization-profile.profile-as" = [
   "k0e5d1e9d9399",
@@ -1386,33 +1073,6 @@ other_receipts_contradicted = [
 "sf.ddl.alter-backup-set.set-comment" = ["k10731c961186"]
 "sf.ddl.alter-backup-set.set-tag" = ["k48c3d869d40c"]
 "sf.ddl.alter-backup-set.unset-tag" = ["kc7ecbb894db9"]
-"sf.ddl.alter-data-movement-rule.rename-to" = [
-  "k128dd31934ca",
-  "k1f5fc7c6007f",
-  "k229c91f4db30",
-  "k425340a23f90",
-  "k60c5c5030a98",
-  "kcd4cf0b207e0",
-]
-"sf.ddl.alter-data-movement-rule.set-comment" = [
-  "k2905c49a4f98",
-  "k2ecd09177e94",
-  "k3e5037185909",
-  "k698c024adb3a",
-  "k95f8b43d5634",
-]
-"sf.ddl.alter-data-movement-rule.set-max-rows-as-returns" = [
-  "k12943c6c6c9a",
-  "k6a72fa4c2e6b",
-  "ka16abef0ffd0",
-  "kacbdc9378db2",
-]
-"sf.ddl.alter-data-movement-rule.unset-comment" = [
-  "k9b93891df740",
-  "kd65e611dbedc",
-  "ke09578efd6f9",
-  "kf796c20d553f",
-]
 "sf.ddl.alter-database-catalog-linked.set" = ["k944dd061d9ca"]
 "sf.ddl.alter-database-catalog-linked.unset-base-location-prefix-comment-contact" = ["k3fbf8ee747f4"]
 "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = ["k87a9b9ccc841"]
@@ -1447,25 +1107,6 @@ other_receipts_contradicted = [
   "kbf77fd1dc039",
 ]
 "sf.ddl.create-ai-function.from-experiment-run" = ["k67bb99e4b1b2"]
-"sf.ddl.create-alert.define-alert" = [
-  "k0e27dd0e6eec",
-  "k15c6232b5345",
-  "k21be5379d8df",
-  "k27c8668f6f66",
-  "k2a687242ac96",
-  "k3977a409869e",
-  "k54334cb00dbf",
-  "k65d988dcd7d3",
-  "k7549e9a0290e",
-  "k7d35b1f4036f",
-  "kb96955ceba6b",
-  "kd28f5d68e653",
-  "ke1a16b8bd96e",
-  "ke3f9907a8954",
-  "ke520d8edbc06",
-  "kf5ce62639c2c",
-  "kfe83182f07de",
-]
 "sf.ddl.create-code-bundle.define-code-bundle" = [
   "k0f0f79a244fa",
   "k137093b200f9",
@@ -1478,34 +1119,7 @@ other_receipts_contradicted = [
   "kd95a74d046f2",
   "kf17853d8e491",
 ]
-"sf.ddl.create-data-movement-rule" = [
-  "k492eb1f257ca",
-  "k87e4ccb946c1",
-  "k8a507f51370a",
-]
 "sf.ddl.create-database-catalog-linked" = ["kd7f8a471f88a"]
-"sf.ddl.create-database.define-database" = [
-  "k0b1d8f5e8b09",
-  "k0b40e98bf061",
-  "k17a4cf612e29",
-  "k1adfa06ae1fb",
-  "k1eeb18345329",
-  "k2a6baa16536d",
-  "k2c06704d0ae2",
-  "k5298dd8b1e6c",
-  "k59f326cc5d93",
-  "k67f22a1bf1cf",
-  "k6ade9d143ffa",
-  "k6e8921346fd1",
-  "k9271eb942683",
-  "k9307863c806e",
-  "ka4d7c208a8ee",
-  "ka987abec0f0a",
-  "kb4fd6b1d0a63",
-  "kb9372389667d",
-  "keaacde60ce9d",
-  "kf1921c981feb",
-]
 "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table" = ["k31ecf5db111a"]
 "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table" = ["kddec0cb4b97e"]
 "sf.ddl.create-external-function.function-returns-api-integration-as" = [
@@ -1546,70 +1160,6 @@ other_receipts_contradicted = [
   "k9f59fb2ac987",
   "ka2ae0cb9c3a7",
 ]
-"sf.ddl.create-procedure.create-procedure-returns-table" = ["kf4e2570af37c"]
-"sf.ddl.create-procedure.create-procedure-returns-table-2" = [
-  "k6136d240c981",
-  "k7f7c1ae5e1e5",
-  "ka7ac2748d64c",
-]
-"sf.ddl.create-procedure.create-procedure-returns-table-3" = ["k6182aa8ba368"]
-"sf.ddl.create-procedure.create-procedure-returns-table.java-handler" = ["k06bf1e65427f"]
-"sf.ddl.create-procedure.create-procedure-returns-table.python-handler" = [
-  "k7a82b497c571",
-  "k9117e1213583",
-  "kef07a825a0c6",
-]
-"sf.ddl.create-procedure.create-procedure-returns-table.scala-handler" = ["kba1af45d5009"]
-"sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler" = [
-  "k0ba68b96f921",
-  "k4fc93dc31b5b",
-  "kaaed85e6b801",
-  "kae4539e452ff",
-]
-"sf.ddl.create-procedure.create-procedure-scoped-temp" = [
-  "k10b971c0ff10",
-  "k21366e5362f2",
-  "k238b37cf9d57",
-  "k634a97038183",
-  "k7d8259cff338",
-  "kb91449a015c6",
-  "kbee784dfdf35",
-]
-"sf.ddl.create-procedure.define-procedure" = [
-  "k0e5f43f63c80",
-  "k1f34ccff3430",
-  "k240eb329e957",
-  "k38f7c16e712b",
-  "k4ab4c7274673",
-  "k500b14ef4a7d",
-  "k5f9f58fe7044",
-  "k6e647fb3c12c",
-  "k78954ff83dc9",
-  "k822aaf72a8e4",
-  "k916a323bf728",
-  "k97f7f7c4e1a7",
-  "kcd0d0f5aaecc",
-  "kfd835d36a5cf",
-]
-"sf.ddl.create-schema.define-schema" = [
-  "k055ffff30157",
-  "k10dc88d62665",
-  "k1ea872c7de6b",
-  "k39de53b49f2e",
-  "k3b8f6f714dbb",
-  "k5774bc3ff2de",
-  "k5d500dc77617",
-  "k636e95402385",
-  "k6ef12cd27477",
-  "ka50bada6faf2",
-  "kae836c730776",
-  "kb173f7fe5f83",
-  "kb586dbb66a51",
-  "kb6d7e370efd2",
-  "kcf578e45c554",
-  "kd241f280bb0e",
-  "kdbb721063d7e",
-]
 "sf.ddl.create-sequence.create-or-alter-sequence" = [
   "k20fca8f5f88e",
   "k78ac458e2742",
@@ -1627,30 +1177,6 @@ other_receipts_contradicted = [
   "k53f85e4c758b",
   "k5781f7b98b4d",
   "kdce8646cffb5",
-]
-"sf.ddl.create-streamlit.define-streamlit" = [
-  "k1d1674a6db86",
-  "k2abceafcb9ed",
-  "k3112e3719098",
-  "k346af2c3dde7",
-  "k3557c61142ad",
-  "k3bbf225227e3",
-  "k47bfb68dad31",
-  "k569a6fea8252",
-  "k61b8039d9386",
-  "k6ba4543e8b9e",
-  "k73cbba671da4",
-  "k758d6bc19831",
-  "k836a015d877b",
-  "k91126944f6c9",
-  "k9ff0f89bb73c",
-  "ka2642459d4c2",
-  "kb00e5a66a2d3",
-  "kd63f17f55670",
-  "kdf2e75630247",
-  "keb333ede896c",
-  "kef3e939c03eb",
-  "kf1d8851290ba",
 ]
 "sf.ddl.create-table.define-table" = ["k2f29257e44ce"]
 "sf.ddl.create-tag.define-tag" = [
