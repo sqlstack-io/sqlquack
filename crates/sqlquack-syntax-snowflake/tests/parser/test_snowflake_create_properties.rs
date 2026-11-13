@@ -387,17 +387,17 @@ fn given_a_snowflake_create_or_alter_kept_as_text_when_parsing_then_its_head_and
         SnowflakeVerdictTestCase {
             description: "a warehouse named IF before its action (recorded OK)",
             sql: "ALTER WAREHOUSE IF SUSPEND ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "RESUME IF SUSPENDED after IF EXISTS (recorded OK)",
             sql: "ALTER WAREHOUSE IF EXISTS v1 RESUME IF SUSPENDED ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "the current warehouse with no name (recorded OK)",
             sql: "ALTER WAREHOUSE ABORT ALL QUERIES ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "START, a reserved keyword, as the action (recorded OK)",
@@ -427,7 +427,7 @@ fn given_a_snowflake_create_or_alter_kept_as_text_when_parsing_then_its_head_and
         SnowflakeVerdictTestCase {
             description: "an unreserved operand word as a value",
             sql: "ALTER WAREHOUSE v1 SET RESOURCE_MONITOR = token ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an unreserved operand word as a new name",

@@ -1,11 +1,14 @@
 //! Parser ddl: the shared check of a Snowflake CREATE or ALTER kept as opaque text, which refuses a malformed head, `NAME = value` option list or tag list while the tree stays the same text.
 
+use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::statements::analyze::snowflake_reserved_word;
 use crate::parser::constants::{
     SNOWFLAKE_DROP_KINDS, SNOWFLAKE_OPAQUE_ALTER_ACTIONS, SNOWFLAKE_OPAQUE_KINDS,
     SNOWFLAKE_OPAQUE_OPERAND_WORDS, SNOWFLAKE_OPAQUE_UNNAMED_KIND, SUSPENDED,
 };
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::names::models::TableRef;
+use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::statements::models::Raw;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::tokens::models::TokenType;
@@ -282,6 +285,12 @@ impl Parser {
     pub(crate) fn parse_opaque_alter(&mut self) -> Result<Expression> {
         self.check_opaque_statement(false)?;
         let start = self.current;
+        if self.check_text_seq(&["WAREHOUSE"]) {
+            if let Ok(Some(alter)) = self.parse_checked_warehouse_alter() {
+                return Ok(alter);
+            }
+            self.current = start;
+        }
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
             self.skip();
         }
@@ -289,6 +298,54 @@ impl Parser {
         Ok(Expression::Raw(Raw {
             sql: format!("ALTER {sql}"),
         }))
+    }
+
+    /// An ALTER WAREHOUSE its checks passed, as a tree: the name, which may be left out before an action, the action's words, and its names or properties (a lone IF before an action is the name, as Snowflake reads it); None keeps the raw text.
+    fn parse_checked_warehouse_alter(&mut self) -> Result<Option<Expression>> {
+        self.skip();
+        let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
+        let name = match self.is_opaque_action_at(0) {
+            true => None,
+            false => Some(self.parse_object_name()?),
+        };
+        let action = self.expect_alter_words(&[
+            &["ABORT", "ALL", "QUERIES"],
+            &["RESUME", "IF", "SUSPENDED"],
+            &["RENAME", "TO"],
+            &["ADD", "TABLES"],
+            &["DROP", "TABLES"],
+            &["ENABLE"],
+            &["DISABLE"],
+            &["SUSPEND"],
+            &["RESUME"],
+            &["SET"],
+            &["UNSET"],
+        ])?;
+        let parts: (Vec<Expression>, Vec<ObjectProperty>) = match action.as_str() {
+            "RENAME TO" => (
+                vec![Expression::Table(Box::new(self.parse_object_name()?))],
+                vec![],
+            ),
+            "ADD TABLES" | "DROP TABLES" => {
+                self.expect_token(TokenType::LParen)?;
+                let tables = self.parse_object_name_list()?;
+                self.expect_token(TokenType::RParen)?;
+                (tables, vec![])
+            }
+            "SET" => (vec![], self.parse_alter_object_properties(true, false)?),
+            "UNSET" => (vec![], self.parse_alter_object_properties(false, false)?),
+            _ => (vec![], vec![]),
+        };
+        if !self.is_statement_end_at(0) {
+            return Ok(None);
+        }
+        let Expression::AlterObject(mut alter) =
+            alter_object("WAREHOUSE", (TableRef::new(""), if_exists), action, parts)
+        else {
+            return Ok(None);
+        };
+        alter.name = name;
+        Ok(Some(Expression::AlterObject(alter)))
     }
 
     /// Whether the token at `at` continues or ends the name in `CREATE MODEL <name>`: a dot, FROM, WITH VERSION, or the statement end.
