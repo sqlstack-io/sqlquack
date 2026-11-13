@@ -489,8 +489,8 @@ impl Parser {
                     == Some(true)
                 {
                     self.skip();
-                    self.check_execute_immediate()?;
-                    self.parse_command()?.ok_or_else(|| {
+                    let end = self.check_execute_immediate()?;
+                    self.parse_command_before(end)?.ok_or_else(|| {
                         self.parse_error("Failed to parse EXECUTE IMMEDIATE statement")
                     })
                 } else {

@@ -49,7 +49,7 @@ impl Parser {
             self.current = after_name;
             return checked;
         }
-        let project = matches!(second.as_str(), "PROJECT");
+        let project = matches!(second.as_str(), "PROJECT") && after_name > kind_at + 2;
         let checked = match kind.as_str() {
             "EXTERNAL" if matches!(second.as_str(), "AGENT") => self.check_external_agent_tail(),
             "VARIABLE" => self.check_variable_tail(),
@@ -296,7 +296,7 @@ impl Parser {
                 .is_some_and(|next| next.text.eq_ignore_ascii_case("VERSION")))
     }
 
-    /// The kind, `IF [ NOT ] EXISTS` and name of a kind the opaque check knows, a notebook project's name with its database left out, then an ALTER's action; nothing for another kind.
+    /// The kind, `IF [ NOT ] EXISTS` and name of a kind the opaque check knows, a notebook project's name with its database left out, then an ALTER's action; nothing for another kind. NOTEBOOK PROJECT is a kind only when a name follows it.
     fn check_opaque_head(&mut self, create: bool) -> Result<()> {
         let kind = SNOWFLAKE_OPAQUE_KINDS
             .iter()
@@ -305,6 +305,7 @@ impl Parser {
                 self.check_text_seq(words)
                     && !(**words == ["MODEL", "MONITOR"]
                         && self.model_name_ends_at(self.current + 2))
+                    && !(**words == ["NOTEBOOK", "PROJECT"] && self.notebook_name_ends_at(2))
             });
         let Some(&kind) = kind else {
             return self.check_opaque_unknown_kind();
@@ -340,6 +341,12 @@ impl Parser {
             true => Ok(()),
             false => Err(self.parse_error("Expected an action after the name")),
         }
+    }
+
+    /// Whether the token `offset` tokens ahead ends a notebook's name: the statement end or FROM, so `CREATE NOTEBOOK project FROM @s1` names the notebook PROJECT.
+    fn notebook_name_ends_at(&self, offset: usize) -> bool {
+        self.peek_nth(offset)
+            .is_none_or(|token| matches!(token.token_type, TokenType::From | TokenType::Semicolon))
     }
 
     /// Refuse a kind whose first word starts a kind the check knows but whose next words complete none, as `ALTER OPENFLOW v1` does.
