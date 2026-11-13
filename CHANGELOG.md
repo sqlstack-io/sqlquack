@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.11.1](https://github.com/sqlstack-io/sqlquack/compare/v0.11.0...v0.11.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* **lint:** read a FIRST or LAST join alias as the relation's alias ([f009b82](https://github.com/sqlstack-io/sqlquack/commit/f009b828ab1ad8209186bd8ec5da8f0d6ec84b7e))
+* **syntax:** accept an online feature table without TARGET_LAG or with IF NOT EXISTS ([98e46f8](https://github.com/sqlstack-io/sqlquack/commit/98e46f86dba50ceecaac286ef829e02f9ae1db62))
+* **syntax:** read ALTER and DROP MODEL monitor as a model named or qualified by monitor ([8fe9485](https://github.com/sqlstack-io/sqlquack/commit/8fe9485dcd1dd0a4c10c3f0ca23dd10e87af4a46))
+* **syntax:** record a SEMANTIC_VIEW that writes DIMENSIONS before METRICS or FACTS ([8343a82](https://github.com/sqlstack-io/sqlquack/commit/8343a82f5dd324084270562f92a47ed39d77a35d))
+* **syntax:** record a stage path as a stage reference, not a string ([75399f2](https://github.com/sqlstack-io/sqlquack/commit/75399f21ce7e53f85e785b23f11864f7ab3969b1))
+
 ## [0.11.0](https://github.com/sqlstack-io/sqlquack/compare/v0.10.0...v0.11.0) (2026-11-12)
 
 
