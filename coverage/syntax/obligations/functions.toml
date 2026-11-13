@@ -10787,12 +10787,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.functions.cast.cast-as.o019"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FIELDS after ADD in [ RENAME FIELDS | ADD FIELDS ]"
-
-[[obligation]]
 id = "sf.functions.cast.cast-as.o016"
 kind = "alternative"
 required = true
@@ -10815,6 +10809,13 @@ required = true
 target = "[ RENAME FIELDS | ADD FIELDS ] → RENAME FIELDS"
 anchor = "doc.functions.cast / Syntax"
 note = "alternative [ RENAME FIELDS | ADD FIELDS ] → RENAME FIELDS, observed"
+
+[[obligation]]
+id = "sf.functions.cast.cast-as.o020"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.cast / Syntax"
+note = "the form without its required FIELDS after ADD in [ RENAME FIELDS | ADD FIELDS ], observed"
 
 [[obligation]]
 id = "sf.functions.cast.double-colon.o001"
@@ -16907,12 +16908,6 @@ required = true
 note = "the form without its required OBJECT_TYPE in [ , OBJECT_TYPE = { WORKSPACE | DBT PROJECT } ]"
 
 [[obligation]]
-id = "sf.functions.dbt-project-execution-history.o063"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DBT after = in [ , OBJECT_TYPE = { WORKSPACE | DBT PROJECT } ]"
-
-[[obligation]]
 id = "sf.functions.dbt-project-execution-history.o045"
 kind = "negative_neighbour"
 required = true
@@ -17034,6 +17029,13 @@ required = true
 target = "{ WORKSPACE | DBT PROJECT } → DBT PROJECT"
 anchor = "doc.functions.dbt_project_execution_history / Syntax"
 note = "alternative { WORKSPACE | DBT PROJECT } → DBT PROJECT, observed"
+
+[[obligation]]
+id = "sf.functions.dbt-project-execution-history.o065"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.dbt_project_execution_history / Syntax"
+note = "the form without its required DBT after = in [ , OBJECT_TYPE = { WORKSPACE | DBT PROJECT } ], observed"
 
 [[obligation]]
 id = "sf.functions.dcm-deployment-history.o001"

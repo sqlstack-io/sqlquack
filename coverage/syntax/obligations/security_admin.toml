@@ -12721,12 +12721,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG after UNSET"
-
-[[obligation]]
 id = "sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets.o022"
 kind = "negative_neighbour"
 required = true
@@ -12785,6 +12779,13 @@ required = true
 target = "<tag_name>"
 anchor = "doc.sql.alter-external-access-integration / Syntax"
 note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets.o031"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-external-access-integration / Syntax"
+note = "the form without its required TAG after UNSET, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-failover-group.add-to-allowed-accounts.o001"
@@ -48134,12 +48135,6 @@ required = true
 note = "the form without its required UNSET"
 
 [[obligation]]
-id = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag.o034"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG after UNSET"
-
-[[obligation]]
 id = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag.o028"
 kind = "negative_neighbour"
 required = true
@@ -48198,6 +48193,13 @@ required = true
 target = "<name>"
 anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
 note = "omit <name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag.o035"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-storage-lifecycle-policy / Syntax"
+note = "the form without its required TAG after UNSET, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-add-key-pair.o001"
@@ -55756,13 +55758,6 @@ target = "<name> in [ <name> ]"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.set-tag.o008"
-kind = "required_operand_missing"
-required = true
-target = "<tag_name>"
-note = "omit <tag_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-user.set-tag.o009"
 kind = "operand_type_class"
 required = true
@@ -55821,12 +55816,6 @@ id = "sf.security_admin.alter-user.set-tag.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SET"
-
-[[obligation]]
-id = "sf.security_admin.alter-user.set-tag.o019"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TAG"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.set-tag.o020"
@@ -55896,6 +55885,21 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-user / Syntax"
 note = "the form without its required EXISTS in [ IF EXISTS ], observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.set-tag.o029"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name>"
+anchor = "doc.sql.alter-user / Syntax"
+note = "omit <tag_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.set-tag.o030"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-user / Syntax"
+note = "the form without its required TAG, observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.unset.o001"
@@ -74763,12 +74767,6 @@ required = true
 note = "the form without its required ADMIN_RSA_PUBLIC_KEY after <string>"
 
 [[obligation]]
-id = "sf.security_admin.create-organization-account.o050"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { ADMIN_PASSWORD = '<string_literal>' | ADMIN_RSA_PUBLIC_KEY = <string> }"
-
-[[obligation]]
 id = "sf.security_admin.create-organization-account.o051"
 kind = "negative_neighbour"
 required = true
@@ -74813,6 +74811,13 @@ required = true
 target = "<name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-organization-account.o060"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-organization-account / Syntax"
+note = "the form without its required { ADMIN_PASSWORD = '<string_literal>' | ADMIN_RSA_PUBLIC_KEY = <string> }, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-organization-listing.as.o001"
@@ -74965,12 +74970,6 @@ required = true
 target = "{ TRUE | FALSE } → FALSE"
 
 [[obligation]]
-id = "sf.security_admin.create-organization-listing.as.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ORGANIZATION"
-
-[[obligation]]
 id = "sf.security_admin.create-organization-listing.as.o025"
 kind = "negative_neighbour"
 required = true
@@ -75071,6 +75070,13 @@ required = true
 target = "<package_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-organization-listing.as.o040"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.create-organization-listing / Syntax"
+note = "the form without its required ORGANIZATION, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-organization-listing.from.o001"
@@ -75640,13 +75646,6 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.security_admin.create-organization-profile.profile-from.o007"
-kind = "required_operand_missing"
-required = true
-target = "<yaml_manifest_stage_location>"
-note = "omit <yaml_manifest_stage_location>"
-
-[[obligation]]
 id = "sf.security_admin.create-organization-profile.profile-from.o008"
 kind = "operand_type_class"
 required = true
@@ -75783,6 +75782,14 @@ required = true
 target = "<version_alias_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.security_admin.create-organization-profile.profile-from.o029"
+kind = "required_operand_missing"
+required = true
+target = "<yaml_manifest_stage_location>"
+anchor = "doc.sql.create-organization-profile / Syntax"
+note = "omit <yaml_manifest_stage_location>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-organization-user.o001"
@@ -112925,12 +112932,6 @@ required = true
 note = "the form without its required POOL"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o543"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL after CREATE"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o401"
 kind = "negative_neighbour"
 required = true
@@ -112947,12 +112948,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o402"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required GROUP"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o545"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required NETWORK after CREATE"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o403"
@@ -112977,12 +112972,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o547"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required REPLICATION after CREATE"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o548"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required GROUP after REPLICATION"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o549"
@@ -113079,18 +113068,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o557"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IMPORT after GRANT"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o558"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ORGANIZATION after IMPORT"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o559"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LISTING after ORGANIZATION"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o560"
@@ -113399,12 +113376,6 @@ required = true
 note = "the form without its required ATTACH after GRANT #2"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o591"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LISTING after ATTACH"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o592"
 kind = "negative_neighbour"
 required = true
@@ -113421,12 +113392,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o594"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CREATE after GRANT #2"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o595"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE after CREATE"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o596"
@@ -113513,12 +113478,6 @@ required = true
 note = "the form without its required EXCHANGE after DATA"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o605"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LISTING after EXCHANGE #2"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o606"
 kind = "negative_neighbour"
 required = true
@@ -113541,12 +113500,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o609"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required GROUP after REPLICATION #2"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o610"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL after ON"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o611"
@@ -113583,12 +113536,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o614"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CREATE after GRANT #3"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o615"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SERVICE after APPLICATION"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o616"
@@ -113741,12 +113688,6 @@ required = true
 note = "the form without its required POLICY after LIFECYCLE #2"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o636"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SNAPSHOT after CREATE"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o637"
 kind = "negative_neighbour"
 required = true
@@ -113783,12 +113724,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #3"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o641"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY after ."
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o470"
 kind = "negative_neighbour"
 required = true
@@ -113813,12 +113748,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #5"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o644"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after ."
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o473"
 kind = "negative_neighbour"
 required = true
@@ -113829,12 +113758,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o645"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #6"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o646"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #2"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o474"
@@ -113849,12 +113772,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #7"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o648"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #3"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o475"
 kind = "negative_neighbour"
 required = true
@@ -113865,12 +113782,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o649"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #8"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o650"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #4"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o476"
@@ -113955,12 +113866,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o659"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CREATE after GRANT #4"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o660"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SERVICE after APPLICATION #2"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o661"
@@ -114113,12 +114018,6 @@ required = true
 note = "the form without its required POLICY after LIFECYCLE #3"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o686"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SNAPSHOT after CREATE #3"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o687"
 kind = "negative_neighbour"
 required = true
@@ -114129,12 +114028,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o688"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #9"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o689"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE after ."
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o690"
@@ -114149,12 +114042,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #10"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o692"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY after . #2"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o693"
 kind = "negative_neighbour"
 required = true
@@ -114165,12 +114052,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o694"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #11"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o695"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY after . #3"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o696"
@@ -114185,12 +114066,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #12"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o698"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #5"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o699"
 kind = "negative_neighbour"
 required = true
@@ -114201,12 +114076,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o700"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #13"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o701"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #6"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o702"
@@ -114221,12 +114090,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #14"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o704"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #7"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o705"
 kind = "negative_neighbour"
 required = true
@@ -114239,12 +114102,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #15"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o707"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #8"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o708"
 kind = "negative_neighbour"
 required = true
@@ -114255,12 +114112,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o709"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #16"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o710"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #9"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o711"
@@ -114279,18 +114130,6 @@ id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o484"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FEATURE in [ { DYNAMIC | EXTERNAL | HYBRID | ICEBERG | INTERACTIVE | ONLINE FEATURE } ] #2"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o713"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TABLE after CREATE #2"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o714"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required VIEW after CREATE"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o715"
@@ -114431,22 +114270,10 @@ required = true
 note = "the form without its required EVOLVE after GRANT #2"
 
 [[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o733"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after EVOLVE"
-
-[[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o734"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SELECT after GRANT #2"
-
-[[obligation]]
-id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o735"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ERROR after SELECT #2"
 
 [[obligation]]
 id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o736"
@@ -114827,6 +114654,216 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.grant-privilege / Syntax"
 note = "the form without its required ROLE, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o746"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required EXTERNAL after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o747"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required NETWORK after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o748"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required GROUP after REPLICATION, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o749"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required ORGANIZATION after IMPORT, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o750"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required LISTING after ORGANIZATION, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o751"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required LISTING after ATTACH, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o752"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required DATABASE after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o753"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required LISTING after EXCHANGE #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o754"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required EXTERNAL after ON, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o755"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required SERVICE after APPLICATION, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o756"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required SNAPSHOT after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o757"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required DATA_PRIVACY after ., observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o758"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required ML after ., observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o759"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required ML after . #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o760"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required ML after . #3, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o761"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required ML after . #4, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o762"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required SERVICE after APPLICATION #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o763"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required SNAPSHOT after CREATE #3, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o764"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required CORE after ., observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o765"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required DATA_PRIVACY after . #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o766"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required DATA_PRIVACY after . #3, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o767"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required ML after . #5, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o768"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required ML after . #6, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o769"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required ML after . #7, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o770"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required ML after . #8, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o771"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required ML after . #9, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o772"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required TABLE after CREATE #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o773"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required VIEW after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o774"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required SCHEMA after EVOLVE, observed"
+
+[[obligation]]
+id = "sf.security_admin.grant-privilege.globalprivileges-all-on-account.o775"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.grant-privilege / Syntax"
+note = "the form without its required ERROR after SELECT #2, observed"
 
 [[obligation]]
 id = "sf.security_admin.grant-role.role.o001"
@@ -124892,12 +124929,6 @@ required = true
 note = "the form without its required POOL"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o546"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL after CREATE"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o406"
 kind = "negative_neighbour"
 required = true
@@ -124914,12 +124945,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o407"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required GROUP"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o548"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required NETWORK after CREATE"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o408"
@@ -124946,22 +124971,10 @@ required = true
 note = "the form without its required REPLICATION after CREATE"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o551"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required GROUP after REPLICATION"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o552"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ATTACH after REVOKE"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o553"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required POLICY after ATTACH"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o554"
@@ -125052,18 +125065,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o561"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IMPORT after REVOKE"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o562"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ORGANIZATION after IMPORT"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o563"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LISTING after ORGANIZATION"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o564"
@@ -125288,12 +125289,6 @@ required = true
 note = "the form without its required EXCHANGE"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o587"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LISTING after EXCHANGE"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o588"
 kind = "negative_neighbour"
 required = true
@@ -125378,12 +125373,6 @@ required = true
 note = "the form without its required ATTACH after REVOKE #2"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o597"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LISTING after ATTACH"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o598"
 kind = "negative_neighbour"
 required = true
@@ -125400,12 +125389,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o600"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CREATE after REVOKE #3"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o601"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE after CREATE"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o602"
@@ -125480,12 +125463,6 @@ required = true
 note = "the form without its required POOL after COMPUTE"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o609"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL after ON"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o610"
 kind = "negative_neighbour"
 required = true
@@ -125514,12 +125491,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o612"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CREATE after REVOKE #4"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o613"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SERVICE after APPLICATION"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o614"
@@ -125672,12 +125643,6 @@ required = true
 note = "the form without its required POLICY after LIFECYCLE #2"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o634"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SNAPSHOT after CREATE"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o635"
 kind = "negative_neighbour"
 required = true
@@ -125714,12 +125679,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #3"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o639"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY after ."
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o474"
 kind = "negative_neighbour"
 required = true
@@ -125744,12 +125703,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #5"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o642"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after ."
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o477"
 kind = "negative_neighbour"
 required = true
@@ -125760,12 +125713,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o643"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #6"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o644"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #2"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o478"
@@ -125780,12 +125727,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #7"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o646"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #3"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o479"
 kind = "negative_neighbour"
 required = true
@@ -125796,12 +125737,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o647"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #8"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o648"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #4"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o480"
@@ -125832,12 +125767,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o651"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON after ALL #3"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o652"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after ON"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o653"
@@ -125892,12 +125821,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o658"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CREATE after REVOKE #5"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o659"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SERVICE after APPLICATION #2"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o660"
@@ -126050,12 +125973,6 @@ required = true
 note = "the form without its required POLICY after LIFECYCLE #3"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o685"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SNAPSHOT after CREATE #3"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o686"
 kind = "negative_neighbour"
 required = true
@@ -126066,12 +125983,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o687"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #9"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o688"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE after ."
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o689"
@@ -126086,12 +125997,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #10"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o691"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY after . #2"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o692"
 kind = "negative_neighbour"
 required = true
@@ -126102,12 +126007,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o693"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #11"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o694"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY after . #3"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o695"
@@ -126122,12 +126021,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #12"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o697"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #5"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o698"
 kind = "negative_neighbour"
 required = true
@@ -126138,12 +126031,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o699"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #13"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o700"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #6"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o701"
@@ -126158,12 +126045,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #14"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o703"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #7"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o704"
 kind = "negative_neighbour"
 required = true
@@ -126176,12 +126057,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #15"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o706"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #8"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o707"
 kind = "negative_neighbour"
 required = true
@@ -126192,12 +126067,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o708"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #16"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o709"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #9"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o710"
@@ -126216,18 +126085,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o487"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FEATURE in [ { DYNAMIC | EXTERNAL | HYBRID | ICEBERG | INTERACTIVE | ONLINE FEATURE } ] #2"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o712"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TABLE after CREATE #2"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o713"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required VIEW after CREATE"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o714"
@@ -126290,22 +126147,10 @@ required = true
 note = "the form without its required EVOLVE after REVOKE"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o722"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after EVOLVE"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o723"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SELECT after REVOKE"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o724"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ERROR after SELECT"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o725"
@@ -126368,22 +126213,10 @@ required = true
 note = "the form without its required EVOLVE after REVOKE #2"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o733"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after EVOLVE #2"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o734"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SELECT after REVOKE #2"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o735"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ERROR after SELECT #2"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o736"
@@ -126444,12 +126277,6 @@ id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o495"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FROM"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o743"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ROLE after DATABASE"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o496"
@@ -126779,6 +126606,251 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.revoke-privilege / Syntax"
 note = "the form without its required ML, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o748"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required EXTERNAL after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o749"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required NETWORK after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o750"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required GROUP after REPLICATION, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o751"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required POLICY after ATTACH, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o752"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ORGANIZATION after IMPORT, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o753"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required LISTING after ORGANIZATION, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o754"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required LISTING after EXCHANGE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o755"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required LISTING after ATTACH, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o756"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required DATABASE after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o757"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required EXTERNAL after ON, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o758"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SERVICE after APPLICATION, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o759"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SNAPSHOT after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o760"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required DATA_PRIVACY after ., observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o761"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after ., observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o762"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o763"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #3, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o764"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #4, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o765"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SCHEMA after ON, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o766"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SERVICE after APPLICATION #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o767"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SNAPSHOT after CREATE #3, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o768"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required CORE after ., observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o769"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required DATA_PRIVACY after . #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o770"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required DATA_PRIVACY after . #3, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o771"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #5, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o772"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #6, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o773"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #7, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o774"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #8, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o775"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #9, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o776"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required TABLE after CREATE #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o777"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required VIEW after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o778"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SCHEMA after EVOLVE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o779"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ERROR after SELECT, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o780"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SCHEMA after EVOLVE #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o781"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ERROR after SELECT #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.create-schema-modify-monitor.o782"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ROLE after DATABASE, observed"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o001"
@@ -129224,12 +129296,6 @@ required = true
 note = "the form without its required POOL"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o538"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL after CREATE"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o399"
 kind = "negative_neighbour"
 required = true
@@ -129246,12 +129312,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o400"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required GROUP"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o540"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required NETWORK after CREATE"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o401"
@@ -129276,12 +129336,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o542"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required REPLICATION after CREATE"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o543"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required GROUP after REPLICATION"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o544"
@@ -129378,18 +129432,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o552"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required IMPORT after REVOKE"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o553"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ORGANIZATION after IMPORT"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o554"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LISTING after ORGANIZATION"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o555"
@@ -129698,12 +129740,6 @@ required = true
 note = "the form without its required ATTACH after REVOKE #2"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o586"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LISTING after ATTACH"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o587"
 kind = "negative_neighbour"
 required = true
@@ -129720,12 +129756,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o589"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CREATE after REVOKE #2"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o590"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATABASE after CREATE"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o591"
@@ -129812,12 +129842,6 @@ required = true
 note = "the form without its required EXCHANGE after DATA"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o600"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LISTING after EXCHANGE #2"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o601"
 kind = "negative_neighbour"
 required = true
@@ -129840,12 +129864,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o604"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required GROUP after REPLICATION #2"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o605"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required EXTERNAL after ON"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o606"
@@ -129876,12 +129894,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o608"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CREATE after REVOKE #3"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o609"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SERVICE after APPLICATION"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o610"
@@ -130034,12 +130046,6 @@ required = true
 note = "the form without its required POLICY after LIFECYCLE #2"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o630"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SNAPSHOT after CREATE"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o631"
 kind = "negative_neighbour"
 required = true
@@ -130076,12 +130082,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #3"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o635"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY after ."
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o468"
 kind = "negative_neighbour"
 required = true
@@ -130106,12 +130106,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #5"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o638"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after ."
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o471"
 kind = "negative_neighbour"
 required = true
@@ -130122,12 +130116,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o639"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #6"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o640"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #2"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o472"
@@ -130142,12 +130130,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #7"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o642"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #3"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o473"
 kind = "negative_neighbour"
 required = true
@@ -130158,12 +130140,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o643"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #8"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o644"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #4"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o474"
@@ -130248,12 +130224,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o653"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CREATE after REVOKE #4"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o654"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SERVICE after APPLICATION #2"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o655"
@@ -130406,12 +130376,6 @@ required = true
 note = "the form without its required POLICY after LIFECYCLE #3"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o680"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SNAPSHOT after CREATE #3"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o681"
 kind = "negative_neighbour"
 required = true
@@ -130422,12 +130386,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o682"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #9"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o683"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CORE after ."
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o684"
@@ -130442,12 +130400,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #10"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o686"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY after . #2"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o687"
 kind = "negative_neighbour"
 required = true
@@ -130458,12 +130410,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o688"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #11"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o689"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required DATA_PRIVACY after . #3"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o690"
@@ -130478,12 +130424,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #12"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o692"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #5"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o693"
 kind = "negative_neighbour"
 required = true
@@ -130494,12 +130434,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o694"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #13"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o695"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #6"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o696"
@@ -130514,12 +130448,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #14"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o698"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #7"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o699"
 kind = "negative_neighbour"
 required = true
@@ -130532,12 +130460,6 @@ required = true
 note = "the form without its required SNOWFLAKE after CREATE #15"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o701"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #8"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o702"
 kind = "negative_neighbour"
 required = true
@@ -130548,12 +130470,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o703"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SNOWFLAKE after CREATE #16"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o704"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ML after . #9"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o705"
@@ -130572,18 +130488,6 @@ id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o482"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FEATURE in [ { DYNAMIC | EXTERNAL | HYBRID | ICEBERG | INTERACTIVE | ONLINE FEATURE } ] #2"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o707"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TABLE after CREATE #2"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o708"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required VIEW after CREATE"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o709"
@@ -130712,22 +130616,10 @@ required = true
 note = "the form without its required EVOLVE after REVOKE #2"
 
 [[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o726"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after EVOLVE"
-
-[[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o727"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SELECT after REVOKE #2"
-
-[[obligation]]
-id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o728"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ERROR after SELECT #2"
 
 [[obligation]]
 id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o729"
@@ -131094,6 +130986,216 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.revoke-privilege / Syntax"
 note = "the form without its required SPECIFICATIONS, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o739"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required EXTERNAL after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o740"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required NETWORK after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o741"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required GROUP after REPLICATION, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o742"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ORGANIZATION after IMPORT, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o743"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required LISTING after ORGANIZATION, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o744"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required LISTING after ATTACH, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o745"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required DATABASE after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o746"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required LISTING after EXCHANGE #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o747"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required EXTERNAL after ON, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o748"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SERVICE after APPLICATION, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o749"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SNAPSHOT after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o750"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required DATA_PRIVACY after ., observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o751"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after ., observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o752"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o753"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #3, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o754"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #4, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o755"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SERVICE after APPLICATION #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o756"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SNAPSHOT after CREATE #3, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o757"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required CORE after ., observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o758"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required DATA_PRIVACY after . #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o759"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required DATA_PRIVACY after . #3, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o760"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #5, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o761"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #6, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o762"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #7, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o763"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #8, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o764"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ML after . #9, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o765"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required TABLE after CREATE #2, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o766"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required VIEW after CREATE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o767"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required SCHEMA after EVOLVE, observed"
+
+[[obligation]]
+id = "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.o768"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.revoke-privilege / Syntax"
+note = "the form without its required ERROR after SELECT #2, observed"
 
 [[obligation]]
 id = "sf.security_admin.revoke-role.role.o001"
@@ -135660,12 +135762,6 @@ required = true
 note = "the form without its required TO"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o091"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required APPLICATION after TO"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o092"
 kind = "negative_neighbour"
 required = true
@@ -135678,18 +135774,6 @@ required = true
 note = "the form without its required ROLE after <class_name>"
 
 [[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o094"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ROLE after TO"
-
-[[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o095"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SHARE after TO"
-
-[[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o055"
 kind = "negative_neighbour"
 required = true
@@ -135700,12 +135784,6 @@ id = "sf.security_admin.show-grants.grants-to-application-application.o056"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required PACKAGE in [ IN APPLICATION PACKAGE <app_package_name> ]"
-
-[[obligation]]
-id = "sf.security_admin.show-grants.grants-to-application-application.o096"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required USER after TO"
 
 [[obligation]]
 id = "sf.security_admin.show-grants.grants-to-application-application.o057"
@@ -135960,6 +136038,34 @@ required = true
 target = "<app_package_name> in [ IN APPLICATION PACKAGE <app_package_name> ]"
 anchor = "doc.sql.show-grants / Syntax"
 note = "a valid identifier, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o099"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-grants / Syntax"
+note = "the form without its required APPLICATION after TO, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o100"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-grants / Syntax"
+note = "the form without its required ROLE after TO, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o101"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-grants / Syntax"
+note = "the form without its required SHARE after TO, observed"
+
+[[obligation]]
+id = "sf.security_admin.show-grants.grants-to-application-application.o102"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.show-grants / Syntax"
+note = "the form without its required USER after TO, observed"
 
 [[obligation]]
 id = "sf.security_admin.show-ingress-policies.o001"

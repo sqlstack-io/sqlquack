@@ -1113,13 +1113,6 @@ target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision>
 note = "omit <fractional_seconds_precision>"
 
 [[obligation]]
-id = "sf.expressions.data-types-datetime.interval.o113"
-kind = "negative_neighbour"
-required = true
-target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
-note = "a string literal in place of <fractional_seconds_precision>"
-
-[[obligation]]
 id = "sf.expressions.data-types-datetime.interval.o069"
 kind = "negative_neighbour"
 required = true
@@ -1281,6 +1274,14 @@ required = true
 target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
 anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
 note = "a valid fractional seconds precision inside CAST, observed"
+
+[[obligation]]
+id = "sf.expressions.data-types-datetime.interval.o114"
+kind = "negative_neighbour"
+required = true
+target = "<fractional_seconds_precision> in [ , ( <fractional_seconds_precision> ) ]"
+anchor = "doc.data-types-datetime / Data types / Interval data types / Representing interval values / Interval literals"
+note = "a string literal in place of <fractional_seconds_precision>, observed"
 
 [[obligation]]
 id = "sf.expressions.data-types-datetime.interval-yearmonthqualifier-daytimequalifier.o001"
@@ -4400,13 +4401,6 @@ target = "<input_table> in [ <input_table> [ [ AS ] <alias_1> ] , ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.expressions.functions-table.o037"
-kind = "negative_neighbour"
-required = true
-target = "<input_table> in [ <input_table> [ [ AS ] <alias_1> ] , ]"
-note = "a string literal in place of <input_table>"
-
-[[obligation]]
 id = "sf.expressions.functions-table.o006"
 kind = "option_present"
 required = true
@@ -4617,6 +4611,14 @@ required = true
 target = "<alias_2>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.expressions.functions-table.o040"
+kind = "negative_neighbour"
+required = true
+target = "<input_table> in [ <input_table> [ [ AS ] <alias_1> ] , ]"
+anchor = "doc.functions-table / Syntax"
+note = "a string literal in place of <input_table>, observed"
 
 [[obligation]]
 id = "sf.expressions.identifier-literal.o001"
