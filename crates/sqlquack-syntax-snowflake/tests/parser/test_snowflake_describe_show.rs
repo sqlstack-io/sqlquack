@@ -279,6 +279,36 @@ fn given_a_snowflake_show_when_parsing_then_the_tree_keeps_kind_container_and_op
             expected_value: json!("TO APPLICATION"),
         },
         ProjectionTestCase {
+            description: "delegated authorizations are the kind without their BY USER clause",
+            sql: "SHOW DELEGATED AUTHORIZATIONS BY USER \"u 1\"",
+            pointer: "/0/show/this",
+            expected_value: json!("DELEGATED AUTHORIZATIONS"),
+        },
+        ProjectionTestCase {
+            description: "a delegated authorization's BY USER is its scope kind",
+            sql: "SHOW DELEGATED AUTHORIZATIONS BY USER \"u 1\"",
+            pointer: "/0/show/scope_kind",
+            expected_value: json!("BY USER"),
+        },
+        ProjectionTestCase {
+            description: "the user after BY USER keeps its quoting",
+            sql: "SHOW DELEGATED AUTHORIZATIONS BY USER \"u 1\"",
+            pointer: "/0/show/scope/table/name/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a lone USER after BY is the user's name (recorded runtime error for BY v1)",
+            sql: "SHOW DELEGATED AUTHORIZATIONS BY USER",
+            pointer: "/0/show/scope_kind",
+            expected_value: json!("BY"),
+        },
+        ProjectionTestCase {
+            description: "a delegated authorization's TO SECURITY INTEGRATION is its scope kind",
+            sql: "SHOW DELEGATED AUTHORIZATIONS TO SECURITY INTEGRATION i1",
+            pointer: "/0/show/scope_kind",
+            expected_value: json!("TO SECURITY INTEGRATION"),
+        },
+        ProjectionTestCase {
             description: "a caller grant's bare ROLE is the owner's name",
             sql: "SHOW CALLER GRANTS TO ROLE ;",
             pointer: "/0/show/scope/table/name/name",
