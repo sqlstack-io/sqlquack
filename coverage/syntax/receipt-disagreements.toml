@@ -351,20 +351,6 @@ other_receipts_contradicted = [
   "k5c0f60c6cde2",
 ]
 "sf.ddl.alter-iceberg-table.unset" = ["ke33c9a12af90"]
-"sf.ddl.alter-openflow-connector.add-live-version-from" = [
-  "k290258939b1d",
-  "k69cb157e974f",
-  "k72baea7da96f",
-  "k8a8b4036de8b",
-  "kb846d6d3ac14",
-  "kbadd8861801f",
-  "kf1931ec69ad6",
-]
-"sf.ddl.alter-openflow-connector.add-version-from" = [
-  "k1d85bc226415",
-  "ka136e4a7e77e",
-  "ka1576fa3499d",
-]
 "sf.ddl.alter-openflow-connector.push-username-password-name" = [
   "k17cce82d6804",
   "k848f558ff405",
@@ -440,14 +426,6 @@ other_receipts_contradicted = [
   "kb2b289150635",
   "kbeab4331574d",
   "ke81a17d6f572",
-]
-"sf.ddl.create-external-agent" = [
-  "k4b7d5a793c6c",
-  "k6854f0d0eca1",
-  "k9647ccb9fa16",
-  "k9cb1a65657fa",
-  "kbc488403dcc0",
-  "ke5461079151e",
 ]
 "sf.ddl.create-file-format.create-file-format" = ["k157043357740"]
 "sf.ddl.create-file-format.create-or-alter-file" = ["k63c67a765cde"]
@@ -723,14 +701,6 @@ other_receipts_contradicted = [
 "sf.ddl.show-service-volumes-in-service" = ["k1a90530e5a33"]
 "sf.ddl.show-shared-content" = ["k651e594c686e"]
 "sf.ddl.show-snapshots-in-snapshot-set" = ["ke9163e3b7b28"]
-"sf.ddl.show-tasks" = [
-  "k82f2da75402a",
-  "k855d0dbd0f9c",
-  "k90c6cf27d683",
-  "k95271e5bb9f9",
-  "kb1f731d0cd16",
-  "kb2ba0e01ba68",
-]
 "sf.ddl.show-versions" = ["k4929e4763764"]
 "sf.ddl.show-versions-in-dataset" = [
   "k165cb3d799e8",
@@ -771,14 +741,6 @@ other_receipts_contradicted = [
   "kf3cbe549deb2",
 ]
 "sf.security_admin.create-organization-user" = ["kf135125eeecb"]
-"sf.security_admin.create-organization-user-group" = [
-  "k00f80439b95c",
-  "k024ff599bce5",
-  "k4318aab765b7",
-  "k763d7da994ef",
-  "k9e5c411214ac",
-  "kb041a193514d",
-]
 "sf.security_admin.create-replication-group.as-replica-of" = ["k28cad1926c65"]
 "sf.transaction_session.show-parameters" = [
   "k44dd24422f48",
