@@ -9061,6 +9061,20 @@ anchor = "doc.sql.execute-immediate / Syntax"
 note = "1,000 bind variables in USING; no documented bound"
 
 [[obligation]]
+id = "sf.utility.execute-immediate.immediate.o015"
+kind = "positive"
+required = true
+anchor = "doc.sql.execute-immediate / Syntax"
+note = "a source built with || from strings, observed"
+
+[[obligation]]
+id = "sf.utility.execute-immediate.immediate.o016"
+kind = "positive"
+required = true
+anchor = "doc.sql.execute-immediate / Syntax"
+note = "a bound variable as the source, observed"
+
+[[obligation]]
 id = "sf.utility.execute-immediate.immediate-2.o001"
 kind = "positive"
 required = true

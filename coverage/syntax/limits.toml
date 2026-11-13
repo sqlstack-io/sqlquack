@@ -84823,3 +84823,102 @@ anchor = "doc.sql.alter-event-routing-table / Syntax"
 sql = "ALTER EVENT ROUTING TABLE v1 SET RULE v1 = ( REGION_GROUP = 'g1' , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
 expect = "observe"
 context = "raw"
+
+# PR J probes: EXECUTE IMMEDIATE in a parenthesised RESULTSET assignment, notebooks named project,
+# event table CONTACT without WITH, and SHOW SERVICES OF TYPE placement.
+
+[[limit]]
+form = "sf.scripting.let.let-resultset-default"
+kind = "positive"
+note = "RESULTSET := ( EXECUTE IMMEDIATE :q ), a bound query in parentheses"
+anchor = "doc.snowflake-scripting.let / Syntax / RESULTSET assignment syntax"
+sql = "LET r1 RESULTSET := ( EXECUTE IMMEDIATE :q1 ) ;"
+expect = "observe"
+
+[[limit]]
+form = "sf.scripting.let.let-resultset-default"
+kind = "positive"
+note = "RESULTSET := ( EXECUTE IMMEDIATE :q USING ( ... ) ), as the EXECUTE IMMEDIATE page shows"
+anchor = "doc.snowflake-scripting.let / Syntax / RESULTSET assignment syntax"
+sql = "LET r1 RESULTSET := ( EXECUTE IMMEDIATE :q1 USING ( v1 ) ) ;"
+expect = "observe"
+
+[[limit]]
+form = "sf.utility.execute-immediate.immediate"
+kind = "positive"
+note = "a source built with || from strings, observed"
+anchor = "doc.sql.execute-immediate / Syntax"
+sql = "EXECUTE IMMEDIATE 'SELECT ' || '1' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.utility.execute-immediate.immediate"
+kind = "positive"
+note = "a bound variable as the source, observed"
+anchor = "doc.sql.execute-immediate / Syntax"
+sql = "EXECUTE IMMEDIATE :q1 ;"
+expect = "observe"
+
+[[limit]]
+form = "sf.ddl.create-notebook"
+kind = "positive"
+note = "a notebook named project, from a stage location string"
+anchor = "doc.sql.create-notebook / Syntax"
+sql = "CREATE NOTEBOOK project FROM '@d1.s1.st1' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-notebook"
+kind = "positive"
+note = "a notebook named project, without FROM"
+anchor = "doc.sql.create-notebook / Syntax"
+sql = "CREATE NOTEBOOK project ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-notebook"
+kind = "negative_neighbour"
+note = "FROM an unquoted stage path in place of '<source_location>'"
+anchor = "doc.sql.create-notebook / Syntax"
+sql = "CREATE NOTEBOOK v1 FROM @s1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.create-event-table.table"
+kind = "negative_neighbour"
+note = "CONTACT without WITH on an event table, observed"
+anchor = "doc.sql.create-event-table / Syntax"
+sql = "CREATE EVENT TABLE v1 CONTACT ( STEWARD = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.show-services"
+kind = "positive"
+note = "OF TYPE after IN COMPUTE POOL"
+anchor = "doc.sql.show-services / Syntax"
+sql = "SHOW SERVICES IN COMPUTE POOL v1 OF TYPE USER ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.show-services"
+kind = "positive"
+note = "OF TYPE with a list of types"
+anchor = "doc.sql.show-services / Syntax"
+sql = "SHOW SERVICES OF TYPE USER , JOB ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.show-services"
+kind = "negative_neighbour"
+note = "OF TYPE before LIMIT, observed"
+anchor = "doc.sql.show-services / Syntax"
+sql = "SHOW SERVICES OF TYPE USER LIMIT 1 ;"
+expect = "observe"
+context = "raw"

@@ -3574,6 +3574,20 @@ anchor = "doc.snowflake-scripting.let / Note"
 note = "at top level, outside any Snowflake Scripting block"
 
 [[obligation]]
+id = "sf.scripting.let.let-resultset-default.o020"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.let / Syntax / RESULTSET assignment syntax"
+note = "RESULTSET := ( EXECUTE IMMEDIATE :q ), a bound query in parentheses"
+
+[[obligation]]
+id = "sf.scripting.let.let-resultset-default.o021"
+kind = "positive"
+required = true
+anchor = "doc.snowflake-scripting.let / Syntax / RESULTSET assignment syntax"
+note = "RESULTSET := ( EXECUTE IMMEDIATE :q USING ( ... ) ), as the EXECUTE IMMEDIATE page shows"
+
+[[obligation]]
 id = "sf.scripting.loop.o001"
 kind = "positive"
 required = true
