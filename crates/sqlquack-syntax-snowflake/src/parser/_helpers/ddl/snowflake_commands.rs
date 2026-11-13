@@ -19,10 +19,10 @@ use sqlquack_syntax::tokens::types::Result;
 use sqlquack_syntax::traversal::types::ExpressionWalk;
 
 impl Parser {
-    /// In Snowflake, refuse an EXECUTE IMMEDIATE, read after EXECUTE, that is neither `IMMEDIATE <source> [ USING ( <variable> [ , ... ] ) ]` nor `IMMEDIATE FROM <location> [ USING ( <name> => <value> [ , ... ] ) ] [ DRY_RUN = { TRUE | FALSE } ]`; the cursor ends where it started.
-    pub(crate) fn check_execute_immediate(&mut self) -> Result<()> {
+    /// In Snowflake, refuse an EXECUTE IMMEDIATE, read after EXECUTE, that is neither `IMMEDIATE <source> [ USING ( <variable> [ , ... ] ) ]` nor `IMMEDIATE FROM <location> [ USING ( <name> => <value> [ , ... ] ) ] [ DRY_RUN = { TRUE | FALSE } ]`, and return the index of the token that ends it, a `)` closing an enclosing assignment included; the cursor ends where it started.
+    pub(crate) fn check_execute_immediate(&mut self) -> Result<Option<usize>> {
         if !self.applies_snowflake_context_rules() {
-            return Ok(());
+            return Ok(None);
         }
         let start = self.current;
         let checked = self.check_execute_immediate_parts();
@@ -53,7 +53,7 @@ impl Parser {
         Err(self.parse_error("Expected the statement to execute"))
     }
 
-    fn check_execute_immediate_parts(&mut self) -> Result<()> {
+    fn check_execute_immediate_parts(&mut self) -> Result<Option<usize>> {
         self.skip();
         let from = self.match_token(TokenType::From);
         if from {
@@ -87,8 +87,8 @@ impl Parser {
                 return Err(self.parse_error("Expected TRUE or FALSE"));
             }
         }
-        match self.is_statement_end_at(0) {
-            true => Ok(()),
+        match self.is_statement_end_at(0) || self.check(TokenType::RParen) {
+            true => Ok(Some(self.current)),
             false => Err(self.parse_error("Expected the end of EXECUTE IMMEDIATE")),
         }
     }
