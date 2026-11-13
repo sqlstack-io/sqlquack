@@ -64,7 +64,6 @@ impl Parser {
         if self.match_text_seq(&["SNAPSHOT", "SET"]) {
             return self.parse_alter_snapshot_set().map(Some);
         }
-        // `ALTER SNAPSHOT POLICY SET COMMENT = ...` alters a snapshot named POLICY (recorded errno 2003).
         let policy_named = self.tokens.get(self.current + 2).is_some_and(|token| {
             token.token_type != TokenType::QuotedIdentifier
                 && token.text.eq_ignore_ascii_case("SET")

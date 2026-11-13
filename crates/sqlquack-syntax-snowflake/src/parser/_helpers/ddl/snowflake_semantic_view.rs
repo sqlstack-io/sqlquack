@@ -105,8 +105,8 @@ impl Parser {
         }
         if self.match_text_seq(&["MAX_STALENESS"]) {
             self.expect_token(TokenType::Eq)?;
-            if !self.check(TokenType::Number) && !self.check(TokenType::String) {
-                return Err(self.parse_error("Expected a number after MAX_STALENESS ="));
+            if !self.check(TokenType::String) {
+                return Err(self.parse_error("Expected a string after MAX_STALENESS ="));
             }
             return Ok(property("MAX_STALENESS", None, Some(self.parse_primary()?)));
         }

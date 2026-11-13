@@ -73,7 +73,7 @@ impl Parser {
             return Ok(Some(Expression::Show(Box::new(show))));
         }
         if let Some(clause) = kind.strip_prefix("DELEGATED AUTHORIZATIONS ") {
-            let clause = if clause == "BY USER" && self.is_statement_end_at(0) {
+            let clause = if matches!(clause, "BY USER") && self.is_statement_end_at(0) {
                 self.current -= 1;
                 "BY"
             } else {

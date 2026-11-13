@@ -1338,6 +1338,26 @@ fn given_snowflake_numeric_operands_given_a_string_when_parsing_then_recorded_ve
             sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) MAX_STALENESS = 'x' ;",
             expected_kind: Some("create_object"),
         },
+        SnowflakeVerdictTestCase {
+            description: "a semantic view refuses a number as MAX_STALENESS (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) MAX_STALENESS = 1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive warehouse needs a name (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE WAREHOUSE ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive warehouse takes IF NOT EXISTS, not IF EXISTS (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE WAREHOUSE IF EXISTS v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an interactive warehouse takes no bare list after its name (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE WAREHOUSE v1 ( v1 = 'm' ) ;",
+            expected_kind: None,
+        },
     ];
     for test_case in test_cases {
         assert_eq!(
@@ -1350,19 +1370,15 @@ fn given_snowflake_numeric_operands_given_a_string_when_parsing_then_recorded_ve
 }
 
 #[test]
-fn given_a_snowflake_semantic_view_max_staleness_when_parsing_then_it_is_kept() {
-    assert_eq!(
-        statement_at(
-            "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) MAX_STALENESS = 120 COMMENT = 'm' ;",
-            "/0/create_object/properties/1"
-        )["kind"],
-        json!("MAX_STALENESS")
-    );
-}
-
-#[test]
-fn given_snowflake_routine_modifiers_or_a_snapshot_named_policy_when_parsing_then_they_are_kept() {
+fn given_snowflake_routine_modifiers_staleness_or_a_snapshot_named_policy_when_parsing_then_they_are_kept(
+) {
     let test_cases = [
+        StatementTestCase {
+            description: "a semantic view keeps MAX_STALENESS as a property",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) MAX_STALENESS = '1 hour' COMMENT = 'm' ;",
+            pointer: "/0/create_object/properties/1/kind",
+            expected_value: json!("MAX_STALENESS"),
+        },
         StatementTestCase {
             description: "a function keeps SECURE",
             sql: "CREATE SECURE EXTERNAL FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = v1 AS 'm' ;",
