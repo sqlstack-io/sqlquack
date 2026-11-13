@@ -1526,6 +1526,7 @@
 {"case_id":"sf.ddl.create-event-table.table.kbcd8dd0ec68a","mark":"settled accept","obligations":["sf.ddl.create-event-table.table.o115"],"sql_sha256":"bcd8dd0ec68a85d138b00f3370a2a1f05f1149bbb89a492181df2830da51b849"}
 {"case_id":"sf.ddl.create-event-table.table.kbeab4331574d","mark":"documented","obligations":["sf.ddl.create-event-table.table.o193"],"sql_sha256":"beab4331574d9af613eb80bd7350d552bedf5518ccf0cd3791c2dd109242e5ed"}
 {"case_id":"sf.ddl.create-event-table.table.kd827debb9f77","mark":"settled accept","obligations":["sf.ddl.create-event-table.table.o042"],"sql_sha256":"d827debb9f77e371aba5e99d613ce61a0ebb562b497eaad113baa4b6f9092d4e"}
+{"case_id":"sf.ddl.create-event-table.table.ke78f8f5c1856","mark":"settled reject","obligations":["sf.ddl.create-event-table.table.o195"],"sql_sha256":"e78f8f5c1856acf89638b92f72ac4f2e0530997c2a3e2667c48f0accf8997374"}
 {"case_id":"sf.ddl.create-event-table.table.ke81a17d6f572","mark":"documented","obligations":["sf.ddl.create-event-table.table.o192"],"sql_sha256":"e81a17d6f5729692cfc39331059d9ecfe7c1e58503400b08b1cd8f34d5712987"}
 {"case_id":"sf.ddl.create-external-agent.k6854f0d0eca1","mark":"documented","obligations":["sf.ddl.create-external-agent.o045"],"sql_sha256":"6854f0d0eca15eaf80c4e144c6fc92dabfe1eba5d8249d8796398826e622d545"}
 {"case_id":"sf.ddl.create-external-agent.k9cb1a65657fa","mark":"settled reject","obligations":["sf.ddl.create-external-agent.o018"],"sql_sha256":"9cb1a65657fab5acd12f3763551d97afc81f3ac56182a503ca316b1de4f4bd1e"}
@@ -2121,10 +2122,13 @@
 {"case_id":"sf.ddl.create-notebook-project.from.syntax.k8658fac18973","mark":"settled accept","obligations":["sf.ddl.create-notebook-project.from.syntax.o031"],"sql_sha256":"8658fac189739eb35bb522921fb9d36e5a2c7602a10c2c3181013d2f6b051157"}
 {"case_id":"sf.ddl.create-notebook-project.from.syntax.kacf90435b87a","mark":"settled accept","obligations":["sf.ddl.create-notebook-project.from.syntax.o017"],"sql_sha256":"acf90435b87a726816fdd3b167a19f738ff1bced092654fec587358817aef124"}
 {"case_id":"sf.ddl.create-notebook-project.from.syntax.kee7525779465","mark":"settled accept","obligations":["sf.ddl.create-notebook-project.from.syntax.o032"],"sql_sha256":"ee752577946543fa081fc85cdbd36544b5de160888a759a887623b4322092ac3"}
+{"case_id":"sf.ddl.create-notebook.k29ba034d4e41","mark":"settled accept","obligations":["sf.ddl.create-notebook.o061"],"sql_sha256":"29ba034d4e41c9ce9b4a4ffee6cc25f3f7199c24f0be2f995bf4ca3f874c3efc"}
 {"case_id":"sf.ddl.create-notebook.k3b06983d8b60","mark":"settled accept","obligations":["sf.ddl.create-notebook.o059"],"sql_sha256":"3b06983d8b60c90eb2317b9ee4093472ea83bb2d8badca4543cf1845f4b3b4ae"}
 {"case_id":"sf.ddl.create-notebook.k46bcc90bdad6","mark":"settled accept","obligations":["sf.ddl.create-notebook.o054"],"sql_sha256":"46bcc90bdad6f7fe5eaa4cf8f66b8a85b8904cd03b1a8e4d8f13dbd158cd35a9"}
 {"case_id":"sf.ddl.create-notebook.k677b4f657abe","mark":"settled accept","obligations":["sf.ddl.create-notebook.o042"],"sql_sha256":"677b4f657abef7a7f985cb55f7b8151cc5d473750b55fbaf21a9fae41cf36784"}
 {"case_id":"sf.ddl.create-notebook.k84e1e6adbca3","mark":"settled accept","obligations":["sf.ddl.create-notebook.o018"],"sql_sha256":"84e1e6adbca38cffb14600a4f56f65ad5a19cc81c925fb6d3e2307e4cc19289d"}
+{"case_id":"sf.ddl.create-notebook.k959cea8a8c07","mark":"settled accept","obligations":["sf.ddl.create-notebook.o062"],"sql_sha256":"959cea8a8c07d5cf24769a48a334df31188b3904ba8f8899428378d03c934dc1"}
+{"case_id":"sf.ddl.create-notebook.k967415cf39d9","mark":"settled accept","obligations":["sf.ddl.create-notebook.o060"],"sql_sha256":"967415cf39d96a4d87f3f3c2a56192675cbc7a8702d91d69989132762317e1b6"}
 {"case_id":"sf.ddl.create-notebook.kc4367bfc5806","mark":"settled accept","obligations":["sf.ddl.create-notebook.o037"],"sql_sha256":"c4367bfc580619aad3f725c782f79c11b6e59e9931b8f1c17822c4ae6a059ad1"}
 {"case_id":"sf.ddl.create-notebook.ke9527c2872ef","mark":"settled accept","obligations":["sf.ddl.create-notebook.o032"],"sql_sha256":"e9527c2872efa48f247189caf5dd8dd4d10c395fe6a6134aa6ee622792931da4"}
 {"case_id":"sf.ddl.create-notebook.kf71b1b4702de","mark":"settled reject","obligations":["sf.ddl.create-notebook.o013"],"sql_sha256":"f71b1b4702de64447441cd5f40fb62dcca833a85abb6473ba247c88ca16a8d4e"}
@@ -3424,10 +3428,13 @@
 {"case_id":"sf.ddl.show-sequences.k03b465f19229","mark":"settled accept","obligations":["sf.ddl.show-sequences.o054"],"sql_sha256":"03b465f19229195d5e450be6dae73aa96a7d4d258f6c7c8bfb269cf771b027db"}
 {"case_id":"sf.ddl.show-sequences.ka48847641a88","mark":"settled reject","obligations":["sf.ddl.show-sequences.o006"],"sql_sha256":"a48847641a88ad4b4240ff99a981e7c1f638ded16ded857e1387850c3e634192"}
 {"case_id":"sf.ddl.show-service-volumes-in-service.k1a90530e5a33","mark":"settled accept","obligations":["sf.ddl.show-service-volumes-in-service.o010"],"sql_sha256":"1a90530e5a335001804303d54459d983cb3939cded1925eba3455b83c30aaaa6"}
+{"case_id":"sf.ddl.show-services.k01db831ab566","mark":"settled accept","obligations":["sf.ddl.show-services.o070"],"sql_sha256":"01db831ab566c8f919c82bde795c39bb7a922e466bf3a6f05563149b8ef80d65"}
 {"case_id":"sf.ddl.show-services.k2b2a51e6a1b2","mark":"documented","obligations":["sf.ddl.show-services.o063"],"sql_sha256":"2b2a51e6a1b29c43ddecbdbe1fab4c48a3d2bba7c30898230592cee98b1b24e8"}
+{"case_id":"sf.ddl.show-services.k5a4f57168e89","mark":"settled reject","obligations":["sf.ddl.show-services.o069"],"sql_sha256":"5a4f57168e8984cd6e1a19288172082bd4aeadbbbd6fb40fe499c23fe214a2ff"}
 {"case_id":"sf.ddl.show-services.k9840ef6666b1","mark":"settled reject","obligations":["sf.ddl.show-services.o010"],"sql_sha256":"9840ef6666b1002df65bd2742fe890e382c66b0e3a236563c63738abe57afaa4"}
 {"case_id":"sf.ddl.show-services.kbce8ef49cc6c","mark":"settled reject","obligations":["sf.ddl.show-services.o042"],"sql_sha256":"bce8ef49cc6c705c28b0e1c3faa3f38365aab8fe79d913709321d9a0168e093e"}
 {"case_id":"sf.ddl.show-services.kc00e9638a197","mark":"documented","obligations":["sf.ddl.show-services.o064"],"sql_sha256":"c00e9638a19730171e0d97b40fb41fb7e68af0f6562ecb4c9f448eb05d2f367e"}
+{"case_id":"sf.ddl.show-services.kc51e4f2199da","mark":"settled accept","obligations":["sf.ddl.show-services.o071"],"sql_sha256":"c51e4f2199da871f15c246985412d7c389b807af2b9435c78b0cd63a05e17271"}
 {"case_id":"sf.ddl.show-services.kcdd9d23758af","mark":"settled reject","obligations":["sf.ddl.show-services.o033"],"sql_sha256":"cdd9d23758af87e55c9fc55a6c2831dcc865bd90405721a36304afd1de899f18"}
 {"case_id":"sf.ddl.show-services.kda3120334b6f","mark":"documented","obligations":["sf.ddl.show-services.o065"],"sql_sha256":"da3120334b6ffe4f96985d8cc828520f634bbe864a4df0105bc358a1c1d9ded6"}
 {"case_id":"sf.ddl.show-services.kf604c05f9bab","mark":"documented","obligations":["sf.ddl.show-services.o066"],"sql_sha256":"f604c05f9bab7b0ca41581d5345af98ed3fe0680c61f98e6f2cb42e6a1186cc6"}
