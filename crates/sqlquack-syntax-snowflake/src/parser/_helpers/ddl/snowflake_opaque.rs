@@ -32,16 +32,23 @@ impl Parser {
         checked
     }
 
-    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, a snapshot's service volume, and AS COPY for a pipe's body; the cursor stays after the name.
+    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, a snapshot's service volume, an external agent's version, AS COPY for a pipe's body, and an Openflow connector's added version; the cursor stays after the name.
     fn check_opaque_shape(&mut self, create: bool, kind_at: usize) -> Result<()> {
-        if !create {
-            return Ok(());
-        }
         let after_name = self.current;
         let kind = self.tokens[kind_at].text.to_ascii_uppercase();
         let second = self.tokens[kind_at + 1].text.to_ascii_uppercase();
+        if !create {
+            let connector = matches!((kind.as_str(), second.as_str()), ("OPENFLOW", "CONNECTOR"));
+            let checked = match connector && self.check_text_seq(&["ADD"]) {
+                true => self.check_connector_version(),
+                false => Ok(()),
+            };
+            self.current = after_name;
+            return checked;
+        }
         let project = matches!(second.as_str(), "PROJECT");
         let checked = match kind.as_str() {
+            "EXTERNAL" if matches!(second.as_str(), "AGENT") => self.check_external_agent_tail(),
             "SNAPSHOT" if !matches!(second.as_str(), "SET" | "POLICY") => {
                 self.check_snapshot_source()
             }
@@ -72,6 +79,39 @@ impl Parser {
         match self.check(TokenType::LParen) {
             true => Err(self.parse_error("Expected an option")),
             false => Ok(()),
+        }
+    }
+
+    /// `ADD VERSION FROM '<location>'` or `ADD LIVE VERSION FROM LAST` after an Openflow connector's name.
+    fn check_connector_version(&mut self) -> Result<()> {
+        self.skip();
+        let live = self.match_text_seq(&["LIVE"]);
+        if !self.match_text_seq(&["VERSION", "FROM"]) {
+            return Err(self.parse_error("Expected VERSION FROM"));
+        }
+        let source = match live {
+            true => self.match_text_seq(&["LAST"]),
+            false => self.match_token(TokenType::String),
+        };
+        match source {
+            true => Ok(()),
+            false => {
+                Err(self.parse_error("Expected LAST for a live version, or a location string"))
+            }
+        }
+    }
+
+    /// An external agent's `[ WITH VERSION <name> ]`, the only clause after its name.
+    fn check_external_agent_tail(&mut self) -> Result<()> {
+        if self.match_token(TokenType::With) {
+            if !self.match_text_seq(&["VERSION"]) {
+                return Err(self.parse_error("Expected VERSION after WITH"));
+            }
+            self.parse_object_name()?;
+        }
+        match self.is_statement_end_at(0) {
+            true => Ok(()),
+            false => Err(self.parse_error("Expected the end of the external agent")),
         }
     }
 

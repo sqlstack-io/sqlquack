@@ -106,24 +106,8 @@ impl Parser {
             show.scope_kind = container;
             show.scope = name;
         }
-        let mut show = self.parse_show_follow_up(&kind, show)?;
-        if self.match_identifier("STARTS") {
-            self.expect_token(TokenType::With)?;
-            show.starts_with = Some(self.parse_show_string("STARTS WITH")?);
-        }
-        if self.match_token(TokenType::Limit) {
-            if !self.check(TokenType::Number) {
-                return Err(self.parse_error("Expected a row count after LIMIT"));
-            }
-            show.limit = Some(Box::new(Limit {
-                this: self.parse_primary()?,
-                percent: false,
-                comments: Vec::new(),
-            }));
-            if self.match_token(TokenType::From) {
-                show.from = Some(self.parse_show_string("FROM")?);
-            }
-        }
+        let show = self.parse_show_follow_up(&kind, show)?;
+        let mut show = self.parse_show_starts_and_limit(&kind, show)?;
         if self.match_token(TokenType::With) {
             show = self.parse_show_with(&kind, show)?;
         }
@@ -157,6 +141,31 @@ impl Parser {
             }
             let service_type = self.advance_text()?.to_ascii_uppercase();
             show.this = format!("{} OF TYPE {service_type}", show.this);
+        }
+        Ok(show)
+    }
+
+    /// `[ STARTS WITH '<prefix>' ]`, then ROOT ONLY for tasks, then `[ LIMIT <rows> [ FROM '<name>' ] ]`.
+    fn parse_show_starts_and_limit(&mut self, kind: &str, mut show: Show) -> Result<Show> {
+        if self.match_identifier("STARTS") {
+            self.expect_token(TokenType::With)?;
+            show.starts_with = Some(self.parse_show_string("STARTS WITH")?);
+        }
+        if matches!(kind, "TASKS") && self.match_text_seq(&["ROOT", "ONLY"]) {
+            show.this.push_str(" ROOT ONLY");
+        }
+        if self.match_token(TokenType::Limit) {
+            if !self.check(TokenType::Number) {
+                return Err(self.parse_error("Expected a row count after LIMIT"));
+            }
+            show.limit = Some(Box::new(Limit {
+                this: self.parse_primary()?,
+                percent: false,
+                comments: Vec::new(),
+            }));
+            if self.match_token(TokenType::From) {
+                show.from = Some(self.parse_show_string("FROM")?);
+            }
         }
         Ok(show)
     }

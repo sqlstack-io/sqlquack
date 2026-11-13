@@ -737,7 +737,11 @@ impl Parser {
         } else if self.check_identifier("ICEBERG") {
             self.skip();
             Some("ICEBERG".to_string())
-        } else if self.check_identifier("EXTERNAL") {
+        } else if self.check_identifier("EXTERNAL")
+            && (!self.is_snowflake()
+                || self.check_next(TokenType::Table)
+                || self.check_next(TokenType::Function))
+        {
             self.skip();
             Some("EXTERNAL".to_string())
         } else if self.check_identifier("HYBRID") {
