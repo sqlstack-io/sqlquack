@@ -366,6 +366,15 @@ impl Parser {
             ("DATASET", "DROP VERSION") | (_, "REMOVE STORAGE_LOCATION") => {
                 (vec![self.parse_string_value()?], vec![])
             }
+            ("AGENT", "MODIFY LIVE VERSION SET") => {
+                self.expect_alter_words(&[&["SPECIFICATION"]])?;
+                self.expect_token(TokenType::Eq)?;
+                let specification = self.parse_string_value()?;
+                (
+                    vec![],
+                    vec![property("SPECIFICATION", None, Some(specification))],
+                )
+            }
             ("AGENT", "SET") if !self.check_identifier("TAG") => {
                 (vec![], vec![self.parse_literal_property()?])
             }
