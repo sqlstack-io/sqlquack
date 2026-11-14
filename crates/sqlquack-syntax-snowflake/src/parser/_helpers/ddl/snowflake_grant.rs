@@ -88,9 +88,10 @@ impl Parser {
                 let mut privileges = vec![first];
                 while self.match_token(TokenType::Comma) {
                     let (next, own) = self.parse_snowflake_privilege()?;
-                    if own.is_some() && own != qualifier {
-                        return Err(self
-                            .parse_error("INHERITED and CALLER qualify the whole privilege list"));
+                    if own.is_some() {
+                        return Err(self.parse_error(
+                            "INHERITED and CALLER come once, before the privilege list",
+                        ));
                     }
                     privileges.push(next);
                 }

@@ -1425,6 +1425,7 @@ impl Parser {
                         .span
                         .zip(part.span)
                         .map(|(start, end)| start.through(end)),
+                    omitted: false,
                 };
             }
             self.expect_token(TokenType::Eq)?;

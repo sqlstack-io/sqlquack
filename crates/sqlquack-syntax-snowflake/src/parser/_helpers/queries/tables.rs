@@ -251,6 +251,7 @@ impl Parser {
                     quoted: false,
                     trailing_comments: Vec::new(),
                     span: None,
+                    omitted: false,
                 }));
             }
         } else if self.check(TokenType::Not) && self.check_next_identifier("INDEXED") {
@@ -262,6 +263,7 @@ impl Parser {
                     quoted: false,
                     trailing_comments: Vec::new(),
                     span: None,
+                    omitted: false,
                 }));
             }
         }
@@ -285,6 +287,7 @@ impl Parser {
                     quoted: false,
                     trailing_comments: Vec::new(),
                     span: None,
+                    omitted: false,
                 }));
             }
         }
@@ -1534,7 +1537,7 @@ impl Parser {
                 Ok(TableRef {
                     sample_call: None,
                     catalog: Some(first),
-                    schema: Some(Identifier::new("")),
+                    schema: Some(Identifier::omitted()),
                     name: table,
                     alias: None,
                     alias_explicit_as: false,

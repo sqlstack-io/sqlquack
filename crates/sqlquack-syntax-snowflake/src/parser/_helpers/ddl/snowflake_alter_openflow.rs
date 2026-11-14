@@ -54,7 +54,7 @@ const RUNTIME_ACTIONS: &[&[&str]] = &[
     &["UPGRADE"],
 ];
 
-/// The optional word after an action without operands, by the kinds it applies to.
+/// The optional word after an action without operands, by the kinds it applies to; it is kept as a property.
 const ACTION_SUFFIXES: &[(&[&str], &str, &[&str])] = &[
     (&["OPENFLOW CONNECTOR"], "TERMINATE", &["FORCE"]),
     (&["OPENFLOW RUNTIME"], "TERMINATE", &["CASCADE"]),
@@ -123,11 +123,10 @@ impl Parser {
                     .iter()
                     .find(|(kinds, name, _)| *name == action && kinds.contains(&kind.as_str()))
                     .map_or(&[][..], |(_, _, words)| *words);
-                if let Some(word) = suffix.iter().find(|word| self.match_text_seq(&[word])) {
-                    action.push(' ');
-                    action.push_str(word);
+                match suffix.iter().find(|word| self.match_text_seq(&[word])) {
+                    Some(word) => (vec![], vec![property(word, None, None)]),
+                    None => (vec![], vec![]),
                 }
-                (vec![], vec![])
             }
         };
         Ok(Some(alter_object(&kind, head, action, parts)))

@@ -30906,6 +30906,23 @@ context = "raw"
 
 [[suppress]]
 form = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate"
+kind = "identifier_class"
+target = "<stage>"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+reason = "[undocumented outcome]: the page documents FROM @<stage> but not a double-quoted stage name with blanks, and Snowflake rejects this one as a syntax error (errno 1003 SQLSTATE 42000, import-20261113-36) while it parses a double-quoted name without blanks; observed, undocumented, so it settles from its receipts"
+
+[[limit]]
+form = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate"
+kind = "identifier_class"
+target = "<stage>"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
+anchor = "doc.sql.alter-service / Syntax"
+sql = "ALTER SERVICE v1 FROM @\"v1 Q\" SPECIFICATION_FILE = 'm' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate"
 kind = "required_operand_missing"
 target = "<stage>"
 note = "omit <stage>"

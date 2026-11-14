@@ -772,7 +772,7 @@ impl Parser {
                 return Ok(Expression::boxed_table(TableRef {
                     sample_call: None,
                     catalog: Some(first_ident),
-                    schema: Some(Identifier::new("")),
+                    schema: Some(Identifier::omitted()),
                     name: table_ident,
                     alias: None,
                     alias_explicit_as: false,
@@ -1738,6 +1738,7 @@ impl Parser {
                 quoted: true,
                 trailing_comments: Vec::new(),
                 span: Some(string_token.span),
+                omitted: false,
             };
             let trailing_comments = self.previous_trailing_comments().to_vec();
             Expression::boxed_table(TableRef {

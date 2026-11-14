@@ -486,6 +486,7 @@ impl Parser {
             quoted: true,
             trailing_comments: Vec::new(),
             span: Some(start.through(self.previous().span)),
+            omitted: false,
         })
     }
 
@@ -607,6 +608,7 @@ impl Parser {
                 quoted: false,
                 trailing_comments: Vec::new(),
                 span: Some(token.span),
+                omitted: false,
             });
         }
         if self.is_identifier_or_keyword_token() {
@@ -1078,6 +1080,7 @@ impl Parser {
                 quoted,
                 trailing_comments,
                 span: Some(start.through(self.previous().span)),
+                omitted: false,
             });
 
             if !self.match_token(TokenType::Comma) {
@@ -1110,6 +1113,7 @@ impl Parser {
                 quoted: final_quoted,
                 trailing_comments,
                 span: Some(start.through(self.previous().span)),
+                omitted: false,
             });
 
             if !self.match_token(TokenType::Comma) {
@@ -1138,6 +1142,7 @@ impl Parser {
                 quoted,
                 trailing_comments,
                 span: Some(start.through(self.previous().span)),
+                omitted: false,
             };
             let prefix_length = if self.match_token(TokenType::LParen) {
                 if !self.check(TokenType::Number) {
@@ -1193,6 +1198,7 @@ impl Parser {
                     quoted,
                     trailing_comments,
                     span: Some(start.through(self.previous().span)),
+                    omitted: false,
                 };
                 let prefix_length = if self.match_token(TokenType::LParen) {
                     if !self.check(TokenType::Number) {

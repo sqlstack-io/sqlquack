@@ -1197,10 +1197,88 @@ fn given_a_snowflake_quoted_contact_purpose_or_set_variable_when_parsing_then_th
 ) {
     let test_cases = [
         StatementTestCase {
-            description: "a quoted contact purpose keeps its quotes",
+            description: "a string contact purpose keeps its text",
             sql: "ALTER TABLE v1 SET CONTACT 'v1' = v1 ;",
             pointer: "/0/alter_object/properties/0/name/name",
-            expected_value: json!("'v1'"),
+            expected_value: json!("v1"),
+        },
+        StatementTestCase {
+            description: "a string contact purpose is marked as a string",
+            sql: "ALTER TABLE v1 SET CONTACT 'v1' = v1 ;",
+            pointer: "/0/alter_object/properties/0/string_name",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a string contact purpose keeps its span",
+            sql: "ALTER TABLE v1 SET CONTACT 'v1' = v1 ;",
+            pointer: "/0/alter_object/properties/0/name/span/start",
+            expected_value: json!(27),
+        },
+        StatementTestCase {
+            description: "an identifier contact purpose is not marked as a string",
+            sql: "ALTER TABLE v1 SET CONTACT v1 = v1 ;",
+            pointer: "/0/alter_object/properties/0/string_name",
+            expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "a quoted UNSET parameter keeps its quoting",
+            sql: "ALTER WAREHOUSE v1 UNSET \"SELECT\" ;",
+            pointer: "/0/alter_object/properties/0/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "an unquoted UNSET parameter is not quoted",
+            sql: "ALTER WAREHOUSE v1 UNSET COMMENT ;",
+            pointer: "/0/alter_object/properties/0/quoted",
+            expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "an optional WITH before TAG stays in the property kind",
+            sql: "CREATE TABLE t1 ( c1 INT ) WITH TAG ( v1 = 'm' ) ;",
+            pointer: "/0/create_object/properties/0/kind",
+            expected_value: json!("WITH TAG"),
+        },
+        StatementTestCase {
+            description: "a TAG without WITH has the bare kind",
+            sql: "CREATE TABLE t1 ( c1 INT ) TAG ( v1 = 'm' ) ;",
+            pointer: "/0/create_object/properties/0/kind",
+            expected_value: json!("TAG"),
+        },
+        StatementTestCase {
+            description: "FORCE is a property, not part of the action",
+            sql: "ALTER OPENFLOW RUNTIME v1 UPGRADE FORCE ;",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("UPGRADE"),
+        },
+        StatementTestCase {
+            description: "the part of a..b the SQL left out is marked omitted",
+            sql: "SELECT * FROM d1..t1 ;",
+            pointer: "/0/select/from/expressions/0/table/schema/omitted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "an absent schema is not an omitted one",
+            sql: "SELECT * FROM t1 ;",
+            pointer: "/0/select/from/expressions/0/table/schema",
+            expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "a SHOW of a SNOWFLAKE class marks its left-out schema omitted",
+            sql: "SHOW SNOWFLAKE . . BUDGET ;",
+            pointer: "/0/show/target/table/schema/omitted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a call of a SNOWFLAKE..<function> marks its left-out schema omitted",
+            sql: "SELECT SNOWFLAKE . . ACCURACY ( 1 ) ;",
+            pointer: "/0/select/expressions/0/method_call/this/column/name/omitted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a CALL of a SNOWFLAKE..<class>!<method> marks its left-out part omitted",
+            sql: "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!SET_ORG_NOTIFICATION_EMAILS ( 'm' ) ;",
+            pointer: "/0/call/name/1/omitted",
+            expected_value: json!(true),
         },
         StatementTestCase {
             description: "a quoted SET variable stays quoted",

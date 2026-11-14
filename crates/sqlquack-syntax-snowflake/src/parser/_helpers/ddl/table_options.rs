@@ -616,6 +616,7 @@ impl Parser {
                 quoted: false,
                 trailing_comments: Vec::new(),
                 span: None,
+                omitted: false,
             };
         }
         col_def

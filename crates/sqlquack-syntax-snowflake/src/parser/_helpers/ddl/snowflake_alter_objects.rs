@@ -305,15 +305,14 @@ impl Parser {
         Ok((vec![], self.parse_alter_settings(set)?))
     }
 
-    /// Parse `<policy_name> [ FORCE ]` after `{ FEATURE | MAINTENANCE | BACKUP } POLICY`, with the action's suffix.
-    fn parse_alter_policy(&mut self) -> Result<(Parts, String)> {
+    /// Parse `<policy_name> [ FORCE ]` after `{ FEATURE | MAINTENANCE | BACKUP } POLICY`; FORCE is a property.
+    fn parse_alter_policy(&mut self) -> Result<Parts> {
         let policy = self.object_operand()?;
-        let suffix = if self.match_text_seq(&["FORCE"]) {
-            " FORCE"
-        } else {
-            ""
+        let properties = match self.match_text_seq(&["FORCE"]) {
+            true => vec![property("FORCE", None, None)],
+            false => vec![],
         };
-        Ok(((vec![policy], vec![]), suffix.to_owned()))
+        Ok((vec![policy], properties))
     }
 
     /// Whether APPLICATION `word` starts that kind; before an application action the next word cannot start, `word` names an application.
@@ -350,11 +349,7 @@ impl Parser {
         let parts = match action.as_str() {
             "RENAME" => self.parse_alter_target("TO")?,
             "SWAP" => self.parse_alter_target("WITH")?,
-            "SET FEATURE POLICY" => {
-                let (parts, suffix) = self.parse_alter_policy()?;
-                action.push_str(&suffix);
-                parts
-            }
+            "SET FEATURE POLICY" => self.parse_alter_policy()?,
             "SET" => self.parse_alter_set(true)?,
             "UNSET" => self.parse_alter_set(false)?,
             "UPDATE LINKED_CATALOG" => {
@@ -465,11 +460,7 @@ impl Parser {
         ])?;
         let parts = match action.as_str() {
             "RENAME" => self.parse_alter_target("TO")?,
-            "SET FEATURE POLICY" | "SET MAINTENANCE POLICY" => {
-                let (parts, suffix) = self.parse_alter_policy()?;
-                action.push_str(&suffix);
-                parts
-            }
+            "SET FEATURE POLICY" | "SET MAINTENANCE POLICY" => self.parse_alter_policy()?,
             "SET SHARED TELEMETRY EVENTS" => (vec![self.parse_string_list()?], vec![]),
             "SET CONFIGURATION" => {
                 let name = self.object_operand()?;
@@ -707,11 +698,7 @@ impl Parser {
             &["UNSET"],
         ])?;
         let parts = match action.as_str() {
-            "APPLY BACKUP POLICY" => {
-                let (parts, suffix) = self.parse_alter_policy()?;
-                action.push_str(&suffix);
-                parts
-            }
+            "APPLY BACKUP POLICY" => self.parse_alter_policy()?,
             "DELETE BACKUP IDENTIFIER" => (vec![self.parse_string_value()?], vec![]),
             "MODIFY BACKUP IDENTIFIER" => {
                 let id = self.parse_string_value()?;
