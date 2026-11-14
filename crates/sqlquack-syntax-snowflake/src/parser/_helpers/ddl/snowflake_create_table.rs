@@ -268,7 +268,7 @@ impl Parser {
         Ok((columns, constraints, untyped))
     }
 
-    /// `<name> [<type>] [<column option> ...]`; `no_type` marks a missing type.
+    /// `<name> [<type>] [<column option> ...]`; `no_type` marks a missing type, and an untyped column takes no DEFAULT.
     pub(super) fn parse_checked_table_column(&mut self) -> Result<ColumnDef> {
         let name = self.parse_external_name()?;
         let untyped = self.check(TokenType::Comma)
@@ -282,7 +282,7 @@ impl Parser {
         column.name = name;
         column.no_type = untyped;
         if !untyped {
-            if self.check(TokenType::String) {
+            if self.check(TokenType::String) || self.check(TokenType::Default) {
                 return Err(self.parse_error("Expected a data type"));
             }
             column.data_type = self.parse_data_type()?;
