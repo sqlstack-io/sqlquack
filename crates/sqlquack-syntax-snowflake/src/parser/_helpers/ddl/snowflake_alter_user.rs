@@ -75,14 +75,15 @@ impl Parser {
         if unnamed && named_only {
             return Err(self.parse_error(format!("Expected a user name before {action}")));
         }
-        let mut existence = (false, false);
-        let (action, parts): Action = match action.as_str() {
-            "RENAME TO" => (action, (vec![self.parse_user_operand()?], vec![])),
-            "ADD" | "MODIFY" | "REMOVE" | "ROTATE" => {
-                self.parse_user_credential_action(action, &mut existence)?
-            }
-            "SET" | "UNSET" => self.parse_user_set(action)?,
-            _ => (action, (vec![], vec![])),
+        let no_existence = (false, false);
+        let ((action, parts), existence): (Action, (bool, bool)) = match action.as_str() {
+            "RENAME TO" => (
+                (action, (vec![self.parse_user_operand()?], vec![])),
+                no_existence,
+            ),
+            "ADD" | "MODIFY" | "REMOVE" | "ROTATE" => self.parse_user_credential_action(action)?,
+            "SET" | "UNSET" => (self.parse_user_set(action)?, no_existence),
+            _ => ((action, (vec![], vec![])), no_existence),
         };
         let Expression::AlterObject(mut alter) =
             alter_object("USER", (TableRef::new(""), if_exists), action, parts)
@@ -94,21 +95,21 @@ impl Parser {
         Ok(Expression::AlterObject(alter))
     }
 
-    /// The object of ADD, MODIFY, REMOVE or ROTATE: a credential, an MFA method or a delegated authorization; a token's IF [NOT] EXISTS goes to `existence`.
+    /// The object of ADD, MODIFY, REMOVE or ROTATE: a credential, an MFA method or a delegated authorization, with a token's IF EXISTS and IF NOT EXISTS.
     fn parse_user_credential_action(
         &mut self,
         mut action: String,
-        existence: &mut (bool, bool),
-    ) -> Result<Action> {
+    ) -> Result<(Action, (bool, bool))> {
         let verb = action.clone();
+        let mut existence = (false, false);
         if self.match_text_seq(&["MFA", "METHOD"]) {
             action.push_str(" MFA METHOD");
-            return self.parse_user_mfa_method(&verb, action);
+            return Ok((self.parse_user_mfa_method(&verb, action)?, existence));
         }
         if self.check_identifier("DELEGATED") && matches!(verb.as_str(), "ADD" | "REMOVE") {
             self.skip();
             action.push_str(" DELEGATED");
-            return self.parse_user_delegation(&verb, action);
+            return Ok((self.parse_user_delegation(&verb, action)?, existence));
         }
         let kind = self.expect_alter_words(CREDENTIALS)?;
         let kind = match kind.as_str() {
@@ -138,13 +139,13 @@ impl Parser {
                     "SET" => (operands, self.parse_user_properties()?),
                     _ => (operands, self.parse_user_unset_names()?),
                 };
-                return Ok((action, parts));
+                return Ok(((action, parts), existence));
             }
             "REMOVE" => vec![],
             _ if self.is_statement_end_at(0) => vec![],
             _ => self.parse_user_properties()?,
         };
-        Ok((action, (operands, properties)))
+        Ok(((action, (operands, properties)), existence))
     }
 
     /// ADD MFA METHOD OTP [ COUNT = n ], REMOVE MFA METHOD <m> or MODIFY MFA METHOD <m> SET COMMENT = '<string>'.

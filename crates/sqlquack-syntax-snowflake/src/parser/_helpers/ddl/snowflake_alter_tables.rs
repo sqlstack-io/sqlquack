@@ -195,7 +195,6 @@ impl Parser {
                 let mut properties: Vec<ObjectProperty> = Vec::new();
                 if self.match_identifier("MAX_SIZE") {
                     self.expect_token(TokenType::Eq)?;
-                    // Snowflake parses a string here and rejects it only semantically.
                     let size = if self.check(TokenType::String) {
                         self.parse_primary()?
                     } else {

@@ -18,8 +18,7 @@ _shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = grammar.CLASS_RUL
 
 
 def install() -> None:
-    """Classify the pages' object and word operands first, then widen the shared integer rule; a
-    quoted value built from placeholders is a string operand."""
+    """Classify object and word operands, widen the integer rule, and read quoted templates."""
     grammar.TEMPLATE_OPERANDS = True
     grammar.CLASS_RULES = (
         (re.compile(IDENTIFIER_NAMES), IDENTIFIER_CLASS),
