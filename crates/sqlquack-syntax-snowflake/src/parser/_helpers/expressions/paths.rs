@@ -961,6 +961,9 @@ impl Parser {
     ) -> Result<Expression> {
         let mut expressions = vec![first_expr];
         if self.check(TokenType::RParen) {
+            if self.is_snowflake() {
+                return Err(self.parse_error("Expected a value after the comma"));
+            }
             self.skip();
             let tuple_expr = Expression::Tuple(Box::new(Tuple { expressions }));
             return self.maybe_parse_subscript(tuple_expr);
@@ -979,6 +982,9 @@ impl Parser {
                 break;
             }
             if self.check(TokenType::RParen) {
+                if self.is_snowflake() {
+                    return Err(self.parse_error("Expected a value after the comma"));
+                }
                 break;
             }
         }

@@ -292,7 +292,9 @@ impl Parser {
             let mut columns: Vec<Expression> = Vec::new();
             while !self.check(TokenType::RParen) {
                 columns.push(Expression::Identifier(self.parse_external_name()?));
-                self.match_token(TokenType::Comma);
+                if self.match_token(TokenType::Comma) && self.check(TokenType::RParen) {
+                    return Err(self.parse_error("Expected a column after the comma"));
+                }
             }
             self.expect_token(TokenType::RParen)?;
             return Ok(vec![policy_property(policy, columns)]);
@@ -368,7 +370,7 @@ impl Parser {
         }
     }
 
-    /// A value: a literal, a word, or a parenthesized list of values and `<key> = <value>` pairs.
+    /// A value: a literal, a word, or a parenthesized list of values and `<key> = <value>` pairs, where a comma needs an item after it.
     fn parse_external_value(&mut self) -> Result<Expression> {
         if !self.match_token(TokenType::LParen) {
             return self.parse_external_scalar();
@@ -386,7 +388,9 @@ impl Parser {
             } else {
                 expressions.push(self.parse_external_scalar()?);
             }
-            self.match_token(TokenType::Comma);
+            if self.match_token(TokenType::Comma) && self.check(TokenType::RParen) {
+                return Err(self.parse_error("Expected a value after the comma"));
+            }
         }
         self.expect_token(TokenType::RParen)?;
         Ok(Expression::Tuple(Box::new(Tuple { expressions })))
