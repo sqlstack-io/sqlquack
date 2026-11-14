@@ -28,7 +28,11 @@ from scripts.grammar_obligations.constants import (
     KIND_POSITIVE,
     MARKS_DIR,
     MEASURE_KEY,
+    NO_EFFECT_KEY,
+    NO_EFFECT_PROBE_ROLE,
     PACKET_KEYS,
+    PROBE_ANY_SETUP,
+    PROBE_PARSED_PHASE,
     RUN_DATABASE_CAPTURES,
     RUN_DATABASE_SETUPS,
     RUN_ID_KEY,
@@ -362,8 +366,19 @@ def receipt_settlements(directory: Path) -> dict[tuple[str, str, str, str], tupl
             gone.add(str(receipt.get("supersedes_receipt_sha256", "")))
             if MEASURE_KEY not in receipt:
                 lines.append((digest(line), receipt))
+    probed: dict[tuple[str, str, str], set[tuple[str, str]]] = {}
     for sha, r in lines:
         if sha in gone:
+            continue
+        errno: object = r.get("errno")
+        answer: tuple[str, str] = (str(r["phase"]), "" if errno is None else str(errno))
+        if _parsed_without_setup(r):
+            probe: tuple[str, str, str] = (
+                str(r["case_id"]),
+                str(r["sql_sha256"]),
+                str(r.get("session_sha256", "")),
+            )
+            probed.setdefault(probe, set()).add(answer)
             continue
         key: tuple[str, str, str, str] = (
             str(r["case_id"]),
@@ -371,8 +386,14 @@ def receipt_settlements(directory: Path) -> dict[tuple[str, str, str, str], tupl
             str(r.get("setup_sha256", "")),
             str(r.get("session_sha256", "")),
         )
-        errno: object = r.get("errno")
-        answers.setdefault(key, set()).add((str(r["phase"]), "" if errno is None else str(errno)))
+        answers.setdefault(key, set()).add(answer)
+    bound: set[tuple[str, str, str]] = set()
+    for (case_id, sql_sha, _, session_sha), found in answers.items():
+        bound.add((case_id, sql_sha, session_sha))
+        found |= probed.get((case_id, sql_sha, session_sha), set())
+    for (case_id, sql_sha, session_sha), found in probed.items():
+        if (case_id, sql_sha, session_sha) not in bound:
+            answers[(case_id, sql_sha, PROBE_ANY_SETUP, session_sha)] = found
     settled: dict[tuple[str, str, str, str], tuple[str, str]] = {}
     for key, found in answers.items():
         if len(found) != 1:
@@ -383,6 +404,17 @@ def receipt_settlements(directory: Path) -> dict[tuple[str, str, str, str], tupl
         elif errno != SETTLED_NEVER_ACCEPT_ERRNO and phase in SETTLED_ACCEPT_STAGES:
             settled[key] = (EXPECT_ACCEPT, SETTLED_ACCEPT_STAGES[phase])
     return settled
+
+
+def _parsed_without_setup(receipt: Row) -> bool:
+    """A probe-role receipt Snowflake parsed or refused by its syntax error: it binds any setup."""
+    return receipt.get(NO_EFFECT_KEY) == NO_EFFECT_PROBE_ROLE and (
+        receipt["phase"] == PROBE_PARSED_PHASE
+        or (
+            receipt["phase"] == SYNTAX_ERROR_PHASE
+            and str(receipt.get("errno")) == SETTLED_NEVER_ACCEPT_ERRNO
+        )
+    )
 
 
 def recorded_receipts(directory: Path) -> set[tuple[str, str]]:
@@ -474,7 +506,10 @@ def settled_cases(  # noqa: PLR0913
             case["sql"] not in rendered and bool(disputed_positives & set(case["obligations"]))
         )
         settlement: tuple[str, str] | None = receipts.settlements.get(
-            (case["case_id"], case["sql_sha256"], case["setup_sha256"], case["session_sha256"])
+            (case["case_id"], case["sql_sha256"], case["setup_sha256"], case["session_sha256"]),
+            receipts.settlements.get(
+                (case["case_id"], case["sql_sha256"], PROBE_ANY_SETUP, case["session_sha256"])
+            ),
         )
         phase: str | None = receipts.phases.get((case["case_id"], case["sql_sha256"]))
         if (

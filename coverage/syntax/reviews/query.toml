@@ -365,3 +365,50 @@ note = "Read in full under review brief version 1 against the documentation page
 
 [review.definitions]
 "sf.query.values" = "49f66004ce661b3f7ae8cc965484094fbc2bdc3a8cdc52d381eb54db91ba9f42"
+
+[[review]]
+id = "query-018"
+family = "query"
+parser_tree = "b551498b20e3796b7fe0fb4f0ef6a2a438a354eb"
+reviewed_utc = "2026-11-14T22:30:27Z"
+verdict = "approved"
+forms = [
+  "sf.query.asof-join",
+  "sf.query.at-before",
+  "sf.query.changes",
+  "sf.query.connect-by",
+  "sf.query.group-by-rollup",
+  "sf.query.group-by.groupitem",
+  "sf.query.join.join",
+  "sf.query.join.join-2",
+  "sf.query.join.join.syntax",
+  "sf.query.pivot",
+  "sf.query.unpivot",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at e45d798d0; every scored case agrees with its Snowflake receipt. Bound to the fingerprints after the receipt import that followed the reading; the cases' SQL and parse trees are unchanged, only receipts, settled expectations and stages were added."
+
+[review.fingerprints]
+"sf.query.asof-join" = "9bd70512c96417f57a2bcef5cbc394afa6738411e53776fb8ca5d7e238e0dacb"
+"sf.query.at-before" = "2b96563587fbc47dcb303964fccbd0e7d395cb554845102eb3819ad440e3d33d"
+"sf.query.changes" = "08054bad0e7398df7bedf961ae4ce23274ad86b2dc94e66b56a954326ef12319"
+"sf.query.connect-by" = "fd0c9f17140455e2c1c5471d9f14846c5bd105bf13406cc90158cd32781413d1"
+"sf.query.group-by-rollup" = "fac0f56945b6eff49148ec117a1c99aae829b21257854454f43227df58e93000"
+"sf.query.group-by.groupitem" = "7b21ee83bd7616b001daa73291512701c7db7a54296c55faa67c8b431e8b54b8"
+"sf.query.join.join" = "98c6fb40cb1884d807c3690b43cfc6c6575981780a9f58fb6c2db8490b0c33a2"
+"sf.query.join.join-2" = "d75b418745eec442ef6fae749cad8389c85e79ff01448d015a304c02b0edf0c8"
+"sf.query.join.join.syntax" = "11953fb38cc104f98e58a26d54e15325accd2e5c56a6833afd6a2c51439bc16b"
+"sf.query.pivot" = "1cc9155ece283ec0e892b379a44a2f64f2e09569ed26a34f2551ed297560458f"
+"sf.query.unpivot" = "c7972b2f404405b7daa87ddd476cf3e0897a43f372ad85d1e2c8e415da8f006d"
+
+[review.definitions]
+"sf.query.asof-join" = "0f7e36da56e558100a3a48d3adc9ce6c769d19e948490ee68453c3e5f2b83bda"
+"sf.query.at-before" = "c22f44abf00eef2ccb78372a2affdd5f516b17058bd94a8d78d76593d0abcf3a"
+"sf.query.changes" = "9f931de198de4e7f9456eb3354488013e7013b8a94c436c9252fa57bc5ec921c"
+"sf.query.connect-by" = "ae43a61556752d3f547297ad534a7a1dce0e07663cd47b4df2d6ee48799e35f2"
+"sf.query.group-by-rollup" = "34f937067a7c9185f997cdbe30cb8c121ae14d67cf269b5cd063ad2d3cb6c40e"
+"sf.query.group-by.groupitem" = "19073bf8d30e6a03d5ff32ec2abf0244f00123c8b014415d9e9184c63eabf6d9"
+"sf.query.join.join" = "8862f65572cf154f8a131b878271ee19a718f2ebe78053b630a9dffcf412e689"
+"sf.query.join.join-2" = "80de2f768020e6baf911e46abd83e46a3071943e94e1b158b64c14736eb38930"
+"sf.query.join.join.syntax" = "6b430e2fa01e5144ca0e2498f88e7151c58c6b54ebc19039924dbbe36b7cd3db"
+"sf.query.pivot" = "e7ca654000c0c093b06ad8d3f6cca602fda630527b3ae7d2ce868358727b77bd"
+"sf.query.unpivot" = "2029dac3f342e66384ebd0cf467cda295923b1e2d1140b7043242e07dd6e6fee"

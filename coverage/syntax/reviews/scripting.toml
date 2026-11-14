@@ -242,3 +242,41 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.scripting.loop" = "d609d59057bb9bb34dc62fac510fb8c837016db9878ae742e087d714006f3b3d"
 "sf.scripting.repeat" = "ad2e09704b416311e8475d2ace17c1da78da39b13d895ab7cbbc3ac00b9adb00"
 "sf.scripting.while" = "e9b1ac629253d7f0f3ded871f613fd0e1f8c2ecf7dff87e522aa5514a8900d89"
+
+[[review]]
+id = "scripting-009"
+family = "scripting"
+parser_tree = "b551498b20e3796b7fe0fb4f0ef6a2a438a354eb"
+reviewed_utc = "2026-11-14T22:30:27Z"
+verdict = "approved"
+forms = [
+  "sf.scripting.begin",
+  "sf.scripting.declare.declare",
+  "sf.scripting.declare.variable-declaration",
+  "sf.scripting.exception",
+  "sf.scripting.let.let",
+  "sf.scripting.let.let-default",
+  "sf.scripting.let.let-default.variable-assignment-syntax",
+  "sf.scripting.return",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at e45d798d0; every scored case agrees with its Snowflake receipt. Bound to the fingerprints after the receipt import that followed the reading; the cases' SQL and parse trees are unchanged, only receipts, settled expectations and stages were added."
+
+[review.fingerprints]
+"sf.scripting.begin" = "57caf335aa088991b7dda8ea1c8fc240631dc056c79183afbae34ca40557257c"
+"sf.scripting.declare.declare" = "c42216554e51a7bc0fd00d52e7eec672b83bf706c81633e426ec4a1c2507bb43"
+"sf.scripting.declare.variable-declaration" = "b364664ba2ead1aaca4d8d35171cb5cd7bdc52051ffcdb0fa9143cbebc5ddf5c"
+"sf.scripting.exception" = "7ace3591dc323147e581639e0817fd5ee43fa0bad9ef06ca905debbf9e37c300"
+"sf.scripting.let.let" = "b91953e2880d4de5a10f88f05baa84973d9d3a80ad9543483bd2934b4b9d7bb6"
+"sf.scripting.let.let-default" = "01825c268fc913fda86e79f3de7b4fc8a9d5ffc6054719df4e311ec3df1647e2"
+"sf.scripting.let.let-default.variable-assignment-syntax" = "fc86c2e862e688f92665306feb36145802fb04321536c27452135d1aa1807ac4"
+"sf.scripting.return" = "c1cb9a1dd0050d7525cf7f431caa2a591280a5d1cf54e3979afb6e9afacf41df"
+
+[review.definitions]
+"sf.scripting.begin" = "811a9c92af3ab88ff10f9f64bc32e427e36042476a471d93c75358914deab6d6"
+"sf.scripting.declare.declare" = "4253830fae014a2066cd607e20c6ec059e81b3dc284a94d337e15be14377a0b6"
+"sf.scripting.declare.variable-declaration" = "57f71051a213eacd501204c85db026c6011d0f8aee07ef2a366e6fafd13cb2a2"
+"sf.scripting.exception" = "8626de1629c95864778951b5beefa50e0f329f7964830bd306c2ded7843578ca"
+"sf.scripting.let.let" = "20a52cc8089c3ebfd217683c12cf53a682176362a6945fb5c05742e59271ac27"
+"sf.scripting.let.let-default" = "fa624183cf73d33f609b8473f1fed802b2bde09180addabf4f6d645ad6223fce"
+"sf.scripting.let.let-default.variable-assignment-syntax" = "613907a139ae4de0c43d0a86f6459b102f55ddeab18bec46c7b8305f716f78e7"
+"sf.scripting.return" = "e37499675e520a680eb2b5a6547eb4989a94f9fd9f9391ded6b95e8da4948311"

@@ -227,3 +227,55 @@ note = "Read in full under review brief version 1, with the clarification that a
 
 [review.definitions]
 "sf.utility.execute-notebook-project" = "73f0ce13afa2c2f0fb0483c4f54ef235f7753056de9acab7ddd05627fc03fb06"
+
+[[review]]
+id = "utility-012"
+family = "utility"
+parser_tree = "b551498b20e3796b7fe0fb4f0ef6a2a438a354eb"
+reviewed_utc = "2026-11-14T22:30:27Z"
+verdict = "approved"
+forms = [
+  "sf.utility.call",
+  "sf.utility.call-with.table-language-sql-as",
+  "sf.utility.execute-code-bundle",
+  "sf.utility.execute-dbt-project.project-2",
+  "sf.utility.execute-immediate.immediate",
+  "sf.utility.execute-notebook",
+  "sf.utility.execute-notebook-project",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at e45d798d0; every scored case agrees with its Snowflake receipt. Bound to the fingerprints after the receipt import that followed the reading; the cases' SQL and parse trees are unchanged, only receipts, settled expectations and stages were added."
+
+[review.fingerprints]
+"sf.utility.call" = "1dab71d7473fb72f50ea941fce48e4c4c835530f16e96f516d522a63d1a5c1b4"
+"sf.utility.call-with.table-language-sql-as" = "167d6458e125c07d80c83fb1d5a7e9200af37832447d7fd04368a1abfdd47c7a"
+"sf.utility.execute-code-bundle" = "9fe0e3a3cbe2ad25e388891ee388927fc0045a42945cd1cfa7bf516c57c808f7"
+"sf.utility.execute-dbt-project.project-2" = "54440f6554d7b86952321e48cb0c32396f96010282f4ac38f1b5ba5880f41fe9"
+"sf.utility.execute-immediate.immediate" = "bab0b010db648a0c685b59d37c2f177d4782b56d136716c70afa79cd3a20fab0"
+"sf.utility.execute-notebook" = "88d9c4d5ea813b884da75b7418b030b8ca64fa53c56c73e59eef13c2fcbc5c07"
+"sf.utility.execute-notebook-project" = "f755bcedc4f7a0b2f110ee4022d9bd04ec4c6b5038da494329c491b772054061"
+
+[review.definitions]
+"sf.utility.call" = "cff18be23171e9d7a76595d88802a7d31c6fc0a74264c63b7a192fdf2eef6592"
+"sf.utility.call-with.table-language-sql-as" = "66456e0c2d796426ab2fde1fbc2331d639b881740f2f69a03a4d83bc04260956"
+"sf.utility.execute-code-bundle" = "70b51c209e944d0db0671c304fdfb9625453b0659d3be495775eec95917a16f3"
+"sf.utility.execute-dbt-project.project-2" = "50439dbf4ce7fbc676c5e07881fbd4c9e58f5d328d1eeb763c59f2ef8cc7236f"
+"sf.utility.execute-immediate.immediate" = "f1285e374d631e2f09480d9c6c79593749ca9ae390d90f6830a1f3f9a040855d"
+"sf.utility.execute-notebook" = "ec0d28a0b204872be30922cdb5eda6c52584257ffcf3fba644015cf33c54b51a"
+"sf.utility.execute-notebook-project" = "9ceb386ff0f7ae5282411147abd19b6271a83f9d2b040e3eef94326f5fca0d39"
+
+[[review]]
+id = "utility-013"
+family = "utility"
+parser_tree = "b551498b20e3796b7fe0fb4f0ef6a2a438a354eb"
+reviewed_utc = "2026-11-14T22:41:06Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-job-service",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at d711c0605; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-job-service" = "2e3cc524134de131013d525c2dd8f92f9b123e894cc33d259f0d19365ff3727b"
+
+[review.definitions]
+"sf.utility.execute-job-service" = "698e7e3c000c21f8956c0bc257ba54e2af95a14b450e96a23ccdf4f61c906605"

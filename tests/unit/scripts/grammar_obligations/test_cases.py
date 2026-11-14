@@ -12,6 +12,8 @@ from scripts.grammar_obligations._helpers.cases import (
     canonical,
     digest,
     family_cases,
+    receipt_phases,
+    receipt_settlements,
     run_database_setups,
     settled_cases,
 )
@@ -21,6 +23,7 @@ from scripts.grammar_obligations.types import Row
 from tests.unit.scripts.grammar_obligations._test_types import (
     DisprovedExpectationTestCase,
     DisputedFormMarkTestCase,
+    ProbeSettlementTestCase,
     SetupBindingTestCase,
 )
 
@@ -305,6 +308,86 @@ def test_given_receipts_against_a_generated_expectation_when_settling_then_recei
     )
 
     found: Row = {row["sql"]: row for row in settled}[test_case.sql]
+    marks: dict[str, str] = {row["case_id"]: row["mark"] for row in marked}
+    assert (found["expect"], marks.get(found["case_id"])) == (
+        test_case.expected_expect,
+        test_case.expected_mark,
+    )
+
+
+PROBE_SETUP: str = digest(canonical([]))
+
+PROBE_PARSED: Row = {"phase": "semantic_error", "errno": 2105, "no_effect": "probe_role"}
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        ProbeSettlementTestCase(
+            description="a probe-role refusal after parsing settles a reject under any setup",
+            receipts=({**PROBE_PARSED, "setup_sha256": PROBE_SETUP},),
+            expected_expect="accept",
+            expected_mark="settled accept",
+        ),
+        ProbeSettlementTestCase(
+            description="the same refusal from another setup without the probe role settles nothing",
+            receipts=({"phase": "semantic_error", "errno": 2105, "setup_sha256": PROBE_SETUP},),
+            expected_expect="reject",
+            expected_mark=None,
+        ),
+        ProbeSettlementTestCase(
+            description="a probe-role refusal against a syntax error under the case's setup settles nothing",
+            receipts=(
+                {**PROBE_PARSED, "setup_sha256": PROBE_SETUP},
+                {"phase": "syntax_error", "errno": 1003, "setup_sha256": None},
+            ),
+            expected_expect="reject",
+            expected_mark=None,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_probe_role_receipts_when_settling_then_they_bind_any_setup(
+    tmp_path: Path, test_case: ProbeSettlementTestCase
+) -> None:
+    (tmp_path / "catalogue").mkdir()
+    (tmp_path / "catalogue" / "ddl.toml").write_text(DROP_TAG_CATALOGUE)
+    (tmp_path / "limits.toml").write_text("")
+    generated: list[Row] = family_cases(
+        root=tmp_path, evidence=tmp_path, family="ddl", setups={}, held=frozenset()
+    )[0]
+    case: Row = {case["sql"]: case for case in generated}["DROP TAG ;"]
+    assert case["setup_sha256"] != PROBE_SETUP
+    receipts: Path = tmp_path / "receipts"
+    receipts.mkdir()
+    (receipts / "ddl.jsonl").write_text(
+        "".join(
+            canonical(
+                {
+                    "case_id": case["case_id"],
+                    "sql_sha256": case["sql_sha256"],
+                    "session_sha256": case["session_sha256"],
+                    **receipt,
+                    "setup_sha256": receipt["setup_sha256"] or case["setup_sha256"],
+                }
+            )
+            + "\n"
+            for receipt in test_case.receipts
+        )
+    )
+
+    settled, _, marked = settled_cases(
+        root=tmp_path,
+        evidence=tmp_path,
+        family="ddl",
+        receipts=ReceiptView(
+            phases=receipt_phases(receipts), settlements=receipt_settlements(receipts)
+        ),
+        setups={},
+        held=frozenset(),
+    )
+
+    found: Row = {row["sql"]: row for row in settled}["DROP TAG ;"]
     marks: dict[str, str] = {row["case_id"]: row["mark"] for row in marked}
     assert (found["expect"], marks.get(found["case_id"])) == (
         test_case.expected_expect,
