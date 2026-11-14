@@ -70,8 +70,11 @@ impl Parser {
         };
         let end = self.current;
         self.current = table_start;
-        let Ok(table) = self.parse_snowflake_create_table(or_replace, SnowflakeTableKind::Table)
-        else {
+        let Ok(table) = self.parse_snowflake_create_table(
+            or_replace,
+            SnowflakeTableKind::Table,
+            self.tokens[create_start].token_type == TokenType::Define,
+        ) else {
             self.current = end;
             return parsed;
         };
@@ -108,7 +111,7 @@ impl Parser {
             ));
         }
         Some(
-            self.parse_snowflake_create_table(or_replace, kind)
+            self.parse_snowflake_create_table(or_replace, kind, define)
                 .map(|table| self.finish_snowflake_table(table, (create_start, table_start))),
         )
     }
@@ -134,11 +137,12 @@ impl Parser {
         Expression::CreateObject(Box::new(table))
     }
 
-    /// A Snowflake CREATE TABLE of `kind` from its TABLE word to the end of the statement.
+    /// A Snowflake CREATE TABLE of `kind`, or a DEFINE when `define`, from its TABLE word to the end of the statement.
     fn parse_snowflake_create_table(
         &mut self,
         or_replace: bool,
         kind: SnowflakeTableKind,
+        define: bool,
     ) -> Result<CreateObject> {
         self.expect_token(TokenType::Table)?;
         let if_not_exists = self.check(TokenType::If);
@@ -167,7 +171,8 @@ impl Parser {
         } else if template {
             operands.push(self.parse_external_template()?);
         } else if columns {
-            let (elements, constraints, missing_type) = self.parse_checked_table_elements()?;
+            let (elements, constraints, missing_type) =
+                self.parse_checked_table_elements(define)?;
             untyped = missing_type;
             operands.push(Expression::Tuple(Box::new(Tuple {
                 expressions: elements,
@@ -239,9 +244,10 @@ impl Parser {
         })
     }
 
-    /// `( <column or constraint> [ , ... ] )`: the columns, the out-of-line constraints as properties, and whether a column has no data type.
+    /// `( <column or constraint> [ , ... ] )`: the columns, the out-of-line constraints as properties, and whether a column has no data type; a DEFINE (`define`) also takes a reference without FOREIGN KEY.
     fn parse_checked_table_elements(
         &mut self,
+        define: bool,
     ) -> Result<(Vec<Expression>, Vec<ObjectProperty>, bool)> {
         self.expect_token(TokenType::LParen)?;
         let mut columns: Vec<Expression> = Vec::new();
@@ -253,8 +259,12 @@ impl Parser {
                 || self.check(TokenType::PrimaryKey)
                 || self.check(TokenType::ForeignKey)
                 || self.check(TokenType::Check);
+            let keyless_reference =
+                define && (self.check(TokenType::LParen) || self.check(TokenType::References));
             if constraint {
                 constraints.push(constraint_property(self.parse_checked_constraint(false)?));
+            } else if keyless_reference {
+                constraints.push(constraint_property(self.parse_keyless_reference()?));
             } else {
                 let column = self.parse_checked_table_column()?;
                 untyped |= column.no_type;
@@ -517,6 +527,27 @@ impl Parser {
             operand,
             references,
             properties,
+        })
+    }
+
+    /// A DEFINE's out-of-line `[ ( <column> , ... ) ] REFERENCES <table>` without FOREIGN KEY, which Snowflake parses only without columns after the table; its kind REFERENCES keeps the omitted keyword visible.
+    fn parse_keyless_reference(&mut self) -> Result<Constraint> {
+        let operand = match self.check(TokenType::LParen) {
+            true => Some(self.parse_iceberg_name_list(false)?),
+            false => None,
+        };
+        self.expect_token(TokenType::References)?;
+        let table = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
+        if self.check(TokenType::LParen) {
+            return Err(self
+                .parse_error("A reference without FOREIGN KEY names no columns after its table"));
+        }
+        Ok(Constraint {
+            kind: "REFERENCES",
+            name: None,
+            operand,
+            references: Some((table, None)),
+            properties: self.parse_checked_constraint_properties(true)?,
         })
     }
 

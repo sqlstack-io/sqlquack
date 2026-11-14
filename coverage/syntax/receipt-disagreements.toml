@@ -433,7 +433,6 @@ other_receipts_contradicted = [
   "k1b5f6207b77d",
   "k4e50633e4032",
 ]
-"sf.ddl.create-table.define-table" = ["ke1f3c185cda6"]
 "sf.ddl.create-versioned-schema" = [
   "ke67978ccde94",
   "kec07de1bbc4f",
@@ -513,7 +512,6 @@ other_receipts_contradicted = [
   "k5781f7b98b4d",
   "kdce8646cffb5",
 ]
-"sf.ddl.create-table.define-table" = ["k2f29257e44ce"]
 "sf.ddl.drop-iceberg-table" = ["k519a5435fa2a"]
 "sf.ddl.show-channels" = [
   "k3fba86e29428",
