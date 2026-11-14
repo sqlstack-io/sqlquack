@@ -248,7 +248,7 @@ impl Parser {
         Ok(part(&format!("{} POLICY", kind.join(" ")), tuple(parts)))
     }
 
-    /// `( <name> [ , ... ] )`, which needs a name unless `empty`: Snowflake accepts a row access policy ON ( ).
+    /// `( <name> [ , ... ] )`, which needs a name unless `empty`: Snowflake accepts a row access policy ON ( ), but no comma without a name after it.
     fn parse_view_names(&mut self, empty: bool) -> Result<Expression> {
         self.expect_token(TokenType::LParen)?;
         let mut names: Vec<Expression> = Vec::new();
@@ -256,6 +256,9 @@ impl Parser {
             names.push(Expression::Identifier(self.parse_external_name()?));
             if !self.match_token(TokenType::Comma) {
                 break;
+            }
+            if self.check(TokenType::RParen) {
+                return Err(self.parse_error("Expected a name after the comma"));
             }
         }
         self.expect_token(TokenType::RParen)?;

@@ -164,14 +164,15 @@ impl Parser {
         }))))
     }
 
-    /// Refuse a Snowflake DESCRIBE argument that opens with a bare parenthesis, or a TABLE argument without column types.
+    /// Refuse a Snowflake DESCRIBE argument that is empty, such as after a trailing comma, opens with a bare parenthesis, or is a TABLE without column types.
     pub(super) fn check_describe_argument_start(&self) -> Result<()> {
         let empty_table = self.check(TokenType::Table)
             && self.check_next(TokenType::LParen)
             && self
                 .peek_nth(2)
                 .is_some_and(|token| token.token_type == TokenType::RParen);
-        match self.check(TokenType::LParen) || empty_table {
+        let empty = self.check(TokenType::RParen) || self.check(TokenType::Comma);
+        match self.check(TokenType::LParen) || empty_table || empty {
             true => Err(self.parse_error("Expected an argument data type")),
             false => Ok(()),
         }
