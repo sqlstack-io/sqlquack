@@ -2,6 +2,7 @@
 
 use crate::parser::constants::ONLINE_FEATURE_TABLE;
 use crate::parser::constants::SNOWFLAKE_ALTER_KINDS;
+use crate::parser::constants::SNOWFLAKE_STRING_KEY_MAP_PROPERTIES;
 use crate::parser::constants::TASK_ACTIONS;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::main::identifier_from_token::identifier_from_token;
@@ -811,6 +812,9 @@ impl Parser {
         loop {
             let name = self.parse_simple_name()?;
             self.expect_token(TokenType::Eq)?;
+            if SNOWFLAKE_STRING_KEY_MAP_PROPERTIES.contains(&property_kind(&name).as_str()) {
+                self.check_snowflake_string_keys()?;
+            }
             let value = if self.check(TokenType::LParen) {
                 self.parse_routine_value_list()?
             } else {

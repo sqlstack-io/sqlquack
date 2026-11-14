@@ -1223,6 +1223,10 @@ pub(crate) const SNOWFLAKE_ROUTINE_WORD_PROPERTIES: &[&str] = &[
 
 /// Snowflake function and procedure properties whose value is a `( '<key>' = <name> , ... )` map.
 pub(crate) const SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES: &[&str] = &["HEADERS", "SECRETS"];
+
+/// Snowflake properties whose `( '<key>' = <value> , ... )` map takes a bare-word key only first: after a comma the key must be a string.
+pub(crate) const SNOWFLAKE_STRING_KEY_MAP_PROPERTIES: &[&str] =
+    &["HEADERS", "SECRETS", "WEBHOOK_HEADERS"];
 /// The privileges a Snowflake GRANT or REVOKE names besides ALL, CREATE SNOWFLAKE classes and USE AI FUNCTION.
 pub(crate) const SNOWFLAKE_GRANT_PRIVILEGES: &[&str] = &[
     "ADD SEARCH OPTIMIZATION",
