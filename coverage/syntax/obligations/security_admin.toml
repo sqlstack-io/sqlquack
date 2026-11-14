@@ -3985,13 +3985,6 @@ target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.security_admin.alter-account.set-contact.o021"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.security_admin.alter-account.set-contact.o022"
 kind = "required_operand_missing"
 required = true
@@ -4060,6 +4053,14 @@ id = "sf.security_admin.alter-account.set-contact.o018"
 kind = "negative_neighbour"
 required = true
 target = "<purpose>"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-account.set-contact.o025"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 anchor = "doc.sql.alter-account / Syntax / Altering the current account"
 note = "a string literal in place of <purpose>, observed"
 
@@ -10713,13 +10714,6 @@ target = "<rule_name> in [ , <rule_name> , ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.alter-data-movement-policy.add-alert-rules.o028"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name> in [ , <rule_name> , ... ]"
-note = "a string literal in place of <rule_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.add-alert-rules.o012"
 kind = "negative_neighbour"
 required = true
@@ -10814,6 +10808,14 @@ anchor = "doc.sql.alter-data-movement-policy / Syntax"
 note = "a string literal in place of <rule_name>, observed"
 
 [[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.add-alert-rules.o029"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name> in [ , <rule_name> , ... ]"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.add-enforce-rules.o001"
 kind = "positive"
 required = true
@@ -10892,13 +10894,6 @@ kind = "operand_type_class"
 required = true
 target = "<rule_name> in [ , <rule_name> , ... ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.alter-data-movement-policy.add-enforce-rules.o028"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name> in [ , <rule_name> , ... ]"
-note = "a string literal in place of <rule_name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.add-enforce-rules.o012"
@@ -10995,6 +10990,14 @@ anchor = "doc.sql.alter-data-movement-policy / Syntax"
 note = "a string literal in place of <rule_name>, observed"
 
 [[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.add-enforce-rules.o029"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name> in [ , <rule_name> , ... ]"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.remove-alert-rules.o001"
 kind = "positive"
 required = true
@@ -11073,13 +11076,6 @@ kind = "operand_type_class"
 required = true
 target = "<rule_name> in [ , <rule_name> , ... ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.alter-data-movement-policy.remove-alert-rules.o028"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name> in [ , <rule_name> , ... ]"
-note = "a string literal in place of <rule_name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.remove-alert-rules.o012"
@@ -11176,6 +11172,14 @@ anchor = "doc.sql.alter-data-movement-policy / Syntax"
 note = "a string literal in place of <rule_name>, observed"
 
 [[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.remove-alert-rules.o029"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name> in [ , <rule_name> , ... ]"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o001"
 kind = "positive"
 required = true
@@ -11254,13 +11258,6 @@ kind = "operand_type_class"
 required = true
 target = "<rule_name> in [ , <rule_name> , ... ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o028"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name> in [ , <rule_name> , ... ]"
-note = "a string literal in place of <rule_name>"
 
 [[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o012"
@@ -11353,6 +11350,14 @@ id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o024"
 kind = "negative_neighbour"
 required = true
 target = "<rule_name>"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules.o029"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name> in [ , <rule_name> , ... ]"
 anchor = "doc.sql.alter-data-movement-policy / Syntax"
 note = "a string literal in place of <rule_name>, observed"
 
@@ -11565,13 +11570,6 @@ target = "<rule_name> in [ , <rule_name> , ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.alter-data-movement-policy.set-alert-rules.o028"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name> in [ , <rule_name> , ... ]"
-note = "a string literal in place of <rule_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.set-alert-rules.o012"
 kind = "negative_neighbour"
 required = true
@@ -11662,6 +11660,14 @@ id = "sf.security_admin.alter-data-movement-policy.set-alert-rules.o024"
 kind = "negative_neighbour"
 required = true
 target = "<rule_name>"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.set-alert-rules.o029"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name> in [ , <rule_name> , ... ]"
 anchor = "doc.sql.alter-data-movement-policy / Syntax"
 note = "a string literal in place of <rule_name>, observed"
 
@@ -11858,13 +11864,6 @@ target = "<rule_name> in [ , <rule_name> , ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.alter-data-movement-policy.set-enforce-rules.o028"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name> in [ , <rule_name> , ... ]"
-note = "a string literal in place of <rule_name>"
-
-[[obligation]]
 id = "sf.security_admin.alter-data-movement-policy.set-enforce-rules.o012"
 kind = "negative_neighbour"
 required = true
@@ -11955,6 +11954,14 @@ id = "sf.security_admin.alter-data-movement-policy.set-enforce-rules.o025"
 kind = "negative_neighbour"
 required = true
 target = "<rule_name>"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.alter-data-movement-policy.set-enforce-rules.o029"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name> in [ , <rule_name> , ... ]"
 anchor = "doc.sql.alter-data-movement-policy / Syntax"
 note = "a string literal in place of <rule_name>, observed"
 
@@ -61005,13 +61012,6 @@ target = "<secret_name> in [ , <secret_name> , ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o078"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name> in [ , <secret_name> , ... ]"
-note = "a string literal in place of <secret_name>"
-
-[[obligation]]
 id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o029"
 kind = "operand_type_class"
 required = true
@@ -61107,13 +61107,6 @@ kind = "operand_type_class"
 required = true
 target = "<secret_name> in [ , <secret_name> , ... ] #2"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o081"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name> in [ , <secret_name> , ... ] #2"
-note = "a string literal in place of <secret_name>"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o043"
@@ -61325,6 +61318,22 @@ id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allow
 kind = "negative_neighbour"
 required = true
 target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+anchor = "doc.sql.create-api-integration / Syntax / For artifact repository"
+note = "a string literal in place of <secret_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o082"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name> in [ , <secret_name> , ... ]"
+anchor = "doc.sql.create-api-integration / Syntax / For artifact repository"
+note = "a string literal in place of <secret_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true.o083"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name> in [ , <secret_name> , ... ] #2"
 anchor = "doc.sql.create-api-integration / Syntax / For artifact repository"
 note = "a string literal in place of <secret_name>, observed"
 
@@ -63636,13 +63645,6 @@ target = "<secret_name> in [ , <secret_name> , ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true.o061"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name> in [ , <secret_name> , ... ]"
-note = "a string literal in place of <secret_name>"
-
-[[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true.o029"
 kind = "operand_type_class"
 required = true
@@ -63838,6 +63840,14 @@ anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
 note = "a string literal in place of <secret_name>, observed"
 
 [[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true.o062"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name> in [ , <secret_name> , ... ]"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+note = "a string literal in place of <secret_name>, observed"
+
+[[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o001"
 kind = "positive"
 required = true
@@ -64028,13 +64038,6 @@ target = "<secret_name> in [ , <secret_name> , ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o077"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name> in [ , <secret_name> , ... ]"
-note = "a string literal in place of <secret_name>"
-
-[[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o029"
 kind = "operand_type_class"
 required = true
@@ -64118,13 +64121,6 @@ kind = "operand_type_class"
 required = true
 target = "<secret_name> in [ , <secret_name> , ... ] #2"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o080"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name> in [ , <secret_name> , ... ] #2"
-note = "a string literal in place of <secret_name>"
 
 [[obligation]]
 id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o041"
@@ -64342,6 +64338,22 @@ id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixe
 kind = "negative_neighbour"
 required = true
 target = "<secret_name> in [ ALLOWED_AUTHENTICATION_SECRETS = { ( <secret_name> [ , <secret_name> , ... ] ) | all | none } ]"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+note = "a string literal in place of <secret_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o081"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name> in [ , <secret_name> , ... ]"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+note = "a string literal in place of <secret_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true.o082"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name> in [ , <secret_name> , ... ] #2"
 anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
 note = "a string literal in place of <secret_name>, observed"
 
@@ -71127,13 +71139,6 @@ target = "<rule_name> in [ , <rule_name> , ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-data-movement-policy.o061"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name> in [ , <rule_name> , ... ]"
-note = "a string literal in place of <rule_name>"
-
-[[obligation]]
 id = "sf.security_admin.create-data-movement-policy.o050"
 kind = "option_present"
 required = true
@@ -71190,13 +71195,6 @@ kind = "operand_type_class"
 required = true
 target = "<rule_name> in [ , <rule_name> , ... ] #2"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-data-movement-policy.o064"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name> in [ , <rule_name> , ... ] #2"
-note = "a string literal in place of <rule_name>"
 
 [[obligation]]
 id = "sf.security_admin.create-data-movement-policy.o023"
@@ -71342,6 +71340,22 @@ id = "sf.security_admin.create-data-movement-policy.o044"
 kind = "negative_neighbour"
 required = true
 target = "<rule_name> in [ ALERT_RULES = ( <rule_name> [ , <rule_name> , ... ] ) ]"
+anchor = "doc.sql.create-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-data-movement-policy.o065"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name> in [ , <rule_name> , ... ]"
+anchor = "doc.sql.create-data-movement-policy / Syntax"
+note = "a string literal in place of <rule_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-data-movement-policy.o066"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name> in [ , <rule_name> , ... ] #2"
 anchor = "doc.sql.create-data-movement-policy / Syntax"
 note = "a string literal in place of <rule_name>, observed"
 
@@ -71730,13 +71744,6 @@ target = "<rule_name_2> in [ , <rule_name_2> , ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-external-access-integration.o068"
-kind = "negative_neighbour"
-required = true
-target = "<rule_name_2> in [ , <rule_name_2> , ... ]"
-note = "a string literal in place of <rule_name_2>"
-
-[[obligation]]
 id = "sf.security_admin.create-external-access-integration.o012"
 kind = "option_present"
 required = true
@@ -71800,13 +71807,6 @@ kind = "operand_type_class"
 required = true
 target = "<integration_name_2> in [ , <integration_name_2> , ... ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-external-access-integration.o071"
-kind = "negative_neighbour"
-required = true
-target = "<integration_name_2> in [ , <integration_name_2> , ... ]"
-note = "a string literal in place of <integration_name_2>"
 
 [[obligation]]
 id = "sf.security_admin.create-external-access-integration.o021"
@@ -71885,13 +71885,6 @@ kind = "operand_type_class"
 required = true
 target = "<secret_name_2> in [ , <secret_name_2> , ... ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-external-access-integration.o074"
-kind = "negative_neighbour"
-required = true
-target = "<secret_name_2> in [ , <secret_name_2> , ... ]"
-note = "a string literal in place of <secret_name_2>"
 
 [[obligation]]
 id = "sf.security_admin.create-external-access-integration.o032"
@@ -72171,6 +72164,30 @@ required = true
 target = "<rule_name_1>"
 anchor = "doc.sql.create-external-access-integration / Syntax"
 note = "a string literal in place of <rule_name_1>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-external-access-integration.o081"
+kind = "negative_neighbour"
+required = true
+target = "<rule_name_2> in [ , <rule_name_2> , ... ]"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+note = "a string literal in place of <rule_name_2>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-external-access-integration.o082"
+kind = "negative_neighbour"
+required = true
+target = "<integration_name_2> in [ , <integration_name_2> , ... ]"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+note = "a string literal in place of <integration_name_2>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-external-access-integration.o083"
+kind = "negative_neighbour"
+required = true
+target = "<secret_name_2> in [ , <secret_name_2> , ... ]"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+note = "a string literal in place of <secret_name_2>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-failover-group.as-replica-of.o001"
@@ -74491,25 +74508,11 @@ required = true
 target = "[ , <arg_1> <arg_type_1> ... ]"
 
 [[obligation]]
-id = "sf.security_admin.create-masking-policy.masking-policy-as-returns.o047"
-kind = "required_operand_missing"
-required = true
-target = "<arg_1> in [ , <arg_1> <arg_type_1> ... ]"
-note = "omit <arg_1>"
-
-[[obligation]]
 id = "sf.security_admin.create-masking-policy.masking-policy-as-returns.o048"
 kind = "operand_type_class"
 required = true
 target = "<arg_1> in [ , <arg_1> <arg_type_1> ... ]"
 note = "a valid operand"
-
-[[obligation]]
-id = "sf.security_admin.create-masking-policy.masking-policy-as-returns.o049"
-kind = "required_operand_missing"
-required = true
-target = "<arg_type_1> in [ , <arg_1> <arg_type_1> ... ]"
-note = "omit <arg_type_1>"
 
 [[obligation]]
 id = "sf.security_admin.create-masking-policy.masking-policy-as-returns.o050"
@@ -74724,6 +74727,22 @@ anchor = "doc.sql.create-masking-policy / Syntax"
 note = "omit <arg_name_to_mask>, observed"
 
 [[obligation]]
+id = "sf.security_admin.create-masking-policy.masking-policy-as-returns.o051"
+kind = "required_operand_missing"
+required = true
+target = "<arg_1> in [ , <arg_1> <arg_type_1> ... ]"
+anchor = "doc.sql.create-masking-policy / Syntax"
+note = "omit <arg_1>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-masking-policy.masking-policy-as-returns.o052"
+kind = "required_operand_missing"
+required = true
+target = "<arg_type_1> in [ , <arg_1> <arg_type_1> ... ]"
+anchor = "doc.sql.create-masking-policy / Syntax"
+note = "omit <arg_type_1>, observed"
+
+[[obligation]]
 id = "sf.security_admin.create-masking-policy.or-alter-masking-policy.o001"
 kind = "positive"
 required = true
@@ -74785,25 +74804,11 @@ required = true
 target = "[ , <arg_1> <arg_type_1> ... ]"
 
 [[obligation]]
-id = "sf.security_admin.create-masking-policy.or-alter-masking-policy.o042"
-kind = "required_operand_missing"
-required = true
-target = "<arg_1> in [ , <arg_1> <arg_type_1> ... ]"
-note = "omit <arg_1>"
-
-[[obligation]]
 id = "sf.security_admin.create-masking-policy.or-alter-masking-policy.o043"
 kind = "operand_type_class"
 required = true
 target = "<arg_1> in [ , <arg_1> <arg_type_1> ... ]"
 note = "a valid operand"
-
-[[obligation]]
-id = "sf.security_admin.create-masking-policy.or-alter-masking-policy.o044"
-kind = "required_operand_missing"
-required = true
-target = "<arg_type_1> in [ , <arg_1> <arg_type_1> ... ]"
-note = "omit <arg_type_1>"
 
 [[obligation]]
 id = "sf.security_admin.create-masking-policy.or-alter-masking-policy.o045"
@@ -75010,6 +75015,22 @@ required = true
 target = "<arg_name_to_mask>"
 anchor = "doc.sql.create-masking-policy / Variant syntax / CREATE OR ALTER MASKING POLICY"
 note = "omit <arg_name_to_mask>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-masking-policy.or-alter-masking-policy.o046"
+kind = "required_operand_missing"
+required = true
+target = "<arg_1> in [ , <arg_1> <arg_type_1> ... ]"
+anchor = "doc.sql.create-masking-policy / Variant syntax / CREATE OR ALTER MASKING POLICY"
+note = "omit <arg_1>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-masking-policy.or-alter-masking-policy.o047"
+kind = "required_operand_missing"
+required = true
+target = "<arg_type_1> in [ , <arg_1> <arg_type_1> ... ]"
+anchor = "doc.sql.create-masking-policy / Variant syntax / CREATE OR ALTER MASKING POLICY"
+note = "omit <arg_type_1>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-multi-party-approval-policy.o001"
@@ -96973,13 +96994,6 @@ target = "<role_name> in [ , <role_name> ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.create-session-policy.o160"
-kind = "negative_neighbour"
-required = true
-target = "<role_name> in [ , <role_name> ... ]"
-note = "a string literal in place of <role_name>"
-
-[[obligation]]
 id = "sf.security_admin.create-session-policy.o035"
 kind = "option_present"
 required = true
@@ -97048,13 +97062,6 @@ kind = "operand_type_class"
 required = true
 target = "<role_name> in [ , <role_name> ... ] #2"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.security_admin.create-session-policy.o163"
-kind = "negative_neighbour"
-required = true
-target = "<role_name> in [ , <role_name> ... ] #2"
-note = "a string literal in place of <role_name>"
 
 [[obligation]]
 id = "sf.security_admin.create-session-policy.o045"
@@ -97457,6 +97464,22 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-session-policy / Syntax"
 note = "a string literal in place of <role_name>, observed #2"
+
+[[obligation]]
+id = "sf.security_admin.create-session-policy.o164"
+kind = "negative_neighbour"
+required = true
+target = "<role_name> in [ , <role_name> ... ]"
+anchor = "doc.sql.create-session-policy / Syntax"
+note = "a string literal in place of <role_name>, observed"
+
+[[obligation]]
+id = "sf.security_admin.create-session-policy.o165"
+kind = "negative_neighbour"
+required = true
+target = "<role_name> in [ , <role_name> ... ] #2"
+anchor = "doc.sql.create-session-policy / Syntax"
+note = "a string literal in place of <role_name>, observed"
 
 [[obligation]]
 id = "sf.security_admin.create-share.create-or-alter-share.o001"

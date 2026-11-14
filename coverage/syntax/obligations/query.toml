@@ -7408,25 +7408,11 @@ target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ { ASC
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.query.order-by.orderitem.o039"
-kind = "negative_neighbour"
-required = true
-target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
-note = "a string literal in place of <column_alias>"
-
-[[obligation]]
 id = "sf.query.order-by.orderitem.o040"
 kind = "operand_type_class"
 required = true
 target = "<position> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "sf.query.order-by.orderitem.o041"
-kind = "negative_neighbour"
-required = true
-target = "<position> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
-note = "a string literal in place of <position>"
 
 [[obligation]]
 id = "sf.query.order-by.orderitem.o042"
@@ -7570,6 +7556,22 @@ required = true
 target = "[ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
 anchor = "doc.constructs.order-by / Syntax"
 note = "the list continued at least once"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o053"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+anchor = "doc.constructs.order-by / Syntax"
+note = "a string literal in place of <column_alias>, observed"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o054"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+anchor = "doc.constructs.order-by / Syntax"
+note = "a string literal in place of <position>, observed"
 
 [[obligation]]
 id = "sf.query.pivot.o001"
@@ -10832,18 +10834,6 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.query.values.o041"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ( in [ , ( ... ) ]"
-
-[[obligation]]
-id = "sf.query.values.o042"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ) in [ , ( ... ) ]"
-
-[[obligation]]
 id = "sf.query.values.o040"
 kind = "negative_neighbour"
 required = true
@@ -10923,6 +10913,20 @@ required = true
 target = "( <expr> ... )"
 anchor = "doc.constructs.values / Syntax"
 note = "200,001 rows against the documented limit of 200,000 rows"
+
+[[obligation]]
+id = "sf.query.values.o043"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.values / Syntax"
+note = "the form without its required ( in [ , ( ... ) ], observed"
+
+[[obligation]]
+id = "sf.query.values.o044"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.constructs.values / Syntax"
+note = "the form without its required ) in [ , ( ... ) ], observed"
 
 [[obligation]]
 id = "sf.query.where.o001"

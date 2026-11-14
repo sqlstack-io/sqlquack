@@ -110,13 +110,6 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.begin.o022"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ]"
-note = "omit <statement>"
-
-[[obligation]]
 id = "sf.scripting.begin.o023"
 kind = "operand_type_class"
 required = true
@@ -235,6 +228,14 @@ kind = "extreme"
 required = true
 anchor = "doc.snowflake-scripting.begin / Syntax"
 note = "5,000 statements in one block; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.begin.o025"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+anchor = "doc.snowflake-scripting.begin / Syntax"
+note = "omit <statement>, observed"
 
 [[obligation]]
 id = "sf.scripting.break.o001"
@@ -447,13 +448,6 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.case.end.o033"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ]"
-note = "omit <statement>"
-
-[[obligation]]
 id = "sf.scripting.case.end.o034"
 kind = "operand_type_class"
 required = true
@@ -524,13 +518,6 @@ id = "sf.scripting.case.end.o019"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #2"
-
-[[obligation]]
-id = "sf.scripting.case.end.o036"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ] #2"
-note = "omit <statement>"
 
 [[obligation]]
 id = "sf.scripting.case.end.o037"
@@ -633,6 +620,22 @@ anchor = "doc.snowflake-scripting.case / Syntax"
 note = "1,000 WHEN branches in one simple CASE; no documented bound"
 
 [[obligation]]
+id = "sf.scripting.case.end.o039"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+anchor = "doc.snowflake-scripting.case / Syntax"
+note = "omit <statement>, observed"
+
+[[obligation]]
+id = "sf.scripting.case.end.o040"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+anchor = "doc.snowflake-scripting.case / Syntax"
+note = "omit <statement>, observed"
+
+[[obligation]]
 id = "sf.scripting.case.end.syntax.o001"
 kind = "positive"
 required = true
@@ -685,13 +688,6 @@ id = "sf.scripting.case.end.syntax.o008"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
-
-[[obligation]]
-id = "sf.scripting.case.end.syntax.o030"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ]"
-note = "omit <statement>"
 
 [[obligation]]
 id = "sf.scripting.case.end.syntax.o031"
@@ -764,13 +760,6 @@ id = "sf.scripting.case.end.syntax.o017"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #2"
-
-[[obligation]]
-id = "sf.scripting.case.end.syntax.o033"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ] #2"
-note = "omit <statement>"
 
 [[obligation]]
 id = "sf.scripting.case.end.syntax.o034"
@@ -866,6 +855,22 @@ kind = "extreme"
 required = true
 anchor = "doc.snowflake-scripting.case / Syntax"
 note = "1,000 WHEN branches in one searched CASE; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o036"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+anchor = "doc.snowflake-scripting.case / Syntax"
+note = "omit <statement>, observed"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o037"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+anchor = "doc.snowflake-scripting.case / Syntax"
+note = "omit <statement>, observed"
 
 [[obligation]]
 id = "sf.scripting.close.o001"
@@ -2038,13 +2043,6 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.exception.o050"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ]"
-note = "omit <statement>"
-
-[[obligation]]
 id = "sf.scripting.exception.o051"
 kind = "operand_type_class"
 required = true
@@ -2132,13 +2130,6 @@ id = "sf.scripting.exception.o031"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #2"
-
-[[obligation]]
-id = "sf.scripting.exception.o053"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ] #2"
-note = "omit <statement>"
 
 [[obligation]]
 id = "sf.scripting.exception.o054"
@@ -2285,6 +2276,22 @@ kind = "extreme"
 required = true
 anchor = "doc.snowflake-scripting.exception / Syntax"
 note = "2,000 exception names joined by OR in one WHEN clause; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.exception.o056"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+note = "omit <statement>, observed"
+
+[[obligation]]
+id = "sf.scripting.exception.o057"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+note = "omit <statement>, observed"
 
 [[obligation]]
 id = "sf.scripting.fetch.o001"
@@ -2510,13 +2517,6 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.for.do-end-for.o033"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ]"
-note = "omit <statement>"
-
-[[obligation]]
 id = "sf.scripting.for.do-end-for.o034"
 kind = "operand_type_class"
 required = true
@@ -2673,6 +2673,14 @@ anchor = "doc.snowflake-scripting.for / Syntax"
 note = "cursor-based FOR ... END FOR nested, 100 levels deep; no documented bound"
 
 [[obligation]]
+id = "sf.scripting.for.do-end-for.o036"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+anchor = "doc.snowflake-scripting.for / Syntax"
+note = "omit <statement>, observed"
+
+[[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o001"
 kind = "positive"
 required = true
@@ -2784,13 +2792,6 @@ id = "sf.scripting.for.to-do-loop-end.o017"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
-
-[[obligation]]
-id = "sf.scripting.for.to-do-loop-end.o043"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ]"
-note = "omit <statement>"
 
 [[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o044"
@@ -2979,6 +2980,14 @@ anchor = "doc.snowflake-scripting.for / Syntax"
 note = "counter-based FOR ... END FOR nested, 100 levels deep; no documented bound"
 
 [[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o046"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+anchor = "doc.snowflake-scripting.for / Syntax"
+note = "omit <statement>, observed"
+
+[[obligation]]
 id = "sf.scripting.if.o001"
 kind = "positive"
 required = true
@@ -3031,13 +3040,6 @@ id = "sf.scripting.if.o008"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
-
-[[obligation]]
-id = "sf.scripting.if.o043"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ]"
-note = "omit <statement>"
 
 [[obligation]]
 id = "sf.scripting.if.o044"
@@ -3114,13 +3116,6 @@ required = true
 target = "[ <statement> ; ... ] #2"
 
 [[obligation]]
-id = "sf.scripting.if.o046"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ] #2"
-note = "omit <statement>"
-
-[[obligation]]
 id = "sf.scripting.if.o047"
 kind = "operand_type_class"
 required = true
@@ -3179,13 +3174,6 @@ id = "sf.scripting.if.o024"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #3"
-
-[[obligation]]
-id = "sf.scripting.if.o049"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ] #3"
-note = "omit <statement>"
 
 [[obligation]]
 id = "sf.scripting.if.o050"
@@ -3321,6 +3309,30 @@ kind = "extreme"
 required = true
 anchor = "doc.snowflake-scripting.if / Syntax"
 note = "1,000 ELSEIF branches in one IF; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.if.o052"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+anchor = "doc.snowflake-scripting.if / Syntax"
+note = "omit <statement>, observed"
+
+[[obligation]]
+id = "sf.scripting.if.o053"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+anchor = "doc.snowflake-scripting.if / Syntax"
+note = "omit <statement>, observed"
+
+[[obligation]]
+id = "sf.scripting.if.o054"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ] #3"
+anchor = "doc.snowflake-scripting.if / Syntax"
+note = "omit <statement>, observed"
 
 [[obligation]]
 id = "sf.scripting.let.let.o001"
@@ -3931,13 +3943,6 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
-id = "sf.scripting.loop.o021"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ]"
-note = "omit <statement>"
-
-[[obligation]]
 id = "sf.scripting.loop.o022"
 kind = "operand_type_class"
 required = true
@@ -4050,6 +4055,14 @@ anchor = "doc.snowflake-scripting.loop / Syntax"
 note = "LOOP ... END LOOP nested, each level ending with BREAK, 100 levels deep; no documented bound"
 
 [[obligation]]
+id = "sf.scripting.loop.o024"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+anchor = "doc.snowflake-scripting.loop / Syntax"
+note = "omit <statement>, observed"
+
+[[obligation]]
 id = "sf.scripting.null.o001"
 kind = "positive"
 required = true
@@ -4150,13 +4163,6 @@ target = "bind_variable_2 in [ , bind_variable_2 ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.scripting.open.o024"
-kind = "negative_neighbour"
-required = true
-target = "bind_variable_2 in [ , bind_variable_2 ... ]"
-note = "a string literal in place of bind_variable_2"
-
-[[obligation]]
 id = "sf.scripting.open.o016"
 kind = "negative_neighbour"
 required = true
@@ -4243,6 +4249,14 @@ kind = "extreme"
 required = true
 anchor = "doc.snowflake-scripting.open / Syntax"
 note = "5,000 bind variables in one OPEN ... USING list; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.open.o027"
+kind = "negative_neighbour"
+required = true
+target = "bind_variable_2 in [ , bind_variable_2 ... ]"
+anchor = "doc.snowflake-scripting.open / Syntax"
+note = "a string literal in place of bind_variable_2, observed"
 
 [[obligation]]
 id = "sf.scripting.raise.o001"
@@ -4347,13 +4361,6 @@ id = "sf.scripting.repeat.o006"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
-
-[[obligation]]
-id = "sf.scripting.repeat.o026"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ]"
-note = "omit <statement>"
 
 [[obligation]]
 id = "sf.scripting.repeat.o027"
@@ -4500,6 +4507,14 @@ anchor = "doc.snowflake-scripting.repeat / Syntax"
 note = "REPEAT ... END REPEAT nested, 100 levels deep; no documented bound"
 
 [[obligation]]
+id = "sf.scripting.repeat.o029"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+anchor = "doc.snowflake-scripting.repeat / Syntax"
+note = "omit <statement>, observed"
+
+[[obligation]]
 id = "sf.scripting.return.o001"
 kind = "positive"
 required = true
@@ -4607,13 +4622,6 @@ id = "sf.scripting.while.o010"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
-
-[[obligation]]
-id = "sf.scripting.while.o034"
-kind = "required_operand_missing"
-required = true
-target = "<statement> in [ <statement> ; ... ]"
-note = "omit <statement>"
 
 [[obligation]]
 id = "sf.scripting.while.o035"
@@ -4784,3 +4792,11 @@ kind = "extreme"
 required = true
 anchor = "doc.snowflake-scripting.while / Syntax"
 note = "WHILE ... END WHILE nested, 100 levels deep; no documented bound"
+
+[[obligation]]
+id = "sf.scripting.while.o037"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+anchor = "doc.snowflake-scripting.while / Syntax"
+note = "omit <statement>, observed"

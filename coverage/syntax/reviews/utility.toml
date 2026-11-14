@@ -190,3 +190,23 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.utility.execute-task-graph.graph" = "0b96bc845f3c1b9d1e70b7a2888bb16ae8aca3c55c4298468fbb254e49141b0c"
+
+[[review]]
+id = "utility-010"
+family = "utility"
+parser_tree = "34d4cc4a0ba49debfa4d3a4ed5e548b3f3c201dd"
+reviewed_utc = "2026-11-14T06:36:28Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-immediate.immediate-2",
+  "sf.utility.execute-immediate.immediate.syntax",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 0938da6ac, whose trees for these forms the later parser fixes leave unchanged; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-immediate.immediate-2" = "8cb76cb6166c35b1663402b25924ffc4aa919d3259a56b29bc5ec9201c641d00"
+"sf.utility.execute-immediate.immediate.syntax" = "5827b7e84239581a040f0442a3009f854ca4d179a5e18eb09dcacc2c76409e05"
+
+[review.definitions]
+"sf.utility.execute-immediate.immediate-2" = "2c36dd6a3341b95497d86629fc906668b7553b3f5abdb67a31a89ad32ffc337f"
+"sf.utility.execute-immediate.immediate.syntax" = "9f934ed69b5e42b0dd6b1f2d0201147927b1dbfb353ffe1886d6d84ca8d1e88f"
