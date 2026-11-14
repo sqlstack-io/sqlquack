@@ -292,7 +292,7 @@ impl Parser {
         self.check_opaque_statement(false)?;
         let start = self.current;
         if self.check_text_seq(&["WAREHOUSE"]) {
-            if let Ok(Some(alter)) = self.parse_checked_warehouse_alter() {
+            if let Some(alter) = self.parse_checked_warehouse_alter()? {
                 return Ok(alter);
             }
             self.current = start;

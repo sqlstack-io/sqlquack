@@ -304,3 +304,22 @@ fn given_a_word_key_after_a_comma_in_a_header_or_secret_map_when_parsing_then_ac
         },
     ]);
 }
+
+#[test]
+fn given_a_string_tag_name_in_alter_warehouse_unset_when_parsing_then_acceptance_matches_snowflake()
+{
+    assert_acceptance_matches_snowflake(&[
+        AcceptanceTestCase {
+            description: "a string tag name after a comma (recorded errno 1003)",
+            sql: "ALTER WAREHOUSE v1 UNSET TAG v1 , 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "tag names after each comma (recorded errno 2003)",
+            sql: "ALTER WAREHOUSE v1 UNSET TAG v1 , v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ]);
+}
