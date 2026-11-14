@@ -53,10 +53,12 @@ from scripts.grammar_obligations.constants import (
     NODE_CHOICE,
     NODE_OPTIONAL,
     NODE_TOKEN,
+    ONE_OF_OPTIONS,
     OPEN_PAREN,
     OPENED,
     PROCEDURE_WRAPPER,
     QUERY_CLASS,
+    QUOTE_MIXED_CASE,
     QUOTED_WITHOUT_BLANK_NAMES,
     REPEAT_FILLS,
     REPEAT_SLOT,
@@ -283,6 +285,7 @@ class Renderer:
         """Rendered tokens; a replaced operand is still declared under its valid name."""
         out: list[str] = []
         dangling: int = -1
+        kept: int = -1
         dropped: bool = False
         for position, node in enumerate(nodes):
             key: int = id(node)
@@ -312,7 +315,12 @@ class Renderer:
                 out += self._optional(node=node, choices=choices, before=out, closes=closes)
             elif node.kind == NODE_CHOICE:
                 index: int = choices.branch.get(key, 0)
-                chosen: list[str] = self._sequence(nodes=node.branches[index], choices=choices)
+                written: Choices = (
+                    self._one_option(nodes=node.branches[index], choices=choices)
+                    if len(node.branches) > 1
+                    else choices
+                )
+                chosen: list[str] = self._sequence(nodes=node.branches[index], choices=written)
                 self._last_choice = (node, index, chosen)
                 out += chosen
             elif node.token_kind == TOKEN_ELISION and out and out[-1] == LIST_SEPARATOR:
@@ -329,6 +337,10 @@ class Renderer:
                 quoted: bool = "".join(out[-2:]).endswith(DOLLAR_QUOTE)
                 out.append(self._token(node=node, choices=choices, dollar_quoted=quoted))
             dangling = _dangling_separator(out=out, emitted=emitted, dangling=dangling, node=node)
+            if _emptied(node=node, choices=choices):
+                kept = len(out) - 1
+            if dangling == kept:
+                dangling = -1
         return out
 
     @staticmethod
@@ -374,13 +386,34 @@ class Renderer:
                 item = before[separator + 1 :]
             elif cut_by_keyword:
                 item = self._whole_choice(item=item, before=before)
+            if _emptied(node=node, choices=choices):
+                return [LIST_SEPARATOR]
             other: list[str] = self._other_branch(item=item, choices=choices)
             repeated: list[str] = [",", *(other or [self._repeat(text) for text in item])]
             return _without_dropped(written=repeated, branch=branch, choices=choices)
-        rendered: list[str] = self._sequence(nodes=branch, choices=choices)
+        rendered: list[str] = self._sequence(
+            nodes=branch, choices=self._one_option(nodes=branch, choices=choices)
+        )
         if is_repetition(branch) and _ends_in_continuation(branch) and rendered:
             return [*rendered, LIST_SEPARATOR, *(self._repeat(text) for text in rendered)]
         return rendered
+
+    @staticmethod
+    def _one_option(*, nodes: tuple[Node, ...], choices: Choices) -> Choices:
+        """Choices that write the first option of `nodes` when nodes are only unwritten options."""
+        options: list[Node] = [node for node in nodes if not is_pure_elision(node)]
+        if (
+            not ONE_OF_OPTIONS
+            or choices.full
+            or not options
+            or any(node.kind != NODE_OPTIONAL for node in options)
+            or any(id(node) in choices.path for node in options)
+        ):
+            return choices
+        writable: list[Node] = [
+            node for node in options if id(node) != choices.absent and not _repeats(node)
+        ]
+        return replace(choices, path=choices.path | {id(writable[0])}) if writable else choices
 
     def _whole_choice(self, *, item: list[str], before: list[str]) -> list[str]:
         """The item, widened to the last chosen branch when a keyword in it cut the item short."""
@@ -437,6 +470,8 @@ class Renderer:
         if self._used.get(name):
             fill = REPEAT_FILLS.get((name, fill), fill)
         if choices.quote == name and node.token_kind == TOKEN_PLACEHOLDER:
+            if QUOTE_MIXED_CASE and not any(char.islower() for char in fill):
+                fill = fill.lower()
             fill = f'"{fill}Q"' if name in QUOTED_WITHOUT_BLANK_NAMES else f'"{fill} Q"'
         fill = qualified(prefix=self.style.qualify.get(name, ""), text=fill)
         if dollar_quoted:
@@ -490,6 +525,18 @@ def _without_dropped(
             at = len(words) - 1 - words[::-1].index(text)
         del words[at]
     return words
+
+
+def _repeats(node: Node) -> bool:
+    """An option that only continues a list, such as `[ , <x> ... ]`."""
+    return all(is_repetition(branch) for branch in node.branches)
+
+
+def _emptied(*, node: Node, choices: Choices) -> bool:
+    """A `[ , ... ]` whose elision is dropped: the list continued with an empty item."""
+    return node.kind == NODE_OPTIONAL and any(
+        n.token_kind == TOKEN_ELISION and id(n) in choices.drop for n in node.branches[0]
+    )
 
 
 def _dangling_separator(*, out: list[str], emitted: int, dangling: int, node: Node) -> int:

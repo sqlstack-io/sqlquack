@@ -186,6 +186,8 @@ SYNTAX_TITLE: re.Pattern[str] = re.compile(r'title="Syntax"', re.I)
 
 HEADING: re.Pattern[str] = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 
+MINTED_SUFFIX: re.Pattern[str] = re.compile(r"\.[^.]+|-\d+")
+
 DEFINITION: re.Pattern[str] = re.compile(r"^\s*<?([A-Za-z_][\w ]*?)>?\s*(\([^)]*\))?\s*::=")
 
 WORD: re.Pattern[str] = re.compile(r"[A-Za-z_][A-Za-z0-9_$]*")

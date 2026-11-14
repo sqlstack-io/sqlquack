@@ -3801,6 +3801,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o039"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct.o010"
 kind = "option_present"
 required = true
@@ -3889,6 +3896,13 @@ kind = "negative_neighbour"
 required = true
 target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct.o038"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "omit <column_name>"
 
 [[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct.o024"
@@ -4035,6 +4049,13 @@ id = "sf.functions.approx-count-distinct.approx-count-distinct-over.o007"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.o019"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.o008"
@@ -4199,6 +4220,13 @@ kind = "negative_neighbour"
 required = true
 target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o040"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "omit <column_name>"
 
 [[obligation]]
 id = "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax.o024"
@@ -4993,6 +5021,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.approximate-jaccard-index.approximate-jaccard-index.o012"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.functions.approximate-jaccard-index.approximate-jaccard-index.o010"
 kind = "alternative"
 required = true
@@ -5054,6 +5089,13 @@ id = "sf.functions.approximate-similarity.approximate-similarity.o007"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.functions.approximate-similarity.approximate-similarity.o012"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.functions.approximate-similarity.approximate-similarity.o010"
@@ -5584,6 +5626,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.array-construct.o016"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.functions.array-construct.o011"
 kind = "negative_neighbour"
 required = true
@@ -5673,6 +5722,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.array-construct-compact.o014"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.functions.array-construct-compact.o011"
 kind = "negative_neighbour"
 required = true
@@ -5741,6 +5797,13 @@ id = "sf.functions.array-construct-structured.o009"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.functions.array-construct-structured.o012"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.functions.array-construct-structured.o010"
@@ -11908,6 +11971,32 @@ required = true
 target = "{ TRUE | FALSE } → FALSE"
 
 [[obligation]]
+id = "sf.functions.complete-task-graphs.o028"
+kind = "option_present"
+required = true
+target = "[ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+
+[[obligation]]
+id = "sf.functions.complete-task-graphs.o029"
+kind = "option_absent"
+required = true
+target = "[ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+
+[[obligation]]
+id = "sf.functions.complete-task-graphs.o030"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.functions.complete-task-graphs.o031"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.complete-task-graphs.o020"
 kind = "negative_neighbour"
 required = true
@@ -11936,6 +12025,12 @@ id = "sf.functions.complete-task-graphs.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { TRUE | FALSE } in [ , ERROR_ONLY => { TRUE | FALSE } ]"
+
+[[obligation]]
+id = "sf.functions.complete-task-graphs.o032"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GRAPH_RUN_GROUP_ID in [ , GRAPH_RUN_GROUP_ID => '<string>' ]"
 
 [[obligation]]
 id = "sf.functions.complete-task-graphs.o025"
@@ -13822,6 +13917,13 @@ target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <
 note = "a string literal in place of <column_name>"
 
 [[obligation]]
+id = "sf.functions.count.count.o044"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "omit <column_name>"
+
+[[obligation]]
 id = "sf.functions.count.count.o030"
 kind = "operand_type_class"
 required = true
@@ -15033,6 +15135,32 @@ target = "'<string>' in [ , GRAPH_NAME => '<string>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.functions.current-task-graphs.o022"
+kind = "option_present"
+required = true
+target = "[ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+
+[[obligation]]
+id = "sf.functions.current-task-graphs.o023"
+kind = "option_absent"
+required = true
+target = "[ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+
+[[obligation]]
+id = "sf.functions.current-task-graphs.o024"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.functions.current-task-graphs.o025"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.current-task-graphs.o016"
 kind = "negative_neighbour"
 required = true
@@ -15049,6 +15177,12 @@ id = "sf.functions.current-task-graphs.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required GRAPH_NAME in [ , GRAPH_NAME => '<string>' ]"
+
+[[obligation]]
+id = "sf.functions.current-task-graphs.o026"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GRAPH_RUN_GROUP_ID in [ , GRAPH_RUN_GROUP_ID => '<string>' ]"
 
 [[obligation]]
 id = "sf.functions.current-task-graphs.o019"
@@ -30605,6 +30739,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.finetune-snowflake-cortex.o015"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.functions.finetune-snowflake-cortex.o006"
 kind = "negative_neighbour"
 required = true
@@ -31672,6 +31813,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.functions-window-syntax.o128"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.functions.functions-window-syntax.o024"
 kind = "option_present"
 required = true
@@ -31757,6 +31905,13 @@ id = "sf.functions.functions-window-syntax.o037"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.functions.functions-window-syntax.o129"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.functions.functions-window-syntax.o038"
@@ -32877,11 +33032,11 @@ target = "<agent_type>"
 note = "omit <agent_type>"
 
 [[obligation]]
-id = "sf.functions.get-ai-evaluation-data-snowflake-local.o010"
+id = "sf.functions.get-ai-evaluation-data-snowflake-local.o030"
 kind = "operand_type_class"
 required = true
 target = "<agent_type>"
-note = "a valid data_type"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.get-ai-evaluation-data-snowflake-local.o012"
@@ -33042,11 +33197,11 @@ target = "<agent_type>"
 note = "omit <agent_type>"
 
 [[obligation]]
-id = "sf.functions.get-ai-observability-events-snowflake-local.o010"
+id = "sf.functions.get-ai-observability-events-snowflake-local.o025"
 kind = "operand_type_class"
 required = true
 target = "<agent_type>"
-note = "a valid data_type"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.get-ai-observability-events-snowflake-local.o013"
@@ -33177,11 +33332,11 @@ target = "<agent_type>"
 note = "omit <agent_type>"
 
 [[obligation]]
-id = "sf.functions.get-ai-observability-logs-snowflake-local.o010"
+id = "sf.functions.get-ai-observability-logs-snowflake-local.o025"
 kind = "operand_type_class"
 required = true
 target = "<agent_type>"
-note = "a valid data_type"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.get-ai-observability-logs-snowflake-local.o013"
@@ -33312,11 +33467,11 @@ target = "<agent_type>"
 note = "omit <agent_type>"
 
 [[obligation]]
-id = "sf.functions.get-ai-record-trace-snowflake-local.o010"
+id = "sf.functions.get-ai-record-trace-snowflake-local.o027"
 kind = "operand_type_class"
 required = true
 target = "<agent_type>"
-note = "a valid data_type"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.get-ai-record-trace-snowflake-local.o012"
@@ -36461,6 +36616,13 @@ target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <
 note = "a string literal in place of <column_name>"
 
 [[obligation]]
+id = "sf.functions.hash.o038"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "omit <column_name>"
+
+[[obligation]]
 id = "sf.functions.hash.o022"
 kind = "operand_type_class"
 required = true
@@ -36709,6 +36871,13 @@ kind = "negative_neighbour"
 required = true
 target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg.o040"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "omit <column_name>"
 
 [[obligation]]
 id = "sf.functions.hash-agg.hash-agg.o024"
@@ -37033,6 +37202,13 @@ kind = "negative_neighbour"
 required = true
 target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.hash-agg.hash-agg-over.syntax.o040"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "omit <column_name>"
 
 [[obligation]]
 id = "sf.functions.hash-agg.hash-agg-over.syntax.o024"
@@ -38041,6 +38217,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.hll.hll.o012"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.functions.hll.hll.o010"
 kind = "alternative"
 required = true
@@ -38102,6 +38285,13 @@ id = "sf.functions.hll.hll-over.o007"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.functions.hll.hll-over.o019"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.functions.hll.hll-over.o008"
@@ -38672,11 +38862,11 @@ required = true
 target = "[ ESCAPE <escape_char> ]"
 
 [[obligation]]
-id = "sf.functions.ilike-any.o012"
+id = "sf.functions.ilike-any.o024"
 kind = "operand_type_class"
 required = true
 target = "<escape_char> in [ ESCAPE <escape_char> ]"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.ilike-any.o013"
@@ -38772,11 +38962,11 @@ target = "<escape> in [ , <escape> ]"
 note = "omit <escape>"
 
 [[obligation]]
-id = "sf.functions.ilike.ilike.o010"
+id = "sf.functions.ilike.ilike.o013"
 kind = "operand_type_class"
 required = true
 target = "<escape> in [ , <escape> ]"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.ilike.ilike.o011"
@@ -38849,11 +39039,11 @@ required = true
 target = "[ ESCAPE <escape> ]"
 
 [[obligation]]
-id = "sf.functions.ilike.ilike.syntax.o012"
+id = "sf.functions.ilike.ilike.syntax.o017"
 kind = "operand_type_class"
 required = true
 target = "<escape> in [ ESCAPE <escape> ]"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.ilike.ilike.syntax.o014"
@@ -39349,6 +39539,13 @@ id = "sf.functions.infer-schema.o016"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.functions.infer-schema.o045"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.functions.infer-schema.o036"
@@ -42712,11 +42909,11 @@ required = true
 target = "[ ESCAPE <escape_char> ]"
 
 [[obligation]]
-id = "sf.functions.like-all.o012"
+id = "sf.functions.like-all.o024"
 kind = "operand_type_class"
 required = true
 target = "<escape_char> in [ ESCAPE <escape_char> ]"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.like-all.o013"
@@ -42839,11 +43036,11 @@ required = true
 target = "[ ESCAPE <escape_char> ]"
 
 [[obligation]]
-id = "sf.functions.like-any.o012"
+id = "sf.functions.like-any.o024"
 kind = "operand_type_class"
 required = true
 target = "<escape_char> in [ ESCAPE <escape_char> ]"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.like-any.o013"
@@ -42939,11 +43136,11 @@ target = "<escape> in [ , <escape> ]"
 note = "omit <escape>"
 
 [[obligation]]
-id = "sf.functions.like.like.o010"
+id = "sf.functions.like.like.o013"
 kind = "operand_type_class"
 required = true
 target = "<escape> in [ , <escape> ]"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.like.like.o011"
@@ -43016,11 +43213,11 @@ required = true
 target = "[ ESCAPE <escape> ]"
 
 [[obligation]]
-id = "sf.functions.like.like.syntax.o012"
+id = "sf.functions.like.like.syntax.o017"
 kind = "operand_type_class"
 required = true
 target = "<escape> in [ ESCAPE <escape> ]"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.like.like.syntax.o014"
@@ -48435,6 +48632,13 @@ target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <
 note = "a string literal in place of <column_name>"
 
 [[obligation]]
+id = "sf.functions.object-construct.o044"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "omit <column_name>"
+
+[[obligation]]
 id = "sf.functions.object-construct.o026"
 kind = "operand_type_class"
 required = true
@@ -48720,6 +48924,13 @@ target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <
 note = "a string literal in place of <column_name>"
 
 [[obligation]]
+id = "sf.functions.object-construct-keep-null.o044"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "omit <column_name>"
+
+[[obligation]]
 id = "sf.functions.object-construct-keep-null.o026"
 kind = "operand_type_class"
 required = true
@@ -48984,6 +49195,13 @@ kind = "negative_neighbour"
 required = true
 target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.object-construct-keep-null-structured.o042"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "omit <column_name>"
 
 [[obligation]]
 id = "sf.functions.object-construct-keep-null-structured.o024"
@@ -57824,6 +58042,13 @@ target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <
 note = "a string literal in place of <column_name>"
 
 [[obligation]]
+id = "sf.functions.search.o061"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "omit <column_name>"
+
+[[obligation]]
 id = "sf.functions.search.o045"
 kind = "operand_type_class"
 required = true
@@ -58191,6 +58416,13 @@ kind = "negative_neighbour"
 required = true
 target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ]"
 note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.functions.search-ip.o051"
+kind = "required_operand_missing"
+required = true
+target = "<column_name> in [ { ILIKE '<pattern>' | EXCLUDE { <column_name> | ( <column_name> [ , <column_name> ... ] ) } } ] #2"
+note = "omit <column_name>"
 
 [[obligation]]
 id = "sf.functions.search-ip.o031"
@@ -66146,6 +66378,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.sys-context.o021"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.functions.sys-context.o019"
 kind = "negative_neighbour"
 required = true
@@ -66210,6 +66449,13 @@ id = "sf.functions.sys-context-snowflake-application.o012"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.functions.sys-context-snowflake-application.o015"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.functions.sys-context-snowflake-application.o013"
@@ -66362,6 +66608,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.sys-context-snowflake-organization.o012"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.functions.sys-context-snowflake-organization.o010"
 kind = "negative_neighbour"
 required = true
@@ -66460,6 +66713,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.sys-context-snowflake-organization-sharing.o015"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.functions.sys-context-snowflake-organization-sharing.o013"
 kind = "negative_neighbour"
 required = true
@@ -66524,6 +66784,13 @@ id = "sf.functions.sys-context-snowflake-session.o012"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.functions.sys-context-snowflake-session.o015"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.functions.sys-context-snowflake-session.o013"
@@ -70178,11 +70445,11 @@ required = true
 target = "{ <sql_statement_expression> | <sql_query_id_expression> } → <sql_statement_expression>"
 
 [[obligation]]
-id = "sf.functions.system-explain-plan-json.o004"
+id = "sf.functions.system-explain-plan-json.o016"
 kind = "operand_type_class"
 required = true
 target = "<sql_statement_expression>"
-note = "a valid statement"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.functions.system-explain-plan-json.o008"
@@ -78212,6 +78479,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.functions.system-wait-for-services.o011"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.functions.system-wait-for-services.o009"
 kind = "negative_neighbour"
 required = true
@@ -79010,6 +79284,32 @@ target = "'<string>' in [ , GRAPH_ID => '<string>' ]"
 note = "a valid string_literal"
 
 [[obligation]]
+id = "sf.functions.task-history.o056"
+kind = "option_present"
+required = true
+target = "[ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+
+[[obligation]]
+id = "sf.functions.task-history.o057"
+kind = "option_absent"
+required = true
+target = "[ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+
+[[obligation]]
+id = "sf.functions.task-history.o058"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.functions.task-history.o059"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , GRAPH_RUN_GROUP_ID => '<string>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.functions.task-history.o043"
 kind = "negative_neighbour"
 required = true
@@ -79068,6 +79368,12 @@ id = "sf.functions.task-history.o052"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required GRAPH_ID in [ , GRAPH_ID => '<string>' ]"
+
+[[obligation]]
+id = "sf.functions.task-history.o060"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GRAPH_RUN_GROUP_ID in [ , GRAPH_RUN_GROUP_ID => '<string>' ]"
 
 [[obligation]]
 id = "sf.functions.task-history.o053"

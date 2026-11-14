@@ -4,7 +4,7 @@
 [[review]]
 id = "c-page-exclusions-1"
 family = ""
-sources_sha256 = "3082a21c8c1a28fe7ba2440c57f32a01ae3dffa439fa029db84acd5d37eeb36b"
+sources_sha256 = "47dbcf41cb7aa0fb2981d2fe9e0c33578a3eb53d80863685f2711c551ff0591e"
 reviewed_utc = "2026-11-04T00:26:20Z"
 verdict = "approved"
 note = "627 pages: every out_of_scope and no_syntax_block source. Pages that document syntax outside sqlsyntax blocks are catalogued from coverage/syntax/hand.toml instead of being excluded. The 17 restated pages are not excluded: each is listed in the also_sources of the canonical forms it restates."

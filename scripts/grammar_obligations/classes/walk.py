@@ -11,6 +11,7 @@ from scripts.grammar_obligations._helpers.grammar import (
     operand_class,
     placeholder_name,
     render,
+    template_alternatives,
     template_name,
 )
 from scripts.grammar_obligations.constants import (
@@ -24,15 +25,19 @@ from scripts.grammar_obligations.constants import (
     ACTION_RESERVED_WORD,
     ARGUMENT_STARTS,
     ARROWS,
+    BARE_VALUE_CLASS,
     CALL_SEPARATORS,
     CALLEE_STARTS,
     CLAUSE_CALLEES,
     CLOSE_PAREN,
     COMMAND_FAMILIES,
     COMMAND_NON_CALL_KEYWORDS,
+    ELISION,
     EXPECT_OBSERVE,
     EXPECT_REJECT,
     EXPRESSION_ARGUMENT_FAMILIES,
+    FAMILY_STYLES,
+    FILL_CLASSES,
     IDENTIFIER_CLASS,
     KIND_ALTERNATIVE,
     KIND_NEGATIVE,
@@ -43,9 +48,11 @@ from scripts.grammar_obligations.constants import (
     LEXICAL_WRONG,
     LEXICALLY_DISTINCT_WRONG_FILL,
     LIST_SEPARATOR,
+    NAME_FILL,
     NESTED_CLASSES,
     NODE_CHOICE,
     NODE_OPTIONAL,
+    NODE_TOKEN,
     NON_CALL_KEYWORDS,
     OBSERVED_WRONG,
     OPEN_PAREN,
@@ -54,6 +61,7 @@ from scripts.grammar_obligations.constants import (
     PARENS,
     PATH_SEPARATORS,
     REPEATED_ITEMS,
+    SINGLE_QUOTE,
     STRING_CLASS,
     SUBGRAMMAR_CLASS,
     TARGET_BREAK,
@@ -62,11 +70,12 @@ from scripts.grammar_obligations.constants import (
     TOKEN_ELISION,
     TOKEN_KEYWORD,
     TOKEN_LITERAL,
+    TOKEN_PLACEHOLDER,
     TOKEN_PUNCT,
     TOP_LEVEL_FAMILIES,
     UNPACKED_FORMS,
 )
-from scripts.grammar_obligations.models import Draft, Node, Spec
+from scripts.grammar_obligations.models import Draft, FormStyle, Node, Spec
 
 
 class Walk:
@@ -243,6 +252,10 @@ class Walk:
         if not name:
             return
         label: str = STRING_CLASS if node.token_kind == TOKEN_LITERAL else operand_class(name)
+        if FILL_CLASSES and self._string_fill(name):
+            label = STRING_CLASS
+        if BARE_VALUE_CLASS and self._bare_value(node):
+            label = BARE_VALUE_CLASS
         self.classes.add(label)
         suffix: str = f" in {where}" if where else ""
         if label == IDENTIFIER_CLASS:
@@ -292,6 +305,34 @@ class Walk:
                 note=f"{LEXICAL_WRONG[label]} in place of {node.text}",
                 spec=replace(wrong, expect=EXPECT_OBSERVE) if label in OBSERVED_WRONG else wrong,
             )
+        if template_name(node):
+            self._template_alternatives(node=node, suffix=suffix)
+
+    def _template_alternatives(self, *, node: Node, suffix: str) -> None:
+        """One case per alternative written inside a quoted template, such as `'60 hours'`."""
+        for branch, text in template_alternatives(node.text):
+            self.add(
+                kind=KIND_ALTERNATIVE,
+                target=self.target(text=f"{node.text}{suffix}", tail=f" → {branch}"),
+                note="",
+                spec=self.spec(action=ACTION_REPLACE_NODE, node=node, payload=text),
+            )
+
+    def _bare_value(self, node: Node) -> bool:
+        """A bare lower-case word after `=`: a keyword value, not a named operand."""
+        return (
+            node.token_kind == TOKEN_PLACEHOLDER
+            and not node.text.startswith("<")
+            and self.previous in OPTION_ASSIGNMENTS
+        )
+
+    def _string_fill(self, name: str) -> bool:
+        """Whether the family fills the operand `name` with a quoted string, whatever its name."""
+        family: str = self.form.split(".")[1]
+        styles: dict[str, FormStyle] = FAMILY_STYLES.get(family, {})
+        prefixes: list[str] = [prefix for prefix in styles if self.form.startswith(prefix)]
+        fills: dict[str, str] = styles[max(prefixes, key=len)].fills if prefixes else {}
+        return (fills.get(name) or NAME_FILL.get(name) or "").startswith(SINGLE_QUOTE)
 
     def valid(self) -> Spec:
         """The packed positive case that contains the current position; a list item's own case."""
@@ -333,6 +374,14 @@ class Walk:
             else frozenset()
         )
         self.path = outer | {id(node)} | continued
+        elision: Node | None = _bare_continuation(node) if repeated else None
+        if elision is not None:
+            self.add(
+                kind=KIND_OPERAND_MISSING,
+                target=self.target(text=f"{ELISION} in {present}"),
+                note="the list continued without its item",
+                spec=self.reject(action=ACTION_DROP_NODE, node=elision),
+            )
         self.repeating += repeated
         self._branches(node=node, where=present, top=False, branch=False)
         self.repeating -= repeated
@@ -377,3 +426,16 @@ def _optional_item(*, item: Node, continuation: Node) -> bool:
         if node.text != LIST_SEPARATOR and node.token_kind != TOKEN_ELISION
     )
     return item.kind == NODE_OPTIONAL and render(item.branches[0]) == render(repeated)
+
+
+def _bare_continuation(node: Node) -> Node | None:
+    """The elision of a `[ , ... ]` that repeats the item before it, else None."""
+    if len(node.branches) != 1:
+        return None
+    tokens: tuple[Node, ...] = node.branches[0]
+    if any(
+        n.kind != NODE_TOKEN or n.token_kind not in {TOKEN_PUNCT, TOKEN_ELISION} for n in tokens
+    ):
+        return None
+    elisions: list[Node] = [n for n in tokens if n.token_kind == TOKEN_ELISION]
+    return elisions[0] if len(elisions) == 1 and len(tokens) > 1 else None

@@ -2,7 +2,16 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
+
+NUMBER_TOKEN: re.Pattern[str] = re.compile(
+    r"\s*(?:(?P<placeholder><[^<>]+>)|(?P<literal>'[^']*'|\"[^\"]*\")|(?P<elision>\.\.\.)"
+    r"|(?P<bracket>[\[\]{}]|\|(?!\|))|(?P<keyword>[A-Za-z_][A-Za-z0-9_$]*|\d+[A-Za-z][A-Za-z0-9_]*)"
+    r"|(?P<punct>:=|::|=>|->>|->|<>|!=|<=|>=|\|\||\d+(?![A-Za-z_])|\S))"
+)
+
+CLAUSE_CALLEES: frozenset[str] = frozenset({"EXCLUDE"})
 
 WITHDRAWN_HEADER: str = (
     "# Derived rejections of family {family} withdrawn because the documented grammar also\n"
@@ -26,6 +35,22 @@ FAMILY_DIRS: tuple[str, ...] = (CATALOGUE_DIR, "obligations", "withdrawn", "elis
 FAMILY_FILE_SUFFIX: str = ".toml"
 FAMILY_FILE_DEPTH: int = 2
 LIMITS_FILE: str = "limits.toml"
+ALIASES_FILE: str = "aliases.toml"
+
+AUDIT_FRAGMENT: str = (
+    "retired without an alias: catalogued once from a fragment that is not a form, so it has "
+    "no grammar of its own"
+)
+AUDIT_ALIASED: str = "retired; its grammar is carried by"
+AUDIT_ALIAS_TARGETS_EMPTY: str = "retired, but forms that carry its grammar have no obligations"
+AUDIT_PROSE_UNREAD: str = (
+    "a prose form: its page has no syntax block and limits.toml has no [[reading]] of it"
+)
+AUDIT_EMPTY_GRAMMAR: str = "a catalogued form with an empty grammar and no [[reading]]"
+AUDIT_WITHDRAWN: str = "a catalogued form whose every derived obligation was withdrawn"
+AUDIT_ARITY: str = "a catalogued form whose every derived obligation became an arity case"
+AUDIT_SUPPRESSED: str = "a catalogued form whose every derived obligation limits.toml suppresses"
+AUDIT_DERIVED_NONE: str = "a catalogued form with a grammar from which no obligation was derived"
 LIMITS_TABLES: tuple[str, ...] = ("limit", "suppress", "reading")
 
 INTEGER_CLASS: str = "integer_literal"

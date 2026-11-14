@@ -1064,6 +1064,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o178"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o034"
 kind = "alternative"
 required = true
@@ -2054,6 +2061,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o173"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o034"
 kind = "alternative"
 required = true
@@ -3009,6 +3023,13 @@ id = "sf.utility.call-with.table-language-python-runtime-version.o014"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o175"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o034"
@@ -3982,6 +4003,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o170"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o034"
 kind = "required_operand_missing"
 required = true
@@ -4917,6 +4945,13 @@ id = "sf.utility.call-with.table-language-scala-runtime-version.o014"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o178"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o034"
@@ -5909,6 +5944,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o173"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o034"
 kind = "alternative"
 required = true
@@ -6828,6 +6870,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o135"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o029"
 kind = "option_present"
 required = true
@@ -7723,6 +7772,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.utility.execute-dbt-project.project.o097"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.execute-dbt-project.project.o054"
 kind = "option_present"
 required = true
@@ -7823,6 +7879,13 @@ required = true
 target = "[ , ... ] #2"
 
 [[obligation]]
+id = "sf.utility.execute-dbt-project.project.o098"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.execute-dbt-project.project.o069"
 kind = "option_present"
 required = true
@@ -7905,6 +7968,13 @@ id = "sf.utility.execute-dbt-project.project.o082"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #3"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project.o099"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #3"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.utility.execute-dbt-project.project.o026"
@@ -8114,6 +8184,13 @@ target = "<integration_name> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_
 note = "a string literal in place of <integration_name>"
 
 [[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o086"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o025"
 kind = "required_operand_missing"
 required = true
@@ -8154,6 +8231,13 @@ kind = "negative_neighbour"
 required = true
 target = "'<value>' in [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]"
 note = "an unquoted identifier in place of '<value>'"
+
+[[obligation]]
+id = "sf.utility.execute-dbt-project.project-2.o087"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.utility.execute-dbt-project.project-2.o040"
@@ -10058,6 +10142,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.utility.execute-immediate-from.o072"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.execute-immediate-from.o020"
 kind = "option_present"
 required = true
@@ -11430,6 +11521,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.utility.execute-job-service.o144"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.execute-job-service.o009"
 kind = "option_present"
 required = true
@@ -11677,6 +11775,13 @@ id = "sf.utility.execute-job-service.o099"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.utility.execute-job-service.o145"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.utility.execute-job-service.o046"
@@ -12014,6 +12119,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.utility.execute-notebook.o018"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.execute-notebook.o011"
 kind = "negative_neighbour"
 required = true
@@ -12313,6 +12425,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.utility.execute-notebook-project.o091"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.utility.execute-notebook-project.o034"
 kind = "option_present"
 required = true
@@ -12350,6 +12469,13 @@ id = "sf.utility.execute-notebook-project.o040"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.utility.execute-notebook-project.o092"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.utility.execute-notebook-project.o041"
@@ -12438,6 +12564,13 @@ id = "sf.utility.execute-notebook-project.o053"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #3"
+
+[[obligation]]
+id = "sf.utility.execute-notebook-project.o093"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #3"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.utility.execute-notebook-project.o054"

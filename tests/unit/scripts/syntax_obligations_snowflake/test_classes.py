@@ -1,5 +1,6 @@
 """Snowflake operands named as numbers, objects or words, quoted values built from placeholders, and
-class instance names, LIKE patterns and tags get their class and its wrong-kind negative."""
+class instance names, LIKE patterns and tags get their class and its wrong-kind negative; list
+items, template alternatives and groups of options get cases that write what they name."""
 
 from __future__ import annotations
 
@@ -8,15 +9,15 @@ from pathlib import Path
 
 import pytest
 
-from scripts.grammar_obligations._helpers.obligations import family_obligations
-from scripts.grammar_obligations._helpers.render import style_of, submissions
 from scripts.grammar_obligations.constants import (
+    KIND_ALTERNATIVE,
+    KIND_IDENTIFIER,
     KIND_NEGATIVE,
     KIND_OPERAND_CLASS,
     KIND_OPERAND_MISSING,
+    KIND_OPTION_ABSENT,
+    KIND_POSITIVE,
 )
-from scripts.grammar_obligations.models import Draft
-from scripts.syntax_obligations_snowflake._helpers.rules import install
 from scripts.syntax_obligations_snowflake.main.build import run_build
 from tests.unit.scripts.syntax_obligations_snowflake._test_types import (
     DerivedLimitTestCase,
@@ -24,14 +25,24 @@ from tests.unit.scripts.syntax_obligations_snowflake._test_types import (
     ListItemTestCase,
     OperandClassTestCase,
 )
+from tests.unit.scripts.syntax_obligations_snowflake.helpers import rendered_sql
 
 CATALOGUES: dict[str, str] = {
+    "ddl": """
+[[form]]
+id = "sf.ddl.cancel-query"
+family = "ddl"
+kind = "statement"
+grammar = ["CANCEL QUERY <query_id>"]
+uses = []
+status = "catalogued"
+""",
     "transaction_session": """
 [[form]]
 id = "sf.transaction_session.show-transactions"
 family = "transaction_session"
 kind = "statement"
-grammar = ["SHOW TRANSACTIONS [ LIMIT <rows> ] [ TIMEOUT = <timeout_seconds> ] [ SIZE = <max_integer> ] [ NAME = <rows_name> ] [ PURPOSE = <purpose> ] [ OWNER = <role> ] [ AGE = <days> ] [ SCALE = <fractional_seconds_precision> ] [ TAG = <purposes> ] [ PERIOD = '<num> { seconds | minutes }' ]"]
+grammar = ["SHOW TRANSACTIONS [ LIMIT <rows> ] [ TIMEOUT = <timeout_seconds> ] [ SIZE = <max_integer> ] [ NAME = <rows_name> ] [ PURPOSE = <purpose> ] [ OWNER = <role> ] [ AGE = <days> ] [ SCALE = <fractional_seconds_precision> ] [ TAG = <purposes> ] [ PERIOD = '<num> { seconds | minutes }' ] [ PROVIDER = git_https_api ]"]
 uses = []
 status = "catalogued"
 
@@ -76,6 +87,13 @@ PACKAGES_POLICY: str = (
     " [ ALLOWLIST = ( [ '<packageSpec>' ] [ , '<packageSpec>' ... ] ) ]"
 )
 VALUES: str = "SELECT ... FROM ( VALUES ( <expr> [ , <expr> [ , ... ] ] ) [ , ( ... ) ] )"
+PERIOD: str = "SHOW TRANSACTIONS [ PERIOD = '<num> { seconds | minutes }' ]"
+SCHEDULE: str = "SHOW TASKS SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
+ENCRYPTION: str = "SHOW KEYS ENCRYPTION = ( { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'NONE' ] } )"
+SET_GROUPS: str = (
+    "ALTER USER [ <name> ] SET { [ [ PASSWORD = '<string>' ] [ LOGIN_NAME = <string> ] ]"
+    " [ [ DISABLED = { TRUE | FALSE } ] ] }"
+)
 
 
 @pytest.mark.parametrize(
@@ -140,6 +158,21 @@ VALUES: str = "SELECT ... FROM ( VALUES ( <expr> [ , <expr> [ , ... ] ] ) [ , ( 
             description="a name that only starts with a word name stays unclassified",
             target="<purposes> in [ TAG = <purposes> ]",
             expected_notes=frozenset({"a valid operand", ""}),
+        ),
+        OperandClassTestCase(
+            description="a bare lower-case value after = is a keyword word",
+            target="git_https_api in [ PROVIDER = git_https_api ]",
+            expected_notes=frozenset(
+                {"a valid word", "a string literal in place of git_https_api"}
+            ),
+        ),
+        OperandClassTestCase(
+            description="an operand the family fills with a quoted string is a string",
+            target="<query_id>",
+            expected_notes=frozenset(
+                {"a valid string_literal", "an unquoted identifier in place of <query_id>"}
+            ),
+            family="ddl",
         ),
         OperandClassTestCase(
             description="a quoted value built from placeholders is a string",
@@ -328,6 +361,22 @@ context = "raw"
             expected_sql=("CREATE PACKAGES POLICY v1 LANGUAGE PYTHON ALLOWLIST = ( 'm' , 'm' ) ;",),
         ),
         ListItemTestCase(
+            description="an elided list continued with an empty item",
+            family="transaction_session",
+            grammar="DROP TAG <name> [ , ... ]",
+            kind=KIND_OPERAND_MISSING,
+            label="... in [ , ... ]",
+            expected_sql=("DROP TAG v1 , ;",),
+        ),
+        ListItemTestCase(
+            description="an empty elided item keeps its comma before an omitted option and )",
+            family="transaction_session",
+            grammar="DROP TAG ( <name> [ , ... ] [ , CASCADE ] )",
+            kind=KIND_OPERAND_MISSING,
+            label="... in [ , ... ]",
+            expected_sql=("DROP TAG ( v1 , ) ;",),
+        ),
+        ListItemTestCase(
             description="an elided row loses its opening parenthesis",
             family="query",
             grammar=VALUES,
@@ -349,31 +398,96 @@ context = "raw"
 def test_given_a_repeated_list_item_when_building_then_the_second_item_has_its_own_cases(
     tmp_path: Path, test_case: ListItemTestCase
 ) -> None:
-    (tmp_path / "catalogue").mkdir()
-    (tmp_path / "catalogue" / f"{test_case.family}.toml").write_text(
-        f'[[form]]\nid = "sf.{test_case.family}.probe"\nfamily = "{test_case.family}"\n'
-        f'kind = "statement"\ngrammar = ["""{test_case.grammar}"""]\nuses = []\n'
-        'status = "catalogued"\n'
-    )
-    (tmp_path / "limits.toml").write_text("")
-    install()
-    numbered, trees, _, _, _ = family_obligations(root=tmp_path, family=test_case.family)
-    drafts: dict[tuple[str, str | None], Draft] = {
-        **{(draft.kind, draft.note): draft for _, draft in numbered},
-        **{(draft.kind, draft.target): draft for _, draft in numbered},
-    }
-    draft: Draft = drafts[(test_case.kind, test_case.label)]
-    assert draft.spec is not None
+    assert rendered_sql(directory=tmp_path, test_case=test_case) == test_case.expected_sql
 
-    assert (
-        tuple(
-            case.sql
-            for case in submissions(
-                trees=trees[draft.form],
-                style=style_of(family=test_case.family, form=draft.form),
-                spec=draft.spec,
-                depths=draft.depths,
-            )
-        )
-        == test_case.expected_sql
-    )
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        ListItemTestCase(
+            description="a quoted template's unit alternative is written with that unit",
+            family="transaction_session",
+            grammar=PERIOD,
+            kind=KIND_ALTERNATIVE,
+            label=(
+                "'<num> { seconds | minutes }' in [ PERIOD = '<num> { seconds | minutes }' ]"
+                " → minutes"
+            ),
+            expected_sql=("SHOW TRANSACTIONS PERIOD = '60 minutes' ;",),
+        ),
+        ListItemTestCase(
+            description="a template made of one choice writes its CRON alternative",
+            family="transaction_session",
+            grammar=SCHEDULE,
+            kind=KIND_ALTERNATIVE,
+            label=(
+                "'{ <num> MINUTE | USING CRON <expr> <time_zone> }' → USING CRON <expr> <time_zone>"
+            ),
+            expected_sql=("SHOW TASKS SCHEDULE = 'USING CRON 0 9 * * * UTC' ;",),
+        ),
+        ListItemTestCase(
+            description="an alternative made only of options writes its option",
+            family="transaction_session",
+            grammar=ENCRYPTION,
+            kind=KIND_ALTERNATIVE,
+            label="{ [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'NONE' ] } → [ TYPE = 'NONE' ]",
+            expected_sql=("SHOW KEYS ENCRYPTION = ( TYPE = 'NONE' ) ;",),
+        ),
+        ListItemTestCase(
+            description="an absent option of a one-option alternative still empties it",
+            family="transaction_session",
+            grammar=ENCRYPTION,
+            kind=KIND_OPTION_ABSENT,
+            label="[ TYPE = 'AWS_SSE_S3' ]",
+            expected_sql=("SHOW KEYS ENCRYPTION = ( ) ;",),
+        ),
+        ListItemTestCase(
+            description="a SET list of option groups writes one option of its first group",
+            family="security_admin",
+            grammar=SET_GROUPS,
+            kind=KIND_POSITIVE,
+            label="the documented form with every required part and no optional part",
+            expected_sql=("ALTER USER SET PASSWORD = 'm' ;",),
+        ),
+        ListItemTestCase(
+            description="an absent first option leaves its group's next option written",
+            family="security_admin",
+            grammar=SET_GROUPS,
+            kind=KIND_OPTION_ABSENT,
+            label="[ PASSWORD = '<string>' ]",
+            expected_sql=("ALTER USER SET LOGIN_NAME = 'm' ;",),
+        ),
+        ListItemTestCase(
+            description="a reserved name, bare and quoted, reaches a SET list that writes an option",
+            family="security_admin",
+            grammar=SET_GROUPS,
+            kind=KIND_IDENTIFIER,
+            label="<name>",
+            expected_sql=(
+                "ALTER USER SELECT SET PASSWORD = 'm' ;",
+                "ALTER USER \"SELECT\" SET PASSWORD = 'm' ;",
+            ),
+        ),
+        ListItemTestCase(
+            description="a documented number is one token, not one digit after another",
+            family="ddl",
+            grammar="ALTER POSTGRES INSTANCE <name> SET POSTGRES_VERSION = { 16 | 17 }",
+            kind=KIND_POSITIVE,
+            label="the documented form with every required part and no optional part",
+            expected_sql=("ALTER POSTGRES INSTANCE v1 SET POSTGRES_VERSION = 16 ;",),
+        ),
+        ListItemTestCase(
+            description="an upper-case name fill is quoted with mixed case",
+            family="security_admin",
+            grammar="SHOW INTEGRATIONS OF TYPE <integration_type_name>",
+            kind=KIND_IDENTIFIER,
+            label="quoted: a double-quoted identifier with blanks and mixed case",
+            expected_sql=('SHOW INTEGRATIONS OF TYPE "security integrations Q" ;',),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_generator_rule_when_building_then_its_case_writes_what_it_names(
+    tmp_path: Path, test_case: ListItemTestCase
+) -> None:
+    assert rendered_sql(directory=tmp_path, test_case=test_case) == test_case.expected_sql

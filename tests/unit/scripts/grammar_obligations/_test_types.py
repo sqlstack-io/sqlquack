@@ -26,3 +26,13 @@ class DisputedFormMarkTestCase:
     sql: str
     expected_mark: str
     expected_expect: str
+
+
+@dataclass(frozen=True)
+class DisprovedExpectationTestCase:
+    description: str
+    sql: str
+    settlement: str
+    phase: str
+    expected_expect: str
+    expected_mark: str | None

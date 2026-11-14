@@ -2975,9 +2975,9 @@ source = "doc.sql.alter-iceberg-table-convert-to-managed"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> CONVERT TO MANAGED [ BASE_LOCATION = '<directory_for_table_files>' ] [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ]",
+  "ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> CONVERT TO MANAGED [ { FILE_PATH | BASE_LOCATION } = '<directory_for_table_files>' ] [ DROP_FROM_SOURCE_CATALOG = { TRUE | FALSE } ] [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ]",
 ]
-grammar_sha256 = "8806be21dd257b49c8b80092e69a03ff5076ed229628c00120d3bc9211fceaf0"
+grammar_sha256 = "9a5d15fcfecd63687b7abce854231c7fd42738611f9059d1b65bea794dbf8234"
 uses = []
 status = "catalogued"
 

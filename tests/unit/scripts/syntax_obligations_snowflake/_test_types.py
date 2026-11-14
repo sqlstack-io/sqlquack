@@ -97,3 +97,22 @@ class DocumentedRefusalTestCase:
     target: str
     sql: str
     expected_note: str
+
+
+@dataclass(frozen=True)
+class OmissionAuditTestCase:
+    description: str
+    catalogue: str
+    aliases: str
+    limits: str
+    built: tuple[str, ...]
+    dropped: tuple[tuple[str, str], ...]
+    expected_failures: tuple[str, ...]
+    expected_listed: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class AuditBuildTestCase:
+    description: str
+    arguments: tuple[str, ...]
+    expected_code: int
