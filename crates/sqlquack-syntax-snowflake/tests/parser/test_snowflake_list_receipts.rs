@@ -195,3 +195,58 @@ fn given_a_string_after_a_comma_in_a_group_name_list_when_parsing_then_acceptanc
         },
     ]);
 }
+
+#[test]
+fn given_a_word_key_after_a_comma_in_a_header_or_secret_map_when_parsing_then_acceptance_matches_snowflake(
+) {
+    assert_acceptance_matches_snowflake(&[
+        AcceptanceTestCase {
+            description: "a word key after a comma in ALTER FUNCTION's HEADERS (recorded errno 1003)",
+            sql: "ALTER FUNCTION v1 ( ) SET HEADERS = ( 'm' = 'm' , m1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a word key after a comma in ALTER FUNCTION's SECRETS (recorded errno 1003)",
+            sql: "ALTER FUNCTION v1 ( ) SET SECRETS = ( 'm' = v1 , m1 = v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a word key after a comma in an external function's HEADERS (recorded errno 1003)",
+            sql: "CREATE EXTERNAL FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = v1 HEADERS = ( 'm' = 'm' , m1 = 'm' ) AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a word key after a comma in WEBHOOK_HEADERS (recorded errno 1003)",
+            sql: "CREATE NOTIFICATION INTEGRATION v1 TYPE = WEBHOOK ENABLED = TRUE WEBHOOK_URL = 'm' WEBHOOK_HEADERS = ( 'm' = 'm' , m1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a word key after a comma in ALTER INTEGRATION's WEBHOOK_HEADERS (recorded errno 1003)",
+            sql: "ALTER INTEGRATION v1 SET WEBHOOK_HEADERS = ( 'm' = 'm' , m1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a lone word key in HEADERS (recorded errno 2003)",
+            sql: "ALTER FUNCTION v1 ( ) SET HEADERS = ( m1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a word value after a comma in HEADERS (recorded errno 2003)",
+            sql: "ALTER FUNCTION v1 ( ) SET HEADERS = ( 'm' = 'm' , 'm' = m1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a lone word key in WEBHOOK_HEADERS (recorded errno 2003)",
+            sql: "CREATE NOTIFICATION INTEGRATION v1 TYPE = WEBHOOK ENABLED = TRUE WEBHOOK_URL = 'm' WEBHOOK_HEADERS = ( m1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ]);
+}
