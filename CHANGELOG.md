@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.13.0](https://github.com/sqlstack-io/sqlquack/compare/v0.12.1...v0.13.0) (2026-11-14)
+
+
+### Features
+
+* **snowflake:** keep routine and task properties, WITH, FORCE, quoted UNSET names, contact purposes and grant targets as tree fields ([cc0d126](https://github.com/sqlstack-io/sqlquack/commit/cc0d1265c62bb7ab0109eac385a0da9800b9bdc2))
+* **snowflake:** parse CREATE TASK, CREATE VARIABLE, CREATE TAG, CONNECTION, DCM PROJECT and ALTER WAREHOUSE into typed trees ([cc0d126](https://github.com/sqlstack-io/sqlquack/commit/cc0d1265c62bb7ab0109eac385a0da9800b9bdc2))
+* **syntax-coverage:** classify Snowflake name, word, numeric and placeholder operands, each with a wrong-kind case ([cc0d126](https://github.com/sqlstack-io/sqlquack/commit/cc0d1265c62bb7ab0109eac385a0da9800b9bdc2))
+* **syntax-coverage:** re-baseline Snowflake form coverage to 2,826 verified of 3,479 forms (from 2,730) ([cc0d126](https://github.com/sqlstack-io/sqlquack/commit/cc0d1265c62bb7ab0109eac385a0da9800b9bdc2))
+
+
+### Bug Fixes
+
+* **snowflake:** match recorded verdicts for typed operands ([63f2195](https://github.com/sqlstack-io/sqlquack/commit/63f21954e1b147a57edb92081819c4797b9fa558))
+* **snowflake:** record no name for an unnamed ALTER USER or ON ACCOUNT grant, and flag an access token's own IF [NOT] EXISTS ([cc0d126](https://github.com/sqlstack-io/sqlquack/commit/cc0d1265c62bb7ab0109eac385a0da9800b9bdc2))
+* **snowflake:** refuse reserved words as INSERT, MERGE, LIKE, SET and UNSET names ([cc0d126](https://github.com/sqlstack-io/sqlquack/commit/cc0d1265c62bb7ab0109eac385a0da9800b9bdc2))
+
 ## [0.12.1](https://github.com/sqlstack-io/sqlquack/compare/v0.12.0...v0.12.1) (2026-11-13)
 
 
