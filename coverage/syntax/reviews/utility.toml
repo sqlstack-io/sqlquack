@@ -262,3 +262,20 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.utility.execute-immediate.immediate" = "f1285e374d631e2f09480d9c6c79593749ca9ae390d90f6830a1f3f9a040855d"
 "sf.utility.execute-notebook" = "ec0d28a0b204872be30922cdb5eda6c52584257ffcf3fba644015cf33c54b51a"
 "sf.utility.execute-notebook-project" = "9ceb386ff0f7ae5282411147abd19b6271a83f9d2b040e3eef94326f5fca0d39"
+
+[[review]]
+id = "utility-013"
+family = "utility"
+parser_tree = "b551498b20e3796b7fe0fb4f0ef6a2a438a354eb"
+reviewed_utc = "2026-11-14T22:41:06Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-job-service",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at d711c0605; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-job-service" = "2e3cc524134de131013d525c2dd8f92f9b123e894cc33d259f0d19365ff3727b"
+
+[review.definitions]
+"sf.utility.execute-job-service" = "698e7e3c000c21f8956c0bc257ba54e2af95a14b450e96a23ccdf4f61c906605"

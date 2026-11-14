@@ -2822,3 +2822,41 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.security_admin.revoke-privilege-user" = "1954b3e8da6da9b29b19a32b419f77283c5f6491bcc3205ee9f66cf3e56789fa"
 "sf.security_admin.revoke-service-role" = "b0682dccf71968a41b8ba4393d51ea8f9d9cf83fcde0edc5f2d0b237b6d37822"
 "sf.security_admin.undrop-account" = "e5ad151da75dcdd864781ebb6222828a551b4649eff9b0f21c88892043ea5c22"
+
+[[review]]
+id = "security-admin-027"
+family = "security_admin"
+parser_tree = "b551498b20e3796b7fe0fb4f0ef6a2a438a354eb"
+reviewed_utc = "2026-11-14T22:41:06Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-resource-monitor",
+  "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository",
+  "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true",
+  "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true",
+  "sf.security_admin.create-api-integration.google-api-gateway-google-audience-api-allowed-prefixes-enabled",
+  "sf.security_admin.create-authentication-policy.create-authentication-policy",
+  "sf.security_admin.create-authentication-policy.create-or-alter-authentication",
+  "sf.security_admin.create-authentication-policy.define-authentication-policy",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at d711c0605; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-resource-monitor" = "16f92c1da8bebcefc116d74a2a3c6bee3f2259ac75ef490f35030e2523bcfec1"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository" = "65c5df71bdc7fb89383ddaea53990b149aa74fc75c4e1c8145f84f3f8023eb97"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true" = "0659550cef931211b964a6993b11771a3d9df91e1050e75dba0a46ff46219c43"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true" = "767d8331a6e951bec1a4c3932402fbf9286db187a81f9232f0d89a47da525531"
+"sf.security_admin.create-api-integration.google-api-gateway-google-audience-api-allowed-prefixes-enabled" = "fb41046dbf3227bad88c47e98cb9feb018a87b54dd9d691c295570b8fa6a068b"
+"sf.security_admin.create-authentication-policy.create-authentication-policy" = "ae383e93aead1f3a9bdc823a88bb64acf9813177495801d5d3247e0596ca046b"
+"sf.security_admin.create-authentication-policy.create-or-alter-authentication" = "4ca90785a15c335e2a15595f3ae2b282ff4815cdc12df1f48616ae652a1124f4"
+"sf.security_admin.create-authentication-policy.define-authentication-policy" = "ad65e0ef7fd66f9fc1a93785695342a22d547fa61ef01cf44b74b985044cba87"
+
+[review.definitions]
+"sf.security_admin.alter-resource-monitor" = "f13fcedae974020ef11452607613b23fad1c64e8773cdd5d4f377127a5a2ec15"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-api-user-authentication-type.for-git-repository" = "a098a2cae08c34327f3ddb2809a2c910e1fea018891762a6a9f288145353316a"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true" = "9190587d3397a9c46729615c178816afe1f11c60e2290d8ae3bc545b878724ea"
+"sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true" = "75bb3a3ca33edbca48d25d5ff528018d006af0384671f27d833d963a84144c5e"
+"sf.security_admin.create-api-integration.google-api-gateway-google-audience-api-allowed-prefixes-enabled" = "05624b150ff5166bb97030f42dd6827ac815aeb8a4b18cdda41af8291c13dc73"
+"sf.security_admin.create-authentication-policy.create-authentication-policy" = "3f60a8bdf3e0a766e7e7e989a2ff814c9c2b8964059e6d8d471448762addc73d"
+"sf.security_admin.create-authentication-policy.create-or-alter-authentication" = "214304f25a3160716bda3ed14a5f85639890010d331f24a4c212edc8b802ae6f"
+"sf.security_admin.create-authentication-policy.define-authentication-policy" = "98788161812d78bfd572af137bcda3762dafbfc8f517441bf5faaaabebd7d003"
