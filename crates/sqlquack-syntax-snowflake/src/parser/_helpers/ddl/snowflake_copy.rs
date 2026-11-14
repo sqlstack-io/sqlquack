@@ -331,7 +331,10 @@ impl Parser {
                 Some(TokenType::Dot)
                     if load
                         && (matches!(next, Some(TokenType::From | TokenType::String))
-                            || self.copy_type(index - 1) == Some(TokenType::String)
+                            || matches!(
+                                self.copy_type(index - 1),
+                                Some(TokenType::String | TokenType::Comma | TokenType::Select)
+                            )
                             || self.copy_reserved(index - 1)) =>
                 {
                     return Err(self.parse_error("Expected a name around ."));
