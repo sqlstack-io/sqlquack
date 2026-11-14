@@ -110,6 +110,27 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
+id = "sf.scripting.begin.o022"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.begin.o023"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.begin.o024"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
 id = "sf.scripting.begin.o007"
 kind = "option_present"
 required = true
@@ -426,6 +447,27 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
+id = "sf.scripting.case.end.o033"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.case.end.o034"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.case.end.o035"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
 id = "sf.scripting.case.end.o011"
 kind = "option_present"
 required = true
@@ -482,6 +524,27 @@ id = "sf.scripting.case.end.o019"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #2"
+
+[[obligation]]
+id = "sf.scripting.case.end.o036"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.case.end.o037"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.case.end.o038"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "a bare literal in place of <statement>"
 
 [[obligation]]
 id = "sf.scripting.case.end.o020"
@@ -624,6 +687,27 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
+id = "sf.scripting.case.end.syntax.o030"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o031"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o032"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
 id = "sf.scripting.case.end.syntax.o009"
 kind = "option_present"
 required = true
@@ -680,6 +764,27 @@ id = "sf.scripting.case.end.syntax.o017"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #2"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o033"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o034"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.case.end.syntax.o035"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "a bare literal in place of <statement>"
 
 [[obligation]]
 id = "sf.scripting.case.end.syntax.o018"
@@ -1038,6 +1143,36 @@ id = "sf.scripting.declare.declare.o008"
 kind = "option_absent"
 required = true
 target = "[ { <variable_declaration> | <cursor_declaration> | <resultset_declaration> | <nested_stored_procedure_declaration> |…"
+
+[[obligation]]
+id = "sf.scripting.declare.declare.o017"
+kind = "alternative"
+required = true
+target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> |… → <variable_declaration> #2"
+
+[[obligation]]
+id = "sf.scripting.declare.declare.o018"
+kind = "alternative"
+required = true
+target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> |… → <cursor_declaration> #2"
+
+[[obligation]]
+id = "sf.scripting.declare.declare.o019"
+kind = "alternative"
+required = true
+target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> |… → <resultset_declaration> #2"
+
+[[obligation]]
+id = "sf.scripting.declare.declare.o020"
+kind = "alternative"
+required = true
+target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> |… → <nested_stored_procedure_declaration> #2"
+
+[[obligation]]
+id = "sf.scripting.declare.declare.o021"
+kind = "alternative"
+required = true
+target = "{ <variable_declaration> | <cursor_declaration> | <resultset_declaration> |… → <exception_declaration> #2"
 
 [[obligation]]
 id = "sf.scripting.declare.declare.o009"
@@ -1903,6 +2038,27 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
+id = "sf.scripting.exception.o050"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.exception.o051"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.exception.o052"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
 id = "sf.scripting.exception.o019"
 kind = "option_present"
 required = true
@@ -1976,6 +2132,27 @@ id = "sf.scripting.exception.o031"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #2"
+
+[[obligation]]
+id = "sf.scripting.exception.o053"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.exception.o054"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.exception.o055"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "a bare literal in place of <statement>"
 
 [[obligation]]
 id = "sf.scripting.exception.o032"
@@ -2171,6 +2348,27 @@ required = true
 target = "[ , <variable> ... ]"
 
 [[obligation]]
+id = "sf.scripting.fetch.o019"
+kind = "required_operand_missing"
+required = true
+target = "<variable> in [ , <variable> ... ]"
+note = "omit <variable>"
+
+[[obligation]]
+id = "sf.scripting.fetch.o020"
+kind = "operand_type_class"
+required = true
+target = "<variable> in [ , <variable> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.scripting.fetch.o021"
+kind = "negative_neighbour"
+required = true
+target = "<variable> in [ , <variable> ... ]"
+note = "a string literal in place of <variable>"
+
+[[obligation]]
 id = "sf.scripting.fetch.o010"
 kind = "negative_neighbour"
 required = true
@@ -2310,6 +2508,27 @@ id = "sf.scripting.for.do-end-for.o012"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o033"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o034"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.for.do-end-for.o035"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a bare literal in place of <statement>"
 
 [[obligation]]
 id = "sf.scripting.for.do-end-for.o013"
@@ -2567,6 +2786,27 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o043"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o044"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.for.to-do-loop-end.o045"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
 id = "sf.scripting.for.to-do-loop-end.o018"
 kind = "alternative"
 required = true
@@ -2793,6 +3033,27 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
+id = "sf.scripting.if.o043"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.if.o044"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.if.o045"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
 id = "sf.scripting.if.o009"
 kind = "option_present"
 required = true
@@ -2853,6 +3114,27 @@ required = true
 target = "[ <statement> ; ... ] #2"
 
 [[obligation]]
+id = "sf.scripting.if.o046"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.if.o047"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.if.o048"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
 id = "sf.scripting.if.o018"
 kind = "option_present"
 required = true
@@ -2897,6 +3179,27 @@ id = "sf.scripting.if.o024"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ] #3"
+
+[[obligation]]
+id = "sf.scripting.if.o049"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ] #3"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.if.o050"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ] #3"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.if.o051"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ] #3"
+note = "a bare literal in place of <statement>"
 
 [[obligation]]
 id = "sf.scripting.if.o025"
@@ -3628,6 +3931,27 @@ required = true
 target = "[ <statement> ; ... ]"
 
 [[obligation]]
+id = "sf.scripting.loop.o021"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.loop.o022"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.loop.o023"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a bare literal in place of <statement>"
+
+[[obligation]]
 id = "sf.scripting.loop.o007"
 kind = "option_present"
 required = true
@@ -3812,6 +4136,27 @@ required = true
 target = "[ , bind_variable_2 ... ]"
 
 [[obligation]]
+id = "sf.scripting.open.o022"
+kind = "required_operand_missing"
+required = true
+target = "bind_variable_2 in [ , bind_variable_2 ... ]"
+note = "omit bind_variable_2"
+
+[[obligation]]
+id = "sf.scripting.open.o023"
+kind = "operand_type_class"
+required = true
+target = "bind_variable_2 in [ , bind_variable_2 ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.scripting.open.o024"
+kind = "negative_neighbour"
+required = true
+target = "bind_variable_2 in [ , bind_variable_2 ... ]"
+note = "a string literal in place of bind_variable_2"
+
+[[obligation]]
 id = "sf.scripting.open.o016"
 kind = "negative_neighbour"
 required = true
@@ -3852,6 +4197,22 @@ id = "sf.scripting.open.o015"
 kind = "identifier_class"
 required = true
 target = "bind_variable_1"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.scripting.open.o025"
+kind = "identifier_class"
+required = true
+target = "bind_variable_2"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "sf.scripting.open.o026"
+kind = "identifier_class"
+required = true
+target = "bind_variable_2"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -3986,6 +4347,27 @@ id = "sf.scripting.repeat.o006"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
+
+[[obligation]]
+id = "sf.scripting.repeat.o026"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.repeat.o027"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.repeat.o028"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a bare literal in place of <statement>"
 
 [[obligation]]
 id = "sf.scripting.repeat.o007"
@@ -4225,6 +4607,27 @@ id = "sf.scripting.while.o010"
 kind = "option_absent"
 required = true
 target = "[ <statement> ; ... ]"
+
+[[obligation]]
+id = "sf.scripting.while.o034"
+kind = "required_operand_missing"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+
+[[obligation]]
+id = "sf.scripting.while.o035"
+kind = "operand_type_class"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a valid statement"
+
+[[obligation]]
+id = "sf.scripting.while.o036"
+kind = "negative_neighbour"
+required = true
+target = "<statement> in [ <statement> ; ... ]"
+note = "a bare literal in place of <statement>"
 
 [[obligation]]
 id = "sf.scripting.while.o011"

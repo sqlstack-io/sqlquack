@@ -253,6 +253,8 @@ COMMAND_NON_CALL_KEYWORDS: frozenset[str] = frozenset({"TAG"})
 
 TEMPLATE_OPERANDS: bool = False
 
+REPEATED_ITEMS: bool = False
+
 PLACEHOLDER_IN_LITERAL: re.Pattern[str] = re.compile(r"<[^<>]+>")
 
 STATEMENT_TERMINATOR: str = ";"

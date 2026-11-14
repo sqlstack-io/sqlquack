@@ -42,6 +42,46 @@ required = true
 target = "[ [ <arg_name> => ] <arg> , ... ]"
 
 [[obligation]]
+id = "sf.utility.call.o018"
+kind = "option_present"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call.o019"
+kind = "option_absent"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call.o020"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call.o021"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call.o022"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call.o023"
+kind = "operand_type_class"
+required = true
+target = "<arg> in [ [ <arg_name> => ] <arg> , ... ]"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.utility.call.o007"
 kind = "option_present"
 required = true
@@ -98,6 +138,22 @@ id = "sf.utility.call.o014"
 kind = "identifier_class"
 required = true
 target = "<procedure_name>"
+anchor = "doc.identifiers-syntax"
+note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
+
+[[obligation]]
+id = "sf.utility.call.o024"
+kind = "identifier_class"
+required = true
+target = "<arg_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to the double-quoted identifier form"
+
+[[obligation]]
+id = "sf.utility.call.o025"
+kind = "identifier_class"
+required = true
+target = "<arg_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
@@ -194,6 +250,48 @@ id = "sf.utility.call-with.language-javascript-as-call.o084"
 kind = "option_absent"
 required = true
 target = "[ , <arg_name> <arg_data_type> ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o110"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o111"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o112"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o113"
+kind = "required_operand_missing"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_data_type>"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o114"
+kind = "operand_type_class"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid data_type"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o115"
+kind = "negative_neighbour"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_data_type>"
 
 [[obligation]]
 id = "sf.utility.call-with.language-javascript-as-call.o015"
@@ -410,6 +508,46 @@ id = "sf.utility.call-with.language-javascript-as-call.o045"
 kind = "option_absent"
 required = true
 target = "[ [ <arg_name> => ] <arg> , ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o116"
+kind = "option_present"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o117"
+kind = "option_absent"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o118"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o119"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o120"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o121"
+kind = "operand_type_class"
+required = true
+target = "<arg> in [ [ <arg_name> => ] <arg> , ... ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.call-with.language-javascript-as-call.o046"
@@ -773,6 +911,48 @@ required = true
 target = "[ , <arg_name> <arg_data_type> ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o160"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o161"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o162"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o163"
+kind = "required_operand_missing"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_data_type>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o164"
+kind = "operand_type_class"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid data_type"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o165"
+kind = "negative_neighbour"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_data_type>"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o015"
 kind = "alternative"
 required = true
@@ -944,6 +1124,27 @@ required = true
 target = "[ , '<package_name_and_version>' ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o166"
+kind = "required_operand_missing"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "omit '<package_name_and_version>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o167"
+kind = "operand_type_class"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o168"
+kind = "negative_neighbour"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "an unquoted identifier in place of '<package_name_and_version>'"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o040"
 kind = "option_present"
 required = true
@@ -988,6 +1189,27 @@ id = "sf.utility.call-with.table-language-java-runtime-version.o046"
 kind = "option_absent"
 required = true
 target = "[ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o169"
+kind = "required_operand_missing"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o170"
+kind = "operand_type_class"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o171"
+kind = "negative_neighbour"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o047"
@@ -1162,6 +1384,46 @@ id = "sf.utility.call-with.table-language-java-runtime-version.o075"
 kind = "option_absent"
 required = true
 target = "[ [ <arg_name> => ] <arg> , ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o172"
+kind = "option_present"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o173"
+kind = "option_absent"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o174"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o175"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o176"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.o177"
+kind = "operand_type_class"
+required = true
+target = "<arg> in [ [ <arg_name> => ] <arg> , ... ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o076"
@@ -1639,6 +1901,48 @@ required = true
 target = "[ , <arg_name> <arg_data_type> ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o155"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o156"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o157"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o158"
+kind = "required_operand_missing"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_data_type>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o159"
+kind = "operand_type_class"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid data_type"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o160"
+kind = "negative_neighbour"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_data_type>"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o015"
 kind = "alternative"
 required = true
@@ -1810,6 +2114,27 @@ required = true
 target = "[ , '<package_name_and_version>' ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o161"
+kind = "required_operand_missing"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "omit '<package_name_and_version>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o162"
+kind = "operand_type_class"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o163"
+kind = "negative_neighbour"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "an unquoted identifier in place of '<package_name_and_version>'"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o040"
 kind = "option_present"
 required = true
@@ -1854,6 +2179,27 @@ id = "sf.utility.call-with.table-language-java-runtime-version.java.o046"
 kind = "option_absent"
 required = true
 target = "[ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o164"
+kind = "required_operand_missing"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o165"
+kind = "operand_type_class"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o166"
+kind = "negative_neighbour"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o047"
@@ -1995,6 +2341,46 @@ id = "sf.utility.call-with.table-language-java-runtime-version.java.o070"
 kind = "option_absent"
 required = true
 target = "[ [ <arg_name> => ] <arg> , ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o167"
+kind = "option_present"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o168"
+kind = "option_absent"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o169"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o170"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o171"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-java-runtime-version.java.o172"
+kind = "operand_type_class"
+required = true
+target = "<arg> in [ [ <arg_name> => ] <arg> , ... ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.java.o071"
@@ -2472,6 +2858,48 @@ required = true
 target = "[ , <arg_name> <arg_data_type> ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o159"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o160"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o161"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o162"
+kind = "required_operand_missing"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_data_type>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o163"
+kind = "operand_type_class"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid data_type"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o164"
+kind = "negative_neighbour"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_data_type>"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o015"
 kind = "alternative"
 required = true
@@ -2637,6 +3065,13 @@ required = true
 target = "[ , '<package_name>[==<version>]' ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o165"
+kind = "operand_type_class"
+required = true
+target = "'<package_name>[==<version>]' in [ , '<package_name>[==<version>]' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o039"
 kind = "option_present"
 required = true
@@ -2681,6 +3116,27 @@ id = "sf.utility.call-with.table-language-python-runtime-version.o045"
 kind = "option_absent"
 required = true
 target = "[ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o166"
+kind = "required_operand_missing"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o167"
+kind = "operand_type_class"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o168"
+kind = "negative_neighbour"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o046"
@@ -2843,6 +3299,46 @@ id = "sf.utility.call-with.table-language-python-runtime-version.o072"
 kind = "option_absent"
 required = true
 target = "[ [ <arg_name> => ] <arg> , ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o169"
+kind = "option_present"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o170"
+kind = "option_absent"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o171"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o172"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o173"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.o174"
+kind = "operand_type_class"
+required = true
+target = "<arg> in [ [ <arg_name> => ] <arg> , ... ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.o073"
@@ -3333,6 +3829,48 @@ required = true
 target = "[ , <arg_name> <arg_data_type> ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o154"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o155"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o156"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o157"
+kind = "required_operand_missing"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_data_type>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o158"
+kind = "operand_type_class"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid data_type"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o159"
+kind = "negative_neighbour"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_data_type>"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o015"
 kind = "alternative"
 required = true
@@ -3498,6 +4036,13 @@ required = true
 target = "[ , '<package_name>[==<version>]' ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o160"
+kind = "operand_type_class"
+required = true
+target = "'<package_name>[==<version>]' in [ , '<package_name>[==<version>]' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o039"
 kind = "option_present"
 required = true
@@ -3542,6 +4087,27 @@ id = "sf.utility.call-with.table-language-python-runtime-version.python.o045"
 kind = "option_absent"
 required = true
 target = "[ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o161"
+kind = "required_operand_missing"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o162"
+kind = "operand_type_class"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o163"
+kind = "negative_neighbour"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o151"
@@ -3683,6 +4249,46 @@ id = "sf.utility.call-with.table-language-python-runtime-version.python.o066"
 kind = "option_absent"
 required = true
 target = "[ [ <arg_name> => ] <arg> , ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o164"
+kind = "option_present"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o165"
+kind = "option_absent"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o166"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o167"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o168"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-python-runtime-version.python.o169"
+kind = "operand_type_class"
+required = true
+target = "<arg> in [ [ <arg_name> => ] <arg> , ... ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-python-runtime-version.python.o067"
@@ -4160,6 +4766,48 @@ required = true
 target = "[ , <arg_name> <arg_data_type> ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o160"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o161"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o162"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o163"
+kind = "required_operand_missing"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_data_type>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o164"
+kind = "operand_type_class"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid data_type"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o165"
+kind = "negative_neighbour"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_data_type>"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o015"
 kind = "alternative"
 required = true
@@ -4331,6 +4979,27 @@ required = true
 target = "[ , '<package_name_and_version>' ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o166"
+kind = "required_operand_missing"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "omit '<package_name_and_version>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o167"
+kind = "operand_type_class"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o168"
+kind = "negative_neighbour"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "an unquoted identifier in place of '<package_name_and_version>'"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o040"
 kind = "option_present"
 required = true
@@ -4375,6 +5044,27 @@ id = "sf.utility.call-with.table-language-scala-runtime-version.o046"
 kind = "option_absent"
 required = true
 target = "[ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o169"
+kind = "required_operand_missing"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o170"
+kind = "operand_type_class"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o171"
+kind = "negative_neighbour"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o047"
@@ -4549,6 +5239,46 @@ id = "sf.utility.call-with.table-language-scala-runtime-version.o075"
 kind = "option_absent"
 required = true
 target = "[ [ <arg_name> => ] <arg> , ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o172"
+kind = "option_present"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o173"
+kind = "option_absent"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o174"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o175"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o176"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.o177"
+kind = "operand_type_class"
+required = true
+target = "<arg> in [ [ <arg_name> => ] <arg> , ... ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.o076"
@@ -5026,6 +5756,48 @@ required = true
 target = "[ , <arg_name> <arg_data_type> ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o155"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o156"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o157"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o158"
+kind = "required_operand_missing"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_data_type>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o159"
+kind = "operand_type_class"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid data_type"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o160"
+kind = "negative_neighbour"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_data_type>"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o015"
 kind = "alternative"
 required = true
@@ -5197,6 +5969,27 @@ required = true
 target = "[ , '<package_name_and_version>' ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o161"
+kind = "required_operand_missing"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "omit '<package_name_and_version>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o162"
+kind = "operand_type_class"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o163"
+kind = "negative_neighbour"
+required = true
+target = "'<package_name_and_version>' in [ , '<package_name_and_version>' ... ]"
+note = "an unquoted identifier in place of '<package_name_and_version>'"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o040"
 kind = "option_present"
 required = true
@@ -5241,6 +6034,27 @@ id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o046"
 kind = "option_absent"
 required = true
 target = "[ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o164"
+kind = "required_operand_missing"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "omit '<stage_path_and_directory_or_file_name_to_read>'"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o165"
+kind = "operand_type_class"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o166"
+kind = "negative_neighbour"
+required = true
+target = "'<stage_path_and_directory_or_file_name_to_read>' in [ , '<stage_path_and_directory_or_file_name_to_read>' ... ]"
+note = "an unquoted identifier in place of '<stage_path_and_directory_or_file_name_to_read>'"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o047"
@@ -5382,6 +6196,46 @@ id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o070"
 kind = "option_absent"
 required = true
 target = "[ [ <arg_name> => ] <arg> , ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o167"
+kind = "option_present"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o168"
+kind = "option_absent"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o169"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o170"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o171"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o172"
+kind = "operand_type_class"
+required = true
+target = "<arg> in [ [ <arg_name> => ] <arg> , ... ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-scala-runtime-version.scala.o071"
@@ -5859,6 +6713,48 @@ required = true
 target = "[ , <arg_name> <arg_data_type> ... ]"
 
 [[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o122"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o123"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o124"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o125"
+kind = "required_operand_missing"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_data_type>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o126"
+kind = "operand_type_class"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a valid data_type"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o127"
+kind = "negative_neighbour"
+required = true
+target = "<arg_data_type> in [ , <arg_name> <arg_data_type> ... ]"
+note = "a string literal in place of <arg_data_type>"
+
+[[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o015"
 kind = "alternative"
 required = true
@@ -6107,6 +7003,46 @@ id = "sf.utility.call-with.table-language-sql-as.o052"
 kind = "option_absent"
 required = true
 target = "[ [ <arg_name> => ] <arg> , ... ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o128"
+kind = "option_present"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o129"
+kind = "option_absent"
+required = true
+target = "[ <arg_name> => ]"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o130"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "omit <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o131"
+kind = "operand_type_class"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o132"
+kind = "negative_neighbour"
+required = true
+target = "<arg_name> in [ <arg_name> => ]"
+note = "a string literal in place of <arg_name>"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o133"
+kind = "operand_type_class"
+required = true
+target = "<arg> in [ [ <arg_name> => ] <arg> , ... ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o053"
@@ -6568,6 +7504,27 @@ id = "sf.utility.execute-code-bundle.o014"
 kind = "option_absent"
 required = true
 target = "[ , '<arg>' ... ]"
+
+[[obligation]]
+id = "sf.utility.execute-code-bundle.o033"
+kind = "required_operand_missing"
+required = true
+target = "'<arg>' in [ , '<arg>' ... ]"
+note = "omit '<arg>'"
+
+[[obligation]]
+id = "sf.utility.execute-code-bundle.o034"
+kind = "operand_type_class"
+required = true
+target = "'<arg>' in [ , '<arg>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.utility.execute-code-bundle.o035"
+kind = "negative_neighbour"
+required = true
+target = "'<arg>' in [ , '<arg>' ... ]"
+note = "an unquoted identifier in place of '<arg>'"
 
 [[obligation]]
 id = "sf.utility.execute-code-bundle.o028"
@@ -7609,11 +8566,39 @@ target = "<expr> in [ ( <expr> [ , <expr> ... ] ) ]"
 note = "omit <expr>"
 
 [[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o079"
+kind = "required_operand_missing"
+required = true
+target = "<expr> in [ , <expr> ... ]"
+note = "omit <expr>"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o080"
+kind = "operand_type_class"
+required = true
+target = "<expr> in [ , <expr> ... ]"
+note = "a valid expression"
+
+[[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o034"
 kind = "required_operand_missing"
 required = true
 target = "<expr> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
 note = "omit <expr>"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o081"
+kind = "required_operand_missing"
+required = true
+target = "<expr> in [ , <expr> ... ] #2"
+note = "omit <expr>"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o082"
+kind = "operand_type_class"
+required = true
+target = "<expr> in [ , <expr> ... ] #2"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.deploy-fromsource-fromdeployment.o039"
@@ -8011,11 +8996,39 @@ target = "<expr> in [ ( <expr> [ , <expr> ... ] ) ]"
 note = "omit <expr>"
 
 [[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o082"
+kind = "required_operand_missing"
+required = true
+target = "<expr> in [ , <expr> ... ]"
+note = "omit <expr>"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o083"
+kind = "operand_type_class"
+required = true
+target = "<expr> in [ , <expr> ... ]"
+note = "a valid expression"
+
+[[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o038"
 kind = "required_operand_missing"
 required = true
 target = "<expr> in [ USING { CONFIGURATION <config_name> [ ( <expr> [ , <expr> ... ] ) ] | ( <expr> [ , <expr> ... ] ) } ]"
 note = "omit <expr>"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o084"
+kind = "required_operand_missing"
+required = true
+target = "<expr> in [ , <expr> ... ] #2"
+note = "omit <expr>"
+
+[[obligation]]
+id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o085"
+kind = "operand_type_class"
+required = true
+target = "<expr> in [ , <expr> ... ] #2"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.utility.execute-dcm-project.plan-fromsource-fromdeployment.o043"
@@ -9239,6 +10252,20 @@ required = true
 target = "[ , <bind_variable> ... ]"
 
 [[obligation]]
+id = "sf.utility.execute-immediate.immediate.o017"
+kind = "required_operand_missing"
+required = true
+target = "<bind_variable> in [ , <bind_variable> ... ]"
+note = "omit <bind_variable>"
+
+[[obligation]]
+id = "sf.utility.execute-immediate.immediate.o018"
+kind = "operand_type_class"
+required = true
+target = "<bind_variable> in [ , <bind_variable> ... ]"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.utility.execute-immediate.immediate.o011"
 kind = "negative_neighbour"
 required = true
@@ -9337,6 +10364,20 @@ required = true
 target = "[ , <bind_variable> ... ]"
 
 [[obligation]]
+id = "sf.utility.execute-immediate.immediate-2.o013"
+kind = "required_operand_missing"
+required = true
+target = "<bind_variable> in [ , <bind_variable> ... ]"
+note = "omit <bind_variable>"
+
+[[obligation]]
+id = "sf.utility.execute-immediate.immediate-2.o014"
+kind = "operand_type_class"
+required = true
+target = "<bind_variable> in [ , <bind_variable> ... ]"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.utility.execute-immediate.immediate-2.o010"
 kind = "negative_neighbour"
 required = true
@@ -9412,6 +10453,20 @@ id = "sf.utility.execute-immediate.immediate.syntax.o010"
 kind = "option_absent"
 required = true
 target = "[ , <bind_variable> ... ]"
+
+[[obligation]]
+id = "sf.utility.execute-immediate.immediate.syntax.o016"
+kind = "required_operand_missing"
+required = true
+target = "<bind_variable> in [ , <bind_variable> ... ]"
+note = "omit <bind_variable>"
+
+[[obligation]]
+id = "sf.utility.execute-immediate.immediate.syntax.o017"
+kind = "operand_type_class"
+required = true
+target = "<bind_variable> in [ , <bind_variable> ... ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.utility.execute-immediate.immediate.syntax.o011"
