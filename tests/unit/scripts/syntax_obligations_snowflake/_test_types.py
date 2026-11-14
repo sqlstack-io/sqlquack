@@ -70,3 +70,11 @@ class OperandClassTestCase:
     target: str
     expected_notes: frozenset[str]
     family: str = "transaction_session"
+
+
+@dataclass(frozen=True)
+class DerivedLimitTestCase:
+    description: str
+    target: str
+    sql: str
+    expected_count: int

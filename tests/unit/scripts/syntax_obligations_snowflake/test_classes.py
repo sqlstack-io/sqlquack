@@ -10,7 +10,10 @@ import pytest
 
 from scripts.grammar_obligations.constants import KIND_NEGATIVE, KIND_OPERAND_CLASS
 from scripts.syntax_obligations_snowflake.main.build import run_build
-from tests.unit.scripts.syntax_obligations_snowflake._test_types import OperandClassTestCase
+from tests.unit.scripts.syntax_obligations_snowflake._test_types import (
+    DerivedLimitTestCase,
+    OperandClassTestCase,
+)
 
 CATALOGUES: dict[str, str] = {
     "transaction_session": """
@@ -171,22 +174,34 @@ def test_given_a_named_operand_when_building_then_it_has_its_class_and_a_wrong_k
     } == test_case.expected_notes
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        DerivedLimitTestCase(
+            description="a quoted placeholder value's negative",
+            target="'<num> { seconds | minutes }' in [ PERIOD = '<num> { seconds | minutes }' ]",
+            sql="SHOW TRANSACTIONS PERIOD = m1 ;",
+            expected_count=1,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_a_limit_that_writes_a_derived_obligation_when_building_then_it_is_listed_once(
-    tmp_path: Path,
+    tmp_path: Path, test_case: DerivedLimitTestCase
 ) -> None:
     (tmp_path / "catalogue").mkdir()
     (tmp_path / "catalogue" / "transaction_session.toml").write_text(
         CATALOGUES["transaction_session"]
     )
-    target: str = "'<num> { seconds | minutes }' in [ PERIOD = '<num> { seconds | minutes }' ]"
+    note: str = test_case.target.split(" in ", 1)[0]
     (tmp_path / "limits.toml").write_text(
         f"""
 [[limit]]
 form = "sf.transaction_session.show-transactions"
 kind = "{KIND_NEGATIVE}"
-target = "{target}"
-note = "an unquoted identifier in place of '<num> {{ seconds | minutes }}'"
-sql = "SHOW TRANSACTIONS PERIOD = m1 ;"
+target = "{test_case.target}"
+note = "an unquoted identifier in place of {note}"
+sql = "{test_case.sql}"
 expect = "reject"
 context = "raw"
 """
@@ -197,4 +212,5 @@ context = "raw"
     rows: list[dict[str, str]] = tomllib.loads(
         (tmp_path / "obligations" / "transaction_session.toml").read_text()
     )["obligation"]
-    assert [row["kind"] for row in rows if row.get("target") == target].count(KIND_NEGATIVE) == 1
+    pairs: list[tuple[str, str]] = [(row["kind"], row.get("target", "")) for row in rows]
+    assert pairs.count((KIND_NEGATIVE, test_case.target)) == test_case.expected_count

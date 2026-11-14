@@ -26,6 +26,7 @@ use sqlquack_syntax::expressions::schema_objects::models::DropType;
 use sqlquack_syntax::expressions::schema_objects::models::FunctionBody;
 use sqlquack_syntax::expressions::schema_objects::models::FunctionParameter;
 use sqlquack_syntax::expressions::schema_objects::models::FunctionSecurity;
+use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::schema_objects::models::ParameterMode;
 use sqlquack_syntax::expressions::schema_objects::models::SeqPropKind;
 use sqlquack_syntax::expressions::schema_objects::models::SequenceBound;
@@ -315,6 +316,25 @@ impl Parser {
         }
     }
 
+    /// Reads `AS { CALLER | OWNER | SELF | RESTRICTED CALLER }` after a procedure's EXECUTE; None without AS or an unknown principal outside Snowflake.
+    fn parse_procedure_execute_as(&mut self) -> Result<Option<String>> {
+        if !self.match_token(TokenType::As) {
+            return Ok(None);
+        }
+        if self.match_text_seq(&["RESTRICTED", "CALLER"]) {
+            return Ok(Some("RESTRICTED CALLER".to_string()));
+        }
+        for principal in ["CALLER", "OWNER", "SELF"] {
+            if self.match_identifier(principal) {
+                return Ok(Some(principal.to_string()));
+            }
+        }
+        match self.is_snowflake() {
+            true => Err(self.parse_error("Expected OWNER, CALLER or RESTRICTED CALLER")),
+            false => Ok(None),
+        }
+    }
+
     /// Parse CREATE PROCEDURE statement
     pub(crate) fn parse_create_procedure(
         &mut self,
@@ -346,7 +366,7 @@ impl Parser {
         let mut return_type = None;
         let mut execute_as = None;
         let mut with_options: Vec<String> = Vec::new();
-        let mut snowflake_properties = Vec::new();
+        let mut snowflake_properties: Vec<ObjectProperty> = Vec::new();
         let mut null_or_volatility = false;
 
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
@@ -374,18 +394,8 @@ impl Parser {
                     }
                 }
             } else if self.match_identifier("EXECUTE") || self.match_token(TokenType::Execute) {
-                if self.match_token(TokenType::As) {
-                    if self.match_identifier("CALLER") {
-                        execute_as = Some("CALLER".to_string());
-                    } else if self.match_identifier("OWNER") {
-                        execute_as = Some("OWNER".to_string());
-                    } else if self.match_identifier("SELF") {
-                        execute_as = Some("SELF".to_string());
-                    } else if self.match_text_seq(&["RESTRICTED", "CALLER"]) {
-                        execute_as = Some("RESTRICTED CALLER".to_string());
-                    } else if self.is_snowflake() {
-                        return Err(self.parse_error("Expected OWNER, CALLER or RESTRICTED CALLER"));
-                    }
+                if let Some(principal) = self.parse_procedure_execute_as()? {
+                    execute_as = Some(principal);
                 }
             } else if self.match_token(TokenType::Language) {
                 language = Some(self.expect_identifier_or_keyword()?);
