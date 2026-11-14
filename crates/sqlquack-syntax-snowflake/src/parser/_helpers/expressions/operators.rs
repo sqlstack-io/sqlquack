@@ -1345,15 +1345,18 @@ impl Parser {
             let start = self.current;
             let target = self.parse_object_name();
             if let (Ok(target), true) = (target, self.check_identifier("CLONE")) {
-                let name = [target.catalog, target.schema, Some(target.name)]
+                let mut parts: Vec<String> = [target.catalog, target.schema, Some(target.name)]
                     .into_iter()
                     .flatten()
                     .map(|part| match part.quoted {
                         true => format!("\"{}\"", part.name.replace('"', "\"\"")),
                         false => part.name,
                     })
-                    .collect::<Vec<_>>()
-                    .join(".");
+                    .collect();
+                if target.schema_omitted {
+                    parts.insert(1, String::new());
+                }
+                let name = parts.join(".");
                 self.skip();
                 let clone_source = self.parse_object_name()?;
                 return Ok(Expression::CreateTask(Box::new(

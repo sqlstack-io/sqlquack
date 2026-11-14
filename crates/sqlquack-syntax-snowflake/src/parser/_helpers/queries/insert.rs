@@ -449,6 +449,7 @@ impl Parser {
                 span: None,
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
+                schema_omitted: false,
             }
         } else {
             let trailing_comments = self.previous_trailing_comments().to_vec();
@@ -475,6 +476,7 @@ impl Parser {
                 span: None,
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
+                schema_omitted: false,
             }
         })
     }
@@ -600,6 +602,7 @@ impl Parser {
                     span: None,
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
+                    schema_omitted: false,
                 }
             } else {
                 let trailing_comments = self.previous_trailing_comments().to_vec();
@@ -626,6 +629,7 @@ impl Parser {
                     span: None,
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
+                    schema_omitted: false,
                 }
             };
             Some(Expression::Table(Box::new(source_table)))

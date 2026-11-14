@@ -492,13 +492,16 @@ impl Analysis<'_> {
                 return name.clone();
             }
         }
-        [&table.catalog, &table.schema]
+        let mut parts: Vec<&str> = [&table.catalog, &table.schema]
             .into_iter()
             .flatten()
             .chain([&table.name])
             .map(|part| self.authored(part))
-            .collect::<Vec<&str>>()
-            .join(".")
+            .collect();
+        if table.schema_omitted {
+            parts.insert(1, "");
+        }
+        parts.join(".")
     }
 
     /// An unquoted name as authored, though PostgreSQL's parser folds it to lower case.

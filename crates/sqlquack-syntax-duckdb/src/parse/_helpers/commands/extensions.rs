@@ -94,7 +94,7 @@ impl Parser<'_> {
             name: SYSTEM_MAIN
                 .into_iter()
                 .chain([name])
-                .map(Identifier::new)
+                .map(|part| Some(Identifier::new(part)))
                 .collect(),
             member: None,
             arguments,

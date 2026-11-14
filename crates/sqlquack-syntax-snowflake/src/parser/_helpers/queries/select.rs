@@ -703,6 +703,7 @@ impl Parser {
                     span: None,
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
+                    schema_omitted: false,
                 })
             }
         })
@@ -772,7 +773,7 @@ impl Parser {
                 return Ok(Expression::boxed_table(TableRef {
                     sample_call: None,
                     catalog: Some(first_ident),
-                    schema: Some(Identifier::new("")),
+                    schema: None,
                     name: table_ident,
                     alias: None,
                     alias_explicit_as: false,
@@ -792,6 +793,7 @@ impl Parser {
                     span: None,
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
+                    schema_omitted: true,
                 }));
             }
 
@@ -830,6 +832,7 @@ impl Parser {
                         span: None,
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
+                        schema_omitted: false,
                     })
                 } else {
                     if self.match_token(TokenType::LParen) {
@@ -883,6 +886,7 @@ impl Parser {
                             span: None,
                             whole_quoted: false,
                             catalog_parts: Vec::new(),
+                            schema_omitted: false,
                         })
                     }
                 }
@@ -938,6 +942,7 @@ impl Parser {
                         span: None,
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
+                        schema_omitted: false,
                     })
                 }
             }
@@ -1140,6 +1145,7 @@ impl Parser {
                                             span: None,
                                             whole_quoted: false,
                                             catalog_parts: Vec::new(),
+                                            schema_omitted: false,
                                         })
                                     } else {
                                         let tc = self.previous_trailing_comments().to_vec();
@@ -1166,6 +1172,7 @@ impl Parser {
                                             span: None,
                                             whole_quoted: false,
                                             catalog_parts: Vec::new(),
+                                            schema_omitted: false,
                                         })
                                     }
                                 } else {
@@ -1193,6 +1200,7 @@ impl Parser {
                                         span: None,
                                         whole_quoted: false,
                                         catalog_parts: Vec::new(),
+                                        schema_omitted: false,
                                     })
                                 }
                             } else {
@@ -1763,6 +1771,7 @@ impl Parser {
                 span: None,
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
+                schema_omitted: false,
             })
         })
     }

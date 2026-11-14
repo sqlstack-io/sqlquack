@@ -491,7 +491,8 @@ pub struct Call {
     #[ast(skip)]
     pub source_dialect: Option<crate::tokens::models::DialectType>,
 
-    pub name: Vec<Identifier>,
+    /// The dotted name's parts; a part `<database>..<name>` leaves out is a null entry in place.
+    pub name: Vec<Option<Identifier>>,
     pub member: Option<Identifier>,
     pub arguments: Vec<Expression>,
     pub asynchronous: bool,
@@ -716,6 +717,9 @@ pub struct MethodCall {
     /// ORDER BY inside the call.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub order_by: Vec<Ordered>,
+    /// Snowflake `<database>..<function>( ... )`: `this` is the database; the schema is left out.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub schema_omitted: bool,
 }
 
 impl MethodCall {
@@ -727,6 +731,7 @@ impl MethodCall {
             args,
             distinct: false,
             order_by: Vec::new(),
+            schema_omitted: false,
         }
     }
 }

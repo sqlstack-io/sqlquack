@@ -270,7 +270,7 @@ impl Parser {
     /// Parse a name of at least two parts, such as `<account>.<share>`.
     fn parse_two_part_name(&mut self) -> Result<TableRef> {
         let name = self.parse_object_name()?;
-        if name.schema.is_none() {
+        if name.schema.is_none() && !name.schema_omitted {
             return Err(self.parse_error("Expected a qualified name"));
         }
         Ok(name)

@@ -5,6 +5,7 @@ use crate::parser::constants::VARIADIC_KEYWORD;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::operators::models::MethodCall;
 use sqlquack_syntax::expressions::queries::models::Subquery;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::tokens::models::SourceSpan;
@@ -194,7 +195,7 @@ impl Parser {
         }
     }
 
-    /// Snowflake's `<database>..<function>( ... )`, the schema left out; it is kept as an empty part.
+    /// Snowflake's `<database>..<function>( ... )`: a call on the database with the schema left out.
     pub(crate) fn parse_snowflake_default_schema_call(
         &mut self,
         database: Identifier,
@@ -212,17 +213,17 @@ impl Parser {
             false => self.parse_method_arguments_for(&method.name)?,
         };
         self.expect_token(TokenType::RParen)?;
-        let schema = Expression::Column(Box::new(Column {
-            name: Identifier::new(String::new()),
-            table: Some(database),
+        let database = Expression::Column(Box::new(Column {
+            name: database,
+            table: None,
             join_mark: false,
             trailing_comments: Vec::new(),
             span: None,
             inferred_type: None,
         }));
-        Ok(Some(
-            self.parse_method_call_expression(schema, method, args),
-        ))
+        let mut call = MethodCall::new(database, method, args);
+        call.schema_omitted = true;
+        Ok(Some(Expression::MethodCall(Box::new(call))))
     }
 
     /// Reads the OVER clause of a schema-qualified Snowflake call, `<schema>.<function>( ... ) OVER ( ... )`.
