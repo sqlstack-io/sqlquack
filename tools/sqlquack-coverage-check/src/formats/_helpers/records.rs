@@ -16,8 +16,9 @@ use crate::formats::constants::{
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
     AccountSetting, Alias, CaptureMethod, Case, Definition, Diagnostic, Exclusion, Expect, Form,
-    FormKind, FormStatus, Index, Obligation, ObligationKind, Phase, Reading, Receipt, Review,
-    Source, SourceStatus, Unobservable, UnobservableCase, UnobservableCause, UnobservableProbe,
+    FormKind, FormStatus, Index, NoEffect, Obligation, ObligationKind, Phase, Reading, Receipt,
+    Review, Source, SourceStatus, Unobservable, UnobservableCase, UnobservableCause,
+    UnobservableProbe,
 };
 
 fn blank(text: &str) -> bool {
@@ -388,6 +389,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         ));
     }
     problems.extend(dcm_problems(receipt));
+    problems.extend(no_effect_problems(receipt));
     let hashes: [Option<&String>; 13] = [
         Some(&receipt.sql_sha256),
         Some(&receipt.setup_sha256),
@@ -500,6 +502,26 @@ fn inner_position(text: &str) -> Option<(u32, u32)> {
 }
 
 /// The rules of a `dcm_definition_file` receipt, and that no other receipt carries its fields.
+/// A no-effect receipt ran with no setup and records a refusal after parsing; anything else is not one.
+fn no_effect_problems(receipt: &Receipt) -> Vec<String> {
+    let id: &str = &receipt.case_id;
+    match receipt.no_effect {
+        None => Vec::new(),
+        Some(NoEffect::ProbeRole) => [
+            (
+                receipt.phase != Phase::SemanticError,
+                "is not a refusal after parsing",
+            ),
+            (receipt.setup_sha256 != setup_sha256(&[]), "names a setup"),
+            (receipt.capture_method.is_engine(), "is an engine capture"),
+        ]
+        .into_iter()
+        .filter(|(wrong, _)| *wrong)
+        .map(|(_, why)| format!("receipt {id}: a receipt run without privileges {why}"))
+        .collect(),
+    }
+}
+
 fn dcm_problems(receipt: &Receipt) -> Vec<String> {
     let id: &str = &receipt.case_id;
     let inner: [bool; 4] = [

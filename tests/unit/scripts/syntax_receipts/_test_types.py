@@ -103,3 +103,12 @@ class QueryHistoryReceiptTestCase:
     description: str
     edit: Callable[[Row], Row]
     expected_receipt: Row
+
+
+@dataclass(frozen=True)
+class UnprivilegedRunTestCase:
+    description: str
+    rows: list[dict[str, object]]
+    packet: list[dict[str, object]]
+    expected_receipts: list[tuple[str, str, str]]
+    expected_refusals: list[str]
