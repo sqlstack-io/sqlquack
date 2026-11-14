@@ -630,7 +630,6 @@ impl Parser<'_> {
                             args,
                             distinct,
                             order_by,
-                            schema_omitted: false,
                         }))
                     }
                     false => dot(this, name),

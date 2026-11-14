@@ -84,17 +84,23 @@ fn node_key(node: &Expression, windowed: bool) -> Option<String> {
             let Expression::Column(path) = &call.this else {
                 return None;
             };
-            let omitted = call.schema_omitted.then_some("");
             let name = path
                 .table
                 .iter()
-                .chain([&path.name])
+                .chain([&path.name, &call.method])
                 .map(|part| part.name.as_str())
-                .chain(omitted)
-                .chain([call.method.name.as_str()])
                 .collect::<Vec<_>>()
                 .join(".");
             return Some(call_key(&name, &call.args, windowed, false));
+        }
+        Expression::Call(call) if call.name.iter().any(Option::is_none) => {
+            let name = call
+                .name
+                .iter()
+                .map(|part| part.as_ref().map_or("", |part| part.name.as_str()))
+                .collect::<Vec<_>>()
+                .join(".");
+            return Some(call_key(&name, &call.arguments, windowed, false));
         }
         Expression::Case(case) if case.operand.is_some() => "case_simple",
         Expression::Case(_) => "case_searched",

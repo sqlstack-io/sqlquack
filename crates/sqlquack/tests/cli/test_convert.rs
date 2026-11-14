@@ -138,6 +138,13 @@ fn given_snowflake_sql_when_converting_then_duckdb_sql_or_named_refusals_are_pri
             expected_outcome: convert_outcome(1, false),
         },
         ConvertTestCase {
+            description: "a call that leaves its schema out is refused, never guessed",
+            sql: "SELECT d1..f1(1) AS v",
+            flags: &[],
+            mention: "1 | SELECT d1..f1(1) AS v\n  |        ^^^^^^ no rule converts CALL\n",
+            expected_outcome: convert_outcome(1, false),
+        },
+        ConvertTestCase {
             description: "a subquery in a hierarchical query's projection is refused",
             sql: "WITH bins AS (SELECT 1 AS id, NULL AS parent) SELECT id, (SELECT 100) AS m FROM bins START WITH parent IS NULL CONNECT BY parent = PRIOR id",
             flags: &[],

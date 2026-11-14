@@ -207,6 +207,10 @@ impl DialectRules for SnowflakeRules {
         false
     }
 
+    fn qualifies_calls_by_schema(&self) -> bool {
+        true
+    }
+
     fn qualifiers_reach_every_name(&self) -> bool {
         false
     }

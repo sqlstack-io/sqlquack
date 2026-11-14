@@ -1397,22 +1397,34 @@ fn given_a_name_whose_middle_part_a_dot_dot_b_leaves_out_when_parsing_then_the_p
             expected_value: json!(true),
         },
         StatementTestCase {
-            description: "a call on a database with its schema left out marks it omitted",
+            description: "a call on a database with its schema left out keeps the database as its first part",
             sql: "SELECT SNOWFLAKE . . AGENT_RUN ( v1 ) ;",
-            pointer: "/0/select/expressions/0/method_call/schema_omitted",
-            expected_value: json!(true),
-        },
-        StatementTestCase {
-            description: "a call with its schema left out is made on the database",
-            sql: "SELECT SNOWFLAKE . . AGENT_RUN ( v1 ) ;",
-            pointer: "/0/select/expressions/0/method_call/this/column/name/name",
+            pointer: "/0/select/expressions/0/call/name/0/name",
             expected_value: json!("SNOWFLAKE"),
         },
         StatementTestCase {
-            description: "a schema-qualified call is not marked omitted",
-            sql: "SELECT CORTEX . AGENT_RUN ( v1 ) ;",
-            pointer: "/0/select/expressions/0/method_call/schema_omitted",
+            description: "a call on a database keeps the schema it leaves out in place as null",
+            sql: "SELECT SNOWFLAKE . . AGENT_RUN ( v1 ) ;",
+            pointer: "/0/select/expressions/0/call/name/1",
             expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "a call on a database keeps the function as its last part",
+            sql: "SELECT SNOWFLAKE . . AGENT_RUN ( v1 ) ;",
+            pointer: "/0/select/expressions/0/call/name/2/name",
+            expected_value: json!("AGENT_RUN"),
+        },
+        StatementTestCase {
+            description: "a call on a database keeps its arguments",
+            sql: "SELECT SNOWFLAKE . . AGENT_RUN ( v1 ) ;",
+            pointer: "/0/select/expressions/0/call/arguments/0/column/name/name",
+            expected_value: json!("v1"),
+        },
+        StatementTestCase {
+            description: "a schema-qualified call stays a method call on the schema",
+            sql: "SELECT CORTEX . AGENT_RUN ( v1 ) ;",
+            pointer: "/0/select/expressions/0/method_call/this/column/name/name",
+            expected_value: json!("CORTEX"),
         },
     ];
     for test_case in test_cases {

@@ -3,9 +3,8 @@
 use crate::parser::_helpers::statements::analyze::snowflake_reserved_word;
 use crate::parser::constants::VARIADIC_KEYWORD;
 use crate::parser::models::Parser;
-use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::expressions::names::models::Identifier;
-use sqlquack_syntax::expressions::operators::models::MethodCall;
+use sqlquack_syntax::expressions::operators::models::Call;
 use sqlquack_syntax::expressions::queries::models::Subquery;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::tokens::models::SourceSpan;
@@ -195,7 +194,7 @@ impl Parser {
         }
     }
 
-    /// Snowflake's `<database>..<function>( ... )`: a call on the database with the schema left out.
+    /// Snowflake's `<database>..<function>( ... )`: a qualified call whose omitted schema is a null part.
     pub(crate) fn parse_snowflake_default_schema_call(
         &mut self,
         database: Identifier,
@@ -213,17 +212,16 @@ impl Parser {
             false => self.parse_method_arguments_for(&method.name)?,
         };
         self.expect_token(TokenType::RParen)?;
-        let database = Expression::Column(Box::new(Column {
-            name: database,
-            table: None,
-            join_mark: false,
-            trailing_comments: Vec::new(),
-            span: None,
-            inferred_type: None,
-        }));
-        let mut call = MethodCall::new(database, method, args);
-        call.schema_omitted = true;
-        Ok(Some(Expression::MethodCall(Box::new(call))))
+        Ok(Some(Expression::Call(Box::new(Call {
+            source_dialect: None,
+            name: vec![Some(database), None, Some(method)],
+            member: None,
+            arguments: args,
+            asynchronous: false,
+            hints: Vec::new(),
+            with: None,
+            into: None,
+        }))))
     }
 
     /// Reads the OVER clause of a schema-qualified Snowflake call, `<schema>.<function>( ... ) OVER ( ... )`.

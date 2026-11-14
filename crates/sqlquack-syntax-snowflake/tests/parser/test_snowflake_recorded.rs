@@ -798,10 +798,22 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             expected_value: json!("c1"),
         },
         ProjectionTestCase {
-            description: "a call without a schema keeps its database as the qualifier",
+            description: "a call without a schema keeps its database as the first name part",
             sql: "SELECT d1 . . f1 ( 1 )",
-            pointer: "/0/select/expressions/0/method_call/this/column/name/name",
+            pointer: "/0/select/expressions/0/call/name/0/name",
             expected_value: json!("d1"),
+        },
+        ProjectionTestCase {
+            description: "a call without a schema keeps its quoted database quoted",
+            sql: "SELECT \"d 1\"..\"f 1\"(1)",
+            pointer: "/0/select/expressions/0/call/name/0/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a call without a schema keeps its quoted function quoted",
+            sql: "SELECT \"d 1\"..\"f 1\"(1)",
+            pointer: "/0/select/expressions/0/call/name/2/quoted",
+            expected_value: json!(true),
         },
         ProjectionTestCase {
             description: "a data metric function keeps its query argument",
