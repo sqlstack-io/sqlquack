@@ -169,6 +169,19 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             ),
         ),
         ClassifyTestCase(
+            description="a session without a current database fails only after parsing",
+            errno=90105,
+            sqlstate="22000",
+            message=(
+                "Cannot perform CREATE TABLE. This session does not have a current database. "
+                "Call 'USE DATABASE', or use a qualified name."
+            ),
+            expected_classification=(
+                "semantic_error",
+                "errno 90105 SQLSTATE 22000, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
             description="an internal error is not established",
             errno=603,
             sqlstate="XX000",
