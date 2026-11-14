@@ -113,7 +113,6 @@ other_receipts_contradicted = [
   "sf.adhoc.b-empty-calls.substring.k65232676812e",
   "sf.ddl.alter-application-package.unset.k7ea5d2c0810f",
   "sf.ddl.alter-application-package.unset.k803533d89767",
-  "sf.ddl.alter-application-package.unset.kacb814473434",
   "sf.ddl.alter-application-package.unset.kef85ada3c5be",
   "sf.ddl.alter-iceberg-table.set.k1b45ae0957e4",
   "sf.ddl.alter-iceberg-table.set.k6524711a5a35",
@@ -123,9 +122,6 @@ other_receipts_contradicted = [
   "sf.ddl.alter-task.set.k0653b1d4a25c",
   "sf.ddl.alter-task.set.kcae5464fa8dc",
   "sf.ddl.alter-task.set.ke6170e5781ec",
-  "sf.ddl.comment.is.k0e2c4f54c25f",
-  "sf.ddl.comment.is.k1e03d7bb5560",
-  "sf.ddl.comment.is.k3a07bff3053a",
   "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.k880a0050852a",
   "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.k7ebbd88e8c27",
   "sf.ddl.create-iceberg-table.table.k12e6c19e0683",
@@ -144,10 +140,6 @@ other_receipts_contradicted = [
   "sf.functions.abs.k93f76764032f",
   "sf.functions.acos.k9277749f1514",
   "sf.functions.acosh.k2bfcf40e4874",
-  "sf.functions.ai-function-evaluation.create-experiment-type-from.k63c21772c776",
-  "sf.functions.ai-function-evaluation.create-experiment-type-from.keb063c0ee2b2",
-  "sf.functions.ai-function-optimization.create-experiment-type-from.k16bedc825902",
-  "sf.functions.ai-function-optimization.create-experiment-type-from.k885c4f6074e2",
   "sf.functions.ai-summarize-agg.k96152ee79950",
   "sf.functions.approx-percentile-accumulate.k3b263d801e70",
   "sf.functions.approx-percentile-combine.kc90071e80d1f",
@@ -317,7 +309,6 @@ other_receipts_contradicted = [
   "sf.security_admin.revoke-privilege.create-schema-modify-monitor.ke807edcf188f",
   "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.k09db58407888",
   "sf.security_admin.revoke-privilege.globalprivileges-all-on-account.kba2871c801f5",
-  "sf.transaction_session.show-parameters.k9c2a74a88b71",
   "sf.utility.call-with.table-language-sql-as.k15b7c654a83e",
   "sf.utility.call-with.table-language-sql-as.k3e4458244eec",
   "sf.utility.call-with.table-language-sql-as.k59b39543a0cf",
@@ -334,11 +325,6 @@ other_receipts_contradicted = [
 ]
 
 [syntax_errors_accepted]
-"sf.ddl.alter-application-package.set" = [
-  "k044f56503f30",
-  "kb073c9de4cdd",
-]
-"sf.ddl.alter-application-package.unset" = ["k208161176879"]
 "sf.ddl.alter-cortex-search.set" = ["k4f66bb7c9ff5"]
 "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = [
   "k08a5ac10d24c",
@@ -348,7 +334,6 @@ other_receipts_contradicted = [
 "sf.ddl.alter-iceberg-table.unset" = ["ke33c9a12af90"]
 "sf.ddl.alter-table.constraintaction" = [
   "k14f89fb0eef9",
-  "k428be0eccccf",
   "kc37b8ead754d",
   "keb8baabd4c81",
 ]
@@ -357,30 +342,7 @@ other_receipts_contradicted = [
   "k40c1b10b46dd",
   "k98072043c837",
 ]
-"sf.ddl.comment.is" = ["ke40ebb8a5793"]
-"sf.ddl.create-agent" = [
-  "k2d726daf323d",
-  "k53c176a344e9",
-  "k79a45e536ad2",
-  "kbe42b930d9a4",
-]
-"sf.ddl.create-application-package" = [
-  "k5586129821dd",
-  "k56df100400d3",
-]
-"sf.ddl.create-code-bundle.create-code-bundle-from" = ["k863f7a02918a"]
-"sf.ddl.create-code-bundle.create-code-bundle-from.syntax" = ["k1ba8b686d81b"]
 "sf.ddl.create-database.create-database" = ["k3c0dc0ce5fe8"]
-"sf.ddl.create-dataset" = [
-  "k6d9683d78996",
-  "k891dc181db3a",
-  "kc009169e62f4",
-  "keb74c1e13fa8",
-]
-"sf.ddl.create-dbt-project" = [
-  "k5122c8e1ce71",
-  "ka1910fdd6a39",
-]
 "sf.ddl.create-hybrid-table.table" = ["k5069c51ae2f1"]
 "sf.ddl.create-iceberg-table-rest.table-as-select" = [
   "k46e441bba1ae",
@@ -393,75 +355,26 @@ other_receipts_contradicted = [
 "sf.ddl.create-iceberg-table.table" = ["k85d5253abb15"]
 "sf.ddl.create-iceberg-table.table-base-location.parquet-files" = ["k656d4111d435"]
 "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database" = ["ke76e03514474"]
-"sf.ddl.create-listing.from" = ["k7357ac165c3b"]
-"sf.ddl.create-mcp-server" = [
-  "kbc9e13925f95",
-  "kf38317833568",
-  "kf849ca718506",
-]
-"sf.ddl.create-model.internalstage" = [
-  "k118c56d121f3",
-  "k968befeeed72",
-  "kbfdd16a6754e",
-  "kdecdca528b66",
-]
-"sf.ddl.create-notebook" = ["kf71b1b4702de"]
-"sf.ddl.create-openflow-connector.from" = ["kfe0f922d5519"]
-"sf.ddl.create-openflow-connector.from-definition" = ["kf967b8f327bb"]
-"sf.ddl.create-openflow-runtime" = ["k4b5b90059d17"]
 "sf.ddl.create-procedure.create-procedure" = [
   "k58d3939e981a",
   "k7296023045b7",
   "k8a55ca864f02",
   "kf69b9bf0a4c9",
 ]
-"sf.ddl.create-provisioned-throughput" = [
-  "k4985fe754001",
-  "k736b65b051be",
-]
 "sf.ddl.create-semantic-view.create-or-alter-semantic" = ["kde5a57ccc35a"]
 "sf.ddl.create-semantic-view.create-semantic-view-tables" = ["kf0a8b4db490a"]
-"sf.ddl.create-service" = ["k8b4a7178f15e"]
-"sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk" = ["k7de2438283a3"]
-"sf.ddl.create-table-constraint.create-table" = ["k0afaf3657a86"]
 "sf.ddl.create-table.create-or-alter-table" = ["k808bd6a0f704"]
 "sf.ddl.create-table.create-table" = [
   "k294b45271663",
   "k81e6795ae05a",
 ]
-"sf.ddl.create-table.create-table-clone" = [
-  "k1b5f6207b77d",
-  "k4e50633e4032",
-]
-"sf.ddl.create-versioned-schema" = [
-  "ke67978ccde94",
-  "kec07de1bbc4f",
-]
 "sf.ddl.drop-iceberg-table" = ["k0c6d88e813a7"]
-"sf.ddl.show-cortex-search" = [
-  "k71bbf0e325e7",
-  "kd5cbccd5e6d3",
-  "kf65aa4035d09",
-]
-"sf.functions.ai-function-evaluation.create-experiment-type-from" = [
-  "k4f10b3e05548",
-  "kf21f2fea79e9",
-]
-"sf.functions.ai-function-optimization.create-experiment-type-from" = [
-  "k5fea67ae70f2",
-  "k936096400225",
-]
 "sf.functions.system-explain-plan-json" = ["k34b4a27a76b5"]
 "sf.functions.to-query" = [
   "k52f4b25a2004",
   "kdfe11763c33e",
 ]
 "sf.security_admin.alter-account.set-maintenance-policy-for" = ["kd79fe523c612"]
-"sf.security_admin.create-organization-listing.from" = [
-  "k477815e83d52",
-  "k7357ac165c3b",
-]
-"sf.security_admin.create-organization-profile.profile-from" = ["k4291f05a67b7"]
 "sf.transaction_session.show-parameters" = ["k087afefdac13"]
 "sf.utility.execute-inference-job-service" = [
   "kd484841cc87f",
@@ -469,72 +382,11 @@ other_receipts_contradicted = [
 ]
 
 [parsed_cases_refused]
-"sf.classes.classification-profile.methods.describe" = ["ke3b4c5082645"]
-"sf.classes.custom-classifier.methods.list" = ["k47bd3252e9ba"]
-"sf.ddl.alter-application-package.unset" = ["k1575bbebeba5"]
-"sf.ddl.alter-external-volume.set-allow-writes-true-false" = ["k1043b085dfad"]
-"sf.ddl.alter-external-volume.set-comment" = ["k55283f91e8bc"]
-"sf.ddl.alter-schema.set" = ["kac592c009c45"]
-"sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = ["k220a7aefbc24"]
 "sf.ddl.alter-stage.set.syntax" = ["kd30e04e36906"]
-"sf.ddl.create-database-catalog-linked" = ["kd7f8a471f88a"]
-"sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format" = [
-  "k56514bd9c52e",
-  "k713a9732b882",
-  "k84af0e5ace4c",
-  "kfebe56122a6c",
-]
-"sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type" = [
-  "k0952c2c962ab",
-  "k70bf88e17355",
-  "k8d7745ab446f",
-  "kecdb5bc99739",
-]
-"sf.ddl.create-function.define-function" = [
-  "k2402be4e8da2",
-  "k30430b73f3ff",
-  "k99a9624cdd1a",
-  "kce6561bba051",
-]
-"sf.ddl.create-index" = ["k06f98b76fca1"]
-"sf.ddl.create-sequence.create-or-alter-sequence" = [
-  "k20fca8f5f88e",
-  "k99f5b3f8173f",
-  "kbecb9a758ed2",
-]
-"sf.ddl.create-sequence.create-sequence" = [
-  "k113b14e42a63",
-  "k26917441077c",
-  "ke9e8b52768f8",
-]
-"sf.ddl.create-sequence.define-sequence" = [
-  "k4060b7e901a5",
-  "k5781f7b98b4d",
-  "kdce8646cffb5",
-]
-"sf.ddl.drop-iceberg-table" = ["k519a5435fa2a"]
-"sf.ddl.show-channels" = [
-  "k3fba86e29428",
-  "k42ea6a819df3",
-  "k6fa8b444a77d",
-  "kb1a407c223a5",
-]
 "sf.ddl.undrop-external-volume" = ["kb557e7ff4586"]
-"sf.functions.spcs-cancel-job" = ["kffa979cc1d0a"]
-"sf.functions.spcs-wait-for" = ["kf2fa04c919eb"]
-"sf.query.match-recognize.match-recognize-pattern-define-as" = ["k8a7c1367e4f3"]
-"sf.security_admin.alter-notification-integration-email.set" = ["k6fc325a7e16a"]
-"sf.security_admin.alter-notification-integration-multi-queue.set-active" = ["keefd85df01aa"]
-"sf.security_admin.alter-notification-integration-queue-outbound-aws.set-aws-sns-topic-arn-aws-sns-role-arn" = ["kf3b24bb6bf05"]
-"sf.security_admin.alter-notification-integration-queue-outbound-azure.set" = ["kbf3e68948501"]
-"sf.security_admin.alter-notification-integration-queue-outbound-gcp.set-gcp-pubsub-subscription-name" = ["k4f9fdf661956"]
 "sf.security_admin.alter-organization-user.set" = ["k4614b5f6b6ce"]
 "sf.security_admin.alter-organization-user.unset" = ["k996ab4d41cd1"]
-"sf.security_admin.alter-share.add-remove-accounts" = ["kf9dad70db85b"]
-"sf.security_admin.create-connection.connection-as-replica-of" = [
-  "k4421eb8bc37c",
-  "kee0d007198dd",
-]
+"sf.security_admin.create-connection.connection-as-replica-of" = ["kee0d007198dd"]
 "sf.security_admin.create-failover-group.as-replica-of" = ["k5e081373c209"]
 "sf.security_admin.create-organization-account" = [
   "k839222785fe7",
@@ -547,8 +399,3 @@ other_receipts_contradicted = [
 ]
 "sf.security_admin.create-organization-user" = ["kf135125eeecb"]
 "sf.security_admin.create-replication-group.as-replica-of" = ["k28cad1926c65"]
-"sf.transaction_session.show-parameters" = [
-  "k44dd24422f48",
-  "k561fb9993b62",
-  "k8aaa013c1431",
-]
