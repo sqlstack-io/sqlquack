@@ -300,7 +300,6 @@ other_receipts_contradicted = [
   "sf.query.operators-query.except.k5a8b5eec3643",
   "sf.query.select.select.selecting-specific-columns.k2883fa022666",
   "sf.scripting.begin.k0fb78add2575",
-  "sf.scripting.exception.kf79e3fec46e4",
   "sf.security_admin.create-resource-monitor.k1a411efdd4d8",
   "sf.security_admin.create-resource-monitor.k1da4b22723a7",
   "sf.security_admin.create-resource-monitor.k1dc94f7a8149",
