@@ -2845,3 +2845,100 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.ddl.alter-postgres-instance.set-tag" = "9aa06522fb2b6a5c8a98673a9f4da941bbfd8694db09985e690503433741fa2f"
 "sf.ddl.alter-postgres-instance.unset-tag" = "547d2c4ae4cc178d42813415a92b8f635474a3f068f72b58f4bcdcb32963d6ca"
 "sf.ddl.alter-task-graph.unset" = "88d7423e1f59d77e778774f1b65271ff93a0d2e75026916ff0098e9ecce3a373"
+
+[[review]]
+id = "ddl-034"
+family = "ddl"
+parser_tree = "4f7d2e5d71780111239df9cd32fb6a9b4156b9f4"
+reviewed_utc = "2026-11-14T00:02:36Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.create-clone.dynamic-table-clone",
+  "sf.ddl.create-hybrid-table.table-like",
+  "sf.ddl.create-table.create-table-like",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 1e99335cf; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.create-clone.dynamic-table-clone" = "d836273a91f0a3800dbe41b3e802a654b548c025ea10963ea8e15e43b5ad9cac"
+"sf.ddl.create-hybrid-table.table-like" = "bc754e1fd770cd330891b773a72ac38ef47379c6f665671150bdde886161a5e8"
+"sf.ddl.create-table.create-table-like" = "3a81f72e36749bdc3b257b2b1a02ec9ce8855385faf66aa0e11b7a7edf48a9f4"
+
+[review.definitions]
+"sf.ddl.create-clone.dynamic-table-clone" = "933653c1d5b8c9e83a1cb944a1b254b9da0c267d8d8c8e6e3fbc245a87303186"
+"sf.ddl.create-hybrid-table.table-like" = "cdd7db92414684e5a9aa061a6c55446d275723fdd369f7e51b36aef1910588ad"
+"sf.ddl.create-table.create-table-like" = "df27f76e89259b0946849475f1e944aa55ef8fc1574c6638662fd4d03ba35227"
+
+[[review]]
+id = "ddl-035"
+family = "ddl"
+parser_tree = "4f7d2e5d71780111239df9cd32fb6a9b4156b9f4"
+reviewed_utc = "2026-11-14T00:02:36Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-external-consumer.unset",
+  "sf.ddl.alter-function-spcs.set-batch-timeout-secs",
+  "sf.ddl.alter-function-spcs.set-max-batch-retries",
+  "sf.ddl.alter-function.set-max-batch-rows",
+  "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by",
+  "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by",
+  "sf.ddl.alter-table.searchoptimizationaction",
+  "sf.ddl.alter-task-graph.set",
+  "sf.ddl.create-alert.create-alert-clone",
+  "sf.ddl.create-clone.event-table-clone",
+  "sf.ddl.create-clone.iceberg-table-clone",
+  "sf.ddl.create-data-metric-function.create-data-metric-function",
+  "sf.ddl.create-data-metric-function.create-data-metric-function.create-or-alter-data-metric-function",
+  "sf.ddl.create-database.create-database-clone",
+  "sf.ddl.create-iceberg-table-snowflake.table-clone",
+  "sf.ddl.create-iceberg-table.table-as-select",
+  "sf.ddl.create-iceberg-table.table-like",
+  "sf.ddl.create-schema.create-schema-clone",
+  "sf.ddl.create-stage.create-stage-clone",
+  "sf.ddl.create-stream.create-stream-clone",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees, then re-reviewed for coverage alone under review brief version 1; the trees are unchanged at 1e99335cf, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-external-consumer.unset" = "2aaa9f44150dee4bc4101c553727c7bc7e390483f4a177b155353cbb81de5236"
+"sf.ddl.alter-function-spcs.set-batch-timeout-secs" = "70407a939294d237ac77165967d558d7015648958ecd97a75406288002bb2e25"
+"sf.ddl.alter-function-spcs.set-max-batch-retries" = "01eb53d4c1a9ad3f014a883730c6ef5955a95bef0bcfa41aea40b429b5c72f2d"
+"sf.ddl.alter-function.set-max-batch-rows" = "8ed01ef764e423ac4b803fee8f0dcf513a0fc7d2fc1534386c9fabd66662ea4a"
+"sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by" = "083425321c9f568c4a969a0078174580792c2ea059420262daccea265856f907"
+"sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by" = "41192e2318895ad5c31d974708e0fe56e3d3f9085831b0a5fb0975fd7b412824"
+"sf.ddl.alter-table.searchoptimizationaction" = "89d3e8c6d347128820294cb863890e029f735271f2fe796d01966c46fa54e93e"
+"sf.ddl.alter-task-graph.set" = "ae15a7511cf521d2298a569807cbbb88108edff0bb996c471fd6d4d78a6472ac"
+"sf.ddl.create-alert.create-alert-clone" = "97b5303e5f8e287e9caf78ac9c7c9de9402cf54a66bd185e37c2501d0a8fff80"
+"sf.ddl.create-clone.event-table-clone" = "f1461dd9279f827f61fced36c552b0bb917e646c4169214bd4c53602a0a92076"
+"sf.ddl.create-clone.iceberg-table-clone" = "5d85195633608a041f371f0d09e14c2b9f28b3d2e8ccb8b7f4c968678a2dd35b"
+"sf.ddl.create-data-metric-function.create-data-metric-function" = "8a112003f520358f585d916f869547a5df9f1aca0e6f4aa692a86edd2a53d299"
+"sf.ddl.create-data-metric-function.create-data-metric-function.create-or-alter-data-metric-function" = "e7153f4174e120c2c9e99332361f89c127599a9ed189aa25fc7248e6069468f4"
+"sf.ddl.create-database.create-database-clone" = "d8daa900615b36cceb999d7afa6cd88a0dbc0da27938ab777ac04e1755fd9041"
+"sf.ddl.create-iceberg-table-snowflake.table-clone" = "7f0b413f0fa5fd17e8fb2399d291cc4386104edf3bc3942018e774388eeb436f"
+"sf.ddl.create-iceberg-table.table-as-select" = "136a17bc4bad0cc6132dd683cbfb659bc6ecf397627ee8431f92ae60a078f9d4"
+"sf.ddl.create-iceberg-table.table-like" = "a46e3eeb6e273673e6e15851efbe4d1d258ec891fde863ecd792228693662b5f"
+"sf.ddl.create-schema.create-schema-clone" = "75adf14477f1b4e42754448dfdb66e17d7a6819b69b83699bae90a56b6e52452"
+"sf.ddl.create-stage.create-stage-clone" = "df6d31c8d680668f51a04065392192921434c60e8bbec1f3ebf63023910ea99d"
+"sf.ddl.create-stream.create-stream-clone" = "efd207aded2eb41482bc73232227af8080fdc5e15c951477ad537a009b88d2de"
+
+[review.definitions]
+"sf.ddl.alter-external-consumer.unset" = "b86d37c4846ba74cd8b0da753246c65229cc9b7c9d76a3fdc80550ce2954fc57"
+"sf.ddl.alter-function-spcs.set-batch-timeout-secs" = "d6bb4978d4bf94906ae1b9d48e012724f98216dc0326448fa3a09b04c856ee48"
+"sf.ddl.alter-function-spcs.set-max-batch-retries" = "87bc3cb0d376464b56b649bca46d890a50d4351e7f6105c221ae0e5819681bee"
+"sf.ddl.alter-function.set-max-batch-rows" = "679de673acbd6e78d1b7f80146e303996d9982e42bacf04a14ef6b18b7150d14"
+"sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by" = "21315c2ae2ce9d0b562037d0175d5c58681ec32ec31089876537c5920279c9f2"
+"sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by" = "ce0270a4f21bb9c160d633782ac6f6407857ad3ffcbcbd6704a701a1df0057d2"
+"sf.ddl.alter-table.searchoptimizationaction" = "70fb9097f187e665820fef809512a0feea869815680872fae7c50499c7920590"
+"sf.ddl.alter-task-graph.set" = "8a52338da43ec47ee586e07715e2f87713b521777f51af2f8dda73025f0d1546"
+"sf.ddl.create-alert.create-alert-clone" = "e51ae5f5a570fcea184ff5e126e40e3a8dca9c73aa2b9059303b771581739aff"
+"sf.ddl.create-clone.event-table-clone" = "bf9c9f9a167e9fb44307ae7b65208fcc2cf8e7a26dc873e106f3a7ba75a65f3c"
+"sf.ddl.create-clone.iceberg-table-clone" = "ae78b2174818463354273955ed464af6086a2acffe3c25aca283708001b3a54a"
+"sf.ddl.create-data-metric-function.create-data-metric-function" = "1c8faf42ef4548486685b47abdcbfc387ebd0b987a718c281a4c446f10a1e238"
+"sf.ddl.create-data-metric-function.create-data-metric-function.create-or-alter-data-metric-function" = "505df617356215d485652c6623e1f119fc619280ab0159bf5716550941f7069f"
+"sf.ddl.create-database.create-database-clone" = "80a028c549b16e60cc4b66b7c3d19c865980c020e28c7a44a318f5bccccb51e1"
+"sf.ddl.create-iceberg-table-snowflake.table-clone" = "762acb00d5667b7c550d0ec2b85ada275215605c257c55e87e452279fdd4f05b"
+"sf.ddl.create-iceberg-table.table-as-select" = "0a087b21aed7426738821c2d7fdf125a804b0af00e7493d90c88639f352ddcd5"
+"sf.ddl.create-iceberg-table.table-like" = "431f53f80ddd9e279f0a9a0fff9e4a0e850eb8ad866d0d7175ed6e459803a515"
+"sf.ddl.create-schema.create-schema-clone" = "16adf1d67744b9e459aa912dcc0e1075c8af22484d288a479e5cf09eff3ea6c6"
+"sf.ddl.create-stage.create-stage-clone" = "8aa1077215a55826d2c7082c691217c6710f490d223a103b0288b53ceb9e271d"
+"sf.ddl.create-stream.create-stream-clone" = "768d718b4a3719339fdf48970d89ff5c4ea9ce087140c37947b6e1a3152717ab"

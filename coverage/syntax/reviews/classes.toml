@@ -741,3 +741,20 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.classes.budget.commands.alter-budget.unset-tag" = "4074ff4eda311c33932f11ef84d8037e735395763a6438d154ea5be897f29e0a"
 "sf.classes.classification.commands.alter-classification.set-tag" = "d56e69fc33d16540f88a6caa03760d8faca2535d2cb9969f2639cc594741bbda"
 "sf.classes.classification.commands.alter-classification.unset-tag" = "4d661dfca1a96b28fe715725432b306059d830c4d45b671caea4ea4e223e49cb"
+
+[[review]]
+id = "classes-011"
+family = "classes"
+parser_tree = "4f7d2e5d71780111239df9cd32fb6a9b4156b9f4"
+reviewed_utc = "2026-11-14T00:02:36Z"
+verdict = "approved"
+forms = [
+  "sf.classes.forecast.commands.create-forecast.forecast",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees, then re-reviewed for coverage alone under review brief version 1; the trees are unchanged at 1e99335cf, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.classes.forecast.commands.create-forecast.forecast" = "6411edd723ab68fd5a352a2e324fd1f31945f98b998957ffda9384bc62aaf49d"
+
+[review.definitions]
+"sf.classes.forecast.commands.create-forecast.forecast" = "895f57fd4f932a662f69597e3c000b1c7e356b7ddf6cc37b5a675760a47d5d8c"
