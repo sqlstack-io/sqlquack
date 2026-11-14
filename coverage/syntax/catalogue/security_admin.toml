@@ -5216,9 +5216,9 @@ source = "doc.sql.create-network-rule"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "CREATE [ OR REPLACE ] NETWORK RULE <name> TYPE = { IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL } VALUE_LIST = ( '<value>' [, '<value>', ... ] ) MODE = { INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS } [ COMMENT = '<string_literal>' ]",
+  "CREATE [ OR REPLACE ] NETWORK RULE <name> TYPE = { IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL } VALUE_LIST = ( '<value>' [, '<value>', ... ] ) [ MODE = { INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS } ] [ COMMENT = '<string_literal>' ]",
 ]
-grammar_sha256 = "f75a9e6c34b9a4833cdcbcfcba0cbd9567595d799dcdebc1705562d840367978"
+grammar_sha256 = "bae169c92d700c7790c3bdc4bb02e15d55115eb295bb10c8ee9f4ec81b899d4f"
 uses = []
 status = "catalogued"
 
@@ -5630,9 +5630,9 @@ source = "doc.sql.create-secret"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = CLOUD_PROVIDER_TOKEN API_AUTHENTICATION = '<cloud_provider_security_integration>' ENABLED = { TRUE | FALSE } [ COMMENT = '<string_literal>' ]",
+  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = CLOUD_PROVIDER_TOKEN API_AUTHENTICATION = '<cloud_provider_security_integration>' ENABLED = { TRUE | FALSE } [ COMMENT = '<string_literal>' ] [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]",
 ]
-grammar_sha256 = "54c1adce4560bc0853b86ad927c01e6e40744c61f0f566e711a6b5fe6e5821ad"
+grammar_sha256 = "e89f322b2c44f5898e8a5ece3d58cba84b5ee14b4d9dee8de12121f77abf7119"
 uses = []
 status = "catalogued"
 
@@ -5643,9 +5643,9 @@ source = "doc.sql.create-secret"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = GENERIC_STRING SECRET_STRING = '<string_literal>' [ COMMENT = '<string_literal>' ]",
+  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = GENERIC_STRING SECRET_STRING = '<string_literal>' [ COMMENT = '<string_literal>' ] [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]",
 ]
-grammar_sha256 = "93b8224f12e67a31fe86ee65b822e23b3bbcb0bbdd2da05020d559d37eb93135"
+grammar_sha256 = "01cd6d430cc82bd55478b29e27de719730a56a80cad55a7885512d94f38296f6"
 uses = []
 status = "catalogued"
 
@@ -5656,9 +5656,9 @@ source = "doc.sql.create-secret"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = OAUTH2 API_AUTHENTICATION = <security_integration_name> OAUTH_SCOPES = ( '<scope_1>' [ , '<scope_2>' ... ] ) [ COMMENT = '<string_literal>' ]",
+  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = OAUTH2 API_AUTHENTICATION = <security_integration_name> OAUTH_SCOPES = ( '<scope_1>' [ , '<scope_2>' ... ] ) [ COMMENT = '<string_literal>' ] [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]",
 ]
-grammar_sha256 = "05bfa2f9b51f10297998b188167e8e9175666362aa40e116b26384a19cfcd621"
+grammar_sha256 = "10a472b51e347b112c1c7eeec7b7a17ee400aff81fbb0adcad1152a1952b1673"
 uses = []
 status = "catalogued"
 
@@ -5669,9 +5669,9 @@ source = "doc.sql.create-secret"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = OAUTH2 OAUTH_REFRESH_TOKEN = '<string_literal>' OAUTH_REFRESH_TOKEN_EXPIRY_TIME = '<string_literal>' API_AUTHENTICATION = <security_integration_name> [ COMMENT = '<string_literal>' ]",
+  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = OAUTH2 OAUTH_REFRESH_TOKEN = '<string_literal>' OAUTH_REFRESH_TOKEN_EXPIRY_TIME = '<string_literal>' API_AUTHENTICATION = <security_integration_name> [ COMMENT = '<string_literal>' ] [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]",
 ]
-grammar_sha256 = "44fdcca5d6b29c1ae6cd99e29805ccbc40dd39b38d77612e00ad082db79927ff"
+grammar_sha256 = "14ae99d2167930b35c8bf5521dcc0f6e0205fb0dbe7c600fc149b80ca1c08232"
 uses = []
 status = "catalogued"
 
@@ -5682,9 +5682,9 @@ source = "doc.sql.create-secret"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = PASSWORD USERNAME = '<username>' PASSWORD = '<password>' [ COMMENT = '<string_literal>' ]",
+  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = PASSWORD USERNAME = '<username>' PASSWORD = '<password>' [ COMMENT = '<string_literal>' ] [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]",
 ]
-grammar_sha256 = "bd26c903ba34369404d850887e91c8931879be949028d8d5627a25263408f6f4"
+grammar_sha256 = "bc283789b009c607085c12153d1777fb27745b8be7bf3aad6dd714a6af2b794b"
 uses = []
 status = "catalogued"
 
@@ -5695,9 +5695,9 @@ source = "doc.sql.create-secret"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = SYMMETRIC_KEY ALGORITHM = GENERIC",
+  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = SYMMETRIC_KEY ALGORITHM = GENERIC [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]",
 ]
-grammar_sha256 = "ee34c9068e10790330ba2186964bb342e1ea512bc444a3f9631a6a61b1c3b950"
+grammar_sha256 = "8dc13c1778b3983057d4aacc24d60be8738615620a406f7ae859ac97d447063a"
 uses = []
 status = "catalogued"
 
@@ -5708,9 +5708,9 @@ source = "doc.sql.create-secret"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = WORKLOAD_IDENTITY_FEDERATION [ COMMENT = '<string_literal>' ]",
+  "CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name> TYPE = WORKLOAD_IDENTITY_FEDERATION [ COMMENT = '<string_literal>' ] [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]",
 ]
-grammar_sha256 = "bb4dbb0ae71327aad66e0a5ef728badae04b23422ee79e33b1203fd4c328c8e0"
+grammar_sha256 = "0abfc9831db85ba50ddd6b5c26b6cb50cb9282590d395988ac10b1b28a93fe77"
 uses = []
 status = "catalogued"
 

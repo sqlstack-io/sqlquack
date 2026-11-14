@@ -20,6 +20,8 @@ from scripts.grammar_obligations.constants import (
     OPEN_OPTIONAL,
     PLACEHOLDER_IN_LITERAL,
     QUOTED_PLACEHOLDER,
+    SINGLE_QUOTE,
+    TEMPLATE_FILLS,
     TEMPLATE_OPERANDS,
     TOKEN,
     TOKEN_BRACKET,
@@ -172,6 +174,31 @@ def template_name(node: Node) -> str:
     if QUOTED_PLACEHOLDER.fullmatch(node.text) or not PLACEHOLDER_IN_LITERAL.search(node.text):
         return ""
     return node.text.strip("'").lower()
+
+
+def template_alternatives(literal: str) -> list[tuple[str, str]]:
+    """Each branch of a quoted template's choices, with the template written taking that branch."""
+    nodes: tuple[Node, ...] = parse(literal.strip(SINGLE_QUOTE))
+    found: list[tuple[str, str]] = []
+    for node in filter(lambda node: node.kind == NODE_CHOICE, nodes):
+        for index, branch in enumerate(node.branches):
+            text: str = _template_text(nodes=nodes, picks={id(node): index})
+            found.append((render(branch), SINGLE_QUOTE + text + SINGLE_QUOTE))
+    return found
+
+
+def _template_text(*, nodes: tuple[Node, ...], picks: dict[int, int]) -> str:
+    """A template's words: a choice's picked branch (else its first), placeholders filled."""
+    words: list[str] = []
+    for node in nodes:
+        if node.kind == NODE_CHOICE:
+            words.append(_template_text(nodes=node.branches[picks.get(id(node), 0)], picks=picks))
+        elif node.kind == NODE_TOKEN and node.token_kind == TOKEN_PLACEHOLDER:
+            name: str = placeholder_name(node)
+            words.append(TEMPLATE_FILLS.get(name, name))
+        elif node.kind == NODE_TOKEN:
+            words.append(node.text)
+    return " ".join(filter(None, words))
 
 
 def operand_class(name: str) -> str:

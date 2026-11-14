@@ -473,21 +473,25 @@ def settled_cases(  # noqa: PLR0913
         is_documented: bool = case["sql"] in documented or (
             case["sql"] not in rendered and bool(disputed_positives & set(case["obligations"]))
         )
+        settlement: tuple[str, str] | None = receipts.settlements.get(
+            (case["case_id"], case["sql_sha256"], case["setup_sha256"], case["session_sha256"])
+        )
+        phase: str | None = receipts.phases.get((case["case_id"], case["sql_sha256"]))
+        if (
+            not extreme
+            and not is_documented
+            and _disproved(case=case, settlement=settlement, phase=phase)
+        ):
+            case["expect"] = EXPECT_OBSERVE
+            case.pop(STAGE_KEY, None)
         by_receipts: bool = case["expect"] == EXPECT_OBSERVE and not extreme and not is_documented
         settled.append(
             observed_stage(
                 case=case,
-                phase=receipts.phases.get((case["case_id"], case["sql_sha256"])),
+                phase=phase,
                 extreme=extreme,
                 documented=is_documented,
-                settlement=receipts.settlements.get(
-                    (
-                        case["case_id"],
-                        case["sql_sha256"],
-                        case["setup_sha256"],
-                        case["session_sha256"],
-                    )
-                ),
+                settlement=settlement,
             )
         )
         mark: str = (
@@ -505,6 +509,15 @@ def settled_cases(  # noqa: PLR0913
                 }
             )
     return settled, arity, marked
+
+
+def _disproved(*, case: Row, settlement: tuple[str, str] | None, phase: str | None) -> bool:
+    """Whether agreeing receipts settle against the case's accept (by a syntax error) or reject."""
+    if settlement is None or case["expect"] not in (EXPECT_ACCEPT, EXPECT_REJECT):
+        return False
+    if settlement[0] == EXPECT_REJECT:
+        return case["expect"] == EXPECT_ACCEPT and phase == SYNTAX_ERROR_PHASE
+    return case["expect"] == EXPECT_REJECT
 
 
 def jsonl_text(rows: list[Row]) -> str:

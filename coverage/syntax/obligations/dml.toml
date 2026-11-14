@@ -212,6 +212,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.dml.copy-files.from.o069"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.dml.copy-files.from.o037"
 kind = "option_present"
 required = true
@@ -2896,6 +2903,12 @@ required = true
 note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [… #3"
 
 [[obligation]]
+id = "sf.dml.copy-into-location.o543"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
+
+[[obligation]]
 id = "sf.dml.copy-into-location.o335"
 kind = "negative_neighbour"
 required = true
@@ -2918,6 +2931,12 @@ id = "sf.dml.copy-into-location.o532"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o544"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-location.o501"
@@ -4321,6 +4340,13 @@ id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o026"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o743"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o027"
@@ -6860,6 +6886,12 @@ required = true
 note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [… #3"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o744"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o589"
 kind = "negative_neighbour"
 required = true
@@ -6876,6 +6908,12 @@ id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o716"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TYPE after ( in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o745"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o591"
@@ -8354,6 +8392,13 @@ id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o045"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o663"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o046"
@@ -12346,6 +12391,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.dml.insert.o069"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.dml.insert.o052"
 kind = "alternative"
 required = true
@@ -12394,6 +12446,13 @@ id = "sf.dml.insert.o020"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.dml.insert.o070"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.dml.insert.o054"
@@ -12446,6 +12505,13 @@ required = true
 target = "[ , ... ] #3"
 
 [[obligation]]
+id = "sf.dml.insert.o071"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #3"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.dml.insert.o057"
 kind = "option_present"
 required = true
@@ -12457,6 +12523,13 @@ id = "sf.dml.insert.o058"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #4"
+
+[[obligation]]
+id = "sf.dml.insert.o072"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #4"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.dml.insert.o023"
@@ -12694,6 +12767,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.dml.insert-multi-table.all-intoclause.o052"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.dml.insert-multi-table.all-intoclause.o020"
 kind = "option_present"
 required = true
@@ -12742,6 +12822,13 @@ id = "sf.dml.insert-multi-table.all-intoclause.o028"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.all-intoclause.o053"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.dml.insert-multi-table.all-intoclause.o029"
@@ -13025,6 +13112,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.dml.insert-multi-table.first-all-when-then.o080"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.dml.insert-multi-table.first-all-when-then.o032"
 kind = "option_present"
 required = true
@@ -13073,6 +13167,13 @@ id = "sf.dml.insert-multi-table.first-all-when-then.o040"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.dml.insert-multi-table.first-all-when-then.o081"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.dml.insert-multi-table.first-all-when-then.o041"
@@ -14223,6 +14324,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.dml.merge.o116"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.dml.merge.o046"
 kind = "required_operand_missing"
 required = true
@@ -14248,6 +14356,13 @@ id = "sf.dml.merge.o049"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.dml.merge.o117"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.dml.merge.o050"

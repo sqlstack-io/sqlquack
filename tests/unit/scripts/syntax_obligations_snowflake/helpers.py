@@ -7,7 +7,12 @@ import sys
 from itertools import filterfalse
 from pathlib import Path
 
+from scripts.grammar_obligations._helpers.obligations import family_obligations
+from scripts.grammar_obligations._helpers.render import style_of, submissions
+from scripts.grammar_obligations.models import Draft
+from scripts.syntax_obligations_snowflake._helpers.rules import install
 from scripts.syntax_obligations_snowflake.main.build import run_build
+from tests.unit.scripts.syntax_obligations_snowflake._test_types import ListItemTestCase
 
 REPOSITORY: Path = Path(__file__).parents[4]
 FAMILY: str = "transaction_session"
@@ -120,9 +125,47 @@ def scripts_outside(*, module: str, allowed: tuple[str, ...]) -> tuple[str, ...]
     return tuple(filterfalse(lambda path: path.startswith(allowed), loaded))
 
 
+def catalogue_form(
+    *, identifier: str, grammars: str, status: str = "catalogued", kind: str = "statement"
+) -> str:
+    """One transaction_session catalogue form; `grammars` is its TOML list of productions."""
+    return (
+        f'[[form]]\nid = "{identifier}"\nfamily = "{FAMILY}"\nkind = "{kind}"\n'
+        f'grammar = {grammars}\nuses = []\nstatus = "{status}"\n\n'
+    )
+
+
 def _family_files(*, prefix: str, part: str) -> dict[str, str]:
     return {f"{prefix}/{family}.toml": f"# {part} {family}\n" for family in SELECTION_FAMILIES}
 
 
 def _git(repository: Path, *arguments: str) -> None:
     subprocess.run(("git", *arguments), cwd=repository, check=True, capture_output=True)
+
+
+def rendered_sql(*, directory: Path, test_case: ListItemTestCase) -> tuple[str, ...]:
+    """The SQL of the probe form's draft of `test_case.kind` labelled by note or target."""
+    (directory / "catalogue").mkdir()
+    (directory / "catalogue" / f"{test_case.family}.toml").write_text(
+        f'[[form]]\nid = "sf.{test_case.family}.probe"\nfamily = "{test_case.family}"\n'
+        f'kind = "statement"\ngrammar = ["""{test_case.grammar}"""]\nuses = []\n'
+        'status = "catalogued"\n'
+    )
+    (directory / "limits.toml").write_text("")
+    install()
+    numbered, trees, _, _, _ = family_obligations(root=directory, family=test_case.family)
+    drafts: dict[tuple[str, str | None], Draft] = {
+        **{(draft.kind, draft.note): draft for _, draft in numbered},
+        **{(draft.kind, draft.target): draft for _, draft in numbered},
+    }
+    draft: Draft = drafts[(test_case.kind, test_case.label)]
+    assert draft.spec is not None
+    return tuple(
+        case.sql
+        for case in submissions(
+            trees=trees[draft.form],
+            style=style_of(family=test_case.family, form=draft.form),
+            spec=draft.spec,
+            depths=draft.depths,
+        )
+    )

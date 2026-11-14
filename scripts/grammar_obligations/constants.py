@@ -255,6 +255,23 @@ TEMPLATE_OPERANDS: bool = False
 
 REPEATED_ITEMS: bool = False
 
+QUOTE_MIXED_CASE: bool = False
+
+FILL_CLASSES: bool = False
+
+BARE_VALUE_CLASS: str = ""
+
+ONE_OF_OPTIONS: bool = False
+
+TEMPLATE_FILLS: dict[str, str] = {
+    "num": "60",
+    "number": "60",
+    "expr": "0 9 * * *",
+    "cron_spec": "0 9 * * *",
+    "time_zone": "UTC",
+    "timezone": "UTC",
+}
+
 PLACEHOLDER_IN_LITERAL: re.Pattern[str] = re.compile(r"<[^<>]+>")
 
 STATEMENT_TERMINATOR: str = ";"

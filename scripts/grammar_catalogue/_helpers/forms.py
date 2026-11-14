@@ -35,6 +35,7 @@ from scripts.grammar_catalogue.constants import (
     KIND_SPECIAL,
     KIND_STATEMENT,
     MIN_VARIANT_DEPTH,
+    MINTED_SUFFIX,
     PROSE_KEY_PREFIX,
     SPECIAL_KIND_NAMED,
     STATUS_CATALOGUED,
@@ -217,7 +218,9 @@ def emit_forms(
     ]
     taken: set[str] = set(used_ids)
     forms: list[Row] = []
-    for group, name, key in zip(groups, variant_names(groups), keys, strict=True):
+    names: list[str] = variant_names(groups)
+    naturals: set[str] = {f"{context.base}.{name}" for name in names} if len(groups) > 1 else set()
+    for group, name, key in zip(groups, names, keys, strict=True):
         form_id: str | None = existing.by_key.get(key)
         natural: str = f"{context.base}.{name}" if len(groups) > 1 else context.base
         if form_id is None and natural in stale:
@@ -225,6 +228,15 @@ def emit_forms(
         if form_id is None:
             form_id = next(
                 (old for old in stale if covers(existing=existing, old=old, group=group)), None
+            )
+        if form_id is None:
+            form_id = next(
+                (
+                    old
+                    for old in stale
+                    if old not in naturals and minted_from(old=old, natural=natural)
+                ),
+                None,
             )
         if form_id is not None and form_id in stale:
             stale.remove(form_id)
@@ -235,6 +247,11 @@ def emit_forms(
         taken.add(form_id)
         forms.append(form_row(context=context, form_id=form_id, group=group, grammar_sha256=key[1]))
     return forms, frozenset(taken)
+
+
+def minted_from(*, old: str, natural: str) -> bool:
+    """Whether `old` is `natural` with the heading or number a collision appends to it."""
+    return old.startswith(natural) and bool(MINTED_SUFFIX.fullmatch(old.removeprefix(natural)))
 
 
 def covers(*, existing: Existing, old: str, group: FormGroup) -> bool:

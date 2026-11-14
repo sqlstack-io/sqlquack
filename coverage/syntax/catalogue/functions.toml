@@ -2426,9 +2426,9 @@ source = "doc.functions.complete_task_graphs"
 anchor = "Syntax"
 kind = "special"
 grammar = [
-  "COMPLETE_TASK_GRAPHS( [ RESULT_LIMIT => <integer> ] [, ROOT_TASK_NAME => '<string>' ] [, GRAPH_NAME => '<string>' ] [, ERROR_ONLY => { TRUE | FALSE } ] )",
+  "COMPLETE_TASK_GRAPHS( [ RESULT_LIMIT => <integer> ] [, ROOT_TASK_NAME => '<string>' ] [, GRAPH_NAME => '<string>' ] [, ERROR_ONLY => { TRUE | FALSE } ] [, GRAPH_RUN_GROUP_ID => '<string>' ] )",
 ]
-grammar_sha256 = "0c9217ea25f77d3a951a5a99e4025b8b4d991094940c5652be2be52c01b82642"
+grammar_sha256 = "b2183b4d8b2f085e3548e617871a3f0c8291398b9c2d5b51325def925ae9eb64"
 uses = []
 status = "catalogued"
 
@@ -3053,9 +3053,9 @@ source = "doc.functions.current_task_graphs"
 anchor = "Syntax"
 kind = "special"
 grammar = [
-  "CURRENT_TASK_GRAPHS( [ RESULT_LIMIT => <integer> ] [, ROOT_TASK_NAME => '<string>' ] [, GRAPH_NAME => '<string>' ] )",
+  "CURRENT_TASK_GRAPHS( [ RESULT_LIMIT => <integer> ] [, ROOT_TASK_NAME => '<string>' ] [, GRAPH_NAME => '<string>' ] [, GRAPH_RUN_GROUP_ID => '<string>' ] )",
 ]
-grammar_sha256 = "9157b3c4dde04de6807827b3fe7938bcd46819580a62c9419458b84026fdf71f"
+grammar_sha256 = "54771568a74b7eee0ac7f10e90e5dc5534c4c47ebea1235a7d6d35957b82936c"
 uses = []
 status = "catalogued"
 
@@ -17303,9 +17303,9 @@ source = "doc.functions.task_history"
 anchor = "Syntax"
 kind = "special"
 grammar = [
-  "TASK_HISTORY( [ SCHEDULED_TIME_RANGE_START => <constant_expr> ] [, SCHEDULED_TIME_RANGE_END => <constant_expr> ] [, RESULT_LIMIT => <integer> ] [, TASK_NAME => '<string>' ] [, DATABASE_NAME => '<string>' ] [, SCHEMA_NAME => '<string>' ] [, ERROR_ONLY => { TRUE | FALSE } ] [, ROOT_TASK_ID => '<string>'] [, GRAPH_ID => '<string>'] )",
+  "TASK_HISTORY( [ SCHEDULED_TIME_RANGE_START => <constant_expr> ] [, SCHEDULED_TIME_RANGE_END => <constant_expr> ] [, RESULT_LIMIT => <integer> ] [, TASK_NAME => '<string>' ] [, DATABASE_NAME => '<string>' ] [, SCHEMA_NAME => '<string>' ] [, ERROR_ONLY => { TRUE | FALSE } ] [, ROOT_TASK_ID => '<string>' ] [, GRAPH_ID => '<string>' ] [, GRAPH_RUN_GROUP_ID => '<string>' ] )",
 ]
-grammar_sha256 = "00472dc502a6995312674266caaea3f3eca362682ba056ad331d6d50d282f5d0"
+grammar_sha256 = "4cf2936873c57ac40afa121020f3212387ea9032e2e731712dd71eb1f6e617f6"
 uses = []
 status = "catalogued"
 

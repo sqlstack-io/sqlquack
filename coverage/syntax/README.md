@@ -41,6 +41,7 @@ Families: `query`, `dml`, `ddl`, `transaction_session`, `security_admin`, `utili
 ```sh
 python -m scripts.fetch_syntax_docs_snowflake CACHE CACHE/idx/*      # private cache, never committed
 python -m scripts.build_syntax_catalogue_snowflake --cache CACHE --out coverage/syntax
+python -m scripts.build_syntax_catalogue_snowflake --refresh --cache PAGES --out coverage/syntax
 python -m scripts.build_syntax_obligations_snowflake ddl query  # obligations, withdrawn, elisions
 ```
 
@@ -51,9 +52,12 @@ whose inputs or generated files changed since `EVIDENCE_BASE`, and passes when n
 `SYNTAX_OBLIGATIONS_SINCE=` (empty) it checks every family, as CI's nightly run does.
 
 Pages with no Markdown export (the per-category command hubs) are fetched as HTML and catalogue
-no form. A rebuild keeps every existing id whose (page, grammar) is unchanged. A form whose
-grammar changed keeps its id when its natural id is unchanged or when all its earlier signatures
-are still among its signatures. A form whose grammar no longer appears keeps its id with
+no form. `--refresh` rebuilds only the pages its cache holds, such as pages that changed since
+the pin, and keeps every other page's sources record and forms as committed. A rebuild keeps
+every existing id whose (page, grammar) is unchanged. A form whose grammar changed keeps its id
+when its natural id is unchanged, when all its earlier signatures are still among its signatures,
+or when its id is its natural id with the heading or number a collision appended. A form whose
+grammar no longer appears keeps its id with
 `status = "absent_from_source"`; ids are never reused, and splits and renames go through
 `aliases.toml`.
 
@@ -135,6 +139,9 @@ collision the heading is appended, then a number.
   IMPORTS, FROM LISTING), so a receipt decides it. An observed neighbour still settles as a
   rejection when its receipt is a syntax error, unless Snowflake refuses every documented positive
   of its form: then the form's receipts say nothing about its negatives, which all stay observed.
+  A generated accept or reject that its agreeing receipts disprove is decided by them the same
+  way: an accept falls only to a syntax error, a reject to an accepted parse. Cases that quote a
+  page and boundary cases keep their expectation.
 - A rejection that only empties a list (`= ( )`) is observed, not scored: Snowflake parses
   `ENCRYPTION = ( )` and accepts `BLOCKED_NETWORK_RULE_LIST = ( )`, and pages document empty
   lists such as `BLOCKED_OBJECT_TYPES_FOR_CREATION = ()`.
@@ -160,7 +167,3 @@ collision the heading is appended, then a number.
     (2 forms).
   - GRANT OWNERSHIP to a database role keeps `<class_name>` in the object-kind string, case-folded
     and without a quoted flag (1 form).
-  - Six docs pages changed after the catalogue pin (TASK_HISTORY, COMPLETE_TASK_GRAPHS,
-    CURRENT_TASK_GRAPHS, CREATE SECRET, CREATE NETWORK RULE, ALTER ICEBERG TABLE ... CONVERT TO
-    MANAGED). Their 16 forms keep the pinned grammar, so the new options have no obligations; 4
-    of them are rejected on the changed grammar.

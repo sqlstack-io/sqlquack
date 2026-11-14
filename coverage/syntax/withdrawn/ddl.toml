@@ -187,7 +187,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] } in [ ENCRYPTION = ( { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] }…"
 sql = "ALTER EXTERNAL VOLUME v1 ADD STORAGE_LOCATION = ( NAME = 'm' STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = 'm' STORAGE_BASE_URL = 's3://b1/p1/' ENCRYPTION = ( ) ) ;"
-valid_as = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams alternative { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE =… → [ TYPE = 'AWS_SSE_S3' ]"
+valid_as = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams option_absent [ TYPE = 'AWS_SSE_S3' ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -196,7 +196,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } ) ]"
 sql = "ALTER EXTERNAL VOLUME v1 ADD STORAGE_LOCATION = ( NAME = 'm' STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://b1/p1/' ENCRYPTION = ( ) ) ;"
-valid_as = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams alternative { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE… → [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ]"
+valid_as = "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams option_absent [ TYPE = 'NONE' ] #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1056,6 +1056,15 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-external-function.function-returns-api-integration-as"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE EXTERNAL FUNCTION v1 ( ) RETURNS INT API_INTEGRATION = v1 AS 'm' ;"
+valid_as = "sf.ddl.create-external-function.function positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-external-function.function-returns-api-integration-as"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
@@ -1132,7 +1141,7 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] } in [ ENCRYPTION = ( { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE = 'NONE' ] }…"
 sql = "CREATE EXTERNAL VOLUME v1 STORAGE_LOCATIONS = ( ( NAME = 'm' STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = 'm' STORAGE_BASE_URL = 's3://b1/p1/' ENCRYPTION = ( ) ) ) ;"
-valid_as = "sf.ddl.create-external-volume alternative { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] ] | [ TYPE =… → [ TYPE = 'AWS_SSE_S3' ]"
+valid_as = "sf.ddl.create-external-volume option_absent [ TYPE = 'AWS_SSE_S3' ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1141,7 +1150,16 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE = 'NONE' ] } ) ]"
 sql = "CREATE EXTERNAL VOLUME v1 STORAGE_LOCATIONS = ( ( NAME = 'm' STORAGE_PROVIDER = 'GCS' STORAGE_BASE_URL = 'gcs://b1/p1/' ENCRYPTION = ( ) ) ) ;"
-valid_as = "sf.ddl.create-external-volume alternative { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | [ TYPE… → [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ]"
+valid_as = "sf.ddl.create-external-volume option_absent [ TYPE = 'NONE' ] #2"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function-spcs.function-returns-service-endpoint"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT SERVICE = v1 ENDPOINT = e1 AS 'm' ;"
+valid_as = "sf.ddl.create-function-spcs.function-returns-service-endpoint positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1155,11 +1173,29 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-function.create-function-returns-language"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-function.create-function-returns-language positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.create-function-returns-language"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
 sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA HANDLER = 'm' AS 'm' ;"
 valid_as = "sf.ddl.create-function.create-function-returns-language positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.create-function-returns-language.scala-handler"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA IMPORTS = ( 'm' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-function.create-function-returns-language.scala-handler positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1173,11 +1209,29 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-function.create-function-returns-table"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-function.create-function-returns-table positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.create-function-returns-table"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
 sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA HANDLER = 'm' AS 'm' ;"
 valid_as = "sf.ddl.create-function.create-function-returns-table positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.create-function-returns-table-2"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' IMPORTS = ( 'm' ) HANDLER = 'm1.run' ;"
+valid_as = "sf.ddl.create-function.create-function-returns-table-2 positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1191,11 +1245,29 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-function.create-function-returns-table.java-handler"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA IMPORTS = ( 'm' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-function.create-function-returns-table.java-handler positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.create-function-returns-table.java-handler"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
 sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVA IMPORTS = ( 'm' ) HANDLER = 'm' ;"
 valid_as = "sf.ddl.create-function.create-function-returns-table.java-handler positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.create-function-returns-table.javascript-handler"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' ;"
+valid_as = "sf.ddl.create-function.create-function-returns-table.javascript-handler positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1209,6 +1281,15 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-function.create-function-returns-table.python-handler"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-function.create-function-returns-table.python-handler positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.create-function-returns-table.python-handler"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
@@ -1218,11 +1299,92 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-function.create-function-returns-table.sql-handler"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE FUNCTION v1 ( ) RETURNS INT AS 'm' ;"
+valid_as = "sf.ddl.create-function.create-function positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.create-function-returns-table.sql-handler"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
 sql = "CREATE FUNCTION v1 ( ) RETURNS INT AS 'm' ;"
 valid_as = "sf.ddl.create-function.create-function positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "DEFINE FUNCTION d1.s1.v1 ( ) RETURNS INT LANGUAGE SCALA HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-function.define-function positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #4"
+note = "the list continued without its item"
+sql = "DEFINE FUNCTION d1.s1.v1 ( ) RETURNS INT LANGUAGE SCALA IMPORTS = ( 'm' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #2"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #6"
+note = "the list continued without its item"
+sql = "DEFINE FUNCTION d1.s1.v1 ( ) RETURNS INT LANGUAGE JAVA HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #3"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #12"
+note = "the list continued without its item"
+sql = "DEFINE FUNCTION d1.s1.v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' IMPORTS = ( 'm' ) HANDLER = 'm1.run' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #4"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #18"
+note = "the list continued without its item"
+sql = "DEFINE FUNCTION d1.s1.v1 ( ) RETURNS INT LANGUAGE JAVA IMPORTS = ( 'm' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #5"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #23"
+note = "the list continued without its item"
+sql = "DEFINE FUNCTION d1.s1.v1 ( ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #6"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #25"
+note = "the list continued without its item"
+sql = "DEFINE FUNCTION d1.s1.v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #7"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-function.define-function"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #31"
+note = "the list continued without its item"
+sql = "DEFINE FUNCTION d1.s1.v1 ( ) RETURNS INT AS 'm' ;"
+valid_as = "sf.ddl.create-function.define-function option_absent [ { TEMP | TEMPORARY } ] #8"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1425,6 +1587,15 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-iceberg-table.table-base-location.parquet-files"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE ICEBERG TABLE v1 ( v1 INT , v1 INT AS 1 ) BASE_LOCATION = 'm' ;"
+valid_as = "sf.ddl.create-iceberg-table.table-base-location.parquet-files alternative { <col_name> <col_type> ... | <col_name> <col_type> AS <expr> | <part_col_name>… → <col_name> <col_type> AS <expr>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-iceberg-table.table-base-location.parquet-files"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] | CHECK ( <expr> ) } in [ { { [ CONSTRAINT <constraint_name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ (…"
@@ -1515,11 +1686,29 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-procedure.create-procedure-returns-language"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' ;"
+valid_as = "sf.ddl.create-procedure.create-procedure-returns-language positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.create-procedure-returns-language"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required RESTRICTED after AS in [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]"
 sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE JAVASCRIPT EXECUTE AS CALLER AS 'm' ;"
 valid_as = "sf.ddl.create-procedure.create-procedure-returns-language alternative { OWNER | CALLER | RESTRICTED CALLER } → CALLER"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-procedure.create-procedure-returns-table positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1542,6 +1731,15 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-procedure.create-procedure-returns-table-2"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm1.run' ;"
+valid_as = "sf.ddl.create-procedure.create-procedure-returns-table-2 positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table-2"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
@@ -1556,6 +1754,15 @@ target = ""
 note = "the form without its required RESTRICTED after AS in [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]"
 sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm1.run' EXECUTE AS CALLER ;"
 valid_as = "sf.ddl.create-procedure.create-procedure-returns-table-2 alternative { OWNER | CALLER | RESTRICTED CALLER } → CALLER"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table-3"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-procedure.create-procedure-returns-table-3 positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1578,6 +1785,15 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
@@ -1592,6 +1808,15 @@ target = ""
 note = "the form without its required RESTRICTED after AS in [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]"
 sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' EXECUTE AS CALLER ;"
 valid_as = "sf.ddl.create-procedure.create-procedure-returns-table.java-handler alternative { OWNER | CALLER | RESTRICTED CALLER } → CALLER"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table.python-handler"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-procedure.create-procedure-returns-table.python-handler positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1614,6 +1839,15 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required NULL in [ [ NOT ] NULL ]"
@@ -1632,11 +1866,92 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE SQL AS $$ BEGIN RETURN 1 ; END $$ ;"
+valid_as = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required RESTRICTED after AS in [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]"
 sql = "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE SQL EXECUTE AS CALLER AS $$ BEGIN RETURN 1 ; END $$ ;"
 valid_as = "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler alternative { OWNER | CALLER | RESTRICTED CALLER } → CALLER"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
+sql = "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ { TEMP | TEMPORARY } ] #2"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #6"
+note = "the list continued without its item"
+sql = "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm1.run' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ { TEMP | TEMPORARY } ] #3"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #11"
+note = "the list continued without its item"
+sql = "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ SECURE ] #3"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #13"
+note = "the list continued without its item"
+sql = "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark:1.14.0' ) HANDLER = 'm' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ { TEMP | TEMPORARY } ] #4"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #17"
+note = "the list continued without its item"
+sql = "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ { TEMP | TEMPORARY } ] #5"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #22"
+note = "the list continued without its item"
+sql = "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = 'm' PACKAGES = ( 'com.snowflake:snowpark_2.12:1.14.0' ) HANDLER = 'm' AS 'm' ;"
+valid_as = "sf.ddl.create-procedure.define-procedure option_absent [ SECURE ] #6"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-procedure.define-procedure"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #24"
+note = "the list continued without its item"
+sql = "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS INT LANGUAGE SQL AS $$ BEGIN RETURN 1 ; END $$ ;"
+valid_as = "sf.ddl.create-procedure.define-procedure operand_type_class <name> #8"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1763,6 +2078,33 @@ target = ""
 note = "the form without its required RESTRICTED after AS in [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ] #8"
 sql = "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS INT LANGUAGE SQL EXECUTE AS CALLER AS $$ BEGIN RETURN 1 ; END $$ ;"
 valid_as = "sf.ddl.create-procedure.define-procedure alternative { OWNER | CALLER | RESTRICTED CALLER } → CALLER #8"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #15"
+note = "the list continued without its item"
+sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 ) METRICS ( v1 . v1 AS SUM ( v1 ) OVER ( ORDER BY 1 ) ) ;"
+valid_as = "sf.ddl.create-semantic-view.create-or-alter-semantic option_present [ ORDER BY <exprs_using_dimensions_or_metrics> [ ASC | DESC ] [ NULLS { FIRST | LAST } ] [ , ... ] ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #15"
+note = "the list continued without its item"
+sql = "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) METRICS ( v1 . v1 AS SUM ( v1 ) OVER ( ORDER BY 1 ) ) ;"
+valid_as = "sf.ddl.create-semantic-view.create-semantic-view-tables option_present [ ORDER BY <exprs_using_dimensions_or_metrics> [ ASC | DESC ] [ NULLS { FIRST | LAST } ] [ , ... ] ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.create-semantic-view.define-semantic-view"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #15"
+note = "the list continued without its item"
+sql = "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( d1.s1.v1 ) METRICS ( v1 . v1 AS SUM ( v1 ) OVER ( ORDER BY 1 ) ) ;"
+valid_as = "sf.ddl.create-semantic-view.define-semantic-view option_absent [ ASC | DESC ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2285,6 +2627,24 @@ target = ""
 note = "the form without its required EXTERNAL"
 sql = "DESC AGENT v1 ;"
 valid_as = "sf.ddl.desc-agent positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.desc-function"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "DESC FUNCTION v1 ( ) ;"
+valid_as = "sf.ddl.desc-function positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.desc-function-spcs"
+kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "DESC FUNCTION v1 ( ) ;"
+valid_as = "sf.ddl.desc-function positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

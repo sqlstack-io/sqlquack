@@ -157,6 +157,15 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 [[withdrawn]]
 form = "sf.query.resample"
 kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "SELECT * FROM t1 RESAMPLE ( USING v1 INCREMENT BY INTERVAL '1 hour' PARTITION BY v1 ) ;"
+valid_as = "sf.query.resample option_absent [ , ... ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.resample"
+kind = "required_operand_missing"
 target = "<alias_name> in [ [ AS ] <alias_name> ] #2"
 note = "omit <alias_name>"
 sql = "SELECT * FROM t1 RESAMPLE ( USING v1 INCREMENT BY INTERVAL '1 hour' METADATA_COLUMNS IS_GENERATED ( ) ) ;"
@@ -193,6 +202,24 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 [[withdrawn]]
 form = "sf.query.semantic-view"
 kind = "required_operand_missing"
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+sql = "SELECT * FROM SEMANTIC_VIEW ( v1 METRICS 1 ) ;"
+valid_as = "sf.query.semantic-view positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.semantic-view"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
+sql = "SELECT * FROM SEMANTIC_VIEW ( v1 FACTS 1 ) ;"
+valid_as = "sf.query.semantic-view alternative { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] | FACTS <fact_expr> [ , ... ] } → FACTS <fact_expr> [ , ... ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.semantic-view"
+kind = "required_operand_missing"
 target = "<alias> in [ [ AS ] <alias> ] #2"
 note = "omit <alias>"
 sql = "SELECT * FROM SEMANTIC_VIEW ( v1 METRICS 1 DIMENSIONS 1 ) ;"
@@ -202,8 +229,26 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 [[withdrawn]]
 form = "sf.query.semantic-view"
 kind = "required_operand_missing"
+target = "... in [ , ... ] #3"
+note = "the list continued without its item"
+sql = "SELECT * FROM SEMANTIC_VIEW ( v1 METRICS 1 DIMENSIONS 1 ) ;"
+valid_as = "sf.query.semantic-view option_absent [ [ AS ] <alias> ] #2"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.semantic-view"
+kind = "required_operand_missing"
 target = "<alias> in [ [ AS ] <alias> ] #3"
 note = "omit <alias>"
+sql = "SELECT * FROM SEMANTIC_VIEW ( v1 DIMENSIONS 1 ) ;"
+valid_as = "sf.query.semantic-view alternative { { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] |… → DIMENSIONS <dimension_expr> [ [ AS ] <alias> ] [ , ... ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.semantic-view"
+kind = "required_operand_missing"
+target = "... in [ , ... ] #4"
+note = "the list continued without its item"
 sql = "SELECT * FROM SEMANTIC_VIEW ( v1 DIMENSIONS 1 ) ;"
 valid_as = "sf.query.semantic-view alternative { { METRICS <metric_expr> [ [ AS ] <alias> ] [ , ... ] |… → DIMENSIONS <dimension_expr> [ [ AS ] <alias> ] [ , ... ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
