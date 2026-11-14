@@ -17,6 +17,7 @@ use crate::expressions::queries::models::RowFormat;
 use crate::expressions::queries::models::Sample;
 use crate::expressions::queries::models::Where;
 use crate::expressions::queries::models::With;
+use crate::expressions::stages::models::StageName;
 use crate::expressions::tables::models::OnCluster;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
@@ -270,6 +271,8 @@ pub struct CopyStmt {
     /// PostgreSQL `COPY ... FROM ... WHERE condition`
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_clause: Option<Box<Expression>>,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub copy_files: bool,
 }
 
 /// COPY parameter (e.g., FILE_FORMAT = CSV or FORMAT PARQUET)
@@ -323,6 +326,9 @@ pub struct StageReference {
     /// Whether the stage reference was originally quoted (e.g., '@mystage')
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub quoted: bool,
+    /// The written name split into its parts (Snowflake)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stage_name: Option<StageName>,
 }
 
 /// Historical data / Time travel (Snowflake) - BEFORE (STATEMENT => ...) or AT (TIMESTAMP => ...)
@@ -448,8 +454,8 @@ pub struct CreateTask {
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub or_alter: bool,
     pub if_not_exists: bool,
-    /// Task name (possibly qualified: db.schema.task)
-    pub name: String,
+    /// Task name (possibly qualified: db.schema.task), each part with its quoting
+    pub name: TableRef,
     /// Raw text of the properties between the name and AS, for a dialect whose properties are not read one by one
     #[serde(default, skip_serializing_if = "String::is_empty")]
     pub properties: String,
@@ -464,6 +470,9 @@ pub struct CreateTask {
     /// Whether this is a Snowflake `CREATE TASK GRAPH`, which has properties and no body
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub graph: bool,
+    /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub define: bool,
 }
 
 /// Raw/unparsed SQL
@@ -569,8 +578,10 @@ pub enum UseKind {
     Role,
     Warehouse,
     Catalog,
-    /// Snowflake: USE SECONDARY ROLES ALL|NONE
+    /// Snowflake: USE SECONDARY ROLES with a list of roles in `roles`
     SecondaryRoles,
+    SecondaryRolesAll,
+    SecondaryRolesNone,
 }
 
 /// SET variable statement

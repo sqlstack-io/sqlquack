@@ -21,6 +21,7 @@ use sqlquack_syntax::expressions::schema_objects::models::Grant;
 use sqlquack_syntax::expressions::schema_objects::models::GrantPrincipal;
 use sqlquack_syntax::expressions::schema_objects::models::Privilege;
 use sqlquack_syntax::expressions::schema_objects::models::Revoke;
+use sqlquack_syntax::expressions::stages::models::StageCommand;
 use sqlquack_syntax::expressions::statements::models::Command;
 use sqlquack_syntax::expressions::statements::models::Comment;
 use sqlquack_syntax::expressions::statements::models::ExecuteParameter;
@@ -43,6 +44,9 @@ impl Parser {
     /// Parses Snowflake RM/REMOVE @stage.
     pub(crate) fn parse_rm_command(&mut self) -> Result<Expression> {
         self.check_snowflake_stage_command(false)?;
+        if let Some(command) = self.try_stage_command() {
+            return Ok(command);
+        }
         let command_token = self.advance()?;
         let command_name = command_token.text.to_ascii_uppercase();
 
@@ -60,6 +64,9 @@ impl Parser {
     /// Parses Snowflake GET @stage 'file:///path'.
     pub(crate) fn parse_get_command(&mut self) -> Result<Expression> {
         self.check_snowflake_stage_command(true)?;
+        if let Some(command) = self.try_stage_command() {
+            return Ok(command);
+        }
         let get_token = self.advance()?;
 
         let mut tokens = vec![("GET".to_string(), get_token.token_type)];
@@ -75,6 +82,42 @@ impl Parser {
 
         Ok(Expression::Command(Box::new(Command {
             this: self.join_command_tokens(tokens),
+        })))
+    }
+
+    /// Reads GET, LIST or LS, or REMOVE or RM as a stage command tree: the stage, GET's local directory, then the options; `None`, with the position unchanged, when the tree does not cover the statement.
+    pub(crate) fn try_stage_command(&mut self) -> Option<Expression> {
+        let start = self.current;
+        match self.parse_stage_command_tree() {
+            Ok(command) if self.is_at_end() || self.check(TokenType::Semicolon) => Some(command),
+            _ => {
+                self.current = start;
+                None
+            }
+        }
+    }
+
+    fn parse_stage_command_tree(&mut self) -> Result<Expression> {
+        let kind = self.advance_text()?.to_ascii_uppercase();
+        let stage = self.parse_stage_location()?;
+        let (target, target_quoted) = match kind.as_str() {
+            "GET" if self.check(TokenType::String) => (Some(self.advance_text()?), true),
+            "GET" => {
+                let mut directory = self.advance_text()?;
+                while !self.is_at_end() && self.copy_adjacent(self.current) {
+                    directory.push_str(&self.advance_text()?);
+                }
+                (Some(directory), false)
+            }
+            _ => (None, false),
+        };
+        let params = self.parse_stage_command_params()?;
+        Ok(Expression::StageCommand(Box::new(StageCommand {
+            kind,
+            stage,
+            target,
+            target_quoted,
+            params,
         })))
     }
 
@@ -373,6 +416,8 @@ impl Parser {
             objects: Vec::new(),
             granted_by: None,
             options: Vec::new(),
+            class: None,
+            service: None,
         })))
     }
 
@@ -468,6 +513,8 @@ impl Parser {
             objects: Vec::new(),
             granted_by: None,
             options: Vec::new(),
+            class: None,
+            service: None,
         })))
     }
 
@@ -1069,6 +1116,8 @@ impl Parser {
                     sqlquack_syntax::expressions::types::models::Tuple { expressions: vars },
                 ))
             } else {
+                let quoted = self.check(TokenType::QuotedIdentifier);
+                let start = self.current;
                 let first = self.advance_text()?;
                 let mut name_str = first;
                 while self.match_token(TokenType::Dot) {
@@ -1082,7 +1131,9 @@ impl Parser {
                     name_str.push(':');
                     name_str.push_str(&next);
                 }
-                Expression::Identifier(Identifier::new(name_str))
+                let mut name = Identifier::new(name_str);
+                name.quoted = quoted && self.current == start + 1;
+                Expression::Identifier(name)
             }
         })
     }
@@ -1263,6 +1314,9 @@ impl Parser {
             at_clause,
             properties,
             leading_comments,
+            or_alter: false,
+            define: false,
+            modifier: None,
         })))
     }
 
@@ -1377,6 +1431,9 @@ impl Parser {
             clone_from,
             at_clause,
             properties,
+            or_alter: false,
+            define: false,
+            modifier: None,
         })))
     }
 

@@ -24,6 +24,7 @@ use sqlquack_syntax::expressions::operators::models::DotAccess;
 use sqlquack_syntax::expressions::operators::models::Group;
 use sqlquack_syntax::expressions::operators::models::IndexParameters;
 use sqlquack_syntax::expressions::operators::models::LambdaExpr;
+use sqlquack_syntax::expressions::operators::models::MergeAction;
 use sqlquack_syntax::expressions::operators::models::Parameter;
 use sqlquack_syntax::expressions::operators::models::ParameterStyle;
 use sqlquack_syntax::expressions::operators::models::Placeholder;
@@ -827,13 +828,7 @@ impl Parser {
                     )));
                 }
 
-                if elements.len() == 1 {
-                    elements[0].clone()
-                } else {
-                    Expression::Tuple(Box::new(Tuple {
-                        expressions: elements,
-                    }))
-                }
+                self.merge_action_node(elements, false)
             } else if self.match_identifier("DO") {
                 if self.match_identifier("NOTHING") {
                     Expression::Var(Box::new(Var {
@@ -884,6 +879,7 @@ impl Parser {
             let mut elements = vec![Expression::Var(Box::new(Var {
                 this: "INSERT".to_string(),
             }))];
+            let mut column_list = false;
 
             let by_name = self.is_snowflake() && self.match_text_seq(&["ALL", "BY", "NAME"]);
             if by_name {
@@ -955,6 +951,7 @@ impl Parser {
                     return Err(self.parse_error("Expected a closed column list in MERGE INSERT"));
                 }
                 if !columns.is_empty() {
+                    column_list = true;
                     elements.push(Expression::Tuple(Box::new(Tuple {
                         expressions: columns,
                     })));
@@ -992,13 +989,7 @@ impl Parser {
                 )));
             }
 
-            if elements.len() == 1 {
-                elements[0].clone()
-            } else {
-                Expression::Tuple(Box::new(Tuple {
-                    expressions: elements,
-                }))
-            }
+            self.merge_action_node(elements, column_list)
         })
     }
 
@@ -1117,14 +1108,58 @@ impl Parser {
                 )));
             }
 
-            if elements.len() == 1 {
-                elements[0].clone()
-            } else {
-                Expression::Tuple(Box::new(Tuple {
-                    expressions: elements,
-                }))
-            }
+            self.merge_action_node(elements, false)
         })
+    }
+
+    /// A MERGE action from its parsed parts: in Snowflake a typed action, else (or with a `*` or
+    /// ROW that has no field) the keyword alone or a tuple of the parts; `column_list` marks an
+    /// INSERT column list before the values.
+    fn merge_action_node(&self, elements: Vec<Expression>, column_list: bool) -> Expression {
+        let legacy = |mut elements: Vec<Expression>| match elements.len() {
+            1 => elements.remove(0),
+            _ => Expression::Tuple(Box::new(Tuple {
+                expressions: elements,
+            })),
+        };
+        if !self.is_snowflake() {
+            return legacy(elements);
+        }
+        let mut action = MergeAction {
+            kind: String::new(),
+            all_by_name: false,
+            columns: Vec::new(),
+            values: Vec::new(),
+            set: Vec::new(),
+            condition: None,
+        };
+        let mut column_list = column_list;
+        for (position, element) in elements.iter().enumerate() {
+            match element {
+                Expression::Var(var) if position == 0 => action.kind = var.this.clone(),
+                Expression::Var(var) if var.this == "ALL BY NAME" => action.all_by_name = true,
+                Expression::Where(clause) => action.condition = Some(clause.this.clone()),
+                Expression::Tuple(tuple) if action.kind == "UPDATE" => {
+                    for assignment in &tuple.expressions {
+                        let Expression::Eq(assignment) = assignment else {
+                            return legacy(elements);
+                        };
+                        action
+                            .set
+                            .push((assignment.left.clone(), assignment.right.clone()));
+                    }
+                }
+                Expression::Tuple(tuple) if column_list => {
+                    action.columns = tuple.expressions.clone();
+                    column_list = false;
+                }
+                Expression::Tuple(tuple) if action.kind == "INSERT" => {
+                    action.values = tuple.expressions.clone();
+                }
+                _ => return legacy(elements),
+            }
+        }
+        Expression::MergeAction(Box::new(action))
     }
 
     /// Parses NEXT VALUE FOR sequence.

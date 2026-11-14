@@ -335,6 +335,19 @@ pub enum DataType {
         name: String,
     },
 
+    /// A type kept as written with its parameters in their own fields, as Snowflake's
+    /// `NUMBER(9, 2)`, `TIMESTAMP_LTZ(9)` or `NCHAR VARYING(5)`.
+    Named {
+        /// The type name as written, upper-cased, such as `NUMBER` or `NCHAR VARYING`.
+        name: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        precision: Option<u32>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        scale: Option<u32>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        length: Option<u32>,
+    },
+
     Geometry {
         subtype: Option<String>,
         srid: Option<u32>,
@@ -478,6 +491,51 @@ impl DataType {
             }
             _ => false,
         }
+    }
+
+    /// [`DataType::Unknown`], the type of a column written without one.
+    pub fn unknown() -> DataType {
+        DataType::Unknown
+    }
+
+    /// Whether this is [`DataType::Unknown`] itself.
+    pub fn is_unknown(&self) -> bool {
+        matches!(self, DataType::Unknown)
+    }
+
+    /// A [`DataType::Named`] type as the common variant or custom name it denotes, or none:
+    /// `NUMBER(9, 2)` and `TIMESTAMPLTZ(9)` as custom names, `NCHAR VARYING(5)` as `VARCHAR(5)`.
+    pub fn unnamed(&self) -> Option<DataType> {
+        let DataType::Named {
+            name,
+            precision,
+            scale,
+            length,
+        } = self
+        else {
+            return None;
+        };
+        let base = match name.as_str() {
+            "NCHAR VARYING" => {
+                return Some(DataType::VarChar {
+                    length: *length,
+                    parenthesized_length: false,
+                });
+            }
+            "TIMESTAMP_LTZ" | "TIMESTAMPLTZ" | "TIMESTAMP WITH LOCAL TIME ZONE" => "TIMESTAMPLTZ",
+            "TIMESTAMP_NTZ" | "TIMESTAMPNTZ" | "TIMESTAMP WITHOUT TIME ZONE" => "TIMESTAMPNTZ",
+            other => other,
+        };
+        let parameters: Vec<String> = [precision, scale, length]
+            .into_iter()
+            .flatten()
+            .map(u32::to_string)
+            .collect();
+        let name = match parameters.is_empty() {
+            true => base.to_owned(),
+            false => format!("{base}({})", parameters.join(", ")),
+        };
+        Some(DataType::Custom { name })
     }
 
     /// Canonical unsigned type names and their bit-width aliases.

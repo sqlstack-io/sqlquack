@@ -301,16 +301,16 @@ fn given_a_snowflake_grant_or_revoke_when_parsing_then_the_tree_keeps_its_parts(
             expected_value: json!(null),
         },
         ProjectionTestCase {
-            description: "a service role keeps the quoting of each part",
+            description: "a service role keeps the quoting of its service",
             sql: "GRANT SERVICE ROLE \"s 1\"!r1 TO ROLE r2",
-            pointer: "/0/grant/securable/name",
-            expected_value: json!("\"s 1\"!r1"),
+            pointer: "/0/grant/service/name/quoted",
+            expected_value: json!(true),
         },
         ProjectionTestCase {
-            description: "a quoted class name keeps its quotes and case",
+            description: "a quoted class name is a quoted name, not a kind",
             sql: "GRANT OWNERSHIP ON \"c 1\" i1 TO ROLE r1",
-            pointer: "/0/grant/kind",
-            expected_value: json!("\"c 1\""),
+            pointer: "/0/grant/class/name/quoted",
+            expected_value: json!(true),
         },
         ProjectionTestCase {
             description: "ownership keeps COPY CURRENT GRANTS",

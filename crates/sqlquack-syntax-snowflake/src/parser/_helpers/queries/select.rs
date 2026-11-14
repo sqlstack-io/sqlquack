@@ -6,6 +6,7 @@ use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::functions::models::JSONTable;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::operators::models::Lateral;
@@ -1739,6 +1740,10 @@ impl Parser {
     }
 
     fn parse_table_string_source(&mut self) -> Result<Expression> {
+        if self.is_snowflake() && self.check(TokenType::String) {
+            let text = self.advance()?.text.to_string();
+            return Ok(Expression::Literal(Box::new(Literal::String(text))));
+        }
         Ok({
             let string_token = self.advance()?;
             let table_name = Identifier {

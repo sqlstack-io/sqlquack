@@ -2,8 +2,18 @@
 
 use crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS;
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::names::models::BooleanLiteral;
+use sqlquack_syntax::expressions::names::models::Literal;
+use sqlquack_syntax::expressions::operators::models::BinaryOp;
+use sqlquack_syntax::expressions::operators::models::Placeholder;
 use sqlquack_syntax::expressions::statements::models::Command;
+use sqlquack_syntax::expressions::statements::models::CopyParameter;
+use sqlquack_syntax::expressions::statements::models::CopyStmt;
+use sqlquack_syntax::expressions::statements::models::Schema;
+use sqlquack_syntax::expressions::statements::models::Var;
 use sqlquack_syntax::expressions::tree::models::Expression;
+use sqlquack_syntax::expressions::types::models::Tuple;
+use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
@@ -13,6 +23,12 @@ impl Parser {
         self.check_snowflake_copy()?;
         let start = self.current;
         let end = self.copy_statement_end();
+        if let Ok(copy) = self.parse_snowflake_copy_tree() {
+            if self.current == end {
+                return Ok(copy);
+            }
+        }
+        self.current = start;
         if let Ok(copy) = self.parse_copy_typed() {
             if self.current == end {
                 return Ok(copy);
@@ -27,6 +43,176 @@ impl Parser {
         Ok(Expression::Command(Box::new(Command {
             this: self.join_command_tokens(tokens),
         })))
+    }
+
+    /// Reads `[FILES] INTO <target> [FROM <source>] [<option> ...]`; the position is after COPY.
+    fn parse_snowflake_copy_tree(&mut self) -> Result<Expression> {
+        let copy_files = self.match_identifier("FILES");
+        self.expect_token(TokenType::Into)?;
+        let this = self.parse_copy_location(true)?;
+        let kind = self.match_token(TokenType::From);
+        let files = match kind {
+            true => vec![self.parse_copy_location(false)?],
+            false => Vec::new(),
+        };
+        let params = self.parse_snowflake_copy_options()?;
+        Ok(Expression::Copy(Box::new(CopyStmt {
+            this,
+            kind,
+            files,
+            params,
+            credentials: None,
+            is_into: true,
+            with_wrapped: false,
+            where_clause: None,
+            copy_files,
+        })))
+    }
+
+    /// A COPY target or source: a stage, a string location, a bind parameter, a query in parentheses, or a table, which as the target may have a column list.
+    fn parse_copy_location(&mut self, target: bool) -> Result<Expression> {
+        let stage = self.check(TokenType::DAt)
+            || (self.check(TokenType::Var) || self.check(TokenType::String))
+                && self.peek_text().starts_with('@');
+        if stage {
+            return self.parse_stage_location();
+        }
+        if self.check(TokenType::String) {
+            return Ok(Expression::Literal(Box::new(Literal::String(
+                self.advance_text()?,
+            ))));
+        }
+        if self.match_token(TokenType::Parameter) {
+            return Ok(Expression::Placeholder(Placeholder { index: None }));
+        }
+        if self.check(TokenType::LParen) {
+            return self.parse_primary();
+        }
+        let table = Expression::Table(Box::new(self.parse_table_ref()?));
+        if !target || !self.match_token(TokenType::LParen) {
+            return Ok(table);
+        }
+        let mut columns: Vec<Expression> = Vec::new();
+        loop {
+            columns.push(Expression::Identifier(
+                self.expect_identifier_or_keyword_with_quoted()?,
+            ));
+            if !self.match_token(TokenType::Comma) {
+                break;
+            }
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(Expression::Schema(Box::new(Schema {
+            this: Some(Box::new(table)),
+            expressions: columns,
+        })))
+    }
+
+    /// The options after the locations: `PARTITION BY <expr>`, `NAME = value` or `NAME = ( ... )`.
+    fn parse_snowflake_copy_options(&mut self) -> Result<Vec<CopyParameter>> {
+        let mut params: Vec<CopyParameter> = Vec::new();
+        while !self.is_at_end() && !self.check(TokenType::Semicolon) {
+            if self.match_text_seq(&["PARTITION", "BY"]) {
+                params.push(CopyParameter {
+                    name: "PARTITION BY".to_string(),
+                    value: Some(self.parse_expression()?),
+                    values: Vec::new(),
+                    eq: false,
+                });
+                continue;
+            }
+            let name = self.expect_identifier_or_keyword()?;
+            self.expect_token(TokenType::Eq)?;
+            let (value, values) = match self.match_token(TokenType::LParen) {
+                true => (None, self.parse_copy_option_list(&name)?),
+                false => (Some(self.parse_copy_option_value(&name)?), Vec::new()),
+            };
+            params.push(CopyParameter {
+                name,
+                value,
+                values,
+                eq: true,
+            });
+        }
+        Ok(params)
+    }
+
+    /// The items of a parenthesised option value up to its closing parenthesis: `KEY = value` options, INCLUDE_METADATA's `<column> = <metadata field>` pairs, `<value> = <value>` pairs, or single values, with optional commas between them.
+    fn parse_copy_option_list(&mut self, option: &str) -> Result<Vec<Expression>> {
+        let mut items: Vec<Expression> = Vec::new();
+        while !self.check(TokenType::RParen) {
+            if self.is_at_end() {
+                return Err(self.parse_error("Expected ) after the option values"));
+            }
+            let word = self.check(TokenType::Var)
+                || self.check_keyword()
+                || self.check(TokenType::QuotedIdentifier);
+            let keyed = word && self.check_next(TokenType::Eq);
+            let item = if keyed && option.eq_ignore_ascii_case("INCLUDE_METADATA") {
+                let column = self.expect_identifier_or_keyword_with_quoted()?;
+                self.expect_token(TokenType::Eq)?;
+                copy_option_pair(
+                    Expression::Identifier(column),
+                    self.parse_copy_option_value(option)?,
+                )
+            } else if keyed && !self.check(TokenType::QuotedIdentifier) {
+                let key = self.advance_text()?;
+                self.skip();
+                let value = match self.match_token(TokenType::LParen) {
+                    true => Expression::Tuple(Box::new(Tuple {
+                        expressions: self.parse_copy_option_list(&key)?,
+                    })),
+                    false => self.parse_copy_option_value(&key)?,
+                };
+                copy_option_pair(Expression::Var(Box::new(Var { this: key })), value)
+            } else {
+                let value = self.parse_copy_option_value(option)?;
+                match self.match_token(TokenType::Eq) {
+                    true => copy_option_pair(value, self.parse_copy_option_value(option)?),
+                    false => value,
+                }
+            };
+            items.push(item);
+            self.match_token(TokenType::Comma);
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(items)
+    }
+
+    /// One option value: a string, a number, TRUE or FALSE, a name (quoted, qualified, or the value of a file format or storage integration option), or else a keyword such as CSV or NONE.
+    fn parse_copy_option_value(&mut self, option: &str) -> Result<Expression> {
+        if self.check(TokenType::String) {
+            return Ok(Expression::Literal(Box::new(Literal::String(
+                self.advance_text()?,
+            ))));
+        }
+        if self.check(TokenType::Number) {
+            return Ok(Expression::Literal(Box::new(Literal::Number(
+                self.advance_text()?,
+            ))));
+        }
+        if self.match_token(TokenType::True) {
+            return Ok(Expression::Boolean(BooleanLiteral { value: true }));
+        }
+        if self.match_token(TokenType::False) {
+            return Ok(Expression::Boolean(BooleanLiteral { value: false }));
+        }
+        let word = self.check(TokenType::Var) || self.check_keyword();
+        let name = self.check(TokenType::QuotedIdentifier)
+            || word
+                && (self.check_next(TokenType::Dot)
+                    || COPY_NAME_OPTIONS
+                        .iter()
+                        .any(|named| option.eq_ignore_ascii_case(named)));
+        if name {
+            return Ok(Expression::Table(Box::new(self.parse_table_ref()?)));
+        }
+        if word {
+            return Ok(Expression::Var(Box::new(Var {
+                this: self.advance_text()?,
+            })));
+        }
+        self.parse_primary()
     }
 
     /// Refuses a Snowflake COPY that breaks `COPY [FILES] INTO <target> [FROM <source>] [<option> ...]`, FROM optional only in a table load; the position is after COPY.
@@ -220,7 +406,7 @@ impl Parser {
     }
 
     /// Whether the token at `at` follows the previous token with no space between them.
-    fn copy_adjacent(&self, at: usize) -> bool {
+    pub(crate) fn copy_adjacent(&self, at: usize) -> bool {
         at > 0
             && self
                 .tokens
@@ -460,4 +646,20 @@ impl Parser {
         }
         Ok(())
     }
+}
+
+/// The options whose bare word value names an object rather than choosing a keyword.
+const COPY_NAME_OPTIONS: &[&str] = &["FILE_FORMAT", "FORMAT_NAME", "STORAGE_INTEGRATION"];
+
+/// A `<key> = <value>` item inside a parenthesised option value.
+fn copy_option_pair(left: Expression, right: Expression) -> Expression {
+    Expression::Eq(Box::new(BinaryOp {
+        left,
+        right,
+        left_comments: Vec::new(),
+        operator_comments: Vec::new(),
+        trailing_comments: Vec::new(),
+        inferred_type: None,
+        span: SourceSpan::default(),
+    }))
 }

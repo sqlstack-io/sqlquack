@@ -548,8 +548,9 @@ impl Parser {
                     timezone: true,
                 })
             }
-            "TIMESTAMPLTZ" | "TIMESTAMP_LTZ" => self.parse_timestampltz_data_type(),
-            "TIMESTAMPNTZ" | "TIMESTAMP_NTZ" => self.parse_timestampntz_data_type(),
+            "TIMESTAMPLTZ" | "TIMESTAMP_LTZ" | "TIMESTAMPNTZ" | "TIMESTAMP_NTZ" => {
+                self.parse_named_precision_data_type(name)
+            }
             "INTERVAL" => self.parse_interval_data_type(),
             _ => self.parse_other_scalar_data_type(name, raw_name),
         }
@@ -796,6 +797,9 @@ impl Parser {
             } else {
                 None
             };
+            if is_nchar {
+                return Ok(named_data_type("NCHAR VARYING", None, None, length));
+            }
             Ok(DataType::VarChar {
                 length,
                 parenthesized_length: false,
@@ -821,12 +825,12 @@ impl Parser {
                 return Ok(DataType::CharacterSet { name: charset });
             }
             if is_nchar {
-                let name = if let Some(len) = length {
-                    format!("NCHAR({})", len)
-                } else {
-                    "NCHAR".to_string()
-                };
-                return Ok(DataType::Custom { name });
+                return Ok(match length {
+                    Some(length) => named_data_type(NCHAR, None, None, Some(length)),
+                    None => DataType::Custom {
+                        name: NCHAR.to_string(),
+                    },
+                });
             }
             Ok(DataType::Char { length })
         }
@@ -865,9 +869,7 @@ impl Parser {
                 }
                 self.expect_token(TokenType::RParen)?;
                 if is_nvarchar {
-                    return Ok(DataType::Custom {
-                        name: format!("NVARCHAR({})", n),
-                    });
+                    return Ok(named_data_type(NVARCHAR, None, None, Some(n)));
                 }
                 Ok(DataType::VarChar {
                     length: Some(n),
@@ -923,9 +925,12 @@ impl Parser {
         if self.match_token(TokenType::With) {
             if self.match_token(TokenType::Local) {
                 self.match_time_zone_words()?;
-                Ok(DataType::Custom {
-                    name: "TIMESTAMPLTZ".to_string(),
-                })
+                Ok(named_data_type(
+                    "TIMESTAMP WITH LOCAL TIME ZONE",
+                    precision,
+                    None,
+                    None,
+                ))
             } else {
                 self.match_time_zone_words()?;
                 Ok(DataType::Timestamp {
@@ -944,7 +949,8 @@ impl Parser {
         }
     }
 
-    fn parse_timestampltz_data_type(&mut self) -> Result<DataType> {
+    /// A type whose only parameter is a precision, kept under its written `name`, as `TIMESTAMP_LTZ(9)`.
+    pub(crate) fn parse_named_precision_data_type(&mut self, name: String) -> Result<DataType> {
         let precision = if self.match_token(TokenType::LParen) {
             let p = self.expect_number()? as u32;
             self.expect_token(TokenType::RParen)?;
@@ -952,28 +958,7 @@ impl Parser {
         } else {
             None
         };
-        let name = if let Some(p) = precision {
-            format!("TIMESTAMPLTZ({})", p)
-        } else {
-            "TIMESTAMPLTZ".to_string()
-        };
-        Ok(DataType::Custom { name })
-    }
-
-    fn parse_timestampntz_data_type(&mut self) -> Result<DataType> {
-        let precision = if self.match_token(TokenType::LParen) {
-            let p = self.expect_number()? as u32;
-            self.expect_token(TokenType::RParen)?;
-            Some(p)
-        } else {
-            None
-        };
-        let name = if let Some(p) = precision {
-            format!("TIMESTAMPNTZ({})", p)
-        } else {
-            "TIMESTAMPNTZ".to_string()
-        };
-        Ok(DataType::Custom { name })
+        Ok(named_data_type(&name, precision, None, None))
     }
 
     fn parse_interval_data_type(&mut self) -> Result<DataType> {
@@ -1298,12 +1283,38 @@ impl Parser {
                     after_comma = self.match_token(TokenType::Comma);
                 }
                 self.expect_token(TokenType::RParen)?;
+                if let Some(named) = self.snowflake_named_parameters(&name, &args) {
+                    return Ok(named);
+                }
                 Ok(DataType::Custom {
                     name: format!("{}({})", custom_name, args.join(", ")),
                 })
             }
         } else {
             Ok(DataType::Custom { name: custom_name })
+        }
+    }
+
+    /// Snowflake's `NUMBER(p, s)`, `DATETIME(p)`, `VARCHAR2(n)` or `NVARCHAR2(n)` with its
+    /// parameters in their own fields, or none for any other name or parameter list.
+    fn snowflake_named_parameters(&self, name: &str, args: &[String]) -> Option<DataType> {
+        if !self.is_snowflake() {
+            return None;
+        }
+        let numbers: Vec<u32> = args
+            .iter()
+            .map(|argument| argument.parse::<u32>().ok())
+            .collect::<Option<_>>()?;
+        match (name, numbers.as_slice()) {
+            ("NUMBER", [precision]) => Some(named_data_type(name, Some(*precision), None, None)),
+            ("NUMBER", [precision, scale]) => {
+                Some(named_data_type(name, Some(*precision), Some(*scale), None))
+            }
+            ("DATETIME", [precision]) => Some(named_data_type(name, Some(*precision), None, None)),
+            ("VARCHAR2" | "NVARCHAR2", [length]) => {
+                Some(named_data_type(name, None, None, Some(*length)))
+            }
+            _ => None,
         }
     }
 
@@ -1458,11 +1469,14 @@ impl Parser {
         }
     }
 
+    /// Folds a COLLATE after a type into the type, except in Snowflake, where COLLATE is a column option that the column reader records.
     pub(crate) fn maybe_parse_collated_data_type(
         &mut self,
         data_type: DataType,
     ) -> Result<DataType> {
-        if !(self.match_token(TokenType::Collate) || self.match_identifier("COLLATE")) {
+        if self.is_snowflake()
+            || !(self.match_token(TokenType::Collate) || self.match_identifier("COLLATE"))
+        {
             return Ok(data_type);
         }
 
@@ -1501,5 +1515,20 @@ impl Parser {
         let data_type = self.with_parser_depth(|parser| parser.parse_data_type_for_cast_inner())?;
         self.within_type_depth(data_type.nesting_depth())?;
         Ok(self.normalize_dialect_data_type(data_type))
+    }
+}
+
+/// A [`DataType::Named`] type with the parameters the SQL wrote.
+pub(crate) fn named_data_type(
+    name: &str,
+    precision: Option<u32>,
+    scale: Option<u32>,
+    length: Option<u32>,
+) -> DataType {
+    DataType::Named {
+        name: name.to_string(),
+        precision,
+        scale,
+        length,
     }
 }

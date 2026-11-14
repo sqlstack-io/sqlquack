@@ -269,6 +269,7 @@ use crate::expressions::operators::models::LambdaExpr;
 use crate::expressions::operators::models::Lateral;
 use crate::expressions::operators::models::LikeOp;
 use crate::expressions::operators::models::LimitOptions;
+use crate::expressions::operators::models::MergeAction;
 use crate::expressions::operators::models::MethodCall;
 use crate::expressions::operators::models::MultitableInserts;
 use crate::expressions::operators::models::NamedArgument;
@@ -364,6 +365,7 @@ use crate::expressions::schema_objects::models::ExecuteObject;
 use crate::expressions::schema_objects::models::Grant;
 use crate::expressions::schema_objects::models::GrantPrincipal;
 use crate::expressions::schema_objects::models::Revoke;
+use crate::expressions::stages::models::StageCommand;
 use crate::expressions::statements::models::AddPartition;
 use crate::expressions::statements::models::AlterSession;
 use crate::expressions::statements::models::Analyze;
@@ -776,6 +778,7 @@ pub enum Expression {
     Delete(Box<Delete>),
     Copy(Box<CopyStmt>),
     Put(Box<PutStmt>),
+    StageCommand(Box<StageCommand>),
     StageReference(Box<StageReference>),
     TryCatch(Box<TryCatch>),
 
@@ -1748,6 +1751,7 @@ pub enum Expression {
     Merge(Box<Merge>),
     When(Box<When>),
     Whens(Box<Whens>),
+    MergeAction(Box<MergeAction>),
     NextValueFor(Box<NextValueFor>),
     /// RETURN statement (DuckDB stored procedures)
     ReturnStmt(Box<Expression>),

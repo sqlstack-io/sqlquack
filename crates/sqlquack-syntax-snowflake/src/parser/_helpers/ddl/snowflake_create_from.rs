@@ -1,6 +1,7 @@
 //! Snowflake CREATE of a database, schema or table from a backup set, a share, a replica or an archive.
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_create_properties::with_written;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
@@ -93,6 +94,7 @@ impl Parser {
             source: source.to_owned(),
             operands,
             properties,
+            ..Default::default()
         }))))
     }
 
@@ -166,7 +168,26 @@ impl Parser {
             source: source.to_owned(),
             operands,
             properties,
+            ..Default::default()
         }))))
+    }
+
+    /// The words before the token at `at` that made a CREATE temporary, as written and upper-cased: `[ LOCAL | GLOBAL ] { TEMP | TEMPORARY | VOLATILE }`.
+    pub(super) fn written_temporary(&self, at: usize) -> String {
+        let word = |offset: usize| {
+            at.checked_sub(offset)
+                .and_then(|index| self.tokens.get(index))
+                .map(|token| token.text.to_ascii_uppercase())
+                .unwrap_or_default()
+        };
+        let temporary = word(1);
+        if !matches!(temporary.as_str(), "TEMP" | "TEMPORARY" | "VOLATILE") {
+            return "TEMPORARY".to_owned();
+        }
+        match word(2).as_str() {
+            scope @ ("LOCAL" | "GLOBAL") => format!("{scope} {temporary}"),
+            _ => temporary,
+        }
     }
 
     /// Parses Snowflake `CREATE ... { STAGE | FILE FORMAT } <name>` with options and tags; None leaves CLONE and other kinds.
@@ -177,10 +198,7 @@ impl Parser {
         temporary: bool,
     ) -> Result<Option<Expression>> {
         let start = self.current;
-        let volatile_or_temporary = match start.checked_sub(1).map(|at| &self.tokens[at]) {
-            Some(token) if token.text.eq_ignore_ascii_case("VOLATILE") => "VOLATILE",
-            _ => "TEMPORARY",
-        };
+        let written_temporary = self.written_temporary(start);
         let kind = if self.check_identifier("STAGE") {
             self.skip();
             "STAGE"
@@ -204,13 +222,14 @@ impl Parser {
         }
         let mut properties: Vec<ObjectProperty> = Vec::new();
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-            let tag = self.match_text_seq(&["WITH", "TAG"])
+            let with = self.match_text_seq(&["WITH", "TAG"]);
+            let tag = with
                 || (self.check_identifier("TAG")
                     && self.check_next(TokenType::LParen)
                     && self.match_identifier("TAG"));
             if tag {
                 self.expect_token(TokenType::LParen)?;
-                properties.extend(self.parse_tag_list(true)?);
+                properties.extend(with_written(with, self.parse_tag_list(true)?));
                 self.expect_token(TokenType::RParen)?;
                 continue;
             }
@@ -232,7 +251,7 @@ impl Parser {
         }
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
             kind: kind.to_owned(),
-            modifier: temporary.then(|| volatile_or_temporary.to_owned()),
+            modifier: temporary.then_some(written_temporary),
             or_replace,
             or_alter,
             if_not_exists,
@@ -240,6 +259,7 @@ impl Parser {
             source: String::new(),
             operands: Vec::new(),
             properties,
+            ..Default::default()
         }))))
     }
 

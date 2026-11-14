@@ -241,6 +241,7 @@ impl Parser {
             source: source.to_owned(),
             operands,
             properties,
+            ..Default::default()
         })
     }
 
@@ -333,7 +334,7 @@ impl Parser {
             let collation = self.expect_token(TokenType::String)?.text.to_string();
             column
                 .constraints
-                .push(ColumnConstraint::Collate(Identifier::new(collation)));
+                .push(ColumnConstraint::CollateString(collation));
             column.constraint_order.push(ConstraintType::Collate);
             return Ok(column);
         }
@@ -376,7 +377,7 @@ impl Parser {
             column.constraint_order.push(ConstraintType::ComputedColumn);
             return Ok(column);
         }
-        self.match_token(TokenType::With);
+        let with = self.match_token(TokenType::With);
         if self.match_text_seq(&["MASKING", "POLICY"]) {
             let policy = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
             let mut expressions: Vec<Expression> = Vec::new();
@@ -389,6 +390,7 @@ impl Parser {
                     MaskingPolicyColumnConstraint {
                         this: Box::new(policy),
                         expressions,
+                        with,
                     },
                 )));
             return Ok(column);
@@ -486,10 +488,10 @@ impl Parser {
             ("UNIQUE", false)
         } else if self.match_keywords(&[TokenType::PrimaryKey, TokenType::Key]) {
             ("PRIMARY KEY", false)
-        } else if self.match_keywords(&[TokenType::ForeignKey, TokenType::Key])
-            || inline && self.check(TokenType::References)
-        {
+        } else if self.match_keywords(&[TokenType::ForeignKey, TokenType::Key]) {
             ("FOREIGN KEY", true)
+        } else if inline && self.check(TokenType::References) {
+            ("REFERENCES", true)
         } else if self.match_token(TokenType::Check) {
             self.expect_token(TokenType::LParen)?;
             let condition = self.parse_expression()?;
@@ -883,20 +885,16 @@ fn constraint_property(constraint: Constraint) -> ObjectProperty {
 
 /// An inline constraint on `column`, with its property words recorded against it.
 fn add_inline_constraint(mut column: ColumnDef, constraint: Constraint) -> Result<ColumnDef> {
-    let name = constraint.name.map(|name| name.name);
     let kind = match constraint.kind {
         "UNIQUE" => {
             column.unique = true;
-            column.unique_constraint_name = name;
             ConstraintType::Unique
         }
         "PRIMARY KEY" => {
             column.primary_key = true;
-            column.primary_key_constraint_name = name;
             ConstraintType::PrimaryKey
         }
         "CHECK" => {
-            column.check_constraint_name = name;
             let condition = constraint.operand.ok_or_else(|| {
                 sqlquack_syntax::tokens::errors::Error::internal(
                     "the parser reached a state its checks rule out",
@@ -927,15 +925,18 @@ fn add_inline_constraint(mut column: ColumnDef, constraint: Constraint) -> Resul
                     on_update_first: false,
                     match_type: None,
                     match_after_actions: false,
-                    constraint_name: name,
+                    constraint_name: None,
                     deferrable: None,
-                    has_foreign_key_keywords: false,
+                    has_foreign_key_keywords: constraint.kind == "FOREIGN KEY",
                 })));
             ConstraintType::References
         }
     };
     column.constraint_order.push(kind);
     let index = column.constraint_order.len() - 1;
+    column
+        .constraint_names
+        .extend(constraint.name.map(|name| (index, name)));
     column
         .constraint_properties
         .extend(constraint.properties.into_iter().map(|word| (index, word)));

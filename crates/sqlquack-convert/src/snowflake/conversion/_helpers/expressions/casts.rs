@@ -38,6 +38,7 @@ use sqlquack_semantics::snowflake::typing::constants::CAST_TARGET;
 use sqlquack_semantics::snowflake::typing::constants::STRUCTURED_UNSUPPORTED;
 use sqlquack_semantics::snowflake::typing::main::cast_target::cast_target;
 use sqlquack_semantics::snowflake::typing::models::{CastTarget, SnowflakeType};
+use sqlquack_syntax::DataType;
 
 use crate::snowflake::conversion::_helpers::expressions::objects::as_json;
 use crate::snowflake::conversion::_helpers::expressions::operators::is_iso_date;
@@ -788,6 +789,12 @@ fn field_names(fields: &[Value]) -> Option<Vec<String>> {
     Some(names)
 }
 
+/// A serialised `named` type as the common or custom type it denotes, or none for another type.
+pub(crate) fn unnamed_type(data_type: &Value) -> Option<Value> {
+    let named: DataType = serde_json::from_value(data_type.clone()).ok()?;
+    serde_json::to_value(named.unnamed()?).ok()
+}
+
 /// The Snowflake spelling of a serialised cast target type.
 pub(crate) fn data_type_name(data_type: &Value) -> Option<String> {
     let object = data_type.as_object()?;
@@ -798,6 +805,7 @@ pub(crate) fn data_type_name(data_type: &Value) -> Option<String> {
         .unwrap_or(false);
     Some(match object.get("data_type")?.as_str()? {
         "custom" => object.get("name")?.as_str()?.to_owned(),
+        "named" => data_type_name(&unnamed_type(data_type)?)?,
         "decimal" => with_arguments("NUMBER", &[number("precision"), number("scale")]),
         "int" | "big_int" | "small_int" | "tiny_int" => "INT".to_owned(),
         "float" | "double" => "FLOAT".to_owned(),

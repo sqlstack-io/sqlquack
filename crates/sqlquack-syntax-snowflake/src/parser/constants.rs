@@ -557,6 +557,43 @@ pub(crate) const SNOWFLAKE_OPAQUE_KINDS: &[&[&str]] = &[
     &["VERSIONED", "SCHEMA"],
 ];
 
+/// The opaque CREATE kinds read into a tree once their checks pass, each before any kind it prefixes.
+pub(crate) const SNOWFLAKE_STRUCTURED_OPAQUE_KINDS: &[&[&str]] = &[
+    &["AI", "FUNCTION"],
+    &["APPLICATION", "PACKAGE"],
+    &["CODE", "BUNDLE"],
+    &["DBT", "PROJECT"],
+    &["EXTERNAL", "AGENT"],
+    &["INTERACTIVE", "WAREHOUSE"],
+    &["MCP", "SERVER"],
+    &["NOTEBOOK", "PROJECT"],
+    &["ORGANIZATION", "PROFILE"],
+    &["PROVISIONED", "THROUGHPUT"],
+    &["VERSIONED", "SCHEMA"],
+    &["AGENT"],
+    &["DATASET"],
+    &["EXPERIMENT"],
+    &["LISTING"],
+    &["MODEL"],
+    &["NOTEBOOK"],
+    &["PIPE"],
+    &["SNAPSHOT"],
+    &["VOLUME"],
+];
+
+/// The modifiers an opaque CREATE may write before its kind, each kept as written.
+pub(crate) const SNOWFLAKE_OPAQUE_MODIFIERS: &[&[&str]] = &[
+    &["LOCAL", "TEMPORARY"],
+    &["LOCAL", "TEMP"],
+    &["GLOBAL", "TEMPORARY"],
+    &["GLOBAL", "TEMP"],
+    &["TEMPORARY"],
+    &["TEMP"],
+    &["VOLATILE"],
+    &["SECURE"],
+    &["TRANSIENT"],
+];
+
 /// The word after `RESUME IF` in `ALTER WAREHOUSE <name> RESUME IF SUSPENDED`.
 pub(crate) const SUSPENDED: &str = "SUSPENDED";
 

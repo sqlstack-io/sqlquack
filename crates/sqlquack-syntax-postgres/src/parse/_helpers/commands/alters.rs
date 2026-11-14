@@ -174,6 +174,7 @@ pub(crate) fn alter(
         operand_if_not_exists: false,
         operands,
         properties: Vec::new(),
+        ..Default::default()
     }))
 }
 

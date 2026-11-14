@@ -19,24 +19,26 @@ use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
 impl Parser {
-    /// A Snowflake CREATE PROCEDURE SCOPED { TEMP | TEMPORARY } TABLE <name> ( <column> <type> [ [ NOT ] NULL ] [ , ... ] ) from PROCEDURE; None when SCOPED TEMP does not follow it.
+    /// A Snowflake CREATE [ PROCEDURE ] SCOPED { TEMP | TEMPORARY } TABLE <name> ( <column> <type> [ [ NOT ] NULL ] [ , ... ] ), its words before TABLE kept as written in the modifier; None when SCOPED TEMP does not follow.
     pub(crate) fn parse_scoped_temp_table(
         &mut self,
         or_replace: bool,
         or_alter: bool,
     ) -> Result<Option<Expression>> {
+        let procedure = usize::from(self.check(TokenType::Procedure));
         if !self.applies_snowflake_context_rules()
-            || !self.check(TokenType::Procedure)
-            || self.text_at(1).as_deref() != Some("SCOPED")
+            || self.text_at(procedure).as_deref() != Some("SCOPED")
             || !["TEMP", "TEMPORARY"]
                 .iter()
-                .any(|word| self.text_at(2).as_deref() == Some(*word))
+                .any(|word| self.text_at(procedure + 1).as_deref() == Some(*word))
         {
             return Ok(None);
         }
-        self.skip();
-        self.skip();
-        self.skip();
+        let mut words: Vec<String> = Vec::new();
+        for _ in 0..procedure + 2 {
+            words.push(self.advance_text()?.to_ascii_uppercase());
+        }
+        let modifier = words.join(" ");
         self.expect_token(TokenType::Table)?;
         let name = self.parse_iceberg_object_name()?;
         self.expect_token(TokenType::LParen)?;
@@ -62,8 +64,8 @@ impl Parser {
         }
         self.expect_token(TokenType::RParen)?;
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
-            kind: "PROCEDURE SCOPED TEMPORARY TABLE".to_owned(),
-            modifier: None,
+            kind: "TABLE".to_owned(),
+            modifier: Some(modifier),
             or_replace,
             or_alter,
             if_not_exists: false,
@@ -73,6 +75,7 @@ impl Parser {
                 expressions: columns,
             }))],
             properties: Vec::new(),
+            ..Default::default()
         }))))
     }
 
@@ -414,6 +417,7 @@ fn routine_property(kind: &str, value: Option<Expression>) -> ObjectProperty {
         value,
         string_name: false,
         quoted: false,
+        ..Default::default()
     }
 }
 

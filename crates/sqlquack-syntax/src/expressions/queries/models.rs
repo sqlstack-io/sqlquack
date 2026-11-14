@@ -595,6 +595,9 @@ pub struct Unpivot {
 pub struct PivotAlias {
     pub this: Expression,
     pub alias: Expression,
+    /// Whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub alias_explicit_as: bool,
 }
 
 /// PREWHERE clause (ClickHouse) - early filtering before WHERE

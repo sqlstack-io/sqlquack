@@ -357,5 +357,6 @@ fn copy(
         is_into: false,
         with_wrapped,
         where_clause: None,
+        copy_files: false,
     }))
 }

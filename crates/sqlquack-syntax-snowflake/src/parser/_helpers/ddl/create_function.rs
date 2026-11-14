@@ -2,6 +2,7 @@
 
 use crate::parser::_helpers::ddl::snowflake_routines::nullability_property;
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::columns::models::ColumnDef;
 use sqlquack_syntax::expressions::schema_objects::main::record_function_property::record_function_property;
 use sqlquack_syntax::expressions::schema_objects::models::CreateFunction;
 use sqlquack_syntax::expressions::schema_objects::models::FunctionBody;
@@ -53,7 +54,8 @@ impl Parser {
         }
 
         let mut returns_table_body: Option<String> = None;
-        (return_type, returns_table_body) =
+        let returns_table_columns: Option<Vec<ColumnDef>>;
+        (return_type, returns_table_body, returns_table_columns) =
             self.parse_create_function_returns(return_type, returns_table_body)?;
         let return_nullability = self.match_snowflake_return_nullability();
 
@@ -75,6 +77,7 @@ impl Parser {
             has_parens,
             sql_data_access,
             returns_table_body,
+            returns_table_columns,
             language_first,
             set_options: Vec::new(),
             strict: false,
@@ -93,6 +96,7 @@ impl Parser {
                 .map(nullability_property)
                 .collect(),
             overloads: Vec::new(),
+            define: false,
         };
         function = self.parse_create_function_properties(function)?;
 
@@ -115,6 +119,21 @@ impl Parser {
                 && self.tokens[self.current + 1].token_type == TokenType::Null
             {
                 function = self.parse_create_function_returns_null_on_null(function)?;
+            } else if self.is_snowflake()
+                && self.check(TokenType::Returns)
+                && self.check_next(TokenType::Table)
+                && self
+                    .tokens
+                    .get(self.current + 2)
+                    .is_some_and(|token| token.token_type == TokenType::LParen)
+            {
+                self.current += 2;
+                function.returns_table_columns = Some(self.parse_returns_table_columns()?);
+                if let Some(nullability) = self.match_snowflake_return_nullability() {
+                    function
+                        .snowflake_properties
+                        .push(nullability_property(nullability));
+                }
             } else if self.match_token(TokenType::Returns) {
                 function.return_type = Some(self.parse_data_type()?);
                 if let Some(nullability) = self.match_snowflake_return_nullability() {
@@ -460,7 +479,8 @@ impl Parser {
         &mut self,
         mut return_type: Option<DataType>,
         mut returns_table_body: Option<String>,
-    ) -> Result<(Option<DataType>, Option<String>)> {
+    ) -> Result<FunctionReturns> {
+        let mut returns_table_columns: Option<Vec<ColumnDef>> = None;
         if self.match_token(TokenType::Returns) {
             if self.check(TokenType::Var) && self.peek_text().starts_with('@') {
                 let var_name = self.advance_text()?;
@@ -532,6 +552,8 @@ impl Parser {
                         return Err(self.parse_error("Expected > after TABLE column definitions"));
                     }
                     returns_table_body = Some(format!("TABLE <{}>", cols.join(", ")));
+                } else if self.is_snowflake() && self.check(TokenType::LParen) {
+                    returns_table_columns = Some(self.parse_returns_table_columns()?);
                 } else if self.check(TokenType::LParen) {
                     self.skip();
                     let mut cols: Vec<String> = Vec::new();
@@ -569,6 +591,34 @@ impl Parser {
                 return_type = Some(self.parse_function_return_type()?);
             }
         }
-        Ok((return_type, returns_table_body))
+        Ok((return_type, returns_table_body, returns_table_columns))
+    }
+
+    /// `( <col_name> [ <col_type> ] [ , ... ] )` after Snowflake's RETURNS TABLE: one column per item with its quoting; a column written without a type has none.
+    fn parse_returns_table_columns(&mut self) -> Result<Vec<ColumnDef>> {
+        self.expect_token(TokenType::LParen)?;
+        let mut columns: Vec<ColumnDef> = Vec::new();
+        loop {
+            let untyped = self.check_next(TokenType::Comma) || self.check_next(TokenType::RParen);
+            if untyped {
+                self.check_snowflake_object_name()?;
+            }
+            let name = self.expect_identifier_with_quoted()?;
+            let mut column = ColumnDef::new("", DataType::Unknown);
+            column.name = name;
+            column.no_type = untyped;
+            if !untyped {
+                column.data_type = self.parse_data_type()?;
+            }
+            columns.push(column);
+            if !self.match_token(TokenType::Comma) {
+                break;
+            }
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(columns)
     }
 }
+
+/// What RETURNS declares: a return type, a table body kept as text, or Snowflake table columns.
+type FunctionReturns = (Option<DataType>, Option<String>, Option<Vec<ColumnDef>>);

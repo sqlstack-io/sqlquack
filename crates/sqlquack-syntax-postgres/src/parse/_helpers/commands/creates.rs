@@ -153,6 +153,7 @@ fn created(kind: &str, name: TableRef, prefix: CreatePrefix) -> CreateObject {
         source: String::new(),
         operands: Vec::new(),
         properties: Vec::new(),
+        ..Default::default()
     }
 }
 

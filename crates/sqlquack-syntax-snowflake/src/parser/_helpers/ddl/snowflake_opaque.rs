@@ -1,16 +1,18 @@
 //! Parser ddl: the shared check of a Snowflake CREATE or ALTER kept as opaque text, which refuses a malformed head, `NAME = value` option list or tag list while the tree stays the same text.
 
-use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
+use crate::parser::_helpers::ddl::snowflake_alter::{alter_object, named_property, property};
 use crate::parser::_helpers::statements::analyze::snowflake_reserved_word;
 use crate::parser::constants::{
-    SNOWFLAKE_DROP_KINDS, SNOWFLAKE_OPAQUE_ALTER_ACTIONS, SNOWFLAKE_OPAQUE_KINDS,
-    SNOWFLAKE_OPAQUE_OPERAND_WORDS, SNOWFLAKE_OPAQUE_UNNAMED_KIND, SUSPENDED,
+    SNOWFLAKE_DEFINE_OPAQUE_KINDS, SNOWFLAKE_DROP_KINDS, SNOWFLAKE_OPAQUE_ALTER_ACTIONS,
+    SNOWFLAKE_OPAQUE_KINDS, SNOWFLAKE_OPAQUE_MODIFIERS, SNOWFLAKE_OPAQUE_OPERAND_WORDS,
+    SNOWFLAKE_OPAQUE_UNNAMED_KIND, SNOWFLAKE_STRUCTURED_OPAQUE_KINDS, SUSPENDED,
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::TableRef;
-use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
+use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
 use sqlquack_syntax::expressions::statements::models::Raw;
 use sqlquack_syntax::expressions::tree::models::Expression;
+use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
@@ -650,5 +652,257 @@ impl Parser {
             true => Ok(()),
             false => Err(self.parse_error("Expected EXISTS or NOT EXISTS after IF")),
         }
+    }
+}
+
+/// The words after a property kind that take one value without `=`: an organization profile's or external agent's VERSION, a snapshot's VOLUME and INSTANCE, an AI function's RUN and a listing's SHARE.
+const OPAQUE_VALUE_WORDS: [&str; 5] = ["VERSION", "VOLUME", "INSTANCE", "RUN", "SHARE"];
+
+impl Parser {
+    /// A Snowflake CREATE the opaque check passed, as a create-object tree: a scoped temporary table, a read-only temporary clone, or a kind the opaque check reads; None keeps the raw text, as for a DEFINE of a kind DEFINE does not take.
+    pub(crate) fn parse_opaque_create(
+        &mut self,
+        or_replace: bool,
+        or_alter: bool,
+    ) -> Result<Option<Expression>> {
+        let start = self.current;
+        if let Some(table) = self.parse_scoped_temp_table(or_replace, or_alter)? {
+            return Ok(Some(table));
+        }
+        if !or_alter {
+            if let Some(clone) = self.parse_snowflake_read_only_clone(or_replace)? {
+                return Ok(Some(clone));
+            }
+        }
+        match self.parse_opaque_create_tree(or_replace, or_alter) {
+            Ok(Some(tree)) if self.is_statement_end_at(0) => Ok(Some(tree)),
+            _ => {
+                self.current = start;
+                Ok(None)
+            }
+        }
+    }
+
+    /// The create-object tree of an opaque CREATE from its kind: the modifier written before the kind, IF NOT EXISTS, the name, an AI function's signature and return type, then its clauses and properties.
+    fn parse_opaque_create_tree(
+        &mut self,
+        or_replace: bool,
+        or_alter: bool,
+    ) -> Result<Option<Expression>> {
+        let Some(keyword_at) = self.statement_keyword_at(self.current) else {
+            return Ok(None);
+        };
+        let define = self.tokens[keyword_at].token_type == TokenType::Define;
+        let mut head = keyword_at + 1;
+        if self.tokens[head].token_type == TokenType::Or {
+            head += 2;
+        }
+        let quoted = self.tokens[head..self.current].iter().any(|token| {
+            matches!(
+                token.token_type,
+                TokenType::QuotedIdentifier | TokenType::String
+            )
+        });
+        let words: Vec<String> = self.tokens[head..self.current]
+            .iter()
+            .map(|token| token.text.to_ascii_uppercase())
+            .collect();
+        let modifier = match words.is_empty() {
+            true => None,
+            false => match SNOWFLAKE_OPAQUE_MODIFIERS
+                .iter()
+                .any(|modifier| *modifier == words.as_slice())
+            {
+                true if !quoted => Some(words.join(" ")),
+                _ => return Ok(None),
+            },
+        };
+        let Some(&kind) = SNOWFLAKE_STRUCTURED_OPAQUE_KINDS.iter().find(|words| {
+            self.check_text_seq(words)
+                && !(**words == ["NOTEBOOK", "PROJECT"] && self.notebook_name_ends_at(2))
+                && !(**words == ["SNAPSHOT"]
+                    && self.peek_nth(1).is_some_and(|token| {
+                        token.text.eq_ignore_ascii_case("SET")
+                            || token.text.eq_ignore_ascii_case("POLICY")
+                    }))
+        }) else {
+            return Ok(None);
+        };
+        if define && !SNOWFLAKE_DEFINE_OPAQUE_KINDS.contains(&kind) {
+            return Ok(None);
+        }
+        self.current += kind.len();
+        let if_not_exists = self.check(TokenType::If);
+        if if_not_exists
+            && !self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists])
+        {
+            return Ok(None);
+        }
+        if kind == ["NOTEBOOK", "PROJECT"] && self.check(TokenType::Dot) {
+            return Ok(None);
+        }
+        let mut create = CreateObject {
+            kind: kind.join(" "),
+            modifier,
+            or_replace,
+            or_alter,
+            if_not_exists,
+            name: self.parse_object_name()?,
+            ..Default::default()
+        };
+        let function = kind == ["AI", "FUNCTION"];
+        if function {
+            self.expect_token(TokenType::LParen)?;
+            create.signature = Some(self.parse_function_parameters()?);
+            self.expect_token(TokenType::RParen)?;
+            if !self.match_text_seq(&["RETURNS"]) {
+                return Ok(None);
+            }
+            create.returns = Some(self.parse_data_type()?);
+        }
+        let mut with = false;
+        while !self.is_statement_end_at(0) {
+            if self.check(TokenType::With) && !self.check_next(TokenType::Eq) {
+                if with {
+                    return Ok(None);
+                }
+                self.skip();
+                with = true;
+                continue;
+            }
+            let first = create.properties.len();
+            create = match self.parse_opaque_create_clause(create, function)? {
+                Some(create) => create,
+                None => return Ok(None),
+            };
+            for found in &mut create.properties[first..] {
+                found.with = with;
+            }
+            if with && create.properties.len() == first {
+                return Ok(None);
+            }
+            with = false;
+        }
+        match with {
+            true => Ok(None),
+            false => Ok(Some(Expression::CreateObject(Box::new(create)))),
+        }
+    }
+
+    /// `create` with one more clause or property of an opaque CREATE: FROM and its source, AS and a body or manifest, a tag or contact list, MANAGED ACCESS, COPY GRANTS, an interactive warehouse's TABLES, a word that takes one value, or `<property> = <value>`; None for anything else.
+    fn parse_opaque_create_clause(
+        &mut self,
+        mut create: CreateObject,
+        function: bool,
+    ) -> Result<Option<CreateObject>> {
+        if self.check(TokenType::From) && create.source.is_empty() && create.body.is_none() {
+            self.skip();
+            let (source, operand) = if self.match_text_seq(&["SPECIFICATION"]) {
+                ("FROM SPECIFICATION", self.parse_opaque_text()?)
+            } else if self.match_text_seq(&["SERVICE"]) {
+                (
+                    "FROM SERVICE",
+                    Expression::Table(Box::new(self.parse_object_name()?)),
+                )
+            } else if self.match_text_seq(&["EXPERIMENT"]) {
+                (
+                    "FROM EXPERIMENT",
+                    Expression::Table(Box::new(self.parse_object_name()?)),
+                )
+            } else if self.is_stage_path() || self.check(TokenType::String) {
+                ("FROM", self.parse_stage_path()?)
+            } else {
+                return Ok(None);
+            };
+            create.source = source.to_owned();
+            create.operands.push(operand);
+            return Ok(Some(create));
+        }
+        if self.check(TokenType::As) && create.source.is_empty() && create.body.is_none() {
+            self.skip();
+            if self.check(TokenType::Copy) || function {
+                let body = match function {
+                    true => self.parse_opaque_text()?,
+                    false => self.parse_statement()?,
+                };
+                create.body = Some(Box::new(body));
+            } else {
+                create.source = "AS".to_owned();
+                create.operands.push(self.parse_opaque_text()?);
+            }
+            return Ok(Some(create));
+        }
+        if self.check_identifier("TAG") && self.check_next(TokenType::LParen) {
+            create.properties.extend(self.parse_create_property_item()?);
+            return Ok(Some(create));
+        }
+        if self.check_identifier("CONTACT") && self.check_next(TokenType::LParen) {
+            self.skip();
+            self.skip();
+            loop {
+                let purpose = self.parse_contact_purpose(Self::parse_simple_name)?;
+                self.expect_token(TokenType::Eq)?;
+                let value = self.parse_object_value()?;
+                create
+                    .properties
+                    .push(named_property("CONTACT", purpose, Some(value)));
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+            }
+            self.expect_token(TokenType::RParen)?;
+            return Ok(Some(create));
+        }
+        if let Some(words) = [&["MANAGED", "ACCESS"], &["COPY", "GRANTS"]]
+            .into_iter()
+            .find(|words| self.match_text_seq(*words))
+        {
+            create
+                .properties
+                .push(property(&words.join(" "), None, None));
+            return Ok(Some(create));
+        }
+        if self.check_identifier("TABLES") && self.check_next(TokenType::LParen) {
+            self.skip();
+            self.skip();
+            let mut tables: Vec<Expression> = Vec::new();
+            while !self.match_token(TokenType::RParen) {
+                tables.push(Expression::Table(Box::new(self.parse_object_name()?)));
+                if !self.match_token(TokenType::Comma) {
+                    self.expect_token(TokenType::RParen)?;
+                    break;
+                }
+            }
+            let tables = Expression::Tuple(Box::new(Tuple {
+                expressions: tables,
+            }));
+            create
+                .properties
+                .push(property("TABLES", None, Some(tables)));
+            return Ok(Some(create));
+        }
+        let word = self.peek_text().to_ascii_uppercase();
+        if self.peek().token_type != TokenType::QuotedIdentifier
+            && OPAQUE_VALUE_WORDS.contains(&word.as_str())
+            && !self.check_next(TokenType::Eq)
+        {
+            self.skip();
+            let value = self.parse_object_value()?;
+            create.properties.push(property(&word, None, Some(value)));
+            return Ok(Some(create));
+        }
+        if self.check_next(TokenType::Eq) {
+            create.properties.extend(self.parse_create_property_item()?);
+            return Ok(Some(create));
+        }
+        Ok(None)
+    }
+
+    /// A specification, manifest or body written as a string or dollar-quoted text.
+    fn parse_opaque_text(&mut self) -> Result<Expression> {
+        if !(self.check(TokenType::String) || self.check(TokenType::DollarString)) {
+            return Err(self.parse_error("Expected a string or dollar-quoted text"));
+        }
+        self.parse_primary()
     }
 }

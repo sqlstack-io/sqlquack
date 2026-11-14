@@ -8,7 +8,9 @@ use crate::parser::constants::{
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
-use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
+use sqlquack_syntax::expressions::schema_objects::models::{
+    CreateObject, FunctionParameter, ObjectProperty,
+};
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
@@ -29,6 +31,99 @@ impl Parser {
         {
             return Err(self.parse_error("Expected a complete object kind after CREATE"));
         }
+        if let Some(create) = self.parse_snowflake_create_own_kind(or_replace, or_alter)? {
+            return Ok(Some(create));
+        }
+        if self.check(TokenType::Alter) || self.check(TokenType::String) {
+            return Err(self.parse_error("Expected an object kind after CREATE"));
+        }
+        let database_role = or_alter && self.names_a_database_role();
+        let Some(parts) = SNOWFLAKE_PROPERTY_KINDS
+            .iter()
+            .map(|kind| kind.split(' ').collect::<Vec<_>>())
+            .filter(|parts| self.check_text_seq(parts))
+            .max_by_key(Vec::len)
+            .or_else(|| database_role.then(|| vec!["DATABASE", "ROLE"]))
+        else {
+            let body = SNOWFLAKE_BODY_POLICY_KINDS
+                .iter()
+                .any(|kind| self.check_text_seq(&kind.split(' ').collect::<Vec<_>>()));
+            if !body && self.names_a_partial_kind() {
+                return Err(self.parse_error("Expected a complete object kind after CREATE"));
+            }
+            return self.parse_snowflake_create_container(or_replace, or_alter);
+        };
+        if parts == ["MODEL", "MONITOR"] && self.model_name_ends_at(self.current + 2) {
+            return Ok(None);
+        }
+        self.match_text_seq(&parts);
+        let if_not_exists = self.check(TokenType::If);
+        if if_not_exists
+            && !self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists])
+        {
+            return Err(self.parse_error("Expected IF NOT EXISTS"));
+        }
+        let name = self.parse_object_name()?;
+        if self.check_identifier("CLONE") || self.check_text_seq(&["AS", "REPLICA"]) {
+            self.current = start;
+            return Ok(None);
+        }
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        if parts == ["COMPUTE", "POOL"] && self.match_text_seq(&["FOR", "APPLICATION"]) {
+            let application = self.parse_simple_name()?;
+            properties.push(property(
+                "FOR APPLICATION",
+                None,
+                Some(Expression::Identifier(application)),
+            ));
+        }
+        let mut with = false;
+        while !self.is_at_end() && !self.check(TokenType::Semicolon) {
+            if self.check(TokenType::With) && !self.check_next(TokenType::Eq) {
+                self.skip();
+                if self.is_at_end() || self.check(TokenType::Semicolon) {
+                    return Err(self.parse_error("Expected a property after WITH"));
+                }
+                with = true;
+                continue;
+            }
+            let tags = self.check_identifier("TAG") && self.check_next(TokenType::LParen);
+            if matches!(parts.as_slice(), ["FAILOVER" | "REPLICATION", "GROUP"]) {
+                self.check_group_name_value()?;
+            }
+            properties.extend(with_written(
+                std::mem::take(&mut with),
+                self.parse_create_property_item()?,
+            ));
+            self.match_token(TokenType::Comma);
+            if tags
+                && SNOWFLAKE_TAGS_LAST_KINDS.contains(&parts.join(" ").as_str())
+                && !self.is_at_end()
+                && !self.check(TokenType::Semicolon)
+            {
+                return Err(self.parse_error("Expected the statement end after the tag list"));
+            }
+        }
+        Ok(Some(Expression::CreateObject(Box::new(CreateObject {
+            kind: parts.join(" "),
+            modifier: None,
+            or_replace,
+            or_alter,
+            if_not_exists,
+            name,
+            source: String::new(),
+            operands: Vec::new(),
+            properties,
+            ..Default::default()
+        }))))
+    }
+
+    /// A Snowflake CREATE of a kind with its own grammar, such as a class instance, stream, service or alert; None for any other kind.
+    fn parse_snowflake_create_own_kind(
+        &mut self,
+        or_replace: bool,
+        or_alter: bool,
+    ) -> Result<Option<Expression>> {
         if let Some(class) = self.parse_snowflake_create_class(or_replace, or_alter)? {
             return Ok(Some(class));
         }
@@ -76,82 +171,7 @@ impl Parser {
         {
             return Ok(Some(instance));
         }
-        if self.check(TokenType::Alter) || self.check(TokenType::String) {
-            return Err(self.parse_error("Expected an object kind after CREATE"));
-        }
-        let database_role = or_alter && self.names_a_database_role();
-        let Some(parts) = SNOWFLAKE_PROPERTY_KINDS
-            .iter()
-            .map(|kind| kind.split(' ').collect::<Vec<_>>())
-            .filter(|parts| self.check_text_seq(parts))
-            .max_by_key(Vec::len)
-            .or_else(|| database_role.then(|| vec!["DATABASE", "ROLE"]))
-        else {
-            let body = SNOWFLAKE_BODY_POLICY_KINDS
-                .iter()
-                .any(|kind| self.check_text_seq(&kind.split(' ').collect::<Vec<_>>()));
-            if !body && self.names_a_partial_kind() {
-                return Err(self.parse_error("Expected a complete object kind after CREATE"));
-            }
-            return Ok(None);
-        };
-        if parts == ["MODEL", "MONITOR"] && self.model_name_ends_at(self.current + 2) {
-            return Ok(None);
-        }
-        self.match_text_seq(&parts);
-        let if_not_exists = self.check(TokenType::If);
-        if if_not_exists
-            && !self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists])
-        {
-            return Err(self.parse_error("Expected IF NOT EXISTS"));
-        }
-        let name = self.parse_object_name()?;
-        if self.check_identifier("CLONE") || self.check_text_seq(&["AS", "REPLICA"]) {
-            self.current = start;
-            return Ok(None);
-        }
-        let mut properties: Vec<ObjectProperty> = Vec::new();
-        if parts == ["COMPUTE", "POOL"] && self.match_text_seq(&["FOR", "APPLICATION"]) {
-            let application = self.parse_simple_name()?;
-            properties.push(property(
-                "FOR APPLICATION",
-                None,
-                Some(Expression::Identifier(application)),
-            ));
-        }
-        while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-            if self.check(TokenType::With) && !self.check_next(TokenType::Eq) {
-                self.skip();
-                if self.is_at_end() || self.check(TokenType::Semicolon) {
-                    return Err(self.parse_error("Expected a property after WITH"));
-                }
-                continue;
-            }
-            let tags = self.check_identifier("TAG") && self.check_next(TokenType::LParen);
-            if matches!(parts.as_slice(), ["FAILOVER" | "REPLICATION", "GROUP"]) {
-                self.check_group_name_value()?;
-            }
-            properties.extend(self.parse_create_property_item()?);
-            self.match_token(TokenType::Comma);
-            if tags
-                && SNOWFLAKE_TAGS_LAST_KINDS.contains(&parts.join(" ").as_str())
-                && !self.is_at_end()
-                && !self.check(TokenType::Semicolon)
-            {
-                return Err(self.parse_error("Expected the statement end after the tag list"));
-            }
-        }
-        Ok(Some(Expression::CreateObject(Box::new(CreateObject {
-            kind: parts.join(" "),
-            modifier: None,
-            or_replace,
-            or_alter,
-            if_not_exists,
-            name,
-            source: String::new(),
-            operands: Vec::new(),
-            properties,
-        }))))
+        Ok(None)
     }
 
     /// Refuse a string as the first value of a group property that names objects, a quoted integration type, and a comma in its list followed by a string, another property or nothing, as Snowflake does.
@@ -193,7 +213,7 @@ impl Parser {
                 _ if token.text.eq_ignore_ascii_case("TAG")
                     && at(offset + 1).is_some_and(|next| next.token_type == TokenType::LParen) =>
                 {
-                    break
+                    break;
                 }
                 _ => {}
             }
@@ -225,18 +245,25 @@ impl Parser {
         let name = self.parse_object_name()?;
         self.expect_token(TokenType::As)?;
         self.expect_token(TokenType::LParen)?;
-        let mut signature: Vec<Expression> = Vec::new();
+        let mut signature: Vec<FunctionParameter> = Vec::new();
         while !self.check(TokenType::RParen) {
+            let at = self.current;
             let first = self.parse_simple_name()?;
-            if self.check(TokenType::Comma) || self.check(TokenType::RParen) {
-                signature.push(Expression::Identifier(first));
-            } else {
-                let data_type = self.parse_data_type()?;
-                signature.push(Expression::PropertyEQ(Box::new(BinaryOp::new(
-                    Expression::Identifier(first),
-                    Expression::DataType(data_type),
-                ))));
-            }
+            let name = match self.check(TokenType::Comma) || self.check(TokenType::RParen) {
+                true => {
+                    self.current = at;
+                    None
+                }
+                false => Some(first),
+            };
+            signature.push(FunctionParameter {
+                name,
+                data_type: self.parse_data_type()?,
+                mode: None,
+                default: None,
+                mode_text: None,
+                span: Default::default(),
+            });
             if !self.match_token(TokenType::Comma) {
                 break;
             }
@@ -248,19 +275,24 @@ impl Parser {
         if !self.is_identifier_token() || self.check(TokenType::QuotedIdentifier) {
             return Err(self.parse_error("Expected a return type"));
         }
-        let returns = Expression::DataType(self.parse_data_type()?);
+        let returns = self.parse_data_type()?;
         self.expect_token(TokenType::Arrow)?;
         let body = self.parse_expression()?;
         let mut properties: Vec<ObjectProperty> = Vec::new();
+        let mut with = false;
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
             if self.check(TokenType::With) && !self.check_next(TokenType::Eq) {
                 self.skip();
                 if self.is_at_end() || self.check(TokenType::Semicolon) {
                     return Err(self.parse_error("Expected a property after WITH"));
                 }
+                with = true;
                 continue;
             }
-            properties.extend(self.parse_create_property_item()?);
+            properties.extend(with_written(
+                std::mem::take(&mut with),
+                self.parse_create_property_item()?,
+            ));
         }
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
             kind: parts.join(" "),
@@ -269,15 +301,13 @@ impl Parser {
             or_alter,
             if_not_exists,
             name,
-            source: "AS".to_owned(),
-            operands: vec![
-                Expression::Tuple(Box::new(Tuple {
-                    expressions: signature,
-                })),
-                returns,
-                body,
-            ],
+            source: String::new(),
+            operands: Vec::new(),
             properties,
+            signature: Some(signature),
+            returns: Some(returns),
+            body: Some(Box::new(body)),
+            ..Default::default()
         }))))
     }
 
@@ -376,6 +406,7 @@ impl Parser {
             source: String::new(),
             operands,
             properties,
+            ..Default::default()
         }))))
     }
 
@@ -554,6 +585,14 @@ impl Parser {
                     && !token.text.eq_ignore_ascii_case("TAG")
             })
     }
+}
+
+/// `properties` with their `with` flag set when a WITH was written before the item they came from.
+pub(super) fn with_written(with: bool, mut properties: Vec<ObjectProperty>) -> Vec<ObjectProperty> {
+    for found in &mut properties {
+        found.with = with;
+    }
+    properties
 }
 
 /// Whether `kind` has `text` as one of its words.

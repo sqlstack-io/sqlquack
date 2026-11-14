@@ -66,6 +66,7 @@ impl Parser {
             },
             operands: vec![operand],
             properties,
+            ..Default::default()
         }))))
     }
 
@@ -188,18 +189,20 @@ impl Parser {
     fn parse_external_constraint(&mut self, mut column: ColumnDef) -> Result<ColumnDef> {
         let named = self.match_text_seq(&["CONSTRAINT"]);
         let constraint_name = match named {
-            true => Some(self.parse_external_name()?.name),
+            true => Some(self.parse_external_name()?),
             false => None,
         };
+        let index = column.constraint_order.len();
+        column
+            .constraint_names
+            .extend(constraint_name.map(|name| (index, name)));
         if self.match_text_seq(&["UNIQUE"]) {
             column.unique = true;
-            column.unique_constraint_name = constraint_name;
             column.constraint_order.push(ConstraintType::Unique);
             return Ok(column);
         }
         if self.match_text_seq(&["PRIMARY", "KEY"]) {
             column.primary_key = true;
-            column.primary_key_constraint_name = constraint_name;
             column.constraint_order.push(ConstraintType::PrimaryKey);
             return Ok(column);
         }
@@ -231,7 +234,7 @@ impl Parser {
                 on_update_first: false,
                 match_type: None,
                 match_after_actions: false,
-                constraint_name,
+                constraint_name: None,
                 deferrable: None,
                 has_foreign_key_keywords: foreign,
             })));
@@ -332,6 +335,7 @@ impl Parser {
                 )))),
                 string_name: false,
                 quoted: false,
+                ..Default::default()
             });
             if !self.match_token(TokenType::Comma) {
                 break;

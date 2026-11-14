@@ -921,6 +921,7 @@ impl Parser {
                 on_cluster,
                 to_table,
                 table_properties,
+                define: false,
             })));
         }
 
@@ -983,6 +984,7 @@ impl Parser {
             on_cluster,
             to_table,
             table_properties,
+            define: false,
         })))
     }
 
@@ -1807,7 +1809,7 @@ impl Parser {
         let mut actions: Vec<AlterTableAction> = Vec::new();
         let mut last_was_add_column = false;
         let mut last_was_alter_column = false;
-        let mut dropping_columns: Option<bool> = None;
+        let mut dropping_columns: Option<(bool, bool)> = None;
         let mut with_check_modifier: Option<String> = None;
 
         loop {
@@ -1825,13 +1827,14 @@ impl Parser {
                 }
                 continue;
             }
-            if let Some(if_exists) =
+            if let Some((if_exists, column_keyword)) =
                 dropping_columns.filter(|_| !self.check_alter_table_action_start())
             {
                 actions.push(AlterTableAction::DropColumn {
                     name: self.parse_simple_name()?,
                     if_exists,
                     cascade: false,
+                    column_keyword,
                 });
                 if !self.match_token(TokenType::Comma) {
                     break;
@@ -1876,7 +1879,7 @@ impl Parser {
                 && !self.check_identifier("REMOVE")
                 && !self.check_identifier("APPLY")
             {
-                self.match_token(TokenType::Column);
+                let column_keyword = self.match_token(TokenType::Column);
                 let if_not_exists =
                     self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
                 let col_def = self.parse_added_column_def()?;
@@ -1898,6 +1901,7 @@ impl Parser {
                     column: col_def,
                     if_not_exists,
                     position,
+                    column_keyword,
                 });
             } else {
                 if self.check_identifier("ALGORITHM") || self.check_identifier("LOCK") {
@@ -1925,8 +1929,9 @@ impl Parser {
                     AlterTableAction::DropColumn {
                         if_exists,
                         cascade: false,
+                        column_keyword,
                         ..
-                    } if self.is_snowflake() => Some(*if_exists),
+                    } if self.is_snowflake() => Some((*if_exists, *column_keyword)),
                     _ => None,
                 };
                 actions.push(action);

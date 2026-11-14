@@ -78,6 +78,7 @@ impl Parser<'_> {
             source: source.to_owned(),
             operands,
             properties,
+            ..Default::default()
         })))
     }
 }
@@ -156,5 +157,6 @@ fn definition(name: Identifier, value: Option<Expression>) -> ObjectProperty {
         value,
         string_name: false,
         quoted: false,
+        ..Default::default()
     }
 }

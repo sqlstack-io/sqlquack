@@ -363,12 +363,13 @@ impl Parser {
                     self.expect_alter_words(&[&["TO", "ACCOUNTS"]])?;
                     operands.push(self.account_list_operand()?);
                 }
+                let mut properties: Vec<ObjectProperty> = Vec::new();
                 if matches!(action.as_str(), "ENABLE REPLICATION")
                     && self.match_text_seq(&["IGNORE", "EDITION", "CHECK"])
                 {
-                    action.push_str(" IGNORE EDITION CHECK");
+                    properties.push(property("IGNORE EDITION CHECK", None, None));
                 }
-                (operands, vec![])
+                (operands, properties)
             }
             _ => (vec![], vec![]),
         };

@@ -11,52 +11,92 @@ fn given_a_snowflake_merge_when_parsing_then_its_actions_need_their_clauses() {
         },
         SnowflakeVerdictTestCase {
             description: "UPDATE without SET (recorded errno 1003)",
-            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN MATCHED THEN UPDATE", " ;"),
+            sql: concat!(
+                "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1",
+                " WHEN MATCHED THEN UPDATE",
+                " ;"
+            ),
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "SET with a string for a column (recorded errno 1003)",
-            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN MATCHED THEN UPDATE SET 'v1' = 1", " ;"),
+            sql: concat!(
+                "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1",
+                " WHEN MATCHED THEN UPDATE SET 'v1' = 1",
+                " ;"
+            ),
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "INSERT without VALUES (recorded errno 1003)",
-            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT", " ;"),
+            sql: concat!(
+                "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1",
+                " WHEN NOT MATCHED THEN INSERT",
+                " ;"
+            ),
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "an empty INSERT column list (recorded errno 1003)",
-            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT ( ) VALUES ( 1 )", " ;"),
+            sql: concat!(
+                "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1",
+                " WHEN NOT MATCHED THEN INSERT ( ) VALUES ( 1 )",
+                " ;"
+            ),
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "an unclosed INSERT column list (recorded errno 1003)",
-            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT ( v1 VALUES ( 1 )", " ;"),
+            sql: concat!(
+                "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1",
+                " WHEN NOT MATCHED THEN INSERT ( v1 VALUES ( 1 )",
+                " ;"
+            ),
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "an empty VALUES list (recorded errno 1003)",
-            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT VALUES ( )", " ;"),
+            sql: concat!(
+                "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1",
+                " WHEN NOT MATCHED THEN INSERT VALUES ( )",
+                " ;"
+            ),
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "an unclosed VALUES list (recorded errno 1003)",
-            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT VALUES ( 1", " ;"),
+            sql: concat!(
+                "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1",
+                " WHEN NOT MATCHED THEN INSERT VALUES ( 1",
+                " ;"
+            ),
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "keeps MERGE WHEN MATCHED THEN UPDATE SET c1 = t2.c1",
-            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN MATCHED THEN UPDATE SET c1 = t2.c1", " ;"),
+            sql: concat!(
+                "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1",
+                " WHEN MATCHED THEN UPDATE SET c1 = t2.c1",
+                " ;"
+            ),
             expected_kind: Some("merge"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps MERGE WHEN MATCHED AND t2.c2 > 0 THEN DELETE WHEN NOT MATCHED THE",
-            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN MATCHED AND t2.c2 > 0 THEN DELETE WHEN NOT MATCHED THEN INSERT ( c1 , c2 ) VALUES ( t2.c1 , DEFAULT )", " ;"),
+            sql: concat!(
+                "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1",
+                " WHEN MATCHED AND t2.c2 > 0 THEN DELETE WHEN NOT MATCHED THEN INSERT ( c1 , c2 ) VALUES ( t2.c1 , DEFAULT )",
+                " ;"
+            ),
             expected_kind: Some("merge"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps MERGE WHEN NOT MATCHED THEN INSERT VALUES ( 1 )",
-            sql: concat!("MERGE INTO v1 USING t2 ON v1.c1 = t2.c1", " WHEN NOT MATCHED THEN INSERT VALUES ( 1 )", " ;"),
+            sql: concat!(
+                "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1",
+                " WHEN NOT MATCHED THEN INSERT VALUES ( 1 )",
+                " ;"
+            ),
             expected_kind: Some("merge"),
         },
     ];
@@ -117,42 +157,42 @@ fn given_a_snowflake_stage_command_when_parsing_then_its_stage_and_options_must_
         SnowflakeVerdictTestCase {
             description: "keeps GET @~/p1 file:///tmp/d1/ PARALLEL = 1 PATTERN = 'm' ;",
             sql: "GET @~/p1 file:///tmp/d1/ PARALLEL = 1 PATTERN = 'm' ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("stage_command"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps GET @s1 'file:///tmp/d 1/' ;",
             sql: "GET @s1 'file:///tmp/d 1/' ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("stage_command"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps GET '@%'v1 Q'' file:///tmp/d1/ ;",
             sql: "GET '@%\"v1 Q\"' file:///tmp/d1/ ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("stage_command"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps LIST @~ ;",
             sql: "LIST @~ ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("stage_command"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps LIST '@'v1 Q'.r1/branches/main' ;",
             sql: "LIST '@\"v1 Q\".r1/branches/main' ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("stage_command"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps LIST @v1.s1/p1 PATTERN = 'm' ;",
             sql: "LIST @v1.s1/p1 PATTERN = 'm' ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("stage_command"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps REMOVE @%'SELECT' ;",
             sql: "REMOVE @%\"SELECT\" ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("stage_command"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps REMOVE @v1.%v1 ;",
             sql: "REMOVE @v1.%v1 ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("stage_command"),
         },
     ];
 
@@ -646,7 +686,7 @@ fn given_a_snowflake_create_model_gateway_or_experiment_when_parsing_then_its_so
         SnowflakeVerdictTestCase {
             description: "keeps CREATE MODEL v1 WITH VERSION 'v1 Q' FROM @s1 ;",
             sql: "CREATE MODEL v1 WITH VERSION \"v1 Q\" FROM @s1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps CREATE GATEWAY 'v1 Q' FROM SPECIFICATION $$m: 1$$ ;",
@@ -661,7 +701,7 @@ fn given_a_snowflake_create_model_gateway_or_experiment_when_parsing_then_its_so
         SnowflakeVerdictTestCase {
             description: "keeps CREATE EXPERIMENT v1 TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATIO",
             sql: "CREATE EXPERIMENT v1 TYPE = 'AI_FUNCTION_EVALUATION' FROM SPECIFICATION $$v1 $$ ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps ALTER TABLE v1 MODIFY DATA METRIC FUNCTION v1 ON ( v1 ) SUSPEND ;",
@@ -1116,17 +1156,61 @@ fn given_snowflake_security_admin_show_drop_and_describe_when_parsing_then_the_r
 fn given_snowflake_secret_resource_monitor_and_integration_alters_when_parsing_then_the_recorded_verdicts_hold(
 ) {
     let test_cases = [
-        SnowflakeVerdictTestCase { description: "a secret sets a property (recorded parse)", sql: "ALTER SECRET v1 SET SECRET_STRING = 'm' ;", expected_kind: Some("alter_object") },
-        SnowflakeVerdictTestCase { description: "a quoted reserved word names a secret (recorded parse)", sql: "ALTER SECRET \"SELECT\" SET COMMENT = 'm' ;", expected_kind: Some("alter_object") },
-        SnowflakeVerdictTestCase { description: "a string is no secret name (recorded errno 1003)", sql: "ALTER SECRET 'v1' SET COMMENT = 'm' ;", expected_kind: None },
-        SnowflakeVerdictTestCase { description: "a secret's property needs SET (recorded errno 1003)", sql: "ALTER SECRET v1 COMMENT = 'm' ;", expected_kind: None },
-        SnowflakeVerdictTestCase { description: "a resource monitor sets its quota (recorded parse)", sql: "ALTER RESOURCE MONITOR v1 SET CREDIT_QUOTA = 1 ;", expected_kind: Some("alter_object") },
-        SnowflakeVerdictTestCase { description: "a resource monitor sets properties and triggers (recorded parse)", sql: "ALTER RESOURCE MONITOR IF EXISTS v1 SET CREDIT_QUOTA = 1 FREQUENCY = MONTHLY TRIGGERS ON 80 PERCENT DO SUSPEND ON 90 PERCENT DO NOTIFY ;", expected_kind: Some("alter_object") },
-        SnowflakeVerdictTestCase { description: "a trigger needs PERCENT", sql: "ALTER RESOURCE MONITOR v1 TRIGGERS ON 80 DO SUSPEND ;", expected_kind: None },
-        SnowflakeVerdictTestCase { description: "SET needs a property", sql: "ALTER RESOURCE MONITOR v1 SET ;", expected_kind: None },
-        SnowflakeVerdictTestCase { description: "an integration refreshes one secret (recorded parse)", sql: "ALTER INTEGRATION v1 REFRESH OAUTH_CLIENT_SECRET_2 ;", expected_kind: Some("alter_object") },
-        SnowflakeVerdictTestCase { description: "REFRESH names what it refreshes (recorded errno 1003)", sql: "ALTER INTEGRATION \"v1 Q\" REFRESH ;", expected_kind: None },
-        SnowflakeVerdictTestCase { description: "REFRESH names one key (recorded errno 1003)", sql: "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;", expected_kind: None },
+        SnowflakeVerdictTestCase {
+            description: "a secret sets a property (recorded parse)",
+            sql: "ALTER SECRET v1 SET SECRET_STRING = 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a quoted reserved word names a secret (recorded parse)",
+            sql: "ALTER SECRET \"SELECT\" SET COMMENT = 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a string is no secret name (recorded errno 1003)",
+            sql: "ALTER SECRET 'v1' SET COMMENT = 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a secret's property needs SET (recorded errno 1003)",
+            sql: "ALTER SECRET v1 COMMENT = 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a resource monitor sets its quota (recorded parse)",
+            sql: "ALTER RESOURCE MONITOR v1 SET CREDIT_QUOTA = 1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a resource monitor sets properties and triggers (recorded parse)",
+            sql: "ALTER RESOURCE MONITOR IF EXISTS v1 SET CREDIT_QUOTA = 1 FREQUENCY = MONTHLY TRIGGERS ON 80 PERCENT DO SUSPEND ON 90 PERCENT DO NOTIFY ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a trigger needs PERCENT",
+            sql: "ALTER RESOURCE MONITOR v1 TRIGGERS ON 80 DO SUSPEND ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "SET needs a property",
+            sql: "ALTER RESOURCE MONITOR v1 SET ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an integration refreshes one secret (recorded parse)",
+            sql: "ALTER INTEGRATION v1 REFRESH OAUTH_CLIENT_SECRET_2 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "REFRESH names what it refreshes (recorded errno 1003)",
+            sql: "ALTER INTEGRATION \"v1 Q\" REFRESH ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "REFRESH names one key (recorded errno 1003)",
+            sql: "ALTER SECURITY INTEGRATION v1 REFRESH SAML2_SNOWFLAKE_PRIVATE_KEY METADATA_URL ;",
+            expected_kind: None,
+        },
     ];
 
     for test_case in test_cases {
@@ -1230,12 +1314,12 @@ fn given_a_snowflake_copy_when_parsing_then_it_follows_the_recorded_grammar() {
         SnowflakeVerdictTestCase {
             description: "COPY FILES from a query parses (recorded errno 90105)",
             sql: "COPY FILES INTO @s1 FROM ( SELECT v1 , 'v1' FROM v1 ) ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("copy"),
         },
         SnowflakeVerdictTestCase {
             description: "COPY FILES into a stage written as a string parses (recorded errno 2003)",
             sql: "COPY FILES INTO '@\"v1 Q\".s1' FROM ( SELECT v1 FROM v1 ) ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("copy"),
         },
         SnowflakeVerdictTestCase {
             description: "COPY FILES from a stage written as a string parses (recorded errno 2003)",
@@ -1245,17 +1329,17 @@ fn given_a_snowflake_copy_when_parsing_then_it_follows_the_recorded_grammar() {
         SnowflakeVerdictTestCase {
             description: "COPY FILES into the bare stage @ parses (recorded errno 1012)",
             sql: "COPY FILES INTO @ FROM @s1 ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("copy"),
         },
         SnowflakeVerdictTestCase {
             description: "an unload with PARTITION BY parses (recorded errno 90105)",
             sql: "COPY INTO @s1 FROM v1 PARTITION BY 1 ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("copy"),
         },
         SnowflakeVerdictTestCase {
             description: "a string key as the only INCLUDE_METADATA item parses (recorded errno 1757)",
             sql: "COPY INTO v1 FROM @s1 INCLUDE_METADATA = ( 'v1' = METADATA$FILENAME ) ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("copy"),
         },
         SnowflakeVerdictTestCase {
             description: "a $ column named by a reserved word parses (recorded errno 2211)",
@@ -1476,7 +1560,7 @@ fn given_snowflake_dml_when_parsing_then_recorded_verdicts_hold() {
         SnowflakeVerdictTestCase {
             description: "keeps a quoted stage name without a space",
             sql: "LIST @\"SELECT\" ;",
-            expected_kind: Some("command"),
+            expected_kind: Some("stage_command"),
         },
         SnowflakeVerdictTestCase {
             description: "a stage path with a space (recorded errno 1003)",

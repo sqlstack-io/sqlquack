@@ -10,6 +10,7 @@ use crate::parser::constants::SET_TAG;
 use crate::parser::constants::UNSET_COMMENT;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::AlterColumn;
+use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::statements::models::Var;
@@ -66,12 +67,16 @@ impl Parser {
         while self.match_token(TokenType::Comma) {
             names.push(Expression::Table(Box::new(self.parse_object_name()?)));
         }
-        let action = self.expect_alter_words(if names.is_empty() {
+        let mut action = self.expect_alter_words(if names.is_empty() {
             ACTIONS
         } else {
             &[&["REFRESH", "COPY", "SESSION"], &["REFRESH"]]
         })?;
-        let (operands, properties) = self.parse_dynamic_table_action(&action)?;
+        let (operands, mut properties) = self.parse_dynamic_table_action(&action)?;
+        if action == "REFRESH COPY SESSION" {
+            action = "REFRESH".to_string();
+            properties.push(property("COPY SESSION", None, None));
+        }
         names.extend(operands);
         Ok(alter_object(
             "DYNAMIC TABLE",
@@ -209,10 +214,13 @@ impl Parser {
         }
         let name = self.parse_simple_name()?;
         if add || self.check(TokenType::LParen) {
-            return Ok(tuple(vec![
-                Expression::Identifier(name),
-                self.column_list_operand()?,
-            ]));
+            let targets = match self.column_list_operand()? {
+                Expression::Tuple(tuple) => tuple.expressions,
+                target => vec![target],
+            };
+            let mut method = Function::new(name.name, targets);
+            method.quoted = name.quoted;
+            return Ok(Expression::Function(Box::new(method)));
         }
         Ok(Expression::Identifier(name))
     }

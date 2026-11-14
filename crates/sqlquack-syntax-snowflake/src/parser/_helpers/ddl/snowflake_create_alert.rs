@@ -1,7 +1,7 @@
 //! Parser ddl: Snowflake CREATE ALERT, with its condition and action or FROM TEMPLATE, checked against its grammar.
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
-use crate::parser::_helpers::ddl::snowflake_alter::with_keyword;
+use crate::parser::_helpers::ddl::snowflake_create_properties::with_written;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -61,6 +61,7 @@ impl Parser {
             .to_owned(),
             operands,
             properties,
+            ..Default::default()
         }))))
     }
 
@@ -78,7 +79,7 @@ impl Parser {
                     return Err(self.parse_error("Expected TAG after WITH"));
                 }
                 let tags = self.parse_create_property_item()?;
-                properties.extend(with_keyword(true, tags));
+                properties.extend(with_written(true, tags));
                 continue;
             }
             if let Some(state) = ALERT_STATES

@@ -638,6 +638,9 @@ impl Parser {
             if self.is_snowflake() {
                 self.check_snowflake_create_kind()?;
                 self.check_opaque_statement(true)?;
+                if let Some(create) = self.parse_opaque_create(or_replace, or_alter)? {
+                    return Ok(create);
+                }
             }
             let start = self.current;
             while !self.is_at_end() && !self.check(TokenType::Semicolon) {
