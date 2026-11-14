@@ -1,6 +1,8 @@
 //! Snowflake's rules on COMMENT ON names and values, stage commands, task properties, DEFINE and class instance method calls.
 
-use crate::parser::_helpers::ddl::snowflake_alter::{property, property_kind};
+use crate::parser::_helpers::ddl::snowflake_alter::named_property;
+use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
+use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::constants::EXECUTE_DCM_PROJECT;
 use crate::parser::constants::SNOWFLAKE_DEFINE_OPAQUE_KINDS;
 use crate::parser::constants::SNOWFLAKE_RESERVED_KEYWORDS;
@@ -627,13 +629,10 @@ impl Parser {
             {
                 self.expect_token(TokenType::LParen)?;
                 loop {
-                    let name = match self.check(TokenType::String) {
-                        true => Identifier::new(format!("'{}'", self.advance_text()?)),
-                        false => self.parse_simple_qualified_name()?,
-                    };
+                    let name = self.parse_contact_purpose(Self::parse_simple_qualified_name)?;
                     self.expect_token(TokenType::Eq)?;
                     let value = self.parse_snowflake_task_value()?;
-                    properties.push(property(kind, Some(name), Some(value)));
+                    properties.push(named_property(kind, name, Some(value)));
                     if !self.match_token(TokenType::Comma) {
                         break;
                     }
@@ -660,7 +659,7 @@ impl Parser {
                 let name = self.parse_simple_name()?;
                 self.expect_token(TokenType::Eq)?;
                 let value = self.parse_snowflake_task_value()?;
-                properties.push(property(&property_kind(&name), None, Some(value)));
+                properties.push(parameter_property(&name, Some(value)));
                 self.match_token(TokenType::Comma);
             }
         }

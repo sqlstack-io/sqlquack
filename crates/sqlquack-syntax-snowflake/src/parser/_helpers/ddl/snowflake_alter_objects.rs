@@ -1,8 +1,9 @@
 //! Snowflake ALTER of APPLICATION, APPLICATION PACKAGE, APPLICATION SERVICE, BACKUP SET, CORTEX SEARCH SERVICE, DATABASE, SEMANTIC VIEW and STREAMLIT.
 
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
+use crate::parser::_helpers::ddl::snowflake_alter::named_property;
+use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
-use crate::parser::_helpers::ddl::snowflake_alter::property_kind;
 use crate::parser::constants::CONTACT;
 use crate::parser::constants::TAG;
 use crate::parser::models::Parser;
@@ -247,7 +248,7 @@ impl Parser {
                 self.skip();
                 loop {
                     let name = if kind == TAG {
-                        self.parse_simple_qualified_name()?
+                        (self.parse_simple_qualified_name()?, false)
                     } else {
                         self.parse_contact_purpose(Self::parse_simple_name)?
                     };
@@ -261,7 +262,7 @@ impl Parser {
                             self.parse_object_value()?
                         })
                     };
-                    properties.push(property(&kind, Some(name), value));
+                    properties.push(named_property(&kind, name, value));
                     if !self.match_token(TokenType::Comma) {
                         break;
                     }
@@ -287,7 +288,7 @@ impl Parser {
                 } else {
                     None
                 };
-                properties.push(property(&property_kind(&name), None, value));
+                properties.push(parameter_property(&name, value));
             }
             let comma = self.match_token(TokenType::Comma);
             if self.is_at_end() || self.check(TokenType::Semicolon) || !set && !comma {
@@ -664,7 +665,7 @@ impl Parser {
             && !suffix.contains("REMOVE")
             && self.match_text_seq(&["FORCE"])
         {
-            suffix.push_str(" FORCE");
+            properties.push(property("FORCE", None, None));
         }
         Ok(((operands, properties), suffix))
     }

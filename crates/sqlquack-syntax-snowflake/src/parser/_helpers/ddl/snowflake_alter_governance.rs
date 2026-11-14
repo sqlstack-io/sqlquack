@@ -1,5 +1,6 @@
 //! Parser ddl: the tag, contact and policy actions of a Snowflake ALTER TABLE, ICEBERG TABLE, VIEW or MATERIALIZED VIEW, checked against their grammar.
 
+use crate::parser::_helpers::ddl::snowflake_alter::named_property;
 use crate::parser::_helpers::ddl::snowflake_alter::{alter_object, property};
 use crate::parser::_helpers::ddl::snowflake_external_table::policy_property;
 use crate::parser::constants::SET_TAG;
@@ -248,7 +249,7 @@ impl Parser {
                 let purpose = self.parse_contact_purpose(Self::parse_external_name)?;
                 self.expect_token(TokenType::Eq)?;
                 let contact = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
-                contacts.push(property("CONTACT", Some(purpose), Some(contact)));
+                contacts.push(named_property("CONTACT", purpose, Some(contact)));
                 if !self.match_token(TokenType::Comma) {
                     return Ok(contacts);
                 }
@@ -325,7 +326,10 @@ impl Parser {
                     true => Some(self.parse_contact_purpose(Self::parse_external_name)?),
                     false => None,
                 };
-                properties.push(property("CONTACT", purpose, None));
+                properties.push(match purpose {
+                    Some(purpose) => named_property("CONTACT", purpose, None),
+                    None => property("CONTACT", None, None),
+                });
             } else if self.match_text_seq(&["TAG"]) {
                 let names = !self.is_at_end()
                     && !self.check(TokenType::Semicolon)

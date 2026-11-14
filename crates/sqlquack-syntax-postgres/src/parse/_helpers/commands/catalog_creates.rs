@@ -275,6 +275,8 @@ impl Parser<'_> {
                 kind: String::new(),
                 name: Some(Identifier::new(COLLATION_FROM)),
                 value: Some(name_value(&self.qualified_name()?)),
+                string_name: false,
+                quoted: false,
             }],
             false => self.definition_list()?,
         };

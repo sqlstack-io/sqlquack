@@ -150,6 +150,9 @@ impl Parser<'_> {
         }
         let granted_by: Option<Expression> = self.granted_by()?;
         Ok(Expression::Grant(Box::new(Grant {
+            caller: None,
+            bulk: None,
+            container: None,
             privileges: privileges.list,
             kind: target.kind,
             securable: Some(Identifier::new("")),
@@ -251,6 +254,9 @@ impl Parser<'_> {
             self.expect_kw("option")?;
         }
         Ok(Expression::Grant(Box::new(Grant {
+            caller: None,
+            bulk: None,
+            container: None,
             privileges: privileges.list,
             kind: target.kind,
             securable: Some(Identifier::new("")),
@@ -456,6 +462,9 @@ fn revoke(
     (granted_by, options): (Option<Expression>, Vec<Expression>),
 ) -> Expression {
     Expression::Revoke(Box::new(Revoke {
+        caller: None,
+        bulk: None,
+        container: None,
         privileges,
         kind: target.kind,
         securable: Some(Identifier::new("")),

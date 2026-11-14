@@ -1245,6 +1245,12 @@ pub struct ObjectProperty {
     /// The value, absent for an unset property
     #[serde(default)]
     pub value: Option<Expression>,
+    /// Whether the name was written as a string literal, as Snowflake admits for a contact purpose
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub string_name: bool,
+    /// Whether the kind is a parameter name written as a quoted identifier, kept as written
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub quoted: bool,
 }
 
 /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action.
@@ -1305,6 +1311,15 @@ pub struct Grant {
     pub privileges: Vec<Privilege>,
     /// Object kind (TABLE, SCHEMA, FUNCTION, etc.)
     pub kind: Option<String>,
+    /// Snowflake: CALLER or INHERITED CALLER, written once before the whole privilege list
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub caller: Option<String>,
+    /// Snowflake: ALL or FUTURE before a plural object kind, as in ON ALL TABLES IN SCHEMA s1
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bulk: Option<String>,
+    /// Snowflake: the container kind after IN, such as DATABASE, SCHEMA or ACCOUNT, that `securable` names
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub container: Option<String>,
     /// The object to grant on; None when the kind names it alone, as Snowflake's ON ACCOUNT
     pub securable: Option<Identifier>,
     /// Function parameter types (for FUNCTION kind)
@@ -1338,6 +1353,15 @@ pub struct Revoke {
     pub privileges: Vec<Privilege>,
     /// Object kind (TABLE, SCHEMA, FUNCTION, etc.)
     pub kind: Option<String>,
+    /// Snowflake: CALLER or INHERITED CALLER, written once before the whole privilege list
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub caller: Option<String>,
+    /// Snowflake: ALL or FUTURE before a plural object kind, as in ON ALL TABLES IN SCHEMA s1
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bulk: Option<String>,
+    /// Snowflake: the container kind after IN, such as DATABASE, SCHEMA or ACCOUNT, that `securable` names
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub container: Option<String>,
     /// The object to revoke from; None when the kind names it alone, as Snowflake's ON ACCOUNT
     pub securable: Option<Identifier>,
     /// Function parameter types (for FUNCTION kind)

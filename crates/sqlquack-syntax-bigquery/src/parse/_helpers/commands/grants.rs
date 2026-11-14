@@ -35,6 +35,9 @@ impl Parser<'_> {
         self.expect_kw("GRANT")?;
         let grants: Grants = self.grants("TO")?;
         Ok(Expression::Grant(Box::new(Grant {
+            caller: None,
+            bulk: None,
+            container: None,
             objects: Vec::new(),
             granted_by: None,
             options: Vec::new(),
@@ -54,6 +57,9 @@ impl Parser<'_> {
         self.expect_kw("REVOKE")?;
         let grants: Grants = self.grants("FROM")?;
         Ok(Expression::Revoke(Box::new(Revoke {
+            caller: None,
+            bulk: None,
+            container: None,
             objects: Vec::new(),
             granted_by: None,
             options: Vec::new(),

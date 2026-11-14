@@ -1,6 +1,8 @@
 //! Parser ddl: a Snowflake CREATE TABLE the table model cannot hold, such as one with column or table policies, checked against its grammar.
 
+use crate::parser::_helpers::ddl::snowflake_alter::named_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_alter::with_keyword;
 use crate::parser::_helpers::ddl::snowflake_external_table::{lacks_property, policy_property};
 use crate::parser::constants::{
     COMMENT, PARTITION_BY, SNOWFLAKE_DYNAMIC_TABLE_KEYS, SNOWFLAKE_DYNAMIC_TABLE_REQUIRED,
@@ -631,6 +633,12 @@ impl Parser {
             return Ok(vec![property(&key, None, Some(value))]);
         }
         let with = self.match_token(TokenType::With);
+        let found = self.parse_table_property_after_with(with)?;
+        Ok(with_keyword(with, found))
+    }
+
+    /// A table property after an optional WITH, which `with` says was written.
+    fn parse_table_property_after_with(&mut self, with: bool) -> Result<Vec<ObjectProperty>> {
         let key = self.peek().text.to_ascii_uppercase();
         if with && self.check_next(TokenType::Eq) && key == COMMENT {
             self.skip();
@@ -800,7 +808,7 @@ impl Parser {
             let purpose = self.parse_contact_purpose(Self::parse_external_name)?;
             self.expect_token(TokenType::Eq)?;
             let contact = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
-            contacts.push(property("CONTACT", Some(purpose), Some(contact)));
+            contacts.push(named_property("CONTACT", purpose, Some(contact)));
             if !self.match_token(TokenType::Comma) {
                 break;
             }
