@@ -228,6 +228,48 @@ required = true
 target = "[ , <tag_name> = '<tag_value>' , ... ]"
 
 [[obligation]]
+id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o065"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o066"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o067"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "a string literal in place of <tag_name>"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o068"
+kind = "required_operand_missing"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "omit '<tag_value>'"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o069"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o070"
+kind = "negative_neighbour"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "an unquoted identifier in place of '<tag_value>'"
+
+[[obligation]]
 id = "sf.classes.anomaly-detection.commands.create-anomaly-detection.o039"
 kind = "option_present"
 required = true
@@ -3003,6 +3045,48 @@ required = true
 target = "[ , <tag_name> = '<tag_value>' ... ]"
 
 [[obligation]]
+id = "sf.classes.budget.commands.alter-budget.set-tag.o029"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' ... ]"
+note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.set-tag.o030"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.set-tag.o031"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' ... ]"
+note = "a string literal in place of <tag_name>"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.set-tag.o032"
+kind = "required_operand_missing"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' ... ]"
+note = "omit '<tag_value>'"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.set-tag.o033"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.set-tag.o034"
+kind = "negative_neighbour"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' ... ]"
+note = "an unquoted identifier in place of '<tag_value>'"
+
+[[obligation]]
 id = "sf.classes.budget.commands.alter-budget.set-tag.o015"
 kind = "negative_neighbour"
 required = true
@@ -3243,6 +3327,27 @@ id = "sf.classes.budget.commands.alter-budget.unset-tag.o011"
 kind = "option_absent"
 required = true
 target = "[ , <tag_name> ... ]"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.unset-tag.o026"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> in [ , <tag_name> ... ]"
+note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.unset-tag.o027"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ , <tag_name> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.budget.commands.alter-budget.unset-tag.o028"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ , <tag_name> ... ]"
+note = "a string literal in place of <tag_name>"
 
 [[obligation]]
 id = "sf.classes.budget.commands.alter-budget.unset-tag.o012"
@@ -9194,6 +9299,48 @@ required = true
 target = "[ , <tag_name> = '<tag_value>' ... ]"
 
 [[obligation]]
+id = "sf.classes.classification.commands.alter-classification.set-tag.o029"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' ... ]"
+note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.set-tag.o030"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.set-tag.o031"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' ... ]"
+note = "a string literal in place of <tag_name>"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.set-tag.o032"
+kind = "required_operand_missing"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' ... ]"
+note = "omit '<tag_value>'"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.set-tag.o033"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.set-tag.o034"
+kind = "negative_neighbour"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' ... ]"
+note = "an unquoted identifier in place of '<tag_value>'"
+
+[[obligation]]
 id = "sf.classes.classification.commands.alter-classification.set-tag.o015"
 kind = "negative_neighbour"
 required = true
@@ -9434,6 +9581,27 @@ id = "sf.classes.classification.commands.alter-classification.unset-tag.o011"
 kind = "option_absent"
 required = true
 target = "[ , <tag_name> ... ]"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.unset-tag.o026"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> in [ , <tag_name> ... ]"
+note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.unset-tag.o027"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ , <tag_name> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification.commands.alter-classification.unset-tag.o028"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ , <tag_name> ... ]"
+note = "a string literal in place of <tag_name>"
 
 [[obligation]]
 id = "sf.classes.classification.commands.alter-classification.unset-tag.o012"
@@ -9702,6 +9870,48 @@ id = "sf.classes.classification.commands.create-classification.o029"
 kind = "option_absent"
 required = true
 target = "[ , <tag_name> = '<tag_value>' ... ]"
+
+[[obligation]]
+id = "sf.classes.classification.commands.create-classification.o057"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' ... ]"
+note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.classes.classification.commands.create-classification.o058"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.classification.commands.create-classification.o059"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' ... ]"
+note = "a string literal in place of <tag_name>"
+
+[[obligation]]
+id = "sf.classes.classification.commands.create-classification.o060"
+kind = "required_operand_missing"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' ... ]"
+note = "omit '<tag_value>'"
+
+[[obligation]]
+id = "sf.classes.classification.commands.create-classification.o061"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.classification.commands.create-classification.o062"
+kind = "negative_neighbour"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' ... ]"
+note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
 id = "sf.classes.classification.commands.create-classification.o030"
@@ -11743,6 +11953,48 @@ required = true
 target = "[ , <tag_name> = '<tag_value>' , ... ]"
 
 [[obligation]]
+id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o065"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o066"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o067"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "a string literal in place of <tag_name>"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o068"
+kind = "required_operand_missing"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "omit '<tag_value>'"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o069"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o070"
+kind = "negative_neighbour"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "an unquoted identifier in place of '<tag_value>'"
+
+[[obligation]]
 id = "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname.o038"
 kind = "option_present"
 required = true
@@ -13233,6 +13485,48 @@ id = "sf.classes.top-insights.commands.create-top-insights.o020"
 kind = "option_absent"
 required = true
 target = "[ , <tag_name> = '<tag_value>' , ... ]"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.create-top-insights.o045"
+kind = "required_operand_missing"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.create-top-insights.o046"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.create-top-insights.o047"
+kind = "negative_neighbour"
+required = true
+target = "<tag_name> in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "a string literal in place of <tag_name>"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.create-top-insights.o048"
+kind = "required_operand_missing"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "omit '<tag_value>'"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.create-top-insights.o049"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.classes.top-insights.commands.create-top-insights.o050"
+kind = "negative_neighbour"
+required = true
+target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ]"
+note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
 id = "sf.classes.top-insights.commands.create-top-insights.o021"

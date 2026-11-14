@@ -11,7 +11,7 @@ reason = "a whole argument of an ordinary function call is an <expr> to the pars
 [[withdrawn_class]]
 class = "identifier"
 derived_negative = "a string literal in place of an operand of class identifier"
-count = 90
+count = 102
 reason = "a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under the lexical-distinctness rule; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
@@ -35,7 +35,7 @@ reason = "a whole argument of an ordinary function call is an <expr> to the pars
 [[withdrawn_class]]
 class = "string_literal"
 derived_negative = "an unquoted identifier in place of an operand of class string_literal"
-count = 803
+count = 823
 reason = "a whole argument of an ordinary function call is an <expr> to the parser, so a wrong class there (an identifier, literal or query where the page names another) is a type or semantic question, not syntax, and is not lexically distinct under the lexical-distinctness rule; class negatives stay where the slot is not an expression (keywords, types, @stage names, ON column lists, qualified-name parts, statement identifiers)"
 
 [[withdrawn_class]]
@@ -204,6 +204,15 @@ target = "'<file_name>' in [ , '<file_name>' ]"
 note = "omit '<file_name>'"
 sql = "SELECT * FROM TABLE ( INFER_SCHEMA ( LOCATION => '@s1' , FILE_FORMAT => 'm' , FILES => ( 'm' ) , IGNORE_CASE => TRUE , MAX_FILE_COUNT => 1 , MAX_RECORDS_PER_FILE => 1 , KIND => 'm' ) ) ;"
 valid_as = "sf.functions.infer-schema positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.functions.row-number"
+kind = "required_operand_missing"
+target = "<expr4> in [ , <expr4> ... ]"
+note = "omit <expr4>"
+sql = "SELECT ROW_NUMBER ( ) OVER ( ORDER BY 1 ) ;"
+valid_as = "sf.functions.row-number positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -438,6 +447,15 @@ target = "'<notification_type>' in [ , '<notification_type>' ]"
 note = "omit '<notification_type>'"
 sql = "SELECT SYSTEM$SEND_NOTIFICATIONS_TO_CATALOG ( 'm' , 'm' ) ;"
 valid_as = "sf.functions.system-send-notifications-to-catalog positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.functions.system-send-snowflake-notification"
+kind = "required_operand_missing"
+target = "<message> in [ <message> , ... ]"
+note = "omit <message>"
+sql = "SELECT SYSTEM$SEND_SNOWFLAKE_NOTIFICATION ( ( 'm' ) , v1 ) ;"
+valid_as = "sf.functions.system-send-snowflake-notification operand_type_class <message> #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

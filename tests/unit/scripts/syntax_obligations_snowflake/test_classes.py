@@ -8,11 +8,20 @@ from pathlib import Path
 
 import pytest
 
-from scripts.grammar_obligations.constants import KIND_NEGATIVE, KIND_OPERAND_CLASS
+from scripts.grammar_obligations._helpers.obligations import family_obligations
+from scripts.grammar_obligations._helpers.render import style_of, submissions
+from scripts.grammar_obligations.constants import (
+    KIND_NEGATIVE,
+    KIND_OPERAND_CLASS,
+    KIND_OPERAND_MISSING,
+)
+from scripts.grammar_obligations.models import Draft
+from scripts.syntax_obligations_snowflake._helpers.rules import install
 from scripts.syntax_obligations_snowflake.main.build import run_build
 from tests.unit.scripts.syntax_obligations_snowflake._test_types import (
     DerivedLimitTestCase,
     DocumentedRefusalTestCase,
+    ListItemTestCase,
     OperandClassTestCase,
 )
 
@@ -23,6 +32,14 @@ id = "sf.transaction_session.show-transactions"
 family = "transaction_session"
 kind = "statement"
 grammar = ["SHOW TRANSACTIONS [ LIMIT <rows> ] [ TIMEOUT = <timeout_seconds> ] [ SIZE = <max_integer> ] [ NAME = <rows_name> ] [ PURPOSE = <purpose> ] [ OWNER = <role> ] [ AGE = <days> ] [ SCALE = <fractional_seconds_precision> ] [ TAG = <purposes> ] [ PERIOD = '<num> { seconds | minutes }' ]"]
+uses = []
+status = "catalogued"
+
+[[form]]
+id = "sf.transaction_session.drop-tags"
+family = "transaction_session"
+kind = "statement"
+grammar = ["DROP TAG <name> [ , <name> ... ]"]
 uses = []
 status = "catalogued"
 """,
@@ -266,3 +283,50 @@ context = "raw"
     )["obligation"]
     assert [row.get("note") for row in rows].count(test_case.expected_note) == 1
     assert not (tmp_path / "withdrawn" / "transaction_session.toml").exists()
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        ListItemTestCase(
+            description="the second item is missing after its separator",
+            kind=KIND_OPERAND_MISSING,
+            expected_sql=("DROP TAG v1 , ;",),
+        ),
+        ListItemTestCase(
+            description="the second item is a valid name of its own",
+            kind=KIND_OPERAND_CLASS,
+            expected_sql=("DROP TAG v1 , v1 ;",),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_repeated_list_item_when_building_then_the_second_item_has_its_own_cases(
+    tmp_path: Path, test_case: ListItemTestCase
+) -> None:
+    (tmp_path / "catalogue").mkdir()
+    (tmp_path / "catalogue" / "transaction_session.toml").write_text(
+        CATALOGUES["transaction_session"]
+    )
+    (tmp_path / "limits.toml").write_text("")
+    install()
+    numbered, trees, _, _, _ = family_obligations(root=tmp_path, family="transaction_session")
+    drafts: dict[tuple[str, str, str], Draft] = {
+        (draft.form, draft.kind, draft.target): draft for _, draft in numbered
+    }
+    draft: Draft = drafts[
+        ("sf.transaction_session.drop-tags", test_case.kind, "<name> in [ , <name> ... ]")
+    ]
+
+    assert (
+        tuple(
+            case.sql
+            for case in submissions(
+                trees=trees[draft.form],
+                style=style_of(family="transaction_session", form=draft.form),
+                spec=draft.spec,
+                depths=draft.depths,
+            )
+        )
+        == test_case.expected_sql
+    )

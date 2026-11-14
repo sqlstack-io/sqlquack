@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 
 from scripts.grammar_obligations._helpers import grammar
+from scripts.grammar_obligations.classes import walk
 from scripts.syntax_obligations_snowflake.constants import (
     IDENTIFIER_CLASS,
     IDENTIFIER_NAMES,
@@ -18,8 +19,9 @@ _shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = grammar.CLASS_RUL
 
 
 def install() -> None:
-    """Classify object and word operands, widen the integer rule, and read quoted templates."""
+    """Classify operands, widen the integer rule, read quoted templates and walk list items."""
     grammar.TEMPLATE_OPERANDS = True
+    walk.REPEATED_ITEMS = True
     grammar.CLASS_RULES = (
         (re.compile(IDENTIFIER_NAMES), IDENTIFIER_CLASS),
         (re.compile(WORD_NAMES), WORD_CLASS),

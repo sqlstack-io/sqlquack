@@ -120,6 +120,24 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.query.pivot"
+kind = "required_operand_missing"
+target = "<pivot_value_2> in [ , <pivot_value_2> [ [ AS ] <alias> ] ... ]"
+note = "omit <pivot_value_2>"
+sql = "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR c1 IN ( 1 ) ) ;"
+valid_as = "sf.query.pivot positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.pivot"
+kind = "required_operand_missing"
+target = "<alias> in [ [ AS ] <alias> ] #3"
+note = "omit <alias>"
+sql = "SELECT 1 FROM t1 PIVOT ( SUM ( v1 ) FOR c1 IN ( 1 , 2 ) ) ;"
+valid_as = "sf.query.pivot operand_type_class <pivot_value_2> in [ , <pivot_value_2> [ [ AS ] <alias> ] ... ]"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.query.pivot"
 kind = "negative_neighbour"
 target = "<subquery>"
 note = "a bare literal in place of <subquery>"

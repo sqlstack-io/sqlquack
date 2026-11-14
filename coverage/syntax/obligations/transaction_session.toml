@@ -1403,6 +1403,27 @@ required = true
 target = "[ , <param_name> , ... ]"
 
 [[obligation]]
+id = "sf.transaction_session.alter-session.unset.o013"
+kind = "required_operand_missing"
+required = true
+target = "<param_name> in [ , <param_name> , ... ]"
+note = "omit <param_name>"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.unset.o014"
+kind = "operand_type_class"
+required = true
+target = "<param_name> in [ , <param_name> , ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.transaction_session.alter-session.unset.o015"
+kind = "negative_neighbour"
+required = true
+target = "<param_name> in [ , <param_name> , ... ]"
+note = "a string literal in place of <param_name>"
+
+[[obligation]]
 id = "sf.transaction_session.alter-session.unset.o007"
 kind = "negative_neighbour"
 required = true
@@ -1861,6 +1882,27 @@ required = true
 target = "[ , <var> ... ]"
 
 [[obligation]]
+id = "sf.transaction_session.set.set.syntax.o021"
+kind = "required_operand_missing"
+required = true
+target = "<var> in [ , <var> ... ]"
+note = "omit <var>"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.syntax.o022"
+kind = "operand_type_class"
+required = true
+target = "<var> in [ , <var> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.syntax.o023"
+kind = "negative_neighbour"
+required = true
+target = "<var> in [ , <var> ... ]"
+note = "a string literal in place of <var>"
+
+[[obligation]]
 id = "sf.transaction_session.set.set.syntax.o006"
 kind = "required_operand_missing"
 required = true
@@ -1886,6 +1928,20 @@ id = "sf.transaction_session.set.set.syntax.o009"
 kind = "option_absent"
 required = true
 target = "[ , <expr> ... ]"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.syntax.o024"
+kind = "required_operand_missing"
+required = true
+target = "<expr> in [ , <expr> ... ]"
+note = "omit <expr>"
+
+[[obligation]]
+id = "sf.transaction_session.set.set.syntax.o025"
+kind = "operand_type_class"
+required = true
+target = "<expr> in [ , <expr> ... ]"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.transaction_session.set.set.syntax.o010"
@@ -2377,6 +2433,27 @@ required = true
 target = "[ , <var> ... ]"
 
 [[obligation]]
+id = "sf.transaction_session.unset.unset.syntax.o013"
+kind = "required_operand_missing"
+required = true
+target = "<var> in [ , <var> ... ]"
+note = "omit <var>"
+
+[[obligation]]
+id = "sf.transaction_session.unset.unset.syntax.o014"
+kind = "operand_type_class"
+required = true
+target = "<var> in [ , <var> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.transaction_session.unset.unset.syntax.o015"
+kind = "negative_neighbour"
+required = true
+target = "<var> in [ , <var> ... ]"
+note = "a string literal in place of <var>"
+
+[[obligation]]
 id = "sf.transaction_session.unset.unset.syntax.o006"
 kind = "negative_neighbour"
 required = true
@@ -2721,6 +2798,27 @@ id = "sf.transaction_session.use-secondary-roles.o009"
 kind = "option_absent"
 required = true
 target = "[ , <role_name> ... ]"
+
+[[obligation]]
+id = "sf.transaction_session.use-secondary-roles.o016"
+kind = "required_operand_missing"
+required = true
+target = "<role_name> in [ , <role_name> ... ]"
+note = "omit <role_name>"
+
+[[obligation]]
+id = "sf.transaction_session.use-secondary-roles.o017"
+kind = "operand_type_class"
+required = true
+target = "<role_name> in [ , <role_name> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.transaction_session.use-secondary-roles.o018"
+kind = "negative_neighbour"
+required = true
+target = "<role_name> in [ , <role_name> ... ]"
+note = "a string literal in place of <role_name>"
 
 [[obligation]]
 id = "sf.transaction_session.use-secondary-roles.o010"
