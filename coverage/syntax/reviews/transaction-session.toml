@@ -195,3 +195,26 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.transaction_session.alter-session.set-sessionparams" = "4c007d28e1a6c817f01c37def65476e052fbbd6bbe64708e61a3ea93793e72b7"
+
+[[review]]
+id = "transaction-session-011"
+family = "transaction_session"
+parser_tree = "4f7d2e5d71780111239df9cd32fb6a9b4156b9f4"
+reviewed_utc = "2026-11-14T00:02:36Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.set.set.syntax",
+  "sf.transaction_session.unset.unset",
+  "sf.transaction_session.unset.unset.syntax",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 1e99335cf; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.set.set.syntax" = "57c5d9847ad77522a0dfa3a0f3c8952841d80c819c0cd9b14279e8a2e6cb8f6b"
+"sf.transaction_session.unset.unset" = "18bec8fb7256ed17532cb2adb18df1dbcf4c0f422f3434bfe91057992345cc9a"
+"sf.transaction_session.unset.unset.syntax" = "0cdafd164996ffb0746d0d3a1cd237f7cd418a5cd7ce3590980c13f906c2f243"
+
+[review.definitions]
+"sf.transaction_session.set.set.syntax" = "9e7541d0b11a4e30b0ddfeb532cb5d2b91ce2b395e6dd556d1cc60640850aba4"
+"sf.transaction_session.unset.unset" = "78be3f7475b9bfccde6100412f84c697f8e50085a8f11b4b33e2121e20de42d7"
+"sf.transaction_session.unset.unset.syntax" = "7fedaeffdcbe9fd3ac538163b3fc724bc8ece977b0973d42b6faac1f83974d07"

@@ -1847,3 +1847,26 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.security_admin.alter-row-access-policy.set-tag" = "1aa9289c480eab7fe06acd5a7beddddd0772962857f60aecb98af09af1941927"
 "sf.security_admin.alter-row-access-policy.unset-tag" = "1f789569ffd52168012a0b5138f522beac372829d7fbea603cb7309d12d917b1"
 "sf.security_admin.alter-user-add-workload-identity" = "b68a483c6428c8cf01e42e7f4388a0f34710f4275be9b65f5728cd35c89f54a9"
+
+[[review]]
+id = "security-admin-021"
+family = "security_admin"
+parser_tree = "4f7d2e5d71780111239df9cd32fb6a9b4156b9f4"
+reviewed_utc = "2026-11-14T00:02:36Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-user-modify-key-pair.unset",
+  "sf.security_admin.create-secret.create-or-alter-secret",
+  "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri",
+]
+note = "Read in full against the documentation page, the obligations, the cases and the parse trees, then re-reviewed for coverage alone under review brief version 1; the trees are unchanged at 1e99335cf, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-user-modify-key-pair.unset" = "a974de8319d61ef9cb0a6c3534e07d2c850518db9a65eeb3369c8cbbcb561bd6"
+"sf.security_admin.create-secret.create-or-alter-secret" = "a6abffadb698647c6a668f0b688e508616453750da7f8a7889005cc9a814dc43"
+"sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri" = "15ed6f013c506bc1fc1378b9ef337855aa97698d06c9e321c4ca93e173323068"
+
+[review.definitions]
+"sf.security_admin.alter-user-modify-key-pair.unset" = "5e35e3b633c8c8b5538dc429ef466a35f8bc0087d4051b68d4978d3d2a337c0a"
+"sf.security_admin.create-secret.create-or-alter-secret" = "3cb3e70220b2a9696f1596209c505d28c2d13eed7d948ee40f8bc02187c8d03c"
+"sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri" = "ae2ab2b5030b4036831b439ef8eee71d7d0a42b793c8f434096e811a06a65919"
