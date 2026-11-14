@@ -10842,13 +10842,6 @@ target = "<app_role2> in [ , <app_role2> ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles.o036"
-kind = "negative_neighbour"
-required = true
-target = "<app_role2> in [ , <app_role2> ... ]"
-note = "a string literal in place of <app_role2>"
-
-[[obligation]]
 id = "sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles.o014"
 kind = "negative_neighbour"
 required = true
@@ -10969,6 +10962,14 @@ required = true
 target = "<app_role1>"
 anchor = "doc.sql.alter-application-set-configuration-definition / Syntax"
 note = "a string literal in place of <app_role1>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles.o039"
+kind = "negative_neighbour"
+required = true
+target = "<app_role2> in [ , <app_role2> ... ]"
+anchor = "doc.sql.alter-application-set-configuration-definition / Syntax"
+note = "a string literal in place of <app_role2>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description.o001"
@@ -11121,13 +11122,6 @@ kind = "operand_type_class"
 required = true
 target = "<app_role2> in [ , <app_role2> ... ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description.o049"
-kind = "negative_neighbour"
-required = true
-target = "<app_role2> in [ , <app_role2> ... ]"
-note = "a string literal in place of <app_role2>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description.o018"
@@ -11290,6 +11284,14 @@ anchor = "doc.sql.alter-application-set-configuration-definition / Syntax"
 note = "a string literal in place of <app_role1>, observed"
 
 [[obligation]]
+id = "sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description.o052"
+kind = "negative_neighbour"
+required = true
+target = "<app_role2> in [ , <app_role2> ... ]"
+anchor = "doc.sql.alter-application-set-configuration-definition / Syntax"
+note = "a string literal in place of <app_role2>, observed"
+
+[[obligation]]
 id = "sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles.o001"
 kind = "positive"
 required = true
@@ -11398,13 +11400,6 @@ kind = "operand_type_class"
 required = true
 target = "<app_role2> in [ , <app_role2> ... ]"
 note = "a valid identifier"
-
-[[obligation]]
-id = "sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles.o040"
-kind = "negative_neighbour"
-required = true
-target = "<app_role2> in [ , <app_role2> ... ]"
-note = "a string literal in place of <app_role2>"
 
 [[obligation]]
 id = "sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles.o014"
@@ -11551,6 +11546,14 @@ required = true
 target = "<app_role1>"
 anchor = "doc.sql.alter-application-set-configuration-definition / Syntax"
 note = "a string literal in place of <app_role1>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles.o043"
+kind = "negative_neighbour"
+required = true
+target = "<app_role2> in [ , <app_role2> ... ]"
+anchor = "doc.sql.alter-application-set-configuration-definition / Syntax"
+note = "a string literal in place of <app_role2>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-application-set-configuration-value.o001"
@@ -19475,13 +19478,6 @@ target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-database-catalog-linked.set.o086"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-database-catalog-linked.set.o087"
 kind = "required_operand_missing"
 required = true
@@ -19686,6 +19682,14 @@ id = "sf.ddl.alter-database-catalog-linked.set.o083"
 kind = "negative_neighbour"
 required = true
 target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-database-catalog-linked / Syntax"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-database-catalog-linked.set.o090"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 anchor = "doc.sql.alter-database-catalog-linked / Syntax"
 note = "a string literal in place of <purpose>, observed"
 
@@ -22684,13 +22688,6 @@ target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-database.set.o307"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-database.set.o308"
 kind = "required_operand_missing"
 required = true
@@ -23034,6 +23031,14 @@ id = "sf.ddl.alter-database.set.o304"
 kind = "negative_neighbour"
 required = true
 target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-database / Syntax"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-database.set.o311"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 anchor = "doc.sql.alter-database / Syntax"
 note = "a string literal in place of <purpose>, observed"
 
@@ -39959,13 +39964,6 @@ target = "<integration_name> in [ , <integration_name> ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-function.set.o063"
-kind = "negative_neighbour"
-required = true
-target = "<integration_name> in [ , <integration_name> ... ]"
-note = "a string literal in place of <integration_name>"
-
-[[obligation]]
 id = "sf.ddl.alter-function.set.o026"
 kind = "option_present"
 required = true
@@ -40229,6 +40227,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
 note = "an empty integration list, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-function.set.o070"
+kind = "negative_neighbour"
+required = true
+target = "<integration_name> in [ , <integration_name> ... ]"
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+note = "a string literal in place of <integration_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-function.set-api-integration.o001"
@@ -60022,13 +60028,6 @@ target = "<eai> in [ , <eai> ... ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.ddl.alter-openflow-runtime.set.o068"
-kind = "negative_neighbour"
-required = true
-target = "<eai> in [ , <eai> ... ]"
-note = "a string literal in place of <eai>"
-
-[[obligation]]
 id = "sf.ddl.alter-openflow-runtime.set.o034"
 kind = "option_present"
 required = true
@@ -60195,6 +60194,14 @@ id = "sf.ddl.alter-openflow-runtime.set.o065"
 kind = "negative_neighbour"
 required = true
 target = "<eai> in [ EXTERNAL_ACCESS_INTEGRATIONS = ( <eai> [ , <eai> ... ] ) ]"
+anchor = "doc.sql.alter-openflow-runtime / Syntax"
+note = "a string literal in place of <eai>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-openflow-runtime.set.o069"
+kind = "negative_neighbour"
+required = true
+target = "<eai> in [ , <eai> ... ]"
 anchor = "doc.sql.alter-openflow-runtime / Syntax"
 note = "a string literal in place of <eai>, observed"
 
@@ -84196,13 +84203,6 @@ target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-table-event-table.set.o078"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-table-event-table.set.o079"
 kind = "required_operand_missing"
 required = true
@@ -84339,6 +84339,14 @@ id = "sf.ddl.alter-table-event-table.set.o075"
 kind = "negative_neighbour"
 required = true
 target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-table-event-table / Syntax"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-table-event-table.set.o082"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 anchor = "doc.sql.alter-table-event-table / Syntax"
 note = "a string literal in place of <purpose>, observed"
 
@@ -92970,13 +92978,6 @@ target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-table.set.o117"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-table.set.o118"
 kind = "required_operand_missing"
 required = true
@@ -93155,6 +93156,14 @@ id = "sf.ddl.alter-table.set.o114"
 kind = "negative_neighbour"
 required = true
 target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
+anchor = "doc.sql.alter-table / Syntax"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-table.set.o121"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 anchor = "doc.sql.alter-table / Syntax"
 note = "a string literal in place of <purpose>, observed"
 
@@ -97088,13 +97097,6 @@ target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-task-graph.set-contact.o030"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-task-graph.set-contact.o031"
 kind = "required_operand_missing"
 required = true
@@ -97191,6 +97193,14 @@ id = "sf.ddl.alter-task-graph.set-contact.o027"
 kind = "negative_neighbour"
 required = true
 target = "<purpose>"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.set-contact.o034"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
 note = "a string literal in place of <purpose>, observed"
 
@@ -97850,13 +97860,6 @@ target = "<purpose> in [ , <purpose> ... ]"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.alter-task-graph.unset-contact.o025"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ , <purpose> ... ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.alter-task-graph.unset-contact.o011"
 kind = "negative_neighbour"
 required = true
@@ -97916,6 +97919,14 @@ id = "sf.ddl.alter-task-graph.unset-contact.o022"
 kind = "negative_neighbour"
 required = true
 target = "<purpose>"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-task-graph.unset-contact.o026"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ , <purpose> ... ]"
 anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
 note = "a string literal in place of <purpose>, observed"
 
@@ -176352,13 +176363,6 @@ target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table-aws-glue.o096"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table-aws-glue.o097"
 kind = "required_operand_missing"
 required = true
@@ -176550,6 +176554,14 @@ anchor = "doc.sql.create-iceberg-table-aws-glue / Syntax"
 note = "a string literal in place of <purpose>, observed"
 
 [[obligation]]
+id = "sf.ddl.create-iceberg-table-aws-glue.o100"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+anchor = "doc.sql.create-iceberg-table-aws-glue / Syntax"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
 id = "sf.ddl.create-iceberg-table-rest.table-as-select.o001"
 kind = "positive"
 required = true
@@ -176600,13 +176612,6 @@ id = "sf.ddl.create-iceberg-table-rest.table-as-select.o008"
 kind = "option_absent"
 required = true
 target = "[ ( <col_name> [ <col_type> ] , <col_name> [ <col_type> ] , ... ) ]"
-
-[[obligation]]
-id = "sf.ddl.create-iceberg-table-rest.table-as-select.o031"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> in [ ( <col_name> [ <col_type> ] , <col_name> [ <col_type> ] , ... ) ]"
-note = "omit <col_name>"
 
 [[obligation]]
 id = "sf.ddl.create-iceberg-table-rest.table-as-select.o032"
@@ -182007,13 +182012,6 @@ required = true
 target = "[ ( <col_name> [ <col_type> ] [ DEFAULT <col_default> ] , <col_name> [ <col_type> ] [ DEFAULT <col_default> ] , ... ) ]"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table-as-select.o077"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> in [ ( <col_name> [ <col_type> ] [ DEFAULT <col_default> ] , <col_name> [ <col_type> ] [ DEFAULT…"
-note = "omit <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table-as-select.o078"
 kind = "operand_type_class"
 required = true
@@ -182591,6 +182589,14 @@ depths = [
 note = "query operands nested; no documented bound"
 
 [[obligation]]
+id = "sf.ddl.create-iceberg-table.table-as-select.o104"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> in [ ( <col_name> [ <col_type> ] [ DEFAULT <col_default> ] , <col_name> [ <col_type> ] [ DEFAULT…"
+anchor = "doc.sql.create-iceberg-table / Syntax / Snowflake as the Iceberg catalog / CREATE ICEBERG TABLE ... AS SELECT (also referred to as CTAS)"
+note = "omit <col_name>, observed"
+
+[[obligation]]
 id = "sf.ddl.create-iceberg-table.table-base-location.o001"
 kind = "positive"
 required = true
@@ -183005,13 +183011,6 @@ target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table-base-location.o088"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table-base-location.o089"
 kind = "required_operand_missing"
 required = true
@@ -183175,6 +183174,14 @@ id = "sf.ddl.create-iceberg-table.table-base-location.o079"
 kind = "negative_neighbour"
 required = true
 target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Delta files"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table-base-location.o092"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Delta files"
 note = "a string literal in place of <purpose>, observed"
 
@@ -187106,13 +187113,6 @@ target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table-catalog-table-name.o124"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table-catalog-table-name.o125"
 kind = "required_operand_missing"
 required = true
@@ -187306,6 +187306,14 @@ id = "sf.ddl.create-iceberg-table.table-catalog-table-name.o115"
 kind = "negative_neighbour"
 required = true
 target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST (including Snowflake Open Catalog)"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table-catalog-table-name.o128"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST (including Snowflake Open Catalog)"
 note = "a string literal in place of <purpose>, observed"
 
@@ -187996,13 +188004,6 @@ target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 note = "a valid word"
 
 [[obligation]]
-id = "sf.ddl.create-iceberg-table.table-metadata-file-path.o083"
-kind = "negative_neighbour"
-required = true
-target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
-note = "a string literal in place of <purpose>"
-
-[[obligation]]
 id = "sf.ddl.create-iceberg-table.table-metadata-file-path.o084"
 kind = "required_operand_missing"
 required = true
@@ -188160,6 +188161,14 @@ id = "sf.ddl.create-iceberg-table.table-metadata-file-path.o074"
 kind = "negative_neighbour"
 required = true
 target = "<purpose> in [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg files in object storage"
+note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.create-iceberg-table.table-metadata-file-path.o087"
+kind = "negative_neighbour"
+required = true
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
 anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg files in object storage"
 note = "a string literal in place of <purpose>, observed"
 
@@ -273305,13 +273314,6 @@ required = true
 target = "[ ( <col_name> [ <col_type> ] , <col_name> [ <col_type> ] , ... ) ]"
 
 [[obligation]]
-id = "sf.ddl.create-table.create-table-as.o044"
-kind = "required_operand_missing"
-required = true
-target = "<col_name> in [ ( <col_name> [ <col_type> ] , <col_name> [ <col_type> ] , ... ) ]"
-note = "omit <col_name>"
-
-[[obligation]]
 id = "sf.ddl.create-table.create-table-as.o045"
 kind = "operand_type_class"
 required = true
@@ -273658,6 +273660,14 @@ depths = [
   8,
 ]
 note = "query operands nested; no documented bound"
+
+[[obligation]]
+id = "sf.ddl.create-table.create-table-as.o063"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> in [ ( <col_name> [ <col_type> ] , <col_name> [ <col_type> ] , ... ) ]"
+anchor = "doc.sql.create-table / Variant syntax / CREATE TABLE ... AS SELECT (also referred to as CTAS)"
+note = "omit <col_name>, observed"
 
 [[obligation]]
 id = "sf.ddl.create-table.create-table-clone.o001"

@@ -544,3 +544,23 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.expressions.data-types-text.char" = "83de4b36b68fcd774a3db7858359e80f809d9b0ef0fd68b21a3634247334de36"
 "sf.expressions.data-types-text.varbinary" = "ed7adfb75793223136cfd331e9c871d349a4768afb29456d87c3629b04b1adaa"
 "sf.expressions.data-types-text.varchar" = "92a54f5f286ce2a651bc4b74b82280acabfa7754b66fc4138e0201eb914591b4"
+
+[[review]]
+id = "expressions-022"
+family = "expressions"
+parser_tree = "34d4cc4a0ba49debfa4d3a4ed5e548b3f3c201dd"
+reviewed_utc = "2026-11-14T06:36:28Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-semistructured.array-index-access",
+  "sf.expressions.snowflake-db-classes",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 0938da6ac, whose trees for these forms the later parser fixes leave unchanged; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-semistructured.array-index-access" = "739254e9b78361a846ab347fea0bfd4c5f85bcd24cca755c53c2e8a6b4c27ee4"
+"sf.expressions.snowflake-db-classes" = "6f68def16eae97c26731398edc6a41e000c2fd697a57037ec9ddd15189fa0406"
+
+[review.definitions]
+"sf.expressions.data-types-semistructured.array-index-access" = "0f3e8e9aaf2d323a168e481db66ece69982e5f3bd1242ab1713cd9cd4747ec39"
+"sf.expressions.snowflake-db-classes" = "87670a3f8ff61add6c82545fb632cefce7a9358d620b1f2452e4d5ac13ef2268"

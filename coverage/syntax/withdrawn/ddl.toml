@@ -1353,6 +1353,15 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.create-iceberg-table-rest.table-as-select"
+kind = "required_operand_missing"
+target = "<col_name> in [ ( <col_name> [ <col_type> ] , <col_name> [ <col_type> ] , ... ) ]"
+note = "omit <col_name>"
+sql = "CREATE ICEBERG TABLE v1 ( v1 ) AS SELECT 1 ;"
+valid_as = "sf.ddl.create-iceberg-table.table-as-select required_operand_missing <col_name> in [ ( <col_name> [ <col_type> ] [ DEFAULT <col_default> ] , <col_name> [ <col_type> ] [ DEFAULT…"
+reason = "the rejection renders SQL a hand row observes because Snowflake parses it"
+
+[[withdrawn]]
+form = "sf.ddl.create-iceberg-table-rest.table-as-select"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required ICEBERG"

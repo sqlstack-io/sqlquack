@@ -91760,3 +91760,1060 @@ sql = "ALTER ACCOUNT UNSET CONTACT 'v1' ;"
 expect = "observe"
 context = "raw"
 
+
+# Second list items Snowflake parses and fails later: each wrong-kind or missing second item is observed under the
+# settle rule, recorded by the list-item receipts.
+
+[[suppress]]
+form = "sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles"
+kind = "negative_neighbour"
+target = "<app_role2> in [ , <app_role2> ... ]"
+note = "a string literal in place of <app_role2>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 98620 SQLSTATE 22000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles"
+kind = "negative_neighbour"
+target = "<app_role2> in [ , <app_role2> ... ]"
+note = "a string literal in place of <app_role2>, observed"
+anchor = "doc.sql.alter-application-set-configuration-definition / Syntax"
+sql = "ALTER APPLICATION SET CONFIGURATION DEFINITION v1 TYPE = APPLICATION_NAME LABEL = 'm' DESCRIPTION = 'm' APPLICATION_ROLES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description"
+kind = "negative_neighbour"
+target = "<app_role2> in [ , <app_role2> ... ]"
+note = "a string literal in place of <app_role2>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 98620 SQLSTATE 22000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description"
+kind = "negative_neighbour"
+target = "<app_role2> in [ , <app_role2> ... ]"
+note = "a string literal in place of <app_role2>, observed"
+anchor = "doc.sql.alter-application-set-configuration-definition / Syntax"
+sql = "ALTER APPLICATION SET CONFIGURATION DEFINITION v1 TYPE = SECRET_AUTHORIZATION SECRET = v1 . v1 LABEL = 'm' DESCRIPTION = 'm' APPLICATION_ROLES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles"
+kind = "negative_neighbour"
+target = "<app_role2> in [ , <app_role2> ... ]"
+note = "a string literal in place of <app_role2>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 98620 SQLSTATE 22000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles"
+kind = "negative_neighbour"
+target = "<app_role2> in [ , <app_role2> ... ]"
+note = "a string literal in place of <app_role2>, observed"
+anchor = "doc.sql.alter-application-set-configuration-definition / Syntax"
+sql = "ALTER APPLICATION SET CONFIGURATION DEFINITION v1 TYPE = STRING LABEL = 'm' DESCRIPTION = 'm' APPLICATION_ROLES = ( v1 , 'v1' ) SENSITIVE = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database-catalog-linked.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-database-catalog-linked.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-database-catalog-linked / Syntax"
+sql = "ALTER DATABASE v1 SET CONTACT STEWARD = v1 , 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-database.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-database.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-database / Syntax"
+sql = "ALTER DATABASE v1 SET CONTACT STEWARD = v1 , 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-function.set"
+kind = "negative_neighbour"
+target = "<integration_name> in [ , <integration_name> ... ]"
+note = "a string literal in place of <integration_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 1422 SQLSTATE 22023, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-function.set"
+kind = "negative_neighbour"
+target = "<integration_name> in [ , <integration_name> ... ]"
+note = "a string literal in place of <integration_name>, observed"
+anchor = "doc.sql.alter-function / Syntax / User-defined and external functions / Java handler"
+sql = "ALTER FUNCTION v1 ( ) SET EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-openflow-runtime.set"
+kind = "negative_neighbour"
+target = "<eai> in [ , <eai> ... ]"
+note = "a string literal in place of <eai>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-openflow-runtime.set"
+kind = "negative_neighbour"
+target = "<eai> in [ , <eai> ... ]"
+note = "a string literal in place of <eai>, observed"
+anchor = "doc.sql.alter-openflow-runtime / Syntax"
+sql = "ALTER OPENFLOW RUNTIME v1 SET EXTERNAL_ACCESS_INTEGRATIONS = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-table-event-table.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-table-event-table.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-table-event-table / Syntax"
+sql = "ALTER TABLE v1 SET CONTACT STEWARD = v1 , 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-table.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-table.set"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-table / Syntax"
+sql = "ALTER TABLE v1 SET CONTACT STEWARD = v1 , 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-task-graph.set-contact"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-task-graph.set-contact"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+sql = "ALTER TASK GRAPH v1 SET CONTACT STEWARD = v1 , 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.alter-task-graph.unset-contact"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> ... ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.alter-task-graph.unset-contact"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> ... ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-task-graph / Syntax / ALTER TASK GRAPH ... SET / UNSET"
+sql = "ALTER TASK GRAPH v1 UNSET CONTACT STEWARD , 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-iceberg-table-aws-glue"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-iceberg-table-aws-glue"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-iceberg-table-aws-glue / Syntax"
+sql = "CREATE ICEBERG TABLE v1 CATALOG_TABLE_NAME = 'm' WITH CONTACT ( STEWARD = v1 , 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-iceberg-table.table-as-select"
+kind = "required_operand_missing"
+target = "<col_name> in [ ( <col_name> [ <col_type> ] [ DEFAULT <col_default> ] , <col_name> [ <col_type> ] [ DEFAULT…"
+note = "omit <col_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno None SQLSTATE None, phase accepted, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-iceberg-table.table-as-select"
+kind = "required_operand_missing"
+target = "<col_name> in [ ( <col_name> [ <col_type> ] [ DEFAULT <col_default> ] , <col_name> [ <col_type> ] [ DEFAULT…"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.create-iceberg-table / Syntax / Snowflake as the Iceberg catalog / CREATE ICEBERG TABLE ... AS SELECT (also referred to as CTAS)"
+sql = "CREATE ICEBERG TABLE v1 ( v1 ) AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-iceberg-table.table-base-location"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-iceberg-table.table-base-location"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Delta files"
+sql = "CREATE ICEBERG TABLE v1 BASE_LOCATION = 'm' WITH CONTACT ( STEWARD = v1 , 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-iceberg-table.table-catalog-table-name"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-iceberg-table.table-catalog-table-name"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg REST (including Snowflake Open Catalog)"
+sql = "CREATE ICEBERG TABLE v1 CATALOG_TABLE_NAME = 'm' WITH CONTACT ( STEWARD = v1 , 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-iceberg-table.table-metadata-file-path"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-iceberg-table.table-metadata-file-path"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.create-iceberg-table / Syntax / External Iceberg catalog / Iceberg files in object storage"
+sql = "CREATE ICEBERG TABLE v1 METADATA_FILE_PATH = 'm' WITH CONTACT ( STEWARD = v1 , 'v1' = v1 ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.ddl.create-table.create-table-as"
+kind = "required_operand_missing"
+target = "<col_name> in [ ( <col_name> [ <col_type> ] , <col_name> [ <col_type> ] , ... ) ]"
+note = "omit <col_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno None SQLSTATE None, phase accepted, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.ddl.create-table.create-table-as"
+kind = "required_operand_missing"
+target = "<col_name> in [ ( <col_name> [ <col_type> ] , <col_name> [ <col_type> ] , ... ) ]"
+note = "omit <col_name>, observed"
+anchor = "doc.sql.create-table / Variant syntax / CREATE TABLE ... AS SELECT (also referred to as CTAS)"
+sql = "CREATE TABLE v1 ( v1 ) AS SELECT 1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.open"
+kind = "negative_neighbour"
+target = "bind_variable_2 in [ , bind_variable_2 ... ]"
+note = "a string literal in place of bind_variable_2"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno None SQLSTATE None, phase accepted, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.open"
+kind = "negative_neighbour"
+target = "bind_variable_2 in [ , bind_variable_2 ... ]"
+note = "a string literal in place of bind_variable_2, observed"
+anchor = "doc.snowflake-scripting.open / Syntax"
+sql = "DECLARE c1 CURSOR FOR SELECT 1 ; v1 INT ; BEGIN OPEN c1 USING ( v1 , 'v1' ) ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.query.order-by.orderitem"
+kind = "negative_neighbour"
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+note = "a string literal in place of <column_alias>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.query.order-by.orderitem"
+kind = "negative_neighbour"
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+note = "a string literal in place of <column_alias>, observed"
+anchor = "doc.constructs.order-by / Syntax"
+sql = "SELECT 1 FROM t1 ORDER BY v1 , 'v1' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.query.order-by.orderitem"
+kind = "negative_neighbour"
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+note = "a string literal in place of <position>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 42S02, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.query.order-by.orderitem"
+kind = "negative_neighbour"
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+note = "a string literal in place of <position>, observed"
+anchor = "doc.constructs.order-by / Syntax"
+sql = "SELECT 1 FROM t1 ORDER BY v1 , 'x' ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.query.values"
+kind = "negative_neighbour"
+note = "the form without its required ( in [ , ( ... ) ]"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno None SQLSTATE None, phase accepted, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.query.values"
+kind = "negative_neighbour"
+note = "the form without its required ( in [ , ( ... ) ], observed"
+anchor = "doc.constructs.values / Syntax"
+sql = "SELECT 1 FROM ( VALUES ( 1 ) , ( 2 ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.query.values"
+kind = "negative_neighbour"
+note = "the form without its required ) in [ , ( ... ) ]"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno None SQLSTATE None, phase accepted, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.query.values"
+kind = "negative_neighbour"
+note = "the form without its required ) in [ , ( ... ) ], observed"
+anchor = "doc.constructs.values / Syntax"
+sql = "SELECT 1 FROM ( VALUES ( 1 ) , ( 2 ) ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.language-javascript-as-call"
+kind = "required_operand_missing"
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.utility.call-with.language-javascript-as-call"
+kind = "required_operand_missing"
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.call-with / Syntax / JavaScript"
+sql = "WITH v1 AS PROCEDURE ( v1 INT , INT ) RETURNS INT LANGUAGE JAVASCRIPT AS 'm' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "required_operand_missing"
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.utility.call-with.table-language-sql-as"
+kind = "required_operand_missing"
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+note = "omit <arg_name>, observed"
+anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
+sql = "WITH v1 AS PROCEDURE ( v1 INT , INT ) RETURNS INT LANGUAGE SQL AS 'BEGIN RETURN 1 ; END' CALL v1 ( ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-account.set-contact"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-account.set-contact"
+kind = "negative_neighbour"
+target = "<purpose> in [ , <purpose> = <contact_name> ... ]"
+note = "a string literal in place of <purpose>, observed"
+anchor = "doc.sql.alter-account / Syntax / Altering the current account"
+sql = "ALTER ACCOUNT SET CONTACT STEWARD = v1 , 'v1' = v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-data-movement-policy.add-alert-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-data-movement-policy.add-alert-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+sql = "ALTER DATA MOVEMENT POLICY v1 ADD ALERT_RULES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-data-movement-policy.add-enforce-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-data-movement-policy.add-enforce-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+sql = "ALTER DATA MOVEMENT POLICY v1 ADD ENFORCE_RULES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-data-movement-policy.remove-alert-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-data-movement-policy.remove-alert-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+sql = "ALTER DATA MOVEMENT POLICY v1 REMOVE ALERT_RULES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-data-movement-policy.remove-enforce-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+sql = "ALTER DATA MOVEMENT POLICY v1 REMOVE ENFORCE_RULES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-data-movement-policy.set-alert-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-data-movement-policy.set-alert-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+sql = "ALTER DATA MOVEMENT POLICY v1 SET ALERT_RULES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.alter-data-movement-policy.set-enforce-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.alter-data-movement-policy.set-enforce-rules"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.alter-data-movement-policy / Syntax"
+sql = "ALTER DATA MOVEMENT POLICY v1 SET ENFORCE_RULES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ , <secret_name> , ... ]"
+note = "a string literal in place of <secret_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ , <secret_name> , ... ]"
+note = "a string literal in place of <secret_name>, observed"
+anchor = "doc.sql.create-api-integration / Syntax / For artifact repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = artifact_repository_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ , <secret_name> , ... ] #2"
+note = "a string literal in place of <secret_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.artifact-repository-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ , <secret_name> , ... ] #2"
+note = "a string literal in place of <secret_name>, observed"
+anchor = "doc.sql.create-api-integration / Syntax / For artifact repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = artifact_repository_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) TLS_TRUSTED_CERTIFICATES = ( v1 , 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ , <secret_name> , ... ]"
+note = "a string literal in place of <secret_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-enabled-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ , <secret_name> , ... ]"
+note = "a string literal in place of <secret_name>, observed"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ , <secret_name> , ... ]"
+note = "a string literal in place of <secret_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ , <secret_name> , ... ]"
+note = "a string literal in place of <secret_name>, observed"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , 'v1' ) USE_PRIVATELINK_ENDPOINT = TRUE ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ , <secret_name> , ... ] #2"
+note = "a string literal in place of <secret_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-api-integration.git-https-api-api-allowed-prefixes-use-privatelink-endpoint-true"
+kind = "negative_neighbour"
+target = "<secret_name> in [ , <secret_name> , ... ] #2"
+note = "a string literal in place of <secret_name>, observed"
+anchor = "doc.sql.create-api-integration / Syntax / For Git repository"
+sql = "CREATE API INTEGRATION i1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( 'https://example.com/' ) USE_PRIVATELINK_ENDPOINT = TRUE TLS_TRUSTED_CERTIFICATES = ( v1 , 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-data-movement-policy"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-data-movement-policy"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ]"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.create-data-movement-policy / Syntax"
+sql = "CREATE DATA MOVEMENT POLICY v1 ENFORCE_RULES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-data-movement-policy"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ] #2"
+note = "a string literal in place of <rule_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-data-movement-policy"
+kind = "negative_neighbour"
+target = "<rule_name> in [ , <rule_name> , ... ] #2"
+note = "a string literal in place of <rule_name>, observed"
+anchor = "doc.sql.create-data-movement-policy / Syntax"
+sql = "CREATE DATA MOVEMENT POLICY v1 ALERT_RULES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<rule_name_2> in [ , <rule_name_2> , ... ]"
+note = "a string literal in place of <rule_name_2>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 509009 SQLSTATE 0A000, phase runtime_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<rule_name_2> in [ , <rule_name_2> , ... ]"
+note = "a string literal in place of <rule_name_2>, observed"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+sql = "CREATE EXTERNAL ACCESS INTEGRATION v1 ALLOWED_NETWORK_RULES = ( v1 , 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<integration_name_2> in [ , <integration_name_2> , ... ]"
+note = "a string literal in place of <integration_name_2>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 509009 SQLSTATE 0A000, phase runtime_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<integration_name_2> in [ , <integration_name_2> , ... ]"
+note = "a string literal in place of <integration_name_2>, observed"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+sql = "CREATE EXTERNAL ACCESS INTEGRATION v1 ALLOWED_NETWORK_RULES = ( v1 ) ALLOWED_API_AUTHENTICATION_INTEGRATIONS = ( v1 , 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<secret_name_2> in [ , <secret_name_2> , ... ]"
+note = "a string literal in place of <secret_name_2>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 509009 SQLSTATE 0A000, phase runtime_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-external-access-integration"
+kind = "negative_neighbour"
+target = "<secret_name_2> in [ , <secret_name_2> , ... ]"
+note = "a string literal in place of <secret_name_2>, observed"
+anchor = "doc.sql.create-external-access-integration / Syntax"
+sql = "CREATE EXTERNAL ACCESS INTEGRATION v1 ALLOWED_NETWORK_RULES = ( v1 ) ALLOWED_AUTHENTICATION_SECRETS = ( v1 , 'v1' ) ENABLED = TRUE ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-masking-policy.masking-policy-as-returns"
+kind = "required_operand_missing"
+target = "<arg_1> in [ , <arg_1> <arg_type_1> ... ]"
+note = "omit <arg_1>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-masking-policy.masking-policy-as-returns"
+kind = "required_operand_missing"
+target = "<arg_1> in [ , <arg_1> <arg_type_1> ... ]"
+note = "omit <arg_1>, observed"
+anchor = "doc.sql.create-masking-policy / Syntax"
+sql = "CREATE MASKING POLICY v1 AS ( v1 VARCHAR , VARCHAR ) RETURNS VARCHAR -> v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-masking-policy.masking-policy-as-returns"
+kind = "required_operand_missing"
+target = "<arg_type_1> in [ , <arg_1> <arg_type_1> ... ]"
+note = "omit <arg_type_1>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-masking-policy.masking-policy-as-returns"
+kind = "required_operand_missing"
+target = "<arg_type_1> in [ , <arg_1> <arg_type_1> ... ]"
+note = "omit <arg_type_1>, observed"
+anchor = "doc.sql.create-masking-policy / Syntax"
+sql = "CREATE MASKING POLICY v1 AS ( v1 VARCHAR , v2 ) RETURNS VARCHAR -> v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-masking-policy.or-alter-masking-policy"
+kind = "required_operand_missing"
+target = "<arg_1> in [ , <arg_1> <arg_type_1> ... ]"
+note = "omit <arg_1>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-masking-policy.or-alter-masking-policy"
+kind = "required_operand_missing"
+target = "<arg_1> in [ , <arg_1> <arg_type_1> ... ]"
+note = "omit <arg_1>, observed"
+anchor = "doc.sql.create-masking-policy / Variant syntax / CREATE OR ALTER MASKING POLICY"
+sql = "CREATE OR ALTER MASKING POLICY v1 AS ( v1 VARCHAR , VARCHAR ) RETURNS VARCHAR -> v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-masking-policy.or-alter-masking-policy"
+kind = "required_operand_missing"
+target = "<arg_type_1> in [ , <arg_1> <arg_type_1> ... ]"
+note = "omit <arg_type_1>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 90201 SQLSTATE 42601, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-masking-policy.or-alter-masking-policy"
+kind = "required_operand_missing"
+target = "<arg_type_1> in [ , <arg_1> <arg_type_1> ... ]"
+note = "omit <arg_type_1>, observed"
+anchor = "doc.sql.create-masking-policy / Variant syntax / CREATE OR ALTER MASKING POLICY"
+sql = "CREATE OR ALTER MASKING POLICY v1 AS ( v1 VARCHAR , v2 ) RETURNS VARCHAR -> v1 ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-session-policy"
+kind = "negative_neighbour"
+target = "<role_name> in [ , <role_name> ... ]"
+note = "a string literal in place of <role_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-session-policy"
+kind = "negative_neighbour"
+target = "<role_name> in [ , <role_name> ... ]"
+note = "a string literal in place of <role_name>, observed"
+anchor = "doc.sql.create-session-policy / Syntax"
+sql = "CREATE SESSION POLICY v1 ALLOWED_SECONDARY_ROLES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.security_admin.create-session-policy"
+kind = "negative_neighbour"
+target = "<role_name> in [ , <role_name> ... ] #2"
+note = "a string literal in place of <role_name>"
+reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno 2003 SQLSTATE 02000, phase semantic_error, import-20261114-40), so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.security_admin.create-session-policy"
+kind = "negative_neighbour"
+target = "<role_name> in [ , <role_name> ... ] #2"
+note = "a string literal in place of <role_name>, observed"
+anchor = "doc.sql.create-session-policy / Syntax"
+sql = "CREATE SESSION POLICY v1 BLOCKED_SECONDARY_ROLES = ( v1 , 'v1' ) ;"
+expect = "observe"
+context = "raw"
+
+# Statements omitted from a repeated statement list: Snowflake accepts the empty statement this leaves, recorded by
+# the list-item receipts, so the omission is observed under the settle rule.
+
+[[suppress]]
+form = "sf.scripting.begin"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.begin"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.begin / Syntax"
+sql = "BEGIN NULL ; ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.case.end"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.case.end"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.case / Syntax"
+sql = "BEGIN CASE ( 1 ) WHEN 1 THEN NULL ; ; END ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.case.end"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.case.end"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.case / Syntax"
+sql = "BEGIN CASE ( 1 ) WHEN 1 THEN NULL ; ELSE NULL ; ; END ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.case.end.syntax"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.case.end.syntax"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.case / Syntax"
+sql = "BEGIN CASE WHEN TRUE THEN NULL ; ; END ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.case.end.syntax"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.case.end.syntax"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.case / Syntax"
+sql = "BEGIN CASE WHEN TRUE THEN NULL ; ELSE NULL ; ; END ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.exception"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+sql = "BEGIN NULL ; EXCEPTION WHEN STATEMENT_ERROR THEN NULL ; ; NULL ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.exception"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.exception"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.exception / Syntax"
+sql = "BEGIN NULL ; EXCEPTION WHEN STATEMENT_ERROR THEN NULL ; NULL ; ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.for.do-end-for"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.for.do-end-for"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.for / Syntax"
+sql = "DECLARE c1 CURSOR FOR SELECT 1 ; BEGIN FOR row1 IN c1 DO NULL ; ; END FOR ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.for.to-do-loop-end"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.for / Syntax"
+sql = "BEGIN FOR i IN 1 TO 1 DO NULL ; ; END FOR ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.if"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.if / Syntax"
+sql = "BEGIN IF ( TRUE ) THEN NULL ; ; END IF ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.if"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ] #2"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.if / Syntax"
+sql = "BEGIN IF ( TRUE ) THEN NULL ; ELSEIF ( TRUE ) THEN NULL ; ; END IF ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.if"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ] #3"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.if"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ] #3"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.if / Syntax"
+sql = "BEGIN IF ( TRUE ) THEN NULL ; ELSE NULL ; ; END IF ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.loop"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.loop"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.loop / Syntax"
+sql = "BEGIN LOOP BREAK ; ; END LOOP ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.repeat"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.repeat"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.repeat / Syntax"
+sql = "BEGIN REPEAT NULL ; ; UNTIL ( TRUE ) END REPEAT ; END ;"
+expect = "observe"
+context = "raw"
+
+[[suppress]]
+form = "sf.scripting.while"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>"
+reason = "[undocumented acceptance]: Snowflake accepts this SQL (phase accepted, import-20261114-40): the omitted statement leaves an empty statement after the previous one, so it is not a syntax error; observed (settle rule)"
+
+[[limit]]
+form = "sf.scripting.while"
+kind = "required_operand_missing"
+target = "<statement> in [ <statement> ; ... ]"
+note = "omit <statement>, observed"
+anchor = "doc.snowflake-scripting.while / Syntax"
+sql = "BEGIN WHILE ( FALSE ) DO NULL ; ; END WHILE ; END ;"
+expect = "observe"
+context = "raw"
+

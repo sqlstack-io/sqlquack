@@ -163,3 +163,23 @@ note = "Read in full under review brief version 1 against the documentation page
 
 [review.definitions]
 "sf.dml.insert" = "3d99ef7773c7855bab404040051c0646390964184002f4e715ee197ada7aef6a"
+
+[[review]]
+id = "dml-010"
+family = "dml"
+parser_tree = "34d4cc4a0ba49debfa4d3a4ed5e548b3f3c201dd"
+reviewed_utc = "2026-11-14T06:36:28Z"
+verdict = "approved"
+forms = [
+  "sf.dml.insert-multi-table.first-all-when-then",
+  "sf.dml.update",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 0938da6ac, whose trees for these forms the later parser fixes leave unchanged; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.dml.insert-multi-table.first-all-when-then" = "4465b91e32a0a500f0c3b8b0a098e80434cb56d601f73d4d701d678975740afb"
+"sf.dml.update" = "30ebc33ad0795c1bc9cc21c1950cb5fe04235eba711b730025638332bccff9ff"
+
+[review.definitions]
+"sf.dml.insert-multi-table.first-all-when-then" = "8ae27c33df0e8b09e65008de1dbf34262ce2bdbd962ab4ae922ac63414ab6924"
+"sf.dml.update" = "8b2bd18826447d69309ce073c9e8640121ecec15b7c242c15edafeaa55153eb1"
