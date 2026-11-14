@@ -243,6 +243,36 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_only_what_snowf
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "CREATE OR ALTER SECRET takes no tags (recorded errno 1003)",
+            sql: "CREATE OR ALTER SECRET v1 TYPE = GENERIC_STRING SECRET_STRING = 'm' WITH TAG ( v1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "CREATE OR ALTER SECRET takes no tags without WITH either (recorded errno 1003)",
+            sql: "CREATE OR ALTER SECRET v1 TYPE = SYMMETRIC_KEY ALGORITHM = GENERIC TAG ( v1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "DEFINE SECRET takes no tags (recorded errno 1003)",
+            sql: "DEFINE SECRET d1.s1.v1 TYPE = GENERIC_STRING SECRET_STRING = 'm' WITH TAG ( v1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "CREATE OR ALTER SECRET without tags (recorded parse)",
+            sql: "CREATE OR ALTER SECRET v1 TYPE = GENERIC_STRING SECRET_STRING = 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "CREATE SECRET keeps its tags",
+            sql: "CREATE SECRET v1 TYPE = GENERIC_STRING SECRET_STRING = 'm' WITH TAG ( v1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
     ];
 
     for test_case in test_cases {
