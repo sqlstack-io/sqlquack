@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -26,7 +27,13 @@ from scripts.syntax_receipts.constants import (
     PACKET_ACCEPTED_OUTCOMES,
     PARSED_PHASE,
     PROBE_NOT_PARSED,
+    PROBE_PROOF_END,
+    PROBE_PROOF_EVENT,
+    PROBE_PROOF_WALKED,
     PROBE_ROLE_KEY,
+    PROBE_SYNTAX_MESSAGE,
+    PROBE_SYNTAX_PHASE,
+    PROBE_UNPROVEN,
     QUERY_HISTORY_FAILED,
     QUERY_HISTORY_SOURCE,
     QUERY_HISTORY_SUCCESS,
@@ -34,6 +41,7 @@ from scripts.syntax_receipts.constants import (
     RUN_NONCE,
     SETUP_FAILED_OUTCOME,
     SHARED_SCHEMA_NOTE,
+    SYNTAX_ERRNO,
     UNKNOWN_ROW,
     UNRECORDED_KEY,
 )
@@ -72,7 +80,7 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
                 )
             )
             continue
-        failure: str | None = client_failure(raw=raw)
+        failure: str | None = client_failure(raw=raw) or _unproven(run=run, raw=raw)
         if failure is not None:
             found.refusals.append(refusal(run_id=run.path.name, row_id=row_id, reason=failure))
             continue
@@ -133,7 +141,7 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
         except RowRefused as error:
             found.refusals.append(refusal(run_id=run.path.name, row_id=row_id, reason=str(error)))
             continue
-        if probe and row["phase"] != PARSED_PHASE:
+        if probe and not _shows_parse(row=row, message=message):
             found.refusals.append(
                 refusal(run_id=run.path.name, row_id=row_id, reason=PROBE_NOT_PARSED)
             )
@@ -144,6 +152,28 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
             )
         found.receipts.append(row)
     return found
+
+
+def _unproven(*, run: CaptureRun, raw: Row) -> str | None:
+    """Why a probe row is no receipt: its run has no end proof that walked the probe's roles."""
+    proven: bool = any(
+        event.get("event") == PROBE_PROOF_EVENT
+        and event.get("when") == PROBE_PROOF_END
+        and event.get(PROBE_PROOF_WALKED, True) is True
+        for event in run.events
+    )
+    return PROBE_UNPROVEN if raw.get(PROBE_ROLE_KEY) is True and not proven else None
+
+
+def _shows_parse(*, row: Row, message: str) -> bool:
+    """Whether a probe receipt is a refusal after parsing or Snowflake's syntax-error class."""
+    if row["phase"] == PARSED_PHASE:
+        return True
+    return (
+        row["phase"] == PROBE_SYNTAX_PHASE
+        and row["errno"] == SYNTAX_ERRNO
+        and re.search(PROBE_SYNTAX_MESSAGE, message, re.IGNORECASE | re.DOTALL) is not None
+    )
 
 
 def _records(

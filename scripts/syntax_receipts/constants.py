@@ -138,4 +138,14 @@ PROBE_ROLE_KEY: str = "probe_role"
 NO_EFFECT_KEY: str = "no_effect"
 NO_EFFECT_PROBE_ROLE: str = "probe_role"
 PARSED_PHASE: str = "semantic_error"
-PROBE_NOT_PARSED: str = "run without privileges, it counts only as a refusal after parsing"
+PROBE_SYNTAX_PHASE: str = "syntax_error"
+PROBE_SYNTAX_MESSAGE: str = r"^SQL compilation error:\s*syntax error\b.*\bunexpected\b"
+PROBE_NOT_PARSED: str = (
+    "run without privileges, it counts only as a refusal after parsing or a syntax error"
+)
+PROBE_PROOF_EVENT: str = "probe_grants"
+PROBE_PROOF_END: str = "end"
+PROBE_PROOF_WALKED: str = "walked"
+PROBE_UNPROVEN: str = (
+    "run without privileges, but the run has no end proof of the probe role's grants"
+)

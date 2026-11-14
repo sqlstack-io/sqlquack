@@ -112,3 +112,6 @@ class UnprivilegedRunTestCase:
     packet: list[dict[str, object]]
     expected_receipts: list[tuple[str, str, str]]
     expected_refusals: list[str]
+    proof: tuple[dict[str, object], ...] = (
+        {"event": "probe_grants", "when": "end", "walked": True},
+    )

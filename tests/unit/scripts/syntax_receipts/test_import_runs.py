@@ -78,6 +78,7 @@ _DDL_START: dict[str, object] = {
         "USE SCHEMA SQLQUACK_DDL_ABC123.CASES",
     ],
 }
+_UNEXPECTED: str = "SQL compilation error:\nsyntax error line 1 at position 7 unexpected 'DATABSE'."
 _SYNTAX_ROW: dict[str, object] = error_row(
     case_id="c1", sql=_GOOD, errno=1003, message="SQL compilation error:\nsyntax error"
 )
@@ -1198,13 +1199,108 @@ def test_given_a_reconciled_query_history_submission_when_imported_then_it_recor
             expected_receipts=[("c1", "semantic_error", "probe_role")],
             expected_refusals=["c2", "c3"],
         ),
+        UnprivilegedRunTestCase(
+            description="Snowflake's syntax-error class counts; no other syntax, parse or unsupported error does",
+            rows=[
+                {
+                    **error_row(case_id=case_id, sql=sql, errno=errno, message=message),
+                    "probe_role": True,
+                }
+                for case_id, sql, errno, message in (
+                    ("c1", _GARBLED, 1003, _UNEXPECTED),
+                    (
+                        "c2",
+                        _DENIED,
+                        1003,
+                        "SQL compilation error:\nsyntax error line 1 at position 7",
+                    ),
+                    (
+                        "c3",
+                        _GRANTED,
+                        1002,
+                        "syntax error line 1 at position 7 unexpected 'DATABSE'.",
+                    ),
+                    ("c4", _GOOD, 921, "parse error line 1 unexpected 'DATABSE'."),
+                    ("c5", _OTHER, 2, "Unsupported feature 'CREATE DATABSE'."),
+                    ("c6", _BROKEN, 2003, "SQL compilation error:\nObject 'V1' does not exist."),
+                )
+            ],
+            packet=[
+                {**packet_case(case_id=case_id, sql=sql), "setup": _DDL_TEMPLATE}
+                for case_id, sql in (
+                    ("c1", _GARBLED),
+                    ("c2", _DENIED),
+                    ("c3", _GRANTED),
+                    ("c4", _GOOD),
+                    ("c5", _OTHER),
+                    ("c6", _BROKEN),
+                )
+            ],
+            expected_receipts=[
+                ("c1", "syntax_error", "probe_role"),
+                ("c6", "semantic_error", "probe_role"),
+            ],
+            expected_refusals=["c2", "c3", "c4", "c5"],
+        ),
+        UnprivilegedRunTestCase(
+            description="no row counts from a run without the end proof of the probe role's grants",
+            rows=[
+                {
+                    **error_row(case_id="c1", sql=_GARBLED, errno=1003, message=_UNEXPECTED),
+                    "probe_role": True,
+                },
+                {
+                    **error_row(case_id="c2", sql=_DENIED, errno=3001, message="Insufficient"),
+                    "probe_role": True,
+                },
+            ],
+            packet=[
+                {**packet_case(case_id=case_id, sql=sql), "setup": _DDL_TEMPLATE}
+                for case_id, sql in (("c1", _GARBLED), ("c2", _DENIED))
+            ],
+            expected_receipts=[],
+            expected_refusals=["c1", "c2"],
+            proof=(),
+        ),
+        UnprivilegedRunTestCase(
+            description="a case's own proof named end, which did not walk, is no end proof",
+            rows=[
+                {
+                    **error_row(case_id="c1", sql=_DENIED, errno=3001, message="Insufficient"),
+                    "probe_role": True,
+                },
+            ],
+            packet=[{**packet_case(case_id="c1", sql=_DENIED), "setup": _DDL_TEMPLATE}],
+            expected_receipts=[],
+            expected_refusals=["c1"],
+            proof=({"event": "probe_grants", "when": "end", "walked": False},),
+        ),
+        UnprivilegedRunTestCase(
+            description="an end proof from before walks were recorded counts, since every proof walked",
+            rows=[
+                {
+                    **error_row(case_id="c1", sql=_DENIED, errno=3001, message="Insufficient"),
+                    "probe_role": True,
+                },
+            ],
+            packet=[{**packet_case(case_id="c1", sql=_DENIED), "setup": _DDL_TEMPLATE}],
+            expected_receipts=[("c1", "semantic_error", "probe_role")],
+            expected_refusals=[],
+            proof=({"event": "probe_grants", "when": "end"},),
+        ),
     ),
     ids=lambda case: case.description,
 )
 def test_given_rows_run_without_privileges_when_imported_then_only_refusals_after_parsing_count(
     test_case: UnprivilegedRunTestCase, tmp_path: Path
 ) -> None:
-    write_run(root=tmp_path, rows=test_case.rows, packet=test_case.packet, start=_DDL_START)
+    write_run(
+        root=tmp_path,
+        rows=test_case.rows,
+        packet=test_case.packet,
+        start=_DDL_START,
+        before_complete=list(test_case.proof),
+    )
     out: Path = tmp_path / "out.jsonl"
 
     run_import(
