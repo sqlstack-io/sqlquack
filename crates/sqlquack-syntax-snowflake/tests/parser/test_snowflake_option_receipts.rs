@@ -153,3 +153,48 @@ fn given_a_snowflake_online_feature_table_when_parsing_then_its_warehouse_is_opt
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_share_set_accounts_when_parsing_then_one_string_or_a_list_of_names_is_accepted(
+) {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "one string (recorded errno 2003)",
+            sql: "ALTER SHARE v1 SET ACCOUNTS = 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a list of names (recorded errno 2003)",
+            sql: "ALTER SHARE v1 SET ACCOUNTS = o1.a1 , o1.a1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a string after a name (recorded errno 1003)",
+            sql: "ALTER SHARE v1 SET ACCOUNTS = o1.a1 , 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a trailing comma (recorded errno 1003)",
+            sql: "ALTER SHARE v1 SET ACCOUNTS = o1.a1 , ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "no value (recorded errno 1003)",
+            sql: "ALTER SHARE v1 SET ACCOUNTS = ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
