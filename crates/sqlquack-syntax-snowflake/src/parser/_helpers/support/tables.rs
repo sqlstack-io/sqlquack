@@ -247,6 +247,9 @@ impl Parser {
                     if !self.match_token(TokenType::Comma) {
                         break;
                     }
+                    if self.is_snowflake() && self.check(TokenType::RParen) {
+                        return Err(self.parse_error("Expected a value after the comma"));
+                    }
                 }
             }
 

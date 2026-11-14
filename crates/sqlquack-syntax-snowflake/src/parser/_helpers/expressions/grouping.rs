@@ -945,6 +945,9 @@ impl Parser {
                     if !self.match_token(TokenType::Comma) {
                         break;
                     }
+                    if self.is_snowflake() && self.check(TokenType::RParen) {
+                        return Err(self.parse_error("Expected a column after the comma"));
+                    }
                 }
                 let closed = self.match_token(TokenType::RParen);
                 if (columns.is_empty() || !closed)

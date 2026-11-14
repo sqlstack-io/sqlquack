@@ -342,6 +342,9 @@ impl Parser {
                 if !self.match_token(TokenType::Comma) {
                     break;
                 }
+                if self.check(TokenType::RParen) {
+                    return Err(self.parse_error("Expected a value after the comma"));
+                }
             }
             self.expect_token(TokenType::RParen)?;
             Expression::Tuple(Box::new(Tuple { expressions }))
