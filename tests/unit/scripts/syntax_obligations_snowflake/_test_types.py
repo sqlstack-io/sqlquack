@@ -78,3 +78,12 @@ class DerivedLimitTestCase:
     target: str
     sql: str
     expected_count: int
+
+
+@dataclass(frozen=True)
+class DocumentedRefusalTestCase:
+    description: str
+    grammar: str
+    target: str
+    sql: str
+    expected_note: str

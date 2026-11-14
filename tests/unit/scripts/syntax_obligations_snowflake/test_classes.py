@@ -12,6 +12,7 @@ from scripts.grammar_obligations.constants import KIND_NEGATIVE, KIND_OPERAND_CL
 from scripts.syntax_obligations_snowflake.main.build import run_build
 from tests.unit.scripts.syntax_obligations_snowflake._test_types import (
     DerivedLimitTestCase,
+    DocumentedRefusalTestCase,
     OperandClassTestCase,
 )
 
@@ -214,3 +215,54 @@ context = "raw"
     )["obligation"]
     pairs: list[tuple[str, str]] = [(row["kind"], row.get("target", "")) for row in rows]
     assert pairs.count((KIND_NEGATIVE, test_case.target)) == test_case.expected_count
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        DocumentedRefusalTestCase(
+            description="a comment Snowflake refuses that the option's positive also renders",
+            grammar="CREATE TAG <name> [ COMMENT = '<string_literal>' ]",
+            target="'<string_literal>' in [ COMMENT = '<string_literal>' ]",
+            sql="CREATE TAG v1 COMMENT = 'm' ;",
+            expected_note="a comment Snowflake refuses on a tag, observed",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_documented_refusal_a_positive_also_renders_when_building_then_it_stays_observed(
+    tmp_path: Path, test_case: DocumentedRefusalTestCase
+) -> None:
+    (tmp_path / "catalogue").mkdir()
+    (tmp_path / "catalogue" / "transaction_session.toml").write_text(
+        f"""
+[[form]]
+id = "sf.transaction_session.create-commented-tag"
+family = "transaction_session"
+kind = "statement"
+grammar = ["{test_case.grammar}"]
+uses = []
+status = "catalogued"
+"""
+    )
+    (tmp_path / "limits.toml").write_text(
+        f"""
+[[limit]]
+form = "sf.transaction_session.create-commented-tag"
+kind = "{KIND_NEGATIVE}"
+target = "{test_case.target}"
+note = "{test_case.expected_note}"
+sql = "{test_case.sql}"
+expect = "observe"
+documented = true
+context = "raw"
+"""
+    )
+
+    assert run_build(["--root", str(tmp_path), "transaction_session"]) == 0
+
+    rows: list[dict[str, str]] = tomllib.loads(
+        (tmp_path / "obligations" / "transaction_session.toml").read_text()
+    )["obligation"]
+    assert [row.get("note") for row in rows].count(test_case.expected_note) == 1
+    assert not (tmp_path / "withdrawn" / "transaction_session.toml").exists()
