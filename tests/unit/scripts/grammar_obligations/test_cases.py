@@ -1,4 +1,5 @@
-"""Syntax cases: run-database setups from their receipts, and their marks."""
+"""Syntax cases: run-database setups from their receipts, their marks, and expectations their
+receipts disprove."""
 
 from __future__ import annotations
 
@@ -18,6 +19,7 @@ from scripts.grammar_obligations.constants import CASE_CAPTURE_RUN_DATABASE
 from scripts.grammar_obligations.models import ReceiptView
 from scripts.grammar_obligations.types import Row
 from tests.unit.scripts.grammar_obligations._test_types import (
+    DisprovedExpectationTestCase,
     DisputedFormMarkTestCase,
     SetupBindingTestCase,
 )
@@ -220,3 +222,91 @@ def test_given_a_form_snowflake_refuses_when_marking_then_only_its_positives_are
     marks: dict[str, str] = {row["case_id"]: row["mark"] for row in marked}
     assert marks.get(case["case_id"]) == test_case.expected_mark
     assert case["expect"] == test_case.expected_expect
+
+
+DROP_TAG_CATALOGUE: str = """
+[[form]]
+id = "sf.ddl.drop-tag"
+family = "ddl"
+kind = "statement"
+grammar = ["DROP TAG <name>"]
+uses = []
+status = "catalogued"
+"""
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        DisprovedExpectationTestCase(
+            description="an accept refused with a syntax error is decided by its receipts",
+            sql="DROP TAG v1 ;",
+            settlement="reject",
+            phase="syntax_error",
+            expected_expect="reject",
+            expected_mark="settled reject",
+        ),
+        DisprovedExpectationTestCase(
+            description="an accept refused after parsing keeps its expectation",
+            sql="DROP TAG v1 ;",
+            settlement="reject",
+            phase="semantic_error",
+            expected_expect="accept",
+            expected_mark=None,
+        ),
+        DisprovedExpectationTestCase(
+            description="a reject Snowflake parses is decided by its receipts",
+            sql="DROP TAG ;",
+            settlement="accept",
+            phase="executed",
+            expected_expect="accept",
+            expected_mark="settled accept",
+        ),
+        DisprovedExpectationTestCase(
+            description="a reject its receipts confirm keeps its expectation",
+            sql="DROP TAG ;",
+            settlement="reject",
+            phase="syntax_error",
+            expected_expect="reject",
+            expected_mark=None,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_receipts_against_a_generated_expectation_when_settling_then_receipts_decide(
+    tmp_path: Path, test_case: DisprovedExpectationTestCase
+) -> None:
+    (tmp_path / "catalogue").mkdir()
+    (tmp_path / "catalogue" / "ddl.toml").write_text(DROP_TAG_CATALOGUE)
+    (tmp_path / "limits.toml").write_text("")
+    generated: list[Row] = family_cases(
+        root=tmp_path, evidence=tmp_path, family="ddl", setups={}, held=frozenset()
+    )[0]
+    case: Row = {case["sql"]: case for case in generated}[test_case.sql]
+    receipts: ReceiptView = ReceiptView(
+        phases={(case["case_id"], case["sql_sha256"]): test_case.phase},
+        settlements={
+            (
+                case["case_id"],
+                case["sql_sha256"],
+                case["setup_sha256"],
+                case["session_sha256"],
+            ): (test_case.settlement, "")
+        },
+    )
+
+    settled, _, marked = settled_cases(
+        root=tmp_path,
+        evidence=tmp_path,
+        family="ddl",
+        receipts=receipts,
+        setups={},
+        held=frozenset(),
+    )
+
+    found: Row = {row["sql"]: row for row in settled}[test_case.sql]
+    marks: dict[str, str] = {row["case_id"]: row["mark"] for row in marked}
+    assert (found["expect"], marks.get(found["case_id"])) == (
+        test_case.expected_expect,
+        test_case.expected_mark,
+    )

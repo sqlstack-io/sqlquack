@@ -369,11 +369,18 @@ target = "<id>"
 note = "omit <id>"
 
 [[obligation]]
-id = "sf.query.at-before.o013"
+id = "sf.query.at-before.o026"
 kind = "operand_type_class"
 required = true
 target = "<id>"
-note = "a valid operand"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.query.at-before.o027"
+kind = "negative_neighbour"
+required = true
+target = "<id>"
+note = "an unquoted identifier in place of <id>"
 
 [[obligation]]
 id = "sf.query.at-before.o014"
@@ -661,11 +668,18 @@ target = "<id>"
 note = "omit <id>"
 
 [[obligation]]
-id = "sf.query.changes.o015"
+id = "sf.query.changes.o053"
 kind = "operand_type_class"
 required = true
 target = "<id>"
-note = "a valid operand"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.query.changes.o054"
+kind = "negative_neighbour"
+required = true
+target = "<id>"
+note = "an unquoted identifier in place of <id>"
 
 [[obligation]]
 id = "sf.query.changes.o016"
@@ -689,11 +703,18 @@ target = "<id> #2"
 note = "omit <id>"
 
 [[obligation]]
-id = "sf.query.changes.o020"
+id = "sf.query.changes.o055"
 kind = "operand_type_class"
 required = true
 target = "<id> #2"
-note = "a valid operand"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.query.changes.o056"
+kind = "negative_neighbour"
+required = true
+target = "<id> #2"
+note = "an unquoted identifier in place of <id>"
 
 [[obligation]]
 id = "sf.query.changes.o021"
@@ -761,11 +782,18 @@ target = "<id> in [ END ( { TIMESTAMP => <timestamp> | OFFSET => <time_differenc
 note = "omit <id>"
 
 [[obligation]]
-id = "sf.query.changes.o031"
+id = "sf.query.changes.o057"
 kind = "operand_type_class"
 required = true
 target = "<id> in [ END ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> } ) ]"
-note = "a valid operand"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.query.changes.o058"
+kind = "negative_neighbour"
+required = true
+target = "<id> in [ END ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> } ) ]"
+note = "an unquoted identifier in place of <id>"
 
 [[obligation]]
 id = "sf.query.changes.o032"
@@ -2883,6 +2911,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.query.group-by-cube.o083"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.query.group-by-cube.o045"
 kind = "alternative"
 required = true
@@ -2984,6 +3019,13 @@ id = "sf.query.group-by-cube.o019"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.query.group-by-cube.o084"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.query.group-by-cube.o020"
@@ -3248,6 +3290,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.query.group-by-grouping-sets.o148"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.query.group-by-grouping-sets.o046"
 kind = "alternative"
 required = true
@@ -3400,6 +3449,13 @@ id = "sf.query.group-by-grouping-sets.o019"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o149"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o071"
@@ -3568,6 +3624,13 @@ required = true
 target = "[ , ... ] #3"
 
 [[obligation]]
+id = "sf.query.group-by-grouping-sets.o150"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #3"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.query.group-by-grouping-sets.o100"
 kind = "option_present"
 required = true
@@ -3579,6 +3642,13 @@ id = "sf.query.group-by-grouping-sets.o101"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #4"
+
+[[obligation]]
+id = "sf.query.group-by-grouping-sets.o151"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #4"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.query.group-by-grouping-sets.o020"
@@ -3946,6 +4016,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.query.group-by-rollup.o083"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.query.group-by-rollup.o045"
 kind = "alternative"
 required = true
@@ -4047,6 +4124,13 @@ id = "sf.query.group-by-rollup.o019"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.query.group-by-rollup.o084"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.query.group-by-rollup.o020"
@@ -4327,6 +4411,13 @@ id = "sf.query.group-by.groupitem.o009"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.query.group-by.groupitem.o041"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.query.group-by.groupitem.o010"
@@ -5741,6 +5832,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o143"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o008"
 kind = "option_present"
 required = true
@@ -5778,6 +5876,13 @@ id = "sf.query.match-recognize.match-recognize-pattern-define-as.o013"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o144"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o014"
@@ -5850,6 +5955,13 @@ id = "sf.query.match-recognize.match-recognize-pattern-define-as.o024"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #3"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o145"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #3"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o025"
@@ -6041,6 +6153,13 @@ id = "sf.query.match-recognize.match-recognize-pattern-define-as.o053"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #4"
+
+[[obligation]]
+id = "sf.query.match-recognize.match-recognize-pattern-define-as.o146"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #4"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.query.match-recognize.match-recognize-pattern-define-as.o054"
@@ -8346,6 +8465,13 @@ required = true
 target = "[ , ... ] #2"
 
 [[obligation]]
+id = "sf.query.resample.o053"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.query.resample.o034"
 kind = "negative_neighbour"
 required = true
@@ -9719,6 +9845,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.query.select.select.selecting-specific-columns.o062"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.query.select.select.selecting-specific-columns.o045"
 kind = "negative_neighbour"
 required = true
@@ -10524,6 +10657,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.query.unpivot.o042"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.query.unpivot.o020"
 kind = "negative_neighbour"
 required = true
@@ -10707,6 +10847,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.query.values.o047"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.query.values.o010"
 kind = "option_present"
 required = true
@@ -10718,6 +10865,13 @@ id = "sf.query.values.o011"
 kind = "option_absent"
 required = true
 target = "[ , ( ... ) ]"
+
+[[obligation]]
+id = "sf.query.values.o048"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ( ... ) ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.query.values.o012"
@@ -10802,6 +10956,13 @@ id = "sf.query.values.o024"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #2"
+
+[[obligation]]
+id = "sf.query.values.o049"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.query.values.o025"

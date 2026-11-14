@@ -1542,11 +1542,11 @@ target = "<account_name>"
 note = "omit <account_name>"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data.o009"
+id = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data.o017"
 kind = "operand_type_class"
 required = true
 target = "<account_name>"
-note = "a valid identifier"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data.o012"
@@ -2201,11 +2201,11 @@ target = "<account_name>"
 note = "omit <account_name>"
 
 [[obligation]]
-id = "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date.o009"
+id = "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date.o017"
 kind = "operand_type_class"
 required = true
 target = "<account_name>"
-note = "a valid identifier"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date.o012"
@@ -7401,11 +7401,11 @@ target = "<operation_mode>"
 note = "omit <operation_mode>"
 
 [[obligation]]
-id = "sf.classes.budget.methods.set-resource-tags.o014"
+id = "sf.classes.budget.methods.set-resource-tags.o016"
 kind = "operand_type_class"
 required = true
 target = "<operation_mode>"
-note = "a valid word"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.classes.budget.methods.set-resource-tags.o009"
@@ -7558,11 +7558,11 @@ target = "<operation_mode>"
 note = "omit <operation_mode>"
 
 [[obligation]]
-id = "sf.classes.budget.methods.set-user-tags.o014"
+id = "sf.classes.budget.methods.set-user-tags.o016"
 kind = "operand_type_class"
 required = true
 target = "<operation_mode>"
-note = "a valid word"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.classes.budget.methods.set-user-tags.o009"
@@ -11328,11 +11328,11 @@ target = "<regular_expression> in [ , COL_NAME_REGEX => <regular_expression> ]"
 note = "omit <regular_expression>"
 
 [[obligation]]
-id = "sf.classes.custom-classifier.methods.add-regex.o016"
+id = "sf.classes.custom-classifier.methods.add-regex.o042"
 kind = "operand_type_class"
 required = true
 target = "<regular_expression> in [ , COL_NAME_REGEX => <regular_expression> ]"
-note = "a valid expression"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.classes.custom-classifier.methods.add-regex.o017"

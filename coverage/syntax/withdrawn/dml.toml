@@ -11,24 +11,6 @@ valid_as = "sf.dml.copy-files.from option_absent [ , '<file_name>' ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.dml.copy-into-location"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
-sql = "COPY INTO 's3://b1/p1/' FROM v1 ENCRYPTION = ( ) ;"
-valid_as = "sf.dml.copy-into-location option_present [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.dml.copy-into-location"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
-sql = "COPY INTO 'gcs://b1/p1/' FROM v1 ENCRYPTION = ( ) ;"
-valid_as = "sf.dml.copy-into-location option_present [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
 kind = "required_operand_missing"
 target = "'<file_name>' in [ , '<file_name>' ]"
@@ -80,24 +62,6 @@ target = "'<string>' in [ '<string>' [ , '<string>' ... ] ] #5"
 note = "omit '<string>'"
 sql = "COPY INTO v1 FROM @s1 FILE_FORMAT = ( TYPE = PARQUET NULL_IF = ( ) ) ;"
 valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_present [ NULL_IF = ( [ '<string>' [ , '<string>' ... ] ] ) ] #5"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
-sql = "COPY INTO v1 FROM 's3://b1/p1/' ENCRYPTION = ( ) ;"
-valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_present [ ENCRYPTION = ( { [ TYPE = 'AWS_CSE' ] [ MASTER_KEY = '<string>' ] | TYPE = 'AWS_SSE_S3' | TYPE = 'AWS_SSE_KMS' […"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.dml.copy-into-table.internalstage-externalstage-externallocation"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } in [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
-sql = "COPY INTO v1 FROM 'gcs://b1/p1/' ENCRYPTION = ( ) ;"
-valid_as = "sf.dml.copy-into-table.internalstage-externalstage-externallocation option_present [ ENCRYPTION = ( { [ TYPE = 'GCS_SSE_KMS' ] [ KMS_KEY_ID = '<string>' ] | TYPE = 'NONE' } ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

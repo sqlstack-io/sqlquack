@@ -3521,6 +3521,13 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
+id = "sf.expressions.data-types-structured.object.o027"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.expressions.data-types-structured.object.o022"
 kind = "negative_neighbour"
 required = true
@@ -4497,6 +4504,13 @@ id = "sf.expressions.functions-table.o018"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
+
+[[obligation]]
+id = "sf.expressions.functions-table.o041"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ]"
+note = "the list continued without its item"
 
 [[obligation]]
 id = "sf.expressions.functions-table.o019"

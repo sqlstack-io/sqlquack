@@ -48,6 +48,7 @@ PAGE_NO_SYNTAX: str = "no_syntax_block"
 PAGE_OUT_OF_SCOPE: str = "out_of_scope"
 
 PAGE_RESTATED: str = "restated"
+SOURCES_FILE: str = "sources.toml"
 
 DECISION_MERGED_HEADINGS: str = "identical grammar under several headings merged into one form"
 

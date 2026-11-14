@@ -1559,6 +1559,13 @@ required = true
 target = "[ , ... ] #2"
 
 [[obligation]]
+id = "sf.scripting.declare.procedure-returns-table-as.o049"
+kind = "required_operand_missing"
+required = true
+target = "... in [ , ... ] #2"
+note = "the list continued without its item"
+
+[[obligation]]
 id = "sf.scripting.declare.procedure-returns-table-as.o029"
 kind = "required_operand_missing"
 required = true

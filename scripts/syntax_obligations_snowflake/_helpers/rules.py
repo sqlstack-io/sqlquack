@@ -5,12 +5,14 @@ from __future__ import annotations
 import re
 
 from scripts.grammar_obligations._helpers import grammar
-from scripts.grammar_obligations.classes import walk
+from scripts.grammar_obligations.classes import renderer, walk
 from scripts.syntax_obligations_snowflake.constants import (
+    CLAUSE_CALLEES,
     IDENTIFIER_CLASS,
     IDENTIFIER_NAMES,
     INTEGER_CLASS,
     INTEGER_NAMES,
+    NUMBER_TOKEN,
     WORD_CLASS,
     WORD_NAMES,
 )
@@ -19,9 +21,15 @@ _shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = grammar.CLASS_RUL
 
 
 def install() -> None:
-    """Classify operands, widen the integer rule, read quoted templates and walk list items."""
+    """Classify operands, widen the integer rule, read templates and numbers, walk lists."""
+    grammar.TOKEN = NUMBER_TOKEN
     grammar.TEMPLATE_OPERANDS = True
     walk.REPEATED_ITEMS = True
+    walk.FILL_CLASSES = True
+    walk.BARE_VALUE_CLASS = WORD_CLASS
+    walk.CLAUSE_CALLEES = walk.CLAUSE_CALLEES | CLAUSE_CALLEES
+    renderer.QUOTE_MIXED_CASE = True
+    renderer.ONE_OF_OPTIONS = True
     grammar.CLASS_RULES = (
         (re.compile(IDENTIFIER_NAMES), IDENTIFIER_CLASS),
         (re.compile(WORD_NAMES), WORD_CLASS),
