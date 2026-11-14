@@ -2272,3 +2272,26 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.security_admin.alter-replication-group.set" = "87cc2fd792c41159d4703440be1ea790075abc098ceee247c4f9a6320e727c07"
 "sf.security_admin.alter-secret.set" = "cdb34694b32e8c7ccb0ac8e5d979fc91a30152318621458499c3cee29d86105b"
 "sf.security_admin.create-notification-integration-webhooks" = "ac4a73f272f9711c1ba7652b8c3bc6f096195570562adc5b3e6ad2e598286995"
+
+[[review]]
+id = "security-admin-025"
+family = "security_admin"
+parser_tree = "171a33a1ef814819de345e0cbad125b95879e347"
+reviewed_utc = "2026-11-14T10:46:56Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.create-network-policy.create-network-policy",
+  "sf.security_admin.create-network-policy.create-or-alter-network",
+  "sf.security_admin.create-packages-policy",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 4c29d0fb9; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.create-network-policy.create-network-policy" = "da30a444991a70532995371c83141ed60225d17d613fe89ce682e0367ccb4224"
+"sf.security_admin.create-network-policy.create-or-alter-network" = "118d800a47c5a5efce9d1c203e13b94f192d5c10f5f1073f6186cdef35d92ffb"
+"sf.security_admin.create-packages-policy" = "3365658fdd2e47bc99b15b24a108c657ae208813f37da7da5295bc097d43da2f"
+
+[review.definitions]
+"sf.security_admin.create-network-policy.create-network-policy" = "8aef6c1066ec8a681c7009fc4bcd08911d4070ee6255699a6d84357a71e1fa9e"
+"sf.security_admin.create-network-policy.create-or-alter-network" = "9038bffc8087252837a4b4ec7085295453410eccd28ceea6e73cc93750df0f72"
+"sf.security_admin.create-packages-policy" = "6a6b3ca058d17305887baa86c7a015e774dedb8d78d90166dc3acd3a6be5d65d"
