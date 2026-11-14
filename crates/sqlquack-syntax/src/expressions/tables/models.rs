@@ -9,6 +9,7 @@ use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::operators::models::PartitionSpec;
 use crate::expressions::queries::models::With;
+use crate::expressions::schema_objects::models::ObjectProperty;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::Interval;
 
@@ -360,6 +361,9 @@ pub struct DropObject {
     /// PostgreSQL: DROP INDEX CONCURRENTLY
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub concurrently: bool,
+    /// Snowflake options after the name, e.g. DROP ACCOUNT's `GRACE_PERIOD_IN_DAYS = 3`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub properties: Vec<ObjectProperty>,
 }
 
 /// UNDROP object statement (Snowflake, ClickHouse)
