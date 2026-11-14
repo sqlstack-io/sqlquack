@@ -154,7 +154,7 @@ impl Parser {
         }))))
     }
 
-    /// Refuse a string as the first value of a group property that names objects, and a quoted integration type.
+    /// Refuse a string as the first value of a group property that names objects, a quoted integration type, and a comma in its list followed by a string, another property or nothing, as Snowflake does.
     fn check_group_name_value(&self) -> Result<()> {
         let key = self.peek_text().to_ascii_uppercase();
         if !self.check_next(TokenType::Eq)
@@ -170,10 +170,36 @@ impl Parser {
                     "ALLOWED_INTEGRATION_TYPES"
                 )
         );
-        match refused {
-            true => Err(self.parse_error(format!("Expected a name as the value of {key}"))),
-            false => Ok(()),
+        if refused {
+            return Err(self.parse_error(format!("Expected a name as the value of {key}")));
         }
+        let at = |offset: usize| self.tokens.get(self.current + offset);
+        let mut offset = 3;
+        while let Some(token) = at(offset) {
+            match token.token_type {
+                TokenType::Semicolon => break,
+                TokenType::Comma => {
+                    let next_is_name = at(offset + 1).is_some_and(|next| {
+                        !matches!(next.token_type, TokenType::String | TokenType::Semicolon)
+                    }) && at(offset + 2)
+                        .is_none_or(|eq| eq.token_type != TokenType::Eq);
+                    if !next_is_name {
+                        return Err(self.parse_error(format!(
+                            "Expected a name after the comma in the list of {key}"
+                        )));
+                    }
+                }
+                _ if at(offset + 1).is_some_and(|next| next.token_type == TokenType::Eq) => break,
+                _ if token.text.eq_ignore_ascii_case("TAG")
+                    && at(offset + 1).is_some_and(|next| next.token_type == TokenType::LParen) =>
+                {
+                    break
+                }
+                _ => {}
+            }
+            offset += 1;
+        }
+        Ok(())
     }
 
     /// A Snowflake CREATE of a body policy, `<kind> <name> AS ( <signature> ) RETURNS <type> -> <body> [ <property> ... ]`; None for any other kind.
