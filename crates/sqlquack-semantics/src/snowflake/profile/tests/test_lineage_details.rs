@@ -56,6 +56,33 @@ fn given_a_query_when_tracing_lineage_then_values_rows_and_untraced_outputs_are_
             expected_rows_resolved: true,
         },
         LineageDetailTestCase {
+            description: "a user function's schema qualifier is no column it reads",
+            sql: "SELECT s1.f1(amount) AS v FROM orders",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("v", TransformKind::Expression, &["ORDERS.AMOUNT"], true)],
+            expected_row_sources: &[],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "a user function named with its database and schema reads only its arguments",
+            sql: "SELECT d1.s1.f1(amount) AS v FROM orders",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("v", TransformKind::Expression, &["ORDERS.AMOUNT"], true)],
+            expected_row_sources: &[],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
+            description: "the same user function with its schema left out traces the same way",
+            sql: "SELECT d1..f1(amount) AS v FROM orders",
+            dialect: Dialect::Snowflake,
+            profile: &SNOWFLAKE,
+            expected_outputs: &[("v", TransformKind::Expression, &["ORDERS.AMOUNT"], true)],
+            expected_row_sources: &[],
+            expected_rows_resolved: true,
+        },
+        LineageDetailTestCase {
             description: "a correlated EXISTS decides rows by both levels' columns",
             sql: "SELECT c.name FROM customers c \
                   WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id)",

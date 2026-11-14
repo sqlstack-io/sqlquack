@@ -244,6 +244,11 @@ pub(crate) trait DialectRules: Sync {
         let _ = name;
         false
     }
+
+    /// Whether `<name>.<function>( ... )` qualifies the function by its schema rather than calling a method on a column.
+    fn qualifies_calls_by_schema(&self) -> bool {
+        false
+    }
 }
 
 /// A value's type and nullability.

@@ -189,6 +189,17 @@ fn expression_lineage_level(
             let value_type: ValueType = (parts[0].data_type.clone(), parts[0].nullability);
             typed(combined(parts, floor), value_type)
         }
+        Expression::MethodCall(call)
+            if matches!(call.this, Expression::Column(_))
+                && dialect_rules(context.profile).qualifies_calls_by_schema() =>
+        {
+            let parts: Vec<Lineage> = call
+                .args
+                .iter()
+                .map(|argument| expression_lineage(argument, scope, context))
+                .collect();
+            combined(parts, TransformKind::Expression)
+        }
         _ if is_aggregate(expression) => {
             children_lineage(expression, scope, context, TransformKind::Aggregation)
         }
