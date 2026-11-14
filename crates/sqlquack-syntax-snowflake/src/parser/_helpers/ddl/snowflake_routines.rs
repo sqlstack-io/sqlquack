@@ -385,6 +385,8 @@ fn routine_property(kind: &str, value: Option<Expression>) -> ObjectProperty {
         kind: kind.to_owned(),
         name: None,
         value,
+        string_name: false,
+        quoted: false,
     }
 }
 

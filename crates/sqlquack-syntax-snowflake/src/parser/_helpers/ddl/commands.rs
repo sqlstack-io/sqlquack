@@ -369,6 +369,9 @@ impl Parser {
         };
 
         Ok(Expression::Grant(Box::new(Grant {
+            caller: None,
+            bulk: None,
+            container: None,
             privileges,
             kind,
             securable: Some(securable),
@@ -461,6 +464,9 @@ impl Parser {
         };
 
         Ok(Expression::Revoke(Box::new(Revoke {
+            caller: None,
+            bulk: None,
+            container: None,
             privileges,
             kind,
             securable: Some(securable),

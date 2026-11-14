@@ -739,6 +739,9 @@ impl Parser<'_> {
         self.expect_kw("TO")?;
         let principals: Vec<GrantPrincipal> = self.principals()?;
         Ok(Expression::Grant(Box::new(Grant {
+            caller: None,
+            bulk: None,
+            container: None,
             objects: Vec::new(),
             granted_by: None,
             options: Vec::new(),
@@ -810,6 +813,9 @@ impl Parser<'_> {
         self.expect_kw("FROM")?;
         let principals: Vec<GrantPrincipal> = self.principals()?;
         Ok(Expression::Revoke(Box::new(Revoke {
+            caller: None,
+            bulk: None,
+            container: None,
             objects: Vec::new(),
             granted_by: None,
             options: Vec::new(),

@@ -154,5 +154,7 @@ fn definition(name: Identifier, value: Option<Expression>) -> ObjectProperty {
         kind: String::new(),
         name: Some(name),
         value,
+        string_name: false,
+        quoted: false,
     }
 }

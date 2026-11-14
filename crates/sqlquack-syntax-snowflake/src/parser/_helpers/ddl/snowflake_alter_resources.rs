@@ -1,8 +1,9 @@
 //! Parser ddl: Snowflake ALTER of schemas, stages, file formats, routines, services and project objects.
 
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
+use crate::parser::_helpers::ddl::snowflake_alter::named_property;
+use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
-use crate::parser::_helpers::ddl::snowflake_alter::property_kind;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::TableRef;
@@ -500,7 +501,7 @@ impl Parser {
             return Err(self.parse_error("Expected a literal value"));
         }
         let value = self.parse_object_value()?;
-        Ok(property(&property_kind(&name), None, Some(value)))
+        Ok(parameter_property(&name, Some(value)))
     }
 
     /// Parse a listing's ADD VERSION after its keywords: `[ [ IF NOT EXISTS ] <version> ] FROM <location>` and properties.
@@ -777,14 +778,14 @@ impl Parser {
                         "CONTACT" => {
                             self.parse_contact_purpose(Self::parse_simple_qualified_name)?
                         }
-                        _ => self.parse_simple_qualified_name()?,
+                        _ => (self.parse_simple_qualified_name()?, false),
                     };
                     self.expect_token(TokenType::Eq)?;
                     let value = match word {
                         "CONTACT" => self.parse_name_operand()?,
                         _ => self.parse_object_value()?,
                     };
-                    properties.push(property(word, Some(name), Some(value)));
+                    properties.push(named_property(word, name, Some(value)));
                     if !self.match_token(TokenType::Comma) {
                         break;
                     }
@@ -799,7 +800,7 @@ impl Parser {
                     self.expect_token(TokenType::Eq)?;
                     self.parse_resource_value()?
                 };
-                properties.push(property(&property_kind(&name), None, Some(value)));
+                properties.push(parameter_property(&name, Some(value)));
                 self.match_token(TokenType::Comma);
             }
         }
@@ -823,16 +824,16 @@ impl Parser {
                         "CONTACT" => {
                             self.parse_contact_purpose(Self::parse_simple_qualified_name)?
                         }
-                        _ => self.parse_simple_qualified_name()?,
+                        _ => (self.parse_simple_qualified_name()?, false),
                     };
-                    properties.push(property(word, Some(name), None));
+                    properties.push(named_property(word, name, None));
                     if !self.match_token(TokenType::Comma) {
                         break;
                     }
                 }
             } else {
                 let name = self.parse_simple_name()?;
-                properties.push(property(&property_kind(&name), None, None));
+                properties.push(parameter_property(&name, None));
             }
             if !self.match_token(TokenType::Comma) {
                 return Ok(properties);

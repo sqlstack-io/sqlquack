@@ -1,8 +1,9 @@
 //! Parser ddl: Snowflake ALTER of account-level objects: failover and replication groups, connections, integrations and organization objects.
 
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
+use crate::parser::_helpers::ddl::snowflake_alter::named_property;
+use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
-use crate::parser::_helpers::ddl::snowflake_alter::property_kind;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::TableRef;
@@ -125,7 +126,7 @@ impl Parser {
             let name = self.parse_simple_name()?;
             self.expect_token(TokenType::Eq)?;
             let value = self.parse_group_values()?;
-            properties.push(property(&property_kind(&name), None, Some(value)));
+            properties.push(parameter_property(&name, Some(value)));
             if self.is_at_end() || self.check(TokenType::Semicolon) {
                 return Ok(properties);
             }
@@ -189,7 +190,7 @@ impl Parser {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
             let name = self.parse_simple_name()?;
-            properties.push(property(&property_kind(&name), None, None));
+            properties.push(parameter_property(&name, None));
             if !self.match_token(TokenType::Comma) {
                 return Ok(properties);
             }
@@ -263,10 +264,12 @@ impl Parser {
                     if let Some(scope) = self.match_policy_scope() {
                         action.push_str(&format!(" FOR ALL {scope}"));
                     }
-                    if set && (force || self.match_identifier("FORCE")) {
-                        action.push_str(" FORCE");
-                    }
-                    (operands, vec![])
+                    let forced = set && (force || self.match_identifier("FORCE"));
+                    let properties = match forced {
+                        true => vec![property("FORCE", None, None)],
+                        false => vec![],
+                    };
+                    (operands, properties)
                 } else if self.check_identifier("TAG")
                     && !self.check_next(TokenType::Eq)
                     && !self.is_statement_end_at(1)
@@ -352,7 +355,7 @@ impl Parser {
                 }
                 false => None,
             };
-            properties.push(property("CONTACT", Some(purpose), value));
+            properties.push(named_property("CONTACT", purpose, value));
             if !self.match_token(TokenType::Comma) {
                 return Ok(properties);
             }
@@ -411,7 +414,7 @@ impl Parser {
             let name = self.parse_simple_name()?;
             self.expect_token(TokenType::Eq)?;
             let value = self.parse_integration_value()?;
-            properties.push(property(&property_kind(&name), None, Some(value)));
+            properties.push(parameter_property(&name, Some(value)));
             if self.is_at_end() || self.check(TokenType::Semicolon) {
                 return Ok(properties);
             }
@@ -577,7 +580,7 @@ impl Parser {
             } else {
                 self.parse_object_value()?
             };
-            properties.push(property(&property_kind(&name), None, Some(value)));
+            properties.push(parameter_property(&name, Some(value)));
             self.match_token(TokenType::Comma);
             if self.is_at_end() || self.check(TokenType::Semicolon) {
                 return Ok(properties);
@@ -590,7 +593,7 @@ impl Parser {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
             let name = self.parse_simple_name()?;
-            properties.push(property(&property_kind(&name), None, None));
+            properties.push(parameter_property(&name, None));
             if !self.match_token(TokenType::Comma) {
                 return Ok(properties);
             }

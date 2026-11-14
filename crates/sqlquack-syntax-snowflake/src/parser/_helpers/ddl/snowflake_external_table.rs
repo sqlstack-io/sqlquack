@@ -328,6 +328,8 @@ impl Parser {
                     Expression::Table(Box::new(tag)),
                     value,
                 )))),
+                string_name: false,
+                quoted: false,
             });
             if !self.match_token(TokenType::Comma) {
                 break;

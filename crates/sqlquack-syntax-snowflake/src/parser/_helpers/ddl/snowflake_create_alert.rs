@@ -1,6 +1,7 @@
 //! Parser ddl: Snowflake CREATE ALERT, with its condition and action or FROM TEMPLATE, checked against its grammar.
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_alter::with_keyword;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -70,11 +71,15 @@ impl Parser {
             && !self.check(TokenType::Semicolon)
             && !(!template && self.check(TokenType::If))
         {
-            if self.check(TokenType::With) && !self.check_next(TokenType::Eq) {
+            let with = self.check(TokenType::With) && !self.check_next(TokenType::Eq);
+            if with {
                 self.skip();
                 if !self.check_identifier("TAG") {
                     return Err(self.parse_error("Expected TAG after WITH"));
                 }
+                let tags = self.parse_create_property_item()?;
+                properties.extend(with_keyword(true, tags));
+                continue;
             }
             if let Some(state) = ALERT_STATES
                 .iter()

@@ -1,5 +1,6 @@
 //! Snowflake ALTER USER (credentials, MFA, delegated authorizations, policies, properties, tags) and ALTER SHARE.
 
+use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::{alter_object, property, property_kind};
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::TableRef;
@@ -203,10 +204,11 @@ impl Parser {
                 return Ok((action, (vec![], vec![])));
             }
             let operands = vec![self.parse_user_operand()?];
-            if self.match_identifier("FORCE") {
-                action.push_str(" FORCE");
-            }
-            return Ok((action, (operands, vec![])));
+            let properties = match self.match_identifier("FORCE") {
+                true => vec![property("FORCE", None, None)],
+                false => vec![],
+            };
+            return Ok((action, (operands, properties)));
         }
         if self.check_identifier("TAG") && !self.check_next(TokenType::Eq) {
             action.push_str(" TAG");
@@ -230,7 +232,7 @@ impl Parser {
                 true => self.parse_routine_value_list()?,
                 false => self.parse_object_value()?,
             };
-            properties.push(property(&property_kind(&name), None, Some(value)));
+            properties.push(parameter_property(&name, Some(value)));
             let comma = self.match_token(TokenType::Comma);
             if self.is_statement_end_at(0) {
                 if comma {
@@ -246,7 +248,7 @@ impl Parser {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
             let name = self.parse_simple_name()?;
-            properties.push(property(&property_kind(&name), None, None));
+            properties.push(parameter_property(&name, None));
             if !self.match_token(TokenType::Comma) {
                 return Ok(properties);
             }

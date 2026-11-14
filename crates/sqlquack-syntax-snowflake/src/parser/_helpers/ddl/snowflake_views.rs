@@ -275,11 +275,14 @@ impl Parser {
         self.expect_token(TokenType::LParen)?;
         let mut contacts: Vec<Expression> = Vec::new();
         loop {
-            let purpose = self.parse_contact_purpose(Self::parse_external_name)?;
+            let purpose = match self.parse_contact_purpose(Self::parse_external_name)? {
+                (purpose, true) => Expression::string(purpose.name),
+                (purpose, false) => Expression::Identifier(purpose),
+            };
             self.expect_token(TokenType::Eq)?;
             let contact = self.parse_external_name()?;
             contacts.push(Expression::PropertyEQ(Box::new(BinaryOp::new(
-                Expression::Identifier(purpose),
+                purpose,
                 Expression::Identifier(contact),
             ))));
             if !self.match_token(TokenType::Comma) {

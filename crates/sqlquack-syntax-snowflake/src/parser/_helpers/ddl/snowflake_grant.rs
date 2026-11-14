@@ -63,7 +63,9 @@ impl Parser {
         let role = ROLE_GRANTS
             .iter()
             .find(|(kind, _)| self.match_text_seq(&kind.split(' ').collect::<Vec<_>>()));
-        let (privileges, kind, securable, function_params, grantees, bare) = match role {
+        let mut caller: Option<String> = None;
+        let mut target = GrantTarget::default();
+        let (privileges, grantees, bare) = match role {
             Some((kind, grantees)) => {
                 let securable = if matches!(*kind, "SERVICE ROLE") {
                     let service = self.parse_grant_securable()?;
@@ -77,41 +79,40 @@ impl Parser {
                 } else {
                     Some(self.parse_grant_securable()?)
                 };
-                (
-                    Vec::new(),
-                    Some(kind.to_string()),
-                    securable,
-                    Vec::new(),
-                    *grantees,
-                    false,
-                )
+                target.kind = Some(kind.to_string());
+                target.securable = securable;
+                (Vec::new(), *grantees, false)
             }
             None => {
-                let mut privileges = vec![self.parse_snowflake_privilege()?];
+                let (first, qualifier) = self.parse_snowflake_privilege()?;
+                let mut privileges = vec![first];
                 while self.match_token(TokenType::Comma) {
-                    privileges.push(self.parse_snowflake_privilege()?);
+                    let (next, own) = self.parse_snowflake_privilege()?;
+                    if own.is_some() && own != qualifier {
+                        return Err(self
+                            .parse_error("INHERITED and CALLER qualify the whole privilege list"));
+                    }
+                    privileges.push(next);
                 }
-                qualify_privileges(&mut privileges);
                 self.expect_token(TokenType::On)?;
-                let inherited = privileges
-                    .iter()
-                    .any(|privilege| privilege.name.contains("INHERITED"));
-                let (kind, securable) = self.parse_grant_target(inherited)?;
-                let function_params = if self.check(TokenType::LParen) {
-                    self.parse_function_param_types()?
-                } else {
-                    Vec::new()
-                };
-                (
-                    privileges,
-                    kind,
-                    securable,
-                    function_params,
-                    PRIVILEGE_GRANTEES,
-                    true,
-                )
+                let inherited = qualifier
+                    .as_deref()
+                    .is_some_and(|words| words.contains("INHERITED"));
+                caller = qualifier;
+                target = self.parse_grant_target(inherited)?;
+                if self.check(TokenType::LParen) {
+                    target.function_params = self.parse_function_param_types()?;
+                }
+                (privileges, PRIVILEGE_GRANTEES, true)
             }
         };
+        let GrantTarget {
+            kind,
+            securable,
+            function_params,
+            bulk,
+            container,
+        } = target;
         self.expect_token(if revoke {
             TokenType::From
         } else {
@@ -122,6 +123,9 @@ impl Parser {
             let cascade = self.match_token(TokenType::Cascade);
             let restrict = !cascade && self.match_token(TokenType::Restrict);
             return Ok(Expression::Revoke(Box::new(Revoke {
+                caller,
+                bulk,
+                container,
                 privileges,
                 kind,
                 securable,
@@ -149,6 +153,9 @@ impl Parser {
             None
         };
         Ok(Expression::Grant(Box::new(Grant {
+            caller,
+            bulk,
+            container,
             privileges,
             kind,
             securable,
@@ -163,27 +170,25 @@ impl Parser {
         })))
     }
 
-    /// One privilege: ALL [ INHERITED ] [ CALLER ] [ PRIVILEGES ], CREATE SNOWFLAKE.<class>, USE AI FUNCTION <name>, or a documented one after INHERITED and CALLER.
-    fn parse_snowflake_privilege(&mut self) -> Result<Privilege> {
+    /// One privilege: ALL [ INHERITED ] [ CALLER ] [ PRIVILEGES ], CREATE SNOWFLAKE.<class>, USE AI FUNCTION <name>, or a documented one after INHERITED and CALLER; with its INHERITED and CALLER words.
+    fn parse_snowflake_privilege(&mut self) -> Result<(Privilege, Option<String>)> {
         let mut words: Vec<String> = Vec::new();
-        if self.match_text_seq(&["ALL"]) {
-            words.push("ALL".to_string());
-            for word in ["INHERITED", "CALLER"] {
-                if self.match_text_seq(&[word]) {
-                    words.push(word.to_string());
-                }
-            }
-            if self.match_text_seq(&["PRIVILEGES"]) {
-                words.push("PRIVILEGES".to_string());
-            } else if words.len() > 1 {
-                return Err(self.parse_error("Expected PRIVILEGES"));
-            }
-            return Ok(privilege(words.join(" ")));
-        }
+        let all = self.match_text_seq(&["ALL"]);
+        let mut qualifiers: Vec<&str> = Vec::new();
         for word in ["INHERITED", "CALLER"] {
             if self.match_text_seq(&[word]) {
-                words.push(word.to_string());
+                qualifiers.push(word);
             }
+        }
+        let qualifier = (!qualifiers.is_empty()).then(|| qualifiers.join(" "));
+        if all {
+            words.push("ALL".to_string());
+            if self.match_text_seq(&["PRIVILEGES"]) {
+                words.push("PRIVILEGES".to_string());
+            } else if qualifier.is_some() {
+                return Err(self.parse_error("Expected PRIVILEGES"));
+            }
+            return Ok((privilege(words.join(" ")), qualifier));
         }
         if self.check_text_seq(&["CREATE", "SNOWFLAKE"]) && self.check_at(2, TokenType::Dot) {
             self.match_text_seq(&["CREATE", "SNOWFLAKE"]);
@@ -215,33 +220,38 @@ impl Parser {
             self.match_text_seq(&parts);
             words.push(parts.join(" "));
         }
-        Ok(privilege(words.join(" ")))
+        Ok((privilege(words.join(" ")), qualifier))
     }
 
     /// The target after ON: ACCOUNT, { ALL | FUTURE } <plural> IN <container>, or [ <kind> ] <name>; IN ACCOUNT takes an INHERITED privilege, and an unlisted kind is one word that neither starts a listed kind of several words nor is a refused tail of one.
-    fn parse_grant_target(
-        &mut self,
-        inherited: bool,
-    ) -> Result<(Option<String>, Option<Identifier>)> {
+    fn parse_grant_target(&mut self, inherited: bool) -> Result<GrantTarget> {
         if self.check_identifier("ACCOUNT") && self.check_grant_end(1) {
             self.skip();
-            return Ok((Some("ACCOUNT".to_string()), None));
+            return Ok(GrantTarget {
+                kind: Some("ACCOUNT".to_string()),
+                ..GrantTarget::default()
+            });
         }
         let future = self.check_identifier("FUTURE");
         if future || self.check_text_seq(&["ALL"]) {
-            let mut words = vec![self.advance_text()?.to_ascii_uppercase()];
+            let bulk = Some(self.advance_text()?.to_ascii_uppercase());
+            let mut words: Vec<String> = Vec::new();
             while !self.check(TokenType::In) {
                 words.push(self.parse_grant_name_part()?.name.to_ascii_uppercase());
             }
-            if words.len() == 1 || words.last().is_some_and(|word| !word.ends_with('S')) {
+            if words.is_empty() || words.last().is_some_and(|word| !word.ends_with('S')) {
                 return Err(self.parse_error("Expected the plural of an object kind"));
             }
             self.expect_token(TokenType::In)?;
-            words.push("IN".to_string());
+            let kind = Some(words.join(" "));
             if !future && inherited && self.check_identifier("ACCOUNT") {
                 self.skip();
-                words.push("ACCOUNT".to_string());
-                return Ok((Some(words.join(" ")), None));
+                return Ok(GrantTarget {
+                    kind,
+                    bulk,
+                    container: Some("ACCOUNT".to_string()),
+                    ..GrantTarget::default()
+                });
             }
             let containers: &[&str] = if future {
                 &["DATABASE", "SCHEMA"]
@@ -251,8 +261,13 @@ impl Parser {
             let Some(container) = self.match_grant_kind(containers) else {
                 return Err(self.parse_error("Expected DATABASE or SCHEMA"));
             };
-            words.push(container);
-            return Ok((Some(words.join(" ")), Some(self.parse_grant_securable()?)));
+            return Ok(GrantTarget {
+                kind,
+                bulk,
+                container: Some(container),
+                securable: Some(self.parse_grant_securable()?),
+                function_params: Vec::new(),
+            });
         }
         let kind = self.match_grant_kind(SNOWFLAKE_GRANT_KINDS).or_else(|| {
             let generic = self.check_grant_name_start(0)
@@ -276,7 +291,11 @@ impl Parser {
                 word
             })
         });
-        Ok((kind, Some(self.parse_grant_securable()?)))
+        Ok(GrantTarget {
+            kind,
+            securable: Some(self.parse_grant_securable()?),
+            ..GrantTarget::default()
+        })
     }
 
     /// The grantee after TO or FROM: one of `kinds` and its name, or a bare role name when `bare`.
@@ -424,25 +443,12 @@ fn written(part: &Identifier) -> String {
     }
 }
 
-/// INHERITED and CALLER qualify the whole privilege list, so every later privilege takes the first one's qualifier.
-fn qualify_privileges(privileges: &mut [Privilege]) {
-    let Some((first, rest)) = privileges.split_first_mut() else {
-        return;
-    };
-    let words: Vec<&str> = first.name.split(' ').collect();
-    let mut qualifiers: Vec<&str> = Vec::new();
-    for word in ["INHERITED", "CALLER"] {
-        if words.contains(&word) {
-            qualifiers.push(word);
-        }
-    }
-    let qualifier: String = qualifiers.join(" ");
-    if qualifier.is_empty() || first.name.starts_with("ALL ") {
-        return;
-    }
-    for privilege in rest {
-        if !privilege.name.starts_with(&qualifier) {
-            privilege.name = format!("{qualifier} {}", privilege.name);
-        }
-    }
+/// What a privilege grant is on: the object kind, `ALL` or `FUTURE` with the container kind after IN, the object, and a function's parameter types.
+#[derive(Default)]
+struct GrantTarget {
+    kind: Option<String>,
+    securable: Option<Identifier>,
+    function_params: Vec<String>,
+    bulk: Option<String>,
+    container: Option<String>,
 }

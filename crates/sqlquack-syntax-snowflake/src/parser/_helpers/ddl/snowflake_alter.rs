@@ -4,6 +4,7 @@ use crate::parser::constants::ONLINE_FEATURE_TABLE;
 use crate::parser::constants::SNOWFLAKE_ALTER_KINDS;
 use crate::parser::constants::TASK_ACTIONS;
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::names::main::identifier_from_token::identifier_from_token;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::schema_objects::models::AlterObject;
@@ -231,14 +232,14 @@ impl Parser {
         self.expect_identifier_or_safe_keyword_with_quoted()
     }
 
-    /// Parse a contact purpose: a name read by `name`, or a string, which Snowflake also admits; a string keeps its quotes.
+    /// Parse a contact purpose: a name read by `name`, or a string, which Snowflake also admits; the flag says it was a string.
     pub(super) fn parse_contact_purpose(
         &mut self,
         name: fn(&mut Self) -> Result<Identifier>,
-    ) -> Result<Identifier> {
+    ) -> Result<(Identifier, bool)> {
         match self.check(TokenType::String) {
-            true => Ok(Identifier::new(format!("'{}'", self.advance_text()?))),
-            false => name(self),
+            true => Ok((identifier_from_token(self.advance()?, false), true)),
+            false => Ok((name(self)?, false)),
         }
     }
 
@@ -342,7 +343,7 @@ impl Parser {
                     } else {
                         None
                     };
-                    properties.push(property("CONTACT", Some(purpose), value));
+                    properties.push(named_property("CONTACT", purpose, value));
                     if !self.match_token(TokenType::Comma) {
                         break;
                     }
@@ -379,7 +380,7 @@ impl Parser {
                 } else {
                     None
                 };
-                properties.push(property(&property_kind(&name), None, value));
+                properties.push(parameter_property(&name, value));
             }
             let comma = self.match_token(TokenType::Comma);
             if self.is_at_end() || self.check(TokenType::Semicolon) || !set && !comma {
@@ -469,7 +470,7 @@ impl Parser {
             "APPLY SNAPSHOT POLICY" => {
                 operands.push(Expression::Table(Box::new(self.parse_object_name()?)));
                 if self.match_identifier("FORCE") {
-                    action.push_str(" FORCE");
+                    properties.push(property("FORCE", None, None));
                 }
             }
             "DELETE SNAPSHOT IDENTIFIER" => operands.push(self.parse_string_value()?),
@@ -511,7 +512,7 @@ impl Parser {
     /// Parse ALTER TAG after its kind.
     fn parse_alter_tag(&mut self) -> Result<Expression> {
         let head = self.parse_alter_object_head()?;
-        let mut action = self.expect_alter_words(&[
+        let action = self.expect_alter_words(&[
             &["RENAME", "TO"],
             &["ADD", "ALLOWED_VALUES"],
             &["DROP", "ALLOWED_VALUES"],
@@ -531,13 +532,13 @@ impl Parser {
             "SET DATA MOVEMENT POLICY" => {
                 operands.push(Expression::Table(Box::new(self.parse_object_name()?)));
                 if self.match_identifier("FORCE") {
-                    action.push_str(" FORCE");
+                    properties.push(property("FORCE", None, None));
                 }
             }
             "SET MASKING POLICY" => {
                 operands = self.parse_masking_policies()?;
                 if self.match_identifier("FORCE") {
-                    action.push_str(" FORCE");
+                    properties.push(property("FORCE", None, None));
                 }
             }
             "UNSET MASKING POLICY" => operands = self.parse_masking_policies()?,
@@ -811,7 +812,7 @@ impl Parser {
             } else {
                 self.parse_object_value()?
             };
-            properties.push(property(&property_kind(&name), None, Some(value)));
+            properties.push(parameter_property(&name, Some(value)));
             self.match_token(TokenType::Comma);
             if self.is_at_end() || self.check(TokenType::Semicolon) {
                 return Ok(properties);
@@ -872,6 +873,14 @@ pub(super) fn property_kind(name: &Identifier) -> String {
     }
 }
 
+/// A property keyed by a parameter name: upper-cased unless quoted, with the quoting kept.
+pub(super) fn parameter_property(name: &Identifier, value: Option<Expression>) -> ObjectProperty {
+    ObjectProperty {
+        quoted: name.quoted,
+        ..property(&property_kind(name), None, value)
+    }
+}
+
 /// One property of kind `kind`.
 pub(super) fn property(
     kind: &str,
@@ -882,5 +891,33 @@ pub(super) fn property(
         kind: kind.to_owned(),
         name,
         value,
+        string_name: false,
+        quoted: false,
+    }
+}
+
+/// `properties` with WITH added to each kind when `with`, so a written WITH stays in the tree.
+pub(super) fn with_keyword(with: bool, properties: Vec<ObjectProperty>) -> Vec<ObjectProperty> {
+    match with {
+        true => properties
+            .into_iter()
+            .map(|found| ObjectProperty {
+                kind: format!("WITH {}", found.kind),
+                ..found
+            })
+            .collect(),
+        false => properties,
+    }
+}
+
+/// A property named by `(name, string_name)`, as `parse_contact_purpose` returns, flagging a name written as a string.
+pub(super) fn named_property(
+    kind: &str,
+    (name, string_name): (Identifier, bool),
+    value: Option<Expression>,
+) -> ObjectProperty {
+    ObjectProperty {
+        string_name,
+        ..property(kind, Some(name), value)
     }
 }

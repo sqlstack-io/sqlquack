@@ -1,5 +1,6 @@
 //! Parser ddl: CREATE, ALTER and DROP of a Snowflake class instance, such as `SNOWFLAKE.ML.FORECAST`, checked against its grammar.
 
+use crate::parser::_helpers::ddl::snowflake_alter::with_keyword;
 use crate::parser::_helpers::ddl::snowflake_alter::{alter_object, property};
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
@@ -79,12 +80,15 @@ impl Parser {
             }
         };
         let mut properties: Vec<ObjectProperty> = Vec::new();
-        if self.match_text_seq(&["WITH", "TAG"]) || self.match_text_seq(&["TAG"]) {
-            properties.extend(self.parse_external_tags()?);
+        let with = self.match_text_seq(&["WITH", "TAG"]);
+        if with || self.match_text_seq(&["TAG"]) {
+            properties.extend(with_keyword(with, self.parse_external_tags()?));
         }
-        if self.match_text_seq(&["WITH", "COMMENT"]) || self.match_text_seq(&["COMMENT"]) {
+        let with = self.match_text_seq(&["WITH", "COMMENT"]);
+        if with || self.match_text_seq(&["COMMENT"]) {
             self.expect_token(TokenType::Eq)?;
-            properties.push(property("COMMENT", None, Some(self.parse_object_value()?)));
+            let comment = property("COMMENT", None, Some(self.parse_object_value()?));
+            properties.extend(with_keyword(with, vec![comment]));
         }
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
             kind,
