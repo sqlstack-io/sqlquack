@@ -52,11 +52,13 @@ from scripts.grammar_obligations.constants import (
     OPTION_ASSIGNMENTS,
     PARENS,
     PATH_SEPARATORS,
+    REPEATED_ITEMS,
     STRING_CLASS,
     SUBGRAMMAR_CLASS,
     TARGET_BREAK,
     TARGET_ELLIPSIS,
     TARGET_WIDTH,
+    TOKEN_ELISION,
     TOKEN_KEYWORD,
     TOKEN_LITERAL,
     TOKEN_PUNCT,
@@ -94,6 +96,7 @@ class Walk:
         self.argument_classes: Counter[str] = Counter()
         self.widest: int = 0
         self.occurrences: Counter[tuple[int, tuple[tuple[int, int], ...], str]] = Counter()
+        self.repeating: int = 0
 
     def target(self, *, text: str, tail: str = "") -> str:
         """A per-form unique target, shortened before `tail`; repeats get `#2`, `#3` …"""
@@ -123,7 +126,8 @@ class Walk:
     ) -> list[str]:
         """Walk a sequence; returns the option_present targets of its options."""
         options: list[str] = []
-        omission_is_absence: bool = len(nodes) == 1 and (branch or where.startswith("["))
+        listed: int = len([node for node in nodes if node.token_kind != TOKEN_ELISION])
+        omission_is_absence: bool = listed == 1 and (branch or where.startswith("["))
         for position, node in enumerate(nodes):
             argument: bool = self._call_argument()
             prior: str = self.previous
@@ -288,8 +292,8 @@ class Walk:
             )
 
     def valid(self) -> Spec:
-        """The packed positive case that contains the current position."""
-        if self.path and self.form in UNPACKED_FORMS:
+        """The packed positive case that contains the current position; a list item's own case."""
+        if self.path and (self.form in UNPACKED_FORMS or self.repeating):
             return self.spec(action=ACTION_MIN_OPTIONS)
         if self.path:
             return self.spec(action=ACTION_ALL_OPTIONS)
@@ -318,11 +322,13 @@ class Walk:
         )
         if len(node.branches) > 1:
             self._alternatives(node=node, text=text)
-        if repeated:
+        if repeated and not REPEATED_ITEMS:
             return [present]
         outer: frozenset[int] = self.path
         self.path = outer | {id(node)}
+        self.repeating += repeated
         self._branches(node=node, where=present, top=False, branch=False)
+        self.repeating -= repeated
         self.path = outer
         return [present]
 

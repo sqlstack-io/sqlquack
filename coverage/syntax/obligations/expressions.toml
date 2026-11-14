@@ -3086,6 +3086,20 @@ required = true
 target = "[ \"[\" <index> \"]\" ... ]"
 
 [[obligation]]
+id = "sf.expressions.data-types-semistructured.array-index-access.o010"
+kind = "required_operand_missing"
+required = true
+target = "<index> in [ \"[\" <index> \"]\" ... ]"
+note = "omit <index>"
+
+[[obligation]]
+id = "sf.expressions.data-types-semistructured.array-index-access.o011"
+kind = "operand_type_class"
+required = true
+target = "<index> in [ \"[\" <index> \"]\" ... ]"
+note = "a valid operand"
+
+[[obligation]]
 id = "sf.expressions.data-types-semistructured.array-index-access.o008"
 kind = "negative_neighbour"
 required = true
@@ -6120,6 +6134,20 @@ id = "sf.expressions.snowflake-db-classes.o016"
 kind = "option_absent"
 required = true
 target = "[ , <arg> ... ]"
+
+[[obligation]]
+id = "sf.expressions.snowflake-db-classes.o027"
+kind = "required_operand_missing"
+required = true
+target = "<arg> in [ , <arg> ... ]"
+note = "omit <arg>"
+
+[[obligation]]
+id = "sf.expressions.snowflake-db-classes.o028"
+kind = "operand_type_class"
+required = true
+target = "<arg> in [ , <arg> ... ]"
+note = "a valid operand"
 
 [[obligation]]
 id = "sf.expressions.snowflake-db-classes.o008"

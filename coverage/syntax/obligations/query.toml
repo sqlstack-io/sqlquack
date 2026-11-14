@@ -7383,6 +7383,107 @@ required = true
 target = "[ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
 
 [[obligation]]
+id = "sf.query.order-by.orderitem.o035"
+kind = "alternative"
+required = true
+target = "{ <column_alias> | <position> | <expr> } → <column_alias> #2"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o036"
+kind = "alternative"
+required = true
+target = "{ <column_alias> | <position> | <expr> } → <position> #2"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o037"
+kind = "alternative"
+required = true
+target = "{ <column_alias> | <position> | <expr> } → <expr> #2"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o038"
+kind = "operand_type_class"
+required = true
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o039"
+kind = "negative_neighbour"
+required = true
+target = "<column_alias> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+note = "a string literal in place of <column_alias>"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o040"
+kind = "operand_type_class"
+required = true
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o041"
+kind = "negative_neighbour"
+required = true
+target = "<position> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+note = "a string literal in place of <position>"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o042"
+kind = "operand_type_class"
+required = true
+target = "<expr> in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o043"
+kind = "option_present"
+required = true
+target = "[ { ASC | DESC } ] #2"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o044"
+kind = "option_absent"
+required = true
+target = "[ { ASC | DESC } ] #2"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o045"
+kind = "alternative"
+required = true
+target = "{ ASC | DESC } → ASC #2"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o046"
+kind = "alternative"
+required = true
+target = "{ ASC | DESC } → DESC #2"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o047"
+kind = "option_present"
+required = true
+target = "[ NULLS { FIRST | LAST } ] #2"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o048"
+kind = "option_absent"
+required = true
+target = "[ NULLS { FIRST | LAST } ] #2"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o049"
+kind = "alternative"
+required = true
+target = "{ FIRST | LAST } → FIRST #2"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o050"
+kind = "alternative"
+required = true
+target = "{ FIRST | LAST } → LAST #2"
+
+[[obligation]]
 id = "sf.query.order-by.orderitem.o006"
 kind = "negative_neighbour"
 required = true
@@ -7411,6 +7512,18 @@ id = "sf.query.order-by.orderitem.o027"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o051"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <column_alias> | <position> | <expr> } in [ , { <column_alias> | <position> | <expr> } [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] , ... ]"
+
+[[obligation]]
+id = "sf.query.order-by.orderitem.o052"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { FIRST | LAST } in [ NULLS { FIRST | LAST } ] #2"
 
 [[obligation]]
 id = "sf.query.order-by.orderitem.o028"
@@ -7640,6 +7753,51 @@ id = "sf.query.pivot.o027"
 kind = "option_absent"
 required = true
 target = "[ , <pivot_value_2> [ [ AS ] <alias> ] ... ]"
+
+[[obligation]]
+id = "sf.query.pivot.o062"
+kind = "operand_type_class"
+required = true
+target = "<pivot_value_2> in [ , <pivot_value_2> [ [ AS ] <alias> ] ... ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.query.pivot.o063"
+kind = "option_present"
+required = true
+target = "[ [ AS ] <alias> ] #3"
+
+[[obligation]]
+id = "sf.query.pivot.o064"
+kind = "option_absent"
+required = true
+target = "[ [ AS ] <alias> ] #3"
+
+[[obligation]]
+id = "sf.query.pivot.o065"
+kind = "option_present"
+required = true
+target = "[ AS ] #3"
+
+[[obligation]]
+id = "sf.query.pivot.o066"
+kind = "option_absent"
+required = true
+target = "[ AS ] #3"
+
+[[obligation]]
+id = "sf.query.pivot.o067"
+kind = "operand_type_class"
+required = true
+target = "<alias> in [ [ AS ] <alias> ] #3"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.query.pivot.o068"
+kind = "negative_neighbour"
+required = true
+target = "<alias> in [ [ AS ] <alias> ] #3"
+note = "a string literal in place of <alias>"
 
 [[obligation]]
 id = "sf.query.pivot.o028"
@@ -10672,6 +10830,18 @@ id = "sf.query.values.o028"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "sf.query.values.o041"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ , ( ... ) ]"
+
+[[obligation]]
+id = "sf.query.values.o042"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , ( ... ) ]"
 
 [[obligation]]
 id = "sf.query.values.o040"

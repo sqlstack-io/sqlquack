@@ -81,6 +81,13 @@ class DerivedLimitTestCase:
 
 
 @dataclass(frozen=True)
+class ListItemTestCase:
+    description: str
+    kind: str
+    expected_sql: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class DocumentedRefusalTestCase:
     description: str
     grammar: str
