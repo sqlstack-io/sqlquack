@@ -164,3 +164,34 @@ fn given_an_empty_statement_in_a_snowflake_block_when_parsing_then_acceptance_ma
         },
     ]);
 }
+
+#[test]
+fn given_a_string_after_a_comma_in_a_group_name_list_when_parsing_then_acceptance_matches_snowflake(
+) {
+    assert_acceptance_matches_snowflake(&[
+        AcceptanceTestCase {
+            description: "a string after a comma in a list of shares (recorded errno 1003)",
+            sql: "ALTER FAILOVER GROUP v1 SET ALLOWED_SHARES = v1 , 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a string after a comma in the object types (recorded errno 1003)",
+            sql: "ALTER REPLICATION GROUP v1 SET OBJECT_TYPES = DATABASES , 'TABLE' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a single string for a list of shares (recorded errno 2003)",
+            sql: "ALTER FAILOVER GROUP v1 SET ALLOWED_SHARES = 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "names after each comma in a list of shares (recorded errno 2003)",
+            sql: "ALTER FAILOVER GROUP v1 SET ALLOWED_SHARES = v1 , v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ]);
+}

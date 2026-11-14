@@ -4,6 +4,7 @@ use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::named_property;
 use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::constants::SNOWFLAKE_GROUP_NAME_PROPERTIES;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::TableRef;
@@ -125,7 +126,7 @@ impl Parser {
         loop {
             let name = self.parse_simple_name()?;
             self.expect_token(TokenType::Eq)?;
-            let value = self.parse_group_values()?;
+            let value = self.parse_group_values(&name.name)?;
             properties.push(parameter_property(&name, Some(value)));
             if self.is_at_end() || self.check(TokenType::Semicolon) {
                 return Ok(properties);
@@ -133,10 +134,14 @@ impl Parser {
         }
     }
 
-    /// Parse a group property's values: comma-separated literals or names, a name of several words such as `SECURITY INTEGRATIONS`.
-    fn parse_group_values(&mut self) -> Result<Expression> {
+    /// Parse a group property's values: comma-separated literals or names, a name of several words such as `SECURITY INTEGRATIONS`; a property of names refuses a string after a comma, as Snowflake does.
+    fn parse_group_values(&mut self, key: &str) -> Result<Expression> {
+        let names = SNOWFLAKE_GROUP_NAME_PROPERTIES.contains(&key.to_ascii_uppercase().as_str());
         let mut values: Vec<Expression> = Vec::new();
         loop {
+            if names && !values.is_empty() && self.check(TokenType::String) {
+                return Err(self.parse_error(format!("Expected a name in the list of {key}")));
+            }
             let value = self.parse_object_value()?;
             let Expression::Table(mut name) = value else {
                 values.push(value);
