@@ -70,3 +70,54 @@ fn given_a_snowflake_option_whose_value_is_a_string_when_parsing_then_a_bare_wor
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_warehouse_create_when_parsing_then_or_replace_and_if_not_exists_are_not_combined(
+) {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "a warehouse with both (recorded errno 1003)",
+            sql: "CREATE OR REPLACE WAREHOUSE IF NOT EXISTS v1 WITH WAREHOUSE_SIZE = XSMALL ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an interactive warehouse with both (recorded errno 1003)",
+            sql: "CREATE OR REPLACE INTERACTIVE WAREHOUSE IF NOT EXISTS v1 TABLES ( v1 , v1 ) WITH WAREHOUSE_SIZE = XSMALL ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a warehouse with OR REPLACE alone",
+            sql: "CREATE OR REPLACE WAREHOUSE v1 WITH WAREHOUSE_SIZE = XSMALL ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a warehouse with IF NOT EXISTS alone",
+            sql: "CREATE WAREHOUSE IF NOT EXISTS v1 WITH WAREHOUSE_SIZE = XSMALL ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an interactive warehouse with IF NOT EXISTS alone",
+            sql: "CREATE INTERACTIVE WAREHOUSE IF NOT EXISTS v1 TABLES ( v1 , v1 ) WITH WAREHOUSE_SIZE = XSMALL ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "another kind keeps both (recorded errno 1004)",
+            sql: "CREATE OR REPLACE CONTACT IF NOT EXISTS v1 URL = 'm' COMMENT = 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
