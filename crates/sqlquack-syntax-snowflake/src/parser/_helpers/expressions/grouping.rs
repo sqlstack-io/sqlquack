@@ -1146,14 +1146,12 @@ impl Parser {
                 quoted: false,
                 trailing_comments: Vec::new(),
                 span: None,
-                omitted: false,
             },
             _ => Identifier {
                 name: String::new(),
                 quoted: false,
                 trailing_comments: Vec::new(),
                 span: None,
-                omitted: false,
             },
         };
 
@@ -1166,7 +1164,6 @@ impl Parser {
                     quoted: token.token_type == TokenType::QuotedIdentifier,
                     trailing_comments: Vec::new(),
                     span: Some(token.span),
-                    omitted: false,
                 });
             } else {
                 break;
@@ -1776,7 +1773,6 @@ impl Parser {
                 quoted: false,
                 trailing_comments: Vec::new(),
                 span: None,
-                omitted: false,
             })));
         }
         if self.match_text_seq(&["SQL", "SECURITY"]) {

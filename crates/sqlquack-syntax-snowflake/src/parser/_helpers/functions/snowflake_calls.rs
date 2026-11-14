@@ -194,7 +194,7 @@ impl Parser {
         }
     }
 
-    /// Snowflake's `<database>..<function>( ... )`, the schema left out; it is kept as an omitted part.
+    /// Snowflake's `<database>..<function>( ... )`, the schema left out; it is kept as an empty part.
     pub(crate) fn parse_snowflake_default_schema_call(
         &mut self,
         database: Identifier,
@@ -213,7 +213,7 @@ impl Parser {
         };
         self.expect_token(TokenType::RParen)?;
         let schema = Expression::Column(Box::new(Column {
-            name: Identifier::omitted(),
+            name: Identifier::new(String::new()),
             table: Some(database),
             join_mark: false,
             trailing_comments: Vec::new(),

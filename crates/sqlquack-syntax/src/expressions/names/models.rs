@@ -140,9 +140,6 @@ pub struct Identifier {
     /// Source range including quote delimiters; absent when synthetic, ignored by equality.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub span: Option<Span>,
-    /// A part of a qualified name the SQL left out between two dots, as the schema of `a..b`; its name is empty.
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub omitted: bool,
 }
 
 impl PartialEq for Identifier {
@@ -150,7 +147,6 @@ impl PartialEq for Identifier {
         self.name == other.name
             && self.quoted == other.quoted
             && self.trailing_comments == other.trailing_comments
-            && self.omitted == other.omitted
     }
 }
 
@@ -161,7 +157,6 @@ impl Identifier {
             quoted: false,
             trailing_comments: Vec::new(),
             span: None,
-            omitted: false,
         }
     }
 
@@ -171,7 +166,6 @@ impl Identifier {
             quoted: true,
             trailing_comments: Vec::new(),
             span: None,
-            omitted: false,
         }
     }
 
@@ -181,15 +175,6 @@ impl Identifier {
             quoted: false,
             trailing_comments: Vec::new(),
             span: None,
-            omitted: false,
-        }
-    }
-
-    /// The part of a qualified name left out between two dots, as the schema of `a..b`.
-    pub fn omitted() -> Self {
-        Self {
-            omitted: true,
-            ..Self::empty()
         }
     }
 

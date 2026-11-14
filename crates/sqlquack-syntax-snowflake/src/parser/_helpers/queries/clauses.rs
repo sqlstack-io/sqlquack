@@ -421,7 +421,6 @@ impl Parser {
                                 quoted,
                                 trailing_comments: Vec::new(),
                                 span: None,
-                                omitted: false,
                             };
                             let item = if self.match_token(TokenType::As) {
                                 let expr = self.parse_expression()?;
