@@ -42,6 +42,7 @@ from scripts.grammar_obligations.constants import (
     KIND_OPTION_PRESENT,
     LEXICAL_WRONG,
     LEXICALLY_DISTINCT_WRONG_FILL,
+    LIST_SEPARATOR,
     NESTED_CLASSES,
     NODE_CHOICE,
     NODE_OPTIONAL,
@@ -133,7 +134,8 @@ class Walk:
             prior: str = self.previous
             if node.kind == NODE_OPTIONAL:
                 before: tuple[str, bool] = (self.previous, self.named)
-                options += self.optional(node=node, where=where)
+                before_item: Node | None = nodes[position - 1] if position else None
+                options += self.optional(node=node, where=where, item=before_item)
                 self.previous, self.named = before
                 continue
             if node.kind == NODE_CHOICE:
@@ -299,7 +301,7 @@ class Walk:
             return self.spec(action=ACTION_ALL_OPTIONS)
         return self.spec(action=ACTION_MIN_OPTIONS)
 
-    def optional(self, *, node: Node, where: str) -> list[str]:
+    def optional(self, *, node: Node, where: str, item: Node | None = None) -> list[str]:
         if is_pure_elision(node):
             return []
         text: str = render((node,))
@@ -325,7 +327,12 @@ class Walk:
         if repeated and not REPEATED_ITEMS:
             return [present]
         outer: frozenset[int] = self.path
-        self.path = outer | {id(node)}
+        continued: frozenset[int] = (
+            frozenset({id(item)})
+            if repeated and item and _optional_item(item=item, continuation=node)
+            else frozenset()
+        )
+        self.path = outer | {id(node)} | continued
         self.repeating += repeated
         self._branches(node=node, where=present, top=False, branch=False)
         self.repeating -= repeated
@@ -360,3 +367,13 @@ def _cut_at_word(*, text: str, width: int) -> str:
     if text[width - 1] != TARGET_BREAK and TARGET_BREAK in cut:
         cut = cut[: cut.rindex(TARGET_BREAK)]
     return cut.rstrip() + TARGET_ELLIPSIS
+
+
+def _optional_item(*, item: Node, continuation: Node) -> bool:
+    """`[ <x> ]` before the `[ , <x> ... ]` that repeats it: the first item is itself optional."""
+    repeated: tuple[Node, ...] = tuple(
+        node
+        for node in continuation.branches[0]
+        if node.text != LIST_SEPARATOR and node.token_kind != TOKEN_ELISION
+    )
+    return item.kind == NODE_OPTIONAL and render(item.branches[0]) == render(repeated)

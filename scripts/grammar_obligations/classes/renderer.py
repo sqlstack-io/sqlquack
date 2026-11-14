@@ -354,9 +354,9 @@ class Renderer:
         if is_pure_elision(node) or not (choices.full or key in choices.path):
             return []
         clause: str | None = self.style.clauses.get(render((node,)))
-        if clause is not None:
-            return [clause]
         branch: tuple[Node, ...] = node.branches[choices.branch.get(key, 0)]
+        if clause is not None:
+            return _without_dropped(written=[clause], branch=branch, choices=choices)
         if is_repetition(branch) and not any(placeholder_name(n) for n in _tokens(branch)):
             start: int = _repeat_start(before=before, keywords=set(self._keywords))
             cut_by_keyword: bool = start >= 0 and before[start] not in CLOSE_REPEAT_AFTER
@@ -375,7 +375,8 @@ class Renderer:
             elif cut_by_keyword:
                 item = self._whole_choice(item=item, before=before)
             other: list[str] = self._other_branch(item=item, choices=choices)
-            return [",", *(other or [self._repeat(text) for text in item])]
+            repeated: list[str] = [",", *(other or [self._repeat(text) for text in item])]
+            return _without_dropped(written=repeated, branch=branch, choices=choices)
         rendered: list[str] = self._sequence(nodes=branch, choices=choices)
         if is_repetition(branch) and _ends_in_continuation(branch) and rendered:
             return [*rendered, LIST_SEPARATOR, *(self._repeat(text) for text in rendered)]
@@ -471,6 +472,24 @@ def _ends_in_continuation(branch: tuple[Node, ...]) -> bool:
         and texts[-2:-1] == [LIST_SEPARATOR]
         and [node.token_kind for node in tokens[-1:]] == [TOKEN_ELISION]
     )
+
+
+def _without_dropped(
+    *, written: list[str], branch: tuple[Node, ...], choices: Choices
+) -> list[str]:
+    """A written repeat or clause less the dropped token: the first `(` or `,`, the last `)`."""
+    dropped: list[str] = [token.text for token in _tokens(branch) if id(token) in choices.drop]
+    if not dropped:
+        return written
+    words: list[str] = " ".join(written).split()
+    for text in dropped:
+        if text not in words:
+            continue
+        at: int = words.index(text)
+        if text == CLOSE_PAREN:
+            at = len(words) - 1 - words[::-1].index(text)
+        del words[at]
+    return words
 
 
 def _dangling_separator(*, out: list[str], emitted: int, dangling: int, node: Node) -> int:

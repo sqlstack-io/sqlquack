@@ -92105,36 +92105,6 @@ expect = "observe"
 context = "raw"
 
 [[suppress]]
-form = "sf.query.values"
-kind = "negative_neighbour"
-note = "the form without its required ( in [ , ( ... ) ]"
-reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno None SQLSTATE None, phase accepted, import-20261114-40), so it is not a syntax error; observed (settle rule)"
-
-[[limit]]
-form = "sf.query.values"
-kind = "negative_neighbour"
-note = "the form without its required ( in [ , ( ... ) ], observed"
-anchor = "doc.constructs.values / Syntax"
-sql = "SELECT 1 FROM ( VALUES ( 1 ) , ( 2 ) ) ;"
-expect = "observe"
-context = "raw"
-
-[[suppress]]
-form = "sf.query.values"
-kind = "negative_neighbour"
-note = "the form without its required ) in [ , ( ... ) ]"
-reason = "[undocumented acceptance]: Snowflake parses this SQL and fails it later (errno None SQLSTATE None, phase accepted, import-20261114-40), so it is not a syntax error; observed (settle rule)"
-
-[[limit]]
-form = "sf.query.values"
-kind = "negative_neighbour"
-note = "the form without its required ) in [ , ( ... ) ], observed"
-anchor = "doc.constructs.values / Syntax"
-sql = "SELECT 1 FROM ( VALUES ( 1 ) , ( 2 ) ) ;"
-expect = "observe"
-context = "raw"
-
-[[suppress]]
 form = "sf.utility.call-with.language-javascript-as-call"
 kind = "required_operand_missing"
 target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"

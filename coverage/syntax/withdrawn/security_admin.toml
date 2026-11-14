@@ -119,24 +119,6 @@ valid_as = "sf.security_admin.alter-feature-policy.set option_absent [ <type> [ 
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.security_admin.alter-network-policy.set"
-kind = "required_operand_missing"
-target = "'<ip_address>' in [ , '<ip_address>' ... ]"
-note = "omit '<ip_address>'"
-sql = "ALTER NETWORK POLICY v1 SET ALLOWED_IP_LIST = ( ) ;"
-valid_as = "sf.security_admin.alter-network-policy.set option_absent [ '<ip_address>' ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.alter-network-policy.set"
-kind = "required_operand_missing"
-target = "'<ip_address>' in [ , '<ip_address>' ... ] #2"
-note = "omit '<ip_address>'"
-sql = "ALTER NETWORK POLICY v1 SET BLOCKED_IP_LIST = ( ) ;"
-valid_as = "sf.security_admin.alter-network-policy.set option_absent [ '<ip_address>' ] #2"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.security_admin.alter-organization-account.set-password-session-policy"
 kind = "negative_neighbour"
 target = ""
@@ -218,33 +200,6 @@ valid_as = "sf.security_admin.alter-organization-profile.add-version-from positi
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.security_admin.alter-packages-policy.set"
-kind = "required_operand_missing"
-target = "'<packageSpec>' in [ , '<packageSpec>' ... ]"
-note = "omit '<packageSpec>'"
-sql = "ALTER PACKAGES POLICY v1 SET ALLOWLIST = ( ) ;"
-valid_as = "sf.security_admin.alter-packages-policy.set option_absent [ '<packageSpec>' ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.alter-packages-policy.set"
-kind = "required_operand_missing"
-target = "'<packageSpec>' in [ , '<packageSpec>' ... ] #2"
-note = "omit '<packageSpec>'"
-sql = "ALTER PACKAGES POLICY v1 SET BLOCKLIST = ( ) ;"
-valid_as = "sf.security_admin.alter-packages-policy.set option_absent [ '<packageSpec>' ] #2"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.alter-packages-policy.set"
-kind = "required_operand_missing"
-target = "'<packageSpec>' in [ , '<packageSpec>' ... ] #3"
-note = "omit '<packageSpec>'"
-sql = "ALTER PACKAGES POLICY v1 SET ADDITIONAL_CREATION_BLOCKLIST = ( ) ;"
-valid_as = "sf.security_admin.alter-packages-policy.set option_absent [ '<packageSpec>' ] #3"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set"
 kind = "negative_neighbour"
 target = ""
@@ -318,29 +273,11 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.alter-storage-integration.set"
-kind = "required_operand_missing"
-target = "'<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ]"
-note = "omit '<cloud>://<bucket>/<path>/'"
-sql = "ALTER INTEGRATION v1 SET STORAGE_ALLOWED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' , '<cloud>://<bucket>/<path>/' ) ;"
-valid_as = "sf.security_admin.alter-storage-integration.set operand_type_class '<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.alter-storage-integration.set"
 kind = "negative_neighbour"
 target = "'<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ]"
 note = "an unquoted identifier in place of '<cloud>://<bucket>/<path>/'"
 sql = "ALTER INTEGRATION v1 SET STORAGE_ALLOWED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' , '<cloud>://<bucket>/<path>/' ) ;"
 valid_as = "sf.security_admin.alter-storage-integration.set operand_type_class '<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.alter-storage-integration.set"
-kind = "required_operand_missing"
-target = "'<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ] #2"
-note = "omit '<cloud>://<bucket>/<path>/'"
-sql = "ALTER INTEGRATION v1 SET STORAGE_BLOCKED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' , '<cloud>://<bucket>/<path>/' ) ;"
-valid_as = "sf.security_admin.alter-storage-integration.set operand_type_class '<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ] #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -434,60 +371,6 @@ valid_as = "sf.security_admin.create-role.create-or-alter-role positive the docu
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.security_admin.create-network-policy.create-network-policy"
-kind = "required_operand_missing"
-target = "'<ip_address>' in [ , '<ip_address>' , ... ]"
-note = "omit '<ip_address>'"
-sql = "CREATE NETWORK POLICY v1 ALLOWED_IP_LIST = ( ) ;"
-valid_as = "sf.security_admin.create-network-policy.create-network-policy option_absent [ '<ip_address>' ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.create-network-policy.create-network-policy"
-kind = "required_operand_missing"
-target = "'<ip_address>' in [ , '<ip_address>' , ... ] #2"
-note = "omit '<ip_address>'"
-sql = "CREATE NETWORK POLICY v1 BLOCKED_IP_LIST = ( ) ;"
-valid_as = "sf.security_admin.create-network-policy.create-network-policy option_absent [ '<ip_address>' ] #2"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.create-network-policy.create-or-alter-network"
-kind = "required_operand_missing"
-target = "'<ip_address>' in [ , '<ip_address>' , ... ]"
-note = "omit '<ip_address>'"
-sql = "CREATE OR ALTER NETWORK POLICY v1 ALLOWED_IP_LIST = ( ) ;"
-valid_as = "sf.security_admin.create-network-policy.create-or-alter-network option_absent [ '<ip_address>' ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.create-network-policy.create-or-alter-network"
-kind = "required_operand_missing"
-target = "'<ip_address>' in [ , '<ip_address>' , ... ] #2"
-note = "omit '<ip_address>'"
-sql = "CREATE OR ALTER NETWORK POLICY v1 BLOCKED_IP_LIST = ( ) ;"
-valid_as = "sf.security_admin.create-network-policy.create-or-alter-network option_absent [ '<ip_address>' ] #2"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.create-network-policy.define-network-policy"
-kind = "required_operand_missing"
-target = "'<ip_address>' in [ , '<ip_address>' , ... ]"
-note = "omit '<ip_address>'"
-sql = "DEFINE NETWORK POLICY v1 ALLOWED_IP_LIST = ( ) ;"
-valid_as = "sf.security_admin.create-network-policy.define-network-policy option_absent [ '<ip_address>' ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.create-network-policy.define-network-policy"
-kind = "required_operand_missing"
-target = "'<ip_address>' in [ , '<ip_address>' , ... ] #2"
-note = "omit '<ip_address>'"
-sql = "DEFINE NETWORK POLICY v1 BLOCKED_IP_LIST = ( ) ;"
-valid_as = "sf.security_admin.create-network-policy.define-network-policy option_absent [ '<ip_address>' ] #2"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.security_admin.create-organization-account"
 kind = "negative_neighbour"
 target = ""
@@ -512,33 +395,6 @@ target = ""
 note = "the form without its required GROUP"
 sql = "CREATE ORGANIZATION USER v1 ;"
 valid_as = "sf.security_admin.create-organization-user positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.create-packages-policy"
-kind = "required_operand_missing"
-target = "'<packageSpec>' in [ , '<packageSpec>' ... ]"
-note = "omit '<packageSpec>'"
-sql = "CREATE PACKAGES POLICY v1 LANGUAGE PYTHON ALLOWLIST = ( ) ;"
-valid_as = "sf.security_admin.create-packages-policy option_absent [ '<packageSpec>' ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.create-packages-policy"
-kind = "required_operand_missing"
-target = "'<packageSpec>' in [ , '<packageSpec>' ... ] #2"
-note = "omit '<packageSpec>'"
-sql = "CREATE PACKAGES POLICY v1 LANGUAGE PYTHON BLOCKLIST = ( ) ;"
-valid_as = "sf.security_admin.create-packages-policy option_absent [ '<packageSpec>' ] #2"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.create-packages-policy"
-kind = "required_operand_missing"
-target = "'<packageSpec>' in [ , '<packageSpec>' ... ] #3"
-note = "omit '<packageSpec>'"
-sql = "CREATE PACKAGES POLICY v1 LANGUAGE PYTHON ADDITIONAL_CREATION_BLOCKLIST = ( ) ;"
-valid_as = "sf.security_admin.create-packages-policy option_absent [ '<packageSpec>' ] #3"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -570,29 +426,11 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.security_admin.create-storage-integration"
-kind = "required_operand_missing"
-target = "'<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ]"
-note = "omit '<cloud>://<bucket>/<path>/'"
-sql = "CREATE STORAGE INTEGRATION v1 TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = 'm' ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' , '<cloud>://<bucket>/<path>/' ) ;"
-valid_as = "sf.security_admin.create-storage-integration operand_type_class '<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.create-storage-integration"
 kind = "negative_neighbour"
 target = "'<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ]"
 note = "an unquoted identifier in place of '<cloud>://<bucket>/<path>/'"
 sql = "CREATE STORAGE INTEGRATION v1 TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = 'm' ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' , '<cloud>://<bucket>/<path>/' ) ;"
 valid_as = "sf.security_admin.create-storage-integration operand_type_class '<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.security_admin.create-storage-integration"
-kind = "required_operand_missing"
-target = "'<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ] #2"
-note = "omit '<cloud>://<bucket>/<path>/'"
-sql = "CREATE STORAGE INTEGRATION v1 TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'S3' STORAGE_AWS_ROLE_ARN = 'm' ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' ) STORAGE_BLOCKED_LOCATIONS = ( '<cloud>://<bucket>/<path>/' , '<cloud>://<bucket>/<path>/' ) ;"
-valid_as = "sf.security_admin.create-storage-integration operand_type_class '<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ] #2"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
