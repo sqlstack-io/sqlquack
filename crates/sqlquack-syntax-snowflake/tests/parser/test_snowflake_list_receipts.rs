@@ -353,3 +353,22 @@ fn given_an_untyped_column_with_default_when_parsing_then_acceptance_matches_sno
         },
     ]);
 }
+
+#[test]
+fn given_a_copy_query_column_that_starts_with_a_dot_when_parsing_then_acceptance_matches_snowflake()
+{
+    assert_acceptance_matches_snowflake(&[
+        AcceptanceTestCase {
+            description: "a column that starts with a dot (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM ( SELECT $1 , . $1 FROM @s1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a column qualified by a name (recorded errno 2003)",
+            sql: "COPY INTO v1 FROM ( SELECT $1 , v1 . $1 FROM @s1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ]);
+}
