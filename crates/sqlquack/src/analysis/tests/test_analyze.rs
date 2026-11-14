@@ -255,6 +255,16 @@ fn given_sql_and_a_schema_when_analyzing_then_it_converts_or_refuses_with_a_cate
             expected_summary: refused(RefusalCategory::TypeCondition),
         },
         AnalyzeTestCase {
+            description: "a database-qualified relation reads the declared relation",
+            sql: "SELECT amount FROM d1.orders",
+            expected_summary: converted(),
+        },
+        AnalyzeTestCase {
+            description: "a relation whose schema a..b leaves out is refused, not read as a..b's b",
+            sql: "SELECT amount FROM d1..orders",
+            expected_summary: refused(RefusalCategory::MissingRule),
+        },
+        AnalyzeTestCase {
             description: "unparseable SQL is one parse-fidelity refusal",
             sql: "SELECT FROM WHERE",
             expected_summary: AnalysisSummary {

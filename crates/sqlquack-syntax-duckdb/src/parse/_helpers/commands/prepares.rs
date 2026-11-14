@@ -101,7 +101,7 @@ impl Parser<'_> {
         };
         Ok(Expression::Call(Box::new(Call {
             source_dialect: None,
-            name,
+            name: name.into_iter().map(Some).collect(),
             member: None,
             arguments,
             asynchronous: false,

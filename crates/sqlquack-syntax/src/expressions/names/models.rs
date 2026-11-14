@@ -315,6 +315,9 @@ pub struct TableRef {
     /// The parts `catalog` joins, each with its quoting, when a name has more than three parts.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub catalog_parts: Vec<Identifier>,
+    /// Snowflake `<catalog>..<name>`: the schema between the dots was left out, so `schema` is null.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub schema_omitted: bool,
 }
 
 impl TableRef {
@@ -342,6 +345,7 @@ impl TableRef {
             span: None,
             whole_quoted: false,
             catalog_parts: Vec::new(),
+            schema_omitted: false,
         }
     }
 
@@ -389,6 +393,7 @@ impl TableRef {
             span: None,
             whole_quoted: false,
             catalog_parts: Vec::new(),
+            schema_omitted: false,
         }
     }
 

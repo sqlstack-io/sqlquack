@@ -283,7 +283,8 @@ impl Parser {
                 table.schema.as_ref(),
                 table.catalog.as_ref(),
             ];
-            if parts.into_iter().flatten().any(|part| part.name.is_empty()) {
+            if table.schema_omitted || parts.into_iter().flatten().any(|part| part.name.is_empty())
+            {
                 return Err(self.parse_error("Expected a name with no empty part"));
             }
         }
