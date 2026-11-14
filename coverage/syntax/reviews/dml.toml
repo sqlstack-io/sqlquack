@@ -183,3 +183,44 @@ note = "Read in full under review brief version 1 against the documentation page
 [review.definitions]
 "sf.dml.insert-multi-table.first-all-when-then" = "8ae27c33df0e8b09e65008de1dbf34262ce2bdbd962ab4ae922ac63414ab6924"
 "sf.dml.update" = "8b2bd18826447d69309ce073c9e8640121ecec15b7c242c15edafeaa55153eb1"
+
+[[review]]
+id = "dml-011"
+family = "dml"
+parser_tree = "b551498b20e3796b7fe0fb4f0ef6a2a438a354eb"
+reviewed_utc = "2026-11-14T22:30:27Z"
+verdict = "approved"
+forms = [
+  "sf.dml.copy-into-table.internalstage-externalstage-externallocation",
+  "sf.dml.get",
+  "sf.dml.insert",
+  "sf.dml.insert-multi-table.all-intoclause",
+  "sf.dml.insert-multi-table.first-all-when-then",
+  "sf.dml.list.internalstage-externalstage",
+  "sf.dml.list.repositoryclone",
+  "sf.dml.put",
+  "sf.dml.remove",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at e45d798d0; every scored case agrees with its Snowflake receipt. Bound to the fingerprints after the receipt import that followed the reading; the cases' SQL and parse trees are unchanged, only receipts, settled expectations and stages were added."
+
+[review.fingerprints]
+"sf.dml.copy-into-table.internalstage-externalstage-externallocation" = "e03c3f7c7d365c1c46a1d97826edfac5a1710f06f23150d87fe1ef776212ecd5"
+"sf.dml.get" = "fa719fc1e03029f2bbfbe80808e3cb50117363918041918c6e5275053bd4554c"
+"sf.dml.insert" = "b54012cf00a49fbb3cab35da2bf5721b20636f7a956c9f77a92ece475e543539"
+"sf.dml.insert-multi-table.all-intoclause" = "b3abd592688d0fb15cb3a8120ced2dd382a575cfa8ce42b64d82e45fd3ed7738"
+"sf.dml.insert-multi-table.first-all-when-then" = "fd570fe1f28e2d08e79019459b6da40391403e31b6d6028ac6c38ab57c796543"
+"sf.dml.list.internalstage-externalstage" = "c7d5f4caaba9a50d319e20273057854345a7f0cc1dbd792af72f0bd3db0c0e5c"
+"sf.dml.list.repositoryclone" = "5237de27717738f1a3209aa6da5b7c7e34c974012b72cfd5aeef9ac711950906"
+"sf.dml.put" = "83977dbeefdc5743e210d317e0309550a361589224604a1cec2377c9932ca277"
+"sf.dml.remove" = "90e71acadc847719ff0822451cac8004f466126e08c27428f55f2377c1a52655"
+
+[review.definitions]
+"sf.dml.copy-into-table.internalstage-externalstage-externallocation" = "cac09d19e62c9d886b20c872581b613e4a6805dc3c84d1ff50574909ddb4ac3f"
+"sf.dml.get" = "45269c484f92b38527d293ce647b8c56546cac30fd00c06fdc0a910993b1467c"
+"sf.dml.insert" = "951445ccc060b812630bdead196c7c6c6e85a0aa5f31a991028ead347f59e116"
+"sf.dml.insert-multi-table.all-intoclause" = "7cfb69f6b27dded42db26acd02989ed907180d080e468909ae9afd1f56506300"
+"sf.dml.insert-multi-table.first-all-when-then" = "867b1b2f89b607e59edb9e6c2699a1717d6887b643c71d8d020388abac60b748"
+"sf.dml.list.internalstage-externalstage" = "64acc36892630452a4d1a9eb3c9566121cd69dd853ef218c01f6bd8f8e074aeb"
+"sf.dml.list.repositoryclone" = "d645f248a1c69732d1286724fe8151bdfd955b601eee84c98ef490d46adc011a"
+"sf.dml.put" = "e7fa1b28dc89b5c07630d9ce0b13e95e37ae38e5c462fa0d126096aa9e4538f5"
+"sf.dml.remove" = "b14eb39655bf197c34de73358c624e73138bd2ceddd80bff361aefc6412806c9"

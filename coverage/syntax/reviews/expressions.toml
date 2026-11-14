@@ -581,3 +581,41 @@ note = "Read in full under review brief version 1, with the clarification that a
 
 [review.definitions]
 "sf.expressions.name-resolution" = "d86311b020152f866a6e99fd13c621c70f143a48a4bb2196034094b19abf2fbf"
+
+[[review]]
+id = "expressions-024"
+family = "expressions"
+parser_tree = "b551498b20e3796b7fe0fb4f0ef6a2a438a354eb"
+reviewed_utc = "2026-11-14T22:30:27Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.commands-model-function.model-default-version",
+  "sf.expressions.commands-model-function.model-version-or-alias",
+  "sf.expressions.data-types-datetime.date-time-constant",
+  "sf.expressions.data-types-datetime.interval",
+  "sf.expressions.data-types-numeric.number",
+  "sf.expressions.data-types-structured.object",
+  "sf.expressions.data-types-text.string",
+  "sf.expressions.functions-table",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at e45d798d0; every scored case agrees with its Snowflake receipt. Bound to the fingerprints after the receipt import that followed the reading; the cases' SQL and parse trees are unchanged, only receipts, settled expectations and stages were added."
+
+[review.fingerprints]
+"sf.expressions.commands-model-function.model-default-version" = "aa5605c436fc54e70716c21f34b0d5f5fda5b63c5ef563495b3cff241fed3c76"
+"sf.expressions.commands-model-function.model-version-or-alias" = "b26d0a574b7bc548be7e5e8c3ac845c5dc7644f1c60684a26c8041cc8b412cef"
+"sf.expressions.data-types-datetime.date-time-constant" = "dde6faf8cfd7d6bf0600a013c98011e8346e184decf9c18f48fc202fac7e1992"
+"sf.expressions.data-types-datetime.interval" = "b2f831f06802eb52cb4ca210e920f543232b79e4bee8a2d2e5cc4a7e2089db3f"
+"sf.expressions.data-types-numeric.number" = "d67093158260a15f5d2dc8d1c100be4b0b77c065547821a9def4133e7cb14493"
+"sf.expressions.data-types-structured.object" = "f84732e5b11afba9a649f8653941d068bd7ed3bb9e697f9d0f06f568871405ed"
+"sf.expressions.data-types-text.string" = "7c71db1ebf5fa7221443fef65fff1c27f6e00b62ab33dd85890fb873a608bd18"
+"sf.expressions.functions-table" = "4854e4bc9c0aaed6a57039e72a2ee9e10cbb1057029f39f6e35f66997490c283"
+
+[review.definitions]
+"sf.expressions.commands-model-function.model-default-version" = "34ce3c94b354e54982cfe7b0cc3c87f56ea0dbf350e3b696dbb990cf27c678fc"
+"sf.expressions.commands-model-function.model-version-or-alias" = "d41d821a949118ef6f38898c63fed9023f562190c8e2c2485bb8c0024144ba5a"
+"sf.expressions.data-types-datetime.date-time-constant" = "fbe8e08957ddc0bbb254581eaf8c532e8548f136ac6a9cb543093e1edb71810e"
+"sf.expressions.data-types-datetime.interval" = "1744844543ad90c7d7fd770cd1c170e42660d7cdeb754aea79a4914e5f282860"
+"sf.expressions.data-types-numeric.number" = "35bc943d07b5b00641a6864443915f18f3a778036229ef2890c739b6ce516290"
+"sf.expressions.data-types-structured.object" = "b5f9e402b983676be90b22b41b4a6e5da03b4848ef769dc3dffc07d354d39576"
+"sf.expressions.data-types-text.string" = "87aef0af87a1becf98f0d8dfb50a81d23c49eacb63557e7559f324fd34e95965"
+"sf.expressions.functions-table" = "112cff4b03112a75cf7b1f5a9694e7236b572040d8a3321e4c3b889ad28ab301"
