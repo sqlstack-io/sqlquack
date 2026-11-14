@@ -4024,3 +4024,23 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.ddl.show-rules-in-event-routing-table" = "7aba74df9e70da3e03bd44692bfd1a041c0df82d8cd960c18206daee1213d66c"
 "sf.ddl.show-schemas" = "e11d87014337f38102b6c77bc601cbc314db6b221cc35e3a287df0e3dbeeb13a"
 "sf.ddl.truncate-materialized-view" = "20ff9d2cccefa4019ad456810f295eccc173a9a9b3bee0c84de97647e7684888"
+
+[[review]]
+id = "ddl-040"
+family = "ddl"
+parser_tree = "b551498b20e3796b7fe0fb4f0ef6a2a438a354eb"
+reviewed_utc = "2026-11-14T22:41:06Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.create-function.create-function-returns-table.sql-handler",
+  "sf.ddl.create-iceberg-table-snowflake.table-clone",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at d711c0605; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.create-function.create-function-returns-table.sql-handler" = "27330a15ba83a153b0d463deae3efc073c4975bf228aadda32e657e9e571576a"
+"sf.ddl.create-iceberg-table-snowflake.table-clone" = "7132d7dae45d1a427097608a6aacc76d9d9d165aea0cf30e9095d5e495145178"
+
+[review.definitions]
+"sf.ddl.create-function.create-function-returns-table.sql-handler" = "469da9c8493446e38189a48e5c757164c382f809c90a69d41c1d906ac304a9ea"
+"sf.ddl.create-iceberg-table-snowflake.table-clone" = "2c2b6b1c957a83ed6800eeaf2ac0ca692e618604f665d087c20d21c9dd5a3133"
