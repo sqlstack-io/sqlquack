@@ -10834,6 +10834,18 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "sf.query.values.o045"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ( in [ , ( ... ) ]"
+
+[[obligation]]
+id = "sf.query.values.o046"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ , ( ... ) ]"
+
+[[obligation]]
 id = "sf.query.values.o040"
 kind = "negative_neighbour"
 required = true
@@ -10913,20 +10925,6 @@ required = true
 target = "( <expr> ... )"
 anchor = "doc.constructs.values / Syntax"
 note = "200,001 rows against the documented limit of 200,000 rows"
-
-[[obligation]]
-id = "sf.query.values.o043"
-kind = "negative_neighbour"
-required = true
-anchor = "doc.constructs.values / Syntax"
-note = "the form without its required ( in [ , ( ... ) ], observed"
-
-[[obligation]]
-id = "sf.query.values.o044"
-kind = "negative_neighbour"
-required = true
-anchor = "doc.constructs.values / Syntax"
-note = "the form without its required ) in [ , ( ... ) ], observed"
 
 [[obligation]]
 id = "sf.query.where.o001"

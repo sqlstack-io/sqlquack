@@ -22286,6 +22286,13 @@ required = true
 target = "[ , '<ip_address>' ... ]"
 
 [[obligation]]
+id = "sf.security_admin.alter-network-policy.set.o070"
+kind = "required_operand_missing"
+required = true
+target = "'<ip_address>' in [ , '<ip_address>' ... ]"
+note = "omit '<ip_address>'"
+
+[[obligation]]
 id = "sf.security_admin.alter-network-policy.set.o066"
 kind = "operand_type_class"
 required = true
@@ -22349,6 +22356,13 @@ id = "sf.security_admin.alter-network-policy.set.o037"
 kind = "option_absent"
 required = true
 target = "[ , '<ip_address>' ... ] #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-network-policy.set.o071"
+kind = "required_operand_missing"
+required = true
+target = "'<ip_address>' in [ , '<ip_address>' ... ] #2"
+note = "omit '<ip_address>'"
 
 [[obligation]]
 id = "sf.security_admin.alter-network-policy.set.o068"
@@ -28656,6 +28670,13 @@ required = true
 target = "[ , '<packageSpec>' ... ]"
 
 [[obligation]]
+id = "sf.security_admin.alter-packages-policy.set.o056"
+kind = "required_operand_missing"
+required = true
+target = "'<packageSpec>' in [ , '<packageSpec>' ... ]"
+note = "omit '<packageSpec>'"
+
+[[obligation]]
 id = "sf.security_admin.alter-packages-policy.set.o050"
 kind = "operand_type_class"
 required = true
@@ -28721,6 +28742,13 @@ required = true
 target = "[ , '<packageSpec>' ... ] #2"
 
 [[obligation]]
+id = "sf.security_admin.alter-packages-policy.set.o057"
+kind = "required_operand_missing"
+required = true
+target = "'<packageSpec>' in [ , '<packageSpec>' ... ] #2"
+note = "omit '<packageSpec>'"
+
+[[obligation]]
 id = "sf.security_admin.alter-packages-policy.set.o052"
 kind = "operand_type_class"
 required = true
@@ -28784,6 +28812,13 @@ id = "sf.security_admin.alter-packages-policy.set.o030"
 kind = "option_absent"
 required = true
 target = "[ , '<packageSpec>' ... ] #3"
+
+[[obligation]]
+id = "sf.security_admin.alter-packages-policy.set.o058"
+kind = "required_operand_missing"
+required = true
+target = "'<packageSpec>' in [ , '<packageSpec>' ... ] #3"
+note = "omit '<packageSpec>'"
 
 [[obligation]]
 id = "sf.security_admin.alter-packages-policy.set.o054"
@@ -50507,6 +50542,13 @@ required = true
 target = "[ , '<cloud>://<bucket>/<path>/' ... ]"
 
 [[obligation]]
+id = "sf.security_admin.alter-storage-integration.set.o082"
+kind = "required_operand_missing"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ]"
+note = "omit '<cloud>://<bucket>/<path>/'"
+
+[[obligation]]
 id = "sf.security_admin.alter-storage-integration.set.o080"
 kind = "operand_type_class"
 required = true
@@ -50558,6 +50600,13 @@ id = "sf.security_admin.alter-storage-integration.set.o052"
 kind = "option_absent"
 required = true
 target = "[ , '<cloud>://<bucket>/<path>/' ... ] #2"
+
+[[obligation]]
+id = "sf.security_admin.alter-storage-integration.set.o083"
+kind = "required_operand_missing"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ] #2"
+note = "omit '<cloud>://<bucket>/<path>/'"
 
 [[obligation]]
 id = "sf.security_admin.alter-storage-integration.set.o081"
@@ -75404,6 +75453,13 @@ required = true
 target = "[ , '<ip_address>' , ... ]"
 
 [[obligation]]
+id = "sf.security_admin.create-network-policy.create-network-policy.o070"
+kind = "required_operand_missing"
+required = true
+target = "'<ip_address>' in [ , '<ip_address>' , ... ]"
+note = "omit '<ip_address>'"
+
+[[obligation]]
 id = "sf.security_admin.create-network-policy.create-network-policy.o066"
 kind = "operand_type_class"
 required = true
@@ -75467,6 +75523,13 @@ id = "sf.security_admin.create-network-policy.create-network-policy.o038"
 kind = "option_absent"
 required = true
 target = "[ , '<ip_address>' , ... ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.create-network-policy.o071"
+kind = "required_operand_missing"
+required = true
+target = "'<ip_address>' in [ , '<ip_address>' , ... ] #2"
+note = "omit '<ip_address>'"
 
 [[obligation]]
 id = "sf.security_admin.create-network-policy.create-network-policy.o068"
@@ -75828,6 +75891,13 @@ required = true
 target = "[ , '<ip_address>' , ... ]"
 
 [[obligation]]
+id = "sf.security_admin.create-network-policy.create-or-alter-network.o065"
+kind = "required_operand_missing"
+required = true
+target = "'<ip_address>' in [ , '<ip_address>' , ... ]"
+note = "omit '<ip_address>'"
+
+[[obligation]]
 id = "sf.security_admin.create-network-policy.create-or-alter-network.o061"
 kind = "operand_type_class"
 required = true
@@ -75891,6 +75961,13 @@ id = "sf.security_admin.create-network-policy.create-or-alter-network.o034"
 kind = "option_absent"
 required = true
 target = "[ , '<ip_address>' , ... ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.create-or-alter-network.o066"
+kind = "required_operand_missing"
+required = true
+target = "'<ip_address>' in [ , '<ip_address>' , ... ] #2"
+note = "omit '<ip_address>'"
 
 [[obligation]]
 id = "sf.security_admin.create-network-policy.create-or-alter-network.o063"
@@ -76246,6 +76323,13 @@ required = true
 target = "[ , '<ip_address>' , ... ]"
 
 [[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o063"
+kind = "required_operand_missing"
+required = true
+target = "'<ip_address>' in [ , '<ip_address>' , ... ]"
+note = "omit '<ip_address>'"
+
+[[obligation]]
 id = "sf.security_admin.create-network-policy.define-network-policy.o059"
 kind = "operand_type_class"
 required = true
@@ -76309,6 +76393,13 @@ id = "sf.security_admin.create-network-policy.define-network-policy.o034"
 kind = "option_absent"
 required = true
 target = "[ , '<ip_address>' , ... ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-network-policy.define-network-policy.o064"
+kind = "required_operand_missing"
+required = true
+target = "'<ip_address>' in [ , '<ip_address>' , ... ] #2"
+note = "omit '<ip_address>'"
 
 [[obligation]]
 id = "sf.security_admin.create-network-policy.define-network-policy.o061"
@@ -81502,6 +81593,13 @@ required = true
 target = "[ , '<packageSpec>' ... ]"
 
 [[obligation]]
+id = "sf.security_admin.create-packages-policy.o060"
+kind = "required_operand_missing"
+required = true
+target = "'<packageSpec>' in [ , '<packageSpec>' ... ]"
+note = "omit '<packageSpec>'"
+
+[[obligation]]
 id = "sf.security_admin.create-packages-policy.o054"
 kind = "operand_type_class"
 required = true
@@ -81567,6 +81665,13 @@ required = true
 target = "[ , '<packageSpec>' ... ] #2"
 
 [[obligation]]
+id = "sf.security_admin.create-packages-policy.o061"
+kind = "required_operand_missing"
+required = true
+target = "'<packageSpec>' in [ , '<packageSpec>' ... ] #2"
+note = "omit '<packageSpec>'"
+
+[[obligation]]
 id = "sf.security_admin.create-packages-policy.o056"
 kind = "operand_type_class"
 required = true
@@ -81630,6 +81735,13 @@ id = "sf.security_admin.create-packages-policy.o032"
 kind = "option_absent"
 required = true
 target = "[ , '<packageSpec>' ... ] #3"
+
+[[obligation]]
+id = "sf.security_admin.create-packages-policy.o062"
+kind = "required_operand_missing"
+required = true
+target = "'<packageSpec>' in [ , '<packageSpec>' ... ] #3"
+note = "omit '<packageSpec>'"
 
 [[obligation]]
 id = "sf.security_admin.create-packages-policy.o058"
@@ -98589,6 +98701,13 @@ required = true
 target = "[ , '<cloud>://<bucket>/<path>/' ... ]"
 
 [[obligation]]
+id = "sf.security_admin.create-storage-integration.o090"
+kind = "required_operand_missing"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ]"
+note = "omit '<cloud>://<bucket>/<path>/'"
+
+[[obligation]]
 id = "sf.security_admin.create-storage-integration.o088"
 kind = "operand_type_class"
 required = true
@@ -98640,6 +98759,13 @@ id = "sf.security_admin.create-storage-integration.o046"
 kind = "option_absent"
 required = true
 target = "[ , '<cloud>://<bucket>/<path>/' ... ] #2"
+
+[[obligation]]
+id = "sf.security_admin.create-storage-integration.o091"
+kind = "required_operand_missing"
+required = true
+target = "'<cloud>://<bucket>/<path>/' in [ , '<cloud>://<bucket>/<path>/' ... ] #2"
+note = "omit '<cloud>://<bucket>/<path>/'"
 
 [[obligation]]
 id = "sf.security_admin.create-storage-integration.o089"

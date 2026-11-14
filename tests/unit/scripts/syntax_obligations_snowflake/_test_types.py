@@ -83,7 +83,10 @@ class DerivedLimitTestCase:
 @dataclass(frozen=True)
 class ListItemTestCase:
     description: str
+    family: str
+    grammar: str
     kind: str
+    label: str
     expected_sql: tuple[str, ...]
 
 

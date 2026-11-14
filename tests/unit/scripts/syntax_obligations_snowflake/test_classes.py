@@ -70,6 +70,13 @@ status = "catalogued"
 """,
 }
 
+DROP_TAGS: str = "DROP TAG <name> [ , <name> ... ]"
+PACKAGES_POLICY: str = (
+    "CREATE PACKAGES POLICY <name> LANGUAGE PYTHON"
+    " [ ALLOWLIST = ( [ '<packageSpec>' ] [ , '<packageSpec>' ... ] ) ]"
+)
+VALUES: str = "SELECT ... FROM ( VALUES ( <expr> [ , <expr> [ , ... ] ] ) [ , ( ... ) ] )"
+
 
 @pytest.mark.parametrize(
     "test_case",
@@ -290,13 +297,51 @@ context = "raw"
     (
         ListItemTestCase(
             description="the second item is missing after its separator",
+            family="transaction_session",
+            grammar=DROP_TAGS,
             kind=KIND_OPERAND_MISSING,
+            label="<name> in [ , <name> ... ]",
             expected_sql=("DROP TAG v1 , ;",),
         ),
         ListItemTestCase(
             description="the second item is a valid name of its own",
+            family="transaction_session",
+            grammar=DROP_TAGS,
             kind=KIND_OPERAND_CLASS,
+            label="<name> in [ , <name> ... ]",
             expected_sql=("DROP TAG v1 , v1 ;",),
+        ),
+        ListItemTestCase(
+            description="the item after an optional first item is missing after its separator",
+            family="security_admin",
+            grammar=PACKAGES_POLICY,
+            kind=KIND_OPERAND_MISSING,
+            label="'<packageSpec>' in [ , '<packageSpec>' ... ]",
+            expected_sql=("CREATE PACKAGES POLICY v1 LANGUAGE PYTHON ALLOWLIST = ( 'm' , ) ;",),
+        ),
+        ListItemTestCase(
+            description="the item after an optional first item is a valid string of its own",
+            family="security_admin",
+            grammar=PACKAGES_POLICY,
+            kind=KIND_OPERAND_CLASS,
+            label="'<packageSpec>' in [ , '<packageSpec>' ... ]",
+            expected_sql=("CREATE PACKAGES POLICY v1 LANGUAGE PYTHON ALLOWLIST = ( 'm' , 'm' ) ;",),
+        ),
+        ListItemTestCase(
+            description="an elided row loses its opening parenthesis",
+            family="query",
+            grammar=VALUES,
+            kind=KIND_NEGATIVE,
+            label="the form without its required ( in [ , ( ... ) ]",
+            expected_sql=("SELECT 1 FROM ( VALUES ( 1 ) , 2 ) ) ;",),
+        ),
+        ListItemTestCase(
+            description="an elided row loses its closing parenthesis",
+            family="query",
+            grammar=VALUES,
+            kind=KIND_NEGATIVE,
+            label="the form without its required ) in [ , ( ... ) ]",
+            expected_sql=("SELECT 1 FROM ( VALUES ( 1 ) , ( 2 ) ;",),
         ),
     ),
     ids=lambda case: case.description,
@@ -305,18 +350,19 @@ def test_given_a_repeated_list_item_when_building_then_the_second_item_has_its_o
     tmp_path: Path, test_case: ListItemTestCase
 ) -> None:
     (tmp_path / "catalogue").mkdir()
-    (tmp_path / "catalogue" / "transaction_session.toml").write_text(
-        CATALOGUES["transaction_session"]
+    (tmp_path / "catalogue" / f"{test_case.family}.toml").write_text(
+        f'[[form]]\nid = "sf.{test_case.family}.probe"\nfamily = "{test_case.family}"\n'
+        f'kind = "statement"\ngrammar = ["""{test_case.grammar}"""]\nuses = []\n'
+        'status = "catalogued"\n'
     )
     (tmp_path / "limits.toml").write_text("")
     install()
-    numbered, trees, _, _, _ = family_obligations(root=tmp_path, family="transaction_session")
-    drafts: dict[tuple[str, str, str], Draft] = {
-        (draft.form, draft.kind, draft.target): draft for _, draft in numbered
+    numbered, trees, _, _, _ = family_obligations(root=tmp_path, family=test_case.family)
+    drafts: dict[tuple[str, str | None], Draft] = {
+        **{(draft.kind, draft.note): draft for _, draft in numbered},
+        **{(draft.kind, draft.target): draft for _, draft in numbered},
     }
-    draft: Draft = drafts[
-        ("sf.transaction_session.drop-tags", test_case.kind, "<name> in [ , <name> ... ]")
-    ]
+    draft: Draft = drafts[(test_case.kind, test_case.label)]
     assert draft.spec is not None
 
     assert (
@@ -324,7 +370,7 @@ def test_given_a_repeated_list_item_when_building_then_the_second_item_has_its_o
             case.sql
             for case in submissions(
                 trees=trees[draft.form],
-                style=style_of(family="transaction_session", form=draft.form),
+                style=style_of(family=test_case.family, form=draft.form),
                 spec=draft.spec,
                 depths=draft.depths,
             )
