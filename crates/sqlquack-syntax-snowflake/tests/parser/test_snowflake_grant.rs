@@ -21,6 +21,12 @@ fn given_a_snowflake_grant_or_revoke_when_parsing_then_only_what_snowflake_parse
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "CALLER on a later privilege is refused (documented once, before the list)",
+            sql: "GRANT CALLER USAGE , CALLER SELECT ON TABLE t1 TO ROLE r1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "an AI function privilege names its function (recorded success)",
             sql: "GRANT USE AI FUNCTION \"SELECT\" ON ACCOUNT TO v1 ;",
             dialect: Dialect::Snowflake,
@@ -216,10 +222,28 @@ fn given_a_snowflake_grant_or_revoke_when_parsing_then_the_tree_keeps_its_parts(
             expected_value: json!("user"),
         },
         ProjectionTestCase {
-            description: "a future grant keeps its plural and container",
+            description: "a future grant's kind is the plural alone",
             sql: "GRANT SELECT ON FUTURE TABLES IN SCHEMA s1 TO ROLE r1",
             pointer: "/0/grant/kind",
-            expected_value: json!("FUTURE TABLES IN SCHEMA"),
+            expected_value: json!("TABLES"),
+        },
+        ProjectionTestCase {
+            description: "a future grant keeps FUTURE as its own field",
+            sql: "GRANT SELECT ON FUTURE TABLES IN SCHEMA s1 TO ROLE r1",
+            pointer: "/0/grant/bulk",
+            expected_value: json!("FUTURE"),
+        },
+        ProjectionTestCase {
+            description: "a future grant keeps its container as its own field",
+            sql: "GRANT SELECT ON FUTURE TABLES IN SCHEMA s1 TO ROLE r1",
+            pointer: "/0/grant/container",
+            expected_value: json!("SCHEMA"),
+        },
+        ProjectionTestCase {
+            description: "a grant on one object has no bulk or container",
+            sql: "GRANT SELECT ON TABLE t1 TO ROLE r1",
+            pointer: "/0/grant/bulk",
+            expected_value: json!(null),
         },
         ProjectionTestCase {
             description: "a multi-word privilege is one privilege",
@@ -234,16 +258,35 @@ fn given_a_snowflake_grant_or_revoke_when_parsing_then_the_tree_keeps_its_parts(
             expected_value: json!("CREATE SNOWFLAKE.ML.FORECAST"),
         },
         ProjectionTestCase {
-            description: "CALLER qualifies every privilege of the list",
+            description: "CALLER is kept once for the whole list",
             sql: "GRANT CALLER USAGE , SELECT ON TABLE t1 TO ROLE r1",
-            pointer: "/0/grant/privileges/1/name",
-            expected_value: json!("CALLER SELECT"),
+            pointer: "/0/grant/caller",
+            expected_value: json!("CALLER"),
         },
         ProjectionTestCase {
-            description: "INHERITED CALLER qualifies every privilege of a revoked list",
+            description: "CALLER is not folded into a privilege name",
+            sql: "GRANT CALLER USAGE , SELECT ON TABLE t1 TO ROLE r1",
+            pointer: "/0/grant/privileges/1/name",
+            expected_value: json!("SELECT"),
+        },
+        ProjectionTestCase {
+            description: "INHERITED CALLER is kept once for a revoked list",
             sql: "REVOKE INHERITED CALLER USAGE , SELECT ON ALL TABLES IN ACCOUNT FROM ROLE r1",
-            pointer: "/0/revoke/privileges/1/name",
-            expected_value: json!("INHERITED CALLER SELECT"),
+            pointer: "/0/revoke/caller",
+            expected_value: json!("INHERITED CALLER"),
+        },
+        ProjectionTestCase {
+            description: "a revoke on all objects keeps ALL and its container as fields",
+            sql: "REVOKE INHERITED CALLER USAGE , SELECT ON ALL TABLES IN ACCOUNT FROM ROLE r1",
+            pointer: "/0/revoke/bulk",
+            expected_value: json!("ALL"),
+        },
+        ProjectionTestCase {
+            description:
+                "ALL INHERITED CALLER PRIVILEGES keeps the caller apart from the privilege",
+            sql: "GRANT ALL INHERITED CALLER PRIVILEGES ON ALL TABLES IN DATABASE d1 TO ROLE r1",
+            pointer: "/0/grant/privileges/0/name",
+            expected_value: json!("ALL PRIVILEGES"),
         },
         ProjectionTestCase {
             description: "ON ACCOUNT names no securable",

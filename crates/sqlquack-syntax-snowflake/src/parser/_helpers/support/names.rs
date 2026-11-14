@@ -561,6 +561,7 @@ impl Parser {
                 quoted: false,
                 trailing_comments: Vec::new(),
                 span: None,
+                omitted: false,
             }));
         }
 
@@ -580,6 +581,7 @@ impl Parser {
                     quoted: false,
                     trailing_comments: Vec::new(),
                     span: None,
+                    omitted: false,
                 }));
             }
         }
@@ -1485,6 +1487,7 @@ impl Parser {
                 quoted: true,
                 trailing_comments: Vec::new(),
                 span: None,
+                omitted: false,
             })))
         } else {
             Ok(None)
@@ -1675,6 +1678,7 @@ impl Parser {
                         quoted: false,
                         trailing_comments: Vec::new(),
                         span: None,
+                        omitted: false,
                     })))
                 } else {
                     None
@@ -1712,6 +1716,7 @@ impl Parser {
                         quoted: false,
                         trailing_comments: Vec::new(),
                         span: None,
+                        omitted: false,
                     })),
                     expressions,
                     target,
@@ -1768,6 +1773,7 @@ impl Parser {
                     quoted: false,
                     trailing_comments: Vec::new(),
                     span: None,
+                    omitted: false,
                 })),
                 expressions: parts,
             })));
@@ -1821,6 +1827,7 @@ impl Parser {
                 quoted: false,
                 trailing_comments: Vec::new(),
                 span: None,
+                omitted: false,
             })));
         }
 

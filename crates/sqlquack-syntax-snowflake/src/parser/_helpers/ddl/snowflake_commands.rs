@@ -155,12 +155,12 @@ impl Parser {
         Ok(())
     }
 
-    /// A called object's dotted name; an empty middle part (`<database>..<name>`) is kept as an empty part.
+    /// A called object's dotted name; an empty middle part (`<database>..<name>`) is kept as an omitted part.
     pub(crate) fn parse_call_name(&mut self) -> Result<Vec<Identifier>> {
         let mut name = vec![self.expect_identifier_or_keyword_with_quoted()?];
         while self.match_token(TokenType::Dot) {
             if name.len() == 1 && self.match_token(TokenType::Dot) {
-                name.push(Identifier::new(""));
+                name.push(Identifier::omitted());
             }
             name.push(self.expect_identifier_or_keyword_with_quoted()?);
         }
