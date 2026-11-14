@@ -314,3 +314,20 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.query.semantic-view" = "51e38825d66dc6d03fa84a9abdbef01a8ea7cfd310178f078f25ef5bd2a42c14"
+
+[[review]]
+id = "query-015"
+family = "query"
+parser_tree = "b6e7a15669d5f96e3151cd7bebf44cec1347f4b2"
+reviewed_utc = "2026-11-14T00:43:39Z"
+verdict = "approved"
+forms = [
+  "sf.query.at-before.iceberg-version",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 1c9043701; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.at-before.iceberg-version" = "fad214785f147d6eeee3af2552f5a57e2bef1d724a6860a7a25ef09a7fccc471"
+
+[review.definitions]
+"sf.query.at-before.iceberg-version" = "84528746db98fd8404cca7b4f622e8b536312d8cd860b4c0adf46c8ed732e7b4"

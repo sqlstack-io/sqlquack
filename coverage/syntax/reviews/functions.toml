@@ -4622,3 +4622,32 @@ note = "Read in full under review brief version 1 against the documentation page
 [review.definitions]
 "sf.functions.system-clustering-information" = "826579718cd00489f8caddd0fe39f21ff9f7a76552e17e65105e2e9c5f598629"
 "sf.functions.system-initiate-move-organization-account" = "8b9f89d223f28fd8e77fca15a7e1b222f9b358f98325eccb8dd86a092453de9b"
+
+[[review]]
+id = "functions-025"
+family = "functions"
+parser_tree = "b6e7a15669d5f96e3151cd7bebf44cec1347f4b2"
+reviewed_utc = "2026-11-14T00:43:39Z"
+verdict = "approved"
+forms = [
+  "sf.functions.infer-schema",
+  "sf.functions.system-wait-for-openflow-connector-status",
+  "sf.functions.system-wait-for-openflow-deployment-status",
+  "sf.functions.system-wait-for-openflow-runtime-status",
+  "sf.functions.system-wait-for-stable-openflow-deployments",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 1c9043701; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.infer-schema" = "c00e4d817a622ba766c6fb2197a959d206c6c397fda2517a1d74e5461fec7e0f"
+"sf.functions.system-wait-for-openflow-connector-status" = "28f19185934748ed731a53cfe9a2172e82b84b31ec5ab05076e43b9c2212543e"
+"sf.functions.system-wait-for-openflow-deployment-status" = "a1b3a39586bbfbab73e878d0badea018e5b19a87da3652f64432c56b8d47bdb1"
+"sf.functions.system-wait-for-openflow-runtime-status" = "1af02f19c96d70ccd8c5561b3411f4411d114414134a30b886de728aa5e4e0d0"
+"sf.functions.system-wait-for-stable-openflow-deployments" = "d04a38426b41cf5302dd0c4993f97c9e731e39cb8c8394b25dc2b6bb3c5d626d"
+
+[review.definitions]
+"sf.functions.infer-schema" = "5177450d7c9f1db1a98202d623098415fa92108306fe48379ecff0d58b434317"
+"sf.functions.system-wait-for-openflow-connector-status" = "a892118ab7b1905c800ad738a654edd2092d6fe7162904f15e0f7b5221f5946e"
+"sf.functions.system-wait-for-openflow-deployment-status" = "23809be3ad925b74e81bfe00e6f4e175f4b3fc1cf487a8d7be62693f5f2549c0"
+"sf.functions.system-wait-for-openflow-runtime-status" = "4477f319341f534c05e4aa0a12aa7c53a00e13cb2ead2967bddaacd1db053c14"
+"sf.functions.system-wait-for-stable-openflow-deployments" = "764c1be57007046dc1111f7e28c5bbf376d9ea7deb3482bba72edc87d99e989d"
