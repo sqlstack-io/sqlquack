@@ -1863,3 +1863,25 @@ fn given_snowflake_database_and_schema_properties_when_parsing_then_recorded_ver
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_option_whose_value_is_a_string_when_parsing_then_a_bare_word_is_refused() {
+    let test_cases = [
+        ("an agent's live version specification as a string (recorded errno 2003)", "ALTER AGENT v1 MODIFY LIVE VERSION SET SPECIFICATION = '{}' ;", true),
+        ("an agent's live version specification as a bare word (recorded errno 1003)", "ALTER AGENT v1 MODIFY LIVE VERSION SET SPECIFICATION = m1 ;", false),
+        ("an agent's live version specification with no value (recorded errno 1003)", "ALTER AGENT v1 MODIFY LIVE VERSION SET SPECIFICATION = ;", false),
+        ("a scoring profile as a string (recorded errno 2003)", "ALTER CORTEX SEARCH SERVICE v1 ADD SCORING PROFILE v1 '{}' ;", true),
+        ("a scoring profile as a bare word (recorded errno 1003)", "ALTER CORTEX SEARCH SERVICE v1 ADD SCORING PROFILE v1 m1 ;", false),
+        ("a scoring profile with no profile (recorded errno 1003)", "ALTER CORTEX SEARCH SERVICE v1 ADD SCORING PROFILE v1 ;", false),
+        ("a failover group's schedule as a bare word (recorded errno 1003)", "CREATE FAILOVER GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 REPLICATION_SCHEDULE = m1 ;", false),
+        ("a replication group's schedule as a bare word (recorded errno 1003)", "CREATE REPLICATION GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 REPLICATION_SCHEDULE = m1 ;", false),
+        ("a failover group's schedule as a string", "CREATE FAILOVER GROUP v1 OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = v1 . v1 REPLICATION_SCHEDULE = '10 MINUTE' ;", true),
+    ];
+    for (description, sql, expected_accepted) in test_cases {
+        assert_eq!(
+            snowflake_kind(sql).is_some(),
+            expected_accepted,
+            "{description}"
+        );
+    }
+}
