@@ -596,7 +596,6 @@ impl Parser {
                         quoted,
                         trailing_comments: Vec::new(),
                         span: None,
-                        omitted: false,
                     });
                 } else {
                     self.current = saved_on;

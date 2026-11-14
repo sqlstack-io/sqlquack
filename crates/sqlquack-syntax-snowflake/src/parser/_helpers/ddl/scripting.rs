@@ -810,7 +810,6 @@ impl Parser {
                                 quoted: id.quoted,
                                 trailing_comments: id.trailing_comments,
                                 span: None,
-                                omitted: false,
                             }));
                         } else {
                             from = Some(Expression::Identifier(id));

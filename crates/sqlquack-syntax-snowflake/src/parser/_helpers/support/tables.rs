@@ -135,7 +135,6 @@ impl Parser {
                 quoted: false,
                 trailing_comments: Vec::new(),
                 span: None,
-                omitted: false,
             })));
         }
         if self.match_text_seq(&["WITH", "TIME", "ZONE"]) {

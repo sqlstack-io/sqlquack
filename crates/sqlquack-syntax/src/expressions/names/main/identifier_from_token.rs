@@ -10,6 +10,5 @@ pub fn identifier_from_token(token: Token, quoted: bool) -> Identifier {
         quoted,
         trailing_comments: Vec::new(),
         span: Some(token.span),
-        omitted: false,
     }
 }

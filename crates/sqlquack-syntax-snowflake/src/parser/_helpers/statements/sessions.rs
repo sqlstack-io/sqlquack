@@ -898,7 +898,6 @@ impl Parser {
                     quoted: token.token_type == TokenType::QuotedIdentifier,
                     trailing_comments: Vec::new(),
                     span: Some(token.span),
-                    omitted: false,
                 };
                 result = Some(Expression::Dot(Box::new(DotAccess {
                     this: result.take().ok_or_else(|| {

@@ -1251,36 +1251,6 @@ fn given_a_snowflake_quoted_contact_purpose_or_set_variable_when_parsing_then_th
             expected_value: json!("UPGRADE"),
         },
         StatementTestCase {
-            description: "the part of a..b the SQL left out is marked omitted",
-            sql: "SELECT * FROM d1..t1 ;",
-            pointer: "/0/select/from/expressions/0/table/schema/omitted",
-            expected_value: json!(true),
-        },
-        StatementTestCase {
-            description: "an absent schema is not an omitted one",
-            sql: "SELECT * FROM t1 ;",
-            pointer: "/0/select/from/expressions/0/table/schema",
-            expected_value: json!(null),
-        },
-        StatementTestCase {
-            description: "a SHOW of a SNOWFLAKE class marks its left-out schema omitted",
-            sql: "SHOW SNOWFLAKE . . BUDGET ;",
-            pointer: "/0/show/target/table/schema/omitted",
-            expected_value: json!(true),
-        },
-        StatementTestCase {
-            description: "a call of a SNOWFLAKE..<function> marks its left-out schema omitted",
-            sql: "SELECT SNOWFLAKE . . ACCURACY ( 1 ) ;",
-            pointer: "/0/select/expressions/0/method_call/this/column/name/omitted",
-            expected_value: json!(true),
-        },
-        StatementTestCase {
-            description: "a CALL of a SNOWFLAKE..<class>!<method> marks its left-out part omitted",
-            sql: "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!SET_ORG_NOTIFICATION_EMAILS ( 'm' ) ;",
-            pointer: "/0/call/name/1/omitted",
-            expected_value: json!(true),
-        },
-        StatementTestCase {
             description: "a quoted SET variable stays quoted",
             sql: "SET ( v1 , \"v1 Q\" ) = ( 1 , 2 ) ;",
             pointer: "/0/set_statement/items/0/name/tuple/expressions/1/column/name/quoted",
