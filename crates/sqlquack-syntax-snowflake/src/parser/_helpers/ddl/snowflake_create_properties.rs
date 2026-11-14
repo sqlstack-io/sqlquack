@@ -93,6 +93,12 @@ impl Parser {
             }
             if matches!(parts.as_slice(), ["FAILOVER" | "REPLICATION", "GROUP"]) {
                 self.check_group_name_value()?;
+                if self.check_identifier("REPLICATION_SCHEDULE")
+                    && self.check_next(TokenType::Eq)
+                    && self.peek_nth(2).map(|token| token.token_type) != Some(TokenType::String)
+                {
+                    return Err(self.parse_error("Expected a string as the replication schedule"));
+                }
             }
             properties.extend(with_written(
                 std::mem::take(&mut with),

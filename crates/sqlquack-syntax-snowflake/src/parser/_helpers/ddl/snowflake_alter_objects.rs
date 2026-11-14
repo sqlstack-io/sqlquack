@@ -776,7 +776,7 @@ impl Parser {
                     action.push_str(" IF NOT EXISTS");
                 }
                 let name = self.object_operand()?;
-                (vec![name, self.parse_object_value()?], vec![])
+                (vec![name, self.parse_string_value()?], vec![])
             }
             "DROP SCORING PROFILE" => {
                 if self.match_keywords(&[TokenType::If, TokenType::Exists]) {
