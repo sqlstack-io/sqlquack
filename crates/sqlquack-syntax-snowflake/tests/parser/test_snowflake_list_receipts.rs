@@ -170,3 +170,33 @@ fn given_a_trailing_comma_in_a_snowflake_list_when_parsing_then_acceptance_match
         },
     ]);
 }
+
+#[test]
+fn given_an_empty_statement_in_a_snowflake_block_when_parsing_then_acceptance_matches_snowflake() {
+    assert_acceptance_matches_snowflake(&[
+        AcceptanceTestCase {
+            description: "a block member followed by an extra semicolon (recorded OK)",
+            sql: "BEGIN NULL ; ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a loop body member followed by an extra semicolon (recorded OK)",
+            sql: "BEGIN WHILE ( FALSE ) DO NULL ; ; END WHILE ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an exception handler member followed by an extra semicolon (recorded OK)",
+            sql: "BEGIN NULL ; EXCEPTION WHEN STATEMENT_ERROR THEN NULL ; ; NULL ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a block that opens with a semicolon (recorded errno 1003)",
+            sql: "BEGIN ; NULL ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ]);
+}
