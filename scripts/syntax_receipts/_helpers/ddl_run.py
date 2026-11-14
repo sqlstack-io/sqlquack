@@ -21,7 +21,12 @@ from scripts.syntax_receipts.constants import (
     CASE_SCHEMA,
     EXPLAIN_METHOD,
     MEASURE_KEY,
+    NO_EFFECT_KEY,
+    NO_EFFECT_PROBE_ROLE,
     PACKET_ACCEPTED_OUTCOMES,
+    PARSED_PHASE,
+    PROBE_NOT_PARSED,
+    PROBE_ROLE_KEY,
     QUERY_HISTORY_FAILED,
     QUERY_HISTORY_SOURCE,
     QUERY_HISTORY_SUCCESS,
@@ -71,9 +76,10 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
         if failure is not None:
             found.refusals.append(refusal(run_id=run.path.name, row_id=row_id, reason=failure))
             continue
-        run_setup: list[str] = _setup(start=start, raw=raw, position=position)
-        fixtures: list[str] | None = _fixtures(
-            packet_setup=case.get("setup", []), run_setup=run_setup
+        probe: bool = raw.get(PROBE_ROLE_KEY) is True
+        run_setup: list[str] = [] if probe else _setup(start=start, raw=raw, position=position)
+        fixtures: list[str] | None = (
+            [] if probe else _fixtures(packet_setup=case.get("setup", []), run_setup=run_setup)
         )
         if fixtures is None:
             found.refusals.append(
@@ -114,6 +120,8 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
         }
         if start.get(MEASURE_KEY):
             extra[MEASURE_KEY] = start[MEASURE_KEY]
+        if probe:
+            extra[NO_EFFECT_KEY] = NO_EFFECT_PROBE_ROLE
         if explain:
             extra.update(
                 statement_index=raw.get("statement_index"),
@@ -124,6 +132,11 @@ def import_ddl_run(*, run: CaptureRun, index: dict[str, Path]) -> Imported:
             row: Row = receipt(observation=observation, extra=extra)
         except RowRefused as error:
             found.refusals.append(refusal(run_id=run.path.name, row_id=row_id, reason=str(error)))
+            continue
+        if probe and row["phase"] != PARSED_PHASE:
+            found.refusals.append(
+                refusal(run_id=run.path.name, row_id=row_id, reason=PROBE_NOT_PARSED)
+            )
             continue
         if raw.get("source") == QUERY_HISTORY_SOURCE:
             row["phase_basis"] += (

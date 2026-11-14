@@ -5,14 +5,18 @@ use std::collections::{BTreeMap, BTreeSet};
 use crate::check::models::{CaseResult, LocalVerdict, Reason, SnowflakeSyntax};
 use crate::formats::constants::SYNTAX_ERRNO;
 use crate::formats::main::current_dialect::current_dialect;
-use crate::formats::models::{AccountSetting, Case, Expect, Phase, Receipt};
+use crate::formats::models::{AccountSetting, Case, Expect, NoEffect, Phase, Receipt};
 
-/// A syntax receipt bound to this case's SQL, setup, session and capture; `/1` needs a query id.
+/// A syntax receipt bound to this case's SQL, setup, session and capture; `/1` needs a query id. A receipt taken
+/// with no setup by a role holding no privilege binds whatever the case's setup: it shows Snowflake parsed the
+/// statement, which no setup changes.
 fn admissible(case: &Case, receipt: &Receipt) -> bool {
+    let parsed_without_setup: bool =
+        receipt.no_effect == Some(NoEffect::ProbeRole) && receipt.phase == Phase::SemanticError;
     receipt.measure.is_none()
         && receipt.capture_method == case.capture
         && receipt.sql_sha256 == case.sql_sha256
-        && receipt.setup_sha256 == case.setup_sha256
+        && (receipt.setup_sha256 == case.setup_sha256 || parsed_without_setup)
         && receipt.session_sha256 == case.session_sha256
         && (receipt.is_engine()
             || receipt

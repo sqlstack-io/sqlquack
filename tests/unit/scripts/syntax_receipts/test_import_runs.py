@@ -25,6 +25,7 @@ from tests.unit.scripts.syntax_receipts._test_types import (
     RepublishTestCase,
     SetupRunTestCase,
     SupersedeTestCase,
+    UnprivilegedRunTestCase,
 )
 from tests.unit.scripts.syntax_receipts.helpers import (
     accepted_row,
@@ -41,6 +42,9 @@ from tests.unit.scripts.syntax_receipts.helpers import (
 )
 
 _GOOD: str = "BEGIN RETURN 1; END;"
+_DENIED: str = "CREATE DATABASE v1"
+_GRANTED: str = "SELECT 1"
+_GARBLED: str = "CREATE DATABSE v1"
 _OTHER: str = "BEGIN RETURN 2; END;"
 _BROKEN: str = "CREATE mTASK t AS SELECT 1"
 _GOOD_SHA: str = hashlib.sha256(_GOOD.encode()).hexdigest()
@@ -1168,3 +1172,49 @@ def test_given_a_reconciled_query_history_submission_when_imported_then_it_recor
     assert receipt["phase_basis"].endswith(
         "; from query history q-unrecorded, the run stopped before its raw record"
     )
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        UnprivilegedRunTestCase(
+            description="only a refusal after parsing counts, with no setup, and nothing that ran",
+            rows=[
+                {
+                    **error_row(case_id="c1", sql=_DENIED, errno=3001, message="Insufficient"),
+                    "probe_role": True,
+                    "current_schema": None,
+                },
+                {**accepted_row(case_id="c2", sql=_GRANTED), "probe_role": True},
+                {
+                    **error_row(case_id="c3", sql=_GARBLED, errno=1003, message="syntax error"),
+                    "probe_role": True,
+                },
+            ],
+            packet=[
+                {**packet_case(case_id=case_id, sql=sql), "setup": _DDL_TEMPLATE}
+                for case_id, sql in (("c1", _DENIED), ("c2", _GRANTED), ("c3", _GARBLED))
+            ],
+            expected_receipts=[("c1", "semantic_error", "probe_role")],
+            expected_refusals=["c2", "c3"],
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_rows_run_without_privileges_when_imported_then_only_refusals_after_parsing_count(
+    test_case: UnprivilegedRunTestCase, tmp_path: Path
+) -> None:
+    write_run(root=tmp_path, rows=test_case.rows, packet=test_case.packet, start=_DDL_START)
+    out: Path = tmp_path / "out.jsonl"
+
+    run_import(
+        [str(tmp_path / "runs"), str(out), str(tmp_path / "out.json"), str(tmp_path / "inputs")]
+    )
+
+    receipts: list[Row] = [json.loads(line) for line in out.read_text().splitlines()]
+    report: Row = json.loads((tmp_path / "out.json").read_text())
+    assert [(r["case_id"], r["phase"], r["no_effect"]) for r in receipts] == (
+        test_case.expected_receipts
+    )
+    assert all(r["setup_sha256"] == sha(b"[]") for r in receipts)
+    assert sorted(r["row_id"] for r in report["refusals"]) == test_case.expected_refusals
