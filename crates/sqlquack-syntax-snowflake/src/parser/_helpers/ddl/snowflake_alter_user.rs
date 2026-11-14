@@ -295,7 +295,7 @@ impl Parser {
         Ok(alter_object("SHARE", head, action, parts))
     }
 
-    /// A share's SET properties; ACCOUNTS takes a list of accounts.
+    /// A share's SET properties; ACCOUNTS takes a list of accounts or one string.
     fn parse_share_set(&mut self) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
@@ -303,6 +303,7 @@ impl Parser {
             self.expect_token(TokenType::Eq)?;
             let kind = property_kind(&name);
             let value = match kind.as_str() {
+                "ACCOUNTS" if self.check(TokenType::String) => self.parse_string_value()?,
                 "ACCOUNTS" => Expression::Tuple(Box::new(Tuple {
                     expressions: self.parse_account_names()?,
                 })),
