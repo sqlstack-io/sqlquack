@@ -1559,6 +1559,8 @@ impl Parser {
                         if !self.match_token(TokenType::Comma) {
                             break;
                         }
+                    } else if snowflake && !roles.is_empty() {
+                        return Err(self.parse_error("Expected a role after the comma"));
                     } else {
                         break;
                     }

@@ -488,6 +488,9 @@ impl Parser {
             }
 
             if self.is_at_end() || self.check(TokenType::Semicolon) {
+                if self.is_snowflake() {
+                    return Err(self.parse_error("Expected a sort key after the comma"));
+                }
                 break;
             }
         }
