@@ -1921,3 +1921,42 @@ fn given_a_snowflake_online_feature_table_when_parsing_then_its_warehouse_is_opt
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_share_set_accounts_when_parsing_then_one_string_or_a_list_of_names_is_accepted(
+) {
+    let test_cases = [
+        (
+            "one string (recorded errno 2003)",
+            "ALTER SHARE v1 SET ACCOUNTS = 'v1' ;",
+            true,
+        ),
+        (
+            "a list of names (recorded errno 2003)",
+            "ALTER SHARE v1 SET ACCOUNTS = o1.a1 , o1.a1 ;",
+            true,
+        ),
+        (
+            "a string after a name (recorded errno 1003)",
+            "ALTER SHARE v1 SET ACCOUNTS = o1.a1 , 'v1' ;",
+            false,
+        ),
+        (
+            "a trailing comma (recorded errno 1003)",
+            "ALTER SHARE v1 SET ACCOUNTS = o1.a1 , ;",
+            false,
+        ),
+        (
+            "no value (recorded errno 1003)",
+            "ALTER SHARE v1 SET ACCOUNTS = ;",
+            false,
+        ),
+    ];
+    for (description, sql, expected_accepted) in test_cases {
+        assert_eq!(
+            snowflake_kind(sql).is_some(),
+            expected_accepted,
+            "{description}"
+        );
+    }
+}
