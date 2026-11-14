@@ -24,6 +24,7 @@ REVIEWED_SEMANTIC_ERRNOS: frozenset[int] = frozenset(
         3078,
         3172,
         90025,
+        90105,
         90201,
         90227,
         92804,
