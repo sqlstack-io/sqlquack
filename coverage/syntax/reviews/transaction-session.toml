@@ -218,3 +218,40 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.transaction_session.set.set.syntax" = "9e7541d0b11a4e30b0ddfeb532cb5d2b91ce2b395e6dd556d1cc60640850aba4"
 "sf.transaction_session.unset.unset" = "78be3f7475b9bfccde6100412f84c697f8e50085a8f11b4b33e2121e20de42d7"
 "sf.transaction_session.unset.unset.syntax" = "7fedaeffdcbe9fd3ac538163b3fc724bc8ece977b0973d42b6faac1f83974d07"
+
+[[review]]
+id = "transaction-session-012"
+family = "transaction_session"
+parser_tree = "34d4cc4a0ba49debfa4d3a4ed5e548b3f3c201dd"
+reviewed_utc = "2026-11-14T06:36:28Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.alter-session.unset",
+  "sf.transaction_session.unset.unset.syntax",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 0938da6ac, whose trees for these forms the later parser fixes leave unchanged; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.alter-session.unset" = "2ab217b751461e496f8c48b144a5095a3da0ae23267faf2aa663d694e781e898"
+"sf.transaction_session.unset.unset.syntax" = "1f849406594fd1fddf85ebd569cfc73a40ff0a6db2cb6b427e6919faf4ebd0f2"
+
+[review.definitions]
+"sf.transaction_session.alter-session.unset" = "cc580446aaf20b4040c3aa8b52a995e60478c8da416a855bb15b033c31746b66"
+"sf.transaction_session.unset.unset.syntax" = "9ad34305b01c6f98226499c6466128d2f3e41b6b23b37105ec1b81e75656e389"
+
+[[review]]
+id = "transaction-session-013"
+family = "transaction_session"
+parser_tree = "34d4cc4a0ba49debfa4d3a4ed5e548b3f3c201dd"
+reviewed_utc = "2026-11-14T06:36:28Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.set.set.syntax",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 89d5b369d, whose trees for these forms the later parser fixes leave unchanged; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.transaction_session.set.set.syntax" = "9227f8b38035336c962fe639f082f7d163769813b75b2ffefd1b33fce7b06e23"
+
+[review.definitions]
+"sf.transaction_session.set.set.syntax" = "7cfce3b705fa4858f82d79458c56e307449d65ceeb9ee200bf6b83158086ecd6"
