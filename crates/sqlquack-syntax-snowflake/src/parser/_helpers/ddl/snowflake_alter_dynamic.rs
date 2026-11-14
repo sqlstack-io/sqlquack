@@ -152,10 +152,7 @@ impl Parser {
             "SET TAG" if self.check(TokenType::Eq) => {
                 self.skip();
                 let value = self.parse_object_value()?;
-                (
-                    vec![],
-                    vec![property("TAG", Some(Identifier::new("")), Some(value))],
-                )
+                (vec![], vec![property("TAG", None, Some(value))])
             }
             "SET TAG" | "UNSET TAG" => (vec![], self.parse_tag_list(action == SET_TAG)?),
             "SET" | "UNSET" => (vec![], self.parse_dynamic_table_properties(action == SET)?),

@@ -328713,16 +328713,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.undrop-database.o008"
+id = "sf.ddl.undrop-database.o035"
 kind = "alternative"
 required = true
-target = "{ <name> | IDENTIFIER ( <id> ) } → <name>"
+target = "{ <name> | IDENTIFIER ( { <id> | <id_number> } ) } → <name>"
 
 [[obligation]]
-id = "sf.ddl.undrop-database.o009"
+id = "sf.ddl.undrop-database.o036"
 kind = "alternative"
 required = true
-target = "{ <name> | IDENTIFIER ( <id> ) } → IDENTIFIER ( <id> )"
+target = "{ <name> | IDENTIFIER ( { <id> | <id_number> } ) } → IDENTIFIER ( { <id> | <id_number> } )"
 
 [[obligation]]
 id = "sf.ddl.undrop-database.o003"
@@ -328739,25 +328739,44 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.undrop-database.o010"
-kind = "required_operand_missing"
+id = "sf.ddl.undrop-database.o037"
+kind = "alternative"
 required = true
-target = "<id>"
-note = "omit <id>"
+target = "{ <id> | <id_number> } → <id>"
 
 [[obligation]]
-id = "sf.ddl.undrop-database.o017"
+id = "sf.ddl.undrop-database.o038"
+kind = "alternative"
+required = true
+target = "{ <id> | <id_number> } → <id_number>"
+
+[[obligation]]
+id = "sf.ddl.undrop-database.o030"
 kind = "operand_type_class"
 required = true
 target = "<id>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.undrop-database.o018"
+id = "sf.ddl.undrop-database.o031"
 kind = "negative_neighbour"
 required = true
 target = "<id>"
 note = "an unquoted identifier in place of <id>"
+
+[[obligation]]
+id = "sf.ddl.undrop-database.o022"
+kind = "operand_type_class"
+required = true
+target = "<id_number>"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.undrop-database.o023"
+kind = "negative_neighbour"
+required = true
+target = "<id_number>"
+note = "a string literal in place of <id_number>"
 
 [[obligation]]
 id = "sf.ddl.undrop-database.o005"
@@ -328778,16 +328797,22 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.ddl.undrop-database.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <id> | <id_number> }"
+
+[[obligation]]
 id = "sf.ddl.undrop-database.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.ddl.undrop-database.o014"
+id = "sf.ddl.undrop-database.o040"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <name> | IDENTIFIER ( <id> ) }"
+note = "the form without its required { <name> | IDENTIFIER ( { <id> | <id_number> } ) }"
 
 [[obligation]]
 id = "sf.ddl.undrop-database.o006"
@@ -328806,7 +328831,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.undrop-database.o015"
+id = "sf.ddl.undrop-database.o034"
 kind = "negative_neighbour"
 required = true
 target = "IDENTIFIER( <id> )"
@@ -329022,16 +329047,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.undrop-schema.o008"
+id = "sf.ddl.undrop-schema.o035"
 kind = "alternative"
 required = true
-target = "{ <name> | IDENTIFIER ( <id> ) } → <name>"
+target = "{ <name> | IDENTIFIER ( { <id> | <id_number> } ) } → <name>"
 
 [[obligation]]
-id = "sf.ddl.undrop-schema.o009"
+id = "sf.ddl.undrop-schema.o036"
 kind = "alternative"
 required = true
-target = "{ <name> | IDENTIFIER ( <id> ) } → IDENTIFIER ( <id> )"
+target = "{ <name> | IDENTIFIER ( { <id> | <id_number> } ) } → IDENTIFIER ( { <id> | <id_number> } )"
 
 [[obligation]]
 id = "sf.ddl.undrop-schema.o003"
@@ -329048,25 +329073,44 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.undrop-schema.o010"
-kind = "required_operand_missing"
+id = "sf.ddl.undrop-schema.o037"
+kind = "alternative"
 required = true
-target = "<id>"
-note = "omit <id>"
+target = "{ <id> | <id_number> } → <id>"
 
 [[obligation]]
-id = "sf.ddl.undrop-schema.o017"
+id = "sf.ddl.undrop-schema.o038"
+kind = "alternative"
+required = true
+target = "{ <id> | <id_number> } → <id_number>"
+
+[[obligation]]
+id = "sf.ddl.undrop-schema.o030"
 kind = "operand_type_class"
 required = true
 target = "<id>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.undrop-schema.o018"
+id = "sf.ddl.undrop-schema.o031"
 kind = "negative_neighbour"
 required = true
 target = "<id>"
 note = "an unquoted identifier in place of <id>"
+
+[[obligation]]
+id = "sf.ddl.undrop-schema.o022"
+kind = "operand_type_class"
+required = true
+target = "<id_number>"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.undrop-schema.o023"
+kind = "negative_neighbour"
+required = true
+target = "<id_number>"
+note = "a string literal in place of <id_number>"
 
 [[obligation]]
 id = "sf.ddl.undrop-schema.o005"
@@ -329087,16 +329131,22 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.ddl.undrop-schema.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <id> | <id_number> }"
+
+[[obligation]]
 id = "sf.ddl.undrop-schema.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.ddl.undrop-schema.o014"
+id = "sf.ddl.undrop-schema.o040"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <name> | IDENTIFIER ( <id> ) }"
+note = "the form without its required { <name> | IDENTIFIER ( { <id> | <id_number> } ) }"
 
 [[obligation]]
 id = "sf.ddl.undrop-schema.o006"
@@ -329115,7 +329165,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.undrop-schema.o015"
+id = "sf.ddl.undrop-schema.o034"
 kind = "negative_neighbour"
 required = true
 target = "IDENTIFIER( <id> )"
@@ -329129,16 +329179,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.undrop-snapshot.o002"
+id = "sf.ddl.undrop-snapshot.o043"
 kind = "alternative"
 required = true
-target = "{ <name> | IDENTIFIER ( <id> ) } → <name>"
+target = "{ <name> | IDENTIFIER ( { <id> | <id_number> } ) } → <name>"
 
 [[obligation]]
-id = "sf.ddl.undrop-snapshot.o003"
+id = "sf.ddl.undrop-snapshot.o044"
 kind = "alternative"
 required = true
-target = "{ <name> | IDENTIFIER ( <id> ) } → IDENTIFIER ( <id> )"
+target = "{ <name> | IDENTIFIER ( { <id> | <id_number> } ) } → IDENTIFIER ( { <id> | <id_number> } )"
 
 [[obligation]]
 id = "sf.ddl.undrop-snapshot.o004"
@@ -329155,25 +329205,44 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.undrop-snapshot.o006"
-kind = "required_operand_missing"
+id = "sf.ddl.undrop-snapshot.o045"
+kind = "alternative"
 required = true
-target = "<id>"
-note = "omit <id>"
+target = "{ <id> | <id_number> } → <id>"
 
 [[obligation]]
-id = "sf.ddl.undrop-snapshot.o025"
+id = "sf.ddl.undrop-snapshot.o046"
+kind = "alternative"
+required = true
+target = "{ <id> | <id_number> } → <id_number>"
+
+[[obligation]]
+id = "sf.ddl.undrop-snapshot.o038"
 kind = "operand_type_class"
 required = true
 target = "<id>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.undrop-snapshot.o026"
+id = "sf.ddl.undrop-snapshot.o039"
 kind = "negative_neighbour"
 required = true
 target = "<id>"
 note = "an unquoted identifier in place of <id>"
+
+[[obligation]]
+id = "sf.ddl.undrop-snapshot.o030"
+kind = "operand_type_class"
+required = true
+target = "<id_number>"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.undrop-snapshot.o031"
+kind = "negative_neighbour"
+required = true
+target = "<id_number>"
+note = "a string literal in place of <id_number>"
 
 [[obligation]]
 id = "sf.ddl.undrop-snapshot.o008"
@@ -329227,16 +329296,22 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.ddl.undrop-snapshot.o047"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <id> | <id_number> }"
+
+[[obligation]]
 id = "sf.ddl.undrop-snapshot.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.ddl.undrop-snapshot.o016"
+id = "sf.ddl.undrop-snapshot.o048"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <name> | IDENTIFIER ( <id> ) }"
+note = "the form without its required { <name> | IDENTIFIER ( { <id> | <id_number> } ) }"
 
 [[obligation]]
 id = "sf.ddl.undrop-snapshot.o017"
@@ -329284,7 +329359,7 @@ anchor = "doc.sql.undrop-snapshot / Syntax"
 note = "the form without its required RENAME in [ RENAME TO <new_snapshot_name> ]"
 
 [[obligation]]
-id = "sf.ddl.undrop-snapshot.o023"
+id = "sf.ddl.undrop-snapshot.o042"
 kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.undrop-snapshot / Syntax"
@@ -329395,16 +329470,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "sf.ddl.undrop-table.o008"
+id = "sf.ddl.undrop-table.o035"
 kind = "alternative"
 required = true
-target = "{ <name> | IDENTIFIER ( <id> ) } → <name>"
+target = "{ <name> | IDENTIFIER ( { <id> | <id_number> } ) } → <name>"
 
 [[obligation]]
-id = "sf.ddl.undrop-table.o009"
+id = "sf.ddl.undrop-table.o036"
 kind = "alternative"
 required = true
-target = "{ <name> | IDENTIFIER ( <id> ) } → IDENTIFIER ( <id> )"
+target = "{ <name> | IDENTIFIER ( { <id> | <id_number> } ) } → IDENTIFIER ( { <id> | <id_number> } )"
 
 [[obligation]]
 id = "sf.ddl.undrop-table.o003"
@@ -329421,25 +329496,44 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
-id = "sf.ddl.undrop-table.o010"
-kind = "required_operand_missing"
+id = "sf.ddl.undrop-table.o037"
+kind = "alternative"
 required = true
-target = "<id>"
-note = "omit <id>"
+target = "{ <id> | <id_number> } → <id>"
 
 [[obligation]]
-id = "sf.ddl.undrop-table.o017"
+id = "sf.ddl.undrop-table.o038"
+kind = "alternative"
+required = true
+target = "{ <id> | <id_number> } → <id_number>"
+
+[[obligation]]
+id = "sf.ddl.undrop-table.o030"
 kind = "operand_type_class"
 required = true
 target = "<id>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "sf.ddl.undrop-table.o018"
+id = "sf.ddl.undrop-table.o031"
 kind = "negative_neighbour"
 required = true
 target = "<id>"
 note = "an unquoted identifier in place of <id>"
+
+[[obligation]]
+id = "sf.ddl.undrop-table.o022"
+kind = "operand_type_class"
+required = true
+target = "<id_number>"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.ddl.undrop-table.o023"
+kind = "negative_neighbour"
+required = true
+target = "<id_number>"
+note = "a string literal in place of <id_number>"
 
 [[obligation]]
 id = "sf.ddl.undrop-table.o005"
@@ -329460,16 +329554,22 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "sf.ddl.undrop-table.o039"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <id> | <id_number> }"
+
+[[obligation]]
 id = "sf.ddl.undrop-table.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "sf.ddl.undrop-table.o014"
+id = "sf.ddl.undrop-table.o040"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <name> | IDENTIFIER ( <id> ) }"
+note = "the form without its required { <name> | IDENTIFIER ( { <id> | <id_number> } ) }"
 
 [[obligation]]
 id = "sf.ddl.undrop-table.o006"
@@ -329488,7 +329588,7 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.undrop-table.o015"
+id = "sf.ddl.undrop-table.o034"
 kind = "negative_neighbour"
 required = true
 target = "IDENTIFIER( <id> )"

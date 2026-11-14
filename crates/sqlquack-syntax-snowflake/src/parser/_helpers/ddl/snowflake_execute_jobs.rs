@@ -2,7 +2,6 @@
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::models::Parser;
-use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::schema_objects::models::ExecuteObject;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -77,7 +76,7 @@ impl Parser {
         };
         let mut node = ExecuteObject {
             kind: kind.to_owned(),
-            name: TableRef::new(""),
+            name: None,
             action: None,
             group: None,
             alias: None,
@@ -91,20 +90,20 @@ impl Parser {
                 if self.match_text_seq(&["FROM", "WORKSPACE"]) {
                     node.action = Some("FROM WORKSPACE".to_owned());
                 }
-                node.name = self.parse_object_name()?;
+                node.name = Some(self.parse_object_name()?);
                 self.parse_execute_options(DBT_OPTIONS, &[])?
             }
             "CODE BUNDLE" => {
-                node.name = self.parse_object_name()?;
+                node.name = Some(self.parse_object_name()?);
                 self.parse_execute_code_bundle()?
             }
             "NOTEBOOK" if self.check_next(TokenType::LParen) => {
-                node.name = self.parse_object_name()?;
+                node.name = Some(self.parse_object_name()?);
                 let arguments = self.parse_execute_list(Self::parse_execute_value)?;
                 vec![property("PARAMETERS", None, Some(arguments))]
             }
             _ => {
-                node.name = self.parse_object_name()?;
+                node.name = Some(self.parse_object_name()?);
                 let mut properties = self.parse_execute_required(NOTEBOOK_REQUIRED)?;
                 let options = self.parse_execute_options(NOTEBOOK_OPTIONS, &properties)?;
                 properties.extend(options);

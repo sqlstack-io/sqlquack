@@ -1074,6 +1074,10 @@ pub(crate) const SNOWFLAKE_UNDROP_KINDS: &[&str] = &[
     "VARIABLE",
 ];
 
+/// The UNDROP kinds that take a system-generated id in `IDENTIFIER( <id> )`, as Snowflake's UNDROP pages name them.
+pub(crate) const SNOWFLAKE_UNDROP_SYSTEM_ID_KINDS: &[&str] =
+    &["DATABASE", "NOTEBOOK", "SCHEMA", "SNAPSHOT", "TABLE"];
+
 /// SHOW kinds the shared SHOW still reads for Snowflake, by their leading words.
 pub(crate) const SHARED_SHOW_KINDS: &[&[&str]] = &[
     &["EXPORTED", "KEYS"],

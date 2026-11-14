@@ -272,7 +272,7 @@ impl Parser {
         };
         let mut node = ExecuteObject {
             kind: kind.to_owned(),
-            name,
+            name: Some(name),
             action: None,
             group: None,
             alias: None,

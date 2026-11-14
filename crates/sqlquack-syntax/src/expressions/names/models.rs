@@ -182,6 +182,11 @@ impl Identifier {
         self.name.is_empty()
     }
 
+    /// Whether this is an empty unquoted name, which no SQL text writes: the name an `IDENTIFIER( )` reference leaves blank.
+    pub fn is_unwritten(&self) -> bool {
+        self.name.is_empty() && !self.quoted
+    }
+
     /// The legacy string form of a named type field, quoted with SQL-standard delimiters.
     pub fn to_type_field_name(&self) -> String {
         if self.quoted {
@@ -253,7 +258,11 @@ impl fmt::Display for Column {
 /// A table reference with optional schema and catalog, alias, time travel and hints.
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TableRef {
-    /// The unqualified table name.
+    /// The unqualified table name; left out of a serialized tree when unwritten, as under `IDENTIFIER( )`.
+    #[serde(
+        default = "Identifier::empty",
+        skip_serializing_if = "Identifier::is_unwritten"
+    )]
     pub name: Identifier,
     /// Optional schema qualifier (e.g. `public` in `public.users`).
     pub schema: Option<Identifier>,
