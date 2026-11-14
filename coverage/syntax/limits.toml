@@ -64895,20 +64895,26 @@ reason = "'<path>/[<filename>]' is one string operand, a path optionally ending 
 [[reading]]
 form = "sf.ddl.undrop-database"
 grammar_sha256 = "fb5edf2f78105d74f3595683f7744acb784859016e260cf110dbbeed4b296962"
-grammar = ["UNDROP DATABASE { <name> | IDENTIFIER( <id> ) }"]
-reason = "the usage notes restore one of several dropped databases of the same name with the IDENTIFIER keyword and its system-generated id (example: UNDROP DATABASE IDENTIFIER(...)), as UNDROP SNAPSHOT's syntax shows"
+grammar = ["UNDROP DATABASE { <name> | IDENTIFIER( { <id> | <id_number> } ) }"]
+reason = "the usage notes restore one of several dropped databases of the same name with the IDENTIFIER keyword and its system-generated id (example: UNDROP DATABASE IDENTIFIER(...)), as UNDROP SNAPSHOT's syntax shows; the id is a number, as the page's example IDENTIFIER(492) writes it"
 
 [[reading]]
 form = "sf.ddl.undrop-schema"
 grammar_sha256 = "531c19f8b655b7c02c48fe2ce3e25a9978c911f90f40b0d75b6101257b9ed0f5"
-grammar = ["UNDROP SCHEMA { <name> | IDENTIFIER( <id> ) }"]
-reason = "the usage notes restore one of several dropped schemas of the same name with the IDENTIFIER keyword and its system-generated id (example: UNDROP SCHEMA IDENTIFIER(...)), as UNDROP SNAPSHOT's syntax shows"
+grammar = ["UNDROP SCHEMA { <name> | IDENTIFIER( { <id> | <id_number> } ) }"]
+reason = "the usage notes restore one of several dropped schemas of the same name with the IDENTIFIER keyword and its system-generated id (example: UNDROP SCHEMA IDENTIFIER(...)), as UNDROP SNAPSHOT's syntax shows; the id is a number, as the page's example IDENTIFIER(492) writes it"
 
 [[reading]]
 form = "sf.ddl.undrop-table"
 grammar_sha256 = "714817b87fd3b065d279e62a3f7f6a997df50bd73c69af5b24c0a824f8115430"
-grammar = ["UNDROP TABLE { <name> | IDENTIFIER( <id> ) }"]
-reason = "the usage notes restore one of several dropped tables of the same name with the IDENTIFIER keyword and its system-generated id (example: UNDROP TABLE IDENTIFIER(...)), as UNDROP SNAPSHOT's syntax shows"
+grammar = ["UNDROP TABLE { <name> | IDENTIFIER( { <id> | <id_number> } ) }"]
+reason = "the usage notes restore one of several dropped tables of the same name with the IDENTIFIER keyword and its system-generated id (example: UNDROP TABLE IDENTIFIER(...)), as UNDROP SNAPSHOT's syntax shows; the id is a number, as the page's example IDENTIFIER(492) writes it"
+
+[[reading]]
+form = "sf.ddl.undrop-snapshot"
+grammar_sha256 = "d7d5129ab9390bbdc57aca9477be73d5ca32e7416456dbe6e5aa67a7637162e4"
+grammar = ["UNDROP SNAPSHOT { <name> | IDENTIFIER( { <id> | <id_number> } ) } [ RENAME TO <new_snapshot_name> ];"]
+reason = "IDENTIFIER( <id> ) takes the snapshot's system-generated id, a number, as the page's example UNDROP SNAPSHOT IDENTIFIER(1) writes it"
 
 [[suppress]]
 form = "sf.scripting.let.let-cursor-for.cursor-assignment-syntax"

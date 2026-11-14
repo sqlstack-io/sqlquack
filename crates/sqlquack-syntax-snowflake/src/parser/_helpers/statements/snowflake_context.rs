@@ -43,6 +43,33 @@ impl Parser {
         }
     }
 
+    /// Refuses UNDROP's IDENTIFIER( ) around a bare word in a top-level statement, leaving scripting blocks alone.
+    pub(crate) fn reject_snowflake_undrop_bare_identifier(
+        &mut self,
+        statement: &Expression,
+        start: usize,
+    ) -> Result<()> {
+        let bare = match statement {
+            Expression::Undrop(undrop) => matches!(
+                undrop.name.identifier_func.as_deref(),
+                Some(Expression::Function(function))
+                    if matches!(function.args.as_slice(), [Expression::Identifier(_)])
+            ),
+            _ => false,
+        };
+        if !bare || !self.applies_snowflake_context_rules() {
+            return Ok(());
+        }
+        if let Some(open) = (start..self.current).find(|&index| {
+            self.tokens[index].token_type == sqlquack_syntax::tokens::models::TokenType::LParen
+        }) {
+            self.current = open + 1;
+        }
+        Err(self.parse_error(
+            "UNDROP takes IDENTIFIER( ) with a string, a variable or a system-generated id, not a bare name",
+        ))
+    }
+
     /// Refuses TABLE( ) or IDENTIFIER( ) around nothing or a bare name, except a named argument's TABLE(name).
     pub(crate) fn reject_snowflake_name_wrappers(&self, statements: &[Expression]) -> Result<()> {
         use sqlquack_syntax::traversal::types::ExpressionWalk;

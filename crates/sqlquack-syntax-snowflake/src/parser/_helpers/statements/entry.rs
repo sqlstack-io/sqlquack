@@ -13,7 +13,9 @@ use crate::parser::models::ParserDepthScope;
 use crate::parser::models::SelectBodyHead;
 use crate::parser::models::SelectLimitClauses;
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::Null;
+use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::operators::models::MethodCall;
 use sqlquack_syntax::expressions::queries::models::From;
@@ -272,6 +274,7 @@ impl Parser {
         while !self.is_at_end() {
             let start = self.current;
             let first = self.parse_statement()?;
+            self.reject_snowflake_undrop_bare_identifier(&first, start)?;
             let mut stmt = self.parse_snowflake_flow(first)?;
             stmt = self.spanned(start, stmt);
 
@@ -758,7 +761,10 @@ impl Parser {
             ));
         };
         let if_exists = self.match_keywords(&[TokenType::If, TokenType::Exists]);
-        let name = self.parse_object_name_ref()?;
+        let name = match self.parse_undrop_system_id(&kind)? {
+            Some(name) => name,
+            None => self.parse_object_name_ref()?,
+        };
         let rename_to = if self.match_keywords(&[TokenType::Rename, TokenType::To]) {
             Some(self.parse_object_name_ref()?)
         } else {
@@ -772,6 +778,29 @@ impl Parser {
                 rename_to,
             },
         )))
+    }
+
+    /// `IDENTIFIER( <id> )` with the system-generated number Snowflake's UNDROP takes for the kinds that keep one.
+    fn parse_undrop_system_id(&mut self, kind: &str) -> Result<Option<TableRef>> {
+        let numbered = crate::parser::constants::SNOWFLAKE_UNDROP_SYSTEM_ID_KINDS.contains(&kind)
+            && self.check_identifier("IDENTIFIER")
+            && self.check_next(TokenType::LParen)
+            && self
+                .tokens
+                .get(self.current + 2)
+                .is_some_and(|token| token.token_type == TokenType::Number);
+        if !numbered {
+            return Ok(None);
+        }
+        self.skip();
+        self.skip();
+        let id = Expression::Literal(Box::new(Literal::Number(self.advance_text()?)));
+        self.expect_token(TokenType::RParen)?;
+        let mut name = TableRef::new("");
+        name.identifier_func = Some(Box::new(Expression::Function(Box::new(
+            sqlquack_syntax::expressions::functions::models::Function::new("IDENTIFIER", vec![id]),
+        ))));
+        Ok(Some(name))
     }
 
     fn parse_statement_parenthesized(&mut self) -> Result<Expression> {
