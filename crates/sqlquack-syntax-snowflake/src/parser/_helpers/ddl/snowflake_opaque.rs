@@ -35,7 +35,7 @@ impl Parser {
         checked
     }
 
-    /// After a CREATE's name, the shape its kind needs: FROM for a code bundle or notebook project, a snapshot's service volume, an external agent's version, a variable's type, AS COPY for a pipe's body, no bare list after an interactive warehouse's name, an Openflow connector's added version and push, and a warehouse's actions; the cursor stays after the name.
+    /// After a CREATE's name, the shape its kind needs: FROM and a quoted location for a code bundle or notebook project, a snapshot's service volume, an external agent's version, a variable's type, AS COPY for a pipe's body, no bare list after an interactive warehouse's name, an Openflow connector's added version and push, and a warehouse's actions; the cursor stays after the name.
     fn check_opaque_shape(&mut self, create: bool, kind_at: usize) -> Result<()> {
         let after_name = self.current;
         let kind = self.tokens[kind_at].text.to_ascii_uppercase();
@@ -60,6 +60,7 @@ impl Parser {
             return checked;
         }
         let project = matches!(second.as_str(), "PROJECT") && after_name > kind_at + 2;
+        let project_or_bundle = project || kind == "CODE";
         let checked = match kind.as_str() {
             "EXTERNAL" if matches!(second.as_str(), "AGENT") => self.check_external_agent_tail(),
             "VARIABLE" => self.check_variable_tail(),
@@ -69,6 +70,9 @@ impl Parser {
             "CODE" if !self.check(TokenType::From) => Err(self.parse_error("Expected FROM")),
             "NOTEBOOK" if project && !self.check(TokenType::From) => {
                 Err(self.parse_error("Expected FROM"))
+            }
+            "CODE" | "NOTEBOOK" if project_or_bundle && !self.check_next(TokenType::String) => {
+                Err(self.parse_error("Expected a quoted location after FROM"))
             }
             "PIPE" => self.check_pipe_body(),
             "INTERACTIVE" if self.check(TokenType::LParen) => {

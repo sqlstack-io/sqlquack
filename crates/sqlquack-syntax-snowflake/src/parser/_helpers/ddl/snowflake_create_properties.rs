@@ -378,6 +378,9 @@ impl Parser {
             self.skip();
             let mut triggers: Vec<ObjectProperty> = Vec::new();
             while self.match_token(TokenType::On) {
+                if !self.check(TokenType::Number) {
+                    return Err(self.parse_error("Expected a number before PERCENT"));
+                }
                 let percent = self.parse_object_value()?;
                 self.expect_alter_words(&[&["PERCENT", "DO"]])?;
                 let action = self.parse_simple_name()?;

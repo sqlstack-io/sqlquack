@@ -66607,12 +66607,12 @@ anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
 
 [[obligation]]
-id = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate.o097"
+id = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate.o101"
 kind = "identifier_class"
 required = true
 target = "<stage>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+anchor = "doc.sql.alter-service / Syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-service.fromspecification-fromspecificationtemplate.o082"
