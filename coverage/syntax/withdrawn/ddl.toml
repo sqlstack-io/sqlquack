@@ -821,15 +821,6 @@ valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalst
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
-kind = "option_absent"
-target = "[ , <purpose> = <contact_name> ... ]"
-note = "option absent [ , <purpose> = <contact_name> ... ], observed"
-sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = v1 ) ;"
-valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format option_present [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type"
 kind = "negative_neighbour"
 target = ""
@@ -848,15 +839,6 @@ valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalst
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type"
-kind = "option_absent"
-target = "[ , <purpose> = <contact_name> ... ]"
-note = "option absent [ , <purpose> = <contact_name> ... ], observed"
-sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = v1 ) ;"
-valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type option_present [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax"
 kind = "negative_neighbour"
 target = ""
@@ -872,15 +854,6 @@ target = ""
 note = "the form without its required { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ]"
 sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
 valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax"
-kind = "option_absent"
-target = "[ , <purpose> = <contact_name> ... ]"
-note = "option absent [ , <purpose> = <contact_name> ... ], observed"
-sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = v1 ) ;"
-valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type option_present [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1235,177 +1208,6 @@ valid_as = "sf.ddl.create-table.create-table-like positive the documented form w
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "option_present"
-target = "[ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…"
-note = "option present [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col…, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( v1 ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table option_present [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )…"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( v1 ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table option_present [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → <col_name>"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_nam… → <col_name>, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( v1 ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table option_present [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "option_absent"
-target = "[ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) |…"
-note = "option absent [ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MO…, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( v1 ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table option_present [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<width> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) |…"
-note = "a valid operand, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( TRUNCATE ( 10 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → TRUNCATE ( <width> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #3"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( TRUNCATE ( 10 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → TRUNCATE ( <width> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → TRUNCATE ( <width> , <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_na… → TRUNCATE ( <width> , <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( TRUNCATE ( 10 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → TRUNCATE ( <width> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #6"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( DAY ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → DAY ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → DAY ( <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( … → DAY ( <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( DAY ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → DAY ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #5"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( MONTH ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR… → MONTH ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR… → MONTH ( <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR … → MONTH ( <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( MONTH ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR… → MONTH ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<num_buckets> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,…"
-note = "a valid integer_literal, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( BUCKET ( 1 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → BUCKET ( <num_buckets> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #2"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( BUCKET ( 1 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → BUCKET ( <num_buckets> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → BUCKET ( <num_buckets> , <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <co… → BUCKET ( <num_buckets> , <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( BUCKET ( 1 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → BUCKET ( <num_buckets> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #7"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( HOUR ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → HOUR ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → HOUR ( <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → HOUR ( <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( HOUR ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → HOUR ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #4"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( YEAR ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → YEAR ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → YEAR ( <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → YEAR ( <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( YEAR ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → YEAR ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "option_present"
-target = "[ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) |…"
-note = "the list continued at least once, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( v1 , v1 ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table option_present [ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) |…"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.ddl.create-interactive-table.as.variant-syntax-static-interactive-table"
 kind = "negative_neighbour"
 target = ""
@@ -1691,24 +1493,6 @@ target = ""
 note = "the form without its required RESTRICTED after AS in [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ] #8"
 sql = "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS INT LANGUAGE SQL EXECUTE AS CALLER AS $$ BEGIN RETURN 1 ; END $$ ;"
 valid_as = "sf.ddl.create-procedure.define-procedure alternative { OWNER | CALLER | RESTRICTED CALLER } → CALLER #8"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
-kind = "option_present"
-target = "[ , ... ] #7"
-note = "the list continued at least once, observed"
-sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 ) RELATIONSHIPS ( v1 ( v1 ) REFERENCES v1 ( v1 , v1 ) ) ;"
-valid_as = "sf.ddl.create-semantic-view.create-or-alter-semantic option_present [ , ... ] #6"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
-kind = "option_present"
-target = "[ , ... ] #7"
-note = "the list continued at least once, observed"
-sql = "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) RELATIONSHIPS ( v1 ( v1 ) REFERENCES v1 ( v1 , v1 ) ) ;"
-valid_as = "sf.ddl.create-semantic-view.create-semantic-view-tables option_present [ , ... ] #6"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
