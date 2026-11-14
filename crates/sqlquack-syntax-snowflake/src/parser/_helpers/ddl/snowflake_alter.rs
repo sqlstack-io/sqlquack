@@ -302,7 +302,7 @@ impl Parser {
         Ok(names)
     }
 
-    /// Parse the properties of a SET (`set`) or UNSET action; `graph` admits TASK_DEFAULTS and always reads CONTACT as contacts.
+    /// Parse the properties of a SET (`set`) or UNSET action, where a comma needs a property after it; `graph` admits TASK_DEFAULTS and always reads CONTACT as contacts.
     pub(super) fn parse_alter_object_properties(
         &mut self,
         set: bool,
@@ -383,7 +383,11 @@ impl Parser {
                 properties.push(parameter_property(&name, value));
             }
             let comma = self.match_token(TokenType::Comma);
-            if self.is_at_end() || self.check(TokenType::Semicolon) || !set && !comma {
+            let end = self.is_at_end() || self.check(TokenType::Semicolon);
+            if comma && end {
+                return Err(self.parse_error("Expected a property after the comma"));
+            }
+            if end || !set && !comma {
                 return Ok(properties);
             }
         }

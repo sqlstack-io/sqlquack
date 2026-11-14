@@ -421,7 +421,7 @@ impl Parser {
         }
     }
 
-    /// Parse an integration property value: ALL, a literal or name, or `( ... )` of values or of `<key> = <value>` pairs, where a key may be any word, such as LOGIN_IDP_REDIRECT's DEFAULT.
+    /// Parse an integration property value: ALL, a literal or name, or `( ... )` of values or of `<key> = <value>` pairs, where a key may be any word, such as LOGIN_IDP_REDIRECT's DEFAULT; a comma needs an item after it.
     fn parse_integration_value(&mut self) -> Result<Expression> {
         if self.text_at(0).as_deref() == Some("ALL") {
             self.skip();
@@ -452,6 +452,9 @@ impl Parser {
             }
             if !self.match_token(TokenType::Comma) {
                 break;
+            }
+            if self.check(TokenType::RParen) {
+                return Err(self.parse_error("Expected a value after the comma"));
             }
         }
         self.expect_token(TokenType::RParen)?;
@@ -573,6 +576,9 @@ impl Parser {
                     items.push(self.parse_object_value()?);
                     if !self.match_token(TokenType::Comma) {
                         break;
+                    }
+                    if self.check(TokenType::RParen) {
+                        return Err(self.parse_error("Expected a value after the comma"));
                     }
                 }
                 self.expect_token(TokenType::RParen)?;

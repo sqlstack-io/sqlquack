@@ -852,7 +852,7 @@ impl Parser {
         self.parse_object_value()
     }
 
-    /// Parse `( [ <item> [ , ] ... ] )`, each item a value or a `<key> = <value>` or `<key> => <value>` pair.
+    /// Parse `( [ <item> [ , ] ... ] )`, each item a value or a `<key> = <value>` or `<key> => <value>` pair; a comma needs an item after it.
     fn parse_value_list(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::LParen)?;
         let mut items: Vec<Expression> = Vec::new();
@@ -867,7 +867,9 @@ impl Parser {
                     item
                 },
             );
-            self.match_token(TokenType::Comma);
+            if self.match_token(TokenType::Comma) && self.check(TokenType::RParen) {
+                return Err(self.parse_error("Expected a value after the comma"));
+            }
             if self.is_at_end() {
                 return Err(self.parse_error("Expected )"));
             }

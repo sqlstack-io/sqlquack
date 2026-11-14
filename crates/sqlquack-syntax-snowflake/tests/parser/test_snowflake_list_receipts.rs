@@ -1,0 +1,136 @@
+use sqlquack_syntax::Dialect;
+
+use crate::helpers::accepted;
+use crate::test_types::AcceptanceTestCase;
+
+fn assert_acceptance_matches_snowflake(test_cases: &[AcceptanceTestCase]) {
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_trailing_comma_in_a_snowflake_list_when_parsing_then_acceptance_matches_snowflake() {
+    assert_acceptance_matches_snowflake(&[
+        AcceptanceTestCase {
+            description: "a property value list ends in a comma (recorded errno 1003)",
+            sql: "ALTER NETWORK RULE v1 SET VALUE_LIST = ( 'm' , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description:
+                "a property value list with an item after each comma (recorded errno 2003)",
+            sql: "ALTER NETWORK RULE v1 SET VALUE_LIST = ( 'm' , 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a file format's NULL_IF list ends in a comma (recorded errno 1003)",
+            sql: "ALTER STAGE v1 SET FILE_FORMAT = ( TYPE = CSV NULL_IF = ( 'm' , ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an integration's list ends in a comma (recorded errno 1003)",
+            sql: "ALTER INTEGRATION v1 SET ALLOWED_AUTHENTICATION_SECRETS = ( v1 , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an integration's list with an item after its comma (recorded errno 2003)",
+            sql: "ALTER INTEGRATION v1 SET ALLOWED_AUTHENTICATION_SECRETS = ( v1 , v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an organization's list ends in a comma (recorded errno 1003)",
+            sql: "ALTER ORGANIZATION SET DOMAIN_NAMES = ( 'm' , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an organization's list with a name after its comma (recorded errno 2003)",
+            sql: "ALTER ORGANIZATION SET DOMAIN_NAMES = ( 'm' , m1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a tuple ends in a comma (recorded errno 1003)",
+            sql: "SELECT ( 1 ) IN ( ( 1 ) , ( 1 , ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "tuples without a trailing comma (recorded OK)",
+            sql: "SELECT ( 1 ) IN ( ( 1 ) , ( 1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a SET value tuple ends in a comma (recorded errno 1003)",
+            sql: "SET ( v1 ) = ( 1 , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a LIKE ANY pattern list ends in a comma (recorded errno 1003)",
+            sql: "SELECT v1 LIKE ANY ( 'm' , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an UNSET list ends in a comma (recorded errno 1003)",
+            sql: "ALTER TASK GRAPH v1 UNSET SUSPEND_TASK_AFTER_NUM_FAILURES , ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an UNSET list with a property after its comma (recorded errno 2003)",
+            sql: "ALTER TASK v1 UNSET LOCK_TIMEOUT , STATEMENT_TIMEOUT_IN_SECONDS ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a secondary role list ends in a comma (recorded errno 1003)",
+            sql: "USE SECONDARY ROLES v1 , ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a secondary role list with a role after its comma (recorded errno 2003)",
+            sql: "USE SECONDARY ROLES v1 , v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "ORDER BY ends in a comma (recorded errno 1003)",
+            sql: "SELECT 1 FROM t1 ORDER BY v1 , ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "ORDER BY with a key after its comma (recorded errno 2003)",
+            sql: "SELECT 1 FROM t1 ORDER BY v1 , v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "DESCRIBE's argument types end in a comma (recorded errno 1003)",
+            sql: "DESC PROCEDURE v1 ( INT , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "DESCRIBE with a type after its comma (recorded errno 2003)",
+            sql: "DESC PROCEDURE v1 ( INT , INT ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ]);
+}
