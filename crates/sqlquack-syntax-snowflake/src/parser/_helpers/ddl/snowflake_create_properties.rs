@@ -3,7 +3,7 @@
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::constants::{
     SNOWFLAKE_BODY_POLICY_KINDS, SNOWFLAKE_GROUP_NAME_PROPERTIES, SNOWFLAKE_KIND_WORDS_ALONE,
-    SNOWFLAKE_PROPERTY_KINDS, SNOWFLAKE_TAGS_LAST_KINDS,
+    SNOWFLAKE_PROPERTY_KINDS, SNOWFLAKE_STRING_KEY_MAP_PROPERTIES, SNOWFLAKE_TAGS_LAST_KINDS,
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -457,6 +457,9 @@ impl Parser {
         }
         let name = self.parse_simple_name()?;
         self.expect_token(TokenType::Eq)?;
+        if SNOWFLAKE_STRING_KEY_MAP_PROPERTIES.contains(&name.name.to_ascii_uppercase().as_str()) {
+            self.check_snowflake_string_keys()?;
+        }
         let value = self.parse_create_property_value(false)?;
         Ok(vec![property(
             &name.name.to_ascii_uppercase(),
