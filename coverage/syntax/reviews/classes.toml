@@ -758,3 +758,101 @@ note = "Read in full against the documentation page, the obligations, the cases 
 
 [review.definitions]
 "sf.classes.forecast.commands.create-forecast.forecast" = "895f57fd4f932a662f69597e3c000b1c7e356b7ddf6cc37b5a675760a47d5d8c"
+
+[[review]]
+id = "classes-012"
+family = "classes"
+parser_tree = "cf4724b37f8f25a48b51cafa1c2df346916212d5"
+reviewed_utc = "2026-11-14T08:48:08Z"
+verdict = "approved"
+forms = [
+  "sf.classes.anomaly-detection.commands.show-anomaly-detection",
+  "sf.classes.anomaly-insights.methods.add-notification-integration",
+  "sf.classes.anomaly-insights.methods.drop-monitor",
+  "sf.classes.anomaly-insights.methods.get-account-anomalies-in-credits",
+  "sf.classes.anomaly-insights.methods.get-account-notification-emails",
+  "sf.classes.anomaly-insights.methods.get-hourly-consumption-by-service-type",
+  "sf.classes.anomaly-insights.methods.get-hourly-spend-for-anomaly",
+  "sf.classes.anomaly-insights.methods.get-monitor-anomalies",
+  "sf.classes.anomaly-insights.methods.get-monitor-config",
+  "sf.classes.anomaly-insights.methods.get-monitor-notification-emails",
+  "sf.classes.anomaly-insights.methods.get-monitor-notification-log",
+  "sf.classes.anomaly-insights.methods.get-notification-integrations",
+  "sf.classes.anomaly-insights.methods.get-org-notification-emails",
+  "sf.classes.anomaly-insights.methods.get-top-accounts-by-consumption",
+  "sf.classes.anomaly-insights.methods.get-top-queries-from-warehouse",
+  "sf.classes.anomaly-insights.methods.list-monitors",
+  "sf.classes.anomaly-insights.methods.recalculate-anomalies",
+  "sf.classes.anomaly-insights.methods.remove-notification-integration",
+  "sf.classes.anomaly-insights.methods.rename-monitor",
+  "sf.classes.anomaly-insights.methods.set-account-notification-emails",
+  "sf.classes.anomaly-insights.methods.set-monitor-notification-emails",
+  "sf.classes.anomaly-insights.methods.set-org-notification-emails",
+  "sf.classes.budget.commands.show-budget",
+  "sf.classes.classification-profile.commands.show-classification-profile",
+  "sf.classes.classification.commands.show-classification",
+  "sf.classes.custom-classifier.commands.show-custom-classifiers",
+  "sf.classes.forecast.commands.show-forecast",
+  "sf.classes.top-insights.commands.show-top-insights",
+]
+note = "Read in full under review brief version 1, with the clarification that a part a..b leaves out is null with a `*_omitted` flag on its owner, against the documentation page, the obligations, the cases and the parse trees of the parser at 814079e7b; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.classes.anomaly-detection.commands.show-anomaly-detection" = "84a43781b8a9419794183cfd68ed1be2bf377d0dbbeb473f6dd37c06e35c3c3e"
+"sf.classes.anomaly-insights.methods.add-notification-integration" = "3d2416247973784fc77e1c29b9ab67a9a6fde3b305a56efd8ef6aaf3e71f0c86"
+"sf.classes.anomaly-insights.methods.drop-monitor" = "cb0834e66de091a74873095eaecc9e478a5663ba2765f2064d7d29e16604e9d5"
+"sf.classes.anomaly-insights.methods.get-account-anomalies-in-credits" = "6d2bda65e841957f80242ee0eae01bfdaf1465a22161d74ab47b54d4d9713641"
+"sf.classes.anomaly-insights.methods.get-account-notification-emails" = "9f079f29409df41ee66f59b27295880b22a606d59fc9314b6ed4dca48884c166"
+"sf.classes.anomaly-insights.methods.get-hourly-consumption-by-service-type" = "f8a5018bce0d94cc32ea392914866c4cbef80072e38b3484e23127c8e73d1885"
+"sf.classes.anomaly-insights.methods.get-hourly-spend-for-anomaly" = "a7bde59b549412c390641ff36929e4a2086c693a641d17cf6d22d6e5e25104fa"
+"sf.classes.anomaly-insights.methods.get-monitor-anomalies" = "2a074868fe3aa576b01dd085693d9e4a89081e81a6c78b26ca9181e08d3126e5"
+"sf.classes.anomaly-insights.methods.get-monitor-config" = "7b8b71157512fa48b947c0763e3c52dea04fd2898298164b207e3f06ad2d5da4"
+"sf.classes.anomaly-insights.methods.get-monitor-notification-emails" = "6fc5c2021c7b51a54114e54727821131c3c416d5eb435919c3db887664cbb5bb"
+"sf.classes.anomaly-insights.methods.get-monitor-notification-log" = "fc1f6de5421c9a7b931f91f0a6f9b6b745b800b77119f217f98464a23697e381"
+"sf.classes.anomaly-insights.methods.get-notification-integrations" = "fb26dd036386ef9148c22da1a9da79cae1f05fe4e5c89a09d52d5d1d674a35b9"
+"sf.classes.anomaly-insights.methods.get-org-notification-emails" = "53f0ec51b4d127b68c7fcb35ac048c8e751db29ff89e9cc595c8d79f0d38424b"
+"sf.classes.anomaly-insights.methods.get-top-accounts-by-consumption" = "df29a8b2374eafd5c1f8baec0f7ca6cb052464abe36351d39b3b08313e017442"
+"sf.classes.anomaly-insights.methods.get-top-queries-from-warehouse" = "10ba02c63fdd1ce6c355be216dbaea3064f0d86d242946f27d23a42a00da7574"
+"sf.classes.anomaly-insights.methods.list-monitors" = "1c9966b47f177c52ae884ddbf5fd96d8c1aa8909cdc3477ca286a6e137ba783a"
+"sf.classes.anomaly-insights.methods.recalculate-anomalies" = "8e7f8532f2eb63d48697b56214f5ab068b1d422e5ddd60713439da9503014145"
+"sf.classes.anomaly-insights.methods.remove-notification-integration" = "3db6d13ec61d87cb69adce3a3bd108eaea6fd78785cb027399a264d4f82c6ec5"
+"sf.classes.anomaly-insights.methods.rename-monitor" = "ca675607a98d06eb1b1f7a63757ad40b225bd00d4f507be8dde1ec4f14eaa999"
+"sf.classes.anomaly-insights.methods.set-account-notification-emails" = "ba046fff2b866ccebd3782eb224b0f10b3d625c34055d1e18ff9db13aed9e6b3"
+"sf.classes.anomaly-insights.methods.set-monitor-notification-emails" = "439e7a99a6458a923187a55b7a3fc92b71cb7dceb5315ac1cade3bd6bef6b232"
+"sf.classes.anomaly-insights.methods.set-org-notification-emails" = "29ae01da599834e47acc26095b21ebc1cd60b4efd0d3026d9fe44b05864628e9"
+"sf.classes.budget.commands.show-budget" = "4b6bb5c9f542b7acf3f12c85e27a5d7eb11a5723e2b5bdd600b8ae4e7354904c"
+"sf.classes.classification-profile.commands.show-classification-profile" = "c3335c4af51d5aa59bcbcaf232e9dcbbac4c1cfa06f274d20733357be2f10040"
+"sf.classes.classification.commands.show-classification" = "eca7472a152f40e588168e335bfbe816a31476cd42fdf4d74ab87bc1a49b895e"
+"sf.classes.custom-classifier.commands.show-custom-classifiers" = "bf701117fbf7f9d0a09cb8b06126f6c2d079d2f133cd11d482852eb56f17c24b"
+"sf.classes.forecast.commands.show-forecast" = "92048a1c2c9967cb78ef200563c2684eb4feeafa941dc932903b7ae21f90ca01"
+"sf.classes.top-insights.commands.show-top-insights" = "57080eaf2509c134b977457b65ff9bed8778763f83f46fe9512999a36cbc0d88"
+
+[review.definitions]
+"sf.classes.anomaly-detection.commands.show-anomaly-detection" = "462e5295c8bcfbf0ac842b8fdb0321d5655e83c01489bb4d43c83e228da629c5"
+"sf.classes.anomaly-insights.methods.add-notification-integration" = "a0a6c4362f4fc4f32e7e739a1109d029f8a650f5c4d97c4b0d9cd0ddb15d3fff"
+"sf.classes.anomaly-insights.methods.drop-monitor" = "1b921641d18cf5045e72d3a9e8ca08e6df03764773e61269c88bf57d6cfce632"
+"sf.classes.anomaly-insights.methods.get-account-anomalies-in-credits" = "b127e796e7dbc2a2c560cbe5d93cd0fa123b34766f2d58d6cbdfe8bff6bea85e"
+"sf.classes.anomaly-insights.methods.get-account-notification-emails" = "77e3289b815f286223f3a1235bd81326b69bf478205da3311b050e25020d00c7"
+"sf.classes.anomaly-insights.methods.get-hourly-consumption-by-service-type" = "3edb8cf0b6a36b6859580b03b5179eb798a25c0a348c0e959298da1681c2254f"
+"sf.classes.anomaly-insights.methods.get-hourly-spend-for-anomaly" = "4a345fd77331df378e8b602226ae3907f3e5b4fc16ef59cca1881b6f80e8f867"
+"sf.classes.anomaly-insights.methods.get-monitor-anomalies" = "e10816fe382d20e5c290a2026453aaf8b2f0aa6b590f281540880322fcff6580"
+"sf.classes.anomaly-insights.methods.get-monitor-config" = "20a62aa5efbc1402e7b8b7d4f4b61a8054241f90076f3b8ccfc152b494958364"
+"sf.classes.anomaly-insights.methods.get-monitor-notification-emails" = "e4373ff5417e56b5856733a28120a8b10fdb45bf274dcdd963a0ebd7fa0d9d7f"
+"sf.classes.anomaly-insights.methods.get-monitor-notification-log" = "c5ddfcd454a549c2708900c513c4b454f0084d84edc7e8714b8edf6f5e70c3af"
+"sf.classes.anomaly-insights.methods.get-notification-integrations" = "bdfbc94a72111c427eeb1e253ec924f6dd44d8acc0ec9d267e59c81079d73d22"
+"sf.classes.anomaly-insights.methods.get-org-notification-emails" = "c0a2c0bdd38cb6c1887c95995d49bf9177769f76c1b3ed63a899ed05a7a184fa"
+"sf.classes.anomaly-insights.methods.get-top-accounts-by-consumption" = "9d1d6c05fd32127493c302d1d8e8efbc1f69f37bca8c7a91a408104ffe664b63"
+"sf.classes.anomaly-insights.methods.get-top-queries-from-warehouse" = "94e93917fe93d7eb79f56df5176eaf7f34078c91958ad6e9139851d3b897af7a"
+"sf.classes.anomaly-insights.methods.list-monitors" = "feb09afb3717659ce6bc50864312fa063360ecaf2c7f8ecc0d8173945d42fccd"
+"sf.classes.anomaly-insights.methods.recalculate-anomalies" = "47ab054b5c45844f7c790f138fedb7a7020e9d664232d5d2e2a9c96844d98d9e"
+"sf.classes.anomaly-insights.methods.remove-notification-integration" = "1b2a0c4bab93d1ac1e265ab3b5890743294de3a147f18bbfc064aa40951e0997"
+"sf.classes.anomaly-insights.methods.rename-monitor" = "4be8d79849e40fb83eb5aa0e52a9e46a97412f4257981845432c63fed1d3b281"
+"sf.classes.anomaly-insights.methods.set-account-notification-emails" = "a023db6d1bb395da12d9dda0a3979250f572888308c2ee7ae945e1a26f4738d8"
+"sf.classes.anomaly-insights.methods.set-monitor-notification-emails" = "4042ef1ea85b41affe0225a9c077ffe244e22febab63b2679077d4b96914ea4c"
+"sf.classes.anomaly-insights.methods.set-org-notification-emails" = "25a86a4dd509a8810fd098020c3f58db1747e127c678d78d275defe2597fd87e"
+"sf.classes.budget.commands.show-budget" = "36214f2c8af8a88f6c431747e3221e481c131f7dbf9acb340dccf1da87f61ce6"
+"sf.classes.classification-profile.commands.show-classification-profile" = "78b23af136c28288ff8843dcf749d55de42b9c4452162c471a954d2ea7cb375f"
+"sf.classes.classification.commands.show-classification" = "06416db0aaa50846884f3aa0e0bfc32cc808eda60345d585c9207656209bbb3d"
+"sf.classes.custom-classifier.commands.show-custom-classifiers" = "855636497275edf8226e203ceb7feb1735ac6e8bbb9fd1a3ee2ae64c4a4b07bd"
+"sf.classes.forecast.commands.show-forecast" = "04f699b7e1ffa36fc47ca31ff7f40bec31de789c80b0b290631613beebb58f96"
+"sf.classes.top-insights.commands.show-top-insights" = "71f450a64fb8ad788281abb934b0d2cb88781def5fbfa320f8ba8fc89ed1e961"

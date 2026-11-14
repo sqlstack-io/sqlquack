@@ -210,3 +210,20 @@ note = "Read in full under review brief version 1 against the documentation page
 [review.definitions]
 "sf.utility.execute-immediate.immediate-2" = "2c36dd6a3341b95497d86629fc906668b7553b3f5abdb67a31a89ad32ffc337f"
 "sf.utility.execute-immediate.immediate.syntax" = "9f934ed69b5e42b0dd6b1f2d0201147927b1dbfb353ffe1886d6d84ca8d1e88f"
+
+[[review]]
+id = "utility-011"
+family = "utility"
+parser_tree = "cf4724b37f8f25a48b51cafa1c2df346916212d5"
+reviewed_utc = "2026-11-14T08:48:08Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-notebook-project",
+]
+note = "Read in full under review brief version 1, with the clarification that a part a..b leaves out is null with a `*_omitted` flag on its owner, against the documentation page, the obligations, the cases and the parse trees of the parser at 814079e7b; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-notebook-project" = "b2a64e0bd68583c28c6b88487904a0e47600cf27864dff003a46e5f4b7e38f9c"
+
+[review.definitions]
+"sf.utility.execute-notebook-project" = "73f0ce13afa2c2f0fb0483c4f54ef235f7753056de9acab7ddd05627fc03fb06"
