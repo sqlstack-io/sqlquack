@@ -33,6 +33,60 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "UNDROP DATABASE's IDENTIFIER( ) takes no bare word (recorded errno 1003)",
+            sql: "UNDROP DATABASE IDENTIFIER ( m1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "UNDROP SCHEMA's IDENTIFIER( ) takes no bare word (recorded errno 1003)",
+            sql: "UNDROP SCHEMA IDENTIFIER ( m1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "UNDROP SNAPSHOT's IDENTIFIER( ) takes no bare word (recorded errno 1003)",
+            sql: "UNDROP SNAPSHOT IDENTIFIER ( m1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "UNDROP TABLE's IDENTIFIER( ) takes no bare word (recorded errno 1003)",
+            sql: "UNDROP TABLE IDENTIFIER ( m1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "UNDROP's IDENTIFIER( ) takes a string (recorded errno 2003, after parsing)",
+            sql: "UNDROP TABLE IDENTIFIER ( 'q1' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "UNDROP's IDENTIFIER( ) takes a system-generated id, as the UNDROP DATABASE page shows",
+            sql: "UNDROP DATABASE IDENTIFIER(492);",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a system-generated id restores a snapshot under a new name",
+            sql: "UNDROP SNAPSHOT IDENTIFIER ( 1 ) RENAME TO s2 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a stage keeps no system-generated id",
+            sql: "UNDROP STAGE IDENTIFIER ( 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a bare word in UNDROP's IDENTIFIER( ) inside a scripting block is left to the block",
+            sql: "BEGIN UNDROP TABLE IDENTIFIER ( v ) ; END ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "CREATE TYPE names a data type (recorded success)",
             sql: "CREATE OR REPLACE TYPE IF NOT EXISTS v1 AS INT COMMENT = 'm' ;",
             dialect: Dialect::Snowflake,
@@ -982,6 +1036,45 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             sql: "ALTER TABLE v1 ADD COLUMN v1 INT NOT NULL CONSTRAINT c9 UNIQUE NORELY ;",
             pointer: "/0/alter_table/actions/0/AddColumn/column/constraint_properties",
             expected_value: json!([[1, "NORELY"]]),
+        },
+        ProjectionTestCase {
+            description: "an IDENTIFIER( ) name writes no empty name beside the call",
+            sql: "UNDROP TABLE IDENTIFIER ( 'q1' ) ;",
+            pointer: "/0/undrop/name",
+            expected_value: json!({
+                "schema": null, "catalog": null, "alias": null, "alias_explicit_as": false,
+                "column_aliases": [], "trailing_comments": [], "when": null, "only": false,
+                "final_": false, "hints": [],
+                "identifier_func": {"function": {
+                    "name": "IDENTIFIER", "args": [{"literal": {"literal_type": "string", "value": "q1"}}],
+                    "distinct": false, "trailing_comments": [], "use_bracket_syntax": false,
+                    "no_parens": false, "quoted": false,
+                }},
+            }),
+        },
+        ProjectionTestCase {
+            description: "a system-generated id stays a number",
+            sql: "UNDROP DATABASE IDENTIFIER(492);",
+            pointer: "/0/undrop/name/identifier_func/function/args/0/literal",
+            expected_value: json!({"literal_type": "number", "value": "492"}),
+        },
+        ProjectionTestCase {
+            description: "a job service names no object",
+            sql: "EXECUTE JOB SERVICE IN COMPUTE POOL v1 FROM @s1 SPECIFICATION_FILE = 'm' ;",
+            pointer: "/0/execute_object/name",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "SET TAG = <value> without a tag name has no invented tag name",
+            sql: "ALTER DYNAMIC TABLE v1 SET TAG = 'm' ;",
+            pointer: "/0/alter_object/properties/0",
+            expected_value: json!({"kind": "TAG", "name": null, "value": {"literal": {"literal_type": "string", "value": "m"}}}),
+        },
+        ProjectionTestCase {
+            description: "an ALTER RESOURCE MONITOR with no clause has no invented action",
+            sql: "ALTER RESOURCE MONITOR v1 ;",
+            pointer: "/0/alter_object/action",
+            expected_value: json!(null),
         },
     ];
 

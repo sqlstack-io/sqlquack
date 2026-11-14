@@ -1246,7 +1246,8 @@ pub struct AlterObject {
     /// IF EXISTS clause
     #[serde(default)]
     pub if_exists: bool,
-    /// The action's keywords, e.g. "RESUME", "MODIFY RUN", "UNSET TAG"
+    /// The action's keywords, e.g. "RESUME", "MODIFY RUN", "UNSET TAG"; left out of a serialized tree when none was written
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub action: String,
     /// IF EXISTS on the action's own object, as in Snowflake's `MODIFY PAT IF EXISTS t1 SET ...`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
@@ -1357,7 +1358,8 @@ pub struct ObjectProperty {
 pub struct ExecuteObject {
     /// The object kind as written in upper case, such as `TASK GRAPH`.
     pub kind: String,
-    pub name: TableRef,
+    /// The object name; none for a job service or inference job, which names no object
+    pub name: Option<TableRef>,
     /// The action words in upper case, such as `RETRY LAST` or `PURGE`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub action: Option<String>,
