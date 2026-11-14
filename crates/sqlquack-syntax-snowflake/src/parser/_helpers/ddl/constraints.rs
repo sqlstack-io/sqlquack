@@ -1506,7 +1506,7 @@ impl Parser {
             _ => (false, false, false),
         };
         let mut properties: Vec<ObjectProperty> = Vec::new();
-        if kind == "ACCOUNT" && self.match_text_seq(&["GRACE_PERIOD_IN_DAYS"]) {
+        if matches!(kind.as_str(), "ACCOUNT") && self.match_text_seq(&["GRACE_PERIOD_IN_DAYS"]) {
             self.expect_token(TokenType::Eq)?;
             if !self.check(TokenType::Number) {
                 return Err(self.parse_error("Expected a number of days"));

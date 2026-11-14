@@ -63,6 +63,9 @@ impl Parser {
         {
             return Err(self.parse_error("Expected IF NOT EXISTS"));
         }
+        if if_not_exists && or_replace && parts == ["WAREHOUSE"] {
+            return Err(self.parse_error("OR REPLACE and IF NOT EXISTS cannot be combined"));
+        }
         let name = self.parse_object_name()?;
         if self.check_identifier("CLONE") || self.check_text_seq(&["AS", "REPLICA"]) {
             self.current = start;
@@ -93,6 +96,12 @@ impl Parser {
             }
             if matches!(parts.as_slice(), ["FAILOVER" | "REPLICATION", "GROUP"]) {
                 self.check_group_name_value()?;
+                if self.check_identifier("REPLICATION_SCHEDULE")
+                    && self.check_next(TokenType::Eq)
+                    && self.peek_nth(2).map(|token| token.token_type) != Some(TokenType::String)
+                {
+                    return Err(self.parse_error("Expected a string as the replication schedule"));
+                }
             }
             properties.extend(with_written(
                 std::mem::take(&mut with),
@@ -173,6 +182,9 @@ impl Parser {
             self.parse_snowflake_create_postgres_instance(or_replace, or_alter)?
         {
             return Ok(Some(instance));
+        }
+        if let Some(openflow) = self.parse_snowflake_create_openflow(or_replace, or_alter)? {
+            return Ok(Some(openflow));
         }
         Ok(None)
     }

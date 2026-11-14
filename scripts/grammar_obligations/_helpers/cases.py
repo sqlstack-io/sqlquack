@@ -388,9 +388,10 @@ def receipt_settlements(directory: Path) -> dict[tuple[str, str, str, str], tupl
         )
         answers.setdefault(key, set()).add(answer)
     bound: set[tuple[str, str, str]] = set()
-    for (case_id, sql_sha, _, session_sha), found in answers.items():
-        bound.add((case_id, sql_sha, session_sha))
-        found |= probed.get((case_id, sql_sha, session_sha), set())
+    for key in answers:
+        statement: tuple[str, str, str] = (key[0], key[1], key[3])
+        bound.add(statement)
+        answers[key] |= probed.get(statement, set())
     for (case_id, sql_sha, session_sha), found in probed.items():
         if (case_id, sql_sha, session_sha) not in bound:
             answers[(case_id, sql_sha, PROBE_ANY_SETUP, session_sha)] = found

@@ -2,9 +2,7 @@
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_create_table::SnowflakeTableKind;
-use crate::parser::constants::{
-    EVENT_TABLE, ONLINE_FEATURE_TABLE, ONLINE_FEATURE_TABLE_REQUIRED, TABLE_KEYWORD,
-};
+use crate::parser::constants::{EVENT_TABLE, ONLINE_FEATURE_TABLE, TABLE_KEYWORD};
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
@@ -206,7 +204,7 @@ impl Parser {
         })))
     }
 
-    /// `PRIMARY KEY ( <columns> ) <property> ... FROM <source>`: the key, the properties with WAREHOUSE required, and the source.
+    /// `PRIMARY KEY ( <columns> ) <property> ... FROM <source>`: the key, the properties, and the source.
     fn parse_online_feature_table(
         &mut self,
     ) -> Result<(Expression, Vec<ObjectProperty>, Expression)> {
@@ -217,15 +215,9 @@ impl Parser {
         }
         let key = self.parse_iceberg_name_list(false)?;
         let mut properties: Vec<ObjectProperty> = Vec::new();
-        let mut keys: Vec<String> = Vec::new();
         while !self.is_at_end() && !self.check(TokenType::Semicolon) && !self.check(TokenType::From)
         {
-            let (found_key, found) = self.parse_interactive_property()?;
-            keys.extend(found_key);
-            properties.extend(found);
-        }
-        if !keys.iter().any(|key| key == ONLINE_FEATURE_TABLE_REQUIRED) {
-            return Err(self.parse_error("Expected WAREHOUSE"));
+            properties.extend(self.parse_interactive_property()?.1);
         }
         self.expect_token(TokenType::From)?;
         let source = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
