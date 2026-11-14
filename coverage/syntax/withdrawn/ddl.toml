@@ -200,10 +200,118 @@ valid_as = "sf.ddl.alter-external-volume.add-storage-location-name-cloudprovider
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.alter-function-spcs.set-batch-timeout-secs"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET BATCH_TIMEOUT_SECS = 1 ;"
+valid_as = "sf.ddl.alter-function-spcs.set-batch-timeout-secs positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function-spcs.set-comment"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-function-spcs.set-comment positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function-spcs.set-context-headers"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET CONTEXT_HEADERS = ( CURRENT_USER ) ;"
+valid_as = "sf.ddl.alter-function-spcs.set-context-headers positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.alter-function-spcs.set-context-headers"
 kind = "required_operand_missing"
 target = "<context_function_1>"
 note = "omit <context_function_1>"
+sql = "ALTER FUNCTION v1 ( ) SET CONTEXT_HEADERS = ( ) ;"
+valid_as = "sf.ddl.alter-function.set-context-headers positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function-spcs.set-max-batch-retries"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET MAX_BATCH_RETRIES = 1 ;"
+valid_as = "sf.ddl.alter-function-spcs.set-max-batch-retries positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function-spcs.set-on-batch-failure-abort-return-null"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET ON_BATCH_FAILURE = ABORT ;"
+valid_as = "sf.ddl.alter-function-spcs.set-on-batch-failure-abort-return-null positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function-spcs.set-service-endpoint"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET SERVICE = 'm' ENDPOINT = 'm' ;"
+valid_as = "sf.ddl.alter-function-spcs.set-service-endpoint positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function-spcs.unset-context-headers-max-batch-rows-max-batch-retries"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) UNSET CONTEXT_HEADERS ;"
+valid_as = "sf.ddl.alter-function-spcs.unset-context-headers-max-batch-rows-max-batch-retries positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.rename-to"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) RENAME TO v1 ;"
+valid_as = "sf.ddl.alter-function.rename-to positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.set"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-function-spcs.set-comment positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.set-api-integration"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET API_INTEGRATION = v1 ;"
+valid_as = "sf.ddl.alter-function.set-api-integration positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.set-compression"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET COMPRESSION = NONE ;"
+valid_as = "sf.ddl.alter-function.set-compression positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.set-context-headers"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
 sql = "ALTER FUNCTION v1 ( ) SET CONTEXT_HEADERS = ( ) ;"
 valid_as = "sf.ddl.alter-function.set-context-headers positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
@@ -215,6 +323,87 @@ target = "<context_function_1> in [ <context_function_1> [ , <context_function_2
 note = "omit <context_function_1>"
 sql = "ALTER FUNCTION v1 ( ) SET CONTEXT_HEADERS = ( ) ;"
 valid_as = "sf.ddl.alter-function.set-context-headers positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.set-headers"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET HEADERS = ( ) ;"
+valid_as = "sf.ddl.alter-function.set-headers positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.set-max-batch-rows"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET MAX_BATCH_ROWS = 1 ;"
+valid_as = "sf.ddl.alter-function.set-max-batch-rows positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.set-request-translator-response-translator"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET REQUEST_TRANSLATOR = v1 ;"
+valid_as = "sf.ddl.alter-function.set-request-translator-response-translator positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.set-secure"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET SECURE ;"
+valid_as = "sf.ddl.alter-function.set-secure positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.set-tag"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET TAG v1 = 'm' ;"
+valid_as = "sf.ddl.alter-function.set-tag positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.set.javascript-handler"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-function-spcs.set-comment positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.unset-comment-headers-context-headers"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) UNSET COMMENT ;"
+valid_as = "sf.ddl.alter-function-spcs.unset-context-headers-max-batch-rows-max-batch-retries alternative { CONTEXT_HEADERS | MAX_BATCH_ROWS | MAX_BATCH_RETRIES | ON_BATCH_FAILURE | BATCH_TIMEOUT_SECS | COMMENT } → COMMENT"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.unset-secure-log-level-trace-level"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) UNSET SECURE ;"
+valid_as = "sf.ddl.alter-function.unset-comment-headers-context-headers alternative { COMMENT | HEADERS | CONTEXT_HEADERS | MAX_BATCH_ROWS | COMPRESSION | SECURE | REQUEST_TRANSLATOR |… → SECURE"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-function.unset-tag"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER FUNCTION v1 ( ) UNSET TAG v1 ;"
+valid_as = "sf.ddl.alter-function.unset-tag positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -390,11 +579,83 @@ reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
 form = "sf.ddl.alter-procedure.execute-as-owner-caller"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER PROCEDURE v1 ( ) EXECUTE AS OWNER ;"
+valid_as = "sf.ddl.alter-procedure.execute-as-owner-caller positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-procedure.execute-as-owner-caller"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required RESTRICTED after AS"
 sql = "ALTER PROCEDURE v1 ( ) EXECUTE AS CALLER ;"
 valid_as = "sf.ddl.alter-procedure.execute-as-owner-caller alternative { OWNER | CALLER | RESTRICTED CALLER } → CALLER"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-procedure.rename-to"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER PROCEDURE v1 ( ) RENAME TO v1 ;"
+valid_as = "sf.ddl.alter-procedure.rename-to positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-procedure.set"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER PROCEDURE v1 ( ) SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-procedure.set positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-procedure.set-tag"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER PROCEDURE v1 ( ) SET TAG v1 = 'm' ;"
+valid_as = "sf.ddl.alter-procedure.set-tag positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-procedure.set.javascript-handler"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER PROCEDURE v1 ( ) SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-procedure.set positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-procedure.set.snowflake-scripting-handler"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER PROCEDURE v1 ( ) SET COMMENT = 'm' ;"
+valid_as = "sf.ddl.alter-procedure.set positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-procedure.unset-comment"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER PROCEDURE v1 ( ) UNSET COMMENT ;"
+valid_as = "sf.ddl.alter-procedure.unset-comment positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.alter-procedure.unset-tag"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "ALTER PROCEDURE v1 ( ) UNSET TAG v1 ;"
+valid_as = "sf.ddl.alter-procedure.unset-tag positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -821,15 +1082,6 @@ valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalst
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format"
-kind = "option_absent"
-target = "[ , <purpose> = <contact_name> ... ]"
-note = "option absent [ , <purpose> = <contact_name> ... ], observed"
-sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = v1 ) ;"
-valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format option_present [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type"
 kind = "negative_neighbour"
 target = ""
@@ -848,15 +1100,6 @@ valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalst
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type"
-kind = "option_absent"
-target = "[ , <purpose> = <contact_name> ... ]"
-note = "option absent [ , <purpose> = <contact_name> ... ], observed"
-sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = v1 ) ;"
-valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type option_present [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax"
 kind = "negative_neighbour"
 target = ""
@@ -872,15 +1115,6 @@ target = ""
 note = "the form without its required { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } in [ , { <col_name> <col_type> AS <expr> | <part_col_name> <col_type> AS <part_expr> ... } ]"
 sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;"
 valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.syntax"
-kind = "option_absent"
-target = "[ , <purpose> = <contact_name> ... ]"
-note = "option absent [ , <purpose> = <contact_name> ... ], observed"
-sql = "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 PARTITION_TYPE = USER_SPECIFIED FILE_FORMAT = ( FORMAT_NAME = 'm' ) WITH CONTACT ( STEWARD = v1 ) ;"
-valid_as = "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type option_present [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -1235,177 +1469,6 @@ valid_as = "sf.ddl.create-table.create-table-like positive the documented form w
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "option_present"
-target = "[ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…"
-note = "option present [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col…, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( v1 ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table option_present [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )…"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( v1 ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table option_present [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → <col_name>"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_nam… → <col_name>, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( v1 ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table option_present [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "option_absent"
-target = "[ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) |…"
-note = "option absent [ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) | MO…, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( v1 ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table option_present [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (…"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<width> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) |…"
-note = "a valid operand, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( TRUNCATE ( 10 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → TRUNCATE ( <width> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #3"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( TRUNCATE ( 10 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → TRUNCATE ( <width> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → TRUNCATE ( <width> , <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_na… → TRUNCATE ( <width> , <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( TRUNCATE ( 10 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → TRUNCATE ( <width> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #6"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( DAY ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → DAY ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → DAY ( <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( … → DAY ( <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( DAY ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → DAY ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #5"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( MONTH ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR… → MONTH ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR… → MONTH ( <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR … → MONTH ( <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( MONTH ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR… → MONTH ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<num_buckets> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,…"
-note = "a valid integer_literal, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( BUCKET ( 1 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → BUCKET ( <num_buckets> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #2"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( BUCKET ( 1 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → BUCKET ( <num_buckets> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → BUCKET ( <num_buckets> , <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <co… → BUCKET ( <num_buckets> , <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( BUCKET ( 1 , v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> ,… → BUCKET ( <num_buckets> , <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #7"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( HOUR ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → HOUR ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → HOUR ( <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → HOUR ( <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( HOUR ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → HOUR ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "operand_type_class"
-target = "<col_name> in [ PARTITION BY ( { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> )… #4"
-note = "a valid identifier, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( YEAR ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → YEAR ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "alternative"
-target = "{ <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → YEAR ( <col_name> )"
-note = "alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → YEAR ( <col_name> ), observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( YEAR ( v1 ) ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table alternative { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR (… → YEAR ( <col_name> )"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-iceberg-table.table.iceberg-rest-in-a-catalog-linked-database"
-kind = "option_present"
-target = "[ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) |…"
-note = "the list continued at least once, observed"
-sql = "CREATE ICEBERG TABLE v1 ( v1 INT ) PARTITION BY ( v1 , v1 ) ;"
-valid_as = "sf.ddl.create-iceberg-table.table option_present [ , { <col_name> | BUCKET ( <num_buckets> , <col_name> ) | TRUNCATE ( <width> , <col_name> ) | YEAR ( <col_name> ) |…"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.ddl.create-interactive-table.as.variant-syntax-static-interactive-table"
 kind = "negative_neighbour"
 target = ""
@@ -1691,24 +1754,6 @@ target = ""
 note = "the form without its required RESTRICTED after AS in [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ] #8"
 sql = "DEFINE PROCEDURE d1.s1.v1 ( ) RETURNS INT LANGUAGE SQL EXECUTE AS CALLER AS $$ BEGIN RETURN 1 ; END $$ ;"
 valid_as = "sf.ddl.create-procedure.define-procedure alternative { OWNER | CALLER | RESTRICTED CALLER } → CALLER #8"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-semantic-view.create-or-alter-semantic"
-kind = "option_present"
-target = "[ , ... ] #7"
-note = "the list continued at least once, observed"
-sql = "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 ) RELATIONSHIPS ( v1 ( v1 ) REFERENCES v1 ( v1 , v1 ) ) ;"
-valid_as = "sf.ddl.create-semantic-view.create-or-alter-semantic option_present [ , ... ] #6"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
-form = "sf.ddl.create-semantic-view.create-semantic-view-tables"
-kind = "option_present"
-target = "[ , ... ] #7"
-note = "the list continued at least once, observed"
-sql = "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) RELATIONSHIPS ( v1 ( v1 ) REFERENCES v1 ( v1 , v1 ) ) ;"
-valid_as = "sf.ddl.create-semantic-view.create-semantic-view-tables option_present [ , ... ] #6"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
@@ -2333,6 +2378,15 @@ valid_as = "sf.ddl.drop-iceberg-table positive the documented form with every re
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.drop-function"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "DROP FUNCTION v1 ( ) ;"
+valid_as = "sf.ddl.drop-function positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.drop-materialized-view"
 kind = "negative_neighbour"
 target = ""
@@ -2348,6 +2402,15 @@ target = ""
 note = "the form without its required MONITOR"
 sql = "DROP MODEL v1 ;"
 valid_as = "sf.ddl.drop-model positive the documented form with every required part and no optional part"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
+form = "sf.ddl.drop-procedure"
+kind = "required_operand_missing"
+target = "<arg_data_type> in [ <arg_data_type> , ... ]"
+note = "omit <arg_data_type>"
+sql = "DROP PROCEDURE v1 ( ) ;"
+valid_as = "sf.ddl.drop-procedure positive the documented form with every required part and no optional part"
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]

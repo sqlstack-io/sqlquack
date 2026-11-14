@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import tomllib
 from collections import Counter
+from dataclasses import replace
 from pathlib import Path
 
 from scripts.grammar_obligations._helpers.derive import derive_trees
@@ -234,10 +235,10 @@ def _without_coincident_negatives(
     """Drafts minus rejections whose SQL a form also renders as valid, with each withdrawal."""
     accepted: dict[str, Draft] = {}
     observed: dict[str, Draft] = {}
-    rendered: list[tuple[Draft, list[Rendered]]] = []
-    for draft in drafts:
-        found: list[Rendered] = _draft_submissions(draft=draft, trees=trees, family=family)
-        rendered.append((draft, found))
+    rendered: list[tuple[Draft, list[Rendered]]] = _refused_positives_observed(
+        [(d, _draft_submissions(draft=d, trees=trees, family=family)) for d in drafts]
+    )
+    for draft, found in rendered:
         for case in found:
             if case.expect == EXPECT_ACCEPT:
                 accepted.setdefault(case.sql, draft)
@@ -295,6 +296,27 @@ def _without_coincident_negatives(
             }
         )
     return kept, withdrawn
+
+
+def _refused_positives_observed(
+    rendered: list[tuple[Draft, list[Rendered]]],
+) -> list[tuple[Draft, list[Rendered]]]:
+    """Positives whose SQL is documented SQL Snowflake refuses are observed, like that SQL."""
+    refused: set[str] = set()
+    for _, found in rendered:
+        refused |= {c.sql for c in found if c.expect == EXPECT_OBSERVE and c.documented}
+    return [_observed_if_refused(draft=d, found=f, refused=refused) for d, f in rendered]
+
+
+def _observed_if_refused(
+    *, draft: Draft, found: list[Rendered], refused: set[str]
+) -> tuple[Draft, list[Rendered]]:
+    if not draft.spec or not found:
+        return draft, found
+    if any(case.expect != EXPECT_ACCEPT or case.sql not in refused for case in found):
+        return draft, found
+    observed: Spec = replace(draft.spec, expect=EXPECT_OBSERVE)
+    return replace(draft, spec=observed), [replace(c, expect=EXPECT_OBSERVE) for c in found]
 
 
 def _clash_key(*, sql: str, draft: Draft) -> str:

@@ -283,6 +283,7 @@ class Renderer:
         """Rendered tokens; a replaced operand is still declared under its valid name."""
         out: list[str] = []
         dangling: int = -1
+        dropped: bool = False
         for position, node in enumerate(nodes):
             key: int = id(node)
             if node.token_kind == TOKEN_KEYWORD and node.text.upper() in SET_KEYWORDS:
@@ -291,7 +292,10 @@ class Renderer:
                 if dangling >= 0 and node.text == CLOSE_PAREN:
                     del out[dangling]
                     dangling = -1
+                dropped = True
                 continue
+            after_drop: bool = dropped
+            dropped = False
             emitted: int = len(out)
             if key in choices.replace:
                 text: str = choices.replace[key]
@@ -312,7 +316,8 @@ class Renderer:
                 self._last_choice = (node, index, chosen)
                 out += chosen
             elif node.token_kind == TOKEN_ELISION and out and out[-1] == LIST_SEPARATOR:
-                out.pop()
+                if not after_drop:
+                    out.pop()
             elif node.token_kind == TOKEN_ELISION:
                 fill: str = self.style.elisions.get(
                     elision_key(keywords=self._keywords, known=self.style.elisions), ""
@@ -470,6 +475,8 @@ def _ends_in_continuation(branch: tuple[Node, ...]) -> bool:
 
 def _dangling_separator(*, out: list[str], emitted: int, dangling: int, node: Node) -> int:
     """Drop the `,` omitted optionals leave beside `(` or `)`; returns the pending comma index."""
+    if len(out) < emitted:
+        return -1 if dangling >= len(out) else dangling
     if len(out) == emitted:
         if node.kind != NODE_OPTIONAL or dangling >= 0:
             return dangling
