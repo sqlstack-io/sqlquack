@@ -121,3 +121,35 @@ fn given_a_snowflake_warehouse_create_when_parsing_then_or_replace_and_if_not_ex
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_online_feature_table_when_parsing_then_its_warehouse_is_optional() {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "no warehouse (recorded errno 2029)",
+            sql: "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) TARGET_LAG = '1 minute' FROM t2 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a warehouse (recorded errno 2003)",
+            sql: "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) TARGET_LAG = '1 minute' WAREHOUSE = \"v1 Q\" FROM t2 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an empty key (recorded errno 1003)",
+            sql: "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( ) TARGET_LAG = '1 minute' FROM t2 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}

@@ -206,9 +206,6 @@ pub(crate) const EVENT_TABLE: &str = "EVENT TABLE";
 /// The text "ONLINE FEATURE TABLE", as comparisons test it.
 pub(crate) const ONLINE_FEATURE_TABLE: &str = "ONLINE FEATURE TABLE";
 
-/// The one property an online feature table requires.
-pub(crate) const ONLINE_FEATURE_TABLE_REQUIRED: &str = "WAREHOUSE";
-
 /// The keyword TABLE, as comparisons test it.
 pub(crate) const TABLE_KEYWORD: &str = "TABLE";
 
