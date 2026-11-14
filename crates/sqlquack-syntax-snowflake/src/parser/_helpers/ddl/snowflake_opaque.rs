@@ -920,7 +920,7 @@ impl Parser {
             self.skip();
             self.skip();
             let mut tables: Vec<Expression> = Vec::new();
-            while !self.match_token(TokenType::RParen) {
+            loop {
                 tables.push(Expression::Table(Box::new(self.parse_object_name()?)));
                 if !self.match_token(TokenType::Comma) {
                     self.expect_token(TokenType::RParen)?;

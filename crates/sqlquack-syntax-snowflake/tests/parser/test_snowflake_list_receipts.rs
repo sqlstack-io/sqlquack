@@ -470,3 +470,145 @@ fn given_a_define_table_reference_without_foreign_key_when_parsing_then_acceptan
         );
     }
 }
+
+#[test]
+fn given_a_trailing_comma_in_a_recorded_object_list_when_parsing_then_acceptance_matches_snowflake()
+{
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "an object's UNSET list ends in a comma (recorded errno 1003)",
+            sql: "ALTER DATABASE v1 UNSET DATA_RETENTION_TIME_IN_DAYS , ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an object's UNSET list with a property after its comma (recorded errno 2003)",
+            sql: "ALTER DATABASE v1 UNSET DATA_RETENTION_TIME_IN_DAYS , MAX_DATA_EXTENSION_TIME_IN_DAYS ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an application's UNSET list ends in a comma (recorded errno 1003)",
+            sql: "ALTER APPLICATION v1 UNSET COMMENT , ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a table's COPY list ends in a comma (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT ) COPY = ( COMMENTS , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a table's COPY list with a kind after its comma (recorded errno 2008)",
+            sql: "CREATE TABLE v1 ( v1 INT ) COPY = ( COMMENTS , TAGS ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a table's empty COPY list (recorded errno 1422)",
+            sql: "CREATE TABLE v1 ( v1 INT ) COPY = ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a dynamic Iceberg table's COPY list ends in a comma (recorded errno 1003)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 COPY = ( COMMENTS , ) AS SELECT 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a dynamic Iceberg table's COPY list with a kind after its comma (recorded errno 2008)",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 COPY = ( COMMENTS , TAGS ) AS SELECT 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a function's PACKAGES list ends in a comma (recorded errno 1003)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA PACKAGES = ( 'm' , ) HANDLER = 'm' AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a function's PACKAGES list without a trailing comma (recorded errno 1480)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA PACKAGES = ( 'm' ) HANDLER = 'm' AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a described TABLE argument's columns end in a comma (recorded errno 1003)",
+            sql: "DESC FUNCTION v1 ( TABLE ( INT , ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a described TABLE argument with a type after its comma (recorded errno 2003)",
+            sql: "DESC FUNCTION v1 ( TABLE ( INT , INT ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a MERGE INSERT column list ends in a comma (recorded errno 1003)",
+            sql: "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1 WHEN NOT MATCHED THEN INSERT ( v1 , ) VALUES ( 1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a MERGE INSERT value list ends in a comma (recorded errno 1003)",
+            sql: "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1 WHEN NOT MATCHED THEN INSERT VALUES ( 1 , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "MERGE INSERT lists with an item after each comma (recorded errno 2003)",
+            sql: "MERGE INTO v1 USING t2 ON v1.c1 = t2.c1 WHEN NOT MATCHED AND 1 THEN INSERT ( v1 , v1 ) VALUES ( 1 , 1 ) WHEN MATCHED AND 1 THEN DELETE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a row access policy's arguments end in a comma (recorded errno 1003)",
+            sql: "CREATE ROW ACCESS POLICY v1 AS ( v1 INT , ) RETURNS BOOLEAN -> v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a storage lifecycle policy's arguments end in a comma (recorded errno 1003)",
+            sql: "CREATE STORAGE LIFECYCLE POLICY v1 AS ( v1 INT , ) RETURNS BOOLEAN -> v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a policy's single argument (recorded errno 90207)",
+            sql: "CREATE ROW ACCESS POLICY v1 AS ( v1 INT ) RETURNS BOOLEAN -> v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an interactive warehouse's TABLES list ends in a comma (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE WAREHOUSE v1 TABLES ( v1 , ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an interactive warehouse's empty TABLES list (recorded errno 1003)",
+            sql: "CREATE INTERACTIVE WAREHOUSE v1 TABLES ( ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an interactive warehouse's TABLES list with a table after its comma (recorded errno 3001)",
+            sql: "CREATE INTERACTIVE WAREHOUSE v1 TABLES ( v1 , v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}

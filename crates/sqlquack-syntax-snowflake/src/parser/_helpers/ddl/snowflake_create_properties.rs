@@ -267,6 +267,9 @@ impl Parser {
             if !self.match_token(TokenType::Comma) {
                 break;
             }
+            if self.check(TokenType::RParen) {
+                return Err(self.parse_error("Expected an argument after the comma"));
+            }
         }
         self.expect_token(TokenType::RParen)?;
         if !self.match_text_seq(&["RETURNS"]) {

@@ -657,6 +657,11 @@ impl Parser {
                 if !self.match_token(TokenType::Comma) {
                     break;
                 }
+                if self.check(TokenType::RParen) {
+                    return Err(
+                        self.parse_error("Expected COMMENTS, TAGS or GRANTS after the comma")
+                    );
+                }
             }
             self.expect_token(TokenType::RParen)?;
             let value = Expression::Tuple(Box::new(Tuple { expressions }));

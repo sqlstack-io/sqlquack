@@ -290,6 +290,13 @@ impl Parser {
                                 parts.push(self.advance_text()?);
                             } else if self.check(TokenType::Comma) && paren_depth == 0 {
                                 break;
+                            } else if self.is_snowflake()
+                                && self.check(TokenType::Comma)
+                                && self.check_next(TokenType::RParen)
+                            {
+                                return Err(
+                                    self.parse_error("Expected a column type after the comma")
+                                );
                             } else {
                                 parts.push(self.advance_text()?);
                             }
