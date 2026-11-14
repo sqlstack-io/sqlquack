@@ -107,6 +107,7 @@ impl Parser<'_> {
                 force: false,
                 objects: Vec::new(),
                 concurrently: false,
+                properties: Vec::new(),
             })),
             _ => Expression::DropSequence(Box::new(DropSequence {
                 name: table(name),

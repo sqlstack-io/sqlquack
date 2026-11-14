@@ -159,6 +159,7 @@ impl Parser<'_> {
             force: false,
             objects: Vec::new(),
             concurrently: false,
+            properties: Vec::new(),
         };
         if kind == INDEX {
             node.concurrently = self.eat_kw("concurrently");

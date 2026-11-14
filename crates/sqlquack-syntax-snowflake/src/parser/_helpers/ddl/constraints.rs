@@ -1,5 +1,6 @@
 //! Parser ddl: constraints.
 
+use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::constants::AT_SIGN;
 use crate::parser::constants::{SNOWFLAKE_DROP_KINDS, SNOWFLAKE_LONE_KINDS};
 use crate::parser::models::Parser;
@@ -22,6 +23,7 @@ use sqlquack_syntax::expressions::schema_objects::models::DropNamespace;
 use sqlquack_syntax::expressions::schema_objects::models::DropType;
 use sqlquack_syntax::expressions::schema_objects::models::DropView;
 use sqlquack_syntax::expressions::schema_objects::models::FunctionSecurity;
+use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::schema_objects::models::ViewColumn;
 use sqlquack_syntax::expressions::statements::main::table_option_to_raw::table_option_to_raw;
 use sqlquack_syntax::expressions::statements::models::Command;
@@ -1503,6 +1505,15 @@ impl Parser {
             "SERVICE" => (false, false, self.match_texts(&["FORCE"])),
             _ => (false, false, false),
         };
+        let mut properties: Vec<ObjectProperty> = Vec::new();
+        if matches!(kind.as_str(), "ACCOUNT") && self.match_text_seq(&["GRACE_PERIOD_IN_DAYS"]) {
+            self.expect_token(TokenType::Eq)?;
+            if !self.check(TokenType::Number) {
+                return Err(self.parse_error("Expected a number of days"));
+            }
+            let days = self.parse_primary()?;
+            properties.push(property("GRACE_PERIOD_IN_DAYS", None, Some(days)));
+        }
         Ok(Expression::DropObject(Box::new(DropObject {
             kind,
             name,
@@ -1512,6 +1523,7 @@ impl Parser {
             force,
             objects: Vec::new(),
             concurrently: false,
+            properties,
         })))
     }
 
