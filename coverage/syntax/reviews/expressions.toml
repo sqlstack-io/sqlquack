@@ -564,3 +564,20 @@ note = "Read in full under review brief version 1 against the documentation page
 [review.definitions]
 "sf.expressions.data-types-semistructured.array-index-access" = "0f3e8e9aaf2d323a168e481db66ece69982e5f3bd1242ab1713cd9cd4747ec39"
 "sf.expressions.snowflake-db-classes" = "87670a3f8ff61add6c82545fb632cefce7a9358d620b1f2452e4d5ac13ef2268"
+
+[[review]]
+id = "expressions-023"
+family = "expressions"
+parser_tree = "cf4724b37f8f25a48b51cafa1c2df346916212d5"
+reviewed_utc = "2026-11-14T08:48:08Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.name-resolution",
+]
+note = "Read in full under review brief version 1, with the clarification that a part a..b leaves out is null with a `*_omitted` flag on its owner, against the documentation page, the obligations, the cases and the parse trees of the parser at 814079e7b; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.name-resolution" = "fc48d2c14752ce8a0805707068349756b2f696fdd7b809fbc43b00ab726d25b4"
+
+[review.definitions]
+"sf.expressions.name-resolution" = "d86311b020152f866a6e99fd13c621c70f143a48a4bb2196034094b19abf2fbf"

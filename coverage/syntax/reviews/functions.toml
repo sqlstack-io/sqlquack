@@ -4805,3 +4805,728 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.functions.policy-context" = "524e3c5278a0e892e6fb890a7dd5be60fc159188864c95442b9031c4efb9b6a6"
 "sf.functions.search" = "d3806d4c0747f6e45200da712f6d02054326669b112427a5bb4b67a1e1723a70"
 "sf.functions.search-ip" = "c1ad96c0ed5d2a8e3206a41dd4e222c7a1871d09bd4a4098ef4fee88540854bb"
+
+[[review]]
+id = "functions-028"
+family = "functions"
+parser_tree = "cf4724b37f8f25a48b51cafa1c2df346916212d5"
+reviewed_utc = "2026-11-14T08:48:08Z"
+verdict = "approved"
+forms = [
+  "sf.functions.agent-run-snowflake-cortex",
+  "sf.functions.application-json",
+  "sf.functions.classify-text-snowflake-cortex",
+  "sf.functions.complete-snowflake-cortex",
+  "sf.functions.complete-snowflake-cortex-multimodal.from",
+  "sf.functions.complete-snowflake-cortex-multimodal.from.syntax",
+  "sf.functions.count-tokens-snowflake-cortex",
+  "sf.functions.cumulative-privacy-losses",
+  "sf.functions.data-agent-run-snowflake-cortex",
+  "sf.functions.deregister-extension",
+  "sf.functions.dmf-accuracy",
+  "sf.functions.dmf-all-space-count",
+  "sf.functions.dmf-all-space-percent",
+  "sf.functions.dmf-approx-quantile-20",
+  "sf.functions.dmf-approx-quantile-25",
+  "sf.functions.dmf-approx-quantile-40",
+  "sf.functions.dmf-approx-quantile-50",
+  "sf.functions.dmf-approx-quantile-60",
+  "sf.functions.dmf-approx-quantile-80",
+  "sf.functions.dmf-approx-quantile-95",
+  "sf.functions.dmf-approx-quantile-99",
+  "sf.functions.dmf-avg",
+  "sf.functions.dmf-blank-count",
+  "sf.functions.dmf-blank-percent",
+  "sf.functions.dmf-case-format-violation-count",
+  "sf.functions.dmf-case-format-violation-percent",
+  "sf.functions.dmf-contains-spaces-count",
+  "sf.functions.dmf-contains-spaces-percent",
+  "sf.functions.dmf-data-metric-schedule-time",
+  "sf.functions.dmf-duplicate-count",
+  "sf.functions.dmf-duplicate-percent",
+  "sf.functions.dmf-empty-string-count",
+  "sf.functions.dmf-empty-string-percent",
+  "sf.functions.dmf-extreme-outlier-count",
+  "sf.functions.dmf-extreme-outlier-iqr-count",
+  "sf.functions.dmf-extreme-outlier-iqr-percent",
+  "sf.functions.dmf-extreme-outlier-percent",
+  "sf.functions.dmf-extreme-outlier-zscore-count",
+  "sf.functions.dmf-extreme-outlier-zscore-percent",
+  "sf.functions.dmf-false-count",
+  "sf.functions.dmf-false-percent",
+  "sf.functions.dmf-freshness",
+  "sf.functions.dmf-future-timestamp-count",
+  "sf.functions.dmf-future-timestamp-percent",
+  "sf.functions.dmf-geometric-mean",
+  "sf.functions.dmf-harmonic-mean",
+  "sf.functions.dmf-invalid-ca-postal-code-count",
+  "sf.functions.dmf-invalid-ca-postal-code-percent",
+  "sf.functions.dmf-invalid-ca-sin-count",
+  "sf.functions.dmf-invalid-ca-sin-percent",
+  "sf.functions.dmf-invalid-ch-oasi-count",
+  "sf.functions.dmf-invalid-ch-oasi-percent",
+  "sf.functions.dmf-invalid-cusip-count",
+  "sf.functions.dmf-invalid-cusip-percent",
+  "sf.functions.dmf-invalid-de-postal-code-count",
+  "sf.functions.dmf-invalid-de-postal-code-percent",
+  "sf.functions.dmf-invalid-de-tax-id-count",
+  "sf.functions.dmf-invalid-de-tax-id-percent",
+  "sf.functions.dmf-invalid-email-count",
+  "sf.functions.dmf-invalid-email-percent",
+  "sf.functions.dmf-invalid-es-dni-count",
+  "sf.functions.dmf-invalid-es-dni-percent",
+  "sf.functions.dmf-invalid-figi-count",
+  "sf.functions.dmf-invalid-figi-percent",
+  "sf.functions.dmf-invalid-fr-insee-code-count",
+  "sf.functions.dmf-invalid-fr-insee-code-percent",
+  "sf.functions.dmf-invalid-fr-postal-code-count",
+  "sf.functions.dmf-invalid-fr-postal-code-percent",
+  "sf.functions.dmf-invalid-integer-count",
+  "sf.functions.dmf-invalid-integer-percent",
+  "sf.functions.dmf-invalid-isin-count",
+  "sf.functions.dmf-invalid-isin-percent",
+  "sf.functions.dmf-invalid-iso8601-format-count",
+  "sf.functions.dmf-invalid-iso8601-format-percent",
+  "sf.functions.dmf-invalid-it-fiscal-code-count",
+  "sf.functions.dmf-invalid-it-fiscal-code-percent",
+  "sf.functions.dmf-invalid-json-count",
+  "sf.functions.dmf-invalid-json-percent",
+  "sf.functions.dmf-invalid-latitude-count",
+  "sf.functions.dmf-invalid-latitude-percent",
+  "sf.functions.dmf-invalid-lei-count",
+  "sf.functions.dmf-invalid-lei-percent",
+  "sf.functions.dmf-invalid-longitude-count",
+  "sf.functions.dmf-invalid-longitude-percent",
+  "sf.functions.dmf-invalid-nl-bsn-count",
+  "sf.functions.dmf-invalid-nl-bsn-percent",
+  "sf.functions.dmf-invalid-numeric-type-cast-count",
+  "sf.functions.dmf-invalid-numeric-type-cast-percent",
+  "sf.functions.dmf-invalid-percentage-range-count",
+  "sf.functions.dmf-invalid-percentage-range-percent",
+  "sf.functions.dmf-invalid-perm-id-count",
+  "sf.functions.dmf-invalid-perm-id-percent",
+  "sf.functions.dmf-invalid-pl-pesel-count",
+  "sf.functions.dmf-invalid-pl-pesel-percent",
+  "sf.functions.dmf-invalid-probability-range-count",
+  "sf.functions.dmf-invalid-probability-range-percent",
+  "sf.functions.dmf-invalid-sedol-count",
+  "sf.functions.dmf-invalid-sedol-percent",
+  "sf.functions.dmf-invalid-timestamp-string-count",
+  "sf.functions.dmf-invalid-timestamp-string-percent",
+  "sf.functions.dmf-invalid-tr-id-no-count",
+  "sf.functions.dmf-invalid-tr-id-no-percent",
+  "sf.functions.dmf-invalid-uk-nino-count",
+  "sf.functions.dmf-invalid-uk-nino-percent",
+  "sf.functions.dmf-invalid-uk-postal-code-count",
+  "sf.functions.dmf-invalid-uk-postal-code-percent",
+  "sf.functions.dmf-invalid-usa-phone-count",
+  "sf.functions.dmf-invalid-usa-phone-percent",
+  "sf.functions.dmf-invalid-usa-state-code-count",
+  "sf.functions.dmf-invalid-usa-state-code-percent",
+  "sf.functions.dmf-invalid-usa-zip-code-count",
+  "sf.functions.dmf-invalid-usa-zip-code-percent",
+  "sf.functions.dmf-invalid-uuid-count",
+  "sf.functions.dmf-invalid-uuid-percent",
+  "sf.functions.dmf-kurtosis",
+  "sf.functions.dmf-mae",
+  "sf.functions.dmf-mape",
+  "sf.functions.dmf-max",
+  "sf.functions.dmf-mean-error",
+  "sf.functions.dmf-median",
+  "sf.functions.dmf-min",
+  "sf.functions.dmf-nan-count",
+  "sf.functions.dmf-nan-percent",
+  "sf.functions.dmf-negative-count",
+  "sf.functions.dmf-negative-percent",
+  "sf.functions.dmf-not-friday-count",
+  "sf.functions.dmf-not-friday-percent",
+  "sf.functions.dmf-not-in-future-count",
+  "sf.functions.dmf-not-in-future-percent",
+  "sf.functions.dmf-not-monday-count",
+  "sf.functions.dmf-not-monday-percent",
+  "sf.functions.dmf-not-null-count",
+  "sf.functions.dmf-not-null-percent",
+  "sf.functions.dmf-not-saturday-count",
+  "sf.functions.dmf-not-saturday-percent",
+  "sf.functions.dmf-not-sunday-count",
+  "sf.functions.dmf-not-sunday-percent",
+  "sf.functions.dmf-not-thursday-count",
+  "sf.functions.dmf-not-thursday-percent",
+  "sf.functions.dmf-not-today-count",
+  "sf.functions.dmf-not-today-percent",
+  "sf.functions.dmf-not-tuesday-count",
+  "sf.functions.dmf-not-tuesday-percent",
+  "sf.functions.dmf-not-wednesday-count",
+  "sf.functions.dmf-not-wednesday-percent",
+  "sf.functions.dmf-not-weekday-count",
+  "sf.functions.dmf-not-weekday-percent",
+  "sf.functions.dmf-not-yesterday-count",
+  "sf.functions.dmf-not-yesterday-percent",
+  "sf.functions.dmf-null-count",
+  "sf.functions.dmf-null-keyword-count",
+  "sf.functions.dmf-null-keyword-percent",
+  "sf.functions.dmf-null-percent",
+  "sf.functions.dmf-outlier-count",
+  "sf.functions.dmf-outlier-iqr-count",
+  "sf.functions.dmf-outlier-iqr-percent",
+  "sf.functions.dmf-outlier-percent",
+  "sf.functions.dmf-outlier-zscore-count",
+  "sf.functions.dmf-outlier-zscore-percent",
+  "sf.functions.dmf-r-squared",
+  "sf.functions.dmf-rmse",
+  "sf.functions.dmf-row-count-difference",
+  "sf.functions.dmf-rows-in-past-day-count",
+  "sf.functions.dmf-rows-in-past-day-percent",
+  "sf.functions.dmf-rows-in-past-hour-count",
+  "sf.functions.dmf-rows-in-past-hour-percent",
+  "sf.functions.dmf-rows-in-past-month-count",
+  "sf.functions.dmf-rows-in-past-month-percent",
+  "sf.functions.dmf-rows-in-past-week-count",
+  "sf.functions.dmf-rows-in-past-week-percent",
+  "sf.functions.dmf-rows-in-past-year-count",
+  "sf.functions.dmf-rows-in-past-year-percent",
+  "sf.functions.dmf-seconds-since-row-count-change",
+  "sf.functions.dmf-skew",
+  "sf.functions.dmf-source-target-lag.snowflake-core-source-target-lag",
+  "sf.functions.dmf-special-character-count",
+  "sf.functions.dmf-special-character-percent",
+  "sf.functions.dmf-stddev",
+  "sf.functions.dmf-string-length-avg",
+  "sf.functions.dmf-string-length-max",
+  "sf.functions.dmf-string-length-min",
+  "sf.functions.dmf-string-length-stddev",
+  "sf.functions.dmf-sum",
+  "sf.functions.dmf-true-count",
+  "sf.functions.dmf-true-percent",
+  "sf.functions.dmf-unique-count",
+  "sf.functions.dmf-unique-percent",
+  "sf.functions.dmf-unix-zero-count",
+  "sf.functions.dmf-unix-zero-percent",
+  "sf.functions.dmf-untrimmed-string-count",
+  "sf.functions.dmf-untrimmed-string-percent",
+  "sf.functions.dmf-variance",
+  "sf.functions.dmf-zero-count",
+  "sf.functions.dmf-zero-percent",
+  "sf.functions.email-integration-config",
+  "sf.functions.embed-text-1024-snowflake-cortex",
+  "sf.functions.embed-text-snowflake-cortex",
+  "sf.functions.entity-sentiment-snowflake-cortex",
+  "sf.functions.estimate-remaining-dp-aggregates",
+  "sf.functions.evaluate-candidate-network-policy",
+  "sf.functions.extract-answer-snowflake-cortex",
+  "sf.functions.finetune-cancel",
+  "sf.functions.finetune-create",
+  "sf.functions.finetune-describe",
+  "sf.functions.finetune-show",
+  "sf.functions.generate-synthetic-data",
+  "sf.functions.get-anaconda-packages-repodata",
+  "sf.functions.get-auto-enablement-status",
+  "sf.functions.get-condition-query-uuid",
+  "sf.functions.get-contacts",
+  "sf.functions.get-job-history",
+  "sf.functions.get-lineage-snowflake-core",
+  "sf.functions.get-python-profiler-output",
+  "sf.functions.integration",
+  "sf.functions.last-successful-scheduled-time",
+  "sf.functions.my-budget-summary-snowflake-local",
+  "sf.functions.parse-document-snowflake-cortex",
+  "sf.functions.recommend-network-policy",
+  "sf.functions.register-extension",
+  "sf.functions.reset-privacy-budget",
+  "sf.functions.sanitize-webhook-content",
+  "sf.functions.scheduled-time",
+  "sf.functions.search-preview-snowflake-cortex",
+  "sf.functions.sentiment-snowflake-cortex",
+  "sf.functions.show-python-packages-dependencies",
+  "sf.functions.snowflake-local-grant-to-public-application-role",
+  "sf.functions.snowflake-local-revoke-from-public-application-role",
+  "sf.functions.snowflake-telemetry-add-row-access-policy-on-events-view",
+  "sf.functions.snowflake-telemetry-drop-row-access-policy-on-events-view",
+  "sf.functions.split-text-markdown-header-snowflake-cortex",
+  "sf.functions.split-text-recursive-character-snowflake-cortex",
+  "sf.functions.text-html",
+  "sf.functions.text-plain",
+  "sf.functions.thread-messages-snowflake-cortex",
+  "sf.functions.translate-snowflake-cortex",
+  "sf.functions.try-complete-snowflake-cortex",
+  "sf.functions.update-auto-enablement-status",
+]
+note = "Read in full under review brief version 1, with the clarification that a part a..b leaves out is null with a `*_omitted` flag on its owner, against the documentation page, the obligations, the cases and the parse trees of the parser at 814079e7b; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.agent-run-snowflake-cortex" = "2cf40cf2447cd7b9ed7d567bc4a87a2853ecb6d32d5d6c63e05e762104fcd5db"
+"sf.functions.application-json" = "dcaef5c4793a547abc284bc9becefa70ff3a8d34b84fa824e463107b761482d0"
+"sf.functions.classify-text-snowflake-cortex" = "a5911fe499427ccdf7f548d1ff942d4e490303362a5bf3f2d0e196a095337ec1"
+"sf.functions.complete-snowflake-cortex" = "c0c598082a12a515889a26280f1370ace051bae3a36c43ea44703978f903ace3"
+"sf.functions.complete-snowflake-cortex-multimodal.from" = "f59966e5e3fc47c6fbb821cab4bf7a7ee2f3be26ca9b00e6d3e8429f4603648b"
+"sf.functions.complete-snowflake-cortex-multimodal.from.syntax" = "d9a2111baa85e1cdc564aaefd1e565afb0edf84341b4d738eaf6b380cea9fbb7"
+"sf.functions.count-tokens-snowflake-cortex" = "e250e3a92d8c3fdd29feef84b8f1a6dd6b695d3bf3814274689047a9770b4b5a"
+"sf.functions.cumulative-privacy-losses" = "11d416b3ba6c30cd040cc0d3c346a7a18aa5239d6ab84e5aeb2b82abeb04676c"
+"sf.functions.data-agent-run-snowflake-cortex" = "da295667303dc468ae035cb268261c887ee1a62f161cdb65f911309a0deb26e9"
+"sf.functions.deregister-extension" = "b111d986843896539f62ccb3c093fb6178ab2ac3ebabf7a10fd0b80d913708ab"
+"sf.functions.dmf-accuracy" = "86f2bc5ecfcc99c6b71979f262b3b9486d0dec062b61ddc749564ffed1c58808"
+"sf.functions.dmf-all-space-count" = "7a39509ffd731f5546dd41e260a04dc6ba012344eb4ac456a55e465c8751a6a7"
+"sf.functions.dmf-all-space-percent" = "c24183d871cc24baa2322369412a825a769115ce68df2ba0f9887f1481bfcb64"
+"sf.functions.dmf-approx-quantile-20" = "4c652c0f1b7da79e5f76857c990e08b481be777b6691983558de58d8dab59176"
+"sf.functions.dmf-approx-quantile-25" = "f60b424cdd09a1fe4646108c6e1956c95a29361574f7bc3b5b4c4aae20666cbb"
+"sf.functions.dmf-approx-quantile-40" = "82ec3680218f2aa14ca3711362ed52327f2cd205a29470ae6459a23fe2787ac8"
+"sf.functions.dmf-approx-quantile-50" = "27101caddfa2327d8422379088f51577f6350e55be3733ca667ee3bc80456bd1"
+"sf.functions.dmf-approx-quantile-60" = "896cd49925550fe691726db90f4b46ede86138f32010edfcd74c36e470488bbe"
+"sf.functions.dmf-approx-quantile-80" = "f56927e2c170711f7136538a006db61aff6a90dc097836d6366f3187e639522c"
+"sf.functions.dmf-approx-quantile-95" = "a2f5a5a6750cc9d65512ffd4ba52a5de17f0b0e7bdba2c3d33f7069813f2a6de"
+"sf.functions.dmf-approx-quantile-99" = "5646dbf62abad14c2b70b1131401892d639b508b0ff0bd85e4099b8db0a4e621"
+"sf.functions.dmf-avg" = "00b51fe6fc20924dfae8869eae2b0a0127fdd54dd8c2798fc59305b3c05e282d"
+"sf.functions.dmf-blank-count" = "392a233ad408e751124bf2f28b933d475833280faf4eba04f9db19aef5531ed9"
+"sf.functions.dmf-blank-percent" = "d2ad4dafdbf205e1b1d04ab538e0b0450a726ee910ba7dcc4396692e5824a316"
+"sf.functions.dmf-case-format-violation-count" = "413c05da8d931484a6cb1a7ebb2dcc3439f7e9553871a7657fc872bdf4ee369d"
+"sf.functions.dmf-case-format-violation-percent" = "8948e08124d9364a72c45ff1e08364bceb059781fb63c684ccc20f3bd8621ceb"
+"sf.functions.dmf-contains-spaces-count" = "bae2c2bf406b251e288c1988921aeb63cfde9b8aca3de5c28187deb022f2724f"
+"sf.functions.dmf-contains-spaces-percent" = "f4f47ff2f56d41e959fa543c1f66694a6005069d635890c47d8952b1e001f58b"
+"sf.functions.dmf-data-metric-schedule-time" = "18ecc1dfba93e22d9897e3a35cbc8d4ba51dacf5af67b2872a963420a7be2df2"
+"sf.functions.dmf-duplicate-count" = "4a476a12f217369a289b5ad1de67993182a1f4c452713399bb869d0922803cd3"
+"sf.functions.dmf-duplicate-percent" = "53ff163b309a8054f626fc942709c711b995ba2b067aa2dc2a083b62f4f27241"
+"sf.functions.dmf-empty-string-count" = "b37da615b9454cdbd439d345a9ee9570086ab97e48e32b25b76c25b7987e94c6"
+"sf.functions.dmf-empty-string-percent" = "144deb1bc8a139cb54329522ac71818b83203cc2c82db7ce323bcf9cd2fca957"
+"sf.functions.dmf-extreme-outlier-count" = "5182a1941e0d8ccb0542dfed3445582840d654c0b58d98bd38cfdb326f158bcc"
+"sf.functions.dmf-extreme-outlier-iqr-count" = "05bc709b9422a3e6964e87fd66aa20a8548a34d971090f26a84280f4fe2ab560"
+"sf.functions.dmf-extreme-outlier-iqr-percent" = "e880541bfa74daf89b9ae6846316e3d6d9c3f9abc874b1fe7234f189fda119ae"
+"sf.functions.dmf-extreme-outlier-percent" = "52d698808d3ed6e34a8bef3fc940947e3726720b83c457682a07f3742f09035d"
+"sf.functions.dmf-extreme-outlier-zscore-count" = "f4dba0550986e9285db08c639224124ce4c157d8d710fbd2bd403e069538a54e"
+"sf.functions.dmf-extreme-outlier-zscore-percent" = "2cb896de62f012b0afbd3c654e24321d2375dc9cef627af461eb476be334bdcb"
+"sf.functions.dmf-false-count" = "8f9e94c55d83188aec30ac98878f0f6f38914afa684f7aa9cc3ffc57dc1776f1"
+"sf.functions.dmf-false-percent" = "a66784e8c0faaccc8b2ef7ed8b0d0c866a9956dcddf4798edb06fd51bdc7441c"
+"sf.functions.dmf-freshness" = "25189dd3f2583e654894898fcad260fd719610048dda2405c00ddd7ec8391b5f"
+"sf.functions.dmf-future-timestamp-count" = "a80b46219b4df342f28db412aca5434de12613d238e062ee79aa0979ac56a434"
+"sf.functions.dmf-future-timestamp-percent" = "04aa4104376e7367fe489966c1cd1f87536843da5d732f4d7d5e82a43958b6a8"
+"sf.functions.dmf-geometric-mean" = "b68a9585f4cf9e31139aa43d9cbde43276d9fe9d8c8c41faa9c68a87e7697e4e"
+"sf.functions.dmf-harmonic-mean" = "c3cd3c3d02f9ffdcff0443c467c221d29e18d650518e101ecb511c3bd853237f"
+"sf.functions.dmf-invalid-ca-postal-code-count" = "cb747ca30c21cde75290e51ca1e21e2371ff0bc8fa6b0d9221e211df2bc55065"
+"sf.functions.dmf-invalid-ca-postal-code-percent" = "df0a120948be194ef1e8142f2e8573b405c18853e712a0d5a014e562f033660e"
+"sf.functions.dmf-invalid-ca-sin-count" = "34e04d1c4ad19ee35811c1782d9b02a31e328e211ebade9625e92637b5b48b92"
+"sf.functions.dmf-invalid-ca-sin-percent" = "bc032ab2d074ec45f76690f81f1e5d03916ea10fc4745d08616701865cafd983"
+"sf.functions.dmf-invalid-ch-oasi-count" = "b2d51cdb6d3034d2739277e2e099ef53eaa6ae5f8054c7edc57242127166bd26"
+"sf.functions.dmf-invalid-ch-oasi-percent" = "24deaaa52e698ef4b3fb88f49e65df3d2d18a2ed5ff0e57ebb827b993a682796"
+"sf.functions.dmf-invalid-cusip-count" = "973a39df28ff287ef85591e63d2ba01807d3b6feb449840a0fdb9f6b13ea6a2f"
+"sf.functions.dmf-invalid-cusip-percent" = "d06ecd8eed092e9dd70bea0c032f4f273d9703638bce16a1a2b9e14ef1a5133c"
+"sf.functions.dmf-invalid-de-postal-code-count" = "a798c1e8faba6a2b631cbf1eecf01a9ec72f5d98aa7560be762675921cfa447e"
+"sf.functions.dmf-invalid-de-postal-code-percent" = "80e76f61dd61f1f728185e56da5dbbbdc9deece95a9740d77e0c321e40874718"
+"sf.functions.dmf-invalid-de-tax-id-count" = "302ecb922f8af6d9c141269ed9a9811b3ffe479752392d4906cb0633a3b7a77c"
+"sf.functions.dmf-invalid-de-tax-id-percent" = "3f0fb593faf827d4e4baf8349d415a0f4d386a1a4fbf775c6853ebe5dd8de1cc"
+"sf.functions.dmf-invalid-email-count" = "2706f7c095e41bf08c8ec3e35a79508209cf7f9e541ca1c5cac2b0bcca3df38c"
+"sf.functions.dmf-invalid-email-percent" = "25e0537844f573fd4d01174c6d67bc40b5ed371f56b35e27d15223bb3a216d48"
+"sf.functions.dmf-invalid-es-dni-count" = "6dabe914016bb8c0d037f1bb07159df613d130a19933195da74c59edd295248e"
+"sf.functions.dmf-invalid-es-dni-percent" = "2f6103cfa917a3445e98e55192d709ec16de423f27d5af4675011e4ba18b9232"
+"sf.functions.dmf-invalid-figi-count" = "c82d888867ea0faa24262ef29daf52581af8ffd9629055b45151e082ba2a7248"
+"sf.functions.dmf-invalid-figi-percent" = "de0a0769153562721bd4067bfcda3994cd086afabda2b3b7934e2feeeabedea7"
+"sf.functions.dmf-invalid-fr-insee-code-count" = "dc00ba584a8fcd7fa02b4106a60f31c6c70a1337c6006aa33fd4f027e0a746e6"
+"sf.functions.dmf-invalid-fr-insee-code-percent" = "8fef2e9d2e359f7eb92bbe6b9a9f93cec918ab9711e2ddb78c7f689d1ecfdd6b"
+"sf.functions.dmf-invalid-fr-postal-code-count" = "b8f1c465a2c6c52eb2b56487c31613aa9ea182a447824af986ef2606589eebc2"
+"sf.functions.dmf-invalid-fr-postal-code-percent" = "ac68deca20f73578244cfcc8f29c8d923fe26ad31d09719f0a7f7d1d6b51a063"
+"sf.functions.dmf-invalid-integer-count" = "1a793d3a02ae1b20932e818597cbda5badc782e321298af7e2f1a38c6b2ad0dc"
+"sf.functions.dmf-invalid-integer-percent" = "72bec653b153daac7a9b33cec12fe145f5b982dace09d28023c883a364b3e4ff"
+"sf.functions.dmf-invalid-isin-count" = "64c24e0e407591c5fa977e53576b372df2a5103360e4ef80342f9c89ef86d612"
+"sf.functions.dmf-invalid-isin-percent" = "13db11b483e3a941f02f831cee64921cca821fc2e5f062b8ae15ec53786e9c32"
+"sf.functions.dmf-invalid-iso8601-format-count" = "b5e5a00d2e51b0b2760ab307105455840ffe33fbea67f2960de0c48ac92a7cb6"
+"sf.functions.dmf-invalid-iso8601-format-percent" = "809835af99aa906e2f579c9b535582347c4a4717addf064aec790536d4095e4e"
+"sf.functions.dmf-invalid-it-fiscal-code-count" = "bf577e3e337d6d792f38e937e1b9f70d2dfcd0cddfa5c948361f19f904c34514"
+"sf.functions.dmf-invalid-it-fiscal-code-percent" = "19bb69632fee68e092b41589898121e0a34cc30b559a765d12a4be8b6afe8558"
+"sf.functions.dmf-invalid-json-count" = "fc13bd2423f301b78dbf7a8d376bb2d48f430cf36c1cd77d8afa5810f1a1420b"
+"sf.functions.dmf-invalid-json-percent" = "7fdf1ecf74271763e68a02f5966b6e89d56b8d76e615df3801be8345ed528d43"
+"sf.functions.dmf-invalid-latitude-count" = "b3081f9cf268c913859a8354878561ae1c91576590652c37d7df7a54db22f676"
+"sf.functions.dmf-invalid-latitude-percent" = "67a87a9a7c0eab27428837909c8ead40067875d4bb035bbf142863a495dedacf"
+"sf.functions.dmf-invalid-lei-count" = "a057af468379bed2b8f30290e9932a775db8e3379ee06acd7ea4174f8ee9074a"
+"sf.functions.dmf-invalid-lei-percent" = "7c7f3ba5721c68cc2528bfd5b212e2cbcc52dfe9ac9631c67523099575598c9f"
+"sf.functions.dmf-invalid-longitude-count" = "9ee67b3284b446088e843c5ad2e3c95114073fe7d7dd68418f669af7430f09d5"
+"sf.functions.dmf-invalid-longitude-percent" = "22ba4356a9fdc82e1486dd895d61252f41dc581bf518c13acd341218fc3a2db1"
+"sf.functions.dmf-invalid-nl-bsn-count" = "db49669398c65f94aa321100c51510611fd0554a861cc9856ef3eb06ce549a91"
+"sf.functions.dmf-invalid-nl-bsn-percent" = "fb4bdca2f2e520ae96ef615896facb797683c9b6221559b01ff33365a807857c"
+"sf.functions.dmf-invalid-numeric-type-cast-count" = "e255f158ea1e2069e7b3a056880c3f2eae8d4bbd5122329db2f4b79f233d4d7b"
+"sf.functions.dmf-invalid-numeric-type-cast-percent" = "b7cb34fb655da517496fc509e923092426852c447fda02c3dae377e498bf20ec"
+"sf.functions.dmf-invalid-percentage-range-count" = "d5f4ec3107c0f71ed2cab33fcd6d5aaaf1527b061667a7a4ac45f0fb1099541b"
+"sf.functions.dmf-invalid-percentage-range-percent" = "c9210bf64b146626bc4ba9aa3f4bae17430ff0b6044e7ae2c47ee552ba87990d"
+"sf.functions.dmf-invalid-perm-id-count" = "24ed73852e25e3d066d532060202183aa0f2a5617c47bde4fa8e423290d551d3"
+"sf.functions.dmf-invalid-perm-id-percent" = "0d41067ff8a3fe335190572b355c296c47e094fab376743445e744e6aa4bd33d"
+"sf.functions.dmf-invalid-pl-pesel-count" = "46543861a42c8621d987b6711c41998b2e5a1c1edf41ebcb9c6e7fde29143562"
+"sf.functions.dmf-invalid-pl-pesel-percent" = "374154383f83a5f8dc0bfbb84142e3eb6ddf3c0eeb594863b1e70fffe967aa28"
+"sf.functions.dmf-invalid-probability-range-count" = "aca2f9aeacf85124520d0b51462a9f334e5679a255bb30440435fae3070d2b76"
+"sf.functions.dmf-invalid-probability-range-percent" = "b2c9141b6d5997c19a46a154ff6f099f45b4a7cce1e4d022b5bd80ea6c21e9ac"
+"sf.functions.dmf-invalid-sedol-count" = "cc020b21463acb2d889bbb3636b16939464dc846fd00a880a7cfbc052047da00"
+"sf.functions.dmf-invalid-sedol-percent" = "a165a1d83e1280aed0b55aae1754e3230f719b8a957b9dd8715a429cd873f40c"
+"sf.functions.dmf-invalid-timestamp-string-count" = "d30374a5be42de5fb6323f62a58f9f64aadc3368ece89d6c913ff4233562a0de"
+"sf.functions.dmf-invalid-timestamp-string-percent" = "35d5c5d43b004fb884b0fb3b3b79f4d5990551eff20b8143ce48dc1d7ab84c6c"
+"sf.functions.dmf-invalid-tr-id-no-count" = "43f43927e6fa76823ee1b2e8dec721c55d48d4dcd09eecbedd9189d701f200ba"
+"sf.functions.dmf-invalid-tr-id-no-percent" = "fdb65cf0c12c59685f1492c8b877f1bf0851ad9f7c72e9469f06e310b83cce42"
+"sf.functions.dmf-invalid-uk-nino-count" = "94941661317487f0e8ab4f9c0386ca91fffdabf761652eb0579690827211475d"
+"sf.functions.dmf-invalid-uk-nino-percent" = "0bd407954a8da944fb6ee23a997163c0f454c393469ee1c16c2452cd12175e68"
+"sf.functions.dmf-invalid-uk-postal-code-count" = "f22b333d2e2cb793fc8aab4b48cdf70b17ffdea18c4ab8f51e817e456ecc4f71"
+"sf.functions.dmf-invalid-uk-postal-code-percent" = "ea53e18acbca27e338d3b3119d1550407b6092d3ca34ac729db5d12d3d69e55f"
+"sf.functions.dmf-invalid-usa-phone-count" = "740f0724fa43943d019b3d27b8662834a3a4cc6357d3a652f3b854e1bc3e9fba"
+"sf.functions.dmf-invalid-usa-phone-percent" = "7cb63e52197a91c7f77c66b744181571be64733e5ba7b66668fe18339689fa31"
+"sf.functions.dmf-invalid-usa-state-code-count" = "c050f061f34d16b5dda4ecea99bba1ac0e12929c2efb93569f1cd2ede4729151"
+"sf.functions.dmf-invalid-usa-state-code-percent" = "ca89222e181d4496e29164a2b5004e376010e5468e42a0e532c6af99188d0d86"
+"sf.functions.dmf-invalid-usa-zip-code-count" = "6c2b95f22e6bfdb9ce66f0c50f128e3e1cdc22066ce0675ba1dcf134490d6fb9"
+"sf.functions.dmf-invalid-usa-zip-code-percent" = "2ba257788684f18d95889a5fef6134beec2d9029b339156240b3c0727b23d553"
+"sf.functions.dmf-invalid-uuid-count" = "2496c5ba915b449b486267b2a1ebaf025ae4cdf95ac6f6d1a0131b50b7b8d20b"
+"sf.functions.dmf-invalid-uuid-percent" = "549d227df732eda17e69d68342ca64c9b5e90cf287234226835b6bcdb91154de"
+"sf.functions.dmf-kurtosis" = "b9fdd6075fb5b066318fcccfa519b6bde8f8dd8a5d9e481ff0c237d8d4ee97df"
+"sf.functions.dmf-mae" = "f5acd386d0a6f7d75068ca505ddfc239a1994f66b0e813e5117c8d909ee802a4"
+"sf.functions.dmf-mape" = "04771de9daf56e20ba4273d870c6e6168bc022fb6ed02a72ab1d83bb1f7b0417"
+"sf.functions.dmf-max" = "ccdef031e79bbd12d0a5210057f279a5dac95631b733e6ccce5f960276945195"
+"sf.functions.dmf-mean-error" = "33cc608ae69e499bfa582ce2228ad5b578dae561b854e7cb355c69db69003ac7"
+"sf.functions.dmf-median" = "33eb7a8395a29912d4335ee67521490dba20ff038785d8f3aa5c8633a72f0c9b"
+"sf.functions.dmf-min" = "b5012f4e57308cf808ec1cd6195202be55804d6fa07c016ba27d62849672c7d3"
+"sf.functions.dmf-nan-count" = "935f6c3a3b493ce2ffca66e8d40c243e755f5c45517b0acdcf81ff375d64a843"
+"sf.functions.dmf-nan-percent" = "baf552fe8d06be7a7fe2f86d2d7ec4db676a8b591b999f2148c610bbd203e042"
+"sf.functions.dmf-negative-count" = "e94fb447ca659b8e7761f59d7f4ce8f7e327cf456ab7e6e0d4d68995f25202c7"
+"sf.functions.dmf-negative-percent" = "cbb918a066f72b7841f2474b5005dc2e7f9e107ac448983ac6964b25c164f27e"
+"sf.functions.dmf-not-friday-count" = "f65191e5c1bfe74ad4383fa86a1035e28d5d718718917f8834e96ead01de8452"
+"sf.functions.dmf-not-friday-percent" = "eb1bfd97ee2c734efecc22f7b20922cd1d8e2c39d249ab229c0b09e91b3a0fc6"
+"sf.functions.dmf-not-in-future-count" = "8dec89ee49b659a8b935ae1660e8c43214f206a62a6e24d6990783122963a2dd"
+"sf.functions.dmf-not-in-future-percent" = "24d9f9aecb322cbe9464f9447f2a1ab14728ac41f1ac762b340881260265ae74"
+"sf.functions.dmf-not-monday-count" = "eea7a5ac09fda8a67fece7458872d802af261a46d31c689ac0fb8ba3fa2957b5"
+"sf.functions.dmf-not-monday-percent" = "f8755b57c482f2c409b941d072da78936377750a051397bd904022b595dc80ed"
+"sf.functions.dmf-not-null-count" = "8ccab5df5446ead225b6abb0f6dc082ab530d6bc37013641bd737eb1b6e21125"
+"sf.functions.dmf-not-null-percent" = "fac4d0a582a3c5e0a0cc565c5ae8b3515a66f347b9a1c4d1024da1ba8fa9abd8"
+"sf.functions.dmf-not-saturday-count" = "4b88dd84eb6f9f86d6a7eda74636816231a210adcb8fddc0b624ef01a457769c"
+"sf.functions.dmf-not-saturday-percent" = "d7a625b880c2149bab1475cd740a9b70a278f7447cdaf3a5122a70ab0a664c40"
+"sf.functions.dmf-not-sunday-count" = "2228cf69e1baebbe0854086b8754c40bf569fe57c0a5ea9f62215c7f73ef7ef6"
+"sf.functions.dmf-not-sunday-percent" = "587725863980b355d785b08db087feb79e85fb1af585556566d7b5258ad4330a"
+"sf.functions.dmf-not-thursday-count" = "68ccdd1c893429fb5df82e8695c34993c34eacfffbeffabfb14eff5835c917c9"
+"sf.functions.dmf-not-thursday-percent" = "fa559b144cf7a5357e6966298b02e59315e101a0479ba9f0ca3b465fd0c12101"
+"sf.functions.dmf-not-today-count" = "528333a9de11ad9b4aac8196950f7c632fafaa6fa282fd87dd049f8947c691c2"
+"sf.functions.dmf-not-today-percent" = "c8f4fc4ccde587526bda1bca9abbdf598effbe980dba41f5e7fba43d5071f9a9"
+"sf.functions.dmf-not-tuesday-count" = "bab33111457fe1a677a2dc6bfae28e05545a7cb530efb149044eacf3327df8be"
+"sf.functions.dmf-not-tuesday-percent" = "2f27d2efa63979fc0761c49cbe0550fe4cbc08edfb660ec905b86748f691a64d"
+"sf.functions.dmf-not-wednesday-count" = "a1e0516b0b9759a445aa3ed7452a2d8eaa6cb9e2d70d660673ca27879e633ca0"
+"sf.functions.dmf-not-wednesday-percent" = "5aa4c71de58050c5ad77ea5c724e83f2ebd9c99461e0e6c9e8bc4182e4570cb6"
+"sf.functions.dmf-not-weekday-count" = "9c24eadfc344ab32aabd3a95e03c44c9c83fb1e7be335c2895928c9e9b54cce5"
+"sf.functions.dmf-not-weekday-percent" = "2bc614f9c445d7bab6184731cc14663a4e83d3c7d48d471fec95c0d82290148f"
+"sf.functions.dmf-not-yesterday-count" = "2f30f6ad0983cd0acc2bf91cc87bfb47a04f0039586365e21199f8c79dd89d0c"
+"sf.functions.dmf-not-yesterday-percent" = "1a5eb7a920c299499f9e81eb145e53ba466c661698f8b78feb2ab3976762830d"
+"sf.functions.dmf-null-count" = "aafbc43814f38c9266729195011989b7cbafc8b192b2e9367fbd25594e96b19e"
+"sf.functions.dmf-null-keyword-count" = "e64de179c02d14b2becef1e47c8e2cd0f0ad3289d8726e5eaf64f43326e8f0cf"
+"sf.functions.dmf-null-keyword-percent" = "1d4ab5d7c366c2fd7b7854aa432cdc0d6ee8cbe4fc2ac8792e66c56f191736af"
+"sf.functions.dmf-null-percent" = "b4a471b013a6306f3a35292a06f490506e531ea9fafdff2563491286771d5e3d"
+"sf.functions.dmf-outlier-count" = "e4b97d8af7fc99154900df9a4ad800a1b5e1490757395ec32d15943a34c11fb3"
+"sf.functions.dmf-outlier-iqr-count" = "328686a7ee44f15d182db1b896483f72d934c2763cb5c5de4c0563a08f84f215"
+"sf.functions.dmf-outlier-iqr-percent" = "58e39b985d07bd388692586575daf2e903d3b81a59b652bc1a8424a26d566695"
+"sf.functions.dmf-outlier-percent" = "e791ca26aedf8a4693ed0dab8dbb6d3ff3bad9151dae95d66baf18b313f2c8ec"
+"sf.functions.dmf-outlier-zscore-count" = "fa6014c53072428d918ab7228363a41a5b319f66322807525e96b78e9cbdcd70"
+"sf.functions.dmf-outlier-zscore-percent" = "6151787f6b9ebc903b900edad819ac1f8d45aa80de640a234514c97d28206cff"
+"sf.functions.dmf-r-squared" = "029349aeb0b6909a5102d63bd10ce7b017101ccb6659bb95be054aed082b1c9a"
+"sf.functions.dmf-rmse" = "3768605dc1bbbdb64ec77c6f31ff0732fd016a1bc559585ba9fd17a801bff3b8"
+"sf.functions.dmf-row-count-difference" = "d0192404d99dc762ef1b9aea108b070196e2fc02f4e2291016f4faf1deb53adc"
+"sf.functions.dmf-rows-in-past-day-count" = "abba9276fc4bb6d02b3e80a889b21b747f71963c19b5826abf2e3bc31bc31fd5"
+"sf.functions.dmf-rows-in-past-day-percent" = "ffc9aaa788358c6e10de996cf55a51d2da40dd80e33e3cba3147106d9ae81c8a"
+"sf.functions.dmf-rows-in-past-hour-count" = "3cf0b378ee9563d68f62e93685229bb1530b4e304f0d381c3650cc513744cb8b"
+"sf.functions.dmf-rows-in-past-hour-percent" = "8779167029149b9e6f8cb6c66cacc5b72235e39cb29acaa7987f54bb20ef9083"
+"sf.functions.dmf-rows-in-past-month-count" = "c578ab424d0aef8756b49b8b46fe27f1c1c29427f7823d4086a76c664c9a5a3d"
+"sf.functions.dmf-rows-in-past-month-percent" = "e62ee0dd3b215cc84105741ddd09d39da8dd0d7ed5512c526712122923a83df0"
+"sf.functions.dmf-rows-in-past-week-count" = "7544ede15ad6b0a9c543cb95719bc9af0aad5996aeeec38edc7f2129f98a2fd2"
+"sf.functions.dmf-rows-in-past-week-percent" = "356fd6e1b9d25fa4246ab39d05a104a35731b90e8047340508ac434207456f84"
+"sf.functions.dmf-rows-in-past-year-count" = "eaafcf23fc87fb5781d273f859a14cf02536bbb4076e538c6caad118e039a8d9"
+"sf.functions.dmf-rows-in-past-year-percent" = "3d7ef2cad8ebbcf31a634fd071cf5c33e52b8a01525dc72517fd0337b58fbf0f"
+"sf.functions.dmf-seconds-since-row-count-change" = "ed97047e586e302dee920ed93d256d7f92c83079b48529f92bede736bd6ecbed"
+"sf.functions.dmf-skew" = "303c064cd4e89be48b7b17a1e9d3880ca3dc693b7cb888bcefcbaded35b29997"
+"sf.functions.dmf-source-target-lag.snowflake-core-source-target-lag" = "9d996bce231d2267327925cae679c125555e32aafeccceb32b20e30bdf4a116a"
+"sf.functions.dmf-special-character-count" = "80ff91a750f57ca26612344bed4b30d024f4bf1e8a945448d0af6095c4384384"
+"sf.functions.dmf-special-character-percent" = "5ba4cedd353d4d4620bbf95a523e5a4cd7e8b7db2a4ee48de38065f8802de7b2"
+"sf.functions.dmf-stddev" = "21f3868eea51400b3e8844b8da9683e10fc197099bac900cd97cd858aff4827e"
+"sf.functions.dmf-string-length-avg" = "d0b2d33a08b366abadd67b64d33e70e363775a729fc77e3bb343a34c43199f83"
+"sf.functions.dmf-string-length-max" = "451604adfcfbd588523f52ede63095ee4cee3b5ea7ae48f15599d8c36b0b695e"
+"sf.functions.dmf-string-length-min" = "abceb48578636e0a422ed1d124211e0a80998982ece288e44be7783feaa13694"
+"sf.functions.dmf-string-length-stddev" = "c4dc4a665960ae2c27d3a3d53d3427f538749dadfbec57e726587422d7f47e24"
+"sf.functions.dmf-sum" = "0fd9d9302cc0fb8d07d68a1402ecea2a6d142dc26ee9c6aa52013683a88ec577"
+"sf.functions.dmf-true-count" = "5afdfbdabfd2e0c1e85aedbf13b3d55522dbe4054b1c714903f6f8f47ec115d8"
+"sf.functions.dmf-true-percent" = "49c6aceaad80efddc36b513577f81e9bba7eacd5a1cf1704f82ce22652ee5a57"
+"sf.functions.dmf-unique-count" = "c9fe4954add098875619221e4e7956a0efe2b95a55f04d6a3b418e65c4f75e13"
+"sf.functions.dmf-unique-percent" = "6064dcc0820b5d3bc300c7671c5c8827c20bbc47b238dbc79e4bf931b76586ef"
+"sf.functions.dmf-unix-zero-count" = "242f559381f5781605126c7e51249093aedf9fc3ca659992a21d64a11d6297df"
+"sf.functions.dmf-unix-zero-percent" = "4bb190a5baa5f7efdb70c9bde39c825700e1f0fdbecbe8c52a59bc22fdbae4fb"
+"sf.functions.dmf-untrimmed-string-count" = "1a5bc96995111ba997fe0b926c88405d1efa601d3d4b1127d6eae9bfcb159ac4"
+"sf.functions.dmf-untrimmed-string-percent" = "28c3cc02e9eebe1dd765eb7efca8dea5cfef678badbc0a7f06baaa8dbe7adf3c"
+"sf.functions.dmf-variance" = "8070fc77a2ecf4af3031f6b7fb23f800dae4c85446cd1190a9ac586fdb739ca1"
+"sf.functions.dmf-zero-count" = "034e900fbe1572ee2a9f8f5a06dfb0d2c7a5503e9b2c3d6f0808f40ae4c69bfd"
+"sf.functions.dmf-zero-percent" = "f5a113a0b84bb26b0b055b1d8b9f1835045e6ab2f39f939e257ebabfa12e7cfd"
+"sf.functions.email-integration-config" = "d093e9c3356560c992b5f7c8d942186a1fba83ce58ed906f0037104a20a75d45"
+"sf.functions.embed-text-1024-snowflake-cortex" = "10ea014e402408dcc9947dd90b1505eed23d963db2e706e0c2f74f8b70f1f7d6"
+"sf.functions.embed-text-snowflake-cortex" = "9750ced5429d48656fe94a8df61c38990b33907a25ed066bd65d5571422131c7"
+"sf.functions.entity-sentiment-snowflake-cortex" = "ec7ac396e52b0c54029bdda54ced944194c8fc9e60f3a797eabcbbfef9e56783"
+"sf.functions.estimate-remaining-dp-aggregates" = "53898bddec5f95c1b4a85d0bcd8c91b290442129f30dc070b7f98cc77caba285"
+"sf.functions.evaluate-candidate-network-policy" = "c88aa0444ec4e2d72d0ab5876ea26d12c8f1479ff2124a60d47c5b066a3aaf9b"
+"sf.functions.extract-answer-snowflake-cortex" = "20d362e89e9a89cffd5d5948e0e8dbe4b716dadb5a3032a829c30af8caf01164"
+"sf.functions.finetune-cancel" = "573bb761fdaea868b7c8bd00e773062f5c82152b51b71ba2120991222658a64a"
+"sf.functions.finetune-create" = "5d651667a8868b6ef16569215b256fac2fd4fd140495c60da971e2bc7bba13d9"
+"sf.functions.finetune-describe" = "bdb226ab2186386b9f18c2b37ca8c828d14ffc74b999d7a87fb9d4f37c7b2ffb"
+"sf.functions.finetune-show" = "3f617668b6f9ad37a31f14e98d4309b789df5a28356017d92fb0aa7e03715383"
+"sf.functions.generate-synthetic-data" = "9ffe80fc51bc56f48398f79fe168b62382d1aa2cf5589105298bad4a47f5c85a"
+"sf.functions.get-anaconda-packages-repodata" = "bd7d24931f4e81de6eeeffb33c408e82bbc1e517a27860db06a7a1756bb3e237"
+"sf.functions.get-auto-enablement-status" = "14d2e798d13cee1f6eefe5ef0849be7ce17926310541087ffe77a4af25ea3a7d"
+"sf.functions.get-condition-query-uuid" = "a3f2dc1fe443f1ca2dfcd37254586c8b0107a1aad874561bcbc175b09e009a5c"
+"sf.functions.get-contacts" = "3f19126281ef6ae2dfce0656a637994690e4ec0d925af5a3cb634fa463e38392"
+"sf.functions.get-job-history" = "96bd08e0a9a0b1f2592097a2e675634d4f906e27d99438c37593f960bd86dac1"
+"sf.functions.get-lineage-snowflake-core" = "4c27fc1a5ea4a4f9b35fa65f08e7f6b02fa72027e1f6bb0ee60450a80773cda4"
+"sf.functions.get-python-profiler-output" = "4c27c9857fbecb5831f270c1079bcbd00b7a165c370f410ea1ecd19bfdceb3d7"
+"sf.functions.integration" = "ffb969ea9b7b491ef898e8e5a0f222519043278b00947d74335a7a7f9ec56e9d"
+"sf.functions.last-successful-scheduled-time" = "40a6ff54673c038b301f2fcb46de0b7ea084d47b07a71c6af057899af97ee2ac"
+"sf.functions.my-budget-summary-snowflake-local" = "b20020ac6328135c6fabefec1b8b5b16469f118226896dd25d1e0358547ce189"
+"sf.functions.parse-document-snowflake-cortex" = "8e1935ceebc65c34137790014e4689e40d66c0f82f0f3573512a998dad92f755"
+"sf.functions.recommend-network-policy" = "0bfe6631b1d202b6e6bf1d1512e14b662403ca964dd1f8e2d5f2e32ffbc8cf4f"
+"sf.functions.register-extension" = "286d3a2e5f660ad7bb832ef25bcc28de8818bbad8899d1a2cc8f0e20c35670cb"
+"sf.functions.reset-privacy-budget" = "5c1998a6f8590703fd783523b6d15b6337eeb6bbdda2c8735140374ae9891aad"
+"sf.functions.sanitize-webhook-content" = "1b28a89a4e674aa561ab1c6f275d09db2f681d63011340e832eb139d42851805"
+"sf.functions.scheduled-time" = "73aa4583e7cb7524f31a3ce02ec3df763763921261018912d04139d87d27190c"
+"sf.functions.search-preview-snowflake-cortex" = "4cb5ca74b60c8ef0cc451cd85ba2974f1f2f7c8192926265c2fb24a70bdae154"
+"sf.functions.sentiment-snowflake-cortex" = "ad1cf39f243ba09b25b67927732ab187d90c90e897fa0acb423d67b027bc4b21"
+"sf.functions.show-python-packages-dependencies" = "2ca9b45003664aa5e4aa73abdf220d268c9c374d31555bf36a77a58a509646fb"
+"sf.functions.snowflake-local-grant-to-public-application-role" = "0ad1f139ee9e14b36451de9374b42c90786fcb275669ced426d7b115a3dc5825"
+"sf.functions.snowflake-local-revoke-from-public-application-role" = "f16b2fb97dabb981e3444ba491b15497866ab1d0c222c3261e46e88cd6d1e78a"
+"sf.functions.snowflake-telemetry-add-row-access-policy-on-events-view" = "8dbfa791a728114806e3d55797564b2e20a58363b3c47ca4e98da2d0f55e7318"
+"sf.functions.snowflake-telemetry-drop-row-access-policy-on-events-view" = "8620a15f80b339f81e19a3a1e3530d14a399a36920dab026e473c122431fb43b"
+"sf.functions.split-text-markdown-header-snowflake-cortex" = "4dd4515981445811c5b6cac3a013e864ffd2bd8a522d8a79430a8c00503ff8b1"
+"sf.functions.split-text-recursive-character-snowflake-cortex" = "678c2954d8b3cb16c61d0fd252c006d5ace5a6e1796297f58143bc70f193df2a"
+"sf.functions.text-html" = "87fa44c50864333af9208f753221dc4fb2f806e06244bb9103b4c903ddaa6966"
+"sf.functions.text-plain" = "df7aaeb43ddc030f0e7943e8813cfda37325c25d233a083787ad576236576b75"
+"sf.functions.thread-messages-snowflake-cortex" = "9ecfd0e1e2631f8d3937ad09e53118e291f549fac3f99a98e13388f386ac97f7"
+"sf.functions.translate-snowflake-cortex" = "3cf520ae72869ced7c1411bd3d96576abd2646956a588406696733650d08313b"
+"sf.functions.try-complete-snowflake-cortex" = "ab2cfa4c533a642b786c63aa18be22c66ff0b8530f1951f52c85f73dd67c077a"
+"sf.functions.update-auto-enablement-status" = "504ad7427a0a232ab074a72d46d29b7d0ea41996b47657140fb3223459c6f77e"
+
+[review.definitions]
+"sf.functions.agent-run-snowflake-cortex" = "6242958b26ca2cb17f0d7b88986088bdcaff5e667faab297dc770962b1e55b6c"
+"sf.functions.application-json" = "5d740543c27e41d58d7a38fafc42fd475abe2d5b60776e28862a75e81f190b7f"
+"sf.functions.classify-text-snowflake-cortex" = "16be30112d3c58e0b609ff24a2fdf036c3c35c45f687feec1d09ac2d6ecfb80c"
+"sf.functions.complete-snowflake-cortex" = "dc5803762c90ff0e4077473fbe387c0e554c3a9ed794689e7d0a22e594c92e7f"
+"sf.functions.complete-snowflake-cortex-multimodal.from" = "1d86ac873d8a963568380e1d5c3078bb3fbaf8f5db69715b7924f0edb065cd5b"
+"sf.functions.complete-snowflake-cortex-multimodal.from.syntax" = "c814d58dee59bb5232d5f31bc59f69751d6d2d9ab0baf73a254a13a190989d97"
+"sf.functions.count-tokens-snowflake-cortex" = "75388640307296d0ecd15d1d9ebb7b1ac82a4d8b9a675836929d1206f0ec936a"
+"sf.functions.cumulative-privacy-losses" = "b794515f0098c7ff2f0b40bddbd8ef4a63edfbb4ad8043d04946f852326752bc"
+"sf.functions.data-agent-run-snowflake-cortex" = "db6367eb95206643c26650efac621b0c7117bbe636d5a847cca1179951565657"
+"sf.functions.deregister-extension" = "a023515620f587922934b1ea412fa2c79ba5e30011abdd49c52b0ec26bed28c5"
+"sf.functions.dmf-accuracy" = "7fc69d812968ccf741139aa85290275258694a619d290a4d0507e0284c62af3c"
+"sf.functions.dmf-all-space-count" = "8e1b27b3ba55e603d163b9ebb367d39ed423c95f42360ce03951485bc4b7b169"
+"sf.functions.dmf-all-space-percent" = "f6034f4bb0f75e7ce9f579789c9ddea9bdcc0925b352b34318164c5811de7c04"
+"sf.functions.dmf-approx-quantile-20" = "b2f050fb1b3856cd9ee9ee496c8fece18b42c97d89a91163db34981db7537e2a"
+"sf.functions.dmf-approx-quantile-25" = "fb14f4053decb7540f2249b3476211d86f3fb5687a917451cc365386d5eaec71"
+"sf.functions.dmf-approx-quantile-40" = "5dab26f07656d29aa4c79876de7a9f5e8704be149ecf3dd3cdd76354518acd13"
+"sf.functions.dmf-approx-quantile-50" = "6d27de19a19bc56d052ec00a2fe832aea2d591b1d0541f0cc191d0cc5d5efc8a"
+"sf.functions.dmf-approx-quantile-60" = "769219757a6cae1bc4a8796f6f590da22fc7871616927e99a6134dd6471a8868"
+"sf.functions.dmf-approx-quantile-80" = "81db45c443481368ee206d97822bda129e7d68905e4ef4cf0a83eb7befa0dcb9"
+"sf.functions.dmf-approx-quantile-95" = "1059a7b6a12bf7c1719d92a05987e5af7d099dc18c856b38329ccf59f2425689"
+"sf.functions.dmf-approx-quantile-99" = "03fb27f37cb3ec778cedc9ac0f0225e3dc353c2340e8d398439d6a1060c2e2e3"
+"sf.functions.dmf-avg" = "27b0ed76238acbf7813f04f9e22f676cf5a7d004b3f76fdcb9694a6efc46f226"
+"sf.functions.dmf-blank-count" = "342534bd0f7acf734d3ed9384a099a0820cea0f146531e818343e65fb5c031ba"
+"sf.functions.dmf-blank-percent" = "3ed889298d9274056536701898e4b492bec61ed57fa650bc2011382a762d5318"
+"sf.functions.dmf-case-format-violation-count" = "944307940c09f31c59a2ba9d9c82c2facc2bb9d61a836f95ca2707caf8aeb614"
+"sf.functions.dmf-case-format-violation-percent" = "76eed37e798e21e6c854dedb6279d529a284a7d2283231888eea81bd068e21f7"
+"sf.functions.dmf-contains-spaces-count" = "3789aa3b793091a92a360fab463afd6d04ef5de5ae4a4bcdee43da7d5640d34d"
+"sf.functions.dmf-contains-spaces-percent" = "0bfb72250658a73f072479bc58f3516d11122c7881b68a0314aba17193415f5c"
+"sf.functions.dmf-data-metric-schedule-time" = "4dfba811760621ce0019a2f0eeca952d82a0a8905f2d0f8b2bd492c811b7b1f8"
+"sf.functions.dmf-duplicate-count" = "8ca918e7eb4b2215e2becb0196b95fa74bc49738519ea71dcb0ecd019c153677"
+"sf.functions.dmf-duplicate-percent" = "c34c09715f78c246bcf081ed6f545c8e4b3f5a10dbb6c1fa3f3944cdc0c1ae68"
+"sf.functions.dmf-empty-string-count" = "75cc894934cf5497afa9234071609267b215ca0ddf42cbb1026952943c862a73"
+"sf.functions.dmf-empty-string-percent" = "28fa307e1e6e5bc915cff7b059d8ce29c82f7c13f06cfde9bbd3d5505a5f2eac"
+"sf.functions.dmf-extreme-outlier-count" = "338c2f126fce2696f6f7d370789417bca81c923169cc92d451461ea0c107c993"
+"sf.functions.dmf-extreme-outlier-iqr-count" = "25bdbde04824557dd59957958ff07817590e3763b44dff6c2465b722829d000e"
+"sf.functions.dmf-extreme-outlier-iqr-percent" = "46e99da74a12c8ac8d79184c9927f83d5c59a4ea856e10205915438e22a7b13e"
+"sf.functions.dmf-extreme-outlier-percent" = "6393f6957114f6decdad2faa40a7f571bc8b0e5f195d1dc1899b25dc9f221799"
+"sf.functions.dmf-extreme-outlier-zscore-count" = "efb877e45df92babf92fa518a957c51755b99496e8053c6dffe9cbb89b8ab493"
+"sf.functions.dmf-extreme-outlier-zscore-percent" = "20f42586e759fe70f450c7c45c9d1af9dbb926e1e7b209f2540a2e408d9bfdda"
+"sf.functions.dmf-false-count" = "3d0a54d9b5607d8e1aa842ecda838d89ff0675fd5d9d42495ec9d0e89ce8b898"
+"sf.functions.dmf-false-percent" = "8c938f7b0158c631d5a111103995d8068d8c0f1c35aa6dd105217cf530d61723"
+"sf.functions.dmf-freshness" = "98e071bdf681d74dcd65d51d2135e5895b61edeced8f69758685bdb935ffd181"
+"sf.functions.dmf-future-timestamp-count" = "3ad1d19fca600d66b62682c5bab53132f4c6486778985154005acdbed413cc4e"
+"sf.functions.dmf-future-timestamp-percent" = "cc3a8889b739fb79bf4276293c514cd7eb64c8ad58036b41e0136e63dbb624b8"
+"sf.functions.dmf-geometric-mean" = "c5fd48e90333b923f6b84bf039deeef419c12a8786aa9c336bdbdea677bc4072"
+"sf.functions.dmf-harmonic-mean" = "1e6d8022fcc8fbb152006a93a7259f7d8e90c78e5cf8a643de334cc22c712192"
+"sf.functions.dmf-invalid-ca-postal-code-count" = "e19e6851ff60043e7343929ffa8b611bad1cc9c2d31cd0c031684a7e07446a6a"
+"sf.functions.dmf-invalid-ca-postal-code-percent" = "6470124e0e9945fb155f12e75e6fc988cfb423f7796f2df9c35cecfb5fa638b9"
+"sf.functions.dmf-invalid-ca-sin-count" = "9059276af6b58c3acc9033315dda94bd9b543e2a1dd788464846e7b30f1453d8"
+"sf.functions.dmf-invalid-ca-sin-percent" = "692a195aeb69bdc7c66eb9aa521915bd48f3ab7b4a850f16ee0ec8ed9cd85458"
+"sf.functions.dmf-invalid-ch-oasi-count" = "604a7ce2209918fd263e0c5974d8d1c4992e305e40f62453e472fd2a11650743"
+"sf.functions.dmf-invalid-ch-oasi-percent" = "0e964909c0d153610742667a44ab1b6a1753c8a0ad80820255405a107bd5a7e2"
+"sf.functions.dmf-invalid-cusip-count" = "e4198f1bdad199544680fef09b7675d2792eca74c1a1b8f5ae5dc367d8de567e"
+"sf.functions.dmf-invalid-cusip-percent" = "a6265a1f7060d8a6969bb92b8b7777acd0380273798e3cc297104133b2247c76"
+"sf.functions.dmf-invalid-de-postal-code-count" = "90604df9cf522997146275ec6248017d2a9a5097e762ede8530c29c414b5fec2"
+"sf.functions.dmf-invalid-de-postal-code-percent" = "f4b1581b90313f3b8587d7d1b44cc93cbf285d04bc3e21eabbfa08f3841a4599"
+"sf.functions.dmf-invalid-de-tax-id-count" = "a6c41da2f744f2beced9523b893e372331342a055c4d3fba747f0d4e3ad3a13a"
+"sf.functions.dmf-invalid-de-tax-id-percent" = "a0db4d3f1f5d0ca04289146ee2623df151c40e885637866d50f3d8a447a9045d"
+"sf.functions.dmf-invalid-email-count" = "db69f3529687a51b643fbfa010a7236ace653c8640eea14487a672a2531c2716"
+"sf.functions.dmf-invalid-email-percent" = "cdf266bc3f2f7c69a40524c22d3c995f38c86fc09659990cf034fbae753025fe"
+"sf.functions.dmf-invalid-es-dni-count" = "35e0cd4aa38f7a32ad523952e2cb695cbce6bc129397e465baaafa463562c96b"
+"sf.functions.dmf-invalid-es-dni-percent" = "0644716dcee2ee4cf2b03cce7ece5948fca0e1460ffa0016b503885fd69258c2"
+"sf.functions.dmf-invalid-figi-count" = "d99786b15c4b4df5b6362bb3e1a4932c86acc8fd6fde4ba4efb9db6545aff5d8"
+"sf.functions.dmf-invalid-figi-percent" = "6de3550feaf3d1a1356461538ec293d662405092abf937d4c4b60b821ef8bcdf"
+"sf.functions.dmf-invalid-fr-insee-code-count" = "16c84fd82252b01d54e865f5e0c98cbb7e3f5138ab4fb5c32cd40b66160b5b54"
+"sf.functions.dmf-invalid-fr-insee-code-percent" = "211ba07112fba486d1dba36785c5fc509b768dbbcc6622dbe3d25fa9731120c3"
+"sf.functions.dmf-invalid-fr-postal-code-count" = "fe986c60966b4aa87e2949ecd9b5ccb02fc91c8bb256282f0ecd8ec699973421"
+"sf.functions.dmf-invalid-fr-postal-code-percent" = "f6a06f2c816814910a0d0c015ba7f64b1298da2d696bade1fac061fbaab93b6e"
+"sf.functions.dmf-invalid-integer-count" = "7301b5a005d244e34b9b135aeff1a45482fdec3e501d1d54dc9758fb02c59506"
+"sf.functions.dmf-invalid-integer-percent" = "6028e05cfd1e5a74351d7ed5b035d3fbf0b271cf1fd1a2fbf8bb267f0cc12c76"
+"sf.functions.dmf-invalid-isin-count" = "5413fb38afc9b07d469afbf5260eddc26986e21192dab2e749dcfe00b2525859"
+"sf.functions.dmf-invalid-isin-percent" = "f3716207e2dd694f3d56b72da95b075146b202967a40d90ad7c1a6c03d199949"
+"sf.functions.dmf-invalid-iso8601-format-count" = "e69f81cf9d593bd2616dce3db27d58da9117f7888c119b60889aee2784131e74"
+"sf.functions.dmf-invalid-iso8601-format-percent" = "59411a6ccc35fdc12a4e99254f0846204c48814a3cb774693ff03ab70f1924bc"
+"sf.functions.dmf-invalid-it-fiscal-code-count" = "b5c7269a07d3e49e118058a272c61ac9edc36342c8233e77e762c28d843dd1e7"
+"sf.functions.dmf-invalid-it-fiscal-code-percent" = "eb15e452ecfbe0d6eb3720e70443297dd3e97c6de5f6d0108a983bfb036d6f62"
+"sf.functions.dmf-invalid-json-count" = "1c1da147afac5be200554904c89639f1860c4fc3229478b5c80b56fd69c7f8b3"
+"sf.functions.dmf-invalid-json-percent" = "0f31a3aa3f3792958f59c8cd3f7a860d947fd374f71984cf747e93d5e9b50baf"
+"sf.functions.dmf-invalid-latitude-count" = "a7d049bd064303d7fe338e122b2bed09df46d7f97afb0327f8b3b728ae25ef74"
+"sf.functions.dmf-invalid-latitude-percent" = "7304a28c414883e21267fe726a3b64f0925269aee031d6e181697e26aa170ff3"
+"sf.functions.dmf-invalid-lei-count" = "4f149e7b18c53c072ebea5efa4192f197b89edfc7cb0795316e003a69bcb77d6"
+"sf.functions.dmf-invalid-lei-percent" = "64a054d2b07750becb15bb3b50f2c41e49a4d4b5ffc88ee932c5c39723d44ba5"
+"sf.functions.dmf-invalid-longitude-count" = "a80d2444460fabfd061e10bc6c8f8e4168d92d94fff96012f66e28b83d4a9bc1"
+"sf.functions.dmf-invalid-longitude-percent" = "78d01172db8a3272146b1b96a5d571f0fcfddb1b555997dd308267a07df66a08"
+"sf.functions.dmf-invalid-nl-bsn-count" = "6523eb4882273993fe542d39bf31d2a60891e492cc267389bd9be3e3bd43ffcb"
+"sf.functions.dmf-invalid-nl-bsn-percent" = "e4cbfd7230559657a9f2aeffd88521b4e8491370dd12fdcbc499a123a7923073"
+"sf.functions.dmf-invalid-numeric-type-cast-count" = "2b7377bab559d4bdcc334ea7b6488bd1895c8280d8f24e002732c80fef90588a"
+"sf.functions.dmf-invalid-numeric-type-cast-percent" = "673ecbaca9192717040e97ab6139736b0497c586a73fd958dae5bde7679816e3"
+"sf.functions.dmf-invalid-percentage-range-count" = "6c60cc4eb85e93a97dde38d232b38127fb2e04e03bc86938777cdca3d0a6df8a"
+"sf.functions.dmf-invalid-percentage-range-percent" = "c733bbf513b16f5820367bed5b6727e9cb40d72f6eb0d5dbc83fac3c80399e33"
+"sf.functions.dmf-invalid-perm-id-count" = "93bc1ce2877dace3c88e4557cc534e9f90b07a70f48f02cf67b77acea0e256e1"
+"sf.functions.dmf-invalid-perm-id-percent" = "762d224c21dd807eb8c9c86192b47276a97c29091e6aff0646c70544b9482416"
+"sf.functions.dmf-invalid-pl-pesel-count" = "64dbaf090cb277f021695170d257a6bc0cc3b2dfcbab982ea7cef9e1969e5bd8"
+"sf.functions.dmf-invalid-pl-pesel-percent" = "69e6b3d0e4fef4c79854dc1e56dcb9d3d0d376d8afba0a5c71554f2a59e82973"
+"sf.functions.dmf-invalid-probability-range-count" = "b9d524d77d2df184754568244f78decd5d152b02de1ff3b2e61a22c024c8c55b"
+"sf.functions.dmf-invalid-probability-range-percent" = "b4d48cb10208aebd300b7d7583a5cac25db7483965f107cfcf335ecb036379c4"
+"sf.functions.dmf-invalid-sedol-count" = "6ff0c5b64724283b6e69a1fe85e396df892bb2ff7c6f0eb884ef780a5962c0ad"
+"sf.functions.dmf-invalid-sedol-percent" = "9b067b06e02dcc7f6e60e9981846f2a89a9ffd13a8950e7db84ac1aaa71ab5db"
+"sf.functions.dmf-invalid-timestamp-string-count" = "873e76dd09d0c57697e0a624b1233b54810b43372603c734271e953752562fd5"
+"sf.functions.dmf-invalid-timestamp-string-percent" = "e1fe0f1530502734ae830afb877febf9fb5f49e24f39fa89fe38b4b6efd917a5"
+"sf.functions.dmf-invalid-tr-id-no-count" = "44673b113d92a68b1930151d413a75bb4b8d1cc11121a274c2b90ba8e4377b79"
+"sf.functions.dmf-invalid-tr-id-no-percent" = "243b9b02dd241431bf573b381b2693040e2daee89fd0816f7d71a9463947f0c0"
+"sf.functions.dmf-invalid-uk-nino-count" = "ec7c4efc872bc2c277d4abfd93f0696c0681272b1055687b26f19efe50f1a4e0"
+"sf.functions.dmf-invalid-uk-nino-percent" = "a7b79ad0a50b1e515efb5c3a0bd7c9f2ba23faa77e541fde254b7ad2ed0b378b"
+"sf.functions.dmf-invalid-uk-postal-code-count" = "366757d2dc1276ab5a82e1d2433b7cafac6a79bb5449e55cd348fa130bfc94ab"
+"sf.functions.dmf-invalid-uk-postal-code-percent" = "4105b8320700197509ba018278b6a074f49bdc4387903c65828124422267e964"
+"sf.functions.dmf-invalid-usa-phone-count" = "e6af966d5f054a347a4a6bad1509f2e6de8bdb8f770693a88034059e3b2cbe4d"
+"sf.functions.dmf-invalid-usa-phone-percent" = "98f352ff6ea03b557652f14a7634b882cef46fc483bccd56a73f7be02bd44fbe"
+"sf.functions.dmf-invalid-usa-state-code-count" = "8c6f7f3080bfb464b46d4f108ce09095d302782607e3e673bb97dcf374724a31"
+"sf.functions.dmf-invalid-usa-state-code-percent" = "8f9180cfb7927a32599ed533d0fc0c55bf7a725038cd257df11cf308d9d672b4"
+"sf.functions.dmf-invalid-usa-zip-code-count" = "872ab5f0c1beb9d37e3c92b3e0615cb8deea3aab96bda881a5cb8ed28bf99c0e"
+"sf.functions.dmf-invalid-usa-zip-code-percent" = "59217eb0f69b9ebc08adfe459278f1652c358677e4a4a99f4d4c1daf1c47dcca"
+"sf.functions.dmf-invalid-uuid-count" = "795ded136fe246e9cecf17df80b7d31d50eca20f19b7945c1b93a417014d6e19"
+"sf.functions.dmf-invalid-uuid-percent" = "d0843b10f25940cdbd8f3babbe0db1036eac4f559b17a6b707fb84a59e3f6926"
+"sf.functions.dmf-kurtosis" = "99178af096f572b142f4bd6e55b28766af70d80d92a781fac0e6a3f4209b2012"
+"sf.functions.dmf-mae" = "1e19373214eaa061c322d369e3cee3e0fb1a5d3e7680e0d74cfd917b79abc109"
+"sf.functions.dmf-mape" = "0c91685f86fa1be47fdb0365fde49ca699eb47ac31c4c153f93f3fc86822785b"
+"sf.functions.dmf-max" = "15256c3b0e7250b8d4d6cf7417c1f883617a798abb82b3dd77147bfa5f9e5708"
+"sf.functions.dmf-mean-error" = "dff9f3a0c37d3e1c66e0920e18cb139ddfe05309a3142781bcb90f8c868b605f"
+"sf.functions.dmf-median" = "84a1e433be2740d8c1ddee57d621c4e2a5660e80225b5b4a382eb9c73008dd8e"
+"sf.functions.dmf-min" = "15f402d8d052311f86ab72ed5b02558640671295447605a274c61eb5b6fce1f6"
+"sf.functions.dmf-nan-count" = "0e91bca9e97007a473143740512e9a9d64779963b9734ab0b46b95a966588b83"
+"sf.functions.dmf-nan-percent" = "6d9771bf3d78b359e71ffca1144d1c3f86cafc90e5fd7f63f29a05f6bfb4c5ae"
+"sf.functions.dmf-negative-count" = "f68de5b5e4656c9ca59af535a86a80f9e0f82c6a78ed3798488c7ed77d5a94d8"
+"sf.functions.dmf-negative-percent" = "f5ca4d0529166ee8dd16f1667d8f6fad3197f110491a3209bd1b213210aada8e"
+"sf.functions.dmf-not-friday-count" = "bdb32f9e09cd6e2eb5efbe23d05b2b473993d81eb581f810550c6cf1ecd4faa8"
+"sf.functions.dmf-not-friday-percent" = "c4195ba1b5e07b0fdf50c665294a2e5a135cfd068a3d34ce6e33597bdaa83c1f"
+"sf.functions.dmf-not-in-future-count" = "48b96b88f00be8b3aae68e64894848c5c89d2d41064712e52aee672681ca95fe"
+"sf.functions.dmf-not-in-future-percent" = "16f969cbcca47ae5c19caff45409457e78c8c0d4d086d7888e165e99b95556bb"
+"sf.functions.dmf-not-monday-count" = "1d6a69dd7a31369524d1c9a3e87a0df63eb8e6ee49f78d329c6de01a6b392bb9"
+"sf.functions.dmf-not-monday-percent" = "03dde37eb9c8011c22196f48f0c7631f0cefd530d80e4fa9db239d4a183b7e4d"
+"sf.functions.dmf-not-null-count" = "ae3e4dbbe42c3da8402fbe6a9833d483abc493e01b5f44083b3ecc41e5ba2eae"
+"sf.functions.dmf-not-null-percent" = "72fc108596ebbee2c95a54b8db1e91785a22affcc03f51d439712d5ca9e22b2d"
+"sf.functions.dmf-not-saturday-count" = "03381b5305a6da75f99ef6780a15f6141ce9c4758d3112b679022e6a07178bd3"
+"sf.functions.dmf-not-saturday-percent" = "fea57a88941c95dfcef54153db83bf50fcf6f2d16f0dfd52bbba1568b97c1338"
+"sf.functions.dmf-not-sunday-count" = "456a3716d4f15d45799bcd515b86adab0cbe4f14b29e9414e0fddd413e8b0293"
+"sf.functions.dmf-not-sunday-percent" = "92948097fe8c85bb6077a90040f027ac628c82882407b362223e5efe04599d2b"
+"sf.functions.dmf-not-thursday-count" = "46db284656c6fe13d16f9707eb0aad2240f391521cd93b3e2a8a3b96c87f531e"
+"sf.functions.dmf-not-thursday-percent" = "3fe21456cda5022a9f74dd131be742bfe9898bf7d3c26bc826695bba4b29b906"
+"sf.functions.dmf-not-today-count" = "a49db36a0889ebaaef861d31cd4ed035aeebc64e02221811c559a8717af52902"
+"sf.functions.dmf-not-today-percent" = "07311ee232180455cdda1e51bb9d6338f4b7268813b8d5219aa243fecb8b5111"
+"sf.functions.dmf-not-tuesday-count" = "238962c7ee3d056b40fff7f2d0d6d4fb03ec2b80a65e4a347542d7aad8bca48d"
+"sf.functions.dmf-not-tuesday-percent" = "fce90e2bdf01d58807ea48f63317fa0e7f8cce7ce13703420c02d3c49fc68c60"
+"sf.functions.dmf-not-wednesday-count" = "a919d09461c4ae922b0537a372b4f40f00d449ddf268d65cbd76ddd218ecd960"
+"sf.functions.dmf-not-wednesday-percent" = "699f4f1ba1b67e269507f8e1d83753119199fd626d56c15faa41d8de642671b9"
+"sf.functions.dmf-not-weekday-count" = "99d79ec5802920a70733a1d564d065b34e0455d1a753aa9ddf3f6c4f46ae4b7b"
+"sf.functions.dmf-not-weekday-percent" = "fd92dec8458dd5eb27ac03a773d0e17023fb82903b8ac187f266132b7ac093df"
+"sf.functions.dmf-not-yesterday-count" = "e2bab0165d4590535d69ef35183272ef2caf7d312e3bae2d3b968a9983c4929f"
+"sf.functions.dmf-not-yesterday-percent" = "a363632e79fceccf2d11eb3c209d89a90e63508d1be33bad547e2888537bdf7f"
+"sf.functions.dmf-null-count" = "6c66f92ddfd1817755ca9b82f258d91ddadf5a732037745f71827384b0f927a8"
+"sf.functions.dmf-null-keyword-count" = "181ab6a012cf4a8d0a004ca50590cf3a3dc9aaa801522442944007c5a5af28be"
+"sf.functions.dmf-null-keyword-percent" = "196d20e2b044148dd25d9a6a5ba4a7ed65861b0f877e2ebec11031f99fa39530"
+"sf.functions.dmf-null-percent" = "8289e022d4690236d3af68467ec9bc6aac3d253806dbe5b5e3a3281ba6d1c0a5"
+"sf.functions.dmf-outlier-count" = "c1a3465c8ac7065e048f046699e1d9e7102af710c2099fee71acc6f31d969d3e"
+"sf.functions.dmf-outlier-iqr-count" = "266a919df52d38ead9fdae7bcaf749ae6f2523362fd32e126300f6b10d213909"
+"sf.functions.dmf-outlier-iqr-percent" = "e3fa4c895f6d31cac5651f20e9a2243523f05bc9fc66361fd5311cd2d28c703f"
+"sf.functions.dmf-outlier-percent" = "ecc2f35bbf1875ee8541ac96610bf3c9095d12ec280872b29869d3511dcc3a97"
+"sf.functions.dmf-outlier-zscore-count" = "d848160ba16b349f7c87fe65df68c9d7e3a817d3ba5650b20921667627e23a85"
+"sf.functions.dmf-outlier-zscore-percent" = "fd1485f207390dd2c3e269e367bdd74768ab6fe7f4495241127af3f22b1e6bc1"
+"sf.functions.dmf-r-squared" = "d4e6891592d2d78561a6f0ee11c656bacc65abf3ec29626111bc51ce09450099"
+"sf.functions.dmf-rmse" = "bb475053de57a96ad17c0e81c23eb0f2ae790e2249c26ced49a00c3d4036456b"
+"sf.functions.dmf-row-count-difference" = "6633e608b8a64fa01efefe1b7f05518779304ec781c22423f740b5e9042a3f90"
+"sf.functions.dmf-rows-in-past-day-count" = "a08254708cf4142c50da9f6742aaa9cc983ceec008a7826ddbe90a1d3fc46a41"
+"sf.functions.dmf-rows-in-past-day-percent" = "5f2f58e94586409fa93e841dea906b4a13c8f198229af21ce32d4c5d2c72ed4f"
+"sf.functions.dmf-rows-in-past-hour-count" = "af0e1b11bc0e2dc9dde4d4ca9794d07bd043cfbb03c2a519a8be9d08d2b15059"
+"sf.functions.dmf-rows-in-past-hour-percent" = "00fcc4a8c5d35de59da3241d2ccb77e36540051c013a5f984b12b0006dfbd992"
+"sf.functions.dmf-rows-in-past-month-count" = "6e4baf3cfeac9848a058f1ede4e36d7fbea8ae9d86fbf47063cb8a9dc7901c4a"
+"sf.functions.dmf-rows-in-past-month-percent" = "04fcc7009a310161ea4270946bacc2fe5a9e76dfd463b040c6ba78165f98922f"
+"sf.functions.dmf-rows-in-past-week-count" = "3f9780490a8b290a3aa235ca0e3952220aee1608bd73b7166fc086f502627726"
+"sf.functions.dmf-rows-in-past-week-percent" = "4c2feb82b990ddb3eeb726bc77c6e2bd35022caeed7c1e086abf5c9de535f6d2"
+"sf.functions.dmf-rows-in-past-year-count" = "809c8640687a92cb430b44d80d033f17aa7a1360e6393f8fab2ae8dd008907cf"
+"sf.functions.dmf-rows-in-past-year-percent" = "3264b1fd312503190e815a155846a1a12f293db14514547b8c7a0f131b32239e"
+"sf.functions.dmf-seconds-since-row-count-change" = "385d07082c784b191f837b08b39ba8a8037e5da458a614f9359a97c76a0cace1"
+"sf.functions.dmf-skew" = "3f707242834fcb72c2b77fa5aad35f0163c7a7165d8e98d2bc830302170434c3"
+"sf.functions.dmf-source-target-lag.snowflake-core-source-target-lag" = "687887861d5ee38b937158f743aa6c4ad52cfd723bcdfab1f87974675cd9901a"
+"sf.functions.dmf-special-character-count" = "0061261ad75a0fca6ff27cdc2988c66653bfcfb90e2ed32187324a252850d0b2"
+"sf.functions.dmf-special-character-percent" = "f54fd726678f9cbad4f2265d43c8d569dba3e02463d8d3aa256659f347c0667f"
+"sf.functions.dmf-stddev" = "4b7e95e81b6a88b73354471d429b28560edc7b0e9979944864e483f5a3c35c98"
+"sf.functions.dmf-string-length-avg" = "fac088b9ca70d4b310608d85c942114242627340088a80acfb6d055d94cba3b9"
+"sf.functions.dmf-string-length-max" = "c5da1802f4dff4d190611966b2dbbdb9568d3d2fcb7534e3f100dec22ebb321e"
+"sf.functions.dmf-string-length-min" = "ef6a177cded49d7c1a5746de27afe40235624dcedf7927dbe76b886923ed9f3d"
+"sf.functions.dmf-string-length-stddev" = "4b482298e5e47ed319a88beadfa57a6abad5796da233663a3582f5730061398c"
+"sf.functions.dmf-sum" = "6b8345ea38c2bd8e4ff61ced0395c2bb8675650e3a0c46b7b29571f44de547ee"
+"sf.functions.dmf-true-count" = "91a97e7c04d7f376bb706c9fe91565c1da420cb1d9ee0b22c6746141dd54b391"
+"sf.functions.dmf-true-percent" = "a860523a8b891b32654c034989e03b60d306097d95153efcd3e03c46bf5d183b"
+"sf.functions.dmf-unique-count" = "d3c8e1dc92e27c9dc76044776a140e604ac0c4acd72274195178acfe5a5b41ec"
+"sf.functions.dmf-unique-percent" = "8ddc77dd469e68882f7e55c0505d15f1be5745a34a6552812b4ba2f44cde27ca"
+"sf.functions.dmf-unix-zero-count" = "143c3e5a273f40062191b4e2e7d61048ccb76480c515c88206c55974a8fcf4df"
+"sf.functions.dmf-unix-zero-percent" = "3785f118cbca4463cd711650aec5e41c4da8108d77e8113037ca459e0dbbc843"
+"sf.functions.dmf-untrimmed-string-count" = "fef7e908bb5da63f50d9e1905d8a269f19ad672545dcdc7ce20e5df433eb9d59"
+"sf.functions.dmf-untrimmed-string-percent" = "df54cfaf0a29a5807755576c810a33efb6c534190ae8ebddb21b0769b5519c90"
+"sf.functions.dmf-variance" = "5a5189a108ae6b24846747070d9484d869b28b944bb1db6386b062efe6191876"
+"sf.functions.dmf-zero-count" = "10320eba53dcb6deb95bd13d3c6957b66fb0db15624b21353724f123b543fa3c"
+"sf.functions.dmf-zero-percent" = "18af1ef017f4613b7e6129333e93dcc22a40755b97e9a9c786e45c1eaa6870f7"
+"sf.functions.email-integration-config" = "83863b3ebc86a91bf2116e9f81007932a5724db8c06e68e6d99d3ef826cd774d"
+"sf.functions.embed-text-1024-snowflake-cortex" = "7a59a71bf929941f4ca5dd9ca79ff41089d9be5c8834c5acb71b388f21478c5a"
+"sf.functions.embed-text-snowflake-cortex" = "4f6cd5f5b6e5cac188c33ba901ce743e6c56ab51bcfe33e536bb1f309d2cfaae"
+"sf.functions.entity-sentiment-snowflake-cortex" = "4adf841302eb3006d1e6f0d6022d565406d49a4fdb413dde69dc5092fe9a82e5"
+"sf.functions.estimate-remaining-dp-aggregates" = "9aa33071d897fa0090a9cec260af4d082f135e35fcb6fe8e73c80ceb338b874c"
+"sf.functions.evaluate-candidate-network-policy" = "4ca738da59023b2a85bc1a84dc597be00ad64d0914b2b0ff8056e2725c8ba452"
+"sf.functions.extract-answer-snowflake-cortex" = "c65044d694c2d52f5b229e81701008bd374cbf590e04d42ee27c8bc4dbfbb272"
+"sf.functions.finetune-cancel" = "26bbd733255d19375d9045b24ef89e7ef5aaafb62acca3ea1498337406ccf886"
+"sf.functions.finetune-create" = "2ccab08116e42dfb5f8abe7abf4fe728a273c20613a2764c63034f3b5d467273"
+"sf.functions.finetune-describe" = "85cf491eedaccfe66d89be050451e7fb3df9ec9f6a0a8f1b7628fbdf1a648b9c"
+"sf.functions.finetune-show" = "688811d8b32290fb993ec62e5034a188712eb88f7bea6c640a9192a98fbaa4ae"
+"sf.functions.generate-synthetic-data" = "dde1a1eaaf61e3af7f6360274014d3bf813dbef27d18493b15dc1df036c5e814"
+"sf.functions.get-anaconda-packages-repodata" = "74f69881bca4ace85b28169f891786d7956bb63d99dbc63ccbafe08e3282c212"
+"sf.functions.get-auto-enablement-status" = "8dccd14d91773e7f51cb4fa4d220661e31fade8c37cf982fea7b80a487ecb090"
+"sf.functions.get-condition-query-uuid" = "c2c1cf2ea4b0042bf1aa4b6440a7d9330409943e6e62ff438450779e219dd7fa"
+"sf.functions.get-contacts" = "ebf41ed1dc49142cd796f17f0e009eb7dfccfe15fd3458d9ff94d907e2721a40"
+"sf.functions.get-job-history" = "16772950e0e849de371b5f0737a8897cab3d00cf58bb10de711f014d96119670"
+"sf.functions.get-lineage-snowflake-core" = "946a46e6a14baaa346b7b344e322e6fc5fe017495c39e1a1ee63942219079ea9"
+"sf.functions.get-python-profiler-output" = "ed83da14833b5913af7cca2baa219ce914483a56760153c4de6a363bbef39f67"
+"sf.functions.integration" = "fb1985fc060dd93732295509d3347c3ed5515ccacf346c82a46ea9535c7fd414"
+"sf.functions.last-successful-scheduled-time" = "94a7ec0095a5eab669b4095dcebb1a509d63c136d9d824f2758c093b0ea3c0fc"
+"sf.functions.my-budget-summary-snowflake-local" = "ef06cc479a26fef1691b30dfbb4b5e7ae84845a776a9a6598579d391c65ca367"
+"sf.functions.parse-document-snowflake-cortex" = "3c086af3a4d408caa383ea3f262126bd3dec0ae47e2d3b46a8671f1be6b5c725"
+"sf.functions.recommend-network-policy" = "bebe6168626c87b3b4dd740b621027caef7213683450fd8fc4a398b23bf9e388"
+"sf.functions.register-extension" = "5df821d9c3960ed2c0664b13e0e28cd654cc561257ec1a471ebea18810ec34de"
+"sf.functions.reset-privacy-budget" = "b3c3cc703d04bd1d41602006d6ca34e1abb83290f47bf38b091d2d6851755eb8"
+"sf.functions.sanitize-webhook-content" = "aa921cfcdc75449c17f8f70f5cdc14bf11677c3c11865355db6f1f7ce177a893"
+"sf.functions.scheduled-time" = "3586ed2242a2d7dfece55b908a734a399d21ed4ee7e9f01327a72452b5ab7adb"
+"sf.functions.search-preview-snowflake-cortex" = "4892368e2c0823620c5a7aa18b764d4b8e20320e1974a2454c867ecb63cbac9a"
+"sf.functions.sentiment-snowflake-cortex" = "a04754c89d2c89401ee83d012e45d4a2a710667af823ddb28c9d25e4385dc805"
+"sf.functions.show-python-packages-dependencies" = "2d8e2294f9d3dbdadaba3cd1298234bf87c61f88e3e92ee9b7bb81b0654fb82a"
+"sf.functions.snowflake-local-grant-to-public-application-role" = "82e91d482de79c8aac6a0aad070e2b392bba9c6f91c1936a108a8743953460dd"
+"sf.functions.snowflake-local-revoke-from-public-application-role" = "379a1bf4e28305387327c849513c3e0eba22b3281deac31419480fb8eaebae7b"
+"sf.functions.snowflake-telemetry-add-row-access-policy-on-events-view" = "d8b20c12c03fe780b0993842fd3255c52cb2a11eacbf1a6fb41f37aea5c45cbe"
+"sf.functions.snowflake-telemetry-drop-row-access-policy-on-events-view" = "1a8063b2557794ac0bec21d07638dd00368635edfe2e4a42e633dfd44db65a57"
+"sf.functions.split-text-markdown-header-snowflake-cortex" = "ce3409441c3e7ee6036e718e53984dd6595cd845a09aa49f144139420d228fa6"
+"sf.functions.split-text-recursive-character-snowflake-cortex" = "60b479b23f6369b82fe2f26ab80aac11047444516da04f0d154414d0dd482b1b"
+"sf.functions.text-html" = "b2b994bf07c66d8bf37c39928a433e7f6af9622079822d6172580f3fcfd663d4"
+"sf.functions.text-plain" = "10c2fb1f668fe5dba1cc9257d2f7f9fda98a482d543c5d72307befabe4a9fb9c"
+"sf.functions.thread-messages-snowflake-cortex" = "4f36ccc81f80429f6322a26b04d21371dfc0e93a758acbc0a1eb8808fa0ec846"
+"sf.functions.translate-snowflake-cortex" = "9936c44d70e6c771bfd1940c473269faad3ce16fbb29e02ca8ca3d4222013aaf"
+"sf.functions.try-complete-snowflake-cortex" = "a27d4aea1298659634cc635b590a44ef36e01c77cf6f67d1b0af1ac29367d138"
+"sf.functions.update-auto-enablement-status" = "259cf80282b77b26d169ced1940ea94a2232256743582b24f8d96f3fd13eb2cf"
