@@ -1,6 +1,7 @@
 //! Parser ddl: Snowflake CREATE EXTERNAL TABLE, checked against its grammar.
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_create_properties::with_written;
 use crate::parser::constants::SNOWFLAKE_EXTERNAL_TABLE_REQUIRED;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::{
@@ -68,6 +69,32 @@ impl Parser {
             properties,
             ..Default::default()
         }))))
+    }
+
+    /// A CREATE TABLE whose columns `LOCATION =` follows, from its TABLE word, read as Snowflake parses it before refusing it; None for any other.
+    pub(super) fn parse_located_table(&mut self, or_replace: bool) -> Result<Option<CreateObject>> {
+        self.expect_token(TokenType::Table)?;
+        let if_not_exists =
+            self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
+        let name = self.parse_object_name()?;
+        let columns = self.parse_external_columns()?;
+        if !(self.check_text_seq(&[SNOWFLAKE_EXTERNAL_TABLE_REQUIRED[0]])
+            && self.check_next(TokenType::Eq))
+        {
+            return Ok(None);
+        }
+        let properties = self.parse_external_properties(true)?;
+        Ok(Some(CreateObject {
+            kind: "TABLE".to_owned(),
+            or_replace,
+            if_not_exists,
+            name,
+            operands: vec![Expression::Tuple(Box::new(Tuple {
+                expressions: columns,
+            }))],
+            properties,
+            ..Default::default()
+        }))
     }
 
     /// `( <query> )`, `$<variable>` or a string after USING TEMPLATE.
@@ -185,8 +212,23 @@ impl Parser {
         Ok(columns)
     }
 
-    /// An optional inline `[CONSTRAINT <name>] UNIQUE | PRIMARY KEY | [FOREIGN KEY] REFERENCES <table> [( <columns> )]` on `column`.
-    fn parse_external_constraint(&mut self, mut column: ColumnDef) -> Result<ColumnDef> {
+    /// An optional inline `[CONSTRAINT <name>] UNIQUE | PRIMARY KEY | [FOREIGN KEY] REFERENCES <table> [( <columns> )]` on `column`, then RELY or NORELY as written.
+    fn parse_external_constraint(&mut self, column: ColumnDef) -> Result<ColumnDef> {
+        let mut column = self.parse_external_constraint_kind(column)?;
+        let Some(index) = column.constraint_order.len().checked_sub(1) else {
+            return Ok(column);
+        };
+        if let Some(word) = ["RELY", "NORELY"]
+            .into_iter()
+            .find(|word| self.match_text_seq(&[word]))
+        {
+            column.constraint_properties.push((index, word.to_owned()));
+        }
+        Ok(column)
+    }
+
+    /// The constraint itself of `parse_external_constraint`.
+    fn parse_external_constraint_kind(&mut self, mut column: ColumnDef) -> Result<ColumnDef> {
         let named = self.match_text_seq(&["CONSTRAINT"]);
         let constraint_name = match named {
             true => Some(self.parse_external_name()?),
@@ -288,6 +330,12 @@ impl Parser {
             let value = Expression::Tuple(Box::new(Tuple { expressions }));
             return Ok(vec![property("PARTITION BY", None, Some(value))]);
         }
+        if self.match_token(TokenType::With) {
+            if self.check(TokenType::With) {
+                return Err(self.parse_error("Expected a property after WITH"));
+            }
+            return Ok(with_written(true, self.parse_external_property()?));
+        }
         if self.match_text_seq(&["ROW", "ACCESS", "POLICY"]) {
             let policy = self.parse_object_name()?;
             self.expect_token(TokenType::On)?;
@@ -302,7 +350,7 @@ impl Parser {
             self.expect_token(TokenType::RParen)?;
             return Ok(vec![policy_property(policy, columns)]);
         }
-        if self.match_text_seq(&["WITH", "TAG"]) || self.match_text_seq(&["TAG"]) {
+        if self.match_text_seq(&["TAG"]) {
             return self.parse_external_tags();
         }
         let key = self.parse_external_name()?;

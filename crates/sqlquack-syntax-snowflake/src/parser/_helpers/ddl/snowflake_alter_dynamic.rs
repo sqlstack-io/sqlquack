@@ -4,6 +4,7 @@ use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_alter_objects::tuple;
 use crate::parser::constants::DROP_ROW_ACCESS_POLICY;
+use crate::parser::constants::REFRESH_COPY_SESSION;
 use crate::parser::constants::SET;
 use crate::parser::constants::SET_MASKING_POLICY;
 use crate::parser::constants::SET_TAG;
@@ -73,7 +74,7 @@ impl Parser {
             &[&["REFRESH", "COPY", "SESSION"], &["REFRESH"]]
         })?;
         let (operands, mut properties) = self.parse_dynamic_table_action(&action)?;
-        if action == "REFRESH COPY SESSION" {
+        if action == REFRESH_COPY_SESSION {
             action = "REFRESH".to_string();
             properties.push(property("COPY SESSION", None, None));
         }

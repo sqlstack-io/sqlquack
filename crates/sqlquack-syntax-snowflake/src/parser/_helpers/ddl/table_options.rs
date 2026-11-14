@@ -221,12 +221,14 @@ impl Parser {
                     || self.check_identifier("SPATIAL")
                 {
                     let looks_like_key_constraint = if self.check(TokenType::Key) {
-                        self.check_next(TokenType::LParen)
-                            || (self.check_next(TokenType::Identifier)
-                                || self.check_next(TokenType::Var)
-                                || self.check_next(TokenType::QuotedIdentifier))
-                                && self.current + 2 < self.tokens.len()
-                                && self.tokens[self.current + 2].token_type == TokenType::LParen
+                        !self.is_snowflake()
+                            && (self.check_next(TokenType::LParen)
+                                || (self.check_next(TokenType::Identifier)
+                                    || self.check_next(TokenType::Var)
+                                    || self.check_next(TokenType::QuotedIdentifier))
+                                    && self.current + 2 < self.tokens.len()
+                                    && self.tokens[self.current + 2].token_type
+                                        == TokenType::LParen)
                     } else {
                         true
                     };

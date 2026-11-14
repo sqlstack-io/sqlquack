@@ -791,8 +791,11 @@ fn field_names(fields: &[Value]) -> Option<Vec<String>> {
 
 /// A serialised `named` type as the common or custom type it denotes, or none for another type.
 pub(crate) fn unnamed_type(data_type: &Value) -> Option<Value> {
-    let named: DataType = serde_json::from_value(data_type.clone()).ok()?;
-    serde_json::to_value(named.unnamed()?).ok()
+    let unnamed: DataType = match serde_json::from_value::<DataType>(data_type.clone()) {
+        Ok(written) => written.unnamed()?,
+        Err(_) => return None,
+    };
+    Some(serde_json::to_value(unnamed).unwrap_or_default())
 }
 
 /// The Snowflake spelling of a serialised cast target type.

@@ -415,10 +415,13 @@ impl Parser {
         Ok(alter_object(kind, head, action, parts))
     }
 
-    /// Parse an integration's SET: `<name> = <value>` properties, at least one, where a value may be a parenthesized list.
+    /// Parse an integration's SET: `<name> = <value>` properties, at least one, optionally comma-separated, where a value may be a parenthesized list.
     fn parse_integration_set(&mut self) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
+            if !properties.is_empty() {
+                self.match_token(TokenType::Comma);
+            }
             let name = self.parse_simple_name()?;
             self.expect_token(TokenType::Eq)?;
             if SNOWFLAKE_STRING_KEY_MAP_PROPERTIES.contains(&property_kind(&name).as_str()) {

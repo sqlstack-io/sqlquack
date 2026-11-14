@@ -20,6 +20,7 @@ use sqlquack_syntax::tokens::types::Result;
 const OMITTED_NAME_ACTIONS: &[(&str, &[&str])] = &[
     ("AGGREGATION POLICY", &["SET", "UNSET"]),
     ("DATABASE", &["SET", "UNSET"]),
+    ("SCHEMA", &["SET", "UNSET"]),
     ("AUTHENTICATION POLICY", &["SET", "UNSET"]),
     ("FEATURE POLICY", &["SET", "UNSET"]),
     ("JOIN POLICY", &["SET", "UNSET"]),

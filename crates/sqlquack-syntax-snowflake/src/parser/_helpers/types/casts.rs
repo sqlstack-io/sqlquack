@@ -1272,6 +1272,11 @@ impl Parser {
                     if self.is_snowflake() && self.check(TokenType::String) {
                         return Err(self.parse_error("Expected a type parameter, not a string"));
                     }
+                    if self.is_snowflake_reserved_keyword() {
+                        return Err(
+                            self.parse_error("Expected a type parameter, not a reserved keyword")
+                        );
+                    }
                     let token = self.advance()?;
                     if !after_comma && !args.is_empty() {
                         if let Some(last) = args.last_mut() {
@@ -1295,16 +1300,19 @@ impl Parser {
         }
     }
 
-    /// Snowflake's `NUMBER(p, s)`, `DATETIME(p)`, `VARCHAR2(n)` or `NVARCHAR2(n)` with its
-    /// parameters in their own fields, or none for any other name or parameter list.
+    /// Snowflake's `NUMBER(p, s)`, `DATETIME(p)`, `VARCHAR2(n)` or `NVARCHAR2(n)` with fields.
     fn snowflake_named_parameters(&self, name: &str, args: &[String]) -> Option<DataType> {
         if !self.is_snowflake() {
             return None;
         }
-        let numbers: Vec<u32> = args
+        let numbers: Vec<u32> = match args
             .iter()
-            .map(|argument| argument.parse::<u32>().ok())
-            .collect::<Option<_>>()?;
+            .map(|argument| argument.parse::<u32>())
+            .collect::<std::result::Result<Vec<u32>, _>>()
+        {
+            Ok(numbers) => numbers,
+            Err(_) => return None,
+        };
         match (name, numbers.as_slice()) {
             ("NUMBER", [precision]) => Some(named_data_type(name, Some(*precision), None, None)),
             ("NUMBER", [precision, scale]) => {

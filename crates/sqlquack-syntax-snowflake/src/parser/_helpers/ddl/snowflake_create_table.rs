@@ -5,8 +5,8 @@ use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_alter::with_keyword;
 use crate::parser::_helpers::ddl::snowflake_external_table::{lacks_property, policy_property};
 use crate::parser::constants::{
-    COMMENT, PARTITION_BY, SNOWFLAKE_DYNAMIC_TABLE_KEYS, SNOWFLAKE_DYNAMIC_TABLE_REQUIRED,
-    SNOWFLAKE_ICEBERG_TABLE_KEYS, SNOWFLAKE_TABLE_PROPERTY_KEYS,
+    COMMENT, FOREIGN_KEY, PARTITION_BY, SNOWFLAKE_DYNAMIC_TABLE_KEYS,
+    SNOWFLAKE_DYNAMIC_TABLE_REQUIRED, SNOWFLAKE_ICEBERG_TABLE_KEYS, SNOWFLAKE_TABLE_PROPERTY_KEYS,
 };
 use crate::parser::models::{Constraint, Parser};
 use sqlquack_syntax::expressions::columns::models::{
@@ -75,6 +75,10 @@ impl Parser {
             SnowflakeTableKind::Table,
             self.tokens[create_start].token_type == TokenType::Define,
         ) else {
+            self.current = table_start;
+            if let Ok(Some(table)) = self.parse_located_table(or_replace) {
+                return Ok(self.finish_snowflake_table(table, (create_start, table_start)));
+            }
             self.current = end;
             return parsed;
         };
@@ -927,7 +931,7 @@ fn add_inline_constraint(mut column: ColumnDef, constraint: Constraint) -> Resul
                     match_after_actions: false,
                     constraint_name: None,
                     deferrable: None,
-                    has_foreign_key_keywords: constraint.kind == "FOREIGN KEY",
+                    has_foreign_key_keywords: constraint.kind == FOREIGN_KEY,
                 })));
             ConstraintType::References
         }

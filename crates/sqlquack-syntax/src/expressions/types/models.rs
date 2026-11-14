@@ -335,8 +335,7 @@ pub enum DataType {
         name: String,
     },
 
-    /// A type kept as written with its parameters in their own fields, as Snowflake's
-    /// `NUMBER(9, 2)`, `TIMESTAMP_LTZ(9)` or `NCHAR VARYING(5)`.
+    /// A type kept as written with its parameters in fields, as `NUMBER(9, 2)` or `NCHAR VARYING(5)`.
     Named {
         /// The type name as written, upper-cased, such as `NUMBER` or `NCHAR VARYING`.
         name: String,
@@ -503,8 +502,7 @@ impl DataType {
         matches!(self, DataType::Unknown)
     }
 
-    /// A [`DataType::Named`] type as the common variant or custom name it denotes, or none:
-    /// `NUMBER(9, 2)` and `TIMESTAMPLTZ(9)` as custom names, `NCHAR VARYING(5)` as `VARCHAR(5)`.
+    /// A [`DataType::Named`] type as the common variant or custom name it denotes, or none.
     pub fn unnamed(&self) -> Option<DataType> {
         let DataType::Named {
             name,

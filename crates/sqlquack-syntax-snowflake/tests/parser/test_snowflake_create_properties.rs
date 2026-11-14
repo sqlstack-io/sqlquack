@@ -159,6 +159,90 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_only_what_snowf
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
+        AcceptanceTestCase {
+            description: "a kind's first word left out is refused (recorded errno 1003)",
+            sql: "CREATE SERVER v1 FROM SPECIFICATION $$m: 1 $$ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "IF before the kind is refused (recorded errno 1003)",
+            sql: "CREATE IF EXISTS DATASET v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an agent's FROM needs SPECIFICATION (recorded errno 1003)",
+            sql: "CREATE AGENT v1 FROM $$m: 1 $$ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a bare listing takes no FROM location (recorded errno 1003)",
+            sql: "CREATE LISTING v1 FROM 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a quoted stage name is no stage path (recorded errno 1003)",
+            sql: "CREATE MODEL v1 FROM @'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a sequence start outside 64 bits parses (recorded semantic error)",
+            sql: "CREATE SEQUENCE v1 START 9223372036854775808 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a sequence comment may be a name (recorded success)",
+            sql: "CREATE SEQUENCE v1 COMMENT = m1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a connection replica comment may be a name (recorded unsupported feature)",
+            sql: "CREATE CONNECTION v1 AS REPLICA OF o1 . a1 . c1 COMMENT = m1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a linked catalog allows ALL write operations (recorded semantic error)",
+            sql: "CREATE DATABASE v1 LINKED_CATALOG = ( CATALOG = 'm' ALLOWED_WRITE_OPERATIONS = ALL ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "channels are shown in a pipe (recorded semantic error)",
+            sql: "SHOW CHANNELS IN PIPE v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a cortex search STARTS WITH needs a string (recorded errno 1003)",
+            sql: "SHOW CORTEX SEARCH SERVICES STARTS WITH m1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an external table takes WITH before LOCATION (recorded semantic error)",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) WITH LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an external table column constraint takes RELY (recorded semantic error)",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 UNIQUE RELY ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "DEFINE takes an aggregate function (recorded semantic error)",
+            sql: "DEFINE SECURE AGGREGATE FUNCTION d1.s1.v1 ( v1 INT ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
     ];
 
     for test_case in test_cases {
@@ -359,6 +443,48 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             sql: "ALTER SNOWFLAKE . . CLASSIFICATION v1 SET TAG v1 = 'm'",
             pointer: "/0/alter_object/class/schema_omitted",
             expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "an aggregate function records AGGREGATE",
+            sql: "CREATE SECURE AGGREGATE FUNCTION v1 ( v1 INT ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm'",
+            pointer: "/0/create_function/aggregate",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a sequence comment written as a name keeps the name",
+            sql: "CREATE SEQUENCE v1 COMMENT = m1",
+            pointer: "/0/create_sequence/comment_name/name",
+            expected_value: json!("m1"),
+        },
+        ProjectionTestCase {
+            description: "a sequence start outside 64 bits keeps its text",
+            sql: "CREATE SEQUENCE v1 START -9223372036854775809",
+            pointer: "/0/create_sequence/start_text",
+            expected_value: json!("-9223372036854775809"),
+        },
+        ProjectionTestCase {
+            description: "an external table property after WITH records the WITH",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) WITH LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' )",
+            pointer: "/0/create_object/properties/0/with",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "an external table column keeps RELY after its constraint",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 UNIQUE RELY ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' )",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/constraint_properties/0/1",
+            expected_value: json!("RELY"),
+        },
+        ProjectionTestCase {
+            description: "channels shown in a pipe name the pipe container",
+            sql: "SHOW CHANNELS IN PIPE v1",
+            pointer: "/0/show/scope_kind",
+            expected_value: json!("PIPE"),
+        },
+        ProjectionTestCase {
+            description: "a model named monitor copied from a model keeps its MODEL source",
+            sql: "CREATE MODEL monitor FROM MODEL m2",
+            pointer: "/0/create_object/source",
+            expected_value: json!("MODEL"),
         },
     ];
 

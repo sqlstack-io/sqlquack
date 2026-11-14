@@ -732,6 +732,13 @@ impl MethodCall {
     }
 }
 
+/// A Snowflake class method called without an instance, `!<method>( <args> )`.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ClassMethodCall {
+    /// The method and its arguments, as a function call.
+    pub expression: Box<Expression>,
+}
+
 /// Array slice (array[start:end])
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ArraySlice {

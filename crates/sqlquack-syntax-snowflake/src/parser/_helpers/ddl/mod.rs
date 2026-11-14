@@ -1,6 +1,7 @@
 //! Ddl.
 
 pub(crate) mod alter;
+pub(crate) mod alter_table;
 pub(crate) mod commands;
 pub(crate) mod constraints;
 pub(crate) mod create_function;

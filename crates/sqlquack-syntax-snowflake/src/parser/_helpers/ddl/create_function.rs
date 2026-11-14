@@ -97,6 +97,7 @@ impl Parser {
                 .collect(),
             overloads: Vec::new(),
             define: false,
+            aggregate: false,
         };
         function = self.parse_create_function_properties(function)?;
 

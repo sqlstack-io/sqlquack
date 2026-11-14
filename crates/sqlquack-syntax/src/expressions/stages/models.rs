@@ -6,6 +6,43 @@ use crate::expressions::names::models::Identifier;
 use crate::expressions::statements::models::CopyParameter;
 use crate::expressions::tree::models::Expression;
 
+/// PUT statement (Snowflake)
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct PutStmt {
+    /// Source file path
+    pub source: String,
+    /// Whether source was quoted in the original SQL
+    #[serde(default)]
+    pub source_quoted: bool,
+    /// Target stage
+    pub target: Expression,
+    /// PUT parameters
+    #[serde(default)]
+    pub params: Vec<CopyParameter>,
+}
+
+/// Stage reference (Snowflake) - @stage_name or @namespace.stage/path
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct StageReference {
+    /// Stage name including @ prefix (e.g., "@mystage", "@namespace.mystage")
+    pub name: String,
+    /// Optional path within the stage (e.g., "/path/to/file.csv")
+    #[serde(default)]
+    pub path: Option<String>,
+    /// Optional FILE_FORMAT parameter
+    #[serde(default)]
+    pub file_format: Option<Expression>,
+    /// Optional PATTERN parameter
+    #[serde(default)]
+    pub pattern: Option<String>,
+    /// Whether the stage reference was originally quoted (e.g., '@mystage')
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub quoted: bool,
+    /// The written name split into its parts (Snowflake)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stage_name: Option<StageName>,
+}
+
 /// GET, LIST or REMOVE (Snowflake): a command on the files in a stage.
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct StageCommand {

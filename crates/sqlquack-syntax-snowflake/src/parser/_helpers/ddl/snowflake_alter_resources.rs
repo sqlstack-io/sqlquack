@@ -4,12 +4,12 @@ use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::named_property;
 use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
-use crate::parser::_helpers::ddl::snowflake_stages::stage_name_fields;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
-use sqlquack_syntax::expressions::statements::models::StageReference;
+use sqlquack_syntax::expressions::stages::main::stage_name_fields::stage_name_fields;
+use sqlquack_syntax::expressions::stages::models::StageReference;
 use sqlquack_syntax::expressions::statements::models::Var;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::Tuple;
@@ -71,6 +71,7 @@ const RESOURCE_KINDS: &[&[&str]] = &[
     &["SECRET"],
     &["SERVICE"],
     &["STAGE"],
+    &["VOLUME"],
 ];
 
 /// The operands and properties of one ALTER action.
@@ -192,6 +193,7 @@ fn resource_actions(kind: &str) -> &'static [&'static [&'static str]] {
             &["UNSET"],
         ],
         "DATASET" => &[&["ADD", "VERSION"], &["DROP", "VERSION"]],
+        "VOLUME" => &[&["SET"]],
         "FEATURE POLICY" | "INGRESS POLICY" | "MULTI PARTY APPROVAL POLICY" => {
             &[&["AS"], &["RENAME", "TO"], &["SET"], &["UNSET"]]
         }

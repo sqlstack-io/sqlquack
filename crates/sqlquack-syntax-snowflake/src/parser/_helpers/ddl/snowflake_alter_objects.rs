@@ -586,14 +586,13 @@ impl Parser {
                 action.push_str(&suffix);
                 parts
             }
-            "SET" => self.parse_alter_set(true)?,
-            _ => {
-                let parts = self.parse_alter_set(false)?;
-                if parts.1.len() > 1 && parts.1.iter().any(|p| p.kind != TAG) {
-                    return Err(self.parse_error("Snowflake unsets one package property at a time"));
-                }
-                parts
+            "SET" | "UNSET" if head.1 => {
+                return Err(self.parse_error(
+                    "Snowflake takes no IF EXISTS before an application package's SET or UNSET",
+                ));
             }
+            "SET" => self.parse_alter_set(true)?,
+            _ => self.parse_alter_set(false)?,
         };
         Ok(alter_object("APPLICATION PACKAGE", head, action, parts))
     }

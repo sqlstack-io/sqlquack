@@ -543,6 +543,9 @@ pub struct CreateFunction {
     /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub define: bool,
+    /// Snowflake: an AGGREGATE function, written `CREATE AGGREGATE FUNCTION`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub aggregate: bool,
 }
 
 /// A SET option in CREATE FUNCTION (PostgreSQL)
@@ -709,6 +712,7 @@ impl CreateFunction {
             snowflake_properties: Vec::new(),
             overloads: Vec::new(),
             define: false,
+            aggregate: false,
         }
     }
 }
@@ -917,6 +921,12 @@ pub struct CreateSequence {
     /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub define: bool,
+    /// Snowflake: a COMMENT written as a name instead of a string, with its quoting; `comment` is then None
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment_name: Option<Identifier>,
+    /// Snowflake: a START value outside the 64-bit range, as written; `start` is then None
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start_text: Option<String>,
 }
 
 /// Sequence bound (value or NO MINVALUE/NO MAXVALUE)
@@ -949,6 +959,8 @@ impl CreateSequence {
             shard_modifier: None,
             property_order: Vec::new(),
             define: false,
+            comment_name: None,
+            start_text: None,
         }
     }
 }

@@ -3,9 +3,10 @@
 use crate::parser::_helpers::ddl::snowflake_alter::{alter_object, named_property, property};
 use crate::parser::_helpers::statements::analyze::snowflake_reserved_word;
 use crate::parser::constants::{
-    SNOWFLAKE_DEFINE_OPAQUE_KINDS, SNOWFLAKE_DROP_KINDS, SNOWFLAKE_OPAQUE_ALTER_ACTIONS,
-    SNOWFLAKE_OPAQUE_KINDS, SNOWFLAKE_OPAQUE_MODIFIERS, SNOWFLAKE_OPAQUE_OPERAND_WORDS,
-    SNOWFLAKE_OPAQUE_UNNAMED_KIND, SNOWFLAKE_STRUCTURED_OPAQUE_KINDS, SUSPENDED,
+    MODEL_KIND, SNOWFLAKE_DEFINE_OPAQUE_KINDS, SNOWFLAKE_DROP_KINDS, SNOWFLAKE_MANIFEST_ONLY_KINDS,
+    SNOWFLAKE_OPAQUE_ALTER_ACTIONS, SNOWFLAKE_OPAQUE_KINDS, SNOWFLAKE_OPAQUE_MODIFIERS,
+    SNOWFLAKE_OPAQUE_OPERAND_WORDS, SNOWFLAKE_OPAQUE_UNNAMED_KIND,
+    SNOWFLAKE_STRUCTURED_OPAQUE_KINDS, SUSPENDED,
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::TableRef;
@@ -383,7 +384,7 @@ impl Parser {
                     && !(**words == ["NOTEBOOK", "PROJECT"] && self.notebook_name_ends_at(2))
             });
         let Some(&kind) = kind else {
-            return self.check_opaque_unknown_kind();
+            return self.check_opaque_unknown_kind(create);
         };
         self.current += kind.len();
         if !create && self.check(TokenType::If) && self.is_opaque_action_at(1) {
@@ -432,15 +433,39 @@ impl Parser {
             })
     }
 
-    /// Refuse a kind whose first word starts a kind the check knows but whose next words complete none, as `ALTER OPENFLOW v1` does.
-    fn check_opaque_unknown_kind(&self) -> Result<()> {
+    /// Refuse a kind whose first word starts a kind the check knows but whose next words complete none, as `ALTER OPENFLOW v1` does; for a CREATE, also IF where the kind belongs, a later word of a kind written without the words before it, as `CREATE SERVER v1` is, and a name with no kind before IN.
+    fn check_opaque_unknown_kind(&self, create: bool) -> Result<()> {
         let first = self.peek().text.to_ascii_uppercase();
-        let partial = SNOWFLAKE_OPAQUE_KINDS
-            .iter()
-            .chain(SNOWFLAKE_DROP_KINDS)
-            .any(|words| words[0] == first);
-        match partial && self.peek().token_type != TokenType::QuotedIdentifier {
-            true => Err(self.parse_error("Expected a complete object kind")),
+        let kinds = || {
+            SNOWFLAKE_OPAQUE_KINDS
+                .iter()
+                .chain(SNOWFLAKE_DROP_KINDS)
+                .chain(SNOWFLAKE_STRUCTURED_OPAQUE_KINDS)
+        };
+        if kinds().any(|words| self.check_text_seq(words)) {
+            return Ok(());
+        }
+        let unquoted = self.peek().token_type != TokenType::QuotedIdentifier;
+        if unquoted && kinds().any(|words| words[0] == first) {
+            return Err(self.parse_error("Expected a complete object kind"));
+        }
+        if !create {
+            return Ok(());
+        }
+        if self.check(TokenType::If) {
+            return Err(self.parse_error("Expected an object kind before IF"));
+        }
+        let tail = kinds().any(|words| words[1..].contains(&first.as_str()));
+        if unquoted && tail {
+            return Err(self.parse_error(format!(
+                "Expected the words of the object kind before {first}"
+            )));
+        }
+        match self
+            .peek_nth(1)
+            .is_some_and(|token| token.token_type == TokenType::In)
+        {
+            true => Err(self.parse_error("Expected an object kind before the name")),
             false => Ok(()),
         }
     }
@@ -674,16 +699,16 @@ impl Parser {
                 return Ok(Some(clone));
             }
         }
-        match self.parse_opaque_create_tree(or_replace, or_alter) {
-            Ok(Some(tree)) if self.is_statement_end_at(0) => Ok(Some(tree)),
-            _ => {
+        match self.parse_opaque_create_tree(or_replace, or_alter)? {
+            Some(tree) => Ok(Some(tree)),
+            None => {
                 self.current = start;
                 Ok(None)
             }
         }
     }
 
-    /// The create-object tree of an opaque CREATE from its kind: the modifier written before the kind, IF NOT EXISTS, the name, an AI function's signature and return type, then its clauses and properties.
+    /// The create-object tree of an opaque CREATE from its kind: the modifier written before the kind, IF NOT EXISTS, the name, an AI function's signature and return type, then its clauses and properties; an error once the kind is known and the rest does not follow its grammar, None for another kind.
     fn parse_opaque_create_tree(
         &mut self,
         or_replace: bool,
@@ -697,26 +722,6 @@ impl Parser {
         if self.tokens[head].token_type == TokenType::Or {
             head += 2;
         }
-        let quoted = self.tokens[head..self.current].iter().any(|token| {
-            matches!(
-                token.token_type,
-                TokenType::QuotedIdentifier | TokenType::String
-            )
-        });
-        let words: Vec<String> = self.tokens[head..self.current]
-            .iter()
-            .map(|token| token.text.to_ascii_uppercase())
-            .collect();
-        let modifier = match words.is_empty() {
-            true => None,
-            false => match SNOWFLAKE_OPAQUE_MODIFIERS
-                .iter()
-                .any(|modifier| *modifier == words.as_slice())
-            {
-                true if !quoted => Some(words.join(" ")),
-                _ => return Ok(None),
-            },
-        };
         let Some(&kind) = SNOWFLAKE_STRUCTURED_OPAQUE_KINDS.iter().find(|words| {
             self.check_text_seq(words)
                 && !(**words == ["NOTEBOOK", "PROJECT"] && self.notebook_name_ends_at(2))
@@ -731,12 +736,16 @@ impl Parser {
         if define && !SNOWFLAKE_DEFINE_OPAQUE_KINDS.contains(&kind) {
             return Ok(None);
         }
+        if kind == ["NOTEBOOK", "PROJECT"] && self.check_next_nth_dot(kind.len()) {
+            return Ok(None);
+        }
+        let modifier = self.opaque_create_modifier(head)?;
         self.current += kind.len();
         let if_not_exists = self.check(TokenType::If);
         if if_not_exists
             && !self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists])
         {
-            return Ok(None);
+            return Err(self.parse_error("Expected IF NOT EXISTS"));
         }
         if kind == ["NOTEBOOK", "PROJECT"] && self.check(TokenType::Dot) {
             return Ok(None);
@@ -756,7 +765,7 @@ impl Parser {
             create.signature = Some(self.parse_function_parameters()?);
             self.expect_token(TokenType::RParen)?;
             if !self.match_text_seq(&["RETURNS"]) {
-                return Ok(None);
+                return Err(self.parse_error("Expected RETURNS"));
             }
             create.returns = Some(self.parse_data_type()?);
         }
@@ -764,7 +773,7 @@ impl Parser {
         while !self.is_statement_end_at(0) {
             if self.check(TokenType::With) && !self.check_next(TokenType::Eq) {
                 if with {
-                    return Ok(None);
+                    return Err(self.parse_error("Expected a property after WITH"));
                 }
                 self.skip();
                 with = true;
@@ -773,29 +782,69 @@ impl Parser {
             let first = create.properties.len();
             create = match self.parse_opaque_create_clause(create, function)? {
                 Some(create) => create,
-                None => return Ok(None),
+                None => {
+                    return Err(
+                        self.parse_error(format!("Unexpected clause in CREATE {}", kind.join(" ")))
+                    )
+                }
             };
             for found in &mut create.properties[first..] {
                 found.with = with;
             }
             if with && create.properties.len() == first {
-                return Ok(None);
+                return Err(self.parse_error("Expected a property after WITH"));
             }
             with = false;
         }
         match with {
-            true => Ok(None),
+            true => Err(self.parse_error("Expected a property after WITH")),
             false => Ok(Some(Expression::CreateObject(Box::new(create)))),
         }
     }
 
-    /// `create` with one more clause or property of an opaque CREATE: FROM and its source, AS and a body or manifest, a tag or contact list, MANAGED ACCESS, COPY GRANTS, an interactive warehouse's TABLES, a word that takes one value, or `<property> = <value>`; None for anything else.
+    /// Whether the token `offset` tokens ahead is a dot, as when a name leaves out its database.
+    fn check_next_nth_dot(&self, offset: usize) -> bool {
+        self.peek_nth(offset)
+            .is_some_and(|token| token.token_type == TokenType::Dot)
+    }
+
+    /// The words from `head` to the kind at the cursor, as written, which must be a modifier an opaque CREATE takes; None when there are none.
+    fn opaque_create_modifier(&self, head: usize) -> Result<Option<String>> {
+        let tokens = &self.tokens[head..self.current];
+        if tokens.is_empty() {
+            return Ok(None);
+        }
+        let quoted = tokens.iter().any(|token| {
+            matches!(
+                token.token_type,
+                TokenType::QuotedIdentifier | TokenType::String
+            )
+        });
+        let words: Vec<String> = tokens
+            .iter()
+            .map(|token| token.text.to_ascii_uppercase())
+            .collect();
+        match !quoted
+            && SNOWFLAKE_OPAQUE_MODIFIERS
+                .iter()
+                .any(|modifier| *modifier == words.as_slice())
+        {
+            true => Ok(Some(words.join(" "))),
+            false => Err(self.parse_error("Unexpected words before the object kind")),
+        }
+    }
+
+    /// `create` with one more clause or property of an opaque CREATE: FROM and its source (a location, SPECIFICATION, SERVICE, EXPERIMENT, or a model's MODEL), AS and a body or manifest, a tag or contact list, MANAGED ACCESS, COPY GRANTS, an interactive warehouse's TABLES, a word that takes one value, or `<property> = <value>`; None for anything else.
     fn parse_opaque_create_clause(
         &mut self,
         mut create: CreateObject,
         function: bool,
     ) -> Result<Option<CreateObject>> {
-        if self.check(TokenType::From) && create.source.is_empty() && create.body.is_none() {
+        if self.check(TokenType::From)
+            && create.source.is_empty()
+            && create.body.is_none()
+            && !SNOWFLAKE_MANIFEST_ONLY_KINDS.contains(&create.kind.as_str())
+        {
             self.skip();
             let (source, operand) = if self.match_text_seq(&["SPECIFICATION"]) {
                 ("FROM SPECIFICATION", self.parse_opaque_text()?)
@@ -807,6 +856,11 @@ impl Parser {
             } else if self.match_text_seq(&["EXPERIMENT"]) {
                 (
                     "FROM EXPERIMENT",
+                    Expression::Table(Box::new(self.parse_object_name()?)),
+                )
+            } else if create.kind == MODEL_KIND && self.match_text_seq(&[MODEL_KIND]) {
+                (
+                    "MODEL",
                     Expression::Table(Box::new(self.parse_object_name()?)),
                 )
             } else if self.is_stage_path() || self.check(TokenType::String) {

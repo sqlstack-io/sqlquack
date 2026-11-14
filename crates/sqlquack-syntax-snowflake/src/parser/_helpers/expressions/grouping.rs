@@ -1,6 +1,9 @@
 //! Parser expressions: grouping.
 
 use crate::parser::constants::BINARY_ARITY;
+use crate::parser::constants::MERGE_ALL_BY_NAME;
+use crate::parser::constants::MERGE_INSERT;
+use crate::parser::constants::MERGE_UPDATE;
 use crate::parser::constants::QUALIFIED_NAME_PARTS;
 use crate::parser::constants::RIGHT_PAREN;
 use crate::parser::constants::TERNARY_ARITY;
@@ -1112,9 +1115,7 @@ impl Parser {
         })
     }
 
-    /// A MERGE action from its parsed parts: in Snowflake a typed action, else (or with a `*` or
-    /// ROW that has no field) the keyword alone or a tuple of the parts; `column_list` marks an
-    /// INSERT column list before the values.
+    /// A MERGE action from its parts: typed in Snowflake, else the keyword alone or a tuple of parts.
     fn merge_action_node(&self, elements: Vec<Expression>, column_list: bool) -> Expression {
         let legacy = |mut elements: Vec<Expression>| match elements.len() {
             1 => elements.remove(0),
@@ -1137,9 +1138,9 @@ impl Parser {
         for (position, element) in elements.iter().enumerate() {
             match element {
                 Expression::Var(var) if position == 0 => action.kind = var.this.clone(),
-                Expression::Var(var) if var.this == "ALL BY NAME" => action.all_by_name = true,
+                Expression::Var(var) if var.this == MERGE_ALL_BY_NAME => action.all_by_name = true,
                 Expression::Where(clause) => action.condition = Some(clause.this.clone()),
-                Expression::Tuple(tuple) if action.kind == "UPDATE" => {
+                Expression::Tuple(tuple) if action.kind == MERGE_UPDATE => {
                     for assignment in &tuple.expressions {
                         let Expression::Eq(assignment) = assignment else {
                             return legacy(elements);
@@ -1153,7 +1154,7 @@ impl Parser {
                     action.columns = tuple.expressions.clone();
                     column_list = false;
                 }
-                Expression::Tuple(tuple) if action.kind == "INSERT" => {
+                Expression::Tuple(tuple) if action.kind == MERGE_INSERT => {
                     action.values = tuple.expressions.clone();
                 }
                 _ => return legacy(elements),

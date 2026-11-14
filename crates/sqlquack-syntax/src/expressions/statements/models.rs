@@ -17,7 +17,6 @@ use crate::expressions::queries::models::RowFormat;
 use crate::expressions::queries::models::Sample;
 use crate::expressions::queries::models::Where;
 use crate::expressions::queries::models::With;
-use crate::expressions::stages::models::StageName;
 use crate::expressions::tables::models::OnCluster;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
@@ -271,6 +270,7 @@ pub struct CopyStmt {
     /// PostgreSQL `COPY ... FROM ... WHERE condition`
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_clause: Option<Box<Expression>>,
+    /// Snowflake `COPY FILES INTO`, which copies files between stages
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub copy_files: bool,
 }
@@ -292,43 +292,6 @@ pub struct Credentials {
     pub credentials: Vec<(String, String)>,
     pub encryption: Option<String>,
     pub storage: Option<String>,
-}
-
-/// PUT statement (Snowflake)
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PutStmt {
-    /// Source file path
-    pub source: String,
-    /// Whether source was quoted in the original SQL
-    #[serde(default)]
-    pub source_quoted: bool,
-    /// Target stage
-    pub target: Expression,
-    /// PUT parameters
-    #[serde(default)]
-    pub params: Vec<CopyParameter>,
-}
-
-/// Stage reference (Snowflake) - @stage_name or @namespace.stage/path
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct StageReference {
-    /// Stage name including @ prefix (e.g., "@mystage", "@namespace.mystage")
-    pub name: String,
-    /// Optional path within the stage (e.g., "/path/to/file.csv")
-    #[serde(default)]
-    pub path: Option<String>,
-    /// Optional FILE_FORMAT parameter
-    #[serde(default)]
-    pub file_format: Option<Expression>,
-    /// Optional PATTERN parameter
-    #[serde(default)]
-    pub pattern: Option<String>,
-    /// Whether the stage reference was originally quoted (e.g., '@mystage')
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub quoted: bool,
-    /// The written name split into its parts (Snowflake)
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub stage_name: Option<StageName>,
 }
 
 /// Historical data / Time travel (Snowflake) - BEFORE (STATEMENT => ...) or AT (TIMESTAMP => ...)
@@ -580,7 +543,9 @@ pub enum UseKind {
     Catalog,
     /// Snowflake: USE SECONDARY ROLES with a list of roles in `roles`
     SecondaryRoles,
+    /// Snowflake: USE SECONDARY ROLES ALL
     SecondaryRolesAll,
+    /// Snowflake: USE SECONDARY ROLES NONE
     SecondaryRolesNone,
 }
 

@@ -311,7 +311,7 @@ impl Parser {
         }))))
     }
 
-    /// Whether the words at the cursor are part of a property or body kind, not all of it, before a name and then `;`, AS, WITH or `<name> =`.
+    /// Whether the words at the cursor are part of a property or body kind, not all of it, before a name and then `;`, AS, WITH, FROM or `<name> =`.
     fn names_a_partial_kind(&self) -> bool {
         let kinds = SNOWFLAKE_PROPERTY_KINDS
             .iter()
@@ -334,7 +334,7 @@ impl Parser {
             self.tokens.get(self.current + offset).is_some_and(|token| {
                 matches!(
                     token.token_type,
-                    TokenType::Semicolon | TokenType::As | TokenType::With
+                    TokenType::Semicolon | TokenType::As | TokenType::With | TokenType::From
                 )
             }) || self
                 .tokens

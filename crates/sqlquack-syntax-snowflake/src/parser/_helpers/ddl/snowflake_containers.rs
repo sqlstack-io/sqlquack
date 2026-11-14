@@ -151,7 +151,7 @@ impl Parser {
         Ok(Expression::Tuple(Box::new(Tuple { expressions: pairs })))
     }
 
-    /// LINKED_CATALOG's `( <key> = <value> ... )`, each pair a `=` node whose value may be a parenthesised list.
+    /// LINKED_CATALOG's `( <key> = <value> ... )`, each pair a `=` node whose value may be a parenthesised list or the ALL of ALLOWED_WRITE_OPERATIONS.
     fn parse_linked_catalog(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::LParen)?;
         let mut pairs: Vec<Expression> = Vec::new();
@@ -168,6 +168,8 @@ impl Parser {
                 }
                 self.expect_token(TokenType::RParen)?;
                 Expression::Tuple(Box::new(Tuple { expressions: items }))
+            } else if self.check(TokenType::All) {
+                Expression::Identifier(Identifier::new(self.advance_text()?))
             } else {
                 self.parse_container_value()?
             };

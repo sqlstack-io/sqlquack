@@ -242,6 +242,7 @@ use crate::expressions::operators::models::Call;
 use crate::expressions::operators::models::Case;
 use crate::expressions::operators::models::Cast;
 use crate::expressions::operators::models::Changes;
+use crate::expressions::operators::models::ClassMethodCall;
 use crate::expressions::operators::models::CollationExpr;
 use crate::expressions::operators::models::ColumnPrefix;
 use crate::expressions::operators::models::ConditionalInsert;
@@ -365,7 +366,9 @@ use crate::expressions::schema_objects::models::ExecuteObject;
 use crate::expressions::schema_objects::models::Grant;
 use crate::expressions::schema_objects::models::GrantPrincipal;
 use crate::expressions::schema_objects::models::Revoke;
+use crate::expressions::stages::models::PutStmt;
 use crate::expressions::stages::models::StageCommand;
+use crate::expressions::stages::models::StageReference;
 use crate::expressions::statements::models::AddPartition;
 use crate::expressions::statements::models::AlterSession;
 use crate::expressions::statements::models::Analyze;
@@ -414,7 +417,6 @@ use crate::expressions::statements::models::Pragma;
 use crate::expressions::statements::models::PrepareStatement;
 use crate::expressions::statements::models::ProjectionDef;
 use crate::expressions::statements::models::PseudoType;
-use crate::expressions::statements::models::PutStmt;
 use crate::expressions::statements::models::QueryBand;
 use crate::expressions::statements::models::Raw;
 use crate::expressions::statements::models::RecursiveWithSearch;
@@ -431,7 +433,6 @@ use crate::expressions::statements::models::SetItem;
 use crate::expressions::statements::models::SetOperation;
 use crate::expressions::statements::models::SetStatement;
 use crate::expressions::statements::models::Show;
-use crate::expressions::statements::models::StageReference;
 use crate::expressions::statements::models::Summarize;
 use crate::expressions::statements::models::TableAlias;
 use crate::expressions::statements::models::TableSample;
@@ -1752,6 +1753,7 @@ pub enum Expression {
     When(Box<When>),
     Whens(Box<Whens>),
     MergeAction(Box<MergeAction>),
+    ClassMethodCall(Box<ClassMethodCall>),
     NextValueFor(Box<NextValueFor>),
     /// RETURN statement (DuckDB stored procedures)
     ReturnStmt(Box<Expression>),

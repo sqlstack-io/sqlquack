@@ -444,7 +444,7 @@ impl Parser {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         if takes_comment && self.match_token(TokenType::Comment) {
             self.expect_token(TokenType::Eq)?;
-            properties.push(property("COMMENT", None, Some(self.parse_string_value()?)));
+            properties.push(property("COMMENT", None, Some(self.parse_object_value()?)));
         }
         if !self.is_at_end() && !self.check(TokenType::Semicolon) {
             return Err(self.parse_error(format!(

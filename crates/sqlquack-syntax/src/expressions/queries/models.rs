@@ -1037,6 +1037,9 @@ pub struct MatchRecognize {
     pub pattern: Option<String>,
     /// DEFINE clauses (pattern variable definitions)
     pub define: Option<Vec<(Identifier, Expression)>>,
+    /// The RUNNING or FINAL written before a DEFINE condition, by the condition's position in `define`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub define_semantics: Vec<(usize, MatchRecognizeSemantics)>,
     /// Optional alias for the result
     pub alias: Option<Identifier>,
     /// Whether AS keyword was explicitly present before alias

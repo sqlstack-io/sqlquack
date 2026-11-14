@@ -1,12 +1,12 @@
 //! Parser ddl: scripting.
 
-use crate::parser::_helpers::ddl::snowflake_stages::stage_name_fields;
 use crate::parser::_helpers::ddl::snowflake_stages::stage_reference;
 use crate::parser::constants::ENGINE;
 use crate::parser::constants::MUTEX;
 use crate::parser::constants::PLAN;
 use crate::parser::constants::REPRODUCTION;
 use crate::parser::constants::SECOND_PREVIOUS_OFFSET;
+use crate::parser::constants::SNOWFLAKE_SHOW_PARAMETERS_SCOPES;
 use crate::parser::constants::STATUS;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
@@ -17,14 +17,15 @@ use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
 use sqlquack_syntax::expressions::operators::models::Placeholder;
 use sqlquack_syntax::expressions::queries::models::Limit;
+use sqlquack_syntax::expressions::stages::main::stage_name_fields::stage_name_fields;
+use sqlquack_syntax::expressions::stages::models::PutStmt;
+use sqlquack_syntax::expressions::stages::models::StageReference;
 use sqlquack_syntax::expressions::statements::models::CopyParameter;
 use sqlquack_syntax::expressions::statements::models::CopyStmt;
 use sqlquack_syntax::expressions::statements::models::Credentials;
 use sqlquack_syntax::expressions::statements::models::Describe;
-use sqlquack_syntax::expressions::statements::models::PutStmt;
 use sqlquack_syntax::expressions::statements::models::Schema;
 use sqlquack_syntax::expressions::statements::models::Show;
-use sqlquack_syntax::expressions::statements::models::StageReference;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::SourceSpan;
@@ -683,6 +684,18 @@ impl Parser {
         self.parse_table_ref()
     }
 
+    /// The keyword kind after Snowflake's `SHOW PARAMETERS IN`, such as USER, and whether a name may follow it.
+    fn match_show_parameters_scope(&mut self, this: &str) -> Option<(&'static str, bool)> {
+        if !self.is_snowflake() || !matches!(this, "PARAMETERS") {
+            return None;
+        }
+        let (kind, named) = SNOWFLAKE_SHOW_PARAMETERS_SCOPES
+            .iter()
+            .find(|(kind, _)| self.check_text_seq(&[kind]))?;
+        self.skip();
+        Some((kind, *named))
+    }
+
     fn parse_show_scope(&mut self, this: &str) -> Result<(Option<String>, Option<Expression>)> {
         Ok(if self.match_token(TokenType::In) {
             let (kind, scope_obj) = if self.match_keyword("ACCOUNT") {
@@ -760,6 +773,17 @@ impl Parser {
                     None
                 };
                 (Some(kind), scope_obj)
+            } else if let Some((kind, named)) = self.match_show_parameters_scope(this) {
+                let scope_obj = match named
+                    && !self.is_at_end()
+                    && !self.check(TokenType::Like)
+                    && !self.check(TokenType::Limit)
+                    && !self.check(TokenType::Semicolon)
+                {
+                    true => Some(Expression::Table(Box::new(self.parse_show_scope_ref()?))),
+                    false => None,
+                };
+                (Some(kind.to_owned()), scope_obj)
             } else {
                 let table = self.parse_show_scope_ref()?;
                 let inferred_kind = match this {

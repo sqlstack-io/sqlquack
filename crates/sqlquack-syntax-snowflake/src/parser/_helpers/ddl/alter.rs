@@ -879,7 +879,7 @@ impl Parser {
             let constraint = self.parse_table_constraint()?;
             Ok(AlterTableAction::AddConstraint(constraint))
         } else if self.check(TokenType::Index)
-            || self.check(TokenType::Key)
+            || (self.check(TokenType::Key) && !self.is_snowflake())
             || self.check(TokenType::Unique)
             || self.check_identifier("FULLTEXT")
             || self.check_identifier("SPATIAL")

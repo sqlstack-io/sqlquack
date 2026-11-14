@@ -965,6 +965,7 @@ impl Expression {
             Expression::When(_) => "when",
             Expression::Whens(_) => "whens",
             Expression::MergeAction(_) => "merge_action",
+            Expression::ClassMethodCall(_) => "class_method_call",
             Expression::NextValueFor(_) => "next_value_for",
             Expression::ReturnStmt(_) => "return_stmt",
         }

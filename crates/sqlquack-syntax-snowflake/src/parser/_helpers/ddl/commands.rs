@@ -3,6 +3,7 @@
 use crate::parser::constants::FUNCTION;
 use crate::parser::constants::PROCEDURE;
 use crate::parser::constants::QUALIFIED_NAME_PARTS;
+use crate::parser::constants::SNOWFLAKE_ALTER_KINDS;
 use crate::parser::constants::VAR;
 use crate::parser::constants::VARIABLE;
 use crate::parser::models::Parser;
@@ -727,6 +728,12 @@ impl Parser {
         };
 
         let kind = self.expect_identifier_or_keyword()?.to_ascii_uppercase();
+        if self.is_snowflake()
+            && !matches!(kind.as_str(), "COLUMN")
+            && !SNOWFLAKE_ALTER_KINDS.contains(&kind.as_str())
+        {
+            return Err(self.parse_error(format!("Snowflake has no COMMENT ON {kind}")));
+        }
 
         let this = if kind == PROCEDURE || kind == FUNCTION {
             let name_token = self.advance()?;
