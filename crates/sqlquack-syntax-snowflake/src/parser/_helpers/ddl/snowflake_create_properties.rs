@@ -63,6 +63,9 @@ impl Parser {
         {
             return Err(self.parse_error("Expected IF NOT EXISTS"));
         }
+        if if_not_exists && or_replace && parts == ["WAREHOUSE"] {
+            return Err(self.parse_error("OR REPLACE and IF NOT EXISTS cannot be combined"));
+        }
         let name = self.parse_object_name()?;
         if self.check_identifier("CLONE") || self.check_text_seq(&["AS", "REPLICA"]) {
             self.current = start;
