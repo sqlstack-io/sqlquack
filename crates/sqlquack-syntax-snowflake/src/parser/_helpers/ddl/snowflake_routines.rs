@@ -5,7 +5,7 @@ use crate::parser::constants::{
     SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES, SNOWFLAKE_ROUTINE_NAME_PROPERTIES,
     SNOWFLAKE_ROUTINE_NUMBER_PROPERTIES, SNOWFLAKE_ROUTINE_TEXT_LIST_PROPERTIES,
     SNOWFLAKE_ROUTINE_TEXT_NAME_PROPERTIES, SNOWFLAKE_ROUTINE_TEXT_PROPERTIES,
-    SNOWFLAKE_ROUTINE_WORD_PROPERTIES,
+    SNOWFLAKE_ROUTINE_WORD_PROPERTIES, SNOWFLAKE_STRING_KEY_MAP_PROPERTIES,
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::ColumnDef;
@@ -143,6 +143,9 @@ impl Parser {
         self.skip();
         self.skip();
         let value_start = self.current;
+        if listed(SNOWFLAKE_STRING_KEY_MAP_PROPERTIES) {
+            self.check_snowflake_string_keys()?;
+        }
         value(self)?;
         let end = self.current;
         self.current = value_start;
@@ -306,6 +309,30 @@ impl Parser {
             return Ok(());
         }
         self.expect_token(TokenType::Number).map(|_| ())
+    }
+
+    /// In a Snowflake parse of a parenthesized `<key> = <value>` map, refuses a pair after a comma whose key is not a string, as Snowflake does; the first key may be a word.
+    pub(crate) fn check_snowflake_string_keys(&self) -> Result<()> {
+        if !self.is_snowflake() || !self.check(TokenType::LParen) {
+            return Ok(());
+        }
+        let mut depth = 0usize;
+        for (offset, token) in self.tokens[self.current..].iter().enumerate() {
+            match token.token_type {
+                TokenType::LParen => depth += 1,
+                TokenType::RParen if depth <= 1 => return Ok(()),
+                TokenType::RParen => depth -= 1,
+                TokenType::Comma if depth == 1 => {
+                    let at = |step: usize| self.tokens.get(self.current + offset + step);
+                    let word_key = at(1).is_some_and(|key| key.token_type != TokenType::String);
+                    if word_key && at(2).is_some_and(|eq| eq.token_type == TokenType::Eq) {
+                        return Err(self.parse_error("Expected a string key after the comma"));
+                    }
+                }
+                _ => {}
+            }
+        }
+        Ok(())
     }
 
     /// In a Snowflake parse, refuses an object name with a reserved word or a string as a part.
