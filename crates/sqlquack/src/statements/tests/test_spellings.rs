@@ -15,6 +15,11 @@ fn given_calls_when_reading_spellings_then_each_call_keys_its_full_name_and_shap
             expected_keys: &["call:SNOWFLAKE.CORE.NULL_COUNT"],
         },
         SpellingsTestCase {
+            description: "a call that leaves out its schema keys the empty part, not a two-part name",
+            sql: "SELECT SNOWFLAKE..NULL_COUNT(SELECT c FROM t)",
+            expected_keys: &["call:SNOWFLAKE..NULL_COUNT"],
+        },
+        SpellingsTestCase {
             description: "a call qualified by schema alone keys both parts",
             sql: "SELECT analytics.normalize(x, 2) FROM t",
             expected_keys: &["call:ANALYTICS.NORMALIZE"],

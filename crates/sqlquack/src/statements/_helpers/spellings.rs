@@ -84,11 +84,14 @@ fn node_key(node: &Expression, windowed: bool) -> Option<String> {
             let Expression::Column(path) = &call.this else {
                 return None;
             };
+            let omitted = call.schema_omitted.then_some("");
             let name = path
                 .table
                 .iter()
-                .chain([&path.name, &call.method])
+                .chain([&path.name])
                 .map(|part| part.name.as_str())
+                .chain(omitted)
+                .chain([call.method.name.as_str()])
                 .collect::<Vec<_>>()
                 .join(".");
             return Some(call_key(&name, &call.args, windowed, false));
