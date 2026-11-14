@@ -149,3 +149,18 @@ collision the heading is appended, then a number.
   (TIMESTAMP_LTZ/NTZ/TZ) is one form with each spelling an alternative.
 - The `ddl`/`security_admin` split is by title words (users, roles, policies, integrations,
   accounts, grants, shares, ...); it is a reporting split, not part of a form's identity.
+- Known gaps under review brief version 1, with the forms each affects:
+  - A name part that `a..b` leaves out is serialized as the empty name `""`, which criterion (d)
+    does not accept: 297 forms were rejected on it, 256 of which stay verified on earlier reviews
+    of the same tree.
+  - A repeated list item (`[ , <x> ... ]`) has no case of its own for its second item: 461
+    verified and 203 unverified forms repeat one.
+  - MERGE keeps its `THEN` actions as raw strings in positional tuples (1 form).
+  - GRANT and REVOKE SERVICE ROLE keep `<service>!<role>` as one raw name without a quoted flag
+    (2 forms).
+  - GRANT OWNERSHIP to a database role keeps `<class_name>` in the object-kind string, case-folded
+    and without a quoted flag (1 form).
+  - Six docs pages changed after the catalogue pin (TASK_HISTORY, COMPLETE_TASK_GRAPHS,
+    CURRENT_TASK_GRAPHS, CREATE SECRET, CREATE NETWORK RULE, ALTER ICEBERG TABLE ... CONVERT TO
+    MANAGED). Their 16 forms keep the pinned grammar, so the new options have no obligations; 4
+    of them are rejected on the changed grammar.
