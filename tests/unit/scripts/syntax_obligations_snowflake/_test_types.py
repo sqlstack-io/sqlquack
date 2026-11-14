@@ -78,3 +78,10 @@ class DerivedLimitTestCase:
     target: str
     sql: str
     expected_count: int
+
+
+@dataclass(frozen=True)
+class ListItemTestCase:
+    description: str
+    kind: str
+    expected_sql: tuple[str, ...]

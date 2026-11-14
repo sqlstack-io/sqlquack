@@ -2443,6 +2443,27 @@ required = true
 target = "[ , '<string2>' , ... ]"
 
 [[obligation]]
+id = "sf.dml.copy-into-location.o540"
+kind = "required_operand_missing"
+required = true
+target = "'<string2>' in [ , '<string2>' , ... ]"
+note = "omit '<string2>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o541"
+kind = "operand_type_class"
+required = true
+target = "'<string2>' in [ , '<string2>' , ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-location.o542"
+kind = "negative_neighbour"
+required = true
+target = "'<string2>' in [ , '<string2>' , ... ]"
+note = "an unquoted identifier in place of '<string2>'"
+
+[[obligation]]
 id = "sf.dml.copy-into-location.o276"
 kind = "option_present"
 required = true
@@ -4984,6 +5005,27 @@ required = true
 target = "[ , '<string>' ... ]"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o728"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , '<string>' ... ]"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o729"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , '<string>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o730"
+kind = "negative_neighbour"
+required = true
+target = "'<string>' in [ , '<string>' ... ]"
+note = "an unquoted identifier in place of '<string>'"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o308"
 kind = "option_present"
 required = true
@@ -5421,6 +5463,27 @@ required = true
 target = "[ , '<string>' ... ] #2"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o731"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #2"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o732"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o733"
+kind = "negative_neighbour"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #2"
+note = "an unquoted identifier in place of '<string>'"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o379"
 kind = "option_present"
 required = true
@@ -5742,6 +5805,27 @@ required = true
 target = "[ , '<string>' ... ] #3"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o734"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #3"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o735"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #3"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o736"
+kind = "negative_neighbour"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #3"
+note = "an unquoted identifier in place of '<string>'"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o432"
 kind = "option_present"
 required = true
@@ -5839,6 +5923,27 @@ id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o447"
 kind = "option_absent"
 required = true
 target = "[ , '<string>' ... ] #4"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o737"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #4"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o738"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #4"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o739"
+kind = "negative_neighbour"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #4"
+note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o448"
@@ -6040,6 +6145,27 @@ id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o480"
 kind = "option_absent"
 required = true
 target = "[ , '<string>' ... ] #5"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o740"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #5"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o741"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #5"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o742"
+kind = "negative_neighbour"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #5"
+note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.internalstage-externalstage-externallocation.o481"
@@ -7696,6 +7822,27 @@ required = true
 target = "[ , <col_name> ... ]"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o632"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> in [ , <col_name> ... ]"
+note = "omit <col_name>"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o633"
+kind = "operand_type_class"
+required = true
+target = "<col_name> in [ , <col_name> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o634"
+kind = "negative_neighbour"
+required = true
+target = "<col_name> in [ , <col_name> ... ]"
+note = "a string literal in place of <col_name>"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o017"
 kind = "option_present"
 required = true
@@ -7794,6 +7941,93 @@ id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o030"
 kind = "option_absent"
 required = true
 target = "[ , [ <alias> . ] $ <file_col_num> [ . <element> ] ... ]"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o635"
+kind = "option_present"
+required = true
+target = "[ <alias> . ] #2"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o636"
+kind = "option_absent"
+required = true
+target = "[ <alias> . ] #2"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o637"
+kind = "required_operand_missing"
+required = true
+target = "<alias> in [ <alias> . ] #2"
+note = "omit <alias>"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o638"
+kind = "operand_type_class"
+required = true
+target = "<alias> in [ <alias> . ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o639"
+kind = "negative_neighbour"
+required = true
+target = "<alias> in [ <alias> . ] #2"
+note = "a string literal in place of <alias>"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o640"
+kind = "required_operand_missing"
+required = true
+target = "<file_col_num> in [ , [ <alias> . ] $ <file_col_num> [ . <element> ] ... ]"
+note = "omit <file_col_num>"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o641"
+kind = "operand_type_class"
+required = true
+target = "<file_col_num> in [ , [ <alias> . ] $ <file_col_num> [ . <element> ] ... ]"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o642"
+kind = "negative_neighbour"
+required = true
+target = "<file_col_num> in [ , [ <alias> . ] $ <file_col_num> [ . <element> ] ... ]"
+note = "a string literal in place of <file_col_num>"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o643"
+kind = "option_present"
+required = true
+target = "[ . <element> ] #2"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o644"
+kind = "option_absent"
+required = true
+target = "[ . <element> ] #2"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o645"
+kind = "required_operand_missing"
+required = true
+target = "<element> in [ . <element> ] #2"
+note = "omit <element>"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o646"
+kind = "operand_type_class"
+required = true
+target = "<element> in [ . <element> ] #2"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o647"
+kind = "negative_neighbour"
+required = true
+target = "<element> in [ . <element> ] #2"
+note = "a string literal in place of <element>"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o091"
@@ -8804,6 +9038,27 @@ required = true
 target = "[ , '<string>' ... ]"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o648"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , '<string>' ... ]"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o649"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , '<string>' ... ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o650"
+kind = "negative_neighbour"
+required = true
+target = "'<string>' in [ , '<string>' ... ]"
+note = "an unquoted identifier in place of '<string>'"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o239"
 kind = "option_present"
 required = true
@@ -9241,6 +9496,27 @@ required = true
 target = "[ , '<string>' ... ] #2"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o651"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #2"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o652"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o653"
+kind = "negative_neighbour"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #2"
+note = "an unquoted identifier in place of '<string>'"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o310"
 kind = "option_present"
 required = true
@@ -9562,6 +9838,27 @@ required = true
 target = "[ , '<string>' ... ] #3"
 
 [[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o654"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #3"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o655"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #3"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o656"
+kind = "negative_neighbour"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #3"
+note = "an unquoted identifier in place of '<string>'"
+
+[[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o363"
 kind = "option_present"
 required = true
@@ -9659,6 +9956,27 @@ id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o378"
 kind = "option_absent"
 required = true
 target = "[ , '<string>' ... ] #4"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o657"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #4"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o658"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #4"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o659"
+kind = "negative_neighbour"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #4"
+note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o379"
@@ -9860,6 +10178,27 @@ id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o411"
 kind = "option_absent"
 required = true
 target = "[ , '<string>' ... ] #5"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o660"
+kind = "required_operand_missing"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #5"
+note = "omit '<string>'"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o661"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #5"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o662"
+kind = "negative_neighbour"
+required = true
+target = "'<string>' in [ , '<string>' ... ] #5"
+note = "an unquoted identifier in place of '<string>'"
 
 [[obligation]]
 id = "sf.dml.copy-into-table.select-from-internalstage-externalstage.o412"
@@ -13765,6 +14104,41 @@ required = true
 target = "[ , <col_name> = <expr> ... ]"
 
 [[obligation]]
+id = "sf.dml.merge.o111"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> in [ , <col_name> = <expr> ... ]"
+note = "omit <col_name>"
+
+[[obligation]]
+id = "sf.dml.merge.o112"
+kind = "operand_type_class"
+required = true
+target = "<col_name> in [ , <col_name> = <expr> ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.merge.o113"
+kind = "negative_neighbour"
+required = true
+target = "<col_name> in [ , <col_name> = <expr> ... ]"
+note = "a string literal in place of <col_name>"
+
+[[obligation]]
+id = "sf.dml.merge.o114"
+kind = "required_operand_missing"
+required = true
+target = "<expr> in [ , <col_name> = <expr> ... ]"
+note = "omit <expr>"
+
+[[obligation]]
+id = "sf.dml.merge.o115"
+kind = "operand_type_class"
+required = true
+target = "<expr> in [ , <col_name> = <expr> ... ]"
+note = "a valid expression"
+
+[[obligation]]
 id = "sf.dml.merge.o033"
 kind = "option_present"
 required = true
@@ -15452,6 +15826,41 @@ id = "sf.dml.update.o010"
 kind = "option_absent"
 required = true
 target = "[ , <col_name> = <value> , ... ]"
+
+[[obligation]]
+id = "sf.dml.update.o028"
+kind = "required_operand_missing"
+required = true
+target = "<col_name> in [ , <col_name> = <value> , ... ]"
+note = "omit <col_name>"
+
+[[obligation]]
+id = "sf.dml.update.o029"
+kind = "operand_type_class"
+required = true
+target = "<col_name> in [ , <col_name> = <value> , ... ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.dml.update.o030"
+kind = "negative_neighbour"
+required = true
+target = "<col_name> in [ , <col_name> = <value> , ... ]"
+note = "a string literal in place of <col_name>"
+
+[[obligation]]
+id = "sf.dml.update.o031"
+kind = "required_operand_missing"
+required = true
+target = "<value> in [ , <col_name> = <value> , ... ]"
+note = "omit <value>"
+
+[[obligation]]
+id = "sf.dml.update.o032"
+kind = "operand_type_class"
+required = true
+target = "<value> in [ , <col_name> = <value> , ... ]"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.dml.update.o011"
