@@ -1355,7 +1355,7 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
 
 [[package]]
 name = "sqlquack"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "anstream",
  "arrow",
@@ -1383,7 +1383,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-blocks"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "duckdb",
  "serde_json",
@@ -1394,7 +1394,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-compare"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "arrow",
  "sqlquack-policy",
@@ -1402,7 +1402,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-convert"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -1417,7 +1417,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-coverage-check"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "clap",
  "serde",
@@ -1438,7 +1438,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-derive"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1447,7 +1447,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-diagnostics"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -1459,7 +1459,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-evidence"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "arrow",
  "duckdb",
@@ -1478,7 +1478,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-fingerprint"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "sha2",
  "sqlquack-fingerprint",
@@ -1488,7 +1488,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-format"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde_json",
  "sqlquack-format",
@@ -1498,7 +1498,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-format-check"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "duckdb",
  "serde_json",
@@ -1508,7 +1508,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-lint"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "rayon",
  "rustc-hash",
@@ -1521,7 +1521,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-parse"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "sqlquack-syntax",
  "sqlquack-syntax-bigquery",
@@ -1536,7 +1536,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-policy"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde",
  "toml",
@@ -1544,7 +1544,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-python"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "pyo3",
  "serde",
@@ -1557,7 +1557,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-semantics"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "regex",
  "rustc-hash",
@@ -1580,7 +1580,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -1592,7 +1592,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax-bigquery"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde_json",
  "sqlquack-syntax",
@@ -1601,7 +1601,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax-clickhouse"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde_json",
  "sqlquack-syntax",
@@ -1610,7 +1610,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax-databricks"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde_json",
  "sqlquack-syntax",
@@ -1619,7 +1619,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax-duckdb"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde_json",
  "sqlquack-syntax",
@@ -1628,7 +1628,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax-postgres"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde_json",
  "sqlquack-syntax",
@@ -1637,7 +1637,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax-snowflake"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -1649,7 +1649,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax-sqlite"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde_json",
  "sqlquack-syntax",
@@ -1658,7 +1658,7 @@ dependencies = [
 
 [[package]]
 name = "sqlquack-syntax-sqlserver"
-version = "0.12.1"
+version = "0.13.0"
 dependencies = [
  "serde_json",
  "sqlquack-syntax",
