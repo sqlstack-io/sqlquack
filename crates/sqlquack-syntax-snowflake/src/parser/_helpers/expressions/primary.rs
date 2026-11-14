@@ -1,5 +1,6 @@
 //! Parser expressions: primary.
 
+use crate::parser::_helpers::types::casts::named_data_type;
 use crate::parser::constants::ARRAY;
 use crate::parser::constants::CONDITION_CLAUSES;
 use crate::parser::constants::MAP;
@@ -870,9 +871,7 @@ impl Parser {
                     if self.match_token(TokenType::Local) {
                         self.match_keyword("TIME");
                         self.match_keyword("ZONE");
-                        DataType::Custom {
-                            name: format!("TIMESTAMPLTZ({})", precision_value),
-                        }
+                        named_data_type("TIMESTAMP WITH LOCAL TIME ZONE", precision, None, None)
                     } else {
                         self.match_keyword("TIME");
                         self.match_keyword("ZONE");
@@ -927,9 +926,7 @@ impl Parser {
                 if self.match_token(TokenType::Local) {
                     self.match_keyword("TIME");
                     self.match_keyword("ZONE");
-                    DataType::Custom {
-                        name: "TIMESTAMPLTZ".to_string(),
-                    }
+                    named_data_type("TIMESTAMP WITH LOCAL TIME ZONE", None, None, None)
                 } else {
                     self.match_keyword("TIME");
                     self.match_keyword("ZONE");

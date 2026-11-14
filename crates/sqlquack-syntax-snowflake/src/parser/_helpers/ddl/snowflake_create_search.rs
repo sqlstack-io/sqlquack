@@ -75,6 +75,7 @@ impl Parser {
             source: source.to_owned(),
             operands: vec![query],
             properties,
+            ..Default::default()
         }))))
     }
 

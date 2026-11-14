@@ -557,7 +557,7 @@ impl Parser {
         {
             return Err(self.parse_error("Unsupported DEFINE object definition"));
         }
-        Ok(definition)
+        Ok(defined(definition))
     }
 
     /// Reads Snowflake CREATE TASK properties up to AS, refusing items that are not tags, contacts, assignments or clauses.
@@ -622,7 +622,8 @@ impl Parser {
         self.current = start;
         let mut properties: Vec<ObjectProperty> = Vec::new();
         while self.current < end {
-            self.match_token(TokenType::With);
+            let with = self.match_token(TokenType::With);
+            let first = properties.len();
             if let Some(kind) = ["TAG", "CONTACT", "TASK_DEFAULTS"]
                 .into_iter()
                 .find(|kind| self.match_identifier(kind))
@@ -661,6 +662,9 @@ impl Parser {
                 let value = self.parse_snowflake_task_value()?;
                 properties.push(parameter_property(&name, Some(value)));
                 self.match_token(TokenType::Comma);
+            }
+            for property in &mut properties[first..] {
+                property.with = with;
             }
         }
         Ok(properties)
@@ -771,7 +775,8 @@ impl Parser {
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
         let name_start = self.current;
         self.skip_snowflake_name()?;
-        let name = self.tokens_to_sql(name_start, self.current);
+        self.current = name_start;
+        let name = self.parse_object_name()?;
         let task_properties = self.parse_snowflake_task_properties(true)?;
         Ok(Expression::CreateTask(Box::new(CreateTask {
             or_replace,
@@ -783,6 +788,23 @@ impl Parser {
             body: None,
             clone_source: None,
             graph: true,
+            define: false,
         })))
     }
+}
+
+/// A DEFINE's definition, parsed as the CREATE it mirrors, marked as written with DEFINE and not OR ALTER.
+fn defined(mut definition: Expression) -> Expression {
+    match &mut definition {
+        Expression::CreateObject(create) => (create.define, create.or_alter) = (true, false),
+        Expression::CreateDatabase(create) => (create.define, create.or_alter) = (true, false),
+        Expression::CreateSchema(create) => (create.define, create.or_alter) = (true, false),
+        Expression::CreateTask(create) => (create.define, create.or_alter) = (true, false),
+        Expression::CreateView(create) => (create.define, create.or_alter) = (true, false),
+        Expression::CreateFunction(create) => (create.define, create.or_alter) = (true, false),
+        Expression::CreateProcedure(create) => (create.define, create.or_alter) = (true, false),
+        Expression::CreateSequence(create) => create.define = true,
+        _ => {}
+    }
+    definition
 }

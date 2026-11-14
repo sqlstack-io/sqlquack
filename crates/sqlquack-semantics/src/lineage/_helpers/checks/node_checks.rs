@@ -709,7 +709,8 @@ fn unknown_cast_target(
     level: NodeLevel<'_, '_>,
     node: &Expression,
 ) -> Option<NameFinding> {
-    let DataType::Custom { name } = target else {
+    let unnamed: Option<DataType> = target.unnamed();
+    let DataType::Custom { name } = unnamed.as_ref().unwrap_or(target) else {
         return None;
     };
     (data_type_family(target) == Family::Unknown && !level.context.schema.known_type(name))

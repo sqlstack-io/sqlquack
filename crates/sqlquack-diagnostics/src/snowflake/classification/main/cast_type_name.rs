@@ -48,6 +48,11 @@ pub fn cast_type_name(data_type: &DataType) -> String {
         DataType::Union { .. } => "UNION",
         DataType::Nullable { inner } | DataType::NotNull { inner } => return cast_type_name(inner),
         DataType::Custom { name } => return custom_type_name(name),
+        DataType::Named { .. } => {
+            return data_type
+                .unnamed()
+                .map_or_else(|| "UNKNOWN".to_owned(), |unnamed| cast_type_name(&unnamed));
+        }
         DataType::Geometry { .. } => "GEOMETRY",
         DataType::Geography { .. } => "GEOGRAPHY",
         DataType::CharacterSet { .. } => "CHAR",

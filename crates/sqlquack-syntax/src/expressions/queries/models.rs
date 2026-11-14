@@ -595,6 +595,9 @@ pub struct Unpivot {
 pub struct PivotAlias {
     pub this: Expression,
     pub alias: Expression,
+    /// Whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub alias_explicit_as: bool,
 }
 
 /// PREWHERE clause (ClickHouse) - early filtering before WHERE
@@ -1034,6 +1037,9 @@ pub struct MatchRecognize {
     pub pattern: Option<String>,
     /// DEFINE clauses (pattern variable definitions)
     pub define: Option<Vec<(Identifier, Expression)>>,
+    /// The RUNNING or FINAL written before a DEFINE condition, by the condition's position in `define`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub define_semantics: Vec<(usize, MatchRecognizeSemantics)>,
     /// Optional alias for the result
     pub alias: Option<Identifier>,
     /// Whether AS keyword was explicitly present before alias

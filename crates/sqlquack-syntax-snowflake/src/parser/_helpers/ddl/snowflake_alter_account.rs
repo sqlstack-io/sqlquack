@@ -98,21 +98,22 @@ impl Parser {
                 let list = self.expect_alter_words(ALLOWED_LISTS)?;
                 action.push(' ');
                 action.push_str(&list);
+                let mut properties: Vec<ObjectProperty> = Vec::new();
                 if matches!(action.as_str(), "ADD TO ALLOWED_ACCOUNTS")
                     && self.match_text_seq(&["IGNORE", "EDITION", "CHECK"])
                 {
-                    action.push_str(" IGNORE EDITION CHECK");
+                    properties.push(property("IGNORE EDITION CHECK", None, None));
                 }
-                (names, vec![])
+                (names, properties)
             }
             "PRIMARY" | "REFRESH" | "RESUME" | "SUSPEND" | "SUSPEND IMMEDIATE" => (vec![], vec![]),
             _ => {
-                let mut operands = self.parse_object_name_list()?;
+                let operands = self.parse_object_name_list()?;
                 self.expect_alter_words(&[&["TO"]])?;
                 self.expect_alter_words(&[&[kind, "GROUP"]])?;
-                action.push_str(&format!(" TO {kind} GROUP"));
-                operands.push(self.parse_group_name()?);
-                (operands, vec![])
+                let target = self.parse_group_name()?;
+                let target = property(&format!("TO {kind} GROUP"), None, Some(target));
+                (operands, vec![target])
             }
         };
         Ok(alter_object(&format!("{kind} GROUP"), head, action, parts))
@@ -414,10 +415,13 @@ impl Parser {
         Ok(alter_object(kind, head, action, parts))
     }
 
-    /// Parse an integration's SET: `<name> = <value>` properties, at least one, where a value may be a parenthesized list.
+    /// Parse an integration's SET: `<name> = <value>` properties, at least one, optionally comma-separated, where a value may be a parenthesized list.
     fn parse_integration_set(&mut self) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
+            if !properties.is_empty() {
+                self.match_token(TokenType::Comma);
+            }
             let name = self.parse_simple_name()?;
             self.expect_token(TokenType::Eq)?;
             if SNOWFLAKE_STRING_KEY_MAP_PROPERTIES.contains(&property_kind(&name).as_str()) {
@@ -634,16 +638,18 @@ impl Parser {
                 self.expect_token(TokenType::Eq)?;
                 let scope =
                     self.expect_alter_words(&[&["ALL"], &["ACCOUNTS"], &["REGION", "GROUPS"]])?;
-                action.push_str(&format!(" = {scope}"));
+                action = "SET".to_string();
+                let value = Expression::Identifier(Identifier::new(scope.clone()));
+                let properties = vec![property("VISIBILITY", None, Some(value))];
                 match scope.as_str() {
-                    "ALL" => (vec![], vec![]),
-                    "ACCOUNTS" => (self.parse_object_name_list()?, vec![]),
+                    "ALL" => (vec![], properties),
+                    "ACCOUNTS" => (self.parse_object_name_list()?, properties),
                     _ => {
                         let mut groups = vec![self.parse_string_value()?];
                         while self.match_token(TokenType::Comma) {
                             groups.push(self.parse_string_value()?);
                         }
-                        (groups, vec![])
+                        (groups, properties)
                     }
                 }
             }

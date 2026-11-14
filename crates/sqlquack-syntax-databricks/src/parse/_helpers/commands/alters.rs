@@ -311,6 +311,7 @@ impl Parser<'_> {
                     column,
                     if_not_exists: false,
                     position,
+                    column_keyword: false,
                 })
                 .collect());
         }
@@ -409,6 +410,7 @@ impl Parser<'_> {
                     name: joined(name),
                     if_exists,
                     cascade: false,
+                    column_keyword: false,
                 })
                 .collect();
             return Ok(dropped);
@@ -919,6 +921,7 @@ impl Parser<'_> {
             operand_if_not_exists: false,
             operands,
             properties: Vec::new(),
+            ..Default::default()
         })))
     }
 }

@@ -414,6 +414,10 @@ impl Parser {
         let (algorithm, definer, security) = self.parse_create_view_options()?;
 
         let secure = self.match_identifier("SECURE");
+        let aggregate = self.is_snowflake()
+            && self.check_identifier("AGGREGATE")
+            && self.check_next(TokenType::Function)
+            && self.match_identifier("AGGREGATE");
 
         let table_modifier: Option<String> = self.parse_create_table_modifier(hana_modifier);
 
@@ -524,7 +528,12 @@ impl Parser {
                 .parse_create_function(or_replace, or_alter, temporary, false)
                 .map(|function| {
                     let external = table_modifier.as_deref() == Some("EXTERNAL");
-                    with_routine_modifiers(function, secure, temporary, external)
+                    let mut function =
+                        with_routine_modifiers(function, secure, temporary, external);
+                    if let Expression::CreateFunction(create) = &mut function {
+                        create.aggregate = aggregate;
+                    }
+                    function
                 }),
             TokenType::Procedure => match self.parse_scoped_temp_table(or_replace, or_alter)? {
                 Some(table) => Ok(table),
@@ -638,6 +647,9 @@ impl Parser {
             if self.is_snowflake() {
                 self.check_snowflake_create_kind()?;
                 self.check_opaque_statement(true)?;
+                if let Some(create) = self.parse_opaque_create(or_replace, or_alter)? {
+                    return Ok(create);
+                }
             }
             let start = self.current;
             while !self.is_at_end() && !self.check(TokenType::Semicolon) {

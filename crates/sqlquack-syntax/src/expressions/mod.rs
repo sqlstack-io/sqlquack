@@ -6,6 +6,7 @@ pub mod names;
 pub mod operators;
 pub mod queries;
 pub mod schema_objects;
+pub mod stages;
 pub mod statements;
 pub mod tables;
 pub mod tree;

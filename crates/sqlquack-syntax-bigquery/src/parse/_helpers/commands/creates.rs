@@ -325,6 +325,7 @@ impl Parser<'_> {
                 source: "REPLICA".to_owned(),
                 operands,
                 properties: Vec::new(),
+                ..Default::default()
             })));
         }
         let parenthesized: bool = self.is_char('(');

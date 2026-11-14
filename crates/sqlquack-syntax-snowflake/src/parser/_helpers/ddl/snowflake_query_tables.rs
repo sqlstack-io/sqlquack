@@ -114,6 +114,7 @@ impl Parser {
             source: source.to_owned(),
             operands,
             properties,
+            ..Default::default()
         }))))
     }
 
@@ -167,7 +168,7 @@ impl Parser {
             column.constraint_order.push(ConstraintType::Comment);
             return Ok(column);
         }
-        self.match_token(TokenType::With);
+        let with = self.match_token(TokenType::With);
         if self.match_text_seq(&["MASKING", "POLICY"]) {
             let policy = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
             let mut expressions: Vec<Expression> = Vec::new();
@@ -180,6 +181,7 @@ impl Parser {
                     MaskingPolicyColumnConstraint {
                         this: Box::new(policy),
                         expressions,
+                        with,
                     },
                 )));
             return Ok(column);

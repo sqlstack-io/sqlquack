@@ -164,6 +164,8 @@ impl Parser<'_> {
             objects: target.objects,
             granted_by,
             options,
+            class: None,
+            service: None,
         })))
     }
 
@@ -268,6 +270,8 @@ impl Parser<'_> {
             objects: Vec::new(),
             granted_by: None,
             options: Vec::new(),
+            class: None,
+            service: None,
         })))
     }
 
@@ -476,5 +480,7 @@ fn revoke(
         objects: target.objects,
         granted_by,
         options,
+        class: None,
+        service: None,
     }))
 }

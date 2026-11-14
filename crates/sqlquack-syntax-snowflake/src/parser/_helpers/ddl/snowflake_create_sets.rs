@@ -1,6 +1,7 @@
 //! Parser ddl: Snowflake CREATE BACKUP SET and SNAPSHOT SET for a database, schema or table, and CREATE APPLICATION from a package or listing, checked against their grammars.
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_create_properties::with_written;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
@@ -62,7 +63,8 @@ impl Parser {
         let operands = vec![Expression::Table(Box::new(self.parse_object_name()?))];
         let mut properties: Vec<ObjectProperty> = Vec::new();
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-            if self.check(TokenType::With) && !self.check_next(TokenType::Eq) {
+            let with = self.check(TokenType::With) && !self.check_next(TokenType::Eq);
+            if with {
                 self.skip();
                 if self.match_text_seq(policy) {
                     let policy_name = self.parse_object_name()?;
@@ -77,7 +79,7 @@ impl Parser {
                     return Err(self.parse_error("Expected a property after WITH"));
                 }
             }
-            properties.extend(self.parse_create_property_item()?);
+            properties.extend(with_written(with, self.parse_create_property_item()?));
         }
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
             kind: kind.join(" "),
@@ -89,6 +91,7 @@ impl Parser {
             source: format!("FOR {target}"),
             operands,
             properties,
+            ..Default::default()
         }))))
     }
 
@@ -119,13 +122,14 @@ impl Parser {
             properties.extend(self.parse_application_using()?);
         }
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-            if self.check(TokenType::With) && !self.check_next(TokenType::Eq) {
+            let with = self.check(TokenType::With) && !self.check_next(TokenType::Eq);
+            if with {
                 self.skip();
                 if self.is_at_end() || self.check(TokenType::Semicolon) {
                     return Err(self.parse_error("Expected a property after WITH"));
                 }
             }
-            properties.extend(self.parse_create_property_item()?);
+            properties.extend(with_written(with, self.parse_create_property_item()?));
         }
         Ok(Expression::CreateObject(Box::new(CreateObject {
             kind: "APPLICATION".to_owned(),
@@ -137,6 +141,7 @@ impl Parser {
             source: format!("FROM {source}"),
             operands,
             properties,
+            ..Default::default()
         })))
     }
 

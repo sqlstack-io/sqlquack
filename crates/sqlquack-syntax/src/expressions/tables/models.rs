@@ -297,6 +297,9 @@ pub struct DropTable {
     /// Oracle: PURGE
     #[serde(default)]
     pub purge: bool,
+    /// Snowflake: NOPURGE written after the names.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub no_purge: bool,
     /// Comments that appear before the DROP keyword (e.g., leading line comments)
     #[serde(default)]
     pub leading_comments: Vec<String>,
@@ -322,6 +325,7 @@ impl DropTable {
             cascade: false,
             cascade_constraints: false,
             purge: false,
+            no_purge: false,
             leading_comments: Vec::new(),
             object_id_args: None,
             sync: false,
@@ -438,6 +442,9 @@ pub struct CreateIndex {
     /// PostgreSQL INCLUDE columns
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub include_columns: Vec<Identifier>,
+    /// Snowflake INCLUDE items written as strings, each by its position in the written INCLUDE list.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub include_strings: Vec<(usize, String)>,
     /// TSQL WITH options (e.g., allow_page_locks=on)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub with_options: Vec<(String, String)>,
@@ -460,6 +467,7 @@ impl CreateIndex {
             concurrently: false,
             where_clause: None,
             include_columns: Vec::new(),
+            include_strings: Vec::new(),
             with_options: Vec::new(),
             on_filegroup: None,
         }

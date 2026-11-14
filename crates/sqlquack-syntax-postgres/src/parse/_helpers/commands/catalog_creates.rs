@@ -180,6 +180,7 @@ impl Parser<'_> {
             source: String::new(),
             operands: Vec::new(),
             properties: Vec::new(),
+            ..Default::default()
         };
         match kind {
             ACCESS_METHOD => self.create_access_method(node),
@@ -277,6 +278,7 @@ impl Parser<'_> {
                 value: Some(name_value(&self.qualified_name()?)),
                 string_name: false,
                 quoted: false,
+                ..Default::default()
             }],
             false => self.definition_list()?,
         };

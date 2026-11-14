@@ -1,5 +1,6 @@
 //! Parser types: the base type names a cast target can start with.
 
+use crate::parser::_helpers::types::casts::named_data_type;
 use crate::parser::constants::INTEGER;
 use crate::parser::constants::NVARCHAR;
 use crate::parser::constants::REAL;
@@ -19,8 +20,9 @@ impl Parser {
             "TIMETZ" => self.parse_cast_timetz_type()?,
             "TIMESTAMP" => self.parse_cast_timestamp_type()?,
             "TIMESTAMPTZ" | "TIMESTAMP_TZ" => self.parse_cast_timestamp_tz_type()?,
-            "TIMESTAMPLTZ" | "TIMESTAMP_LTZ" => self.parse_cast_timestamp_ltz_type()?,
-            "TIMESTAMPNTZ" | "TIMESTAMP_NTZ" => self.parse_cast_timestamp_ntz_type()?,
+            "TIMESTAMPLTZ" | "TIMESTAMP_LTZ" | "TIMESTAMPNTZ" | "TIMESTAMP_NTZ" => {
+                self.parse_named_precision_data_type(name)?
+            }
             "INTERVAL" => self.parse_cast_interval_type()?,
             "VARCHAR" | "NVARCHAR" => self.parse_cast_varchar_type(name)?,
             "VARBINARY" => self.parse_cast_varbinary_type()?,
@@ -338,9 +340,7 @@ impl Parser {
             if self.match_token(TokenType::With) {
                 if self.match_token(TokenType::Local) {
                     self.match_time_zone_words()?;
-                    DataType::Custom {
-                        name: "TIMESTAMPLTZ".to_string(),
-                    }
+                    named_data_type("TIMESTAMP WITH LOCAL TIME ZONE", precision, None, None)
                 } else {
                     self.match_time_zone_words()?;
                     DataType::Timestamp {
@@ -362,14 +362,9 @@ impl Parser {
 
     /// `TIMESTAMP WITHOUT TIME ZONE`: Snowflake's TIMESTAMP_NTZ, whatever TIMESTAMP maps to.
     pub(crate) fn timestamp_without_time_zone(&self, precision: Option<u32>) -> DataType {
-        match (self.is_snowflake(), precision) {
-            (true, Some(precision)) => DataType::Custom {
-                name: format!("TIMESTAMPNTZ({precision})"),
-            },
-            (true, None) => DataType::Custom {
-                name: "TIMESTAMPNTZ".to_owned(),
-            },
-            (false, _) => DataType::Timestamp {
+        match self.is_snowflake() {
+            true => named_data_type("TIMESTAMP WITHOUT TIME ZONE", precision, None, None),
+            false => DataType::Timestamp {
                 precision,
                 timezone: false,
             },
@@ -389,42 +384,6 @@ impl Parser {
                 precision,
                 timezone: true,
             }
-        })
-    }
-
-    pub(crate) fn parse_cast_timestamp_ltz_type(&mut self) -> Result<DataType> {
-        Ok({
-            let precision = if self.match_token(TokenType::LParen) {
-                let p = self.expect_number()? as u32;
-                self.expect_token(TokenType::RParen)?;
-                Some(p)
-            } else {
-                None
-            };
-            let dt_name = if let Some(p) = precision {
-                format!("TIMESTAMPLTZ({})", p)
-            } else {
-                "TIMESTAMPLTZ".to_string()
-            };
-            DataType::Custom { name: dt_name }
-        })
-    }
-
-    pub(crate) fn parse_cast_timestamp_ntz_type(&mut self) -> Result<DataType> {
-        Ok({
-            let precision = if self.match_token(TokenType::LParen) {
-                let p = self.expect_number()? as u32;
-                self.expect_token(TokenType::RParen)?;
-                Some(p)
-            } else {
-                None
-            };
-            let dt_name = if let Some(p) = precision {
-                format!("TIMESTAMPNTZ({})", p)
-            } else {
-                "TIMESTAMPNTZ".to_string()
-            };
-            DataType::Custom { name: dt_name }
         })
     }
 
@@ -498,9 +457,7 @@ impl Parser {
                     let n = self.expect_number()? as u32;
                     self.expect_token(TokenType::RParen)?;
                     if is_nvarchar {
-                        DataType::Custom {
-                            name: format!("NVARCHAR({})", n),
-                        }
+                        named_data_type(NVARCHAR, None, None, Some(n))
                     } else {
                         DataType::VarChar {
                             length: Some(n),

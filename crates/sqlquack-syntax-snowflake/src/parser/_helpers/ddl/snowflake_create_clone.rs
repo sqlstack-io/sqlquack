@@ -210,7 +210,10 @@ impl Parser {
                     self.current = start;
                     return Ok(None);
                 }
-                modifier = Some(format!("{scope} TEMPORARY"));
+                modifier = Some(format!(
+                    "{scope} {}",
+                    self.previous_text().to_ascii_uppercase()
+                ));
             } else if self.match_text_seq(&["VOLATILE"]) {
                 modifier = Some("VOLATILE".to_owned());
             }
@@ -227,11 +230,10 @@ impl Parser {
             Some("DYNAMIC") if self.match_token(TokenType::Table) => {
                 ("TABLE", CloneOptions::Dynamic)
             }
-            Some("ICEBERG" | "LOCAL TEMPORARY" | "GLOBAL TEMPORARY" | "VOLATILE")
-                if self.match_token(TokenType::Table) =>
-            {
-                ("TABLE", CloneOptions::Copy)
-            }
+            Some(
+                "ICEBERG" | "LOCAL TEMPORARY" | "GLOBAL TEMPORARY" | "LOCAL TEMP" | "GLOBAL TEMP"
+                | "VOLATILE",
+            ) if self.match_token(TokenType::Table) => ("TABLE", CloneOptions::Copy),
             None if !temporary && self.match_text_seq(&["EVENT", "TABLE"]) => {
                 ("EVENT TABLE", CloneOptions::Bare)
             }
@@ -298,6 +300,7 @@ impl Parser {
                 source: String::new(),
                 operands: Vec::new(),
                 properties,
+                ..Default::default()
             }))));
         }
         if !self.match_identifier("CLONE") {
@@ -332,6 +335,52 @@ impl Parser {
             source: "CLONE".to_owned(),
             operands,
             properties,
+            ..Default::default()
+        }))))
+    }
+
+    /// `[ LOCAL | GLOBAL ] { TEMP | TEMPORARY } READ ONLY TABLE [ IF NOT EXISTS ] <name> CLONE <source> ...` after its temporary words, which stay in the modifier as written; None for anything else.
+    pub(crate) fn parse_snowflake_read_only_clone(
+        &mut self,
+        or_replace: bool,
+    ) -> Result<Option<Expression>> {
+        let start = self.current;
+        let temporary = start.checked_sub(1).is_some_and(|at| {
+            matches!(
+                self.tokens[at].text.to_ascii_uppercase().as_str(),
+                "TEMP" | "TEMPORARY"
+            )
+        });
+        if !temporary || !self.match_text_seq(&["READ"]) {
+            self.current = start;
+            return Ok(None);
+        }
+        if !self.match_text_seq(&["ONLY"]) {
+            return Err(self.parse_error("Expected ONLY after READ"));
+        }
+        self.expect_token(TokenType::Table)?;
+        let if_not_exists =
+            self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
+        let name = self.parse_object_name()?;
+        if !self.match_identifier("CLONE") {
+            self.current = start;
+            return Ok(None);
+        }
+        let mut operands = vec![Expression::Table(Box::new(self.parse_object_name()?))];
+        if let Some(time_travel) = self.parse_clone_time_travel()? {
+            operands.push(time_travel);
+        }
+        let properties = self.parse_clone_options(CloneOptions::Copy)?;
+        Ok(Some(Expression::CreateObject(Box::new(CreateObject {
+            kind: "TABLE".to_owned(),
+            modifier: Some(format!("{} READ ONLY", self.written_temporary(start))),
+            or_replace,
+            if_not_exists,
+            name,
+            source: "CLONE".to_owned(),
+            operands,
+            properties,
+            ..Default::default()
         }))))
     }
 
@@ -395,7 +444,7 @@ impl Parser {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         if takes_comment && self.match_token(TokenType::Comment) {
             self.expect_token(TokenType::Eq)?;
-            properties.push(property("COMMENT", None, Some(self.parse_string_value()?)));
+            properties.push(property("COMMENT", None, Some(self.parse_object_value()?)));
         }
         if !self.is_at_end() && !self.check(TokenType::Semicolon) {
             return Err(self.parse_error(format!(
@@ -412,6 +461,7 @@ impl Parser {
             source: "REPLICA".to_owned(),
             operands: vec![Expression::Table(Box::new(primary))],
             properties,
+            ..Default::default()
         }))))
     }
 }

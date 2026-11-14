@@ -267,12 +267,13 @@ impl Parser {
         let mut action = self.expect_alter_words(&[&["ADD"], &["REMOVE"], &["SET"], &["UNSET"]])?;
         let parts: ActionParts = match action.as_str() {
             "ADD" | "REMOVE" => {
-                self.expect_alter_words(&[&["ACCOUNTS"]])?;
-                action.push_str(" ACCOUNTS");
+                let word = self.expect_alter_words(&[&["ACCOUNTS"], &["ACCOUNT"]])?;
+                action.push(' ');
+                action.push_str(&word);
                 self.expect_token(TokenType::Eq)?;
                 let accounts = self.parse_account_names()?;
                 let mut properties: Vec<ObjectProperty> = Vec::new();
-                if matches!(action.as_str(), "ADD ACCOUNTS")
+                if matches!(action.as_str(), "ADD ACCOUNTS" | "ADD ACCOUNT")
                     && self.match_identifier("SHARE_RESTRICTIONS")
                 {
                     self.expect_token(TokenType::Eq)?;

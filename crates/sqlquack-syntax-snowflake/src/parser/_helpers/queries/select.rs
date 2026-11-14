@@ -6,8 +6,10 @@ use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::functions::models::JSONTable;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::Alias;
+use sqlquack_syntax::expressions::operators::models::ClassMethodCall;
 use sqlquack_syntax::expressions::operators::models::Lateral;
 use sqlquack_syntax::expressions::operators::models::Parameter;
 use sqlquack_syntax::expressions::operators::models::ParameterStyle;
@@ -66,7 +68,10 @@ impl Parser {
                 expressions.push(self.item_spanned(item_start, star_expr));
             } else {
                 let leading_comments = self.current_leading_comments().to_vec();
-                let expr = self.parse_expression()?;
+                let expr = match self.parse_snowflake_class_method_call()? {
+                    Some(call) => call,
+                    None => self.parse_expression()?,
+                };
 
                 let expr = { expr };
 
@@ -157,6 +162,33 @@ impl Parser {
         }
 
         Ok(expressions)
+    }
+
+    /// A Snowflake class method called without an instance as a projection item, `!<method>( <args> )`.
+    fn parse_snowflake_class_method_call(&mut self) -> Result<Option<Expression>> {
+        let method_start = self.is_snowflake()
+            && self.check(TokenType::Exclamation)
+            && self.peek_nth(1).is_some_and(|token| {
+                matches!(
+                    token.token_type,
+                    TokenType::Var | TokenType::Identifier | TokenType::QuotedIdentifier
+                ) || token.token_type.is_keyword()
+            })
+            && self
+                .peek_nth(2)
+                .is_some_and(|token| token.token_type == TokenType::LParen);
+        if !method_start {
+            return Ok(None);
+        }
+        self.skip();
+        let call = self.parse_primary()?;
+        if !matches!(call, Expression::Function(_)) {
+            return Err(self.parse_error("Expected a method call after !"));
+        }
+        let call = Expression::ClassMethodCall(Box::new(ClassMethodCall {
+            expression: Box::new(call),
+        }));
+        self.parse_postfix_operators(call).map(Some)
     }
 
     fn parse_select_item_colon_alias(
@@ -1739,6 +1771,10 @@ impl Parser {
     }
 
     fn parse_table_string_source(&mut self) -> Result<Expression> {
+        if self.is_snowflake() && self.check(TokenType::String) {
+            let text = self.advance()?.text.to_string();
+            return Ok(Expression::Literal(Box::new(Literal::String(text))));
+        }
         Ok({
             let string_token = self.advance()?;
             let table_name = Identifier {

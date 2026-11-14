@@ -557,6 +557,49 @@ pub(crate) const SNOWFLAKE_OPAQUE_KINDS: &[&[&str]] = &[
     &["VERSIONED", "SCHEMA"],
 ];
 
+/// The opaque CREATE kinds read into a tree once their checks pass, each before any kind it prefixes.
+pub(crate) const SNOWFLAKE_STRUCTURED_OPAQUE_KINDS: &[&[&str]] = &[
+    &["AI", "FUNCTION"],
+    &["APPLICATION", "PACKAGE"],
+    &["CODE", "BUNDLE"],
+    &["DBT", "PROJECT"],
+    &["EXTERNAL", "AGENT"],
+    &["INTERACTIVE", "WAREHOUSE"],
+    &["MCP", "SERVER"],
+    &["NOTEBOOK", "PROJECT"],
+    &["ORGANIZATION", "PROFILE"],
+    &["PROVISIONED", "THROUGHPUT"],
+    &["VERSIONED", "SCHEMA"],
+    &["AGENT"],
+    &["DATASET"],
+    &["EXPERIMENT"],
+    &["LISTING"],
+    &["MODEL"],
+    &["NOTEBOOK"],
+    &["PIPE"],
+    &["SNAPSHOT"],
+    &["VOLUME"],
+];
+
+/// The model kind, the one opaque CREATE kind copied FROM MODEL another model.
+pub(crate) const MODEL_KIND: &str = "MODEL";
+
+/// The opaque CREATE kinds that take their manifest only after AS, never FROM a location: a bare LISTING, unlike an EXTERNAL or ORGANIZATION LISTING.
+pub(crate) const SNOWFLAKE_MANIFEST_ONLY_KINDS: &[&str] = &["LISTING"];
+
+/// The modifiers an opaque CREATE may write before its kind, each kept as written.
+pub(crate) const SNOWFLAKE_OPAQUE_MODIFIERS: &[&[&str]] = &[
+    &["LOCAL", "TEMPORARY"],
+    &["LOCAL", "TEMP"],
+    &["GLOBAL", "TEMPORARY"],
+    &["GLOBAL", "TEMP"],
+    &["TEMPORARY"],
+    &["TEMP"],
+    &["VOLATILE"],
+    &["SECURE"],
+    &["TRANSIENT"],
+];
+
 /// The word after `RESUME IF` in `ALTER WAREHOUSE <name> RESUME IF SUSPENDED`.
 pub(crate) const SUSPENDED: &str = "SUSPENDED";
 
@@ -824,6 +867,7 @@ pub(crate) const SHARED_DESCRIBE_KINDS: &[&str] = &["TABLE", "VIEW", "FUNCTION",
 
 /// Snowflake SHOW kinds, each before any kind it prefixes.
 pub(crate) const SNOWFLAKE_SHOW_KINDS: &[&[&str]] = &[
+    &["CORTEX", "SEARCH", "SERVICES"],
     &[
         "EVENT",
         "ROUTING",
@@ -1032,7 +1076,6 @@ pub(crate) const SNOWFLAKE_UNDROP_KINDS: &[&str] = &[
 
 /// SHOW kinds the shared SHOW still reads for Snowflake, by their leading words.
 pub(crate) const SHARED_SHOW_KINDS: &[&[&str]] = &[
-    &["CORTEX", "SEARCH", "SERVICES"],
     &["EXPORTED", "KEYS"],
     &["IMPORTED", "KEYS"],
     &["PRIMARY", "KEYS"],
@@ -1070,6 +1113,7 @@ pub(crate) const SNOWFLAKE_SHOW_CONTAINERS: &[&[&str]] = &[
     &["GRAPH"],
     &["LISTING"],
     &["MODEL"],
+    &["PIPE"],
     &["SCHEMA"],
     &["SERVICE"],
     &["TABLE"],
@@ -1091,6 +1135,7 @@ pub(crate) const SNOWFLAKE_SHOW_GENERAL_CONTAINERS: &[&str] = &[
 
 /// Further containers some Snowflake SHOW kinds may name.
 pub(crate) const SNOWFLAKE_SHOW_EXTRA_CONTAINERS: &[(&str, &[&str])] = &[
+    ("CHANNELS", &["PIPE"]),
     ("COMMITTED TASKS", &["GRAPH"]),
     ("DEPLOYMENTS", &["DCM PROJECT"]),
     ("MODEL MONITORS", &["GATEWAY"]),
@@ -1490,7 +1535,7 @@ pub(crate) const SNOWFLAKE_GRANT_KINDS: &[&str] = &[
 ];
 
 /// Words of a multi-word property kind that Snowflake also parses as a kind on their own, so CREATE <word> <name> is not a partial kind.
-pub(crate) const SNOWFLAKE_KIND_WORDS_ALONE: &[&str] = &["MODEL", "VOLUME"];
+pub(crate) const SNOWFLAKE_KIND_WORDS_ALONE: &[&str] = &["MODEL", "SNAPSHOT", "VOLUME"];
 
 /// Property-list kinds whose tag list must end the statement: Snowflake refuses any property after it.
 pub(crate) const SNOWFLAKE_TAGS_LAST_KINDS: &[&str] = &["ARTIFACT REPOSITORY", "COMPUTE POOL"];
@@ -1564,4 +1609,28 @@ pub(crate) const SNOWFLAKE_BODY_POLICY_KINDS: &[&str] = &[
     "PROJECTION POLICY",
     "ROW ACCESS POLICY",
     "STORAGE LIFECYCLE POLICY",
+];
+
+/// The ALTER DYNAMIC TABLE action that refreshes in a copy of the current session.
+pub(crate) const REFRESH_COPY_SESSION: &str = "REFRESH COPY SESSION";
+
+/// The constraint kind whose `REFERENCES` follows the `FOREIGN KEY` keywords.
+pub(crate) const FOREIGN_KEY: &str = "FOREIGN KEY";
+
+/// The MERGE action modifier that matches source to target columns by name.
+pub(crate) const MERGE_ALL_BY_NAME: &str = "ALL BY NAME";
+
+/// The MERGE action that updates the matched row.
+pub(crate) const MERGE_UPDATE: &str = "UPDATE";
+
+/// The MERGE action that inserts an unmatched row.
+pub(crate) const MERGE_INSERT: &str = "INSERT";
+
+/// The kinds Snowflake's `SHOW PARAMETERS IN` names by a keyword, each with whether a name may follow it.
+pub(crate) const SNOWFLAKE_SHOW_PARAMETERS_SCOPES: &[(&str, bool)] = &[
+    ("SESSION", false),
+    ("USER", true),
+    ("WAREHOUSE", true),
+    ("TASK", true),
+    ("PIPE", true),
 ];

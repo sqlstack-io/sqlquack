@@ -732,6 +732,13 @@ impl MethodCall {
     }
 }
 
+/// A Snowflake class method called without an instance, `!<method>( <args> )`.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ClassMethodCall {
+    /// The method and its arguments, as a function call.
+    pub expression: Box<Expression>,
+}
+
 /// Array slice (array[start:end])
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ArraySlice {
@@ -1091,4 +1098,26 @@ pub struct WithFill {
     pub staleness: Option<Box<Expression>>,
     #[serde(default)]
     pub interpolate: Option<Box<Expression>>,
+}
+
+/// A Snowflake MERGE action after THEN, with its parts in their own fields.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct MergeAction {
+    /// The action's keyword: "INSERT", "UPDATE" or "DELETE"
+    pub kind: String,
+    /// Whether ALL BY NAME follows INSERT or UPDATE
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub all_by_name: bool,
+    /// The INSERT column list, one node per column
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub columns: Vec<Expression>,
+    /// The values after INSERT's VALUES, one node per value
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub values: Vec<Expression>,
+    /// The UPDATE's SET assignments, each a column and its value
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub set: Vec<(Expression, Expression)>,
+    /// The condition after WHERE
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub condition: Option<Expression>,
 }

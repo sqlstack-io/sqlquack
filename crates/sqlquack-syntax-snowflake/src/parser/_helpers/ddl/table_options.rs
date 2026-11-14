@@ -221,12 +221,14 @@ impl Parser {
                     || self.check_identifier("SPATIAL")
                 {
                     let looks_like_key_constraint = if self.check(TokenType::Key) {
-                        self.check_next(TokenType::LParen)
-                            || (self.check_next(TokenType::Identifier)
-                                || self.check_next(TokenType::Var)
-                                || self.check_next(TokenType::QuotedIdentifier))
-                                && self.current + 2 < self.tokens.len()
-                                && self.tokens[self.current + 2].token_type == TokenType::LParen
+                        !self.is_snowflake()
+                            && (self.check_next(TokenType::LParen)
+                                || (self.check_next(TokenType::Identifier)
+                                    || self.check_next(TokenType::Var)
+                                    || self.check_next(TokenType::QuotedIdentifier))
+                                    && self.current + 2 < self.tokens.len()
+                                    && self.tokens[self.current + 2].token_type
+                                        == TokenType::LParen)
                     } else {
                         true
                     };
@@ -315,9 +317,7 @@ impl Parser {
 
         let no_type = self.check(TokenType::Comma) || self.check(TokenType::RParen);
         let data_type = if no_type {
-            DataType::Custom {
-                name: String::new(),
-            }
+            DataType::Unknown
         } else {
             self.parse_data_type()?
         };
@@ -502,7 +502,15 @@ impl Parser {
     }
 
     fn parse_column_named_constraint(&mut self, mut col_def: ColumnDef) -> Result<ColumnDef> {
-        let constraint_name = self.expect_identifier()?;
+        let quoted = self.check(TokenType::QuotedIdentifier);
+        let span = self.peek().span;
+        let constraint_name = Identifier {
+            name: self.expect_identifier()?,
+            quoted,
+            trailing_comments: Vec::new(),
+            span: Some(span),
+        };
+        let index = col_def.constraint_order.len();
         let foreign_key = self.check(TokenType::ForeignKey)
             && self.check_next(TokenType::Key)
             && self
@@ -514,7 +522,6 @@ impl Parser {
         }
         if self.match_token(TokenType::References) {
             let mut fk_ref = self.parse_foreign_key_ref()?;
-            fk_ref.constraint_name = Some(constraint_name);
             fk_ref.has_foreign_key_keywords |= foreign_key;
             col_def
                 .constraints
@@ -522,21 +529,17 @@ impl Parser {
             col_def.constraint_order.push(ConstraintType::References);
         } else if self.match_keywords(&[TokenType::PrimaryKey, TokenType::Key]) {
             col_def.primary_key = true;
-            col_def.primary_key_constraint_name = Some(constraint_name);
             col_def.constraint_order.push(ConstraintType::PrimaryKey);
         } else if self.match_token(TokenType::Unique) {
             col_def.unique = true;
-            col_def.unique_constraint_name = Some(constraint_name);
             if self.match_text_seq(&["NULLS", "NOT", "DISTINCT"]) {
                 col_def.unique_nulls_not_distinct = true;
             }
             col_def.constraint_order.push(ConstraintType::Unique);
         } else if self.match_keywords(&[TokenType::Not, TokenType::Null]) {
             col_def.nullable = Some(false);
-            col_def.not_null_constraint_name = Some(constraint_name);
             col_def.constraint_order.push(ConstraintType::NotNull);
         } else if self.match_token(TokenType::Check) {
-            col_def.check_constraint_name = Some(constraint_name);
             if self.match_token(TokenType::LParen) {
                 let check_expr = self.parse_expression()?;
                 self.expect_token(TokenType::RParen)?;
@@ -545,6 +548,9 @@ impl Parser {
                     .push(ColumnConstraint::Check(check_expr));
             }
             col_def.constraint_order.push(ConstraintType::Check);
+        }
+        if col_def.constraint_order.len() > index {
+            col_def.constraint_names.push((index, constraint_name));
         }
         Ok(col_def)
     }
@@ -597,9 +603,7 @@ impl Parser {
             let text = self.advance_text()?;
             col_def
                 .constraints
-                .push(ColumnConstraint::Collate(Identifier::new(format!(
-                    "'{text}'"
-                ))));
+                .push(ColumnConstraint::CollateString(text));
             col_def.constraint_order.push(ConstraintType::Collate);
             return Ok(col_def);
         }

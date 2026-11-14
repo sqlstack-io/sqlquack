@@ -42,6 +42,7 @@ impl Expression {
             Expression::Delete(_) => "delete",
             Expression::Copy(_) => "copy",
             Expression::Put(_) => "put",
+            Expression::StageCommand(_) => "stage_command",
             Expression::StageReference(_) => "stage_reference",
             Expression::Alias(_) => "alias",
             Expression::Cast(_) => "cast",
@@ -963,6 +964,8 @@ impl Expression {
             Expression::Merge(_) => "merge",
             Expression::When(_) => "when",
             Expression::Whens(_) => "whens",
+            Expression::MergeAction(_) => "merge_action",
+            Expression::ClassMethodCall(_) => "class_method_call",
             Expression::NextValueFor(_) => "next_value_for",
             Expression::ReturnStmt(_) => "return_stmt",
         }

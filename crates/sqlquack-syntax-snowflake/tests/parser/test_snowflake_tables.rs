@@ -1,8 +1,9 @@
 use serde_json::json;
 
 use crate::helpers::snowflake_kind;
+use crate::helpers::statement_at;
 use crate::helpers::statements;
-use crate::test_types::{ProjectionTestCase, SnowflakeVerdictTestCase};
+use crate::test_types::{ProjectionTestCase, SnowflakeVerdictTestCase, StatementTestCase};
 use sqlquack_syntax::{CallMode, Dialect};
 
 #[test]
@@ -813,6 +814,442 @@ fn given_a_snowflake_event_routing_rule_when_parsing_then_the_probed_verdicts_ho
         assert_eq!(
             snowflake_kind(test_case.sql),
             test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_parameterised_type_when_parsing_then_the_tree_keeps_its_written_name_and_parameters(
+) {
+    let test_cases = [
+        StatementTestCase {
+            description: "NUMBER ( 9 , 2 ) keeps its name",
+            sql: "CREATE TABLE v1 ( v1 NUMBER ( 9 , 2 ) ) ;",
+            pointer: "/0/create_table/columns/0/data_type/name",
+            expected_value: json!("NUMBER"),
+        },
+        StatementTestCase {
+            description: "NUMBER ( 9 , 2 ) keeps its scale as a number",
+            sql: "CREATE TABLE v1 ( v1 NUMBER ( 9 , 2 ) ) ;",
+            pointer: "/0/create_table/columns/0/data_type/scale",
+            expected_value: json!(2),
+        },
+        StatementTestCase {
+            description: "NCHAR VARYING stays apart from CHAR VARYING",
+            sql: "CREATE TABLE v1 ( v1 NCHAR VARYING ( 5 ) ) ;",
+            pointer: "/0/create_table/columns/0/data_type/name",
+            expected_value: json!("NCHAR VARYING"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_quoted_or_qualified_name_when_parsing_then_the_tree_keeps_its_parts() {
+    let test_cases = [
+        StatementTestCase {
+            description: "SET keeps a quoted variable name quoted",
+            sql: "SET \"v1 Q\" = 1 ;",
+            pointer: "/0/set_statement/items/0/name/identifier/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a service role keeps the service apart from the role",
+            sql: "GRANT SERVICE ROLE s1!\"v1 Q\" TO ROLE r1 ;",
+            pointer: "/0/grant/service/name/name",
+            expected_value: json!("s1"),
+        },
+        StatementTestCase {
+            description: "USE SECONDARY ROLES ALL is its own kind",
+            sql: "USE SECONDARY ROLES ALL ;",
+            pointer: "/0/use/kind",
+            expected_value: json!("SecondaryRolesAll"),
+        },
+        StatementTestCase {
+            description: "a single-quoted table in FROM is a string, not a quoted name",
+            sql: "SELECT 1 FROM 'v1' ;",
+            pointer: "/0/select/from/expressions/0/literal/value",
+            expected_value: json!("v1"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_optional_keyword_or_clause_when_parsing_then_the_tree_records_it() {
+    let test_cases = [
+        StatementTestCase {
+            description: "ADD COLUMN records the COLUMN keyword",
+            sql: "ALTER TABLE v1 ADD COLUMN v1 INT ;",
+            pointer: "/0/alter_table/actions/0/AddColumn/column_keyword",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a MERGE action records ALL BY NAME",
+            sql: "MERGE INTO t1 USING t2 ON 1 = 1 WHEN MATCHED THEN UPDATE ALL BY NAME ;",
+            pointer: "/0/merge/whens/whens/expressions/0/when/then/merge_action/all_by_name",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "EXECUTE AS keeps its choice apart from the action",
+            sql: "ALTER PROCEDURE v1 ( ) EXECUTE AS CALLER ;",
+            pointer: "/0/alter_object/operands/0/var/this",
+            expected_value: json!("CALLER"),
+        },
+        StatementTestCase {
+            description: "PUT keeps a table stage's table as a name part",
+            sql: "PUT file:///tmp/d1/f1.csv @v1.%v1/p1 SOURCE_COMPRESSION = GZIP ;",
+            pointer: "/0/put/target/stage_reference/stage_name/table_stage",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "PUT keeps SOURCE_COMPRESSION's value as a keyword",
+            sql: "PUT file:///tmp/d1/f1.csv @v1.%v1/p1 SOURCE_COMPRESSION = GZIP ;",
+            pointer: "/0/put/params/0/value/var/this",
+            expected_value: json!("GZIP"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_column_option_when_parsing_then_the_column_keeps_it_as_written() {
+    let test_cases = [
+        StatementTestCase {
+            description: "WITH MASKING POLICY records WITH",
+            sql: "CREATE TABLE v1 ( v1 INT WITH MASKING POLICY p1 , v2 INT MASKING POLICY p1 ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/options/0/masking_policy_column_constraint/with",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "MASKING POLICY without WITH records no WITH",
+            sql: "CREATE TABLE v1 ( v1 INT WITH MASKING POLICY p1 , v2 INT MASKING POLICY p1 ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/1/column_def/options/0/masking_policy_column_constraint/with",
+            expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "COLLATE is a column option, not part of the type",
+            sql: "CREATE TABLE v1 ( v1 INT COLLATE 'm' ) ;",
+            pointer: "/0/create_table/columns/0/constraints/0/CollateString",
+            expected_value: json!("m"),
+        },
+        StatementTestCase {
+            description: "a CTAS column written without a type has none",
+            sql: "CREATE TABLE v1 ( v1 , v2 ) AS SELECT 1 , 2 ;",
+            pointer: "/0/create_table/columns/0/data_type",
+            expected_value: json!(null),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_function_returning_a_table_when_parsing_then_its_columns_keep_their_quoting() {
+    let test_cases = [
+        StatementTestCase {
+            description: "a RETURNS TABLE column keeps its quoted name",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS TABLE ( \"v1 Q\" INT ) AS 'SELECT 1' ;",
+            pointer: "/0/create_function/returns_table_columns/0/name/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a RETURNS TABLE column keeps its type",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS TABLE ( \"v1 Q\" INT ) AS 'SELECT 1' ;",
+            pointer: "/0/create_function/returns_table_columns/0/data_type/data_type",
+            expected_value: json!("int"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_stage_file_command_when_parsing_then_it_is_a_tree_not_a_command() {
+    let test_cases = [
+        StatementTestCase {
+            description: "GET keeps a quoted stage name part quoted",
+            sql: "GET '@\"s1 Q\"/p1' file:///tmp/d1/ PARALLEL = 1 ;",
+            pointer: "/0/stage_command/stage/stage_reference/stage_name/parts/0/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "GET keeps its local directory",
+            sql: "GET '@\"s1 Q\"/p1' file:///tmp/d1/ PARALLEL = 1 ;",
+            pointer: "/0/stage_command/target",
+            expected_value: json!("file:///tmp/d1/"),
+        },
+        StatementTestCase {
+            description: "LIST keeps a left-out namespace as a null part",
+            sql: "LIST @.%v1 PATTERN = 'm' ;",
+            pointer: "/0/stage_command/stage/stage_reference/stage_name/parts/0",
+            expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "REMOVE marks the user stage",
+            sql: "REMOVE @~/p1 ;",
+            pointer: "/0/stage_command/stage/stage_reference/stage_name/user_stage",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "COPY FILES INTO records FILES",
+            sql: "COPY FILES INTO @s1 FROM @v1.s1/p1/ ;",
+            pointer: "/0/copy/copy_files",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "COPY INTO keeps a file format type as a keyword",
+            sql: "COPY INTO v1 FROM @s1 FILE_FORMAT = ( TYPE = CSV ) ;",
+            pointer: "/0/copy/params/0/values/0/eq/right/var/this",
+            expected_value: json!("CSV"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_statements_with_recorded_verdicts_when_parsing_then_the_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "an application package unsets a comma list (recorded errno 2003)",
+            sql: "ALTER APPLICATION PACKAGE v1 UNSET DATA_RETENTION_TIME_IN_DAYS , MAX_DATA_EXTENSION_TIME_IN_DAYS ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "IF EXISTS before an application package's UNSET (recorded errno 1003)",
+            sql: "ALTER APPLICATION PACKAGE IF EXISTS v1 UNSET DATA_RETENTION_TIME_IN_DAYS ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ALTER VOLUME sets a property (recorded errno 2043)",
+            sql: "ALTER VOLUME v1 SET COMMENT = 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "ALTER VOLUME has no storage location actions (recorded errno 1003)",
+            sql: "ALTER VOLUME v1 REMOVE STORAGE_LOCATION 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ALTER SCHEMA may omit its name before UNSET (recorded OK)",
+            sql: "ALTER SCHEMA UNSET DATA_RETENTION_TIME_IN_DAYS ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a type parameter is never a reserved keyword (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ADD REFERENCES v1 ( SELECT ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "COMMENT ON names an object kind (recorded errno 1003)",
+            sql: "COMMENT ON INT v1 IS 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "Snowflake has no KEY table constraint (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT , KEY ( v1 ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ALTER TABLE ADD has no KEY constraint (recorded errno 1003)",
+            sql: "ALTER TABLE v1 ADD KEY ( v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an integration SET takes comma-separated properties (recorded errno 2003)",
+            sql: "ALTER NOTIFICATION INTEGRATION v1 SET ENABLED = TRUE , COMMENT = 'm' ;",
+            expected_kind: Some("alter_object"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_clause_accepted_on_its_receipt_when_parsing_then_the_tree_keeps_it() {
+    let test_cases = [
+        StatementTestCase {
+            description: "DROP TABLE records NOPURGE",
+            sql: "DROP TABLE v1 NOPURGE ;",
+            pointer: "/0/drop_table/no_purge",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a DEFINE condition keeps FINAL by its position",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a b ) DEFINE a AS TRUE , b AS FINAL COUNT ( * ) > 1 ) ;",
+            pointer: "/0/select/from/expressions/0/match_recognize/define_semantics",
+            expected_value: json!([[1, "Final"]]),
+        },
+        StatementTestCase {
+            description: "SHOW PARAMETERS IN USER keeps USER as the scope kind",
+            sql: "SHOW PARAMETERS IN USER \"v1 Q\" ;",
+            pointer: "/0/show/scope_kind",
+            expected_value: json!("USER"),
+        },
+        StatementTestCase {
+            description: "SHOW PARAMETERS IN USER keeps the quoted user name",
+            sql: "SHOW PARAMETERS IN USER \"v1 Q\" ;",
+            pointer: "/0/show/scope/table/name/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "ALTER SHARE keeps the singular ACCOUNT as written",
+            sql: "ALTER SHARE v1 REMOVE ACCOUNT = o1.a1 ;",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("REMOVE ACCOUNT"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_class_method_calls_and_located_tables_when_parsing_then_recorded_verdicts_hold()
+{
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a class method called without an instance as a projection (recorded errno 2139)",
+            sql: "SELECT !DESCRIBE ( ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a class method with arguments as a projection (recorded errno 904)",
+            sql: "SELECT !SPCS_WAIT_FOR ( v1 , v1 ) ;",
+            expected_kind: Some("select"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "CALL takes no class method without an instance (recorded errno 1003)",
+            sql: "CALL !GET_CONFIG ( ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "TABLE ( ) takes no class method without an instance (recorded errno 1003)",
+            sql: "SELECT * FROM TABLE ( !SPCS_GET_EVENTS ( ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a table with stage properties parses before Snowflake refuses it (recorded unsupported)",
+            sql: "CREATE TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a computed column with an unbalanced parenthesis (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT AS 1 ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "an index INCLUDE list may hold a string (recorded errno 2003)",
+            sql: "CREATE INDEX v1 ON v1 ( v1 ) INCLUDE ( 'v1' ) ;",
+            expected_kind: Some("create_index"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "an inline hybrid table index INCLUDE holds names only (recorded errno 1003)",
+            sql: "CREATE HYBRID TABLE v1 ( v1 INT , INDEX v1 ( v1 ) INCLUDE ( v1 , 'v1' ) ) ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_class_method_or_index_string_when_parsing_then_the_tree_keeps_it() {
+    let test_cases = [
+        StatementTestCase {
+            description: "a class method without an instance is its own node",
+            sql: "SELECT !SPCS_CANCEL_JOB ( 'm' ) ;",
+            pointer: "/0/select/expressions/0/class_method_call/expression/function/name",
+            expected_value: json!("SPCS_CANCEL_JOB"),
+        },
+        StatementTestCase {
+            description: "a class method keeps its arguments",
+            sql: "SELECT !SPCS_WAIT_FOR ( 'm' , 1 ) ;",
+            pointer: "/0/select/expressions/0/class_method_call/expression/function/args/1/literal/value",
+            expected_value: json!("1"),
+        },
+        StatementTestCase {
+            description: "an aliased class method keeps the call under the alias",
+            sql: "SELECT !LIST ( ) AS l1 ;",
+            pointer: "/0/select/expressions/0/alias/this/class_method_call/expression/function/name",
+            expected_value: json!("LIST"),
+        },
+        StatementTestCase {
+            description: "a table with stage properties keeps LOCATION",
+            sql: "CREATE TABLE v1 ( v1 INT AS 1 ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' ) ;",
+            pointer: "/0/create_object/properties/0/kind",
+            expected_value: json!("LOCATION"),
+        },
+        StatementTestCase {
+            description: "an index INCLUDE string keeps its text and position",
+            sql: "CREATE INDEX v1 ON v1 ( v1 ) INCLUDE ( v1 , 'v2' ) ;",
+            pointer: "/0/create_index/include_strings",
+            expected_value: json!([[1, "v2"]]),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
             "{}",
             test_case.description
         );

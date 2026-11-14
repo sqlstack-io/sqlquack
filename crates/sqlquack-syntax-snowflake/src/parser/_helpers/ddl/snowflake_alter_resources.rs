@@ -8,7 +8,9 @@ use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
-use sqlquack_syntax::expressions::statements::models::StageReference;
+use sqlquack_syntax::expressions::stages::main::stage_name_fields::stage_name_fields;
+use sqlquack_syntax::expressions::stages::models::StageReference;
+use sqlquack_syntax::expressions::statements::models::Var;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
@@ -69,6 +71,7 @@ const RESOURCE_KINDS: &[&[&str]] = &[
     &["SECRET"],
     &["SERVICE"],
     &["STAGE"],
+    &["VOLUME"],
 ];
 
 /// The operands and properties of one ALTER action.
@@ -190,6 +193,7 @@ fn resource_actions(kind: &str) -> &'static [&'static [&'static str]] {
             &["UNSET"],
         ],
         "DATASET" => &[&["ADD", "VERSION"], &["DROP", "VERSION"]],
+        "VOLUME" => &[&["SET"]],
         "FEATURE POLICY" | "INGRESS POLICY" | "MULTI PARTY APPROVAL POLICY" => {
             &[&["AS"], &["RENAME", "TO"], &["SET"], &["UNSET"]]
         }
@@ -609,8 +613,7 @@ impl Parser {
             "EXECUTE AS" => {
                 let caller =
                     self.expect_alter_words(&[&["OWNER"], &["CALLER"], &["RESTRICTED", "CALLER"]])?;
-                action.push(' ');
-                action.push_str(&caller);
+                operands.push(Expression::Var(Box::new(Var { this: caller })));
             }
             "ADD" | "DROP" => {
                 self.expect_alter_words(&[&["SEGMENT_COLUMN"]])?;
@@ -685,7 +688,7 @@ impl Parser {
             self.skip();
             return Ok(Expression::Literal(Box::new(Literal::String(text))));
         }
-        let mut path = self.peek_text().to_owned();
+        let start = self.peek().span.start;
         let mut end = self.peek().span.end;
         self.skip();
         while !self.is_at_end()
@@ -698,20 +701,18 @@ impl Parser {
             if self.check(TokenType::String) || self.peek_text().chars().any(char::is_whitespace) {
                 return Err(self.parse_error("A stage path ends at whitespace"));
             }
-            path.push_str(self.peek_text());
             end = self.peek().span.end;
             self.skip();
         }
-        let (name, path) = match path.find('/') {
-            Some(at) => (path[..at].to_owned(), Some(path[at..].to_owned())),
-            None => (path, None),
-        };
+        let text = self.source_text_range(start, end);
+        let (stage_name, rest) = stage_name_fields(&text);
         Ok(Expression::StageReference(Box::new(StageReference {
-            name,
-            path,
+            name: text[..text.len() - rest.len()].to_owned(),
+            path: (!rest.is_empty()).then(|| rest.to_owned()),
             file_format: None,
             pattern: None,
             quoted: false,
+            stage_name: Some(stage_name),
         })))
     }
 

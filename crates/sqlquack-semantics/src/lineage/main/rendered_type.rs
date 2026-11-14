@@ -37,6 +37,7 @@ pub(crate) fn rendered_type(data_type: &DataType) -> Option<String> {
         } => "TIMESTAMP".to_owned(),
         DataType::Timestamp { timezone: true, .. } => "TIMESTAMPTZ".to_owned(),
         DataType::Custom { name } => name.replace(", ", ","),
+        DataType::Named { .. } => return rendered_type(&data_type.unnamed()?),
         DataType::Array { element_type, .. } => format!("ARRAY({})", rendered_type(element_type)?),
         _ => return None,
     };

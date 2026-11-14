@@ -55,6 +55,7 @@ impl Parser {
             source: String::new(),
             operands: Vec::new(),
             properties,
+            ..Default::default()
         }))))
     }
 }

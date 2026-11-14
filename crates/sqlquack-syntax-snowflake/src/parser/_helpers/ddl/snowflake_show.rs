@@ -247,7 +247,7 @@ impl Parser {
         })
     }
 
-    /// The container after IN and its name, which ACCOUNT, DATABASE or SCHEMA may lack; a lone APPLICATION, CLASS, DATASET, GATEWAY, GRAPH, LISTING or MODEL is one.
+    /// The container after IN and its name, which ACCOUNT, DATABASE or SCHEMA may lack; a lone APPLICATION, CLASS, DATASET, GATEWAY, GRAPH, LISTING, MODEL or PIPE is one.
     fn parse_show_container(&mut self, kind: &str) -> Result<(Option<String>, Option<Expression>)> {
         let Some(words) = SNOWFLAKE_SHOW_CONTAINERS
             .iter()
@@ -273,7 +273,7 @@ impl Parser {
         };
         let lone_name = match container.as_str() {
             "APPLICATION" | "CLASS" => optional,
-            "DATASET" | "GATEWAY" | "GRAPH" | "LISTING" | "MODEL" => true,
+            "DATASET" | "GATEWAY" | "GRAPH" | "LISTING" | "MODEL" | "PIPE" => true,
             _ => false,
         };
         if lone_name && self.ends_show_scope_at(1) {

@@ -1,10 +1,12 @@
 //! Parser ddl: scripting.
 
+use crate::parser::_helpers::ddl::snowflake_stages::stage_reference;
 use crate::parser::constants::ENGINE;
 use crate::parser::constants::MUTEX;
 use crate::parser::constants::PLAN;
 use crate::parser::constants::REPRODUCTION;
 use crate::parser::constants::SECOND_PREVIOUS_OFFSET;
+use crate::parser::constants::SNOWFLAKE_SHOW_PARAMETERS_SCOPES;
 use crate::parser::constants::STATUS;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
@@ -15,11 +17,13 @@ use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
 use sqlquack_syntax::expressions::operators::models::Placeholder;
 use sqlquack_syntax::expressions::queries::models::Limit;
+use sqlquack_syntax::expressions::stages::main::stage_name_fields::stage_name_fields;
+use sqlquack_syntax::expressions::stages::models::PutStmt;
+use sqlquack_syntax::expressions::stages::models::StageReference;
 use sqlquack_syntax::expressions::statements::models::CopyParameter;
 use sqlquack_syntax::expressions::statements::models::CopyStmt;
 use sqlquack_syntax::expressions::statements::models::Credentials;
 use sqlquack_syntax::expressions::statements::models::Describe;
-use sqlquack_syntax::expressions::statements::models::PutStmt;
 use sqlquack_syntax::expressions::statements::models::Schema;
 use sqlquack_syntax::expressions::statements::models::Show;
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -680,6 +684,18 @@ impl Parser {
         self.parse_table_ref()
     }
 
+    /// The keyword kind after Snowflake's `SHOW PARAMETERS IN`, such as USER, and whether a name may follow it.
+    fn match_show_parameters_scope(&mut self, this: &str) -> Option<(&'static str, bool)> {
+        if !self.is_snowflake() || !matches!(this, "PARAMETERS") {
+            return None;
+        }
+        let (kind, named) = SNOWFLAKE_SHOW_PARAMETERS_SCOPES
+            .iter()
+            .find(|(kind, _)| self.check_text_seq(&[kind]))?;
+        self.skip();
+        Some((kind, *named))
+    }
+
     fn parse_show_scope(&mut self, this: &str) -> Result<(Option<String>, Option<Expression>)> {
         Ok(if self.match_token(TokenType::In) {
             let (kind, scope_obj) = if self.match_keyword("ACCOUNT") {
@@ -757,6 +773,17 @@ impl Parser {
                     None
                 };
                 (Some(kind), scope_obj)
+            } else if let Some((kind, named)) = self.match_show_parameters_scope(this) {
+                let scope_obj = match named
+                    && !self.is_at_end()
+                    && !self.check(TokenType::Like)
+                    && !self.check(TokenType::Limit)
+                    && !self.check(TokenType::Semicolon)
+                {
+                    true => Some(Expression::Table(Box::new(self.parse_show_scope_ref()?))),
+                    false => None,
+                };
+                (Some(kind.to_owned()), scope_obj)
             } else {
                 let table = self.parse_show_scope_ref()?;
                 let inferred_kind = match this {
@@ -955,6 +982,7 @@ impl Parser {
             is_into,
             with_wrapped,
             where_clause: None,
+            copy_files: false,
         })))
     }
 
@@ -1352,18 +1380,11 @@ impl Parser {
 
     /// Parses a Snowflake stage reference tokenized as a string, such as '@stage/path'.
     pub(crate) fn parse_stage_reference_from_string(&mut self) -> Result<Expression> {
-        use sqlquack_syntax::expressions::statements::models::StageReference;
-
         let string_token = self.advance()?;
         let full_path = string_token.text.to_string();
-
-        let parts: Vec<&str> = full_path.splitn(2, '/').collect();
-        let name = parts[0].to_string();
-        let path = if parts.len() > 1 {
-            Some(format!("/{}", parts[1]))
-        } else {
-            None
-        };
+        let (stage_name, rest) = stage_name_fields(&full_path);
+        let name = full_path[..full_path.len() - rest.len()].to_string();
+        let path = (!rest.is_empty()).then(|| rest.to_string());
 
         let (file_format, pattern) = if self.match_token(TokenType::LParen) {
             let mut ff = None;
@@ -1401,13 +1422,12 @@ impl Parser {
             file_format,
             pattern,
             quoted: true,
+            stage_name: Some(stage_name),
         })))
     }
 
     /// Parses a Snowflake stage reference tokenized as a Var, such as @stage/path/file.csv.
     pub(crate) fn parse_stage_reference_from_var(&mut self) -> Result<Expression> {
-        use sqlquack_syntax::expressions::statements::models::StageReference;
-
         let var_token = self.advance()?;
         let mut name = var_token.text.to_string();
 
@@ -1480,19 +1500,19 @@ impl Parser {
             (None, None)
         };
 
+        let (stage_name, _) = stage_name_fields(&name);
         Ok(Expression::StageReference(Box::new(StageReference {
             name,
             path,
             file_format,
             pattern,
             quoted: false,
+            stage_name: Some(stage_name),
         })))
     }
 
     /// Parses a FROM-clause stage reference: @stage, @ns.stage, @stage/path, @~, @%table.
     pub(crate) fn parse_stage_reference(&mut self) -> Result<Expression> {
-        use sqlquack_syntax::expressions::statements::models::StageReference;
-
         self.expect_token(TokenType::DAt)?;
 
         let mut name = String::from("@");
@@ -1533,7 +1553,7 @@ impl Parser {
                     || self.is_safe_keyword_as_identifier()
                 {
                     name.push_str(&self.advance_text()?);
-                } else {
+                } else if !self.check(TokenType::Dot) {
                     break;
                 }
 
@@ -1599,12 +1619,14 @@ impl Parser {
             (None, None)
         };
 
+        let (stage_name, _) = stage_name_fields(&name);
         Ok(Expression::StageReference(Box::new(StageReference {
             name,
             path,
             file_format,
             pattern,
             quoted: false,
+            stage_name: Some(stage_name),
         })))
     }
 
@@ -1654,7 +1676,7 @@ impl Parser {
                     }
                 }
             }
-            return Ok(Expression::Literal(Box::new(Literal::String(stage_path))));
+            return Ok(stage_reference(&stage_path, false));
         }
 
         if self.check(TokenType::Var) && self.peek_text().starts_with('@') {
@@ -1688,11 +1710,14 @@ impl Parser {
                     }
                 }
             }
-            return Ok(Expression::Literal(Box::new(Literal::String(stage_path))));
+            return Ok(stage_reference(&stage_path, false));
         }
 
         if self.check(TokenType::String) {
             let token = self.advance()?;
+            if token.text.starts_with('@') {
+                return Ok(stage_reference(&token.text, true));
+            }
             return Ok(Expression::Literal(Box::new(Literal::String(
                 token.text.to_string(),
             ))));
@@ -1718,85 +1743,6 @@ impl Parser {
         }
 
         Err(self.parse_error("Expected file location"))
-    }
-
-    /// Parses a Snowflake stage reference for PUT/GET/COPY as a string literal.
-    pub(crate) fn parse_stage_reference_as_string(&mut self) -> Result<Expression> {
-        if self.check(TokenType::DAt) {
-            self.skip();
-            let mut stage_path = String::from("@");
-
-            if self.check(TokenType::Percent) || self.check(TokenType::Mod) {
-                stage_path.push('%');
-                self.skip();
-            } else if self.check(TokenType::Tilde) {
-                stage_path.push('~');
-                self.skip();
-                stage_path.push_str(&self.stage_path_segments()?);
-                return Ok(Expression::Literal(Box::new(Literal::String(stage_path))));
-            }
-            stage_path.push_str(&self.stage_name_part()?);
-            stage_path.push_str(&self.stage_dotted_parts()?);
-            stage_path.push_str(&self.stage_path_segments()?);
-            return Ok(Expression::Literal(Box::new(Literal::String(stage_path))));
-        }
-
-        if self.check(TokenType::Var) && self.peek_text().starts_with('@') {
-            let mut stage_path = self.advance_text()?;
-            stage_path.push_str(&self.stage_dotted_parts()?);
-            stage_path.push_str(&self.stage_path_segments()?);
-            return Ok(Expression::Literal(Box::new(Literal::String(stage_path))));
-        }
-
-        Err(self.parse_error("Expected stage reference starting with @"))
-    }
-
-    /// One stage name part, quoted or not, or nothing when the current token is not one.
-    fn stage_name_part(&mut self) -> Result<String> {
-        if self.check(TokenType::QuotedIdentifier) {
-            let text = format!("\"{}\"", self.peek_text());
-            self.skip();
-            return Ok(text);
-        }
-        match self.check(TokenType::Var)
-            || self.check_keyword()
-            || self.check(TokenType::Identifier)
-        {
-            true => self.advance_text(),
-            false => Ok(String::new()),
-        }
-    }
-
-    /// Each `.part` of a stage name, where a part may be a table stage `%name`.
-    fn stage_dotted_parts(&mut self) -> Result<String> {
-        let mut parts = String::new();
-        while self.match_token(TokenType::Dot) {
-            parts.push('.');
-            if self.check(TokenType::Percent) || self.check(TokenType::Mod) {
-                parts.push('%');
-                self.skip();
-            }
-            parts.push_str(&self.stage_name_part()?);
-        }
-        Ok(parts)
-    }
-
-    /// Each `/segment` of a stage path.
-    fn stage_path_segments(&mut self) -> Result<String> {
-        let mut segments = String::new();
-        while self.match_token(TokenType::Slash) {
-            segments.push('/');
-            while (self.check(TokenType::Var)
-                || self.check_keyword()
-                || self.is_identifier_token()
-                || self.check(TokenType::Number)
-                || self.check(TokenType::Dash))
-                && !self.check_next(TokenType::Eq)
-            {
-                segments.push_str(&self.advance_text()?);
-            }
-        }
-        Ok(segments)
     }
 
     /// Parses Snowflake PUT file://path @stage [options].
@@ -1830,35 +1776,16 @@ impl Parser {
 
         let target = if self.match_token(TokenType::Parameter) {
             Expression::Placeholder(Placeholder { index: None })
-        } else if self.check(TokenType::String) || self.check(TokenType::DollarString) {
+        } else if self.check(TokenType::DollarString)
+            || self.check(TokenType::String) && !self.peek_text().starts_with('@')
+        {
             let tok = self.advance()?;
             Expression::Literal(Box::new(Literal::String(tok.text.to_string())))
         } else {
-            self.parse_stage_reference_as_string()?
+            self.parse_stage_location()?
         };
 
-        let mut params: Vec<CopyParameter> = Vec::new();
-        while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-            let is_param_name = self.check(TokenType::Var)
-                || self.check_keyword()
-                || self.check(TokenType::Overwrite);
-            if is_param_name {
-                let name = self.advance_text()?;
-                let value = if self.match_token(TokenType::Eq) {
-                    Some(self.parse_primary()?)
-                } else {
-                    None
-                };
-                params.push(CopyParameter {
-                    name,
-                    value,
-                    values: Vec::new(),
-                    eq: true,
-                });
-            } else {
-                break;
-            }
-        }
+        let params = self.parse_stage_command_params()?;
 
         Ok(Expression::Put(Box::new(PutStmt {
             source,

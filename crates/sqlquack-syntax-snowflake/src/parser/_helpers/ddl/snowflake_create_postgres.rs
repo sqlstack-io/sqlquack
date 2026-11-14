@@ -1,5 +1,6 @@
 //! Parser ddl: Snowflake CREATE POSTGRES INSTANCE, with its FORK source, time travel, properties and tags, checked against its grammar.
 
+use crate::parser::_helpers::ddl::snowflake_create_properties::with_written;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -39,10 +40,11 @@ impl Parser {
         }
         let mut properties: Vec<ObjectProperty> = Vec::new();
         while !self.is_statement_end_at(0) {
-            if self.check(TokenType::With) && self.check_next_identifier("TAG") {
+            let with = self.check(TokenType::With) && self.check_next_identifier("TAG");
+            if with {
                 self.skip();
             }
-            properties.extend(self.parse_create_property_item()?);
+            properties.extend(with_written(with, self.parse_create_property_item()?));
         }
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
             kind: "POSTGRES INSTANCE".to_owned(),
@@ -54,6 +56,7 @@ impl Parser {
             source: if fork { "FORK" } else { "" }.to_owned(),
             operands,
             properties,
+            ..Default::default()
         }))))
     }
 }
