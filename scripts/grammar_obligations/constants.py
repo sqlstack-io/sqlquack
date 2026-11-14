@@ -487,6 +487,14 @@ SETTLED_REJECT_ERRNOS: frozenset[str] = frozenset({"921"})
 
 SETTLED_NEVER_ACCEPT_ERRNO: str = "1003"
 
+NO_EFFECT_KEY: str = "no_effect"
+
+NO_EFFECT_PROBE_ROLE: str = "probe_role"
+
+PROBE_PARSED_PHASE: str = "semantic_error"
+
+PROBE_ANY_SETUP: str = "*"
+
 SETTLED_ACCEPT_STAGES: dict[str, str] = {
     "accepted": "",
     "semantic_error": "semantic",
