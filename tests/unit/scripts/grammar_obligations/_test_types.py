@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from scripts.grammar_obligations.types import Row
+
 
 @dataclass(frozen=True)
 class ShortenedTargetTestCase:
@@ -34,5 +36,13 @@ class DisprovedExpectationTestCase:
     sql: str
     settlement: str
     phase: str
+    expected_expect: str
+    expected_mark: str | None
+
+
+@dataclass(frozen=True)
+class ProbeSettlementTestCase:
+    description: str
+    receipts: tuple[Row, ...]
     expected_expect: str
     expected_mark: str | None
