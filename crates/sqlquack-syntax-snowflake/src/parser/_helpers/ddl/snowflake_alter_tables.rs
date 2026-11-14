@@ -195,11 +195,13 @@ impl Parser {
                 let mut properties: Vec<ObjectProperty> = Vec::new();
                 if self.match_identifier("MAX_SIZE") {
                     self.expect_token(TokenType::Eq)?;
-                    properties.push(property(
-                        "MAX_SIZE",
-                        None,
-                        Some(self.parse_number_operand()?),
-                    ));
+                    // Snowflake parses a string here and rejects it only semantically.
+                    let size = if self.check(TokenType::String) {
+                        self.parse_primary()?
+                    } else {
+                        self.parse_number_operand()?
+                    };
+                    properties.push(property("MAX_SIZE", None, Some(size)));
                 }
                 if self.match_token(TokenType::Where) {
                     properties.push(property("WHERE", None, Some(self.parse_expression()?)));

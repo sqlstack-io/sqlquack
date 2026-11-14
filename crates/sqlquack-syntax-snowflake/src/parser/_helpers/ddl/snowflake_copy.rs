@@ -330,7 +330,7 @@ impl Parser {
                 }
                 Some(TokenType::Dot)
                     if load
-                        && (next == Some(TokenType::From)
+                        && (matches!(next, Some(TokenType::From | TokenType::String))
                             || self.copy_type(index - 1) == Some(TokenType::String)
                             || self.copy_reserved(index - 1)) =>
                 {

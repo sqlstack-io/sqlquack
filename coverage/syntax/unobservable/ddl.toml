@@ -2856,18 +2856,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-openflow-runtime.o007"
-form = "sf.ddl.create-openflow-runtime"
-construct = "a valid operand: CREATE OPENFLOW RUNTIME IF NOT EXISTS v1 . v1 . v1 IN DEPLOYMENT v1 NODE_TYPE = SMALL NODE_TYPE_TIER = 'S1' MIN_NODES = 1 MAX_NODES = 1 EXECUTE_AS_ROLE = v1 EXTERNAL_ACCESS_INTEGRATIONS = ( v1 , v1 ) DISPLAY_NAME = 'm' COMMENT = 'm' ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (OPENFLOW RUNTIME IF)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-openflow-runtime.k902812cf55f6", sql_sha256 = "902812cf55f69c4d8f71102d21efa76ce8b3442b2350d86ba61b0550bb203627" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-openflow-runtime.o008"
 form = "sf.ddl.create-openflow-runtime"
 construct = "omit <schema>: CREATE OPENFLOW RUNTIME v1 . . v1 IN DEPLOYMENT v1 NODE_TYPE = SMALL MIN_NODES = 1 MAX_NODES = 1 EXECUTE_AS_ROLE = v1 ;"
@@ -2875,18 +2863,6 @@ reason = "not submitted: held by the capture guard in chunk ux-06: CREATE of an 
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-openflow-runtime.k3d6b59cf700c", sql_sha256 = "3d6b59cf700c3a36ac0f4a702ed035f95470aef6c38519af030dcc14fb395835" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-openflow-runtime.o009"
-form = "sf.ddl.create-openflow-runtime"
-construct = "a valid operand: CREATE OPENFLOW RUNTIME IF NOT EXISTS v1 . v1 . v1 IN DEPLOYMENT v1 NODE_TYPE = SMALL NODE_TYPE_TIER = 'S1' MIN_NODES = 1 MAX_NODES = 1 EXECUTE_AS_ROLE = v1 EXTERNAL_ACCESS_INTEGRATIONS = ( v1 , v1 ) DISPLAY_NAME = 'm' COMMENT = 'm' ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (OPENFLOW RUNTIME IF)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-openflow-runtime.k902812cf55f6", sql_sha256 = "902812cf55f69c4d8f71102d21efa76ce8b3442b2350d86ba61b0550bb203627" },
 ]
 runs = []
 probes = []
@@ -3156,18 +3132,6 @@ runs = []
 probes = []
 
 [[unobservable]]
-obligation = "sf.ddl.create-openflow-runtime.o032"
-form = "sf.ddl.create-openflow-runtime"
-construct = "a valid operand: CREATE OPENFLOW RUNTIME v1 IN DEPLOYMENT v1 NODE_TYPE = SMALL MIN_NODES = 1 MAX_NODES = 1 EXECUTE_AS_ROLE = v1 ;"
-reason = "not submitted: held by the capture guard in chunk ux-06: CREATE of an account-level or unvetted kind (OPENFLOW RUNTIME v1)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-openflow-runtime.k12803a83606a", sql_sha256 = "12803a83606a6ac49cd68bb169af6369dd66f264c3b85b92c49581d7cc46ee96" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
 obligation = "sf.ddl.create-openflow-runtime.o033"
 form = "sf.ddl.create-openflow-runtime"
 construct = "option_present: CREATE OPENFLOW RUNTIME IF NOT EXISTS v1 . v1 . v1 IN DEPLOYMENT v1 NODE_TYPE = SMALL NODE_TYPE_TIER = 'S1' MIN_NODES = 1 MAX_NODES = 1 EXECUTE_AS_ROLE = v1 EXTERNAL_ACCESS_INTEGRATIONS = ( v1 , v1 ) DISPLAY_NAME = 'm' COMMENT = 'm' ;"
@@ -3199,18 +3163,6 @@ reason = "not submitted: held by the capture guard in chunk ux-06: CREATE of an 
 cause = "not_submitted"
 cases = [
   { case_id = "sf.ddl.create-openflow-runtime.k7228cece2e9b", sql_sha256 = "7228cece2e9befc3688634e29028717850839c67db54883f76772009e932c8bb" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-openflow-runtime.o036"
-form = "sf.ddl.create-openflow-runtime"
-construct = "a valid operand: CREATE OPENFLOW RUNTIME IF NOT EXISTS v1 . v1 . v1 IN DEPLOYMENT v1 NODE_TYPE = SMALL NODE_TYPE_TIER = 'S1' MIN_NODES = 1 MAX_NODES = 1 EXECUTE_AS_ROLE = v1 EXTERNAL_ACCESS_INTEGRATIONS = ( v1 , v1 ) DISPLAY_NAME = 'm' COMMENT = 'm' ;"
-reason = "not submitted: held by the capture guard in chunk ux-07: CREATE of an account-level or unvetted kind (OPENFLOW RUNTIME IF)"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-openflow-runtime.k902812cf55f6", sql_sha256 = "902812cf55f69c4d8f71102d21efa76ce8b3442b2350d86ba61b0550bb203627" },
 ]
 runs = []
 probes = []
@@ -4566,18 +4518,6 @@ probes = []
 obligation = "sf.ddl.create-streamlit.define-streamlit.o054"
 form = "sf.ddl.create-streamlit.define-streamlit"
 construct = "a valid string_literal: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
-reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
-cause = "not_submitted"
-cases = [
-  { case_id = "sf.ddl.create-streamlit.define-streamlit.kd5fc596eaaca", sql_sha256 = "d5fc596eaaca94b885013dde68a1dc15ab1926e48a043a835741aa81caebc2e1" },
-]
-runs = []
-probes = []
-
-[[unobservable]]
-obligation = "sf.ddl.create-streamlit.define-streamlit.o057"
-form = "sf.ddl.create-streamlit.define-streamlit"
-construct = "a valid operand: DEFINE STREAMLIT d1.s1.v1 FROM 'asset://a1/' MAIN_FILE = 'm' QUERY_WAREHOUSE = v1 RUNTIME_NAME = 'm' COMPUTE_POOL = v1 COMMENT = 'm' TITLE = 'm' IMPORTS = ( 'm' , 'm' ) EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i1 ) SECRETS = ( 'm' = d1.s1.v1 , 'm' = d1.s1.v1 ) ;"
 reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-08.jsonl: billable or out-of-account: compute pool or service"
 cause = "not_submitted"
 cases = [

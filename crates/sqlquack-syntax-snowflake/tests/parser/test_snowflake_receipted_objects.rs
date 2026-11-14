@@ -73,6 +73,65 @@ fn given_a_snowflake_external_consumer_when_parsing_then_recorded_verdicts_hold(
 }
 
 #[test]
+fn given_typed_operands_when_parsing_then_recorded_verdicts_hold() {
+    let test_cases = [
+        SnowflakeVerdictTestCase {
+            description: "a RECLUSTER MAX_SIZE string is parsed (recorded semantic error)",
+            sql: "ALTER TABLE v1 RECLUSTER MAX_SIZE = 'x' ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "CREATE CODE BUNDLE FROM takes a string (recorded errno 1003)",
+            sql: "CREATE CODE BUNDLE v1 . v1 . v1 FROM m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "DEFINE CODE BUNDLE FROM takes a string (recorded errno 1003)",
+            sql: "DEFINE CODE BUNDLE v1 . v1 . v1 FROM m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "NOTEBOOK PROJECT FROM takes a string (recorded errno 1003)",
+            sql: "CREATE NOTEBOOK PROJECT v1 . v1 . v1 FROM m1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a COPY transform column takes no string after . (recorded errno 1003)",
+            sql: "COPY INTO v1 FROM ( SELECT $1 . 'v1' FROM @s1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ALTER RESOURCE MONITOR needs a number for a later percent (recorded errno 1003)",
+            sql: "ALTER RESOURCE MONITOR v1 TRIGGERS ON 80 PERCENT DO SUSPEND ON 'x' PERCENT DO SUSPEND ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "ALTER RESOURCE MONITOR needs a number for the percent (recorded errno 1003)",
+            sql: "ALTER RESOURCE MONITOR v1 TRIGGERS ON 'x' PERCENT DO SUSPEND ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "CREATE RESOURCE MONITOR needs a number for the percent (recorded errno 1003)",
+            sql: "CREATE RESOURCE MONITOR v1 WITH CREDIT_QUOTA = 1 TRIGGERS ON 'x' PERCENT DO SUSPEND ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "CREATE RESOURCE MONITOR needs a number for a later percent (recorded errno 1003)",
+            sql: "CREATE RESOURCE MONITOR v1 WITH CREDIT_QUOTA = 1 TRIGGERS ON 80 PERCENT DO SUSPEND ON 'x' PERCENT DO SUSPEND ;",
+            expected_kind: None,
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            snowflake_kind(test_case.sql),
+            test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_a_snowflake_external_consumer_when_parsing_then_the_tree_keeps_its_kind() {
     let test_cases = [
         StatementTestCase {
