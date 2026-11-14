@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.14.0](https://github.com/sqlstack-io/sqlquack/compare/v0.13.0...v0.14.0) (2026-11-14)
+
+
+### Features
+
+* **syntax-coverage:** give each repeated Snowflake list item its own missing, class and wrong-kind obligations ([c1bc963](https://github.com/sqlstack-io/sqlquack/commit/c1bc9637a4e3ea28e88b0390105d57c34b81be90))
+
+
+### Bug Fixes
+
+* **snowflake:** accept an extra semicolon after a block member ([6ab4b43](https://github.com/sqlstack-io/sqlquack/commit/6ab4b439fae9ad7b752482169e3f4b5ea4f5126c))
+* **snowflake:** read a DEFINE TABLE reference without FOREIGN KEY ([4716d40](https://github.com/sqlstack-io/sqlquack/commit/4716d4079db4b7e1388abc643e44f9f48dae66bb))
+* **snowflake:** refuse a COPY query column that starts with a dot ([019bcb7](https://github.com/sqlstack-io/sqlquack/commit/019bcb7896787c6030f0883edfee22aad8735a3b))
+* **snowflake:** refuse a string after a comma in a group's name list ([de82372](https://github.com/sqlstack-io/sqlquack/commit/de823729a0eb6dcdb7580094628864402297d17a))
+* **snowflake:** refuse a trailing comma in lists Snowflake rejects ([29076cb](https://github.com/sqlstack-io/sqlquack/commit/29076cb73186d3f32a229167c83e5f09b6787041))
+* **snowflake:** refuse DEFAULT on an untyped column ([58306ca](https://github.com/sqlstack-io/sqlquack/commit/58306cac42788f426d47c2143d71cb8d74308884))
+* **snowflake:** report ALTER WAREHOUSE parse errors instead of raw text ([1f5a47d](https://github.com/sqlstack-io/sqlquack/commit/1f5a47d15d75a85d7a243349b54ea729f3a00d7f))
+* **snowflake:** require a string key after a comma in header and secret maps ([b51361d](https://github.com/sqlstack-io/sqlquack/commit/b51361d495baec78b9bbdd6a4182fe076d4e7da3))
+* **statements:** keep the empty part when keying a call that leaves out its schema ([9688f25](https://github.com/sqlstack-io/sqlquack/commit/9688f2589baee26277aff4aac095d37411e5963f))
+* **syntax-coverage:** fill the second list item after an optional first item, and drop the parenthesis of an elided group ([76df2b1](https://github.com/sqlstack-io/sqlquack/commit/76df2b1d4a72453319f58454b7769d6233db8af7))
+* **syntax-coverage:** keep a documented Snowflake refusal when a positive renders the same SQL ([d839796](https://github.com/sqlstack-io/sqlquack/commit/d83979689f92a765b5db073d4d9c31938868d0c3))
+* **syntax-snowflake:** parse a call that leaves out its schema as a qualified call ([478d767](https://github.com/sqlstack-io/sqlquack/commit/478d767fba452605295fe85ac09f4e0eab487b7e))
+* **syntax-snowflake:** represent the part a..b leaves out as null with a flag on its owner ([9801e12](https://github.com/sqlstack-io/sqlquack/commit/9801e127e6c41f85a70cf39002c146261eb03d1f))
+
 ## [0.13.0](https://github.com/sqlstack-io/sqlquack/compare/v0.12.1...v0.13.0) (2026-11-14)
 
 

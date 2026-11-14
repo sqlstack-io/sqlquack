@@ -50,6 +50,7 @@ def write_run(
     raw_hash: str | None = None,
     start: dict[str, object] | None = None,
     audit_events: int = 3,
+    before_complete: list[Row] | None = None,
 ) -> Path:
     """One run under `root`/runs bound to a packet under `root`/inputs; scripting by default."""
     inputs: Path = root / "inputs"
@@ -70,8 +71,9 @@ def write_run(
             **(start or {}),
         },
         {"event": "recording_session", "identity_checked": True, "session_id": "S1"},
+        *(before_complete or []),
         {"event": "complete", "raw_sha256": raw_hash or sha(raw)},
-    ][:audit_events]
+    ][: audit_events + len(before_complete or [])]
     (run / "audit.jsonl").write_text("".join(json.dumps(e) + "\n" for e in events))
     return run
 

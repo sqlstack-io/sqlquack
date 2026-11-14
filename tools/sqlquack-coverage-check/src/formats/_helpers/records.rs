@@ -501,16 +501,15 @@ fn inner_position(text: &str) -> Option<(u32, u32)> {
     }
 }
 
-/// The rules of a `dcm_definition_file` receipt, and that no other receipt carries its fields.
-/// A no-effect receipt ran with no setup and records a refusal after parsing; anything else is not one.
+/// A no-effect receipt ran with no setup and records a refusal after parsing or a syntax error.
 fn no_effect_problems(receipt: &Receipt) -> Vec<String> {
     let id: &str = &receipt.case_id;
     match receipt.no_effect {
         None => Vec::new(),
         Some(NoEffect::ProbeRole) => [
             (
-                receipt.phase != Phase::SemanticError,
-                "is not a refusal after parsing",
+                !receipt.shows_parse_without_privileges(),
+                "is neither a refusal after parsing nor a syntax error",
             ),
             (receipt.setup_sha256 != setup_sha256(&[]), "names a setup"),
             (receipt.capture_method.is_engine(), "is an engine capture"),
@@ -522,6 +521,7 @@ fn no_effect_problems(receipt: &Receipt) -> Vec<String> {
     }
 }
 
+/// The rules of a `dcm_definition_file` receipt, and that no other receipt carries its fields.
 fn dcm_problems(receipt: &Receipt) -> Vec<String> {
     let id: &str = &receipt.case_id;
     let inner: [bool; 4] = [
