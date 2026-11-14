@@ -17,6 +17,7 @@ use crate::parse::constants::{
 fn dropped(kind: &str, name: TableRef, if_exists: bool) -> Expression {
     Expression::DropObject(Box::new(DropObject {
         concurrently: false,
+        properties: Vec::new(),
         objects: Vec::new(),
         kind: kind.to_owned(),
         name,
@@ -161,6 +162,7 @@ impl Parser<'_> {
         }
         Ok(Expression::DropObject(Box::new(DropObject {
             concurrently: false,
+            properties: Vec::new(),
             objects: Vec::new(),
             kind: kind.to_owned(),
             name,

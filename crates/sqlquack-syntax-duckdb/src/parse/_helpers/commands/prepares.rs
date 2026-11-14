@@ -90,6 +90,7 @@ impl Parser<'_> {
             force: false,
             objects: Vec::new(),
             concurrently: false,
+            properties: Vec::new(),
         })))
     }
 

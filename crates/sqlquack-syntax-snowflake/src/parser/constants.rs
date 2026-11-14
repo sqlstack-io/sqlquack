@@ -661,6 +661,7 @@ pub(crate) const SNOWFLAKE_OPAQUE_UNNAMED_KIND: &[&str] = &["WAREHOUSE"];
 
 /// Snowflake DROP object kinds, each listed before any kind it prefixes.
 pub(crate) const SNOWFLAKE_DROP_KINDS: &[&[&str]] = &[
+    &["ACCOUNT"],
     &["AGENT"],
     &["AGGREGATION", "POLICY"],
     &["ALERT"],
@@ -702,6 +703,7 @@ pub(crate) const SNOWFLAKE_DROP_KINDS: &[&[&str]] = &[
     &["JOIN", "POLICY"],
     &["LISTING"],
     &["MAINTENANCE", "POLICY"],
+    &["MANAGED", "ACCOUNT"],
     &["MASKING", "POLICY"],
     &["MCP", "SERVER"],
     &["MODEL", "MONITOR"],
