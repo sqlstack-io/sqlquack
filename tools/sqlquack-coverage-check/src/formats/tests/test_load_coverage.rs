@@ -1024,6 +1024,28 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "receipt query.select-17: DCM fields on a capture other than",
         },
         FormatFaultTestCase {
+            description: "a receipt run without privileges that Snowflake accepted",
+            mutate: |root| {
+                let probe = receipt_line().replace(
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"accepted\",\"no_effect\":\"probe_role\"",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{probe}\n"))
+            },
+            expected_problem: "a receipt run without privileges is not a refusal after parsing",
+        },
+        FormatFaultTestCase {
+            description: "a receipt run without privileges that names a setup",
+            mutate: |root| {
+                let probe = receipt_line().replace(
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"semantic_error\",\"no_effect\":\"probe_role\"",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{probe}\n"))
+            },
+            expected_problem: "a receipt run without privileges names a setup",
+        },
+        FormatFaultTestCase {
             description: "an obligation id declared twice",
             mutate: |root| replace(root, "obligations/query.toml", "o002", "o001"),
             expected_problem: "sf.query.select.o001: declared twice",

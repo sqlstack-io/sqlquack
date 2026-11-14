@@ -379,6 +379,9 @@ pub struct Receipt {
     /// A measure other than syntax the receipt was recorded for; never syntax evidence.
     #[serde(default)]
     pub measure: Option<String>,
+    /// How the statement was kept from having any effect, when it ran without the setup its case names.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub no_effect: Option<NoEffect>,
     /// The warehouse's whole error message.
     #[serde(default)]
     pub message: Option<String>,
@@ -414,6 +417,14 @@ impl Receipt {
         self.format == RECEIPT_FORMAT_ENGINE
             || (self.format == RECEIPT_FORMAT_PUBLIC && self.capture_method.is_engine())
     }
+}
+
+/// How a receipt's statement was kept from having any effect.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum NoEffect {
+    /// Run with no setup by a role holding no privilege, so Snowflake refused it after parsing it.
+    ProbeRole,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
