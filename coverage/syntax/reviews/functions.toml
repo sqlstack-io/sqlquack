@@ -6249,3 +6249,194 @@ note = "Re-read for the changed trees only under review brief version 1: a call 
 "sf.functions.translate-snowflake-cortex" = "9936c44d70e6c771bfd1940c473269faad3ce16fbb29e02ca8ca3d4222013aaf"
 "sf.functions.try-complete-snowflake-cortex" = "a27d4aea1298659634cc635b590a44ef36e01c77cf6f67d1b0af1ac29367d138"
 "sf.functions.update-auto-enablement-status" = "259cf80282b77b26d169ced1940ea94a2232256743582b24f8d96f3fd13eb2cf"
+
+[[review]]
+id = "functions-030"
+family = "functions"
+parser_tree = "b551498b20e3796b7fe0fb4f0ef6a2a438a354eb"
+reviewed_utc = "2026-11-14T22:30:27Z"
+verdict = "approved"
+forms = [
+  "sf.functions.accumulate",
+  "sf.functions.ai-function-evaluation.create-experiment-type-from",
+  "sf.functions.ai-function-optimization.create-experiment-type-from",
+  "sf.functions.approx-count-distinct.approx-count-distinct",
+  "sf.functions.approx-count-distinct.approx-count-distinct-over",
+  "sf.functions.approx-count-distinct.approx-count-distinct-over.syntax",
+  "sf.functions.approximate-jaccard-index.approximate-jaccard-index",
+  "sf.functions.approximate-similarity.approximate-similarity",
+  "sf.functions.array-construct",
+  "sf.functions.array-construct-compact",
+  "sf.functions.array-construct-structured",
+  "sf.functions.cast.cast-as",
+  "sf.functions.complete-task-graphs",
+  "sf.functions.count.count",
+  "sf.functions.current-task-graphs",
+  "sf.functions.extract.extract-from",
+  "sf.functions.finetune-snowflake-cortex",
+  "sf.functions.functions-window-syntax",
+  "sf.functions.get-path.colon.syntax",
+  "sf.functions.hash",
+  "sf.functions.hash-agg.hash-agg",
+  "sf.functions.hash-agg.hash-agg-over.syntax",
+  "sf.functions.hll.hll",
+  "sf.functions.ilike-any",
+  "sf.functions.ilike.ilike",
+  "sf.functions.ilike.ilike.syntax",
+  "sf.functions.infer-schema",
+  "sf.functions.like-all",
+  "sf.functions.like-any",
+  "sf.functions.like.like",
+  "sf.functions.like.like.syntax",
+  "sf.functions.minhash.minhash",
+  "sf.functions.minhash.minhash-expr-over",
+  "sf.functions.object-construct",
+  "sf.functions.object-construct-keep-null",
+  "sf.functions.object-construct-keep-null-structured",
+  "sf.functions.search",
+  "sf.functions.search-ip",
+  "sf.functions.spcs-cancel-job",
+  "sf.functions.spcs-wait-for",
+  "sf.functions.sys-context",
+  "sf.functions.sys-context-snowflake-application",
+  "sf.functions.sys-context-snowflake-organization",
+  "sf.functions.sys-context-snowflake-organization-sharing",
+  "sf.functions.sys-context-snowflake-session",
+  "sf.functions.system-disable-preview-access",
+  "sf.functions.system-enable-preview-access",
+  "sf.functions.system-enforce-privatelink-access-only",
+  "sf.functions.system-explain-plan-json",
+  "sf.functions.system-migrate-saml-idp-registration",
+  "sf.functions.system-opt-out-malicious-ip-protection-by-category",
+  "sf.functions.system-send-email",
+  "sf.functions.system-send-snowflake-notification",
+  "sf.functions.system-set-return-value",
+  "sf.functions.system-wait-for-services",
+  "sf.functions.system-wait-for-stable-openflow-connectors",
+  "sf.functions.system-wait-for-stable-openflow-runtimes",
+  "sf.functions.task-history",
+  "sf.functions.to-query",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at e45d798d0; every scored case agrees with its Snowflake receipt. Bound to the fingerprints after the receipt import that followed the reading; the cases' SQL and parse trees are unchanged, only receipts, settled expectations and stages were added."
+
+[review.fingerprints]
+"sf.functions.accumulate" = "81b41fa89b7f1689df2d1522a12f60ed278a130f18ac5577f7dd30bf3a4fad69"
+"sf.functions.ai-function-evaluation.create-experiment-type-from" = "32d454da871dc733da9fd924eb4a2f7089bb692f3745c7c66df53819a9da2a8e"
+"sf.functions.ai-function-optimization.create-experiment-type-from" = "d758da482a1e5117bef89152bf16a17e42444789b12db55782a9681706eda5a5"
+"sf.functions.approx-count-distinct.approx-count-distinct" = "64c3937d9f0eb3f0594242ed2e7b0c000d5cec600fb422ceaa86359a6da427c9"
+"sf.functions.approx-count-distinct.approx-count-distinct-over" = "dd080c26d18bbcf9a79cf61d6e225af0cf049ffc3b9a1e819cb58be41901e392"
+"sf.functions.approx-count-distinct.approx-count-distinct-over.syntax" = "015d0a35cd61b60ea3b1a6f28c19008552c17d0fea750a6a5691f947aa48cad5"
+"sf.functions.approximate-jaccard-index.approximate-jaccard-index" = "6033faeecec839c7c818cb5b57b44901a8f923630c82f2c295d3301c5444d631"
+"sf.functions.approximate-similarity.approximate-similarity" = "fcf3a9bb1404d0ba90899509c8e1b221738cf22a4a6e39bc27a3970fe028f59f"
+"sf.functions.array-construct" = "f184d421432784800a41c7ea6a0527a3d4d6b0f79c881161d456b21cacc66df8"
+"sf.functions.array-construct-compact" = "2ae4c65a6f50d63a28573226ab9e546247242a22507e6c348996177001bc5579"
+"sf.functions.array-construct-structured" = "193ae43965419e2fbec112fc5dbd7a5a9c0bd8c83fa312e0ab5c96340b36f717"
+"sf.functions.cast.cast-as" = "037c010ce8793e5e26dcb223cad3d552f8d64fdb39c32892e8fc74a05680e1e1"
+"sf.functions.complete-task-graphs" = "cfb910de5d5c137453de1eaaaf9dae6c35a10ed692a4379e477825d4cb1b51a7"
+"sf.functions.count.count" = "5df5ff777a2c15838f1a82e2097d48c02ce96c11df6545324a8e4a88abaf0fb5"
+"sf.functions.current-task-graphs" = "4b017bcf22e9416c2a317158be55b951e9ed49e1e0fa307d2f2331758e47f523"
+"sf.functions.extract.extract-from" = "27c1425354bb568ea3a403b82425141c6a72511ff6995e3208a374b0c8f5148f"
+"sf.functions.finetune-snowflake-cortex" = "2c6079e0d08857fa49e613ac280c756e41a6da42a56c05a39d90005ad50c3ce5"
+"sf.functions.functions-window-syntax" = "9181dd0f9f26728c2e5e905013481f0a751ae89e69132fd487f818a46277a4df"
+"sf.functions.get-path.colon.syntax" = "ee644ff04c7165d77dbf9abb8fa509c68f42e8559f7fa6db2baf04a283031b49"
+"sf.functions.hash" = "c59b72baf29972f5acbaf55da134aae5c162eb667c1534f825c8f0bc72f1da4b"
+"sf.functions.hash-agg.hash-agg" = "4732b1005fb225b2449a3b8e4204bef896a14c2fba0962a83cdfb2519520bba0"
+"sf.functions.hash-agg.hash-agg-over.syntax" = "21103500dec6df420060864dc8128d7ca964bbbbce702f204934eb3b17328180"
+"sf.functions.hll.hll" = "665341a5749f77187ee4b1cde819f93434fc312f9da527f78a1c53818f3459b3"
+"sf.functions.ilike-any" = "3a44195ae6a55531216bcf7d2ceb36d03c125261cddad24a1e4298d98e984b5d"
+"sf.functions.ilike.ilike" = "24acf3e48c2512a013a2050ffb29cb31ddd402acd7cd243255339aecf2e46161"
+"sf.functions.ilike.ilike.syntax" = "209cd927a0c535234bf994c0d1eabdd14cc4f5c7f65d1407b75cfa14ba791dbb"
+"sf.functions.infer-schema" = "8527e2e24255a84c9e3dfeb78c93852f18d7e7fd28c5fd91af71d6baf1bebf77"
+"sf.functions.like-all" = "3499552e9b5790b0947c27f62355793a9d2df0836428c910ccb964118f2d3de5"
+"sf.functions.like-any" = "c73a2ab9d55bf8e668998a5652abd92216d88918ca8883b3db3a90615e06cff4"
+"sf.functions.like.like" = "2fc936ccfe49b4c0bafb63170d4b9bf70d2f87a25a2e5eabffca4cbb6ee5d4bc"
+"sf.functions.like.like.syntax" = "b8253d85f0b0dd4a26f2bfa40717978885d1327fe09e10f1ddaee175ecc9cf99"
+"sf.functions.minhash.minhash" = "d7163f1fdddfef2991f32b9d7fa3612a8b552998c5cd7dd4ec26129211a03089"
+"sf.functions.minhash.minhash-expr-over" = "54e8d4128df1efe06a478612ebe02121a56e3bdc5b2cd5db121133b43b6c5481"
+"sf.functions.object-construct" = "50c8f45beebe427ce5da7adc117d3c4d211f92ffe33297e76f22f6102efac253"
+"sf.functions.object-construct-keep-null" = "f2544fb953456e79676ff76684a40ac87d6d01d67b0f48a2d47545360172f182"
+"sf.functions.object-construct-keep-null-structured" = "5f9bd3e63080694de934eef4be30bda121b181a13df4045c1c5a19d66f57f6e1"
+"sf.functions.search" = "8d39bf5a2a6871c5b08ef1c0fb021cf3df0f2a6b1f314b77fa4d4dd19d1a4ae4"
+"sf.functions.search-ip" = "dd772d0b38706399c205c1d157c2d2cca7c109ee0b33be48a2e7e20de494cbe1"
+"sf.functions.spcs-cancel-job" = "f58cce8985fd382ff4f2640e01d05650d9c32610deaabcaa21109df73b3af3f2"
+"sf.functions.spcs-wait-for" = "25293aa60a36f76461753675e69191da0a3318e72eb47da1aa33eda32d671487"
+"sf.functions.sys-context" = "e938b6aa0da36206c39da8d6e70e5055a2d1d2ab262e4358c87a5315df405bcd"
+"sf.functions.sys-context-snowflake-application" = "9a6db0e9e72563a6b89dd82ecfb2f58a47aaa0167aecfa48d41ad2f6e8b1d1ca"
+"sf.functions.sys-context-snowflake-organization" = "fc217b2cb760e99cbbdb0bf4f3502348b22e2e37e95973cb12983ede0a130089"
+"sf.functions.sys-context-snowflake-organization-sharing" = "6c2527d19aea90b61893f752b6a18cf5c0a8785bfdb0d734f49c2dbfe2545c8a"
+"sf.functions.sys-context-snowflake-session" = "2d252183945d197284ee595572dac3e3a66ad2794a36c439b6920d8ef648cf50"
+"sf.functions.system-disable-preview-access" = "ea8f49d24c5b214089603c891e2d53b995009de17755b8bd311e9730803e57ae"
+"sf.functions.system-enable-preview-access" = "1fd06e6f1ebade070b89fbaf3885bcc6ae2baea112373d728c30b1425952a70e"
+"sf.functions.system-enforce-privatelink-access-only" = "f1e8a34dd024a071af18ac58387223b2e2dcc0893cfd6921b659552bee152eb7"
+"sf.functions.system-explain-plan-json" = "67a107adbcf028e6e2a8781b7ce46202fa96253747f30ea004729ce813f5d411"
+"sf.functions.system-migrate-saml-idp-registration" = "37b7cce5746755155f8ea9985f6f075e74f7ee0dc2b66f5b02070a2d3b0a9b5e"
+"sf.functions.system-opt-out-malicious-ip-protection-by-category" = "4008bbf733a501adc001a8323f29bd9190023a73b5308f483e44576f07f86ea7"
+"sf.functions.system-send-email" = "45d3a15835aa76d0a0e16bd49fc8f93b3398316040b43cde239764eef01c65a2"
+"sf.functions.system-send-snowflake-notification" = "26564529c7ada5cef05936712ca78db5024b371e3fded796a1ecf1f57ed450e5"
+"sf.functions.system-set-return-value" = "2341c61a24380d581cffb0d61b6acf76f13738c0ad4c4993ab5667103451b425"
+"sf.functions.system-wait-for-services" = "34c1883c060d70b20384c7a069839f4f12aa8885df1634940d64149280ec0d6d"
+"sf.functions.system-wait-for-stable-openflow-connectors" = "11bd4416cf00b35aec1bf7ba3f76d746b683f9f77cb81f42ab7a9cffaae0407a"
+"sf.functions.system-wait-for-stable-openflow-runtimes" = "60c46e8cb12ac432bc092ee27bdf54ff9021888fa19c4c588003ce661959d0b1"
+"sf.functions.task-history" = "0b669ad9952467cf5f2fe82aa8e5cf258ae6e8f1b3f1bc280d38e9984c528627"
+"sf.functions.to-query" = "89d3af29200ba836f4934337eafbef1630a7abdb3104c930e0ac3b3c54c4bbd0"
+
+[review.definitions]
+"sf.functions.accumulate" = "4ca1439efdd23bf3d5914501e063d9c4711a09aba367458e8e5974b47bfaf74c"
+"sf.functions.ai-function-evaluation.create-experiment-type-from" = "023c355f9f9754aafde7393db7a1250e27c6a1eb4e2cefd99fb8892aeaa674d1"
+"sf.functions.ai-function-optimization.create-experiment-type-from" = "110e8576a99dd89034c52d2064f6e2ae90173b2da7757c6b89c94d57b6ab947a"
+"sf.functions.approx-count-distinct.approx-count-distinct" = "d5cde7a54f56eec0f99c49af13dd0cfa1c4419c671d11f894de5c8f7397f9333"
+"sf.functions.approx-count-distinct.approx-count-distinct-over" = "40e0b9833490d38299116fd57817c7e70935005610c55bb14e8c3aac54edd8ee"
+"sf.functions.approx-count-distinct.approx-count-distinct-over.syntax" = "3be2e95ad519ff2b9588b2619ffa0ab7eea53d7821b2bc8c7e66a1b9640687c1"
+"sf.functions.approximate-jaccard-index.approximate-jaccard-index" = "52959eb6f5385df9384d54bbaac3849a66282a7f6116b3f0232055b2673e5628"
+"sf.functions.approximate-similarity.approximate-similarity" = "5687d13b9851e2173ec817c065dc7717c8f64aa2024c854a127ba2931f42d477"
+"sf.functions.array-construct" = "d96841838d59b2cd28ccf057497724314566cd3274f7c8ff699e3fce9f2e039f"
+"sf.functions.array-construct-compact" = "2bb6a0540044774230f8d4a5166b0fd66725143a44a157c028cbc89c2b2ec66c"
+"sf.functions.array-construct-structured" = "ee742b21ca7f51106705395b797c4d3d1bf613452e5170c1c670fb751d955e08"
+"sf.functions.cast.cast-as" = "49f109189fd1e5270cd2181c6650a58ba1cd8aad51ca8d61c9732cfb2ec29f52"
+"sf.functions.complete-task-graphs" = "4317b4a441bda39ac20ab015d6d57f513aaa984823b911d3e5d46848b8c0b94d"
+"sf.functions.count.count" = "47229d200f408ff4050f44c3bb7f6358f6c6e78aa17d878575844d9297f6dff6"
+"sf.functions.current-task-graphs" = "eb4eb39ce037b2d56b30e797f02a839bf2bc827c1ad40521cccb297bc83b5d91"
+"sf.functions.extract.extract-from" = "f251caee7b0494781525f6fbe1f98aaae895f92f752918bab47db966e4c8a28b"
+"sf.functions.finetune-snowflake-cortex" = "4f79522cc8a3a1aaf66b1adc0d91a9bf0d154559eb8ff1b4c5dccdbb0dee7965"
+"sf.functions.functions-window-syntax" = "6b37f0d8c4d1277d19372847ec16d31df3162fcba54e29474216d1d4e3f7a2bf"
+"sf.functions.get-path.colon.syntax" = "b8fb86d916962f447053fbc7484fbbcd8d13d45148081d1c535c3dc7b32c7cf0"
+"sf.functions.hash" = "cca591d3c65b8d627013764a6b989d858300d5540a7290b96d4af962b6430761"
+"sf.functions.hash-agg.hash-agg" = "a06581262139d530c66c2bf117ad05e81335c2b7723b33d0e1fbbc959f207a83"
+"sf.functions.hash-agg.hash-agg-over.syntax" = "93b16f06195c492280bc1afcac04401dc9a4b77dcbd34bc6899ae302c79acec7"
+"sf.functions.hll.hll" = "8df0cf3d1b4b22ad27c883b328ef4d46c0d3d4461d3cd257951f239d7e3155c4"
+"sf.functions.ilike-any" = "fd4f2d7bbeb71628597797db104ccd138f46a5794bb97188ba5ebc75de233b24"
+"sf.functions.ilike.ilike" = "598332a3288c07556a54883b8cdcc3fc4c6e29f9645ed1930e18202cfaeacd9a"
+"sf.functions.ilike.ilike.syntax" = "fcfc4ba1a3acfc87bbd1b358c8c73990a051a6de19e78341ef191029c9d63602"
+"sf.functions.infer-schema" = "46db623387896ec8415d1adb2fea043af3a2112e04d95119448d46ad317fc5f6"
+"sf.functions.like-all" = "51a3785b0e2987621645cf6495bc4b00235af333dcd1e872e4d7e0be8759278c"
+"sf.functions.like-any" = "deaef706a10beab33dd4326704dbc2bf56f1fc3ba92a6ba821fc33227217b73f"
+"sf.functions.like.like" = "672d1e578427076241805f1c26451170d32915bda145fba21d9a0e3c3335452c"
+"sf.functions.like.like.syntax" = "2ae2de64796db58f49c7d43c9902115c8415586ad4064399eb018de8f8b41a72"
+"sf.functions.minhash.minhash" = "b81b60e3d2eb6900109ee1818a9451f04c7543d9c43d462235c2e2c65829faf2"
+"sf.functions.minhash.minhash-expr-over" = "e11c38bbe457965bd06107ab3017be4fc08451f6161c80e580dbe687c2d73352"
+"sf.functions.object-construct" = "e29fa2e34bc0d63eb35f67aed19f10a8d10c7174c66c46c9a870ee91e4e596b8"
+"sf.functions.object-construct-keep-null" = "a6fe2c34eca1b0b047e2688be4a9f360d535994aa737dddd2167e1bdf034ee14"
+"sf.functions.object-construct-keep-null-structured" = "b1258344b951800ddcb3cd4cf220cb25b411f6c605811eca315183e13e1cfd0c"
+"sf.functions.search" = "35faeefa3491d732f46f7a3ace42a1d80061cfaeed67d9c7c84d5e25b562514d"
+"sf.functions.search-ip" = "e169b02fc64d7ccb67ec1b8c12278d8347fb122a49d2bd6a1fd437da98242381"
+"sf.functions.spcs-cancel-job" = "c20c16111e0a7d547ad606979258727672c51634cffb590b96e4227047c04940"
+"sf.functions.spcs-wait-for" = "d0552d2f2b485ca0008b770efe6ee76cc170589a62ca62562f5e583d02fb8590"
+"sf.functions.sys-context" = "61f79523f7575c3225e0dcfd372904c16baad69743aeff28962b333defd1e8f0"
+"sf.functions.sys-context-snowflake-application" = "d423102cbf0ef15c85667ae644278e5d90f5eae224837e2adabb0cdce1c927d3"
+"sf.functions.sys-context-snowflake-organization" = "05e9187f0107fa58e5b11d179d3fdfebecd7d111d5f728f5b3c3878879985964"
+"sf.functions.sys-context-snowflake-organization-sharing" = "ff7b1d1320195e3b694c4b30f71d6cab44b0728cdc3f3811337bc5ee9efeb077"
+"sf.functions.sys-context-snowflake-session" = "f5416612e4e3cb488d579362373b079c85ade14dd3e286983f25e47ef59b7244"
+"sf.functions.system-disable-preview-access" = "1f14eb67ca6458b87dd1e77f346c95560daec197316484c8d6c7cc5b73757ed4"
+"sf.functions.system-enable-preview-access" = "7f39ef54e24b724af5925f494e40e3da6607524a5e1ac05ec48f1fdfa088772d"
+"sf.functions.system-enforce-privatelink-access-only" = "803904f860269ac732f3cc05c80e980a4e5e4542e2534dcace2f16afb7ac94d8"
+"sf.functions.system-explain-plan-json" = "02d4a83358d1af1db76e8b4f818aa8943d9cea78f167acc68ce91256b9a41ca9"
+"sf.functions.system-migrate-saml-idp-registration" = "bf88655ec8fc141f965c308c977d7499be5e97272dabdde0fb4b0ce0ab389616"
+"sf.functions.system-opt-out-malicious-ip-protection-by-category" = "688b6d6269eeccc8cbf21bfc198612bf0501565110e14e8212ff35e2af13e53a"
+"sf.functions.system-send-email" = "7b254c5875819539a90ca3846197717e9efbea657aa28bc0099aa4a8da97b9f6"
+"sf.functions.system-send-snowflake-notification" = "ebe4140ba524ad577559c93003b7e003f7508cd25d685717b12cff4f143c4321"
+"sf.functions.system-set-return-value" = "c6809f8bdd5dfee4c460c50567d88e335c7054acdfd59b3cd9e7a34392b3f108"
+"sf.functions.system-wait-for-services" = "6e12fb13ed624a5879031a3d7c5fd060a29dcb670e9da503afb923e712a68207"
+"sf.functions.system-wait-for-stable-openflow-connectors" = "eae17d90f6b534c926f87eff14af5946bbdf824c637db5d82e22fd029816a17e"
+"sf.functions.system-wait-for-stable-openflow-runtimes" = "6fdbfa9364146c7acc636dce1a25fe54fee24253caf5a4f4a5db8f7e86149538"
+"sf.functions.task-history" = "2fa2b1d0bde13cd0b42bbd7d1e4959774fec1f235c0103ff828c0151faf49e71"
+"sf.functions.to-query" = "e7d2497e3c734d3374e32eab605d71cd9d6f28383eb6b97959fa7cd7d9336322"

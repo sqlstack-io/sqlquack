@@ -255,3 +255,23 @@ note = "Read in full under review brief version 1 against the documentation page
 
 [review.definitions]
 "sf.transaction_session.set.set.syntax" = "7cfce3b705fa4858f82d79458c56e307449d65ceeb9ee200bf6b83158086ecd6"
+
+[[review]]
+id = "transaction-session-014"
+family = "transaction_session"
+parser_tree = "b551498b20e3796b7fe0fb4f0ef6a2a438a354eb"
+reviewed_utc = "2026-11-14T22:30:27Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.set.set",
+  "sf.transaction_session.use-secondary-roles",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at e45d798d0; every scored case agrees with its Snowflake receipt. Bound to the fingerprints after the receipt import that followed the reading; the cases' SQL and parse trees are unchanged, only receipts, settled expectations and stages were added."
+
+[review.fingerprints]
+"sf.transaction_session.set.set" = "119d8cad4491a5554f60358d16bfea771c1a6623e708dce504dc1374d9ed87b9"
+"sf.transaction_session.use-secondary-roles" = "bef43f091a5d53ea40359348633bcf5d6690b2b235f573caceb5962b1282e4bd"
+
+[review.definitions]
+"sf.transaction_session.set.set" = "a0d71b06dae5a41249517ec51ed85e2f64d6a9e9daa5553e0fea3b1ae13d2726"
+"sf.transaction_session.use-secondary-roles" = "3f667c86a6a1185d4b38794a73bcb2a34bb21804f31a7459e234098325c80bde"
