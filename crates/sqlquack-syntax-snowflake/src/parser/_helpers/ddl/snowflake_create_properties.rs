@@ -174,6 +174,9 @@ impl Parser {
         {
             return Ok(Some(instance));
         }
+        if let Some(openflow) = self.parse_snowflake_create_openflow(or_replace, or_alter)? {
+            return Ok(Some(openflow));
+        }
         Ok(None)
     }
 
