@@ -2942,3 +2942,137 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.ddl.create-schema.create-schema-clone" = "16adf1d67744b9e459aa912dcc0e1075c8af22484d288a479e5cf09eff3ea6c6"
 "sf.ddl.create-stage.create-stage-clone" = "8aa1077215a55826d2c7082c691217c6710f490d223a103b0288b53ceb9e271d"
 "sf.ddl.create-stream.create-stream-clone" = "768d718b4a3719339fdf48970d89ff5c4ea9ce087140c37947b6e1a3152717ab"
+
+[[review]]
+id = "ddl-036"
+family = "ddl"
+parser_tree = "b6e7a15669d5f96e3151cd7bebf44cec1347f4b2"
+reviewed_utc = "2026-11-14T00:43:39Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-application-service.set",
+  "sf.ddl.alter-application-set-configuration-value",
+  "sf.ddl.alter-application.set-feature-policy",
+  "sf.ddl.alter-application.set-maintenance-policy",
+  "sf.ddl.alter-backup-set.apply-backup-policy",
+  "sf.ddl.alter-cortex-search.unset",
+  "sf.ddl.alter-database-catalog-linked.set",
+  "sf.ddl.alter-database.set",
+  "sf.ddl.alter-database.set-feature-policy",
+  "sf.ddl.alter-dcm-project.set",
+  "sf.ddl.alter-iceberg-table.searchoptimizationaction",
+  "sf.ddl.alter-materialized-view.set-data-metric-schedule",
+  "sf.ddl.alter-notebook.set",
+  "sf.ddl.alter-openflow-connector.terminate",
+  "sf.ddl.alter-openflow-runtime.restart",
+  "sf.ddl.alter-openflow-runtime.resume",
+  "sf.ddl.alter-openflow-runtime.set",
+  "sf.ddl.alter-openflow-runtime.terminate",
+  "sf.ddl.alter-openflow-runtime.upgrade",
+  "sf.ddl.alter-pipe.unset-comment",
+  "sf.ddl.alter-snapshot-set.apply-snapshot-policy",
+  "sf.ddl.alter-stage.set",
+  "sf.ddl.alter-streamlit.set",
+  "sf.ddl.alter-table-event-table.set",
+  "sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking",
+  "sf.ddl.alter-table.set",
+  "sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking",
+  "sf.ddl.alter-tag.set-data-movement-policy",
+  "sf.ddl.alter-tag.set-masking-policy",
+  "sf.ddl.alter-task-graph.set-contact",
+  "sf.ddl.alter-task-graph.unset-contact",
+  "sf.ddl.alter-warehouse.unset",
+  "sf.ddl.create-alert.create-alert-from-template",
+  "sf.ddl.create-function.create-function-returns-language",
+  "sf.ddl.create-iceberg-table-aws-glue",
+  "sf.ddl.create-iceberg-table.table-base-location",
+  "sf.ddl.create-iceberg-table.table-catalog-table-name",
+  "sf.ddl.create-iceberg-table.table-metadata-file-path",
+  "sf.ddl.create-table.create-table-as",
+  "sf.ddl.create-table.create-table-from-archive",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 1c9043701; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-application-service.set" = "c66fe950916d9773d383fc6f4f2da695057decbe4cd1d5f6febfca4e1aa822c2"
+"sf.ddl.alter-application-set-configuration-value" = "2f40ebe73c03018d6fdef31f4cdc0c85d3ee24e985da2b2bfac2ffa04aa654f5"
+"sf.ddl.alter-application.set-feature-policy" = "21df083a75ecd71d79931a7bd9691992a019aeee2e9e3979def62696774b2db9"
+"sf.ddl.alter-application.set-maintenance-policy" = "7041f963392493212f185093444c0b14dc4cac6e0e29a8e7d480c517d5cf7f56"
+"sf.ddl.alter-backup-set.apply-backup-policy" = "94e0e8e6497e8d30dd917cfabeeee43ff5c4684293aaed7010cc4a1ce25b8d9a"
+"sf.ddl.alter-cortex-search.unset" = "435bfcd68e4a46dcf05e0acb86a5a933c8bf01ea1fd3766ac16654d20f69e7ef"
+"sf.ddl.alter-database-catalog-linked.set" = "1eba719f8624c4467c228b3c61e726b2cc1ae228cbec3e95c3d672c4a7d3d615"
+"sf.ddl.alter-database.set" = "ed5b73c0315422fe7493ff59399c127cf71b3bc353b892ea839c3d0b463c6bce"
+"sf.ddl.alter-database.set-feature-policy" = "259e089e1d1b29114351d517f432d1d261459e6603572d31c09ca7327ac79f4e"
+"sf.ddl.alter-dcm-project.set" = "314a2e1826ba9de21267a550e60d8ed7244b18fd118e807869f1a2a339005ce9"
+"sf.ddl.alter-iceberg-table.searchoptimizationaction" = "4cbffbef19af03c47fb871703861f9bab2f7edda965d3f50aadfa6404d82e30b"
+"sf.ddl.alter-materialized-view.set-data-metric-schedule" = "b303ad448748e5b2d3140b3f0b01c95bf9de93431fd24cac54eb04e028da4003"
+"sf.ddl.alter-notebook.set" = "aeed337887fbb54c4c5afa8447f94532fb44ed44c17d43ee61ecbfcde71b55f7"
+"sf.ddl.alter-openflow-connector.terminate" = "a3ab671ec11db7069e9a738df51c40568553f25c22549cccfb335ff13d9406f0"
+"sf.ddl.alter-openflow-runtime.restart" = "ddb1add12632a2e54c69bd5f808aee0453ee3b3905b7e3f614e9df3870da0180"
+"sf.ddl.alter-openflow-runtime.resume" = "6a83c803f537720c8c76a1076e9346ad2b5054ceedeeac9a2969ad67df7aa34b"
+"sf.ddl.alter-openflow-runtime.set" = "1a49d2b4529f1a26b68665e0b11e2666a04723202715b71e6d5d76da91a3457f"
+"sf.ddl.alter-openflow-runtime.terminate" = "3f7ad3ab9e22a389480cb8ee7039de02db44618c312b924f38f67bf9407f5f88"
+"sf.ddl.alter-openflow-runtime.upgrade" = "2f2fd1b5eb1a51773a82760fa39ae94f888d787e31e23298257f90201977fda0"
+"sf.ddl.alter-pipe.unset-comment" = "f1b19e57474feeb258881d576c74cb39699e35751a1bd9d98c5f9fcdcea473d0"
+"sf.ddl.alter-snapshot-set.apply-snapshot-policy" = "cd7003e6344c9896e8cff9b01f9da8a30ad80aabaf05339be02459bc65c6d7bc"
+"sf.ddl.alter-stage.set" = "b841bc1979ee79e82fe0fe42baeabdbf38f44652f5b7fc2cede6fe936b910a03"
+"sf.ddl.alter-streamlit.set" = "8c6d3508346153720809375532e64b0cc85b805d0a001d147d0ecf42f275bf6e"
+"sf.ddl.alter-table-event-table.set" = "6c7061687de20569b90545b934f517e07eaa9e55a5b8cc8efcb3bd478f166292"
+"sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking" = "0ccc94c92494f08870627685224a3c786e91d78fc2f66fed30acd6ca5f6eae8d"
+"sf.ddl.alter-table.set" = "91c8ad6b4307fda7955042adb878c5663ed1176b3a2a820e2e2819e33ece2209"
+"sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking" = "e8b019d4c5e1dd583248754a5ff3bcb31a8ae45260863e98bee29827db4d3caa"
+"sf.ddl.alter-tag.set-data-movement-policy" = "1938998b5bb19a822a1a684a7b3bb2d9e2ae7207113a3f46ecaf13b5127198ae"
+"sf.ddl.alter-tag.set-masking-policy" = "de5c087f6760849a6e98533832e74844471c278342cf35851846bcf50535092e"
+"sf.ddl.alter-task-graph.set-contact" = "98e4b6f365d32f54d8a6f1cfc34231b5777605223ebb6d1c774cc3b5e8268c2a"
+"sf.ddl.alter-task-graph.unset-contact" = "c5261e36dd977261287e4937c168766951b7494c455a06b768a729524369237c"
+"sf.ddl.alter-warehouse.unset" = "d3b47070f556a56b7af1245a205ef4e382d1ec68fc534b72c1cd18b9af004238"
+"sf.ddl.create-alert.create-alert-from-template" = "1bc87a1412e2aea084c5fe13b032573218c7cc388a81a0052ac8a6c7c88ce57b"
+"sf.ddl.create-function.create-function-returns-language" = "75f2b2fa5240a287c28bf71fc390bd3f703f2272047eb6ef3d3513baba3b3add"
+"sf.ddl.create-iceberg-table-aws-glue" = "4d536a519ca8a19b8fd408da6eaec888b0ff97e05aaf1453beb534a419c22464"
+"sf.ddl.create-iceberg-table.table-base-location" = "c3f076ed71122d932e6838412dc5b90665e6fb82762d11c798f3a63befe2ec21"
+"sf.ddl.create-iceberg-table.table-catalog-table-name" = "bb54ccdc02dd48966f066d8e1f0a5b9aadaedd43101c63c4446e749309bcbc50"
+"sf.ddl.create-iceberg-table.table-metadata-file-path" = "1c8aad6fecb74ff66067510d137862fce6648822923d3db39f730697e217223b"
+"sf.ddl.create-table.create-table-as" = "114589fad060b3b5c33e10846f6499ceddb3fe65052090fc5e83fb9f8962958d"
+"sf.ddl.create-table.create-table-from-archive" = "e067b697deef00d902f7d7f322e82a350d2fdd49fdb118290415ec6e205321f2"
+
+[review.definitions]
+"sf.ddl.alter-application-service.set" = "05479c205ae4b2a918e42338a8d1bc2854f8f04953cfd8276bd86d558f32c165"
+"sf.ddl.alter-application-set-configuration-value" = "8b3b143086ccbd33b60309fed99f5b38720de0efa6b088ced3252932635c0b24"
+"sf.ddl.alter-application.set-feature-policy" = "b9bfc1c902320b79a1e72dd190adb701b0e38a4aac787d6b1be7700603489faa"
+"sf.ddl.alter-application.set-maintenance-policy" = "d0e7eebd5f5b395ee4296f1ffe97539685acc13d80997ceaf6f5bc7bc4861b05"
+"sf.ddl.alter-backup-set.apply-backup-policy" = "edf922404a58171be93d3d7146b756e0af8745b514b5d41e526454fbd34b0eb0"
+"sf.ddl.alter-cortex-search.unset" = "056af9497c8b9cc4982159afe0aa46c6272ea20e08c03c8a5dd89c0e41eafaa7"
+"sf.ddl.alter-database-catalog-linked.set" = "5ec0e54baf89a01b873edc7ddb8659b6d4f5035b51fc2871b106a5f121589af4"
+"sf.ddl.alter-database.set" = "3164f9a4ee10f18d71b9501df7d48d95183a1bc28dacce8613cd7a97c0d67811"
+"sf.ddl.alter-database.set-feature-policy" = "39ea0617a233ebe72e6a70745a73fedf91ede38c4124a9ebc78da78f2ef11221"
+"sf.ddl.alter-dcm-project.set" = "97fe5eda2b9e7948d120aaf8b1bd31ab708ee31f393ffc73836036ae5ab9c0e6"
+"sf.ddl.alter-iceberg-table.searchoptimizationaction" = "5941cffb28da68c89507616737daf619a875fe4cc9832d20e9978fc32644099f"
+"sf.ddl.alter-materialized-view.set-data-metric-schedule" = "25fa3ca30f1df37561e0607529ad3e2df8461f793c025fb5f891de1148f69058"
+"sf.ddl.alter-notebook.set" = "9082cbbbedb57a0dae5c2cc25a8790eb5025b948d65df996d5038d505e4479c4"
+"sf.ddl.alter-openflow-connector.terminate" = "0fe0c13e846c592fc950acd35cdafc50080202742a223c6b7ef89fe73ee54f9f"
+"sf.ddl.alter-openflow-runtime.restart" = "c10574a25ec57218adefd328da35744fe7fe1c73fd109a55736f698a1dfe7188"
+"sf.ddl.alter-openflow-runtime.resume" = "cffa95fda164677c29158376b0170ebb6fddf0a3cc5f03dbf11d37a2559f33fc"
+"sf.ddl.alter-openflow-runtime.set" = "d4065328a9856e6ae4d2c199c658a658ef1727b9de3f7fe4dd12db09e23548f7"
+"sf.ddl.alter-openflow-runtime.terminate" = "51adf4d74a8bccb8ac93263578f129f8834bb89cf84bfebcd6b90d7522c2e9a0"
+"sf.ddl.alter-openflow-runtime.upgrade" = "de3cdc898d6bf9645c4af6e07e170378307e818990f763965deda7a8205b8d95"
+"sf.ddl.alter-pipe.unset-comment" = "6e3fe802ce652c851d3ff0b21dafad68380d04c30008b15a38c19692a9c59984"
+"sf.ddl.alter-snapshot-set.apply-snapshot-policy" = "53c85dd3b0c500487a0acea22534fe6eef3939a99c4d050f59a27c9a1fba10ce"
+"sf.ddl.alter-stage.set" = "f0df3bbd46104e073db99d788bf7c272ad76af509ebc2779069eaba15a77a0e6"
+"sf.ddl.alter-streamlit.set" = "b5b388c95350e61a5bfceb8fc0db11f9ab9165e8944054a7203ef3a86fa971ce"
+"sf.ddl.alter-table-event-table.set" = "124925fa57c45c7da1664c683690dea7b12f4e5490adfd1268daece36029396c"
+"sf.ddl.alter-table-event-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking" = "655ce04cdfbd01d4b4eb40939b6030b39ae52c50bb44ad7f69f638d57613b79c"
+"sf.ddl.alter-table.set" = "34bfdc6aef122264525c753dafed639d56ff6b43477971243b5924d7e28824b3"
+"sf.ddl.alter-table.unset-data-retention-time-in-days-max-data-extension-time-in-days-change-tracking" = "3564974dcd315ff67949f9bfe20a562f0ae50a75dd33395a195f98ae6e6959a8"
+"sf.ddl.alter-tag.set-data-movement-policy" = "a7744f81f096c35a3637c3da8c6c031f0e01fa0e33bff2111c64529ab9656d98"
+"sf.ddl.alter-tag.set-masking-policy" = "c19e4f3ae4d53bff3480eeaabb84ffc6537331c970db4826287059e8e81aa851"
+"sf.ddl.alter-task-graph.set-contact" = "089d085098d84d6f2d607cee0cff40aaffe0ff7ee38d399f6da1cf467c095297"
+"sf.ddl.alter-task-graph.unset-contact" = "013b2075b43860d76c26b5b5eece74f1e70fa474dc9de0c34ea7d234c67d6386"
+"sf.ddl.alter-warehouse.unset" = "097372fc436239e2624156ffbb1466e991a0efbb39e9f1e17de71375209cf346"
+"sf.ddl.create-alert.create-alert-from-template" = "60abdf78c08151430b6e70c77474ac171ad958ff327bec7e25af7d71cb7215b3"
+"sf.ddl.create-function.create-function-returns-language" = "6e7880e7712574ca94e6ec059b13c594c4128e69739e5b0489ea821ec210f0a9"
+"sf.ddl.create-iceberg-table-aws-glue" = "19bbaa3566bc96c1002367417fd0ba2c79d79026710c8bb6371e5a193e65139c"
+"sf.ddl.create-iceberg-table.table-base-location" = "319baebd6346aaf21edee7e677135987d5f683f03f158395cbc24f773740084f"
+"sf.ddl.create-iceberg-table.table-catalog-table-name" = "9faf734968d15ea3339a98046d2887ef89077a8d9ddb992e120d04a0fe3fb7b2"
+"sf.ddl.create-iceberg-table.table-metadata-file-path" = "b26ab6eb84d28888c6d09f5d11500b2565111b77e7b058296c7b862b392599c3"
+"sf.ddl.create-table.create-table-as" = "8b4c7a7bf4efcedf8e8b769a6224c7c35f479b8bb4ec43d4c40ed208337fd7f4"
+"sf.ddl.create-table.create-table-from-archive" = "36c1632809a3986937cbca164a88a91fd287e8069c0b95420769570c00d3ee2e"

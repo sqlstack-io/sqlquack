@@ -1870,3 +1870,98 @@ note = "Read in full against the documentation page, the obligations, the cases 
 "sf.security_admin.alter-user-modify-key-pair.unset" = "5e35e3b633c8c8b5538dc429ef466a35f8bc0087d4051b68d4978d3d2a337c0a"
 "sf.security_admin.create-secret.create-or-alter-secret" = "3cb3e70220b2a9696f1596209c505d28c2d13eed7d948ee40f8bc02187c8d03c"
 "sf.security_admin.create-security-integration-oauth-snowflake.custom-oauth-client-type-oauth-redirect-uri" = "ae2ab2b5030b4036831b439ef8eee71d7d0a42b793c8f434096e811a06a65919"
+
+[[review]]
+id = "security-admin-022"
+family = "security_admin"
+parser_tree = "b6e7a15669d5f96e3151cd7bebf44cec1347f4b2"
+reviewed_utc = "2026-11-14T00:43:39Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-account.set-contact",
+  "sf.security_admin.alter-account.set-data-movement-policy",
+  "sf.security_admin.alter-account.unset",
+  "sf.security_admin.alter-account.unset-contact",
+  "sf.security_admin.alter-organization-account.unset",
+  "sf.security_admin.alter-user-modify-workload-identity.set",
+  "sf.security_admin.alter-user-set-ingress-policy.set-ingress-policy",
+  "sf.security_admin.alter-user.unset",
+  "sf.security_admin.create-security-integration-api-auth.false",
+  "sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri",
+  "sf.security_admin.grant-caller.all-caller-privileges-on",
+  "sf.security_admin.grant-caller.all-inherited-caller-privileges",
+  "sf.security_admin.grant-caller.caller-on-to-role",
+  "sf.security_admin.grant-caller.inherited-caller-on-all",
+  "sf.security_admin.grant-ownership.all-in-database-schema",
+  "sf.security_admin.grant-privilege-application",
+  "sf.security_admin.grant-privilege-application-role",
+  "sf.security_admin.grant-privilege-share",
+  "sf.security_admin.grant-privilege-user",
+  "sf.security_admin.grant-privilege.create-schema-modify-monitor",
+  "sf.security_admin.revoke-caller.all-caller-privileges-on",
+  "sf.security_admin.revoke-caller.all-inherited-caller-privileges",
+  "sf.security_admin.revoke-caller.caller-on-from-role",
+  "sf.security_admin.revoke-privilege-application",
+  "sf.security_admin.revoke-privilege-application-role",
+  "sf.security_admin.revoke-privilege-share",
+  "sf.security_admin.revoke-privilege-user",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 1c9043701; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-account.set-contact" = "aadea8bec8b7f7d45e6b4069a70ff1a7ea98ecf11e3ff5e109968b133ba2d9a7"
+"sf.security_admin.alter-account.set-data-movement-policy" = "d6a19e7acf2083aea4c12b858bc72a3e5dba94e13c9aa9ca097f79739b0ec4eb"
+"sf.security_admin.alter-account.unset" = "51a4f9ee8c6f5c8e7203fe77ad96994a79cd6564a4168f1623a5e78bc4222c2e"
+"sf.security_admin.alter-account.unset-contact" = "0a1bc58bcb852266c372be7cc156e40585b13b7ff31dc3388d8ff55bcf4cc204"
+"sf.security_admin.alter-organization-account.unset" = "ebbef183998acfdfab74857765ddf67caad81aa1ed5efb8543726197e5e338a3"
+"sf.security_admin.alter-user-modify-workload-identity.set" = "528c0c7b63b5068e088e8828c2d33b5db342b912fcd4c8568c5cf1d33f6693ec"
+"sf.security_admin.alter-user-set-ingress-policy.set-ingress-policy" = "d1f9f21687d307e7c8a4f3a57d9905f643a4f747223afbbc17d4b45af62d5872"
+"sf.security_admin.alter-user.unset" = "8b0e96b031163b7bbf77c646e6507b7f1e2dc8372e467b9b9b0257b8f585105f"
+"sf.security_admin.create-security-integration-api-auth.false" = "178577e4bf2360ca87b7f517573c0491b4dc4b6919c197e92f428b670c67ecef"
+"sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri" = "94a212645ef58b9198e90d9fcc7ff7e8a1f47e60e3e4284a052d88a179c783b0"
+"sf.security_admin.grant-caller.all-caller-privileges-on" = "285219684197340e3115d74433b55e60daf3111a526756ff2ca8039bd0b5f49f"
+"sf.security_admin.grant-caller.all-inherited-caller-privileges" = "674ed0891cf65ee1a5fbeebd37d761ad42afd07d8ef6fc46b0da427e0e061dc3"
+"sf.security_admin.grant-caller.caller-on-to-role" = "f1df53e4cac4e5c52de1f6c27d2b7e0653e6bd0aa1f156c1c77d7a59772d659a"
+"sf.security_admin.grant-caller.inherited-caller-on-all" = "8994b0cc2b52aee2bd62243b65daa1e49d759a553d0bd1616e0332a002ee6f0b"
+"sf.security_admin.grant-ownership.all-in-database-schema" = "e937317532d94e05f3b017c70e81c86d835d8c3320b0003b482acb1d39c8f1f9"
+"sf.security_admin.grant-privilege-application" = "be86faacb5ede280b91fed3720f7c5bc7e21af71e7409898760fce62d60d2989"
+"sf.security_admin.grant-privilege-application-role" = "b8757fdb62db38eeb398cc750519b6fd223d53d9e8b52b33dea65d7bee71509d"
+"sf.security_admin.grant-privilege-share" = "9341f5b6f4f647fd57c63e075b33fc91951cb9beca3e1a9d2ce5deb836706171"
+"sf.security_admin.grant-privilege-user" = "c34867271e3eb0464edc57a22fb340b870a5384c356baffc315f39fac1731e8d"
+"sf.security_admin.grant-privilege.create-schema-modify-monitor" = "01bf65c8494df91c301057a801895e1983e700b1df451e62e739ebc0e6ae6aa5"
+"sf.security_admin.revoke-caller.all-caller-privileges-on" = "2fbf0374232aab70173a32d939ee1d4b28a20288a2d2107c0293526ccafdb493"
+"sf.security_admin.revoke-caller.all-inherited-caller-privileges" = "ee8d419bc586f36416585efd4949d1c02cb3554652fba34d797ac1cdde8ee55c"
+"sf.security_admin.revoke-caller.caller-on-from-role" = "c5d9a335e454e5a4653367c6452132a4cebe3198b22a39365ada4517999ee0b8"
+"sf.security_admin.revoke-privilege-application" = "0e08788cf1004a4084e13aa5340f378e173a26d8722833b42c7534483f15f393"
+"sf.security_admin.revoke-privilege-application-role" = "2feb5695409e4d84f8afe38cda66ae97587484db71fa71ad19dfbb5cee340c57"
+"sf.security_admin.revoke-privilege-share" = "c96898d3d2545d9b801ec7721ad86d89c830e7fffc7a018112f54abc0b3bd274"
+"sf.security_admin.revoke-privilege-user" = "58eececd6d97c007eeabd3446a1baa4ad548dc8746dea7d5acd90499d53d30d7"
+
+[review.definitions]
+"sf.security_admin.alter-account.set-contact" = "4030abc9ac8722c855b95a9f0d8f042ff51b6687920d55f2de9a66aac70167f0"
+"sf.security_admin.alter-account.set-data-movement-policy" = "6cceb827bc5dffabd09bb57b398e33410d66497a1a741d21864a5edef333bf36"
+"sf.security_admin.alter-account.unset" = "2220bf504ac98778ebb1699e5e0f5df1fe1c7e7114bf96d84b6630d0eb4f2976"
+"sf.security_admin.alter-account.unset-contact" = "d4adc9c9b2c5693ac9c819d7f52931f5b0a54d71288b5ca8bb53738af7a7ef11"
+"sf.security_admin.alter-organization-account.unset" = "a88384eec8d168c7e53c23d4d6d8aea1e06d82e190a9107a6ca0683f998f8eb4"
+"sf.security_admin.alter-user-modify-workload-identity.set" = "4186f0016558a1d1c128984f8878e69d42927269f28200f1448f8688605608f1"
+"sf.security_admin.alter-user-set-ingress-policy.set-ingress-policy" = "cf4f78492210b6916befad5c95c80c0983edd50fcc0d831fecce1971140a6d12"
+"sf.security_admin.alter-user.unset" = "03f1076d9f5b5a75292a8d80e4aebe5466f29e5955d0e669966aabd9501ae280"
+"sf.security_admin.create-security-integration-api-auth.false" = "1e2935bafea7ab606c86d716fd213d284cad389524bfdf3a49247eb98e9ab4b9"
+"sf.security_admin.create-security-integration-oauth-snowflake.oauth-redirect-uri" = "dde35be95e55b62c84f6d0641bbc4f1ed6007d4ae2c5bee977057ddcaccc7c59"
+"sf.security_admin.grant-caller.all-caller-privileges-on" = "48e6b79f13d14da83965bd5c8d96556d55c155fdd1890512f65cb8b982bb400f"
+"sf.security_admin.grant-caller.all-inherited-caller-privileges" = "d2d8064e3f96ef3c525e48027a7de14101e89cfd215d48bcffb5f653a9a81caa"
+"sf.security_admin.grant-caller.caller-on-to-role" = "317fbddbdde7edafdf6c75f5ce7019e26121bbe32e3805fcb0b582eae6b9ae21"
+"sf.security_admin.grant-caller.inherited-caller-on-all" = "1993923ca7d7876bcd458f3231865e74bea10460863d30c31275c3879ea0ada1"
+"sf.security_admin.grant-ownership.all-in-database-schema" = "194b82f612b19c1177d4c0f8ab9c9022374a6000575c232e5ea44682a7b8d75e"
+"sf.security_admin.grant-privilege-application" = "2887d566e835fa66d267b6de0001352dac2861528be863a42a4d7d067ba61d37"
+"sf.security_admin.grant-privilege-application-role" = "b6144911ab122c000020dc57cd88f3d2d1f72dd002683da2f7b9002f4466aafc"
+"sf.security_admin.grant-privilege-share" = "3e8371cd1d8e81e3d53a2c9cf5b976590604b40c0353f841fc15beb20a1b5504"
+"sf.security_admin.grant-privilege-user" = "69ba36d76ed1434ea2713723cfc2cf53075db867fb135c8bb920b84a9f48a410"
+"sf.security_admin.grant-privilege.create-schema-modify-monitor" = "6f83c4e0fee4b1e070ad7fa8afec97762f1d3265a23340ecb33df4f2ac6c4627"
+"sf.security_admin.revoke-caller.all-caller-privileges-on" = "41ac46ca67086e1ff5ec9fb370651dbd7c0aa2cb3819b7e0ff3914923ad4a0e2"
+"sf.security_admin.revoke-caller.all-inherited-caller-privileges" = "43db744f6d7e320ade3330e89ec36cd1f4cf50d1e731e0465ebf4cf4c746ff89"
+"sf.security_admin.revoke-caller.caller-on-from-role" = "af296b666bad782be918c2d9f38989d638b2c22ea4d09f1c54a13ca191c37be5"
+"sf.security_admin.revoke-privilege-application" = "00c2415a28ce6f8788229988ed37ed2a6faf612e75aecb1aef46a479ce5cae56"
+"sf.security_admin.revoke-privilege-application-role" = "8f5af4876de6f0882686fff9c3b69b23d575e74c380fb424017d9171e79ca161"
+"sf.security_admin.revoke-privilege-share" = "d216af4549ff7aa715f5f34ba26fe31109b877d531fef478495b636a63253877"
+"sf.security_admin.revoke-privilege-user" = "c7c87b79bd1291e0c86e65a01199414cc0e2ef8e378612d319902679d8261d44"
