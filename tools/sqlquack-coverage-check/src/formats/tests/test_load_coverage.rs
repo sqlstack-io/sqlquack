@@ -1032,7 +1032,62 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 );
                 write(root, "receipts/dcm.jsonl", &format!("{probe}\n"))
             },
-            expected_problem: "a receipt run without privileges is not a refusal after parsing",
+            expected_problem: "a receipt run without privileges is neither a refusal after parsing nor a syntax error",
+        },
+        FormatFaultTestCase {
+            description: "a receipt run without privileges that records an unsupported feature",
+            mutate: |root| {
+                let probe = receipt_line().replace("\"errno\":null,", "").replace(
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"unsupported_feature\",\"errno\":2,\"no_effect\":\"probe_role\"",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{probe}\n"))
+            },
+            expected_problem: "a receipt run without privileges is neither a refusal after parsing nor a syntax error",
+        },
+        FormatFaultTestCase {
+            description: "a receipt run without privileges that records a runtime error",
+            mutate: |root| {
+                let probe = receipt_line().replace("\"errno\":null,", "").replace(
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"runtime_error\",\"errno\":100038,\"no_effect\":\"probe_role\"",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{probe}\n"))
+            },
+            expected_problem: "a receipt run without privileges is neither a refusal after parsing nor a syntax error",
+        },
+        FormatFaultTestCase {
+            description: "a receipt run without privileges that records a parser syntax error other than Snowflake's syntax-error class",
+            mutate: |root| {
+                let probe = receipt_line().replace("\"errno\":null,", "").replace(
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"syntax_error\",\"errno\":1002,\"no_effect\":\"probe_role\"",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{probe}\n"))
+            },
+            expected_problem: "a receipt run without privileges is neither a refusal after parsing nor a syntax error",
+        },
+        FormatFaultTestCase {
+            description: "a receipt run without privileges that records a parse error other than Snowflake's syntax-error class",
+            mutate: |root| {
+                let probe = receipt_line().replace("\"errno\":null,", "").replace(
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"syntax_error\",\"errno\":921,\"no_effect\":\"probe_role\"",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{probe}\n"))
+            },
+            expected_problem: "a receipt run without privileges is neither a refusal after parsing nor a syntax error",
+        },
+        FormatFaultTestCase {
+            description: "a receipt run without privileges that records a syntax error with no errno",
+            mutate: |root| {
+                let probe = receipt_line().replace("\"errno\":null,", "").replace(
+                    "\"phase\":\"accepted\"",
+                    "\"phase\":\"syntax_error\",\"errno\":null,\"no_effect\":\"probe_role\"",
+                );
+                write(root, "receipts/dcm.jsonl", &format!("{probe}\n"))
+            },
+            expected_problem: "a receipt run without privileges is neither a refusal after parsing nor a syntax error",
         },
         FormatFaultTestCase {
             description: "a receipt run without privileges that names a setup",

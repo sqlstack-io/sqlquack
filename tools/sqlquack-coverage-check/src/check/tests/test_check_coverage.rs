@@ -228,6 +228,22 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             expected_problem: None,
         },
         CheckTestCase {
+            description: "a receipt run without privileges or setup binds its case with Snowflake's syntax error",
+            mutate: |root| {
+                let probe: String = with_fields(
+                    &receipt_line(&select_17(), "syntax_error"),
+                    serde_json::json!({"setup_sha256": sha256("[]"), "no_effect": "probe_role", "errno": 1003}),
+                );
+                append_receipt(root, &probe);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::AmbiguousReceipts),
+            expected_problem: None,
+        },
+        CheckTestCase {
             description: "an inadmissible receipt of another phase does not make it ambiguous",
             mutate: |root| {
                 let stale: String = receipt_line(&select_17(), "syntax_error")
