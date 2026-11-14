@@ -4,7 +4,9 @@ use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::named_property;
 use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_alter::property_kind;
 use crate::parser::constants::SNOWFLAKE_GROUP_NAME_PROPERTIES;
+use crate::parser::constants::SNOWFLAKE_STRING_KEY_MAP_PROPERTIES;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::TableRef;
@@ -418,6 +420,9 @@ impl Parser {
         loop {
             let name = self.parse_simple_name()?;
             self.expect_token(TokenType::Eq)?;
+            if SNOWFLAKE_STRING_KEY_MAP_PROPERTIES.contains(&property_kind(&name).as_str()) {
+                self.check_snowflake_string_keys()?;
+            }
             let value = self.parse_integration_value()?;
             properties.push(parameter_property(&name, Some(value)));
             if self.is_at_end() || self.check(TokenType::Semicolon) {
