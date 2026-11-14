@@ -4651,3 +4651,157 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.functions.system-wait-for-openflow-deployment-status" = "23809be3ad925b74e81bfe00e6f4e175f4b3fc1cf487a8d7be62693f5f2549c0"
 "sf.functions.system-wait-for-openflow-runtime-status" = "4477f319341f534c05e4aa0a12aa7c53a00e13cb2ead2967bddaacd1db053c14"
 "sf.functions.system-wait-for-stable-openflow-deployments" = "764c1be57007046dc1111f7e28c5bbf376d9ea7deb3482bba72edc87d99e989d"
+
+[[review]]
+id = "functions-026"
+family = "functions"
+parser_tree = "34d4cc4a0ba49debfa4d3a4ed5e548b3f3c201dd"
+reviewed_utc = "2026-11-14T06:36:28Z"
+verdict = "approved"
+forms = [
+  "sf.functions.ai-filter",
+  "sf.functions.arrays-zip",
+  "sf.functions.concat-ws",
+  "sf.functions.concat.concat",
+  "sf.functions.concat.concat-subscript-dot",
+  "sf.functions.count.count",
+  "sf.functions.count.count-over",
+  "sf.functions.format-string-template",
+  "sf.functions.greatest",
+  "sf.functions.greatest-ignore-nulls",
+  "sf.functions.grouping",
+  "sf.functions.grouping-id",
+  "sf.functions.hash",
+  "sf.functions.hash-agg.hash-agg",
+  "sf.functions.hash-agg.hash-agg-over",
+  "sf.functions.hash-agg.hash-agg-over.syntax",
+  "sf.functions.in.in",
+  "sf.functions.is-role-activated",
+  "sf.functions.least",
+  "sf.functions.least-ignore-nulls",
+  "sf.functions.map-construct",
+  "sf.functions.map-delete",
+  "sf.functions.map-pick",
+  "sf.functions.object-delete",
+  "sf.functions.object-pick",
+  "sf.functions.prompt",
+  "sf.functions.row-number",
+  "sf.functions.sys-context-snowflake-current",
+  "sf.functions.system-block-internal-stages-public-access-with-exception",
+  "sf.functions.system-block-snowflake-managed-storage-volume-public-access-with-exception",
+  "sf.functions.system-reference",
+  "sf.functions.system-wait-for-openflow-connector-status",
+  "sf.functions.system-wait-for-openflow-deployment-status",
+  "sf.functions.system-wait-for-openflow-runtime-status",
+  "sf.functions.system-wait-for-stable-openflow-deployments",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 0938da6ac, whose trees for these forms the later parser fixes leave unchanged; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.ai-filter" = "e9aefe97a560f6119938ab0651330f3b96561896368c35b014545a7db0f26c43"
+"sf.functions.arrays-zip" = "234cbe9700b486284eefe11f7234d978df7496df00f8fbb0b477330eab49e2cd"
+"sf.functions.concat-ws" = "8dee1def3683bbeba314f3afe052514a28ef475885bbe3864fad9fb17b2a46d1"
+"sf.functions.concat.concat" = "676180d3a52bfa373c40c714accb8f7a4237b54f65456856e83fdc7fab28123e"
+"sf.functions.concat.concat-subscript-dot" = "219015686b1ac8d3f7b738670a5306c04b78739ca1b5d1061489ebb0e0af0f84"
+"sf.functions.count.count" = "f8d7b1a9a7238080443daa20dc1d9fdc84f286d54ad39b22e69e34d616900c2e"
+"sf.functions.count.count-over" = "3d6a54611b172656a313f38dc45cf0d3d6f6907b6f05b2cbff240df87cd5368b"
+"sf.functions.format-string-template" = "342a6bc34c778b6f65a3ed6820062baf67b2d1c84ef74fc9e9879a014a286b47"
+"sf.functions.greatest" = "25e971ef8dfe40e1fcbc03dbe3a281e2512fdebfb3b544221db7c73657fdf89d"
+"sf.functions.greatest-ignore-nulls" = "f4942510353ae278a28145feaffab166c8bb0dbacec8fe0729dca05d515e412f"
+"sf.functions.grouping" = "7bb141788ee90bc0793a7694f07dd754c628575e9bfda56d232815f75d1bf381"
+"sf.functions.grouping-id" = "3a9afc9f60be955e62496ee42c7ea0cce7241c9f980051e18fd3ff9c9b677376"
+"sf.functions.hash" = "376286bf8ef91a019c5e5ae32d486f4b78092c89aa60827501bddeeb71d8612a"
+"sf.functions.hash-agg.hash-agg" = "f41c7333d0387477d343f7e240896aafac085099a0ad09e20b64a279f4c564a9"
+"sf.functions.hash-agg.hash-agg-over" = "17115d58f36e05b0436484e54e25cd93c49f4adbbb30c0f6030f69a683090698"
+"sf.functions.hash-agg.hash-agg-over.syntax" = "244e482696fcdb2453ea02768231e3ef8bb833ade3b8087e22a694e5e2345487"
+"sf.functions.in.in" = "f2b8cc3bedc90cb4ec2fb46ef343635ddbb069058fc099a277049dd5f4cac677"
+"sf.functions.is-role-activated" = "cd0cddd4b36c28517b277034c6734be158fca63b08dd2fe5068465d9d7d5f2de"
+"sf.functions.least" = "d73bf958deedef4ebdda4b6747e864c70c0068414f6bbde090b7ed0dce498580"
+"sf.functions.least-ignore-nulls" = "4ef64d2655f02177064f8f645f80aec419647d649cb7521aa3ecb1d52d0f9392"
+"sf.functions.map-construct" = "0ef029f510447d34ee092bb68e3f66f6c64355f2c4032302c9818bb95c9a888a"
+"sf.functions.map-delete" = "6e07826f6ab924aac77a5460a2f942d1c68691a28effa708dbdefffb267bb6e0"
+"sf.functions.map-pick" = "64ea63eed6354e0b169c552bb97bb288682598a045507938e982d676771a7266"
+"sf.functions.object-delete" = "9a51b70ef366cad348c3c32630fc770d1a5a6a0553cab8f4d130979b8f008ab1"
+"sf.functions.object-pick" = "e590bae573cd7799164c4864b52f03f4bef0ea6b879b5e195b39167f033b1b50"
+"sf.functions.prompt" = "126c4bc451e9641d08babf6cf71c584b286de01482ecd1b3b1d3160a45121c61"
+"sf.functions.row-number" = "c0f3323cb55ec56d157d696ec7b5ad3de449fcb922b81c3178357dd243bb5025"
+"sf.functions.sys-context-snowflake-current" = "ecb118b06f9518ea27f2cffb30325a091c3bb8b97202fb2f4dec620a16c22f27"
+"sf.functions.system-block-internal-stages-public-access-with-exception" = "b86ffcc37d1883b713b41ddad8525a3b9ad9726e4fe1584c64f0d575fa621299"
+"sf.functions.system-block-snowflake-managed-storage-volume-public-access-with-exception" = "65c64d33b73b5b6c46a47e72a40917e9b9646b1c8f38d5fc079d1df24c957fc0"
+"sf.functions.system-reference" = "7d0b24a3c6f738b957292706253861dbf969976fde247e0de12241043cbb4845"
+"sf.functions.system-wait-for-openflow-connector-status" = "e6ae96c4433f0a659011063cddf28a1f9cdaa3733e90923577d3343ab27196fd"
+"sf.functions.system-wait-for-openflow-deployment-status" = "603f3435dce26f9b5772dad3b3532b70ec0642a4ecada2e5c99febd692f809ba"
+"sf.functions.system-wait-for-openflow-runtime-status" = "6ccdc47502973928947e5340b0d7f7fe45d52015cad830fb9029ad587449b4b4"
+"sf.functions.system-wait-for-stable-openflow-deployments" = "1c153f889f1e660d416aa7382a5a385083e38c1b5d48487339b98c1533db3ef5"
+
+[review.definitions]
+"sf.functions.ai-filter" = "8d8fce42c007446eda567ffb8a855c4f14f93845e5105399e3251f3757ba092e"
+"sf.functions.arrays-zip" = "5ea7a3f04761ea244f43b8090be3cf5d3333b4bc09e0a7cd9f5dd93211516e6f"
+"sf.functions.concat-ws" = "08f34e97bbf637e3b4387ebaaff30029b92a2dc7224ed968d38a3c540dca87b1"
+"sf.functions.concat.concat" = "91f192c523227fe021b8ec6ceac658cffeb80228935263c243bcdefe3eddc080"
+"sf.functions.concat.concat-subscript-dot" = "9f5597563088010e5bcf3ffe50908905c3ff661e180a8c0936de4a7fed5e4668"
+"sf.functions.count.count" = "5f2c0d4709a2537ede913276427d530edbe0ff88b39371c620f78e65ea665674"
+"sf.functions.count.count-over" = "35cb351fd7bc5d8d690cecd7631853616cfe1d0a33e11044c6c231d6d4e07674"
+"sf.functions.format-string-template" = "0a1399e7c72765869af3ce03206a1c4e24adf235f0e3431ae06ef2be5addd545"
+"sf.functions.greatest" = "d6f93921d2301303484351af0dda744c41db59eaf1ff98fe6a3957d7705c8690"
+"sf.functions.greatest-ignore-nulls" = "6543bac20d2c206d4e84c3c1fb7e7db4cd5598f5453cdf8a6cc582edd5ef097d"
+"sf.functions.grouping" = "98bed871cb525f0b6e4057f24ab336beecaee1c0e5b098c05e86d36f9a216005"
+"sf.functions.grouping-id" = "aea54ddf69b08ef2d8d346d1c469fa1ce7927b762d4b16d3e8f13083d6da4a71"
+"sf.functions.hash" = "e4ee250c9cf4aa4730f42f87b3cdb71ee105eae04bec5cb879a77f7f516eefe6"
+"sf.functions.hash-agg.hash-agg" = "ec8c8a7bc1ff4531227cd5002728b0329e51c55ce1a74c22aadfed2c14159e1d"
+"sf.functions.hash-agg.hash-agg-over" = "e99700d0c3b5f54b4c47852f1612ac41112c18be9dbac50202aa84e21c8806d8"
+"sf.functions.hash-agg.hash-agg-over.syntax" = "61e0a91e3c52df453f1a7c96fc4613b990497c8b3a537d2199f603674a8a6469"
+"sf.functions.in.in" = "13cc336ca164cdf6af51766debdb97051905a43ff8719b2614c2e6928097fbcf"
+"sf.functions.is-role-activated" = "87dad99273d997f88ac1b193fdda4d7d12b9bc601c8cbbd8f455accb28e281fb"
+"sf.functions.least" = "b7b60bc3a5a1e76d0c11e7e0409201a3e1d662358d9f02cbe88f8c361ad9fcca"
+"sf.functions.least-ignore-nulls" = "4e3be7116c267b2466a8b7c7917e31aba53e6bf457604c6d98929c2b7e8e9851"
+"sf.functions.map-construct" = "8d4af32041f0c734151538056aeae23899b95bdc08f5d7461d0696f4983e77fc"
+"sf.functions.map-delete" = "e4536bfefd74b0b12f945d5ecb4c188f2fe6794ff36ea63782eeb44783e35582"
+"sf.functions.map-pick" = "1a7165f5ec91dc4a6e0e3fc1cd9d81b1ab79fe29027a72a9baeeb2046aa708a3"
+"sf.functions.object-delete" = "499ee3631ec4abf5b0f0b2af0eb7050a0ce930b0dd0843b97d560bed56a70e59"
+"sf.functions.object-pick" = "8ae3b0cb2cd9368614b8c6f796de50c445b16003e669cba5fa1bb4466a42d37e"
+"sf.functions.prompt" = "3f40c24f2156645b7c7e0cd894bb2dcf32e0f4c1af582667d091911881029c76"
+"sf.functions.row-number" = "b81e9ce8f4c2aa38d26b270872cd9c9b1b7cd263052310529003b7a93fdc9056"
+"sf.functions.sys-context-snowflake-current" = "12d6ce573a51f3f3b6b01767ea8f8be861a910b406867d442fa6f77305c984c6"
+"sf.functions.system-block-internal-stages-public-access-with-exception" = "92170e6fa1bd5aa723b41562d2fd15bdb0d9ac2da102050056b16bdeb13b2748"
+"sf.functions.system-block-snowflake-managed-storage-volume-public-access-with-exception" = "129a12d865ce67d736746cfe7ee0819ce99855bd67620918aef1c7bab9a4cfde"
+"sf.functions.system-reference" = "bdbb93bf98dcc80198bfc92fc44ed76e49af3a95276a25116e113fdf80799bb6"
+"sf.functions.system-wait-for-openflow-connector-status" = "0964a4e1e0db6fa5a46765e6b4811a4d30c1ffd7742473e849ab0e3812cfa1f1"
+"sf.functions.system-wait-for-openflow-deployment-status" = "945200aa45e49796ccfa4692a3ca4e863bdb3491e1c52eb79e4e1eab01408a0a"
+"sf.functions.system-wait-for-openflow-runtime-status" = "afb02d3d392464b000101584115fde367130fc2831aebe0a4aa93e609c54f9c8"
+"sf.functions.system-wait-for-stable-openflow-deployments" = "f0c32a1400a6e08debce260fb3b00e42949f7f41b5f45dc3864b38ba853bccb2"
+
+[[review]]
+id = "functions-027"
+family = "functions"
+parser_tree = "34d4cc4a0ba49debfa4d3a4ed5e548b3f3c201dd"
+reviewed_utc = "2026-11-14T06:36:28Z"
+verdict = "approved"
+forms = [
+  "sf.functions.ilike-any",
+  "sf.functions.in.in.syntax",
+  "sf.functions.like-all",
+  "sf.functions.like-any",
+  "sf.functions.policy-context",
+  "sf.functions.search",
+  "sf.functions.search-ip",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 89d5b369d, whose trees for these forms the later parser fixes leave unchanged; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.ilike-any" = "3a44195ae6a55531216bcf7d2ceb36d03c125261cddad24a1e4298d98e984b5d"
+"sf.functions.in.in.syntax" = "6145d7a29f527a4265912f9089408ff0500d2be3c5b6e92b1e5dfbb7c06b14d2"
+"sf.functions.like-all" = "3499552e9b5790b0947c27f62355793a9d2df0836428c910ccb964118f2d3de5"
+"sf.functions.like-any" = "c73a2ab9d55bf8e668998a5652abd92216d88918ca8883b3db3a90615e06cff4"
+"sf.functions.policy-context" = "9d846436c169932292cc9d62993cc2e4197df80c41052fc2460089198f2ae6d0"
+"sf.functions.search" = "15dc85811e8befc98a6165a6a45af242aa5d1cb7d32a68d2130fa5ae620f5ed2"
+"sf.functions.search-ip" = "d3521da1c3346e679b5b70fea20ed6bba09ea50ae730f8c7fd67cdd31f06c7a3"
+
+[review.definitions]
+"sf.functions.ilike-any" = "9ce0845b566a85b7212c3e44a23714dac0638dfb2f2db221e97648bad8b90d27"
+"sf.functions.in.in.syntax" = "2500c13a7a03fc0cf7a670c337906d9fe78c202f80a71fe2abce59350ae472b4"
+"sf.functions.like-all" = "1204973004cc9e5ce3994d01fbd8dbbc6df69e75fb55169f0d87c0e37173033d"
+"sf.functions.like-any" = "001b43acbc1e7caa735c495acaf221fb4d1d5e903274286396e9e6e0224ef411"
+"sf.functions.policy-context" = "524e3c5278a0e892e6fb890a7dd5be60fc159188864c95442b9031c4efb9b6a6"
+"sf.functions.search" = "d3806d4c0747f6e45200da712f6d02054326669b112427a5bb4b67a1e1723a70"
+"sf.functions.search-ip" = "c1ad96c0ed5d2a8e3206a41dd4e222c7a1871d09bd4a4098ef4fee88540854bb"

@@ -331,3 +331,20 @@ note = "Read in full under review brief version 1 against the documentation page
 
 [review.definitions]
 "sf.query.at-before.iceberg-version" = "84528746db98fd8404cca7b4f622e8b536312d8cd860b4c0adf46c8ed732e7b4"
+
+[[review]]
+id = "query-016"
+family = "query"
+parser_tree = "34d4cc4a0ba49debfa4d3a4ed5e548b3f3c201dd"
+reviewed_utc = "2026-11-14T06:36:28Z"
+verdict = "approved"
+forms = [
+  "sf.query.order-by.orderitem",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 89d5b369d, whose trees for these forms the later parser fixes leave unchanged; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.order-by.orderitem" = "d6f01e51d2c1ffd19d96297448362f83f650758f640081e797379803c487462e"
+
+[review.definitions]
+"sf.query.order-by.orderitem" = "7713fbfe2e89d7f30e496cdd0264af0cddabfbc5d55bbf8dbb1b86ed2585bda9"

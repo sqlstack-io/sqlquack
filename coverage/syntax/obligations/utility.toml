@@ -252,13 +252,6 @@ required = true
 target = "[ , <arg_name> <arg_data_type> ... ]"
 
 [[obligation]]
-id = "sf.utility.call-with.language-javascript-as-call.o110"
-kind = "required_operand_missing"
-required = true
-target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
-note = "omit <arg_name>"
-
-[[obligation]]
 id = "sf.utility.call-with.language-javascript-as-call.o111"
 kind = "operand_type_class"
 required = true
@@ -829,6 +822,14 @@ kind = "positive"
 required = true
 anchor = "doc.sql.call-with / Syntax / JavaScript"
 note = "a positional argument in the CALL, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.language-javascript-as-call.o122"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+anchor = "doc.sql.call-with / Syntax / JavaScript"
+note = "omit <arg_name>, observed"
 
 [[obligation]]
 id = "sf.utility.call-with.table-language-java-runtime-version.o001"
@@ -6713,13 +6714,6 @@ required = true
 target = "[ , <arg_name> <arg_data_type> ... ]"
 
 [[obligation]]
-id = "sf.utility.call-with.table-language-sql-as.o122"
-kind = "required_operand_missing"
-required = true
-target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
-note = "omit <arg_name>"
-
-[[obligation]]
 id = "sf.utility.call-with.table-language-sql-as.o123"
 kind = "operand_type_class"
 required = true
@@ -7361,6 +7355,14 @@ required = true
 target = "<query> in [ , <cte_nameN> [ ( <cte_column_list> ) ] AS ( <query> ) ]"
 anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
 note = "a bare literal in place of <query>, observed"
+
+[[obligation]]
+id = "sf.utility.call-with.table-language-sql-as.o134"
+kind = "required_operand_missing"
+required = true
+target = "<arg_name> in [ , <arg_name> <arg_data_type> ... ]"
+anchor = "doc.sql.call-with / Syntax / Snowflake Scripting"
+note = "omit <arg_name>, observed"
 
 [[obligation]]
 id = "sf.utility.execute-alert.o001"
