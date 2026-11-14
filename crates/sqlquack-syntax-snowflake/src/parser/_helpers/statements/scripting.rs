@@ -336,12 +336,13 @@ impl Parser {
         Ok(self.spanned(start, statement))
     }
 
-    /// One or more `statement;` members, stopping before the enclosing construct's keyword.
+    /// One or more `statement;` members, stopping before the enclosing construct's keyword; empty statements (`;;`) after a member are skipped, as Snowflake does.
     fn parse_scripting_body(&mut self) -> Result<Vec<ScriptingStatement>> {
         let mut body: Vec<ScriptingStatement> = Vec::new();
         while !self.is_at_end() && !self.at_scripting_terminator() {
             body.push(self.with_parser_depth(Self::parse_scripting_statement)?);
             self.expect_token(TokenType::Semicolon)?;
+            while self.match_token(TokenType::Semicolon) {}
         }
         if body.is_empty() {
             return Err(self.parse_error("Expected at least one statement"));
