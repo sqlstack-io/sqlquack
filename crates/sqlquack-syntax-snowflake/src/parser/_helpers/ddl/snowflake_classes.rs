@@ -1,8 +1,9 @@
 //! Parser ddl: CREATE, ALTER and DROP of a Snowflake class instance, such as `SNOWFLAKE.ML.FORECAST`, checked against its grammar.
 
-use crate::parser::_helpers::ddl::snowflake_alter::with_keyword;
 use crate::parser::_helpers::ddl::snowflake_alter::{alter_object, property};
+use crate::parser::_helpers::ddl::snowflake_create_properties::with_written;
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::tokens::models::TokenType;
@@ -22,6 +23,18 @@ const SNOWFLAKE_CLASSES: [&str; 7] = [
 impl Parser {
     /// The class after CREATE, ALTER or DROP as `SNOWFLAKE.<schema>.<class>`, where an empty schema stays empty; None when the next words name no class, and outside the faithful Snowflake modes.
     pub(crate) fn parse_snowflake_class_kind(&mut self) -> Result<Option<String>> {
+        let Some(class) = self.parse_snowflake_class()? else {
+            return Ok(None);
+        };
+        let schema = class
+            .schema
+            .map_or_else(String::new, |schema| schema.name.to_ascii_uppercase());
+        let name = class.name.name.to_ascii_uppercase();
+        Ok(Some(format!("SNOWFLAKE.{schema}.{name}")))
+    }
+
+    /// The class after CREATE, ALTER or DROP as a qualified name, where a schema left out of `SNOWFLAKE..<class>` stays a null part; None when the next words name no class, and outside the faithful Snowflake modes.
+    pub(crate) fn parse_snowflake_class(&mut self) -> Result<Option<TableRef>> {
         if !self.applies_snowflake_context_rules() {
             return Ok(None);
         }
@@ -31,18 +44,23 @@ impl Parser {
         if !self.check_identifier("SNOWFLAKE") || !self.check_next(TokenType::Dot) {
             return Ok(None);
         }
-        self.current += 2;
+        let database = self.parse_simple_name()?;
+        self.expect_token(TokenType::Dot)?;
         let schema = match self.check(TokenType::Dot) {
-            true => String::new(),
-            false => self.parse_simple_name()?.name.to_ascii_uppercase(),
+            true => None,
+            false => Some(self.parse_simple_name()?),
         };
         self.expect_token(TokenType::Dot)?;
         let class = self.peek_text().to_ascii_uppercase();
         if self.check(TokenType::QuotedIdentifier) || !SNOWFLAKE_CLASSES.contains(&class.as_str()) {
             return Err(self.parse_error("Expected a Snowflake class"));
         }
-        self.skip();
-        Ok(Some(format!("SNOWFLAKE.{schema}.{class}")))
+        let mut name = TableRef::new(String::new());
+        name.name = self.parse_simple_name()?;
+        name.schema_omitted = schema.is_none();
+        name.schema = schema;
+        name.catalog = Some(database);
+        Ok(Some(name))
     }
 
     /// The kind a Snowflake DROP names before the other kinds are tried: a class, or DATABASE ROLE; None otherwise.
@@ -60,7 +78,7 @@ impl Parser {
         or_replace: bool,
         or_alter: bool,
     ) -> Result<Option<Expression>> {
-        let Some(kind) = self.parse_snowflake_class_kind()? else {
+        let Some(class) = self.parse_snowflake_class()? else {
             return Ok(None);
         };
         let if_not_exists = self.check(TokenType::If);
@@ -82,16 +100,17 @@ impl Parser {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         let with = self.match_text_seq(&["WITH", "TAG"]);
         if with || self.match_text_seq(&["TAG"]) {
-            properties.extend(with_keyword(with, self.parse_external_tags()?));
+            properties.extend(with_written(with, self.parse_external_tags()?));
         }
         let with = self.match_text_seq(&["WITH", "COMMENT"]);
         if with || self.match_text_seq(&["COMMENT"]) {
             self.expect_token(TokenType::Eq)?;
             let comment = property("COMMENT", None, Some(self.parse_object_value()?));
-            properties.extend(with_keyword(with, vec![comment]));
+            properties.extend(with_written(with, vec![comment]));
         }
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
-            kind,
+            kind: "INSTANCE".to_owned(),
+            class: Some(class),
             modifier: None,
             or_replace,
             or_alter,
@@ -100,11 +119,12 @@ impl Parser {
             source: String::new(),
             operands,
             properties,
+            ..Default::default()
         }))))
     }
 
     /// An ALTER of a class instance after its class: `[ IF EXISTS ] <name>`, then RENAME TO, or SET or UNSET of tags and properties.
-    pub(super) fn parse_alter_snowflake_class(&mut self, kind: &str) -> Result<Expression> {
+    pub(super) fn parse_alter_snowflake_class(&mut self, class: TableRef) -> Result<Expression> {
         let head = self.parse_alter_object_head()?;
         let action = self.expect_alter_words(&[&["RENAME", "TO"], &["SET"], &["UNSET"]])?;
         let (operands, properties) = match action.as_str() {
@@ -118,6 +138,10 @@ impl Parser {
                 self.parse_alter_object_properties(false, false)?,
             ),
         };
-        Ok(alter_object(kind, head, action, (operands, properties)))
+        let mut alter = alter_object("INSTANCE", head, action, (operands, properties));
+        if let Expression::AlterObject(object) = &mut alter {
+            object.class = Some(class);
+        }
+        Ok(alter)
     }
 }

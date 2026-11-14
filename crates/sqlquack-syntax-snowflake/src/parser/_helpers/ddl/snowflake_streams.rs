@@ -2,6 +2,7 @@
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_alter::property_kind;
+use crate::parser::_helpers::ddl::snowflake_create_properties::with_written;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
@@ -53,8 +54,9 @@ impl Parser {
             return Ok(None);
         }
         let mut properties: Vec<ObjectProperty> = Vec::new();
-        if self.match_text_seq(&["WITH", "TAG"]) || self.match_text_seq(&["TAG"]) {
-            properties.extend(self.parse_external_tags()?);
+        let with = self.match_text_seq(&["WITH", "TAG"]);
+        if with || self.match_text_seq(&["TAG"]) {
+            properties.extend(with_written(with, self.parse_external_tags()?));
         }
         if !or_alter && self.match_text_seq(&["COPY", "GRANTS"]) {
             properties.push(property("COPY GRANTS", None, None));
@@ -100,6 +102,7 @@ impl Parser {
             source: format!("ON {}", source.join(" ")),
             operands,
             properties,
+            ..Default::default()
         }))))
     }
 

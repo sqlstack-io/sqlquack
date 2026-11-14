@@ -19,6 +19,11 @@ use crate::expressions::types::models::DataType;
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ColumnDef {
     pub name: Identifier,
+    /// The column's type; a column written without one, as in a CTAS column list, has none
+    #[serde(
+        default = "DataType::unknown",
+        skip_serializing_if = "DataType::is_unknown"
+    )]
     pub data_type: DataType,
     pub nullable: Option<bool>,
     pub default: Option<Expression>,
@@ -42,6 +47,9 @@ pub struct ColumnDef {
     /// Snowflake RELY/NORELY, each with the `constraint_order` index of the constraint it follows.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub constraint_properties: Vec<(usize, String)>,
+    /// Snowflake CONSTRAINT names with their quoting, each with the `constraint_order` index of the constraint it names.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub constraint_names: Vec<(usize, Identifier)>,
     /// Teradata: FORMAT 'pattern'
     #[serde(default)]
     pub format: Option<String>,
@@ -142,6 +150,7 @@ impl ColumnDef {
             constraints: Vec::new(),
             constraint_order: Vec::new(),
             constraint_properties: Vec::new(),
+            constraint_names: Vec::new(),
             format: None,
             title: None,
             inline_length: None,
@@ -185,6 +194,8 @@ pub enum ColumnConstraint {
     References(Box<ForeignKeyRef>),
     GeneratedAsIdentity(GeneratedAsIdentity),
     Collate(Identifier),
+    /// Snowflake: COLLATE '<collation_specification>', a string literal
+    CollateString(String),
     Comment(String),
     /// Snowflake: TAG (key='value', ...)
     Tags(Tags),
@@ -651,11 +662,17 @@ pub enum AlterTableAction {
         column: ColumnDef,
         if_not_exists: bool,
         position: Option<ColumnPosition>,
+        /// Whether the optional COLUMN keyword was written, as in Snowflake's `ADD COLUMN`
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        column_keyword: bool,
     },
     DropColumn {
         name: Identifier,
         if_exists: bool,
         cascade: bool,
+        /// Whether the optional COLUMN keyword was written, as in Snowflake's `DROP COLUMN`
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        column_keyword: bool,
     },
     RenameColumn {
         old_name: Identifier,
@@ -1110,6 +1127,9 @@ pub struct MaskingPolicyColumnConstraint {
     pub this: Box<Expression>,
     #[serde(default)]
     pub expressions: Vec<Expression>,
+    /// Whether WITH was written before MASKING POLICY
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub with: bool,
 }
 
 /// NotNullColumnConstraint

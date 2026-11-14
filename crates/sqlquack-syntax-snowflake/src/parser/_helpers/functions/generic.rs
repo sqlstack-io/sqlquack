@@ -297,18 +297,18 @@ impl Parser {
                 self.current = saved_pos;
                 if self.is_identifier_token() || self.is_safe_keyword_as_identifier() {
                     let ident_token = self.advance()?;
-                    let ident_name = ident_token.text.to_string();
+                    let quoted = ident_token.token_type == TokenType::QuotedIdentifier;
                     if self.match_token(TokenType::FArrow) {
                         let value = self.parse_function_argument_value()?;
                         Expression::NamedArgument(Box::new(NamedArgument {
-                            name: Identifier::new(ident_name).with_span(ident_token.span),
+                            name: identifier_from_token(ident_token, quoted),
                             value,
                             separator: NamedArgSeparator::DArrow,
                         }))
                     } else if self.match_token(TokenType::ColonEq) {
                         let value = self.parse_expression()?;
                         Expression::NamedArgument(Box::new(NamedArgument {
-                            name: Identifier::new(ident_name).with_span(ident_token.span),
+                            name: identifier_from_token(ident_token, quoted),
                             value,
                             separator: NamedArgSeparator::ColonEq,
                         }))
@@ -368,14 +368,14 @@ impl Parser {
                 } else if self.match_token(TokenType::FArrow) {
                     let value = self.parse_function_argument_value()?;
                     Expression::NamedArgument(Box::new(NamedArgument {
-                        name: Identifier::new(ident_name).with_span(ident_token.span),
+                        name: identifier_from_token(ident_token, quoted),
                         value,
                         separator: NamedArgSeparator::DArrow,
                     }))
                 } else if self.match_token(TokenType::ColonEq) {
                     let value = self.parse_expression()?;
                     Expression::NamedArgument(Box::new(NamedArgument {
-                        name: Identifier::new(ident_name).with_span(ident_token.span),
+                        name: identifier_from_token(ident_token, quoted),
                         value,
                         separator: NamedArgSeparator::ColonEq,
                     }))

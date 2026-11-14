@@ -137,6 +137,7 @@ fn parameterized_date_time(data_type: &DataType) -> Option<(String, &'static str
             precision: Some(precision),
             ..
         } => Some((format!("TIME({precision})"), "TO_TIME")),
+        DataType::Named { .. } => parameterized_date_time(&data_type.unnamed()?),
         DataType::Custom { name } => {
             let written: String = name.split_whitespace().collect();
             let (base, _) = written.split_once('(')?;

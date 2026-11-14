@@ -107,6 +107,9 @@ pub(crate) fn data_type_family(data_type: &DataType) -> Family {
         | DataType::Geography { .. } => Family::Struct,
         DataType::Nullable { inner } | DataType::NotNull { inner } => data_type_family(inner),
         DataType::Custom { name } => type_family(name),
+        DataType::Named { .. } => data_type
+            .unnamed()
+            .map_or(Family::Unknown, |unnamed| data_type_family(&unnamed)),
         _ => Family::Unknown,
     }
 }

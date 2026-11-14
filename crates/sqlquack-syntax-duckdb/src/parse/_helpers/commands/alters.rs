@@ -136,6 +136,7 @@ impl Parser<'_> {
                     name: path.remove(0),
                     if_exists,
                     cascade,
+                    column_keyword: false,
                 },
                 _ => AlterTableAction::DropField {
                     names: path,
@@ -290,6 +291,7 @@ impl Parser<'_> {
             column,
             if_not_exists,
             position: None,
+            column_keyword: false,
         })))
     }
 

@@ -4,6 +4,7 @@ use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::functions::models::Xor;
 use sqlquack_syntax::expressions::names::main::identifier_from_token::identifier_from_token;
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::main::maybe_rebalance_boolean_chain::maybe_rebalance_boolean_chain;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
 use sqlquack_syntax::expressions::operators::models::IsNull;
@@ -473,6 +474,7 @@ impl Parser {
             has_parens,
             use_proc_keyword,
             returns_table: None,
+            define: false,
         })))
     }
 
@@ -548,6 +550,9 @@ impl Parser {
             scale_modifier: None,
             shard_modifier: None,
             property_order: Vec::new(),
+            define: false,
+            comment_name: None,
+            start_text: None,
         };
 
         if self.match_token(TokenType::As) {
@@ -584,10 +589,7 @@ impl Parser {
                 seq.maxvalue = Some(SequenceBound::None);
                 seq.property_order.push(SeqPropKind::NoMaxvalueWord);
             } else if self.match_token(TokenType::Start) {
-                self.match_token(TokenType::With);
-                self.match_token(TokenType::Eq);
-                seq.start = Some(self.parse_signed_integer()?);
-                seq.property_order.push(SeqPropKind::Start);
+                seq = self.parse_sequence_start_clause(seq)?;
             } else if self.match_token(TokenType::Cache) {
                 seq.cache = Some(self.parse_signed_integer()?);
                 seq.property_order.push(SeqPropKind::Cache);
@@ -623,10 +625,7 @@ impl Parser {
                 seq.order = Some(false);
                 seq.property_order.push(SeqPropKind::NoOrder);
             } else if self.match_token(TokenType::Comment) || self.match_identifier("COMMENT") {
-                self.expect_token(TokenType::Eq)?;
-                let comment_val = self.expect_token(TokenType::String)?;
-                seq.comment = Some(comment_val.text.to_string());
-                seq.property_order.push(SeqPropKind::Comment);
+                seq = self.parse_sequence_comment(seq)?;
             } else if self.match_identifier("SHARING") {
                 self.expect_token(TokenType::Eq)?;
                 let val = self.expect_identifier_or_keyword()?;
@@ -654,6 +653,33 @@ impl Parser {
         }
 
         Ok(Expression::CreateSequence(Box::new(seq)))
+    }
+
+    fn parse_sequence_start_clause(&mut self, mut seq: CreateSequence) -> Result<CreateSequence> {
+        self.match_token(TokenType::With);
+        self.match_token(TokenType::Eq);
+        match self.parse_sequence_start()? {
+            Ok(start) => seq.start = Some(start),
+            Err(text) => seq.start_text = Some(text),
+        }
+        seq.property_order.push(SeqPropKind::Start);
+        Ok(seq)
+    }
+
+    fn parse_sequence_comment(&mut self, mut seq: CreateSequence) -> Result<CreateSequence> {
+        self.expect_token(TokenType::Eq)?;
+        match self.check(TokenType::String) || !self.applies_snowflake_context_rules() {
+            true => {
+                let comment_val = self.expect_token(TokenType::String)?;
+                seq.comment = Some(comment_val.text.to_string());
+            }
+            false if self.is_snowflake_reserved_keyword() => {
+                return Err(self.parse_error("Expected a string or a name after COMMENT ="));
+            }
+            false => seq.comment_name = Some(self.expect_identifier_or_safe_keyword_with_quoted()?),
+        }
+        seq.property_order.push(SeqPropKind::Comment);
+        Ok(seq)
     }
 
     fn parse_sequence_increment(&mut self, mut seq: CreateSequence) -> Result<CreateSequence> {
@@ -700,6 +726,28 @@ impl Parser {
         seq.shard_modifier = Some(modifier);
         seq.property_order.push(SeqPropKind::Shard);
         seq
+    }
+
+    /// A sequence's START value: the integer, or in Snowflake, whose parser leaves the range to a later check, the text of a whole number outside the 64-bit range.
+    fn parse_sequence_start(&mut self) -> Result<std::result::Result<i64, String>> {
+        let start = self.current;
+        match self.parse_signed_integer() {
+            Ok(value) => Ok(Ok(value)),
+            Err(error) => {
+                let whole = self.current > start
+                    && self.tokens[self.current - 1]
+                        .text
+                        .chars()
+                        .all(|c| c.is_ascii_digit());
+                match whole && self.applies_snowflake_context_rules() {
+                    true => Ok(Err(self.tokens[start..self.current]
+                        .iter()
+                        .map(|token| token.text.to_string())
+                        .collect())),
+                    false => Err(error),
+                }
+            }
+        }
     }
 
     /// Parse a signed integer (positive or negative)
@@ -1344,19 +1392,7 @@ impl Parser {
         if self.is_snowflake() {
             let start = self.current;
             let target = self.parse_object_name();
-            if let (Ok(target), true) = (target, self.check_identifier("CLONE")) {
-                let mut parts: Vec<String> = [target.catalog, target.schema, Some(target.name)]
-                    .into_iter()
-                    .flatten()
-                    .map(|part| match part.quoted {
-                        true => format!("\"{}\"", part.name.replace('"', "\"\"")),
-                        false => part.name,
-                    })
-                    .collect();
-                if target.schema_omitted {
-                    parts.insert(1, String::new());
-                }
-                let name = parts.join(".");
+            if let (Ok(name), true) = (target, self.check_identifier("CLONE")) {
                 self.skip();
                 let clone_source = self.parse_object_name()?;
                 return Ok(Expression::CreateTask(Box::new(
@@ -1370,33 +1406,45 @@ impl Parser {
                         body: None,
                         clone_source: Some(clone_source),
                         graph: false,
+                        define: false,
                     },
                 )));
             }
             self.current = start;
         }
 
-        if self.is_snowflake() {
-            let start = self.current;
-            self.skip_snowflake_name()?;
-            self.current = start;
-        }
-        let mut name = String::new();
-        if self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token() {
-            name.push_str(&self.advance_text()?);
-        }
-        while self.check(TokenType::Dot) {
-            self.skip();
-            name.push('.');
-            if self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token() {
-                name.push_str(&self.advance_text()?);
+        let name = match self.is_snowflake() {
+            true => {
+                let start = self.current;
+                self.skip_snowflake_name()?;
+                self.current = start;
+                self.parse_object_name()?
             }
-        }
+            false => {
+                let mut name = String::new();
+                if self.check(TokenType::Var) || self.check_keyword() || self.is_identifier_token()
+                {
+                    name.push_str(&self.advance_text()?);
+                }
+                while self.check(TokenType::Dot) {
+                    self.skip();
+                    name.push('.');
+                    if self.check(TokenType::Var)
+                        || self.check_keyword()
+                        || self.is_identifier_token()
+                    {
+                        name.push_str(&self.advance_text()?);
+                    }
+                }
+                TableRef::new(name)
+            }
+        };
 
         let props_start = self.current;
+        let graph_named = name.schema.is_none() && name.name.name.eq_ignore_ascii_case("GRAPH");
         if self.is_snowflake()
             && (self.is_at_end() || self.check(TokenType::Semicolon))
-            && !name.eq_ignore_ascii_case("GRAPH")
+            && !graph_named
         {
             return Ok(Expression::CreateTask(Box::new(
                 sqlquack_syntax::expressions::statements::models::CreateTask {
@@ -1409,6 +1457,7 @@ impl Parser {
                     body: None,
                     clone_source: None,
                     graph: false,
+                    define: false,
                 },
             )));
         }
@@ -1441,6 +1490,7 @@ impl Parser {
                 body: Some(body),
                 clone_source: None,
                 graph: false,
+                define: false,
             },
         )))
     }

@@ -974,7 +974,7 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
         ProjectionTestCase {
             description: "a named column FOREIGN KEY keeps its constraint name",
             sql: "ALTER TABLE v1 ADD COLUMN v1 INT CONSTRAINT c9 FOREIGN KEY REFERENCES v2 ( v1 ) RELY ;",
-            pointer: "/0/alter_table/actions/0/AddColumn/column/constraints/0/References/constraint_name",
+            pointer: "/0/alter_table/actions/0/AddColumn/column/constraint_names/0/1/name",
             expected_value: json!("c9"),
         },
         ProjectionTestCase {

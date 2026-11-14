@@ -596,6 +596,7 @@ impl<'sql> Parser<'sql> {
                         column: parser.column_definition()?,
                         if_not_exists: false,
                         position: None,
+                        column_keyword: false,
                     })
                 })?;
             }
@@ -607,6 +608,7 @@ impl<'sql> Parser<'sql> {
                         name: parser.name()?,
                         if_exists,
                         cascade: false,
+                        column_keyword: false,
                     })
                 })?;
             }

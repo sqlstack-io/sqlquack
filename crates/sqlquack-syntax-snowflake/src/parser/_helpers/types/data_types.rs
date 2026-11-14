@@ -1,5 +1,6 @@
 //! Parser types: data types.
 
+use crate::parser::_helpers::types::casts::named_data_type;
 use crate::parser::constants::ARRAY;
 use crate::parser::constants::EXCLUDE;
 use crate::parser::constants::INCLUDE;
@@ -333,12 +334,7 @@ impl Parser {
                         None
                     };
                     if is_nchar {
-                        let name = if let Some(len) = length {
-                            format!("NVARCHAR({})", len)
-                        } else {
-                            "NVARCHAR".to_string()
-                        };
-                        DataType::Custom { name }
+                        named_data_type("NCHAR VARYING", None, None, length)
                     } else {
                         DataType::VarChar {
                             length,
@@ -360,13 +356,12 @@ impl Parser {
                         let charset = self.expect_identifier_or_keyword()?;
                         return Ok(DataType::CharacterSet { name: charset });
                     }
-                    if is_nchar {
-                        let name = if let Some(len) = length {
-                            format!("NCHAR({})", len)
-                        } else {
-                            "NCHAR".to_string()
-                        };
-                        DataType::Custom { name }
+                    if let (true, Some(length)) = (is_nchar, length) {
+                        named_data_type(NCHAR, None, None, Some(length))
+                    } else if is_nchar {
+                        DataType::Custom {
+                            name: NCHAR.to_string(),
+                        }
                     } else {
                         DataType::Char { length }
                     }

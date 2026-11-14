@@ -5,6 +5,7 @@ use crate::parser::constants::SNOWFLAKE_ALTER_KINDS;
 use crate::parser::constants::SNOWFLAKE_STRING_KEY_MAP_PROPERTIES;
 use crate::parser::constants::TASK_ACTIONS;
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::names::main::identifier_from_token::identifier_from_token;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::TableRef;
@@ -19,6 +20,7 @@ use sqlquack_syntax::tokens::types::Result;
 const OMITTED_NAME_ACTIONS: &[(&str, &[&str])] = &[
     ("AGGREGATION POLICY", &["SET", "UNSET"]),
     ("DATABASE", &["SET", "UNSET"]),
+    ("SCHEMA", &["SET", "UNSET"]),
     ("AUTHENTICATION POLICY", &["SET", "UNSET"]),
     ("FEATURE POLICY", &["SET", "UNSET"]),
     ("JOIN POLICY", &["SET", "UNSET"]),
@@ -42,8 +44,8 @@ const OMITTED_NAME_ACTIONS: &[(&str, &[&str])] = &[
 impl Parser {
     /// Parse a Snowflake ALTER of a kind this module owns, or None when the next words name another kind.
     pub(crate) fn parse_alter_snowflake_object(&mut self) -> Result<Option<Expression>> {
-        if let Some(kind) = self.parse_snowflake_class_kind()? {
-            return self.parse_alter_snowflake_class(&kind).map(Some);
+        if let Some(class) = self.parse_snowflake_class()? {
+            return self.parse_alter_snowflake_class(class).map(Some);
         }
         if let Some(expr) = self.parse_alter_snowflake_objects()? {
             return Ok(Some(expr));
@@ -789,9 +791,9 @@ impl Parser {
                     columns.push(Expression::DataType(self.parse_data_type()?));
                 }
                 self.expect_token(TokenType::RParen)?;
-                arguments.push(Expression::Tuple(Box::new(Tuple {
-                    expressions: columns,
-                })));
+                arguments.push(Expression::Function(Box::new(Function::new(
+                    "TABLE", columns,
+                ))));
             } else {
                 arguments.push(Expression::DataType(self.parse_data_type()?));
             }
@@ -873,6 +875,7 @@ pub(super) fn alter_object(
         operand_if_not_exists: false,
         operands,
         properties,
+        ..Default::default()
     }))
 }
 
@@ -904,6 +907,7 @@ pub(super) fn property(
         value,
         string_name: false,
         quoted: false,
+        ..Default::default()
     }
 }
 

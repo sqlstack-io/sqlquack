@@ -78,6 +78,7 @@ impl Expression {
             | Expression::Delete(_)
             | Expression::Copy(_)
             | Expression::Put(_)
+            | Expression::StageCommand(_)
             | Expression::Merge(_)
             | Expression::TryCatch(_)
             | Expression::CreateTable(_)

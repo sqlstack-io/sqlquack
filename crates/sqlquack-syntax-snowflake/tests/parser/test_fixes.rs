@@ -150,8 +150,8 @@ fn given_a_parenthesized_typed_lambda_when_parsing_then_it_keeps_names_and_types
         ProjectionTestCase {
             description: "a parameterised parameter type keeps its precision and scale",
             sql: "SELECT REDUCE(a, 0, (acc NUMBER(18, 2), i VARIANT) -> acc + i::INT) FROM t",
-            pointer: "/function/args/2/lambda/parameter_types/0/name",
-            expected_value: json!("NUMBER(18, 2)"),
+            pointer: "/function/args/2/lambda/parameter_types/0/scale",
+            expected_value: json!(2),
         },
         ProjectionTestCase {
             description: "the second parameter's type",
@@ -1165,8 +1165,7 @@ fn given_statements_from_the_parser_only_disagreements_when_parsing_snowflake_th
             expected_accepted: false,
         },
         AcceptanceTestCase {
-            description:
-                "a PIVOT aggregate is a call, not a parenthesised column (recorded errno 1003)",
+            description: "a PIVOT aggregate is a call, not a parenthesised column (recorded errno 1003)",
             sql: "SELECT 1 FROM t1 PIVOT ( ( v1 ) FOR c1 IN ( 1 ) ) ;",
             dialect: Dialect::Snowflake,
             expected_accepted: false,
@@ -1409,9 +1408,9 @@ fn given_snowflake_statements_with_their_own_nodes_when_parsing_then_the_tree_na
             expected_value: json!("USING TABULAR"),
         },
         ProjectionTestCase {
-            description: "DEFINE STAGE is a CREATE OR ALTER of a stage",
+            description: "DEFINE STAGE is recorded as DEFINE",
             sql: "DEFINE STAGE d1.s1.v1 FILE_FORMAT = ( TYPE = JSON ENABLE_OCTAL = FALSE )",
-            pointer: "/0/create_object/or_alter",
+            pointer: "/0/create_object/define",
             expected_value: json!(true),
         },
         ProjectionTestCase {
@@ -1626,8 +1625,8 @@ fn given_a_snowflake_alter_of_an_application_database_or_service_kind_when_parsi
         ProjectionTestCase {
             description: "the edition check option is kept",
             sql: "ALTER DATABASE v1 ENABLE REPLICATION TO ACCOUNTS o1.a1 IGNORE EDITION CHECK",
-            pointer: "/0/alter_object/action",
-            expected_value: json!("ENABLE REPLICATION IGNORE EDITION CHECK"),
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("IGNORE EDITION CHECK"),
         },
         ProjectionTestCase {
             description: "an account keeps its unquoted organization as a separate part",
@@ -1696,10 +1695,10 @@ fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
             expected_value: json!(true),
         },
         ProjectionTestCase {
-            description: "TIMESTAMP WITHOUT TIME ZONE is TIMESTAMP_NTZ, not bare TIMESTAMP",
+            description: "TIMESTAMP WITHOUT TIME ZONE keeps its written name, not bare TIMESTAMP",
             sql: "SELECT CAST(NULL AS TIMESTAMP(3) WITHOUT TIME ZONE)",
             pointer: "/0/select/expressions/0/cast/to/name",
-            expected_value: json!("TIMESTAMPNTZ(3)"),
+            expected_value: json!("TIMESTAMP WITHOUT TIME ZONE"),
         },
         ProjectionTestCase {
             description: "a transaction name is the name, quoting kept, NAME apart",
@@ -1806,8 +1805,20 @@ fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
         ProjectionTestCase {
             description: "a cloned task keeps its name's quoting",
             sql: "CREATE TASK \"v1 Q\" CLONE db.v2",
-            pointer: "/0/create_task/name",
-            expected_value: json!("\"v1 Q\""),
+            pointer: "/0/create_task/name/name/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a task's qualified name keeps its parts",
+            sql: "CREATE TASK d1 . s1 . \"v1 Q\" AS SELECT 1",
+            pointer: "/0/create_task/name/schema/name",
+            expected_value: json!("s1"),
+        },
+        ProjectionTestCase {
+            description: "a task's WITH TAG records the WITH",
+            sql: "CREATE TASK v1 WITH TAG ( v1 = 'm' ) AS SELECT 1",
+            pointer: "/0/create_task/task_properties/0/with",
+            expected_value: json!(true),
         },
         ProjectionTestCase {
             description: "a database replica keeps its source and properties",

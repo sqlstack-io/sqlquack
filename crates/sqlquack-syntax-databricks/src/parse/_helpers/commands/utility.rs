@@ -753,6 +753,8 @@ impl Parser<'_> {
             grant_option: false,
             as_principal: None,
             current_grants: None,
+            class: None,
+            service: None,
         })))
     }
 
@@ -827,6 +829,8 @@ impl Parser<'_> {
             grant_option: false,
             cascade: false,
             restrict: false,
+            class: None,
+            service: None,
         })))
     }
 

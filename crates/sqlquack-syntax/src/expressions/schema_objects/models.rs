@@ -4,6 +4,7 @@ use serde::Deserialize;
 use serde::Serialize;
 
 use crate::expressions::columns::models::AlterColumnAction;
+use crate::expressions::columns::models::ColumnDef;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::schema_objects::_helpers::serde_defaults::default_true;
@@ -130,6 +131,9 @@ pub struct CreateView {
     /// ClickHouse: Table properties (ENGINE, ORDER BY, SAMPLE, SETTINGS, TTL, etc.) for materialized views
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub table_properties: Vec<Expression>,
+    /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub define: bool,
 }
 
 impl CreateView {
@@ -167,6 +171,7 @@ impl CreateView {
             on_cluster: None,
             to_table: None,
             table_properties: Vec::new(),
+            define: false,
         }
     }
 }
@@ -301,6 +306,15 @@ pub struct CreateSchema {
     /// Leading comments before the statement
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub leading_comments: Vec<String>,
+    /// Snowflake `CREATE OR ALTER SCHEMA`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_alter: bool,
+    /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub define: bool,
+    /// Snowflake: the modifier before SCHEMA as written, e.g. "TRANSIENT"
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub modifier: Option<String>,
 }
 
 impl CreateSchema {
@@ -314,6 +328,9 @@ impl CreateSchema {
             at_clause: None,
             properties: Vec::new(),
             leading_comments: Vec::new(),
+            or_alter: false,
+            define: false,
+            modifier: None,
         }
     }
 }
@@ -376,6 +393,15 @@ pub struct CreateDatabase {
     /// Snowflake clone options, e.g. IGNORE HYBRID TABLES
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub properties: Vec<Expression>,
+    /// Snowflake `CREATE OR ALTER DATABASE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_alter: bool,
+    /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub define: bool,
+    /// Snowflake: the modifier before DATABASE as written, e.g. "TRANSIENT"
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub modifier: Option<String>,
 }
 
 /// Database option
@@ -399,6 +425,9 @@ impl CreateDatabase {
             clone_from: None,
             at_clause: None,
             properties: Vec::new(),
+            or_alter: false,
+            define: false,
+            modifier: None,
         }
     }
 }
@@ -463,6 +492,9 @@ pub struct CreateFunction {
     /// TSQL: RETURNS @var TABLE (col_defs) - stores the variable name and column definitions as raw string
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub returns_table_body: Option<String>,
+    /// Snowflake `RETURNS TABLE ( ... )` columns with their quoting; a column may have no type
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub returns_table_columns: Option<Vec<ColumnDef>>,
     /// True if LANGUAGE clause appears before RETURNS clause
     #[serde(default)]
     pub language_first: bool,
@@ -508,6 +540,12 @@ pub struct CreateFunction {
     /// DuckDB: a macro's further overloads, each a `CreateFunction` with only its parameters, body and `is_table_function`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub overloads: Vec<Expression>,
+    /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub define: bool,
+    /// Snowflake: an AGGREGATE function, written `CREATE AGGREGATE FUNCTION`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub aggregate: bool,
 }
 
 /// A SET option in CREATE FUNCTION (PostgreSQL)
@@ -657,6 +695,7 @@ impl CreateFunction {
             has_parens: true,
             sql_data_access: None,
             returns_table_body: None,
+            returns_table_columns: None,
             language_first: false,
             set_options: Vec::new(),
             strict: false,
@@ -672,6 +711,8 @@ impl CreateFunction {
             parameter_style: None,
             snowflake_properties: Vec::new(),
             overloads: Vec::new(),
+            define: false,
+            aggregate: false,
         }
     }
 }
@@ -736,6 +777,9 @@ pub struct CreateProcedure {
     /// Snowflake `RETURNS TABLE (...)` columns, possibly none; `return_type` is then absent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub returns_table: Option<Vec<StructField>>,
+    /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub define: bool,
 }
 
 impl CreateProcedure {
@@ -758,6 +802,7 @@ impl CreateProcedure {
             has_parens: true,
             use_proc_keyword: false,
             returns_table: None,
+            define: false,
         }
     }
 }
@@ -873,6 +918,15 @@ pub struct CreateSequence {
     /// Tracks the order in which properties appeared in the source
     #[serde(default)]
     pub property_order: Vec<SeqPropKind>,
+    /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub define: bool,
+    /// Snowflake: a COMMENT written as a name instead of a string, with its quoting; `comment` is then None
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment_name: Option<Identifier>,
+    /// Snowflake: a START value outside the 64-bit range, as written; `start` is then None
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub start_text: Option<String>,
 }
 
 /// Sequence bound (value or NO MINVALUE/NO MAXVALUE)
@@ -904,6 +958,9 @@ impl CreateSequence {
             scale_modifier: None,
             shard_modifier: None,
             property_order: Vec::new(),
+            define: false,
+            comment_name: None,
+            start_text: None,
         }
     }
 }
@@ -1177,7 +1234,7 @@ impl DropType {
 }
 
 /// Snowflake ALTER of an object kind with no statement of its own, e.g. `ALTER TASK t1 RESUME`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct AlterObject {
     /// The object kind, e.g. "TASK", "TASK GRAPH", "SNAPSHOT SET"
     pub kind: String,
@@ -1203,6 +1260,9 @@ pub struct AlterObject {
     /// The properties the action sets or unsets; an unset property has no value
     #[serde(default)]
     pub properties: Vec<ObjectProperty>,
+    /// The class of a Snowflake class instance, e.g. `SNOWFLAKE.CORE.BUDGET`; `kind` is then "INSTANCE"
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub class: Option<TableRef>,
 }
 
 /// Snowflake CREATE of an object from another source, e.g. `CREATE DATABASE d1 FROM SHARE a1.s1`.
@@ -1216,7 +1276,7 @@ pub struct CreateObject {
     /// OR REPLACE clause
     #[serde(default)]
     pub or_replace: bool,
-    /// OR ALTER clause, also set by a Snowflake DCM `DEFINE`
+    /// OR ALTER clause
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub or_alter: bool,
     /// IF NOT EXISTS clause
@@ -1232,10 +1292,46 @@ pub struct CreateObject {
     /// The properties set after the source
     #[serde(default)]
     pub properties: Vec<ObjectProperty>,
+    /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub define: bool,
+    /// The class of a Snowflake class instance, e.g. `SNOWFLAKE.CORE.BUDGET`; `kind` is then "INSTANCE"
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub class: Option<TableRef>,
+    /// The parenthesised signature of a policy or function-like object, possibly empty
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub signature: Option<Vec<FunctionParameter>>,
+    /// The type after RETURNS
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub returns: Option<DataType>,
+    /// The body after AS or `->`: an expression, a string or a statement
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub body: Option<Box<Expression>>,
+}
+
+impl Default for CreateObject {
+    fn default() -> Self {
+        Self {
+            kind: String::new(),
+            modifier: None,
+            or_replace: false,
+            or_alter: false,
+            if_not_exists: false,
+            name: TableRef::new(String::new()),
+            source: String::new(),
+            operands: Vec::new(),
+            properties: Vec::new(),
+            define: false,
+            class: None,
+            signature: None,
+            returns: None,
+            body: None,
+        }
+    }
 }
 
 /// One property of a Snowflake ALTER action, e.g. `SCHEDULE = '1 MINUTE'` or `TAG t1 = 'v'`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct ObjectProperty {
     /// The property's keywords, e.g. "SCHEDULE", "CONTACT", "TAG", "EXECUTE AS USER"
     pub kind: String,
@@ -1251,6 +1347,9 @@ pub struct ObjectProperty {
     /// Whether the kind is a parameter name written as a quoted identifier, kept as written
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub quoted: bool,
+    /// Whether the optional WITH was written before it, as in Snowflake's `WITH TAG ( ... )`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub with: bool,
 }
 
 /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action.
@@ -1344,6 +1443,12 @@ pub struct Grant {
     /// PostgreSQL role membership options in order, e.g. `(ADMIN, true)` or `(INHERIT, false)`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub options: Vec<Expression>,
+    /// Snowflake: the class written before the instance in `ON <class_name> <instance_name>`; `kind` is then none
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub class: Option<TableRef>,
+    /// Snowflake: the service of a SERVICE ROLE written `<service>!<role>`; `securable` is then the role
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub service: Option<TableRef>,
 }
 
 /// REVOKE statement
@@ -1385,6 +1490,12 @@ pub struct Revoke {
     /// PostgreSQL role membership options revoked, e.g. `ADMIN` in `REVOKE ADMIN OPTION FOR`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub options: Vec<Expression>,
+    /// Snowflake: the class written before the instance in `ON <class_name> <instance_name>`; `kind` is then none
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub class: Option<TableRef>,
+    /// Snowflake: the service of a SERVICE ROLE written `<service>!<role>`; `securable` is then the role
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub service: Option<TableRef>,
 }
 
 /// PostgreSQL ALTER DEFAULT PRIVILEGES: a GRANT or REVOKE on objects created later.

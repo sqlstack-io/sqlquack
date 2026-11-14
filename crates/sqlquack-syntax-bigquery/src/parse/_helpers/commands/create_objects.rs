@@ -35,6 +35,7 @@ fn created(head: &Head, target: CreateTarget, operands: Vec<Expression>) -> Expr
         source: String::new(),
         operands,
         properties: Vec::new(),
+        ..Default::default()
     }))
 }
 

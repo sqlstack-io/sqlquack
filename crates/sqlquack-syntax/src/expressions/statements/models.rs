@@ -270,6 +270,9 @@ pub struct CopyStmt {
     /// PostgreSQL `COPY ... FROM ... WHERE condition`
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub where_clause: Option<Box<Expression>>,
+    /// Snowflake `COPY FILES INTO`, which copies files between stages
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub copy_files: bool,
 }
 
 /// COPY parameter (e.g., FILE_FORMAT = CSV or FORMAT PARQUET)
@@ -289,40 +292,6 @@ pub struct Credentials {
     pub credentials: Vec<(String, String)>,
     pub encryption: Option<String>,
     pub storage: Option<String>,
-}
-
-/// PUT statement (Snowflake)
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PutStmt {
-    /// Source file path
-    pub source: String,
-    /// Whether source was quoted in the original SQL
-    #[serde(default)]
-    pub source_quoted: bool,
-    /// Target stage
-    pub target: Expression,
-    /// PUT parameters
-    #[serde(default)]
-    pub params: Vec<CopyParameter>,
-}
-
-/// Stage reference (Snowflake) - @stage_name or @namespace.stage/path
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct StageReference {
-    /// Stage name including @ prefix (e.g., "@mystage", "@namespace.mystage")
-    pub name: String,
-    /// Optional path within the stage (e.g., "/path/to/file.csv")
-    #[serde(default)]
-    pub path: Option<String>,
-    /// Optional FILE_FORMAT parameter
-    #[serde(default)]
-    pub file_format: Option<Expression>,
-    /// Optional PATTERN parameter
-    #[serde(default)]
-    pub pattern: Option<String>,
-    /// Whether the stage reference was originally quoted (e.g., '@mystage')
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub quoted: bool,
 }
 
 /// Historical data / Time travel (Snowflake) - BEFORE (STATEMENT => ...) or AT (TIMESTAMP => ...)
@@ -448,8 +417,8 @@ pub struct CreateTask {
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub or_alter: bool,
     pub if_not_exists: bool,
-    /// Task name (possibly qualified: db.schema.task)
-    pub name: String,
+    /// Task name (possibly qualified: db.schema.task), each part with its quoting
+    pub name: TableRef,
     /// Raw text of the properties between the name and AS, for a dialect whose properties are not read one by one
     #[serde(default, skip_serializing_if = "String::is_empty")]
     pub properties: String,
@@ -464,6 +433,9 @@ pub struct CreateTask {
     /// Whether this is a Snowflake `CREATE TASK GRAPH`, which has properties and no body
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub graph: bool,
+    /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub define: bool,
 }
 
 /// Raw/unparsed SQL
@@ -569,8 +541,12 @@ pub enum UseKind {
     Role,
     Warehouse,
     Catalog,
-    /// Snowflake: USE SECONDARY ROLES ALL|NONE
+    /// Snowflake: USE SECONDARY ROLES with a list of roles in `roles`
     SecondaryRoles,
+    /// Snowflake: USE SECONDARY ROLES ALL
+    SecondaryRolesAll,
+    /// Snowflake: USE SECONDARY ROLES NONE
+    SecondaryRolesNone,
 }
 
 /// SET variable statement

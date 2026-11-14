@@ -174,6 +174,7 @@ impl Parser<'_> {
         }
         Ok(Expression::Copy(Box::new(CopyStmt {
             where_clause: None,
+            copy_files: false,
             this: Expression::Table(Box::new(target)),
             kind: true,
             files: vec![source],

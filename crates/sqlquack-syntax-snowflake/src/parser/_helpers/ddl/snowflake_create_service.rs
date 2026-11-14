@@ -1,6 +1,7 @@
 //! Parser ddl: Snowflake CREATE SERVICE in a compute pool from a specification or template, and CREATE APPLICATION SERVICE from an artifact repository package, checked against their grammars.
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_create_properties::with_written;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::schema_objects::models::{CreateObject, ObjectProperty};
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -72,6 +73,7 @@ impl Parser {
             source: source.to_owned(),
             operands,
             properties,
+            ..Default::default()
         }))))
     }
 
@@ -125,14 +127,15 @@ impl Parser {
     fn parse_service_options(&mut self) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
-            if self.check(TokenType::With) && !self.check_next(TokenType::Eq) {
+            let with = self.check(TokenType::With) && !self.check_next(TokenType::Eq);
+            if with {
                 self.skip();
                 if !self.check_identifier("TAG") {
                     return Err(self.parse_error("Expected TAG after WITH"));
                 }
             }
             let tags = self.check_identifier("TAG") && self.check_next(TokenType::LParen);
-            properties.extend(self.parse_create_property_item()?);
+            properties.extend(with_written(with, self.parse_create_property_item()?));
             if tags && !self.is_at_end() && !self.check(TokenType::Semicolon) {
                 return Err(self.parse_error("Expected the statement end after the tag list"));
             }

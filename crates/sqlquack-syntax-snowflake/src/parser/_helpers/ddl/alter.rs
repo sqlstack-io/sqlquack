@@ -733,6 +733,7 @@ impl Parser {
                 name,
                 if_exists,
                 cascade,
+                column_keyword: true,
             })
         } else if self.match_token(TokenType::Constraint) {
             let name = self.expect_identifier_with_quoted()?;
@@ -761,6 +762,7 @@ impl Parser {
                 name,
                 if_exists,
                 cascade,
+                column_keyword: false,
             })
         }
     }
@@ -877,7 +879,7 @@ impl Parser {
             let constraint = self.parse_table_constraint()?;
             Ok(AlterTableAction::AddConstraint(constraint))
         } else if self.check(TokenType::Index)
-            || self.check(TokenType::Key)
+            || (self.check(TokenType::Key) && !self.is_snowflake())
             || self.check(TokenType::Unique)
             || self.check_identifier("FULLTEXT")
             || self.check_identifier("SPATIAL")
@@ -984,6 +986,7 @@ impl Parser {
                 column: col_def,
                 if_not_exists: true,
                 position: None,
+                column_keyword: false,
             })
         }
     }
@@ -1065,6 +1068,7 @@ impl Parser {
                 column: col_def,
                 if_not_exists,
                 position,
+                column_keyword: has_column_keyword,
             })
         }
     }
@@ -1568,19 +1572,38 @@ impl Parser {
                 if snowflake && roles.is_empty() {
                     return Err(self.parse_error("Expected ALL, NONE or a role after ROLES"));
                 }
-                let name = if roles.is_empty() {
-                    "ALL".to_string()
-                } else {
-                    roles.join(", ")
+                let keyword = match roles.as_slice() {
+                    [role] if role.eq_ignore_ascii_case("ALL") => Some(UseKind::SecondaryRolesAll),
+                    [role] if role.eq_ignore_ascii_case("NONE") => {
+                        Some(UseKind::SecondaryRolesNone)
+                    }
+                    _ => None,
                 };
-                let keyword = matches!(roles.as_slice(), [role] if role.eq_ignore_ascii_case("ALL") || role.eq_ignore_ascii_case("NONE"));
+                let first = listed.first().cloned();
+                let (kind, this, roles) = match (snowflake, keyword, first) {
+                    (true, Some(UseKind::SecondaryRolesAll), _) => (
+                        UseKind::SecondaryRolesAll,
+                        Identifier::new("ALL"),
+                        Vec::new(),
+                    ),
+                    (true, Some(_), _) => (
+                        UseKind::SecondaryRolesNone,
+                        Identifier::new("NONE"),
+                        Vec::new(),
+                    ),
+                    (true, None, Some(first)) => (UseKind::SecondaryRoles, first, listed),
+                    _ => {
+                        let name = match roles.is_empty() {
+                            true => "ALL".to_string(),
+                            false => roles.join(", "),
+                        };
+                        (UseKind::SecondaryRoles, Identifier::new(name), Vec::new())
+                    }
+                };
                 return Ok(Expression::Use(Box::new(Use {
-                    kind: Some(UseKind::SecondaryRoles),
-                    this: Identifier::new(name),
-                    roles: match snowflake && !keyword {
-                        true => listed,
-                        false => Vec::new(),
-                    },
+                    kind: Some(kind),
+                    this,
+                    roles,
                     parts: Vec::new(),
                 })));
             }

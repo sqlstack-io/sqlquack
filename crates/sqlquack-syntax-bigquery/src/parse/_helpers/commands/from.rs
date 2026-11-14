@@ -767,6 +767,7 @@ impl Parser<'_> {
             after,
             pattern: Some(pattern),
             define: Some(define),
+            define_semantics: Vec::new(),
             alias: name,
             alias_explicit_as: explicit,
             options,

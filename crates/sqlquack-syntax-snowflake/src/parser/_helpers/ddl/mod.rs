@@ -1,6 +1,7 @@
 //! Ddl.
 
 pub(crate) mod alter;
+pub(crate) mod alter_table;
 pub(crate) mod commands;
 pub(crate) mod constraints;
 pub(crate) mod create_function;
@@ -43,6 +44,7 @@ pub(crate) mod snowflake_query_tables;
 pub(crate) mod snowflake_routines;
 pub(crate) mod snowflake_semantic_view;
 pub(crate) mod snowflake_show;
+pub(crate) mod snowflake_stages;
 pub(crate) mod snowflake_statements;
 pub(crate) mod snowflake_streams;
 pub(crate) mod snowflake_views;

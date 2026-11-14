@@ -48,6 +48,12 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
+/// DEFINE conditions by pattern variable, and the RUNNING or FINAL before a condition by its position.
+type MatchRecognizeDefinitions = (
+    Vec<(Identifier, Expression)>,
+    Vec<(usize, MatchRecognizeSemantics)>,
+);
+
 impl Parser {
     /// Parse GROUP BY clause
     pub(crate) fn parse_group_by(&mut self) -> Result<GroupBy> {
@@ -1405,10 +1411,11 @@ impl Parser {
             None
         };
 
-        let define = if self.match_token(TokenType::Define) {
-            Some(self.parse_match_recognize_define()?)
+        let (define, define_semantics) = if self.match_token(TokenType::Define) {
+            let (define, semantics) = self.parse_match_recognize_define()?;
+            (Some(define), semantics)
         } else {
-            None
+            (None, Vec::new())
         };
 
         if self.is_snowflake() && (pattern.is_none() || define.is_none()) {
@@ -1425,6 +1432,7 @@ impl Parser {
             after,
             pattern,
             define,
+            define_semantics,
             alias: None,
             alias_explicit_as: false,
             options: Vec::new(),
@@ -1436,13 +1444,7 @@ impl Parser {
         let mut measures: Vec<MatchRecognizeMeasure> = Vec::new();
 
         loop {
-            let window_frame = if self.match_token(TokenType::Running) {
-                Some(MatchRecognizeSemantics::Running)
-            } else if self.match_token(TokenType::Final) {
-                Some(MatchRecognizeSemantics::Final)
-            } else {
-                None
-            };
+            let window_frame = self.parse_match_recognize_semantics();
 
             let mut expr = self.parse_expression()?;
 
@@ -1667,13 +1669,31 @@ impl Parser {
         Ok(pattern.trim().to_string())
     }
 
-    /// Parse DEFINE clause in MATCH_RECOGNIZE
-    pub(crate) fn parse_match_recognize_define(&mut self) -> Result<Vec<(Identifier, Expression)>> {
+    /// A RUNNING or FINAL written before a MATCH_RECOGNIZE measure or condition.
+    fn parse_match_recognize_semantics(&mut self) -> Option<MatchRecognizeSemantics> {
+        if self.match_token(TokenType::Running) {
+            Some(MatchRecognizeSemantics::Running)
+        } else if self.match_token(TokenType::Final) {
+            Some(MatchRecognizeSemantics::Final)
+        } else {
+            None
+        }
+    }
+
+    /// Parse DEFINE clause in MATCH_RECOGNIZE, with the RUNNING or FINAL Snowflake parses before a condition.
+    pub(crate) fn parse_match_recognize_define(&mut self) -> Result<MatchRecognizeDefinitions> {
         let mut definitions: Vec<(Identifier, Expression)> = Vec::new();
+        let mut semantics: Vec<(usize, MatchRecognizeSemantics)> = Vec::new();
 
         loop {
             let name = self.parse_unquoted_identifier(Self::expect_identifier)?;
             self.expect_token(TokenType::As)?;
+            if self.is_snowflake() {
+                semantics.extend(
+                    self.parse_match_recognize_semantics()
+                        .map(|written| (definitions.len(), written)),
+                );
+            }
             let expr = self.parse_expression()?;
 
             definitions.push((name, expr));
@@ -1683,7 +1703,7 @@ impl Parser {
             }
         }
 
-        Ok(definitions)
+        Ok((definitions, semantics))
     }
 
     /// Parses Hive/Spark LATERAL VIEW [OUTER] generator(args) alias AS col [, ...].

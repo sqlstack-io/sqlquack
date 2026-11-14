@@ -356,6 +356,9 @@ impl Parser<'_> {
             at_clause: None,
             properties: Vec::new(),
             leading_comments: Vec::new(),
+            or_alter: false,
+            define: false,
+            modifier: None,
         })))
     }
 

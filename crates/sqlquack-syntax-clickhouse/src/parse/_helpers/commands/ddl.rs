@@ -494,6 +494,7 @@ impl Parser<'_> {
                 column,
                 if_not_exists,
                 position,
+                column_keyword: false,
             });
         }
         if self.eat_kws(&["DROP", "COLUMN"]) {
@@ -503,6 +504,7 @@ impl Parser<'_> {
                 name,
                 if_exists,
                 cascade: false,
+                column_keyword: false,
             });
         }
         if self.eat_kws(&["MODIFY", "COLUMN"]) {

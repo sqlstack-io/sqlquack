@@ -5,6 +5,7 @@ use crate::parser::constants::{
 };
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::schema_objects::models::{
     Grant, GrantPrincipal, Privilege, Revoke,
 };
@@ -68,14 +69,12 @@ impl Parser {
         let (privileges, grantees, bare) = match role {
             Some((kind, grantees)) => {
                 let securable = if matches!(*kind, "SERVICE ROLE") {
-                    let service = self.parse_grant_securable()?;
+                    target.service = Some(self.parse_grant_table_ref()?);
                     self.expect_token(TokenType::Exclamation)?;
-                    let role = self.parse_grant_name_part()?;
-                    Some(Identifier::new(format!(
-                        "{}!{}",
-                        written(&service),
-                        written(&role)
-                    )))
+                    Some(Identifier {
+                        span: None,
+                        ..self.parse_grant_name_part()?
+                    })
                 } else {
                     Some(self.parse_grant_securable()?)
                 };
@@ -113,6 +112,8 @@ impl Parser {
             function_params,
             bulk,
             container,
+            class,
+            service,
         } = target;
         self.expect_token(if revoke {
             TokenType::From
@@ -138,6 +139,8 @@ impl Parser {
                 objects: Vec::new(),
                 granted_by: None,
                 options: Vec::new(),
+                class,
+                service,
             })));
         }
         let grant_option = self.check(TokenType::With);
@@ -168,6 +171,8 @@ impl Parser {
             objects: Vec::new(),
             granted_by: None,
             options: Vec::new(),
+            class,
+            service,
         })))
     }
 
@@ -267,33 +272,33 @@ impl Parser {
                 bulk,
                 container: Some(container),
                 securable: Some(self.parse_grant_securable()?),
-                function_params: Vec::new(),
+                ..GrantTarget::default()
             });
         }
-        let kind = self.match_grant_kind(SNOWFLAKE_GRANT_KINDS).or_else(|| {
-            let generic = self.check_grant_name_start(0)
-                && self.check_grant_name_start(1)
-                && !self.check_at(2, TokenType::Dot)
-                && !SNOWFLAKE_GRANT_KIND_TAILS
-                    .iter()
-                    .any(|word| self.check_identifier(word))
-                && !SNOWFLAKE_GRANT_KINDS.iter().any(|kind| {
-                    kind.split(' ')
-                        .next()
-                        .is_some_and(|first| kind.contains(' ') && self.check_identifier(first))
-                });
-            generic.then(|| {
-                let word = if self.check(TokenType::QuotedIdentifier) {
-                    format!("\"{}\"", self.peek_text())
-                } else {
-                    self.peek_text().to_ascii_uppercase()
-                };
-                self.skip();
-                word
-            })
-        });
+        if let Some(kind) = self.match_grant_kind(SNOWFLAKE_GRANT_KINDS) {
+            return Ok(GrantTarget {
+                kind: Some(kind),
+                securable: Some(self.parse_grant_securable()?),
+                ..GrantTarget::default()
+            });
+        }
+        let class = self.check_grant_name_start(0)
+            && self.check_grant_name_start(1)
+            && !self.check_at(2, TokenType::Dot)
+            && !SNOWFLAKE_GRANT_KIND_TAILS
+                .iter()
+                .any(|word| self.check_identifier(word))
+            && !SNOWFLAKE_GRANT_KINDS.iter().any(|kind| {
+                kind.split(' ')
+                    .next()
+                    .is_some_and(|first| kind.contains(' ') && self.check_identifier(first))
+            });
+        let class = match class {
+            true => Some(TableRef::from_identifier(self.parse_grant_name_part()?)),
+            false => None,
+        };
         Ok(GrantTarget {
-            kind,
+            class,
             securable: Some(self.parse_grant_securable()?),
             ..GrantTarget::default()
         })
@@ -348,6 +353,29 @@ impl Parser {
             span: None,
             ..self.parse_grant_name()?
         })
+    }
+
+    /// A possibly dotted object name with each part kept, as a SERVICE ROLE's service.
+    fn parse_grant_table_ref(&mut self) -> Result<TableRef> {
+        let mut parts = vec![self.parse_grant_name_part()?];
+        while self.match_token(TokenType::Dot) {
+            parts.push(self.parse_grant_name_part()?);
+        }
+        let mut table = TableRef::from_identifier(parts.pop().ok_or_else(|| {
+            sqlquack_syntax::tokens::errors::Error::internal("a name has no parts")
+        })?);
+        table.schema = parts.pop();
+        match parts.len() {
+            0 => {}
+            1 => table.catalog = parts.pop(),
+            _ => {
+                table.catalog = Some(Identifier::new(
+                    parts.iter().map(written).collect::<Vec<_>>().join("."),
+                ));
+                table.catalog_parts = parts;
+            }
+        }
+        Ok(table)
     }
 
     /// A possibly dotted object name; each part is an identifier, not a string or reserved word.
@@ -448,6 +476,8 @@ fn written(part: &Identifier) -> String {
 #[derive(Default)]
 struct GrantTarget {
     kind: Option<String>,
+    class: Option<TableRef>,
+    service: Option<TableRef>,
     securable: Option<Identifier>,
     function_params: Vec<String>,
     bulk: Option<String>,

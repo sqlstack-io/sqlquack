@@ -64,6 +64,7 @@ impl Parser {
             .to_owned(),
             operands: vec![manifest],
             properties,
+            ..Default::default()
         }))))
     }
 
@@ -84,7 +85,8 @@ impl Parser {
         }
         let name = self.parse_object_name()?;
         let mut operands: Vec<Expression> = Vec::new();
-        if self.match_token(TokenType::From) {
+        let from = self.match_token(TokenType::From);
+        if from {
             operands.push(match self.is_stage_path() {
                 true => self.parse_stage_path()?,
                 false => self.parse_string_value()?,
@@ -101,9 +103,13 @@ impl Parser {
             or_alter,
             if_not_exists,
             name,
-            source: String::new(),
+            source: match from {
+                true => "FROM".to_owned(),
+                false => String::new(),
+            },
             operands,
             properties,
+            ..Default::default()
         }))))
     }
 }

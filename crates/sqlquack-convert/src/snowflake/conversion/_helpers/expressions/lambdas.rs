@@ -10,6 +10,7 @@ use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
+use crate::snowflake::conversion::_helpers::expressions::casts::unnamed_type;
 use crate::snowflake::conversion::_helpers::expressions::objects::{
     as_json, semi_structured, variant,
 };
@@ -45,6 +46,8 @@ pub(crate) fn lambda_call(
         "parameter_types",
     );
     let text_typed = declared.iter().all(|declared| {
+        let unnamed = unnamed_type(declared);
+        let declared = unnamed.as_ref().unwrap_or(declared);
         declared.is_null()
             || (declared.get("length").is_none_or(Value::is_null)
                 && declared

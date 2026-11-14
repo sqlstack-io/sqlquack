@@ -201,7 +201,7 @@ fn given_a_snowflake_ai_function_when_parsing_then_recorded_verdicts_hold() {
         SnowflakeVerdictTestCase {
             description: "an AI function from an experiment run (recorded semantic error)",
             sql: "CREATE OR REPLACE AI FUNCTION IF NOT EXISTS v1 ( v1 INT , v1 INT ) RETURNS INT FROM EXPERIMENT v1 RUN v1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a plain function from an experiment run (recorded semantic error)",
@@ -211,7 +211,7 @@ fn given_a_snowflake_ai_function_when_parsing_then_recorded_verdicts_hold() {
         SnowflakeVerdictTestCase {
             description: "an AI function with a body (recorded semantic error)",
             sql: "CREATE AI FUNCTION v1 ( ) RETURNS INT COMMENT = m1 AS $$1 $$ ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an AI function needs RETURNS (recorded errno 1003)",
@@ -400,7 +400,7 @@ fn given_a_snowflake_define_of_a_tag_pipe_or_code_bundle_when_parsing_then_recor
         SnowflakeVerdictTestCase {
             description: "a pipe with properties (recorded semantic error)",
             sql: "DEFINE PIPE d1.s1.v1 AUTO_INGEST = TRUE AS COPY INTO t1 FROM @s1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a pipe's body is a COPY (recorded errno 1003)",
@@ -415,7 +415,7 @@ fn given_a_snowflake_define_of_a_tag_pipe_or_code_bundle_when_parsing_then_recor
         SnowflakeVerdictTestCase {
             description: "a code bundle from an asset (recorded semantic error)",
             sql: "DEFINE CODE BUNDLE v1 . v1 . v1 FROM 'asset://a1/' COMMENT = 'm' ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a code bundle's source follows FROM (recorded errno 1003)",
@@ -445,7 +445,7 @@ fn given_a_snowflake_notebook_project_or_organization_profile_when_parsing_then_
         SnowflakeVerdictTestCase {
             description: "a notebook project from a workspace (recorded semantic error)",
             sql: "CREATE NOTEBOOK PROJECT v1 . v1 . v1 FROM 'snow://workspace/w1' COMMENT = m1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a notebook project's name may leave out its database (recorded semantic error)",
@@ -465,17 +465,17 @@ fn given_a_snowflake_notebook_project_or_organization_profile_when_parsing_then_
         SnowflakeVerdictTestCase {
             description: "a notebook may be named PROJECT (recorded runtime error)",
             sql: "CREATE NOTEBOOK project ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a notebook named PROJECT may come from a stage (recorded runtime error)",
             sql: "CREATE NOTEBOOK project FROM '@d1.s1.st1' ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a notebook named PROJECT may take options",
             sql: "CREATE NOTEBOOK project QUERY_WAREHOUSE = w1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a reserved word is no notebook project's name",
@@ -490,7 +490,7 @@ fn given_a_snowflake_notebook_project_or_organization_profile_when_parsing_then_
         SnowflakeVerdictTestCase {
             description: "a profile from a stage with a version (recorded semantic error)",
             sql: "CREATE ORGANIZATION PROFILE IF NOT EXISTS v1 FROM @d1.s1.st1/p1 VERSION v1 PUBLISH = TRUE ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a profile's manifest is a string (recorded errno 1003)",
@@ -633,7 +633,7 @@ fn given_a_snowflake_service_snapshot_when_parsing_then_recorded_verdicts_hold()
             description:
                 "a snapshot names its service, volume and instance (recorded semantic error)",
             sql: "CREATE SNAPSHOT v1 FROM SERVICE v1 VOLUME \"d1\" INSTANCE 0 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a snapshot set is not a service snapshot (recorded semantic error)",
@@ -764,7 +764,7 @@ fn given_a_snowflake_external_agent_task_list_or_user_group_when_parsing_then_re
         SnowflakeVerdictTestCase {
             description: "an external agent takes WITH VERSION (recorded acceptance)",
             sql: "CREATE EXTERNAL AGENT v1 WITH VERSION v1 ;",
-            expected_kind: Some("raw"),
+            expected_kind: Some("create_object"),
         },
         SnowflakeVerdictTestCase {
             description: "an external agent takes no COMMENT (recorded errno 1003)",
@@ -839,8 +839,8 @@ fn given_a_snowflake_external_agent_or_filtered_show_when_parsing_then_the_tree_
         StatementTestCase {
             description: "an external agent's text keeps EXTERNAL",
             sql: "CREATE EXTERNAL AGENT v1 WITH VERSION v1 ;",
-            pointer: "/0/raw/sql",
-            expected_value: json!("CREATE EXTERNAL AGENT v1 WITH VERSION v1"),
+            pointer: "/0/create_object/kind",
+            expected_value: json!("EXTERNAL AGENT"),
         },
         StatementTestCase {
             description: "EXECUTE IMMEDIATE keeps a bound variable as its source",
@@ -873,10 +873,10 @@ fn given_a_snowflake_external_agent_or_filtered_show_when_parsing_then_the_tree_
             expected_value: json!("q1"),
         },
         StatementTestCase {
-            description: "a DEFINE kept as text says DEFINE",
+            description: "a DEFINE of a code bundle says DEFINE",
             sql: "DEFINE CODE BUNDLE v1 . v1 . v1 FROM 'asset://a1/' ;",
-            pointer: "/0/raw/sql",
-            expected_value: json!("DEFINE CODE BUNDLE v1 . v1 . v1 FROM 'asset://a1/'"),
+            pointer: "/0/create_object/define",
+            expected_value: json!(true),
         },
         StatementTestCase {
             description: "SHOW TASKS keeps ROOT ONLY as a filter, not in its kind",
@@ -1623,7 +1623,7 @@ fn given_a_snowflake_put_to_a_table_stage_after_a_dot_when_parsing_then_the_targ
             description:
                 "the current schema's table stage keeps its table name (recorded acceptance)",
             sql: "PUT file:///tmp/f1 @.%v1 OVERWRITE = TRUE ;",
-            pointer: "/0/put/target/literal/value",
+            pointer: "/0/put/target/stage_reference/name",
             expected_value: json!("@.%v1"),
         },
         StatementTestCase {
