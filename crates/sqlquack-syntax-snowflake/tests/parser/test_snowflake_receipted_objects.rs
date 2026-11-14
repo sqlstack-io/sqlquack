@@ -1327,6 +1327,93 @@ fn given_a_snowflake_quoted_contact_purpose_or_set_variable_when_parsing_then_th
 }
 
 #[test]
+fn given_a_name_whose_middle_part_a_dot_dot_b_leaves_out_when_parsing_then_the_part_is_null_and_its_owner_marks_it(
+) {
+    let test_cases = [
+        StatementTestCase {
+            description: "the schema d1..t1 leaves out is null",
+            sql: "SELECT * FROM d1..t1 ;",
+            pointer: "/0/select/from/expressions/0/table/schema",
+            expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "the table that leaves out its schema marks it omitted",
+            sql: "SELECT * FROM d1..t1 ;",
+            pointer: "/0/select/from/expressions/0/table/schema_omitted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "the catalog before the omitted schema stays the catalog",
+            sql: "SELECT * FROM d1..t1 ;",
+            pointer: "/0/select/from/expressions/0/table/catalog/name",
+            expected_value: json!("d1"),
+        },
+        StatementTestCase {
+            description: "a written schema is not marked omitted",
+            sql: "SELECT * FROM d1.s1.t1 ;",
+            pointer: "/0/select/from/expressions/0/table/schema_omitted",
+            expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "a two-part name's first part is its schema, not an omitted one",
+            sql: "SELECT * FROM d1.t1 ;",
+            pointer: "/0/select/from/expressions/0/table/schema/name",
+            expected_value: json!("d1"),
+        },
+        StatementTestCase {
+            description: "a class SHOW target marks its omitted schema",
+            sql: "SHOW SNOWFLAKE . . FORECAST ;",
+            pointer: "/0/show/target/table/schema_omitted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a CALL name keeps the omitted part in place as null",
+            sql: "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!DROP_MONITOR ( 'm' ) ;",
+            pointer: "/0/call/name/1",
+            expected_value: json!(null),
+        },
+        StatementTestCase {
+            description: "a CALL name keeps the part after the omitted one",
+            sql: "CALL SNOWFLAKE . . ANOMALY_INSIGHTS!DROP_MONITOR ( 'm' ) ;",
+            pointer: "/0/call/name/2/name",
+            expected_value: json!("ANOMALY_INSIGHTS"),
+        },
+        StatementTestCase {
+            description: "a CALL name with every part written has no null part",
+            sql: "CALL SNOWFLAKE . LOCAL . ANOMALY_INSIGHTS!DROP_MONITOR ( 'm' ) ;",
+            pointer: "/0/call/name/1/name",
+            expected_value: json!("LOCAL"),
+        },
+        StatementTestCase {
+            description: "a call on a database with its schema left out marks it omitted",
+            sql: "SELECT SNOWFLAKE . . AGENT_RUN ( v1 ) ;",
+            pointer: "/0/select/expressions/0/method_call/schema_omitted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a call with its schema left out is made on the database",
+            sql: "SELECT SNOWFLAKE . . AGENT_RUN ( v1 ) ;",
+            pointer: "/0/select/expressions/0/method_call/this/column/name/name",
+            expected_value: json!("SNOWFLAKE"),
+        },
+        StatementTestCase {
+            description: "a schema-qualified call is not marked omitted",
+            sql: "SELECT CORTEX . AGENT_RUN ( v1 ) ;",
+            pointer: "/0/select/expressions/0/method_call/schema_omitted",
+            expected_value: json!(null),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_a_snowflake_lone_kind_word_or_omitted_name_when_parsing_then_recorded_verdicts_hold() {
     let test_cases = [
         SnowflakeVerdictTestCase {

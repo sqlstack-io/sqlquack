@@ -963,6 +963,8 @@ impl Parser {
                     }
                     if let Some(schema) = t.schema {
                         parts.push(schema.name);
+                    } else if t.schema_omitted {
+                        parts.push(String::new());
                     }
                     parts.push(t.name.name);
                     let col_name = parts.join(".");
@@ -1521,6 +1523,7 @@ impl Parser {
                 span: None,
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
+                schema_omitted: false,
             });
         }
 
@@ -1534,7 +1537,7 @@ impl Parser {
                 Ok(TableRef {
                     sample_call: None,
                     catalog: Some(first),
-                    schema: Some(Identifier::new("")),
+                    schema: None,
                     name: table,
                     alias: None,
                     alias_explicit_as: false,
@@ -1554,6 +1557,7 @@ impl Parser {
                     span: None,
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
+                    schema_omitted: true,
                 })
             } else {
                 let table = self.parse_bigquery_table_part()?;
@@ -1583,6 +1587,7 @@ impl Parser {
                         span: None,
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
+                        schema_omitted: false,
                     })
                 } else {
                     let trailing_comments = self.previous_trailing_comments().to_vec();
@@ -1609,6 +1614,7 @@ impl Parser {
                         span: None,
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
+                        schema_omitted: false,
                     })
                 }
             }
@@ -1637,6 +1643,7 @@ impl Parser {
                 span: None,
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
+                schema_omitted: false,
             })
         }
     }

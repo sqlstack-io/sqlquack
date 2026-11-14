@@ -529,30 +529,29 @@ fn file_stem(name: &Identifier, context: LineageContext<'_>) -> Option<String> {
 
 /// The relation's name as written, its parts joined by dots, in lower case.
 fn written_name(table: &TableRef) -> String {
-    [
-        table.catalog.as_ref(),
-        table.schema.as_ref(),
-        Some(&table.name),
-    ]
-    .into_iter()
-    .flatten()
-    .map(|part: &Identifier| part.name.to_lowercase())
-    .collect::<Vec<String>>()
-    .join(".")
+    dotted(table, |part: &Identifier| part.name.to_lowercase())
 }
 
 /// The relation's name, its parts resolved and joined by dots.
 fn relation_name(table: &TableRef, context: LineageContext<'_>) -> String {
-    [
+    dotted(table, |part: &Identifier| key(part, context))
+}
+
+/// The name's parts joined by dots, keeping an omitted `<catalog>..<name>` schema empty.
+fn dotted(table: &TableRef, part: impl Fn(&Identifier) -> String) -> String {
+    let mut parts: Vec<String> = [
         table.catalog.as_ref(),
         table.schema.as_ref(),
         Some(&table.name),
     ]
     .into_iter()
     .flatten()
-    .map(|part: &Identifier| key(part, context))
-    .collect::<Vec<String>>()
-    .join(".")
+    .map(part)
+    .collect();
+    if table.schema_omitted {
+        parts.insert(1, String::new());
+    }
+    parts.join(".")
 }
 
 /// A stored relation: its schema columns, or open with the columns known so far.
