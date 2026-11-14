@@ -323,3 +323,33 @@ fn given_a_string_tag_name_in_alter_warehouse_unset_when_parsing_then_acceptance
         },
     ]);
 }
+
+#[test]
+fn given_an_untyped_column_with_default_when_parsing_then_acceptance_matches_snowflake() {
+    assert_acceptance_matches_snowflake(&[
+        AcceptanceTestCase {
+            description: "an untyped column with DEFAULT and no value (recorded errno 1003)",
+            sql: "CREATE ICEBERG TABLE v1 ( v1 DEFAULT , v1 ) AS SELECT 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a last untyped column with DEFAULT and no value (recorded errno 1003)",
+            sql: "CREATE ICEBERG TABLE v1 ( v1 , v1 DEFAULT ) AS SELECT 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an untyped column with a DEFAULT value (recorded errno 1003)",
+            sql: "CREATE ICEBERG TABLE v1 ( v1 DEFAULT 1 , v1 ) AS SELECT 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "untyped columns without options (recorded errno 2003)",
+            sql: "CREATE ICEBERG TABLE v1 ( v1 , v1 ) AS SELECT 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+    ]);
+}
