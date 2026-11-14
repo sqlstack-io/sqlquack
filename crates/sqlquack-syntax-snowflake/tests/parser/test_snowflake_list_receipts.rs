@@ -424,3 +424,49 @@ fn given_a_copy_query_column_that_starts_with_a_dot_when_parsing_then_acceptance
         );
     }
 }
+
+#[test]
+fn given_a_define_table_reference_without_foreign_key_when_parsing_then_acceptance_matches_snowflake(
+) {
+    let test_cases = [
+        AcceptanceTestCase {
+            description: "columns before REFERENCES (recorded errno 2003)",
+            sql: "DEFINE TABLE d1.s1.v1 ( v1 INT , ( v1 , v1 ) REFERENCES d1.s1.v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "REFERENCES without columns (recorded errno 2003)",
+            sql: "DEFINE TABLE d1.s1.v1 ( v1 INT , REFERENCES d1.s1.v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "columns after the referenced table (recorded errno 1003)",
+            sql: "DEFINE TABLE d1.s1.v1 ( v1 INT , REFERENCES d1.s1.v1 ( v1 , v1 ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an empty column list before REFERENCES (recorded errno 1003)",
+            sql: "DEFINE TABLE d1.s1.v1 ( v1 INT , ( ) REFERENCES d1.s1.v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "CREATE TABLE refuses columns before REFERENCES (recorded errno 1003)",
+            sql: "CREATE TABLE v1 ( v1 INT , ( v1 , v1 ) REFERENCES v1 ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
+            "{}",
+            test_case.description
+        );
+    }
+}
