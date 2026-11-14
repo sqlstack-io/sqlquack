@@ -747,6 +747,9 @@ impl Parser {
         {
             return Err(self.parse_error("Expected IF NOT EXISTS"));
         }
+        if if_not_exists && or_replace && kind == ["INTERACTIVE", "WAREHOUSE"] {
+            return Err(self.parse_error("OR REPLACE and IF NOT EXISTS cannot be combined"));
+        }
         if kind == ["NOTEBOOK", "PROJECT"] && self.check(TokenType::Dot) {
             return Ok(None);
         }
