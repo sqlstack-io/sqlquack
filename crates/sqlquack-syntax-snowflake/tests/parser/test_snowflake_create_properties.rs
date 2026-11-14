@@ -243,6 +243,90 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_only_what_snowf
             dialect: Dialect::Snowflake,
             expected_accepted: true,
         },
+        AcceptanceTestCase {
+            description: "CREATE OR ALTER SECRET takes no tags (recorded errno 1003)",
+            sql: "CREATE OR ALTER SECRET v1 TYPE = GENERIC_STRING SECRET_STRING = 'm' WITH TAG ( v1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "CREATE OR ALTER SECRET takes no tags without WITH either (recorded errno 1003)",
+            sql: "CREATE OR ALTER SECRET v1 TYPE = SYMMETRIC_KEY ALGORITHM = GENERIC TAG ( v1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "DEFINE SECRET takes no tags (recorded errno 1003)",
+            sql: "DEFINE SECRET d1.s1.v1 TYPE = GENERIC_STRING SECRET_STRING = 'm' WITH TAG ( v1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "CREATE OR ALTER SECRET without tags (recorded parse)",
+            sql: "CREATE OR ALTER SECRET v1 TYPE = GENERIC_STRING SECRET_STRING = 'm' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "CREATE SECRET keeps its tags",
+            sql: "CREATE SECRET v1 TYPE = GENERIC_STRING SECRET_STRING = 'm' WITH TAG ( v1 = 'm' ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an account is dropped with a grace period (recorded errno 2003)",
+            sql: "DROP ACCOUNT v1 GRACE_PERIOD_IN_DAYS = 3 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an account is dropped by a quoted name (recorded errno 2003)",
+            sql: "DROP ACCOUNT \"v1 Q\" GRACE_PERIOD_IN_DAYS = 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an account is dropped without a grace period (recorded errno 2003)",
+            sql: "DROP ACCOUNT v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a grace period is a number (recorded errno 1003)",
+            sql: "DROP ACCOUNT v1 GRACE_PERIOD_IN_DAYS = 'x' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a grace period needs a value (recorded errno 1003)",
+            sql: "DROP ACCOUNT v1 GRACE_PERIOD_IN_DAYS = ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a dropped account needs a name (recorded errno 1003)",
+            sql: "DROP ACCOUNT GRACE_PERIOD_IN_DAYS = 1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a managed account is dropped (recorded errno 2003)",
+            sql: "DROP MANAGED ACCOUNT v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a managed account name is no reserved word (recorded errno 1003)",
+            sql: "DROP MANAGED ACCOUNT SELECT ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a managed account name is no string (recorded errno 1003)",
+            sql: "DROP MANAGED ACCOUNT 'v1' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
     ];
 
     for test_case in test_cases {
@@ -485,6 +569,12 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             sql: "CREATE MODEL monitor FROM MODEL m2",
             pointer: "/0/create_object/source",
             expected_value: json!("MODEL"),
+        },
+        ProjectionTestCase {
+            description: "a dropped account keeps its grace period",
+            sql: "DROP ACCOUNT v1 GRACE_PERIOD_IN_DAYS = 3",
+            pointer: "/0/drop_object/properties/0/value/literal/value",
+            expected_value: json!("3"),
         },
     ];
 

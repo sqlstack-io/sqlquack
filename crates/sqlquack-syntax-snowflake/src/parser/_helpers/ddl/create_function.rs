@@ -468,6 +468,9 @@ impl Parser {
                 if !self.match_token(TokenType::Comma) {
                     break;
                 }
+                if self.is_snowflake() && self.check(TokenType::RParen) {
+                    return Err(self.parse_error("Expected a package after the comma"));
+                }
             }
             self.expect_token(TokenType::RParen)?;
         }

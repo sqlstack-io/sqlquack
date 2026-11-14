@@ -234,7 +234,7 @@ impl Parser {
         Ok(property(name, None, Some(self.parse_primary()?)))
     }
 
-    /// Parse the properties of a SET (`set`) or UNSET: TAG and CONTACT lists, PRIMARY KEY, or named properties.
+    /// Parse the properties of a SET (`set`) or UNSET: TAG and CONTACT lists, PRIMARY KEY, or named properties, where a comma needs a property after it.
     pub(super) fn parse_alter_settings(&mut self, set: bool) -> Result<Vec<ObjectProperty>> {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         let mut contact_list_ends_set = false;
@@ -291,7 +291,11 @@ impl Parser {
                 properties.push(parameter_property(&name, value));
             }
             let comma = self.match_token(TokenType::Comma);
-            if self.is_at_end() || self.check(TokenType::Semicolon) || !set && !comma {
+            let end = self.is_at_end() || self.check(TokenType::Semicolon);
+            if comma && end {
+                return Err(self.parse_error("Expected a property after the comma"));
+            }
+            if end || !set && !comma {
                 return Ok(properties);
             }
             if contact_list_ends_set {

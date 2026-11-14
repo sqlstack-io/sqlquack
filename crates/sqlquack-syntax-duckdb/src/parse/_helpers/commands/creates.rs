@@ -679,6 +679,7 @@ impl Parser<'_> {
                 force: false,
                 objects: Vec::new(),
                 concurrently: false,
+                properties: Vec::new(),
             })));
         }
         let mut node: DropView = DropView::new(String::new());

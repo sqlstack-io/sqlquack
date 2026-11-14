@@ -88,6 +88,9 @@ impl Parser {
                 continue;
             }
             let tags = self.check_identifier("TAG") && self.check_next(TokenType::LParen);
+            if tags && or_alter && parts == ["SECRET"] {
+                return Err(self.parse_error("CREATE OR ALTER and DEFINE SECRET take no tags"));
+            }
             if matches!(parts.as_slice(), ["FAILOVER" | "REPLICATION", "GROUP"]) {
                 self.check_group_name_value()?;
             }
@@ -266,6 +269,9 @@ impl Parser {
             });
             if !self.match_token(TokenType::Comma) {
                 break;
+            }
+            if self.check(TokenType::RParen) {
+                return Err(self.parse_error("Expected an argument after the comma"));
             }
         }
         self.expect_token(TokenType::RParen)?;
