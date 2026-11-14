@@ -1905,3 +1905,19 @@ fn given_a_snowflake_warehouse_create_when_parsing_then_or_replace_and_if_not_ex
         );
     }
 }
+
+#[test]
+fn given_a_snowflake_online_feature_table_when_parsing_then_its_warehouse_is_optional() {
+    let test_cases = [
+        ("no warehouse (recorded errno 2029)", "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) TARGET_LAG = '1 minute' FROM t2 ;", true),
+        ("a warehouse (recorded errno 2003)", "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) TARGET_LAG = '1 minute' WAREHOUSE = \"v1 Q\" FROM t2 ;", true),
+        ("an empty key (recorded errno 1003)", "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( ) TARGET_LAG = '1 minute' FROM t2 ;", false),
+    ];
+    for (description, sql, expected_accepted) in test_cases {
+        assert_eq!(
+            snowflake_kind(sql).is_some(),
+            expected_accepted,
+            "{description}"
+        );
+    }
+}
