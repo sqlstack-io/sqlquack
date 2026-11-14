@@ -1385,6 +1385,18 @@ fn given_a_name_whose_middle_part_a_dot_dot_b_leaves_out_when_parsing_then_the_p
             expected_value: json!("LOCAL"),
         },
         StatementTestCase {
+            description: "a data metric function name marks its omitted schema",
+            sql: "ALTER TABLE t1 ADD DATA METRIC FUNCTION SNOWFLAKE . . NULL_COUNT ON ( v1 ) ;",
+            pointer: "/0/alter_table/actions/0/DataMetricFunction/items/0/name/schema_omitted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "an EXECUTE JOB property value marks its omitted schema",
+            sql: "EXECUTE INFERENCE JOB SERVICE IN COMPUTE POOL v1 WITH SPECIFICATION $$ m $$ FROM ( SELECT 1 ) MODEL = v1 . . v1 ;",
+            pointer: "/0/execute_object/properties/3/value/table/schema_omitted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
             description: "a call on a database with its schema left out marks it omitted",
             sql: "SELECT SNOWFLAKE . . AGENT_RUN ( v1 ) ;",
             pointer: "/0/select/expressions/0/method_call/schema_omitted",
