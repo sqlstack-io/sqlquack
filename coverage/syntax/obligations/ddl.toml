@@ -109587,48 +109587,6 @@ required = true
 target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_64X_x86"
 
 [[obligation]]
-id = "sf.ddl.alter-warehouse.set.o130"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_1X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.alter-warehouse.set.o131"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_1X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_1X_x86"
-
-[[obligation]]
-id = "sf.ddl.alter-warehouse.set.o132"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_16X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.alter-warehouse.set.o133"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_16X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_16X_x86"
-
-[[obligation]]
-id = "sf.ddl.alter-warehouse.set.o134"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_64X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.alter-warehouse.set.o135"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_64X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_64X_x86"
-
-[[obligation]]
 id = "sf.ddl.alter-warehouse.set.o055"
 kind = "option_present"
 required = true
@@ -290383,48 +290341,6 @@ required = true
 target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 | MEMORY_64X |… → MEMORY_64X"
 
 [[obligation]]
-id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o127"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_1X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o128"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_1X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_1X_x86"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o129"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_16X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o130"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_16X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_16X_x86"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o131"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_64X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o132"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_64X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_64X_x86"
-
-[[obligation]]
 id = "sf.ddl.create-warehouse.create-or-alter-warehouse.o043"
 kind = "option_present"
 required = true
@@ -291228,48 +291144,6 @@ id = "sf.ddl.create-warehouse.create-warehouse.o073"
 kind = "alternative"
 required = true
 target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_64X_x86"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-warehouse.o161"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_1X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-warehouse.o162"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_1X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_1X_x86"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-warehouse.o163"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_16X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-warehouse.o164"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_16X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_16X_x86"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-warehouse.o165"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_64X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.create-warehouse.o166"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_64X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_64X_x86"
 
 [[obligation]]
 id = "sf.ddl.create-warehouse.create-warehouse.o077"
@@ -292212,48 +292086,6 @@ id = "sf.ddl.create-warehouse.define-warehouse.o039"
 kind = "alternative"
 required = true
 target = "{ STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X | MEMORY_16X_x86 |… → MEMORY_64X_x86"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.define-warehouse.o122"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_1X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.define-warehouse.o123"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_1X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_1X_x86"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.define-warehouse.o124"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_16X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.define-warehouse.o125"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_16X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_16X_x86"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.define-warehouse.o126"
-kind = "operand_type_class"
-required = true
-target = "MEMORY_64X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a valid word"
-
-[[obligation]]
-id = "sf.ddl.create-warehouse.define-warehouse.o127"
-kind = "negative_neighbour"
-required = true
-target = "MEMORY_64X_x86 in [ RESOURCE_CONSTRAINT = { STANDARD_GEN_1 | STANDARD_GEN_2 | MEMORY_1X | MEMORY_1X_x86 | MEMORY_16X |…"
-note = "a string literal in place of MEMORY_64X_x86"
 
 [[obligation]]
 id = "sf.ddl.create-warehouse.define-warehouse.o043"

@@ -253,6 +253,10 @@ COMMAND_NON_CALL_KEYWORDS: frozenset[str] = frozenset({"TAG"})
 
 TEMPLATE_OPERANDS: bool = False
 
+# A bare word this matches is a keyword even with lower-case letters in it, such as Snowflake's
+# MEMORY_1X_x86; None leaves every bare word with a lower-case letter a placeholder.
+CASED_KEYWORD: re.Pattern[str] | None = None
+
 REPEATED_ITEMS: bool = False
 
 QUOTE_MIXED_CASE: bool = False

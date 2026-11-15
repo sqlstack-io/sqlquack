@@ -8,6 +8,7 @@ from scripts.grammar_obligations.constants import (
     ASSIGNMENT_SIZE,
     ASSIGNMENTS,
     BAR,
+    CASED_KEYWORD,
     CLASS_RULES,
     CLOSERS,
     DEFAULT_CLASS,
@@ -46,7 +47,9 @@ def tokens(production: str) -> list[tuple[str, str]]:
     found: list[tuple[str, str]] = []
     for index, (kind, word) in enumerate(pairs):
         named: bool = index + 1 < len(pairs) and pairs[index + 1][1] == NAMED_ARGUMENT
-        bare: bool = kind == TOKEN_KEYWORD and not named and any(char.islower() for char in word)
+        cased: bool = CASED_KEYWORD is not None and CASED_KEYWORD.fullmatch(word) is not None
+        lower: bool = any(char.islower() for char in word)
+        bare: bool = kind == TOKEN_KEYWORD and not named and not cased and lower
         found.append((TOKEN_PLACEHOLDER if bare else kind, word))
     return found
 
