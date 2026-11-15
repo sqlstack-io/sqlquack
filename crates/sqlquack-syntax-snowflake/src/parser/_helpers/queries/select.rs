@@ -890,6 +890,7 @@ impl Parser {
                             span: SourceSpan::default(),
                             inferred_type: None,
                             export_state: false,
+                            from_separator: false,
                         }))
                     } else {
                         let table_name = third_ident;
@@ -946,6 +947,7 @@ impl Parser {
                         span: SourceSpan::default(),
                         inferred_type: None,
                         export_state: false,
+                        from_separator: false,
                     }))
                 } else {
                     let table_name = second_ident;
@@ -1090,6 +1092,7 @@ impl Parser {
                             span: SourceSpan::default(),
                             inferred_type: None,
                             export_state: false,
+                            from_separator: false,
                         }))
                     } else {
                         let args = if self.check(TokenType::RParen) {
@@ -1143,6 +1146,7 @@ impl Parser {
                                 span: SourceSpan::default(),
                                 inferred_type: None,
                                 export_state: false,
+                                from_separator: false,
                             };
                             let func_expr = Expression::Function(Box::new(func));
 
@@ -1339,6 +1343,7 @@ impl Parser {
                         span: SourceSpan::default(),
                         inferred_type: None,
                         export_state: false,
+                        from_separator: false,
                     }))
                 };
 

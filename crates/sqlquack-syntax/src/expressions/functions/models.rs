@@ -54,6 +54,9 @@ pub struct Function {
     /// DuckDB `EXPORT_STATE`: the call returns its aggregate state.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub export_state: bool,
+    /// FROM, not a comma, separates the first two arguments, as in Snowflake's `DATE_PART(YEAR FROM d)`.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub from_separator: bool,
 }
 
 impl Function {
@@ -85,6 +88,7 @@ impl Function {
             span: SourceSpan::default(),
             inferred_type: None,
             export_state: false,
+            from_separator: false,
         }
     }
 }

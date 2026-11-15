@@ -250,6 +250,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     inferred_type: None,
                     export_state: false,
+                    from_separator: false,
                 }))));
             }
             let args = self.parse_expression_list()?;
@@ -287,6 +288,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     inferred_type: None,
                     export_state: false,
+                    from_separator: false,
                 }))));
             } else {
                 return Err(self.parse_error("IF function requires 2 or 3 arguments"));

@@ -427,6 +427,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     inferred_type: None,
                     export_state: false,
+                    from_separator: false,
                 }))))
             }
             (
@@ -527,6 +528,7 @@ impl Parser {
                         span: SourceSpan::default(),
                         inferred_type: None,
                         export_state: false,
+                        from_separator: false,
                     }))))
                 }
             }
@@ -549,6 +551,7 @@ impl Parser {
                         span: SourceSpan::default(),
                         inferred_type: None,
                         export_state: false,
+                        from_separator: false,
                     }))))
                 } else if args.len() == BINARY_ARITY {
                     Ok(Some(Expression::Nvl(Box::new(
@@ -575,6 +578,7 @@ impl Parser {
                         span: SourceSpan::default(),
                         inferred_type: None,
                         export_state: false,
+                        from_separator: false,
                     }))))
                 }
             }
@@ -606,6 +610,7 @@ impl Parser {
                         span: SourceSpan::default(),
                         inferred_type: None,
                         export_state: false,
+                        from_separator: false,
                     }))))
                 }
             }
@@ -634,6 +639,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     inferred_type: None,
                     export_state: false,
+                    from_separator: false,
                 }))))
             }
             (sqlquack_syntax::functions::typed::models::TypedParseKind::Variadic, "CHAR") => {
@@ -674,6 +680,7 @@ impl Parser {
                         span: SourceSpan::default(),
                         inferred_type: None,
                         export_state: false,
+                        from_separator: false,
                     }))))
                 }
             }
@@ -703,6 +710,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     inferred_type: None,
                     export_state: false,
+                    from_separator: false,
                 }))))
             }
             (sqlquack_syntax::functions::typed::models::TypedParseKind::Variadic, "MATCH") => {
@@ -764,6 +772,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     inferred_type: None,
                     export_state: false,
+                    from_separator: false,
                 }))))
             }
             (sqlquack_syntax::functions::typed::models::TypedParseKind::CastLike, "TRY_CAST") => {
