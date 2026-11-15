@@ -123,12 +123,10 @@ def family_cases(  # noqa: PLR0913
         if rendered.stage:
             case[STAGE_KEY] = rendered.stage
         cases.append(case)
-    packed_refused: frozenset[str] = (
+    to_derive_one_option_per_case: frozenset[str] = (
         _packed_refused(numbered=numbered, cases=cases, phases=phases or {}) - unpacked
     )
-    if packed_refused:
-        # Snowflake refused the one case that covered an option, the case with every option, so
-        # derive those forms again with each option in its own case.
+    if to_derive_one_option_per_case:
         return family_cases(
             root=root,
             evidence=evidence,
@@ -136,7 +134,7 @@ def family_cases(  # noqa: PLR0913
             setups=setups,
             held=held,
             phases=phases,
-            unpacked=unpacked | packed_refused,
+            unpacked=unpacked | to_derive_one_option_per_case,
         )
     scored: set[str] = {str(case["sql"]) for case in cases}
     refused: set[str] = disputed - undisputed
