@@ -153,8 +153,32 @@ fn given_a_snowflake_clone_or_replica_when_parsing_then_only_documented_forms_ar
             expected_accepted: true,
         },
         AcceptanceTestCase {
-            description: "a replica's source has all three parts",
+            description: "a replica's source may leave out its account (recorded semantic error)",
             sql: "CREATE FAILOVER GROUP v1 AS REPLICA OF v1 . . v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a connection replica may leave out its account (recorded unsupported feature)",
+            sql: "CREATE CONNECTION v1 AS REPLICA OF v1 . . v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "a replica's source needs its organization (recorded syntax error)",
+            sql: "CREATE REPLICATION GROUP v1 AS REPLICA OF . v1 . v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a replica's source needs its name (recorded syntax error)",
+            sql: "CREATE FAILOVER GROUP v1 AS REPLICA OF v1 . v1 . ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a group replica's source has three parts",
+            sql: "CREATE REPLICATION GROUP v1 AS REPLICA OF v1 . v1 ;",
             dialect: Dialect::Snowflake,
             expected_accepted: false,
         },
@@ -232,6 +256,18 @@ fn given_a_snowflake_clone_or_replica_when_parsing_then_the_tree_keeps_its_parts
             sql: "CREATE CONNECTION c1 AS REPLICA OF o1.a1.c2",
             pointer: "/0/create_object/operands/0/table/catalog/name",
             expected_value: json!("o1"),
+        },
+        ProjectionTestCase {
+            description: "a replica's left-out account is null, not an empty name",
+            sql: "CREATE REPLICATION GROUP g1 AS REPLICA OF o1 . . g2",
+            pointer: "/0/create_object/operands/0/table/schema",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "a replica records that its account was left out",
+            sql: "CREATE REPLICATION GROUP g1 AS REPLICA OF o1 . . g2",
+            pointer: "/0/create_object/operands/0/table/schema_omitted",
+            expected_value: json!(true),
         },
         ProjectionTestCase {
             description: "a failover group replica names its source",
