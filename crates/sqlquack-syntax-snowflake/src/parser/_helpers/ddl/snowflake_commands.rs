@@ -20,6 +20,7 @@ use sqlquack_syntax::expressions::statements::models::CreateTask;
 use sqlquack_syntax::expressions::statements::models::ExecuteImmediate;
 use sqlquack_syntax::expressions::statements::models::ExecuteUsingPolicyContext;
 use sqlquack_syntax::expressions::statements::models::Raw;
+use sqlquack_syntax::expressions::statements::models::Var;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::SourceSpan;
@@ -354,7 +355,13 @@ impl Parser {
             _ => {}
         }
         if self.match_text_seq(&["FROM", "DEPLOYMENT"]) {
-            let deployment = Expression::Identifier(self.parse_simple_name()?);
+            let latest = self.check_text_seq(&["LAST"]) || self.check_text_seq(&["LATEST"]);
+            let deployment = match latest {
+                true => Expression::Var(Box::new(Var {
+                    this: self.advance()?.text.to_ascii_uppercase(),
+                })),
+                false => Expression::Identifier(self.parse_simple_name()?),
+            };
             node.properties
                 .push(property("FROM DEPLOYMENT", None, Some(deployment)));
         } else {
