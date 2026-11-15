@@ -208,9 +208,9 @@ fn given_snowflake_view_alters_when_parsing_then_their_grammar_is_checked() {
             expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
-            description: "SET of a data metric schedule with the name omitted (recorded OK)",
+            description: "SET of a data metric schedule with the name omitted (recorded syntax error)",
             sql: "ALTER VIEW SET DATA_METRIC_SCHEDULE = '1 MINUTE' ;",
-            expected_kind: Some("alter_object"),
+            expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "UNSET of a property on a quoted name (recorded OK)",
