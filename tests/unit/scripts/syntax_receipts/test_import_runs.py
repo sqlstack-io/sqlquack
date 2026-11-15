@@ -226,6 +226,206 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             ),
         ),
         ClassifyTestCase(
+            description="reviewed post-parse errno 1485 is semantic",
+            errno=1485,
+            sqlstate="42601",
+            message="Invalid value specified for property 'PACKAGES', use 'single quoted string literals' instead.",
+            expected_classification=(
+                "semantic_error",
+                "errno 1485 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 99310 is semantic",
+            errno=99310,
+            sqlstate="22000",
+            message="Only an Application can create or drop an Application Specification.",
+            expected_classification=(
+                "semantic_error",
+                "errno 99310 SQLSTATE 22000, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 91086 is semantic",
+            errno=91086,
+            sqlstate="42601",
+            message="Invalid schedule was specified. Please refer to the docs on what constitutes a valid schedule.",
+            expected_classification=(
+                "semantic_error",
+                "errno 91086 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 60158 is semantic",
+            errno=60158,
+            sqlstate="22023",
+            message="Organization User Group not found: V1.",
+            expected_classification=(
+                "semantic_error",
+                "errno 60158 SQLSTATE 22023, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 90080 is semantic",
+            errno=90080,
+            sqlstate="22000",
+            message="Warehouse 'V1' does not exist.",
+            expected_classification=(
+                "semantic_error",
+                "errno 90080 SQLSTATE 22000, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 511807 is semantic",
+            errno=511807,
+            sqlstate="42601",
+            message="SQL compilation error: Backup m not found in backup set V1.",
+            expected_classification=(
+                "semantic_error",
+                "errno 511807 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 90268 is semantic",
+            errno=90268,
+            sqlstate="22023",
+            message="User V1 does not exist.",
+            expected_classification=(
+                "semantic_error",
+                "errno 90268 SQLSTATE 22023, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 90259 is semantic",
+            errno=90259,
+            sqlstate="42601",
+            message="Must specify frequency and start time together.",
+            expected_classification=(
+                "semantic_error",
+                "errno 90259 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 91083 is semantic",
+            errno=91083,
+            sqlstate="42601",
+            message="Nonexistent warehouse M was specified.",
+            expected_classification=(
+                "semantic_error",
+                "errno 91083 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 3523 is semantic",
+            errno=3523,
+            sqlstate="22023",
+            message="SQL execution error: JWS Key URL and RSA Public Keys cannot both be null",
+            expected_classification=(
+                "semantic_error",
+                "errno 3523 SQLSTATE 22023, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 90200 is semantic",
+            errno=90200,
+            sqlstate="42601",
+            message="Argument V1 repeats in the function signature.",
+            expected_classification=(
+                "semantic_error",
+                "errno 90200 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 91085 is semantic",
+            errno=91085,
+            sqlstate="42601",
+            message="Invalid predecessor V1 was specified.",
+            expected_classification=(
+                "semantic_error",
+                "errno 91085 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 2829 is semantic",
+            errno=2829,
+            sqlstate="23001",
+            message="START AT clause requires BACKFILL FROM clause in either INSERT ONLY INPUTS or Custom Incremental Dynamic Table.",
+            expected_classification=(
+                "semantic_error",
+                "errno 2829 SQLSTATE 23001, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 391434 is semantic",
+            errno=391434,
+            sqlstate="42701",
+            message="SQL compilation error: Index V1 contains a duplicate column V1.",
+            expected_classification=(
+                "semantic_error",
+                "errno 391434 SQLSTATE 42701, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 91348 is semantic",
+            errno=91348,
+            sqlstate="42601",
+            message="Catalog integration m is not valid. Please ensure required properties are valid.",
+            expected_classification=(
+                "semantic_error",
+                "errno 91348 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 90569 is semantic",
+            errno=90569,
+            sqlstate="22023",
+            message="'M' is an invalid Snowflake region.",
+            expected_classification=(
+                "semantic_error",
+                "errno 90569 SQLSTATE 22023, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 391403 is semantic",
+            errno=391403,
+            sqlstate="42601",
+            message="A hybrid table must contain primary key.",
+            expected_classification=(
+                "semantic_error",
+                "errno 391403 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 3215 is semantic",
+            errno=3215,
+            sqlstate="42601",
+            message="Invalid clustering key 1, 1 ",
+            expected_classification=(
+                "semantic_error",
+                "errno 3215 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 682 is semantic",
+            errno=682,
+            sqlstate="22000",
+            message="Cannot set resource constraint to 'STANDARD_GEN_1'. Use the GENERATION property to set warehouse hardware generation. ",
+            expected_classification=(
+                "semantic_error",
+                "errno 682 SQLSTATE 22000, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 99933 is semantic",
+            errno=99933,
+            sqlstate="22023",
+            message="Invalid TARGET_LAG value '1 second' specified for online feature table. Additional details: target lag values above 1 second(s) are not supported.",
+            expected_classification=(
+                "semantic_error",
+                "errno 99933 SQLSTATE 22023, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
             description="an unreviewed errno without the compilation prefix is not established",
             errno=926,
             sqlstate="42601",
