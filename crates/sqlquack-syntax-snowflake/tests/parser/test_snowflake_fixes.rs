@@ -709,9 +709,9 @@ fn given_a_snowflake_create_model_gateway_or_experiment_when_parsing_then_its_so
             expected_kind: Some("alter_table"),
         },
         SnowflakeVerdictTestCase {
-            description: "keeps ALTER TABLE v1 MODIFY v1 SET MASKING POLICY v1 ;",
+            description: "keeps ALTER TABLE v1 MODIFY v1 SET MASKING POLICY v1 ; as a column governance action",
             sql: "ALTER TABLE v1 MODIFY v1 SET MASKING POLICY v1 ;",
-            expected_kind: Some("alter_table"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "keeps CREATE TABLE t1 ( a INT AS ( 1 ) ) ;",
@@ -1731,9 +1731,9 @@ fn given_a_snowflake_alter_table_governance_action_when_parsing_then_only_a_fait
             expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
-            description: "an unquoted row access policy stays structured (recorded OK)",
+            description: "an unquoted row access policy keeps its policy and columns, which the shared ALTER TABLE holds only as raw text (recorded OK)",
             sql: "ALTER TABLE v1 ADD ROW ACCESS POLICY v1 ON ( v1 ) ;",
-            expected_kind: Some("alter_table"),
+            expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
             description: "a quoted row access policy stays raw (recorded OK)",

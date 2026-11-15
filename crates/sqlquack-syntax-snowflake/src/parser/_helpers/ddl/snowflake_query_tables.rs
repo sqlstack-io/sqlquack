@@ -190,7 +190,7 @@ impl Parser {
             let expressions = self.parse_iceberg_tags()?;
             column
                 .constraints
-                .push(ColumnConstraint::Tags(Tags { expressions }));
+                .push(ColumnConstraint::Tags(Tags { expressions, with }));
             column.constraint_order.push(ConstraintType::Tags);
             return Ok(column);
         }

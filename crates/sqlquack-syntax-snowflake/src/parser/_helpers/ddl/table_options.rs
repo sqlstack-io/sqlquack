@@ -475,7 +475,9 @@ impl Parser {
         } else if self.match_keyword("TAG")
             || self.match_token(TokenType::With) && self.match_keyword("TAG")
         {
-            let tags = self.parse_tags()?;
+            let with = self.tokens[self.current - 2].token_type == TokenType::With;
+            let mut tags = self.parse_tags()?;
+            tags.with = with;
             col_def.constraints.push(ColumnConstraint::Tags(tags));
             col_def.constraint_order.push(ConstraintType::Tags);
         } else if self.match_token(TokenType::As) {
