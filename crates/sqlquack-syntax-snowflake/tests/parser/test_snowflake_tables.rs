@@ -659,6 +659,11 @@ fn given_snowflake_iceberg_and_dynamic_tables_when_parsing_then_their_grammar_is
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
+            description: "a DCM definition names a database in an account (recorded semantic error)",
+            sql: "DEFINE DATABASE d1.v1 ;",
+            expected_kind: Some("create_database"),
+        },
+        SnowflakeVerdictTestCase {
             description: "OR ALTER on an iceberg table (recorded errno 1003)",
             sql: "CREATE OR ALTER ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 AS SELECT 1 ;",
             expected_kind: None,
@@ -1375,6 +1380,41 @@ fn given_a_snowflake_class_method_or_index_string_when_parsing_then_the_tree_kee
     for test_case in test_cases {
         assert_eq!(
             statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_dcm_database_in_an_account_when_parsing_then_the_tree_keeps_the_account() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "the account qualifies the database",
+            sql: "DEFINE DATABASE a1.d1",
+            pointer: "/0/create_database/account/name",
+            expected_value: json!("a1"),
+        },
+        ProjectionTestCase {
+            description: "the database keeps its own name",
+            sql: "DEFINE DATABASE a1.d1",
+            pointer: "/0/create_database/name/name",
+            expected_value: json!("d1"),
+        },
+        ProjectionTestCase {
+            description: "a database named alone has no account",
+            sql: "DEFINE DATABASE d1",
+            pointer: "/0/create_database/account",
+            expected_value: json!(null),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
             test_case.expected_value,
             "{}",
             test_case.description

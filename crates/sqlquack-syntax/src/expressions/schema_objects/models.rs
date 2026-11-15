@@ -402,6 +402,9 @@ pub struct CreateDatabase {
     /// Snowflake: the modifier before DATABASE as written, e.g. "TRANSIENT"
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub modifier: Option<String>,
+    /// Snowflake DCM: the account that qualifies the name in `DEFINE DATABASE <account>.<name>`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub account: Option<Identifier>,
 }
 
 /// Database option
@@ -428,6 +431,7 @@ impl CreateDatabase {
             or_alter: false,
             define: false,
             modifier: None,
+            account: None,
         }
     }
 }
