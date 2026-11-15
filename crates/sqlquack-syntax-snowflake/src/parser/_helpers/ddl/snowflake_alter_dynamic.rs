@@ -107,7 +107,12 @@ impl Parser {
                     self.expect_alter_words(&[&["ADD", "ROW", "ACCESS", "POLICY"]])?;
                     let added = self.policy_operand()?;
                     self.expect_token(TokenType::On)?;
-                    return Ok((vec![name, added, self.row_access_columns()?], vec![]));
+                    let columns = self.row_access_columns()?;
+                    let addition = tuple(vec![added, columns]);
+                    return Ok((
+                        vec![name],
+                        vec![property("ADD ROW ACCESS POLICY", None, Some(addition))],
+                    ));
                 }
                 (vec![name], vec![])
             }
@@ -376,8 +381,14 @@ impl Parser {
                 }
                 _ => properties.push(property(&action, None, None)),
             }
-            let mut items = vec![column, Expression::Identifier(Identifier::new(action))];
+            let mut items = vec![
+                column,
+                Expression::Identifier(Identifier::new(action.as_str())),
+            ];
             for item in properties {
+                if item.name.is_none() && item.value.is_none() && item.kind != action {
+                    items.push(Expression::Identifier(Identifier::new(item.kind.as_str())));
+                }
                 items.extend(item.name.map(Expression::Identifier));
                 items.extend(item.value);
             }

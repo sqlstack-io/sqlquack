@@ -1,6 +1,7 @@
 //! Parser ddl: Snowflake CREATE DYNAMIC ICEBERG TABLE and CREATE INTERACTIVE TABLE, checked against their grammar.
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_alter::with_keyword;
 use crate::parser::_helpers::ddl::snowflake_create_table::tag_properties;
 use crate::parser::_helpers::ddl::snowflake_external_table::policy_property;
 use crate::parser::constants::SNOWFLAKE_DYNAMIC_TABLE_REQUIRED;
@@ -295,7 +296,7 @@ impl Parser {
             return Ok((None, vec![property("FROZEN WHERE", None, Some(condition))]));
         }
         let saved = self.current;
-        self.match_token(TokenType::With);
+        let with = self.match_token(TokenType::With);
         if self.match_text_seq(&["ROW", "ACCESS", "POLICY"]) {
             let policy = self.parse_iceberg_object_name()?;
             self.expect_token(TokenType::On)?;
@@ -304,17 +305,26 @@ impl Parser {
                     "the parser reached a state its checks rule out",
                 ));
             };
-            return Ok((None, vec![policy_property(policy, columns.expressions)]));
+            let found = vec![policy_property(policy, columns.expressions)];
+            return Ok((None, with_keyword(with, found)));
         }
         self.current = saved;
         self.parse_interactive_property()
     }
 
-    /// One property an interactive table allows, with the key of a `<key> = <value>` one.
+    /// One property an interactive table allows, with the key of a `<key> = <value>` one; a WITH before it is kept in its kind.
     pub(super) fn parse_interactive_property(
         &mut self,
     ) -> Result<(Option<String>, Vec<ObjectProperty>)> {
-        self.match_token(TokenType::With);
+        let with = self.match_token(TokenType::With);
+        let (key, found) = self.parse_interactive_property_after_with()?;
+        Ok((key, with_keyword(with, found)))
+    }
+
+    /// One property an interactive table allows after its optional WITH.
+    fn parse_interactive_property_after_with(
+        &mut self,
+    ) -> Result<(Option<String>, Vec<ObjectProperty>)> {
         if self.match_text_seq(&["TAG"]) {
             return Ok((None, tag_properties(self.parse_iceberg_tags()?)));
         }
