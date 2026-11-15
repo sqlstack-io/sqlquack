@@ -137,6 +137,18 @@ fn given_a_snowflake_cortex_search_service_create_when_parsing_then_the_tree_kee
             pointer: "/0/create_object/operands/0/select/from/expressions/0/table/name/name",
             expected_value: json!("t1"),
         },
+        ProjectionTestCase {
+            description: "a service on one column files its query under AS, not under the column keyword",
+            sql: "CREATE CORTEX SEARCH SERVICE s1 ON c1 WAREHOUSE = w1 TARGET_LAG = '1 hour' AS SELECT c1 FROM t1",
+            pointer: "/0/create_object/source",
+            expected_value: json!("AS"),
+        },
+        ProjectionTestCase {
+            description: "a service with indexes files its query under AS, not under TEXT INDEXES",
+            sql: "CREATE CORTEX SEARCH SERVICE s1 TEXT INDEXES c1 VECTOR INDEXES c2 WAREHOUSE = w1 TARGET_LAG = '1 hour' AS SELECT c1 FROM t1",
+            pointer: "/0/create_object/source",
+            expected_value: json!("AS"),
+        },
     ];
     for test_case in test_cases {
         assert_eq!(
