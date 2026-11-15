@@ -367,9 +367,9 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             expected_value: json!("DEFAULT_ROLE"),
         },
         ProjectionTestCase {
-            description: "a multi-word value stays one value",
-            sql: "CREATE FAILOVER GROUP g1 OBJECT_TYPES = INTEGRATIONS ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = o1.a1",
-            pointer: "/0/create_object/properties/1/value/table/name/name",
+            description: "a multi-word value stays one keyword phrase, not a name (recorded success)",
+            sql: "CREATE FAILOVER GROUP g1 OBJECT_TYPES = INTEGRATIONS ALLOWED_INTEGRATION_TYPES = security INTEGRATIONS ALLOWED_ACCOUNTS = o1.a1",
+            pointer: "/0/create_object/properties/1/value/var/this",
             expected_value: json!("SECURITY INTEGRATIONS"),
         },
         ProjectionTestCase {
@@ -389,6 +389,18 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             sql: "CREATE DATABASE d1 FROM SHARE a1.s1",
             pointer: "/0/create_object/source",
             expected_value: json!("SHARE"),
+        },
+        ProjectionTestCase {
+            description: "a one-word value stays a name",
+            sql: "CREATE FAILOVER GROUP g1 OBJECT_TYPES = INTEGRATIONS ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS ALLOWED_ACCOUNTS = o1.a1",
+            pointer: "/0/create_object/properties/0/value/table/name/name",
+            expected_value: json!("INTEGRATIONS"),
+        },
+        ProjectionTestCase {
+            description: "an altered group's multi-word value is a keyword phrase too",
+            sql: "ALTER FAILOVER GROUP g1 SET ALLOWED_INTEGRATION_TYPES = SECURITY INTEGRATIONS , API INTEGRATIONS",
+            pointer: "/0/alter_object/properties/0/value/tuple/expressions/1/var/this",
+            expected_value: json!("API INTEGRATIONS"),
         },
         ProjectionTestCase {
             description: "a warehouse keeps OR ALTER",
