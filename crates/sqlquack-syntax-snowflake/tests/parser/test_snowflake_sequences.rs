@@ -138,3 +138,50 @@ fn given_a_snowflake_sequence_create_when_parsing_then_the_tree_keeps_its_writte
         );
     }
 }
+
+#[test]
+fn given_an_altered_sequence_increment_when_parsing_then_its_optional_words_are_kept() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "BY in a bare ALTER SEQUENCE INCREMENT is kept",
+            sql: "ALTER SEQUENCE v1 INCREMENT BY 1 ;",
+            pointer: "/0/alter_sequence/spelling/increment_by",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "= in a bare ALTER SEQUENCE INCREMENT is kept",
+            sql: "ALTER SEQUENCE v1 INCREMENT = 1 ;",
+            pointer: "/0/alter_sequence/spelling/increment_eq",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a bare INCREMENT records no optional words",
+            sql: "ALTER SEQUENCE v1 INCREMENT 1 ;",
+            pointer: "/0/alter_sequence/spelling",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "BY after SET INCREMENT is kept in the property's kind",
+            sql: "ALTER SEQUENCE v1 SET INCREMENT BY = 1 ;",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("INCREMENT BY"),
+        },
+        ProjectionTestCase {
+            description: "= after SET INCREMENT BY is kept on the property",
+            sql: "ALTER SEQUENCE v1 SET INCREMENT BY = 1 ;",
+            pointer: "/0/alter_object/properties/0/eq",
+            expected_value: json!(true),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
