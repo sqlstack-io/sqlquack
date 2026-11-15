@@ -12,6 +12,7 @@ use crate::formats::_helpers::ids::{
 use crate::formats::constants::{
     DCM_LINE, DCM_POSITION, DEFINITION_SEPARATOR, GRAMMAR_JOIN, HTTPS, INTERACTION_MEMBERS,
     PROSE_HASH_PREFIX, RECEIPT_FORBIDDEN_TEXT, RECEIPT_FORMAT_ENGINE, RECEIPT_FORMAT_PUBLIC,
+    REDACTED_LOCATION,
 };
 use crate::formats::main::obligation_form::obligation_form;
 use crate::formats::models::{
@@ -389,6 +390,7 @@ pub(crate) fn check_receipt(receipt: &Receipt) -> Vec<String> {
         ));
     }
     problems.extend(dcm_problems(receipt));
+    problems.extend(redaction_problem(receipt));
     problems.extend(no_effect_problems(receipt));
     let hashes: [Option<&String>; 13] = [
         Some(&receipt.sql_sha256),
@@ -518,6 +520,23 @@ fn no_effect_problems(receipt: &Receipt) -> Vec<String> {
         .filter(|(wrong, _)| *wrong)
         .map(|(_, why)| format!("receipt {id}: a receipt run without privileges {why}"))
         .collect(),
+    }
+}
+
+/// The problem, if any, when `locations_redacted` does not count the placeholders in the message.
+fn redaction_problem(receipt: &Receipt) -> Option<String> {
+    let written: usize = receipt
+        .message
+        .as_deref()
+        .map_or(0, |message| message.matches(REDACTED_LOCATION).count());
+    let recorded: Option<u32> = receipt.locations_redacted;
+    match recorded != Some(0) && usize::try_from(recorded.unwrap_or(0)) == Ok(written) {
+        true => None,
+        false => Some(format!(
+            "receipt {}: locations_redacted must count the {REDACTED_LOCATION} placeholders in \
+             its message, and is absent when there are none",
+            receipt.case_id
+        )),
     }
 }
 

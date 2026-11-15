@@ -68,6 +68,24 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             expected_counts: counts(1),
         },
         LoadTestCase {
+            description: "a receipt whose message had its echoed location redacted loads",
+            tree: |root| {
+                valid_tree(root);
+                let redacted = receipt_line()
+                    .replace("\"outcome\":\"accepted\"", "\"outcome\":\"error\"")
+                    .replace(
+                        "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
+                        "\"errno\":1688,\"sqlstate\":\"42704\",\"phase\":\"semantic_error\"",
+                    )
+                    .replace(
+                        "\"packet_sha256\"",
+                        "\"message\":\"Asset reference '<location>' is not declared.\",\"locations_redacted\":1,\"packet_sha256\"",
+                    );
+                write(root, "receipts/redacted.jsonl", &format!("{redacted}\n"));
+            },
+            expected_counts: counts(2),
+        },
+        LoadTestCase {
             description: "an obligation numbered past 999 loads",
             tree: |root| {
                 valid_tree(root);
@@ -1213,6 +1231,66 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 )
             },
             expected_problem: "unknown field `scope`",
+        },
+        FormatFaultTestCase {
+            description: "a redacted location the receipt does not count",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line()
+                    .replace("\"outcome\":\"accepted\"", "\"outcome\":\"error\"")
+                    .replace(
+                        "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
+                        "\"errno\":1688,\"sqlstate\":\"42704\",\"phase\":\"semantic_error\"",
+                    )
+                    .replace(
+                        "\"packet_sha256\"",
+                        "\"message\":\"Asset reference '<location>' is not declared.\",\"locations_redacted\":1,\"packet_sha256\"",
+                    ).replace(",\"locations_redacted\":1", ""),
+                )
+            },
+            expected_problem: "receipt query.select-17: locations_redacted must count",
+        },
+        FormatFaultTestCase {
+            description: "a redaction count with no placeholder in the message",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line()
+                    .replace("\"outcome\":\"accepted\"", "\"outcome\":\"error\"")
+                    .replace(
+                        "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
+                        "\"errno\":1688,\"sqlstate\":\"42704\",\"phase\":\"semantic_error\"",
+                    )
+                    .replace(
+                        "\"packet_sha256\"",
+                        "\"message\":\"Asset reference '<location>' is not declared.\",\"locations_redacted\":1,\"packet_sha256\"",
+                    ).replace("'<location>'", "'a1'"),
+                )
+            },
+            expected_problem: "receipt query.select-17: locations_redacted must count",
+        },
+        FormatFaultTestCase {
+            description: "a location echoed without redaction",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &receipt_line()
+                    .replace("\"outcome\":\"accepted\"", "\"outcome\":\"error\"")
+                    .replace(
+                        "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
+                        "\"errno\":1688,\"sqlstate\":\"42704\",\"phase\":\"semantic_error\"",
+                    )
+                    .replace(
+                        "\"packet_sha256\"",
+                        "\"message\":\"Asset reference '<location>' is not declared.\",\"locations_redacted\":1,\"packet_sha256\"",
+                    ).replace("'<location>'", "'asset://a1/'"),
+                )
+            },
+            expected_problem: "receipt query.select-17: holds an account, host, URL or address",
         },
         FormatFaultTestCase {
             description: "a receipt holding an address",
