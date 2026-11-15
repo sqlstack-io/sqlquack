@@ -552,6 +552,9 @@ pub struct CreateFunction {
     /// Snowflake: an AGGREGATE function, written `CREATE AGGREGATE FUNCTION`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub aggregate: bool,
+    /// Snowflake: the words that made the function temporary when they were not TEMPORARY, e.g. `TEMP`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub temporary_spelling: Option<String>,
 }
 
 /// A SET option in CREATE FUNCTION (PostgreSQL)
@@ -721,6 +724,7 @@ impl CreateFunction {
             overloads: Vec::new(),
             define: false,
             aggregate: false,
+            temporary_spelling: None,
         }
     }
 }
