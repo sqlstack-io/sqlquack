@@ -1352,10 +1352,23 @@ impl Parser {
 
         let if_not_exists =
             self.match_keywords(&[TokenType::If, TokenType::Not, TokenType::Exists]);
-        let name = if self.is_snowflake() {
+        let mut name = if self.is_snowflake() {
             self.parse_quoting_identifier(Self::expect_identifier)?
         } else {
             self.parse_unquoted_identifier(Self::expect_identifier)?
+        };
+        let account = match self.is_snowflake()
+            && self.check(TokenType::Dot)
+            && self
+                .statement_keyword_at(self.current)
+                .is_some_and(|at| self.tokens[at].token_type == TokenType::Define)
+        {
+            true => {
+                self.skip();
+                let database = self.parse_quoting_identifier(Self::expect_identifier)?;
+                Some(std::mem::replace(&mut name, database))
+            }
+            false => None,
         };
 
         let clone_from = if self.match_identifier("CLONE") {
@@ -1442,6 +1455,7 @@ impl Parser {
             or_alter: false,
             define: false,
             modifier: None,
+            account,
         })))
     }
 
