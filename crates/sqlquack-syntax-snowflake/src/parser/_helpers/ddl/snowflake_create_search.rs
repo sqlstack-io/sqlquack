@@ -32,9 +32,8 @@ impl Parser {
         }
         let name = self.parse_object_name()?;
         let mut properties: Vec<ObjectProperty> = Vec::new();
-        let source = if self.match_token(TokenType::On) {
+        if self.match_token(TokenType::On) {
             properties.push(property("ON", None, Some(self.search_column()?)));
-            "ON"
         } else {
             self.expect_alter_words(&[&["TEXT", "INDEXES"]])?;
             properties.push(property("TEXT INDEXES", None, Some(self.search_columns()?)));
@@ -44,8 +43,7 @@ impl Parser {
                 None,
                 Some(self.search_columns()?),
             ));
-            "TEXT INDEXES"
-        };
+        }
         if self.match_text_seq(&["PRIMARY", "KEY"]) {
             self.expect_token(TokenType::LParen)?;
             properties.push(property("PRIMARY KEY", None, Some(self.search_columns()?)));
@@ -72,7 +70,7 @@ impl Parser {
             or_alter,
             if_not_exists,
             name,
-            source: source.to_owned(),
+            source: "AS".to_owned(),
             operands: vec![query],
             properties,
             ..Default::default()
