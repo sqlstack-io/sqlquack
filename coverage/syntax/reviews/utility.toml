@@ -296,3 +296,23 @@ note = "Approved at its last review with the same definition, obligations and ca
 
 [review.definitions]
 "sf.utility.execute-job-service" = "698e7e3c000c21f8956c0bc257ba54e2af95a14b450e96a23ccdf4f61c906605"
+
+[[review]]
+id = "utility-015"
+family = "utility"
+parser_tree = "3a4cba73f9f022daa15bba5bcbd08b54aca3ee57"
+reviewed_utc = "2026-11-15T10:13:31Z"
+verdict = "approved"
+forms = [
+  "sf.utility.call-with.language-javascript-as-call",
+  "sf.utility.execute-code-bundle",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 60ca8f7a6; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.call-with.language-javascript-as-call" = "6b5941cf234df617611e722d70d285d79650760c8e8f0d21946513487bdb4f0b"
+"sf.utility.execute-code-bundle" = "2af4c81fb838bcdfac1a8b1a584f7677f24fb00391cc4a4ba52157da0003fd0b"
+
+[review.definitions]
+"sf.utility.call-with.language-javascript-as-call" = "53b81ab712fc6080e3dc5945b08ba45941cb4e4e1fcc240a5aa6e9f204e086a7"
+"sf.utility.execute-code-bundle" = "70b51c209e944d0db0671c304fdfb9625453b0659d3be495775eec95917a16f3"

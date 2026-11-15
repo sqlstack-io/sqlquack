@@ -4346,3 +4346,322 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.ddl.create-table.create-table-clone" = "fc141db0872a5504e4750af33aa4b51c07665287ed8fbf0aedac0ec66cd11a50"
 "sf.ddl.experiment.create-experiment" = "c45d7e4d3c3690b2d1d97937f8d33d8ef52900d9adabe76c3e64f2ab7c00edc9"
 "sf.ddl.undrop-external-volume" = "a9ea5bd96c8fd93cec48dfa8af88a70a050c296b7d54d985426a23cb37644ece"
+
+[[review]]
+id = "ddl-045"
+family = "ddl"
+parser_tree = "3a4cba73f9f022daa15bba5bcbd08b54aca3ee57"
+reviewed_utc = "2026-11-15T10:13:30Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-application-set-app-spec.listing-label-description-target-accounts",
+  "sf.ddl.alter-application-set-app-spec.setting-label-description-setting",
+  "sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles",
+  "sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description",
+  "sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles",
+  "sf.ddl.alter-artifact-repository.set",
+  "sf.ddl.alter-database.set",
+  "sf.ddl.alter-dcm-project.set",
+  "sf.ddl.alter-external-volume.update-storage-location-credentials-aws-key-id",
+  "sf.ddl.alter-function-spcs.set-on-batch-failure-abort-return-null",
+  "sf.ddl.alter-function.set",
+  "sf.ddl.alter-function.set-compression",
+  "sf.ddl.alter-function.set-headers",
+  "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type",
+  "sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields",
+  "sf.ddl.alter-notebook.set",
+  "sf.ddl.alter-openflow-connector.set-default-version-first-last",
+  "sf.ddl.alter-openflow-deployment.set",
+  "sf.ddl.alter-pipe.set",
+  "sf.ddl.alter-stage.set-directory-enable-true",
+  "sf.ddl.create-application-package",
+  "sf.ddl.create-dcm-project",
+  "sf.ddl.create-file-format.create-file-format",
+  "sf.ddl.create-file-format.create-or-alter-file",
+  "sf.ddl.create-function-spcs.function-returns-service-endpoint",
+  "sf.ddl.create-function.create-function-returns-table.javascript-handler",
+  "sf.ddl.create-function.create-function-returns-table.sql-handler",
+  "sf.ddl.create-postgres-instance.compute-family-storage-size-gb-authentication-authority-postgres",
+  "sf.ddl.create-stage.create-or-alter-stage",
+  "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage",
+  "sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams",
+  "sf.ddl.create-tag.create-tag",
+]
+note = "Approved at its last review with the same definition, obligations and cases; the cases whose parse trees changed with the parser at 60ca8f7a6, which keeps keywords, key-value pairs and omitted name parts in their own fields, were read again under review brief version 1, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-application-set-app-spec.listing-label-description-target-accounts" = "60a595d9633091c8df0ad0536fd7451173cd241b2e3fc9ccb8b71d60f6c65e37"
+"sf.ddl.alter-application-set-app-spec.setting-label-description-setting" = "cdd2f65aaf118c34d3aeae2e9005c9c6a1ec9aec4bb66e1defb49adec934df7a"
+"sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles" = "95d0a71d82e2f87258056483e39baa3bf117b2dbf07ff8ddb4527906da9dca84"
+"sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description" = "8707ca8fe24da5dd52c0af11bbdd5dd3912e375f69aaafa35ef14933da285712"
+"sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles" = "027a34ffc63572d836ca432a19c4c566d717c8820361f21d5835f781c339e632"
+"sf.ddl.alter-artifact-repository.set" = "6a85c19ac506a782bdf5b54b3bfe7dc70dc2f519b76ac4956e52bfe8f94bbf79"
+"sf.ddl.alter-database.set" = "71e6a4d60ce3dfd8a7e83546ce18205f6b687fc3292ee5682f27f813c50fbaa8"
+"sf.ddl.alter-dcm-project.set" = "51dd9f256ad3aae6ccdb2d3e167f4c4912bf6417f4f2afa48c661da206146088"
+"sf.ddl.alter-external-volume.update-storage-location-credentials-aws-key-id" = "46d37a8301f7974449054a8c8abe1699a098282045a9a5fc6a649424845f2782"
+"sf.ddl.alter-function-spcs.set-on-batch-failure-abort-return-null" = "04deec45ec17266bd34a9b889f058eeda77f5ef8996a6a0b4c530954bc1584eb"
+"sf.ddl.alter-function.set" = "b8712fe78a85b6a3cf05709d65f5817cbe25bf18e6a4ec354d312f6fa718c899"
+"sf.ddl.alter-function.set-compression" = "afc713a19031816d06bde83bf971b4ef9d408cb5446d5588e9d147da210f27a1"
+"sf.ddl.alter-function.set-headers" = "9741eca38447bc096791ee93a20b11e0a43bbc709be8101266c04b89736edd50"
+"sf.ddl.alter-iceberg-table-alter-column-set-data-type.type" = "df2f98ba53acca5cfcf1b4ef0c23ce032537bb91488804349004057863de2a32"
+"sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields" = "ab20f35bc085690099f538e54d4ce6e0338da82564eded274d8c6df1c0d702d8"
+"sf.ddl.alter-notebook.set" = "59d417c577d5f23b3746db2d5ac35e6fe8b9fce30660f090cb4a13c6863abf57"
+"sf.ddl.alter-openflow-connector.set-default-version-first-last" = "fa6a65f69302bc1e1b3c84af6402832b4845f4e2c1dcb32a7f52fa2eeb2c769a"
+"sf.ddl.alter-openflow-deployment.set" = "8c6ef4359256139247a54cfdc1728b87b8ee9e4b9d3b1275986b11c29eae486a"
+"sf.ddl.alter-pipe.set" = "cd56fb2286d0d74494bd1d459bd88a39c37b632bb6c9c3e7223389cd9e8d0185"
+"sf.ddl.alter-stage.set-directory-enable-true" = "acf6d924d1accd962eb4409c1b290e58d944fcf028bf8841fd39b8de12536761"
+"sf.ddl.create-application-package" = "5ba7f538efa5bf1102e64ca351edd6120a563d37351b88c06b2088674885d8a0"
+"sf.ddl.create-dcm-project" = "791e0fa70264e5f12722aec9d4c5ddaee11c3cecea566fe483f2a2c99627f0dc"
+"sf.ddl.create-file-format.create-file-format" = "35db9c19ff965aabe885e1a2ad63ab622e629ea3910ab1ae2d8f8ba3b5968f1d"
+"sf.ddl.create-file-format.create-or-alter-file" = "9990372f8c7401e56f7775559538500415865af61460434687051b49d18450fb"
+"sf.ddl.create-function-spcs.function-returns-service-endpoint" = "6b11ce3b9630c673bf1257ed755957092a1e650c88612aba8de3e9be17202423"
+"sf.ddl.create-function.create-function-returns-table.javascript-handler" = "9a76b9e9d02c5896eeffe1e2d363be2b3b4985bf9cf5cf676229ba377432c3aa"
+"sf.ddl.create-function.create-function-returns-table.sql-handler" = "de41ee94073fcdf2fcbd4e01db3398e39c2075df7ad18128e52822b6d11c586c"
+"sf.ddl.create-postgres-instance.compute-family-storage-size-gb-authentication-authority-postgres" = "ccfa5fdd434bef309b89ff2855505673f1035680eccc7b1500b61d56e0e82f3f"
+"sf.ddl.create-stage.create-or-alter-stage" = "4fab22c31b8956c8765a929747bfe0b7305f28924b24a92fc902a3583e21957c"
+"sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage" = "5968e98b43ff294f6ec12811e66dfb6dd152efafa80a4096d5b9b931e76cfea8"
+"sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams" = "cc259b54d39a10778742ef43c854cf2e1d378c44caf664f05eab51d61da8499c"
+"sf.ddl.create-tag.create-tag" = "83e75e1ac2bd54b4de3d06b2dbb4fb2c8fa7ada28a2d2d68904248a1fd76a0af"
+
+[review.definitions]
+"sf.ddl.alter-application-set-app-spec.listing-label-description-target-accounts" = "8184752002ee81f1f80c37e7ece8602275212d103533537f813ddfe842fdc0bc"
+"sf.ddl.alter-application-set-app-spec.setting-label-description-setting" = "2694bd78b6f3b41a08a8a5fed8cb7689d1c726f6692c9797fdade96d9fd2696b"
+"sf.ddl.alter-application-set-configuration-definition.application-name-label-description-application-roles" = "ab80d9ac566e65636cb376be915e0f1f044f0f91dac77e8801cd4145d234a517"
+"sf.ddl.alter-application-set-configuration-definition.secret-authorization-secret-label-description" = "3443390f418d7521a4b8d5cce734fcd52fe767b3afbf8140095bdaa2e052cbc5"
+"sf.ddl.alter-application-set-configuration-definition.string-label-description-application-roles" = "368b052eea331a893614e13b64cbcb50263ea39902d525ec933fb55f8d9631f2"
+"sf.ddl.alter-artifact-repository.set" = "c351be6c20190bb91c78e88b6d53ba2d30fe2c1723326f47c4ffecdbd3829b72"
+"sf.ddl.alter-database.set" = "08799e403df4666dc5c5d7101019b610822f95a578a78a18b3953fba8e7f78fc"
+"sf.ddl.alter-dcm-project.set" = "97fe5eda2b9e7948d120aaf8b1bd31ab708ee31f393ffc73836036ae5ab9c0e6"
+"sf.ddl.alter-external-volume.update-storage-location-credentials-aws-key-id" = "c0280728d0f4de8036fe0dccbc6ae78df8db99b0b1e8219ba87ffd8da86d8b49"
+"sf.ddl.alter-function-spcs.set-on-batch-failure-abort-return-null" = "6882445a1a4359d72aca1d42ae02e3ad2fac00f1e6ff01d5d0c10fccb5fab1ac"
+"sf.ddl.alter-function.set" = "d714479280ab160fa10a59c8723c6514d8e718295db1d87d27d8b8cd8bf2bd9d"
+"sf.ddl.alter-function.set-compression" = "4e09d40b7f3cf1a9362525e2d3e74264c651bd739433e143171fab0a05929ce3"
+"sf.ddl.alter-function.set-headers" = "38995b57b10cdd3eb7510950e16fe5484ba90ab156b9a8220f8b76dd51e22b2f"
+"sf.ddl.alter-iceberg-table-alter-column-set-data-type.type" = "bcd44b5c5436e96753e5157b157d1a114317c2bc22a0a347914d72fa967eb1b9"
+"sf.ddl.alter-iceberg-table-alter-column-set-data-type.type-rename-fields" = "ed30c99e17d992feb029f0a5901430cbfbf9dc4395c13a079d7568f99f206378"
+"sf.ddl.alter-notebook.set" = "faba8e8fc6371ca2cf22841e6e9d64bd521ea114a3128286e0459ed4deb8a9c4"
+"sf.ddl.alter-openflow-connector.set-default-version-first-last" = "94fc9ff3d930f4e3f16126e1e06407835409611a9c70dad43e14a0f5dbf40f30"
+"sf.ddl.alter-openflow-deployment.set" = "c94efdc7d76fe23e31b950c974ccadb2ae187dea6a0cff6b00a394d657edda52"
+"sf.ddl.alter-pipe.set" = "fbc4501e985f2ad9edc083629f11559b8e658d58d9ba654def8444dcee1b9091"
+"sf.ddl.alter-stage.set-directory-enable-true" = "df151ec6045eef01ae04d23f0acf73e699613df1040941b2251b47ca318d9311"
+"sf.ddl.create-application-package" = "7d4735907f5fa41d7d90297585f0121384e0b25253d127e5f67810274aaf8c00"
+"sf.ddl.create-dcm-project" = "4338dd7d5c75cc5e362ecc13c1b4a094452c59544ed4bebbe0556acebb50245e"
+"sf.ddl.create-file-format.create-file-format" = "9a0d3d9dae6010ba8f511f4f2c1ab460924cb66e5063f08c9574411f2970b8cb"
+"sf.ddl.create-file-format.create-or-alter-file" = "db0df9a29d9963a7a03b70fe93087bde100a475038ab55456276e379a742b9c5"
+"sf.ddl.create-function-spcs.function-returns-service-endpoint" = "4839747a65417ff3148cdbad94ffc64249872a8ebf89acffe47c5c6abd8d1193"
+"sf.ddl.create-function.create-function-returns-table.javascript-handler" = "6291311667f470061f3222fb2c2f8d17d52f5a1b0a306bb01158520a0ebbd4c2"
+"sf.ddl.create-function.create-function-returns-table.sql-handler" = "469da9c8493446e38189a48e5c757164c382f809c90a69d41c1d906ac304a9ea"
+"sf.ddl.create-postgres-instance.compute-family-storage-size-gb-authentication-authority-postgres" = "113ee2218e173585ccce6ff466026f7c0d45620f7496558c74c74f63897e7f65"
+"sf.ddl.create-stage.create-or-alter-stage" = "b506c35887120beee27328d2a5e3591b49f10d09613b8f633c8e2d8a132b9da7"
+"sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage" = "b517564bcd6e54927a278d7af7f60abe8d49b517476deec831e6a4ec521f6bfa"
+"sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams" = "24b1d7a2d29f8971215fa70cc6c3605e3c28750d04775c53df8a4a7cf8ebb22e"
+"sf.ddl.create-tag.create-tag" = "da99d3b7e73ff860170b43d19e1c172a97300f20efc627c4fbb0b2c786cb3925"
+
+[[review]]
+id = "ddl-046"
+family = "ddl"
+parser_tree = "3a4cba73f9f022daa15bba5bcbd08b54aca3ee57"
+reviewed_utc = "2026-11-15T10:13:31Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-agent.set",
+  "sf.ddl.alter-alert.unset",
+  "sf.ddl.alter-application-package.set",
+  "sf.ddl.alter-application-package.unset",
+  "sf.ddl.alter-application-set-app-spec.connection-label-description-server-application",
+  "sf.ddl.alter-application-set-app-spec.external-access-label-description-host-ports",
+  "sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type",
+  "sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-authorization-code",
+  "sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-jwt-bearer",
+  "sf.ddl.alter-application.set-shared-telemetry-events",
+  "sf.ddl.alter-application.unset",
+  "sf.ddl.alter-dynamic-table.searchoptimizationaction",
+  "sf.ddl.alter-dynamic-table.set-unset-comment",
+  "sf.ddl.alter-dynamic-table.unset",
+  "sf.ddl.alter-external-consumer-remove-programmatic-access-token",
+  "sf.ddl.alter-external-table.add-partition-location",
+  "sf.ddl.alter-external-table.drop-partition-location",
+  "sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams",
+  "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with",
+  "sf.ddl.alter-iceberg-table-version-tag.create-version-tag",
+  "sf.ddl.alter-materialized-view.rename-to-cluster-by",
+  "sf.ddl.alter-online-feature-table.table-set",
+  "sf.ddl.alter-restricted-session-scope.add-as",
+  "sf.ddl.alter-restricted-session-scope.remove-as",
+  "sf.ddl.alter-schema.set",
+  "sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days",
+  "sf.ddl.alter-stage.set",
+  "sf.ddl.alter-table.datametricfunctionaction",
+  "sf.ddl.alter-tag.unset-data-movement-policy",
+  "sf.ddl.alter-task.set",
+  "sf.ddl.alter-task.unset",
+  "sf.ddl.comment.is",
+  "sf.ddl.create-alert.create-or-alter-alert",
+  "sf.ddl.create-artifact-repository",
+  "sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag",
+  "sf.ddl.create-cortex-search.text-indexes-vector-indexes",
+  "sf.ddl.create-database-catalog-linked",
+  "sf.ddl.create-database.create-database-from-backup",
+  "sf.ddl.create-database.define-database",
+  "sf.ddl.create-dataset",
+  "sf.ddl.create-dynamic-table.create-dynamic-table-from",
+  "sf.ddl.create-event-table.table",
+  "sf.ddl.create-event-table.table-clone",
+  "sf.ddl.create-external-agent",
+  "sf.ddl.create-external-consumer",
+  "sf.ddl.create-function.create-function-returns-language",
+  "sf.ddl.create-function.create-function-returns-language.scala-handler",
+  "sf.ddl.create-function.create-function-returns-table",
+  "sf.ddl.create-function.create-function-returns-table-2",
+  "sf.ddl.create-function.create-function-returns-table.python-handler",
+  "sf.ddl.create-iceberg-table.table-as-select",
+  "sf.ddl.create-procedure.create-procedure-returns-language",
+  "sf.ddl.create-schema.create-schema-from-backup",
+  "sf.ddl.create-schema.define-schema",
+  "sf.ddl.create-streamlit.define-streamlit",
+  "sf.ddl.create-table.create-table-from-backup",
+  "sf.ddl.create-task-graph.create-or-alter-task",
+  "sf.ddl.create-task-graph.create-task-graph",
+  "sf.ddl.create-task.create-or-alter-task",
+  "sf.ddl.create-task.create-task-as",
+  "sf.ddl.show-cortex-search",
+  "sf.ddl.show-databases",
+  "sf.ddl.show-nodes-compute-pool",
+  "sf.ddl.show-rules-in-event-routing-table",
+  "sf.ddl.truncate-materialized-view",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 60ca8f7a6; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-agent.set" = "305fac74c5d0a45dc7cb93209aa74a71d5ba52ca274552f4342f19a6ac410b4e"
+"sf.ddl.alter-alert.unset" = "161004851b7c21ba35fcfb978be3f75c83e218db5e9940b3ed031fe56f2e518f"
+"sf.ddl.alter-application-package.set" = "a83ac6ee7614bb64133e9a61a805288c7691f1f9a8970aa03dc648e1a3b81160"
+"sf.ddl.alter-application-package.unset" = "6974a45c56a284125678209ef9eae0fd18695e9b2d6c461547d8d57906535da1"
+"sf.ddl.alter-application-set-app-spec.connection-label-description-server-application" = "b447fcad91510dcf29088445cf71aa1a9e1d19cc040fc372171548f5dd1f4333"
+"sf.ddl.alter-application-set-app-spec.external-access-label-description-host-ports" = "1e405ca9bbc953eec2a7e3a389ac91d7715c0d989e3091fbaee054162dedcfc2"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type" = "77d9b861b59309d512ea919678e5bc8fbbd3d76eec868859a81b98630b0a46d8"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-authorization-code" = "cdc2d57d206ed1a2a3c7d9e4ab2fd4ae4150d4bf6e651bcbc98dc1e7da552d7d"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-jwt-bearer" = "71284f57ecaf77290924f4769f29be8cb32299281ddb3ae8920d6738825b1ce9"
+"sf.ddl.alter-application.set-shared-telemetry-events" = "6bbdb657e4615e2e07cb733bd59a93c62890c0bab4731ce737ee9adff0351870"
+"sf.ddl.alter-application.unset" = "3f93479aa72b5b2132aff01a2bfce7b6015e98c7732dcf62d16268f50f1a02ad"
+"sf.ddl.alter-dynamic-table.searchoptimizationaction" = "ff1f3a10c061314337a5bd57e70fc3da907b6030013b03b1fbef2e73a93fbd6d"
+"sf.ddl.alter-dynamic-table.set-unset-comment" = "92575bc5106b0e042f3f7b2a0c6a37fdce547e604bc0039f29a2ba23439c4251"
+"sf.ddl.alter-dynamic-table.unset" = "bd40726c0beddd6f97248bb0d0029c79114c2b975e4d7b2180196e9bf0d2231a"
+"sf.ddl.alter-external-consumer-remove-programmatic-access-token" = "759579cbce20bcd638e705302f3e3ce21c1cc337fb2764f07399acc0e09047de"
+"sf.ddl.alter-external-table.add-partition-location" = "1216e43e744694a7d3784d3f3bec15fc9661b2593ccd526ef8aacf23d79373ed"
+"sf.ddl.alter-external-table.drop-partition-location" = "a7d1a71198cfa6346b8fd66e081daf128138339af91b748fcdd388a9bcea2cf1"
+"sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams" = "b35df177754f7315be74cd10b3616d22fe47f8d85fdf562bbe0394f27cd4e0c2"
+"sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with" = "f760a6b981cf4fe37feb5e10c99e7816d9a641bbb7ff11b644e8ff2d2e4dda0d"
+"sf.ddl.alter-iceberg-table-version-tag.create-version-tag" = "a3bdc65eece63302d651e4abd9053cbd557ae3a7f19797308191fed006e7c0e8"
+"sf.ddl.alter-materialized-view.rename-to-cluster-by" = "114bb639ff0b217af5ab5c11f54b14efba6831dceb1dc078cf10a6c97fecdb8b"
+"sf.ddl.alter-online-feature-table.table-set" = "a80d55385e5186dd259e5fb7f8e0b8524052925b295f021e60d64ec53ada2c9b"
+"sf.ddl.alter-restricted-session-scope.add-as" = "7d5cdbf614603ea7a5df93aae53704afcaa60ffeb7bfd7467c579c971f00f483"
+"sf.ddl.alter-restricted-session-scope.remove-as" = "c0421206941e7cd4c0be5fd0fbb42fd7db1274f15b45c917bcb267ab1048ff64"
+"sf.ddl.alter-schema.set" = "b1c90b70dd4ef4769887a958f0efa2bf69f781ff7643226fb92fd409fe1f1f53"
+"sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = "e59b159779d928d7cae896245f520f52b37d3e8f5bb064dd3aa3b1b85861102a"
+"sf.ddl.alter-stage.set" = "8685a3eb9de65f235863f8b08a5269d2e335f64f49c5fcbeca0325537282a451"
+"sf.ddl.alter-table.datametricfunctionaction" = "73733eaa601e74cd0138169fd5a06d63de494695347bf34f4c202c775d1bc0be"
+"sf.ddl.alter-tag.unset-data-movement-policy" = "ddbe98a7f48cc8c80631bfb6ebaddcf1d18bb48913b510fe3684a5a3d7b1fdd1"
+"sf.ddl.alter-task.set" = "529d40c70010e0f6589812f7d2cd353af66616d5c090d2000ffd40070c701e3e"
+"sf.ddl.alter-task.unset" = "067c4f5e084ff813e94843f6fb2a844966b3e2840c998a1c40cb2afc24625c8a"
+"sf.ddl.comment.is" = "f38141b32fce48af20a862fa4a0f914e6e7d4bdcf48613262001ad89a569006f"
+"sf.ddl.create-alert.create-or-alter-alert" = "0ea38f9c56634795814210a1be3563d1212ff3510e046777c9f30c2d06e6bf89"
+"sf.ddl.create-artifact-repository" = "2f44fd55a8812be1f760301b864fd4b18a95af0528edba2d7b87809c178bf393"
+"sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag" = "5bfa00b683dd4ad835a4f5ff145c63d66f6f5248993a40e3eb4fce0f7ae19d8a"
+"sf.ddl.create-cortex-search.text-indexes-vector-indexes" = "f333c484b35f5047c1ece1a74c703973039ae587e55c0beb4a7392c29332471f"
+"sf.ddl.create-database-catalog-linked" = "62ff9ab0f19a0b4654d8edfcc32bdbcd7ca4247f8636ea0c0f62eaec344dde87"
+"sf.ddl.create-database.create-database-from-backup" = "a5c0ad27798e44005333eef0feb6eb7caa6199f783dca69ada9d5f4e4acd41a7"
+"sf.ddl.create-database.define-database" = "7a14d5f5e43db529ab0d4bc2efedebdfeb4e7b81b4da4dcb49910fe639c3503d"
+"sf.ddl.create-dataset" = "0f77c580c5ad22e129d6dd47c1be88a975a70e4ddad5ad9990dd0c0ab0752ea9"
+"sf.ddl.create-dynamic-table.create-dynamic-table-from" = "f97834f82a244b3b0a11c17c580b5b348f4abd44cac8b78d086a6565adfdb2e0"
+"sf.ddl.create-event-table.table" = "2422267ec1a372f5d46fa4a34b16a546efbc785fce264b13218413fbed0b5651"
+"sf.ddl.create-event-table.table-clone" = "ebb494288dd7dd187ecb6d157610c488b66d1e35ac67be436198a45ad2b55aa0"
+"sf.ddl.create-external-agent" = "49331ac18fb3ce3b01680774745e2f7de94d0976f993dec97fa96a30052afa97"
+"sf.ddl.create-external-consumer" = "a3d73760aab0bcb81072414a99a79e37d53e8b5b4827d6e6051d1b9be28935f5"
+"sf.ddl.create-function.create-function-returns-language" = "811579b3799fff5d0c94c649ab165dad5a753daa6b2da38e7ea8b02727689bb2"
+"sf.ddl.create-function.create-function-returns-language.scala-handler" = "8244d69772d3bc02ba707c1455660bcf18984351868175458340d61d28a8603e"
+"sf.ddl.create-function.create-function-returns-table" = "169dbdbd009bb2c28fc270d4b812468fcd4f1f92480c99811dda664851d760f1"
+"sf.ddl.create-function.create-function-returns-table-2" = "4b865c4c460ab15b84cb45d61e12da9bd07daeafb72d45bc1286b1bc1a1b6067"
+"sf.ddl.create-function.create-function-returns-table.python-handler" = "de191f54ae8a8603a39a46808f107b6766aa8acf3bd6ca321b8dcd213714b33f"
+"sf.ddl.create-iceberg-table.table-as-select" = "33ce1bb6514fbb8a07f65b3463dd81b2bf756f541bebeb1a5263f8ff18bbb1a4"
+"sf.ddl.create-procedure.create-procedure-returns-language" = "d5e06ac3b51a8198b47bc02a6f637e52a5042021ebad6bdfe26fbb0d986173df"
+"sf.ddl.create-schema.create-schema-from-backup" = "bc968b7a4b576d543c8b77f245c93fc9d30528d65cbf19574decafb900e3c8d0"
+"sf.ddl.create-schema.define-schema" = "7aad5c793ca4547a7679cd3c8c28413ad35b05feb53dd59860ac19d343a455cf"
+"sf.ddl.create-streamlit.define-streamlit" = "5ad76df55551380e34e020b41dae0c24a18044585a7686001f0d718f1df4d15c"
+"sf.ddl.create-table.create-table-from-backup" = "e5770f9c45ca6582644a70b7642fdeef1eac79eaeb73cc57835d782d6556137a"
+"sf.ddl.create-task-graph.create-or-alter-task" = "c199800295b4c486df81ec463fc23fc94bb08867909d3b4291da43664726e5dd"
+"sf.ddl.create-task-graph.create-task-graph" = "11baa5ac1194f01c69e7f1bf494a4055df1d1e30f51ff871754c10c02eab550d"
+"sf.ddl.create-task.create-or-alter-task" = "57c05dfa7e4d5d4e830e942b18e21a0f61c47f2b35998088656f4c48c38486ba"
+"sf.ddl.create-task.create-task-as" = "4db200f119734c1c286342dc95eff9e6ca789c41b2141475f01fe4ba96d4f6b3"
+"sf.ddl.show-cortex-search" = "6403ac3f193e5a295a25839532ff9525bc2df3a63b0ac0da760f8873f42f641e"
+"sf.ddl.show-databases" = "1da80fd269f3b0bac8f56dd0ed47a07d083f4a2623630375d304e83adfd784ad"
+"sf.ddl.show-nodes-compute-pool" = "4a30a57a32d83e0bbeef77451499ec9f5e5d09f4add453b5b15d2483def0a7ef"
+"sf.ddl.show-rules-in-event-routing-table" = "c20fd87d4e4bdcb0cf9fdf115ee2f4993b23c6babe476d7b19686e2769b7f50c"
+"sf.ddl.truncate-materialized-view" = "91a204db83f52f8aab1c3e3e58e42c28958aac0c4025363ff17913b1d0bfc327"
+
+[review.definitions]
+"sf.ddl.alter-agent.set" = "242e2745d4fffccd47a2f7f67e2f611a0e4ba5e055c4a6aea2d0842a8c338c75"
+"sf.ddl.alter-alert.unset" = "2e4c7c460bf69357c25fef8da8df86ad612e9fb3f9a6479a274fa7a66e8d4c2f"
+"sf.ddl.alter-application-package.set" = "9ecd69dd58846bfca638de0e53b8847ce1f76b6575e8584a33743b83141634d6"
+"sf.ddl.alter-application-package.unset" = "739ff13d6a825b9695a54247ae0a32f9cb5698a424394630b5b9d4831a90d104"
+"sf.ddl.alter-application-set-app-spec.connection-label-description-server-application" = "c61a805327f9a3a57683c028f6986707d8e4fb5ffa05cecd9db783f653df19e6"
+"sf.ddl.alter-application-set-app-spec.external-access-label-description-host-ports" = "2e44b7fc78318642ee75856db242870ae6c8e8db15a2fa6ea8c41b8e25bc3cde"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type" = "cbd041bed8d77864d70bbfaf170b07beb638f958ea0bfc5607b5e715b5988afe"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-authorization-code" = "efcae35db876aca4e9861ac6e462e1b9c2b78af9bfb5028fbae5f26c36ff5083"
+"sf.ddl.alter-application-set-app-spec.security-integration-label-description-oauth-type.security-integration-jwt-bearer" = "75d781b0591ec13c5705379f326fff8682730284c48171858705e071670c4bd7"
+"sf.ddl.alter-application.set-shared-telemetry-events" = "b7d17d40be524bd09a1814b5690c6ecf5f7ca830839a23ded5dcb293b5a70aa7"
+"sf.ddl.alter-application.unset" = "1ab1ce0bb0204b27fa8d7f907368f301d3c09f44395519a7c8a2d9390a337d43"
+"sf.ddl.alter-dynamic-table.searchoptimizationaction" = "365f495b09c0b0dc6acdbf3c8da3e0f4c1a51da21064c86af61088420b24ea3e"
+"sf.ddl.alter-dynamic-table.set-unset-comment" = "61726be5d70c5d68b820a549d0beae55ba6b889469f472943988d32a0bf0cfce"
+"sf.ddl.alter-dynamic-table.unset" = "f8170b4e96a09fdaae798c6d057030082787286ce2ff29029fe3a1eb4a2a56fa"
+"sf.ddl.alter-external-consumer-remove-programmatic-access-token" = "3b1be0df3c4349c7f20d5922314116f2c4bb71142f4b6efe7e5f6a53e862bdf0"
+"sf.ddl.alter-external-table.add-partition-location" = "f8ed56a9909cf04119a8d6d1406dec64947bda4fb5519211980d770f76ee9df4"
+"sf.ddl.alter-external-table.drop-partition-location" = "b4602acfff58f778dad9d306c83b81b82b388875a543bcec1796f98d75e8b7b4"
+"sf.ddl.alter-external-volume.add-storage-location-name-cloudproviderparams" = "b08a00cda0a96eb3a1be90f58360ecc528ef76039a27b86cb5f21c8bf23378fd"
+"sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with" = "47022b853c2ed9b702d3327986e1005123a928c3db70268756f3a5c2366eb497"
+"sf.ddl.alter-iceberg-table-version-tag.create-version-tag" = "17877edaf75a7e2859685c2130d10aebcc6963aaca54f968fdf5d01ac5969597"
+"sf.ddl.alter-materialized-view.rename-to-cluster-by" = "a3373346def34ab3b8b0cb35fa88e153741637db335f6dcddbe07e52229d4ce2"
+"sf.ddl.alter-online-feature-table.table-set" = "7d217ddbb2c72d259337954f8913c29576dda13bb9308d6dee2ea611dd2a829e"
+"sf.ddl.alter-restricted-session-scope.add-as" = "6868348a176357e26b0eed28acc9b3b1ea9712b663f564b823840e64ea6a454e"
+"sf.ddl.alter-restricted-session-scope.remove-as" = "c0bdf5c20bd441f50752ac83a58538522fb851776bcf6e4c731bdd5905437ec3"
+"sf.ddl.alter-schema.set" = "dfc9274a1f40e0006bbd1b4a47bde6ffda2ad24e13a7b82e2d8eca924d5dd657"
+"sf.ddl.alter-schema.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = "383c7e91227a4b9275c2c7efe93ba9fb19b7f84970cf1550248246694d8e03a6"
+"sf.ddl.alter-stage.set" = "4036d1cf417bcef8312e0799e586abd3db1b78b8921662a0dfd1026589239025"
+"sf.ddl.alter-table.datametricfunctionaction" = "fa414cd2f6de1ea869afcb8c544b0720c1091efec954398641e2745062b5d25e"
+"sf.ddl.alter-tag.unset-data-movement-policy" = "d751b809856185e6a6bbff2d0242f06be1033818c86674f21bb929a1c50cb88b"
+"sf.ddl.alter-task.set" = "31b70975fde8afa7258214193f47e14fb58331c97f729e3b0c670bd7145ccd2a"
+"sf.ddl.alter-task.unset" = "3e6a1c80f0f4f91e05d9fadf64be7683cdc77c0e14d2021933f53fdafee477f1"
+"sf.ddl.comment.is" = "aea06f10e34c7d36a8d09e7eac3f70d09e67618f3f5f5dde0208910bdbd27fb4"
+"sf.ddl.create-alert.create-or-alter-alert" = "1e6249352120d86a54b3d4c161b3c404ae5feeaeee9d5ca7f309ad8b45bf4a59"
+"sf.ddl.create-artifact-repository" = "724ef9d9b8ddb655930a096c9dd6626648191a82f8c6519dc6473660d6365d0e"
+"sf.ddl.create-cortex-search.on-attributes-warehouse-target-lag" = "51e6a017fb26326ec7a2aa075c7c400b5369a38f1aac0691514acffe4e78ffa3"
+"sf.ddl.create-cortex-search.text-indexes-vector-indexes" = "e5dcd82981036e6eb6140932a956f11aec5d6a1f39309dc2cff64344ee0fac15"
+"sf.ddl.create-database-catalog-linked" = "45ebc8e4aafe08bec5826f579f6a63a61d38ebef4ca22fddab03b17fe629b0c2"
+"sf.ddl.create-database.create-database-from-backup" = "fc3bab356cf059339bfb73ef3757ff2498abb4cc1c48c73dee367aaea1e56f87"
+"sf.ddl.create-database.define-database" = "b28c6c5165c1fff0880ea71369bc9887fc4516f6fa8137ccc5e00487ed4339c0"
+"sf.ddl.create-dataset" = "2c47b577ee0029c7d66d18475cc477f0cafd350ad2d1a2812f7f983dba7701ff"
+"sf.ddl.create-dynamic-table.create-dynamic-table-from" = "6ac48946b66ac8c6ca3039cdf0b987ba6c020760d3132484af0a9da01fb35fa3"
+"sf.ddl.create-event-table.table" = "247662acdab88624abeb64b33f6cb674facdf474be638c958ae3fe0691f72a9a"
+"sf.ddl.create-event-table.table-clone" = "d4bfff75b268e97a21f7b437baa12be2497892a1865767d7d922bc03ab140b5c"
+"sf.ddl.create-external-agent" = "edcea5ec656ec453e0a0c038245d154635e332188ece0ef301aca4ed94d0be66"
+"sf.ddl.create-external-consumer" = "22b5c27d35bee94b01055a52a4e1cf08e01fff9c134c4084d17d1b8a86c2bc6a"
+"sf.ddl.create-function.create-function-returns-language" = "446dea35dfc8bc476a9ff0c982e333a3e83a14d9302b5ddb7b418ca56038260b"
+"sf.ddl.create-function.create-function-returns-language.scala-handler" = "d175cd733cfb02ea67ff1f4124c4c477f17dc9e42e3829761ec010ae6baea71c"
+"sf.ddl.create-function.create-function-returns-table" = "586099fb246a45217126b1c52d2bb1ebb900e2f6efb4d3028d082ccb39d34ed8"
+"sf.ddl.create-function.create-function-returns-table-2" = "272e17e0bd56300dbf76532cc5d67f245b5c5eab03a18a99ff35929b7caf0c16"
+"sf.ddl.create-function.create-function-returns-table.python-handler" = "8cabd972d9156ec2ec600690201dddb8c0b82445286eae9fe2ec66c72e5850d0"
+"sf.ddl.create-iceberg-table.table-as-select" = "b65407063f89aef74ccd683a9359996fb82c91e906d2f450f5167a3625d4c610"
+"sf.ddl.create-procedure.create-procedure-returns-language" = "14a78f6bf90e55c84e4565f3987f295376649dc8f7f2197b61ce74785eb5ef04"
+"sf.ddl.create-schema.create-schema-from-backup" = "fbc360f2a3f8e861493b8811bb21c86336153e9465ed0b728a1069ad7a081bc7"
+"sf.ddl.create-schema.define-schema" = "808bcc954417323e29b5590b871e864b585cc55c76adb123ee9b1ff82e7a8278"
+"sf.ddl.create-streamlit.define-streamlit" = "e0cc75a886f2d0f5cc8ea1328b4d762e201e74dbba12a8627a4d3cf45a0a919f"
+"sf.ddl.create-table.create-table-from-backup" = "4921ff4607da912a4c493d7eb1b28b7c172056ced959bf3afd063e9103db846f"
+"sf.ddl.create-task-graph.create-or-alter-task" = "2455d525afc1d1f96eb3d726e5562874a6d8334d9111354aaedeb88f6c762893"
+"sf.ddl.create-task-graph.create-task-graph" = "13bfd5470d8e1e13a32ace7eb5ec753386683367c4547bfed99f734eab07eb2e"
+"sf.ddl.create-task.create-or-alter-task" = "a390baf1b1a4694644cd309ed723d987af101e4f1812f31f956b6539323cd8bb"
+"sf.ddl.create-task.create-task-as" = "179711f26038f73a2a2d49d3e6c537d51065da020348872c4a9cdf0fa0e56f7e"
+"sf.ddl.show-cortex-search" = "35a3f985c9ada6f3c7269033920f4eb51adca7a6b8f803d80aeef2e46c5f539b"
+"sf.ddl.show-databases" = "4e504c875d851020f51e8c4443bca5393d5789b9858de919ec560b3760500711"
+"sf.ddl.show-nodes-compute-pool" = "af798e827d56919e4d13b44f6eb63d42323630e6a4310351edd1f21426816e36"
+"sf.ddl.show-rules-in-event-routing-table" = "7aba74df9e70da3e03bd44692bfd1a041c0df82d8cd960c18206daee1213d66c"
+"sf.ddl.truncate-materialized-view" = "20ff9d2cccefa4019ad456810f295eccc173a9a9b3bee0c84de97647e7684888"

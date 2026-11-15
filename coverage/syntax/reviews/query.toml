@@ -412,3 +412,40 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.query.join.join.syntax" = "6b430e2fa01e5144ca0e2498f88e7151c58c6b54ebc19039924dbbe36b7cd3db"
 "sf.query.pivot" = "e7ca654000c0c093b06ad8d3f6cca602fda630527b3ae7d2ce868358727b77bd"
 "sf.query.unpivot" = "2029dac3f342e66384ebd0cf467cda295923b1e2d1140b7043242e07dd6e6fee"
+
+[[review]]
+id = "query-019"
+family = "query"
+parser_tree = "3a4cba73f9f022daa15bba5bcbd08b54aca3ee57"
+reviewed_utc = "2026-11-15T10:13:30Z"
+verdict = "approved"
+forms = [
+  "sf.query.constructs",
+]
+note = "Approved at its last review with the same definition, obligations and cases; the cases whose parse trees changed with the parser at 60ca8f7a6, which keeps keywords, key-value pairs and omitted name parts in their own fields, were read again under review brief version 1, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.constructs" = "2124defe9de553890be3375af8629ab17a49f4d42905f79338ca87ea7f3ede97"
+
+[review.definitions]
+"sf.query.constructs" = "c8a8a6cd0ee6642ea5a89af0b125b637a5efea4df80f5d9eda34370ccd9932c4"
+
+[[review]]
+id = "query-020"
+family = "query"
+parser_tree = "3a4cba73f9f022daa15bba5bcbd08b54aca3ee57"
+reviewed_utc = "2026-11-15T10:13:31Z"
+verdict = "approved"
+forms = [
+  "sf.query.match-recognize.match-recognize-pattern-define-as",
+  "sf.query.resample",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 60ca8f7a6; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.query.match-recognize.match-recognize-pattern-define-as" = "fa035cbd5f328e618dbb12e59b41ef49e4f96cbff027964df2868882aab4e362"
+"sf.query.resample" = "a1217839b25693288ea82060abd63f3cacfcfe63f75489e9a40ae9cfaeaad19e"
+
+[review.definitions]
+"sf.query.match-recognize.match-recognize-pattern-define-as" = "b1575679b90b13ccb0cf1ed3a3bd417e53701b63d2b99baf888c91cec31301db"
+"sf.query.resample" = "ae258470c362d09a2a321c6b7951cfe49fef7128c81448030f5f9bbfb4575a3f"

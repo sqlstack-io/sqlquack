@@ -241,3 +241,20 @@ note = "Read in full under review brief version 1 against the documentation page
 
 [review.definitions]
 "sf.dml.merge" = "4ffabedec84da39328c92a80bae17ada0231770f4cd0c42edede99de8d60b5c4"
+
+[[review]]
+id = "dml-013"
+family = "dml"
+parser_tree = "3a4cba73f9f022daa15bba5bcbd08b54aca3ee57"
+reviewed_utc = "2026-11-15T10:13:31Z"
+verdict = "approved"
+forms = [
+  "sf.dml.copy-into-table.internalstage-externalstage-externallocation",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 60ca8f7a6; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.dml.copy-into-table.internalstage-externalstage-externallocation" = "b5d22aea2fb0a563efdb122fd575d8fb12d05153b7e8113d26bd40fd6b62892e"
+
+[review.definitions]
+"sf.dml.copy-into-table.internalstage-externalstage-externallocation" = "cac09d19e62c9d886b20c872581b613e4a6805dc3c84d1ff50574909ddb4ac3f"
