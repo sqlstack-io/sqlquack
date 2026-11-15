@@ -417,49 +417,9 @@ impl Parser {
                     security = Some(FunctionSecurity::Invoker);
                 }
             } else if self.match_token(TokenType::With) {
-                loop {
-                    if self.match_identifier("EXECUTE") || self.match_token(TokenType::Execute) {
-                        self.expect_token(TokenType::As)?;
-                        if self.check(TokenType::String) {
-                            let tok = self.advance()?;
-                            with_options.push(format!("EXECUTE AS '{}'", tok.text));
-                        } else {
-                            let ident = self.expect_identifier_or_keyword()?;
-                            with_options.push(format!("EXECUTE AS {}", ident.to_ascii_uppercase()));
-                        }
-                    } else {
-                        let opt = self.expect_identifier_or_keyword()?;
-                        with_options.push(opt.to_ascii_uppercase());
-                    }
-                    if !self.match_token(TokenType::Comma) {
-                        break;
-                    }
-                }
+                with_options.extend(self.parse_procedure_with_options()?);
             } else if self.match_token(TokenType::As) {
-                if self.check(TokenType::String) {
-                    let tok = self.advance()?;
-                    body = Some(FunctionBody::StringLiteral(tok.text.to_string()));
-                } else if self.check(TokenType::HeredocString) {
-                    let tok = self.advance()?;
-                    body = Some(FunctionBody::Block(tok.text.to_string()));
-                } else if self.match_token(TokenType::Begin) {
-                    let mut statements: Vec<Expression> = Vec::new();
-                    while !self.check(TokenType::End) && !self.is_at_end() {
-                        while self.match_token(TokenType::Semicolon) {}
-                        if self.check(TokenType::End) {
-                            break;
-                        }
-                        statements.push(self.parse_statement()?);
-                        self.match_token(TokenType::Semicolon);
-                    }
-                    self.expect_token(TokenType::End)?;
-                    body = Some(FunctionBody::Statements(statements));
-                } else if self.check(TokenType::DollarString) {
-                    body = Some(FunctionBody::Expression(self.parse_expression()?));
-                } else {
-                    let stmt = self.parse_statement()?;
-                    body = Some(FunctionBody::Expression(stmt));
-                }
+                body = Some(self.parse_procedure_body()?);
             } else {
                 break;
             }
@@ -487,6 +447,58 @@ impl Parser {
             define: false,
             temporary_spelling,
         })))
+    }
+
+    /// The options of a procedure's WITH clause, after WITH, upper-cased in order.
+    fn parse_procedure_with_options(&mut self) -> Result<Vec<String>> {
+        let mut with_options: Vec<String> = Vec::new();
+        loop {
+            if self.match_identifier("EXECUTE") || self.match_token(TokenType::Execute) {
+                self.expect_token(TokenType::As)?;
+                if self.check(TokenType::String) {
+                    let tok = self.advance()?;
+                    with_options.push(format!("EXECUTE AS '{}'", tok.text));
+                } else {
+                    let ident = self.expect_identifier_or_keyword()?;
+                    with_options.push(format!("EXECUTE AS {}", ident.to_ascii_uppercase()));
+                }
+            } else {
+                let opt = self.expect_identifier_or_keyword()?;
+                with_options.push(opt.to_ascii_uppercase());
+            }
+            if !self.match_token(TokenType::Comma) {
+                return Ok(with_options);
+            }
+        }
+    }
+
+    /// A procedure's body after AS: a string, a block, BEGIN ... END statements or one statement.
+    fn parse_procedure_body(&mut self) -> Result<FunctionBody> {
+        if self.check(TokenType::String) {
+            let tok = self.advance()?;
+            return Ok(FunctionBody::StringLiteral(tok.text.to_string()));
+        }
+        if self.check(TokenType::HeredocString) {
+            let tok = self.advance()?;
+            return Ok(FunctionBody::Block(tok.text.to_string()));
+        }
+        if self.match_token(TokenType::Begin) {
+            let mut statements: Vec<Expression> = Vec::new();
+            while !self.check(TokenType::End) && !self.is_at_end() {
+                while self.match_token(TokenType::Semicolon) {}
+                if self.check(TokenType::End) {
+                    break;
+                }
+                statements.push(self.parse_statement()?);
+                self.match_token(TokenType::Semicolon);
+            }
+            self.expect_token(TokenType::End)?;
+            return Ok(FunctionBody::Statements(statements));
+        }
+        if self.check(TokenType::DollarString) {
+            return Ok(FunctionBody::Expression(self.parse_expression()?));
+        }
+        Ok(FunctionBody::Expression(self.parse_statement()?))
     }
 
     /// Parse DROP PROCEDURE statement

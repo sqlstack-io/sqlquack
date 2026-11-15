@@ -57,19 +57,21 @@ fn table_constraint(constraint: Constraint) -> Result<TableConstraint> {
                 "the parser reached a state its checks rule out",
             ));
         };
-        let mut reference = ForeignKeyRef {
-            table: *table,
-            columns: tuple_names(columns),
-            on_delete: None,
-            on_update: None,
-            on_update_first: false,
-            match_type: None,
-            match_after_actions: false,
-            constraint_name: None,
-            deferrable: None,
-            has_foreign_key_keywords: true,
-        };
-        let properties = set_reference_words(&mut reference, properties);
+        let (reference, properties) = set_reference_words(
+            ForeignKeyRef {
+                table: *table,
+                columns: tuple_names(columns),
+                on_delete: None,
+                on_update: None,
+                on_update_first: false,
+                match_type: None,
+                match_after_actions: false,
+                constraint_name: None,
+                deferrable: None,
+                has_foreign_key_keywords: true,
+            },
+            properties,
+        );
         return Ok(TableConstraint::ForeignKey {
             name,
             columns: tuple_names(operand),

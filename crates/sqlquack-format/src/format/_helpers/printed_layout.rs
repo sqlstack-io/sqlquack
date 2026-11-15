@@ -262,8 +262,7 @@ fn bracket_structure(tokens: &[String]) -> (Vec<usize>, Vec<Option<usize>>) {
     (depths, partners)
 }
 
-/// A comment gap with each line after a break, and the token after it, at `indentation`; lines
-/// inside a block comment keep their text.
+/// A comment gap with each line after a break, and the token after it, at `indentation`; block comment lines keep their text.
 fn indent_comment_lines(gap: &str, indentation: usize) -> String {
     let margin = " ".repeat(indentation);
     let lines: Vec<&str> = gap.split('\n').collect();
