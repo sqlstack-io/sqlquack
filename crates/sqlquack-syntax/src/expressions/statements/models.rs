@@ -708,7 +708,7 @@ pub struct Describe {
     pub as_json: bool,
     /// Parenthesized parameter types for DESCRIBE PROCEDURE/FUNCTION (e.g., INT, VARCHAR)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub params: Vec<String>,
+    pub params: Vec<DataType>,
 }
 
 impl Describe {

@@ -632,6 +632,15 @@ impl Parser {
                 format!("{} NOT NULL", self.data_type_to_string(inner))
             }
             DataType::Custom { name } => name.clone(),
+            DataType::Table(table) => format!(
+                "TABLE({})",
+                table
+                    .column_types
+                    .iter()
+                    .map(|column_type| self.data_type_to_string(column_type))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ),
             _ => format!("{:?}", dt),
         }
     }

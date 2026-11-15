@@ -1506,3 +1506,53 @@ fn given_snowflake_timestamp_conversions_without_arguments_when_parsing_then_the
         );
     }
 }
+
+#[test]
+fn given_a_data_metric_function_with_a_table_argument_when_parsing_then_the_reference_is_typed() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "the table's schema keeps its quoting",
+            sql: "ALTER TABLE v1 ADD DATA METRIC FUNCTION v1 ON ( v1 , TABLE ( \"v2 Q\" . v3 ( \"c Q\" , v4 ) ) ) ;",
+            pointer: "/0/alter_table/actions/0/DataMetricFunction/items/0/referenced_table/table/schema/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "the table keeps its name",
+            sql: "ALTER TABLE v1 ADD DATA METRIC FUNCTION v1 ON ( v1 , TABLE ( \"v2 Q\" . v3 ( \"c Q\" , v4 ) ) ) ;",
+            pointer: "/0/alter_table/actions/0/DataMetricFunction/items/0/referenced_table/table/name/name",
+            expected_value: json!("v3"),
+        },
+        ProjectionTestCase {
+            description: "the first referenced column keeps its quoting",
+            sql: "ALTER TABLE v1 ADD DATA METRIC FUNCTION v1 ON ( v1 , TABLE ( \"v2 Q\" . v3 ( \"c Q\" , v4 ) ) ) ;",
+            pointer: "/0/alter_table/actions/0/DataMetricFunction/items/0/referenced_table/columns/0/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "the second referenced column keeps its name",
+            sql: "ALTER TABLE v1 ADD DATA METRIC FUNCTION v1 ON ( v1 , TABLE ( \"v2 Q\" . v3 ( \"c Q\" , v4 ) ) ) ;",
+            pointer: "/0/alter_table/actions/0/DataMetricFunction/items/0/referenced_table/columns/1/name",
+            expected_value: json!("v4"),
+        },
+        ProjectionTestCase {
+            description: "the column before the TABLE stays an argument",
+            sql: "ALTER TABLE v1 ADD DATA METRIC FUNCTION v1 ON ( v1 , TABLE ( \"v2 Q\" . v3 ( \"c Q\" , v4 ) ) ) ;",
+            pointer: "/0/alter_table/actions/0/DataMetricFunction/items/0/arguments/0/column/name/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "the TABLE is not also an argument",
+            sql: "ALTER TABLE v1 ADD DATA METRIC FUNCTION v1 ON ( v1 , TABLE ( \"v2 Q\" . v3 ( \"c Q\" , v4 ) ) ) ;",
+            pointer: "/0/alter_table/actions/0/DataMetricFunction/items/0/arguments/1",
+            expected_value: json!(null),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
