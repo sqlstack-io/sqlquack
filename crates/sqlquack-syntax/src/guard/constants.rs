@@ -10,7 +10,7 @@ pub(crate) const DEFAULT_MAX_AST_DEPTH: usize = 512;
 
 pub(crate) const DEFAULT_MAX_PARENTHESES_DEPTH: usize = 512;
 
-pub(crate) const DEFAULT_MAX_FUNCTION_CALL_DEPTH: usize = 64;
+pub(crate) const DEFAULT_MAX_FUNCTION_CALL_DEPTH: usize = 256;
 
 /// Deepest type nesting, every `[]`, `ARRAY<`, `ARRAY(`, `OBJECT(` or `MAP(` level counted as one.
 pub const MAX_DATA_TYPE_DEPTH: usize = 512;
