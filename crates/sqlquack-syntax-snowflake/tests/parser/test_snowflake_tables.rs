@@ -1421,3 +1421,35 @@ fn given_a_snowflake_dcm_database_in_an_account_when_parsing_then_the_tree_keeps
         );
     }
 }
+
+#[test]
+fn given_an_out_of_line_foreign_key_with_not_enforced_when_parsing_then_not_is_kept() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "NOT ENFORCED after a foreign key's reference is not enforced",
+            sql: "CREATE TABLE v1 ( v1 INT , FOREIGN KEY ( v1 ) REFERENCES v1 NOT ENFORCED ) ;",
+            pointer: "/0/create_table/constraints/0/ForeignKey/modifiers/enforced",
+            expected_value: json!(false),
+        },
+        ProjectionTestCase {
+            description: "ENFORCED after a foreign key's reference is enforced",
+            sql: "CREATE TABLE v1 ( v1 INT , FOREIGN KEY ( v1 ) REFERENCES v1 ENFORCED ) ;",
+            pointer: "/0/create_table/constraints/0/ForeignKey/modifiers/enforced",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "NOT DEFERRABLE after a foreign key's reference is still not deferrable",
+            sql: "CREATE TABLE v1 ( v1 INT , FOREIGN KEY ( v1 ) REFERENCES v1 NOT DEFERRABLE ) ;",
+            pointer: "/0/create_table/constraints/0/ForeignKey/references/deferrable",
+            expected_value: json!(false),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
