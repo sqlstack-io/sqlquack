@@ -685,6 +685,24 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             expected_value: json!(null),
         },
         ProjectionTestCase {
+            description: "a TEMP procedure keeps TEMP",
+            sql: "CREATE OR REPLACE TEMP PROCEDURE v1 ( ) RETURNS INT LANGUAGE SQL AS 'm' ;",
+            pointer: "/0/create_procedure/temporary_spelling",
+            expected_value: json!("TEMP"),
+        },
+        ProjectionTestCase {
+            description: "a TEMPORARY procedure needs no spelling",
+            sql: "CREATE TEMPORARY PROCEDURE v1 ( ) RETURNS INT LANGUAGE SQL AS 'm' ;",
+            pointer: "/0/create_procedure/temporary_spelling",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "a procedure that is not temporary has no spelling",
+            sql: "CREATE PROCEDURE v1 ( ) RETURNS INT LANGUAGE SQL AS 'm' ;",
+            pointer: "/0/create_procedure/temporary_spelling",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
             description: "a class instance keeps its class's omitted schema as null",
             sql: "CREATE SNOWFLAKE . . BUDGET v1 ( )",
             pointer: "/0/create_object/class/schema_omitted",

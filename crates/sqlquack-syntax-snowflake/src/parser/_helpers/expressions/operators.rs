@@ -343,6 +343,7 @@ impl Parser {
         or_alter: bool,
     ) -> Result<Expression> {
         let use_proc_keyword = self.peek_text().eq_ignore_ascii_case("PROC");
+        let temporary_spelling = self.routine_temporary_spelling(true);
         self.expect_token(TokenType::Procedure)?;
 
         let if_not_exists =
@@ -475,6 +476,7 @@ impl Parser {
             use_proc_keyword,
             returns_table: None,
             define: false,
+            temporary_spelling,
         })))
     }
 

@@ -188,8 +188,8 @@ impl Parser {
         }
     }
 
-    /// How a temporary Snowflake function spelled TEMPORARY, read from the words before its FUNCTION, when not plainly.
-    pub(crate) fn function_temporary_spelling(&self, temporary: bool) -> Option<String> {
+    /// How a temporary Snowflake function or procedure spelled TEMPORARY, read from the words before its FUNCTION or PROCEDURE, when not plainly.
+    pub(crate) fn routine_temporary_spelling(&self, temporary: bool) -> Option<String> {
         let at: usize = (0..self.current)
             .rev()
             .find(|&index| {

@@ -803,6 +803,9 @@ pub struct CreateProcedure {
     /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub define: bool,
+    /// Snowflake: the words that made the procedure temporary when they were not TEMPORARY, e.g. `TEMP`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub temporary_spelling: Option<String>,
 }
 
 impl CreateProcedure {
@@ -826,6 +829,7 @@ impl CreateProcedure {
             use_proc_keyword: false,
             returns_table: None,
             define: false,
+            temporary_spelling: None,
         }
     }
 }
