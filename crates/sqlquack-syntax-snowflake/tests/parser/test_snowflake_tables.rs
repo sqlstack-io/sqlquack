@@ -1129,6 +1129,42 @@ fn given_a_snowflake_clause_accepted_on_its_receipt_when_parsing_then_the_tree_k
             expected_value: json!([[1, "Final"]]),
         },
         StatementTestCase {
+            description: "SKIP TO keeps a quoted pattern variable's quoting",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 MEASURES COUNT ( * ) AS \"m Q\" , COUNT ( * ) m2 AFTER MATCH SKIP TO \"a Q\" PATTERN ( \"a Q\" ) DEFINE \"a Q\" AS TRUE ) ;",
+            pointer: "/0/select/from/expressions/0/match_recognize/after/To/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "SKIP TO LAST keeps a quoted pattern variable's quoting",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 AFTER MATCH SKIP TO LAST \"SELECT\" PATTERN ( \"SELECT\" ) DEFINE \"SELECT\" AS TRUE ) ;",
+            pointer: "/0/select/from/expressions/0/match_recognize/after/ToLast/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a DEFINE name keeps its quoting",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 MEASURES COUNT ( * ) AS \"m Q\" , COUNT ( * ) m2 AFTER MATCH SKIP TO \"a Q\" PATTERN ( \"a Q\" ) DEFINE \"a Q\" AS TRUE ) ;",
+            pointer: "/0/select/from/expressions/0/match_recognize/define/0/0/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a measure alias after AS keeps its quoting",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 MEASURES COUNT ( * ) AS \"m Q\" , COUNT ( * ) m2 AFTER MATCH SKIP TO \"a Q\" PATTERN ( \"a Q\" ) DEFINE \"a Q\" AS TRUE ) ;",
+            pointer: "/0/select/from/expressions/0/match_recognize/measures/0/this/alias/alias/quoted",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a measure alias records its written AS",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 MEASURES COUNT ( * ) AS \"m Q\" , COUNT ( * ) m2 AFTER MATCH SKIP TO \"a Q\" PATTERN ( \"a Q\" ) DEFINE \"a Q\" AS TRUE ) ;",
+            pointer: "/0/select/from/expressions/0/match_recognize/measures/0/this/alias/alias_explicit_as",
+            expected_value: json!(true),
+        },
+        StatementTestCase {
+            description: "a measure alias without AS records none",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 MEASURES COUNT ( * ) AS \"m Q\" , COUNT ( * ) m2 AFTER MATCH SKIP TO \"a Q\" PATTERN ( \"a Q\" ) DEFINE \"a Q\" AS TRUE ) ;",
+            pointer: "/0/select/from/expressions/0/match_recognize/measures/1/this/alias/alias_explicit_as",
+            expected_value: json!(false),
+        },
+        StatementTestCase {
             description: "SHOW PARAMETERS IN USER keeps USER as the scope kind",
             sql: "SHOW PARAMETERS IN USER \"v1 Q\" ;",
             pointer: "/0/show/scope_kind",
