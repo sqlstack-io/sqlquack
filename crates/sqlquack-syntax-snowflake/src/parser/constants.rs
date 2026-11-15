@@ -1074,6 +1074,7 @@ pub(crate) const SNOWFLAKE_UNDROP_KINDS: &[&str] = &[
     "TAG",
     "TYPE",
     "VARIABLE",
+    "VOLUME",
 ];
 
 /// The UNDROP kinds that take a system-generated id in `IDENTIFIER( <id> )`, as Snowflake's UNDROP pages name them.
