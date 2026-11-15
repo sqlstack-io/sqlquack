@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.15.0](https://github.com/sqlstack-io/sqlquack/compare/v0.14.0...v0.15.0) (2026-11-15)
+
+
+### Features
+
+* **syntax-coverage:** audit forms without obligations and settle generated cases by their receipts ([5df886e](https://github.com/sqlstack-io/sqlquack/commit/5df886e054902c1f1d86fe1ae247803b36b2f250))
+* **syntax-coverage:** count a refusal after parsing from a statement run without privileges ([b7f1fad](https://github.com/sqlstack-io/sqlquack/commit/b7f1fad788c0fe20c008f066a9ffec2b0750b906))
+* **syntax-coverage:** count Snowflake's syntax error from a statement run without privileges ([7a09b73](https://github.com/sqlstack-io/sqlquack/commit/7a09b736fb768df4c5e945782b6b47567f13a152))
+* **syntax:** record Snowflake statements as structured trees that keep what was written ([d758b8c](https://github.com/sqlstack-io/sqlquack/commit/d758b8c76e941f133486e5edc7d998ae734d81f5))
+
+
+### Bug Fixes
+
+* **snowflake:** accept an online feature table without a warehouse ([71b1b61](https://github.com/sqlstack-io/sqlquack/commit/71b1b61f5cbefe278450ea22d0323c03ea4d48d1))
+* **snowflake:** accept one string as a share's SET ACCOUNTS ([8444210](https://github.com/sqlstack-io/sqlquack/commit/8444210cac95cad9f4f35aa3f5e21b7af23bee2f))
+* **snowflake:** read CREATE OPENFLOW CONNECTOR, DEPLOYMENT and RUNTIME as trees ([af5807f](https://github.com/sqlstack-io/sqlquack/commit/af5807f612dd643316f33235b5614bf084aefca8))
+* **snowflake:** read DROP ACCOUNT with its grace period and DROP MANAGED ACCOUNT ([77c95de](https://github.com/sqlstack-io/sqlquack/commit/77c95de58b87c682accad5d8f9f10f8b7d5bc45a))
+* **snowflake:** refuse a bare word where Snowflake takes only a string ([d2087cd](https://github.com/sqlstack-io/sqlquack/commit/d2087cd8491d989fefe414028adbf9a7e8713b9a))
+* **snowflake:** refuse a trailing comma in more lists Snowflake rejects ([4b917b0](https://github.com/sqlstack-io/sqlquack/commit/4b917b0d78b7b2b6b380810f4b04e1cf0e0ff5dc))
+* **snowflake:** refuse OR REPLACE with IF NOT EXISTS on warehouses ([a1a8273](https://github.com/sqlstack-io/sqlquack/commit/a1a82732167ecf64b3d4c4c02a980e6d787888c5))
+* **snowflake:** refuse tags on CREATE OR ALTER SECRET and DEFINE SECRET ([e717f7c](https://github.com/sqlstack-io/sqlquack/commit/e717f7ca15554bff443638f0b55404337cb157e7))
+* **snowflake:** reject a bare word in UNDROP IDENTIFIER( ) and stop emitting empty names ([e267ab5](https://github.com/sqlstack-io/sqlquack/commit/e267ab52dff92297c19869a4d607a1568cd0e2e2))
+* **syntax-cases:** settle observed cases from probe-role receipts under any setup ([42222de](https://github.com/sqlstack-io/sqlquack/commit/42222de5a32b906e0f341a9e4325b4cab7711436))
+* **syntax-catalogue:** type the committed catalogue file as tables of rows ([b6aa931](https://github.com/sqlstack-io/sqlquack/commit/b6aa9319441b1e3ba479ae4b118f52408a6adacc))
+* **syntax-receipts:** read errno 90105, no current database, as a post-parse semantic error ([36ad01f](https://github.com/sqlstack-io/sqlquack/commit/36ad01f412f4684eccbf5c6134f8be2b0215fa75))
+
 ## [0.14.0](https://github.com/sqlstack-io/sqlquack/compare/v0.13.0...v0.14.0) (2026-11-14)
 
 
