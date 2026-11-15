@@ -547,6 +547,7 @@ impl Parser<'_> {
             not_null: false,
             persistence_kind: volatile.then(|| "STORED VOLATILE".to_owned()),
             data_type: None,
+            generated_always: false,
         }))
     }
 

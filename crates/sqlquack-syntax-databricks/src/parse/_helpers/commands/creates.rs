@@ -593,6 +593,7 @@ impl Parser<'_> {
                 not_null: false,
                 persistence_kind: None,
                 data_type: None,
+                generated_always: false,
             }));
         }
         let always: bool = self.eat_kw("ALWAYS");

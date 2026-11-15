@@ -36,6 +36,12 @@ pub struct ColumnDef {
     #[serde(default)]
     pub unique_nulls_not_distinct: bool,
     pub auto_increment: bool,
+    /// Snowflake: the identity was written IDENTITY rather than AUTOINCREMENT
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub identity_spelling: bool,
+    /// Snowflake: the identity's start and step were written START and INCREMENT rather than in parentheses
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub identity_start_keyword: bool,
     /// TiDB distributed primary-key allocation attribute.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub auto_random: Option<TiDBAutoRandom>,
@@ -145,6 +151,8 @@ impl ColumnDef {
             unique: false,
             unique_nulls_not_distinct: false,
             auto_increment: false,
+            identity_spelling: false,
+            identity_start_keyword: false,
             auto_random: None,
             comment: None,
             constraints: Vec::new(),
@@ -224,6 +232,9 @@ pub struct ComputedColumn {
     /// Optional data type for SingleStore: AS (expr) PERSISTED TYPE NOT NULL
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub data_type: Option<DataType>,
+    /// Snowflake: written GENERATED ALWAYS AS rather than a bare AS
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub generated_always: bool,
 }
 
 /// TSQL temporal column constraint: GENERATED ALWAYS AS ROW START|END [HIDDEN]

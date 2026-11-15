@@ -354,8 +354,10 @@ impl Parser {
             column.constraint_order.push(ConstraintType::Default);
             return Ok(column);
         }
-        if self.match_token(TokenType::AutoIncrement) || self.match_text_seq(&["IDENTITY"]) {
+        let autoincrement = self.match_token(TokenType::AutoIncrement);
+        if autoincrement || self.match_text_seq(&["IDENTITY"]) {
             column.auto_increment = true;
+            column.identity_spelling = !autoincrement;
             column.constraint_order.push(ConstraintType::AutoIncrement);
             return self.parse_checked_identity_options(column);
         }
@@ -379,6 +381,7 @@ impl Parser {
                     not_null: false,
                     persistence_kind: virtual_kind.then(|| "VIRTUAL".to_owned()),
                     data_type: None,
+                    generated_always: generated,
                 }));
             column.constraint_order.push(ConstraintType::ComputedColumn);
             return Ok(column);
@@ -436,6 +439,7 @@ impl Parser {
             column.auto_increment_increment = Some(Box::new(self.parse_checked_identity_number()?));
             self.expect_token(TokenType::RParen)?;
         } else if self.match_text_seq(&["START"]) {
+            column.identity_start_keyword = true;
             column.auto_increment_start = Some(Box::new(self.parse_checked_identity_number()?));
             if !self.match_text_seq(&["INCREMENT"]) {
                 return Err(self.parse_error("Expected INCREMENT"));

@@ -409,7 +409,9 @@ impl Parser {
     }
 
     fn parse_column_option(&mut self, mut col_def: ColumnDef) -> Result<(ColumnDef, bool)> {
-        if self.match_token(TokenType::AutoIncrement) || self.match_keyword("IDENTITY") {
+        let autoincrement = self.match_token(TokenType::AutoIncrement);
+        if autoincrement || self.match_keyword("IDENTITY") {
+            col_def.identity_spelling = !autoincrement;
             col_def = self.parse_column_identity(col_def)?;
         } else if self.match_token(TokenType::Default) {
             col_def.default = Some(self.parse_unary()?);
@@ -574,6 +576,7 @@ impl Parser {
         }
         loop {
             if self.match_keyword("START") {
+                col_def.identity_start_keyword = true;
                 col_def.auto_increment_start = Some(Box::new(self.parse_identity_value()?));
             } else if self.match_keyword("INCREMENT") {
                 col_def.auto_increment_increment = Some(Box::new(self.parse_identity_value()?));
@@ -978,6 +981,7 @@ impl Parser {
                     not_null: false,
                     persistence_kind,
                     data_type: None,
+                    generated_always: always,
                 }));
             col_def
                 .constraint_order
@@ -1057,6 +1061,7 @@ impl Parser {
                 not_null,
                 persistence_kind,
                 data_type,
+                generated_always: false,
             }));
         col_def
             .constraint_order
