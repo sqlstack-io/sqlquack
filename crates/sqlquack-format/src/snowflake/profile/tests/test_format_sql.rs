@@ -227,6 +227,15 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             expected_outcome: Ok("SELECT a\nFROM t -- one\n-- two"),
         },
         test_types::FormatSqlTestCase {
+            description: "a line comment before a call's first argument is indented inside the call with the arguments",
+            sql: "SELECT REGEXP_REPLACE(\n  -- Collapse\n  x,\n  y\n)::VARCHAR AS z",
+            line_width: None,
+            dialect: FormatDialect::Snowflake,
+            expected_outcome: Ok(
+                "SELECT\n  REGEXP_REPLACE(\n    -- Collapse\n    x,\n    y\n  )::VARCHAR AS z",
+            ),
+        },
+        test_types::FormatSqlTestCase {
             description: "an UPDATE's SET assignments written touching are spaced, and a comparison in SET stays one",
             sql: "update t set a=1, b=c=d where b=2",
             line_width: None,
