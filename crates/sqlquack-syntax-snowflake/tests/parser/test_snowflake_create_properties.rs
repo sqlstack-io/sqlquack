@@ -619,6 +619,48 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             expected_value: json!("NAME"),
         },
         ProjectionTestCase {
+            description: "an altered column keeps a written COLUMN",
+            sql: "ALTER TABLE v1 ALTER COLUMN v1 SET NOT NULL ;",
+            pointer: "/0/alter_table/actions/0/AlterColumn/column_keyword",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "an altered column without COLUMN records none",
+            sql: "ALTER TABLE v1 ALTER v1 NOT NULL ;",
+            pointer: "/0/alter_table/actions/0/AlterColumn/column_keyword",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "SET NOT NULL keeps its SET",
+            sql: "ALTER TABLE v1 ALTER COLUMN v1 SET NOT NULL ;",
+            pointer: "/0/alter_table/actions/0/AlterColumn/action_words",
+            expected_value: json!("SET"),
+        },
+        ProjectionTestCase {
+            description: "NOT NULL without SET records no words",
+            sql: "ALTER TABLE v1 ALTER v1 NOT NULL ;",
+            pointer: "/0/alter_table/actions/0/AlterColumn/action_words",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "SET DATA TYPE keeps all three words",
+            sql: "ALTER TABLE v1 ALTER COLUMN v1 SET DATA TYPE INT ;",
+            pointer: "/0/alter_table/actions/0/AlterColumn/action_words",
+            expected_value: json!("SET DATA TYPE"),
+        },
+        ProjectionTestCase {
+            description: "TYPE alone keeps TYPE",
+            sql: "ALTER TABLE v1 ALTER COLUMN v1 TYPE INT ;",
+            pointer: "/0/alter_table/actions/0/AlterColumn/action_words",
+            expected_value: json!("TYPE"),
+        },
+        ProjectionTestCase {
+            description: "a bare data type records no words",
+            sql: "ALTER TABLE v1 ALTER COLUMN v1 INT ;",
+            pointer: "/0/alter_table/actions/0/AlterColumn/action_words",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
             description: "a TEMP function keeps TEMP",
             sql: "CREATE TEMP FUNCTION v1 ( ) RETURNS INT AS '1' ;",
             pointer: "/0/create_function/temporary_spelling",

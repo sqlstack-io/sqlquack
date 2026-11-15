@@ -2,6 +2,7 @@
 
 use std::sync::Arc;
 
+use crate::parser::constants::ALTER_COLUMN_ACTION_WORDS;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::main::split_mysql_table_index_key_parts::split_mysql_table_index_key_parts;
 use sqlquack_syntax::expressions::columns::models::AlterColumnAction;
@@ -332,13 +333,16 @@ impl Parser {
                 distkey: Some(col),
             })
         } else {
-            self.match_token(TokenType::Column);
+            let column_keyword = self.match_token(TokenType::Column);
             let name = self.expect_identifier_with_quoted()?;
+            let action_words = self.written_alter_column_words();
             let action = self.parse_alter_column_action()?;
             Ok(AlterTableAction::AlterColumn {
                 name,
                 action,
                 use_modify_keyword: false,
+                column_keyword: column_keyword && self.is_snowflake(),
+                action_words,
             })
         }
     }
@@ -1190,12 +1194,15 @@ impl Parser {
         }
         let start = self.current;
         self.skip();
-        self.match_token(TokenType::Column);
+        let column_keyword = self.match_token(TokenType::Column);
         let typed = self.parse_simple_name().and_then(|name| {
+            let action_words = self.written_alter_column_words();
             Ok(AlterTableAction::AlterColumn {
                 name,
                 action: self.parse_alter_column_action()?,
                 use_modify_keyword: true,
+                column_keyword,
+                action_words,
             })
         });
         let ends =
@@ -1222,13 +1229,16 @@ impl Parser {
         self.current += 2;
         let mut actions: Vec<AlterTableAction> = Vec::new();
         loop {
-            self.match_token(TokenType::Column);
+            let column_keyword = self.match_token(TokenType::Column);
             let name = self.parse_simple_name()?;
+            let action_words = self.written_alter_column_words();
             let action = self.parse_alter_column_action()?;
             actions.push(AlterTableAction::AlterColumn {
                 name,
                 action,
                 use_modify_keyword: false,
+                column_keyword,
+                action_words,
             });
             if !self.match_token(TokenType::Comma) {
                 break;
@@ -1236,6 +1246,19 @@ impl Parser {
         }
         self.expect_token(TokenType::RParen)?;
         Ok(Some(actions))
+    }
+
+    /// Snowflake: the optional SET, DATA and TYPE words at the start of a column action, upper-cased and as written; None when there are none.
+    pub(crate) fn written_alter_column_words(&self) -> Option<String> {
+        if !self.is_snowflake() {
+            return None;
+        }
+        let words: Vec<String> = self.tokens[self.current..]
+            .iter()
+            .map(|token| token.text.to_ascii_uppercase())
+            .take_while(|word| ALTER_COLUMN_ACTION_WORDS.contains(&word.as_str()))
+            .collect();
+        (!words.is_empty()).then(|| words.join(" "))
     }
 
     /// Parse ALTER COLUMN action
