@@ -168,14 +168,14 @@ def _scoped_class_rules(*, form: str) -> tuple[tuple[re.Pattern[str], str], ...]
 
 
 def bq_derive_trees(
-    *, form: str, grammar: list[str]
+    *, form: str, grammar: list[str], unpacked: bool = False
 ) -> tuple[list[Draft], list[tuple[Node, ...]], Counter[str]]:
     """The shared derivation, with the class rules of the form's FORM_CLASS_RULES entries first."""
     general: tuple[tuple[re.Pattern[str], str], ...] = shared_grammar.CLASS_RULES
     scoped: tuple[tuple[re.Pattern[str], str], ...] = _scoped_class_rules(form=form)
     shared_grammar.CLASS_RULES = (*scoped, *general)
     try:
-        return _shared_derive_trees(form=form, grammar=grammar)
+        return _shared_derive_trees(form=form, grammar=grammar, unpacked=unpacked)
     finally:
         shared_grammar.CLASS_RULES = general
 

@@ -46,3 +46,11 @@ class ProbeSettlementTestCase:
     receipts: tuple[Row, ...]
     expected_expect: str
     expected_mark: str | None
+
+
+@dataclass(frozen=True)
+class PackedRefusalTestCase:
+    description: str
+    refused_sql: str
+    phase: str
+    expected_option_sql: tuple[str, ...]

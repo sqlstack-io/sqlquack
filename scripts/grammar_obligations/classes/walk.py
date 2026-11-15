@@ -81,8 +81,9 @@ from scripts.grammar_obligations.models import Draft, FormStyle, Node, Spec
 class Walk:
     """Collects drafts for one form while walking its grammar trees."""
 
-    def __init__(self, form: str) -> None:
+    def __init__(self, form: str, *, unpacked: bool = False) -> None:
         self.form: str = form
+        self.unpacked: bool = unpacked or form in UNPACKED_FORMS
         self.drafts: list[Draft] = []
         self.seen: Counter[str] = Counter()
         self.identifiers: dict[str, None] = {}
@@ -354,7 +355,7 @@ class Walk:
             target=present,
             note=note,
             spec=replace(self.spec(action=ACTION_MIN_OPTIONS), path=self.path | {id(node)})
-            if self.form in UNPACKED_FORMS
+            if self.unpacked
             else self.spec(action=ACTION_ALL_OPTIONS),
         )
         self.add(
