@@ -1063,6 +1063,9 @@ pub struct AlterSequence {
     pub cache: Option<i64>,
     pub cycle: Option<bool>,
     pub owned_by: Option<Option<TableRef>>,
+    /// The optional words written in START [ WITH ] [ = ] and INCREMENT [ BY ] [ = ]
+    #[serde(default, skip_serializing_if = "SequenceSpelling::is_empty")]
+    pub spelling: SequenceSpelling,
 }
 
 impl AlterSequence {
@@ -1078,6 +1081,7 @@ impl AlterSequence {
             cache: None,
             cycle: None,
             owned_by: None,
+            spelling: SequenceSpelling::default(),
         }
     }
 }
@@ -1425,6 +1429,9 @@ pub struct ObjectProperty {
     /// Whether the optional COLUMN was written before the column the property names, as in Snowflake's `MODIFY COLUMN <column> SET MASKING POLICY`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub column_keyword: bool,
+    /// Whether an optional `=` was written before the value, as in Snowflake's ALTER SEQUENCE SET INCREMENT [ BY ] [ = ]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub eq: bool,
 }
 
 /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action.
