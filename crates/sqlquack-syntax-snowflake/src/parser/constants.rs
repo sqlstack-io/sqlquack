@@ -1547,6 +1547,9 @@ pub(crate) const SNOWFLAKE_KIND_WORDS_ALONE: &[&str] = &["MODEL", "SNAPSHOT", "V
 /// Property-list kinds whose tag list must end the statement: Snowflake refuses any property after it.
 pub(crate) const SNOWFLAKE_TAGS_LAST_KINDS: &[&str] = &["ARTIFACT REPOSITORY", "COMPUTE POOL"];
 
+/// The failover and replication group property whose values are object-type keywords, such as `DATABASES`.
+pub(crate) const OBJECT_TYPES: &str = "OBJECT_TYPES";
+
 /// The failover and replication group properties whose values are names, which Snowflake refuses as strings.
 pub(crate) const SNOWFLAKE_GROUP_NAME_PROPERTIES: &[&str] = &[
     "ALLOWED_DATABASES",
