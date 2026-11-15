@@ -22,8 +22,18 @@ fn given_a_snowflake_external_consumer_when_parsing_then_recorded_verdicts_hold(
             expected_kind: Some("alter_object"),
         },
         SnowflakeVerdictTestCase {
-            description: "MODIFY needs SET (recorded errno 1003)",
+            description: "MODIFY needs SET or UNSET (recorded errno 1003)",
             sql: "ALTER EXTERNAL CONSUMER v1 MODIFY PAT v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "MODIFY unsets the comment (recorded semantic error)",
+            sql: "ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET COMMENT ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "MODIFY's UNSET names COMMENT (recorded errno 1003)",
+            sql: "ALTER EXTERNAL CONSUMER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET ;",
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
