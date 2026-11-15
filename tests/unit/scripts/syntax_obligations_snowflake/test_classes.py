@@ -90,6 +90,9 @@ VALUES: str = "SELECT ... FROM ( VALUES ( <expr> [ , <expr> [ , ... ] ] ) [ , ( 
 PERIOD: str = "SHOW TRANSACTIONS [ PERIOD = '<num> { seconds | minutes }' ]"
 SCHEDULE: str = "SHOW TASKS SCHEDULE = '{ <num> MINUTE | USING CRON <expr> <time_zone> }'"
 ENCRYPTION: str = "SHOW KEYS ENCRYPTION = ( { [ TYPE = 'AWS_SSE_S3' ] | [ TYPE = 'NONE' ] } )"
+BRANCH_GROUP_OPTIONS: str = "{ [ MAX_ROWS = <integer> ] [ OWNER = <name> ] }"
+BRANCH_GROUP_CHOICE: str = f"{{ RESET | {BRANCH_GROUP_OPTIONS} }}"
+BRANCH_GROUP: str = f"ALTER WIDGET <name> SET {BRANCH_GROUP_CHOICE}"
 SET_GROUPS: str = (
     "ALTER USER [ <name> ] SET { [ [ PASSWORD = '<string>' ] [ LOGIN_NAME = <string> ] ]"
     " [ [ DISABLED = { TRUE | FALSE } ] ] }"
@@ -456,6 +459,22 @@ def test_given_a_repeated_list_item_when_building_then_the_second_item_has_its_o
             kind=KIND_OPTION_ABSENT,
             label="[ PASSWORD = '<string>' ]",
             expected_sql=("ALTER USER SET LOGIN_NAME = 'm' ;",),
+        ),
+        ListItemTestCase(
+            description="a branch that is one group of options writes its first option",
+            family="ddl",
+            grammar=BRANCH_GROUP,
+            kind=KIND_ALTERNATIVE,
+            label=f"{BRANCH_GROUP_CHOICE} → {BRANCH_GROUP_OPTIONS}",
+            expected_sql=("ALTER WIDGET v1 SET MAX_ROWS = 1 ;",),
+        ),
+        ListItemTestCase(
+            description="an absent option in a branch group leaves the group's next option written",
+            family="ddl",
+            grammar=BRANCH_GROUP,
+            kind=KIND_OPTION_ABSENT,
+            label="[ MAX_ROWS = <integer> ]",
+            expected_sql=("ALTER WIDGET v1 SET OWNER = v1 ;",),
         ),
         ListItemTestCase(
             description="a reserved name, bare and quoted, reaches a SET list that writes an option",
