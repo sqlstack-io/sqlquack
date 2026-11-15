@@ -1,6 +1,7 @@
 //! Snowflake ALTER of APPLICATION, APPLICATION PACKAGE, APPLICATION SERVICE, BACKUP SET, CORTEX SEARCH SERVICE, DATABASE, SEMANTIC VIEW and STREAMLIT.
 
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
+use crate::parser::_helpers::ddl::snowflake_alter::keyed_pair;
 use crate::parser::_helpers::ddl::snowflake_alter::named_property;
 use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
@@ -167,7 +168,7 @@ impl Parser {
             loop {
                 let item = self.parse_object_value()?;
                 if self.match_token(TokenType::Eq) {
-                    items.push(tuple(vec![item, self.parse_object_value()?]));
+                    items.push(keyed_pair(item, self.parse_object_value()?, false));
                 } else {
                     items.push(item);
                 }

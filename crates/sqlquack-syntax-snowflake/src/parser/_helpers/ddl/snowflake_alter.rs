@@ -9,6 +9,9 @@ use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::names::main::identifier_from_token::identifier_from_token;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::TableRef;
+use sqlquack_syntax::expressions::operators::models::BinaryOp;
+use sqlquack_syntax::expressions::operators::models::NamedArgSeparator;
+use sqlquack_syntax::expressions::operators::models::NamedArgument;
 use sqlquack_syntax::expressions::schema_objects::models::AlterObject;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -833,7 +836,7 @@ impl Parser {
         }
     }
 
-    /// Parse `( [ <item> [ , ... ] ] )`, each item a value or a `'<key>' = <value>` pair.
+    /// Parse `( [ <item> [ , ... ] ] )`, each item a value or a `<key> = <value>` pair.
     pub(super) fn parse_routine_value_list(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::LParen)?;
         let mut items: Vec<Expression> = Vec::new();
@@ -841,9 +844,7 @@ impl Parser {
             loop {
                 let item = self.parse_object_value()?;
                 items.push(if self.match_token(TokenType::Eq) {
-                    Expression::Tuple(Box::new(Tuple {
-                        expressions: vec![item, self.parse_object_value()?],
-                    }))
+                    keyed_pair(item, self.parse_object_value()?, false)
                 } else {
                     item
                 });
@@ -892,6 +893,23 @@ pub(super) fn parameter_property(name: &Identifier, value: Option<Expression>) -
     ObjectProperty {
         quoted: name.quoted,
         ..property(&property_kind(name), None, value)
+    }
+}
+
+/// A `<key> = <value>` pair, or `<key> => <value>` (`arrow`) as a named argument when the key is a plain name.
+pub(super) fn keyed_pair(key: Expression, value: Expression, arrow: bool) -> Expression {
+    match key {
+        Expression::Table(table) if arrow && table.schema.is_none() && table.catalog.is_none() => {
+            Expression::NamedArgument(Box::new(NamedArgument {
+                name: table.name,
+                value,
+                separator: NamedArgSeparator::DArrow,
+            }))
+        }
+        key if arrow => Expression::Tuple(Box::new(Tuple {
+            expressions: vec![key, value],
+        })),
+        key => Expression::PropertyEQ(Box::new(BinaryOp::new(key, value))),
     }
 }
 
