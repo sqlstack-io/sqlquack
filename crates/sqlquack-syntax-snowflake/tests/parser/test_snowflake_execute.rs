@@ -83,7 +83,7 @@ fn given_a_snowflake_execute_of_a_job_service_when_parsing_then_the_tree_keeps_i
         ProjectionTestCase {
             description: "the USING arguments keep their name",
             sql: SQL,
-            pointer: "/0/execute_object/properties/3/value/tuple/expressions/0/tuple/expressions/0/identifier/name",
+            pointer: "/0/execute_object/properties/3/value/tuple/expressions/0/named_argument/name/name",
             expected_value: json!("k"),
         },
         ProjectionTestCase {
