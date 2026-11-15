@@ -271,14 +271,13 @@ impl Parser {
                         false => vec![],
                     };
                     let mut properties: Vec<ObjectProperty> = Vec::new();
-                    let force = set && self.match_identifier("FORCE");
-                    if force {
-                        properties.push(property("FORCE", None, None));
-                    }
                     if let Some(scope) = self.match_policy_scope() {
                         properties.push(property(&format!("FOR ALL {scope}"), None, None));
                     }
-                    if set && !force && self.match_identifier("FORCE") {
+                    if set && self.match_identifier("FORCE") {
+                        if properties.is_empty() && self.check_text_seq(&["FOR", "ALL"]) {
+                            return Err(self.parse_error("FORCE comes after FOR ALL <scope>"));
+                        }
                         properties.push(property("FORCE", None, None));
                     }
                     (operands, properties)
