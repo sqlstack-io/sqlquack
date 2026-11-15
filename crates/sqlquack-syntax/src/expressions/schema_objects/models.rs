@@ -531,6 +531,12 @@ pub struct CreateFunction {
     /// Snowflake: PACKAGES=('pkg1', 'pkg2')
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub packages: Option<Vec<String>>,
+    /// Snowflake: how RUNTIME_VERSION was written when not as a string
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub runtime_version_bare: Option<BareValue>,
+    /// Snowflake: how each PACKAGES entry not written as a string was written, by its position in `packages`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub packages_bare: Vec<(usize, BareValue)>,
     /// PARAMETER STYLE clause (e.g., PANDAS for Databricks)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameter_style: Option<String>,
@@ -708,6 +714,8 @@ impl CreateFunction {
             handler_uses_eq: false,
             runtime_version: None,
             packages: None,
+            runtime_version_bare: None,
+            packages_bare: Vec::new(),
             parameter_style: None,
             snowflake_properties: Vec::new(),
             overloads: Vec::new(),
@@ -715,6 +723,13 @@ impl CreateFunction {
             aggregate: false,
         }
     }
+}
+
+/// A value Snowflake usually takes as a string, written instead as a name or a number.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum BareValue {
+    Name,
+    Number,
 }
 
 /// DROP FUNCTION statement
