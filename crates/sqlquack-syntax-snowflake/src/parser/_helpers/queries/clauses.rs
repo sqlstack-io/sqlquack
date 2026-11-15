@@ -1405,10 +1405,16 @@ impl Parser {
 
         let after = self.parse_match_recognize_after()?;
 
-        let pattern = if self.match_token(TokenType::Pattern) {
-            Some(self.parse_match_recognize_pattern()?)
+        let (pattern, row_pattern) = if self.match_token(TokenType::Pattern) {
+            let start = self.current;
+            let row_pattern = match self.is_snowflake() {
+                true => Some(self.parse_snowflake_row_pattern()?),
+                false => None,
+            };
+            self.current = start;
+            (Some(self.parse_match_recognize_pattern()?), row_pattern)
         } else {
-            None
+            (None, None)
         };
 
         let (define, define_semantics) = if self.match_token(TokenType::Define) {
@@ -1431,6 +1437,7 @@ impl Parser {
             rows,
             after,
             pattern,
+            row_pattern,
             define,
             define_semantics,
             alias: None,
