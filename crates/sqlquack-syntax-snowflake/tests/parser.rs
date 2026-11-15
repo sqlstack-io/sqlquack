@@ -48,6 +48,8 @@ mod test_snowflake_grant;
 mod test_snowflake_list_receipts;
 #[path = "parser/test_snowflake_openflow.rs"]
 mod test_snowflake_openflow;
+#[path = "parser/test_snowflake_option_receipts.rs"]
+mod test_snowflake_option_receipts;
 #[path = "parser/test_snowflake_postgres_instance.rs"]
 mod test_snowflake_postgres_instance;
 #[path = "parser/test_snowflake_procedures.rs"]
