@@ -2,6 +2,7 @@
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_create_properties::with_written;
+use crate::parser::constants::PLAIN_TEMPORARY;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
@@ -172,8 +173,23 @@ impl Parser {
         }))))
     }
 
+    /// Record on a Snowflake temporary table's tree how TEMPORARY was spelled, when not plainly, from the words before `at`.
+    pub(crate) fn keep_temporary_spelling(
+        &self,
+        parsed: &mut Result<Expression>,
+        temporary: bool,
+        at: usize,
+    ) {
+        if let (true, Ok(Expression::CreateTable(table))) =
+            (temporary && self.is_snowflake(), parsed)
+        {
+            let written = self.written_temporary(at);
+            table.temporary_spelling = (written != PLAIN_TEMPORARY).then_some(written);
+        }
+    }
+
     /// The words before the token at `at` that made a CREATE temporary, as written and upper-cased: `[ LOCAL | GLOBAL ] { TEMP | TEMPORARY | VOLATILE }`.
-    pub(super) fn written_temporary(&self, at: usize) -> String {
+    pub(crate) fn written_temporary(&self, at: usize) -> String {
         let word = |offset: usize| {
             at.checked_sub(offset)
                 .and_then(|index| self.tokens.get(index))
@@ -182,7 +198,7 @@ impl Parser {
         };
         let temporary = word(1);
         if !matches!(temporary.as_str(), "TEMP" | "TEMPORARY" | "VOLATILE") {
-            return "TEMPORARY".to_owned();
+            return PLAIN_TEMPORARY.to_owned();
         }
         match word(2).as_str() {
             scope @ ("LOCAL" | "GLOBAL") => format!("{scope} {temporary}"),
