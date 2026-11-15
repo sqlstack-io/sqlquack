@@ -57,11 +57,18 @@ fn given_parser_depth_limits_when_parsing_then_deep_input_is_refused_by_its_guar
             expected_outcome_part: "Parse error",
         },
         GuardedParseTestCase {
-            description: "the function nesting guard is independent",
-            sql: nested_calls(100, "abs"),
+            description: "the function nesting guard is independent: 257 nested calls are refused",
+            sql: nested_calls(257, "abs"),
             max_parser_depth: None,
             outcome: configured_outcome,
             expected_outcome_part: "E_GUARD_FUNCTION_NESTING_DEPTH_EXCEEDED",
+        },
+        GuardedParseTestCase {
+            description: "256 nested calls, deeper than the 100 Snowflake parses, are read",
+            sql: nested_calls(256, "abs"),
+            max_parser_depth: None,
+            outcome: configured_outcome,
+            expected_outcome_part: "parsed",
         },
         GuardedParseTestCase {
             description: "16 lambda wrappers consume parser depth",
