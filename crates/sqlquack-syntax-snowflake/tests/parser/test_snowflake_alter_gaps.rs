@@ -223,10 +223,35 @@ fn given_snowflake_table_actions_and_method_calls_when_parsing_then_the_tree_kee
             expected_value: json!("ICEBERG TABLE"),
         },
         ProjectionTestCase {
-            description: "IF NOT EXISTS is part of the version tag action",
+            description: "IF NOT EXISTS on the version tag is a flag, not part of the action",
             sql: "ALTER ICEBERG TABLE v1 CREATE VERSION_TAG IF NOT EXISTS t1",
             pointer: "/0/alter_object/action",
-            expected_value: json!("CREATE VERSION_TAG IF NOT EXISTS"),
+            expected_value: json!("CREATE VERSION_TAG"),
+        },
+        ProjectionTestCase {
+            description: "IF NOT EXISTS on the version tag is kept",
+            sql: "ALTER ICEBERG TABLE v1 CREATE VERSION_TAG IF NOT EXISTS t1",
+            pointer: "/0/alter_object/operand_if_not_exists",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description:
+                "IF NOT EXISTS on a scoring profile is kept as a flag (recorded semantic error)",
+            sql: "ALTER CORTEX SEARCH SERVICE v1 ADD SCORING PROFILE IF NOT EXISTS v1 '{}' ;",
+            pointer: "/0/alter_object/operand_if_not_exists",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "IF EXISTS on a dropped scoring profile is kept as a flag",
+            sql: "ALTER CORTEX SEARCH SERVICE v1 DROP SCORING PROFILE IF EXISTS v1 ;",
+            pointer: "/0/alter_object/operand_if_exists",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "IF NOT EXISTS on an organization profile version is kept as a flag",
+            sql: "ALTER ORGANIZATION PROFILE v1 ADD VERSION IF NOT EXISTS v1 FROM @d1.s1.st1/p1 ;",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("ADD VERSION FROM"),
         },
         ProjectionTestCase {
             description: "RETAIN keeps its unit",

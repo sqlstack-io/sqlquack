@@ -866,18 +866,31 @@ pub(super) fn alter_object(
     (operands, properties): (Vec<Expression>, Vec<ObjectProperty>),
 ) -> Expression {
     let named = !name.name.name.is_empty() || name.name.quoted;
+    let (action, operand_if_exists, operand_if_not_exists) = operand_existence(action);
     Expression::AlterObject(Box::new(AlterObject {
         kind: kind.to_owned(),
         name: named.then_some(name),
         arguments: Vec::new(),
         if_exists,
         action,
-        operand_if_exists: false,
-        operand_if_not_exists: false,
+        operand_if_exists,
+        operand_if_not_exists,
         operands,
         properties,
         ..Default::default()
     }))
+}
+
+/// The action without the IF [ NOT ] EXISTS an action parser wrote into it for the action's own object, such as
+/// `ADD SCORING PROFILE IF NOT EXISTS`, with whether it said IF EXISTS and whether it said IF NOT EXISTS.
+fn operand_existence(mut action: String) -> (String, bool, bool) {
+    for (words, not) in [(" IF NOT EXISTS", true), (" IF EXISTS", false)] {
+        if let Some(at) = action.find(words) {
+            action.replace_range(at..at + words.len(), "");
+            return (action, !not, not);
+        }
+    }
+    (action, false, false)
 }
 
 /// A property's kind from its name: upper-cased when unquoted, as written when quoted.
