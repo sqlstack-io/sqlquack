@@ -4118,3 +4118,122 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.ddl.undrop-database" = "fbdee3caf91c0741e6642e2bd82c5a9a31c93c233fb91a861747344665c2b54a"
 "sf.ddl.undrop-snapshot" = "c8e249038f4e7dda5cc75ea06a21653c8853af2634817b9d865be47a33b7a764"
 "sf.ddl.undrop-table" = "dea4f6fab8e872a491bcab29e0164bdda9ce7a55dfe4bbf7e584a3dc4469f256"
+
+[[review]]
+id = "ddl-042"
+family = "ddl"
+parser_tree = "3e89af5774ad48e90b91c6416fca02a0517c4cb7"
+reviewed_utc = "2026-11-15T00:57:50Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.create-ai-function.as",
+  "sf.ddl.create-application-package",
+  "sf.ddl.create-contact",
+  "sf.ddl.create-dcm-project",
+  "sf.ddl.create-experiment",
+  "sf.ddl.create-external-volume",
+  "sf.ddl.create-file-format.create-file-format",
+  "sf.ddl.create-file-format.create-or-alter-file",
+  "sf.ddl.create-git-repository",
+  "sf.ddl.create-iceberg-table-aws-glue",
+  "sf.ddl.create-iceberg-table.table-base-location",
+  "sf.ddl.create-iceberg-table.table-catalog-table-name",
+  "sf.ddl.create-iceberg-table.table-metadata-file-path",
+  "sf.ddl.create-image-repository",
+  "sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval",
+  "sf.ddl.create-model-monitor.version-function-source-warehouse",
+  "sf.ddl.create-notebook",
+  "sf.ddl.create-openflow-deployment",
+  "sf.ddl.create-pipe.create-or-alter-pipe",
+  "sf.ddl.create-pipe.create-pipe-as",
+  "sf.ddl.create-pipe.define-pipe",
+  "sf.ddl.create-postgres-instance.compute-family-storage-size-gb-authentication-authority-postgres",
+  "sf.ddl.create-procedure.create-procedure-scoped-temp",
+  "sf.ddl.create-provisioned-throughput",
+  "sf.ddl.create-restricted-session-scope.or-alter-restricted-session",
+  "sf.ddl.create-restricted-session-scope.restricted-session-scope-rss",
+  "sf.ddl.create-stage.create-or-alter-stage",
+  "sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage",
+  "sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams",
+  "sf.ddl.create-streamlit.create-streamlit",
+  "sf.ddl.create-streamlit.create-streamlit-root-location-main-file",
+  "sf.ddl.create-tag.create-or-alter-tag",
+  "sf.ddl.create-tag.create-tag",
+  "sf.ddl.create-tag.define-tag",
+  "sf.ddl.create-versioned-schema",
+]
+note = "Approved at its last review with the same definition, obligations and cases; the cases whose parse trees changed with the parser at 9a638ce10, which leaves out an empty create source, were read again under review brief version 1, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.create-ai-function.as" = "4c0dbb392ea2f6f6042ee4c9e36c60273f909eb728f7d699211363dc30fbf1a8"
+"sf.ddl.create-application-package" = "42fed0e56a90b044107b0723edb18837fe07667636fdf5923c3f9b566a33dd9b"
+"sf.ddl.create-contact" = "6f5a90262e772e4f426fbf4f5eddf60a61546b8a5229ba68683b83090a06fd1c"
+"sf.ddl.create-dcm-project" = "5dbcb471a6c75e9f0bfe3b6520846b998f40eb458b4936e29b5a06d5c71ec933"
+"sf.ddl.create-experiment" = "a2df0668b9db9cc413862b055fb4048493e9ed2981a46d6cf47ae9d0f6153f49"
+"sf.ddl.create-external-volume" = "8e04539233c55cb2c3a2506562ea49c7c6d1103cc22586f025b7dc1622b96534"
+"sf.ddl.create-file-format.create-file-format" = "76140c3508ab86678e045ea34ce28158f116f566c3294f15435229579f34a466"
+"sf.ddl.create-file-format.create-or-alter-file" = "ba84e503e13c99cd8d9136ed3978a92762c3d00288bc55e8be1e475a8d55d3df"
+"sf.ddl.create-git-repository" = "1d2c6f47dfd322e5c18902351defdb397022da9b4b115eeaade05741c2691848"
+"sf.ddl.create-iceberg-table-aws-glue" = "1fa53c23bdb8a557e1ff2cc4e40329533b599c2731067b493c1b5b92ba013911"
+"sf.ddl.create-iceberg-table.table-base-location" = "2aec26b4e80354ff3490f317a6ec6688827ddf35b0d6b3f3464a72edf59fa363"
+"sf.ddl.create-iceberg-table.table-catalog-table-name" = "56a9496aac8198ceb1354c6e97c9548db43c7e9035ff19521bd6e832e765954f"
+"sf.ddl.create-iceberg-table.table-metadata-file-path" = "6b9129e43509ec6c355575c8e228d022c0a3f64c1be145b2241abb98a76b1ee8"
+"sf.ddl.create-image-repository" = "78ce445a893307ff9f8bcca58f4c20b32133e68889cf4188cae8edb8ca1c4fed"
+"sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval" = "076efc1445aed802bdc0df60e9bfaf1ca575fdff39b01b67493d1c1f2c048955"
+"sf.ddl.create-model-monitor.version-function-source-warehouse" = "4c82f7e1e8d0b96daaba0f179c283e03d15ca61844bca5bccfc8577e71467fb7"
+"sf.ddl.create-notebook" = "cb53405812bb00f1e4201c188f9e1545606b7c4ef9156f3074dbd50e44aa339d"
+"sf.ddl.create-openflow-deployment" = "62188d9627158cd92342654a34dd6dc65224a961cab0547acec579abf27f8e47"
+"sf.ddl.create-pipe.create-or-alter-pipe" = "e219b37cad86b3740f59da534fe2a20af84caa7520264848a06b91d2fe968a2c"
+"sf.ddl.create-pipe.create-pipe-as" = "c435c9f2b0eb296adb0d1ec28c65f84142fc3e311944bd635beb08b3f58e11de"
+"sf.ddl.create-pipe.define-pipe" = "55dcb68692dbb6a2f0370293836f76db10db1a07d935115f1c870236f9356372"
+"sf.ddl.create-postgres-instance.compute-family-storage-size-gb-authentication-authority-postgres" = "ba1da2bd78d95de3e4d7b983ce48c2f627877cbaedce165b6ae3315788b20b9e"
+"sf.ddl.create-procedure.create-procedure-scoped-temp" = "0a3439cd98853e950a4fd65855a0dde8ca95e9ee20cc29e1fff6ee7d8325b939"
+"sf.ddl.create-provisioned-throughput" = "e674e5f2ec36a33ef17c7c2077642c2746367fc4aee3f1414b941d6f27140ffb"
+"sf.ddl.create-restricted-session-scope.or-alter-restricted-session" = "23835917b76e828e4931764be44d9093ea095bc202b792f4e4b0e876d7e020d3"
+"sf.ddl.create-restricted-session-scope.restricted-session-scope-rss" = "66e5562ddb0873c85007990710c41214867ac820679f64b25fd68783fd4ea417"
+"sf.ddl.create-stage.create-or-alter-stage" = "9ed194065f05616a74e77756ff98fd6103aa0f093cb6b7d32f11c7305db7a410"
+"sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage" = "55d3ee2cf9da0b8cc2bf217b5e0b917a7bfa0c851aad7a3b56edb5a7ecfffc63"
+"sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams" = "52332332252a014cdcdf6f7fcb01e208ce587fdb28b1c7831208389559ebd7f2"
+"sf.ddl.create-streamlit.create-streamlit" = "cecbdda0a827d24a8d872b02a9695df4a49833f7fab7b030446c9477f1b38c8a"
+"sf.ddl.create-streamlit.create-streamlit-root-location-main-file" = "a76a87975ca6e82ed27e9af62d32daf313416a2a30942f12faee4157637fc71c"
+"sf.ddl.create-tag.create-or-alter-tag" = "70c2489bac80a9b4abf9c90d94a9bb201b841efd841684015a30716e7d810cfc"
+"sf.ddl.create-tag.create-tag" = "94c11b25a073acdfa1f205f390db6c1e1c63f702db779b271eb91b95a1bd4ca7"
+"sf.ddl.create-tag.define-tag" = "f53a374e2520d186685b61049e737008e4723ad5976d491ae77c4e360097b9f9"
+"sf.ddl.create-versioned-schema" = "9e37906da213e350f440f8dc19ee7f5ac0eea0111392d7c33d9a5068fc984a04"
+
+[review.definitions]
+"sf.ddl.create-ai-function.as" = "8fa12f88f80bb31cc6b8caedba3312f3baa40301f11267d94afc4ec6a575c8f4"
+"sf.ddl.create-application-package" = "7d4735907f5fa41d7d90297585f0121384e0b25253d127e5f67810274aaf8c00"
+"sf.ddl.create-contact" = "6aa7a702ff9f6988395f1eeea99c4e0eeced5e104c4a99677916c8047abc6e5b"
+"sf.ddl.create-dcm-project" = "4338dd7d5c75cc5e362ecc13c1b4a094452c59544ed4bebbe0556acebb50245e"
+"sf.ddl.create-experiment" = "83e20ada4b76a5c1a119f45849e2b294ba6759cd85d07614a919679f633a4f34"
+"sf.ddl.create-external-volume" = "48754f12ef725dca3bf6b6e0b30cf4fa02240f51aba12dad6a5f7be18611520b"
+"sf.ddl.create-file-format.create-file-format" = "9a0d3d9dae6010ba8f511f4f2c1ab460924cb66e5063f08c9574411f2970b8cb"
+"sf.ddl.create-file-format.create-or-alter-file" = "db0df9a29d9963a7a03b70fe93087bde100a475038ab55456276e379a742b9c5"
+"sf.ddl.create-git-repository" = "4014e46646224e18f961621a3e66a7e34ea6e8e3570a04233aa138134ee42e1c"
+"sf.ddl.create-iceberg-table-aws-glue" = "3309dbc193b10f2ff273836e3952dc10d485d14da589390f93bc81f55ed4e8ab"
+"sf.ddl.create-iceberg-table.table-base-location" = "38f78f836722ecf44dc61875d51813162af9c8a1cb293eb1c6a4d9e2ee311a99"
+"sf.ddl.create-iceberg-table.table-catalog-table-name" = "60503f6b5eb308ac59589ba02d04f03198d299161a1d253801902cb00e80b976"
+"sf.ddl.create-iceberg-table.table-metadata-file-path" = "1d87de8a4958f7c69c1a41c00988db8283159e926b0eca2d91c90cc93675b393"
+"sf.ddl.create-image-repository" = "faed874e95b124abf65f22620fd1ad0ad9b9508516efb3388986623d9a70aba6"
+"sf.ddl.create-model-monitor.gateway-function-warehouse-refresh-interval" = "0d4fee5688c27616dcec30663d00594955294492ba060f42579051de880761e7"
+"sf.ddl.create-model-monitor.version-function-source-warehouse" = "aaf077e911052959a625791fe91b58332acddb7829bee5e15e18da2740c8cedb"
+"sf.ddl.create-notebook" = "f487a8fb30005e2b4d7c41e872d56b052037d01db539163d22480b0f3ca94832"
+"sf.ddl.create-openflow-deployment" = "6a4b6e26e6a85c602db4e0cefc982c494171a200ada9ed83a989915e83866966"
+"sf.ddl.create-pipe.create-or-alter-pipe" = "121dfb5d26e374c88547125fc4726cf7c3f7e935422345b30d192db3bdd51827"
+"sf.ddl.create-pipe.create-pipe-as" = "54a971b270c9ef7f212e738ad866308159253a8da9c428f87691533802a64561"
+"sf.ddl.create-pipe.define-pipe" = "93120a6f8a4464a2edd4ac68f41eaaf5abf0773c48b0e90a95b080c1af4bf7bf"
+"sf.ddl.create-postgres-instance.compute-family-storage-size-gb-authentication-authority-postgres" = "113ee2218e173585ccce6ff466026f7c0d45620f7496558c74c74f63897e7f65"
+"sf.ddl.create-procedure.create-procedure-scoped-temp" = "0f19cca3c66940dbb1d9174aa012d2d5f3c64e1ac88d97d86696686a4bd460f6"
+"sf.ddl.create-provisioned-throughput" = "4beb87b016c2521b3cb51fa789312257e2daa22aae6598c923da81f8e1d2f0ce"
+"sf.ddl.create-restricted-session-scope.or-alter-restricted-session" = "3942264e2713cd872a461f3c86d2b6b9a139a9a39e59ad478f9fdb3f6cc45e15"
+"sf.ddl.create-restricted-session-scope.restricted-session-scope-rss" = "ffe67e4f6af40c6f3050d0c4d2194982f142eabe38448ef89f0121df52486dc9"
+"sf.ddl.create-stage.create-or-alter-stage" = "b506c35887120beee27328d2a5e3591b49f10d09613b8f633c8e2d8a132b9da7"
+"sf.ddl.create-stage.create-or-alter-stage.create-or-alter-stage" = "b517564bcd6e54927a278d7af7f60abe8d49b517476deec831e6a4ec521f6bfa"
+"sf.ddl.create-stage.create-stage-internalstageparams-directorytableparams" = "24b1d7a2d29f8971215fa70cc6c3605e3c28750d04775c53df8a4a7cf8ebb22e"
+"sf.ddl.create-streamlit.create-streamlit" = "1dc0a603e8ea7a7c7113ccbebbe0fbb308a2ac7be7305e74e56754fbc6d32b27"
+"sf.ddl.create-streamlit.create-streamlit-root-location-main-file" = "25e3b2b845db945762a7596bd3df698d2f999edbe93ab5a9a53785b0cbe21daa"
+"sf.ddl.create-tag.create-or-alter-tag" = "812242a3f6dc03b89ed75b01b89b2b9d939c7eee1dae8380d58a3578bd3f9ef1"
+"sf.ddl.create-tag.create-tag" = "da99d3b7e73ff860170b43d19e1c172a97300f20efc627c4fbb0b2c786cb3925"
+"sf.ddl.create-tag.define-tag" = "788f08aa9ca96d9d8f54777d086bdf8f17b0ee629381486171f23b3f82ddb127"
+"sf.ddl.create-versioned-schema" = "6383231c1aed459dbe09d220aab7116af32a1d4b152ab52cb1427846cd02b166"
