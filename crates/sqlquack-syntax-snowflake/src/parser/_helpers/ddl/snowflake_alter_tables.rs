@@ -374,16 +374,19 @@ impl Parser {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         while !self.is_statement_end_at(0) {
             if self.match_token(TokenType::Increment) || self.match_identifier("INCREMENT") {
-                self.match_token(TokenType::By);
-                self.match_token(TokenType::Eq);
+                let by = self.match_token(TokenType::By);
+                let eq = self.match_token(TokenType::Eq);
                 let start = self.current;
                 self.parse_signed_integer()?;
                 self.current = start;
-                properties.push(property(
-                    "INCREMENT",
-                    None,
-                    Some(self.parse_object_value()?),
-                ));
+                properties.push(ObjectProperty {
+                    eq,
+                    ..property(
+                        if by { "INCREMENT BY" } else { "INCREMENT" },
+                        None,
+                        Some(self.parse_object_value()?),
+                    )
+                });
             } else if self.match_token(TokenType::Order) {
                 properties.push(property("ORDER", None, None));
             } else if self.match_identifier("NOORDER") {
