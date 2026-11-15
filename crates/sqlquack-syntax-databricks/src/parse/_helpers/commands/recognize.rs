@@ -77,6 +77,7 @@ impl Parser<'_> {
             rows,
             after,
             pattern: Some(pattern),
+            row_pattern: None,
             define: Some(define),
             define_semantics: Vec::new(),
             alias_explicit_as,

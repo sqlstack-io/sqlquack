@@ -1038,6 +1038,9 @@ pub struct MatchRecognize {
     pub after: Option<MatchRecognizeAfter>,
     /// PATTERN definition (stored as raw string for complex regex patterns)
     pub pattern: Option<String>,
+    /// Snowflake: the PATTERN as a tree of variables, anchors, groups, exclusions, PERMUTE and quantifiers
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub row_pattern: Option<RowPattern>,
     /// DEFINE clauses (pattern variable definitions)
     pub define: Option<Vec<(Identifier, Expression)>>,
     /// The RUNNING or FINAL written before a DEFINE condition, by the condition's position in `define`.
@@ -1088,6 +1091,48 @@ pub enum MatchRecognizeAfter {
     ToLast(Identifier),
     /// `TO <symbol>`, with neither FIRST nor LAST written.
     To(Identifier),
+}
+
+/// A Snowflake MATCH_RECOGNIZE row pattern.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum RowPattern {
+    /// A pattern variable.
+    Symbol(Identifier),
+    /// `^`, the start of the partition.
+    Start,
+    /// `$`, the end of the partition.
+    End,
+    /// Patterns written one after another.
+    Sequence(Vec<RowPattern>),
+    /// Patterns separated by `|`.
+    Alternation(Vec<RowPattern>),
+    /// `( <pattern> )`.
+    Group(Box<RowPattern>),
+    /// `{- <pattern> -}`, rows matched but left out of the output.
+    Exclusion(Box<RowPattern>),
+    /// `PERMUTE ( <pattern> [ , ... ] )`.
+    Permute(Vec<RowPattern>),
+    /// A pattern followed by its quantifier, and a `?` after it when the quantifier is reluctant.
+    Quantified {
+        this: Box<RowPattern>,
+        quantifier: RowPatternQuantifier,
+        reluctant: bool,
+    },
+}
+
+/// A row pattern quantifier, as written.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum RowPatternQuantifier {
+    /// `*`
+    ZeroOrMore,
+    /// `+`
+    OneOrMore,
+    /// `?`
+    ZeroOrOne,
+    /// `{ n }`
+    Exactly(u64),
+    /// `{ [ n ] , [ m ] }`
+    Between { min: Option<u64>, max: Option<u64> },
 }
 
 /// Represent a LIMIT clause that restricts the number of returned rows.
