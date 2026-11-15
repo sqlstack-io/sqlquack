@@ -400,8 +400,7 @@ class Renderer:
 
     @staticmethod
     def _one_option(*, nodes: tuple[Node, ...], choices: Choices) -> Choices:
-        """Choices that write the first option of `nodes` when nodes, or the one brace group they
-        are, hold only unwritten options."""
+        """Choices writing the first option when `nodes` hold only unwritten options."""
         options: list[Node] = [node for node in nodes if not is_pure_elision(node)]
         while len(options) == 1 and options[0].kind == NODE_CHOICE:
             if len(options[0].branches) != 1:

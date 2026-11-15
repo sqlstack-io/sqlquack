@@ -915,20 +915,23 @@ fn add_inline_constraint(mut column: ColumnDef, constraint: Constraint) -> Resul
                     "the parser reached a state its checks rule out",
                 ));
             };
-            let mut reference = ForeignKeyRef {
-                table: *table,
-                columns: tuple_names(columns),
-                on_delete: None,
-                on_update: None,
-                on_update_first: false,
-                match_type: None,
-                match_after_actions: false,
-                constraint_name: None,
-                deferrable: None,
-                has_foreign_key_keywords: constraint.kind == FOREIGN_KEY,
-            };
-            let mut words = Vec::new();
-            for word in set_reference_words(&mut reference, constraint.properties) {
+            let (mut reference, rest) = set_reference_words(
+                ForeignKeyRef {
+                    table: *table,
+                    columns: tuple_names(columns),
+                    on_delete: None,
+                    on_update: None,
+                    on_update_first: false,
+                    match_type: None,
+                    match_after_actions: false,
+                    constraint_name: None,
+                    deferrable: None,
+                    has_foreign_key_keywords: constraint.kind == FOREIGN_KEY,
+                },
+                constraint.properties,
+            );
+            let mut words: Vec<String> = Vec::new();
+            for word in rest {
                 match (word.as_str(), reference.deferrable) {
                     ("DEFERRABLE", None) => reference.deferrable = Some(true),
                     ("NOT DEFERRABLE", None) => reference.deferrable = Some(false),
@@ -966,12 +969,12 @@ fn record_inline_constraint(
     column
 }
 
-/// A foreign key's MATCH, ON UPDATE and ON DELETE property words set on `reference`; the other words, and any repeat, are returned in order.
+/// `reference` with its MATCH, ON UPDATE and ON DELETE property words set, and the other words, and any repeat, in order.
 pub(super) fn set_reference_words(
-    reference: &mut ForeignKeyRef,
+    mut reference: ForeignKeyRef,
     words: Vec<String>,
-) -> Vec<String> {
-    let mut rest = Vec::new();
+) -> (ForeignKeyRef, Vec<String>) {
+    let mut rest: Vec<String> = Vec::new();
     for word in words {
         if let Some(kind) = word.strip_prefix("MATCH ") {
             if reference.match_type.is_none() {
@@ -998,7 +1001,7 @@ pub(super) fn set_reference_words(
         }
         rest.push(word);
     }
-    rest
+    (reference, rest)
 }
 
 /// The action an `ON UPDATE` or `ON DELETE` property word names.
@@ -1017,23 +1020,36 @@ pub(super) fn constraint_modifiers(words: Vec<String>) -> ConstraintModifiers {
     let mut modifiers = ConstraintModifiers::default();
     for word in words {
         let set = match word.as_str() {
-            "ENFORCED" | "NOT ENFORCED" if modifiers.enforced.is_none() => {
-                modifiers.enforced = Some(word == "ENFORCED");
+            "ENFORCED" if modifiers.enforced.is_none() => {
+                modifiers.enforced = Some(true);
                 true
             }
-            "DEFERRABLE" | "NOT DEFERRABLE" if modifiers.deferrable.is_none() => {
-                modifiers.deferrable = Some(word == "DEFERRABLE");
+            "NOT ENFORCED" if modifiers.enforced.is_none() => {
+                modifiers.enforced = Some(false);
                 true
             }
-            "INITIALLY DEFERRED" | "INITIALLY IMMEDIATE"
-                if modifiers.initially_deferred.is_none() =>
-            {
-                modifiers.initially_deferred = Some(word == "INITIALLY DEFERRED");
+            "DEFERRABLE" if modifiers.deferrable.is_none() => {
+                modifiers.deferrable = Some(true);
                 true
             }
-            "RELY" | "NORELY" if !modifiers.rely && !modifiers.norely => {
-                modifiers.rely = word == "RELY";
-                modifiers.norely = word == "NORELY";
+            "NOT DEFERRABLE" if modifiers.deferrable.is_none() => {
+                modifiers.deferrable = Some(false);
+                true
+            }
+            "INITIALLY DEFERRED" if modifiers.initially_deferred.is_none() => {
+                modifiers.initially_deferred = Some(true);
+                true
+            }
+            "INITIALLY IMMEDIATE" if modifiers.initially_deferred.is_none() => {
+                modifiers.initially_deferred = Some(false);
+                true
+            }
+            "RELY" if !modifiers.rely && !modifiers.norely => {
+                modifiers.rely = true;
+                true
+            }
+            "NORELY" if !modifiers.rely && !modifiers.norely => {
+                modifiers.norely = true;
                 true
             }
             _ => match word.strip_prefix("COMMENT '") {
