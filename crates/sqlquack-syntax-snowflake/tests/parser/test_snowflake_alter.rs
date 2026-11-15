@@ -76,6 +76,30 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_recorded_rejectio
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "a stage URL may be an unquoted s3 URL (recorded semantic error 3169)",
+            sql: "ALTER STAGE v1 SET URL = s3://b1/p1/ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "an unquoted gcs URL is refused (recorded errno 1003)",
+            sql: "ALTER STAGE v1 SET URL = gcs://b1/p1/ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an unquoted URL of an unknown scheme is refused (recorded errno 1003)",
+            sql: "ALTER STAGE v1 SET URL = s4://b1/p1/ ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "an s3 scheme without // is refused (recorded errno 1003)",
+            sql: "ALTER STAGE v1 SET URL = s3: ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "a string is no user (recorded errno 1003)",
             sql: "ALTER TASK v1 SET EXECUTE AS USER 'v1' ;",
             dialect: Dialect::Snowflake,
@@ -542,6 +566,12 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_recorded_rejectio
 #[test]
 fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_the_tree_names_kind_and_action() {
     let test_cases = [
+        ProjectionTestCase {
+            description: "an unquoted s3 URL is kept as written",
+            sql: "ALTER STAGE v1 SET URL = s3://b1/p1/ ;",
+            pointer: "/0/alter_object/properties/0/value/var/this",
+            expected_value: json!("s3://b1/p1/"),
+        },
         ProjectionTestCase {
             description: "TASK GRAPH is one kind",
             sql: "ALTER TASK GRAPH v1 COMMIT",

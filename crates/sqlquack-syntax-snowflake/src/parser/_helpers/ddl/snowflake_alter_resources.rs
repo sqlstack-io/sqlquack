@@ -5,6 +5,7 @@ use crate::parser::_helpers::ddl::snowflake_alter::keyed_pair;
 use crate::parser::_helpers::ddl::snowflake_alter::named_property;
 use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::constants::{UNQUOTED_URL_SCHEME, URL_PROPERTY};
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::TableRef;
@@ -693,6 +694,41 @@ impl Parser {
         self.parse_primary()
     }
 
+    /// Whether an unquoted `s3://` URL starts here, the only scheme Snowflake parses without quotes.
+    fn is_unquoted_s3_url(&self) -> bool {
+        let adjacent = |offset: usize, token_type: TokenType| {
+            matches!(
+                (self.peek_nth(offset - 1), self.peek_nth(offset)),
+                (Some(before), Some(token)) if token.token_type == token_type && token.span.start == before.span.end
+            )
+        };
+        !self.is_at_end()
+            && self.peek_text().eq_ignore_ascii_case(UNQUOTED_URL_SCHEME)
+            && adjacent(1, TokenType::Colon)
+            && adjacent(2, TokenType::Slash)
+            && adjacent(3, TokenType::Slash)
+    }
+
+    /// An unquoted URL up to the first whitespace, kept as written.
+    fn parse_unquoted_url(&mut self) -> Expression {
+        let start = self.peek().span.start;
+        let mut end = self.peek().span.end;
+        self.skip();
+        while !self.is_at_end()
+            && self.peek().span.start == end
+            && !matches!(
+                self.peek().token_type,
+                TokenType::Semicolon | TokenType::Comma | TokenType::LParen | TokenType::RParen
+            )
+        {
+            end = self.peek().span.end;
+            self.skip();
+        }
+        Expression::Var(Box::new(Var {
+            this: self.source_text_range(start, end),
+        }))
+    }
+
     /// Whether the current token starts a stage path.
     pub(crate) fn is_stage_path(&self) -> bool {
         !self.is_at_end() && self.peek_text().starts_with('@')
@@ -816,7 +852,11 @@ impl Parser {
                     self.parse_expression()?
                 } else {
                     self.expect_token(TokenType::Eq)?;
-                    self.parse_resource_value()?
+                    match name.name.eq_ignore_ascii_case(URL_PROPERTY) && self.is_unquoted_s3_url()
+                    {
+                        true => self.parse_unquoted_url(),
+                        false => self.parse_resource_value()?,
+                    }
                 };
                 properties.push(parameter_property(&name, Some(value)));
                 if self.match_token(TokenType::Comma)

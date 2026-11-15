@@ -1653,3 +1653,9 @@ pub(crate) const ROW_PATTERN_QUESTION_MARK: &str = "?";
 
 /// The kind of the property that names the user a task runs as.
 pub(crate) const EXECUTE_AS_USER: &str = "EXECUTE AS USER";
+
+/// A stage's location property, whose value Snowflake also parses as an unquoted `s3://` URL.
+pub(crate) const URL_PROPERTY: &str = "URL";
+
+/// The one URL scheme Snowflake parses unquoted in a stage's URL.
+pub(crate) const UNQUOTED_URL_SCHEME: &str = "s3";
