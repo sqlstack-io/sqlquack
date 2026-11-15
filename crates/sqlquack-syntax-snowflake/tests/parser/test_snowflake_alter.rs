@@ -2,7 +2,7 @@ use serde_json::json;
 
 use sqlquack_syntax::{CallMode, Dialect};
 
-use crate::helpers::{accepted, snowflake_kind, statements};
+use crate::helpers::{accepted, snowflake_kind, statement_at, statements};
 use crate::test_types::{AcceptanceTestCase, ProjectionTestCase, SnowflakeVerdictTestCase};
 
 #[test]
@@ -785,6 +785,33 @@ fn given_snowflake_session_settings_when_parsing_then_each_needs_a_value() {
         assert_eq!(
             snowflake_kind(test_case.sql),
             test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_model_source_in_a_quoted_string_when_parsing_then_it_is_a_stage_reference() {
+    let test_cases = [
+        ProjectionTestCase {
+            description:
+                "ALTER MODEL ADD VERSION FROM a quoted stage keeps the stage's quoted name",
+            sql: "ALTER MODEL v1 ADD VERSION v1 FROM '@\"s1 Q\"' ;",
+            pointer: "/0/alter_object/operands/1/stage_reference/stage_name/parts/0/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "CREATE MODEL FROM a quoted stage splits the stage's name",
+            sql: "CREATE MODEL v1 FROM '@\"v1 Q\".s1' ;",
+            pointer: "/0/create_object/operands/0/stage_reference/stage_name/parts/1/name",
+            expected_value: json!("s1"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
             "{}",
             test_case.description
         );
