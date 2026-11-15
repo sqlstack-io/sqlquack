@@ -1,5 +1,6 @@
 //! Snowflake function, procedure and object-name rules that the shared parsers do not apply.
 
+use crate::parser::_helpers::ddl::snowflake_alter::keyword_values;
 use crate::parser::constants::{
     SNOWFLAKE_RESERVED_KEYWORDS, SNOWFLAKE_ROUTINE_NAME_LIST_PROPERTIES,
     SNOWFLAKE_ROUTINE_NAME_MAP_PROPERTIES, SNOWFLAKE_ROUTINE_NAME_PROPERTIES,
@@ -156,7 +157,10 @@ impl Parser {
         if self.current != end {
             return Err(self.parse_error("Expected the end of the property value"));
         }
-        Ok(Some(routine_property(&key, Some(tree))))
+        Ok(Some(routine_property(
+            &key,
+            Some(keyword_values(&key, tree)),
+        )))
     }
 
     /// A routine property value its check accepted: a literal, a name, or a parenthesized list whose `key = value` entries stay pairs.

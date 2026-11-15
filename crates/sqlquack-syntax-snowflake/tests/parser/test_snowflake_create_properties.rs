@@ -607,6 +607,12 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             expected_value: json!(null),
         },
         ProjectionTestCase {
+            description: "a function's COPY = ( GRANTS ) keeps GRANTS as a keyword",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE SCALA RUNTIME_VERSION = '2.12' COPY = ( GRANTS ) HANDLER = 'm' AS 'm' ;",
+            pointer: "/0/create_function/snowflake_properties/0/value/tuple/expressions/0/var/this",
+            expected_value: json!("GRANTS"),
+        },
+        ProjectionTestCase {
             description: "a TEMP function keeps TEMP",
             sql: "CREATE TEMP FUNCTION v1 ( ) RETURNS INT AS '1' ;",
             pointer: "/0/create_function/temporary_spelling",
