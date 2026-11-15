@@ -567,6 +567,8 @@ impl Parser {
                     if self.match_identifier("VERSION") {
                         operands.push(self.parse_name_operand()?);
                     }
+                } else if self.check(TokenType::String) && self.peek_text().starts_with('@') {
+                    operands.push(self.parse_stage_location()?);
                 } else {
                     operands.push(self.parse_location_value()?);
                 }
