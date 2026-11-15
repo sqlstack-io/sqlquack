@@ -618,8 +618,14 @@ impl Parser {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         match action.as_str() {
             "STOP ALL" if self.match_text_seq(&["OF", "TYPE"]) => {
-                action.push_str(" OF TYPE");
-                operands = self.parse_object_name_list()?;
+                let types = Tuple {
+                    expressions: self.parse_object_name_list()?,
+                };
+                properties.push(property(
+                    "OF TYPE",
+                    None,
+                    Some(Expression::Tuple(Box::new(types))),
+                ));
             }
             "EXECUTE AS" => {
                 let caller =
