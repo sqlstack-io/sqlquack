@@ -198,6 +198,12 @@ fn nested_arithmetic(depth: usize) -> String {
     format!("SELECT {value} AS x FROM orders")
 }
 
+fn nested_calls(depth: usize) -> String {
+    let value: String =
+        (0..depth).fold("id".to_owned(), |value, _| format!("COALESCE({value}, 0)"));
+    format!("SELECT {value} AS x FROM orders")
+}
+
 fn scalar_subqueries(depth: usize) -> String {
     let value: String = (0..depth).fold("id".to_owned(), |value, _| {
         format!("(SELECT {value} FROM orders AS o LIMIT 1)")
@@ -242,6 +248,10 @@ pub(crate) fn analysed_constructs() -> Vec<Construct> {
         Construct {
             name: "analysed_arithmetic",
             text: |parser, depth| analysed(parser, depth, nested_arithmetic),
+        },
+        Construct {
+            name: "analysed_function_calls",
+            text: |parser, depth| analysed(parser, depth, nested_calls),
         },
         Construct {
             name: "analysed_scalar_subqueries",
