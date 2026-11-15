@@ -1160,6 +1160,15 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             }),
         },
         ProjectionTestCase {
+            description: "a MODIFY ( ... ) list gives each column its own typed action",
+            sql: "ALTER TABLE v1 MODIFY ( v1 DROP DEFAULT , v2 UNSET COMMENT ) ;",
+            pointer: "/0/alter_table/actions/1/AlterColumn",
+            expected_value: json!({
+                "name": {"name": "v2", "quoted": false, "trailing_comments": [], "span": {"start": 42, "end": 44, "line": 1, "column": 45}},
+                "action": "UnsetComment", "use_modify_keyword": true,
+            }),
+        },
+        ProjectionTestCase {
             description: "a column reference keeps a word with no typed field, such as RELY, against it",
             sql: "ALTER TABLE v1 ADD COLUMN v1 INT REFERENCES v2 ( c1 ) MATCH FULL ON UPDATE RESTRICT NOT DEFERRABLE RELY ;",
             pointer: "/0/alter_table/actions/0/AddColumn/column/constraint_properties",
