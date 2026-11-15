@@ -1,5 +1,6 @@
 //! Parser ddl: table options.
 
+use crate::parser::_helpers::ddl::snowflake_create_table::with_modifier_words;
 use crate::parser::constants::CHARSET;
 use crate::parser::constants::UNSIGNED;
 use crate::parser::constants::ZEROFILL;
@@ -382,14 +383,18 @@ impl Parser {
                         if self.match_identifier("TTL") {
                             let expr = self.parse_expression()?;
                             col_def.ttl_expr = Some(Box::new(expr));
-                        } else if self.is_snowflake()
-                            && !col_def.constraint_order.is_empty()
-                            && (self.check_identifier("RELY") || self.check_identifier("NORELY"))
-                        {
-                            let word = self.advance_text()?.to_ascii_uppercase();
-                            let after = col_def.constraint_order.len() - 1;
-                            col_def.constraint_properties.push((after, word));
                         } else {
+                            let words = match self.is_snowflake()
+                                && !col_def.constraint_order.is_empty()
+                            {
+                                true => self.parse_checked_constraint_properties(false, false)?,
+                                false => Vec::new(),
+                            };
+                            if !words.is_empty() {
+                                let after = col_def.constraint_order.len() - 1;
+                                col_def = with_modifier_words(col_def, after, words);
+                                continue;
+                            }
                             if self.skip_column_modifier() {
                                 continue;
                             }

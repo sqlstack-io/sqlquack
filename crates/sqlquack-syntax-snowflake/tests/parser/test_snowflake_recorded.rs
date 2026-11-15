@@ -1104,19 +1104,25 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             expected_value: json!("c9"),
         },
         ProjectionTestCase {
-            description: "RELY stays with the column constraint it follows",
+            description: "NORELY stays with the column constraint it follows",
             sql: "ALTER TABLE v1 ADD COLUMN v1 INT NOT NULL CONSTRAINT c9 UNIQUE NORELY ;",
-            pointer: "/0/alter_table/actions/0/AddColumn/column/constraint_properties",
-            expected_value: json!([[1, "NORELY"]]),
+            pointer: "/0/alter_table/actions/0/AddColumn/column/constraint_modifiers/0/0",
+            expected_value: json!(1),
         },
         ProjectionTestCase {
-            description: "an added constraint's options set their typed modifiers; a word with no field stays in order",
+            description: "NORELY after a column constraint is its typed modifier",
+            sql: "ALTER TABLE v1 ADD COLUMN v1 INT NOT NULL CONSTRAINT c9 UNIQUE NORELY ;",
+            pointer: "/0/alter_table/actions/0/AddColumn/column/constraint_modifiers/0/1/norely",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "an added constraint's options, ENABLE VALIDATE among them, set their typed modifiers",
             sql: "ALTER TABLE v1 ADD CONSTRAINT c1 UNIQUE ( v1 ) NOT ENFORCED NOT DEFERRABLE INITIALLY DEFERRED ENABLE VALIDATE RELY COMMENT 'it''s' ;",
             pointer: "/0/alter_table/actions/0/AddConstraint/Unique/modifiers",
             expected_value: json!({
                 "enforced": false, "deferrable": false, "initially_deferred": true,
-                "norely": false, "rely": true, "using": null, "using_before_columns": false,
-                "comment": "it's", "not_valid": false, "properties": ["ENABLE VALIDATE"],
+                "norely": false, "rely": true, "enabled": true, "validated": true,
+                "using": null, "using_before_columns": false, "comment": "it's", "not_valid": false,
             }),
         },
         ProjectionTestCase {
@@ -1169,10 +1175,10 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             }),
         },
         ProjectionTestCase {
-            description: "a column reference keeps a word with no typed field, such as RELY, against it",
+            description: "a column reference's RELY is a typed modifier against it",
             sql: "ALTER TABLE v1 ADD COLUMN v1 INT REFERENCES v2 ( c1 ) MATCH FULL ON UPDATE RESTRICT NOT DEFERRABLE RELY ;",
-            pointer: "/0/alter_table/actions/0/AddColumn/column/constraint_properties",
-            expected_value: json!([[0, "RELY"]]),
+            pointer: "/0/alter_table/actions/0/AddColumn/column/constraint_modifiers/0/1/rely",
+            expected_value: json!(true),
         },
         ProjectionTestCase {
             description: "an IDENTIFIER( ) name writes no empty name beside the call",
