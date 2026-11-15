@@ -39,12 +39,14 @@ impl Parser {
             return Err(self.parse_error("Expected an object kind after CREATE"));
         }
         let database_role = or_alter && self.names_a_database_role();
+        let organization = self.names_an_organization();
         let Some(parts) = SNOWFLAKE_PROPERTY_KINDS
             .iter()
             .map(|kind| kind.split(' ').collect::<Vec<_>>())
-            .filter(|parts| self.check_text_seq(parts))
+            .filter(|parts| !organization && self.check_text_seq(parts))
             .max_by_key(Vec::len)
             .or_else(|| database_role.then(|| vec!["DATABASE", "ROLE"]))
+            .or_else(|| organization.then(|| vec!["ORGANIZATION"]))
         else {
             let body = SNOWFLAKE_BODY_POLICY_KINDS
                 .iter()
@@ -90,6 +92,9 @@ impl Parser {
                 }
                 with = true;
                 continue;
+            }
+            if parts == ["ORGANIZATION"] && !self.check_next(TokenType::Eq) {
+                return Err(self.parse_error("Expected <property> = <value>"));
             }
             let tags = self.check_identifier("TAG") && self.check_next(TokenType::LParen);
             if tags && or_alter && parts == ["SECRET"] {
@@ -328,6 +333,23 @@ impl Parser {
             body: Some(Box::new(body)),
             ..Default::default()
         }))))
+    }
+
+    /// Whether CREATE names an organization itself: `ORGANIZATION <name>`, where a kind word such as ACCOUNT or USER is the name when the statement ends after it or a property follows it.
+    fn names_an_organization(&self) -> bool {
+        if self.peek().token_type == TokenType::QuotedIdentifier
+            || !self.check_identifier("ORGANIZATION")
+        {
+            return false;
+        }
+        if !matches!(
+            self.text_at(1).as_deref(),
+            Some("ACCOUNT" | "LISTING" | "PROFILE" | "USER")
+        ) {
+            return true;
+        }
+        let at = |offset: usize| self.tokens.get(self.current + offset).map(|t| t.token_type);
+        matches!(at(2), None | Some(TokenType::Semicolon)) || at(3) == Some(TokenType::Eq)
     }
 
     /// Whether the words at the cursor are part of a property or body kind, not all of it, before a name and then `;`, AS, WITH, FROM or `<name> =`.
