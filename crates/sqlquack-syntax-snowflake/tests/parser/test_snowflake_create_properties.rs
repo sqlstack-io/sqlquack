@@ -373,6 +373,24 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             expected_value: json!("SECURITY INTEGRATIONS"),
         },
         ProjectionTestCase {
+            description: "an integration without AS or CLONE writes no source",
+            sql: "CREATE API INTEGRATION v1 API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ( 'https://x' ) ENABLED = TRUE",
+            pointer: "/0/create_object/source",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "a policy without AS or CLONE writes no source",
+            sql: "CREATE AUTHENTICATION POLICY v1 COMMENT = 'm'",
+            pointer: "/0/create_object/source",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "a create from a share keeps its source keyword",
+            sql: "CREATE DATABASE d1 FROM SHARE a1.s1",
+            pointer: "/0/create_object/source",
+            expected_value: json!("SHARE"),
+        },
+        ProjectionTestCase {
             description: "a warehouse keeps OR ALTER",
             sql: "CREATE OR ALTER WAREHOUSE v1 WAREHOUSE_SIZE = MEDIUM",
             pointer: "/0/create_object/or_alter",
