@@ -584,6 +584,9 @@ pub(crate) const MODEL_KIND: &str = "MODEL";
 /// The opaque CREATE kinds that take their manifest only after AS, never FROM a location: a bare LISTING, unlike an EXTERNAL or ORGANIZATION LISTING.
 pub(crate) const SNOWFLAKE_MANIFEST_ONLY_KINDS: &[&str] = &["LISTING"];
 
+/// The plain spelling of a temporary CREATE, which a tree records as its flag alone.
+pub(crate) const PLAIN_TEMPORARY: &str = "TEMPORARY";
+
 /// The modifiers an opaque CREATE may write before its kind, each kept as written.
 pub(crate) const SNOWFLAKE_OPAQUE_MODIFIERS: &[&[&str]] = &[
     &["LOCAL", "TEMPORARY"],

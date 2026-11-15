@@ -535,10 +535,40 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             expected_value: json!("SCOPED TEMP"),
         },
         ProjectionTestCase {
-            description: "a read-only temporary clone keeps its words",
+            description: "a read-only temporary clone keeps its temporary words as its modifier",
             sql: "CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v2 COPY GRANTS",
             pointer: "/0/create_object/modifier",
-            expected_value: json!("LOCAL TEMP READ ONLY"),
+            expected_value: json!("LOCAL TEMP"),
+        },
+        ProjectionTestCase {
+            description: "a read-only temporary clone keeps READ ONLY as a property",
+            sql: "CREATE OR REPLACE LOCAL TEMP READ ONLY TABLE v1 CLONE v2 COPY GRANTS",
+            pointer: "/0/create_object/properties/0/kind",
+            expected_value: json!("READ ONLY"),
+        },
+        ProjectionTestCase {
+            description: "a volatile table clone keeps VOLATILE (recorded success)",
+            sql: "CREATE VOLATILE TABLE v1 CLONE v1 ;",
+            pointer: "/0/create_table/temporary_spelling",
+            expected_value: json!("VOLATILE"),
+        },
+        ProjectionTestCase {
+            description: "a global temporary table keeps GLOBAL TEMPORARY",
+            sql: "CREATE GLOBAL TEMPORARY TABLE t1 ( c1 INT ) ;",
+            pointer: "/0/create_table/temporary_spelling",
+            expected_value: json!("GLOBAL TEMPORARY"),
+        },
+        ProjectionTestCase {
+            description: "a TEMP table keeps TEMP",
+            sql: "CREATE TEMP TABLE v1 CLONE v1 ;",
+            pointer: "/0/create_table/temporary_spelling",
+            expected_value: json!("TEMP"),
+        },
+        ProjectionTestCase {
+            description: "a TEMPORARY table needs no spelling",
+            sql: "CREATE TEMPORARY TABLE t1 ( c1 INT ) ;",
+            pointer: "/0/create_table/temporary_spelling",
+            expected_value: json!(null),
         },
         ProjectionTestCase {
             description: "a class instance keeps its class's omitted schema as null",

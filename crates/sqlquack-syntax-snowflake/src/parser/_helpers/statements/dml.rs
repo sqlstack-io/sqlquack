@@ -476,8 +476,9 @@ impl Parser {
                         return table;
                     }
                 }
-                let parsed =
+                let mut parsed =
                     self.parse_create_table(or_replace, temporary, leading_comments, modifier);
+                self.keep_temporary_spelling(&mut parsed, temporary, table_start);
                 let checkable =
                     !define && !secure && matches!(modifier, None | Some("TRANSIENT" | "HYBRID"));
                 self.keep_snowflake_create_table(
