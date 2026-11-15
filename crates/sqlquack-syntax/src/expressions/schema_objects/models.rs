@@ -5,6 +5,7 @@ use serde::Serialize;
 
 use crate::expressions::columns::models::AlterColumnAction;
 use crate::expressions::columns::models::ColumnDef;
+use crate::expressions::columns::models::TableConstraint;
 use crate::expressions::names::models::Identifier;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::schema_objects::_helpers::serde_defaults::default_true;
@@ -1356,6 +1357,9 @@ pub struct CreateObject {
     /// The properties set after the source
     #[serde(default)]
     pub properties: Vec<ObjectProperty>,
+    /// The out-of-line constraints of a Snowflake DEFINE, ICEBERG or DYNAMIC table
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub constraints: Vec<TableConstraint>,
     /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub define: bool,
@@ -1385,6 +1389,7 @@ impl Default for CreateObject {
             source: String::new(),
             operands: Vec::new(),
             properties: Vec::new(),
+            constraints: Vec::new(),
             define: false,
             class: None,
             signature: None,

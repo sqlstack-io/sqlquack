@@ -168,6 +168,7 @@ impl Parser {
         let mut untyped = false;
         let mut operands: Vec<Expression> = Vec::new();
         let mut properties: Vec<ObjectProperty> = Vec::new();
+        let mut constraints: Vec<TableConstraint> = Vec::new();
         if like {
             let source = self.parse_iceberg_object_name()?;
             self.reject_reserved_table_ref(&source)?;
@@ -175,13 +176,13 @@ impl Parser {
         } else if template {
             operands.push(self.parse_external_template()?);
         } else if columns {
-            let (elements, constraints, missing_type) =
+            let (elements, table_constraints, missing_type) =
                 self.parse_checked_table_elements(define)?;
             untyped = missing_type;
             operands.push(Expression::Tuple(Box::new(Tuple {
                 expressions: elements,
             })));
-            properties.extend(constraints);
+            constraints = table_constraints;
         }
         while !self.is_at_end()
             && !self.check(TokenType::Semicolon)
@@ -245,18 +246,19 @@ impl Parser {
             source: source.to_owned(),
             operands,
             properties,
+            constraints,
             ..Default::default()
         })
     }
 
-    /// `( <column or constraint> [ , ... ] )`: the columns, the out-of-line constraints as properties, and whether a column has no data type; a DEFINE (`define`) also takes a reference without FOREIGN KEY.
+    /// `( <column or constraint> [ , ... ] )`: the columns, the typed out-of-line constraints, and whether a column has no data type; a DEFINE (`define`) also takes a reference without FOREIGN KEY.
     fn parse_checked_table_elements(
         &mut self,
         define: bool,
-    ) -> Result<(Vec<Expression>, Vec<ObjectProperty>, bool)> {
+    ) -> Result<(Vec<Expression>, Vec<TableConstraint>, bool)> {
         self.expect_token(TokenType::LParen)?;
         let mut columns: Vec<Expression> = Vec::new();
-        let mut constraints: Vec<ObjectProperty> = Vec::new();
+        let mut constraints: Vec<TableConstraint> = Vec::new();
         let mut untyped = false;
         loop {
             let constraint = self.check(TokenType::Constraint)
@@ -267,9 +269,9 @@ impl Parser {
             let keyless_reference =
                 define && (self.check(TokenType::LParen) || self.check(TokenType::References));
             if constraint {
-                constraints.push(constraint_property(self.parse_checked_constraint(false)?));
+                constraints.push(table_constraint(self.parse_checked_constraint(false)?)?);
             } else if keyless_reference {
-                constraints.push(constraint_property(self.parse_keyless_reference()?));
+                constraints.push(table_constraint(self.parse_keyless_reference()?)?);
             } else {
                 let column = self.parse_checked_table_column()?;
                 untyped |= column.no_type;
@@ -868,26 +870,6 @@ pub(super) fn tag_properties(tags: Vec<Expression>) -> Vec<ObjectProperty> {
         .collect()
 }
 
-/// An out-of-line constraint as a property: its keywords, its name, and a tuple of its columns or condition, its reference and its property words.
-fn constraint_property(constraint: Constraint) -> ObjectProperty {
-    let mut expressions: Vec<Expression> = constraint.operand.into_iter().collect();
-    if let Some((table, columns)) = constraint.references {
-        expressions.push(table);
-        expressions.extend(columns);
-    }
-    expressions.extend(
-        constraint
-            .properties
-            .into_iter()
-            .map(|word| Expression::Var(Box::new(Var { this: word }))),
-    );
-    property(
-        constraint.kind,
-        constraint.name,
-        Some(Expression::Tuple(Box::new(Tuple { expressions }))),
-    )
-}
-
 /// An inline constraint on `column`, with its property words recorded against it.
 fn add_inline_constraint(mut column: ColumnDef, constraint: Constraint) -> Result<ColumnDef> {
     let kind = match constraint.kind {
@@ -1140,4 +1122,76 @@ pub(super) fn tuple_names(names: Option<Expression>) -> Vec<Identifier> {
             .collect(),
         _ => Vec::new(),
     }
+}
+
+/// An out-of-line constraint as a typed table constraint, its property words set on their typed fields; a keyless REFERENCES keeps that FOREIGN KEY was omitted.
+pub(super) fn table_constraint(constraint: Constraint) -> Result<TableConstraint> {
+    let Constraint {
+        kind,
+        name,
+        operand,
+        references,
+        properties,
+    } = constraint;
+    let has_constraint_keyword = name.is_some();
+    if let Some((table, columns)) = references {
+        let Expression::Table(table) = table else {
+            return Err(sqlquack_syntax::tokens::errors::Error::internal(
+                "the parser reached a state its checks rule out",
+            ));
+        };
+        let (reference, properties) = set_reference_words(
+            ForeignKeyRef {
+                table: *table,
+                columns: tuple_names(columns),
+                on_delete: None,
+                on_update: None,
+                on_update_first: false,
+                match_type: None,
+                match_after_actions: false,
+                constraint_name: None,
+                deferrable: None,
+                has_foreign_key_keywords: kind == FOREIGN_KEY,
+            },
+            properties,
+        );
+        return Ok(TableConstraint::ForeignKey {
+            name,
+            columns: tuple_names(operand),
+            references: Some(Box::new(reference)),
+            on_delete: None,
+            on_update: None,
+            modifiers: constraint_modifiers(properties),
+        });
+    }
+    let modifiers = constraint_modifiers(properties);
+    Ok(match kind {
+        "UNIQUE" => TableConstraint::Unique {
+            name,
+            columns: tuple_names(operand),
+            key_parts: Vec::new(),
+            columns_parenthesized: true,
+            modifiers,
+            has_constraint_keyword,
+            nulls_not_distinct: false,
+        },
+        "PRIMARY KEY" => TableConstraint::PrimaryKey {
+            name,
+            columns: tuple_names(operand),
+            key_parts: Vec::new(),
+            timeseries_columns: Vec::new(),
+            include_columns: Vec::new(),
+            modifiers,
+            has_constraint_keyword,
+        },
+        _ => TableConstraint::Check {
+            name,
+            expression: operand.ok_or_else(|| {
+                sqlquack_syntax::tokens::errors::Error::internal(
+                    "the parser reached a state its checks rule out",
+                )
+            })?,
+            modifiers,
+        },
+    })
 }
