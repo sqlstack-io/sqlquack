@@ -1080,6 +1080,7 @@
 {"case_id":"sf.ddl.alter-stage.set.syntax.ka081faac0b29","mark":"settled accept","obligations":["sf.ddl.alter-stage.set.syntax.o117"],"sql_sha256":"a081faac0b29a19f174220927572adb3a355266d6f638a15b935c56d64aae3a3"}
 {"case_id":"sf.ddl.alter-stage.set.syntax.ka823580477f5","mark":"settled accept","obligations":["sf.ddl.alter-stage.set.syntax.o476"],"sql_sha256":"a823580477f52a11e79cb4a88ba0dda559a13d670969d080902d1866698f1c0a"}
 {"case_id":"sf.ddl.alter-stage.set.syntax.kb25187b4a0c0","mark":"settled reject","obligations":["sf.ddl.alter-stage.set.syntax.o647"],"sql_sha256":"b25187b4a0c0cfb8281c787180fb3f33f3b56eed48fce28f5f3b7998b24997b3"}
+{"case_id":"sf.ddl.alter-stage.set.syntax.kbb0fed558aea","mark":"settled accept","obligations":["sf.ddl.alter-stage.set.syntax.o646"],"sql_sha256":"bb0fed558aeaca6c2bba07f33d2b5b9f2876ec64cf5722e126b457d2115e9966"}
 {"case_id":"sf.ddl.alter-stage.set.syntax.kc2c2712311c9","mark":"settled accept","obligations":["sf.ddl.alter-stage.set.syntax.o586"],"sql_sha256":"c2c2712311c97d9c5ab21f431a1d1f74cb4bcc1206219bc26889857cd28ade2e"}
 {"case_id":"sf.ddl.alter-stage.set.syntax.kd30e04e36906","mark":"settled accept","obligations":["sf.ddl.alter-stage.set.syntax.o614"],"sql_sha256":"d30e04e36906ec892ba522843c5597635e1dc590c69a4bc3f2e3b0fdd084d5a8"}
 {"case_id":"sf.ddl.alter-stage.set.syntax.kea8d4e67ae46","mark":"settled reject","obligations":["sf.ddl.alter-stage.set.syntax.o648"],"sql_sha256":"ea8d4e67ae460c769a7ca942f3b030b76db4d8f717c0dabcf89c7b2c881250a7"}
@@ -1719,6 +1720,7 @@
 {"case_id":"sf.ddl.create-database.define-database.k82e8d8532fcf","mark":"settled accept","obligations":["sf.ddl.create-database.define-database.o095"],"sql_sha256":"82e8d8532fcf4a747321681abecf4e5294d5859c9faebded392fcd12ddd06bfe"}
 {"case_id":"sf.ddl.create-database.define-database.k9307863c806e","mark":"settled accept","obligations":["sf.ddl.create-database.define-database.o029"],"sql_sha256":"9307863c806e83d1a1e80f3a3a21dbe17e790edea26487cd90f7c3fec714a9b2"}
 {"case_id":"sf.ddl.create-database.define-database.k979f3a757ff5","mark":"settled accept","obligations":["sf.ddl.create-database.define-database.o099"],"sql_sha256":"979f3a757ff58825b565d6b05e3be9a123be9aaeb3d7bbe4e601ee72d492ba26"}
+{"case_id":"sf.ddl.create-database.define-database.ka20fb04f1f77","mark":"settled accept","obligations":["sf.ddl.create-database.define-database.o024"],"sql_sha256":"a20fb04f1f77f24a8deeacec22d4f4494f879ded6b2eb0009b6f390a4be7e5fc"}
 {"case_id":"sf.ddl.create-database.define-database.kf1921c981feb","mark":"settled accept","obligations":["sf.ddl.create-database.define-database.o051"],"sql_sha256":"f1921c981feb1b926ee8bc0ffd88b5eb3f4938ae827cd45212e0879e729d7456"}
 {"case_id":"sf.ddl.create-dataset.k6d9683d78996","mark":"documented","obligations":["sf.ddl.create-dataset.o018"],"sql_sha256":"6d9683d7899637a19246f91ac479a4a6710b1f0df2c152fda77e32419c9df259"}
 {"case_id":"sf.ddl.create-dataset.keb74c1e13fa8","mark":"documented","obligations":["sf.ddl.create-dataset.o021"],"sql_sha256":"eb74c1e13fa83c1f8a57b47863f939f6563c6373cbdeff7769e3d6ca7a7c2b73"}
@@ -3195,6 +3197,7 @@
 {"case_id":"sf.ddl.create-schema.create-schema.kfd5e9ad844d1","mark":"settled accept","obligations":["sf.ddl.create-schema.create-schema.o127"],"sql_sha256":"fd5e9ad844d159a86ed41b2c4b08481ac9235ee49934072415f9a97030e83bb3"}
 {"case_id":"sf.ddl.create-schema.define-schema.k055ffff30157","mark":"settled accept","obligations":["sf.ddl.create-schema.define-schema.o063"],"sql_sha256":"055ffff301576c0253e6a0951fb9c8338500c6fb296200bdb3bd6e76fe44d65a"}
 {"case_id":"sf.ddl.create-schema.define-schema.k360928e4c766","mark":"settled accept","obligations":["sf.ddl.create-schema.define-schema.o091"],"sql_sha256":"360928e4c7661673920981b10105ef0597a36e0cbe94280105b910abd9b22527"}
+{"case_id":"sf.ddl.create-schema.define-schema.k623d2ff0dcb6","mark":"settled accept","obligations":["sf.ddl.create-schema.define-schema.o026"],"sql_sha256":"623d2ff0dcb6c9bcdf92c9f27f1fbb67edb17342d73cbe96a247d1c3aaab2165"}
 {"case_id":"sf.ddl.create-schema.define-schema.k636e95402385","mark":"settled accept","obligations":["sf.ddl.create-schema.define-schema.o058"],"sql_sha256":"636e9540238567299ec1265feafe2e246139e1b2d1f27506afa2206b2907eb02"}
 {"case_id":"sf.ddl.create-schema.define-schema.k6ef12cd27477","mark":"settled accept","obligations":["sf.ddl.create-schema.define-schema.o053"],"sql_sha256":"6ef12cd27477b6eef59227f7e57048fda2a5a784266b7e56f69cc953b30ea307"}
 {"case_id":"sf.ddl.create-schema.define-schema.k8da930bcf126","mark":"settled accept","obligations":["sf.ddl.create-schema.define-schema.o093"],"sql_sha256":"8da930bcf126b8865fc6225da7bf29efb2c1464d6e2168d7e24f6464a572ad47"}
