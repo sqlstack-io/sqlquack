@@ -1,5 +1,6 @@
 //! Snowflake ALTER of object kinds that have no statement of their own, such as TASK, TAG or ALERT.
 
+use crate::parser::_helpers::ddl::snowflake_alter_resources::pair_key;
 use crate::parser::constants::EXECUTE_AS_USER;
 use crate::parser::constants::ONLINE_FEATURE_TABLE;
 use crate::parser::constants::SNOWFLAKE_ALTER_KINDS;
@@ -861,7 +862,7 @@ impl Parser {
             loop {
                 let item = self.parse_object_value()?;
                 items.push(if self.match_token(TokenType::Eq) {
-                    keyed_pair(item, self.parse_object_value()?, false)
+                    keyed_pair(pair_key(item), self.parse_object_value()?, false)
                 } else {
                     item
                 });
