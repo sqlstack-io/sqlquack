@@ -948,3 +948,23 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.classes.forecast.commands.create-forecast.forecast" = "895f57fd4f932a662f69597e3c000b1c7e356b7ddf6cc37b5a675760a47d5d8c"
 "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname" = "2c611ab8a09c541f88ab121af99a8d9c01425a2a12cef0c4b9955d7445e2a921"
 "sf.classes.top-insights.commands.create-top-insights" = "15c7463b346ad5219f1dd443576a97382345089434e0725d97198843f5c7e184"
+
+[[review]]
+id = "classes-014"
+family = "classes"
+parser_tree = "546965da8fa82c765d0eff634a9bc71d52ef6a10"
+reviewed_utc = "2026-11-15T00:09:31Z"
+verdict = "approved"
+forms = [
+  "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data",
+  "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 7d8c3b553; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data" = "e10829762c939b6d314060b5455d137aeab8d397080401dc523d0e86ecac8d89"
+"sf.classes.anomaly-insights.methods.get-top-warehouses-on-date" = "7ab44e6c20a085aea3c410c3779f592a05e8384f2c1e30ef0d9f5a700877440c"
+
+[review.definitions]
+"sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data" = "51c7f76810952085903d5c10af401cd61e91a9050d7a1dfb4a27d6b786124e92"
+"sf.classes.anomaly-insights.methods.get-top-warehouses-on-date" = "bb9039f66516d2703d3438eff7a719e572f595f6034208a5e7926d285e0bfbbd"

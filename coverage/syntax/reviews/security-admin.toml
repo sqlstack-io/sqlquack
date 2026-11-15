@@ -2860,3 +2860,41 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.security_admin.create-authentication-policy.create-authentication-policy" = "3f60a8bdf3e0a766e7e7e989a2ff814c9c2b8964059e6d8d471448762addc73d"
 "sf.security_admin.create-authentication-policy.create-or-alter-authentication" = "214304f25a3160716bda3ed14a5f85639890010d331f24a4c212edc8b802ae6f"
 "sf.security_admin.create-authentication-policy.define-authentication-policy" = "98788161812d78bfd572af137bcda3762dafbfc8f517441bf5faaaabebd7d003"
+
+[[review]]
+id = "security-admin-028"
+family = "security_admin"
+parser_tree = "546965da8fa82c765d0eff634a9bc71d52ef6a10"
+reviewed_utc = "2026-11-15T00:09:31Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-account.set-domain-names",
+  "sf.security_admin.alter-share.set",
+  "sf.security_admin.create-managed-account",
+  "sf.security_admin.create-row-access-policy.or-alter-row-access",
+  "sf.security_admin.create-row-access-policy.row-access-policy-as",
+  "sf.security_admin.create-storage-integration",
+  "sf.security_admin.create-storage-lifecycle-policy",
+  "sf.security_admin.drop-managed-account",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 7d8c3b553; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-account.set-domain-names" = "33b09cf3fd519aca173f77bcb459564dabae6a561d89da2945410bd3d3148e38"
+"sf.security_admin.alter-share.set" = "fbf3977d9b579230f5c1c6d6447abf5ee09dd6383532cc159265d121ffc80d9a"
+"sf.security_admin.create-managed-account" = "b0abaf8a7a1dd94540087424958d7951cf8684a348eff583235075ec1cd598ca"
+"sf.security_admin.create-row-access-policy.or-alter-row-access" = "b9cb6b466df59907ca0d020e2c25486d82aaf5c762329185fffb646a7e58c35c"
+"sf.security_admin.create-row-access-policy.row-access-policy-as" = "7738b698b4993087cfc6975e5c4a382c186e28833545405027e894d4afef64b9"
+"sf.security_admin.create-storage-integration" = "006a56c1372fe6ecc84f5ddd0d7c5f6cdcce8c54a1688a8136cd905240977460"
+"sf.security_admin.create-storage-lifecycle-policy" = "6c821cf5a1acb5fed27deaa68a5e07f8d9c1f8982f56fbb5671ab86b03897a7a"
+"sf.security_admin.drop-managed-account" = "c3ce5964576c049079d6d80adb7290ed6d2ec57edd7c6d8769bc3752103ebf1d"
+
+[review.definitions]
+"sf.security_admin.alter-account.set-domain-names" = "0c8e5935a50c6e0e9dbbff1cdf147d8c7cc4193d6c6e25d0ada5841f70745b0e"
+"sf.security_admin.alter-share.set" = "e21fa774a5736b4c819ad3ca243fb945433a342616cb676b4cb348ec2eef8785"
+"sf.security_admin.create-managed-account" = "a239680a4b89a9ad472ac28869d56345a4c9e75a4de84535ad3b08d9316c13d6"
+"sf.security_admin.create-row-access-policy.or-alter-row-access" = "af2b23bda162f6fc23e2237f4dd115aaaa09fe1fe3ac86da91d97377eebc25f8"
+"sf.security_admin.create-row-access-policy.row-access-policy-as" = "ab112d10d5fe5e6a7d08b996139ede512054636c8275cc5b51dd4f1a0e1a8be2"
+"sf.security_admin.create-storage-integration" = "b025567f6e937069767fc0e649de6db4261d488e8a1ac6e9f450b7cf856bb5e8"
+"sf.security_admin.create-storage-lifecycle-policy" = "8665b98dca1048abdea0c35f7990f3f66bc17b725ceca8daee0b251d4ea25610"
+"sf.security_admin.drop-managed-account" = "9040c6a49aa93acac6533994f05fff5c896c4dc8cb2c1d3fb6b0789127a40749"

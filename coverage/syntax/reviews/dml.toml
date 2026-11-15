@@ -224,3 +224,20 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.dml.list.repositoryclone" = "d645f248a1c69732d1286724fe8151bdfd955b601eee84c98ef490d46adc011a"
 "sf.dml.put" = "e7fa1b28dc89b5c07630d9ce0b13e95e37ae38e5c462fa0d126096aa9e4538f5"
 "sf.dml.remove" = "b14eb39655bf197c34de73358c624e73138bd2ceddd80bff361aefc6412806c9"
+
+[[review]]
+id = "dml-012"
+family = "dml"
+parser_tree = "546965da8fa82c765d0eff634a9bc71d52ef6a10"
+reviewed_utc = "2026-11-15T00:09:31Z"
+verdict = "approved"
+forms = [
+  "sf.dml.merge",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 7d8c3b553; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.dml.merge" = "6621e7d1e5a6ad687b3ab7eb4928380b43be3d66d841a575482364e9af3de4db"
+
+[review.definitions]
+"sf.dml.merge" = "4ffabedec84da39328c92a80bae17ada0231770f4cd0c42edede99de8d60b5c4"
