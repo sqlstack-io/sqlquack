@@ -294,6 +294,24 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_recorded_rejectio
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description: "FORCE before an account policy's FOR ALL scope is refused (recorded errno 1003)",
+            sql: "ALTER ACCOUNT SET MAINTENANCE POLICY v1 FORCE FOR ALL APPLICATIONS ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "FORCE after an account policy's FOR ALL scope is accepted (recorded semantic error)",
+            sql: "ALTER ACCOUNT SET FEATURE POLICY v1 FOR ALL APPLICATIONS FORCE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "FORCE without a scope is accepted (recorded semantic error)",
+            sql: "ALTER ACCOUNT SET PACKAGES POLICY v1 FORCE ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "only external tables add partitions (recorded errno 1003)",
             sql: "ALTER TABLE v1 ADD PARTITION ( v1 = 'm' ) LOCATION 'm' ;",
             dialect: Dialect::Snowflake,
@@ -598,14 +616,14 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_the_tree_names_ki
             expected_value: json!("DArrow"),
         },
         ProjectionTestCase {
-            description: "a policy's FOR ALL scope is its own property (recorded success)",
-            sql: "ALTER ACCOUNT SET AUTHENTICATION POLICY v1 FORCE FOR ALL PERSON USERS ;",
-            pointer: "/0/alter_object/properties/1/kind",
+            description: "a policy's FOR ALL scope is its own property (recorded semantic error)",
+            sql: "ALTER ACCOUNT SET AUTHENTICATION POLICY v1 FOR ALL PERSON USERS FORCE ;",
+            pointer: "/0/alter_object/properties/0/kind",
             expected_value: json!("FOR ALL PERSON USERS"),
         },
         ProjectionTestCase {
             description: "the policy's action names only the policy",
-            sql: "ALTER ACCOUNT SET AUTHENTICATION POLICY v1 FORCE FOR ALL PERSON USERS ;",
+            sql: "ALTER ACCOUNT SET AUTHENTICATION POLICY v1 FOR ALL PERSON USERS FORCE ;",
             pointer: "/0/alter_object/action",
             expected_value: json!("SET AUTHENTICATION POLICY"),
         },
