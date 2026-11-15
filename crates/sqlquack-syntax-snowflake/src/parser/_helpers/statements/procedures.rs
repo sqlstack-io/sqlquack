@@ -1,5 +1,6 @@
 //! Snowflake anonymous procedures, `WITH <name> AS PROCEDURE ... CALL <name>(...)`, as documented.
 
+use crate::parser::_helpers::ddl::snowflake_routines::{nullability_property, routine_property};
 use crate::parser::models::Dialect;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -51,7 +52,9 @@ impl Parser {
         procedure.return_type = return_type;
         procedure.returns_table = returns_table;
         procedure.language = Some(language);
-        procedure.with_options.extend(return_nullability);
+        procedure
+            .snowflake_properties
+            .extend(return_nullability.map(nullability_property));
         let procedure = self.parse_anonymous_procedure_options(procedure)?;
         Ok(Expression::CreateProcedure(Box::new(procedure)))
     }
@@ -173,26 +176,29 @@ impl Parser {
             .as_deref()
             .is_some_and(|language| NULL_INPUT_LANGUAGES.contains(&language));
         loop {
-            let option = if self.match_identifier("RUNTIME_VERSION")
+            let property = if self.match_identifier("RUNTIME_VERSION")
                 || self.match_identifier("HANDLER")
             {
                 let key = self.previous_text().to_ascii_uppercase();
                 self.expect_token(TokenType::Eq)?;
-                format!("{key} = {}", self.parse_procedure_option_value()?)
+                let start = self.current;
+                self.parse_procedure_option_value()?;
+                let end = self.current;
+                self.checked_routine_property(&key, start, end)?
             } else if self.match_identifier("PACKAGES") || self.match_identifier("IMPORTS") {
                 let key = self.previous_text().to_ascii_uppercase();
                 self.expect_token(TokenType::Eq)?;
-                format!(
-                    "{key} = ({})",
-                    self.parse_procedure_string_list()?.join(", ")
-                )
+                let start = self.current;
+                self.parse_procedure_string_list()?;
+                let end = self.current;
+                self.checked_routine_property(&key, start, end)?
             } else if null_input && self.match_text_seq(&["CALLED", "ON", "NULL", "INPUT"]) {
-                "CALLED ON NULL INPUT".to_string()
+                routine_property("CALLED ON NULL INPUT", None)
             } else if null_input && self.match_text_seq(&["RETURNS", "NULL", "ON", "NULL", "INPUT"])
             {
-                "RETURNS NULL ON NULL INPUT".to_string()
+                routine_property("RETURNS NULL ON NULL INPUT", None)
             } else if null_input && self.match_identifier("STRICT") {
-                "STRICT".to_string()
+                routine_property("STRICT", None)
             } else if procedure.body.is_none() && self.match_token(TokenType::As) {
                 let body = self.parse_anonymous_procedure_body(procedure.language.as_deref())?;
                 procedure.body = Some(body);
@@ -200,15 +206,20 @@ impl Parser {
             } else {
                 return Ok(procedure);
             };
-            let key = option.split(' ').next().unwrap_or_default().to_string();
+            let key = property
+                .kind
+                .split(' ')
+                .next()
+                .unwrap_or_default()
+                .to_string();
             if procedure
-                .with_options
+                .snowflake_properties
                 .iter()
-                .any(|seen| seen.starts_with(&key))
+                .any(|seen| seen.kind.starts_with(&key))
             {
                 return Err(self.parse_error(format!("{key} is given more than once")));
             }
-            procedure.with_options.push(option);
+            procedure.snowflake_properties.push(property);
         }
     }
 

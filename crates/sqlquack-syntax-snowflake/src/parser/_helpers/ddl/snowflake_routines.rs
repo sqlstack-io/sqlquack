@@ -163,6 +163,21 @@ impl Parser {
         )))
     }
 
+    /// The property `kind` whose value its own check read from `start` to `end`, read again as a tree.
+    pub(crate) fn checked_routine_property(
+        &mut self,
+        kind: &str,
+        start: usize,
+        end: usize,
+    ) -> Result<ObjectProperty> {
+        self.current = start;
+        let tree = self.parse_routine_value_tree()?;
+        if self.current != end {
+            return Err(self.parse_error("Expected the end of the property value"));
+        }
+        Ok(routine_property(kind, Some(keyword_values(kind, tree))))
+    }
+
     /// A routine property value its check accepted: a literal, a name, or a parenthesized list whose `key = value` entries stay pairs.
     fn parse_routine_value_tree(&mut self) -> Result<Expression> {
         if !self.match_token(TokenType::LParen) {
@@ -414,7 +429,7 @@ impl Parser {
 }
 
 /// One routine property of kind `kind`, with its value when it has one.
-fn routine_property(kind: &str, value: Option<Expression>) -> ObjectProperty {
+pub(crate) fn routine_property(kind: &str, value: Option<Expression>) -> ObjectProperty {
     ObjectProperty {
         kind: kind.to_owned(),
         name: None,
