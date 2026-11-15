@@ -201,6 +201,7 @@ impl Parser {
                     not_null: false,
                     persistence_kind: None,
                     data_type: None,
+                    generated_always: false,
                 }));
             column.constraint_order.push(ConstraintType::ComputedColumn);
             column = self.parse_external_constraint(column)?;
