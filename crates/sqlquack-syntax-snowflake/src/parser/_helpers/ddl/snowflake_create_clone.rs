@@ -434,12 +434,11 @@ impl Parser {
         self.expect_token(TokenType::As)?;
         self.expect_alter_words(&[&["REPLICA", "OF"]])?;
         let primary = self.parse_object_name()?;
-        if primary.catalog.is_none()
-            || primary
-                .schema
-                .as_ref()
-                .is_none_or(|part| part.name.is_empty())
-        {
+        let account_missing = primary
+            .schema
+            .as_ref()
+            .is_none_or(|part| part.name.is_empty());
+        if primary.catalog.is_none() || (account_missing && !primary.schema_omitted) {
             return Err(self.parse_error("Expected <organization>.<account>.<name>"));
         }
         let mut properties: Vec<ObjectProperty> = Vec::new();
