@@ -162775,6 +162775,70 @@ anchor = "doc.sql.create-file-format / DEFINE FILE FORMAT"
 note = "the list continued at least once, observed"
 
 [[obligation]]
+id = "sf.ddl.create-file-format.define-file-format.o525"
+kind = "option_present"
+required = true
+target = "[ FILE_EXTENSION = '<string>' ]"
+anchor = "doc.sql.create-file-format / DEFINE FILE FORMAT"
+note = "FILE_EXTENSION on its own, without the TEMP the refused case with every option writes"
+
+[[obligation]]
+id = "sf.ddl.create-file-format.define-file-format.o526"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ FILE_EXTENSION = '<string>' ]"
+anchor = "doc.sql.create-file-format / DEFINE FILE FORMAT"
+note = "a valid string for FILE_EXTENSION on its own"
+
+[[obligation]]
+id = "sf.ddl.create-file-format.define-file-format.o527"
+kind = "option_present"
+required = true
+target = "[ SKIP_HEADER = <integer> ]"
+anchor = "doc.sql.create-file-format / DEFINE FILE FORMAT"
+note = "SKIP_HEADER on its own, without the TEMP the refused case with every option writes"
+
+[[obligation]]
+id = "sf.ddl.create-file-format.define-file-format.o528"
+kind = "operand_type_class"
+required = true
+target = "<integer> in [ SKIP_HEADER = <integer> ]"
+anchor = "doc.sql.create-file-format / DEFINE FILE FORMAT"
+note = "a valid integer for SKIP_HEADER on its own"
+
+[[obligation]]
+id = "sf.ddl.create-file-format.define-file-format.o529"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+anchor = "doc.sql.create-file-format / DEFINE FILE FORMAT"
+note = "COMMENT on its own, without the TEMP the refused case with every option writes"
+
+[[obligation]]
+id = "sf.ddl.create-file-format.define-file-format.o530"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+anchor = "doc.sql.create-file-format / DEFINE FILE FORMAT"
+note = "a valid string literal for COMMENT on its own"
+
+[[obligation]]
+id = "sf.ddl.create-file-format.define-file-format.o531"
+kind = "option_present"
+required = true
+target = "[ FILE_EXTENSION = '<string>' ] #2"
+anchor = "doc.sql.create-file-format / DEFINE FILE FORMAT"
+note = "JSON's FILE_EXTENSION on its own, without the TEMP the refused case with every option writes"
+
+[[obligation]]
+id = "sf.ddl.create-file-format.define-file-format.o532"
+kind = "operand_type_class"
+required = true
+target = "'<string>' in [ FILE_EXTENSION = '<string>' ] #2"
+anchor = "doc.sql.create-file-format / DEFINE FILE FORMAT"
+note = "a valid string for JSON's FILE_EXTENSION on its own"
+
+[[obligation]]
 id = "sf.ddl.create-function-spcs.function-returns-service-endpoint.o001"
 kind = "positive"
 required = true
