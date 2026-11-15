@@ -492,12 +492,12 @@ impl Parser {
             "UPGRADE" => {
                 if self.match_text_seq(&["USING", "VERSION"]) {
                     action.push_str(" USING VERSION");
-                    let mut operands = vec![self.object_operand()?];
+                    let operands = vec![self.object_operand()?];
+                    let mut properties: Vec<ObjectProperty> = Vec::new();
                     if self.match_text_seq(&["PATCH"]) {
-                        action.push_str(" PATCH");
-                        operands.push(self.number_operand()?);
+                        properties.push(property("PATCH", None, Some(self.number_operand()?)));
                     }
-                    (operands, vec![])
+                    (operands, properties)
                 } else if self.match_text_seq(&["USING"]) {
                     action.push_str(" USING");
                     (vec![self.parse_string_value()?], vec![])
