@@ -901,10 +901,22 @@ fn given_a_snowflake_external_agent_or_filtered_show_when_parsing_then_the_tree_
             expected_value: json!("TASKS"),
         },
         StatementTestCase {
-            description: "SHOW SERVICES keeps its filters in its kind",
+            description: "SHOW SERVICES keeps SERVICES as its kind",
             sql: "SHOW SERVICES OF TYPE USER , JOB IN COMPUTE POOL v1 LIMIT 1 ;",
             pointer: "/0/show/this",
-            expected_value: json!("SERVICES OF TYPE USER, JOB"),
+            expected_value: json!("SERVICES"),
+        },
+        StatementTestCase {
+            description: "SHOW SERVICES OF TYPE keeps each type in order",
+            sql: "SHOW SERVICES OF TYPE USER , JOB IN COMPUTE POOL v1 LIMIT 1 ;",
+            pointer: "/0/show/service_types",
+            expected_value: json!(["USER", "JOB"]),
+        },
+        StatementTestCase {
+            description: "SHOW SERVICES EXCLUDE JOBS is its own field",
+            sql: "SHOW SERVICES EXCLUDE JOBS ;",
+            pointer: "/0/show/exclude_jobs",
+            expected_value: json!(true),
         },
     ];
     for test_case in test_cases {
