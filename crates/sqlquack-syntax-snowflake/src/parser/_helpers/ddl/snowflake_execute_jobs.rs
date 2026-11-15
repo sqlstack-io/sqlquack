@@ -1,7 +1,10 @@
 //! Snowflake `EXECUTE JOB SERVICE`, `INFERENCE JOB SERVICE`, `NOTEBOOK [ PROJECT ]`, `DBT PROJECT` and `CODE BUNDLE`.
 
+use crate::parser::_helpers::ddl::snowflake_alter::keyed_pair;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::operators::models::NamedArgSeparator;
+use sqlquack_syntax::expressions::operators::models::NamedArgument;
 use sqlquack_syntax::expressions::schema_objects::models::ExecuteObject;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -311,9 +314,7 @@ impl Parser {
         let key = self.parse_execute_value()?;
         self.expect_token(TokenType::Eq)?;
         let value = self.parse_execute_value()?;
-        Ok(Expression::Tuple(Box::new(Tuple {
-            expressions: vec![key, value],
-        })))
+        Ok(keyed_pair(key, value, false))
     }
 
     /// An IMPORTS entry: a location or a system function call, with an optional `AS '<alias>'`.
@@ -336,11 +337,12 @@ impl Parser {
         self.expect_token(TokenType::LParen)?;
         let mut items: Vec<Expression> = Vec::new();
         loop {
-            let name = Expression::Identifier(self.parse_simple_name()?);
+            let name = self.parse_simple_name()?;
             self.expect_token(TokenType::FArrow)?;
-            let value = self.parse_expression()?;
-            items.push(Expression::Tuple(Box::new(Tuple {
-                expressions: vec![name, value],
+            items.push(Expression::NamedArgument(Box::new(NamedArgument {
+                name,
+                value: self.parse_expression()?,
+                separator: NamedArgSeparator::DArrow,
             })));
             if !self.match_token(TokenType::Comma) {
                 break;

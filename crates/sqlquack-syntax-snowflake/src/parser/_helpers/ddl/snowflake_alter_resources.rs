@@ -1,6 +1,7 @@
 //! Parser ddl: Snowflake ALTER of schemas, stages, file formats, routines, services and project objects.
 
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
+use crate::parser::_helpers::ddl::snowflake_alter::keyed_pair;
 use crate::parser::_helpers::ddl::snowflake_alter::named_property;
 use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
@@ -875,15 +876,12 @@ impl Parser {
         let mut items: Vec<Expression> = Vec::new();
         while !self.match_token(TokenType::RParen) {
             let item = self.parse_resource_value()?;
-            items.push(
-                if self.match_token(TokenType::Eq) || self.match_token(TokenType::FArrow) {
-                    Expression::Tuple(Box::new(Tuple {
-                        expressions: vec![item, self.parse_resource_value()?],
-                    }))
-                } else {
-                    item
-                },
-            );
+            let arrow = self.match_token(TokenType::FArrow);
+            items.push(if arrow || self.match_token(TokenType::Eq) {
+                keyed_pair(item, self.parse_resource_value()?, arrow)
+            } else {
+                item
+            });
             if self.match_token(TokenType::Comma) && self.check(TokenType::RParen) {
                 return Err(self.parse_error("Expected a value after the comma"));
             }

@@ -568,6 +568,36 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_the_tree_names_ki
             expected_value: json!("COMPUTE POOL"),
         },
         ProjectionTestCase {
+            description: "a parenthesised KEY = value keeps the pair keyed (recorded semantic error)",
+            sql: "ALTER USER v1 SET WORKLOAD_IDENTITY = ( ANOMALY_DETECTION = TRUE ) ;",
+            pointer: "/0/alter_object/properties/0/value/tuple/expressions/0/property_e_q/left/table/name/name",
+            expected_value: json!("ANOMALY_DETECTION"),
+        },
+        ProjectionTestCase {
+            description: "a keyed pair's value is its right side",
+            sql: "ALTER USER v1 SET WORKLOAD_IDENTITY = ( ANOMALY_DETECTION = TRUE ) ;",
+            pointer: "/0/alter_object/properties/0/value/tuple/expressions/0/property_e_q/right/boolean/value",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a string key keeps its pair keyed",
+            sql: "ALTER STREAMLIT v1 SET SECRETS = ( 'm' = v1 , 'n' = v2 ) ;",
+            pointer: "/0/alter_object/properties/0/value/tuple/expressions/1/property_e_q/left/literal/value",
+            expected_value: json!("n"),
+        },
+        ProjectionTestCase {
+            description: "a nested option list keeps its pairs keyed",
+            sql: "ALTER EXTERNAL VOLUME v1 ADD STORAGE_LOCATION = ( NAME = 'm' STORAGE_PROVIDER = 'S3' ENCRYPTION = ( TYPE = 'AWS_SSE_S3' ) ) ;",
+            pointer: "/0/alter_object/operands/0/tuple/expressions/2/property_e_q/right/tuple/expressions/0/property_e_q/left/table/name/name",
+            expected_value: json!("TYPE"),
+        },
+        ProjectionTestCase {
+            description: "=> keeps its separator as a named argument",
+            sql: "ALTER SERVICE v1 FROM @s1 SPECIFICATION_TEMPLATE_FILE = 'm' USING ( v1 => 1 ) ;",
+            pointer: "/0/alter_object/properties/1/value/tuple/expressions/0/named_argument/separator",
+            expected_value: json!("DArrow"),
+        },
+        ProjectionTestCase {
             description: "IF EXISTS is kept",
             sql: "ALTER TAG IF EXISTS v1 RENAME TO v2",
             pointer: "/0/alter_object/if_exists",
