@@ -138,7 +138,7 @@ impl Parser {
                     let version = Expression::Identifier(self.parse_simple_name()?);
                     properties.push(property("VERSION", None, Some(version)));
                 }
-                "MODEL"
+                "FROM MODEL"
             }
             "GATEWAY" if !self.check(TokenType::From) => {
                 return Err(self.parse_error("Expected FROM SPECIFICATION"));
@@ -150,7 +150,7 @@ impl Parser {
                     return Err(self.parse_error("Expected the specification text"));
                 }
                 operands.push(self.parse_primary()?);
-                "SPECIFICATION"
+                "FROM SPECIFICATION"
             }
             _ if self.check(TokenType::Type) || self.check_identifier("TYPE") => return Ok(None),
             _ => "",

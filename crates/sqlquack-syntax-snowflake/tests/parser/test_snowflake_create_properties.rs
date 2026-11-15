@@ -565,10 +565,16 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             expected_value: json!("PIPE"),
         },
         ProjectionTestCase {
-            description: "a model named monitor copied from a model keeps its MODEL source",
+            description: "a model named monitor copied from a model keeps its FROM MODEL source",
             sql: "CREATE MODEL monitor FROM MODEL m2",
             pointer: "/0/create_object/source",
-            expected_value: json!("MODEL"),
+            expected_value: json!("FROM MODEL"),
+        },
+        ProjectionTestCase {
+            description: "an experiment keeps FROM in its specification source (recorded runtime error)",
+            sql: "CREATE EXPERIMENT v1 FROM SPECIFICATION $$m1 $$ ;",
+            pointer: "/0/create_object/source",
+            expected_value: json!("FROM SPECIFICATION"),
         },
         ProjectionTestCase {
             description: "a dropped account keeps its grace period",

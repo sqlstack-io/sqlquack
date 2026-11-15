@@ -863,7 +863,7 @@ impl Parser {
                 )
             } else if create.kind == MODEL_KIND && self.match_text_seq(&[MODEL_KIND]) {
                 (
-                    "MODEL",
+                    "FROM MODEL",
                     Expression::Table(Box::new(self.parse_object_name()?)),
                 )
             } else if self.is_stage_path() || self.check(TokenType::String) {
