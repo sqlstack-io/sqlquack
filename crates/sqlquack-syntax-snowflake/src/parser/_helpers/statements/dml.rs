@@ -522,7 +522,15 @@ impl Parser {
                     self.parse_create_index_with_clustered(true, clustered)
                 }
             }
-            TokenType::Index => self.parse_create_index_with_clustered(false, None),
+            TokenType::Index => self
+                .parse_create_index_with_clustered(false, None)
+                .map(|index| match index {
+                    Expression::CreateIndex(mut created) => {
+                        created.or_replace = or_replace;
+                        Expression::CreateIndex(created)
+                    }
+                    other => other,
+                }),
             TokenType::Schema => self.parse_create_schema(leading_comments, or_replace),
             TokenType::Database => self.parse_create_database(or_replace),
             TokenType::Function => self

@@ -1292,6 +1292,7 @@ impl Parser {
             include_strings,
             with_options,
             on_filegroup,
+            or_replace: false,
         })))
     }
 

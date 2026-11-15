@@ -459,6 +459,9 @@ pub struct CreateIndex {
     /// TSQL ON filegroup or partition scheme (e.g., ON PRIMARY, ON X([y]))
     #[serde(default)]
     pub on_filegroup: Option<String>,
+    /// Snowflake: CREATE OR REPLACE INDEX
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_replace: bool,
 }
 
 impl CreateIndex {
@@ -478,6 +481,7 @@ impl CreateIndex {
             include_strings: Vec::new(),
             with_options: Vec::new(),
             on_filegroup: None,
+            or_replace: false,
         }
     }
 }

@@ -185,7 +185,11 @@ impl Parser {
                 if !self.match_text_seq(&["ADD", "ROW", "ACCESS", "POLICY"]) {
                     return Err(self.parse_error("Expected ADD ROW ACCESS POLICY"));
                 }
-                properties.push(self.parse_row_access_addition()?);
+                let added = self.parse_row_access_addition()?;
+                properties.push(ObjectProperty {
+                    kind: "ADD ROW ACCESS POLICY".to_owned(),
+                    ..added
+                });
             }
             return Ok((
                 "DROP ROW ACCESS POLICY".to_owned(),
