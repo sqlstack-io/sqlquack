@@ -45,3 +45,12 @@ pub(crate) struct GateTestCase {
     pub(crate) expected_unlisted_syntax_errors_accepted: Vec<&'static str>,
     pub(crate) expected_fails: bool,
 }
+
+/// A change to the verified tree, and the counts the summary must report.
+pub(crate) struct SummarizeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) mutate: fn(&Path),
+    pub(crate) expected_forms: usize,
+    pub(crate) expected_verified: usize,
+    pub(crate) expected_absent_forms: usize,
+}
