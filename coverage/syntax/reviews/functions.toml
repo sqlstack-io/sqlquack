@@ -6440,3 +6440,29 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.functions.system-wait-for-stable-openflow-runtimes" = "6fdbfa9364146c7acc636dce1a25fe54fee24253caf5a4f4a5db8f7e86149538"
 "sf.functions.task-history" = "2fa2b1d0bde13cd0b42bbd7d1e4959774fec1f235c0103ff828c0151faf49e71"
 "sf.functions.to-query" = "e7d2497e3c734d3374e32eab605d71cd9d6f28383eb6b97959fa7cd7d9336322"
+
+[[review]]
+id = "functions-031"
+family = "functions"
+parser_tree = "546965da8fa82c765d0eff634a9bc71d52ef6a10"
+reviewed_utc = "2026-11-15T00:09:31Z"
+verdict = "approved"
+forms = [
+  "sf.functions.get-ai-evaluation-data-snowflake-local",
+  "sf.functions.get-ai-observability-events-snowflake-local",
+  "sf.functions.get-ai-observability-logs-snowflake-local",
+  "sf.functions.get-ai-record-trace-snowflake-local",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 7d8c3b553; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.get-ai-evaluation-data-snowflake-local" = "74224dbb256fe774aeae3003693f847c72f45082295561e425f5f38a5b4fb876"
+"sf.functions.get-ai-observability-events-snowflake-local" = "2a164c0793b1e861b01e04ef045a40bd07a3f9ebef215f904e06e5cd010599c3"
+"sf.functions.get-ai-observability-logs-snowflake-local" = "05489bfc5d0ebcff7a99d6f8c8dfc0a619f3d7d0481b2b81bfacbc9192b5f971"
+"sf.functions.get-ai-record-trace-snowflake-local" = "cafb0fc55efccd15a8e9a71866129672b7f19e4583a2ee2942b2d5fecd4c1ec6"
+
+[review.definitions]
+"sf.functions.get-ai-evaluation-data-snowflake-local" = "8af5322da6559373c08fcd8436854ef03b843e07bdf979cd7f3d2803e8e2bb2b"
+"sf.functions.get-ai-observability-events-snowflake-local" = "cbe0d75551bde8512d6d420461141aba335cf5756b894b121e13d60e879a3d7b"
+"sf.functions.get-ai-observability-logs-snowflake-local" = "2ae530230cdfe96a6c26d9199bae708ddf6f67f504b2499e6fe9ae69278a0de9"
+"sf.functions.get-ai-record-trace-snowflake-local" = "9540cdeb323e5cb881562f6d0a298154ceeac305c3d0776583d2dc4f9f10ddf7"

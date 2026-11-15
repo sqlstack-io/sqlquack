@@ -4044,3 +4044,77 @@ note = "Read in full under review brief version 1 against the documentation page
 [review.definitions]
 "sf.ddl.create-function.create-function-returns-table.sql-handler" = "469da9c8493446e38189a48e5c757164c382f809c90a69d41c1d906ac304a9ea"
 "sf.ddl.create-iceberg-table-snowflake.table-clone" = "2c2b6b1c957a83ed6800eeaf2ac0ca692e618604f665d087c20d21c9dd5a3133"
+
+[[review]]
+id = "ddl-041"
+family = "ddl"
+parser_tree = "546965da8fa82c765d0eff634a9bc71d52ef6a10"
+reviewed_utc = "2026-11-15T00:09:31Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-agent.modify-live-version-set",
+  "sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations",
+  "sf.ddl.alter-oflow-data-plane",
+  "sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table",
+  "sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment",
+  "sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row",
+  "sf.ddl.create-iceberg-table.table-like",
+  "sf.ddl.create-interactive-table.target-lag-warehouse-as",
+  "sf.ddl.create-listing.as",
+  "sf.ddl.create-openflow-connector.from",
+  "sf.ddl.create-openflow-connector.from-definition",
+  "sf.ddl.create-openflow-deployment",
+  "sf.ddl.create-postgres-instance.compute-family-storage-size-gb-authentication-authority-postgres",
+  "sf.ddl.create-postgres-instance.fork",
+  "sf.ddl.create-provisioned-throughput",
+  "sf.ddl.create-table.create-table-as",
+  "sf.ddl.create-table.create-table-like",
+  "sf.ddl.undrop-database",
+  "sf.ddl.undrop-snapshot",
+  "sf.ddl.undrop-table",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 7d8c3b553; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-agent.modify-live-version-set" = "468c29bd5a33ba30334ceb45e8018672691b000b7a538cb7ba40091cce48cf7f"
+"sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations" = "05b44e6c139c6672ae1eb82641742dc80271949d7dbaa9ac2646c72d04afb05d"
+"sf.ddl.alter-oflow-data-plane" = "21056be534f85b109b4d51c79a3461e4a3393a9da52285becd265d7895efe98d"
+"sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table" = "f5edc722dda20ece8bb16f351fd56bbd1cd1577c7080e9315b865100039bbc9c"
+"sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment" = "6f3d82bd9eb6875a1919b8394ce16cbb0597f2185d293cbaf9f18471c962d1e1"
+"sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row" = "cee5e89d19e1961ca6c9a023520a65033b50cd817011c08c08b1c0b2d45a1995"
+"sf.ddl.create-iceberg-table.table-like" = "01b3846d957157fb739af1f3c362b9fb136d2f6bc2128ff9babe08486bdd22ae"
+"sf.ddl.create-interactive-table.target-lag-warehouse-as" = "b217e1da38ad5c91151d27faf3ab20f022c1acb7e7fbb562f71ab89e701f3637"
+"sf.ddl.create-listing.as" = "3471dd366738f25cbfb184eb7d3c1c4402efea85d6bfc568e4cac9aa6469ef9c"
+"sf.ddl.create-openflow-connector.from" = "f3969fe75f09c4baf99cec2d91120d776fb02f9d9c5e49212e773ff78dd8da79"
+"sf.ddl.create-openflow-connector.from-definition" = "e2dbf65459dd17540261b65c6c1ca59861bcc9a8c96d0b2d26543ae41f52fb10"
+"sf.ddl.create-openflow-deployment" = "b4d1c3da04cccbe0489f34a5cc47e0c6ea91ecdc7fafb13e910bf1c3454afe7c"
+"sf.ddl.create-postgres-instance.compute-family-storage-size-gb-authentication-authority-postgres" = "dc148aafaa583df5eaf9a246df9f449828c6873d88ecb6807b20c43a3e83e30f"
+"sf.ddl.create-postgres-instance.fork" = "84f5a5c1fa696275457d2bd73f91834bb6b821e3d50fc0c052900e0a07def3e8"
+"sf.ddl.create-provisioned-throughput" = "50cd63020dd21f02302d5de020a88b7ba9cca651dac16cc048f85e791aecd00a"
+"sf.ddl.create-table.create-table-as" = "2e6f8f72876455fbf83cad85e695228ab089516d5ad5450531bab70f53703c27"
+"sf.ddl.create-table.create-table-like" = "d33943e8e1f1f69d78e959021e9822d65e6a751d8db35f3fa5f5b9d20e128227"
+"sf.ddl.undrop-database" = "4c9d5bc8c5d7b64b72781023251cf01be47f3286bb1a34f58be683efef53b597"
+"sf.ddl.undrop-snapshot" = "d2d5935d0a512a5242955e296939cae0c17bdb88aa482c457f38a4e42c43e814"
+"sf.ddl.undrop-table" = "175ebcf8b373ffa0977b53a1169cdd070a80908de9a0b119ea1ae869d31e7011"
+
+[review.definitions]
+"sf.ddl.alter-agent.modify-live-version-set" = "04cbfa9a9c363deb9e51c36c48d4f6202b8417bd06e743cd14f25f2b25214f88"
+"sf.ddl.alter-application-service.unset-auto-resume-auto-suspend-secs-external-access-integrations" = "ffaa5ba1b3dbaf6526b362d5a6219d6b1aecc1152a8841eb8c8104e6b3fcb529"
+"sf.ddl.alter-oflow-data-plane" = "7002d0a3fda50b076cd86c344046c46898e427562bfc4da4a33d275f08f79b2b"
+"sf.ddl.alter-openflow-deployment.unset-display-name-comment-event-table" = "e079c5b3f779dea747c761a0b963b3a22a45498f379a26dbe12f538d169085e6"
+"sf.ddl.alter-openflow-runtime.unset-display-name-external-access-integrations-comment" = "2367a6a1ebd431f520b3087fad5f5305ec91326facd87e3a4e2c38dcabf58da6"
+"sf.ddl.create-iceberg-table-snowflake.table-masking-policy-row" = "e16a4738b1850522bf9ffca9a1b00fa551270333d28bd4071142c412ba1b4332"
+"sf.ddl.create-iceberg-table.table-like" = "56341a88c34014cdee4f515bcc11ce118aa189d5f8b82653fcbac69f35d85fa4"
+"sf.ddl.create-interactive-table.target-lag-warehouse-as" = "7613a150bea4c917223ca17f46c2c157ca3069e127242ec40aa9d40cabe8ce57"
+"sf.ddl.create-listing.as" = "49059c955c5c6d6323ca70b88ad78584c20668e8851befd85a31934d7f9e53a8"
+"sf.ddl.create-openflow-connector.from" = "024f89daa1eae75e6d70157aed21ce242bcabf8f2a59944d9443d64356ba7e64"
+"sf.ddl.create-openflow-connector.from-definition" = "3d95b8e7437b458b789d4593613d6bedc939bc51e9fcdeed390b03da13663011"
+"sf.ddl.create-openflow-deployment" = "6a4b6e26e6a85c602db4e0cefc982c494171a200ada9ed83a989915e83866966"
+"sf.ddl.create-postgres-instance.compute-family-storage-size-gb-authentication-authority-postgres" = "113ee2218e173585ccce6ff466026f7c0d45620f7496558c74c74f63897e7f65"
+"sf.ddl.create-postgres-instance.fork" = "aad910eb5fb5717d836668b35ec50422824f0a84f5f447c311074f410f773e7e"
+"sf.ddl.create-provisioned-throughput" = "4beb87b016c2521b3cb51fa789312257e2daa22aae6598c923da81f8e1d2f0ce"
+"sf.ddl.create-table.create-table-as" = "c77925d158d6dc91b00db5357b26eac4ffe53f2adb17c429835f0d081326c411"
+"sf.ddl.create-table.create-table-like" = "7f6460dd0f4eb8f49ff6dfa7280c38c58ef42c59bf47d9049be8bf74007a3e1c"
+"sf.ddl.undrop-database" = "fbdee3caf91c0741e6642e2bd82c5a9a31c93c233fb91a861747344665c2b54a"
+"sf.ddl.undrop-snapshot" = "c8e249038f4e7dda5cc75ea06a21653c8853af2634817b9d865be47a33b7a764"
+"sf.ddl.undrop-table" = "dea4f6fab8e872a491bcab29e0164bdda9ce7a55dfe4bbf7e584a3dc4469f256"
