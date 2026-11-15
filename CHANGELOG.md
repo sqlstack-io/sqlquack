@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.15.2](https://github.com/sqlstack-io/sqlquack/compare/v0.15.1...v0.15.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* **snowflake:** accept a replica source that leaves out its account ([e2627ac](https://github.com/sqlstack-io/sqlquack/commit/e2627acac8b3ad1da42c8e0d6b2fa10ecdda1575))
+* **snowflake:** accept SET and UNSET on a named organization ([f4eb433](https://github.com/sqlstack-io/sqlquack/commit/f4eb4332a82cb636505edd8b1eebff8aa451e6a6))
+* **snowflake:** accept UNDROP VOLUME ([19bd250](https://github.com/sqlstack-io/sqlquack/commit/19bd2501a875e08db8c116300f813ec00ba73d0b))
+* **snowflake:** keep a compute pool's STOP ALL OF TYPE as a property ([6ee2777](https://github.com/sqlstack-io/sqlquack/commit/6ee277729dc84618b95be3efeb22f9f9511463dd))
+* **snowflake:** keep a data metric function's left-out column ([d423774](https://github.com/sqlstack-io/sqlquack/commit/d423774656172a0c1774615114ec394a47cbd377))
+* **snowflake:** keep a data movement rule's row-limit return type ([71f3d27](https://github.com/sqlstack-io/sqlquack/commit/71f3d27ff6c76cdb5bfeb3242544e00a7edb37b2))
+* **snowflake:** keep a sequence's OR ALTER and optional words ([5303167](https://github.com/sqlstack-io/sqlquack/commit/53031674f2c4e176ffafef94d836904e57f7efa5))
+* **snowflake:** keep an account policy's FOR ALL scope as a property ([e2d0cc9](https://github.com/sqlstack-io/sqlquack/commit/e2d0cc9478ccd62ef7ee24e365d016ee6199cd24))
+* **snowflake:** keep an ALTER action's own IF [ NOT ] EXISTS as a flag ([025de45](https://github.com/sqlstack-io/sqlquack/commit/025de45c3f8bf62c428e545610b27fbb0d92efec))
+* **snowflake:** keep an application upgrade's PATCH as a property ([01cac50](https://github.com/sqlstack-io/sqlquack/commit/01cac504ae9c14a38a20c119a2bcce654bfebaff))
+* **snowflake:** keep FROM in model and specification create sources ([578fbc5](https://github.com/sqlstack-io/sqlquack/commit/578fbc5e4cc8b870f3486bad3490d07cb64eff6a))
+* **snowflake:** keep how a temporary table was spelled ([eeee673](https://github.com/sqlstack-io/sqlquack/commit/eeee67311d1097333efa3872a773fd260003c481))
+* **snowflake:** keep KEY = value pairs in ALTER lists keyed ([e9270c3](https://github.com/sqlstack-io/sqlquack/commit/e9270c387626224e754b5ca880aaa104630d3c39))
+* **snowflake:** keep PAT as written in token actions ([527eb2f](https://github.com/sqlstack-io/sqlquack/commit/527eb2f2f19a6bc90163daa52808ecd2192aee4e))
+* **snowflake:** keep quoting and AS in MATCH_RECOGNIZE names ([51b2bf4](https://github.com/sqlstack-io/sqlquack/commit/51b2bf4acce2b49c974ba62367f69e78f9e9d952))
+* **snowflake:** keep whether RUNTIME_VERSION and PACKAGES were written as strings ([5b3b325](https://github.com/sqlstack-io/sqlquack/commit/5b3b325093db181782a4e622eb357177d93858ab))
+* **snowflake:** label an Openflow connector's runtime and a runtime's deployment ([1fe132d](https://github.com/sqlstack-io/sqlquack/commit/1fe132daca1121ea2e92e7281665b9fa5ca26074))
+* **snowflake:** read a multi-word property value as a keyword phrase ([1a0c294](https://github.com/sqlstack-io/sqlquack/commit/1a0c29463657b80c105c48ab09136078b1b4f44e))
+* **snowflake:** read CREATE ORGANIZATION &lt;name&gt; as an organization with properties ([bbf26e5](https://github.com/sqlstack-io/sqlquack/commit/bbf26e514850ed39c23b73c99db5ff6a93a54d41))
+* **snowflake:** refuse FORCE before an account policy's FOR ALL scope ([cff2aea](https://github.com/sqlstack-io/sqlquack/commit/cff2aea89505cf3050b038d6b7528d760e4f68a5))
+
 ## [0.15.1](https://github.com/sqlstack-io/sqlquack/compare/v0.15.0...v0.15.1) (2026-11-15)
 
 
