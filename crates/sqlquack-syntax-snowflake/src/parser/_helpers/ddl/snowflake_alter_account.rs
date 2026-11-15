@@ -269,15 +269,17 @@ impl Parser {
                         true => vec![self.parse_group_name()?],
                         false => vec![],
                     };
+                    let mut properties: Vec<ObjectProperty> = Vec::new();
                     let force = set && self.match_identifier("FORCE");
-                    if let Some(scope) = self.match_policy_scope() {
-                        action.push_str(&format!(" FOR ALL {scope}"));
+                    if force {
+                        properties.push(property("FORCE", None, None));
                     }
-                    let forced = set && (force || self.match_identifier("FORCE"));
-                    let properties = match forced {
-                        true => vec![property("FORCE", None, None)],
-                        false => vec![],
-                    };
+                    if let Some(scope) = self.match_policy_scope() {
+                        properties.push(property(&format!("FOR ALL {scope}"), None, None));
+                    }
+                    if set && !force && self.match_identifier("FORCE") {
+                        properties.push(property("FORCE", None, None));
+                    }
                     (operands, properties)
                 } else if self.check_identifier("TAG")
                     && !self.check_next(TokenType::Eq)
