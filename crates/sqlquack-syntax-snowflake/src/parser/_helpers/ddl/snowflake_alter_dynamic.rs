@@ -1,6 +1,7 @@
 //! Snowflake ALTER DYNAMIC TABLE.
 
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
+use crate::parser::_helpers::ddl::snowflake_alter::keyword_values;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_alter_objects::tuple;
 use crate::parser::constants::DROP_ROW_ACCESS_POLICY;
@@ -294,7 +295,7 @@ impl Parser {
                 let name = self.parse_simple_name()?;
                 let value = if set {
                     self.expect_token(TokenType::Eq)?;
-                    Some(self.parse_object_value()?)
+                    Some(keyword_values(&name.name, self.parse_object_value()?))
                 } else {
                     None
                 };

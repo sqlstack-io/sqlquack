@@ -3,6 +3,7 @@
 use crate::parser::constants::EXECUTE_AS_USER;
 use crate::parser::constants::ONLINE_FEATURE_TABLE;
 use crate::parser::constants::SNOWFLAKE_ALTER_KINDS;
+use crate::parser::constants::SNOWFLAKE_DOCUMENTED_KEYWORD_VALUES;
 use crate::parser::constants::SNOWFLAKE_KEYWORD_VALUE_PROPERTIES;
 use crate::parser::constants::SNOWFLAKE_STRING_KEY_MAP_PROPERTIES;
 use crate::parser::constants::TASK_ACTIONS;
@@ -916,8 +917,9 @@ pub(super) fn property_kind(name: &Identifier) -> String {
     }
 }
 
-/// A property keyed by a parameter name: upper-cased unless quoted, with the quoting kept.
+/// A property keyed by a parameter name: upper-cased unless quoted, with the quoting kept and a keyword value read as a keyword.
 pub(super) fn parameter_property(name: &Identifier, value: Option<Expression>) -> ObjectProperty {
+    let value = value.map(|value| keyword_values(&name.name, value));
     ObjectProperty {
         quoted: name.quoted,
         ..property(&property_kind(name), None, value)
@@ -937,7 +939,18 @@ pub(super) fn keyed_pair(key: Expression, value: Expression, arrow: bool) -> Exp
         key if arrow => Expression::Tuple(Box::new(Tuple {
             expressions: vec![key, value],
         })),
-        key => Expression::PropertyEQ(Box::new(BinaryOp::new(key, value))),
+        key => {
+            let value = match &key {
+                Expression::Table(table)
+                    if table.schema.is_none() && table.catalog.is_none() && !table.name.quoted =>
+                {
+                    keyword_values(&table.name.name, value)
+                }
+                Expression::Identifier(name) if !name.quoted => keyword_values(&name.name, value),
+                _ => value,
+            };
+            Expression::PropertyEQ(Box::new(BinaryOp::new(key, value)))
+        }
     }
 }
 
@@ -958,14 +971,24 @@ pub(super) fn value_phrase(mut first: Box<TableRef>, more: Vec<String>) -> Expre
     Expression::Var(Box::new(Var { this }))
 }
 
-/// The value of a property whose values are keywords, such as `OBJECT_TYPES = DATABASES` or `COPY = ( GRANTS )`, with each plain one-word name read as the keyword it is.
+/// The value of property `key` with each plain one-word name that is one of its keywords read as that keyword: any word for `OBJECT_TYPES = DATABASES` or `COPY = ( GRANTS )`, and only a documented one for `OVERLAP_POLICY = NO_OVERLAP`.
 pub(crate) fn keyword_values(key: &str, value: Expression) -> Expression {
-    if !SNOWFLAKE_KEYWORD_VALUE_PROPERTIES.contains(&key.to_ascii_uppercase().as_str()) {
+    let key = key.to_ascii_uppercase();
+    let every_word = SNOWFLAKE_KEYWORD_VALUE_PROPERTIES.contains(&key.as_str());
+    let documented = SNOWFLAKE_DOCUMENTED_KEYWORD_VALUES
+        .iter()
+        .find(|(name, _)| *name == key)
+        .map_or(&[][..], |(_, words)| *words);
+    if !every_word && documented.is_empty() {
         return value;
     }
     let keyword = |item: Expression| match item {
         Expression::Table(table)
-            if !table.name.quoted && table.schema.is_none() && table.catalog.is_none() =>
+            if !table.name.quoted
+                && table.schema.is_none()
+                && table.catalog.is_none()
+                && (every_word
+                    || documented.contains(&table.name.name.to_ascii_uppercase().as_str())) =>
         {
             Expression::Var(Box::new(Var {
                 this: table.name.name.to_ascii_uppercase(),

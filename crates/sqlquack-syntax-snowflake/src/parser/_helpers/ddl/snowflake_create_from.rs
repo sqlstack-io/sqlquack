@@ -1,5 +1,6 @@
 //! Snowflake CREATE of a database, schema or table from a backup set, a share, a replica or an archive.
 
+use crate::parser::_helpers::ddl::snowflake_alter::keyword_values;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_create_properties::with_written;
 use crate::parser::constants::PLAIN_TEMPORARY;
@@ -266,7 +267,7 @@ impl Parser {
             }
             let option = self.parse_simple_name()?;
             self.expect_token(TokenType::Eq)?;
-            let value = self.parse_option_value()?;
+            let value = keyword_values(&option.name, self.parse_option_value()?);
             properties.push(property(
                 &option.name.to_ascii_uppercase(),
                 None,
@@ -302,9 +303,10 @@ impl Parser {
         let mut expressions: Vec<Expression> = Vec::new();
         if !self.check(TokenType::String) && self.check_next(TokenType::Eq) {
             while !self.check(TokenType::RParen) {
-                let option = Expression::Identifier(self.parse_simple_name()?);
+                let option = self.parse_simple_name()?;
                 self.expect_token(TokenType::Eq)?;
-                let value = self.parse_option_value()?;
+                let value = keyword_values(&option.name, self.parse_option_value()?);
+                let option = Expression::Identifier(option);
                 expressions.push(Expression::Eq(Box::new(BinaryOp::new(option, value))));
                 self.match_token(TokenType::Comma);
             }

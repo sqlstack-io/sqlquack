@@ -547,13 +547,20 @@ impl Parser {
             let mut expressions: Vec<Expression> = Vec::new();
             while !self.check(TokenType::RParen) {
                 if self.check_next(TokenType::Eq) {
-                    let key = if self.check(TokenType::String) {
-                        self.parse_primary()?
+                    let (key, value) = if self.check(TokenType::String) {
+                        let key = self.parse_primary()?;
+                        self.expect_token(TokenType::Eq)?;
+                        (key, self.parse_create_property_value(false)?)
                     } else {
-                        Expression::Identifier(self.parse_simple_name()?)
+                        let name = self.parse_simple_name()?;
+                        self.expect_token(TokenType::Eq)?;
+                        let value = self.parse_create_property_value(false)?;
+                        let value = match name.quoted {
+                            true => value,
+                            false => keyword_values(&name.name, value),
+                        };
+                        (Expression::Identifier(name), value)
                     };
-                    self.expect_token(TokenType::Eq)?;
-                    let value = self.parse_create_property_value(false)?;
                     expressions.push(Expression::PropertyEQ(Box::new(BinaryOp::new(key, value))));
                     if !self.match_token(TokenType::Comma) {
                         continue;
