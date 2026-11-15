@@ -405,7 +405,11 @@ impl Parser {
                 .options
                 .push(Expression::PropertyEQ(Box::new(BinaryOp::new(
                     Expression::Var(Box::new(Var {
-                        this: "PROJECTION POLICY".to_owned(),
+                        this: match with {
+                            true => "WITH PROJECTION POLICY",
+                            false => "PROJECTION POLICY",
+                        }
+                        .to_owned(),
                     })),
                     policy,
                 ))));
@@ -415,7 +419,7 @@ impl Parser {
             let expressions = self.parse_iceberg_tags()?;
             column
                 .constraints
-                .push(ColumnConstraint::Tags(Tags { expressions }));
+                .push(ColumnConstraint::Tags(Tags { expressions, with }));
             column.constraint_order.push(ConstraintType::Tags);
             return Ok(column);
         }
