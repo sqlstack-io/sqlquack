@@ -968,3 +968,41 @@ note = "Read in full under review brief version 1 against the documentation page
 [review.definitions]
 "sf.classes.anomaly-insights.methods.get-daily-consumption-anomaly-data" = "51c7f76810952085903d5c10af401cd61e91a9050d7a1dfb4a27d6b786124e92"
 "sf.classes.anomaly-insights.methods.get-top-warehouses-on-date" = "bb9039f66516d2703d3438eff7a719e572f595f6034208a5e7926d285e0bfbbd"
+
+[[review]]
+id = "classes-015"
+family = "classes"
+parser_tree = "3e89af5774ad48e90b91c6416fca02a0517c4cb7"
+reviewed_utc = "2026-11-15T00:57:50Z"
+verdict = "approved"
+forms = [
+  "sf.classes.anomaly-detection.commands.create-anomaly-detection",
+  "sf.classes.budget.commands.create-budget",
+  "sf.classes.classification-profile.commands.create-classification-profile",
+  "sf.classes.classification.commands.create-classification",
+  "sf.classes.custom-classifier.commands.create-custom-classifier",
+  "sf.classes.forecast.commands.create-forecast.forecast",
+  "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname",
+  "sf.classes.top-insights.commands.create-top-insights",
+]
+note = "Approved at its last review with the same definition, obligations and cases; the cases whose parse trees changed with the parser at 9a638ce10, which leaves out an empty create source, were read again under review brief version 1, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.classes.anomaly-detection.commands.create-anomaly-detection" = "32446c4c4857db82d03dd8a4dcbcac7dc67fc6ad0284ae0d9f68746ff8430315"
+"sf.classes.budget.commands.create-budget" = "0390329707fc558327e045dc057c9127f64aad391a740fcc45e7299c7c272e5c"
+"sf.classes.classification-profile.commands.create-classification-profile" = "2fc00336d72e6a79782d2d26885f3603f36ffe61153f3102236f6515c070589c"
+"sf.classes.classification.commands.create-classification" = "8fb43e6fc5596873a0a0c781d6cb8c395c089580f43a0ae61b4833c8f57330c6"
+"sf.classes.custom-classifier.commands.create-custom-classifier" = "fa7d516ac2225b0969ec7bb515b40bacd2a4db6ec83015a51d733c08c44b0fbd"
+"sf.classes.forecast.commands.create-forecast.forecast" = "207ae6f90161a25528031c9a67748a37bcd1c34ffd3d121c0c25e899bd956615"
+"sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname" = "d14426760b7c90bf6be3a374fe2b0f3f12928dc7616737988beedd45138127e1"
+"sf.classes.top-insights.commands.create-top-insights" = "811188579a8844b9a6fa6ec036a0f27afabee8654c84f40e96ba8cdfd2f1e1d2"
+
+[review.definitions]
+"sf.classes.anomaly-detection.commands.create-anomaly-detection" = "dc9faf3b8931b87a38098067a0e3de623561a95c78309cca9c702ed89eba5fb2"
+"sf.classes.budget.commands.create-budget" = "0ae74d8d7d7790a3561b083fd9a52e07e5da8891bcbb6f55a6a3f330dfe9c65f"
+"sf.classes.classification-profile.commands.create-classification-profile" = "82d4ff445940075ac95557c7bb5f09d9079a24472c041c100d281e8621b5396b"
+"sf.classes.classification.commands.create-classification" = "02874422ef157b15a8e228eb27c142ee3374e0ed5c1c5f4280c7b11dbb019d5f"
+"sf.classes.custom-classifier.commands.create-custom-classifier" = "b721680b0aecf1328178cf8b083d8a516e977ec7a77a6729960629ae71fb635e"
+"sf.classes.forecast.commands.create-forecast.forecast" = "895f57fd4f932a662f69597e3c000b1c7e356b7ddf6cc37b5a675760a47d5d8c"
+"sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname" = "2c611ab8a09c541f88ab121af99a8d9c01425a2a12cef0c4b9955d7445e2a921"
+"sf.classes.top-insights.commands.create-top-insights" = "15c7463b346ad5219f1dd443576a97382345089434e0725d97198843f5c7e184"

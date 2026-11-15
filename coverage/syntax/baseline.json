@@ -15,7 +15,7 @@
     "catalogue/utility.toml": "55b30dcf06bf8182232a0da6b1da75462ae171e015cc8c9b8b95b36a722b44c5",
     "sources.toml": "47dbcf41cb7aa0fb2981d2fe9e0c33578a3eb53d80863685f2711c551ff0591e"
   },
-  "parser_tree": "546965da8fa82c765d0eff634a9bc71d52ef6a10",
+  "parser_tree": "3e89af5774ad48e90b91c6416fca02a0517c4cb7",
   "forms": {
     "sf.classes.anomaly-detection.commands.create-anomaly-detection": "verified",
     "sf.classes.anomaly-detection.commands.drop-anomaly-detection": "verified",
@@ -681,7 +681,7 @@
     "sf.ddl.create-data-metric-function.create-data-metric-function": "verified",
     "sf.ddl.create-data-metric-function.create-data-metric-function.create-or-alter-data-metric-function": "verified",
     "sf.ddl.create-data-metric-function.define-data-metric-function": "unverified",
-    "sf.ddl.create-data-movement-rule": "verified",
+    "sf.ddl.create-data-movement-rule": "unverified",
     "sf.ddl.create-database-catalog-linked": "unverified",
     "sf.ddl.create-database.create-database": "unverified",
     "sf.ddl.create-database.create-database-as-replica": "verified",
