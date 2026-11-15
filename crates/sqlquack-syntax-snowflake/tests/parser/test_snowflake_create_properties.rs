@@ -801,8 +801,8 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
         ProjectionTestCase {
             description: "an external table column keeps RELY after its constraint",
             sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 UNIQUE RELY ) LOCATION = @s1 FILE_FORMAT = ( FORMAT_NAME = 'm' )",
-            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/constraint_properties/0/1",
-            expected_value: json!("RELY"),
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/constraint_modifiers/0/1/rely",
+            expected_value: json!(true),
         },
         ProjectionTestCase {
             description: "channels shown in a pipe name the pipe container",
