@@ -1252,6 +1252,9 @@ pub struct TemporaryProperty {
 pub struct Tags {
     #[serde(default)]
     pub expressions: Vec<Expression>,
+    /// Whether WITH was written before TAG, as in Snowflake's column `WITH TAG ( ... )`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub with: bool,
 }
 
 /// TransformModelProperty

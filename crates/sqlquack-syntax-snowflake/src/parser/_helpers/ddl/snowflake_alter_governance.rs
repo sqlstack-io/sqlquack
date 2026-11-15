@@ -5,9 +5,9 @@ use crate::parser::_helpers::ddl::snowflake_alter::{alter_object, property};
 use crate::parser::_helpers::ddl::snowflake_external_table::policy_property;
 use crate::parser::constants::SET_TAG;
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
-use sqlquack_syntax::expressions::statements::models::Var;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
@@ -256,13 +256,18 @@ impl Parser {
             }
         }
         if self.match_text_seq(&["AGGREGATION", "POLICY"]) {
-            let mut expressions = vec![Expression::Table(Box::new(
+            let expressions = vec![Expression::Table(Box::new(
                 self.parse_iceberg_object_name()?,
             ))];
-            if self.match_text_seq(&["ENTITY", "KEY"]) {
-                expressions.push(self.parse_iceberg_name_list(false)?);
+            let entity_key = match self.match_text_seq(&["ENTITY", "KEY"]) {
+                true => Some(self.parse_iceberg_name_list(false)?),
+                false => None,
+            };
+            let mut properties = self.forced_policy("AGGREGATION POLICY", expressions);
+            if let Some(columns) = entity_key {
+                properties.insert(1, property("ENTITY KEY", None, Some(columns)));
             }
-            return Ok(self.forced_policy("AGGREGATION POLICY", expressions));
+            return Ok(properties);
         }
         if self.match_token(TokenType::Join) && self.match_text_seq(&["POLICY"]) {
             let policy = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
@@ -316,8 +321,11 @@ impl Parser {
             if self.match_text_seq(&["AGGREGATION", "POLICY"]) {
                 properties.push(property("AGGREGATION POLICY", None, None));
             } else if self.match_token(TokenType::Join) {
-                self.match_text_seq(&["POLICY"]);
-                properties.push(property("JOIN POLICY", None, None));
+                let kind = match self.match_text_seq(&["POLICY"]) {
+                    true => "JOIN POLICY",
+                    false => "JOIN",
+                };
+                properties.push(property(kind, None, None));
             } else if self.match_text_seq(&["CONTACT"]) {
                 let purpose = match !self.is_at_end()
                     && !self.check(TokenType::Semicolon)
@@ -401,9 +409,9 @@ impl Parser {
         let mut properties: Vec<ObjectProperty> = Vec::new();
         loop {
             let column = self.match_token(TokenType::Column);
-            let name = Some(self.parse_external_name()?);
+            let name = self.parse_external_name()?;
             if self.match_token(TokenType::Set) {
-                let (kind, mut expressions) = if self.match_text_seq(&["MASKING", "POLICY"]) {
+                let (kind, expressions) = if self.match_text_seq(&["MASKING", "POLICY"]) {
                     let mut expressions = vec![Expression::Table(Box::new(
                         self.parse_iceberg_object_name()?,
                     ))];
@@ -421,23 +429,29 @@ impl Parser {
                         self.parse_error("Expected MASKING POLICY, PROJECTION POLICY or TAG")
                     );
                 };
-                if kind != SET_TAG && self.match_text_seq(&["FORCE"]) {
-                    expressions.push(Expression::Var(Box::new(Var {
-                        this: "FORCE".to_owned(),
-                    })));
+                let force = kind != SET_TAG && self.match_text_seq(&["FORCE"]);
+                properties.push(column_property(
+                    kind,
+                    &name,
+                    Some(tuple(expressions)),
+                    column,
+                ));
+                if force {
+                    properties.push(column_property("FORCE", &name, None, column));
                 }
-                properties.push(property(kind, name, Some(tuple(expressions))));
             } else if self.match_text_seq(&["UNSET"]) {
                 if !column && (self.check_text_seq(&["TAG"]) || self.check_text_seq(&["MASKING"])) {
                     return Err(self.parse_error("Expected COLUMN before the column name"));
                 }
                 if self.match_text_seq(&["TAG"]) {
                     let tags = self.parse_unset_tag_names()?;
-                    properties.push(property("UNSET TAG", name, Some(tuple(tags))));
+                    let tags = Some(tuple(tags));
+                    properties.push(column_property("UNSET TAG", &name, tags, column));
                 } else if self.match_text_seq(&["MASKING", "POLICY"]) {
-                    properties.push(property("UNSET MASKING POLICY", name, None));
+                    properties.push(column_property("UNSET MASKING POLICY", &name, None, column));
                 } else if self.match_text_seq(&["PROJECTION", "POLICY"]) {
-                    properties.push(property("UNSET PROJECTION POLICY", name, None));
+                    let kind = "UNSET PROJECTION POLICY";
+                    properties.push(column_property(kind, &name, None, column));
                 } else {
                     return Err(
                         self.parse_error("Expected MASKING POLICY, PROJECTION POLICY or TAG")
@@ -450,6 +464,19 @@ impl Parser {
                 return Ok(properties);
             }
         }
+    }
+}
+
+/// A property of `kind` on the column `name`, recording whether COLUMN was written before it.
+fn column_property(
+    kind: &str,
+    name: &Identifier,
+    value: Option<Expression>,
+    column_keyword: bool,
+) -> ObjectProperty {
+    ObjectProperty {
+        column_keyword,
+        ..property(kind, Some(name.clone()), value)
     }
 }
 
