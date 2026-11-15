@@ -413,6 +413,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     inferred_type: None,
                     export_state: false,
+                    from_separator: false,
                 })))
             }
 
@@ -599,6 +600,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             })))
         }
     }
@@ -622,6 +624,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             })));
         }
         if self.check(TokenType::LParen) {
@@ -692,6 +695,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     inferred_type: None,
                     export_state: false,
+                    from_separator: false,
                 })));
             } else {
                 self.current = saved_pos;
@@ -718,6 +722,7 @@ impl Parser {
             span: SourceSpan::default(),
             inferred_type: None,
             export_state: false,
+            from_separator: false,
         })))
     }
 
@@ -847,6 +852,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     inferred_type: None,
                     export_state: false,
+                    from_separator: false,
                 })))
             }
         } else {
@@ -1187,6 +1193,7 @@ impl Parser {
                         span: SourceSpan::default(),
                         inferred_type: None,
                         export_state: false,
+                        from_separator: false,
                     })))
                 }
             }
@@ -1488,6 +1495,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }));
 
             return Ok(func_expr);
@@ -1596,6 +1604,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             })))
         } else {
             self.expect_token(TokenType::RParen)?;
