@@ -75,11 +75,13 @@ impl Parser {
         }
         let name = self.parse_object_name()?;
         let mut operands: Vec<Expression> = Vec::new();
+        let mut properties: Vec<ObjectProperty> = Vec::new();
         let mut source = String::new();
         match kind {
             "CONNECTOR" => {
                 self.expect_openflow_words(&["IN", "RUNTIME"])?;
-                operands.push(Expression::Table(Box::new(self.parse_object_name()?)));
+                let runtime = Expression::Table(Box::new(self.parse_object_name()?));
+                properties.push(property("IN RUNTIME", None, Some(runtime)));
                 self.expect_token(TokenType::From)?;
                 if self.match_text_seq(&["DEFINITION"]) {
                     source = "FROM DEFINITION".to_owned();
@@ -91,11 +93,11 @@ impl Parser {
             }
             "RUNTIME" => {
                 self.expect_openflow_words(&["IN", "DEPLOYMENT"])?;
-                operands.push(Expression::Table(Box::new(self.parse_object_name()?)));
+                let deployment = Expression::Table(Box::new(self.parse_object_name()?));
+                properties.push(property("IN DEPLOYMENT", None, Some(deployment)));
             }
             _ => {}
         }
-        let mut properties: Vec<ObjectProperty> = Vec::new();
         while !self.is_statement_end_at(0) {
             let key = self.peek_text().to_ascii_uppercase();
             let Some(&(_, value)) = keys.iter().find(|(name, _)| *name == key) else {
