@@ -118,9 +118,6 @@ other_receipts_contradicted = [
   "sf.ddl.alter-iceberg-table.set.kbfb3b393ea34",
   "sf.ddl.alter-iceberg-table.set.kd86190580ac3",
   "sf.ddl.alter-materialized-view.rename-to-cluster-by.k0b93e15e7deb",
-  "sf.ddl.alter-task.set.k0653b1d4a25c",
-  "sf.ddl.alter-task.set.kcae5464fa8dc",
-  "sf.ddl.alter-task.set.ke6170e5781ec",
   "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-file-format.k880a0050852a",
   "sf.ddl.create-external-table.cloudproviderparams-location-externalstage-partition-type.k7ebbd88e8c27",
   "sf.ddl.create-iceberg-table.table.k12e6c19e0683",
@@ -335,10 +332,6 @@ other_receipts_contradicted = [
   "keb8baabd4c81",
 ]
 "sf.ddl.alter-tag.set" = ["k7fdfe7d53553"]
-"sf.ddl.alter-task.set" = [
-  "k40c1b10b46dd",
-  "k98072043c837",
-]
 "sf.ddl.create-database.create-database" = ["k3c0dc0ce5fe8"]
 "sf.ddl.create-hybrid-table.table" = ["k5069c51ae2f1"]
 "sf.ddl.create-iceberg-table-rest.table-as-select" = [
@@ -376,6 +369,3 @@ other_receipts_contradicted = [
   "kd484841cc87f",
   "kfa70a352f258",
 ]
-
-[parsed_cases_refused]
-"sf.ddl.alter-stage.set.syntax" = ["kd30e04e36906"]
