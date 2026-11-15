@@ -3173,3 +3173,115 @@ note = "Approved at its last review with the same definition, obligations and ca
 "sf.security_admin.create-storage-integration-postgres-internal" = "76481f8cc8ceb166d463046715305012b82e4e52875fc69fb8da8b0a38ef38bb"
 "sf.security_admin.create-storage-lifecycle-policy" = "8665b98dca1048abdea0c35f7990f3f66bc17b725ceca8daee0b251d4ea25610"
 "sf.security_admin.create-user" = "80b02e9a4f791284926b9a3bed2a6c7e8462272bc8701be2658208175a0aa1b4"
+
+[[review]]
+id = "security-admin-030"
+family = "security_admin"
+parser_tree = "0cca295bf9de498b61adfbc95c00f2d066d23251"
+reviewed_utc = "2026-11-15T04:17:54Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-account.set-feature-policy-for",
+  "sf.security_admin.alter-account.set-feature-policy-for-2",
+  "sf.security_admin.alter-account.set-feature-policy-for.altering-the-current-account",
+  "sf.security_admin.alter-account.unset-feature-policy-for",
+  "sf.security_admin.alter-account.unset-feature-policy-for-2",
+  "sf.security_admin.alter-account.unset-feature-policy-for.altering-the-current-account",
+  "sf.security_admin.alter-account.unset-maintenance-policy-for",
+  "sf.security_admin.alter-failover-group.set-object-types-integrations-allowed-integration-types",
+  "sf.security_admin.alter-organization-profile.add-live-version-from",
+  "sf.security_admin.alter-replication-group.set-object-types-integrations-allowed-integration-types",
+  "sf.security_admin.alter-user-add-programmatic-access-token",
+  "sf.security_admin.alter-user-modify-programmatic-access-token.rename-to",
+  "sf.security_admin.alter-user-modify-programmatic-access-token.set",
+  "sf.security_admin.alter-user-remove-programmatic-access-token",
+  "sf.security_admin.alter-user-rotate-programmatic-access-token",
+]
+note = "Approved at its last review with the same definition, obligations and cases; the cases whose parse trees changed with the parser at 548fe5bda, which keeps keywords, key-value pairs and omitted name parts in their own fields, were read again under review brief version 1, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-account.set-feature-policy-for" = "c66af12641714e4329a402c945b09490323eb4dbc0916fc2411b03961b39645a"
+"sf.security_admin.alter-account.set-feature-policy-for-2" = "3f21fa6346c325290a514a711f18363bee2a3a01759daf6c6fd9253a5ea98ca6"
+"sf.security_admin.alter-account.set-feature-policy-for.altering-the-current-account" = "4eabf5a08375162b8085b1f9d2331f769d58fac70e9a680b1674487fa697bd29"
+"sf.security_admin.alter-account.unset-feature-policy-for" = "e70d7987f85e329c70cf95bf71d97527ce4c935dedd8cf2c4ea0c21b04a67d50"
+"sf.security_admin.alter-account.unset-feature-policy-for-2" = "207d4753e0cafd78c62b450980a26bf7bd2f820f8fe3d0179ed8625bca1d3840"
+"sf.security_admin.alter-account.unset-feature-policy-for.altering-the-current-account" = "b0c8cc45dd89cfcf3e895cbdfa562a61ac6c5bd40fd553c7bbd5d32d8e89a148"
+"sf.security_admin.alter-account.unset-maintenance-policy-for" = "26b53e5e4a93a91bc15ab4234311a65684727f1d8a34dfeb7376582279e0846e"
+"sf.security_admin.alter-failover-group.set-object-types-integrations-allowed-integration-types" = "e2e571cfc5d19301fb58d7663a2a050655b2db43d84d8d45a1410e3cd9e354b9"
+"sf.security_admin.alter-organization-profile.add-live-version-from" = "cf0b124697416739eac89e097498af26f2c2ec7eacc44f86bf84ab19ee55d5d1"
+"sf.security_admin.alter-replication-group.set-object-types-integrations-allowed-integration-types" = "530bb6fb5da8732f184c5cf7b8d06658cd84d6a00a3e8f0e82597d726003fc04"
+"sf.security_admin.alter-user-add-programmatic-access-token" = "7e7af9b367a9b37f7a99377c22c3fb5448bc6af773a436c18220bdd2a5d9fea1"
+"sf.security_admin.alter-user-modify-programmatic-access-token.rename-to" = "aabff3eec475f43f2243f963dc21fc9c2fdb62cccbd528296f5aecc0640e8306"
+"sf.security_admin.alter-user-modify-programmatic-access-token.set" = "caedc806b09eeafb510762ef7cd2b24acf7f42989c19725e54f5b84e74e17b60"
+"sf.security_admin.alter-user-remove-programmatic-access-token" = "d2d3f5be6dcc113a9b08961d39e83a7e83733322fcf3ddbbc4388e86f4a9268d"
+"sf.security_admin.alter-user-rotate-programmatic-access-token" = "2fd3b4e05f6c9ae804686878a1c06781f1aad9d46da802ab982dba30552777a2"
+
+[review.definitions]
+"sf.security_admin.alter-account.set-feature-policy-for" = "808878a0491177a939d0fb15b198ec0f7b4e18b5fea92b198516a302bb1a13d4"
+"sf.security_admin.alter-account.set-feature-policy-for-2" = "d8a88b1132a3d51f67508a1aee93f1723b5be246293c869cb834dc436a350b75"
+"sf.security_admin.alter-account.set-feature-policy-for.altering-the-current-account" = "9c9f6a6753f6e7448346023ed98e3e625c879b1569f6050eb745758e7c3d28bd"
+"sf.security_admin.alter-account.unset-feature-policy-for" = "8453d8ca4ab2500dcd916b0f205fbb82210c77303a4de02e1e9712233d42686a"
+"sf.security_admin.alter-account.unset-feature-policy-for-2" = "6a81cc0253920b5286cbe6572ed2b6de462800d11e9c6bbd1129838dfdca0f05"
+"sf.security_admin.alter-account.unset-feature-policy-for.altering-the-current-account" = "c3ddf7c6507748f340d772a6ef2fb72fe6133cfdeaa805ad6e385d09e8a5206d"
+"sf.security_admin.alter-account.unset-maintenance-policy-for" = "994d6a5da1aa135911012915782c5fd1b8e863e4c7a9eb7a4d191c6bd5126e81"
+"sf.security_admin.alter-failover-group.set-object-types-integrations-allowed-integration-types" = "a2bba8661f4227b8d26e65c348fde817e9a705b2cbc7e1007057b542259bd0ba"
+"sf.security_admin.alter-organization-profile.add-live-version-from" = "6a7749b99110a0a0dd5688adfabc262526d38b0139dcc185b4030560ac44be62"
+"sf.security_admin.alter-replication-group.set-object-types-integrations-allowed-integration-types" = "97712b285f83607ad848369368df68b00fe33bdcd124accd1770ea16853aa204"
+"sf.security_admin.alter-user-add-programmatic-access-token" = "950416cefc3db0faf416ef071dcc708a696b230d6211053efe7c6f99ba7bd065"
+"sf.security_admin.alter-user-modify-programmatic-access-token.rename-to" = "cd64f608ce8631449eeecd44b34e70ea6ac94e692ebc60f8b29ab969b41e41a0"
+"sf.security_admin.alter-user-modify-programmatic-access-token.set" = "78968d0e01a9d477ce82b06c5b00d895c96e60b87e61acbd385001dc88108ac1"
+"sf.security_admin.alter-user-remove-programmatic-access-token" = "90ef6b5ef46d82197fc786377ba3054f38796488e7d80bf6b7c129af30429e15"
+"sf.security_admin.alter-user-rotate-programmatic-access-token" = "76da2ed28f7265dc0b60e5c12693d38733db7233ee5ca49baa29748fa5fa553b"
+
+[[review]]
+id = "security-admin-031"
+family = "security_admin"
+parser_tree = "0cca295bf9de498b61adfbc95c00f2d066d23251"
+reviewed_utc = "2026-11-15T04:17:56Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-account.set-authentication-session-policy",
+  "sf.security_admin.alter-account.unset-authentication-session-policy",
+  "sf.security_admin.alter-organization-profile.add-version-from",
+  "sf.security_admin.alter-organization-user.set",
+  "sf.security_admin.alter-organization-user.unset",
+  "sf.security_admin.alter-user-modify-programmatic-access-token.unset",
+  "sf.security_admin.alter-user.set",
+  "sf.security_admin.create-failover-group.as-replica-of",
+  "sf.security_admin.create-organization-account",
+  "sf.security_admin.create-organization-profile.profile",
+  "sf.security_admin.create-organization-user",
+  "sf.security_admin.create-replication-group.as-replica-of",
+  "sf.security_admin.create-replication-group.object-types-allowed-accounts",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 548fe5bda; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-account.set-authentication-session-policy" = "9afef0f505d7e236b51fd7879af660dab85d743901f2dee0cf0d884558759e2e"
+"sf.security_admin.alter-account.unset-authentication-session-policy" = "5d6199ed6f6cd8daa78f354e36b6d79eeddb844eb7a8a181981fcf262bc4755a"
+"sf.security_admin.alter-organization-profile.add-version-from" = "5ec5717fd4f2a698876d4763464fbb203a7b85ad566bee99d96034f1e5fa97fb"
+"sf.security_admin.alter-organization-user.set" = "effaed837c24b49e548b3516175cbfe1334ba4a32053f87f8448a077f8375b78"
+"sf.security_admin.alter-organization-user.unset" = "22a56a56fdbc7284dd1c75b195c30b7a92b9baa681793ddbcc4e39295e108d60"
+"sf.security_admin.alter-user-modify-programmatic-access-token.unset" = "aa2e6df08ffea6249bd4b73873927547c9369f0b3aeefaf8d4a800398af1ffb4"
+"sf.security_admin.alter-user.set" = "2bc598caf966e0f7dcc0bb56793da8d6aa1822b614d298fc15b6146ab261595c"
+"sf.security_admin.create-failover-group.as-replica-of" = "55aeef335ea8d187efca3437f877db53e534a96d3a47b9188dd3c125ee3a22bd"
+"sf.security_admin.create-organization-account" = "1ebf869d2c93c6418755a676c507c28418128b06168b01b6a76d582c2d9fad73"
+"sf.security_admin.create-organization-profile.profile" = "e1f2401f84280d87d855c083104a0b2d8ff1c652021e8a22d578d9c86fba7bc0"
+"sf.security_admin.create-organization-user" = "e97550a715f6cd54d369a4a9c34070c6ee8bf523d32cccd4ac3ae3a6b993c0ed"
+"sf.security_admin.create-replication-group.as-replica-of" = "3d30d1e38f8d2fd92701f5b2db8a4bf31126a0b29bcf82ffee48a1176f376705"
+"sf.security_admin.create-replication-group.object-types-allowed-accounts" = "c387a592ec922f1b86944553898dc080620495c3f8151ea76e2a7502026b5779"
+
+[review.definitions]
+"sf.security_admin.alter-account.set-authentication-session-policy" = "a392562e7ceb3710c8427f52caa13fd367365a95e54d1c211094ae9342fe8e12"
+"sf.security_admin.alter-account.unset-authentication-session-policy" = "5c659ec1234be8ffc1deb28c0867706b3b48bfb880920492fca925581bd634d2"
+"sf.security_admin.alter-organization-profile.add-version-from" = "2b73fd4e8df4cb80fe575cf1669b45cff2cea5b75a5d2a92551f446bd4e8be67"
+"sf.security_admin.alter-organization-user.set" = "48e629da8bbc812ff8fadf5573e0488f9a9734155c7539f2f9c6190903da8905"
+"sf.security_admin.alter-organization-user.unset" = "f28349e92cb55a0095ca6dfa340230e7082380216cb4ce425e6c13679958fe4c"
+"sf.security_admin.alter-user-modify-programmatic-access-token.unset" = "551eaecaee197460f0834fbb80ce76d4f62f00425ecd9cd674e32dbb08bbff4e"
+"sf.security_admin.alter-user.set" = "c43fd1a03cd2d4d09e5a44e2a4063b90c663d01524f0bbe5237d40af2b065965"
+"sf.security_admin.create-failover-group.as-replica-of" = "a1fcecb52304ef2690b591c06754e58e926cc1e4d0ff374ec63e543ce0027729"
+"sf.security_admin.create-organization-account" = "cc4b2c9b87c5a4116904813c400e26e9f6c3d1732bf8554e15d77c0ee7afbed7"
+"sf.security_admin.create-organization-profile.profile" = "bd9a88ac7b956bb7e7f212873ecf2236308d2f12b1af203fe98547351e031922"
+"sf.security_admin.create-organization-user" = "66bea5bc0f65e7c955dc9a715de69e79a6986baefb36ead5b6203cdf4f0f6588"
+"sf.security_admin.create-replication-group.as-replica-of" = "934cd8d5b644b257cc91e50fef6c48fc8c82a909f69b3a321a90cf8bf4d9d0a0"
+"sf.security_admin.create-replication-group.object-types-allowed-accounts" = "04ac21af3aad40eeb81c032996c2f537a470451620b5929494dcec1c036d84e2"

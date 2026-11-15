@@ -6466,3 +6466,52 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.functions.get-ai-observability-events-snowflake-local" = "cbe0d75551bde8512d6d420461141aba335cf5756b894b121e13d60e879a3d7b"
 "sf.functions.get-ai-observability-logs-snowflake-local" = "2ae530230cdfe96a6c26d9199bae708ddf6f67f504b2499e6fe9ae69278a0de9"
 "sf.functions.get-ai-record-trace-snowflake-local" = "9540cdeb323e5cb881562f6d0a298154ceeac305c3d0776583d2dc4f9f10ddf7"
+
+[[review]]
+id = "functions-032"
+family = "functions"
+parser_tree = "0cca295bf9de498b61adfbc95c00f2d066d23251"
+reviewed_utc = "2026-11-15T04:17:54Z"
+verdict = "approved"
+forms = [
+  "sf.functions.dmf-row-count-difference",
+]
+note = "Approved at its last review with the same definition, obligations and cases; the cases whose parse trees changed with the parser at 548fe5bda, which keeps keywords, key-value pairs and omitted name parts in their own fields, were read again under review brief version 1, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.dmf-row-count-difference" = "8e736fdd6a13d8d26bbd52aaa9ebeb01ae2344d1082f58353fca6f2f01e3bd6f"
+
+[review.definitions]
+"sf.functions.dmf-row-count-difference" = "6633e608b8a64fa01efefe1b7f05518779304ec781c22423f740b5e9042a3f90"
+
+[[review]]
+id = "functions-033"
+family = "functions"
+parser_tree = "0cca295bf9de498b61adfbc95c00f2d066d23251"
+reviewed_utc = "2026-11-15T04:17:56Z"
+verdict = "approved"
+forms = [
+  "sf.functions.abs",
+  "sf.functions.coalesce",
+  "sf.functions.dmf-accepted-values",
+  "sf.functions.dmf-accepted-values-percent",
+  "sf.functions.dmf-referential-integrity-count.table",
+  "sf.functions.dmf-source-target-lag.alter-table-add-data",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 548fe5bda; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.abs" = "01362a8cbd3887b0b45a5ffd9e737bd58348645afcca38d36ca7230cd829f1cc"
+"sf.functions.coalesce" = "89d274afe91c10e650dc71fcd6ab4d570682bfc9864855c619dfbfc25a52f6e6"
+"sf.functions.dmf-accepted-values" = "9022763e092c00d8d60ff582713bfb8a6baee88acd5dcf2ebe7a9a929bb1bdfb"
+"sf.functions.dmf-accepted-values-percent" = "835afdc605a242a91f6b625ac8ff35a04c74bf1e80fb3c2e0642510a8ab1529c"
+"sf.functions.dmf-referential-integrity-count.table" = "ff32a6d4143f4e1f42ce3aa6ffc14608dcd8fbac812f5463258a42be03b8a437"
+"sf.functions.dmf-source-target-lag.alter-table-add-data" = "d073ee5f3ef9f2b2a64b1ff2da09aa7d8e5fa0a90cebaa74e6588c0ea1845ea3"
+
+[review.definitions]
+"sf.functions.abs" = "be5235fa19680039066d239814f876e6941c86b4814300a90d19b1612d2c5b4e"
+"sf.functions.coalesce" = "ea2354d1459479e4f06f6dfc2067e0cac6f4a6d401289860353f9687ce6d9aed"
+"sf.functions.dmf-accepted-values" = "0f43871a9bf53475e95d04f9b58e8a146db0992b0c5c0209a7f5c4e5e77922f1"
+"sf.functions.dmf-accepted-values-percent" = "13194a834f982364851a9aedff65d3248cb2ce29343fd8438fb7fdc775261c4c"
+"sf.functions.dmf-referential-integrity-count.table" = "47c14d85203c383d248c0eef06e65fd37693ef72606d8105541250e62f1a49f9"
+"sf.functions.dmf-source-target-lag.alter-table-add-data" = "820f46969fb8b72bdd6bb35fa792ed4e6a2e81073393417a907c7263befce7e0"

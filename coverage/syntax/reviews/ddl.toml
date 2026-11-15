@@ -4237,3 +4237,112 @@ note = "Approved at its last review with the same definition, obligations and ca
 "sf.ddl.create-tag.create-tag" = "da99d3b7e73ff860170b43d19e1c172a97300f20efc627c4fbb0b2c786cb3925"
 "sf.ddl.create-tag.define-tag" = "788f08aa9ca96d9d8f54777d086bdf8f17b0ee629381486171f23b3f82ddb127"
 "sf.ddl.create-versioned-schema" = "6383231c1aed459dbe09d220aab7116af32a1d4b152ab52cb1427846cd02b166"
+
+[[review]]
+id = "ddl-043"
+family = "ddl"
+parser_tree = "0cca295bf9de498b61adfbc95c00f2d066d23251"
+reviewed_utc = "2026-11-15T04:17:54Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-cortex-search.drop-scoring-profile",
+  "sf.ddl.alter-data-movement-rule.set-max-rows-as-returns",
+  "sf.ddl.alter-external-volume.update-storage-location-credentials-aws-key-id",
+  "sf.ddl.alter-function.set",
+  "sf.ddl.alter-function.set-headers",
+  "sf.ddl.alter-iceberg-table-version-tag.drop-version-tag",
+  "sf.ddl.alter-listing.listing-add-version-from",
+  "sf.ddl.alter-notebook.set",
+  "sf.ddl.alter-service.fromspecification-fromspecificationtemplate",
+  "sf.ddl.alter-stage.set",
+  "sf.ddl.alter-stage.set-directory-enable-true",
+  "sf.ddl.create-gateway",
+  "sf.ddl.create-model.model",
+  "sf.ddl.create-openflow-connector.from",
+  "sf.ddl.create-openflow-connector.from-definition",
+]
+note = "Approved at its last review with the same definition, obligations and cases; the cases whose parse trees changed with the parser at 548fe5bda, which keeps keywords, key-value pairs and omitted name parts in their own fields, were read again under review brief version 1, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-cortex-search.drop-scoring-profile" = "8e4036eea485f7e8a5d3c17f9d6b02371c99e45b0c12c9642a29618615d1ea87"
+"sf.ddl.alter-data-movement-rule.set-max-rows-as-returns" = "c16b657daf0c84d5e7ac9bdf505df9666445e2f35c157572064109486a0e998f"
+"sf.ddl.alter-external-volume.update-storage-location-credentials-aws-key-id" = "e655f23ab3bcfa58499bb64287b7da5219cd5c12834e92881f11751af9aa0955"
+"sf.ddl.alter-function.set" = "50feca5997a051fe819b69273e3fcd7344729e4ace3df817215bb1d5282208c0"
+"sf.ddl.alter-function.set-headers" = "645259d8ff9ac96209f3a82731b9d5a1af0ec596d4d648b5dc0ec54b4a640a70"
+"sf.ddl.alter-iceberg-table-version-tag.drop-version-tag" = "97118b84ec912ec4e312bf4a74022e89d5bb033929f37802ff64a1f7f229ad18"
+"sf.ddl.alter-listing.listing-add-version-from" = "4ba1e7c871ff282c7935e1a5c98bbb6e2edb6fbb6feec380d69b1ea36e53e874"
+"sf.ddl.alter-notebook.set" = "bfbb6bbb29a9b6e6cd75d835e135759ae49a97a512cdc6318761c7cce42a1b5d"
+"sf.ddl.alter-service.fromspecification-fromspecificationtemplate" = "7e6d5f258c96121ccde71517ae2aacf8455bd9968c9cbb5b806706e9f2310266"
+"sf.ddl.alter-stage.set" = "dcc135b27019640eed6b6f903f7dc7973f6e6d09606dbb5f88ff0a6ef5cafb31"
+"sf.ddl.alter-stage.set-directory-enable-true" = "3589bd15fcb85c051168b600e77d46cebabb471fab26dec4735dfd991f1ca45c"
+"sf.ddl.create-gateway" = "369343cf2a9f860c71a361be9b5b165560103945e12168809e6adb81a4af91e6"
+"sf.ddl.create-model.model" = "f27c46af0becf410b8a98371d52982f3468bd8507deabb7c599c95cf5498c00f"
+"sf.ddl.create-openflow-connector.from" = "e7736caa107e7aadb561c79120cf1106f0f41a668d76762351ed1cbf7c436400"
+"sf.ddl.create-openflow-connector.from-definition" = "77b1a50729af558fa851ea834ca263964a90e377235fb4a2d8009f0918c8d4be"
+
+[review.definitions]
+"sf.ddl.alter-cortex-search.drop-scoring-profile" = "4f962619d813f2ac79ac64b53dad353b63b901c021266cd77926333cbbaab80e"
+"sf.ddl.alter-data-movement-rule.set-max-rows-as-returns" = "8572fe2a90171f3be739044a7b05360259a67c530871a982d1ef44ae5cf7e5db"
+"sf.ddl.alter-external-volume.update-storage-location-credentials-aws-key-id" = "c0280728d0f4de8036fe0dccbc6ae78df8db99b0b1e8219ba87ffd8da86d8b49"
+"sf.ddl.alter-function.set" = "d714479280ab160fa10a59c8723c6514d8e718295db1d87d27d8b8cd8bf2bd9d"
+"sf.ddl.alter-function.set-headers" = "38995b57b10cdd3eb7510950e16fe5484ba90ab156b9a8220f8b76dd51e22b2f"
+"sf.ddl.alter-iceberg-table-version-tag.drop-version-tag" = "c0686669412efdf5bc737a60fdd0c81074f11b61f3c52cdd300b08e4f7704187"
+"sf.ddl.alter-listing.listing-add-version-from" = "d2b6b9d6850402fbf3cb027e387305cef8a9e1f08f883561b58bdf7cbca3d380"
+"sf.ddl.alter-notebook.set" = "faba8e8fc6371ca2cf22841e6e9d64bd521ea114a3128286e0459ed4deb8a9c4"
+"sf.ddl.alter-service.fromspecification-fromspecificationtemplate" = "e056da280443d8ffe942530dda82de2c17f85e62e5c8481f057f72e7b122d27a"
+"sf.ddl.alter-stage.set" = "4036d1cf417bcef8312e0799e586abd3db1b78b8921662a0dfd1026589239025"
+"sf.ddl.alter-stage.set-directory-enable-true" = "df151ec6045eef01ae04d23f0acf73e699613df1040941b2251b47ca318d9311"
+"sf.ddl.create-gateway" = "b2449339ed642e417a8051f44099f278e5346544136fe70aa03f74c1bdf93bed"
+"sf.ddl.create-model.model" = "6f4b59e3f853f43628a158f218bfc2dcd72176a108ccbab4cae309ae2922e029"
+"sf.ddl.create-openflow-connector.from" = "024f89daa1eae75e6d70157aed21ce242bcabf8f2a59944d9443d64356ba7e64"
+"sf.ddl.create-openflow-connector.from-definition" = "3d95b8e7437b458b789d4593613d6bedc939bc51e9fcdeed390b03da13663011"
+
+[[review]]
+id = "ddl-044"
+family = "ddl"
+parser_tree = "0cca295bf9de498b61adfbc95c00f2d066d23251"
+reviewed_utc = "2026-11-15T04:17:56Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-application.upgrade-using-version",
+  "sf.ddl.alter-compute-pool.stop-all",
+  "sf.ddl.alter-cortex-search.add-scoring-profile",
+  "sf.ddl.alter-streamlit.set",
+  "sf.ddl.create-data-movement-rule",
+  "sf.ddl.create-openflow-runtime",
+  "sf.ddl.create-sequence.create-or-alter-sequence",
+  "sf.ddl.create-sequence.create-sequence",
+  "sf.ddl.create-sequence.define-sequence",
+  "sf.ddl.create-table.create-table-clone",
+  "sf.ddl.experiment.create-experiment",
+  "sf.ddl.undrop-external-volume",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 548fe5bda; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-application.upgrade-using-version" = "efb0fea29df73f1c00cd6b20f1120023fbd4f7864ee420df15953ab82acffdf1"
+"sf.ddl.alter-compute-pool.stop-all" = "0981e9f37a159e94778c32e29c888173342beb95b13defdec93c968c936060be"
+"sf.ddl.alter-cortex-search.add-scoring-profile" = "d0b9c6fd6b3fc6292fb82e02b10bb837a477042c66e51d22f3700a46190037ec"
+"sf.ddl.alter-streamlit.set" = "054e874b930b0241e73558bcc3b0b6c15f48ad2a038daef6512156feb1760ba3"
+"sf.ddl.create-data-movement-rule" = "1a498b7d6b40be26c94c222f87668c39a10d99e8b075fbe16bb3606419997d90"
+"sf.ddl.create-openflow-runtime" = "395e75ef8681034fbdcab6b3d25c57389bbe622da1db260df04fdafac99aec30"
+"sf.ddl.create-sequence.create-or-alter-sequence" = "ae9c5d2f072229d901f11ca8fc29a239937e8e7f172820cb5b1849a0b9bef8ce"
+"sf.ddl.create-sequence.create-sequence" = "9b7e1344c7b84fe501e50f141284462cc3042bdd7d5d7b0414d9bec35b97265d"
+"sf.ddl.create-sequence.define-sequence" = "bb1c636d9ac7a56b47613c33dd63900a7c41ed6f117cdbb493fee783025d75af"
+"sf.ddl.create-table.create-table-clone" = "582bb6dab3f3b4f4b05af44596b55ef78f3e9f01e70bf2e06e81c8ee1860b9aa"
+"sf.ddl.experiment.create-experiment" = "b5ddb6a953d937db4ede0f7ac0aac778cfa7bc617c73a34d86ea61416f7f2797"
+"sf.ddl.undrop-external-volume" = "eb8f669ec3eea211aad6cfa7487228e36139672babc4fa1350bf009fd9fcfeaf"
+
+[review.definitions]
+"sf.ddl.alter-application.upgrade-using-version" = "77d8d92fbec092f23770862ceee5146bd7ccf2d38cd4c8242327dedb9a3dd934"
+"sf.ddl.alter-compute-pool.stop-all" = "de4cb12516489444f5acdb5537a53ecab9577a18e3bf9b9913bbcc3e28f90ba5"
+"sf.ddl.alter-cortex-search.add-scoring-profile" = "bf9c593fe9af17594f55cfdeada19c115f56f17f8e7ab9498f75fe28a2f3fe2e"
+"sf.ddl.alter-streamlit.set" = "b1c640342348018c6b7c810dc46bc5b82a382837cb6d739baa6aabe202bcd038"
+"sf.ddl.create-data-movement-rule" = "700ab60144013c2a34310036d0165ea00415d401c1695402cd1a1d1f83e4f2b2"
+"sf.ddl.create-openflow-runtime" = "43a9931584a407d6ef079c21342d496156277ba62fe920354e8c3d88d205108b"
+"sf.ddl.create-sequence.create-or-alter-sequence" = "02d5df7ce84571ef03286dc957f79b9c631f9e769bfcdbfb1763d654cc200b47"
+"sf.ddl.create-sequence.create-sequence" = "2140ce342defcdff90c93602f7b8654b64db3819e6d06c24c4af55ecb292ca3c"
+"sf.ddl.create-sequence.define-sequence" = "cde1f9045a1afd7322eaa5ac2212747b4a0aaa0a7e22864d9474a12b2cff3c99"
+"sf.ddl.create-table.create-table-clone" = "fc141db0872a5504e4750af33aa4b51c07665287ed8fbf0aedac0ec66cd11a50"
+"sf.ddl.experiment.create-experiment" = "c45d7e4d3c3690b2d1d97937f8d33d8ef52900d9adabe76c3e64f2ab7c00edc9"
+"sf.ddl.undrop-external-volume" = "a9ea5bd96c8fd93cec48dfa8af88a70a050c296b7d54d985426a23cb37644ece"
