@@ -316,3 +316,52 @@ note = "Read in full under review brief version 1 against the documentation page
 [review.definitions]
 "sf.utility.call-with.language-javascript-as-call" = "53b81ab712fc6080e3dc5945b08ba45941cb4e4e1fcc240a5aa6e9f204e086a7"
 "sf.utility.execute-code-bundle" = "70b51c209e944d0db0671c304fdfb9625453b0659d3be495775eec95917a16f3"
+
+[[review]]
+id = "utility-016"
+family = "utility"
+parser_tree = "4891fc2c99b4b6e4571a236af739768a4b294ec7"
+reviewed_utc = "2026-11-15T14:04:12Z"
+verdict = "approved"
+forms = [
+  "sf.utility.call-with.table-language-java-runtime-version",
+  "sf.utility.call-with.table-language-java-runtime-version.java",
+  "sf.utility.call-with.table-language-python-runtime-version",
+  "sf.utility.call-with.table-language-python-runtime-version.python",
+  "sf.utility.call-with.table-language-scala-runtime-version",
+  "sf.utility.call-with.table-language-sql-as",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 82c64bb54; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.call-with.table-language-java-runtime-version" = "12fab3c80ddba32492a9d230e47957d802c4d121377675be3e7aa580daec9ba6"
+"sf.utility.call-with.table-language-java-runtime-version.java" = "423faf317ae00cf359ccd087cfa053ac71bc002c4f10f50f15c1201cfa104167"
+"sf.utility.call-with.table-language-python-runtime-version" = "065d5497bc95284bf2e32ae38bff65533545ca97d3c3913969c22f1d8d5f282f"
+"sf.utility.call-with.table-language-python-runtime-version.python" = "01839bd159911bb8fce1b9c9288fbb74a6a319e76f4572f6286bad32ac4a916a"
+"sf.utility.call-with.table-language-scala-runtime-version" = "88c7e9d8e80bcb1b63fca5c3fc301b1449e0022a98d966c3925cc7203421d112"
+"sf.utility.call-with.table-language-sql-as" = "94493ba98c40f74aca19af8d6d927d511d14ae7a17b3dbf79986325a38f6d1bc"
+
+[review.definitions]
+"sf.utility.call-with.table-language-java-runtime-version" = "a7af24a9f445bf4bbfd3de93211f429e5b4a8e7cc70d759594604edc9b579ce8"
+"sf.utility.call-with.table-language-java-runtime-version.java" = "af84c18dc3ea14c793aec7e08ff9ff9752f7a5983a0c0f072e78412726ef6cfe"
+"sf.utility.call-with.table-language-python-runtime-version" = "4cd409943f46704baa69449562336061c21fe9ff254f56d87bf840e479569094"
+"sf.utility.call-with.table-language-python-runtime-version.python" = "9b69f7876e7823f554ab13c8e41aafe685c746cac77592dc9c3b709603d0c1a0"
+"sf.utility.call-with.table-language-scala-runtime-version" = "753816500d43e6854ede37b000774caee7cd45e79a6001b87780626cb7f585a1"
+"sf.utility.call-with.table-language-sql-as" = "66456e0c2d796426ab2fde1fbc2331d639b881740f2f69a03a4d83bc04260956"
+
+[[review]]
+id = "utility-017"
+family = "utility"
+parser_tree = "4891fc2c99b4b6e4571a236af739768a4b294ec7"
+reviewed_utc = "2026-11-15T14:04:14Z"
+verdict = "approved"
+forms = [
+  "sf.utility.call-with.language-javascript-as-call",
+]
+note = "Approved at its last review with the same definition, obligations and cases; the cases whose parse trees changed with the parser at 82c64bb54, which reads CALL WITH options as typed properties, were read again under review brief version 1, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.call-with.language-javascript-as-call" = "d3957c1dab9e119ec22cf02c641c3cdae81a6c584998fa67f1fc76b4442e8112"
+
+[review.definitions]
+"sf.utility.call-with.language-javascript-as-call" = "53b81ab712fc6080e3dc5945b08ba45941cb4e4e1fcc240a5aa6e9f204e086a7"
