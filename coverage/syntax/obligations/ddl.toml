@@ -80180,6 +80180,34 @@ anchor = "doc.sql.alter-stage / External stage parameters (externalStageParams)"
 note = "omit the URL"
 
 [[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o646"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-stage / Syntax"
+note = "an unquoted s3 URL with nothing after //, observed: whether // starts a comment"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o647"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-stage / Syntax"
+note = "an unquoted s3 scheme alone, observed: whether the parsed s3 URL is read as s3: before a comment"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o648"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-stage / Syntax"
+note = "an unquoted URL whose scheme is not a cloud, observed: whether s3 is special or any word followed by // parses"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o649"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-stage / Syntax"
+note = "an unquoted gcs scheme alone, observed: whether gcs is refused before or at //"
+
+[[obligation]]
 id = "sf.ddl.alter-stage.unset-stage-undrop-retention-time-in-days.o001"
 kind = "positive"
 required = true
