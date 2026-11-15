@@ -147,7 +147,7 @@ impl Parser {
                 let option = match self.check_text_seq(&["TAG"]) {
                     true => {
                         self.skip();
-                        part("TAG", self.parse_view_tags()?)
+                        part(with_key(with, "TAG").as_str(), self.parse_view_tags()?)
                     }
                     false => self.parse_view_policy(&[&["MASKING"], &["PROJECTION"]], with)?,
                 };
@@ -197,7 +197,10 @@ impl Parser {
         }
         let with = self.match_token(TokenType::With);
         if self.match_text_seq(&["TAG"]) {
-            return Ok(Some(part("TAG", self.parse_view_tags()?)));
+            return Ok(Some(part(
+                with_key(with, "TAG").as_str(),
+                self.parse_view_tags()?,
+            )));
         }
         if with && self.match_text_seq(&["CONTACT"]) {
             return Ok(Some(part("CONTACT", self.parse_view_contacts()?)));
@@ -245,7 +248,8 @@ impl Parser {
             }
             parts.push(part(&words.join(" "), self.parse_view_names(empty)?));
         }
-        Ok(part(&format!("{} POLICY", kind.join(" ")), tuple(parts)))
+        let key = with_key(with, &format!("{} POLICY", kind.join(" ")));
+        Ok(part(&key, tuple(parts)))
     }
 
     /// `( <name> [ , ... ] )`, which needs a name unless `empty`: Snowflake accepts a row access policy ON ( ), but no comma without a name after it.
@@ -309,5 +313,13 @@ impl Parser {
         }
         self.expect_token(TokenType::RParen)?;
         Ok(tuple(kinds))
+    }
+}
+
+/// A clause's key, with the optional WITH written before it kept in front.
+fn with_key(with: bool, key: &str) -> String {
+    match with {
+        true => format!("WITH {key}"),
+        false => key.to_owned(),
     }
 }
