@@ -289,7 +289,7 @@ def refresh_catalogue(*, cache: Path, out: Path, hand_path: Path) -> Catalogue:
     )
     emitted: set[str] = set()
     for family in FAMILIES:
-        document: Row = _catalogue_file(out=out, family=family)
+        document: dict[str, list[Row]] = _catalogue_file(out=out, family=family)
         catalogue.forms[family] = [
             row for row in document.get("form", []) if row["source"] not in refreshed
         ] + fresh.forms[family]
@@ -308,7 +308,7 @@ def refresh_catalogue(*, cache: Path, out: Path, hand_path: Path) -> Catalogue:
     return catalogue
 
 
-def _catalogue_file(*, out: Path, family: str) -> Row:
+def _catalogue_file(*, out: Path, family: str) -> dict[str, list[Row]]:
     path: Path = out / "catalogue" / f"{family}.toml"
     return tomllib.loads(path.read_text()) if path.exists() else {}
 
