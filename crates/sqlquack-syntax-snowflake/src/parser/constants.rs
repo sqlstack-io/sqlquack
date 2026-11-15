@@ -1650,3 +1650,6 @@ pub(crate) const ALTER_COLUMN_ACTION_WORDS: &[&str] = &["SET", "DATA", "TYPE"];
 
 /// A lone `?` in a row pattern: the zero-or-one quantifier, or the reluctant mark after a quantifier.
 pub(crate) const ROW_PATTERN_QUESTION_MARK: &str = "?";
+
+/// The kind of the property that names the user a task runs as.
+pub(crate) const EXECUTE_AS_USER: &str = "EXECUTE AS USER";
