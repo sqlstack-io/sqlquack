@@ -176,13 +176,13 @@ fn given_a_snowflake_create_openflow_when_parsing_then_the_tree_keeps_its_parts(
         ProjectionTestCase {
             description: "a connector keeps its runtime",
             sql: "CREATE OPENFLOW CONNECTOR c1 IN RUNTIME r1 FROM DEFINITION d1",
-            pointer: "/0/create_object/operands/0/table/name/name",
+            pointer: "/0/create_object/properties/0/value/table/name/name",
             expected_value: json!("r1"),
         },
         ProjectionTestCase {
             description: "a connector keeps its definition",
             sql: "CREATE OPENFLOW CONNECTOR c1 IN RUNTIME r1 FROM DEFINITION d1",
-            pointer: "/0/create_object/operands/1/table/name/name",
+            pointer: "/0/create_object/operands/0/table/name/name",
             expected_value: json!("d1"),
         },
         ProjectionTestCase {
@@ -194,32 +194,44 @@ fn given_a_snowflake_create_openflow_when_parsing_then_the_tree_keeps_its_parts(
         ProjectionTestCase {
             description: "a connector keeps its stage location as a string",
             sql: "CREATE OPENFLOW CONNECTOR c1 IN RUNTIME r1 FROM '@s1/p1'",
-            pointer: "/0/create_object/operands/1/literal/value",
+            pointer: "/0/create_object/operands/0/literal/value",
             expected_value: json!("@s1/p1"),
         },
         ProjectionTestCase {
             description: "a runtime keeps its deployment",
             sql: "CREATE OPENFLOW RUNTIME r1 IN DEPLOYMENT p1 NODE_TYPE = SMALL MIN_NODES = 1 MAX_NODES = 2 EXECUTE_AS_ROLE = o1",
-            pointer: "/0/create_object/operands/0/table/name/name",
+            pointer: "/0/create_object/properties/0/value/table/name/name",
             expected_value: json!("p1"),
         },
         ProjectionTestCase {
             description: "a node type is a keyword, not a name",
             sql: "CREATE OPENFLOW RUNTIME r1 IN DEPLOYMENT p1 NODE_TYPE = small MIN_NODES = 1 MAX_NODES = 2 EXECUTE_AS_ROLE = o1",
-            pointer: "/0/create_object/properties/0/value/var/this",
+            pointer: "/0/create_object/properties/1/value/var/this",
             expected_value: json!("SMALL"),
         },
         ProjectionTestCase {
             description: "a runtime keeps its role as a name",
             sql: "CREATE OPENFLOW RUNTIME r1 IN DEPLOYMENT p1 NODE_TYPE = SMALL MIN_NODES = 1 MAX_NODES = 2 EXECUTE_AS_ROLE = o1",
-            pointer: "/0/create_object/properties/3/value/table/name/name",
+            pointer: "/0/create_object/properties/4/value/table/name/name",
             expected_value: json!("o1"),
         },
         ProjectionTestCase {
             description: "a runtime's integrations stay one list",
             sql: "CREATE OPENFLOW RUNTIME r1 IN DEPLOYMENT p1 NODE_TYPE = SMALL MIN_NODES = 1 MAX_NODES = 2 EXECUTE_AS_ROLE = o1 EXTERNAL_ACCESS_INTEGRATIONS = ( i1 , i2 )",
-            pointer: "/0/create_object/properties/4/value/tuple/expressions/1/table/name/name",
+            pointer: "/0/create_object/properties/5/value/tuple/expressions/1/table/name/name",
             expected_value: json!("i2"),
+        },
+        ProjectionTestCase {
+            description: "a runtime labels its deployment with IN DEPLOYMENT (recorded semantic error)",
+            sql: "CREATE OPENFLOW RUNTIME r1 IN DEPLOYMENT p1 NODE_TYPE = SMALL MIN_NODES = 1 MAX_NODES = 2 EXECUTE_AS_ROLE = o1",
+            pointer: "/0/create_object/properties/0/kind",
+            expected_value: json!("IN DEPLOYMENT"),
+        },
+        ProjectionTestCase {
+            description: "a connector labels its runtime with IN RUNTIME",
+            sql: "CREATE OPENFLOW CONNECTOR c1 IN RUNTIME r1 FROM DEFINITION d1",
+            pointer: "/0/create_object/properties/0/kind",
+            expected_value: json!("IN RUNTIME"),
         },
         ProjectionTestCase {
             description: "a deployment type is a keyword",
