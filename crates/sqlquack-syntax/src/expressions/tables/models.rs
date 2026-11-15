@@ -176,6 +176,9 @@ pub struct CreateTable {
     /// WITH CONNECTION `project.region.connection`, as BigQuery external tables use.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub with_connection: Option<TableRef>,
+    /// Snowflake: the words that made the table temporary when they were not TEMPORARY, e.g. `TEMP`, `VOLATILE` or `LOCAL TEMP`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub temporary_spelling: Option<String>,
 }
 
 /// Teradata index specification for CREATE TABLE
@@ -246,6 +249,7 @@ impl CreateTable {
             uuid: None,
             with_partition_columns: Vec::new(),
             with_connection: None,
+            temporary_spelling: None,
         }
     }
 }

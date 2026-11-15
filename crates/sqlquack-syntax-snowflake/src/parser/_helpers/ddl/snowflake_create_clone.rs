@@ -339,7 +339,7 @@ impl Parser {
         }))))
     }
 
-    /// `[ LOCAL | GLOBAL ] { TEMP | TEMPORARY } READ ONLY TABLE [ IF NOT EXISTS ] <name> CLONE <source> ...` after its temporary words, which stay in the modifier as written; None for anything else.
+    /// `[ LOCAL | GLOBAL ] { TEMP | TEMPORARY } READ ONLY TABLE [ IF NOT EXISTS ] <name> CLONE <source> ...` after its temporary words, which stay in the modifier as written, with READ ONLY as its first property; None for anything else.
     pub(crate) fn parse_snowflake_read_only_clone(
         &mut self,
         or_replace: bool,
@@ -370,10 +370,11 @@ impl Parser {
         if let Some(time_travel) = self.parse_clone_time_travel()? {
             operands.push(time_travel);
         }
-        let properties = self.parse_clone_options(CloneOptions::Copy)?;
+        let mut properties = vec![property("READ ONLY", None, None)];
+        properties.extend(self.parse_clone_options(CloneOptions::Copy)?);
         Ok(Some(Expression::CreateObject(Box::new(CreateObject {
             kind: "TABLE".to_owned(),
-            modifier: Some(format!("{} READ ONLY", self.written_temporary(start))),
+            modifier: Some(self.written_temporary(start)),
             or_replace,
             if_not_exists,
             name,

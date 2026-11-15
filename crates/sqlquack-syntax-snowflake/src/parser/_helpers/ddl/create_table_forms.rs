@@ -151,6 +151,7 @@ impl Parser {
             uuid: None,
             with_partition_columns: Vec::new(),
             with_connection: None,
+            temporary_spelling: None,
         })))
     }
 
@@ -318,6 +319,7 @@ impl Parser {
             uuid: uuid.clone(),
             with_partition_columns: Vec::new(),
             with_connection: None,
+            temporary_spelling: None,
         })))
     }
 
@@ -384,6 +386,7 @@ impl Parser {
             uuid: uuid.clone(),
             with_partition_columns: Vec::new(),
             with_connection: None,
+            temporary_spelling: None,
         })))
     }
 
@@ -489,6 +492,7 @@ impl Parser {
             uuid: uuid.clone(),
             with_partition_columns: Vec::new(),
             with_connection: None,
+            temporary_spelling: None,
         })))
     }
 
@@ -584,6 +588,7 @@ impl Parser {
             uuid: uuid.clone(),
             with_partition_columns: Vec::new(),
             with_connection: None,
+            temporary_spelling: None,
         })))
     }
 
@@ -654,6 +659,7 @@ impl Parser {
             uuid: uuid.clone(),
             with_partition_columns: Vec::new(),
             with_connection: None,
+            temporary_spelling: None,
         })))
     }
 
@@ -720,6 +726,7 @@ impl Parser {
             uuid: uuid.clone(),
             with_partition_columns: Vec::new(),
             with_connection: None,
+            temporary_spelling: None,
         })))
     }
 
@@ -793,6 +800,7 @@ impl Parser {
             uuid: uuid.clone(),
             with_partition_columns: Vec::new(),
             with_connection: None,
+            temporary_spelling: None,
         })))
     }
 
@@ -869,6 +877,7 @@ impl Parser {
             uuid: uuid.clone(),
             with_partition_columns: Vec::new(),
             with_connection: None,
+            temporary_spelling: None,
         })))
     }
 }

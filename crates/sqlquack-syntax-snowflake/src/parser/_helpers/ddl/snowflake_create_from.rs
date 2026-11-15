@@ -173,7 +173,7 @@ impl Parser {
     }
 
     /// The words before the token at `at` that made a CREATE temporary, as written and upper-cased: `[ LOCAL | GLOBAL ] { TEMP | TEMPORARY | VOLATILE }`.
-    pub(super) fn written_temporary(&self, at: usize) -> String {
+    pub(crate) fn written_temporary(&self, at: usize) -> String {
         let word = |offset: usize| {
             at.checked_sub(offset)
                 .and_then(|index| self.tokens.get(index))
