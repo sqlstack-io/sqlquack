@@ -233,3 +233,35 @@ fn given_a_dcm_project_run_or_an_anonymous_procedure_when_parsing_then_names_and
         );
     }
 }
+
+#[test]
+fn given_execute_keywords_and_aliases_when_parsing_then_they_are_told_apart() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "DEPLOY FROM DEPLOYMENT LAST is a keyword, not a deployment name",
+            sql: "EXECUTE DCM PROJECT v1 DEPLOY FROM DEPLOYMENT LAST ;",
+            pointer: "/0/execute_object/properties/0/value/var/this",
+            expected_value: json!("LAST"),
+        },
+        ProjectionTestCase {
+            description: "a quoted \"LAST\" stays a deployment name",
+            sql: "EXECUTE DCM PROJECT v1 DEPLOY FROM DEPLOYMENT \"LAST\" ;",
+            pointer: "/0/execute_object/properties/0/value/identifier/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "an IMPORTS alias keeps its AS",
+            sql: "EXECUTE DBT PROJECT v1 IMPORTS = ( 'm' AS 'n' ) ;",
+            pointer: "/0/execute_object/properties/0/value/tuple/expressions/0/tuple/expressions/1/property_e_q/left/identifier/name",
+            expected_value: json!("AS"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
