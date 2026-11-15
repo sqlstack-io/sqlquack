@@ -53,6 +53,7 @@ pub fn cast_type_name(data_type: &DataType) -> String {
                 .unnamed()
                 .map_or_else(|| "UNKNOWN".to_owned(), |unnamed| cast_type_name(&unnamed));
         }
+        DataType::Table { .. } => "TABLE",
         DataType::Geometry { .. } => "GEOMETRY",
         DataType::Geography { .. } => "GEOGRAPHY",
         DataType::CharacterSet { .. } => "CHAR",

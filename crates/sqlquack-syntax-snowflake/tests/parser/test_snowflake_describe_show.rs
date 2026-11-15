@@ -2,7 +2,7 @@ use serde_json::json;
 
 use sqlquack_syntax::{CallMode, Dialect};
 
-use crate::helpers::{accepted, statements};
+use crate::helpers::{accepted, statement_at, statements};
 use crate::test_types::{AcceptanceTestCase, ProjectionTestCase};
 
 #[test]
@@ -329,6 +329,60 @@ fn given_a_snowflake_show_when_parsing_then_the_tree_keeps_kind_container_and_op
                 .cloned()
                 .unwrap_or_default(),
             test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_function_signatures_with_table_arguments_when_parsing_then_each_type_is_typed() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "a DESC FUNCTION TABLE argument keeps its second column type",
+            sql: "DESC FUNCTION v1 ( TABLE ( INT , VARCHAR ) , NUMBER ( 9 , 2 ) ) ;",
+            pointer: "/0/describe/params/0/column_types/1/data_type",
+            expected_value: json!("var_char"),
+        },
+        ProjectionTestCase {
+            description: "a DESC FUNCTION argument after the TABLE keeps its precision",
+            sql: "DESC FUNCTION v1 ( TABLE ( INT , VARCHAR ) , NUMBER ( 9 , 2 ) ) ;",
+            pointer: "/0/describe/params/1/scale",
+            expected_value: json!(2),
+        },
+        ProjectionTestCase {
+            description: "a DROP FUNCTION TABLE argument is a table type",
+            sql: "DROP FUNCTION v1 ( TABLE ( INT , TEXT ) ) ;",
+            pointer: "/0/drop_function/parameters/0/column_types/1/data_type",
+            expected_value: json!("text"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+    let refusals = [
+        AcceptanceTestCase {
+            description: "a TABLE argument's column is never another TABLE",
+            sql: "DESC FUNCTION v1 ( TABLE ( INT , TABLE ( INT ) ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "a TABLE argument names at least one type",
+            sql: "DROP FUNCTION v1 ( TABLE ( ) ) ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+    ];
+    for test_case in refusals {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
             "{}",
             test_case.description
         );

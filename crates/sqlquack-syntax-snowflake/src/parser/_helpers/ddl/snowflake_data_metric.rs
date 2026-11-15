@@ -7,6 +7,7 @@ use sqlquack_syntax::expressions::columns::models::DataMetricExpectation;
 use sqlquack_syntax::expressions::columns::models::DataMetricFunctionAction;
 use sqlquack_syntax::expressions::columns::models::DataMetricFunctionClause;
 use sqlquack_syntax::expressions::columns::models::DataMetricFunctionItem;
+use sqlquack_syntax::expressions::columns::models::DataMetricReference;
 use sqlquack_syntax::expressions::columns::models::DataMetricTableArgument;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::tokens::models::TokenType;
@@ -146,7 +147,7 @@ impl Parser {
         if !self.match_token(TokenType::On) {
             return Err(self.parse_error("Expected ON after a data metric function name"));
         }
-        let (arguments, column_omitted) = self.parse_data_metric_arguments()?;
+        let (arguments, column_omitted, referenced_table) = self.parse_data_metric_arguments()?;
         let mut clauses: Vec<DataMetricFunctionClause> = Vec::new();
         match kind {
             "ADD" => {
@@ -161,34 +162,44 @@ impl Parser {
             name,
             arguments,
             column_omitted,
+            referenced_table,
             clauses,
         })
     }
 
-    /// `( [ <column>, ... ] [ , TABLE ( <name> ( <column>, ... ) ) | , <lambda> ] )`, whose column list may be empty; returns the arguments and whether a leading comma left the column out.
-    fn parse_data_metric_arguments(&mut self) -> Result<(Vec<Expression>, bool)> {
+    /// `( [ <column>, ... ] [ , TABLE ( <name> ( <column>, ... ) ) | , <lambda> ] )`, whose column list may be empty; returns the arguments, whether a leading comma left the column out, and the TABLE argument.
+    fn parse_data_metric_arguments(
+        &mut self,
+    ) -> Result<(Vec<Expression>, bool, Option<DataMetricReference>)> {
         self.expect_token(TokenType::LParen)?;
         let leading_comma = self.match_token(TokenType::Comma);
-        let arguments = if self.check(TokenType::RParen) && !leading_comma {
-            Vec::new()
-        } else {
-            self.parse_function_arguments()?
-        };
+        let mut arguments: Vec<Expression> = Vec::new();
+        let mut reference: Option<DataMetricReference> = None;
+        if !self.check(TokenType::RParen) || leading_comma {
+            loop {
+                if self.check(TokenType::Table) && self.check_next(TokenType::LParen) {
+                    self.current += 2;
+                    reference = Some(self.parse_data_metric_reference()?);
+                    break;
+                }
+                arguments.push(self.parse_single_function_argument()?);
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+                if self.check(TokenType::Comma) {
+                    return Err(self.parse_error("Expected a function argument between commas"));
+                }
+            }
+        }
         self.expect_token(TokenType::RParen)?;
         let column = |argument: &Expression| matches!(argument, Expression::Column(_));
-        let last_allowed = |argument: &Expression| match argument {
-            Expression::Lambda(_) => true,
-            Expression::Function(table) if table.name.eq_ignore_ascii_case("TABLE") => {
-                matches!(table.args.as_slice(), [Expression::Function(source)]
-                    if !source.args.is_empty() && source.args.iter().all(column))
-            }
-            _ => false,
-        };
-        let valid = match arguments.split_last() {
-            None => true,
-            Some((last, columns)) if leading_comma => columns.is_empty() && last_allowed(last),
-            Some((last, columns)) => {
-                columns.iter().all(column) && (column(last) || last_allowed(last))
+        let lambda = |argument: &Expression| matches!(argument, Expression::Lambda(_));
+        let valid = match (arguments.split_last(), &reference) {
+            (None, _) => true,
+            (Some(_), Some(_)) => !leading_comma && arguments.iter().all(column),
+            (Some((last, columns)), None) if leading_comma => columns.is_empty() && lambda(last),
+            (Some((last, columns)), None) => {
+                columns.iter().all(column) && (column(last) || lambda(last))
             }
         };
         if !valid {
@@ -196,7 +207,17 @@ impl Parser {
                 "A data metric function takes columns, then optionally TABLE ( <name> ( <column>, ... ) ) or a lambda",
             ));
         }
-        Ok((arguments, leading_comma))
+        Ok((arguments, leading_comma, reference))
+    }
+
+    /// `<name> ( <column>, ... ) )` after a data metric function's `TABLE (`.
+    fn parse_data_metric_reference(&mut self) -> Result<DataMetricReference> {
+        let table = self.parse_object_name_ref()?;
+        self.expect_token(TokenType::LParen)?;
+        let columns = self.parse_identifier_list()?;
+        self.expect_token(TokenType::RParen)?;
+        self.expect_token(TokenType::RParen)?;
+        Ok(DataMetricReference { table, columns })
     }
 
     /// A clause of ADD DATA METRIC FUNCTION, or none.
