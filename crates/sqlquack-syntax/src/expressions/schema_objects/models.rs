@@ -1443,6 +1443,9 @@ pub struct Privilege {
     /// Optional column list for column-level privileges (e.g., UPDATE(col1, col2))
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub columns: Vec<String>,
+    /// The class a Snowflake `CREATE SNOWFLAKE.<schema>.<class>` privilege creates, where a schema left out of `SNOWFLAKE..<class>` stays a null part.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub class: Option<TableRef>,
 }
 
 /// Principal in GRANT/REVOKE (user, role, etc.)

@@ -127,7 +127,11 @@ impl Parser<'_> {
             columns =
                 self.parenthesized(|parser| Ok(joined(parser.multipart_identifier()?).name))?;
         }
-        Ok(Privilege { name, columns })
+        Ok(Privilege {
+            name,
+            columns,
+            class: None,
+        })
     }
 
     /// `string_literal_or_parameter`: a string, `@name`, `?` or `@@name`, the last three by kind.
