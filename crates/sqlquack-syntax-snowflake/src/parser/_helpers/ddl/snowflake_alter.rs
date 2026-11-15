@@ -14,6 +14,7 @@ use sqlquack_syntax::expressions::operators::models::NamedArgSeparator;
 use sqlquack_syntax::expressions::operators::models::NamedArgument;
 use sqlquack_syntax::expressions::schema_objects::models::AlterObject;
 use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
+use sqlquack_syntax::expressions::statements::models::Var;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
@@ -923,6 +924,23 @@ pub(super) fn keyed_pair(key: Expression, value: Expression, arrow: bool) -> Exp
         })),
         key => Expression::PropertyEQ(Box::new(BinaryOp::new(key, value))),
     }
+}
+
+/// A value written as a name, or as a keyword phrase such as `SECURITY INTEGRATIONS` when `more` words followed a plain one-part name; after a quoted or qualified name the words stay part of its last part.
+pub(super) fn value_phrase(mut first: Box<TableRef>, more: Vec<String>) -> Expression {
+    if more.is_empty() {
+        return Expression::Table(first);
+    }
+    if first.name.quoted || first.schema.is_some() || first.catalog.is_some() {
+        first.name.name = std::iter::once(first.name.name)
+            .chain(more)
+            .collect::<Vec<_>>()
+            .join(" ");
+        return Expression::Table(first);
+    }
+    let words = std::iter::once(first.name.name).chain(more);
+    let this = words.collect::<Vec<_>>().join(" ").to_ascii_uppercase();
+    Expression::Var(Box::new(Var { this }))
 }
 
 /// One property of kind `kind`.
