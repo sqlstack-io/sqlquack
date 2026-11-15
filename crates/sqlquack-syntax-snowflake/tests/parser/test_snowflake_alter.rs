@@ -664,6 +664,18 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_the_tree_names_ki
             expected_value: json!("STOP ALL"),
         },
         ProjectionTestCase {
+            description: "UPGRADE USING VERSION keeps PATCH as a property (recorded semantic error)",
+            sql: "ALTER APPLICATION v1 UPGRADE USING VERSION v1 PATCH 1 ;",
+            pointer: "/0/alter_object/properties/0/value/literal/value",
+            expected_value: json!("1"),
+        },
+        ProjectionTestCase {
+            description: "UPGRADE USING VERSION with PATCH names only USING VERSION as its action",
+            sql: "ALTER APPLICATION v1 UPGRADE USING VERSION v1 PATCH 1 ;",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("UPGRADE USING VERSION"),
+        },
+        ProjectionTestCase {
             description: "IF EXISTS is kept",
             sql: "ALTER TAG IF EXISTS v1 RENAME TO v2",
             pointer: "/0/alter_object/if_exists",
