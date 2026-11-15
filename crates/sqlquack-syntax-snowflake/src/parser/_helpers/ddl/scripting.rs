@@ -410,6 +410,8 @@ impl Parser {
             privileges,
             root_only: false,
             listing_filters,
+            exclude_jobs: false,
+            service_types: Vec::new(),
         })))
     }
 
