@@ -960,6 +960,30 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             expected_value: json!(null),
         },
         ProjectionTestCase {
+            description: "a runtime version written as a name says so (recorded semantic error)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = m1 PACKAGES = ( 'm' ) HANDLER = 'm' AS 'm'",
+            pointer: "/0/create_function/runtime_version_bare",
+            expected_value: json!("Name"),
+        },
+        ProjectionTestCase {
+            description: "a runtime version written as a number says so",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = 3 PACKAGES = ( 'm' ) HANDLER = 'm' AS 'm'",
+            pointer: "/0/create_function/runtime_version_bare",
+            expected_value: json!("Number"),
+        },
+        ProjectionTestCase {
+            description: "a runtime version written as a string is no bare value",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.11' PACKAGES = ( 'm' ) HANDLER = 'm' AS 'm'",
+            pointer: "/0/create_function/runtime_version_bare",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "a package written as a name says so by position (recorded semantic error)",
+            sql: "CREATE FUNCTION v1 ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.11' PACKAGES = ( 'm' , m1 ) HANDLER = 'm' AS 'm'",
+            pointer: "/0/create_function/packages_bare",
+            expected_value: json!([[1, "Name"]]),
+        },
+        ProjectionTestCase {
             description: "a typed literal keeps its type's name and parameters",
             sql: "SELECT PERIOD ( INT ) 'x'",
             pointer: "/0/select/expressions/0/cast/to/name",
