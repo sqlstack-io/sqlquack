@@ -380,3 +380,55 @@ fn given_a_snowflake_dynamic_table_user_with_secondary_roles_when_parsing_then_t
         );
     }
 }
+
+#[test]
+fn given_optional_words_in_table_and_index_ddl_when_parsing_then_they_are_kept() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "FORCE after a dynamic table column's masking policy is kept",
+            sql: "ALTER DYNAMIC TABLE v1 ALTER v1 SET MASKING POLICY v1 FORCE ;",
+            pointer: "/0/alter_object/operands/0/tuple/expressions/3/identifier/name",
+            expected_value: json!("FORCE"),
+        },
+        ProjectionTestCase {
+            description: "a dynamic table's ADD after DROP ROW ACCESS POLICY is its own property",
+            sql: "ALTER DYNAMIC TABLE v1 DROP ROW ACCESS POLICY v1 , ADD ROW ACCESS POLICY v2 ON ( v1 ) ;",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("ADD ROW ACCESS POLICY"),
+        },
+        ProjectionTestCase {
+            description: "a table's ADD after DROP ROW ACCESS POLICY keeps ADD in its kind",
+            sql: "ALTER TABLE v1 DROP ROW ACCESS POLICY v1 , ADD ROW ACCESS POLICY v2 ON ( v1 ) ;",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("ADD ROW ACCESS POLICY"),
+        },        ProjectionTestCase {
+            description: "WITH before a dynamic Iceberg table's tags is kept in their kind",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 TARGET_LAG = '1 minute' WAREHOUSE = v1 WITH TAG ( v1 = 'm' ) AS SELECT 1 ;",
+            pointer: "/0/create_object/properties/2/kind",
+            expected_value: json!("WITH TAG"),
+        },
+        ProjectionTestCase {
+            description: "a dynamic Iceberg table's tags without WITH keep the bare kind",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 TARGET_LAG = '1 minute' WAREHOUSE = v1 TAG ( v1 = 'm' ) AS SELECT 1 ;",
+            pointer: "/0/create_object/properties/2/kind",
+            expected_value: json!("TAG"),
+        },
+        ProjectionTestCase {
+            description: "OR REPLACE on CREATE INDEX is kept",
+            sql: "CREATE OR REPLACE INDEX IF NOT EXISTS v1 ON v1 ( v1 ) ;",
+            pointer: "/0/create_index/or_replace",
+            expected_value: json!(true),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
