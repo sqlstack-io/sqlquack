@@ -4,6 +4,7 @@ use crate::parser::_helpers::ddl::snowflake_routines::nullability_property;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::ColumnDef;
 use sqlquack_syntax::expressions::schema_objects::main::record_function_property::record_function_property;
+use sqlquack_syntax::expressions::schema_objects::models::BareValue;
 use sqlquack_syntax::expressions::schema_objects::models::CreateFunction;
 use sqlquack_syntax::expressions::schema_objects::models::FunctionBody;
 use sqlquack_syntax::expressions::schema_objects::models::FunctionPropertyKind;
@@ -90,6 +91,8 @@ impl Parser {
             handler_uses_eq: false,
             runtime_version: None,
             packages: None,
+            runtime_version_bare: None,
+            packages_bare: Vec::new(),
             parameter_style: None,
             snowflake_properties: return_nullability
                 .into_iter()
@@ -440,10 +443,20 @@ impl Parser {
             || self.check(TokenType::Number)
             || self.is_identifier_or_keyword_token()
         {
+            function.runtime_version_bare = self.bare_value();
             function.runtime_version = Some(self.advance_text()?);
         }
         function = record_function_property(function, FunctionPropertyKind::RuntimeVersion);
         Ok(function)
+    }
+
+    /// How the current token writes a value that is usually a string: none for a string.
+    fn bare_value(&self) -> Option<BareValue> {
+        match self.peek().token_type {
+            TokenType::String => None,
+            TokenType::Number => Some(BareValue::Number),
+            _ => Some(BareValue::Name),
+        }
     }
 
     fn parse_create_function_packages(
@@ -460,6 +473,9 @@ impl Parser {
                     || self.check(TokenType::Number)
                     || self.check_keyword()
                 {
+                    if let Some(bare) = self.bare_value() {
+                        function.packages_bare.push((parsed_packages.len(), bare));
+                    }
                     parsed_packages.push(self.advance_text()?);
                 } else {
                     break;
