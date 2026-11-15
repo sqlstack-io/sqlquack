@@ -1,13 +1,8 @@
 //! Snowflake's ALTER TABLE ADD of a column or an out-of-line constraint, read with the CREATE TABLE grammar.
 
-use crate::parser::_helpers::ddl::snowflake_create_table::{
-    constraint_modifiers, set_reference_words, tuple_names,
-};
-use crate::parser::models::{Constraint, Parser};
-use sqlquack_syntax::expressions::columns::models::{
-    AlterTableAction, ColumnDef, ForeignKeyRef, TableConstraint,
-};
-use sqlquack_syntax::expressions::tree::models::Expression;
+use crate::parser::_helpers::ddl::snowflake_create_table::table_constraint;
+use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::columns::models::{AlterTableAction, ColumnDef};
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
@@ -39,76 +34,4 @@ impl Parser {
             constraint,
         )?)))
     }
-}
-
-/// An out-of-line constraint as the table constraint ALTER TABLE ADD holds, its property words set on their typed fields.
-fn table_constraint(constraint: Constraint) -> Result<TableConstraint> {
-    let Constraint {
-        kind,
-        name,
-        operand,
-        references,
-        properties,
-    } = constraint;
-    let has_constraint_keyword = name.is_some();
-    if let Some((table, columns)) = references {
-        let Expression::Table(table) = table else {
-            return Err(sqlquack_syntax::tokens::errors::Error::internal(
-                "the parser reached a state its checks rule out",
-            ));
-        };
-        let (reference, properties) = set_reference_words(
-            ForeignKeyRef {
-                table: *table,
-                columns: tuple_names(columns),
-                on_delete: None,
-                on_update: None,
-                on_update_first: false,
-                match_type: None,
-                match_after_actions: false,
-                constraint_name: None,
-                deferrable: None,
-                has_foreign_key_keywords: true,
-            },
-            properties,
-        );
-        return Ok(TableConstraint::ForeignKey {
-            name,
-            columns: tuple_names(operand),
-            references: Some(Box::new(reference)),
-            on_delete: None,
-            on_update: None,
-            modifiers: constraint_modifiers(properties),
-        });
-    }
-    let modifiers = constraint_modifiers(properties);
-    Ok(match kind {
-        "UNIQUE" => TableConstraint::Unique {
-            name,
-            columns: tuple_names(operand),
-            key_parts: Vec::new(),
-            columns_parenthesized: true,
-            modifiers,
-            has_constraint_keyword,
-            nulls_not_distinct: false,
-        },
-        "PRIMARY KEY" => TableConstraint::PrimaryKey {
-            name,
-            columns: tuple_names(operand),
-            key_parts: Vec::new(),
-            timeseries_columns: Vec::new(),
-            include_columns: Vec::new(),
-            modifiers,
-            has_constraint_keyword,
-        },
-        _ => TableConstraint::Check {
-            name,
-            expression: operand.ok_or_else(|| {
-                sqlquack_syntax::tokens::errors::Error::internal(
-                    "the parser reached a state its checks rule out",
-                )
-            })?,
-            modifiers,
-        },
-    })
 }

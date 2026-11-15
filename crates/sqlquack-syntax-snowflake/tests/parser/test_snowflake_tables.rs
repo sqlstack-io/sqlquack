@@ -433,27 +433,27 @@ fn given_a_snowflake_table_with_policies_when_parsing_then_its_columns_and_prope
             expected_value: json!("p1"),
         },
         ProjectionTestCase {
-            description: "the primary key is the first property",
+            description: "the primary key is a typed constraint, not a property",
             sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
-            pointer: "/0/create_object/properties/0/kind",
-            expected_value: json!("PRIMARY KEY"),
+            pointer: "/0/create_object/constraints/0/PrimaryKey/modifiers/rely",
+            expected_value: json!(true),
         },
         ProjectionTestCase {
-            description: "the row access policy is the second property",
+            description: "the row access policy is the first property",
             sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
-            pointer: "/0/create_object/properties/1/kind",
+            pointer: "/0/create_object/properties/0/kind",
             expected_value: json!("ROW ACCESS POLICY"),
         },
         ProjectionTestCase {
-            description: "there are only two properties",
+            description: "there is only one property",
             sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
-            pointer: "/0/create_object/properties/2",
+            pointer: "/0/create_object/properties/1",
             expected_value: json!(null),
         },
         ProjectionTestCase {
             description: "the primary key keeps its name",
             sql: "CREATE TRANSIENT TABLE v1 ( v1 INT NOT NULL MASKING POLICY p1 USING ( v1 , v2 ) , v2 INT , CONSTRAINT k1 PRIMARY KEY ( v1 ) RELY ) ROW ACCESS POLICY p2 ON ( v1 ) ;",
-            pointer: "/0/create_object/properties/0/name/name",
+            pointer: "/0/create_object/constraints/0/PrimaryKey/name/name",
             expected_value: json!("k1"),
         },
     ];
@@ -1485,6 +1485,47 @@ fn given_inline_constraint_modifiers_when_parsing_then_they_are_typed_on_the_con
             description: "DISABLE after an added UNIQUE is not enabled",
             sql: "ALTER TABLE v1 ADD UNIQUE ( v1 ) DISABLE ;",
             pointer: "/0/alter_table/actions/0/AddConstraint/Unique/modifiers/enabled",
+            expected_value: json!(false),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_define_table_with_out_of_line_constraints_when_parsing_then_they_are_typed() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "RELY after a DEFINE's named UNIQUE is a typed modifier, not a word",
+            sql: "DEFINE TABLE v1 ( v1 INT , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' ) ;",
+            pointer: "/0/create_object/constraints/0/Unique/modifiers/rely",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "the COMMENT after a DEFINE's UNIQUE is the constraint's comment",
+            sql: "DEFINE TABLE v1 ( v1 INT , CONSTRAINT v1 UNIQUE ( v1 , v1 ) RELY COMMENT 'm' ) ;",
+            pointer: "/0/create_object/constraints/0/Unique/modifiers/comment",
+            expected_value: json!("m"),
+        },
+        ProjectionTestCase {
+            description:
+                "NOT ENFORCED after a DEFINE's reference without FOREIGN KEY is not enforced",
+            sql: "DEFINE TABLE v1 ( v1 INT , ( v1 ) REFERENCES v1 NOT ENFORCED ) ;",
+            pointer: "/0/create_object/constraints/0/ForeignKey/modifiers/enforced",
+            expected_value: json!(false),
+        },
+        ProjectionTestCase {
+            description:
+                "a DEFINE's reference without FOREIGN KEY keeps that the keywords were omitted",
+            sql: "DEFINE TABLE v1 ( v1 INT , ( v1 ) REFERENCES v1 NOT ENFORCED ) ;",
+            pointer:
+                "/0/create_object/constraints/0/ForeignKey/references/has_foreign_key_keywords",
             expected_value: json!(false),
         },
     ];
