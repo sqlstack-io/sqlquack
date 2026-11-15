@@ -279,3 +279,20 @@ note = "Read in full under review brief version 1 against the documentation page
 
 [review.definitions]
 "sf.utility.execute-job-service" = "698e7e3c000c21f8956c0bc257ba54e2af95a14b450e96a23ccdf4f61c906605"
+
+[[review]]
+id = "utility-014"
+family = "utility"
+parser_tree = "0cca295bf9de498b61adfbc95c00f2d066d23251"
+reviewed_utc = "2026-11-15T04:17:54Z"
+verdict = "approved"
+forms = [
+  "sf.utility.execute-job-service",
+]
+note = "Approved at its last review with the same definition, obligations and cases; the cases whose parse trees changed with the parser at 548fe5bda, which keeps keywords, key-value pairs and omitted name parts in their own fields, were read again under review brief version 1, and every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.utility.execute-job-service" = "b34d7de74b3d1054325ee6bc4931066e932c24a9d341aff337cf1dfcab1413bc"
+
+[review.definitions]
+"sf.utility.execute-job-service" = "698e7e3c000c21f8956c0bc257ba54e2af95a14b450e96a23ccdf4f61c906605"
