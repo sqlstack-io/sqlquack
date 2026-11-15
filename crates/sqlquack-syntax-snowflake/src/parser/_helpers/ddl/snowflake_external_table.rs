@@ -184,6 +184,7 @@ impl Parser {
             self.expect_token(TokenType::As)?;
             let expression_start = self.current;
             let expression = self.parse_expression()?;
+            let expression = self.release_trailing_not_null(expression);
             let negated_constraint = self.tokens
                 [expression_start..(self.current + 1).min(self.tokens.len())]
                 .windows(2)
@@ -229,8 +230,40 @@ impl Parser {
         Ok(with_modifier_words(column, index, words))
     }
 
-    /// The constraint itself of `parse_external_constraint`.
+    /// `expression` without a trailing bare NOT NULL, which the column's inline constraint starts with, and the position moved back before it; `expression` itself otherwise.
+    fn release_trailing_not_null(&mut self, expression: Expression) -> Expression {
+        let bare = match &self.tokens[..self.current] {
+            [.., before, not, null] => {
+                not.token_type == TokenType::Not
+                    && null.token_type == TokenType::Null
+                    && before.token_type != TokenType::Is
+            }
+            _ => false,
+        };
+        let operand = match &expression {
+            Expression::Not(negated) => match &negated.this {
+                Expression::Is(test) if bare && matches!(test.right, Expression::Null(_)) => {
+                    Some(test.left.clone())
+                }
+                _ => None,
+            },
+            _ => None,
+        };
+        match operand {
+            Some(operand) => {
+                self.current -= 2;
+                operand
+            }
+            None => expression,
+        }
+    }
+
+    /// The constraint itself of `parse_external_constraint`, after an optional NOT NULL.
     fn parse_external_constraint_kind(&mut self, mut column: ColumnDef) -> Result<ColumnDef> {
+        if self.match_keywords(&[TokenType::Not, TokenType::Null]) {
+            column.nullable = Some(false);
+            column.constraint_order.push(ConstraintType::NotNull);
+        }
         let named = self.match_text_seq(&["CONSTRAINT"]);
         let constraint_name = match named {
             true => Some(self.parse_external_name()?),
@@ -415,7 +448,10 @@ impl Parser {
             let adjacent = !self.is_at_end()
                 && self.tokens[self.current - 1].span.end == self.peek().span.start;
             if !adjacent {
-                let path = self.tokens_to_sql(start, self.current);
+                let path = self.source_text_range(
+                    self.tokens[start].span.start,
+                    self.tokens[self.current - 1].span.end,
+                );
                 return Ok(Expression::Literal(Box::new(Literal::String(path))));
             }
             if self.check(TokenType::String) {
