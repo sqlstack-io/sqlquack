@@ -27,6 +27,7 @@ use sqlquack_syntax::expressions::statements::models::Describe;
 use sqlquack_syntax::expressions::statements::models::Schema;
 use sqlquack_syntax::expressions::statements::models::Show;
 use sqlquack_syntax::expressions::tree::models::Expression;
+use sqlquack_syntax::expressions::types::models::DataType;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::tokens::models::Token;
@@ -262,57 +263,26 @@ impl Parser {
         Ok((properties, target))
     }
 
-    fn parse_describe_params(&mut self, kind: &Option<String>) -> Result<Vec<String>> {
-        Ok(
-            if matches!(kind.as_deref(), Some("PROCEDURE") | Some("FUNCTION"))
-                && self.match_token(TokenType::LParen)
-            {
-                let mut type_args: Vec<String> = Vec::new();
-                if !self.check(TokenType::RParen) {
-                    loop {
-                        if self.is_snowflake() {
-                            self.check_describe_argument_start()?;
-                        }
-                        let mut parts: Vec<String> = Vec::new();
-                        let mut paren_depth = 0usize;
-                        while !self.is_at_end() {
-                            if self.is_snowflake() && self.check(TokenType::String) {
-                                return Err(self.parse_error("Expected an argument data type"));
-                            }
-                            if self.check(TokenType::LParen) {
-                                paren_depth += 1;
-                                parts.push(self.advance_text()?);
-                            } else if self.check(TokenType::RParen) {
-                                if paren_depth == 0 {
-                                    break;
-                                }
-                                paren_depth -= 1;
-                                parts.push(self.advance_text()?);
-                            } else if self.check(TokenType::Comma) && paren_depth == 0 {
-                                break;
-                            } else if self.is_snowflake()
-                                && self.check(TokenType::Comma)
-                                && self.check_next(TokenType::RParen)
-                            {
-                                return Err(
-                                    self.parse_error("Expected a column type after the comma")
-                                );
-                            } else {
-                                parts.push(self.advance_text()?);
-                            }
-                        }
-                        type_args.push(parts.join(" ").trim().to_uppercase());
-                        if !self.match_token(TokenType::Comma) {
-                            break;
-                        }
-                    }
+    fn parse_describe_params(&mut self, kind: &Option<String>) -> Result<Vec<DataType>> {
+        if !matches!(kind.as_deref(), Some("PROCEDURE") | Some("FUNCTION"))
+            || !self.match_token(TokenType::LParen)
+        {
+            return Ok(Vec::new());
+        }
+        let mut type_args: Vec<DataType> = Vec::new();
+        if !self.check(TokenType::RParen) {
+            loop {
+                if self.is_snowflake() {
+                    self.check_describe_argument_start()?;
                 }
-                self.expect_token(TokenType::RParen)?;
-                type_args
-            } else {
-                Vec::new()
-            },
-        )
+                type_args.push(self.parse_data_type()?);
+                if !self.match_token(TokenType::Comma) {
+                    break;
+                }
+            }
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(type_args)
     }
 
     fn parse_describe_partition(&mut self) -> Result<Option<Box<Expression>>> {

@@ -9,7 +9,6 @@ use crate::parser::constants::SNOWFLAKE_KEYWORD_VALUE_PROPERTIES;
 use crate::parser::constants::SNOWFLAKE_STRING_KEY_MAP_PROPERTIES;
 use crate::parser::constants::TASK_ACTIONS;
 use crate::parser::models::Parser;
-use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::names::main::identifier_from_token::identifier_from_token;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::TableRef;
@@ -790,19 +789,7 @@ impl Parser {
             return Ok(arguments);
         }
         loop {
-            if self.check(TokenType::Table) && self.check_next(TokenType::LParen) {
-                self.current += 2;
-                let mut columns = vec![Expression::DataType(self.parse_data_type()?)];
-                while self.match_token(TokenType::Comma) {
-                    columns.push(Expression::DataType(self.parse_data_type()?));
-                }
-                self.expect_token(TokenType::RParen)?;
-                arguments.push(Expression::Function(Box::new(Function::new(
-                    "TABLE", columns,
-                ))));
-            } else {
-                arguments.push(Expression::DataType(self.parse_data_type()?));
-            }
+            arguments.push(Expression::DataType(self.parse_data_type()?));
             if !self.match_token(TokenType::Comma) {
                 break;
             }
