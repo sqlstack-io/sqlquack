@@ -262,20 +262,51 @@ fn bracket_structure(tokens: &[String]) -> (Vec<usize>, Vec<Option<usize>>) {
     (depths, partners)
 }
 
-/// A gap of line comments with each line after a break, and the token after it, at `indentation`.
+/// A comment gap with each line after a break, and the token after it, at `indentation`; lines
+/// inside a block comment keep their text.
 fn indent_comment_lines(gap: &str, indentation: usize) -> String {
     let margin = " ".repeat(indentation);
     let lines: Vec<&str> = gap.split('\n').collect();
     let mut indented = lines[0].to_string();
+    let mut in_block = ends_in_block_comment(lines[0], false);
     for (position, line) in lines.iter().enumerate().skip(1) {
-        let text = line.trim_start_matches(' ');
         indented.push('\n');
-        if !text.is_empty() || position == lines.len() - 1 {
+        let text = line.trim_start_matches(' ');
+        if in_block {
+            indented.push_str(line);
+        } else if !text.is_empty() || position == lines.len() - 1 {
             indented.push_str(&margin);
             indented.push_str(text);
         }
+        in_block = ends_in_block_comment(line, in_block);
     }
     indented
+}
+
+/// Whether a block comment is still open at the end of comment-gap `line`.
+fn ends_in_block_comment(line: &str, mut in_block: bool) -> bool {
+    let mut rest = line;
+    loop {
+        if in_block {
+            let Some(end) = rest.find("*/") else {
+                return true;
+            };
+            rest = &rest[end + 2..];
+            in_block = false;
+        } else {
+            let Some(start) = rest.find("/*") else {
+                return false;
+            };
+            if ["--", "//"]
+                .iter()
+                .any(|marker| rest[..start].contains(marker))
+            {
+                return false;
+            }
+            rest = &rest[start + 2..];
+            in_block = true;
+        }
+    }
 }
 
 fn newline(indentation: usize) -> String {
@@ -519,12 +550,17 @@ impl PrintedSql<'_> {
                     && !self.is(opener - 1, DECODE_FUNCTION)
                     && !self.is(opener - 1, WINDOW_KEYWORD);
                 for index in opener + 2..closer {
-                    if separates_arguments
-                        && self.depths[index] == self.depths[opener + 1]
-                        && self.tokens[index - 1] == COMMA
-                        && !self.gaps[index].contains('\n')
+                    if !separates_arguments
+                        || self.depths[index] != self.depths[opener + 1]
+                        || self.tokens[index - 1] != COMMA
                     {
+                        continue;
+                    }
+                    if !self.gaps[index].contains('\n') {
                         self.set_break(index, &inner);
+                    } else if !self.gaps[index].trim().is_empty() {
+                        self.gaps[index] =
+                            indent_comment_lines(&self.gaps[index], indentation + self.indent);
                     }
                 }
             }
