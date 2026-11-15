@@ -1,5 +1,7 @@
-use crate::helpers::snowflake_kind;
-use crate::test_types::SnowflakeVerdictTestCase;
+use serde_json::json;
+
+use crate::helpers::{snowflake_kind, statement_at};
+use crate::test_types::{ProjectionTestCase, SnowflakeVerdictTestCase};
 
 #[test]
 fn given_snowflake_streams_when_parsing_then_their_grammar_is_checked() {
@@ -267,6 +269,44 @@ fn given_snowflake_view_alters_when_parsing_then_their_grammar_is_checked() {
         assert_eq!(
             snowflake_kind(test_case.sql),
             test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_view_clause_after_an_optional_with_when_parsing_then_the_with_is_kept() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "WITH before a view's row access policy is kept in its key",
+            sql: "CREATE VIEW v1 WITH ROW ACCESS POLICY v1 ON ( v1 ) AS SELECT 1 ;",
+            pointer: "/0/create_view/table_properties/0/property_e_q/left/identifier/name",
+            expected_value: json!("WITH ROW ACCESS POLICY"),
+        },
+        ProjectionTestCase {
+            description: "a row access policy without WITH keeps the bare key",
+            sql: "CREATE VIEW v1 ROW ACCESS POLICY v1 ON ( v1 ) AS SELECT 1 ;",
+            pointer: "/0/create_view/table_properties/0/property_e_q/left/identifier/name",
+            expected_value: json!("ROW ACCESS POLICY"),
+        },
+        ProjectionTestCase {
+            description: "WITH before a view column's masking policy is kept in its key",
+            sql: "CREATE VIEW v1 ( v1 WITH MASKING POLICY p1 ) AS SELECT 1 ;",
+            pointer: "/0/create_view/columns/0/options/0/property_e_q/left/identifier/name",
+            expected_value: json!("WITH MASKING POLICY"),
+        },
+        ProjectionTestCase {
+            description: "WITH before a materialized view's tags is kept in its key",
+            sql: "CREATE MATERIALIZED VIEW v1 WITH TAG ( t1 = 'm' ) AS SELECT 1 ;",
+            pointer: "/0/create_view/table_properties/0/property_e_q/left/identifier/name",
+            expected_value: json!("WITH TAG"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
             "{}",
             test_case.description
         );
