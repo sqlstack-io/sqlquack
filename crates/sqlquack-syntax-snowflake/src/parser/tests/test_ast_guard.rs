@@ -484,6 +484,7 @@ fn given_a_100_000_step_chain_of_a_node_parsers_build_in_a_loop_when_dropping_on
                     rows: None,
                     after: None,
                     pattern: None,
+                    row_pattern: None,
                     define: None,
                     define_semantics: Vec::new(),
                     alias: None,

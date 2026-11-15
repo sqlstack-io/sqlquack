@@ -766,6 +766,7 @@ impl Parser<'_> {
             rows: None,
             after,
             pattern: Some(pattern),
+            row_pattern: None,
             define: Some(define),
             define_semantics: Vec::new(),
             alias: name,
