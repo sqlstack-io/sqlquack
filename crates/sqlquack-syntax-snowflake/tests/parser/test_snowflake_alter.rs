@@ -58,6 +58,24 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_recorded_rejectio
             expected_accepted: false,
         },
         AcceptanceTestCase {
+            description: "EXECUTE AS USER after another property is refused (recorded errno 1003)",
+            sql: "ALTER TASK v1 SET COMMENT = 'm' EXECUTE AS USER v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
+            description: "EXECUTE AS USER on its own is parsed (recorded semantic error)",
+            sql: "ALTER TASK v1 SET EXECUTE AS USER v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "every other SET property together is parsed (recorded semantic error)",
+            sql: "ALTER TASK IF EXISTS v1 SET WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' LOCK_TIMEOUT = 1 , STATEMENT_TIMEOUT_IN_SECONDS = 1 TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
             description: "a string is no user (recorded errno 1003)",
             sql: "ALTER TASK v1 SET EXECUTE AS USER 'v1' ;",
             dialect: Dialect::Snowflake,
