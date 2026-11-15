@@ -7,6 +7,7 @@ import re
 from scripts.grammar_obligations._helpers import grammar
 from scripts.grammar_obligations.classes import renderer, walk
 from scripts.syntax_obligations_snowflake.constants import (
+    CASED_KEYWORD,
     CLAUSE_CALLEES,
     IDENTIFIER_CLASS,
     IDENTIFIER_NAMES,
@@ -24,6 +25,7 @@ def install() -> None:
     """Classify operands, widen the integer rule, read templates and numbers, walk lists."""
     grammar.TOKEN = NUMBER_TOKEN
     grammar.TEMPLATE_OPERANDS = True
+    grammar.CASED_KEYWORD = CASED_KEYWORD
     walk.REPEATED_ITEMS = True
     walk.FILL_CLASSES = True
     walk.BARE_VALUE_CLASS = WORD_CLASS

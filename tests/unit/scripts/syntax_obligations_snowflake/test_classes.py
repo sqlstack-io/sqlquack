@@ -477,6 +477,14 @@ def test_given_a_repeated_list_item_when_building_then_the_second_item_has_its_o
             expected_sql=("ALTER POSTGRES INSTANCE v1 SET POSTGRES_VERSION = 16 ;",),
         ),
         ListItemTestCase(
+            description="an upper-case keyword with a lower-case part is written, not filled",
+            family="ddl",
+            grammar="ALTER WAREHOUSE <name> SET RESOURCE_CONSTRAINT = { MEMORY_1X | MEMORY_1X_x86 }",
+            kind=KIND_ALTERNATIVE,
+            label="{ MEMORY_1X | MEMORY_1X_x86 } → MEMORY_1X_x86",
+            expected_sql=("ALTER WAREHOUSE v1 SET RESOURCE_CONSTRAINT = MEMORY_1X_x86 ;",),
+        ),
+        ListItemTestCase(
             description="an upper-case name fill is quoted with mixed case",
             family="security_admin",
             grammar="SHOW INTEGRATIONS OF TYPE <integration_type_name>",

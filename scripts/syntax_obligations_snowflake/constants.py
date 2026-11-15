@@ -73,3 +73,6 @@ WORD_NAMES: str = (
     r"^(interface|log_event_level|log_level|mfa_method|object_privilege|object_type_plural"
     r"|operation_mode|partner_application|property|purpose|session_parameter)$"
 )
+
+# A word whose first underscore-separated part is upper case, as MEMORY_1X_x86, is a keyword.
+CASED_KEYWORD: re.Pattern[str] = re.compile(r"[A-Z][A-Z0-9]*_[A-Za-z0-9_]*")
