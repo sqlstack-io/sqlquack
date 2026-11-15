@@ -1,5 +1,6 @@
 //! Snowflake ALTER of object kinds that have no statement of their own, such as TASK, TAG or ALERT.
 
+use crate::parser::constants::EXECUTE_AS_USER;
 use crate::parser::constants::ONLINE_FEATURE_TABLE;
 use crate::parser::constants::SNOWFLAKE_ALTER_KINDS;
 use crate::parser::constants::SNOWFLAKE_KEYWORD_VALUE_PROPERTIES;
@@ -363,7 +364,7 @@ impl Parser {
                 } else {
                     None
                 };
-                properties.push(property("EXECUTE AS USER", None, value));
+                properties.push(property(EXECUTE_AS_USER, None, value));
             } else if graph && !next_is_value && self.match_identifier("TASK_DEFAULTS") {
                 self.expect_token(TokenType::LParen)?;
                 loop {
@@ -429,11 +430,24 @@ impl Parser {
             "REMOVE AFTER" | "ADD AFTER" => (self.parse_object_name_list()?, vec![]),
             "MODIFY AS" => (vec![self.parse_statement()?], vec![]),
             "MODIFY WHEN" => (vec![self.parse_expression()?], vec![]),
-            "SET" => (vec![], self.parse_alter_object_properties(true, false)?),
+            "SET" => (vec![], self.parse_alter_task_set_properties()?),
             "UNSET" => (vec![], self.parse_alter_object_properties(false, false)?),
             _ => (vec![], vec![]),
         };
         Ok(alter_object("TASK", head, action, (operands, properties)))
+    }
+
+    /// Parse ALTER TASK SET's properties, where Snowflake refuses EXECUTE AS USER after another property.
+    fn parse_alter_task_set_properties(&mut self) -> Result<Vec<ObjectProperty>> {
+        let properties = self.parse_alter_object_properties(true, false)?;
+        match properties
+            .iter()
+            .skip(1)
+            .any(|property| property.kind == EXECUTE_AS_USER)
+        {
+            true => Err(self.parse_error("Expected EXECUTE AS USER before the other properties")),
+            false => Ok(properties),
+        }
     }
 
     /// Parse ALTER TASK GRAPH after its kind.
