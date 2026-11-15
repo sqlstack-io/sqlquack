@@ -1016,6 +1016,9 @@ pub struct Resample {
     /// METADATA_COLUMNS calls, each with its optional alias
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub metadata_columns: Vec<(Expression, Option<Identifier>)>,
+    /// Whether each METADATA_COLUMNS alias was written after AS, by position; empty when none was
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub metadata_alias_explicit_as: Vec<bool>,
 }
 
 /// MATCH_RECOGNIZE clause for row pattern matching (Oracle/Snowflake/Presto/Trino)
