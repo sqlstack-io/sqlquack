@@ -122,6 +122,12 @@ pub enum OracleTimestampTimeZone {
     WithLocalTimeZone,
 }
 
+/// The column types of a `TABLE(...)` argument type, kept apart so `DataType`'s traversal frame stays small.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct TableArgumentType {
+    pub column_types: Vec<DataType>,
+}
+
 /// Every data type the parser recognizes, standard and dialect-specific.
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "data_type", rename_all = "snake_case")]
@@ -347,6 +353,9 @@ pub enum DataType {
         length: Option<u32>,
     },
 
+    /// A table argument's type in a data metric function signature, such as Snowflake's `TABLE(INT, VARCHAR)`.
+    Table(TableArgumentType),
+
     Geometry {
         subtype: Option<String>,
         srid: Option<u32>,
@@ -400,6 +409,14 @@ impl DataType {
                 }
                 DataType::Object { fields, .. } => {
                     pending.extend(fields.iter().map(|(_, field, _)| (field, next)));
+                }
+                DataType::Table(table) => {
+                    pending.extend(
+                        table
+                            .column_types
+                            .iter()
+                            .map(|column_type| (column_type, next)),
+                    );
                 }
                 DataType::Union { fields } => {
                     pending.extend(fields.iter().map(|(_, field)| (field, next)));
