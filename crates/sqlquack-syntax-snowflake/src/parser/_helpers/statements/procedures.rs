@@ -111,8 +111,8 @@ impl Parser {
         Ok(parameters)
     }
 
-    /// `( [<column> [<type>]] [, ...] )` after `RETURNS TABLE`.
-    fn parse_procedure_table_columns(&mut self) -> Result<Vec<StructField>> {
+    /// `( [<column> [<type>]] [, ...] )` after `RETURNS TABLE`; a quoted column name keeps its quotes.
+    pub(crate) fn parse_procedure_table_columns(&mut self) -> Result<Vec<StructField>> {
         self.expect_token(TokenType::LParen)?;
         let mut columns: Vec<StructField> = Vec::new();
         while !self.check(TokenType::RParen) {
@@ -121,7 +121,7 @@ impl Parser {
             }
             let name = self.expect_procedure_part_name()?;
             columns.push(StructField::new(
-                name.name,
+                name.to_type_field_name(),
                 self.parse_procedure_part_type()?,
             ));
         }
