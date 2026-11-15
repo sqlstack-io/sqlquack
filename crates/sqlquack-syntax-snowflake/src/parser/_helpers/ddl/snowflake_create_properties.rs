@@ -1,5 +1,6 @@
 //! Snowflake CREATE for kinds defined only by `<property> = <value>` lists: users, policies, integrations and groups.
 
+use crate::parser::_helpers::ddl::snowflake_alter::object_type_keywords;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_alter::value_phrase;
 use crate::parser::constants::{
@@ -532,7 +533,7 @@ impl Parser {
         if SNOWFLAKE_STRING_KEY_MAP_PROPERTIES.contains(&name.name.to_ascii_uppercase().as_str()) {
             self.check_snowflake_string_keys()?;
         }
-        let value = self.parse_create_property_value(false)?;
+        let value = object_type_keywords(&name.name, self.parse_create_property_value(false)?);
         Ok(vec![property(
             &name.name.to_ascii_uppercase(),
             None,

@@ -3,6 +3,7 @@
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::keyed_pair;
 use crate::parser::_helpers::ddl::snowflake_alter::named_property;
+use crate::parser::_helpers::ddl::snowflake_alter::object_type_keywords;
 use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_alter::property_kind;
@@ -131,7 +132,7 @@ impl Parser {
         loop {
             let name = self.parse_simple_name()?;
             self.expect_token(TokenType::Eq)?;
-            let value = self.parse_group_values(&name.name)?;
+            let value = object_type_keywords(&name.name, self.parse_group_values(&name.name)?);
             properties.push(parameter_property(&name, Some(value)));
             if self.is_at_end() || self.check(TokenType::Semicolon) {
                 return Ok(properties);
