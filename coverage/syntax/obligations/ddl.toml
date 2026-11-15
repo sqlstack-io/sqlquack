@@ -80180,6 +80180,34 @@ anchor = "doc.sql.alter-stage / External stage parameters (externalStageParams)"
 note = "omit the URL"
 
 [[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o646"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-stage / Syntax"
+note = "an unquoted s3 URL with nothing after //, observed: whether // starts a comment"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o647"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-stage / Syntax"
+note = "an unquoted s3 scheme alone, observed: whether the parsed s3 URL is read as s3: before a comment"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o648"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-stage / Syntax"
+note = "an unquoted URL whose scheme is not a cloud, observed: whether s3 is special or any word followed by // parses"
+
+[[obligation]]
+id = "sf.ddl.alter-stage.set.syntax.o649"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-stage / Syntax"
+note = "an unquoted gcs scheme alone, observed: whether gcs is refused before or at //"
+
+[[obligation]]
 id = "sf.ddl.alter-stage.unset-stage-undrop-retention-time-in-days.o001"
 kind = "positive"
 required = true
@@ -100686,6 +100714,48 @@ required = true
 target = "<purpose> in [ CONTACT <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ]"
 anchor = "doc.sql.alter-task / Syntax"
 note = "a string literal in place of <purpose>, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o226"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-task / Syntax"
+note = "EXECUTE AS USER after another property, observed: whether it may follow other properties"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o227"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-task / Syntax"
+note = "a property after the comma-joined session parameters, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o228"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-task / Syntax"
+note = "a session parameter after a task property, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o229"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-task / Syntax"
+note = "two task properties together, observed"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o230"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-task / Syntax"
+note = "every option but EXECUTE AS USER, observed: whether EXECUTE AS is what Snowflake refuses in the full SET"
+
+[[obligation]]
+id = "sf.ddl.alter-task.set.o231"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql.alter-task / Syntax"
+note = "every option but the comma-joined session parameters, observed: whether they are what Snowflake refuses in the full SET"
 
 [[obligation]]
 id = "sf.ddl.alter-task.set-finalize.o001"
