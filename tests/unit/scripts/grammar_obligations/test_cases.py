@@ -17,8 +17,13 @@ from scripts.grammar_obligations._helpers.cases import (
     run_database_setups,
     settled_cases,
 )
-from scripts.grammar_obligations.constants import CASE_CAPTURE_RUN_DATABASE
-from scripts.grammar_obligations.models import ReceiptView
+from scripts.grammar_obligations._helpers.obligations import family_obligations
+from scripts.grammar_obligations.constants import (
+    CASE_CAPTURE_RUN_DATABASE,
+    KIND_INTERACTION_ALL,
+    KIND_OPTION_PRESENT,
+)
+from scripts.grammar_obligations.models import Draft, ReceiptView
 from scripts.grammar_obligations.types import Row
 from tests.unit.scripts.grammar_obligations._test_types import (
     DisprovedExpectationTestCase,
@@ -459,8 +464,12 @@ def test_given_a_refused_case_with_every_option_when_building_cases_then_each_op
     for case in cases:
         by_obligation |= dict.fromkeys(case["obligations"], str(case["sql"]))
     all_options: Row = {case["sql"]: case for case in cases}[ALL_OPTIONS_SQL]
+    numbered: list[tuple[str, Draft]] = family_obligations(root=tmp_path, family="ddl")[0]
+    by_kind: dict[str, list[str]] = {}
+    for found, draft in numbered:
+        by_kind.setdefault(draft.kind, []).append(found)
     assert (
-        by_obligation["sf.ddl.alter-widget.set.o005"],
-        by_obligation["sf.ddl.alter-widget.set.o010"],
-        "sf.ddl.alter-widget.set.o016" in all_options["obligations"],
+        by_obligation[by_kind[KIND_OPTION_PRESENT][0]],
+        by_obligation[by_kind[KIND_OPTION_PRESENT][1]],
+        by_kind[KIND_INTERACTION_ALL][0] in all_options["obligations"],
     ) == (*test_case.expected_option_sql, True), test_case.description
