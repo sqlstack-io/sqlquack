@@ -947,7 +947,7 @@ impl Parser {
 }
 
 /// The key of a `<key> = <value>` pair: an unqualified name is the key itself, not an object.
-fn pair_key(item: Expression) -> Expression {
+pub(super) fn pair_key(item: Expression) -> Expression {
     match item {
         Expression::Table(table) if table.schema.is_none() && table.catalog.is_none() => {
             Expression::Identifier(table.name)

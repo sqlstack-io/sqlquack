@@ -634,9 +634,9 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_the_tree_names_ki
             expected_value: json!("COMPUTE POOL"),
         },
         ProjectionTestCase {
-            description: "a parenthesised KEY = value keeps the pair keyed (recorded semantic error)",
+            description: "a parenthesised KEY = value is keyed by a name, not an object (recorded semantic error)",
             sql: "ALTER USER v1 SET WORKLOAD_IDENTITY = ( ANOMALY_DETECTION = TRUE ) ;",
-            pointer: "/0/alter_object/properties/0/value/tuple/expressions/0/property_e_q/left/table/name/name",
+            pointer: "/0/alter_object/properties/0/value/tuple/expressions/0/property_e_q/left/identifier/name",
             expected_value: json!("ANOMALY_DETECTION"),
         },
         ProjectionTestCase {
