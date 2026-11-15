@@ -4,7 +4,7 @@ use std::path::Path;
 use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{FormState, LocalVerdict};
 use crate::check::tests::helpers::{
-    TREE, case_line, replace, rewrite_select_17, select_17, with_fields,
+    TREE, case_line, form, replace, review, rewrite_select_17, select_17, with_fields,
 };
 use crate::formats::main::load_coverage::load_coverage;
 use crate::report::main::snapshot::snapshot;
@@ -137,4 +137,12 @@ pub(crate) fn snapshot_with(root: &Path, parse: fn(&str) -> LocalVerdict) -> Sna
         &coverage,
         "catalogue",
     )
+}
+
+/// Retires `sf.query.select.top`, which verifies in the verified tree, and re-pins the reviews.
+pub(crate) fn retire_select_top(root: &Path) {
+    let top: String = form("sf.query.select.top", "SELECT TOP <n> <expr>");
+    let retired: String = top.replace("status = \"catalogued\"", "status = \"absent_from_source\"");
+    replace(root, "catalogue/query.toml", &top, &retired);
+    review(root);
 }

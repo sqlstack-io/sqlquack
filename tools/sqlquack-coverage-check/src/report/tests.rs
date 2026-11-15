@@ -4,5 +4,7 @@ mod helpers;
 mod test_diff_snapshots;
 #[path = "tests/test_parser_changes.rs"]
 mod test_parser_changes;
+#[path = "tests/test_summarize.rs"]
+mod test_summarize;
 #[path = "tests/test_types.rs"]
 mod test_types;
