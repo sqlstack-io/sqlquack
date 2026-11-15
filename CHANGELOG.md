@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.15.1](https://github.com/sqlstack-io/sqlquack/compare/v0.15.0...v0.15.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **syntax:** accept function calls nested up to 256 deep ([a236172](https://github.com/sqlstack-io/sqlquack/commit/a2361727aaabb67c3007755c9999925dfe357b96))
+* **syntax:** leave out a create's source when the statement names none ([847e266](https://github.com/sqlstack-io/sqlquack/commit/847e2660f365d40a4430942acf598066b491cb91))
+
 ## [0.15.0](https://github.com/sqlstack-io/sqlquack/compare/v0.14.0...v0.15.0) (2026-11-15)
 
 
