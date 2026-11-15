@@ -495,6 +495,14 @@ impl Parser {
         })
     }
 
+    /// VALIDATE or NOVALIDATE after a Snowflake ENABLE or DISABLE, as true or false, or none.
+    fn parse_constraint_validation(&mut self) -> Option<bool> {
+        if self.match_identifier("VALIDATE") {
+            return Some(true);
+        }
+        self.match_identifier("NOVALIDATE").then_some(false)
+    }
+
     /// Parse constraint modifiers like ENFORCED, DEFERRABLE, NORELY, USING, etc.
     pub(crate) fn parse_constraint_modifiers(&mut self) -> Result<ConstraintModifiers> {
         let mut modifiers = ConstraintModifiers::default();
@@ -519,6 +527,12 @@ impl Parser {
                 } else if self.is_snowflake() {
                     return Err(self.parse_error("Expected DEFERRED or IMMEDIATE after INITIALLY"));
                 }
+            } else if self.is_snowflake() && self.match_identifier("ENABLE") {
+                modifiers.enabled = Some(true);
+                modifiers.validated = self.parse_constraint_validation();
+            } else if self.is_snowflake() && self.match_identifier("DISABLE") {
+                modifiers.enabled = Some(false);
+                modifiers.validated = self.parse_constraint_validation();
             } else if self.match_identifier("NORELY") {
                 modifiers.norely = true;
             } else if self.match_identifier("RELY") {

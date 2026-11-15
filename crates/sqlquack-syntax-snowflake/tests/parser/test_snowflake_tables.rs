@@ -47,7 +47,7 @@ fn given_snowflake_table_policies_and_properties_when_parsing_then_recorded_verd
         SnowflakeVerdictTestCase {
             description: "constraint properties (recorded OK)",
             sql: "CREATE TABLE v1 ( v1 INT UNIQUE , v1 INT REFERENCES v1 INITIALLY DEFERRED ) ;",
-            expected_kind: Some("create_object"),
+            expected_kind: Some("create_table"),
         },
         SnowflakeVerdictTestCase {
             description: "an untyped column without AS (recorded errno 1003)",
@@ -1441,6 +1441,50 @@ fn given_an_out_of_line_foreign_key_with_not_enforced_when_parsing_then_not_is_k
             description: "NOT DEFERRABLE after a foreign key's reference is still not deferrable",
             sql: "CREATE TABLE v1 ( v1 INT , FOREIGN KEY ( v1 ) REFERENCES v1 NOT DEFERRABLE ) ;",
             pointer: "/0/create_table/constraints/0/ForeignKey/references/deferrable",
+            expected_value: json!(false),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_inline_constraint_modifiers_when_parsing_then_they_are_typed_on_the_constraint() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "DEFERRABLE after an inline UNIQUE is kept, not skipped",
+            sql: "CREATE TABLE v1 ( v1 INT UNIQUE DEFERRABLE ) ;",
+            pointer: "/0/create_table/columns/0/constraint_modifiers/0/1/deferrable",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "ENABLE NOVALIDATE after an inline PRIMARY KEY is not validated",
+            sql: "CREATE TABLE v1 ( v1 INT PRIMARY KEY NOT DEFERRABLE ENABLE NOVALIDATE ) ;",
+            pointer: "/0/create_table/columns/0/constraint_modifiers/0/1/validated",
+            expected_value: json!(false),
+        },
+        ProjectionTestCase {
+            description: "a COMMENT after an inline constraint's RELY stays the column's comment",
+            sql: "CREATE TABLE v1 ( v1 INT UNIQUE RELY COMMENT 'm' ) ;",
+            pointer: "/0/create_table/columns/0/constraints/0/Comment",
+            expected_value: json!("m"),
+        },
+        ProjectionTestCase {
+            description: "ENABLE VALIDATE after an added CHECK is typed, not one raw word pair",
+            sql: "ALTER TABLE v1 ADD CHECK ( 1 ) ENABLE VALIDATE ;",
+            pointer: "/0/alter_table/actions/0/AddConstraint/Check/modifiers/validated",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "DISABLE after an added UNIQUE is not enabled",
+            sql: "ALTER TABLE v1 ADD UNIQUE ( v1 ) DISABLE ;",
+            pointer: "/0/alter_table/actions/0/AddConstraint/Unique/modifiers/enabled",
             expected_value: json!(false),
         },
     ];

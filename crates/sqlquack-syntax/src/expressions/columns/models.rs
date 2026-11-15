@@ -44,9 +44,9 @@ pub struct ColumnDef {
     /// Track original order of constraints for accurate regeneration
     #[serde(default)]
     pub constraint_order: Vec<ConstraintType>,
-    /// Snowflake RELY/NORELY, each with the `constraint_order` index of the constraint it follows.
+    /// Snowflake modifiers written after an inline constraint, such as RELY or NOT ENFORCED, each with the `constraint_order` index of the constraint they follow.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub constraint_properties: Vec<(usize, String)>,
+    pub constraint_modifiers: Vec<(usize, ConstraintModifiers)>,
     /// Snowflake CONSTRAINT names with their quoting, each with the `constraint_order` index of the constraint it names.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub constraint_names: Vec<(usize, Identifier)>,
@@ -149,7 +149,7 @@ impl ColumnDef {
             comment: None,
             constraints: Vec::new(),
             constraint_order: Vec::new(),
-            constraint_properties: Vec::new(),
+            constraint_modifiers: Vec::new(),
             constraint_names: Vec::new(),
             format: None,
             title: None,
@@ -268,6 +268,12 @@ pub struct ConstraintModifiers {
     pub norely: bool,
     /// RELY (Oracle)
     pub rely: bool,
+    /// ENABLE / DISABLE (Snowflake)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub enabled: Option<bool>,
+    /// VALIDATE / NOVALIDATE after ENABLE or DISABLE (Snowflake)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub validated: Option<bool>,
     /// USING index type (MySQL): BTREE or HASH
     #[serde(default)]
     pub using: Option<String>,
