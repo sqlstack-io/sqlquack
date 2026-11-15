@@ -509,7 +509,7 @@ impl Parser {
                 name,
                 operand: Some(condition),
                 references: None,
-                properties: self.parse_checked_constraint_properties(false)?,
+                properties: self.parse_checked_constraint_properties(false, true)?,
             });
         } else {
             return Err(self.parse_error("Expected UNIQUE, PRIMARY KEY, FOREIGN KEY or CHECK"));
@@ -530,7 +530,7 @@ impl Parser {
             }
             false => None,
         };
-        let properties = self.parse_checked_constraint_properties(references.is_some())?;
+        let properties = self.parse_checked_constraint_properties(references.is_some(), true)?;
         Ok(Constraint {
             kind,
             name,
@@ -557,12 +557,16 @@ impl Parser {
             name: None,
             operand,
             references: Some((table, None)),
-            properties: self.parse_checked_constraint_properties(true)?,
+            properties: self.parse_checked_constraint_properties(true, true)?,
         })
     }
 
-    /// The property words after a constraint; MATCH and ON UPDATE or DELETE follow a foreign key, VALIDATE follows ENABLE or DISABLE (errno 1003).
-    fn parse_checked_constraint_properties(&mut self, references: bool) -> Result<Vec<String>> {
+    /// The property words after a constraint; MATCH and ON UPDATE or DELETE follow a foreign key, VALIDATE follows ENABLE or DISABLE (errno 1003), and COMMENT is read only where it is the constraint's.
+    pub(super) fn parse_checked_constraint_properties(
+        &mut self,
+        references: bool,
+        comment: bool,
+    ) -> Result<Vec<String>> {
         let mut words: Vec<String> = Vec::new();
         loop {
             let start = self.current;
@@ -579,7 +583,7 @@ impl Parser {
                 || self.match_text_seq(&["INITIALLY", "IMMEDIATE"])
             {
                 true
-            } else if self.match_token(TokenType::Comment) {
+            } else if comment && self.match_token(TokenType::Comment) {
                 self.expect_token(TokenType::String)?;
                 true
             } else if references && self.match_token(TokenType::Match) {
@@ -953,7 +957,7 @@ fn add_inline_constraint(mut column: ColumnDef, constraint: Constraint) -> Resul
     ))
 }
 
-/// The name and remaining property words of the inline constraint just pushed onto `column`.
+/// The name and modifier words of the inline constraint just pushed onto `column`.
 fn record_inline_constraint(
     mut column: ColumnDef,
     name: Option<Identifier>,
@@ -963,9 +967,29 @@ fn record_inline_constraint(
     column
         .constraint_names
         .extend(name.map(|name| (index, name)));
-    column
-        .constraint_properties
-        .extend(words.into_iter().map(|word| (index, word)));
+    with_modifier_words(column, index, words)
+}
+
+/// `column` with `words` applied to the modifiers of its inline constraint at `index`, merged with any recorded there.
+pub(super) fn with_modifier_words(
+    mut column: ColumnDef,
+    index: usize,
+    words: Vec<String>,
+) -> ColumnDef {
+    if words.is_empty() {
+        return column;
+    }
+    match column.constraint_modifiers.pop() {
+        Some((last, modifiers)) if last == index => column
+            .constraint_modifiers
+            .push((index, apply_modifier_words(modifiers, words))),
+        last => {
+            column.constraint_modifiers.extend(last);
+            column
+                .constraint_modifiers
+                .push((index, constraint_modifiers(words)));
+        }
+    }
     column
 }
 
@@ -1015,9 +1039,16 @@ fn referential_action(action: &str) -> ReferentialAction {
     }
 }
 
-/// An out-of-line constraint's modifiers: ENFORCED, DEFERRABLE, INITIALLY, RELY, NORELY and COMMENT each set their field once; other words, such as ENABLE VALIDATE, and repeats stay in `properties` in order.
+/// A constraint's modifiers: ENFORCED, DEFERRABLE, INITIALLY, RELY, NORELY, ENABLE or DISABLE with VALIDATE or NOVALIDATE, and COMMENT each set their field once; other words and repeats stay in `properties` in order.
 pub(super) fn constraint_modifiers(words: Vec<String>) -> ConstraintModifiers {
-    let mut modifiers = ConstraintModifiers::default();
+    apply_modifier_words(ConstraintModifiers::default(), words)
+}
+
+/// `modifiers` with `words` applied as `constraint_modifiers` applies them.
+fn apply_modifier_words(
+    mut modifiers: ConstraintModifiers,
+    words: Vec<String>,
+) -> ConstraintModifiers {
     for word in words {
         let set = match word.as_str() {
             "ENFORCED" if modifiers.enforced.is_none() => {
@@ -1050,6 +1081,34 @@ pub(super) fn constraint_modifiers(words: Vec<String>) -> ConstraintModifiers {
             }
             "NORELY" if !modifiers.rely && !modifiers.norely => {
                 modifiers.norely = true;
+                true
+            }
+            "ENABLE" if modifiers.enabled.is_none() => {
+                modifiers.enabled = Some(true);
+                true
+            }
+            "DISABLE" if modifiers.enabled.is_none() => {
+                modifiers.enabled = Some(false);
+                true
+            }
+            "ENABLE VALIDATE" if modifiers.enabled.is_none() => {
+                modifiers.enabled = Some(true);
+                modifiers.validated = Some(true);
+                true
+            }
+            "ENABLE NOVALIDATE" if modifiers.enabled.is_none() => {
+                modifiers.enabled = Some(true);
+                modifiers.validated = Some(false);
+                true
+            }
+            "DISABLE VALIDATE" if modifiers.enabled.is_none() => {
+                modifiers.enabled = Some(false);
+                modifiers.validated = Some(true);
+                true
+            }
+            "DISABLE NOVALIDATE" if modifiers.enabled.is_none() => {
+                modifiers.enabled = Some(false);
+                modifiers.validated = Some(false);
                 true
             }
             _ => match word.strip_prefix("COMMENT '") {

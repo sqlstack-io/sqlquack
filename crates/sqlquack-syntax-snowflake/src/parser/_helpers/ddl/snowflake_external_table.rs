@@ -2,6 +2,7 @@
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_create_properties::with_written;
+use crate::parser::_helpers::ddl::snowflake_create_table::with_modifier_words;
 use crate::parser::constants::SNOWFLAKE_EXTERNAL_TABLE_REQUIRED;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::{
@@ -214,17 +215,17 @@ impl Parser {
 
     /// An optional inline `[CONSTRAINT <name>] UNIQUE | PRIMARY KEY | [FOREIGN KEY] REFERENCES <table> [( <columns> )]` on `column`, then RELY or NORELY as written.
     fn parse_external_constraint(&mut self, column: ColumnDef) -> Result<ColumnDef> {
-        let mut column = self.parse_external_constraint_kind(column)?;
+        let column = self.parse_external_constraint_kind(column)?;
         let Some(index) = column.constraint_order.len().checked_sub(1) else {
             return Ok(column);
         };
-        if let Some(word) = ["RELY", "NORELY"]
+        let words: Vec<String> = ["RELY", "NORELY"]
             .into_iter()
             .find(|word| self.match_text_seq(&[word]))
-        {
-            column.constraint_properties.push((index, word.to_owned()));
-        }
-        Ok(column)
+            .map(str::to_owned)
+            .into_iter()
+            .collect();
+        Ok(with_modifier_words(column, index, words))
     }
 
     /// The constraint itself of `parse_external_constraint`.
