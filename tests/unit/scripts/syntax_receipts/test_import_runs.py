@@ -226,6 +226,116 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             ),
         ),
         ClassifyTestCase(
+            description="reviewed post-parse errno 1632 is semantic",
+            errno=1632,
+            sqlstate="42601",
+            message='Unresolved or ambiguous dependency: Dependency Role "v1 Q" does not exist or not authorized',
+            expected_classification=(
+                "semantic_error",
+                "errno 1632 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 1661 is semantic",
+            errno=1661,
+            sqlstate="0A000",
+            message="DCM Project cannot reference an object in a different account: 'D1'. Remove the account qualifier or use the current session account.",
+            expected_classification=(
+                "semantic_error",
+                "errno 1661 SQLSTATE 0A000, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 1688 is semantic",
+            errno=1688,
+            sqlstate="42704",
+            message="Asset reference '<location>' does not name an asset declared under 'assets:' in this project. Declared assets: none.",
+            expected_classification=(
+                "semantic_error",
+                "errno 1688 SQLSTATE 42704, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 1698 is semantic",
+            errno=1698,
+            sqlstate="0A000",
+            message="(Task graph) D1.S1.V1 references member (Task) D1.S1.V1, which is not defined in the project. A task graph and all its members must be authored in one project.",
+            expected_classification=(
+                "semantic_error",
+                "errno 1698 SQLSTATE 0A000, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 90215 is semantic",
+            errno=90215,
+            sqlstate="42601",
+            message="Language JAVASCRIPT does not support type 'NUMBER(38,0)' for argument or return type.",
+            expected_classification=(
+                "semantic_error",
+                "errno 90215 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 91006 is semantic",
+            errno=91006,
+            sqlstate="22000",
+            message="Bucket name '' in the stage location is not supported. Valid bucket names must consist of lowercase letters, digits, hyphens '-', and periods '.'.",
+            expected_classification=(
+                "semantic_error",
+                "errno 91006 SQLSTATE 22000, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 91453 is semantic",
+            errno=91453,
+            sqlstate="22000",
+            message="Task D1.S1.V1 should have a SCHEDULE, AFTER, FINALIZE or WHEN to be resumed.",
+            expected_classification=(
+                "semantic_error",
+                "errno 91453 SQLSTATE 22000, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 394007 is semantic",
+            errno=394007,
+            sqlstate="42601",
+            message="Invalid value for log level. Allowed values are TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF.",
+            expected_classification=(
+                "semantic_error",
+                "errno 394007 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 394010 is semantic",
+            errno=394010,
+            sqlstate="42601",
+            message="Event table name m is not fully qualified. It must be of the format <database>.<schema>.<event_table>.",
+            expected_classification=(
+                "semantic_error",
+                "errno 394010 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 394011 is semantic",
+            errno=394011,
+            sqlstate="42601",
+            message="Invalid value for trace level. Allowed values are ALWAYS,ON_EVENT,PROPAGATE,OFF.",
+            expected_classification=(
+                "semantic_error",
+                "errno 394011 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 394012 is semantic",
+            errno=394012,
+            sqlstate="42601",
+            message="Invalid value for metric level. Allowed values are ALL,NONE.",
+            expected_classification=(
+                "semantic_error",
+                "errno 394012 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
             description="reviewed post-parse errno 1485 is semantic",
             errno=1485,
             sqlstate="42601",
