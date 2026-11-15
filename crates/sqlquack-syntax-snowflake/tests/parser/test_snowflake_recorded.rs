@@ -33,6 +33,18 @@ fn given_recorded_snowflake_cases_when_parsing_then_acceptance_matches_snowflake
             expected_accepted: true,
         },
         AcceptanceTestCase {
+            description: "UNDROP takes VOLUME without EXTERNAL (recorded semantic error)",
+            sql: "UNDROP VOLUME v1 ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: true,
+        },
+        AcceptanceTestCase {
+            description: "UNDROP EXTERNAL VOLUME needs its name (recorded syntax error)",
+            sql: "UNDROP EXTERNAL VOLUME ;",
+            dialect: Dialect::Snowflake,
+            expected_accepted: false,
+        },
+        AcceptanceTestCase {
             description: "UNDROP DATABASE's IDENTIFIER( ) takes no bare word (recorded errno 1003)",
             sql: "UNDROP DATABASE IDENTIFIER ( m1 ) ;",
             dialect: Dialect::Snowflake,
