@@ -143,7 +143,7 @@ def obligation_rows(numbered: list[tuple[str, Draft]]) -> list[Row]:
 
 
 def family_obligations(
-    *, root: Path, family: str
+    *, root: Path, family: str, unpacked: frozenset[str] = frozenset()
 ) -> tuple[
     list[tuple[str, Draft]], dict[str, list[tuple[Node, ...]]], list[Row], list[Row], list[Row]
 ]:
@@ -163,7 +163,9 @@ def family_obligations(
     argument_classes: Counter[str] = Counter()
     for form in forms:
         found, trees[str(form["id"])], skipped = derive_trees(
-            form=str(form["id"]), grammar=_grammar_read(form=form, readings=readings)
+            form=str(form["id"]),
+            grammar=_grammar_read(form=form, readings=readings),
+            unpacked=form["id"] in unpacked,
         )
         drafts += found
         argument_classes.update(skipped)
