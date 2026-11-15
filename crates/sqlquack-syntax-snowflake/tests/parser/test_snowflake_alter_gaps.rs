@@ -334,6 +334,11 @@ fn given_snowflake_policy_and_integration_alters_without_a_name_when_parsing_the
         AcceptanceTestCase { description: "an integration named refresh refreshes its secret", sql: "ALTER INTEGRATION refresh REFRESH OAUTH_CLIENT_SECRET ;", dialect: Dialect::Snowflake, expected_accepted: true },
         AcceptanceTestCase { description: "an organization user's visibility may be another value", sql: "ALTER ORGANIZATION USER v1 SET VISIBILITY = 'x' ;", dialect: Dialect::Snowflake, expected_accepted: true },
         AcceptanceTestCase { description: "VISIBILITY = ALL is followed by other properties", sql: "ALTER ORGANIZATION USER v1 SET VISIBILITY = ALL , COMMENT = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a named organization sets a property (recorded semantic error)", sql: "ALTER ORGANIZATION v1 SET COMMENT = 'm' ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a named organization unsets a property (recorded semantic error)", sql: "ALTER ORGANIZATION v1 UNSET EMAIL ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a named organization's SET names a property (recorded syntax error)", sql: "ALTER ORGANIZATION v1 SET ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a named organization's UNSET names a property (recorded syntax error)", sql: "ALTER ORGANIZATION v1 UNSET ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a named organization takes no COMMIT (recorded syntax error)", sql: "ALTER ORGANIZATION v1 COMMIT ;", dialect: Dialect::Snowflake, expected_accepted: false },
     ];
 
     for test_case in test_cases {
@@ -391,6 +396,18 @@ fn given_snowflake_policy_and_integration_alters_without_a_name_when_parsing_the
             sql: "ALTER ORGANIZATION USER v1 SET VISIBILITY = ALL",
             pointer: "/0/alter_object/properties/0/kind",
             expected_value: json!("VISIBILITY"),
+        },
+        ProjectionTestCase {
+            description: "a named organization keeps its name",
+            sql: "ALTER ORGANIZATION v1 UNSET EMAIL",
+            pointer: "/0/alter_object/name/name/name",
+            expected_value: json!("v1"),
+        },
+        ProjectionTestCase {
+            description: "a named organization's SET keeps its property",
+            sql: "ALTER ORGANIZATION v1 SET COMMENT = 'm'",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("COMMENT"),
         },
     ];
 

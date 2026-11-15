@@ -540,14 +540,23 @@ impl Parser {
                 (vec![], properties),
             ));
         }
-        let renames = self
-            .tokens
-            .get(self.current + 1)
-            .is_some_and(|token| token.text.eq_ignore_ascii_case("RENAME"));
-        if renames {
+        // A named organization takes RENAME TO, SET or UNSET; the current one and its ACCOUNT or PROFILE take SET or UNSET.
+        let named = match self.text_at(1).as_deref() {
+            Some("RENAME") => true,
+            Some("SET" | "UNSET") => !matches!(
+                self.text_at(0).as_deref(),
+                Some("ACCOUNT" | "PROFILE" | "SET" | "UNSET")
+            ),
+            _ => false,
+        };
+        if named {
             let head = self.parse_alter_object_head()?;
-            let action = self.expect_alter_words(&[&["RENAME", "TO"]])?;
-            let parts: ActionParts = (vec![self.parse_group_name()?], vec![]);
+            let action = self.expect_alter_words(&[&["RENAME", "TO"], &["SET"], &["UNSET"]])?;
+            let parts: ActionParts = match action.as_str() {
+                "RENAME TO" => (vec![self.parse_group_name()?], vec![]),
+                "SET" => (vec![], self.parse_organization_set()?),
+                _ => (vec![], self.parse_group_unset_names()?),
+            };
             return Ok(alter_object("ORGANIZATION", head, action, parts));
         }
         if self.match_identifier("PROFILE") {
