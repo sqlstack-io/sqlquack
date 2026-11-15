@@ -1538,3 +1538,65 @@ fn given_a_define_table_with_out_of_line_constraints_when_parsing_then_they_are_
         );
     }
 }
+
+#[test]
+fn given_an_identity_column_when_parsing_then_its_spelling_is_kept() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "IDENTITY in a CREATE TABLE is told apart from AUTOINCREMENT",
+            sql: "CREATE TABLE v1 ( v1 INT IDENTITY ) ;",
+            pointer: "/0/create_table/columns/0/identity_spelling",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "AUTOINCREMENT in a CREATE TABLE records no IDENTITY spelling",
+            sql: "CREATE TABLE v1 ( v1 INT AUTOINCREMENT ) ;",
+            pointer: "/0/create_table/columns/0/identity_spelling",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "IDENTITY in a DEFINE TABLE is told apart from AUTOINCREMENT",
+            sql: "DEFINE TABLE v1 ( v1 INT IDENTITY ( 1 , 1 ) ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/identity_spelling",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "START and INCREMENT written as words are told apart from the parenthesized pair",
+            sql: "CREATE TABLE v1 ( v1 INT IDENTITY START 1 INCREMENT 1 ) ;",
+            pointer: "/0/create_table/columns/0/identity_start_keyword",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "the parenthesized start and step record no START keyword",
+            sql: "CREATE TABLE v1 ( v1 INT AUTOINCREMENT ( 1 , 1 ) ) ;",
+            pointer: "/0/create_table/columns/0/identity_start_keyword",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "an added column's START and INCREMENT words are kept",
+            sql: "ALTER TABLE v1 ADD COLUMN v1 INT IDENTITY START 1 INCREMENT 1 ;",
+            pointer: "/0/alter_table/actions/0/AddColumn/column/identity_start_keyword",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "GENERATED ALWAYS AS in a CREATE TABLE is told apart from a bare AS",
+            sql: "CREATE TABLE v1 ( v1 INT GENERATED ALWAYS AS ( 1 ) ) ;",
+            pointer: "/0/create_table/columns/0/constraints/0/ComputedColumn/generated_always",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "an added column's GENERATED ALWAYS AS is kept",
+            sql: "ALTER TABLE v1 ADD COLUMN v1 INT GENERATED ALWAYS AS ( 1 ) ;",
+            pointer: "/0/alter_table/actions/0/AddColumn/column/constraints/0/ComputedColumn/generated_always",
+            expected_value: json!(true),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
