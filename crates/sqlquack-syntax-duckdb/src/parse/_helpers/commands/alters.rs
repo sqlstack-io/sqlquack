@@ -155,6 +155,8 @@ impl Parser<'_> {
                     name,
                     action,
                     use_modify_keyword: false,
+                    column_keyword: false,
+                    action_words: None,
                 })),
                 Err(()) => TableAction::Gap("nested_field"),
             });

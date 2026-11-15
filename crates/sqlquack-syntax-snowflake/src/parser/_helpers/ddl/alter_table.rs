@@ -68,13 +68,16 @@ impl Parser {
 
         loop {
             if last_was_alter_column {
-                self.match_token(TokenType::Column);
+                let column_keyword = self.match_token(TokenType::Column);
                 let name = self.parse_simple_name()?;
+                let action_words = self.written_alter_column_words();
                 let action = self.parse_alter_column_action()?;
                 actions.push(AlterTableAction::AlterColumn {
                     name,
                     action,
                     use_modify_keyword: false,
+                    column_keyword: column_keyword && self.is_snowflake(),
+                    action_words,
                 });
                 if !self.match_token(TokenType::Comma) {
                     break;

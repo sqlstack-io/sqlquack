@@ -688,6 +688,12 @@ pub enum AlterTableAction {
         /// Whether this was parsed from MODIFY COLUMN syntax (MySQL)
         #[serde(default)]
         use_modify_keyword: bool,
+        /// Snowflake: whether COLUMN was written before the column name
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        column_keyword: bool,
+        /// Snowflake: the optional SET, DATA and TYPE words written before the action, e.g. `SET DATA TYPE`
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        action_words: Option<String>,
     },
     /// MySQL/TiDB `MODIFY [COLUMN]` with a complete replacement column definition.
     ModifyColumn {
