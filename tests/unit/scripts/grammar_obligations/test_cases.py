@@ -23,6 +23,7 @@ from scripts.grammar_obligations.types import Row
 from tests.unit.scripts.grammar_obligations._test_types import (
     DisprovedExpectationTestCase,
     DisputedFormMarkTestCase,
+    PackedRefusalTestCase,
     ProbeSettlementTestCase,
     SetupBindingTestCase,
 )
@@ -393,3 +394,73 @@ def test_given_probe_role_receipts_when_settling_then_they_bind_any_setup(
         test_case.expected_expect,
         test_case.expected_mark,
     )
+
+
+ALTER_WIDGET_CATALOGUE: str = """
+[[form]]
+id = "sf.ddl.alter-widget.set"
+family = "ddl"
+kind = "statement"
+grammar = ["ALTER WIDGET <name> SET [ COMMENT = '<string_literal>' ] [ MAX_ROWS = <integer> ]"]
+uses = []
+status = "catalogued"
+"""
+ALL_OPTIONS_SQL: str = "ALTER WIDGET v1 SET COMMENT = 'm' MAX_ROWS = 1 ;"
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PackedRefusalTestCase(
+            description="a syntax error on the case with every option gives each option its own case",
+            refused_sql=ALL_OPTIONS_SQL,
+            phase="syntax_error",
+            expected_option_sql=(
+                "ALTER WIDGET v1 SET COMMENT = 'm' ;",
+                "ALTER WIDGET v1 SET MAX_ROWS = 1 ;",
+            ),
+        ),
+        PackedRefusalTestCase(
+            description="an error after parsing on the case with every option keeps the options together",
+            refused_sql=ALL_OPTIONS_SQL,
+            phase="semantic_error",
+            expected_option_sql=(ALL_OPTIONS_SQL, ALL_OPTIONS_SQL),
+        ),
+        PackedRefusalTestCase(
+            description="a syntax error on a case that covers no option alone keeps the options together",
+            refused_sql="ALTER WIDGET v1 SET COMMENT = 'm' ;",
+            phase="syntax_error",
+            expected_option_sql=(ALL_OPTIONS_SQL, ALL_OPTIONS_SQL),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_refused_case_with_every_option_when_building_cases_then_each_option_gets_its_own(
+    tmp_path: Path, test_case: PackedRefusalTestCase
+) -> None:
+    (tmp_path / "catalogue").mkdir()
+    (tmp_path / "catalogue" / "ddl.toml").write_text(ALTER_WIDGET_CATALOGUE)
+    (tmp_path / "limits.toml").write_text("")
+    packed: list[Row] = family_cases(
+        root=tmp_path, evidence=tmp_path, family="ddl", setups={}, held=frozenset()
+    )[0]
+    refused: Row = {case["sql"]: case for case in packed}[test_case.refused_sql]
+
+    cases: list[Row] = family_cases(
+        root=tmp_path,
+        evidence=tmp_path,
+        family="ddl",
+        setups={},
+        held=frozenset(),
+        phases={(refused["case_id"], refused["sql_sha256"]): test_case.phase},
+    )[0]
+
+    by_obligation: dict[str, str] = {}
+    for case in cases:
+        by_obligation |= dict.fromkeys(case["obligations"], str(case["sql"]))
+    all_options: Row = {case["sql"]: case for case in cases}[ALL_OPTIONS_SQL]
+    assert (
+        by_obligation["sf.ddl.alter-widget.set.o005"],
+        by_obligation["sf.ddl.alter-widget.set.o010"],
+        "sf.ddl.alter-widget.set.o016" in all_options["obligations"],
+    ) == (*test_case.expected_option_sql, True), test_case.description

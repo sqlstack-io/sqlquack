@@ -25,6 +25,7 @@ from scripts.grammar_obligations.constants import (
     HELD_RUN_DATABASE_SETUP,
     INPUTS_FILE,
     KIND_EXTREME,
+    KIND_OPTION_PRESENT,
     KIND_POSITIVE,
     MARKS_DIR,
     MEASURE_KEY,
@@ -62,16 +63,18 @@ def canonical(value: object) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 
-def family_cases(
+def family_cases(  # noqa: PLR0913
     *,
     root: Path,
     evidence: Path,
     family: str,
     setups: dict[tuple[str, str], list[str]],
     held: frozenset[str],
+    phases: dict[tuple[str, str], str] | None = None,
+    unpacked: frozenset[str] = frozenset(),
 ) -> tuple[list[Row], dict[str, set[str]], list[Row], set[str], set[str], set[str]]:
     """Cases, outcomes, arity cases, extremes, documented SQL, disputed positive obligations."""
-    numbered, trees, _, _, arity = family_obligations(root=root, family=family)
+    numbered, trees, _, _, arity = family_obligations(root=root, family=family, unpacked=unpacked)
     by_sql: dict[str, tuple[str, Rendered, list[str]]] = {}
     expected: dict[str, set[str]] = {}
     documented: set[str] = set()
@@ -120,6 +123,21 @@ def family_cases(
         if rendered.stage:
             case[STAGE_KEY] = rendered.stage
         cases.append(case)
+    packed_refused: frozenset[str] = (
+        _packed_refused(numbered=numbered, cases=cases, phases=phases or {}) - unpacked
+    )
+    if packed_refused:
+        # Snowflake refused the one case that covered an option, the case with every option, so
+        # derive those forms again with each option in its own case.
+        return family_cases(
+            root=root,
+            evidence=evidence,
+            family=family,
+            setups=setups,
+            held=held,
+            phases=phases,
+            unpacked=unpacked | packed_refused,
+        )
     scored: set[str] = {str(case["sql"]) for case in cases}
     refused: set[str] = disputed - undisputed
     refused_positives: set[tuple[str, str]] = {
@@ -132,6 +150,25 @@ def family_cases(
         {identifier for identifier, draft in numbered if draft.kind == KIND_EXTREME},
         documented | {sql for _, sql in refused_positives},
         {identifier for identifier, _ in refused_positives},
+    )
+
+
+def _packed_refused(
+    *,
+    numbered: list[tuple[str, Draft]],
+    cases: list[Row],
+    phases: dict[tuple[str, str], str],
+) -> frozenset[str]:
+    """Forms with an option whose every case Snowflake refused as a syntax error."""
+    refused: dict[str, bool] = {}
+    for case in cases:
+        syntax_error: bool = phases.get((case["case_id"], case["sql_sha256"])) == SYNTAX_ERROR_PHASE
+        for identifier in case["obligations"]:
+            refused[identifier] = refused.get(identifier, True) and syntax_error
+    return frozenset(
+        draft.form
+        for identifier, draft in numbered
+        if draft.kind == KIND_OPTION_PRESENT and refused.get(identifier, False)
     )
 
 
@@ -491,7 +528,12 @@ def settled_cases(  # noqa: PLR0913
 ) -> tuple[list[Row], list[Row], list[Row]]:
     """The merged cases with their receipts' stages, unscored arity cases, case marks."""
     generated, expected, arity, extremes, documented, disputed_positives = family_cases(
-        root=root, evidence=evidence, family=family, setups=setups, held=held
+        root=root,
+        evidence=evidence,
+        family=family,
+        setups=setups,
+        held=held,
+        phases=receipts.phases,
     )
     cases, problems = merge_mapped(
         cases=generated, mapped=evidence / "mapped-cases" / f"{family}.jsonl", expected=expected

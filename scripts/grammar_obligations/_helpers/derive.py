@@ -35,12 +35,12 @@ def derive(*, form: str, grammar: list[str]) -> list[Draft]:
 
 
 def derive_trees(
-    *, form: str, grammar: list[str]
+    *, form: str, grammar: list[str], unpacked: bool = False
 ) -> tuple[list[Draft], list[tuple[Node, ...]], Counter[str]]:
-    """The drafts, parsed productions and the classes of skipped argument negatives."""
+    """Drafts, parsed productions, skipped argument classes; unpacked gives one case per option."""
     if not grammar:
         return [], [], Counter()
-    walk: Walk = Walk(form)
+    walk: Walk = Walk(form, unpacked=unpacked)
     note: str = "the documented form with every required part and no optional part"
     walk.add(kind=KIND_POSITIVE, target="", note=note, spec=walk.spec(action=ACTION_MIN_OPTIONS))
     trees: list[tuple[Node, ...]] = []
