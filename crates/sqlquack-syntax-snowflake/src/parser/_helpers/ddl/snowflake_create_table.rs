@@ -11,7 +11,7 @@ use crate::parser::constants::{
 use crate::parser::models::{Constraint, Parser};
 use sqlquack_syntax::expressions::columns::models::{
     ColumnConstraint, ColumnDef, ComputedColumn, ConstraintModifiers, ForeignKeyRef,
-    MaskingPolicyColumnConstraint, TableConstraint,
+    MaskingPolicyColumnConstraint, MatchType, ReferentialAction, TableConstraint,
 };
 use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -911,33 +911,141 @@ fn add_inline_constraint(mut column: ColumnDef, constraint: Constraint) -> Resul
                     "the parser reached a state its checks rule out",
                 ));
             };
-            let columns = tuple_names(columns);
+            let mut reference = ForeignKeyRef {
+                table: *table,
+                columns: tuple_names(columns),
+                on_delete: None,
+                on_update: None,
+                on_update_first: false,
+                match_type: None,
+                match_after_actions: false,
+                constraint_name: None,
+                deferrable: None,
+                has_foreign_key_keywords: constraint.kind == FOREIGN_KEY,
+            };
+            let mut words = Vec::new();
+            for word in set_reference_words(&mut reference, constraint.properties) {
+                match (word.as_str(), reference.deferrable) {
+                    ("DEFERRABLE", None) => reference.deferrable = Some(true),
+                    ("NOT DEFERRABLE", None) => reference.deferrable = Some(false),
+                    _ => words.push(word),
+                }
+            }
             column
                 .constraints
-                .push(ColumnConstraint::References(Box::new(ForeignKeyRef {
-                    table: *table,
-                    columns,
-                    on_delete: None,
-                    on_update: None,
-                    on_update_first: false,
-                    match_type: None,
-                    match_after_actions: false,
-                    constraint_name: None,
-                    deferrable: None,
-                    has_foreign_key_keywords: constraint.kind == FOREIGN_KEY,
-                })));
-            ConstraintType::References
+                .push(ColumnConstraint::References(Box::new(reference)));
+            column.constraint_order.push(ConstraintType::References);
+            return Ok(record_inline_constraint(column, constraint.name, words));
         }
     };
     column.constraint_order.push(kind);
+    Ok(record_inline_constraint(
+        column,
+        constraint.name,
+        constraint.properties,
+    ))
+}
+
+/// The name and remaining property words of the inline constraint just pushed onto `column`.
+fn record_inline_constraint(
+    mut column: ColumnDef,
+    name: Option<Identifier>,
+    words: Vec<String>,
+) -> ColumnDef {
     let index = column.constraint_order.len() - 1;
     column
         .constraint_names
-        .extend(constraint.name.map(|name| (index, name)));
+        .extend(name.map(|name| (index, name)));
     column
         .constraint_properties
-        .extend(constraint.properties.into_iter().map(|word| (index, word)));
-    Ok(column)
+        .extend(words.into_iter().map(|word| (index, word)));
+    column
+}
+
+/// A foreign key's MATCH, ON UPDATE and ON DELETE property words set on `reference`; the other words, and any repeat, are returned in order.
+pub(super) fn set_reference_words(
+    reference: &mut ForeignKeyRef,
+    words: Vec<String>,
+) -> Vec<String> {
+    let mut rest = Vec::new();
+    for word in words {
+        if let Some(kind) = word.strip_prefix("MATCH ") {
+            if reference.match_type.is_none() {
+                reference.match_type = match kind {
+                    "FULL" => Some(MatchType::Full),
+                    "PARTIAL" => Some(MatchType::Partial),
+                    _ => Some(MatchType::Simple),
+                };
+                reference.match_after_actions =
+                    reference.on_delete.is_some() || reference.on_update.is_some();
+                continue;
+            }
+        } else if let Some(action) = word.strip_prefix("ON UPDATE ") {
+            if reference.on_update.is_none() {
+                reference.on_update_first = reference.on_delete.is_none();
+                reference.on_update = Some(referential_action(action));
+                continue;
+            }
+        } else if let Some(action) = word.strip_prefix("ON DELETE ") {
+            if reference.on_delete.is_none() {
+                reference.on_delete = Some(referential_action(action));
+                continue;
+            }
+        }
+        rest.push(word);
+    }
+    rest
+}
+
+/// The action an `ON UPDATE` or `ON DELETE` property word names.
+fn referential_action(action: &str) -> ReferentialAction {
+    match action {
+        "CASCADE" => ReferentialAction::Cascade,
+        "RESTRICT" => ReferentialAction::Restrict,
+        "SET NULL" => ReferentialAction::SetNull,
+        "SET DEFAULT" => ReferentialAction::SetDefault,
+        _ => ReferentialAction::NoAction,
+    }
+}
+
+/// An out-of-line constraint's modifiers: ENFORCED, DEFERRABLE, INITIALLY, RELY, NORELY and COMMENT each set their field once; other words, such as ENABLE VALIDATE, and repeats stay in `properties` in order.
+pub(super) fn constraint_modifiers(words: Vec<String>) -> ConstraintModifiers {
+    let mut modifiers = ConstraintModifiers::default();
+    for word in words {
+        let set = match word.as_str() {
+            "ENFORCED" | "NOT ENFORCED" if modifiers.enforced.is_none() => {
+                modifiers.enforced = Some(word == "ENFORCED");
+                true
+            }
+            "DEFERRABLE" | "NOT DEFERRABLE" if modifiers.deferrable.is_none() => {
+                modifiers.deferrable = Some(word == "DEFERRABLE");
+                true
+            }
+            "INITIALLY DEFERRED" | "INITIALLY IMMEDIATE"
+                if modifiers.initially_deferred.is_none() =>
+            {
+                modifiers.initially_deferred = Some(word == "INITIALLY DEFERRED");
+                true
+            }
+            "RELY" | "NORELY" if !modifiers.rely && !modifiers.norely => {
+                modifiers.rely = word == "RELY";
+                modifiers.norely = word == "NORELY";
+                true
+            }
+            _ => match word.strip_prefix("COMMENT '") {
+                Some(text) if modifiers.comment.is_none() => {
+                    let text = text.strip_suffix('\'').unwrap_or(text);
+                    modifiers.comment = Some(text.replace("''", "'"));
+                    true
+                }
+                _ => false,
+            },
+        };
+        if !set {
+            modifiers.properties.push(word);
+        }
+    }
+    modifiers
 }
 
 /// The names in a parsed `( <name> [ , ... ] )`, or none.
