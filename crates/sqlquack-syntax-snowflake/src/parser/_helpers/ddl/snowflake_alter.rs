@@ -1,5 +1,6 @@
 //! Snowflake ALTER of object kinds that have no statement of their own, such as TASK, TAG or ALERT.
 
+use crate::parser::constants::OBJECT_TYPES;
 use crate::parser::constants::ONLINE_FEATURE_TABLE;
 use crate::parser::constants::SNOWFLAKE_ALTER_KINDS;
 use crate::parser::constants::SNOWFLAKE_STRING_KEY_MAP_PROPERTIES;
@@ -941,6 +942,30 @@ pub(super) fn value_phrase(mut first: Box<TableRef>, more: Vec<String>) -> Expre
     let words = std::iter::once(first.name.name).chain(more);
     let this = words.collect::<Vec<_>>().join(" ").to_ascii_uppercase();
     Expression::Var(Box::new(Var { this }))
+}
+
+/// A group's OBJECT_TYPES value with each plain one-word name read as the object-type keyword it is, such as `DATABASES`.
+pub(super) fn object_type_keywords(key: &str, value: Expression) -> Expression {
+    if !key.eq_ignore_ascii_case(OBJECT_TYPES) {
+        return value;
+    }
+    let keyword = |item: Expression| match item {
+        Expression::Table(table)
+            if !table.name.quoted && table.schema.is_none() && table.catalog.is_none() =>
+        {
+            Expression::Var(Box::new(Var {
+                this: table.name.name.to_ascii_uppercase(),
+            }))
+        }
+        other => other,
+    };
+    match value {
+        Expression::Tuple(mut tuple) => {
+            tuple.expressions = tuple.expressions.into_iter().map(keyword).collect();
+            Expression::Tuple(tuple)
+        }
+        other => keyword(other),
+    }
 }
 
 /// One property of kind `kind`.
