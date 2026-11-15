@@ -866,6 +866,11 @@ impl Parser {
                     "FROM MODEL",
                     Expression::Table(Box::new(self.parse_object_name()?)),
                 )
+            } else if create.kind == MODEL_KIND
+                && self.check(TokenType::String)
+                && self.peek_text().starts_with('@')
+            {
+                ("FROM", self.parse_stage_location()?)
             } else if self.is_stage_path() || self.check(TokenType::String) {
                 ("FROM", self.parse_stage_path()?)
             } else {
