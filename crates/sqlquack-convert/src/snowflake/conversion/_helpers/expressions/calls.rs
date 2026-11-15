@@ -154,6 +154,7 @@ pub(crate) fn convert_function(payload: &Value, site: Site<'_>) -> Result<Emitte
     }
     let understood: &[&str] = match name.as_str() {
         "CURRENT_DATE" | "CURRENT_TIMESTAMP" => &["name", "args", "no_parens"],
+        "DATE_PART" => &["name", "args", "from_separator"],
         _ => &["name", "args"],
     };
     require_understood(payload, understood, &construct)?;

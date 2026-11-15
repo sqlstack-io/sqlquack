@@ -487,6 +487,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }));
 
             if self.match_token(TokenType::Within) {
@@ -732,6 +733,7 @@ impl Parser {
             span: SourceSpan::default(),
             inferred_type: None,
             export_state: false,
+            from_separator: false,
         })))
     }
 
@@ -1032,6 +1034,7 @@ impl Parser {
             span: SourceSpan::default(),
             inferred_type: None,
             export_state: false,
+            from_separator: false,
         }));
         self.maybe_parse_over(func_expr)
     }
@@ -1399,6 +1402,7 @@ impl Parser {
             span: SourceSpan::default(),
             inferred_type: None,
             export_state: false,
+            from_separator: false,
         }));
         self.maybe_parse_over(func)
     }
@@ -1427,6 +1431,7 @@ impl Parser {
             span: SourceSpan::default(),
             inferred_type: None,
             export_state: false,
+            from_separator: false,
         }));
         self.maybe_parse_over(func)
     }
@@ -1477,6 +1482,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }));
             self.maybe_parse_subscript(func)
         } else {
@@ -1496,6 +1502,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }));
             self.maybe_parse_subscript(func)
         }
@@ -1937,6 +1944,7 @@ impl Parser {
             span: SourceSpan::default(),
             inferred_type: None,
             export_state: false,
+            from_separator: false,
         })))
     }
 
