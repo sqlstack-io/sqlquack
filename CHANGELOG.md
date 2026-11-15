@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.16.0](https://github.com/sqlstack-io/sqlquack/compare/v0.15.2...v0.16.0) (2026-11-15)
+
+
+### Features
+
+* **syntax-cases:** give each option its own case when Snowflake refuses the case with every option ([dd29423](https://github.com/sqlstack-io/sqlquack/commit/dd2942359da58df2bdc91ebe89e5e0edcd0a4bd5))
+* **syntax-cases:** settle a documented observe case from its agreeing receipts ([59523a0](https://github.com/sqlstack-io/sqlquack/commit/59523a034898c4d98c414893b9728650cb7b8313))
+* **syntax-coverage:** accept receipts whose echoed locations were redacted, counted in locations_redacted ([0af6b9e](https://github.com/sqlstack-io/sqlquack/commit/0af6b9eb0ce6a6181ef9b87f34114fe6bccbc62e))
+
+
+### Bug Fixes
+
+* **receipts:** classify 11 more reviewed post-parse Snowflake errnos as semantic ([7a79c7e](https://github.com/sqlstack-io/sqlquack/commit/7a79c7ec51e1cb9340bd8c292fdf423db43e1e1e))
+* **receipts:** classify 20 reviewed post-parse Snowflake errnos as semantic ([95bbd31](https://github.com/sqlstack-io/sqlquack/commit/95bbd31c5bffc13fa181c9353fc1f5f379370190))
+* **snowflake:** accept UNSET COMMENT when modifying an external consumer's token ([e1b7851](https://github.com/sqlstack-io/sqlquack/commit/e1b78511e822c96651ee9de4a1712cad7c727854))
+* **snowflake:** file a cortex search service's query under AS ([3c78fb2](https://github.com/sqlstack-io/sqlquack/commit/3c78fb201cb5d015a47c0c473c5995ac7814d22a))
+* **snowflake:** keep a CREATE SNOWFLAKE class privilege's class path as a name ([fcb06a7](https://github.com/sqlstack-io/sqlquack/commit/fcb06a743d8048707d67a9de6598cfd43475b21c))
+* **snowflake:** keep a routine's COPY = ( GRANTS ) as a keyword ([deeefb7](https://github.com/sqlstack-io/sqlquack/commit/deeefb7325827777c7d1d2d96bdb68cc14da87fb))
+* **snowflake:** keep a storage location's option keys as keys ([9d597e4](https://github.com/sqlstack-io/sqlquack/commit/9d597e4c33f31d865d31b42431821ed6e9fb140f))
+* **snowflake:** keep AS on a RESAMPLE metadata column alias ([62b46a3](https://github.com/sqlstack-io/sqlquack/commit/62b46a3bee11327e55cd383d71abadc6c0b7834b))
+* **snowflake:** keep COLUMN and SET/DATA/TYPE words on an altered column ([18da974](https://github.com/sqlstack-io/sqlquack/commit/18da974850a342445ffc82aaf4237a57e2f6d68a))
+* **snowflake:** keep how a temporary function was spelled ([06bc929](https://github.com/sqlstack-io/sqlquack/commit/06bc92934efec30501d9deb361fe36d882a9b5c5))
+* **snowflake:** keep how a temporary procedure spells TEMP ([b76b514](https://github.com/sqlstack-io/sqlquack/commit/b76b51476f30437dae61e2464faddc08ceb823a9))
+* **snowflake:** keep the account of a DCM database definition ([8a8918a](https://github.com/sqlstack-io/sqlquack/commit/8a8918addfa011101d8fc886ceeb4f0ea6581ce2))
+* **snowflake:** key an ALTER option list's pairs by name ([3d4866a](https://github.com/sqlstack-io/sqlquack/commit/3d4866acfc795ca71ab20e074fa5b868c6e35dd1))
+* **snowflake:** parse an unquoted s3:// URL in ALTER STAGE SET URL ([674b0ab](https://github.com/sqlstack-io/sqlquack/commit/674b0ab6aecd7b8edc97c86121de55b251f72442))
+* **snowflake:** read a group's object types as keywords ([eec8538](https://github.com/sqlstack-io/sqlquack/commit/eec853887b9c1c5d7fe888c2da4317c0e25c45cc))
+* **snowflake:** read a MATCH_RECOGNIZE pattern as a tree of variables, anchors, groups and quantifiers ([c46fa19](https://github.com/sqlstack-io/sqlquack/commit/c46fa19d21ee825d43ad092e3c02ee6c4da5f48f))
+* **snowflake:** read documented property keywords as keywords ([bdaca33](https://github.com/sqlstack-io/sqlquack/commit/bdaca33d3f9fe183249a957bb379665ea36e42f0))
+* **snowflake:** refuse EXECUTE AS USER after another property in ALTER TASK SET ([0e51c5b](https://github.com/sqlstack-io/sqlquack/commit/0e51c5be0a789db9d078e514d0edf85546305615))
+
 ## [0.15.2](https://github.com/sqlstack-io/sqlquack/compare/v0.15.1...v0.15.2) (2026-11-15)
 
 
