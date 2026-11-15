@@ -1644,3 +1644,6 @@ pub(crate) const SNOWFLAKE_SHOW_PARAMETERS_SCOPES: &[(&str, bool)] = &[
     ("TASK", true),
     ("PIPE", true),
 ];
+
+/// The words a Snowflake column action may write or leave out before its value: `SET [ DATA ] TYPE`, `SET NOT NULL`, `SET DEFAULT`.
+pub(crate) const ALTER_COLUMN_ACTION_WORDS: &[&str] = &["SET", "DATA", "TYPE"];

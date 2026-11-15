@@ -631,6 +631,8 @@ impl<'sql> Parser<'sql> {
                         rename: None,
                     },
                     use_modify_keyword: false,
+                    column_keyword: false,
+                    action_words: None,
                 }];
                 let nullability: Option<AlterColumnAction> = if self.eat_kws(&["NOT", "NULL"]) {
                     Some(AlterColumnAction::SetNotNull)
@@ -644,6 +646,8 @@ impl<'sql> Parser<'sql> {
                         name,
                         action,
                         use_modify_keyword: false,
+                        column_keyword: false,
+                        action_words: None,
                     });
                 }
                 if self.kw("WITH") && self.char_at(1, '(') {
