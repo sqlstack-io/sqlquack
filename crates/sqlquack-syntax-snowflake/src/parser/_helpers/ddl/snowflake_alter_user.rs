@@ -112,13 +112,9 @@ impl Parser {
             return Ok((self.parse_user_delegation(&verb, action)?, existence));
         }
         let kind = self.expect_alter_words(CREDENTIALS)?;
-        let kind = match kind.as_str() {
-            "PAT" => "PROGRAMMATIC ACCESS TOKEN".to_string(),
-            _ => kind,
-        };
         action.push(' ');
         action.push_str(&kind);
-        let token = matches!(kind.as_str(), "PROGRAMMATIC ACCESS TOKEN");
+        let token = matches!(kind.as_str(), "PROGRAMMATIC ACCESS TOKEN" | "PAT");
         if token && matches!(verb.as_str(), "ADD") && self.check(TokenType::If) {
             self.expect_alter_words(&[&["IF", "NOT", "EXISTS"]])?;
             existence.1 = true;

@@ -144,7 +144,7 @@ fn given_a_snowflake_external_consumer_when_parsing_then_the_tree_keeps_its_kind
             description: "a token action keeps its words",
             sql: "ALTER EXTERNAL CONSUMER v1 ROTATE PAT v1 ;",
             pointer: "/0/alter_object/action",
-            expected_value: json!("ROTATE PROGRAMMATIC ACCESS TOKEN"),
+            expected_value: json!("ROTATE PAT"),
         },
     ];
     for test_case in test_cases {
