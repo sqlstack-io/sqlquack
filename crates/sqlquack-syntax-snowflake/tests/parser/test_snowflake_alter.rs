@@ -622,6 +622,30 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_the_tree_names_ki
             expected_value: json!("FOR ALL PERSON USERS"),
         },
         ProjectionTestCase {
+            description: "a user's PAT keeps its short spelling (recorded success)",
+            sql: "ALTER USER v1 MODIFY PAT v1 UNSET DISABLED ;",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("MODIFY PAT UNSET"),
+        },
+        ProjectionTestCase {
+            description: "a user's PROGRAMMATIC ACCESS TOKEN keeps its long spelling",
+            sql: "ALTER USER v1 MODIFY PROGRAMMATIC ACCESS TOKEN v1 UNSET DISABLED ;",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("MODIFY PROGRAMMATIC ACCESS TOKEN UNSET"),
+        },
+        ProjectionTestCase {
+            description: "a consumer's PAT keeps its short spelling",
+            sql: "ALTER EXTERNAL CONSUMER v1 REMOVE PAT v1 ;",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("REMOVE PAT"),
+        },
+        ProjectionTestCase {
+            description: "a consumer's modified PAT still takes SET",
+            sql: "ALTER EXTERNAL CONSUMER v1 MODIFY PAT v1 SET COMMENT = 'm' ;",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("MODIFY PAT SET"),
+        },
+        ProjectionTestCase {
             description: "IF EXISTS is kept",
             sql: "ALTER TAG IF EXISTS v1 RENAME TO v2",
             pointer: "/0/alter_object/if_exists",

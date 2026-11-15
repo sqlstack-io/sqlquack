@@ -184,7 +184,7 @@ fn given_snowflake_table_actions_and_method_calls_when_parsing_then_the_tree_kee
             description: "ALTER USER without a name acts on the current user",
             sql: "ALTER USER ADD PAT t1 DAYS_TO_EXPIRY = 1",
             pointer: "/0/alter_object/action",
-            expected_value: json!("ADD PROGRAMMATIC ACCESS TOKEN"),
+            expected_value: json!("ADD PAT"),
         },
         ProjectionTestCase {
             description: "a token's IF NOT EXISTS is a flag, not part of the action",
@@ -196,7 +196,7 @@ fn given_snowflake_table_actions_and_method_calls_when_parsing_then_the_tree_kee
             description: "a token's IF EXISTS is a flag apart from the user's",
             sql: "ALTER USER IF EXISTS u1 MODIFY PAT IF EXISTS t1 RENAME TO t2",
             pointer: "/0/alter_object/action",
-            expected_value: json!("MODIFY PROGRAMMATIC ACCESS TOKEN RENAME TO"),
+            expected_value: json!("MODIFY PAT RENAME TO"),
         },
         ProjectionTestCase {
             description: "the user's IF EXISTS stays on the user",

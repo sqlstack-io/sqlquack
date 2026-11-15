@@ -478,22 +478,20 @@ impl Parser {
 
     /// An external consumer's token action after its keyword: `{ PROGRAMMATIC ACCESS TOKEN | PAT } <name>`, then MODIFY's `SET <property> ...` or ADD and ROTATE's properties, with no IF [ NOT ] EXISTS.
     fn parse_consumer_token(&mut self, mut action: String) -> Result<(String, ActionParts)> {
-        if !self.match_text_seq(&["PROGRAMMATIC", "ACCESS", "TOKEN"])
-            && !self.match_identifier("PAT")
-        {
-            return Err(self.parse_error("Expected PROGRAMMATIC ACCESS TOKEN or PAT"));
-        }
-        action.push_str(" PROGRAMMATIC ACCESS TOKEN");
+        let verb = action.clone();
+        let kind = self.expect_alter_words(&[&["PROGRAMMATIC", "ACCESS", "TOKEN"], &["PAT"]])?;
+        action.push(' ');
+        action.push_str(&kind);
         let operands = vec![self.parse_name_operand()?];
-        let properties = match action.as_str() {
-            "MODIFY PROGRAMMATIC ACCESS TOKEN" => {
+        let properties = match verb.as_str() {
+            "MODIFY" => {
                 if !self.match_token(TokenType::Set) {
                     return Err(self.parse_error("Expected SET"));
                 }
                 action.push_str(" SET");
                 self.parse_resource_set()?
             }
-            "REMOVE PROGRAMMATIC ACCESS TOKEN" => Vec::new(),
+            "REMOVE" => Vec::new(),
             _ => self.parse_resource_properties()?,
         };
         Ok((action, (operands, properties)))
