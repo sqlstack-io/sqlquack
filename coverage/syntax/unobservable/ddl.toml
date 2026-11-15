@@ -426,11 +426,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.create-warehouse.define-warehouse.o035"
 form = "sf.ddl.create-warehouse.define-warehouse"
-construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = v1 ;"
-reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = MEMORY_1X_x86 ;"
+reason = "not submitted: held by capture guard 300d266 when building the batch 36 packets: billable or out-of-account: compute other than standard single-cluster"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-warehouse.define-warehouse.kdf5675113c15", sql_sha256 = "df5675113c1596760e2cd1128ee17ee130a38623db8d64b9fb7bce5d6cbb5572" },
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.ke683259abf2e", sql_sha256 = "e683259abf2e9557a2f6319c7e181e9057dbc1b3f12dbdc1dfa698dada71d6d2" },
 ]
 runs = []
 probes = []
@@ -450,11 +450,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.create-warehouse.define-warehouse.o037"
 form = "sf.ddl.create-warehouse.define-warehouse"
-construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = v1 ;"
-reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = MEMORY_16X_x86 ;"
+reason = "not submitted: held by capture guard 300d266 when building the batch 36 packets: billable or out-of-account: compute other than standard single-cluster"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-warehouse.define-warehouse.kdf5675113c15", sql_sha256 = "df5675113c1596760e2cd1128ee17ee130a38623db8d64b9fb7bce5d6cbb5572" },
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.k5c5eebdf9305", sql_sha256 = "5c5eebdf9305a41e18dae1277459e6a9229e499376eee061e21cecebe13070de" },
 ]
 runs = []
 probes = []
@@ -474,11 +474,11 @@ probes = []
 [[unobservable]]
 obligation = "sf.ddl.create-warehouse.define-warehouse.o039"
 form = "sf.ddl.create-warehouse.define-warehouse"
-construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = v1 ;"
-reason = "not submitted: held by capture guard f187c2c in the define-stage packet udq-09.jsonl: billable or out-of-account: compute other than standard single-cluster"
+construct = "alternative: DEFINE WAREHOUSE v1 RESOURCE_CONSTRAINT = MEMORY_64X_x86 ;"
+reason = "not submitted: held by capture guard 300d266 when building the batch 36 packets: billable or out-of-account: compute other than standard single-cluster"
 cause = "not_submitted"
 cases = [
-  { case_id = "sf.ddl.create-warehouse.define-warehouse.kdf5675113c15", sql_sha256 = "df5675113c1596760e2cd1128ee17ee130a38623db8d64b9fb7bce5d6cbb5572" },
+  { case_id = "sf.ddl.create-warehouse.define-warehouse.kd83d411ee21a", sql_sha256 = "d83d411ee21abd6bc6c02d823b3568f10d615a3767b82413d6a106fa0419ba11" },
 ]
 runs = []
 probes = []
