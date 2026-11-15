@@ -202,14 +202,26 @@ fn given_a_dcm_project_run_or_an_anonymous_procedure_when_parsing_then_names_and
         ProjectionTestCase {
             description: "an anonymous procedure keeps NOT NULL on its return type, before its options",
             sql: "WITH v1 AS PROCEDURE ( ) RETURNS INT NOT NULL LANGUAGE JAVASCRIPT CALLED ON NULL INPUT AS 'm' CALL v1 ( ) ;",
-            pointer: "/0/call/with/ctes/0/this/create_procedure/with_options",
-            expected_value: json!(["NOT NULL", "CALLED ON NULL INPUT"]),
+            pointer: "/0/call/with/ctes/0/this/create_procedure/snowflake_properties/1/kind",
+            expected_value: json!("CALLED ON NULL INPUT"),
         },
         ProjectionTestCase {
             description: "an anonymous procedure keeps NULL on its return type",
             sql: "WITH v1 AS PROCEDURE ( ) RETURNS INT NULL LANGUAGE SQL AS 'BEGIN RETURN 1 ; END' CALL v1 ( ) ;",
-            pointer: "/0/call/with/ctes/0/this/create_procedure/with_options",
-            expected_value: json!(["NULL"]),
+            pointer: "/0/call/with/ctes/0/this/create_procedure/snowflake_properties/0/kind",
+            expected_value: json!("NULL"),
+        },
+        ProjectionTestCase {
+            description: "an anonymous procedure's handler options are properties, a string value a literal",
+            sql: "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.11' PACKAGES = ( 'p1' , 'p2' ) HANDLER = 'm1.run' AS 'x' CALL v1 ( ) ;",
+            pointer: "/0/call/with/ctes/0/this/create_procedure/snowflake_properties/1/value/tuple/expressions/1/literal/value",
+            expected_value: json!("p2"),
+        },
+        ProjectionTestCase {
+            description: "an anonymous procedure's handler option written as a name stays a name",
+            sql: "WITH v1 AS PROCEDURE ( ) RETURNS INT LANGUAGE JAVA RUNTIME_VERSION = m1 HANDLER = 'm' AS 'x' CALL v1 ( ) ;",
+            pointer: "/0/call/with/ctes/0/this/create_procedure/snowflake_properties/0/value/table/name/name",
+            expected_value: json!("m1"),
         },
     ];
     for test_case in test_cases {
