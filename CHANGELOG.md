@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.16.1](https://github.com/sqlstack-io/sqlquack/compare/v0.16.0...v0.16.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **ci:** pin DuckShop's SQLBuild to the published 0.231.0 ([d70daf2](https://github.com/sqlstack-io/sqlquack/commit/d70daf21f07163053f16322c78fe2f4388aab032))
+* **format:** indent a call's arguments under a line comment before the first one ([30471a5](https://github.com/sqlstack-io/sqlquack/commit/30471a5e93ceb9a6d9fc2773719d29e4be579a53))
+* **format:** keep a call's argument indent after a comment between arguments ([60450f9](https://github.com/sqlstack-io/sqlquack/commit/60450f92a8501d599a1c784cc809948b6b2387c4))
+* **receipts:** classify 3 more reviewed post-parse Snowflake errnos as semantic ([b143f0e](https://github.com/sqlstack-io/sqlquack/commit/b143f0e8daca2221c995a1675145cccdbdbbb141))
+* **snowflake:** give a dynamic table's secondary roles their own property ([e7d8135](https://github.com/sqlstack-io/sqlquack/commit/e7d813577b366f8e4754549888a23be2f3a89c5f))
+* **snowflake:** keep a procedure's RETURNS TABLE columns as fields with their quoting ([b93ecd9](https://github.com/sqlstack-io/sqlquack/commit/b93ecd97028f011b783c980ade80476951fec722))
+* **snowflake:** keep a table's policy, tag and column actions structured ([729ec8a](https://github.com/sqlstack-io/sqlquack/commit/729ec8ace02a3dd2d8ff46b3af553fa499cdef70))
+* **snowflake:** keep an anonymous procedure's options as properties ([6f6611f](https://github.com/sqlstack-io/sqlquack/commit/6f6611f14b531ed92dc6c7a57b1d33ca75686b35))
+* **snowflake:** read a MODIFY ( ... ) column list as typed column actions ([f380256](https://github.com/sqlstack-io/sqlquack/commit/f38025693036d78c834662839a629f7ad4476619))
+* **snowflake:** refuse nameless ALTER SET and UNSET that Snowflake refuses ([737c81d](https://github.com/sqlstack-io/sqlquack/commit/737c81d3f50395b2f5676cdd552d02482f307869))
+* **snowflake:** set a constraint's options on their typed fields ([6d8844c](https://github.com/sqlstack-io/sqlquack/commit/6d8844c1f22b54fb8a7f32e1e77d36ed08e48eee))
+* **syntax-cases:** write a Snowflake keyword with a lower-case part instead of filling it ([16441f7](https://github.com/sqlstack-io/sqlquack/commit/16441f7c7ce908e6d852100e1a2b007181d6cc3d))
+* **syntax-cases:** write an option of a branch that is one group of options ([22beb13](https://github.com/sqlstack-io/sqlquack/commit/22beb130f456490a3664b779b6bcdd9ee8d4b8c4))
+
 ## [0.16.0](https://github.com/sqlstack-io/sqlquack/compare/v0.15.2...v0.16.0) (2026-11-15)
 
 
