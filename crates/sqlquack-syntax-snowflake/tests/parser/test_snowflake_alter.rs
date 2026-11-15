@@ -646,6 +646,24 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_the_tree_names_ki
             expected_value: json!("MODIFY PAT SET"),
         },
         ProjectionTestCase {
+            description: "STOP ALL keeps OF TYPE as a property (recorded semantic error)",
+            sql: "ALTER COMPUTE POOL v1 STOP ALL OF TYPE USER , USER ;",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("OF TYPE"),
+        },
+        ProjectionTestCase {
+            description: "OF TYPE keeps each workload type",
+            sql: "ALTER COMPUTE POOL v1 STOP ALL OF TYPE USER , SYSTEM ;",
+            pointer: "/0/alter_object/properties/0/value/tuple/expressions/1/table/name/name",
+            expected_value: json!("SYSTEM"),
+        },
+        ProjectionTestCase {
+            description: "STOP ALL OF TYPE names only STOP ALL as its action",
+            sql: "ALTER COMPUTE POOL v1 STOP ALL OF TYPE USER ;",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("STOP ALL"),
+        },
+        ProjectionTestCase {
             description: "IF EXISTS is kept",
             sql: "ALTER TAG IF EXISTS v1 RENAME TO v2",
             pointer: "/0/alter_object/if_exists",
