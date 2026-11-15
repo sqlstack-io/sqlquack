@@ -698,7 +698,7 @@ impl Parser {
 
         let deferrable = if self.match_identifier("DEFERRABLE") {
             Some(true)
-        } else if self.match_token(TokenType::Not) && self.match_identifier("DEFERRABLE") {
+        } else if self.match_text_seq(&["NOT", "DEFERRABLE"]) {
             Some(false)
         } else {
             None
