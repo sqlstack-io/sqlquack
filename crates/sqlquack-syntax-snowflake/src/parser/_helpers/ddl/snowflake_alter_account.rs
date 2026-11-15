@@ -1,6 +1,7 @@
 //! Parser ddl: Snowflake ALTER of account-level objects: failover and replication groups, connections, integrations and organization objects.
 
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
+use crate::parser::_helpers::ddl::snowflake_alter::keyed_pair;
 use crate::parser::_helpers::ddl::snowflake_alter::named_property;
 use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
@@ -458,9 +459,7 @@ impl Parser {
                 };
                 self.expect_token(TokenType::Eq)?;
                 let value = self.parse_object_value()?;
-                items.push(Expression::Tuple(Box::new(Tuple {
-                    expressions: vec![key, value],
-                })));
+                items.push(keyed_pair(key, value, false));
             } else {
                 items.push(self.parse_object_value()?);
             }
