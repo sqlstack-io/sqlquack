@@ -942,6 +942,24 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             expected_value: json!(false),
         },
         ProjectionTestCase {
+            description: "a data metric function's arguments keep a left-out column (recorded semantic error)",
+            sql: "ALTER TABLE t1 ADD DATA METRIC FUNCTION SNOWFLAKE . CORE . ACCEPTED_VALUES ON ( , x -> x > 0 ) ;",
+            pointer: "/0/alter_table/actions/0/DataMetricFunction/items/0/column_omitted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a left-out column before TABLE is kept",
+            sql: "ALTER TABLE v1 ADD DATA METRIC FUNCTION SNOWFLAKE . CORE . ROW_COUNT_DIFFERENCE ON ( , TABLE ( v1 ( v1 ) ) ) ;",
+            pointer: "/0/alter_table/actions/0/DataMetricFunction/items/0/column_omitted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "a data metric function's written column leaves nothing out",
+            sql: "ALTER TABLE t1 ADD DATA METRIC FUNCTION SNOWFLAKE . CORE . ACCEPTED_VALUES ON ( v1 , x -> x > 0 ) ;",
+            pointer: "/0/alter_table/actions/0/DataMetricFunction/items/0/column_omitted",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
             description: "a typed literal keeps its type's name and parameters",
             sql: "SELECT PERIOD ( INT ) 'x'",
             pointer: "/0/select/expressions/0/cast/to/name",
