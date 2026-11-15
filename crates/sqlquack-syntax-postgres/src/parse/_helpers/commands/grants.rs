@@ -312,6 +312,7 @@ impl Parser<'_> {
             true => vec![Privilege {
                 name: String::new(),
                 columns: self.privilege_columns()?,
+                class: None,
             }],
             false => Vec::new(),
         };
@@ -325,6 +326,7 @@ impl Parser<'_> {
             return Ok(Privilege {
                 name: ALTER_SYSTEM.to_owned(),
                 columns: Vec::new(),
+                class: None,
             });
         }
         let name: String = match KEYWORD_PRIVILEGES.iter().find(|word| self.kw(word)) {
@@ -338,7 +340,11 @@ impl Parser<'_> {
             true => self.privilege_columns()?,
             false => Vec::new(),
         };
-        Ok(Privilege { name, columns })
+        Ok(Privilege {
+            name,
+            columns,
+            class: None,
+        })
     }
 
     /// `'(' columnList ')'`: the column names.

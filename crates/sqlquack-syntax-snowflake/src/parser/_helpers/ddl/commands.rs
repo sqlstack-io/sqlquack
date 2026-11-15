@@ -563,6 +563,7 @@ impl Parser {
             privileges.push(Privilege {
                 name: priv_name,
                 columns,
+                class: None,
             });
             if !self.match_token(TokenType::Comma) {
                 break;

@@ -197,16 +197,21 @@ impl Parser {
             return Ok((privilege(words.join(" ")), qualifier));
         }
         if self.check_text_seq(&["CREATE", "SNOWFLAKE"]) && self.check_at(2, TokenType::Dot) {
-            self.match_text_seq(&["CREATE", "SNOWFLAKE"]);
+            self.skip();
+            let database = self.parse_grant_name_part()?;
             self.expect_token(TokenType::Dot)?;
-            let schema = if self.check(TokenType::Dot) {
-                String::new()
-            } else {
-                self.parse_grant_name_part()?.name
+            let schema = match self.check(TokenType::Dot) {
+                true => None,
+                false => Some(self.parse_grant_name_part()?),
             };
             self.expect_token(TokenType::Dot)?;
-            let class = self.parse_grant_name_part()?.name;
-            words.push(format!("CREATE SNOWFLAKE.{schema}.{class}"));
+            let mut class = TableRef::from_identifier(self.parse_grant_name_part()?);
+            class.schema_omitted = schema.is_none();
+            class.schema = schema;
+            class.catalog = Some(database);
+            let mut create = privilege("CREATE".to_string());
+            create.class = Some(class);
+            return Ok((create, qualifier));
         } else if self.match_text_seq(&["USE", "AI", "FUNCTION"]) {
             let name = self.parse_grant_name_part()?;
             words.push(format!("USE AI FUNCTION {}", name.name));
@@ -460,6 +465,7 @@ fn privilege(name: String) -> Privilege {
     Privilege {
         name,
         columns: Vec::new(),
+        class: None,
     }
 }
 

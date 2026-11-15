@@ -681,6 +681,7 @@ impl Parser<'_> {
             Ok(Privilege {
                 name: words.join(" "),
                 columns: Vec::new(),
+                class: None,
             })
         })
     }

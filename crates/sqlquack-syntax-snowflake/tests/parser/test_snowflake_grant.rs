@@ -252,10 +252,34 @@ fn given_a_snowflake_grant_or_revoke_when_parsing_then_the_tree_keeps_its_parts(
             expected_value: json!("ADD SEARCH OPTIMIZATION"),
         },
         ProjectionTestCase {
-            description: "a SNOWFLAKE class privilege keeps its class",
+            description: "a SNOWFLAKE class privilege is CREATE",
             sql: "GRANT CREATE SNOWFLAKE.ML.FORECAST ON SCHEMA s1 TO ROLE r1",
             pointer: "/0/grant/privileges/0/name",
-            expected_value: json!("CREATE SNOWFLAKE.ML.FORECAST"),
+            expected_value: json!("CREATE"),
+        },
+        ProjectionTestCase {
+            description: "a SNOWFLAKE class privilege keeps its class's schema",
+            sql: "GRANT CREATE SNOWFLAKE.ML.FORECAST ON SCHEMA s1 TO ROLE r1",
+            pointer: "/0/grant/privileges/0/class/schema/name",
+            expected_value: json!("ML"),
+        },
+        ProjectionTestCase {
+            description: "a SNOWFLAKE class privilege keeps its class's name",
+            sql: "GRANT CREATE SNOWFLAKE.ML.FORECAST ON SCHEMA s1 TO ROLE r1",
+            pointer: "/0/grant/privileges/0/class/name/name",
+            expected_value: json!("FORECAST"),
+        },
+        ProjectionTestCase {
+            description: "a class privilege's omitted schema is a null part, not an empty name",
+            sql: "GRANT CREATE SNOWFLAKE . . BUDGET ON SCHEMA s1 TO ROLE r1",
+            pointer: "/0/grant/privileges/0/class/schema",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "a class privilege records that its schema was left out",
+            sql: "GRANT CREATE SNOWFLAKE . . BUDGET ON SCHEMA s1 TO ROLE r1",
+            pointer: "/0/grant/privileges/0/class/schema_omitted",
+            expected_value: json!(true),
         },
         ProjectionTestCase {
             description: "CALLER is kept once for the whole list",
