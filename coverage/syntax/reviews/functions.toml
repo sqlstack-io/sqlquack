@@ -6515,3 +6515,35 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.functions.dmf-accepted-values-percent" = "13194a834f982364851a9aedff65d3248cb2ce29343fd8438fb7fdc775261c4c"
 "sf.functions.dmf-referential-integrity-count.table" = "47c14d85203c383d248c0eef06e65fd37693ef72606d8105541250e62f1a49f9"
 "sf.functions.dmf-source-target-lag.alter-table-add-data" = "820f46969fb8b72bdd6bb35fa792ed4e6a2e81073393417a907c7263befce7e0"
+
+[[review]]
+id = "functions-034"
+family = "functions"
+parser_tree = "3a4cba73f9f022daa15bba5bcbd08b54aca3ee57"
+reviewed_utc = "2026-11-15T10:13:31Z"
+verdict = "approved"
+forms = [
+  "sf.functions.cast.cast-as",
+  "sf.functions.dbt-project-execution-history",
+  "sf.functions.extract.extract-from",
+  "sf.functions.get-path.colon.syntax",
+  "sf.functions.hll.hll-over",
+  "sf.functions.minhash.minhash",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 60ca8f7a6; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.cast.cast-as" = "047748437c7fe49c650eff23c3b5df206adce6ea2bf74d75287629be04849782"
+"sf.functions.dbt-project-execution-history" = "af22fd941c33b3afac8d2244309820542e2cd8f06baca0166c1ccac2c8d97ac7"
+"sf.functions.extract.extract-from" = "93f108672b89729e8203bcdf009d713d447389d35bbd61925152c0de32db8775"
+"sf.functions.get-path.colon.syntax" = "df756d4b076c8a073016897851136935fb384ad2f0a75a116b3ea974cc2a8c6a"
+"sf.functions.hll.hll-over" = "3acc97212d7b70ee2c501960cc3a1ac13d5b3b8ecb5e611ad0164800d4b7d9a4"
+"sf.functions.minhash.minhash" = "df024bad5f791ac44340bb999d24fb86ba78fd9f7a176889d36f842b3099d66e"
+
+[review.definitions]
+"sf.functions.cast.cast-as" = "49f109189fd1e5270cd2181c6650a58ba1cd8aad51ca8d61c9732cfb2ec29f52"
+"sf.functions.dbt-project-execution-history" = "18beb419ca80e4c2e5a3e57127eb749483bed833e7c963d4390b2938eef79f46"
+"sf.functions.extract.extract-from" = "f251caee7b0494781525f6fbe1f98aaae895f92f752918bab47db966e4c8a28b"
+"sf.functions.get-path.colon.syntax" = "b8fb86d916962f447053fbc7484fbbcd8d13d45148081d1c535c3dc7b32c7cf0"
+"sf.functions.hll.hll-over" = "f08741b1ca7a430e11175722a3b9788f83f20b7ac3722ce0c3b9d10375b9be75"
+"sf.functions.minhash.minhash" = "b81b60e3d2eb6900109ee1818a9451f04c7543d9c43d462235c2e2c65829faf2"

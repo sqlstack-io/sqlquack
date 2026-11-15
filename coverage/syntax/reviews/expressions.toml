@@ -619,3 +619,20 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.expressions.data-types-structured.object" = "b5f9e402b983676be90b22b41b4a6e5da03b4848ef769dc3dffc07d354d39576"
 "sf.expressions.data-types-text.string" = "87aef0af87a1becf98f0d8dfb50a81d23c49eacb63557e7559f324fd34e95965"
 "sf.expressions.functions-table" = "112cff4b03112a75cf7b1f5a9694e7236b572040d8a3321e4c3b889ad28ab301"
+
+[[review]]
+id = "expressions-025"
+family = "expressions"
+parser_tree = "3a4cba73f9f022daa15bba5bcbd08b54aca3ee57"
+reviewed_utc = "2026-11-15T10:13:31Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.data-types-datetime.interval",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 60ca8f7a6; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.expressions.data-types-datetime.interval" = "c0ca33d7c22bf0f7ac5d9fde3975223c626264a9ad0447d52b9cd68c86dd453c"
+
+[review.definitions]
+"sf.expressions.data-types-datetime.interval" = "1744844543ad90c7d7fd770cd1c170e42660d7cdeb754aea79a4914e5f282860"
