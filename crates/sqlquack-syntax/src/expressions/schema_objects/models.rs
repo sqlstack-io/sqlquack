@@ -1285,7 +1285,8 @@ pub struct CreateObject {
     pub if_not_exists: bool,
     /// The object name
     pub name: TableRef,
-    /// The source's keywords: "BACKUP SET", "SHARE", "REPLICA" or "ARCHIVE"; empty without one
+    /// The source's keywords: "BACKUP SET", "SHARE", "REPLICA" or "ARCHIVE"; empty without one, and then left out of the tree
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub source: String,
     /// The source's operands in order: names, an identifier string or a condition
     #[serde(default)]
