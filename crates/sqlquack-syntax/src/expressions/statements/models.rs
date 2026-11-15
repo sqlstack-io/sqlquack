@@ -775,6 +775,12 @@ pub struct Show {
     /// Snowflake SHOW AVAILABLE LISTINGS filters set to TRUE, such as IS_IMPORTED, in source order
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub listing_filters: Vec<String>,
+    /// Snowflake SHOW SERVICES EXCLUDE JOBS
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub exclude_jobs: bool,
+    /// Snowflake SHOW SERVICES OF TYPE <type> [ , ... ], upper case in source order
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub service_types: Vec<String>,
 }
 
 impl Show {
@@ -797,6 +803,8 @@ impl Show {
             privileges: Vec::new(),
             root_only: false,
             listing_filters: Vec::new(),
+            exclude_jobs: false,
+            service_types: Vec::new(),
         }
     }
 }
