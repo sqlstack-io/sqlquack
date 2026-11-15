@@ -1449,8 +1449,10 @@ impl Parser {
             let mut expr = self.parse_expression()?;
 
             if self.match_token(TokenType::As) {
-                let alias = self.parse_unquoted_identifier(Self::expect_identifier)?;
-                expr = Expression::Alias(Box::new(Alias::new(expr, alias)));
+                let alias = self.parse_quoting_identifier(Self::expect_identifier)?;
+                let mut alias = Alias::new(expr, alias);
+                alias.alias_explicit_as = true;
+                expr = Expression::Alias(Box::new(alias));
             } else if self.is_snowflake() {
                 let at_clause = self.is_at_end()
                     || self.check(TokenType::Comma)
@@ -1595,22 +1597,22 @@ impl Parser {
             }
 
             if self.match_token(TokenType::First) {
-                let name = self.expect_identifier()?;
-                return Ok(Some(MatchRecognizeAfter::ToFirst(Identifier::new(name))));
+                let name = self.parse_quoting_identifier(Self::expect_identifier)?;
+                return Ok(Some(MatchRecognizeAfter::ToFirst(name)));
             }
 
             if self.match_token(TokenType::Last) {
-                let name = self.expect_identifier()?;
-                return Ok(Some(MatchRecognizeAfter::ToLast(Identifier::new(name))));
+                let name = self.parse_quoting_identifier(Self::expect_identifier)?;
+                return Ok(Some(MatchRecognizeAfter::ToLast(name)));
             }
 
             if self.is_snowflake() {
                 let name = if next {
-                    self.advance_text()?
+                    self.parse_quoting_identifier(Self::advance_text)?
                 } else {
-                    self.expect_identifier()?
+                    self.parse_quoting_identifier(Self::expect_identifier)?
                 };
-                return Ok(Some(MatchRecognizeAfter::To(Identifier::new(name))));
+                return Ok(Some(MatchRecognizeAfter::To(name)));
             }
 
             return Err(self.parse_error("Expected NEXT ROW, FIRST x, or LAST x after TO"));
@@ -1686,7 +1688,7 @@ impl Parser {
         let mut semantics: Vec<(usize, MatchRecognizeSemantics)> = Vec::new();
 
         loop {
-            let name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+            let name = self.parse_quoting_identifier(Self::expect_identifier)?;
             self.expect_token(TokenType::As)?;
             if self.is_snowflake() {
                 semantics.extend(
