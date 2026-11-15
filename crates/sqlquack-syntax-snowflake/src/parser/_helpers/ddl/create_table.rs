@@ -475,6 +475,7 @@ impl Parser {
             uuid,
             with_partition_columns: Vec::new(),
             with_connection: None,
+            temporary_spelling: None,
         })))
     }
 

@@ -476,8 +476,14 @@ impl Parser {
                         return table;
                     }
                 }
-                let parsed =
+                let mut parsed =
                     self.parse_create_table(or_replace, temporary, leading_comments, modifier);
+                if let (true, Ok(Expression::CreateTable(table))) =
+                    (temporary && self.is_snowflake(), &mut parsed)
+                {
+                    let written = self.written_temporary(table_start);
+                    table.temporary_spelling = (written != "TEMPORARY").then_some(written);
+                }
                 let checkable =
                     !define && !secure && matches!(modifier, None | Some("TRANSIENT" | "HYBRID"));
                 self.keep_snowflake_create_table(
