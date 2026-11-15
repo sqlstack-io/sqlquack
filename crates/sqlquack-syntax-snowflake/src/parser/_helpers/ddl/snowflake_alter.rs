@@ -24,28 +24,13 @@ use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
-/// The kinds whose ALTER Snowflake parses without a name, and before which actions; recorded receipts refuse the omission for other kinds, such as BACKUP POLICY or SECRET, and for SNAPSHOT POLICY's UNSET.
+/// The kinds whose ALTER Snowflake parses without a name, and before which actions; recorded receipts refuse the omission as a syntax error for other kinds, such as the policies, the integrations, VIEW, BACKUP POLICY or SECRET, and for SNAPSHOT POLICY's UNSET.
 const OMITTED_NAME_ACTIONS: &[(&str, &[&str])] = &[
-    ("AGGREGATION POLICY", &["SET", "UNSET"]),
     ("DATABASE", &["SET", "UNSET"]),
     ("SCHEMA", &["SET", "UNSET"]),
-    ("AUTHENTICATION POLICY", &["SET", "UNSET"]),
-    ("FEATURE POLICY", &["SET", "UNSET"]),
-    ("JOIN POLICY", &["SET", "UNSET"]),
-    ("MAINTENANCE POLICY", &["SET", "UNSET"]),
-    ("MASKING POLICY", &["SET", "UNSET"]),
-    ("NETWORK POLICY", &["SET", "UNSET"]),
     ("ONLINE FEATURE TABLE", &["SET"]),
-    ("PACKAGES POLICY", &["SET", "UNSET"]),
-    ("PASSWORD POLICY", &["SET", "UNSET"]),
-    ("SESSION POLICY", &["SET", "UNSET"]),
     ("SNAPSHOT POLICY", &["SET"]),
-    ("STORAGE LIFECYCLE POLICY", &["SET", "UNSET"]),
-    ("INTEGRATION", &["SET", "UNSET", "REFRESH"]),
-    ("CATALOG INTEGRATION", &["SET"]),
-    ("EXTERNAL ACCESS INTEGRATION", &["SET", "UNSET"]),
-    ("SECURITY INTEGRATION", &["SET"]),
-    ("VIEW", &["SET"]),
+    ("INTEGRATION", &["REFRESH"]),
     ("MATERIALIZED VIEW", &["SET"]),
 ];
 

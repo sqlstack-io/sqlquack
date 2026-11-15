@@ -44,11 +44,16 @@ impl Parser {
     /// Parse a Snowflake ALTER of a kind this module owns, or None when the next words name another kind.
     pub(crate) fn parse_alter_snowflake_objects(&mut self) -> Result<Option<Expression>> {
         for kind in ["APPLICATION", "DATABASE"] {
-            if self.check_text_seq(&[kind, "ROLE"])
-                && !self
-                    .text_at(2)
-                    .is_some_and(|word| matches!(word.as_str(), "RENAME" | "SET" | "UNSET"))
-            {
+            // ROLE names the application or database before RENAME, SET or UNSET; Snowflake reads
+            // `DATABASE ROLE SET` or `UNSET` of anything but a TAG as a database role with no name.
+            let role_is_name = match self.text_at(2).as_deref() {
+                Some("RENAME") => true,
+                Some("SET" | "UNSET") => {
+                    kind == "APPLICATION" || self.text_at(3).as_deref() == Some("TAG")
+                }
+                _ => false,
+            };
+            if self.check_text_seq(&[kind, "ROLE"]) && !role_is_name {
                 self.current += 2;
                 return self
                     .parse_alter_scoped_role(&format!("{kind} ROLE"))
