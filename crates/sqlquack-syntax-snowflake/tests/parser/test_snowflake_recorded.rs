@@ -864,6 +864,24 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
             expected_value: json!("c1"),
         },
         ProjectionTestCase {
+            description: "a created procedure's return columns are fields, not a TABLE type name",
+            sql: "CREATE PROCEDURE v1 ( ) RETURNS TABLE ( c1 INT , c2 TEXT ) LANGUAGE SQL AS $$ SELECT 1 $$ ;",
+            pointer: "/0/create_procedure/returns_table/1/name",
+            expected_value: json!("c2"),
+        },
+        ProjectionTestCase {
+            description: "a created procedure's quoted return column keeps its quotes",
+            sql: "CREATE PROCEDURE v1 ( ) RETURNS TABLE ( \"v1 Q\" INT ) LANGUAGE SQL AS $$ SELECT 1 $$ ;",
+            pointer: "/0/create_procedure/returns_table/0/name",
+            expected_value: json!("\"v1 Q\""),
+        },
+        ProjectionTestCase {
+            description: "an anonymous procedure's quoted return column keeps its quotes",
+            sql: "WITH v1 AS PROCEDURE ( ) RETURNS TABLE ( \"SELECT\" INT ) LANGUAGE SQL AS $$ SELECT 1 $$ CALL v1 ( ) ;",
+            pointer: "/0/call/with/ctes/0/this/create_procedure/returns_table/0/name",
+            expected_value: json!("\"SELECT\""),
+        },
+        ProjectionTestCase {
             description: "a call without a schema keeps its database as the first name part",
             sql: "SELECT d1 . . f1 ( 1 )",
             pointer: "/0/select/expressions/0/call/name/0/name",
