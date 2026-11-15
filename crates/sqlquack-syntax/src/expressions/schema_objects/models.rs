@@ -927,6 +927,38 @@ pub struct CreateSequence {
     /// Snowflake: a START value outside the 64-bit range, as written; `start` is then None
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub start_text: Option<String>,
+    /// Snowflake: written as `CREATE OR ALTER SEQUENCE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub or_alter: bool,
+    /// The optional WITH written before the properties
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub with: bool,
+    /// The optional words written in START [ WITH ] [ = ] and INCREMENT [ BY ] [ = ]
+    #[serde(default, skip_serializing_if = "SequenceSpelling::is_empty")]
+    pub spelling: SequenceSpelling,
+}
+
+/// The optional words a sequence's START and INCREMENT were written with.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+pub struct SequenceSpelling {
+    /// `START WITH`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub start_with: bool,
+    /// `START [ WITH ] =`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub start_eq: bool,
+    /// `INCREMENT BY`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub increment_by: bool,
+    /// `INCREMENT [ BY ] =`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub increment_eq: bool,
+}
+
+impl SequenceSpelling {
+    pub fn is_empty(&self) -> bool {
+        *self == Self::default()
+    }
 }
 
 /// Sequence bound (value or NO MINVALUE/NO MAXVALUE)
@@ -961,6 +993,9 @@ impl CreateSequence {
             define: false,
             comment_name: None,
             start_text: None,
+            or_alter: false,
+            with: false,
+            spelling: SequenceSpelling::default(),
         }
     }
 }

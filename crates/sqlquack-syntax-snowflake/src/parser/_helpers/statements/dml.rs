@@ -541,7 +541,7 @@ impl Parser {
                     .parse_create_procedure(or_replace, or_alter)
                     .map(|procedure| with_routine_modifiers(procedure, secure, temporary, false)),
             },
-            TokenType::Sequence => self.parse_create_sequence(temporary, or_replace),
+            TokenType::Sequence => self.parse_create_sequence(temporary, or_replace, or_alter),
             TokenType::Trigger => {
                 self.parse_create_trigger(or_replace, or_alter, false, create_pos)
             }
