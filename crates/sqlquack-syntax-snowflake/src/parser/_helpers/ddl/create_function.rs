@@ -27,6 +27,7 @@ impl Parser {
         temporary: bool,
         is_table_function: bool,
     ) -> Result<Expression> {
+        let temporary_spelling = self.function_temporary_spelling(temporary);
         self.expect_token(TokenType::Function)?;
 
         let if_not_exists =
@@ -101,6 +102,7 @@ impl Parser {
             overloads: Vec::new(),
             define: false,
             aggregate: false,
+            temporary_spelling,
         };
         function = self.parse_create_function_properties(function)?;
 

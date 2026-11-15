@@ -188,6 +188,21 @@ impl Parser {
         }
     }
 
+    /// How a temporary Snowflake function spelled TEMPORARY, read from the words before its FUNCTION, when not plainly.
+    pub(crate) fn function_temporary_spelling(&self, temporary: bool) -> Option<String> {
+        let at: usize = (0..self.current)
+            .rev()
+            .find(|&index| {
+                !matches!(
+                    self.tokens[index].text.to_ascii_uppercase().as_str(),
+                    "SECURE" | "AGGREGATE"
+                )
+            })
+            .map_or(0, |index| index + 1);
+        let written = (temporary && self.is_snowflake()).then(|| self.written_temporary(at))?;
+        (written != PLAIN_TEMPORARY).then_some(written)
+    }
+
     /// The words before the token at `at` that made a CREATE temporary, as written and upper-cased: `[ LOCAL | GLOBAL ] { TEMP | TEMPORARY | VOLATILE }`.
     pub(crate) fn written_temporary(&self, at: usize) -> String {
         let word = |offset: usize| {

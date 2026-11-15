@@ -589,6 +589,30 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             expected_value: json!(null),
         },
         ProjectionTestCase {
+            description: "a TEMP function keeps TEMP",
+            sql: "CREATE TEMP FUNCTION v1 ( ) RETURNS INT AS '1' ;",
+            pointer: "/0/create_function/temporary_spelling",
+            expected_value: json!("TEMP"),
+        },
+        ProjectionTestCase {
+            description: "a TEMP SECURE AGGREGATE function keeps TEMP past SECURE and AGGREGATE",
+            sql: "CREATE OR REPLACE TEMP SECURE AGGREGATE FUNCTION v1 ( v1 INT ) RETURNS INT LANGUAGE PYTHON RUNTIME_VERSION = '3.10' HANDLER = 'm' AS 'm'",
+            pointer: "/0/create_function/temporary_spelling",
+            expected_value: json!("TEMP"),
+        },
+        ProjectionTestCase {
+            description: "a TEMPORARY function needs no spelling",
+            sql: "CREATE TEMPORARY SECURE FUNCTION v1 ( ) RETURNS INT AS '1' ;",
+            pointer: "/0/create_function/temporary_spelling",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "a function that is not temporary has no spelling",
+            sql: "CREATE SECURE FUNCTION v1 ( ) RETURNS INT AS '1' ;",
+            pointer: "/0/create_function/temporary_spelling",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
             description: "a class instance keeps its class's omitted schema as null",
             sql: "CREATE SNOWFLAKE . . BUDGET v1 ( )",
             pointer: "/0/create_object/class/schema_omitted",
