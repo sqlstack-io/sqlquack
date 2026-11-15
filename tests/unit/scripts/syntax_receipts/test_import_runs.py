@@ -182,6 +182,43 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             ),
         ),
         ClassifyTestCase(
+            description="reviewed post-parse errno 1647 is semantic",
+            errno=1647,
+            sqlstate="0A000",
+            message="Temporary objects are not allowed in DCM project definition files.",
+            expected_classification=(
+                "semantic_error",
+                "errno 1647 SQLSTATE 0A000, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 90214 is semantic",
+            errno=90214,
+            sqlstate="42601",
+            message="Return signature missing data type for column 'V1'.",
+            expected_classification=(
+                "semantic_error",
+                "errno 90214 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="reviewed post-parse errno 90216 is semantic",
+            errno=90216,
+            sqlstate="42601",
+            message="Invalid UDF function name: 'v1 Q'",
+            expected_classification=(
+                "semantic_error",
+                "errno 90216 SQLSTATE 42601, reviewed as semantic",
+            ),
+        ),
+        ClassifyTestCase(
+            description="a missing name that may be refused while parsing is not established",
+            errno=926,
+            sqlstate="42601",
+            message="External table identifier cannot be empty",
+            expected_classification=None,
+        ),
+        ClassifyTestCase(
             description="an internal error is not established",
             errno=603,
             sqlstate="XX000",
