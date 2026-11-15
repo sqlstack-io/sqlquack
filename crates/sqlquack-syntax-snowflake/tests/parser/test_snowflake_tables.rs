@@ -1600,3 +1600,41 @@ fn given_an_identity_column_when_parsing_then_its_spelling_is_kept() {
         );
     }
 }
+
+#[test]
+fn given_an_external_table_column_with_not_null_when_parsing_then_it_is_a_constraint() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "NOT NULL after a column's expression is the column's constraint",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 NOT NULL UNIQUE ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/nullable",
+            expected_value: json!(false),
+        },
+        ProjectionTestCase {
+            description: "the expression before NOT NULL is not turned into a null test",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 NOT NULL UNIQUE ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/constraints/0/ComputedColumn/expression/literal/value",
+            expected_value: json!("1"),
+        },
+        ProjectionTestCase {
+            description: "IS NOT NULL stays part of the expression",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 BOOLEAN AS v2 IS NOT NULL ) LOCATION = @s1 FILE_FORMAT = ( TYPE = CSV ) ;",
+            pointer: "/0/create_object/operands/0/tuple/expressions/0/column_def/nullable",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "a quoted stage name in LOCATION keeps its quotes",
+            sql: "CREATE EXTERNAL TABLE v1 ( v1 INT AS 1 ) LOCATION = @\"SELECT\" FILE_FORMAT = ( TYPE = CSV ) ;",
+            pointer: "/0/create_object/properties/0/value/literal/value",
+            expected_value: json!("@\"SELECT\""),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
