@@ -371,7 +371,6 @@ other_receipts_contradicted = [
   "k52f4b25a2004",
   "kdfe11763c33e",
 ]
-"sf.security_admin.alter-account.set-maintenance-policy-for" = ["kd79fe523c612"]
 "sf.transaction_session.show-parameters" = ["k087afefdac13"]
 "sf.utility.execute-inference-job-service" = [
   "kd484841cc87f",
@@ -380,19 +379,3 @@ other_receipts_contradicted = [
 
 [parsed_cases_refused]
 "sf.ddl.alter-stage.set.syntax" = ["kd30e04e36906"]
-"sf.ddl.undrop-external-volume" = ["kb557e7ff4586"]
-"sf.security_admin.alter-organization-user.set" = ["k4614b5f6b6ce"]
-"sf.security_admin.alter-organization-user.unset" = ["k996ab4d41cd1"]
-"sf.security_admin.create-connection.connection-as-replica-of" = ["kee0d007198dd"]
-"sf.security_admin.create-failover-group.as-replica-of" = ["k5e081373c209"]
-"sf.security_admin.create-organization-account" = [
-  "k839222785fe7",
-  "kcf702494458a",
-  "kff1992709592",
-]
-"sf.security_admin.create-organization-profile.profile" = [
-  "k0c40743be9b8",
-  "kf3cbe549deb2",
-]
-"sf.security_admin.create-organization-user" = ["kf135125eeecb"]
-"sf.security_admin.create-replication-group.as-replica-of" = ["k28cad1926c65"]
