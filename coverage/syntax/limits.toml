@@ -82346,6 +82346,42 @@ sql = "ALTER STAGE v1 SET URL = ;"
 expect = "reject"
 context = "raw"
 
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "negative_neighbour"
+note = "an unquoted s3 URL with nothing after //, observed: whether // starts a comment"
+anchor = "doc.sql.alter-stage / Syntax"
+sql = "ALTER STAGE v1 SET URL = s3:// ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "negative_neighbour"
+note = "an unquoted s3 scheme alone, observed: whether the parsed s3 URL is read as s3: before a comment"
+anchor = "doc.sql.alter-stage / Syntax"
+sql = "ALTER STAGE v1 SET URL = s3: ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "negative_neighbour"
+note = "an unquoted URL whose scheme is not a cloud, observed: whether s3 is special or any word followed by // parses"
+anchor = "doc.sql.alter-stage / Syntax"
+sql = "ALTER STAGE v1 SET URL = s4://b1/p1/ ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-stage.set.syntax"
+kind = "negative_neighbour"
+note = "an unquoted gcs scheme alone, observed: whether gcs is refused before or at //"
+anchor = "doc.sql.alter-stage / Syntax"
+sql = "ALTER STAGE v1 SET URL = gcs: ;"
+expect = "observe"
+context = "raw"
 [[suppress]]
 form = "sf.expressions.data-types-datetime.interval"
 kind = "option_present"
@@ -92793,3 +92829,56 @@ sql = "BEGIN WHILE ( FALSE ) DO NULL ; ; END WHILE ; END ;"
 expect = "observe"
 context = "raw"
 
+[[limit]]
+form = "sf.ddl.alter-task.set"
+kind = "negative_neighbour"
+note = "EXECUTE AS USER after another property, observed: whether it may follow other properties"
+anchor = "doc.sql.alter-task / Syntax"
+sql = "ALTER TASK v1 SET COMMENT = 'm' EXECUTE AS USER v1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-task.set"
+kind = "negative_neighbour"
+note = "a property after the comma-joined session parameters, observed"
+anchor = "doc.sql.alter-task / Syntax"
+sql = "ALTER TASK v1 SET LOCK_TIMEOUT = 1 , STATEMENT_TIMEOUT_IN_SECONDS = 1 TASK_AUTO_RETRY_ATTEMPTS = 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-task.set"
+kind = "negative_neighbour"
+note = "a session parameter after a task property, observed"
+anchor = "doc.sql.alter-task / Syntax"
+sql = "ALTER TASK v1 SET COMMENT = 'm' LOCK_TIMEOUT = 1 ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-task.set"
+kind = "negative_neighbour"
+note = "two task properties together, observed"
+anchor = "doc.sql.alter-task / Syntax"
+sql = "ALTER TASK v1 SET WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-task.set"
+kind = "negative_neighbour"
+note = "every option but EXECUTE AS USER, observed: whether EXECUTE AS is what Snowflake refuses in the full SET"
+anchor = "doc.sql.alter-task / Syntax"
+sql = "ALTER TASK IF EXISTS v1 SET WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' LOCK_TIMEOUT = 1 , STATEMENT_TIMEOUT_IN_SECONDS = 1 TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' ;"
+expect = "observe"
+context = "raw"
+
+[[limit]]
+form = "sf.ddl.alter-task.set"
+kind = "negative_neighbour"
+note = "every option but the comma-joined session parameters, observed: whether they are what Snowflake refuses in the full SET"
+anchor = "doc.sql.alter-task / Syntax"
+sql = "ALTER TASK IF EXISTS v1 SET WAREHOUSE = 'm' SCHEDULE = '1 MINUTES' CONFIG = 'm' OVERLAP_POLICY = NO_OVERLAP USER_TASK_TIMEOUT_MS = 1 SUSPEND_TASK_AFTER_NUM_FAILURES = 1 ERROR_INTEGRATION = i1 SUCCESS_INTEGRATION = i1 LOG_LEVEL = 'm' COMMENT = 'm' TASK_AUTO_RETRY_ATTEMPTS = 1 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = 1 TARGET_COMPLETION_INTERVAL = '1 MINUTES' SERVERLESS_TASK_MIN_STATEMENT_SIZE = 'XSMALL' SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'XSMALL' EXECUTE AS USER v1 ;"
+expect = "observe"
+context = "raw"
