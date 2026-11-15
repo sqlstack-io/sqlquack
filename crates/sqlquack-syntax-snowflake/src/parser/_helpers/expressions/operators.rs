@@ -519,6 +519,7 @@ impl Parser {
         &mut self,
         temporary: bool,
         or_replace: bool,
+        or_alter: bool,
     ) -> Result<Expression> {
         self.expect_token(TokenType::Sequence)?;
 
@@ -535,31 +536,15 @@ impl Parser {
             if_not_exists,
             temporary,
             or_replace,
-            as_type: None,
-            increment: None,
-            minvalue: None,
-            maxvalue: None,
-            start: None,
-            cache: None,
-            cycle: false,
-            owned_by: None,
-            owned_by_none: false,
-            order: None,
-            comment: None,
-            sharing: None,
-            scale_modifier: None,
-            shard_modifier: None,
-            property_order: Vec::new(),
-            define: false,
-            comment_name: None,
-            start_text: None,
+            or_alter,
+            ..CreateSequence::new(String::new())
         };
 
         if self.match_token(TokenType::As) {
             seq.as_type = Some(self.parse_data_type()?);
         }
 
-        self.match_token(TokenType::With);
+        seq.with = self.match_token(TokenType::With);
 
         loop {
             self.match_token(TokenType::Comma);
@@ -656,8 +641,8 @@ impl Parser {
     }
 
     fn parse_sequence_start_clause(&mut self, mut seq: CreateSequence) -> Result<CreateSequence> {
-        self.match_token(TokenType::With);
-        self.match_token(TokenType::Eq);
+        seq.spelling.start_with = self.match_token(TokenType::With);
+        seq.spelling.start_eq = self.match_token(TokenType::Eq);
         match self.parse_sequence_start()? {
             Ok(start) => seq.start = Some(start),
             Err(text) => seq.start_text = Some(text),
@@ -683,8 +668,8 @@ impl Parser {
     }
 
     fn parse_sequence_increment(&mut self, mut seq: CreateSequence) -> Result<CreateSequence> {
-        self.match_token(TokenType::By);
-        self.match_token(TokenType::Eq);
+        seq.spelling.increment_by = self.match_token(TokenType::By);
+        seq.spelling.increment_eq = self.match_token(TokenType::Eq);
         seq.increment = Some(self.parse_signed_integer()?);
         seq.property_order.push(SeqPropKind::Increment);
         Ok(seq)
