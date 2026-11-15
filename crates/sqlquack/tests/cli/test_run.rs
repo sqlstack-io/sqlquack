@@ -1,5 +1,5 @@
-use crate::helpers::{parquet_run, project_run};
-use crate::test_types::{ParquetRunTestCase, ProjectFile, RunTestCase};
+use crate::helpers::{converted_first_value, parquet_run, project_run};
+use crate::test_types::{ParquetRunTestCase, ProjectFile, RunTestCase, ValueTestCase};
 
 /// Orders with a decimal amount and a lower-case quoted column, in a qualified source.
 const SOURCES: ProjectFile = ProjectFile {
@@ -201,6 +201,35 @@ fn given_a_parquet_fixture_when_running_then_its_columns_fill_the_declared_table
             "{}: stderr {}",
             test_case.description,
             outcome.stderr
+        );
+    }
+}
+
+#[test]
+fn given_date_part_with_from_or_a_comma_when_converting_then_both_read_the_same_part() {
+    let test_cases = [
+        ValueTestCase {
+            description: "DATE_PART with FROM reads the day",
+            sql: "SELECT DATE_PART(day FROM '2024-03-17'::DATE)::VARCHAR AS part",
+            expected_value: "17",
+        },
+        ValueTestCase {
+            description: "DATE_PART with a comma reads the same day",
+            sql: "SELECT DATE_PART(day, '2024-03-17'::DATE)::VARCHAR AS part",
+            expected_value: "17",
+        },
+        ValueTestCase {
+            description: "DATE_PART with FROM reads the month, not the day",
+            sql: "SELECT DATE_PART(month FROM '2024-03-17'::DATE)::VARCHAR AS part",
+            expected_value: "3",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            converted_first_value(test_case.sql),
+            test_case.expected_value,
+            "{}",
+            test_case.description
         );
     }
 }

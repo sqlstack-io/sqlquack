@@ -1570,6 +1570,7 @@ impl Parser {
             span: SourceSpan::default(),
             inferred_type: None,
             export_state: false,
+            from_separator: false,
         }));
 
         if self.match_token(TokenType::As) {
