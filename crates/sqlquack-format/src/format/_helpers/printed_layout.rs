@@ -262,6 +262,22 @@ fn bracket_structure(tokens: &[String]) -> (Vec<usize>, Vec<Option<usize>>) {
     (depths, partners)
 }
 
+/// A gap of line comments with each line after a break, and the token after it, at `indentation`.
+fn indent_comment_lines(gap: &str, indentation: usize) -> String {
+    let margin = " ".repeat(indentation);
+    let lines: Vec<&str> = gap.split('\n').collect();
+    let mut indented = lines[0].to_string();
+    for (position, line) in lines.iter().enumerate().skip(1) {
+        let text = line.trim_start_matches(' ');
+        indented.push('\n');
+        if !text.is_empty() || position == lines.len() - 1 {
+            indented.push_str(&margin);
+            indented.push_str(text);
+        }
+    }
+    indented
+}
+
 fn newline(indentation: usize) -> String {
     format!("\n{}", " ".repeat(indentation))
 }
@@ -471,25 +487,34 @@ impl PrintedSql<'_> {
             let Some(closer) = self.partners[opener] else {
                 continue;
             };
+            let commented = !self.gaps[opener + 1].trim().is_empty();
             if closer <= opener + 1
                 || self.locked[opener + 1]
                 || !self.spans_lines(opener, closer)
-                || !self.gaps[opener + 1].trim().is_empty()
+                || self.gaps[opener + 1].contains("/*")
                 || !self.gaps[closer].trim().is_empty()
             {
                 continue;
             }
-            let opens = !self.gaps[opener + 1].contains('\n');
+            let (first, _) = self.line_of(opener);
+            let indentation = self.indentation(first);
+            let opens = if commented {
+                self.indentation(opener + 1) != indentation + self.indent
+            } else {
+                !self.gaps[opener + 1].contains('\n')
+            };
             let closes = !self.gaps[closer].contains('\n');
             if !opens && !closes {
                 continue;
             }
-            let (first, _) = self.line_of(opener);
-            let indentation = self.indentation(first);
             if opens {
                 self.indent_lines(opener + 2, closer - 1, self.indent);
                 let inner = newline(indentation + self.indent);
-                self.gaps[opener + 1] = inner.clone();
+                self.gaps[opener + 1] = if commented {
+                    indent_comment_lines(&self.gaps[opener + 1], indentation + self.indent)
+                } else {
+                    inner.clone()
+                };
                 let separates_arguments = opener > 0
                     && !self.is(opener - 1, DECODE_FUNCTION)
                     && !self.is(opener - 1, WINDOW_KEYWORD);
