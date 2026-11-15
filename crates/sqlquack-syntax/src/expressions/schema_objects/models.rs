@@ -1351,6 +1351,9 @@ pub struct ObjectProperty {
     /// Whether the optional WITH was written before it, as in Snowflake's `WITH TAG ( ... )`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub with: bool,
+    /// The type after RETURNS when the value is a body, as in `MAX_ROWS AS ( ) RETURNS <type> -> <expression>`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub returns: Option<DataType>,
 }
 
 /// Snowflake `EXECUTE ALERT | TASK [ GRAPH ] | DCM PROJECT <name>` with its action.

@@ -228,9 +228,12 @@ impl Parser {
         self.expect_token(TokenType::LParen)?;
         self.expect_token(TokenType::RParen)?;
         self.expect_token(TokenType::Returns)?;
-        self.parse_data_type()?;
+        let returns = self.parse_data_type()?;
         self.expect_token(TokenType::Arrow)?;
-        Ok(property("MAX_ROWS", None, Some(self.parse_expression()?)))
+        Ok(ObjectProperty {
+            returns: Some(returns),
+            ..property("MAX_ROWS", None, Some(self.parse_expression()?))
+        })
     }
 
     /// Whether `MODEL MONITOR` here starts `ALTER MODEL <name>` with a name or schema called monitor: a dot or a whole ALTER MODEL action follows.
