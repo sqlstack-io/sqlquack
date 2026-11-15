@@ -1,5 +1,9 @@
-use crate::helpers::snowflake_kind;
-use crate::test_types::SnowflakeVerdictTestCase;
+use serde_json::json;
+
+use sqlquack_syntax::{CallMode, Dialect};
+
+use crate::helpers::{snowflake_kind, statements};
+use crate::test_types::{ProjectionTestCase, SnowflakeVerdictTestCase};
 
 #[test]
 fn given_a_snowflake_alter_dynamic_table_when_parsing_then_each_action_is_checked() {
@@ -329,6 +333,48 @@ fn given_a_snowflake_dynamic_table_clone_or_set_when_parsing_then_the_probed_ver
         assert_eq!(
             snowflake_kind(test_case.sql),
             test_case.expected_kind.map(str::to_owned),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_snowflake_dynamic_table_user_with_secondary_roles_when_parsing_then_the_roles_are_their_own_property(
+) {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "ALTER SET keeps the user apart from the roles",
+            sql: "ALTER DYNAMIC TABLE v1 SET EXECUTE AS USER u1 USE SECONDARY ROLES r1 , r2 ;",
+            pointer: "/0/alter_object/properties/0/value/table/name/name",
+            expected_value: json!("u1"),
+        },
+        ProjectionTestCase {
+            description: "ALTER SET lists the roles under USE SECONDARY ROLES",
+            sql: "ALTER DYNAMIC TABLE v1 SET EXECUTE AS USER u1 USE SECONDARY ROLES r1 , r2 ;",
+            pointer: "/0/alter_object/properties/1/value/tuple/expressions/1/table/name/name",
+            expected_value: json!("r2"),
+        },
+        ProjectionTestCase {
+            description: "NONE is a keyword, not a role name",
+            sql: "CREATE OR ALTER DYNAMIC TABLE v1 TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER u1 USE SECONDARY ROLES NONE AS SELECT 1 ;",
+            pointer: "/0/create_object/properties/3/value/var/this",
+            expected_value: json!("NONE"),
+        },
+        ProjectionTestCase {
+            description: "a dynamic iceberg table names the property",
+            sql: "CREATE DYNAMIC ICEBERG TABLE v1 ( v1 INT ) TARGET_LAG = '1 minute' WAREHOUSE = v1 EXECUTE AS USER u1 USE SECONDARY ROLES r1 , r2 AS SELECT 1 ;",
+            pointer: "/0/create_object/properties/3/kind",
+            expected_value: json!("USE SECONDARY ROLES"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
             "{}",
             test_case.description
         );
