@@ -618,6 +618,9 @@ pub struct DataMetricColumn {
 pub struct DataMetricFunctionItem {
     pub name: TableRef,
     pub arguments: Vec<Expression>,
+    /// `ON ( , <argument> )`: the column before the first comma was left out.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub column_omitted: bool,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub clauses: Vec<DataMetricFunctionClause>,
 }

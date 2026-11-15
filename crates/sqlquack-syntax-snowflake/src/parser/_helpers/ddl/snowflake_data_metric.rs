@@ -146,7 +146,7 @@ impl Parser {
         if !self.match_token(TokenType::On) {
             return Err(self.parse_error("Expected ON after a data metric function name"));
         }
-        let arguments = self.parse_data_metric_arguments()?;
+        let (arguments, column_omitted) = self.parse_data_metric_arguments()?;
         let mut clauses: Vec<DataMetricFunctionClause> = Vec::new();
         match kind {
             "ADD" => {
@@ -160,12 +160,14 @@ impl Parser {
         Ok(DataMetricFunctionItem {
             name,
             arguments,
+            column_omitted,
             clauses,
         })
     }
 
-    /// `( [ <column>, ... ] [ , TABLE ( <name> ( <column>, ... ) ) | , <lambda> ] )`; the column list may be empty.
-    fn parse_data_metric_arguments(&mut self) -> Result<Vec<Expression>> {
+    /// `( [ <column>, ... ] [ , TABLE ( <name> ( <column>, ... ) ) | , <lambda> ] )`; the column list may be
+    /// empty. Returns the arguments and whether a leading comma left the column out.
+    fn parse_data_metric_arguments(&mut self) -> Result<(Vec<Expression>, bool)> {
         self.expect_token(TokenType::LParen)?;
         let leading_comma = self.match_token(TokenType::Comma);
         let arguments = if self.check(TokenType::RParen) && !leading_comma {
@@ -195,7 +197,7 @@ impl Parser {
                 "A data metric function takes columns, then optionally TABLE ( <name> ( <column>, ... ) ) or a lambda",
             ));
         }
-        Ok(arguments)
+        Ok((arguments, leading_comma))
     }
 
     /// A clause of ADD DATA METRIC FUNCTION, or none.
