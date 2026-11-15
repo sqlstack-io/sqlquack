@@ -186,6 +186,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))))
         } else {
             self.expect_token(TokenType::RParen)?;
@@ -254,6 +255,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))));
         }
         self.expect_token(TokenType::RParen)?;
@@ -389,6 +391,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))))
         }
     }
@@ -397,7 +400,8 @@ impl Parser {
         self.reject_snowflake_string_part_from()?;
         let part = self.parse_expression()?;
         let mut part = { part };
-        if !self.match_token(TokenType::From) && !self.match_token(TokenType::Comma) {
+        let from_separator = self.match_token(TokenType::From);
+        if !from_separator && !self.match_token(TokenType::Comma) {
             return Err(self.parse_error("Expected FROM or comma in DATE_PART"));
         }
         let from_expr = self.parse_expression()?;
@@ -428,6 +432,7 @@ impl Parser {
             span: SourceSpan::default(),
             inferred_type: None,
             export_state: false,
+            from_separator,
         }))))
     }
 
@@ -468,6 +473,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))))
         } else {
             self.expect_token(TokenType::RParen)?;
@@ -486,6 +492,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))))
         }
     }
@@ -537,6 +544,7 @@ impl Parser {
             span: SourceSpan::default(),
             inferred_type: None,
             export_state: false,
+            from_separator: false,
         }))))
     }
 
@@ -601,6 +609,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))));
         }
         let first = self.parse_expression()?;
@@ -621,6 +630,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))));
         }
         self.expect_token(TokenType::Comma)?;
@@ -711,6 +721,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))));
         }
         self.expect_token(TokenType::RParen)?;
@@ -777,6 +788,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))));
         }
 
@@ -826,6 +838,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))))
         }
     }
@@ -863,6 +876,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))))
         }
     }
@@ -932,6 +946,7 @@ impl Parser {
             span: SourceSpan::default(),
             inferred_type: None,
             export_state: false,
+            from_separator: false,
         }))))
     }
 
@@ -964,6 +979,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))));
         }
 
@@ -1071,6 +1087,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))))
         }
     }
@@ -1121,6 +1138,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))))
         } else {
             self.expect_token(TokenType::RParen)?;
@@ -1140,6 +1158,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))))
         }
     }
@@ -1286,6 +1305,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     inferred_type: None,
                     export_state: false,
+                    from_separator: false,
                 }))))
             }
         } else {
@@ -1305,6 +1325,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))))
         }
     }
@@ -1351,6 +1372,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
+                from_separator: false,
             }))));
         }
         let args = self.parse_expression_list()?;

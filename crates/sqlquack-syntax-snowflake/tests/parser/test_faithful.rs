@@ -316,3 +316,41 @@ fn given_snowflake_derived_tables_join_aliases_and_semantic_views_when_parsing_t
         );
     }
 }
+
+#[test]
+fn given_date_part_with_from_or_a_comma_when_parsing_then_the_tree_keeps_the_separator() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "DATE_PART ( DAY FROM d ) marks FROM",
+            sql: "SELECT DATE_PART ( DAY FROM d )",
+            pointer: "/function/from_separator",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "DATE_PART ( DAY , d ) has no FROM mark",
+            sql: "SELECT DATE_PART ( DAY , d )",
+            pointer: "/function/from_separator",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "DATE_PART ( DAY FROM d ) keeps the part first",
+            sql: "SELECT DATE_PART ( DAY FROM d )",
+            pointer: "/function/args/0/var/this",
+            expected_value: json!("DAY"),
+        },
+        ProjectionTestCase {
+            description: "DATE_PART ( DAY FROM d ) keeps the value second",
+            sql: "SELECT DATE_PART ( DAY FROM d )",
+            pointer: "/function/args/1/column/name/name",
+            expected_value: json!("d"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            projection_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
