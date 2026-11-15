@@ -236,6 +236,24 @@ fn given_sql_whose_spacing_carries_meaning_when_formatting_then_it_is_kept_or_re
             ),
         },
         test_types::FormatSqlTestCase {
+            description: "an argument after a trailing line comment between arguments keeps the argument indent",
+            sql: "SELECT COALESCE(\n  a, -- it's here\n  'x', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'\n) AS y",
+            line_width: None,
+            dialect: FormatDialect::Snowflake,
+            expected_outcome: Ok(
+                "SELECT\n  COALESCE(\n    a, -- it's here\n    'x',\n    'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'\n  ) AS y",
+            ),
+        },
+        test_types::FormatSqlTestCase {
+            description: "an own-line block comment between arguments and the argument after it keep the argument indent",
+            sql: "SELECT REGEXP_REPLACE(\n  x,\n  'b',\n  /* One space, not an empty string,\n     so that words stay apart */\n  ' '\n)::VARCHAR AS z",
+            line_width: None,
+            dialect: FormatDialect::Snowflake,
+            expected_outcome: Ok(
+                "SELECT\n  REGEXP_REPLACE(\n    x,\n    'b',\n    /* One space, not an empty string,\n     so that words stay apart */\n    ' '\n  )::VARCHAR AS z",
+            ),
+        },
+        test_types::FormatSqlTestCase {
             description: "an UPDATE's SET assignments written touching are spaced, and a comparison in SET stays one",
             sql: "update t set a=1, b=c=d where b=2",
             line_width: None,
