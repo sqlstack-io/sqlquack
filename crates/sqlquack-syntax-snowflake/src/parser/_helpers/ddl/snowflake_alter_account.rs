@@ -6,6 +6,7 @@ use crate::parser::_helpers::ddl::snowflake_alter::named_property;
 use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_alter::property_kind;
+use crate::parser::_helpers::ddl::snowflake_alter::value_phrase;
 use crate::parser::constants::SNOWFLAKE_GROUP_NAME_PROPERTIES;
 use crate::parser::constants::SNOWFLAKE_STRING_KEY_MAP_PROPERTIES;
 use crate::parser::models::Parser;
@@ -147,19 +148,19 @@ impl Parser {
                 return Err(self.parse_error(format!("Expected a name in the list of {key}")));
             }
             let value = self.parse_object_value()?;
-            let Expression::Table(mut name) = value else {
+            let Expression::Table(name) = value else {
                 values.push(value);
                 if !self.match_token(TokenType::Comma) {
                     break;
                 }
                 continue;
             };
+            let mut more: Vec<String> = Vec::new();
             while !self.is_at_end() && self.check(TokenType::Var) && !self.check_next(TokenType::Eq)
             {
-                name.name.name = format!("{} {}", name.name.name, self.peek_text());
-                self.skip();
+                more.push(self.advance_text()?);
             }
-            values.push(Expression::Table(name));
+            values.push(value_phrase(name, more));
             if !self.match_token(TokenType::Comma) {
                 break;
             }
