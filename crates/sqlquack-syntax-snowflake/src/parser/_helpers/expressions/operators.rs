@@ -31,6 +31,7 @@ use sqlquack_syntax::expressions::schema_objects::models::ObjectProperty;
 use sqlquack_syntax::expressions::schema_objects::models::ParameterMode;
 use sqlquack_syntax::expressions::schema_objects::models::SeqPropKind;
 use sqlquack_syntax::expressions::schema_objects::models::SequenceBound;
+use sqlquack_syntax::expressions::schema_objects::models::SequenceSpelling;
 use sqlquack_syntax::expressions::schema_objects::models::TriggerBody;
 use sqlquack_syntax::expressions::schema_objects::models::TriggerEvent;
 use sqlquack_syntax::expressions::schema_objects::models::TriggerForEach;
@@ -807,6 +808,7 @@ impl Parser {
             cache: None,
             cycle: None,
             owned_by: None,
+            spelling: SequenceSpelling::default(),
         };
 
         if self.applies_snowflake_context_rules()
@@ -816,10 +818,9 @@ impl Parser {
         }
         while !self.is_at_end() && !self.check(TokenType::Semicolon) {
             if self.match_token(TokenType::Increment) || self.match_identifier("INCREMENT") {
-                self.match_token(TokenType::By);
-                if self.applies_snowflake_context_rules() {
-                    self.match_token(TokenType::Eq);
-                }
+                seq.spelling.increment_by = self.match_token(TokenType::By);
+                seq.spelling.increment_eq =
+                    self.applies_snowflake_context_rules() && self.match_token(TokenType::Eq);
                 seq.increment = Some(self.parse_signed_integer()?);
             } else if self.match_token(TokenType::Minvalue) {
                 seq.minvalue = Some(SequenceBound::Value(self.parse_signed_integer()?));
