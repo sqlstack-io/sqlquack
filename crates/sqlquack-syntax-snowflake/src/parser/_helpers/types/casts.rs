@@ -19,6 +19,7 @@ use sqlquack_syntax::expressions::types::models::DataType;
 use sqlquack_syntax::expressions::types::models::IntervalQualifier;
 use sqlquack_syntax::expressions::types::models::IntervalUnit;
 use sqlquack_syntax::expressions::types::models::IntervalUnitSpec;
+use sqlquack_syntax::expressions::types::models::TableArgumentType;
 use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
@@ -382,6 +383,23 @@ impl Parser {
         Ok(self.normalize_dialect_data_type(data_type))
     }
 
+    /// The column types of a `TABLE ( ... )` argument type, after its opening parenthesis; a column is never another TABLE.
+    #[inline(never)]
+    fn parse_table_argument_type(&mut self) -> Result<DataType> {
+        let mut column_types: Vec<DataType> = Vec::new();
+        loop {
+            if self.check(TokenType::Table) {
+                return Err(self.parse_error("Expected a type parameter, not a reserved keyword"));
+            }
+            column_types.push(self.parse_data_type()?);
+            if !self.match_token(TokenType::Comma) {
+                break;
+            }
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok(DataType::Table(TableArgumentType { column_types }))
+    }
+
     /// Applies dialect type aliasing after parsing a type, such as Vertica's 64-bit integers.
     pub(crate) fn normalize_dialect_data_type(&self, data_type: DataType) -> DataType {
         data_type
@@ -396,6 +414,13 @@ impl Parser {
             let _token = self.advance()?;
             let (subtype, srid) = self.parse_spatial_type_args()?;
             return Ok(DataType::Geometry { subtype, srid });
+        }
+        if self.applies_snowflake_context_rules()
+            && self.check(TokenType::Table)
+            && self.check_next(TokenType::LParen)
+        {
+            self.current += 2;
+            return self.parse_table_argument_type();
         }
         let mut raw_name = self.expect_identifier_or_keyword()?;
         while self.match_token(TokenType::Dot) {

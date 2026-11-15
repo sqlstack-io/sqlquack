@@ -622,9 +622,9 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_the_tree_names_ki
         },
         ProjectionTestCase {
             description:
-                "a function's argument types are kept, a TABLE( ... ) argument as a TABLE call",
+                "a function's argument types are kept, a TABLE( ... ) argument as a table type",
             sql: "ALTER FUNCTION v1 ( TABLE ( INT , TEXT ) ) UNSET TAG t1",
-            pointer: "/0/alter_object/arguments/0/function/args/1/data_type/data_type",
+            pointer: "/0/alter_object/arguments/0/data_type/column_types/1/data_type",
             expected_value: json!("text"),
         },
         ProjectionTestCase {

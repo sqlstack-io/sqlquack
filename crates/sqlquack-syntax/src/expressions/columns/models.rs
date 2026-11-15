@@ -621,8 +621,18 @@ pub struct DataMetricFunctionItem {
     /// `ON ( , <argument> )`: the column before the first comma was left out.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub column_omitted: bool,
+    /// The `TABLE ( <table> ( <column> , ... ) )` argument after the columns, when given.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub referenced_table: Option<DataMetricReference>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub clauses: Vec<DataMetricFunctionClause>,
+}
+
+/// A table a data metric function compares with, and the columns it reads there.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DataMetricReference {
+    pub table: TableRef,
+    pub columns: Vec<Identifier>,
 }
 
 /// A clause after a data metric function's arguments.
