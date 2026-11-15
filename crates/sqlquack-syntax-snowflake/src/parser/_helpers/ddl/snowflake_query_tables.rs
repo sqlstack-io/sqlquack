@@ -274,14 +274,12 @@ impl Parser {
             return Ok((None, vec![property("REQUIRE USER", None, None)]));
         }
         if self.match_text_seq(&["EXECUTE", "AS", "USER"]) {
-            let mut expressions = vec![Expression::Table(Box::new(
-                self.parse_iceberg_object_name()?,
-            ))];
+            let user = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
+            let mut properties = vec![property("EXECUTE AS USER", None, Some(user))];
             if self.match_text_seq(&["USE", "SECONDARY", "ROLES"]) {
-                expressions.extend(self.parse_secondary_roles()?);
+                properties.push(self.parse_secondary_roles_property()?);
             }
-            let value = Expression::Tuple(Box::new(Tuple { expressions }));
-            return Ok((None, vec![property("EXECUTE AS USER", None, Some(value))]));
+            return Ok((None, properties));
         }
         if self.match_keywords(&[TokenType::Cluster, TokenType::By]) {
             self.expect_token(TokenType::LParen)?;
@@ -371,8 +369,18 @@ impl Parser {
         }
         Ok(Expression::Identifier(self.parse_external_name()?))
     }
+    /// USE SECONDARY ROLES as its own property: ALL or NONE as a keyword, or the list of role names.
+    pub(crate) fn parse_secondary_roles_property(&mut self) -> Result<ObjectProperty> {
+        let mut roles = self.parse_secondary_roles()?;
+        let value = match roles.as_slice() {
+            [Expression::Var(_)] => roles.remove(0),
+            _ => Expression::Tuple(Box::new(Tuple { expressions: roles })),
+        };
+        Ok(property("USE SECONDARY ROLES", None, Some(value)))
+    }
+
     /// The roles after USE SECONDARY ROLES: ALL, NONE, or one or more role names.
-    pub(crate) fn parse_secondary_roles(&mut self) -> Result<Vec<Expression>> {
+    fn parse_secondary_roles(&mut self) -> Result<Vec<Expression>> {
         if self.match_token(TokenType::All) || self.match_text_seq(&["NONE"]) {
             return Ok(vec![Expression::Var(Box::new(Var {
                 this: self.previous_text().to_ascii_uppercase(),
