@@ -1,8 +1,8 @@
 //! Snowflake ALTER of object kinds that have no statement of their own, such as TASK, TAG or ALERT.
 
-use crate::parser::constants::OBJECT_TYPES;
 use crate::parser::constants::ONLINE_FEATURE_TABLE;
 use crate::parser::constants::SNOWFLAKE_ALTER_KINDS;
+use crate::parser::constants::SNOWFLAKE_KEYWORD_VALUE_PROPERTIES;
 use crate::parser::constants::SNOWFLAKE_STRING_KEY_MAP_PROPERTIES;
 use crate::parser::constants::TASK_ACTIONS;
 use crate::parser::models::Parser;
@@ -944,9 +944,9 @@ pub(super) fn value_phrase(mut first: Box<TableRef>, more: Vec<String>) -> Expre
     Expression::Var(Box::new(Var { this }))
 }
 
-/// A group's OBJECT_TYPES value with each plain one-word name read as the object-type keyword it is, such as `DATABASES`.
-pub(super) fn object_type_keywords(key: &str, value: Expression) -> Expression {
-    if !key.eq_ignore_ascii_case(OBJECT_TYPES) {
+/// The value of a property whose values are keywords, such as `OBJECT_TYPES = DATABASES` or `COPY = ( GRANTS )`, with each plain one-word name read as the keyword it is.
+pub(crate) fn keyword_values(key: &str, value: Expression) -> Expression {
+    if !SNOWFLAKE_KEYWORD_VALUE_PROPERTIES.contains(&key.to_ascii_uppercase().as_str()) {
         return value;
     }
     let keyword = |item: Expression| match item {
