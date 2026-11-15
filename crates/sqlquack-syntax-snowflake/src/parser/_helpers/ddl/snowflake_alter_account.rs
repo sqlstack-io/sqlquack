@@ -504,7 +504,7 @@ impl Parser {
         Ok(alter_object("CONNECTION", head, action, parts))
     }
 
-    /// Parse ALTER ORGANIZATION after its first word: the organization itself, or its ACCOUNT, PROFILE, USER or USER GROUP.
+    /// Parse ALTER ORGANIZATION after its first word: a named organization's RENAME TO, SET or UNSET, the current one's SET or UNSET, or its ACCOUNT, PROFILE, USER or USER GROUP.
     fn parse_alter_organization(&mut self) -> Result<Expression> {
         if self.match_text_seq(&["USER", "GROUP"]) {
             return self.parse_alter_organization_user_group();
@@ -540,14 +540,22 @@ impl Parser {
                 (vec![], properties),
             ));
         }
-        let renames = self
-            .tokens
-            .get(self.current + 1)
-            .is_some_and(|token| token.text.eq_ignore_ascii_case("RENAME"));
-        if renames {
+        let named = match self.text_at(1).as_deref() {
+            Some("RENAME") => true,
+            Some("SET" | "UNSET") => !matches!(
+                self.text_at(0).as_deref(),
+                Some("ACCOUNT" | "PROFILE" | "SET" | "UNSET")
+            ),
+            _ => false,
+        };
+        if named {
             let head = self.parse_alter_object_head()?;
-            let action = self.expect_alter_words(&[&["RENAME", "TO"]])?;
-            let parts: ActionParts = (vec![self.parse_group_name()?], vec![]);
+            let action = self.expect_alter_words(&[&["RENAME", "TO"], &["SET"], &["UNSET"]])?;
+            let parts: ActionParts = match action.as_str() {
+                "RENAME TO" => (vec![self.parse_group_name()?], vec![]),
+                "SET" => (vec![], self.parse_organization_set()?),
+                _ => (vec![], self.parse_group_unset_names()?),
+            };
             return Ok(alter_object("ORGANIZATION", head, action, parts));
         }
         if self.match_identifier("PROFILE") {
