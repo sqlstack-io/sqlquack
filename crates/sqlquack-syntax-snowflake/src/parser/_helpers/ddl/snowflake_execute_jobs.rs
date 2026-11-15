@@ -2,6 +2,7 @@
 
 use crate::parser::_helpers::ddl::snowflake_alter::keyed_pair;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_semantic_view::part;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::operators::models::NamedArgSeparator;
 use sqlquack_syntax::expressions::operators::models::NamedArgument;
@@ -326,7 +327,7 @@ impl Parser {
         if !self.match_token(TokenType::As) {
             return Ok(source);
         }
-        let alias = self.parse_string_value()?;
+        let alias = part("AS", self.parse_string_value()?);
         Ok(Expression::Tuple(Box::new(Tuple {
             expressions: vec![source, alias],
         })))
