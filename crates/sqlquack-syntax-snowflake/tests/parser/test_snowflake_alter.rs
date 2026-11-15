@@ -598,6 +598,30 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_the_tree_names_ki
             expected_value: json!("DArrow"),
         },
         ProjectionTestCase {
+            description: "a policy's FOR ALL scope is its own property (recorded success)",
+            sql: "ALTER ACCOUNT SET AUTHENTICATION POLICY v1 FORCE FOR ALL PERSON USERS ;",
+            pointer: "/0/alter_object/properties/1/kind",
+            expected_value: json!("FOR ALL PERSON USERS"),
+        },
+        ProjectionTestCase {
+            description: "the policy's action names only the policy",
+            sql: "ALTER ACCOUNT SET AUTHENTICATION POLICY v1 FORCE FOR ALL PERSON USERS ;",
+            pointer: "/0/alter_object/action",
+            expected_value: json!("SET AUTHENTICATION POLICY"),
+        },
+        ProjectionTestCase {
+            description: "FORCE after the scope follows it",
+            sql: "ALTER ACCOUNT SET AUTHENTICATION POLICY v1 FOR ALL SERVICE USERS FORCE ;",
+            pointer: "/0/alter_object/properties/1/kind",
+            expected_value: json!("FORCE"),
+        },
+        ProjectionTestCase {
+            description: "an unset policy keeps its scope",
+            sql: "ALTER ACCOUNT UNSET AUTHENTICATION POLICY FOR ALL PERSON USERS ;",
+            pointer: "/0/alter_object/properties/0/kind",
+            expected_value: json!("FOR ALL PERSON USERS"),
+        },
+        ProjectionTestCase {
             description: "IF EXISTS is kept",
             sql: "ALTER TAG IF EXISTS v1 RENAME TO v2",
             pointer: "/0/alter_object/if_exists",
