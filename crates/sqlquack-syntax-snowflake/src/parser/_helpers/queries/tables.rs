@@ -172,6 +172,7 @@ impl Parser {
             Vec::new()
         };
         let mut metadata_columns: Vec<(Expression, Option<Identifier>)> = Vec::new();
+        let mut metadata_alias_explicit_as: Vec<bool> = Vec::new();
         if self.match_keyword("METADATA_COLUMNS") {
             loop {
                 let is_call = matches!(
@@ -182,7 +183,9 @@ impl Parser {
                     return Err(self.parse_error("Expected a metadata column function in RESAMPLE"));
                 }
                 let call = self.parse_expression()?;
-                let alias = if self.match_token(TokenType::As)
+                let explicit_as = self.match_token(TokenType::As);
+                metadata_alias_explicit_as.push(explicit_as);
+                let alias = if explicit_as
                     || matches!(
                         self.peek().token_type,
                         TokenType::Identifier | TokenType::Var | TokenType::QuotedIdentifier
@@ -204,6 +207,10 @@ impl Parser {
             increment,
             partition_by,
             metadata_columns,
+            metadata_alias_explicit_as: match metadata_alias_explicit_as.contains(&true) {
+                true => metadata_alias_explicit_as,
+                false => Vec::new(),
+            },
         })))
     }
 

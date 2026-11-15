@@ -888,6 +888,20 @@ fn given_statements_when_parsing_then_their_parts_are_kept() {
             expected_value: Ok(json!("b")),
         },
         ParseValueTestCase {
+            description: "RESAMPLE records a metadata column alias written after AS",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT * FROM t1 RESAMPLE (USING ts INCREMENT BY INTERVAL '1 hour' METADATA_COLUMNS IS_GENERATED() AS g, BUCKET_START() b)",
+            pointer: "/0/select/from/expressions/0/resample/metadata_alias_explicit_as",
+            expected_value: Ok(json!([true, false])),
+        },
+        ParseValueTestCase {
+            description: "RESAMPLE records nothing when no metadata column alias was written after AS",
+            dialect: Some(DialectType::Snowflake),
+            sql: "SELECT * FROM t1 RESAMPLE (USING ts INCREMENT BY INTERVAL '1 hour' METADATA_COLUMNS IS_GENERATED() g)",
+            pointer: "/0/select/from/expressions/0/resample/metadata_alias_explicit_as",
+            expected_value: Ok(json!(null)),
+        },
+        ParseValueTestCase {
             description: "ILIKE keeps its pattern on the star",
             dialect: None,
             sql: "SELECT * ILIKE '%_ID' FROM orders",
