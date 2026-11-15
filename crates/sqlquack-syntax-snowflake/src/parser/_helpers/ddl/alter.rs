@@ -1216,12 +1216,13 @@ impl Parser {
         }
     }
 
-    /// A Snowflake `ALTER ( [ COLUMN ] <column> <action> [ , ... ] )` list, or None (position unchanged) for any other action.
+    /// A Snowflake `{ ALTER | MODIFY } ( [ COLUMN ] <column> <action> [ , ... ] )` list, or None (position unchanged) for any other action.
     pub(crate) fn parse_snowflake_alter_column_list(
         &mut self,
     ) -> Result<Option<Vec<AlterTableAction>>> {
+        let modify = self.check_identifier("MODIFY");
         if !self.is_snowflake()
-            || !self.check(TokenType::Alter)
+            || !(self.check(TokenType::Alter) || modify)
             || !self.check_next(TokenType::LParen)
         {
             return Ok(None);
@@ -1236,7 +1237,7 @@ impl Parser {
             actions.push(AlterTableAction::AlterColumn {
                 name,
                 action,
-                use_modify_keyword: false,
+                use_modify_keyword: modify,
                 column_keyword,
                 action_words,
             });
