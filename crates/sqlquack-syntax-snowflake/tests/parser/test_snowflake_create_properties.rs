@@ -613,6 +613,12 @@ fn given_a_snowflake_property_or_policy_create_when_parsing_then_the_tree_keeps_
             expected_value: json!("GRANTS"),
         },
         ProjectionTestCase {
+            description: "a storage location's option key is a key, not a table",
+            sql: "ALTER EXTERNAL VOLUME v1 ADD STORAGE_LOCATION = ( NAME = 'm' STORAGE_PROVIDER = 'S3' ENCRYPTION = ( TYPE = 'AWS_SSE_S3' ) ) ;",
+            pointer: "/0/alter_object/operands/0/tuple/expressions/0/property_e_q/left/identifier/name",
+            expected_value: json!("NAME"),
+        },
+        ProjectionTestCase {
             description: "a TEMP function keeps TEMP",
             sql: "CREATE TEMP FUNCTION v1 ( ) RETURNS INT AS '1' ;",
             pointer: "/0/create_function/temporary_spelling",

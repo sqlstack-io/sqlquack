@@ -606,7 +606,7 @@ fn given_a_snowflake_alter_of_an_object_kind_when_parsing_then_the_tree_names_ki
         ProjectionTestCase {
             description: "a nested option list keeps its pairs keyed",
             sql: "ALTER EXTERNAL VOLUME v1 ADD STORAGE_LOCATION = ( NAME = 'm' STORAGE_PROVIDER = 'S3' ENCRYPTION = ( TYPE = 'AWS_SSE_S3' ) ) ;",
-            pointer: "/0/alter_object/operands/0/tuple/expressions/2/property_e_q/right/tuple/expressions/0/property_e_q/left/table/name/name",
+            pointer: "/0/alter_object/operands/0/tuple/expressions/2/property_e_q/right/tuple/expressions/0/property_e_q/left/identifier/name",
             expected_value: json!("TYPE"),
         },
         ProjectionTestCase {

@@ -881,8 +881,10 @@ impl Parser {
         while !self.match_token(TokenType::RParen) {
             let item = self.parse_resource_value()?;
             let arrow = self.match_token(TokenType::FArrow);
-            items.push(if arrow || self.match_token(TokenType::Eq) {
-                keyed_pair(item, self.parse_resource_value()?, arrow)
+            items.push(if arrow {
+                keyed_pair(item, self.parse_resource_value()?, true)
+            } else if self.match_token(TokenType::Eq) {
+                keyed_pair(pair_key(item), self.parse_resource_value()?, false)
             } else {
                 item
             });
@@ -894,5 +896,15 @@ impl Parser {
             }
         }
         Ok(Expression::Tuple(Box::new(Tuple { expressions: items })))
+    }
+}
+
+/// The key of a `<key> = <value>` pair: an unqualified name is the key itself, not an object.
+fn pair_key(item: Expression) -> Expression {
+    match item {
+        Expression::Table(table) if table.schema.is_none() && table.catalog.is_none() => {
+            Expression::Identifier(table.name)
+        }
+        other => other,
     }
 }
