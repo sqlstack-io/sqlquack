@@ -52,21 +52,18 @@ impl Parser {
         show.target = target;
         show.terse = terse;
         show.history = self.match_identifier("HISTORY");
-        if matches!(kind.as_str(), "SERVICES") && self.match_text_seq(&["EXCLUDE", "JOBS"]) {
-            show.this.push_str(" EXCLUDE JOBS");
-        }
+        show.exclude_jobs =
+            matches!(kind.as_str(), "SERVICES") && self.match_text_seq(&["EXCLUDE", "JOBS"]);
         if matches!(kind.as_str(), "SERVICES") && self.match_text_seq(&["OF", "TYPE"]) {
-            show.this.push_str(" OF TYPE ");
             loop {
                 if !(self.is_identifier_token() || self.check_keyword()) {
                     return Err(self.parse_error("Expected a service type after OF TYPE"));
                 }
-                show.this
-                    .push_str(&self.advance_text()?.to_ascii_uppercase());
+                show.service_types
+                    .push(self.advance_text()?.to_ascii_uppercase());
                 if !self.match_token(TokenType::Comma) {
                     break;
                 }
-                show.this.push_str(", ");
             }
         }
         if matches!(kind.as_str(), "OPENFLOW DATA PLANE INTEGRATIONS") {
