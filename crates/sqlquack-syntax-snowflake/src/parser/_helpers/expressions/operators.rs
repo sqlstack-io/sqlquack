@@ -366,6 +366,7 @@ impl Parser {
         let mut security = None;
         let mut body = None;
         let mut return_type = None;
+        let mut returns_table = None;
         let mut execute_as = None;
         let mut with_options: Vec<String> = Vec::new();
         let mut snowflake_properties: Vec<ObjectProperty> = Vec::new();
@@ -384,7 +385,15 @@ impl Parser {
                 snowflake_properties.push(property);
             } else if self.match_token(TokenType::Returns) {
                 self.check_snowflake_table_columns()?;
-                return_type = Some(self.parse_data_type()?);
+                if self.is_snowflake()
+                    && self.check(TokenType::Table)
+                    && self.check_next(TokenType::LParen)
+                {
+                    self.skip();
+                    returns_table = Some(self.parse_procedure_table_columns()?);
+                } else {
+                    return_type = Some(self.parse_data_type()?);
+                }
                 match self.match_snowflake_return_nullability() {
                     Some(nullability) => snowflake_properties.push(
                         crate::parser::_helpers::ddl::snowflake_routines::nullability_property(
@@ -474,7 +483,7 @@ impl Parser {
             snowflake_properties,
             has_parens,
             use_proc_keyword,
-            returns_table: None,
+            returns_table,
             define: false,
             temporary_spelling,
         })))
