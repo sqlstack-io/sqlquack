@@ -117,7 +117,7 @@ fn given_a_snowflake_alert_or_data_movement_rule_when_parsing_then_only_what_sno
 }
 
 #[test]
-fn given_a_snowflake_alert_create_when_parsing_then_the_tree_keeps_its_parts() {
+fn given_a_snowflake_alert_or_data_movement_rule_when_parsing_then_the_tree_keeps_its_parts() {
     let test_cases = [
         ProjectionTestCase {
             description: "the condition is the first operand",
@@ -130,6 +130,18 @@ fn given_a_snowflake_alert_create_when_parsing_then_the_tree_keeps_its_parts() {
             sql: "CREATE ALERT a1 SUSPENDED IF ( EXISTS ( SELECT 1 ) ) THEN SELECT 1",
             pointer: "/0/create_object/properties/0/kind",
             expected_value: json!("SUSPENDED"),
+        },
+        ProjectionTestCase {
+            description: "a data movement rule's row limit keeps its return type",
+            sql: "CREATE DATA MOVEMENT RULE v1 TYPE = 'm' MAX_ROWS AS ( ) RETURNS INTEGER -> ( 1 ) ;",
+            pointer: "/0/create_object/properties/1/returns/data_type",
+            expected_value: json!("int"),
+        },
+        ProjectionTestCase {
+            description: "an altered row limit keeps its return type",
+            sql: "ALTER DATA MOVEMENT RULE IF EXISTS v1 SET MAX_ROWS AS ( ) RETURNS VARCHAR -> ( 1 ) ;",
+            pointer: "/0/alter_object/properties/0/returns/data_type",
+            expected_value: json!("var_char"),
         },
     ];
     for test_case in test_cases {
