@@ -1,6 +1,7 @@
 //! Snowflake CREATE for kinds defined only by `<property> = <value>` lists: users, policies, integrations and groups.
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
+use crate::parser::_helpers::ddl::snowflake_alter::value_phrase;
 use crate::parser::constants::{
     SNOWFLAKE_BODY_POLICY_KINDS, SNOWFLAKE_GROUP_NAME_PROPERTIES, SNOWFLAKE_KIND_WORDS_ALONE,
     SNOWFLAKE_PROPERTY_KINDS, SNOWFLAKE_STRING_KEY_MAP_PROPERTIES, SNOWFLAKE_TAGS_LAST_KINDS,
@@ -554,29 +555,29 @@ impl Parser {
             let word = self.advance_text()?.to_ascii_uppercase();
             return Ok(Expression::Identifier(Identifier::new(word)));
         }
-        let mut first = self.parse_object_value()?;
-        if let Expression::Table(table) = &mut first {
-            while self.continues_value_words() {
-                let word = self.advance_text()?;
-                table.name.name = format!("{} {}", table.name.name, word);
-            }
-        }
+        let first = self.parse_value_phrase()?;
         if in_list || !self.continues_name_list() {
             return Ok(first);
         }
         let mut expressions = vec![first];
         while self.continues_name_list() {
             self.skip();
-            let mut next = self.parse_object_value()?;
-            if let Expression::Table(table) = &mut next {
-                while self.continues_value_words() {
-                    let word = self.advance_text()?;
-                    table.name.name = format!("{} {}", table.name.name, word);
-                }
-            }
-            expressions.push(next);
+            expressions.push(self.parse_value_phrase()?);
         }
         Ok(Expression::Tuple(Box::new(Tuple { expressions })))
+    }
+
+    /// A value, or a keyword phrase such as SECURITY INTEGRATIONS when plain words follow a name.
+    fn parse_value_phrase(&mut self) -> Result<Expression> {
+        let value = self.parse_object_value()?;
+        let Expression::Table(name) = value else {
+            return Ok(value);
+        };
+        let mut more: Vec<String> = Vec::new();
+        while self.continues_value_words() {
+            more.push(self.advance_text()?);
+        }
+        Ok(value_phrase(name, more))
     }
 
     /// Whether the next word continues a multi-word value, such as SECURITY INTEGRATIONS: a plain word that starts no `<name> =` or clause.
