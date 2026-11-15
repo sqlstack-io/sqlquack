@@ -770,24 +770,12 @@ impl Parser {
             return Ok(Some(vec![property("START AT", None, Some(value))]));
         }
         if self.match_text_seq(&["EXECUTE", "AS", "USER"]) {
-            let mut expressions = vec![Expression::Table(Box::new(
-                self.parse_iceberg_object_name()?,
-            ))];
+            let user = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
+            let mut properties = vec![property("EXECUTE AS USER", None, Some(user))];
             if self.match_text_seq(&["USE", "SECONDARY", "ROLES"]) {
-                expressions.push(match self.match_token(TokenType::All) {
-                    true => Expression::Var(Box::new(Var {
-                        this: "ALL".to_owned(),
-                    })),
-                    false => Expression::Table(Box::new(self.parse_iceberg_object_name()?)),
-                });
-                while self.match_token(TokenType::Comma) {
-                    expressions.push(Expression::Table(Box::new(
-                        self.parse_iceberg_object_name()?,
-                    )));
-                }
+                properties.push(self.parse_secondary_roles_property()?);
             }
-            let value = Expression::Tuple(Box::new(Tuple { expressions }));
-            return Ok(Some(vec![property("EXECUTE AS USER", None, Some(value))]));
+            return Ok(Some(properties));
         }
         Ok(None)
     }

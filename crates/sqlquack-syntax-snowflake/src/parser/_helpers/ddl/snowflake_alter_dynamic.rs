@@ -277,20 +277,14 @@ impl Parser {
                 properties.push(property("FROZEN WHERE", None, value));
             } else if self.match_text_seq(&["EXECUTE"]) {
                 self.expect_alter_words(&[&["AS", "USER"]])?;
-                let value = if set {
-                    let user = self.policy_operand()?;
-                    match self.match_text_seq(&["USE", "SECONDARY", "ROLES"]) {
-                        true => {
-                            let mut expressions = vec![user];
-                            expressions.extend(self.parse_secondary_roles()?);
-                            Some(tuple(expressions))
-                        }
-                        false => Some(user),
-                    }
-                } else {
-                    None
+                let user = match set {
+                    true => Some(self.policy_operand()?),
+                    false => None,
                 };
-                properties.push(property("EXECUTE AS USER", None, value));
+                properties.push(property("EXECUTE AS USER", None, user));
+                if set && self.match_text_seq(&["USE", "SECONDARY", "ROLES"]) {
+                    properties.push(self.parse_secondary_roles_property()?);
+                }
             } else {
                 let name = self.parse_simple_name()?;
                 let value = if set {
