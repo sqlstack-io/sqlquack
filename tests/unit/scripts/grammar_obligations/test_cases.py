@@ -155,16 +155,16 @@ context = "raw"
     "test_case",
     (
         DisputedFormMarkTestCase(
-            description="a positive the form renders, which stays a docs and engine conflict",
+            description="a positive the form renders, which its receipts settle and which stays documented",
             sql="ALTER SEQUENCE v1 SET ;",
             expected_mark="documented",
-            expected_expect="observe",
+            expected_expect="reject",
         ),
         DisputedFormMarkTestCase(
-            description="a mapped case citing the form's documented positive",
+            description="a mapped case citing the form's documented positive, settled by its receipts",
             sql=MAPPED_SQL,
             expected_mark="documented",
-            expected_expect="observe",
+            expected_expect="reject",
         ),
         DisputedFormMarkTestCase(
             description="a rejection the form renders observed, which its receipt settles",

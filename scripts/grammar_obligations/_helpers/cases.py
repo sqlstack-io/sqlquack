@@ -560,19 +560,20 @@ def settled_cases(  # noqa: PLR0913
         ):
             case["expect"] = EXPECT_OBSERVE
             case.pop(STAGE_KEY, None)
-        by_receipts: bool = case["expect"] == EXPECT_OBSERVE and not extreme and not is_documented
+        observed: bool = case["expect"] == EXPECT_OBSERVE
+        by_receipts: bool = observed and not extreme and not is_documented
         settled.append(
             observed_stage(
                 case=case,
                 phase=phase,
                 extreme=extreme,
-                documented=is_documented,
+                documented=is_documented and settlement is None,
                 settlement=settlement,
             )
         )
         mark: str = (
             DOCUMENTED_MARK
-            if is_documented and case["expect"] == EXPECT_OBSERVE
+            if is_documented and observed
             else (SETTLED_MARKS.get(case["expect"], "") if by_receipts else "")
         )
         if mark:
