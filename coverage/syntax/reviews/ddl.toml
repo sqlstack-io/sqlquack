@@ -4665,3 +4665,80 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.ddl.show-nodes-compute-pool" = "af798e827d56919e4d13b44f6eb63d42323630e6a4310351edd1f21426816e36"
 "sf.ddl.show-rules-in-event-routing-table" = "7aba74df9e70da3e03bd44692bfd1a041c0df82d8cd960c18206daee1213d66c"
 "sf.ddl.truncate-materialized-view" = "20ff9d2cccefa4019ad456810f295eccc173a9a9b3bee0c84de97647e7684888"
+
+[[review]]
+id = "ddl-047"
+family = "ddl"
+parser_tree = "4891fc2c99b4b6e4571a236af739768a4b294ec7"
+reviewed_utc = "2026-11-15T14:04:12Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-dynamic-table.set",
+  "sf.ddl.alter-external-volume.set-allow-writes-true-false",
+  "sf.ddl.alter-external-volume.set-comment",
+  "sf.ddl.alter-file-format.set",
+  "sf.ddl.alter-restricted-session-scope.unset-comment",
+  "sf.ddl.alter-stage.set.syntax",
+  "sf.ddl.alter-stream.set-comment",
+  "sf.ddl.alter-stream.unset-comment",
+  "sf.ddl.alter-type.set-comment",
+  "sf.ddl.alter-type.unset-comment",
+  "sf.ddl.alter-warehouse.set",
+  "sf.ddl.create-alert.define-alert",
+  "sf.ddl.create-data-metric-function.define-data-metric-function",
+  "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag",
+  "sf.ddl.create-dynamic-table.create-or-alter-dynamic",
+  "sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table",
+  "sf.ddl.create-dynamic-table.define-dynamic-table",
+  "sf.ddl.create-file-format.define-file-format",
+  "sf.ddl.create-stage.define-stage",
+  "sf.ddl.create-task.define-task",
+  "sf.ddl.show-mcp-servers",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at 82c64bb54; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-dynamic-table.set" = "97a308717744328e68dcb6083d7d759a5ff9450de4bf703c7382109f0d200d42"
+"sf.ddl.alter-external-volume.set-allow-writes-true-false" = "efb99c9600895defb698ae2ba44bb6146a0b4f5fa8a58caef443a5d1bba42e4b"
+"sf.ddl.alter-external-volume.set-comment" = "ebf870f86169b147fe7489cde4ee9c19365eb44f6b9f9ce7063fb765610efce4"
+"sf.ddl.alter-file-format.set" = "49e45f816c1d3ace6c16b8678e88b8a8f176e2f2126bf7e82cc311d7481dcaee"
+"sf.ddl.alter-restricted-session-scope.unset-comment" = "d67c08f8fe1f7108dbbd4e797a80a8c816fdfe1f19cf325a531f4307c47b4793"
+"sf.ddl.alter-stage.set.syntax" = "317303d294ca653b0dd62a753688e8475ef1030874c358922ed3075b3a31475a"
+"sf.ddl.alter-stream.set-comment" = "257d0b20bc1c0f54ff7b163fd2a4bdbde686d378b2afe1b6ba6aa744b23835f6"
+"sf.ddl.alter-stream.unset-comment" = "b021dc2d6797b34eef2ee8c63169a395a57b4f2f7cea4e4bc1cbfdd25702a47e"
+"sf.ddl.alter-type.set-comment" = "7971030825e737a11be98cdeb5f0f417fadde7cd48facb17db307b644ab01aea"
+"sf.ddl.alter-type.unset-comment" = "5b06939bcf9af7c978e2c8f01dbcf2c646c567dd841abd61765ce149e69c763f"
+"sf.ddl.alter-warehouse.set" = "ee8088034ef54241f798580d8018cc120855d747d3ebef9c076d26e114555061"
+"sf.ddl.create-alert.define-alert" = "7d211ca211e35324dab0a1d7ac08aa8bba38f16b90105f3d19f1a3d58bb81554"
+"sf.ddl.create-data-metric-function.define-data-metric-function" = "93afbfb1a940a9839b33c6f01085f313bb8b9b7ecb1a7fd8c07f720e7cb9f100"
+"sf.ddl.create-dynamic-table.create-dynamic-table-target-lag" = "e537346e7804dedd75ca696ca92f70fac94a76b61d713c9de09f796003053e8f"
+"sf.ddl.create-dynamic-table.create-or-alter-dynamic" = "9225176c714060c69125c2c45a977cda472ee947ff048fceaffcb8449b3b7ae4"
+"sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table" = "6048461e2c7aa2b8873d5e676faa473176e2f72a319c2bcea746db469aa8f125"
+"sf.ddl.create-dynamic-table.define-dynamic-table" = "43f4a84df94940df5ed8d5d464a59a5d46bb306387f5760fc19cebdd34178e9a"
+"sf.ddl.create-file-format.define-file-format" = "8e3f2573accc99804f76fa73e61188a2e9b33813cadc97e5864f3ba7b97f5b07"
+"sf.ddl.create-stage.define-stage" = "83b67a4d9808983ea68138df2d791a79b4282055d7cb30fe28f66058080c997f"
+"sf.ddl.create-task.define-task" = "457e74dccce8c243ea47a130eb23132341a0a11cb885442c217e71ab3f159976"
+"sf.ddl.show-mcp-servers" = "fcc9df1ffda3d1b00d8ddfaff3a00d4a5b0705d366dc733c276d4d5ce0ddf9f6"
+
+[review.definitions]
+"sf.ddl.alter-dynamic-table.set" = "3f9d359ddc3194fbbae7749a494fb1acc0546fb6c7ada307cb6220e952a9fa52"
+"sf.ddl.alter-external-volume.set-allow-writes-true-false" = "55c66fde4fa6cbf17d94807355bb6f892fb3b1bc0e7dda22772b6e520429848d"
+"sf.ddl.alter-external-volume.set-comment" = "bf1df8280d05aa3a043b0b2718a77a1015d12da933c6b0273a2368fc53f3938b"
+"sf.ddl.alter-file-format.set" = "e1e38ff72a0d44faf05ba5d3b61c6cd7c0862ce0f5dee047bd92f324bcd7e6ca"
+"sf.ddl.alter-restricted-session-scope.unset-comment" = "1e4ed16ee2b9c4ffd8f5e9c66387654efc36db28cddc5846e1bd695c32799d86"
+"sf.ddl.alter-stage.set.syntax" = "ecab30f186011f1230caf76dbd7ebe1a692fed672c87f5374f55e701d119fee9"
+"sf.ddl.alter-stream.set-comment" = "d497ec520fd0805e9de06b8dec18c8a020f49370b183420894886c604adfe1b5"
+"sf.ddl.alter-stream.unset-comment" = "96061861a7fa980f47c73046ebf2af386f4fedc26eafa76632531179db6befc4"
+"sf.ddl.alter-type.set-comment" = "be469b8a70a51b5dbb2927682c823f76227e6b119e8c4bdb68ca975f769aebf4"
+"sf.ddl.alter-type.unset-comment" = "2aba608f26c4d1e5a3f032d999d884ddf8edc6dd6431dc585de45647114d73dd"
+"sf.ddl.alter-warehouse.set" = "5ea1cb74cdfe91465baad20263641cbe1aa0cd6edcd5010705a2cbda2229d089"
+"sf.ddl.create-alert.define-alert" = "0b75f75797f7d83f4e19d3be8789f22f5629cd95620710afd35ac8d01ea967b2"
+"sf.ddl.create-data-metric-function.define-data-metric-function" = "148e192c0f260438a7c64cb792bd3c298189cfd5a574270c930f50dd54006940"
+"sf.ddl.create-dynamic-table.create-dynamic-table-target-lag" = "511a4a60a8bc60ae8ffcc37581e0500dfd1c4d1978341886b0933463bf88a0c1"
+"sf.ddl.create-dynamic-table.create-or-alter-dynamic" = "affa889628d66751ca70cd4c2f1f077ba6ca99e1b8e02eaedf20d50d509cd39f"
+"sf.ddl.create-dynamic-table.create-or-alter-dynamic-iceberg-table" = "b9a8cafc0b361764575bbba18f26b2aa5fbfa528fc1a7def09fa5321e1b606c0"
+"sf.ddl.create-dynamic-table.define-dynamic-table" = "b70959a6031ad8a75cc67b7fdfd78770058f777ac85995d2d3b74cad99a8a750"
+"sf.ddl.create-file-format.define-file-format" = "fffd0188e636b94a8bdb65189010df3eae95e03f74ed6faa9b1ed11a6d0e1a15"
+"sf.ddl.create-stage.define-stage" = "68fc2dfb5eea59483fb65707aacfc327405a6c6020e74d30a7a745a4cd41547e"
+"sf.ddl.create-task.define-task" = "32501f7731baebdbf3a874101576e21e97900b892c33779ab80597a8a2454346"
+"sf.ddl.show-mcp-servers" = "fa145bbc2736b9e7897c78b0e1464c582b73298cfb94fec2bf8a3055f8f5bffc"
