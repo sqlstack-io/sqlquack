@@ -1,9 +1,11 @@
 //! Snowflake's ALTER TABLE ADD of a column or an out-of-line constraint, read with the CREATE TABLE grammar.
 
-use crate::parser::_helpers::ddl::snowflake_create_table::tuple_names;
+use crate::parser::_helpers::ddl::snowflake_create_table::{
+    constraint_modifiers, set_reference_words, tuple_names,
+};
 use crate::parser::models::{Constraint, Parser};
 use sqlquack_syntax::expressions::columns::models::{
-    AlterTableAction, ColumnDef, ConstraintModifiers, ForeignKeyRef, TableConstraint,
+    AlterTableAction, ColumnDef, ForeignKeyRef, TableConstraint,
 };
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::tokens::models::TokenType;
@@ -39,7 +41,7 @@ impl Parser {
     }
 }
 
-/// An out-of-line constraint as the table constraint ALTER TABLE ADD holds, its property words kept in order.
+/// An out-of-line constraint as the table constraint ALTER TABLE ADD holds, its property words set on their typed fields.
 fn table_constraint(constraint: Constraint) -> Result<TableConstraint> {
     let Constraint {
         kind,
@@ -49,10 +51,35 @@ fn table_constraint(constraint: Constraint) -> Result<TableConstraint> {
         properties,
     } = constraint;
     let has_constraint_keyword = name.is_some();
-    let modifiers = ConstraintModifiers {
-        properties,
-        ..ConstraintModifiers::default()
-    };
+    if let Some((table, columns)) = references {
+        let Expression::Table(table) = table else {
+            return Err(sqlquack_syntax::tokens::errors::Error::internal(
+                "the parser reached a state its checks rule out",
+            ));
+        };
+        let mut reference = ForeignKeyRef {
+            table: *table,
+            columns: tuple_names(columns),
+            on_delete: None,
+            on_update: None,
+            on_update_first: false,
+            match_type: None,
+            match_after_actions: false,
+            constraint_name: None,
+            deferrable: None,
+            has_foreign_key_keywords: true,
+        };
+        let properties = set_reference_words(&mut reference, properties);
+        return Ok(TableConstraint::ForeignKey {
+            name,
+            columns: tuple_names(operand),
+            references: Some(Box::new(reference)),
+            on_delete: None,
+            on_update: None,
+            modifiers: constraint_modifiers(properties),
+        });
+    }
+    let modifiers = constraint_modifiers(properties);
     Ok(match kind {
         "UNIQUE" => TableConstraint::Unique {
             name,
@@ -72,7 +99,7 @@ fn table_constraint(constraint: Constraint) -> Result<TableConstraint> {
             modifiers,
             has_constraint_keyword,
         },
-        "CHECK" => TableConstraint::Check {
+        _ => TableConstraint::Check {
             name,
             expression: operand.ok_or_else(|| {
                 sqlquack_syntax::tokens::errors::Error::internal(
@@ -81,36 +108,5 @@ fn table_constraint(constraint: Constraint) -> Result<TableConstraint> {
             })?,
             modifiers,
         },
-        _ => {
-            let (table, columns) = references.ok_or_else(|| {
-                sqlquack_syntax::tokens::errors::Error::internal(
-                    "the parser reached a state its checks rule out",
-                )
-            })?;
-            let Expression::Table(table) = table else {
-                return Err(sqlquack_syntax::tokens::errors::Error::internal(
-                    "the parser reached a state its checks rule out",
-                ));
-            };
-            TableConstraint::ForeignKey {
-                name,
-                columns: tuple_names(operand),
-                references: Some(Box::new(ForeignKeyRef {
-                    table: *table,
-                    columns: tuple_names(columns),
-                    on_delete: None,
-                    on_update: None,
-                    on_update_first: false,
-                    match_type: None,
-                    match_after_actions: false,
-                    constraint_name: None,
-                    deferrable: None,
-                    has_foreign_key_keywords: true,
-                })),
-                on_delete: None,
-                on_update: None,
-                modifiers,
-            }
-        }
     })
 }
