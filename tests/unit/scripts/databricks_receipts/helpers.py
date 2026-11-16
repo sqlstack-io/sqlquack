@@ -87,9 +87,24 @@ class FakeClient(Client):
             f"{UC}/catalogs": (
                 "catalogs",
                 [
-                    {"name": "samples", "owner": "System user", "updated_at": 1},
-                    {"name": "system", "owner": "System user", "updated_at": 1},
-                    {"name": "workspace", "owner": "owner@example.com", "comment": None},
+                    {
+                        "name": "samples",
+                        "owner": "System user",
+                        "updated_at": 1,
+                        "catalog_type": "SYSTEM_CATALOG",
+                    },
+                    {
+                        "name": "system",
+                        "owner": "System user",
+                        "updated_at": 1,
+                        "catalog_type": "SYSTEM_CATALOG",
+                    },
+                    {
+                        "name": "workspace",
+                        "owner": "owner@example.com",
+                        "comment": None,
+                        "catalog_type": "MANAGED_CATALOG",
+                    },
                 ],
             ),
             f"{UC}/schemas": (

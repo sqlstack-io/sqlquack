@@ -615,6 +615,7 @@ SNAPSHOT_KINDS: dict[str, SnapshotKind] = {
         name="name",
         fields=UNITY_CATALOG_FIELDS,
         paging=PAGING_TOKEN,
+        skip=("catalog_type", "SYSTEM_CATALOG"),
     ),
     KIND_SCHEMA: SnapshotKind(
         path=f"{UNITY_CATALOG_PATH}/schemas?catalog_name={CATALOG}&max_results=0",

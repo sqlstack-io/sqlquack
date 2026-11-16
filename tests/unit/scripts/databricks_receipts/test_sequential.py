@@ -186,6 +186,26 @@ def test_given_a_case_that_changes_a_pre_existing_object_when_run_sequentially_t
     assert report["dropped"] == []
 
 
+def test_given_the_platform_updating_the_system_catalog_during_a_case_when_run_sequentially_then_it_is_receipted(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def touch(fake: FakeClient) -> None:
+        fake.objects(f"{UC}/catalogs")[1]["updated_at"] = 2
+
+    use(monkeypatch, FakeClient({"CREATE SERVER TYPE MYSQL OPTIONS ( v1 1 )": touch}))
+    out: Path = tmp_path / "out"
+
+    summary: Row = record_sequential(
+        cases=[case("CREATE SERVER TYPE MYSQL OPTIONS ( v1 1 )")],
+        out=out,
+        private=tmp_path / "private",
+        seed=None,
+    )
+
+    assert summary["receipts"] == 1
+    assert not list((tmp_path / "private").glob("*.sequential-stop.json"))
+
+
 @pytest.mark.parametrize(
     "test_case",
     (
