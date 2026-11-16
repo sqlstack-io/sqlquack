@@ -1357,6 +1357,31 @@ impl Parser {
         Err(self.parse_error("Expected value for COPY parameter"))
     }
 
+    /// A stage reference's optional `( FILE_FORMAT => ... , PATTERN => ... )`, each value as written.
+    fn parse_stage_options(&mut self) -> Result<(Option<Expression>, Option<Expression>)> {
+        let mut file_format = None;
+        let mut pattern = None;
+        if !self.match_token(TokenType::LParen) {
+            return Ok((file_format, pattern));
+        }
+        loop {
+            if self.match_identifier("FILE_FORMAT") {
+                self.expect_token(TokenType::FArrow)?;
+                file_format = Some(self.parse_primary()?);
+            } else if self.match_identifier("PATTERN") || self.match_token(TokenType::Pattern) {
+                self.expect_token(TokenType::FArrow)?;
+                pattern = Some(self.parse_primary()?);
+            } else {
+                break;
+            }
+            if !self.match_token(TokenType::Comma) {
+                break;
+            }
+        }
+        self.expect_token(TokenType::RParen)?;
+        Ok((file_format, pattern))
+    }
+
     /// Parses a Snowflake stage reference tokenized as a string, such as '@stage/path'.
     pub(crate) fn parse_stage_reference_from_string(&mut self) -> Result<Expression> {
         let string_token = self.advance()?;
@@ -1365,35 +1390,7 @@ impl Parser {
         let name = full_path[..full_path.len() - rest.len()].to_string();
         let path = (!rest.is_empty()).then(|| rest.to_string());
 
-        let (file_format, pattern) = if self.match_token(TokenType::LParen) {
-            let mut ff = None;
-            let mut pat = None;
-
-            loop {
-                if self.match_identifier("FILE_FORMAT") {
-                    self.expect_token(TokenType::FArrow)?;
-                    ff = Some(self.parse_primary()?);
-                } else if self.match_identifier("PATTERN") || self.match_token(TokenType::Pattern) {
-                    self.expect_token(TokenType::FArrow)?;
-                    if let Expression::Literal(lit) = self.parse_primary()? {
-                        if let Literal::String(s) = lit.as_ref() {
-                            pat = Some(s.clone());
-                        }
-                    }
-                } else {
-                    break;
-                }
-
-                if !self.match_token(TokenType::Comma) {
-                    break;
-                }
-            }
-
-            self.expect_token(TokenType::RParen)?;
-            (ff, pat)
-        } else {
-            (None, None)
-        };
+        let (file_format, pattern) = self.parse_stage_options()?;
 
         Ok(Expression::StageReference(Box::new(StageReference {
             name,
@@ -1449,35 +1446,7 @@ impl Parser {
             None
         };
 
-        let (file_format, pattern) = if self.match_token(TokenType::LParen) {
-            let mut ff = None;
-            let mut pat = None;
-
-            loop {
-                if self.match_identifier("FILE_FORMAT") {
-                    self.expect_token(TokenType::FArrow)?;
-                    ff = Some(self.parse_primary()?);
-                } else if self.match_identifier("PATTERN") || self.match_token(TokenType::Pattern) {
-                    self.expect_token(TokenType::FArrow)?;
-                    if let Expression::Literal(lit) = self.parse_primary()? {
-                        if let Literal::String(s) = lit.as_ref() {
-                            pat = Some(s.clone());
-                        }
-                    }
-                } else {
-                    break;
-                }
-
-                if !self.match_token(TokenType::Comma) {
-                    break;
-                }
-            }
-
-            self.expect_token(TokenType::RParen)?;
-            (ff, pat)
-        } else {
-            (None, None)
-        };
+        let (file_format, pattern) = self.parse_stage_options()?;
 
         let (stage_name, _) = stage_name_fields(&name);
         Ok(Expression::StageReference(Box::new(StageReference {
@@ -1568,35 +1537,7 @@ impl Parser {
             None
         };
 
-        let (file_format, pattern) = if self.match_token(TokenType::LParen) {
-            let mut ff = None;
-            let mut pat = None;
-
-            loop {
-                if self.match_identifier("FILE_FORMAT") {
-                    self.expect_token(TokenType::FArrow)?;
-                    ff = Some(self.parse_primary()?);
-                } else if self.match_identifier("PATTERN") || self.match_token(TokenType::Pattern) {
-                    self.expect_token(TokenType::FArrow)?;
-                    if let Expression::Literal(lit) = self.parse_primary()? {
-                        if let Literal::String(s) = lit.as_ref() {
-                            pat = Some(s.clone());
-                        }
-                    }
-                } else {
-                    break;
-                }
-
-                if !self.match_token(TokenType::Comma) {
-                    break;
-                }
-            }
-
-            self.expect_token(TokenType::RParen)?;
-            (ff, pat)
-        } else {
-            (None, None)
-        };
+        let (file_format, pattern) = self.parse_stage_options()?;
 
         let (stage_name, _) = stage_name_fields(&name);
         Ok(Expression::StageReference(Box::new(StageReference {

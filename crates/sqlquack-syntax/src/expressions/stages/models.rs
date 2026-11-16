@@ -32,9 +32,9 @@ pub struct StageReference {
     /// Optional FILE_FORMAT parameter
     #[serde(default)]
     pub file_format: Option<Expression>,
-    /// Optional PATTERN parameter
+    /// Optional PATTERN parameter, as written
     #[serde(default)]
-    pub pattern: Option<String>,
+    pub pattern: Option<Expression>,
     /// Whether the stage reference was originally quoted (e.g., '@mystage')
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub quoted: bool,
