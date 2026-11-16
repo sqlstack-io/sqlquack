@@ -1096,6 +1096,16 @@ fn given_snowflake_security_admin_show_drop_and_describe_when_parsing_then_the_r
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
+            description: "Openflow data plane integrations take LIKE (recorded success)",
+            sql: "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' ;",
+            expected_kind: Some("show"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "Openflow data plane integrations take no STARTS WITH (recorded errno 1003)",
+            sql: "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
             description: "caller grants ON need an object (recorded errno 1003)",
             sql: "SHOW CALLER GRANTS ON ;",
             expected_kind: None,
