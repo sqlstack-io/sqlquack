@@ -2,6 +2,7 @@
 
 use crate::parser::_helpers::ddl::snowflake_alter::alter_object;
 use crate::parser::_helpers::ddl::snowflake_alter::keyed_pair;
+use crate::parser::_helpers::ddl::snowflake_alter::keyword_values;
 use crate::parser::_helpers::ddl::snowflake_alter::named_property;
 use crate::parser::_helpers::ddl::snowflake_alter::parameter_property;
 use crate::parser::_helpers::ddl::snowflake_alter::property;
@@ -217,7 +218,8 @@ impl Parser {
         {
             self.skip();
             self.skip();
-            properties.push(property(name, None, Some(self.parse_alter_value()?)));
+            let value = keyword_values(name, self.parse_alter_value()?);
+            properties.push(property(name, None, Some(value)));
         }
         Ok(properties)
     }

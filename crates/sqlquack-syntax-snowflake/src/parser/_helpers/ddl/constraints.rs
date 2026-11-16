@@ -939,6 +939,8 @@ impl Parser {
                 to_table,
                 table_properties,
                 define: false,
+                recursive: false,
+                temporary_spelling: None,
             })));
         }
 
@@ -1002,6 +1004,8 @@ impl Parser {
             to_table,
             table_properties,
             define: false,
+            recursive: false,
+            temporary_spelling: None,
         })))
     }
 
