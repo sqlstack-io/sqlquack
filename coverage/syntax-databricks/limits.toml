@@ -2138,6 +2138,13 @@ note = "omit <collation_name>"
 reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the operand parses as a configuration SET"
 
 [[suppress]]
+form = "db.transaction_session.collation"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required COLLATION"
+reason = "Spark's generic configuration SET takes any text after SET (SqlBaseParser #setConfiguration: SET configKey (EQ .*?)?, and SET .*?), so the text without the keyword parses as a configuration SET"
+
+[[suppress]]
 form = "db.transaction_session.conf-mgmt-set-collation"
 kind = "required_operand_missing"
 target = "<collation_name>"

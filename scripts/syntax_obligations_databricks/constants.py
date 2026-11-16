@@ -475,6 +475,12 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         ("db.functions.try-variant-get", "db.functions.variant-get"),
         {"type": "'int'", "path": "'$.a'"},
     ),
+    "db.functions.vector-search.": {
+        "index": "'i1'",
+        "query_text": "'v1'",
+        "query_str": "'v1'",
+        "query_vector": "ARRAY ( 1.0 )",
+    },
     **dict.fromkeys(
         ("db.functions.http-request", "db.functions.remote-query"), {"connection_name": "'c1'"}
     ),
@@ -912,6 +918,13 @@ FORM_CLASSES: dict[str, dict[str, str]] = {
     ),
     **dict.fromkeys(
         ("db.functions.try-variant-get", "db.functions.variant-get"), {"type": "string_literal"}
+    ),
+    **dict.fromkeys(
+        (
+            "db.functions.vector-search.query-num-results",
+            "db.functions.vector-search.query-text-query-vector",
+        ),
+        {"index": "string_literal"},
     ),
 }
 FAMILY_CONTEXTS: dict[str, tuple[str, str]] = {

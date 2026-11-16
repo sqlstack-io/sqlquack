@@ -134,12 +134,6 @@ target = "<collation_name>"
 note = "a string literal in place of <collation_name>"
 
 [[obligation]]
-id = "db.transaction_session.collation.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required COLLATION"
-
-[[obligation]]
 id = "db.transaction_session.collation.o006"
 kind = "identifier_class"
 required = true

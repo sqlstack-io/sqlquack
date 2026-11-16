@@ -2458,3 +2458,42 @@ ids = [
   "db.functions.ai-forecast.o055",
   "db.functions.ai-forecast.o056",
 ]
+
+[[retired]]
+retired_in = "4ab7c9ddcfb2712193492c2175b3132c873a806e"
+reason = "vector_search's arguments are read as named arguments, as the page's Arguments require, so its two Syntax lines become new forms and the obligations of the positional forms are retired"
+ids = [
+  "db.functions.vector-search.vector-search-2.o001",
+  "db.functions.vector-search.vector-search-2.o002",
+  "db.functions.vector-search.vector-search-2.o003",
+  "db.functions.vector-search.vector-search-2.o004",
+  "db.functions.vector-search.vector-search-2.o005",
+  "db.functions.vector-search.vector-search-2.o006",
+  "db.functions.vector-search.vector-search-2.o007",
+  "db.functions.vector-search.vector-search-2.o008",
+  "db.functions.vector-search.vector-search-2.o009",
+  "db.functions.vector-search.vector-search-2.o010",
+  "db.functions.vector-search.vector-search-2.o011",
+  "db.functions.vector-search.vector-search.o001",
+  "db.functions.vector-search.vector-search.o002",
+  "db.functions.vector-search.vector-search.o003",
+  "db.functions.vector-search.vector-search.o004",
+  "db.functions.vector-search.vector-search.o005",
+  "db.functions.vector-search.vector-search.o006",
+  "db.functions.vector-search.vector-search.o007",
+  "db.functions.vector-search.vector-search.o008",
+  "db.functions.vector-search.vector-search.o009",
+  "db.functions.vector-search.vector-search.o010",
+  "db.functions.vector-search.vector-search.o011",
+  "db.functions.vector-search.vector-search.o012",
+  "db.functions.vector-search.vector-search.o013",
+  "db.functions.vector-search.vector-search.o014",
+  "db.functions.vector-search.vector-search.o015",
+]
+
+[[retired]]
+retired_in = "4ab7c9ddcfb2712193492c2175b3132c873a806e"
+reason = "the COLLATION parameter form without its COLLATION keyword is a generic configuration SET, which takes any text, so its negative is suppressed as the SET COLLATION statement's is"
+ids = [
+  "db.transaction_session.collation.o005",
+]

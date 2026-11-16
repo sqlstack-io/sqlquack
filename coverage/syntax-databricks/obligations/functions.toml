@@ -42362,168 +42362,225 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search.o001"
+id = "db.functions.vector-search.query-num-results.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search.o002"
+id = "db.functions.vector-search.query-num-results.o002"
 kind = "required_operand_missing"
 required = true
 target = "<index>"
 note = "omit <index>"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search.o003"
+id = "db.functions.vector-search.query-num-results.o003"
 kind = "operand_type_class"
 required = true
 target = "<index>"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search.o004"
-kind = "alternative"
-required = true
-target = "{ <query_text> | <query_vector> } → <query_text>"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o005"
-kind = "alternative"
-required = true
-target = "{ <query_text> | <query_vector> } → <query_vector>"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o006"
-kind = "operand_type_class"
-required = true
-target = "<query_text>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o007"
-kind = "operand_type_class"
-required = true
-target = "<query_vector>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o008"
-kind = "option_present"
-required = true
-target = "[ <num_results> ]"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o009"
-kind = "option_absent"
-required = true
-target = "[ <num_results> ]"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o010"
-kind = "operand_type_class"
-required = true
-target = "<num_results> in [ <num_results> ]"
-note = "a valid integer_literal"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FROM"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required VECTOR_SEARCH"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { <query_text> | <query_vector> }"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required )"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search-2.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search-2.o002"
-kind = "required_operand_missing"
-required = true
-target = "<index>"
-note = "omit <index>"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search-2.o003"
-kind = "operand_type_class"
-required = true
-target = "<index>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search-2.o004"
+id = "db.functions.vector-search.query-num-results.o004"
 kind = "required_operand_missing"
 required = true
 target = "<query_str>"
 note = "omit <query_str>"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o005"
+id = "db.functions.vector-search.query-num-results.o005"
 kind = "operand_type_class"
 required = true
 target = "<query_str>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o006"
+id = "db.functions.vector-search.query-num-results.o006"
 kind = "required_operand_missing"
 required = true
 target = "<num_results>"
 note = "omit <num_results>"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o007"
+id = "db.functions.vector-search.query-num-results.o007"
 kind = "operand_type_class"
 required = true
 target = "<num_results>"
 note = "a valid integer_literal"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o008"
+id = "db.functions.vector-search.query-num-results.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FROM"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o009"
+id = "db.functions.vector-search.query-num-results.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required VECTOR_SEARCH"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o010"
+id = "db.functions.vector-search.query-num-results.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o011"
+id = "db.functions.vector-search.query-num-results.o011"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required index"
+
+[[obligation]]
+id = "db.functions.vector-search.query-num-results.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required query"
+
+[[obligation]]
+id = "db.functions.vector-search.query-num-results.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required num_results"
+
+[[obligation]]
+id = "db.functions.vector-search.query-num-results.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o002"
+kind = "required_operand_missing"
+required = true
+target = "<index>"
+note = "omit <index>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o003"
+kind = "operand_type_class"
+required = true
+target = "<index>"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o004"
+kind = "alternative"
+required = true
+target = "{ query_text => <query_text> | query_vector => <query_vector> } → query_text => <query_text>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o005"
+kind = "alternative"
+required = true
+target = "{ query_text => <query_text> | query_vector => <query_vector> } → query_vector => <query_vector>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o006"
+kind = "required_operand_missing"
+required = true
+target = "<query_text>"
+note = "omit <query_text>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o007"
+kind = "operand_type_class"
+required = true
+target = "<query_text>"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o008"
+kind = "required_operand_missing"
+required = true
+target = "<query_vector>"
+note = "omit <query_vector>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o009"
+kind = "operand_type_class"
+required = true
+target = "<query_vector>"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o010"
+kind = "option_present"
+required = true
+target = "[ , num_results => <num_results> ]"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o011"
+kind = "option_absent"
+required = true
+target = "[ , num_results => <num_results> ]"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o012"
+kind = "required_operand_missing"
+required = true
+target = "<num_results> in [ , num_results => <num_results> ]"
+note = "omit <num_results>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o013"
+kind = "operand_type_class"
+required = true
+target = "<num_results> in [ , num_results => <num_results> ]"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VECTOR_SEARCH"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required index"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required query_text after ,"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required query_vector after ,"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required num_results in [ , num_results => <num_results> ]"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"

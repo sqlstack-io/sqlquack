@@ -102,7 +102,7 @@ anchor = "Setting"
 kind = "statement"
 label = "collation"
 grammar = [
-  "SET COLLATION = <collation_name>",
+  "SET COLLATION <collation_name>",
 ]
 basis = "prose"
 article_sha256 = "27c64af1e54826eec1fd2a7a45e4dd4cdbd4eb5e3094faed93e79f14bde6851b"
@@ -1064,17 +1064,17 @@ reason = "the page's Syntax names st_asbinary, another function, and the build r
 page = "functions/vector_search"
 written = "SELECT * FROM <vector_search> ( <index> , { <query_text> | <query_vector> } , [ <num_results> ] )"
 read = [
-  "SELECT * FROM VECTOR_SEARCH ( <index> , { <query_text> | <query_vector> } , [ <num_results> ] )",
+  "SELECT * FROM VECTOR_SEARCH ( index => <index> , { query_text => <query_text> | query_vector => <query_vector> } [ , num_results => <num_results> ] )",
 ]
-reason = "the lower-case function name vector_search was read as a placeholder; read as the function the page defines"
+reason = "the lower-case function name vector_search was read as a placeholder; read as the function the page defines. The page's Arguments say all arguments must be passed by name (vector_search(index => indexName, query_text => queryText)), so each is written named, and the comma printed before the optional num_results is part of it"
 
 [[reading]]
 page = "functions/vector_search"
 written = "SELECT * FROM <vector_search> ( <index> , <query> , <num_results> )"
 read = [
-  "SELECT * FROM VECTOR_SEARCH ( <index> , <query_str> , <num_results> )",
+  "SELECT * FROM VECTOR_SEARCH ( index => <index> , query => <query_str> , num_results => <num_results> )",
 ]
-reason = "the lower-case function name vector_search was read as a placeholder; read as the function the page defines. The argument named query is a STRING expression (the page's Arguments), not a query, though the build classes a placeholder named query as one; read with a name it classes as an expression"
+reason = "the lower-case function name vector_search was read as a placeholder; read as the function the page defines. The page's Arguments say all arguments must be passed by name, so each is written named. The argument named query is a STRING expression (the page's Arguments), not a query, though the build classes a placeholder named query as one; read with a name it classes as an expression"
 
 [[reading]]
 page = "functions/ai_parse_document"

@@ -46,9 +46,9 @@ source = "doc.parameters.collation"
 anchor = "Setting"
 kind = "statement"
 grammar = [
-  "SET COLLATION = <collation_name>",
+  "SET COLLATION <collation_name>",
 ]
-grammar_sha256 = "7ce6093358e7db619f3239cc555e7afda04d879c1a34dea76fec24eefab22b3b"
+grammar_sha256 = "67e8796199f93a9318fc75edae28aaa48158edd91f2a2738d1c70668eb22ae7d"
 uses = []
 status = "catalogued"
 

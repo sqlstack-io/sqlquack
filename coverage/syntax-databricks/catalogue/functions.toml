@@ -10737,6 +10737,32 @@ uses = []
 status = "absent_from_source"
 
 [[form]]
+id = "db.functions.vector-search.query-num-results"
+family = "functions"
+source = "doc.functions.vector_search"
+anchor = "Syntax"
+kind = "special"
+grammar = [
+  "SELECT * FROM VECTOR_SEARCH ( index => <index> , query => <query_str> , num_results => <num_results> )",
+]
+grammar_sha256 = "d078a76374307963108eaf3f54c2e9737eba2ca0436346b6e1bf18fe7c7184cf"
+uses = []
+status = "catalogued"
+
+[[form]]
+id = "db.functions.vector-search.query-text-query-vector"
+family = "functions"
+source = "doc.functions.vector_search"
+anchor = "Syntax"
+kind = "special"
+grammar = [
+  "SELECT * FROM VECTOR_SEARCH ( index => <index> , { query_text => <query_text> | query_vector => <query_vector> } [ , num_results => <num_results> ] )",
+]
+grammar_sha256 = "100608088b093479839aa1d52cb76782f4cb28419d59cf5957aeae4516d3afc0"
+uses = []
+status = "catalogued"
+
+[[form]]
 id = "db.functions.vector-search.vector-search"
 family = "functions"
 source = "doc.functions.vector_search"
@@ -10747,7 +10773,7 @@ grammar = [
 ]
 grammar_sha256 = "7ffd8a2cc8224e3a91c687b9bbb3327daed719f8e04c4f3edd874eea3e0750d8"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "db.functions.vector-search.vector-search-2"
@@ -10760,7 +10786,7 @@ grammar = [
 ]
 grammar_sha256 = "558c0f1e203fee83e3228e440842d64278eed43cd366babb554057212ee80cfe"
 uses = []
-status = "catalogued"
+status = "absent_from_source"
 
 [[form]]
 id = "db.functions.vector-search.vector-search.syntax"
