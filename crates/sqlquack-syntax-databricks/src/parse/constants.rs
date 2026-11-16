@@ -212,6 +212,9 @@ pub(crate) const GROUPING_SETS: &str = "GROUPING SETS";
 /// The scope kind of a `SHOW` that lists a schema's objects, which an `IDENTIFIER (...)` may name.
 pub(crate) const SCHEMA_SCOPE: &str = "SCHEMA";
 
+/// The digits of an `@yyyyMMddHHmmssSSS` timestamp after a Delta table name.
+pub(crate) const AT_TIMESTAMP_DIGITS: usize = 17;
+
 /// The function name an `IDENTIFIER (expr)` clause becomes, as lineage reads it.
 pub(crate) const IDENTIFIER_CLAUSE: &str = "IDENTIFIER";
 

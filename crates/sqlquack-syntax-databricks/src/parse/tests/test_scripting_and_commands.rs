@@ -161,6 +161,26 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             sql: "CREATE FUNCTION abs ( ) RETURNS INT LANGUAGE PYTHON HANDLER 'm' AS $$ return 1 $$",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
+        VerdictTestCase {
+            description: "a clone source takes an @ version",
+            sql: "CREATE TABLE t3 CLONE t1@v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a clone source takes an @ timestamp",
+            sql: "CREATE TABLE t3 CLONE t1@20261101000000000",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "an @ version is written against the table name",
+            sql: "CREATE TABLE t3 CLONE t1 @v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "an @ timestamp has seventeen digits",
+            sql: "CREATE TABLE t3 CLONE t1@2026",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

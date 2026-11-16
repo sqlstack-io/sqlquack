@@ -452,7 +452,10 @@ impl Parser<'_> {
         node.deep_clone = !node.shallow_clone && self.eat_kw("DEEP");
         self.expect_kw("CLONE")?;
         node.clone_source = Some(self.table_reference()?);
-        node.clone_at_clause = self.temporal_clause()?.map(Expression::Version);
+        node.clone_at_clause = match self.at_version()? {
+            Some(version) => Some(Expression::Version(version)),
+            None => self.temporal_clause()?.map(Expression::Version),
+        };
         let mut seen: Vec<&str> = Vec::new();
         loop {
             let start: usize = self.offset();

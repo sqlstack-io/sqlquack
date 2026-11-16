@@ -11,9 +11,9 @@ use sqlquack_syntax::expressions::statements::models::Version;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier, is_strict_identifier};
 use crate::parse::_helpers::tree::nodes::{
     JoinConstraint, TableAlias, alias, call, column_from, function, in_list, join, joined_table,
-    lateral, literal, null, paren, subquery, table, tuple, values,
+    lateral, literal, null, paren, string, subquery, table, tuple, values,
 };
-use crate::parse::constants::IDENTIFIER_CLAUSE;
+use crate::parse::constants::{AT_TIMESTAMP_DIGITS, IDENTIFIER_CLAUSE};
 use crate::scan::models::{NumberKind, TokenKind};
 
 /// `item` with `joins` after it, as one joined table when there are any.
@@ -448,6 +448,40 @@ impl Parser<'_> {
             kind: "AS OF".to_owned(),
             expression: Some(Box::new(value)),
             for_keyword: offset == 1,
+        })))
+    }
+
+    /// Delta's `@v<version>` or `@<yyyyMMddHHmmssSSS>`, written against the table name before it.
+    pub(crate) fn at_version(&mut self) -> Parsing<Option<Box<Version>>> {
+        let touches: bool = self.at > 0
+            && self.is_char('@')
+            && self.tokens[self.at - 1].end == self.tokens[self.at].start
+            && self.adjacent(0);
+        if !touches {
+            return Ok(None);
+        }
+        self.at += 1;
+        let token = self.advance()?;
+        let digits =
+            |text: &str| !text.is_empty() && text.bytes().all(|byte| byte.is_ascii_digit());
+        let (kind, value): (&str, &str) = match token.kind {
+            TokenKind::Word
+                if token.value.len() > 1
+                    && token.value.starts_with(['v', 'V'])
+                    && digits(&token.value[1..]) =>
+            {
+                ("VERSION", &token.value[1..])
+            }
+            TokenKind::Number(NumberKind::Integer) if token.value.len() == AT_TIMESTAMP_DIGITS => {
+                ("TIMESTAMP", token.value.as_str())
+            }
+            _ => return Err(self.error_with("Syntax error at or near '@'", token.start, true)),
+        };
+        Ok(Some(Box::new(Version {
+            this: Box::new(Expression::Identifier(Identifier::new(kind))),
+            kind: "@".to_owned(),
+            expression: Some(Box::new(string(value))),
+            for_keyword: false,
         })))
     }
 
