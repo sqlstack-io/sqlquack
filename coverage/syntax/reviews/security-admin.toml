@@ -3571,3 +3571,203 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.security_admin.create-share.define-share" = "5d4ba476ffd8edb7f9f6dfa2765ea7e10a1d6ae1e52ba07ff754243d408d4e37"
 "sf.security_admin.create-snapshot-policy" = "2dff983050df477b3255cc413cbd6d71bafb9a531041f24d14ad955e20e6b0ac"
 "sf.security_admin.grant-privilege.create-schema-modify-monitor" = "7b9278d1706ec49f56440ca61d6bba69efb3eff327fb0be86f10c6ae393dd4df"
+
+[[review]]
+id = "security-admin-034"
+family = "security_admin"
+parser_tree = "2ccaa276710faea098d6dd794c680f84ec5e0fae"
+reviewed_utc = "2026-11-16T04:27:40Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-aggregation-policy.set-comment",
+  "sf.security_admin.alter-aggregation-policy.unset-comment",
+  "sf.security_admin.alter-api-integration.set",
+  "sf.security_admin.alter-api-integration.unset-api-key-enabled-api-blocked-prefixes",
+  "sf.security_admin.alter-authentication-policy.set",
+  "sf.security_admin.alter-database-role.set-comment",
+  "sf.security_admin.alter-database-role.unset-comment",
+  "sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets",
+  "sf.security_admin.alter-feature-policy.set",
+  "sf.security_admin.alter-integration",
+  "sf.security_admin.alter-join-policy.set-comment",
+  "sf.security_admin.alter-join-policy.unset-comment",
+  "sf.security_admin.alter-maintenance-policy.set",
+  "sf.security_admin.alter-maintenance-policy.unset",
+  "sf.security_admin.alter-masking-policy.set-comment",
+  "sf.security_admin.alter-masking-policy.unset-comment",
+  "sf.security_admin.alter-network-policy.set",
+  "sf.security_admin.alter-network-policy.unset-comment",
+  "sf.security_admin.alter-notification-integration-email.set",
+  "sf.security_admin.alter-notification-integration-email.unset-enabled-allowed-recipients-default-recipients",
+  "sf.security_admin.alter-notification-integration-multi-queue.set-active",
+  "sf.security_admin.alter-notification-integration-queue-inbound-gcp.set",
+  "sf.security_admin.alter-notification-integration-queue-inbound-gcp.unset-comment",
+  "sf.security_admin.alter-notification-integration-queue-outbound-aws.set-aws-sns-topic-arn-aws-sns-role-arn",
+  "sf.security_admin.alter-notification-integration-queue-outbound-azure.set",
+  "sf.security_admin.alter-notification-integration-queue-outbound-gcp.set-gcp-pubsub-subscription-name",
+  "sf.security_admin.alter-notification-integration-webhooks.unset-enabled-webhook-secret-webhook-body-template",
+  "sf.security_admin.alter-packages-policy.set",
+  "sf.security_admin.alter-password-policy.set",
+  "sf.security_admin.alter-password-policy.unset",
+  "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set",
+  "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault",
+  "sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager",
+  "sf.security_admin.alter-security-integration-api-auth.security-integration-set",
+  "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow",
+  "sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow",
+  "sf.security_admin.alter-security-integration-aws-iam.set",
+  "sf.security_admin.alter-security-integration-oauth-external.set",
+  "sf.security_admin.alter-security-integration-oauth-external.unset-enabled-external-oauth-audience-list-is-agentic",
+  "sf.security_admin.alter-security-integration-oauth-snowflake.set",
+  "sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax",
+  "sf.security_admin.alter-security-integration-oauth-snowflake.unset-enabled-comment",
+  "sf.security_admin.alter-security-integration-oauth-snowflake.unset-enabled-network-policy-oauth-client-rsa-public-key",
+  "sf.security_admin.alter-security-integration-oidc.set",
+  "sf.security_admin.alter-security-integration-oidc.unset-allowed-email-patterns-allowed-user-domains-comment",
+  "sf.security_admin.alter-security-integration-saml2.set",
+  "sf.security_admin.alter-security-integration-saml2.unset-enabled",
+  "sf.security_admin.alter-security-integration-scim.set",
+  "sf.security_admin.alter-security-integration-scim.unset-network-policy",
+  "sf.security_admin.alter-security-integration.set",
+  "sf.security_admin.alter-security-integration.unset",
+  "sf.security_admin.alter-session-policy.set",
+  "sf.security_admin.alter-storage-integration.set",
+  "sf.security_admin.alter-storage-integration.unset-enabled-storage-blocked-locations-comment",
+  "sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag",
+  "sf.security_admin.alter-user-modify-workload-identity.unset",
+  "sf.security_admin.alter-user.rename-to",
+  "sf.security_admin.alter-user.set-authentication-password-session",
+  "sf.security_admin.alter-user.unset-authentication-password-session",
+  "sf.security_admin.alter-user.unset-tag",
+  "sf.security_admin.show-oflow-data-plane-integration",
+  "sf.security_admin.show-row-access-policies",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at ab68bcf08; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.security_admin.alter-aggregation-policy.set-comment" = "dcc66b7dd0ff7df3ecb27e6b6d4aa4ae0998a6676de13b3043cb1c6742218611"
+"sf.security_admin.alter-aggregation-policy.unset-comment" = "a014741fad315eb3e8b7d58c8b3668c667bbeb8f2168245d4808025bfae467c8"
+"sf.security_admin.alter-api-integration.set" = "64e28d4ead56a1dc9fd5349388a960d7ee951ab81c65e8d0288f7400ee02481f"
+"sf.security_admin.alter-api-integration.unset-api-key-enabled-api-blocked-prefixes" = "be7f1536eb3d496ede9fdcd160e3028c74555fa3453dd1331212a9c43694f04b"
+"sf.security_admin.alter-authentication-policy.set" = "b59d635da995e04f763015c58428b19bd2764c774c0fc0405dd75e8e5660bb96"
+"sf.security_admin.alter-database-role.set-comment" = "9786e64a35f8d22213174b45a4db8652d2e9741b9f7ecf66ac4cbd33692a8057"
+"sf.security_admin.alter-database-role.unset-comment" = "0126fc0575c9ed384aeab33ba695c534df43efd6ff5f3597210ab903e95a454e"
+"sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets" = "6553c9cd97f8a67b51bd8753bcb360c747a46ca2fa2ac751616948cc9c08aa90"
+"sf.security_admin.alter-feature-policy.set" = "0ee0d2c265523df5001dd4e10adcec5193ff9b20c4fba39392aa3791b46e3dbc"
+"sf.security_admin.alter-integration" = "ccb6ead445d00b0af6e0f94847cbce061553e5b9b499c9f2c6a0521b4935e3e3"
+"sf.security_admin.alter-join-policy.set-comment" = "f255f170755a026f891435bd036d829d3f395eb621b40f05ccc72a54428ed148"
+"sf.security_admin.alter-join-policy.unset-comment" = "d504993ed9172abe3cc8a5c5acc5e5afa523ae378ee2be1afb6a5017735f31ab"
+"sf.security_admin.alter-maintenance-policy.set" = "81ddbb0277815265e438ed2efa9708b2099399dfadc81168f04b7ad53aff4820"
+"sf.security_admin.alter-maintenance-policy.unset" = "610b9f01e8950f5f1285e7f088f361883ba6784a14cb0b6c5f95367397b0bf81"
+"sf.security_admin.alter-masking-policy.set-comment" = "5d8c824298f328c5021041bc7c904576c7f39e465d087d68b4eaac4683ff4f55"
+"sf.security_admin.alter-masking-policy.unset-comment" = "1f489765947f014d1d44fe50c708fcf96e7a5df45f20f9b88f7d9f160396c4c2"
+"sf.security_admin.alter-network-policy.set" = "a34d4bf310d7c8e8263acc2022faed6c163e46a39014327bae211ee84ba0714d"
+"sf.security_admin.alter-network-policy.unset-comment" = "525c74d25a000efd6b364d9c1ee96bb0caaa7f82fc853f875a382793da81f787"
+"sf.security_admin.alter-notification-integration-email.set" = "f33ca68aa8beb3d5748f9f4c8773603f3b63896ee69120b922543edf27e918e6"
+"sf.security_admin.alter-notification-integration-email.unset-enabled-allowed-recipients-default-recipients" = "48cad710b5a1c7eb4510faaeee111387d70ec1c07d8c20c046ad2e1a735b1348"
+"sf.security_admin.alter-notification-integration-multi-queue.set-active" = "68428e3c7a6035ad5fc87533a4ab08f0c82fe8ff151f7eb1b45f2fc1efc56037"
+"sf.security_admin.alter-notification-integration-queue-inbound-gcp.set" = "160df72bcd2b044c485f256d95b1e0360cb850d4ea436b7341218849946bf41c"
+"sf.security_admin.alter-notification-integration-queue-inbound-gcp.unset-comment" = "9420334d5b3902fc0efe70d361365638a4ff9aa83c6f1b22918ebf2aface126c"
+"sf.security_admin.alter-notification-integration-queue-outbound-aws.set-aws-sns-topic-arn-aws-sns-role-arn" = "7994a0f070726f2d51540e28a48f4a9696e546d28edd7800ac183a7aaf112ae7"
+"sf.security_admin.alter-notification-integration-queue-outbound-azure.set" = "c5f33e7f53f3734fb915a37750b42151fd58e579304e715cb7037eb35e57c5e8"
+"sf.security_admin.alter-notification-integration-queue-outbound-gcp.set-gcp-pubsub-subscription-name" = "69d9dca09838f8431b09305225e7a85ccf3e486a221060df5fbba4e9a048d639"
+"sf.security_admin.alter-notification-integration-webhooks.unset-enabled-webhook-secret-webhook-body-template" = "e3635b0d60428a61406fa43f82660297e1c2095d42193534459c84b38a4d072f"
+"sf.security_admin.alter-packages-policy.set" = "db582bac082c727b7b9b57ff749993cab124995c5291b7fb60ff8006d9a51619"
+"sf.security_admin.alter-password-policy.set" = "3d470ff3ff0c3ad23e2779a7ac61900349ca010dfe82392aedab9ece0d91859e"
+"sf.security_admin.alter-password-policy.unset" = "b3cc548d675c9fb83362aad07c978daf4bf57a9645daa85ae0f505f7295304a9"
+"sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set" = "e9dfeb61ec414412dcb7f9aae0dd907417c743a4d2b4bf91954d18572a8f5e93"
+"sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault" = "825506d78274857fb9fcdde357f5fac8f9f0d1a629e43c4bad61f04382740631"
+"sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager" = "d9976887ef429858f32755addb52f11dfa8a72e7e9cecf3448b97c8a30b8fafe"
+"sf.security_admin.alter-security-integration-api-auth.security-integration-set" = "0ce4a26f2290e635212c66e7e5e88fd1a16a27f2839dc5d417e7fe756f3a6d32"
+"sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow" = "e7a90a185dcacebe32270a610e579cebf888f48137c3d4cdb1064891a5038d95"
+"sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow" = "83d15874572be1615696ef6a5d5f76b2582619b9e3a0c474a63a1fb65837b4a9"
+"sf.security_admin.alter-security-integration-aws-iam.set" = "9b62e5a7bde9e6e5958f75b271702f5cf83d40fdf528b0c6b085e747e962fb17"
+"sf.security_admin.alter-security-integration-oauth-external.set" = "504448c2843558b803eaa4713ae932efe3c864a7fa59e82b9c7577102b678ae7"
+"sf.security_admin.alter-security-integration-oauth-external.unset-enabled-external-oauth-audience-list-is-agentic" = "a3ca53f9ff5d4b6fe5382befa4c1605850ddb0cc57b421599d52cbde76406901"
+"sf.security_admin.alter-security-integration-oauth-snowflake.set" = "bb8dfe02808d75a6497599ac28f1943ff4fabe3a664f19bed748da2017820a6f"
+"sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax" = "3c28e3a558c33003e627b6f063072756aea80c66598915df5376da7ed3fa0aad"
+"sf.security_admin.alter-security-integration-oauth-snowflake.unset-enabled-comment" = "2e62b4f12032701c75692de00a4d398066dd3232e7e949dcab05ea9d5801a59b"
+"sf.security_admin.alter-security-integration-oauth-snowflake.unset-enabled-network-policy-oauth-client-rsa-public-key" = "2058dfd20a03fb9ffbab054ff245318b2310049eb67973d8e90a2d7fab109fd0"
+"sf.security_admin.alter-security-integration-oidc.set" = "ef01540221d196403189e7b07b4a4fc1549d2e75cf69d581d1b90b8f665169df"
+"sf.security_admin.alter-security-integration-oidc.unset-allowed-email-patterns-allowed-user-domains-comment" = "405b5cd6ff7abbac99b403af5d35288563cf972ef205355b018b4b1a960c34f7"
+"sf.security_admin.alter-security-integration-saml2.set" = "bb908c363b8ac8c9b10ec3777eb6f23ad64e251bc1b3a6e9ca2fdc4115f5295d"
+"sf.security_admin.alter-security-integration-saml2.unset-enabled" = "c955d241d61e93b98032eaf86205a4afb8b1e3d2badc8213cf1e9aab1a77b8da"
+"sf.security_admin.alter-security-integration-scim.set" = "a098a6d6a696ca3855e736c34ed2acdf24aaea0409251dfa6485e5eae0b6a860"
+"sf.security_admin.alter-security-integration-scim.unset-network-policy" = "a6f9fc0ae0ebe7640c69ac8e5e5ace5081792c18252bac322b8c77a67bc9bea0"
+"sf.security_admin.alter-security-integration.set" = "7768904c740c0445f26764e36e0e016f01bba881e556eefe74930e7ebde5141a"
+"sf.security_admin.alter-security-integration.unset" = "0c18d536f73d60558a7a479b3d12109cabc2d1734cda9c3ada5fdeb08fffa699"
+"sf.security_admin.alter-session-policy.set" = "c20303206a0ccd4eabb547b77d1165e12ea8e70e5331ee4391ef794d58797923"
+"sf.security_admin.alter-storage-integration.set" = "c6114ad3a94245a15f17a20a66e190c38cacfa2a07b0b7069ae3a96c727c4b33"
+"sf.security_admin.alter-storage-integration.unset-enabled-storage-blocked-locations-comment" = "8db52b77f132e2791556f9195361ee4df2fc230aaa386f0e4fc337134636dfc2"
+"sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag" = "6716c48107572cc9ab50edd4b609eec61b744d13f90ed478c3395e4e178098f9"
+"sf.security_admin.alter-user-modify-workload-identity.unset" = "71d2635c53b95dd3f098acbb821322d4863225bb1534e10978be9333f18f9c88"
+"sf.security_admin.alter-user.rename-to" = "e009aae1115fb3d414c479b827170897c0484021982e6da933f2bfd26c54d5b9"
+"sf.security_admin.alter-user.set-authentication-password-session" = "bd4a1fd477e8c9868f0ceb4a4134a7f2b1a19f3777c2da382a5ff532589c5c5c"
+"sf.security_admin.alter-user.unset-authentication-password-session" = "5a30380f80ee308cf95f849d4ab4bc37c8a9651c87f1d3ed45c70fab700d7402"
+"sf.security_admin.alter-user.unset-tag" = "4aeefd6458d2ee2afb5e807aed3569a6a244c7482107147cfbfa5bd0c986bcc7"
+"sf.security_admin.show-oflow-data-plane-integration" = "9e16bffe807671dfab69eee534a6a42f5ad08eb39fb8a58649ff407a9c6885bc"
+"sf.security_admin.show-row-access-policies" = "283f3cbd059bdc982ba73da9ae3b134f1cc8a2c0c49715be580375cd2f954fce"
+
+[review.definitions]
+"sf.security_admin.alter-aggregation-policy.set-comment" = "03e5afc49227a3da730229580a2266799296a1dd428fea7683e3ccc5916a32e6"
+"sf.security_admin.alter-aggregation-policy.unset-comment" = "677aec05e27cb7d6954d22be2b59c1afc7ed65db63db0175e0bd2be5412ea8c0"
+"sf.security_admin.alter-api-integration.set" = "b09956d83de70dc580d333236f24c009e9e42fc67dc0461e9e823046a3a83e8e"
+"sf.security_admin.alter-api-integration.unset-api-key-enabled-api-blocked-prefixes" = "a10539c3eb2f7f91912f5bbf1651f3a199dde2464652db39ae5b76577511fdc3"
+"sf.security_admin.alter-authentication-policy.set" = "2f8613a9664ed533d4158be0554e84e8e38d3bfdaf36789a2bec246e969065da"
+"sf.security_admin.alter-database-role.set-comment" = "1fd4d760e42674d54b5bee9643cf4429791bdbbaaf67998a796baf5209eb77b2"
+"sf.security_admin.alter-database-role.unset-comment" = "94e1dba850644cb96cd2c0f934583bbbf7a77f1ab5fd6934154b4bbe692a9afd"
+"sf.security_admin.alter-external-access-integration.unset-allowed-network-rules-allowed-api-authentication-integrations-allowed-authentication-secrets" = "9fc65afe94e8ff3a8339f1f420271d55dc26eab89ba1abbe4bb0ccb5fffbf597"
+"sf.security_admin.alter-feature-policy.set" = "9180efdc27dcc4156596f5a00fd8ba27e6cc33a5075794333781795438a4628f"
+"sf.security_admin.alter-integration" = "84070f012f2b9e9e7348e51c3870dedd5726de9ba9d7a511cb447459c07c9200"
+"sf.security_admin.alter-join-policy.set-comment" = "69825b5bf5f6f41616ed806673f3f679b441881c3afc2232a821ebf4599fd1c1"
+"sf.security_admin.alter-join-policy.unset-comment" = "1f6bedf764376e7036402c9b2c9f72b45c56196e1ad3c9bd23cce4cb6510e826"
+"sf.security_admin.alter-maintenance-policy.set" = "91c3a75895589369c012624b5d5fb6c2e8993bef1766f080ca3b904f091842b5"
+"sf.security_admin.alter-maintenance-policy.unset" = "f3d02bbf55407c7aa57129965923b22bf69415a89873a42079796b23bb2893cc"
+"sf.security_admin.alter-masking-policy.set-comment" = "7263e0fcdc072330243c5eec0715812a9c9038cd1eae478c35ab54d14aa50207"
+"sf.security_admin.alter-masking-policy.unset-comment" = "9051f862033ecd02062c7c5bc26b889d95e31749b73ee01fda54f4b100b476a4"
+"sf.security_admin.alter-network-policy.set" = "fea753e5d63616806c05da6bc7d1a1539c385091c5dee4c37d7905ccd55e57b6"
+"sf.security_admin.alter-network-policy.unset-comment" = "549de4a0c9f5f0bb202035aff3078a9f3c6441ff3b2abe0ddd3ec5756111dd3b"
+"sf.security_admin.alter-notification-integration-email.set" = "5689dd6e0ecd803044abcdcf53d9d8cb48afc3181556d377e5e67ce416b0c5a7"
+"sf.security_admin.alter-notification-integration-email.unset-enabled-allowed-recipients-default-recipients" = "761e5455f0d74d19bb7aa3d801cdc7bad96e0a36c1107fe64f8fafb60beb4fc6"
+"sf.security_admin.alter-notification-integration-multi-queue.set-active" = "f2dd1523deddf47834d89b620b1414ad133749d18fcccd70ca16171160ef27c5"
+"sf.security_admin.alter-notification-integration-queue-inbound-gcp.set" = "058d090c89799f808e6dc72c8ae575125b814941e9e62dec6f8221783bf40f94"
+"sf.security_admin.alter-notification-integration-queue-inbound-gcp.unset-comment" = "7ffe061ba994e31901434a142e8530a1828f2dc662363fc6ab89fcb71f606814"
+"sf.security_admin.alter-notification-integration-queue-outbound-aws.set-aws-sns-topic-arn-aws-sns-role-arn" = "ddcce0ceaff9c536bcb6da8591b3a3af2ff14b26938e6188f4eee282a30db9a3"
+"sf.security_admin.alter-notification-integration-queue-outbound-azure.set" = "bb4589c0229472fa5e9662078e5e70edfa4b6611609d68c7a667ff9de02dc70f"
+"sf.security_admin.alter-notification-integration-queue-outbound-gcp.set-gcp-pubsub-subscription-name" = "ccd0a82fa38a7c7e39ae5cb236fb8f60a8a177c872966b11cb73d4c35f0624c5"
+"sf.security_admin.alter-notification-integration-webhooks.unset-enabled-webhook-secret-webhook-body-template" = "be10c9ebe1a7784fedf27fc9e4bff5d7231ab61c293804a873d3d595eee54159"
+"sf.security_admin.alter-packages-policy.set" = "5a6c09a235d4ff3ad500142bad87a6c079145299b793134e781d06f889c6501d"
+"sf.security_admin.alter-password-policy.set" = "9e7b57f30021fd76cdd42887e429f0f7b482a8740e412f1010f93cfa35e70713"
+"sf.security_admin.alter-password-policy.unset" = "e97632bbca43437cc39c015792fe8801f13f83f7e7598249af1264e749a11f95"
+"sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set" = "dd17e1559c79fbadbdfbd19e6442ee5dc80be81452619f112aee0e0ca6ff3875"
+"sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.azure-key-vault" = "04594c43724b5b8b3cdc96690815c05b06adade03a7fab95ab22140e34760744"
+"sf.security_admin.alter-security-integration-api-auth-external-secret-provider.set.google-cloud-secret-manager" = "902054a3e396daa74360b77e46844aed504609439921bc479e921ac65f62f4ee"
+"sf.security_admin.alter-security-integration-api-auth.security-integration-set" = "62d56dc2935ec6d9a1c0506b1e202760fc09d443ece825a1a4c5eb049794d4c2"
+"sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-authorization-code-grant-flow" = "96aa8668174477e49593c05df2e3eb39e5a1742f3072fea9d19230b5ee1fb10e"
+"sf.security_admin.alter-security-integration-api-auth.security-integration-set.oauth-jwt-bearer-flow" = "4a49154955314d57fe8959f73506c5ffb96aa32740251610627d3a6bba026948"
+"sf.security_admin.alter-security-integration-aws-iam.set" = "29caa639e715012e4fbf0bb14251831a51cc5c86c8ddb23af78b028a8fadcc56"
+"sf.security_admin.alter-security-integration-oauth-external.set" = "844ce26208d9b8a5e1c7cd3a94204c0e877d06e747ac178d458e6d784f59a91a"
+"sf.security_admin.alter-security-integration-oauth-external.unset-enabled-external-oauth-audience-list-is-agentic" = "adaac8305b598c58d413738ca193fe67d4c5d7fd60c9174407d893007218025e"
+"sf.security_admin.alter-security-integration-oauth-snowflake.set" = "116d12923dd60da028e5a520aed7d76a8fc73c798666daf1496ecbf557793c5b"
+"sf.security_admin.alter-security-integration-oauth-snowflake.set.syntax" = "183fb71f942074fc273ded5b7e39f5c058ba1fa8b03ee9514967f93ae8d70cfe"
+"sf.security_admin.alter-security-integration-oauth-snowflake.unset-enabled-comment" = "c2875f00966c38368127a3a79aaf97f2337e6bcc236170678fc36e374f8446a4"
+"sf.security_admin.alter-security-integration-oauth-snowflake.unset-enabled-network-policy-oauth-client-rsa-public-key" = "f731e1b3ec79a2da427e9442449286133d58c4d6ce761c094e6aba0de3beeb16"
+"sf.security_admin.alter-security-integration-oidc.set" = "e30b89a9b2179d3288f1d52dc8ea38786a568b610e043780d6f22001f13efa39"
+"sf.security_admin.alter-security-integration-oidc.unset-allowed-email-patterns-allowed-user-domains-comment" = "95f73013a31b6435c65c72ee7268e2f90a58aa2588810cacabce710bb044b93b"
+"sf.security_admin.alter-security-integration-saml2.set" = "b63faa9adfbee3d3fd0684b5ad92c43d3adc0b680d319df60efedb4b22eed4c7"
+"sf.security_admin.alter-security-integration-saml2.unset-enabled" = "27aa728a576bd203531a2c1d0090ca72c314fef4e2a59f568b970c34829dfd4b"
+"sf.security_admin.alter-security-integration-scim.set" = "a679233b6ca6226b172a5d52fd35c0156f1f9a12082daf5f52645d3b1434918a"
+"sf.security_admin.alter-security-integration-scim.unset-network-policy" = "34d918bdf98a9a55c0b4eeea0619d6ec29a22ae656cc412594a1acb3364a02dc"
+"sf.security_admin.alter-security-integration.set" = "39f1b349581b59f71628aadb1209aeff52f39b33c5ac764024add1e59b887185"
+"sf.security_admin.alter-security-integration.unset" = "ad2d3f8055d96da3b0f84c21b63d1abd8f7e4be57a26f89878c85e17af2dfa83"
+"sf.security_admin.alter-session-policy.set" = "b172082f30e5f2097d9fd2313f443a02a8c833cecba124e12a157a134901620a"
+"sf.security_admin.alter-storage-integration.set" = "55345a8d7be236103a6b920db64a6c66e6087be98e41ffc5796998d87d9e135d"
+"sf.security_admin.alter-storage-integration.unset-enabled-storage-blocked-locations-comment" = "5c7f87cffa153dc1f14cb319e4acd2bf3c64561b67ad9540d7a4456df0c339f0"
+"sf.security_admin.alter-storage-lifecycle-policy.unset-archive-for-days-comment-tag" = "194971986cfd16fea636a49a77b32f06e70482487c2cd482dc9aa89784359d72"
+"sf.security_admin.alter-user-modify-workload-identity.unset" = "9426e98a334c2c1b7e83e4a9d2846538e0a3673561dbc07d3623797ac0caf271"
+"sf.security_admin.alter-user.rename-to" = "42ff26b2c9a02c0b7cac1e136e39be35b687b9fab239be0e97a323392c148c25"
+"sf.security_admin.alter-user.set-authentication-password-session" = "725cf5de40ddbd7f7f4cf484d4ee1672f1c383fd044e2f8a7640433fed070615"
+"sf.security_admin.alter-user.unset-authentication-password-session" = "553c605574d40980d5604b0866001da9d5da2f746cc1ebb3b533f9558bd7ae72"
+"sf.security_admin.alter-user.unset-tag" = "887a22d4899b63426761575fe9b62bc2e373ac086e1b7f0b43e7a5a03d6e34d5"
+"sf.security_admin.show-oflow-data-plane-integration" = "8bf5da4c6f9b547ef3b96a5c008b91fc3a2b340cd478c29d0f4d71c09775767b"
+"sf.security_admin.show-row-access-policies" = "be506ee175eb39d934a5c0860a328fc6074b77245e012e68dc41971a4e877a9c"

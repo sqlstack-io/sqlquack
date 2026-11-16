@@ -6547,3 +6547,32 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.functions.get-path.colon.syntax" = "b8fb86d916962f447053fbc7484fbbcd8d13d45148081d1c535c3dc7b32c7cf0"
 "sf.functions.hll.hll-over" = "f08741b1ca7a430e11175722a3b9788f83f20b7ac3722ce0c3b9d10375b9be75"
 "sf.functions.minhash.minhash" = "b81b60e3d2eb6900109ee1818a9451f04c7543d9c43d462235c2e2c65829faf2"
+
+[[review]]
+id = "functions-035"
+family = "functions"
+parser_tree = "2ccaa276710faea098d6dd794c680f84ec5e0fae"
+reviewed_utc = "2026-11-16T04:27:40Z"
+verdict = "approved"
+forms = [
+  "sf.functions.date-part.date-part-from",
+  "sf.functions.dmf-referential-integrity-count.table",
+  "sf.functions.dmf-referential-integrity-count.table.syntax",
+  "sf.functions.dmf-row-count-difference",
+  "sf.functions.dmf-source-target-lag.alter-table-add-data",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at ab68bcf08; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.functions.date-part.date-part-from" = "633b475469fba5b4e51bfeb161bb8e8788f9b7335fac746d6a49a56cbc95a9ae"
+"sf.functions.dmf-referential-integrity-count.table" = "1646661c256c5a765ba9f2860c23b38649882a742683fd7c7ffff79bf6678d2d"
+"sf.functions.dmf-referential-integrity-count.table.syntax" = "d84db6232926d5b410b59492f288bff0837f6ff69f3f81a701cb0bfca67ba303"
+"sf.functions.dmf-row-count-difference" = "2147e16454ea7ebed100b613bccc681606e7346655a704b62e2dea8c1581d7fd"
+"sf.functions.dmf-source-target-lag.alter-table-add-data" = "e83675a4e9227cc38dcf136ed0bc81c49b36a23fbd5de216b4328ff7d4cf9e70"
+
+[review.definitions]
+"sf.functions.date-part.date-part-from" = "61413f283d03f6eb65d925aabe6cc618762575abaf4fd2fd4d81ba4d2e6f1f6e"
+"sf.functions.dmf-referential-integrity-count.table" = "47c14d85203c383d248c0eef06e65fd37693ef72606d8105541250e62f1a49f9"
+"sf.functions.dmf-referential-integrity-count.table.syntax" = "4fed7098a689cc3d92b2afbe287eefdae7ea388ec2e86005b6a07f0d448b6341"
+"sf.functions.dmf-row-count-difference" = "6633e608b8a64fa01efefe1b7f05518779304ec781c22423f740b5e9042a3f90"
+"sf.functions.dmf-source-target-lag.alter-table-add-data" = "820f46969fb8b72bdd6bb35fa792ed4e6a2e81073393417a907c7263befce7e0"

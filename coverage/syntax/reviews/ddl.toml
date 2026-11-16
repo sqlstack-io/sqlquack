@@ -4742,3 +4742,101 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.ddl.create-stage.define-stage" = "68fc2dfb5eea59483fb65707aacfc327405a6c6020e74d30a7a745a4cd41547e"
 "sf.ddl.create-task.define-task" = "32501f7731baebdbf3a874101576e21e97900b892c33779ab80597a8a2454346"
 "sf.ddl.show-mcp-servers" = "fa145bbc2736b9e7897c78b0e1464c582b73298cfb94fec2bf8a3055f8f5bffc"
+
+[[review]]
+id = "ddl-048"
+family = "ddl"
+parser_tree = "2ccaa276710faea098d6dd794c680f84ec5e0fae"
+reviewed_utc = "2026-11-16T04:27:40Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days",
+  "sf.ddl.alter-function-dmf.rename-to",
+  "sf.ddl.alter-function-dmf.set-comment",
+  "sf.ddl.alter-function-dmf.set-secure",
+  "sf.ddl.alter-function-dmf.set-tag",
+  "sf.ddl.alter-function-dmf.unset-comment",
+  "sf.ddl.alter-function-dmf.unset-secure",
+  "sf.ddl.alter-function-dmf.unset-tag",
+  "sf.ddl.alter-model-add-version.internalstage",
+  "sf.ddl.alter-semantic-view.add-materialization-warehouse-as",
+  "sf.ddl.alter-view.set",
+  "sf.ddl.create-dynamic-table.create-dynamic-iceberg-table",
+  "sf.ddl.create-model.internalstage",
+  "sf.ddl.create-procedure.create-procedure-returns-table",
+  "sf.ddl.create-procedure.create-procedure-returns-table-3",
+  "sf.ddl.create-procedure.create-procedure-returns-table.java-handler",
+  "sf.ddl.create-procedure.create-procedure-returns-table.python-handler",
+  "sf.ddl.create-procedure.create-procedure-returns-table.scala-handler",
+  "sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler",
+  "sf.ddl.create-table-constraint.alter-table-add-column",
+  "sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk",
+  "sf.ddl.create-table-constraint.create-table",
+  "sf.ddl.create-table-constraint.create-table-inlineuniquepk-inlinefk",
+  "sf.ddl.create-table.define-table",
+  "sf.ddl.create-view.create-or-alter-view",
+  "sf.ddl.create-view.create-view-as",
+  "sf.ddl.drop-function-dmf",
+  "sf.ddl.show-channels",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at ab68bcf08; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = "a5b59329a3ae3d73870b3870cea256566699492fd2b602093d78c00eacf2efc5"
+"sf.ddl.alter-function-dmf.rename-to" = "ac133da9b79154497ec342902b1b39a25ff53e1a0dfc3c83d56c81c85b589755"
+"sf.ddl.alter-function-dmf.set-comment" = "e0bd3bdc76b865294c0aa42d683a3ee92081d363ce289be7f8014bda4ee07fc4"
+"sf.ddl.alter-function-dmf.set-secure" = "c70f896281ca5a64e61d657a33981f4f29737912b2739d0d4d4ee4d37498f590"
+"sf.ddl.alter-function-dmf.set-tag" = "01df60e8db981da946a7c946b672422898e95817d663f8801e950ce7cd5ce11d"
+"sf.ddl.alter-function-dmf.unset-comment" = "0f2fc945033d3439c46a2480084db638c1762c44010f77737b8709877d8a2a16"
+"sf.ddl.alter-function-dmf.unset-secure" = "a158731794609304d408f935cc6e2bd22e949f7fcbb9f788cfe0c42b4032ce0c"
+"sf.ddl.alter-function-dmf.unset-tag" = "1985bc92c8df6aa3d8005271a0972eb5c0abab44790b5b353d2f51942feb8292"
+"sf.ddl.alter-model-add-version.internalstage" = "0882536f7e72defd29613cb844d3aea8ac9d82549e98c8c9f8e204cc110ecc32"
+"sf.ddl.alter-semantic-view.add-materialization-warehouse-as" = "419718d731bb29a69a3ad71c221f25194d7618dba7f0c9fe61acea4a9a164eed"
+"sf.ddl.alter-view.set" = "9730bbce1268e38294d8fcc472d0e10b730c6b86fa891a7bb1140870d62cd28b"
+"sf.ddl.create-dynamic-table.create-dynamic-iceberg-table" = "8b8d5667b8d64e6eb9b4872e40f2ffb68c27d9ad12f8684734b0d534b415726b"
+"sf.ddl.create-model.internalstage" = "98dd173a10fe241dc9518bb8b65d0696bc9112c0e64684549f684e3071536acc"
+"sf.ddl.create-procedure.create-procedure-returns-table" = "9b7874b448facc54b57cb47a1b6f07dfa7c727a73541e47bcf968d7e1818ca14"
+"sf.ddl.create-procedure.create-procedure-returns-table-3" = "974493a15bf2df59de2da720d57091499d127a8b6d9b972fa63699df30b9e778"
+"sf.ddl.create-procedure.create-procedure-returns-table.java-handler" = "17608af37f9546cf85b321e8e8487d9c58d1ef0c7f55d3f51fa35e29f97923f2"
+"sf.ddl.create-procedure.create-procedure-returns-table.python-handler" = "45b6f71cbb405001b6e3329d200964e833cb61b7cea61636bc9b097b503c3dfd"
+"sf.ddl.create-procedure.create-procedure-returns-table.scala-handler" = "4967d87ac59bcdb59c5a738bbbc73091d7881b7608b397a2b568debbcc3cf8ab"
+"sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler" = "2a9c312cbf080bc96aae022d1976d322ac389c1585b137e56831249cc8e4d353"
+"sf.ddl.create-table-constraint.alter-table-add-column" = "dd0dda22dacb023d1cd8d9414164b55021518cfb596223fbc3b3e44bf705768d"
+"sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk" = "287f9b66f097cbbe637e894324f4616cea69c7760e5c6a91d431229d1d628ec8"
+"sf.ddl.create-table-constraint.create-table" = "00b5e41cef0723d6b87d734faaf44722d2c8aa65aeda428c89cc20e8adc4f1a0"
+"sf.ddl.create-table-constraint.create-table-inlineuniquepk-inlinefk" = "f816ee2bb216b802c8489bb21fa3655ac5f8e49eac4da68f606e9c781788b909"
+"sf.ddl.create-table.define-table" = "79e9981ba5874cac0be67e12bd0f70b74d00972adc7f018addaf9a52a3ddf2f1"
+"sf.ddl.create-view.create-or-alter-view" = "ca4c1ab9dce151cc5f2f0317436c9ccc0369e3c37911c835e3cf7b100c223fc6"
+"sf.ddl.create-view.create-view-as" = "0e1f85a9a50c7bdad8c9e7726892d14e754b104d6e7310057aca67d49b0b8384"
+"sf.ddl.drop-function-dmf" = "d4e58f7718e234a238cb48859998aa76a62c9bbb60b27fe59f3cebd1f0f7f14e"
+"sf.ddl.show-channels" = "97f6437dfc9adc734e68e60a430623c296f614908e030aadcc9556847d36dfb9"
+
+[review.definitions]
+"sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = "234754ee59ddc7812f2518972d0814b5bc5d152318ecd0646f6ec87d39f70dbf"
+"sf.ddl.alter-function-dmf.rename-to" = "c19c3b7feff29a53d0ed0f85add7251c2de2719ff0e58ddb7367e79142160b55"
+"sf.ddl.alter-function-dmf.set-comment" = "ccf1daddc21a93207bd4af7bc26f49e15151ab7a629f047d8be74ccad9ff731f"
+"sf.ddl.alter-function-dmf.set-secure" = "5ccfa255cea56e062add04465a502d33883d801f49f8d7793a14d2afe98e2320"
+"sf.ddl.alter-function-dmf.set-tag" = "6439c5a23c3d5960a068ec2010195ccf363b01ef92684d2631029ce685445ced"
+"sf.ddl.alter-function-dmf.unset-comment" = "6d58c24412f488715040f16762164b75da2798cda3c1a6ac7c68334bf3a334c4"
+"sf.ddl.alter-function-dmf.unset-secure" = "4355b2295e5d36bb3c1a9c5b30c0ba403dba52e0492447828601bcb0193244a2"
+"sf.ddl.alter-function-dmf.unset-tag" = "0c1d9de63c8f590da92cac4dfa151301e31f745024184bcf146470a77c3426b3"
+"sf.ddl.alter-model-add-version.internalstage" = "1a3da13f2e68eeb155414cf471614ca8bf007a13f0094fc36c38a96e8fccc30e"
+"sf.ddl.alter-semantic-view.add-materialization-warehouse-as" = "acf9d51c7bd194d3a8a9d60125ca7dcee7d7f79e2eebe5782f57d841f47996cf"
+"sf.ddl.alter-view.set" = "0f7a814a0d06f407f249dbc69d9e3573a7f33bd35d4b91365620830ca198176a"
+"sf.ddl.create-dynamic-table.create-dynamic-iceberg-table" = "2ef80bcb71a701f660d8a613bc1477b7ec51ef5e01ece134bcb55e5fe84b5d0c"
+"sf.ddl.create-model.internalstage" = "2d16accde695dc1e351a1ccf71c933fe7665b6c81624cf316a78f62894d02bc6"
+"sf.ddl.create-procedure.create-procedure-returns-table" = "82dff7a808da0670abfa43ffa436164a04736fff4db8f40684444c07ddb55f22"
+"sf.ddl.create-procedure.create-procedure-returns-table-3" = "ce30afbbcd0c49dbc08fef818343c585306cae449735f7357f434815a0eff2b9"
+"sf.ddl.create-procedure.create-procedure-returns-table.java-handler" = "1ca2d41de0eee3529650172ee4f200a8322c2baf2c0548ee7ddd260efbf935a7"
+"sf.ddl.create-procedure.create-procedure-returns-table.python-handler" = "307054b5ed1b822844de03019679dcd68013a891ea49fd4f338604e8eed7d206"
+"sf.ddl.create-procedure.create-procedure-returns-table.scala-handler" = "bb54f23aecd77f235f06ec6d649a42e5d0eec69f8889401a17b462d0cd8b113b"
+"sf.ddl.create-procedure.create-procedure-returns-table.snowflake-scripting-handler" = "70970d1e40208627d1d3e51e9d47a08964b085b95d5c70b89f6ed800833a2318"
+"sf.ddl.create-table-constraint.alter-table-add-column" = "387b2c304cc7a1c9e12b4c94bc76ef08589b68827aa65fa064940dd32579cea2"
+"sf.ddl.create-table-constraint.alter-table-add-outoflineuniquepk" = "d4c4d4a4cd0353ffe9749ee7137e43ef51aef8ed6f858d992817c7254d762ae1"
+"sf.ddl.create-table-constraint.create-table" = "22a13301c5385270e35c0673ce2f6414be52c2de67e8ccfbc949175ea5f574e4"
+"sf.ddl.create-table-constraint.create-table-inlineuniquepk-inlinefk" = "915d4ef4e35dab4a50f866ca677804ded3c203a7e11cd9c63d9187cc0021aaaa"
+"sf.ddl.create-table.define-table" = "1962391005227425a8d722a9daa59a5dfad8e86e92a29cfaffefd14e9d06c030"
+"sf.ddl.create-view.create-or-alter-view" = "78ede0a663b9d2e3306b2a4a3434bf9d24da914d9261271968f48df64acd7b93"
+"sf.ddl.create-view.create-view-as" = "019962ccc90d8c0c5baa16d03536cd188672100aec3b63452914ebb8cd1acd6c"
+"sf.ddl.drop-function-dmf" = "6823c38d29d0171b8aae897fe404231386f4ad070984acb2a48ad250c13f9a1a"
+"sf.ddl.show-channels" = "6a93a9146cbd0bf20b851eb57ab86c31581bf9949de6526b01bcd66d0dd3a01b"
