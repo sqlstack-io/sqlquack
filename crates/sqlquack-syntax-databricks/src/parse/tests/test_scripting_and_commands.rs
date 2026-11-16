@@ -231,6 +231,21 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             sql: "CREATE EXTERNAL LOCATION v1 URL 's3://b1/p1' WITH ( CREDENTIAL v1 )",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
+        VerdictTestCase {
+            description: "a do alias inside a FOR query's subquery is still an alias",
+            sql: "BEGIN FOR r AS SELECT * FROM ( SELECT * FROM t1 do ) DO SELECT 1 ; END FOR ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a label named atomic is a label",
+            sql: "BEGIN atomic : BEGIN SELECT 1 ; END ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a procedure body without AS is a compound statement, not a transaction",
+            sql: "CREATE PROCEDURE v1 ( ) LANGUAGE SQL SQL SECURITY INVOKER BEGIN TRANSACTION",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

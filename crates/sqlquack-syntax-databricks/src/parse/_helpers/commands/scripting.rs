@@ -35,8 +35,8 @@ impl Parser<'_> {
         self.expect_kw("BEGIN")?;
         if self.kw("NOT") && self.kw_at(1, "ATOMIC") {
             self.at += 2;
-        } else {
-            self.eat_kw("ATOMIC");
+        } else if self.kw("ATOMIC") && !self.char_at(1, ':') {
+            self.at += 1;
         }
         if !self.kw("END") {
             self.compound_body(&["END"])?;

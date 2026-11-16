@@ -420,7 +420,7 @@ impl<'sql> Parser<'sql> {
         };
         self.is_at(offset, test)
             && !self.starts_clause(offset)
-            && !(self.for_query && self.kw_at(offset, "DO"))
+            && !(self.for_query && self.kw_at(offset, "DO") && !self.terminal_at(offset + 1))
     }
 
     /// `multipartIdentifier`: `identifier ( . identifier )*`.

@@ -185,7 +185,7 @@ impl Parser<'_> {
                     .collect(),
             ),
             "statement" => self.statement()?,
-            "compound" => match self.kw("BEGIN") {
+            "compound" => match self.kw("BEGIN") && !self.kw_at(1, "TRANSACTION") {
                 true => self.statement()?,
                 false => return Err(self.error()),
             },
