@@ -258,3 +258,23 @@ note = "Read in full under review brief version 1 against the documentation page
 
 [review.definitions]
 "sf.dml.copy-into-table.internalstage-externalstage-externallocation" = "cac09d19e62c9d886b20c872581b613e4a6805dc3c84d1ff50574909ddb4ac3f"
+
+[[review]]
+id = "dml-014"
+family = "dml"
+parser_tree = "2ccaa276710faea098d6dd794c680f84ec5e0fae"
+reviewed_utc = "2026-11-16T04:27:40Z"
+verdict = "approved"
+forms = [
+  "sf.dml.copy-files.from",
+  "sf.dml.copy-files.from-select-from",
+]
+note = "Read in full under review brief version 1 against the documentation page, the obligations, the cases and the parse trees of the parser at ab68bcf08; every scored case agrees with its Snowflake receipt."
+
+[review.fingerprints]
+"sf.dml.copy-files.from" = "629415bf084f14ebf0ae0971ee382e7070aad5b2183be605b84ff7c70bfcf4eb"
+"sf.dml.copy-files.from-select-from" = "6bb70e9de0c880c222d2768c3df2f70d5978f962f04060e953e813ccf1010329"
+
+[review.definitions]
+"sf.dml.copy-files.from" = "1f7bcdedca94e5ca51876bc56e437ddba60e1715d173d19193a0bc3808262690"
+"sf.dml.copy-files.from-select-from" = "51f169127683c08a6a243491f7b818219e4cba9840f79d4631d3c80479564926"
