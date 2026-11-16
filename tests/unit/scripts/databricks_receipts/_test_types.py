@@ -96,6 +96,14 @@ class StopTestCase:
 
 
 @dataclass(frozen=True)
+class CatalogStopTestCase:
+    description: str
+    fields: Row
+    diff: str
+    expected_error: str
+
+
+@dataclass(frozen=True)
 class PlatformChangeTestCase:
     description: str
     catalog: int

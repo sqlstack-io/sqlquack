@@ -24,6 +24,7 @@ from scripts.databricks_receipts.main.run import run_referee
 from scripts.databricks_receipts.models import Failure
 from scripts.databricks_receipts.types import Row
 from tests.unit.scripts.databricks_receipts._test_types import (
+    CatalogStopTestCase,
     CheckTestCase,
     CleanupTestCase,
     DeadlineTestCase,
@@ -50,6 +51,7 @@ from tests.unit.scripts.databricks_receipts.helpers import (
     SWEEP,
     UC,
     USERS_MISSING,
+    Effect,
     FakeClient,
     Frozen,
     adds,
@@ -185,6 +187,72 @@ def test_given_a_case_that_changes_a_pre_existing_object_when_run_sequentially_t
     )
     assert changed[0]["name"] == "workspace"
     assert report["dropped"] == []
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        CatalogStopTestCase(
+            description="a managed catalog changed by a case",
+            fields={"catalog_type": "MANAGED_CATALOG"},
+            diff="changed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+        CatalogStopTestCase(
+            description="a managed catalog removed by a case",
+            fields={"catalog_type": "MANAGED_CATALOG"},
+            diff="removed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+        CatalogStopTestCase(
+            description="a foreign catalog changed by a case",
+            fields={"catalog_type": "FOREIGN_CATALOG"},
+            diff="changed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+        CatalogStopTestCase(
+            description="a Delta Sharing catalog removed by a case",
+            fields={"catalog_type": "DELTASHARING_CATALOG"},
+            diff="removed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+        CatalogStopTestCase(
+            description="an internal catalog changed by a case",
+            fields={"catalog_type": "INTERNAL_CATALOG"},
+            diff="changed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+        CatalogStopTestCase(
+            description="a catalog without a type removed by a case",
+            fields={},
+            diff="removed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_non_system_catalog_changed_or_removed_when_run_sequentially_then_the_run_stops(
+    test_case: CatalogStopTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    effects: dict[str, Effect] = {
+        "changed": lambda f: f.objects(f"{UC}/catalogs")[2].update(comment="x"),
+        "removed": removes(f"{UC}/catalogs", "workspace"),
+    }
+    fake: FakeClient = use(monkeypatch, FakeClient({"SELECT 1": effects[test_case.diff]}))
+    workspace: Row = fake.objects(f"{UC}/catalogs")[2]
+    del workspace["catalog_type"]
+    workspace.update(test_case.fields)
+
+    with pytest.raises(RefereeError, match=test_case.expected_error):
+        record_sequential(
+            cases=[case("SELECT 1")],
+            out=tmp_path / "out",
+            private=tmp_path / "private",
+            seed=None,
+        )
+
+    diff: Row = cast(Row, stop_report(tmp_path / "private")["diff"])
+    assert [r["name"] for r in cast(list[Row], diff[test_case.diff])] == ["workspace"]
 
 
 @pytest.mark.parametrize(
