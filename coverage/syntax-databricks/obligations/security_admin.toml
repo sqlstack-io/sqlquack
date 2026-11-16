@@ -395,18 +395,6 @@ target = "<principal>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.security_admin.deny.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ALL after DENY"
-
-[[obligation]]
-id = "db.security_admin.deny.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PRIVILEGES"
-
-[[obligation]]
 id = "db.security_admin.deny.o019"
 kind = "negative_neighbour"
 required = true

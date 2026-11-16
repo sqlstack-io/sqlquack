@@ -2651,3 +2651,24 @@ reason = "AS before the Hive form's CTAS query is optional in the warehouse's pa
 ids = [
   "db.ddl.create-table-hiveformat.o243",
 ]
+
+[[retired]]
+retired_in = "60b04014d4ba09833c6a80997e206762ecfcc68c"
+reason = "a privilege type is an identifier, so the DENY negatives without ALL or without PRIVILEGES parse and are suppressed with the receipt that shows it"
+ids = [
+  "db.security_admin.deny.o017",
+  "db.security_admin.deny.o018",
+]
+
+[[retired]]
+retired_in = "60b04014d4ba09833c6a80997e206762ecfcc68c"
+reason = "SHOW FUNCTIONS reads the pattern as its first alternative, because the warehouse refuses an unquoted function name after FROM or IN"
+ids = [
+  "db.utility.show-functions.o012",
+  "db.utility.show-functions.o013",
+  "db.utility.show-functions.o016",
+  "db.utility.show-functions.o017",
+  "db.utility.show-functions.o018",
+  "db.utility.show-functions.o020",
+  "db.utility.show-functions.o021",
+]

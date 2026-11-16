@@ -4652,16 +4652,16 @@ target = "<schema_name> in [ { FROM | IN } <schema_name> ]"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "db.utility.show-functions.o012"
+id = "db.utility.show-functions.o032"
 kind = "option_present"
 required = true
-target = "[ [ LIKE ] { <function_name> | <regex_pattern> } ]"
+target = "[ [ LIKE ] { <regex_pattern> | <function_name> } ]"
 
 [[obligation]]
-id = "db.utility.show-functions.o013"
+id = "db.utility.show-functions.o033"
 kind = "option_absent"
 required = true
-target = "[ [ LIKE ] { <function_name> | <regex_pattern> } ]"
+target = "[ [ LIKE ] { <regex_pattern> | <function_name> } ]"
 
 [[obligation]]
 id = "db.utility.show-functions.o014"
@@ -4676,36 +4676,29 @@ required = true
 target = "[ LIKE ]"
 
 [[obligation]]
-id = "db.utility.show-functions.o016"
+id = "db.utility.show-functions.o034"
 kind = "alternative"
 required = true
-target = "{ <function_name> | <regex_pattern> } → <function_name>"
+target = "{ <regex_pattern> | <function_name> } → <regex_pattern>"
 
 [[obligation]]
-id = "db.utility.show-functions.o017"
+id = "db.utility.show-functions.o035"
 kind = "alternative"
 required = true
-target = "{ <function_name> | <regex_pattern> } → <regex_pattern>"
+target = "{ <regex_pattern> | <function_name> } → <function_name>"
 
 [[obligation]]
-id = "db.utility.show-functions.o018"
+id = "db.utility.show-functions.o036"
 kind = "operand_type_class"
 required = true
-target = "<function_name> in [ [ LIKE ] { <function_name> | <regex_pattern> } ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.utility.show-functions.o020"
-kind = "operand_type_class"
-required = true
-target = "<regex_pattern> in [ [ LIKE ] { <function_name> | <regex_pattern> } ]"
+target = "<regex_pattern> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.show-functions.o021"
+id = "db.utility.show-functions.o037"
 kind = "negative_neighbour"
 required = true
-target = "<regex_pattern> in [ [ LIKE ] { <function_name> | <regex_pattern> } ]"
+target = "<regex_pattern> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
 note = "an unquoted identifier in place of <regex_pattern>"
 
 [[obligation]]

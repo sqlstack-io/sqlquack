@@ -2357,7 +2357,7 @@ reason = "SHOW FUNCTIONS takes an optional function name or a string pattern (Sq
 [[suppress]]
 form = "db.utility.show-functions"
 kind = "negative_neighbour"
-target = "<function_name> in [ [ LIKE ] { <function_name> | <regex_pattern> } ]"
+target = "<function_name> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
 note = "a string literal in place of <function_name>"
 reason = "SHOW FUNCTIONS takes an optional function name or a string pattern (SqlBaseParser #showFunctions: SHOW identifier? FUNCTIONS ((FROM | IN) ns)? (LIKE? (legacy=multipartIdentifier | pattern=stringLit))?), so a string literal is the documented pattern and a lone FROM reads as a function name; the text parses"
 
@@ -5225,7 +5225,7 @@ reason = "the Literals syntax spells one token (SqlBaseLexer FLOAT_LITERAL: DIGI
 form = "db.expressions.string-type.subscript-dot"
 grammar_sha256 = "d648544b685c77f4dbb95e2c93826084b7e2148c186f47d83577fe4b9bbd335e"
 grammar = []
-reason = "the Literals syntax spells one token (SqlBaseLexer STRING_LITERAL: '\\'' ... '\\'' | 'R\\'' (~'\\'')* '\\'', the raw prefix joined to the quote): digits, exponent, postfix and prefix are written without blanks, which a derivation that joins tokens with blanks cannot write, so the documented literals are hand-written [[limit]] rows"
+reason = "the Literals syntax writes [r|R]'c [ ... ]', a raw-literal prefix r or R joined to the quote, which the catalogue tokenises as [ <r> | R ] 'c [ ... ] ' with a blank before the closing quote; it spells one token (SqlBaseLexer STRING_LITERAL: '\\'' ... '\\'' | 'R\\'' (~'\\'')* '\\'', the raw prefix joined to the quote): digits, exponent, postfix and prefix are written without blanks, which a derivation that joins tokens with blanks cannot write, so the documented literals are hand-written [[limit]] rows"
 
 [[limit]]
 form = "db.expressions.bigint-type.subscript-dot"
@@ -6650,3 +6650,42 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required AS after <output_format>"
 reason = "AS before a CTAS query is optional (SqlBaseParser createTable: (AS? query)?): the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T193029.100477Z) parses CREATE TABLE t3 ROW FORMAT DELIMITED SELECT 1 AS c1 , 2 AS c2 , 3 AS c3 and answers UNSUPPORTED_DATA_SOURCE_WRITE, not a syntax error"
+
+[[reading]]
+form = "db.functions.vector-search.query-num-results"
+grammar_sha256 = "d078a76374307963108eaf3f54c2e9737eba2ca0436346b6e1bf18fe7c7184cf"
+grammar = ["SELECT * FROM VECTOR_SEARCH ( index => <index> , query => <query_str> , num_results => <num_results> )"]
+reason = "the page's Syntax writes vector_search( index, query, num_results) and its Arguments say all arguments must be passed by name and that query is a STRING, so each argument is written with its name and =>, and the query placeholder is query_str, a string"
+
+[[reading]]
+form = "db.functions.vector-search.query-text-query-vector"
+grammar_sha256 = "100608088b093479839aa1d52cb76782f4cb28419d59cf5957aeae4516d3afc0"
+grammar = ["SELECT * FROM VECTOR_SEARCH ( index => <index> , { query_text => <query_text> | query_vector => <query_vector> } [ , num_results => <num_results> ] )"]
+reason = "the page's Syntax writes vector_search( index, { query_text | query_vector }, [ num_results ]) and its Arguments say all arguments must be passed by name, so each argument is written with its name and =>, and the comma before the optional num_results moves inside its brackets"
+
+[[suppress]]
+form = "db.security_admin.deny"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ALL after DENY"
+reason = "a privilege type is an identifier, so PRIVILEGES alone reads as one: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T170535.934117Z) parses DENY PRIVILEGES ON TABLE t1 TO v1 and answers UC_COMMAND_NOT_SUPPORTED, as it does for DENY SELECT, not a syntax error"
+
+[[suppress]]
+form = "db.security_admin.deny"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required PRIVILEGES"
+reason = "a privilege type is an identifier, so ALL alone reads as one: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T170535.934117Z) parses DENY ALL ON TABLE t1 TO v1 and answers UC_COMMAND_NOT_SUPPORTED, as it does for DENY SELECT, not a syntax error"
+
+[[reading]]
+form = "db.utility.show-functions"
+grammar_sha256 = "25df368e34d49b5a85ce6357886273d03818255b7739116f16e46e0e4c49131d"
+grammar = ["SHOW [ <function_kind> ] FUNCTIONS [ { FROM | IN } <schema_name> ] [ [ LIKE ] { <regex_pattern> | <function_name> } ]"]
+reason = "the warehouse refuses an unquoted function name after FROM or IN (DBSQL 2026.45, run databricks-2026.45-20261116T090736.200251Z: SHOW USER FUNCTIONS FROM s1 LIKE abs answers INVALID_SQL_SYNTAX.SHOW_FUNCTIONS_INVALID_PATTERN), so the pattern is read as the first alternative and the form with every option takes a pattern"
+
+[[suppress]]
+form = "db.utility.show-functions"
+kind = "operand_type_class"
+target = "<function_name> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
+note = "a valid identifier"
+reason = "the derived case puts the function name after FROM s1, which the warehouse refuses (DBSQL 2026.45, run databricks-2026.45-20261116T090736.200251Z: INVALID_SQL_SYNTAX.SHOW_FUNCTIONS_INVALID_PATTERN); a valid function name is the alternative case SHOW FUNCTIONS abs and the [[limit]] SHOW FUNCTIONS LIKE abs"
