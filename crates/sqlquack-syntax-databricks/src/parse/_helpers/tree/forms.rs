@@ -185,6 +185,10 @@ impl Parser<'_> {
                     .collect(),
             ),
             "statement" => self.statement()?,
+            "compound" => match self.kw("BEGIN") {
+                true => self.statement()?,
+                false => return Err(self.error()),
+            },
             "column" => Expression::ColumnDef(Box::new(self.column_definition()?)),
             "table_constraint" => {
                 self.table_constraint()?;

@@ -246,7 +246,7 @@ const FORMS: &[Form] = &[
         construct: "create_external_location",
         leads: &[&["CREATE", "EXTERNAL", "LOCATION"]],
         patterns: &["CREATE EXTERNAL LOCATION [ if_not_exists ] name URL text \
-             WITH ( STORAGE CREDENTIAL name ) [ comment ]"],
+             WITH ( [ STORAGE ] CREDENTIAL name ) [ comment ]"],
     },
     Form {
         construct: "create_materialized_view",
@@ -289,7 +289,7 @@ const FORMS: &[Form] = &[
             &["CREATE", "OR", "REPLACE", "PROCEDURE"],
         ],
         patterns: &["CREATE [ OR REPLACE ] PROCEDURE [ if_not_exists ] name \
-             ( [ procedure_parameter ,... ] ) [ procedure_characteristic ... ] AS statement"],
+             ( [ procedure_parameter ,... ] ) [ procedure_characteristic ... ] { AS statement | compound }"],
     },
     Form {
         construct: "create_recipient",
