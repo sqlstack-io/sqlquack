@@ -145,7 +145,15 @@ class Walk:
             if node.kind == NODE_OPTIONAL:
                 before: tuple[str, bool] = (self.previous, self.named)
                 before_item: Node | None = nodes[position - 1] if position else None
-                options += self.optional(node=node, where=where, item=before_item)
+                whole_list: bool = (
+                    position >= 2
+                    and nodes[position - 2].text == OPEN_PAREN
+                    and position + 1 < len(nodes)
+                    and nodes[position + 1].text == CLOSE_PAREN
+                )
+                options += self.optional(
+                    node=node, where=where, item=before_item, whole_list=whole_list
+                )
                 self.previous, self.named = before
                 continue
             if node.kind == NODE_CHOICE:
@@ -343,18 +351,32 @@ class Walk:
             return self.spec(action=ACTION_ALL_OPTIONS)
         return self.spec(action=ACTION_MIN_OPTIONS)
 
-    def optional(self, *, node: Node, where: str, item: Node | None = None) -> list[str]:
+    def optional(
+        self, *, node: Node, where: str, item: Node | None = None, whole_list: bool = False
+    ) -> list[str]:
+        """The obligations of `[ ... ]`; `whole_list` when it and `item` are all of a `( ... )`."""
         if is_pure_elision(node):
             return []
         text: str = render((node,))
         repeated: bool = all(is_repetition(branch) for branch in node.branches)
         present: str = self.target(text=text)
         note: str = "the list continued at least once" if repeated else ""
+        continued: frozenset[int] = (
+            frozenset({id(item)})
+            if repeated and item and _optional_item(item=item, continuation=node)
+            else frozenset()
+        )
         self.add(
             kind=KIND_OPTION_PRESENT,
             target=present,
             note=note,
-            spec=replace(self.spec(action=ACTION_MIN_OPTIONS), path=self.path | {id(node)})
+            spec=replace(
+                self.spec(action=ACTION_MIN_OPTIONS),
+                path=self.path
+                | {id(node)}
+                | continued
+                | (_first_item(item=item, continuation=node) if whole_list else frozenset()),
+            )
             if self.unpacked
             else self.spec(action=ACTION_ALL_OPTIONS),
         )
@@ -369,11 +391,6 @@ class Walk:
         if repeated and not REPEATED_ITEMS:
             return [present]
         outer: frozenset[int] = self.path
-        continued: frozenset[int] = (
-            frozenset({id(item)})
-            if repeated and item and _optional_item(item=item, continuation=node)
-            else frozenset()
-        )
         self.path = outer | {id(node)} | continued
         elision: Node | None = _bare_continuation(node) if repeated else None
         if elision is not None:
@@ -427,6 +444,13 @@ def _optional_item(*, item: Node, continuation: Node) -> bool:
         if node.text != LIST_SEPARATOR and node.token_kind != TOKEN_ELISION
     )
     return item.kind == NODE_OPTIONAL and render(item.branches[0]) == render(repeated)
+
+
+def _first_item(*, item: Node | None, continuation: Node) -> frozenset[int]:
+    """`[ <x> ]` and a bare `[ , ... ]` filling a `( ... )`: what a continued list starts with."""
+    if item is None or item.kind != NODE_OPTIONAL or _bare_continuation(continuation) is None:
+        return frozenset()
+    return frozenset({id(item)})
 
 
 def _bare_continuation(node: Node) -> Node | None:
