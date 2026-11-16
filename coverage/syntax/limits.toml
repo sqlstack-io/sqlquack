@@ -20860,6 +20860,30 @@ grammar = ["ALTER [ STORAGE ] INTEGRATION [ IF EXISTS ] <name> SET [ { { STORAGE
 reason = "page definitions inlined: cloudProviderParams; a definition the page gives per cloud or variant becomes a choice of its variants; unbraced alternatives inside `( ... )` and in `KEY = a | b` properties are braced"
 
 [[reading]]
+form = "sf.security_admin.alter-user.rename-to"
+grammar_sha256 = "c551dbf5328ca8c112596661ede699f96683970ad40cdb8f91e9cbc154fe4c58"
+grammar = ["ALTER USER [ IF EXISTS ] <name> RENAME TO <new_name>"]
+reason = "receipts show Snowflake refusing every statement with the optional name left out as a syntax error (errno 1003), so the name is read as required and its omission is a rejection"
+
+[[reading]]
+form = "sf.security_admin.alter-user.set-authentication-password-session"
+grammar_sha256 = "d32bafa87bc3a9a194be435b27c57b400036027f0d6f6ac4581c1184aca68d27"
+grammar = ["ALTER USER [ IF EXISTS ] <name> SET { AUTHENTICATION | PASSWORD | SESSION } POLICY <policy_name> [ FORCE ]"]
+reason = "receipts show Snowflake refusing every statement with the optional name left out as a syntax error (errno 1003), so the name is read as required and its omission is a rejection"
+
+[[reading]]
+form = "sf.security_admin.alter-user.unset-authentication-password-session"
+grammar_sha256 = "5b83fc6cb4978428330aa07952d3a59109b5e687ec7e3026f718d28c664edca8"
+grammar = ["ALTER USER [ IF EXISTS ] <name> UNSET { AUTHENTICATION | PASSWORD | SESSION } POLICY"]
+reason = "receipts show Snowflake refusing every statement with the optional name left out as a syntax error (errno 1003), so the name is read as required and its omission is a rejection"
+
+[[reading]]
+form = "sf.security_admin.alter-user.unset-tag"
+grammar_sha256 = "197c494558816beafac17335cb6922e5e5721a05e0ac6a27e2c895e5d981399e"
+grammar = ["ALTER USER [ IF EXISTS ] <name> UNSET TAG <tag_name> [ , <tag_name> ... ]"]
+reason = "receipts show Snowflake refusing every statement with the optional name left out as a syntax error (errno 1003), so the name is read as required and its omission is a rejection"
+
+[[reading]]
 form = "sf.security_admin.alter-user.mfaactions"
 grammar_sha256 = "0923e2c6686f2d5be5fd2556d03847ec8ee4542e5ce91faf920f74ea07f39330"
 grammar = ["ALTER USER [ IF EXISTS ] [ <name> ] { { ENROLL MFA } | { SET DEFAULT_MFA_METHOD = { PASSKEY | TOTP | DUO } } | { REMOVE MFA METHOD <mfa_method> } | { MODIFY MFA METHOD <mfa_method> SET COMMENT = '<string>' } | { ADD MFA METHOD OTP [ COUNT = <number> ] } }"]

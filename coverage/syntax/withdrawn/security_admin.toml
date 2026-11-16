@@ -290,15 +290,6 @@ valid_as = "sf.security_admin.alter-storage-integration.set operand_type_class '
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
-form = "sf.security_admin.alter-user.unset-tag"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required TAG"
-sql = "ALTER USER UNSET v1 ;"
-valid_as = "sf.security_admin.alter-user.unset positive the documented form with every required part and no optional part"
-reason = "the rejection renders SQL the documented grammar also accepts"
-
-[[withdrawn]]
 form = "sf.security_admin.create-application-role.application-role"
 kind = "negative_neighbour"
 target = ""
