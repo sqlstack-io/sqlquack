@@ -6830,12 +6830,6 @@ target = "<checkpoint>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.cloud-files-state.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.cloud-files-state.o009"
 kind = "negative_neighbour"
 required = true
@@ -9131,12 +9125,6 @@ target = "<table_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.functions.data-skipping-summary.o004"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.data-skipping-summary.o006"
 kind = "negative_neighbour"
 required = true
@@ -10947,12 +10935,6 @@ kind = "operand_type_class"
 required = true
 target = "<pipeline_id>"
 note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.event-log.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.event-log.o009"

@@ -2680,3 +2680,18 @@ ids = [
   "db.ddl.create-location.o024",
   "db.ddl.create-procedure.o026",
 ]
+
+[[retired]]
+retired_in = "2fa3f2403dba929ced13223dc9bc72fd1ff87a0e"
+reason = "the warehouse's parser reads these derived negatives as other valid statements (a bare policy target, a table aliased TABLE with a column list, a resource REFRESH, an ALTER TABLE schedule clause), so they are suppressed with the receipts that show it"
+ids = [
+  "db.ddl.alter-streaming-table.streaming-table-add-alter.o029",
+  "db.ddl.create-policy.o015",
+  "db.ddl.create-policy.o018",
+  "db.ddl.create-policy.o043",
+  "db.ddl.create-policy.o045",
+  "db.ddl.refresh-full.o029",
+  "db.functions.cloud-files-state.o007",
+  "db.functions.data-skipping-summary.o004",
+  "db.functions.event-log.o007",
+]

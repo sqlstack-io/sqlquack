@@ -4558,12 +4558,6 @@ target = "<principal>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.ddl.alter-streaming-table.streaming-table-add-alter.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required STREAMING"
-
-[[obligation]]
 id = "db.ddl.alter-streaming-table.streaming-table-add-alter.o030"
 kind = "negative_neighbour"
 required = true
@@ -12996,13 +12990,6 @@ target = "<catalog_name>"
 note = "a string literal in place of <catalog_name>"
 
 [[obligation]]
-id = "db.ddl.create-policy.o015"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name>"
-note = "omit <schema_name>"
-
-[[obligation]]
 id = "db.ddl.create-policy.o016"
 kind = "operand_type_class"
 required = true
@@ -13015,13 +13002,6 @@ kind = "negative_neighbour"
 required = true
 target = "<schema_name>"
 note = "a string literal in place of <schema_name>"
-
-[[obligation]]
-id = "db.ddl.create-policy.o018"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "db.ddl.create-policy.o019"
@@ -13172,22 +13152,10 @@ required = true
 note = "the form without its required ON"
 
 [[obligation]]
-id = "db.ddl.create-policy.o043"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CATALOG after ON"
-
-[[obligation]]
 id = "db.ddl.create-policy.o044"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SCHEMA after ON"
-
-[[obligation]]
-id = "db.ddl.create-policy.o045"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TABLE after ON"
 
 [[obligation]]
 id = "db.ddl.create-policy.o046"
@@ -24518,13 +24486,6 @@ id = "db.ddl.refresh-full.o005"
 kind = "option_absent"
 required = true
 target = "[ STREAMING ]"
-
-[[obligation]]
-id = "db.ddl.refresh-full.o029"
-kind = "required_operand_missing"
-required = true
-target = "<table_name> #2"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "db.ddl.refresh-full.o030"

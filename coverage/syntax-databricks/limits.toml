@@ -6703,3 +6703,66 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required STORAGE"
 reason = "STORAGE before CREDENTIAL is optional in the warehouse's parser: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T112320.575489Z) parses CREATE EXTERNAL LOCATION v1 URL 's3://b1/p1' WITH ( CREDENTIAL v1 ) and answers NO_SUCH_STORAGE_CREDENTIAL_EXCEPTION, not a syntax error"
+
+[[suppress]]
+form = "db.ddl.create-policy"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required TABLE after ON"
+reason = "a policy target may be a bare name: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T112320.575489Z) parses CREATE POLICY v1 ON t1 ROW FILTER f1 TO `u1` FOR TABLES and answers PRINCIPAL_DOES_NOT_EXIST, not a syntax error"
+
+[[suppress]]
+form = "db.ddl.create-policy"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CATALOG after ON"
+reason = "a policy target may be a bare name: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T112320.575489Z) parses CREATE POLICY v1 ON v1 ROW FILTER f1 TO `u1` FOR TABLES and answers PRINCIPAL_DOES_NOT_EXIST, not a syntax error"
+
+[[suppress]]
+form = "db.ddl.create-policy"
+kind = "required_operand_missing"
+target = "<table_name>"
+note = "omit <table_name>"
+reason = "TABLE alone reads as the name of the policy target: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T112320.575489Z) parses CREATE POLICY v1 ON TABLE ROW FILTER f1 TO `u1` FOR TABLES and answers PRINCIPAL_DOES_NOT_EXIST, not a syntax error"
+
+[[suppress]]
+form = "db.ddl.create-policy"
+kind = "required_operand_missing"
+target = "<schema_name>"
+note = "omit <schema_name>"
+reason = "SCHEMA alone reads as the name of the policy target: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T112320.575489Z) parses CREATE POLICY v1 ON SCHEMA ROW FILTER f1 TO `u1` FOR TABLES and answers PRINCIPAL_DOES_NOT_EXIST, not a syntax error"
+
+[[suppress]]
+form = "db.functions.event-log"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "without ( the name reads as a table with the alias TABLE and a column list: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T165300.561941Z) parses SELECT * FROM EVENT_LOG TABLE ( t1 ) and answers TABLE_OR_VIEW_NOT_FOUND, not a syntax error"
+
+[[suppress]]
+form = "db.functions.cloud-files-state"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "without ( the name reads as a table with the alias TABLE and a column list: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T165300.561941Z) parses SELECT * FROM CLOUD_FILES_STATE TABLE ( t1 ) and answers TABLE_OR_VIEW_NOT_FOUND, not a syntax error"
+
+[[suppress]]
+form = "db.functions.data-skipping-summary"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "without ( the name reads as a table with the alias TABLE and a column list: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T165300.561941Z) parses SELECT * FROM DATA_SKIPPING_SUMMARY TABLE ( t1 ) and answers TABLE_OR_VIEW_NOT_FOUND, not a syntax error"
+
+[[suppress]]
+form = "db.ddl.refresh-full"
+kind = "required_operand_missing"
+target = "<table_name> #2"
+note = "omit <table_name>"
+reason = "REFRESH followed by one word reads as a resource refresh: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T095943.990438Z) parses REFRESH TABLE and answers UC_COMMAND_NOT_SUPPORTED for resource operations, not a syntax error"
+
+[[suppress]]
+form = "db.ddl.alter-streaming-table.streaming-table-add-alter"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required STREAMING"
+reason = "ALTER TABLE takes a schedule clause in the warehouse's parser: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T095943.990438Z) parses ALTER TABLE t1 ADD SCHEDULE EVERY 1 HOUR and answers ALTER_SCHEDULE_INVALID_ENTITY, not a syntax error"
