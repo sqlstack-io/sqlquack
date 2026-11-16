@@ -605,7 +605,7 @@ forms = [
   "sl.functions.window.rank",
   "sl.functions.window.row-number",
 ]
-note = "Re-bound, not re-read: the forms' approved reviews still hold. Every parse tree of their cases equals the reviewed one once the call's distinct flag is read as set_quantifier (false as none, true as distinct), the only change the set quantifier made, checked over all SQLite cases; no case, receipt, obligation or definition changed."
+note = "re-bound: set_quantifier rename, diff-checked. Not re-read: scripts/check_rebound_reviews.py found every parse tree of these forms' cases equal to the one the earlier approved review fingerprinted, but for each call's distinct flag read as set_quantifier (true as distinct, false as none, or all where the SQL writes ( ALL); no case, receipt, obligation or definition changed."
 
 [review.fingerprints]
 "sl.functions.aggregate.avg" = "909cf7afbcaca7d2e267b3a89bcdfdece5cfecf5826775038bbe2b7a616382e1"
