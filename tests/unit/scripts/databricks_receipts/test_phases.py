@@ -259,6 +259,14 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             expected_parse_only=None,
         ),
         PhaseTestCase(
+            description="a generator's column aliases that do not match its output columns",
+            message="[UDTF_ALIAS_NUMBER_MISMATCH] The number of aliases supplied in the AS clause "
+            "does not match the number of columns output by the UDTF. SQLSTATE: 42802",
+            sqlstate="42802",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
             description="an analysis class with no reviewed row",
             message="[DIVIDE_BY_ZERO] Division by zero. SQLSTATE: 22012",
             sqlstate="22012",
