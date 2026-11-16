@@ -1197,7 +1197,9 @@ impl Parser {
         let column_keyword = self.match_token(TokenType::Column);
         if !column_keyword
             && self.check(TokenType::Constraint)
-            && self.peek_nth(2).is_some_and(|token| token.token_type == TokenType::LParen)
+            && self
+                .peek_nth(2)
+                .is_some_and(|token| token.token_type == TokenType::LParen)
         {
             return Err(self.parse_error("Expected no column list after MODIFY CONSTRAINT <name>"));
         }

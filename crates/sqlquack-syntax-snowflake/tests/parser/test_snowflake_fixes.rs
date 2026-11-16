@@ -1101,8 +1101,10 @@ fn given_snowflake_security_admin_show_drop_and_describe_when_parsing_then_the_r
             expected_kind: Some("show"),
         },
         SnowflakeVerdictTestCase {
-            description: "Openflow data plane integrations take no STARTS WITH (recorded errno 1003)",
-            sql: "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;",
+            description:
+                "Openflow data plane integrations take no STARTS WITH (recorded errno 1003)",
+            sql:
+                "SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE 'm' STARTS WITH 'm' LIMIT 1 FROM 'm' ;",
             expected_kind: None,
         },
         SnowflakeVerdictTestCase {
@@ -1640,6 +1642,16 @@ fn given_a_snowflake_create_semantic_view_when_parsing_then_recorded_verdicts_ho
             description: "a metric window PARTITION BY EXCLUDING (recorded OK)",
             sql: "CREATE OR ALTER SEMANTIC VIEW v1 TABLES ( v1 ) METRICS ( v1 . v1 AS SUM ( v1 ) OVER ( PARTITION BY EXCLUDING v1 ) ) ;",
             expected_kind: Some("create_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a metric window holding only a window name (recorded errno 1003)",
+            sql: "CREATE SEMANTIC VIEW v1 TABLES ( v1 ) METRICS ( v1 . v1 AS SUM ( v1 ) OVER ( v1 ) ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a DCM metric window holding only a window name (recorded errno 1003)",
+            sql: "DEFINE SEMANTIC VIEW d1.s1.v1 TABLES ( d1.s1.v1 ) METRICS ( v1 . v1 AS SUM ( v1 ) OVER ( v1 ) ) ;",
+            expected_kind: None,
         },
         SnowflakeVerdictTestCase {
             description: "a dimension with a Cortex Search service (recorded OK)",
