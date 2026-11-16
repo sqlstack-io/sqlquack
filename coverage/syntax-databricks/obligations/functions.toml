@@ -759,124 +759,159 @@ target = "<value_col>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.ai-detect-anomalies.o007"
+id = "db.functions.ai-detect-anomalies.o038"
 kind = "option_present"
 required = true
-target = "[ , <group_col> ]"
+target = "[ , group_col => <group_col> ]"
 
 [[obligation]]
-id = "db.functions.ai-detect-anomalies.o008"
+id = "db.functions.ai-detect-anomalies.o039"
 kind = "option_absent"
 required = true
-target = "[ , <group_col> ]"
+target = "[ , group_col => <group_col> ]"
 
 [[obligation]]
-id = "db.functions.ai-detect-anomalies.o009"
-kind = "operand_type_class"
-required = true
-target = "<group_col> in [ , <group_col> ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o010"
-kind = "option_present"
-required = true
-target = "[ , <anomaly_threshold> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o011"
-kind = "option_absent"
-required = true
-target = "[ , <anomaly_threshold> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o012"
-kind = "operand_type_class"
-required = true
-target = "<anomaly_threshold> in [ , <anomaly_threshold> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o013"
-kind = "option_present"
-required = true
-target = "[ , <covariate_col> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o014"
-kind = "option_absent"
-required = true
-target = "[ , <covariate_col> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o015"
-kind = "operand_type_class"
-required = true
-target = "<covariate_col> in [ , <covariate_col> ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o016"
-kind = "option_present"
-required = true
-target = "[ , <holiday_region> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o017"
-kind = "option_absent"
-required = true
-target = "[ , <holiday_region> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o018"
-kind = "operand_type_class"
-required = true
-target = "<holiday_region> in [ , <holiday_region> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o019"
-kind = "option_present"
-required = true
-target = "[ , <only_last_n> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o020"
-kind = "option_absent"
-required = true
-target = "[ , <only_last_n> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o021"
-kind = "operand_type_class"
-required = true
-target = "<only_last_n> in [ , <only_last_n> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o022"
-kind = "option_present"
-required = true
-target = "[ , <smoothing> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o023"
-kind = "option_absent"
-required = true
-target = "[ , <smoothing> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o024"
+id = "db.functions.ai-detect-anomalies.o040"
 kind = "required_operand_missing"
 required = true
-target = "<smoothing> in [ , <smoothing> ]"
+target = "<group_col> in [ , group_col => <group_col> ]"
+note = "omit <group_col>"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o041"
+kind = "operand_type_class"
+required = true
+target = "<group_col> in [ , group_col => <group_col> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o042"
+kind = "option_present"
+required = true
+target = "[ , anomaly_threshold => <anomaly_threshold> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o043"
+kind = "option_absent"
+required = true
+target = "[ , anomaly_threshold => <anomaly_threshold> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o044"
+kind = "required_operand_missing"
+required = true
+target = "<anomaly_threshold> in [ , anomaly_threshold => <anomaly_threshold> ]"
+note = "omit <anomaly_threshold>"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o045"
+kind = "operand_type_class"
+required = true
+target = "<anomaly_threshold> in [ , anomaly_threshold => <anomaly_threshold> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o046"
+kind = "option_present"
+required = true
+target = "[ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o047"
+kind = "option_absent"
+required = true
+target = "[ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o048"
+kind = "required_operand_missing"
+required = true
+target = "<covariate_col> in [ , covariate_col => <covariate_col> ]"
+note = "omit <covariate_col>"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o049"
+kind = "operand_type_class"
+required = true
+target = "<covariate_col> in [ , covariate_col => <covariate_col> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o050"
+kind = "option_present"
+required = true
+target = "[ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o051"
+kind = "option_absent"
+required = true
+target = "[ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o052"
+kind = "required_operand_missing"
+required = true
+target = "<holiday_region> in [ , holiday_region => <holiday_region> ]"
+note = "omit <holiday_region>"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o053"
+kind = "operand_type_class"
+required = true
+target = "<holiday_region> in [ , holiday_region => <holiday_region> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o054"
+kind = "option_present"
+required = true
+target = "[ , only_last_n => <only_last_n> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o055"
+kind = "option_absent"
+required = true
+target = "[ , only_last_n => <only_last_n> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o056"
+kind = "required_operand_missing"
+required = true
+target = "<only_last_n> in [ , only_last_n => <only_last_n> ]"
+note = "omit <only_last_n>"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o057"
+kind = "operand_type_class"
+required = true
+target = "<only_last_n> in [ , only_last_n => <only_last_n> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o058"
+kind = "option_present"
+required = true
+target = "[ , smoothing => <smoothing> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o059"
+kind = "option_absent"
+required = true
+target = "[ , smoothing => <smoothing> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o060"
+kind = "required_operand_missing"
+required = true
+target = "<smoothing> in [ , smoothing => <smoothing> ]"
 note = "omit <smoothing>"
 
 [[obligation]]
-id = "db.functions.ai-detect-anomalies.o025"
+id = "db.functions.ai-detect-anomalies.o061"
 kind = "operand_type_class"
 required = true
-target = "<smoothing> in [ , <smoothing> ]"
+target = "<smoothing> in [ , smoothing => <smoothing> ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -884,6 +919,42 @@ id = "db.functions.ai-detect-anomalies.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o062"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required group_col in [ , group_col => <group_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o063"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required anomaly_threshold in [ , anomaly_threshold => <anomaly_threshold> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o064"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required covariate_col in [ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o065"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required holiday_region in [ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o066"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required only_last_n in [ , only_last_n => <only_last_n> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o067"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required smoothing in [ , smoothing => <smoothing> ]"
 
 [[obligation]]
 id = "db.functions.ai-detect-anomalies.o027"
@@ -1244,143 +1315,185 @@ target = "<value_col>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o009"
+id = "db.functions.ai-forecast.o069"
 kind = "option_present"
 required = true
-target = "[ , <group_col> ]"
+target = "[ , group_col => <group_col> ]"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o010"
+id = "db.functions.ai-forecast.o070"
 kind = "option_absent"
 required = true
-target = "[ , <group_col> ]"
+target = "[ , group_col => <group_col> ]"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o011"
-kind = "operand_type_class"
-required = true
-target = "<group_col> in [ , <group_col> ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o012"
-kind = "option_present"
-required = true
-target = "[ , <covariate_col> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o013"
-kind = "option_absent"
-required = true
-target = "[ , <covariate_col> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o014"
-kind = "operand_type_class"
-required = true
-target = "<covariate_col> in [ , <covariate_col> ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o015"
-kind = "option_present"
-required = true
-target = "[ , <prediction_interval_width> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o016"
-kind = "option_absent"
-required = true
-target = "[ , <prediction_interval_width> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o017"
-kind = "operand_type_class"
-required = true
-target = "<prediction_interval_width> in [ , <prediction_interval_width> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o018"
-kind = "option_present"
-required = true
-target = "[ , <frequency> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o019"
-kind = "option_absent"
-required = true
-target = "[ , <frequency> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o020"
-kind = "operand_type_class"
-required = true
-target = "<frequency> in [ , <frequency> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o021"
-kind = "option_present"
-required = true
-target = "[ , <holiday_region> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o022"
-kind = "option_absent"
-required = true
-target = "[ , <holiday_region> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o023"
-kind = "operand_type_class"
-required = true
-target = "<holiday_region> in [ , <holiday_region> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o024"
-kind = "option_present"
-required = true
-target = "[ , <positive_only> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o025"
-kind = "option_absent"
-required = true
-target = "[ , <positive_only> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o026"
-kind = "operand_type_class"
-required = true
-target = "<positive_only> in [ , <positive_only> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o027"
-kind = "option_present"
-required = true
-target = "[ , <version> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o028"
-kind = "option_absent"
-required = true
-target = "[ , <version> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o029"
+id = "db.functions.ai-forecast.o071"
 kind = "required_operand_missing"
 required = true
-target = "<version> in [ , <version> ]"
+target = "<group_col> in [ , group_col => <group_col> ]"
+note = "omit <group_col>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o072"
+kind = "operand_type_class"
+required = true
+target = "<group_col> in [ , group_col => <group_col> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o073"
+kind = "option_present"
+required = true
+target = "[ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o074"
+kind = "option_absent"
+required = true
+target = "[ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o075"
+kind = "required_operand_missing"
+required = true
+target = "<covariate_col> in [ , covariate_col => <covariate_col> ]"
+note = "omit <covariate_col>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o076"
+kind = "operand_type_class"
+required = true
+target = "<covariate_col> in [ , covariate_col => <covariate_col> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o077"
+kind = "option_present"
+required = true
+target = "[ , prediction_interval_width => <prediction_interval_width> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o078"
+kind = "option_absent"
+required = true
+target = "[ , prediction_interval_width => <prediction_interval_width> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o079"
+kind = "required_operand_missing"
+required = true
+target = "<prediction_interval_width> in [ , prediction_interval_width => <prediction_interval_width> ]"
+note = "omit <prediction_interval_width>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o080"
+kind = "operand_type_class"
+required = true
+target = "<prediction_interval_width> in [ , prediction_interval_width => <prediction_interval_width> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o081"
+kind = "option_present"
+required = true
+target = "[ , frequency => <frequency> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o082"
+kind = "option_absent"
+required = true
+target = "[ , frequency => <frequency> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o083"
+kind = "required_operand_missing"
+required = true
+target = "<frequency> in [ , frequency => <frequency> ]"
+note = "omit <frequency>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o084"
+kind = "operand_type_class"
+required = true
+target = "<frequency> in [ , frequency => <frequency> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o085"
+kind = "option_present"
+required = true
+target = "[ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o086"
+kind = "option_absent"
+required = true
+target = "[ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o087"
+kind = "required_operand_missing"
+required = true
+target = "<holiday_region> in [ , holiday_region => <holiday_region> ]"
+note = "omit <holiday_region>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o088"
+kind = "operand_type_class"
+required = true
+target = "<holiday_region> in [ , holiday_region => <holiday_region> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o089"
+kind = "option_present"
+required = true
+target = "[ , positive_only => <positive_only> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o090"
+kind = "option_absent"
+required = true
+target = "[ , positive_only => <positive_only> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o091"
+kind = "required_operand_missing"
+required = true
+target = "<positive_only> in [ , positive_only => <positive_only> ]"
+note = "omit <positive_only>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o092"
+kind = "operand_type_class"
+required = true
+target = "<positive_only> in [ , positive_only => <positive_only> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o093"
+kind = "option_present"
+required = true
+target = "[ , version => <version> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o094"
+kind = "option_absent"
+required = true
+target = "[ , version => <version> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o095"
+kind = "required_operand_missing"
+required = true
+target = "<version> in [ , version => <version> ]"
 note = "omit <version>"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o030"
+id = "db.functions.ai-forecast.o096"
 kind = "operand_type_class"
 required = true
-target = "<version> in [ , <version> ]"
+target = "<version> in [ , version => <version> ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -1433,124 +1546,159 @@ target = "<value_col> #2"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o038"
+id = "db.functions.ai-forecast.o097"
 kind = "option_present"
 required = true
-target = "[ , <group_col> ] #2"
+target = "[ , group_col => <group_col> ] #2"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o039"
+id = "db.functions.ai-forecast.o098"
 kind = "option_absent"
 required = true
-target = "[ , <group_col> ] #2"
+target = "[ , group_col => <group_col> ] #2"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o040"
+id = "db.functions.ai-forecast.o099"
+kind = "required_operand_missing"
+required = true
+target = "<group_col> in [ , group_col => <group_col> ] #2"
+note = "omit <group_col>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o100"
 kind = "operand_type_class"
 required = true
-target = "<group_col> in [ , <group_col> ] #2"
+target = "<group_col> in [ , group_col => <group_col> ] #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o041"
+id = "db.functions.ai-forecast.o101"
 kind = "option_present"
 required = true
-target = "[ , <prediction_interval_width> ] #2"
+target = "[ , prediction_interval_width => <prediction_interval_width> ] #2"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o042"
+id = "db.functions.ai-forecast.o102"
 kind = "option_absent"
 required = true
-target = "[ , <prediction_interval_width> ] #2"
+target = "[ , prediction_interval_width => <prediction_interval_width> ] #2"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o043"
-kind = "operand_type_class"
-required = true
-target = "<prediction_interval_width> in [ , <prediction_interval_width> ] #2"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o044"
-kind = "option_present"
-required = true
-target = "[ , <frequency> ] #2"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o045"
-kind = "option_absent"
-required = true
-target = "[ , <frequency> ] #2"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o046"
-kind = "operand_type_class"
-required = true
-target = "<frequency> in [ , <frequency> ] #2"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o047"
-kind = "option_present"
-required = true
-target = "[ , <seed> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o048"
-kind = "option_absent"
-required = true
-target = "[ , <seed> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o049"
-kind = "operand_type_class"
-required = true
-target = "<seed> in [ , <seed> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o050"
-kind = "option_present"
-required = true
-target = "[ , <parameters> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o051"
-kind = "option_absent"
-required = true
-target = "[ , <parameters> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o052"
-kind = "operand_type_class"
-required = true
-target = "<parameters> in [ , <parameters> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o053"
-kind = "option_present"
-required = true
-target = "[ , <version> ] #2"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o054"
-kind = "option_absent"
-required = true
-target = "[ , <version> ] #2"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o055"
+id = "db.functions.ai-forecast.o103"
 kind = "required_operand_missing"
 required = true
-target = "<version> in [ , <version> ] #2"
+target = "<prediction_interval_width> in [ , prediction_interval_width => <prediction_interval_width> ] #2"
+note = "omit <prediction_interval_width>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o104"
+kind = "operand_type_class"
+required = true
+target = "<prediction_interval_width> in [ , prediction_interval_width => <prediction_interval_width> ] #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o105"
+kind = "option_present"
+required = true
+target = "[ , frequency => <frequency> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o106"
+kind = "option_absent"
+required = true
+target = "[ , frequency => <frequency> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o107"
+kind = "required_operand_missing"
+required = true
+target = "<frequency> in [ , frequency => <frequency> ] #2"
+note = "omit <frequency>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o108"
+kind = "operand_type_class"
+required = true
+target = "<frequency> in [ , frequency => <frequency> ] #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o109"
+kind = "option_present"
+required = true
+target = "[ , seed => <seed> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o110"
+kind = "option_absent"
+required = true
+target = "[ , seed => <seed> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o111"
+kind = "required_operand_missing"
+required = true
+target = "<seed> in [ , seed => <seed> ]"
+note = "omit <seed>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o112"
+kind = "operand_type_class"
+required = true
+target = "<seed> in [ , seed => <seed> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o113"
+kind = "option_present"
+required = true
+target = "[ , parameters => <parameters> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o114"
+kind = "option_absent"
+required = true
+target = "[ , parameters => <parameters> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o115"
+kind = "required_operand_missing"
+required = true
+target = "<parameters> in [ , parameters => <parameters> ]"
+note = "omit <parameters>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o116"
+kind = "operand_type_class"
+required = true
+target = "<parameters> in [ , parameters => <parameters> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o117"
+kind = "option_present"
+required = true
+target = "[ , version => <version> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o118"
+kind = "option_absent"
+required = true
+target = "[ , version => <version> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o119"
+kind = "required_operand_missing"
+required = true
+target = "<version> in [ , version => <version> ] #2"
 note = "omit <version>"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o056"
+id = "db.functions.ai-forecast.o120"
 kind = "operand_type_class"
 required = true
-target = "<version> in [ , <version> ] #2"
+target = "<version> in [ , version => <version> ] #2"
 note = "a valid operand"
 
 [[obligation]]
@@ -1560,10 +1708,88 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "db.functions.ai-forecast.o121"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required group_col in [ , group_col => <group_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o122"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required covariate_col in [ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o123"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required prediction_interval_width in [ , prediction_interval_width => <prediction_interval_width> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o124"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required frequency in [ , frequency => <frequency> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o125"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required holiday_region in [ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o126"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required positive_only in [ , positive_only => <positive_only> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o127"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required version in [ , version => <version> ]"
+
+[[obligation]]
 id = "db.functions.ai-forecast.o058"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o128"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required group_col in [ , group_col => <group_col> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o129"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required prediction_interval_width in [ , prediction_interval_width => <prediction_interval_width> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o130"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required frequency in [ , frequency => <frequency> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o131"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required seed in [ , seed => <seed> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o132"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required parameters in [ , parameters => <parameters> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o133"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required version in [ , version => <version> ] #2"
 
 [[obligation]]
 id = "db.functions.ai-forecast.o059"

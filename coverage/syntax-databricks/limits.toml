@@ -240,6 +240,18 @@ grammar_sha256 = "ba7b01c37071fb99cd5e62f883718005c461dd44ad6343c69b7e97dd3c0b1f
 grammar = ["DECODE ( <expr> , <key1> , <value1> [ , <key1> , <value1> ... ] [ , <def_value> ] )"]
 reason = "the [ , ... ] continues the list with another key and value pair (keyN and valueN in the page's Arguments; its examples: decode(5, 6, 'Spark', 5, 'SQL', 4, 'rocks') and, with defValue, decode(7, 6, 'Spark', 5, 'SQL', 'rocks')); the renderer otherwise repeats only the value, which reads as defValue, so a case with defValue could not be told from one with a second pair"
 
+[[reading]]
+form = "db.functions.ai-detect-anomalies"
+grammar_sha256 = "1bcfde9916aed10c940071e3c4abc3863e6fa372375219c44cb90d1c465c7c6e"
+grammar = ["AI_DETECT_ANOMALIES ( <observed> , <time_col> , <value_col> [ , group_col => <group_col> ] [ , anomaly_threshold => <anomaly_threshold> ] [ , covariate_col => <covariate_col> ] [ , holiday_region => <holiday_region> ] [ , only_last_n => <only_last_n> ] [ , smoothing => <smoothing> ] )"]
+reason = "an optional argument after one left out can be passed only by name, and the page's examples pass every optional argument by name (covariate_col => 'temperature', holiday_region => 'US', only_last_n => 100), so each optional argument is read as a named argument, which may be written without the ones before it"
+
+[[reading]]
+form = "db.functions.ai-forecast"
+grammar_sha256 = "12827d2e459678a8707aa9f712a67ebce09aba5b70b1e7f3ce0101247447cd1e"
+grammar = ["AI_FORECAST ( <observed> , <horizon> , <time_col> , <value_col> [ , group_col => <group_col> ] [ , covariate_col => <covariate_col> ] [ , prediction_interval_width => <prediction_interval_width> ] [ , frequency => <frequency> ] [ , holiday_region => <holiday_region> ] [ , positive_only => <positive_only> ] [ , version => <version> ] )", "AI_FORECAST ( <observed> , <horizon> , <time_col> , <value_col> [ , group_col => <group_col> ] [ , prediction_interval_width => <prediction_interval_width> ] [ , frequency => <frequency> ] [ , seed => <seed> ] [ , parameters => <parameters> ] [ , version => <version> ] )"]
+reason = "an optional argument after one left out can be passed only by name, and the page's examples pass every optional argument by name (covariate_col => 'promotion', holiday_region => 'US', version => '2'), so each optional argument is read as a named argument, which may be written without the ones before it"
+
 [[limit]]
 form = "db.query.select-hints"
 kind = "option_present"
