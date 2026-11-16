@@ -6,6 +6,7 @@ use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::Comprehension;
 use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::functions::models::JSONExtract;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -1070,7 +1071,7 @@ impl Parser {
 
                 name: token.text.to_string(),
                 args: Vec::new(),
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: true,
@@ -1111,7 +1112,7 @@ impl Parser {
 
                     name: dynamic_name,
                     args,
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,

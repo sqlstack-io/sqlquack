@@ -13,6 +13,7 @@ use crate::parser::constants::STRUCT;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::functions::models::Columns;
 use sqlquack_syntax::expressions::functions::models::Function;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::functions::models::WithinGroup;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Column;
@@ -479,7 +480,7 @@ impl Parser {
 
                 name: format!("APPROXIMATE {}", name),
                 args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -725,7 +726,7 @@ impl Parser {
 
             name: "EXISTS".to_string(),
             args: vec![array_expr, predicate],
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,
@@ -1026,7 +1027,7 @@ impl Parser {
 
             name: "ROW".to_string(),
             args,
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,
@@ -1394,7 +1395,7 @@ impl Parser {
 
             name: token.text.to_string(),
             args,
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,
@@ -1423,7 +1424,7 @@ impl Parser {
 
             name: token.text.to_string(),
             args,
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,
@@ -1474,7 +1475,7 @@ impl Parser {
 
                 name: token.text.to_string(),
                 args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -1494,7 +1495,7 @@ impl Parser {
 
                 name: token.text.to_string(),
                 args: Vec::new(),
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: true,
@@ -1936,7 +1937,7 @@ impl Parser {
 
             name: token.text,
             args,
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,

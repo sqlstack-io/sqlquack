@@ -1997,3 +1997,24 @@ fn given_a_naive_timestamp_joined_with_a_local_one_when_converting_then_its_nano
         );
     }
 }
+
+#[test]
+fn given_an_aggregate_with_an_explicit_all_when_converting_then_it_converts_as_if_none_was_written()
+{
+    let sources = [
+        "SELECT MEDIAN({q}a) AS m FROM (SELECT 1 AS a UNION ALL SELECT 1)",
+        "SELECT ARRAY_AGG({q}a) AS m FROM (SELECT 1 AS a UNION ALL SELECT 1)",
+    ];
+    for source in sources {
+        let written = |quantifier: &str| {
+            convert_streams(&source.replace("{q}", quantifier), &["--no-config"]).0
+        };
+        let (none, all, distinct) = (written(""), written("ALL "), written("DISTINCT "));
+        assert!(!none.is_empty(), "{source}: converts without a quantifier");
+        assert_eq!(all, none, "{source}: ALL converts exactly as no quantifier");
+        assert_ne!(
+            distinct, none,
+            "{source}: DISTINCT still changes the conversion"
+        );
+    }
+}

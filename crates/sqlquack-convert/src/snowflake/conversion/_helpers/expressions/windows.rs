@@ -31,8 +31,8 @@ use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted};
 use crate::snowflake::conversion::_helpers::support::shapes::type_family;
 use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
 use crate::snowflake::conversion::_helpers::support::tree::{
-    Payload, field, flag, function_construct, integer_literal, list, node_construct, node_kind,
-    payload_object, require_understood,
+    Payload, field, flag, function_construct, integer_literal, is_distinct, list, node_construct,
+    node_kind, payload_object, require_understood,
 };
 use crate::snowflake::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::snowflake::conversion::constants::{
@@ -196,7 +196,7 @@ pub(crate) fn convert_window(payload: &Value, site: Site<'_>) -> Result<Emitted,
                     format!("{name} over an explicit frame, which no recording shows"),
                 ));
             }
-            let distinct = function_payload.get("distinct").and_then(Value::as_bool) == Some(true);
+            let distinct = function_payload.as_object().is_some_and(is_distinct);
             if statistic && distinct && !over.order.is_empty() {
                 return Err(outside_conditions(
                     function_construct(&name),
@@ -351,8 +351,7 @@ fn ratio_to_report(call: &Value, window: &Payload, site: Site<'_>) -> Result<Emi
     let _rule = site.context.log.rule(WINDOW_AGGREGATE);
     let total =
         json!({ "window_function": { "this": { "sum": { "this": value } }, "over": over } });
-    let divisor =
-        json!({ CALL_KIND: { "name": "NULLIFZERO", "args": [total], "distinct": false } });
+    let divisor = json!({ CALL_KIND: { "name": "NULLIFZERO", "args": [total] } });
     convert_expression(&json!({ "div": { "left": value, "right": divisor } }), site)
 }
 

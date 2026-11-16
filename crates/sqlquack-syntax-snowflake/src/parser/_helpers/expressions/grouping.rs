@@ -15,6 +15,7 @@ use sqlquack_syntax::expressions::functions::models::JSONColumnDef;
 use sqlquack_syntax::expressions::functions::models::JSONSchema;
 use sqlquack_syntax::expressions::functions::models::OpenJSON;
 use sqlquack_syntax::expressions::functions::models::OpenJSONColumnDef;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::names::main::identifier_from_token::identifier_from_token;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Column;
@@ -242,7 +243,7 @@ impl Parser {
 
                     name: original_name.clone().unwrap_or_else(|| "IF".to_string()),
                     args: vec![],
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,
@@ -280,7 +281,7 @@ impl Parser {
 
                     name: original_name.clone().unwrap_or_else(|| "IF".to_string()),
                     args,
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,

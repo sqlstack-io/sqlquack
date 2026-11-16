@@ -18,6 +18,7 @@ use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 
 use crate::parse::_helpers::tree::cursor::Parser;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 
 pub(crate) fn column(table: Option<Identifier>, name: Identifier) -> Expression {
     let span = name.span;
@@ -210,7 +211,7 @@ pub(crate) fn aggregate(
     Expression::AggregateFunction(Box::new(AggregateFunction {
         name,
         args: function.args,
-        distinct,
+        set_quantifier: SetQuantifier::from_distinct(distinct),
         filter,
         ignore_nulls,
         span: function.span,

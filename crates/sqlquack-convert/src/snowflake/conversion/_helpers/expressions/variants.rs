@@ -43,7 +43,7 @@ use crate::snowflake::conversion::_helpers::support::scope::{
 };
 use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
 use crate::snowflake::conversion::_helpers::support::tree::{
-    Payload, flag, function_construct, list, node_kind, require_understood,
+    Payload, function_construct, is_distinct, list, node_kind, require_understood,
 };
 use crate::snowflake::conversion::_helpers::support::typed_leaves::compared_by_text;
 use crate::snowflake::conversion::constants::DUPLICATE_VARIANTS;
@@ -104,13 +104,13 @@ fn array_agg_size(
         return Err(refused(construct, "ARRAY_AGG takes one value"));
     };
     let value = convert_expression(value, site.placed(Placement::ROW))?;
-    if flag(call, "distinct") && value.data_type == SnowflakeType::SemiStructured {
+    if is_distinct(call) && value.data_type == SnowflakeType::SemiStructured {
         return Err(refused(
             construct,
             &format!("ARRAY_AGG DISTINCT {DUPLICATE_VARIANTS}"),
         ));
     }
-    let distinct = match flag(call, "distinct") {
+    let distinct = match is_distinct(call) {
         true => "DISTINCT ",
         false => "",
     };

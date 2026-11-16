@@ -689,7 +689,6 @@ impl Parser<'_> {
                 parser.expect_char(')')?;
                 Ok(aggregate(
                     function(vec![Identifier::new(name.clone())], vec![value]),
-                    false,
                     None,
                     Some(true),
                 ))

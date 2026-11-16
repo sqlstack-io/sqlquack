@@ -10,6 +10,7 @@ use crate::parser::constants::TRY_CONVERT;
 use crate::parser::constants::TRY_TO_NUMBER;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::functions::models::Function;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::functions::models::ToNumber;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Literal;
@@ -178,7 +179,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args: all_args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -247,7 +248,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args: vec![this, dimension],
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -383,7 +384,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args: vec![this],
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -424,7 +425,7 @@ impl Parser {
 
             name: "DATE_PART".to_string(),
             args,
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,
@@ -465,7 +466,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -484,7 +485,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args: vec![first_arg, second_arg],
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -536,7 +537,7 @@ impl Parser {
 
             name: name.to_string(),
             args,
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,
@@ -601,7 +602,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args: vec![],
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -622,7 +623,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args: vec![first],
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -713,7 +714,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -780,7 +781,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -830,7 +831,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -868,7 +869,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -938,7 +939,7 @@ impl Parser {
 
             name: "XMLATTRIBUTES".to_string(),
             args: attrs,
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,
@@ -971,7 +972,7 @@ impl Parser {
 
                 name: "MATCH".to_string(),
                 args: expressions,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -1079,7 +1080,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args: expressions,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -1130,7 +1131,7 @@ impl Parser {
 
                 name: func_name.to_string(),
                 args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -1150,7 +1151,7 @@ impl Parser {
 
                 name: func_name.to_string(),
                 args: vec![this],
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -1297,7 +1298,7 @@ impl Parser {
 
                     name: name.to_string(),
                     args: vec![this, replacement],
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,
@@ -1317,7 +1318,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args: vec![this],
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -1364,7 +1365,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args: vec![],
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,

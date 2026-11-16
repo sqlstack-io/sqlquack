@@ -8,6 +8,7 @@ use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::ColumnDef;
 use sqlquack_syntax::expressions::functions::models::Anonymous;
 use sqlquack_syntax::expressions::functions::models::Function;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::names::main::identifier_from_token::identifier_from_token;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -1562,7 +1563,7 @@ impl Parser {
 
             name: func_name,
             args,
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,

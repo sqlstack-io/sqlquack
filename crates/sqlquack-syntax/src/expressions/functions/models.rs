@@ -12,6 +12,48 @@ use crate::expressions::queries::models::Over;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
 
+/// The set quantifier written at the start of a call's arguments.
+///
+/// `ALL` means the same as writing nothing; it is kept so the tree records what was written.
+#[derive(
+    sqlquack_derive::AstNode,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+    Default,
+    Serialize,
+    Deserialize,
+)]
+#[serde(rename_all = "snake_case")]
+pub enum SetQuantifier {
+    /// No quantifier was written.
+    #[default]
+    None,
+    /// `ALL` was written; equivalent to `None`.
+    All,
+    /// `DISTINCT` was written.
+    Distinct,
+}
+
+impl SetQuantifier {
+    /// Whether duplicate inputs are removed, which only `DISTINCT` does.
+    pub fn is_distinct(self) -> bool {
+        self == Self::Distinct
+    }
+
+    /// `Distinct` when `distinct` holds, otherwise `None`.
+    pub fn from_distinct(distinct: bool) -> Self {
+        if distinct {
+            Self::Distinct
+        } else {
+            Self::None
+        }
+    }
+}
+
 /// A scalar function call not recognized as a dedicated `Expression` variant.
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct Function {
@@ -30,8 +72,9 @@ pub struct Function {
     pub name: String,
     /// Positional arguments to the function.
     pub args: Vec<Expression>,
-    /// Whether DISTINCT was specified inside the call (e.g. `COUNT(DISTINCT x)`).
-    pub distinct: bool,
+    /// The set quantifier written inside the call, as in `COUNT(DISTINCT x)` or `SUM(ALL x)`.
+    #[serde(default)]
+    pub set_quantifier: SetQuantifier,
     #[serde(default)]
     pub trailing_comments: Vec<String>,
     /// Whether this function uses bracket syntax (e.g., MAP[keys, values])
@@ -80,7 +123,7 @@ impl Function {
             on_error: None,
             name: name.into(),
             args,
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,
@@ -105,8 +148,9 @@ pub struct AggregateFunction {
     pub name: String,
     /// Positional arguments.
     pub args: Vec<Expression>,
-    /// Whether DISTINCT was specified.
-    pub distinct: bool,
+    /// The set quantifier written inside the call: none, `ALL` or `DISTINCT`.
+    #[serde(default)]
+    pub set_quantifier: SetQuantifier,
     /// Optional FILTER (WHERE ...) clause applied to the aggregate.
     pub filter: Option<Expression>,
     /// ORDER BY inside aggregate (e.g., JSON_AGG(x ORDER BY y))

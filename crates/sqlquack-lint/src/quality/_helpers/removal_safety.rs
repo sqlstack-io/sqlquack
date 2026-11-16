@@ -76,7 +76,7 @@ fn row_neutral(expression: &Expression) -> bool {
         Expression::Function(function) => {
             let name: String = function.name.to_ascii_uppercase();
             let arguments: usize = function.args.len();
-            !function.distinct
+            !function.set_quantifier.is_distinct()
                 && DETERMINISTIC_SCALAR_FUNCTIONS.contains(&name.as_str())
                 && (arguments == 1 || !SINGLE_ARGUMENT_SCALAR_FUNCTIONS.contains(&name.as_str()))
                 && (arguments > 1 || !MULTI_ARGUMENT_SCALAR_FUNCTIONS.contains(&name.as_str()))
