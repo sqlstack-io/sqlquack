@@ -30819,6 +30819,20 @@ target = "<region_group>"
 note = "omit <region_group>"
 
 [[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o057"
+kind = "operand_type_class"
+required = true
+target = "<region_group>"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o058"
+kind = "negative_neighbour"
+required = true
+target = "<region_group>"
+note = "an unquoted identifier in place of <region_group>"
+
+[[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rule-region-group-regions.o012"
 kind = "required_operand_missing"
 required = true
@@ -31102,6 +31116,20 @@ kind = "required_operand_missing"
 required = true
 target = "<region_group>"
 note = "omit <region_group>"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o057"
+kind = "operand_type_class"
+required = true
+target = "<region_group>"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o058"
+kind = "negative_neighbour"
+required = true
+target = "<region_group>"
+note = "an unquoted identifier in place of <region_group>"
 
 [[obligation]]
 id = "sf.ddl.alter-event-routing-table.set-rules-region-group-regions.o012"
@@ -141758,6 +141786,20 @@ target = "<region_group>"
 note = "omit <region_group>"
 
 [[obligation]]
+id = "sf.ddl.create-event-routing-table.o124"
+kind = "operand_type_class"
+required = true
+target = "<region_group>"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o125"
+kind = "negative_neighbour"
+required = true
+target = "<region_group>"
+note = "an unquoted identifier in place of <region_group>"
+
+[[obligation]]
 id = "sf.ddl.create-event-routing-table.o046"
 kind = "required_operand_missing"
 required = true
@@ -141833,6 +141875,20 @@ kind = "required_operand_missing"
 required = true
 target = "<region_group> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
 note = "omit <region_group>"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o126"
+kind = "operand_type_class"
+required = true
+target = "<region_group> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "sf.ddl.create-event-routing-table.o127"
+kind = "negative_neighbour"
+required = true
+target = "<region_group> in [ <rule_name> = ( REGION_GROUP = <region_group> , REGIONS = ( '<region1>' [ , '<region2>' , ... ] ) ,…"
+note = "an unquoted identifier in place of <region_group>"
 
 [[obligation]]
 id = "sf.ddl.create-event-routing-table.o063"
@@ -142208,13 +142264,6 @@ kind = "positive"
 required = true
 anchor = "doc.sql.create-event-routing-table / Syntax"
 note = "an event routing table with no rules, observed"
-
-[[obligation]]
-id = "sf.ddl.create-event-routing-table.o113"
-kind = "positive"
-required = true
-anchor = "doc.sql.create-event-routing-table / Syntax"
-note = "a rule with a string region group, observed"
 
 [[obligation]]
 id = "sf.ddl.create-event-routing-table.o114"

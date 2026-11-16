@@ -1717,6 +1717,12 @@ CLASS_METHODS_WITH_SELECT: tuple[str, ...] = (
     "sf.classes.custom-classifier.methods.list",
 )
 
+# Event routing rules, whose REGION_GROUP Snowflake takes only as a string ('g1'), never a name.
+EVENT_ROUTING_PAGES: tuple[str, ...] = (
+    "sf.ddl.alter-event-routing-table",
+    "sf.ddl.create-event-routing-table",
+)
+
 FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
     "scripting": SCRIPTING_SELF_DECLARING_BLOCKS,
     "query": QUERY_STYLES,
@@ -1786,6 +1792,16 @@ FAMILY_STYLES: dict[str, dict[str, FormStyle]] = {
                 observe_empty_properties=True,
             )
             for prefix in ALERT_PAGES
+        },
+        **{
+            prefix: FormStyle(
+                prefix="",
+                suffix="",
+                fills={**DDL_FILLS, "region_group": "'g1'"},
+                literal_fills=DDL_LITERAL_FILLS,
+                observe_empty_properties=True,
+            )
+            for prefix in EVENT_ROUTING_PAGES
         },
     },
     "security_admin": {

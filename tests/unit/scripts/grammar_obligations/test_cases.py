@@ -514,3 +514,33 @@ def test_given_an_optional_first_item_and_a_bare_continuation_when_building_case
         str(case["sql"]) for case in cases if continued & set(case["obligations"])
     ]
     assert continued_sql == ["CREATE GADGET v1 ( v1 INT , v1 INT ) ;"]
+
+
+ROUTING_CATALOGUE: str = """
+[[form]]
+id = "sf.ddl.create-event-routing-table"
+family = "ddl"
+kind = "statement"
+grammar = ["CREATE EVENT ROUTING TABLE <name> WITH RULES <rule_name> = ( REGION_GROUP = <region_group> )"]
+uses = []
+status = "catalogued"
+"""
+
+
+def test_given_an_event_routing_rule_when_building_cases_then_valid_cases_quote_the_region_group(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "catalogue").mkdir()
+    (tmp_path / "catalogue" / "ddl.toml").write_text(ROUTING_CATALOGUE)
+    (tmp_path / "limits.toml").write_text("")
+
+    cases: list[Row] = family_cases(
+        root=tmp_path, evidence=tmp_path, family="ddl", setups={}, held=frozenset()
+    )[0]
+
+    region_groups: set[str] = {
+        str(case["sql"]).split("REGION_GROUP = ")[1].split(" ")[0]
+        for case in cases
+        if case["expect"] == "accept"
+    }
+    assert region_groups == {"'g1'"}
