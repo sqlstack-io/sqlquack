@@ -188,6 +188,22 @@ class StallTestCase:
 
 
 @dataclass(frozen=True)
+class VersionLostTestCase:
+    description: str
+    lost: int
+    expected_sends: int
+    expected_receipts: int
+
+
+@dataclass(frozen=True)
+class NotResentTestCase:
+    description: str
+    sql: str
+    expected_sent: list[str]
+    expected_error: str
+
+
+@dataclass(frozen=True)
 class CheckTestCase:
     description: str
     failing_checks: frozenset[int]

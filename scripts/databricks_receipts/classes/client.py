@@ -28,6 +28,8 @@ from scripts.databricks_receipts.constants import (
     HTTP_SERVER_ERROR,
     POLL_SECONDS,
     REPLY_LOST,
+    RESEND_ATTEMPTS,
+    RESENT_WHEN_LOST,
     STATE_FAILED,
     STATE_SUCCEEDED,
     STATEMENTS_PATH,
@@ -194,3 +196,14 @@ class Client:
         if status["state"] != STATE_SUCCEEDED:
             raise RefereeError(f"{sql[:200]!r} failed: {row_of(status.get('error') or {})}")
         return reply
+
+    def require_again(self, *, sql: str) -> Row:
+        """A referee statement on RESENT_WHEN_LOST, sent again up to RESEND_ATTEMPTS times."""
+        if sql not in RESENT_WHEN_LOST:
+            raise RefereeError(f"{sql[:200]!r} is not on the allow-list of statements sent again")
+        for _ in range(RESEND_ATTEMPTS):
+            try:
+                return self.require(sql=sql, schema=None)
+            except ReplyLost:
+                time.sleep(HTTP_PAUSE_SECONDS)
+        return self.require(sql=sql, schema=None)

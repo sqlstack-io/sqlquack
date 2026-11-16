@@ -45,6 +45,8 @@ STATES_PENDING: frozenset[str] = frozenset({"PENDING", "RUNNING"})
 STATES_STOPPED: frozenset[str] = frozenset({"CANCELED", "CLOSED"})
 VERSION_QUERY: str = "SELECT current_version()"
 VERSION_SECONDS: float = 60.0
+RESENT_WHEN_LOST: frozenset[str] = frozenset({VERSION_QUERY})
+RESEND_ATTEMPTS: int = 3
 DROP_ATTEMPTS: int = 3
 
 ACCEPTED: str = "accepted"
