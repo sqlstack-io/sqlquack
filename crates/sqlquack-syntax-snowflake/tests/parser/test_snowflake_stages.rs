@@ -80,6 +80,24 @@ fn given_a_double_slash_after_a_stage_when_parsing_then_it_is_the_stage_path() {
             pointer: "/0/stage_command/stage/stage_reference/path",
             expected_value: json!(null),
         },
+        ProjectionTestCase {
+            description: "// after a semicolon that ends a stage is a comment",
+            sql: "LIST @s1;// a comment\n",
+            pointer: "/0/stage_command/stage/stage_reference/stage_name/parts/0/name",
+            expected_value: json!("s1"),
+        },
+        ProjectionTestCase {
+            description: "// after a closing parenthesis that ends a stage's options is a comment",
+            sql: "SELECT * FROM @s1 ( FILE_FORMAT => f1 )// a comment\n;",
+            pointer: "/0/select/from/expressions/0/stage_reference/stage_name/parts/0/name",
+            expected_value: json!("s1"),
+        },
+        ProjectionTestCase {
+            description: "// after a quoted name holding an @ is a comment",
+            sql: "SELECT \"a@b\"// a comment\n;",
+            pointer: "/0/select/expressions/0/column/name/name",
+            expected_value: json!("a@b"),
+        },
     ];
     for test_case in test_cases {
         assert_eq!(
