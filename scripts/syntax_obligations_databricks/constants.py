@@ -267,6 +267,7 @@ DB_REPEAT_FILLS: dict[tuple[str, str], str] = {
     ("alias", "v1"): "v2",
     ("var_name", "v1"): "v2",
     ("key", "'k'"): "'k2'",
+    ("key1", "'k1'"): "'k2'",
     ("option_key", "'k'"): "'k2'",
     ("property_key", "'k'"): "'k2'",
     ("key_column", "c1"): "c2",
@@ -429,6 +430,7 @@ FORM_FILLS: dict[str, dict[str, str]] = {
     "db.expressions.names-identifier-clause.identifier.syntax": {"str_expr": "'c1'"},
     "db.functions.current-time": {"precision": "3"},
     "db.functions.current-timestamp": {"precision": "6"},
+    "db.functions.now": {"precision": "6"},
     "db.functions.ai-top-drivers": {
         "dimensions": "array ( 'c1' )",
         "aggregation": "'sum'",

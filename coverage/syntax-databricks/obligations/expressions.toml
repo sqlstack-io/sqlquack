@@ -378,6 +378,14 @@ required = true
 note = "the form without its required ) in [ ( <p> ) ]"
 
 [[obligation]]
+id = "db.expressions.decfloat-type.o008"
+kind = "operand_type_class"
+required = true
+target = "<p>"
+anchor = "doc.data-types.decfloat-type / Syntax"
+note = "a string where the page documents an integer"
+
+[[obligation]]
 id = "db.expressions.decimal-type.o001"
 kind = "positive"
 required = true
@@ -458,6 +466,22 @@ id = "db.expressions.decimal-type.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ( <p> [ , <s> ] ) ]"
+
+[[obligation]]
+id = "db.expressions.decimal-type.o015"
+kind = "operand_type_class"
+required = true
+target = "<p>"
+anchor = "doc.data-types.decimal-type / Syntax"
+note = "a string where the page documents an integer"
+
+[[obligation]]
+id = "db.expressions.decimal-type.o016"
+kind = "operand_type_class"
+required = true
+target = "<s>"
+anchor = "doc.data-types.decimal-type / Syntax"
+note = "a string where the page documents an integer"
 
 [[obligation]]
 id = "db.expressions.decimal-type.bd.o007"
@@ -1400,6 +1424,22 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "db.expressions.geography-type.o009"
+kind = "required_operand_missing"
+required = true
+target = "<srid>"
+anchor = "doc.data-types.geography-type / Syntax"
+note = "the type without its srid, recorded to compare with the ( ANY ) spelling"
+
+[[obligation]]
+id = "db.expressions.geography-type.o010"
+kind = "operand_type_class"
+required = true
+target = "<srid>"
+anchor = "doc.data-types.geography-type / Syntax"
+note = "a string where the page documents an integer srid"
+
+[[obligation]]
 id = "db.expressions.geometry-type.o001"
 kind = "positive"
 required = true
@@ -1441,6 +1481,22 @@ id = "db.expressions.geometry-type.o007"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.expressions.geometry-type.o009"
+kind = "required_operand_missing"
+required = true
+target = "<srid>"
+anchor = "doc.data-types.geometry-type / Syntax"
+note = "the type without its srid, recorded to compare with the ( ANY ) spelling"
+
+[[obligation]]
+id = "db.expressions.geometry-type.o010"
+kind = "operand_type_class"
+required = true
+target = "<srid>"
+anchor = "doc.data-types.geometry-type / Syntax"
+note = "a string where the page documents an integer srid"
 
 [[obligation]]
 id = "db.expressions.identifiers.subscript-dot.o001"
@@ -3997,6 +4053,14 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "db.expressions.time-type.time.syntax.o007"
+kind = "operand_type_class"
+required = true
+target = "<p>"
+anchor = "doc.data-types.time-type / Syntax"
+note = "a string where the page documents an integer"
+
+[[obligation]]
 id = "db.expressions.timestamp-ntz-type.timestamp-ntz.o001"
 kind = "positive"
 required = true
@@ -4033,6 +4097,14 @@ id = "db.expressions.timestamp-ntz-type.timestamp-ntz.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ ( <p> ) ]"
+
+[[obligation]]
+id = "db.expressions.timestamp-ntz-type.timestamp-ntz.o008"
+kind = "operand_type_class"
+required = true
+target = "<p>"
+anchor = "doc.data-types.timestamp-ntz-type / Syntax"
+note = "a string where the page documents an integer"
 
 [[obligation]]
 id = "db.expressions.timestamp-ntz-type.timestamp-ntz.literals.o001"

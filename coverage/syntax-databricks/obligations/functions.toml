@@ -9062,6 +9062,14 @@ required = true
 note = "the form without its required ) in [ ( [ <precision> ] ) ]"
 
 [[obligation]]
+id = "db.functions.current-timestamp.o010"
+kind = "operand_type_class"
+required = true
+target = "<precision>"
+anchor = "doc.functions.current_timestamp / Syntax"
+note = "a string where the page documents an INTEGER literal precision"
+
+[[obligation]]
 id = "db.functions.current-timezone.o001"
 kind = "positive"
 required = true
@@ -9352,6 +9360,14 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "db.functions.date-add3.o022"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.date_add3 / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
 id = "db.functions.date-diff.o001"
 kind = "positive"
 required = true
@@ -9490,6 +9506,14 @@ id = "db.functions.date-diff.o024"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }"
+
+[[obligation]]
+id = "db.functions.date-diff.o025"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.date_diff / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
 
 [[obligation]]
 id = "db.functions.date-format.o001"
@@ -9819,6 +9843,14 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "db.functions.dateadd.o022"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.dateadd / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
 id = "db.functions.dateadd2.o001"
 kind = "positive"
 required = true
@@ -10021,6 +10053,14 @@ id = "db.functions.datediff3.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.datediff3.o021"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.datediff3 / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
 
 [[obligation]]
 id = "db.functions.day.o001"
@@ -11251,6 +11291,14 @@ id = "db.functions.extract.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.extract.o009"
+kind = "negative_neighbour"
+required = true
+target = "("
+anchor = "doc.functions.extract / Syntax"
+note = "the call without its required ( keeping its documented keyword operand, beside the case that writes 1 there"
 
 [[obligation]]
 id = "db.functions.factorial.o001"
@@ -15046,6 +15094,14 @@ id = "db.functions.http-request.o029"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.http-request.o036"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+anchor = "doc.functions.http_request / Syntax"
+note = "two different named parameters; the page says a parameter given more than once is an error"
 
 [[obligation]]
 id = "db.functions.hypot.o001"
@@ -20725,62 +20781,63 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.map.o002"
+id = "db.functions.map.o012"
 kind = "option_present"
 required = true
-target = "[ <key1> , <value1> ]"
+target = "[ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
 
 [[obligation]]
-id = "db.functions.map.o003"
+id = "db.functions.map.o013"
 kind = "option_absent"
 required = true
-target = "[ <key1> , <value1> ]"
+target = "[ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
 
 [[obligation]]
-id = "db.functions.map.o004"
+id = "db.functions.map.o014"
 kind = "required_operand_missing"
 required = true
-target = "<key1> in [ <key1> , <value1> ]"
+target = "<key1> in [ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
 note = "omit <key1>"
 
 [[obligation]]
-id = "db.functions.map.o005"
+id = "db.functions.map.o015"
 kind = "operand_type_class"
 required = true
-target = "<key1> in [ <key1> , <value1> ]"
+target = "<key1> in [ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.map.o006"
+id = "db.functions.map.o016"
+kind = "required_operand_missing"
+required = true
+target = "<value1> in [ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
+note = "omit <value1>"
+
+[[obligation]]
+id = "db.functions.map.o017"
 kind = "operand_type_class"
 required = true
-target = "<value1> in [ <key1> , <value1> ]"
+target = "<value1> in [ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.map.o007"
+id = "db.functions.map.o018"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
+target = "[ , <key1> , <value1> ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "db.functions.map.o008"
+id = "db.functions.map.o019"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <key1> , <value1> ... ]"
 
 [[obligation]]
 id = "db.functions.map.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "db.functions.map.o011"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "db.functions.map-concat.o001"
@@ -35500,6 +35557,14 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "db.functions.timediff.o021"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.timediff / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
 id = "db.functions.timestamp.o001"
 kind = "positive"
 required = true
@@ -35743,6 +35808,14 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "db.functions.timestampadd.o022"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.timestampadd / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
 id = "db.functions.timestampdiff.o001"
 kind = "positive"
 required = true
@@ -35853,6 +35926,14 @@ id = "db.functions.timestampdiff.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o021"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.timestampdiff / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
 
 [[obligation]]
 id = "db.functions.tinyint.o001"

@@ -6087,3 +6087,199 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required ("
 reason = "the page's own examples set one variable without parentheses (SET VAR myvar1 = 5), so the variable list without its ( and ) is valid"
+
+[[reading]]
+form = "db.functions.map"
+grammar_sha256 = "a24a68b1adecd4f8c2440fb81152799468cdc9c1403bac7ba52e27bf769063e9"
+grammar = ["MAP ( [ <key1> , <value1> [ , <key1> , <value1> ... ] ] )"]
+reason = "the [ , ... ] continues the list with another key and value pair (keyN and valueN in the page's Arguments; its example: map(1.0, '2', 3.0, '4')); the renderer otherwise repeats only the value (MAP ( 'k1' , 1 , 1 )), an odd argument count the page's pairs rule out, as DECODE's reading records"
+
+[[limit]]
+form = "db.functions.extract"
+kind = "negative_neighbour"
+target = "("
+note = "the call without its required ( keeping its documented keyword operand, beside the case that writes 1 there"
+anchor = "doc.functions.extract / Syntax"
+sql = "SELECT ( EXTRACT YEAR FROM v1 )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "db.functions.date-add3"
+kind = "operand_type_class"
+target = "<unit>"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+anchor = "doc.functions.date_add3 / Syntax"
+sql = "SELECT ( DATE_ADD ( 'MICROSECOND' , 1 , 1 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.dateadd"
+kind = "operand_type_class"
+target = "<unit>"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+anchor = "doc.functions.dateadd / Syntax"
+sql = "SELECT ( DATEADD ( 'MICROSECOND' , 1 , 1 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.datediff3"
+kind = "operand_type_class"
+target = "<unit>"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+anchor = "doc.functions.datediff3 / Syntax"
+sql = "SELECT ( DATEDIFF ( 'MICROSECOND' , 1 , 1 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.date-diff"
+kind = "operand_type_class"
+target = "<unit>"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+anchor = "doc.functions.date_diff / Syntax"
+sql = "SELECT ( DATE_DIFF ( 'MICROSECOND' , 1 , 1 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.http-request"
+kind = "option_present"
+target = "[ , ... ]"
+note = "two different named parameters; the page says a parameter given more than once is an error"
+anchor = "doc.functions.http_request / Syntax"
+sql = "SELECT ( HTTP_REQUEST ( CONN => 'c1' , METHOD => 'GET' ) )"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.functions.current-timestamp"
+kind = "operand_type_class"
+target = "<precision>"
+note = "a string where the page documents an INTEGER literal precision"
+anchor = "doc.functions.current_timestamp / Syntax"
+sql = "SELECT ( CURRENT_TIMESTAMP ( 'x' ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.geography-type"
+kind = "required_operand_missing"
+target = "<srid>"
+note = "the type without its srid, recorded to compare with the ( ANY ) spelling"
+anchor = "doc.data-types.geography-type / Syntax"
+sql = "SELECT CAST ( NULL AS GEOGRAPHY )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.geography-type"
+kind = "operand_type_class"
+target = "<srid>"
+note = "a string where the page documents an integer srid"
+anchor = "doc.data-types.geography-type / Syntax"
+sql = "SELECT CAST ( NULL AS GEOGRAPHY ( 'x' ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.geometry-type"
+kind = "required_operand_missing"
+target = "<srid>"
+note = "the type without its srid, recorded to compare with the ( ANY ) spelling"
+anchor = "doc.data-types.geometry-type / Syntax"
+sql = "SELECT CAST ( NULL AS GEOMETRY )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.geometry-type"
+kind = "operand_type_class"
+target = "<srid>"
+note = "a string where the page documents an integer srid"
+anchor = "doc.data-types.geometry-type / Syntax"
+sql = "SELECT CAST ( NULL AS GEOMETRY ( 'x' ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.decimal-type"
+kind = "operand_type_class"
+target = "<p>"
+note = "a string where the page documents an integer"
+anchor = "doc.data-types.decimal-type / Syntax"
+sql = "SELECT CAST ( NULL AS DECIMAL ( 'x' ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.decimal-type"
+kind = "operand_type_class"
+target = "<s>"
+note = "a string where the page documents an integer"
+anchor = "doc.data-types.decimal-type / Syntax"
+sql = "SELECT CAST ( NULL AS DECIMAL ( 10 , 'x' ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.decfloat-type"
+kind = "operand_type_class"
+target = "<p>"
+note = "a string where the page documents an integer"
+anchor = "doc.data-types.decfloat-type / Syntax"
+sql = "SELECT CAST ( NULL AS DECFLOAT ( 'x' ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.time-type.time.syntax"
+kind = "operand_type_class"
+target = "<p>"
+note = "a string where the page documents an integer"
+anchor = "doc.data-types.time-type / Syntax"
+sql = "SELECT CAST ( NULL AS TIME ( 'x' ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.timestamp-ntz-type.timestamp-ntz"
+kind = "operand_type_class"
+target = "<p>"
+note = "a string where the page documents an integer"
+anchor = "doc.data-types.timestamp-ntz-type / Syntax"
+sql = "SELECT CAST ( NULL AS TIMESTAMP_NTZ ( 'x' ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.timediff"
+kind = "operand_type_class"
+target = "<unit>"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+anchor = "doc.functions.timediff / Syntax"
+sql = "SELECT ( TIMEDIFF ( 'MICROSECOND' , 1 , 1 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.timestampadd"
+kind = "operand_type_class"
+target = "<unit>"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+anchor = "doc.functions.timestampadd / Syntax"
+sql = "SELECT ( TIMESTAMPADD ( 'MICROSECOND' , 1 , 1 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.timestampdiff"
+kind = "operand_type_class"
+target = "<unit>"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+anchor = "doc.functions.timestampdiff / Syntax"
+sql = "SELECT ( TIMESTAMPDIFF ( 'MICROSECOND' , 1 , 1 ) )"
+context = "raw"
+expect = "observe"

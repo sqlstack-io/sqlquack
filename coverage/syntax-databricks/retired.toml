@@ -2497,3 +2497,17 @@ reason = "the COLLATION parameter form without its COLLATION keyword is a generi
 ids = [
   "db.transaction_session.collation.o005",
 ]
+
+[[retired]]
+retired_in = "c6d6b2907551115b9fc654fdd85809712ea6aad6"
+reason = "MAP's [ , ... ] is read as a further key and value pair, as DECODE's is, so the obligations of the bare continuation that repeated only the value give way to those of the optional pair"
+ids = [
+  "db.functions.map.o002",
+  "db.functions.map.o003",
+  "db.functions.map.o004",
+  "db.functions.map.o005",
+  "db.functions.map.o006",
+  "db.functions.map.o007",
+  "db.functions.map.o008",
+  "db.functions.map.o011",
+]
