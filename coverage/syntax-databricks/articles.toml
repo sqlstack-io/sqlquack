@@ -269,11 +269,11 @@ article_sha256 = "2b817a2210883e1d3f9c803041f802e6a4e1b11f51ae1ae9728797ef5f1eb7
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_analyze_sentiment"
-article_sha256 = "59e2434f3652c75ca87dc6285918bed0571171b7582cf8a9928895961e95e069"
+article_sha256 = "fc2e5b58610b06c7f5c11e78911ee64c0040a37aca14acfea2587f01003be6cb"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_classify"
-article_sha256 = "f832e5ca1401c6957c512f469bc9d2b69ac8c03d9f3874e35dd3b279d9fd448a"
+article_sha256 = "4a21fa0957d5d2d14e7b9879d45c733d3f38012ea086c9a9eae41711fe319066"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_decide"
@@ -285,15 +285,15 @@ article_sha256 = "0b01fb03d6867c707ebca2c84d3bf084de77a6ac6aa7921b6f11ce898a819c
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_enrich"
-article_sha256 = "7da30d8006779595fe84b664a3b214f00b4e9992488030cf292239c3d5609c0e"
+article_sha256 = "5ee3534d843bc35f8b4cfd04b7f06cd8f733f57a244d376993894acc6ca066cc"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_extract"
-article_sha256 = "9fcdf879e0ed52f27c52f36d67e4cec4d768b85074805c18193b783ae516daf2"
+article_sha256 = "d58d85a3def5e58d3205db976e3a1b871e2d5a525d5d49d038d4d681fcd289f0"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_fix_grammar"
-article_sha256 = "50cc9afbb1d99d60018b07bc0b0caf9a9d88a70827ff7d8afc6044d074e2bd17"
+article_sha256 = "5e6cf48895094f019d4b32b26f5314556caa052b013605825fa4d5c8346030a1"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_forecast"
@@ -301,7 +301,7 @@ article_sha256 = "71987d85f56aa54225e357c3704934f5a4798deabb5d8045d9220be5201ce3
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_gen"
-article_sha256 = "c0f95e3b5dc8626f61546083a20b5d528c886a6e8be4ce9ac3df8c2347a52691"
+article_sha256 = "58fd007927fc8fb5253e549e350a61289d0e9dfcd7da0e26c000242f00d78e70"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_generate_text"
@@ -309,11 +309,11 @@ article_sha256 = "4256aa446ed5c614f4791534216d7bea6c60fa3fd36f7a312edcc1b56d7860
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_mask"
-article_sha256 = "1f6e1653db2bb620c01c74c6e3f05dd4ea610016894a79b03aae943ab4a6cefc"
+article_sha256 = "1fe5bcc709ad673d5fbf5011c3ef51fd69ceb7930dea8d489be7cdbd605ab69f"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_parse_document"
-article_sha256 = "b3c5843165a3c62003142eb602cbec91a566870e68a36739fffe72930a62604c"
+article_sha256 = "f9bb73b498d7b336dbd271d51b9c3f3be8566a7b2ba699b6360d940d3cab6683"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_predict_class"
@@ -337,11 +337,11 @@ article_sha256 = "9c00f6448dfe256a40aeb8d3fa3f9dce6452f2805067951370485f063d7bd2
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_similarity"
-article_sha256 = "aa2a2352da314730adba233f584d2f0aad7cf8a210fbd059b10aa6147ccb2012"
+article_sha256 = "727a26ef75634a332ca975e3bcf97cc532a582e8526e49fdc905da4608c88f27"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_summarize"
-article_sha256 = "508ceccd2984359263982ece509c90dd73dd8ecf7981ec2ec447253e05195ba3"
+article_sha256 = "d15f1e38df622867ba3da7635144625604f7e7b32f27306981e90ada1a0b51ea"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_top_drivers"
@@ -353,7 +353,7 @@ article_sha256 = "011179d6acd8f3a2a7aefbd88beb589ffb5cdd23d2038f56aeeee77d1c2bb3
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_translate"
-article_sha256 = "b51a58cd69904702ec350835fa99c15a9771c70af1c91fdf895500f37f6fe3c2"
+article_sha256 = "48c27125d462a41bee27c2eecf156f41382c5d643e9b30fd25604bf74d25cd75"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/ampersandsign"
@@ -857,7 +857,7 @@ article_sha256 = "17df74976ca3e245d03c4425eb83d71a497c4b6d41675db484396bfceb23bc
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/date"
-article_sha256 = "6804cdda6d3507a0fb40a43c999ed9644ca92ad8654e7daa05d98f06935dcd9b"
+article_sha256 = "c32acc22da837fc0a678cf637355219219740dc310e3ec6fcf70f64131ead63c"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/date_add"
@@ -1825,7 +1825,7 @@ article_sha256 = "294a2af598ff15e23efd1ef96601350e2c45f22a6a097ffa9e7fd9ff1e37a1
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/max_by"
-article_sha256 = "961ff9aaed6a0b621bdf162ad9f265c86f5041118a53c803b2a4ebc68131f9d2"
+article_sha256 = "7e67b957e958ba4cc7743e83d9f329bf5ba44aaa985d9e8f7df95d880e014552"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/md5"
@@ -1849,7 +1849,7 @@ article_sha256 = "30f0242e857e4268f3586ce3881cab6eccf74217f575c3bb3123502b975fcc
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/min_by"
-article_sha256 = "f1d9812369ae5faef8bcdf22f311781585359ad65795b9c47c18aff64127461d"
+article_sha256 = "520d7b587d941bec73700b1daa192f4cd1b16553ff524389d4227e0b57479956"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/minussign"
@@ -2077,7 +2077,7 @@ article_sha256 = "9b5d4dad2fdbb851e760de528c6a42135ff9b45a2adec82eaa2313d5885f23
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/read_files"
-article_sha256 = "03dd58a8b47efadb51a304615936b4f08d00b2bb23e48a854e7cec276cf9ae80"
+article_sha256 = "7e71a9f1686ed82464efde6ea1f00d55579937a1718f1647e8f08313457d0c0f"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/read_kafka"
@@ -2085,11 +2085,11 @@ article_sha256 = "359c4b95c9392ae6a14a4ae3eaafe6017badfe244d9139baf492d6285f41a9
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/read_kinesis"
-article_sha256 = "b52265da2dacc9b8e4295cdcb53d63dab186798820cdd8b94d4c549f9da2216e"
+article_sha256 = "dacff0b6b08f3ec24f10b6a4a1eec0740c44feee5ddd716379bcf312884c99fe"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/read_pubsub"
-article_sha256 = "82c6519e6e383eba03eee0b425dd0ef1dcc2b64830362fbe78fa5b964a3cf1b4"
+article_sha256 = "d57710a87804328751ab5254c5391eb985657146c3845ff004f2cdeca02f59bd"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/read_pulsar"
@@ -2265,7 +2265,7 @@ article_sha256 = "ac1c24e40f93fa8ad8800625828a9f48eb96cd0e9aba72f9c103e312c98c8d
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/secret"
-article_sha256 = "36ebbdc92806c2248be1b3cbd647f323674ad6ded20c4a553838413bab0e0bdb"
+article_sha256 = "f05db6d3cdf469f3a5632dfe4c699f7277fab1d81f0a5076dc49504dfbe93fb8"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/sentences"
@@ -3429,7 +3429,7 @@ article_sha256 = "b0b05072bc57614c41bc7461f5a6638173cf2ceacf08a7173fda2948838820
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/window"
-article_sha256 = "4ff4e213b6bbf2097b84e37d1bfa741f6431751e6d97a8b21ba20da7ce4a902e"
+article_sha256 = "d19f6aa31042512101a5b66d6b4fb666f7d78d9523ce1bbde4ee9007dbcd7d58"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/functions/window_time"
@@ -4245,7 +4245,7 @@ article_sha256 = "8d29fff32213a31b6ec91449b4f5566cb97ea9d6d7fbcc1fce7f0ee4f42826
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-aux-show-volumes-dropped"
-article_sha256 = "9ec4f7ea9e8873b8496d595b2100578ae6e12304f4ab0615e95c7bd69b858d7f"
+article_sha256 = "a4306f1fa6e4f5452b946a6d9d9611ca6db46eb887f88dc82b0ec0928dcffba8"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-aux-sync"
@@ -4413,15 +4413,15 @@ article_sha256 = "1c514640fe87c19ac6344c15e9fa99496f50bada34a3a37545ec14c1a585b4
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-ddl-create-sql-function"
-article_sha256 = "f8c98b8a0af433d81785bb7ca35dfe8f7816cc5b8df1752ef1333a4ebf8ab0fe"
+article_sha256 = "979444d82fc697c6cffb42a85a4544fe2497d57a184c8bdedfd4598fcfd88c17"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-ddl-create-streaming-table"
-article_sha256 = "c54c85679d317925e97c72939c5315883173f724cfddcc181d1669e392345fbd"
+article_sha256 = "429b0d427b3c9e66fd41f8b5bf65e0e6b1beb143a0aa6298e9b2bfb276413d9c"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-ddl-create-streaming-table-auto-cdc"
-article_sha256 = "56336639a20c68194ed0771b5a5368ee5943814ce2999d94380805d230eedb20"
+article_sha256 = "fbd75eb9f445838a860926792b493ba6c41a2a7d40df3b7c4eb17afb3063c123"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-ddl-create-table"
@@ -4441,7 +4441,7 @@ article_sha256 = "39ef6c010b7abdd8896b17aedb6bbabbd7d3dcb498d7b148fe01828221b4c3
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-ddl-create-table-using"
-article_sha256 = "5274dace556673f906dddc68afb930d0f105451144975b4c99ba01740d2bb206"
+article_sha256 = "0f15f08135ad8060cc3d59eb6ff7d4b524cf9f585577089670c3396df2f57161"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-ddl-create-view"
@@ -4553,11 +4553,11 @@ article_sha256 = "4c4a5d6bd87e673bc13f14c5b37fa6c3b6248edabf75304742cf23dcde8353
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-ddl-undrop-table"
-article_sha256 = "d8157a9accb600fa97978ea21e47c91f2393bb1a16b31a95a9fbcfc90263d30a"
+article_sha256 = "8dd02354c848cef99785401b00b938dee67805f6bcf60f22ae3ba3debdcea3c3"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-ddl-undrop-volume"
-article_sha256 = "9d2a02f4db923bd30860863e607234ee46705ea32f253e53c56d97a7f7d26234"
+article_sha256 = "0db45d44af8a984d11a3eb2b5d18efe086119a421713667b718fbbab4a7b3453"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-ddl-unset-tag"
@@ -4717,7 +4717,7 @@ article_sha256 = "4cda2589b5e4baa428af1c183b870e4d09a4d44692c542fd9f9561cd709a3e
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-qry-select-unpivot"
-article_sha256 = "fbbea26372466b0e8b785b8f35b0c1bb47bd26c2c6695af8f6bb5df8c0bf21cb"
+article_sha256 = "7455935864ce2b67d8907f894099f70236594c5873ac0c6f2ddc8383891f73b9"
 
 [[article]]
 url = "https://docs.databricks.com/aws/en/sql/language-manual/sql-ref-syntax-qry-select-values"

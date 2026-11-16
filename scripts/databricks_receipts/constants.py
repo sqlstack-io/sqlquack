@@ -7,12 +7,12 @@ import re
 from scripts.databricks_receipts.models import SnapshotKind
 
 ENGINE: str = "databricks"
-ENGINE_VERSION: str = "2026.44"
+ENGINE_VERSION: str = "2026.45"
 RECEIPT_FORMAT: str = "sqlquack-syntax-receipt/2"
 RUN_AUDIT_FORMAT: str = "sqlquack-databricks-run-audit/1"
 CAPTURE: str = "execute_autocommit_in_throwaway_database"
 PARSER_CHECK: str = "whole_text"
-RUN_PREFIX: str = "databricks-2026.44-"
+RUN_PREFIX: str = "databricks-2026.45-"
 CATALOG: str = "workspace"
 SCHEMA_PREFIX: str = "sqlquack_referee_"
 

@@ -5,12 +5,12 @@
 # of the XML as fetched, a record of the fetch rather than a pin.
 
 [[index]]
-name = "https://docs.databricks.com/aws/en/sitemap.xml (retrieved 2026-11-06T17:53:22Z)"
-sha256 = "2709cf3fe294a163a44b4e45b8b358ee085712816d3a501151a225271bdb910c"
+name = "https://docs.databricks.com/aws/en/sitemap.xml (retrieved 2026-11-16T07:55:39Z)"
+sha256 = "11d0a1dc601c15a346d5b4573f9b5c043ac35eaa8687375e07c0211668b43d97"
 
 [[index]]
-name = "language-manual page set: 1191 pages as `<article sha256>  <url>` lines (Databricks SQL 2026.44)"
-sha256 = "4e0530887a5bc142869a1a452947bea7d06248ffa6b89f8a9f3e78a57660abd0"
+name = "language-manual page set: 1191 pages as `<article sha256>  <url>` lines (Databricks SQL 2026.45)"
+sha256 = "250b3f3052922e09e895a4dc6feef1357ab35c0805e87a844474f1071b7aea9f"
 
 [[index]]
 name = "apache/spark v4.2.0 (32f7299601108917fb01920a54e084595b7b3bf8) sql/api/src/main/antlr4/org/apache/spark/sql/catalyst/parser/SqlBaseLexer.g4"

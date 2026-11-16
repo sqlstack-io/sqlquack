@@ -2660,14 +2660,6 @@ sequences = [
 reason = "undocumented: !< as a spelling of >=; the comparison operator pages write >= only"
 
 [[gap]]
-rule = "primaryExpression"
-alternative = 17
-sequences = [
-  "… : .",
-]
-reason = "prose: sql-ref-json-path-expression names the : operator in its text; its syntax block writes the path after it, which the audit reads as no keyword"
-
-[[gap]]
 rule = "unitInMultiUnits"
 alternative = 1
 sequences = [

@@ -1,6 +1,6 @@
 # Databricks SQL syntax catalogue
 
-The documented SQL syntax of Databricks SQL 2026.44 as stable form IDs `db.<family>.<slug>`,
+The documented SQL syntax of Databricks SQL 2026.45 as stable form IDs `db.<family>.<slug>`,
 with the same layout and checker as the Snowflake root in `coverage/syntax`, the PostgreSQL
 root in `coverage/syntax-postgres` and the DuckDB root in `coverage/syntax-duckdb`.
 `dialect.toml` names the dialect for `syntax-coverage`.
@@ -8,7 +8,7 @@ root in `coverage/syntax-postgres` and the DuckDB root in `coverage/syntax-duckd
 ## Sources
 
 - Documentation: the Databricks SQL language reference
-  (`https://docs.databricks.com/aws/en/sql/language-manual/`), retrieved 2026-11-06. The page
+  (`https://docs.databricks.com/aws/en/sql/language-manual/`), retrieved 2026-11-16. The page
   set is every page of the docs sitemap under the language manual, plus three function pages
   that the function indexes link but the sitemap leaves out (`index_linked` in
   `scripts/syntax_catalogue_databricks`): 1,191 pages. `sources.toml` lists each page with the
@@ -21,7 +21,7 @@ root in `coverage/syntax-postgres` and the DuckDB root in `coverage/syntax-duckd
   Databricks SQL's parser is not published; the Spark grammar it extends is the independent
   check the omission audit reads.
 - Engine: a Databricks SQL serverless warehouse whose `current_version()` reports
-  `dbsql_version` 2026.44. Every receipt records that value.
+  `dbsql_version` 2026.45. Every receipt records that value.
 
 ## Regenerating
 
@@ -113,7 +113,7 @@ listed, and when the lexer has a token that is neither compared nor listed, so a
 or new token is caught. `tests/unit/scripts/syntax_catalogue_databricks/test_review.py` checks
 this guard.
 
-At the pin: 279 rules (3 unwalked), 10,135 keyword sequences, 3,259 gaps under 146 reviewed
+At the pin: 279 rules (3 unwalked), 10,135 keyword sequences, 3,258 gaps under 145 reviewed
 `[[gap]]` rows, 21 reviewed `[[unseen]]` tokens, 427 keywords (47 not catalogued) and 51
 helper option words (6 not catalogued), 0 problems.
 

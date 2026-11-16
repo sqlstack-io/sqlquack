@@ -1331,7 +1331,7 @@ grammar = [
   "FLOW AUTO CDC [ ONCE ] FROM SNAPSHOT ( <snapshot_query> ) [ WITH VERSION ( <version_query> ) ] KEYS ( <key> [ , ... ] ) [ STORED AS { SCD TYPE 1 | SCD TYPE 2 } ] [ TRACK HISTORY ON { <column_list> | * EXCEPT ( <except_column_list> ) } ]",
 ]
 basis = "section"
-article_sha256 = "56336639a20c68194ed0771b5a5368ee5943814ce2999d94380805d230eedb20"
+article_sha256 = "fbd75eb9f445838a860926792b493ba6c41a2a7d40df3b7c4eb17afb3063c123"
 
 [[reading]]
 page = "sql-ref-syntax-aux-describe-provider"

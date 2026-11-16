@@ -210,7 +210,7 @@ class FakeClient(Client):
         return route(sql=sql)
 
     def _version(self, *, sql: str) -> Row:
-        return succeeded([[json.dumps({"dbsql_version": "2026.44"})]])
+        return succeeded([[json.dumps({"dbsql_version": "2026.45"})]])
 
     def _setup(self, *, sql: str) -> Row:
         return succeeded()
