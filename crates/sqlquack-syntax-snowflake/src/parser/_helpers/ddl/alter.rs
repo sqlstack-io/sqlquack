@@ -1195,6 +1195,12 @@ impl Parser {
         let start = self.current;
         self.skip();
         let column_keyword = self.match_token(TokenType::Column);
+        if !column_keyword
+            && self.check(TokenType::Constraint)
+            && self.peek_nth(2).is_some_and(|token| token.token_type == TokenType::LParen)
+        {
+            return Err(self.parse_error("Expected no column list after MODIFY CONSTRAINT <name>"));
+        }
         let typed = self.parse_simple_name().and_then(|name| {
             let action_words = self.written_alter_column_words();
             Ok(AlterTableAction::AlterColumn {

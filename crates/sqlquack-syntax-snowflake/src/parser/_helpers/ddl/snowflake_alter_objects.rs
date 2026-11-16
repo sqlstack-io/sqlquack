@@ -290,8 +290,6 @@ impl Parser {
                 let value = if set {
                     self.expect_token(TokenType::Eq)?;
                     Some(self.parse_alter_value()?)
-                } else if self.match_token(TokenType::Eq) {
-                    Some(self.object_operand()?)
                 } else {
                     None
                 };

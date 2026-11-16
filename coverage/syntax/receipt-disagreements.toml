@@ -110,9 +110,6 @@ other_receipts_contradicted = [
   "sf.adhoc.b-empty-calls.overlay.k08458760827b",
   "sf.adhoc.b-empty-calls.substr.k258c8d80e1b1",
   "sf.adhoc.b-empty-calls.substring.k65232676812e",
-  "sf.ddl.alter-application-package.unset.k7ea5d2c0810f",
-  "sf.ddl.alter-application-package.unset.k803533d89767",
-  "sf.ddl.alter-application-package.unset.kef85ada3c5be",
   "sf.ddl.alter-iceberg-table.set.k1b45ae0957e4",
   "sf.ddl.alter-iceberg-table.set.k6524711a5a35",
   "sf.ddl.alter-iceberg-table.set.kbfb3b393ea34",
@@ -320,20 +317,9 @@ other_receipts_contradicted = [
 
 [syntax_errors_accepted]
 "sf.ddl.alter-cortex-search.set" = ["k4f66bb7c9ff5"]
-"sf.ddl.alter-database.unset-data-retention-time-in-days-max-data-extension-time-in-days-stage-undrop-retention-time-in-days" = [
-  "k08a5ac10d24c",
-  "k4a5bcb72e4bd",
-  "k5c0f60c6cde2",
-]
 "sf.ddl.alter-iceberg-table.unset" = ["ke33c9a12af90"]
-"sf.ddl.alter-table.constraintaction" = [
-  "k14f89fb0eef9",
-  "kc37b8ead754d",
-  "keb8baabd4c81",
-]
 "sf.ddl.alter-tag.set" = ["k7fdfe7d53553"]
 "sf.ddl.create-database.create-database" = ["k3c0dc0ce5fe8"]
-"sf.ddl.create-hybrid-table.table" = ["k5069c51ae2f1"]
 "sf.ddl.create-iceberg-table-rest.table-as-select" = [
   "k46e441bba1ae",
   "k8a423a457267",
@@ -353,18 +339,13 @@ other_receipts_contradicted = [
 ]
 "sf.ddl.create-semantic-view.create-or-alter-semantic" = ["kde5a57ccc35a"]
 "sf.ddl.create-semantic-view.create-semantic-view-tables" = ["kf0a8b4db490a"]
-"sf.ddl.create-table.create-or-alter-table" = ["k808bd6a0f704"]
-"sf.ddl.create-table.create-table" = [
-  "k294b45271663",
-  "k81e6795ae05a",
-]
+"sf.ddl.create-table.create-table" = ["k294b45271663"]
 "sf.ddl.drop-iceberg-table" = ["k0c6d88e813a7"]
 "sf.functions.system-explain-plan-json" = ["k34b4a27a76b5"]
 "sf.functions.to-query" = [
   "k52f4b25a2004",
   "kdfe11763c33e",
 ]
-"sf.transaction_session.show-parameters" = ["k087afefdac13"]
 "sf.utility.execute-inference-job-service" = [
   "kd484841cc87f",
   "kfa70a352f258",

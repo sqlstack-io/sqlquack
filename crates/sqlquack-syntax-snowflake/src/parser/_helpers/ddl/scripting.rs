@@ -717,6 +717,9 @@ impl Parser {
                 } else {
                     None
                 };
+                if scope_obj.is_none() && self.is_snowflake() && matches!(this, "PARAMETERS") {
+                    return Err(self.parse_error("Expected the table SHOW PARAMETERS IN TABLE names"));
+                }
                 (Some("TABLE".to_string()), scope_obj)
             } else if self.match_token(TokenType::View) {
                 let scope_obj = if !self.is_at_end()
