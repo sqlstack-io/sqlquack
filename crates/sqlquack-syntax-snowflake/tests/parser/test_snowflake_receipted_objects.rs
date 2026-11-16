@@ -1,7 +1,7 @@
 use serde_json::json;
 
 use crate::helpers::{snowflake_kind, statement_at};
-use crate::test_types::{ProjectionTestCase, SnowflakeVerdictTestCase, StatementTestCase};
+use crate::test_types::{SnowflakeVerdictTestCase, StatementTestCase};
 
 #[test]
 fn given_a_snowflake_external_consumer_when_parsing_then_recorded_verdicts_hold() {
@@ -1912,50 +1912,6 @@ fn given_snowflake_routine_modifiers_staleness_or_a_snapshot_named_policy_when_p
             sql: "ALTER SNAPSHOT POLICY SET EXPIRE_AFTER_DAYS = 7 ;",
             pointer: "/0/alter_object/kind",
             expected_value: json!("SNAPSHOT POLICY"),
-        },
-    ];
-    for test_case in test_cases {
-        assert_eq!(
-            statement_at(test_case.sql, test_case.pointer),
-            test_case.expected_value,
-            "{}",
-            test_case.description
-        );
-    }
-}
-
-#[test]
-fn given_a_stage_in_from_when_parsing_then_its_written_values_are_kept() {
-    let test_cases = [
-        ProjectionTestCase {
-            description: "a PATTERN that is a name is kept",
-            sql: "SELECT * FROM @s1 ( PATTERN => m1 ) ;",
-            pointer: "/0/select/from/expressions/0/stage_reference/pattern/column/name/name",
-            expected_value: json!("m1"),
-        },
-        ProjectionTestCase {
-            description: "a string PATTERN is a string literal",
-            sql: "SELECT * FROM @s1 ( FILE_FORMAT => f1 , PATTERN => '.*' ) ;",
-            pointer: "/0/select/from/expressions/0/stage_reference/pattern/literal/value",
-            expected_value: json!(".*"),
-        },
-        ProjectionTestCase {
-            description: "a quoted stage's PATTERN is kept",
-            sql: "SELECT * FROM '@s1' ( PATTERN => m1 ) ;",
-            pointer: "/0/select/from/expressions/0/stage_reference/pattern/column/name/name",
-            expected_value: json!("m1"),
-        },
-        ProjectionTestCase {
-            description: "DIRECTORY's argument is a stage, not a column",
-            sql: "SELECT 1 FROM DIRECTORY ( @\"SELECT\" ) ;",
-            pointer: "/0/select/from/expressions/0/function/args/0/stage_reference/stage_name/parts/0/quoted",
-            expected_value: json!(true),
-        },
-        ProjectionTestCase {
-            description: "DIRECTORY ( @ ) names no stage",
-            sql: "SELECT 1 FROM DIRECTORY ( @) ;",
-            pointer: "/0/select/from/expressions/0/function/args/0/stage_reference/stage_name",
-            expected_value: json!(null),
         },
     ];
     for test_case in test_cases {

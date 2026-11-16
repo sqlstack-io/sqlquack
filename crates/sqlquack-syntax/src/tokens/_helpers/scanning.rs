@@ -269,6 +269,15 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
         Some((content_start, content_end))
     }
 
+    /// Whether the text just before the position, up to the last whitespace, is a stage such as `@s1`, so a `//` written straight after it continues its path.
+    fn follows_stage_word(&self) -> bool {
+        let mut start = self.current;
+        while start > 0 && !self.char_at(start - 1).is_whitespace() {
+            start -= 1;
+        }
+        start < self.current && self.char_at(start) == '@'
+    }
+
     /// Skips whitespace and comments; an unterminated block comment is an error at its `/*`.
     pub(crate) fn skip_whitespace(&mut self) -> Result<()> {
         let mut saw_newline = false;
@@ -309,7 +318,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
                     } else {
                         '\0'
                     };
-                    if prev_non_ws == ':' || prev_non_ws == '/' {
+                    if prev_non_ws == ':' || prev_non_ws == '/' || self.follows_stage_word() {
                         break;
                     }
                     self.scan_line_comment(saw_newline);
