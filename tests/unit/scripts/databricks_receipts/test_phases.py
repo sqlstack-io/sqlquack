@@ -82,6 +82,13 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             expected_parse_only=None,
         ),
         PhaseTestCase(
+            description="a volume command that parsed reaches the lookup of its schema",
+            message="NOT_FOUND: Schema 'workspace.s1' does not exist.",
+            sqlstate="42000",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
             description="a reviewed parser message without an error class, after a blank line",
             message="\n50 is not a valid byte length literal, expected syntax: DIGIT+ ('B' | 'K' | "
             "'M' | 'G').\n== SQL (line 1, position 18) ==\nSELECT * FROM t1 TABLESAMPLE ( 50 )\n",

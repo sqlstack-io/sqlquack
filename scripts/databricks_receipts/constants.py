@@ -430,6 +430,7 @@ UNCLASSED_LATER: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"^None\.get$"), RUNTIME_ERROR),
     (re.compile(r"^Filtering (?:user|group) membership is not supported\.$"), UNSUPPORTED_FEATURE),
     (re.compile(r"^NOT_FOUND: Tag policy with name \S+ not found in account "), SEMANTIC_ERROR),
+    (re.compile(r"^NOT_FOUND: Schema '[^']*' does not exist\.$"), SEMANTIC_ERROR),
     (
         re.compile(
             r"^INVALID_PARAMETER_VALUE: credential name can not be provided with a volume path$"
