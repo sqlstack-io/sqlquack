@@ -30,6 +30,7 @@ from tests.unit.scripts.grammar_obligations._test_types import (
     DisputedFormMarkTestCase,
     PackedRefusalTestCase,
     ProbeSettlementTestCase,
+    RenderedCaseTestCase,
     SetupBindingTestCase,
 )
 
@@ -486,36 +487,6 @@ status = "catalogued"
 """
 
 
-def test_given_an_optional_first_item_and_a_bare_continuation_when_building_cases_then_it_continues(
-    tmp_path: Path,
-) -> None:
-    (tmp_path / "catalogue").mkdir()
-    (tmp_path / "catalogue" / "ddl.toml").write_text(GADGET_CATALOGUE)
-    (tmp_path / "limits.toml").write_text("")
-
-    cases: list[Row] = family_cases(
-        root=tmp_path,
-        evidence=tmp_path,
-        family="ddl",
-        setups={},
-        held=frozenset(),
-        unpacked=frozenset({"sf.ddl.create-gadget.gadget"}),
-    )[0]
-
-    numbered: list[tuple[str, Draft]] = family_obligations(
-        root=tmp_path, family="ddl", unpacked=frozenset({"sf.ddl.create-gadget.gadget"})
-    )[0]
-    continued: set[str] = {
-        found
-        for found, draft in numbered
-        if draft.kind == KIND_OPTION_PRESENT and draft.note == "the list continued at least once"
-    }
-    continued_sql: list[str] = [
-        str(case["sql"]) for case in cases if continued & set(case["obligations"])
-    ]
-    assert continued_sql == ["CREATE GADGET v1 ( v1 INT , v1 INT ) ;"]
-
-
 ROUTING_CATALOGUE: str = """
 [[form]]
 id = "sf.ddl.create-event-routing-table"
@@ -527,20 +498,51 @@ status = "catalogued"
 """
 
 
-def test_given_an_event_routing_rule_when_building_cases_then_valid_cases_quote_the_region_group(
-    tmp_path: Path,
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        RenderedCaseTestCase(
+            description="an optional first item with a bare continuation continues the list",
+            catalogue=GADGET_CATALOGUE,
+            unpacked=frozenset({"sf.ddl.create-gadget.gadget"}),
+            sql="CREATE GADGET v1 ( v1 INT , v1 INT ) ;",
+            expected_expect="accept",
+            expected_note="the list continued at least once",
+        ),
+        RenderedCaseTestCase(
+            description="an event routing rule's valid case quotes its region group",
+            catalogue=ROUTING_CATALOGUE,
+            unpacked=frozenset(),
+            sql="CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = 'g1' ) ;",
+            expected_expect="accept",
+            expected_note="the documented form with every required part and no optional part",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_catalogued_form_when_building_cases_then_the_case_renders_as_expected(
+    tmp_path: Path, test_case: RenderedCaseTestCase
 ) -> None:
     (tmp_path / "catalogue").mkdir()
-    (tmp_path / "catalogue" / "ddl.toml").write_text(ROUTING_CATALOGUE)
+    (tmp_path / "catalogue" / "ddl.toml").write_text(test_case.catalogue)
     (tmp_path / "limits.toml").write_text("")
 
     cases: list[Row] = family_cases(
-        root=tmp_path, evidence=tmp_path, family="ddl", setups={}, held=frozenset()
+        root=tmp_path,
+        evidence=tmp_path,
+        family="ddl",
+        setups={},
+        held=frozenset(),
+        unpacked=test_case.unpacked,
+    )[0]
+    numbered: list[tuple[str, Draft]] = family_obligations(
+        root=tmp_path, family="ddl", unpacked=test_case.unpacked
     )[0]
 
-    region_groups: set[str] = {
-        str(case["sql"]).split("REGION_GROUP = ")[1].split(" ")[0]
-        for case in cases
-        if case["expect"] == "accept"
-    }
-    assert region_groups == {"'g1'"}
+    notes: dict[str, str] = {identifier: draft.note for identifier, draft in numbered}
+    by_sql: dict[str, Row] = {str(case["sql"]): case for case in cases}
+    case: Row = by_sql[test_case.sql]
+    assert (
+        case["expect"],
+        test_case.expected_note in {notes[found] for found in case["obligations"]},
+    ) == (test_case.expected_expect, True), test_case.description
