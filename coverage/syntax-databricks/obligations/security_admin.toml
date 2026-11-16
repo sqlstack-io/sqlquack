@@ -305,18 +305,50 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.security_admin.deny.o002"
-kind = "required_operand_missing"
+id = "db.security_admin.deny.o010"
+kind = "alternative"
 required = true
-target = "<privilege_types>"
-note = "omit <privilege_types>"
+target = "{ ALL PRIVILEGES | <privilege_type> [ , ... ] } → ALL PRIVILEGES"
 
 [[obligation]]
-id = "db.security_admin.deny.o003"
+id = "db.security_admin.deny.o011"
+kind = "alternative"
+required = true
+target = "{ ALL PRIVILEGES | <privilege_type> [ , ... ] } → <privilege_type> [ , ... ]"
+
+[[obligation]]
+id = "db.security_admin.deny.o012"
+kind = "required_operand_missing"
+required = true
+target = "<privilege_type>"
+note = "omit <privilege_type>"
+
+[[obligation]]
+id = "db.security_admin.deny.o013"
 kind = "operand_type_class"
 required = true
-target = "<privilege_types>"
-note = "a valid operand"
+target = "<privilege_type>"
+note = "a valid data_type"
+
+[[obligation]]
+id = "db.security_admin.deny.o014"
+kind = "negative_neighbour"
+required = true
+target = "<privilege_type>"
+note = "a string literal in place of <privilege_type>"
+
+[[obligation]]
+id = "db.security_admin.deny.o015"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "db.security_admin.deny.o016"
+kind = "option_absent"
+required = true
+target = "[ , ... ]"
 
 [[obligation]]
 id = "db.security_admin.deny.o004"
@@ -345,6 +377,24 @@ kind = "operand_type_class"
 required = true
 target = "<principal>"
 note = "a valid operand"
+
+[[obligation]]
+id = "db.security_admin.deny.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ALL after DENY"
+
+[[obligation]]
+id = "db.security_admin.deny.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PRIVILEGES"
+
+[[obligation]]
+id = "db.security_admin.deny.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ALL PRIVILEGES | <privilege_type> [ , ... ] }"
 
 [[obligation]]
 id = "db.security_admin.deny.o008"
@@ -391,18 +441,50 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.security_admin.grant.o002"
-kind = "required_operand_missing"
+id = "db.security_admin.grant.o010"
+kind = "alternative"
 required = true
-target = "<privilege_types>"
-note = "omit <privilege_types>"
+target = "{ ALL PRIVILEGES | <privilege_type> [ , ... ] } → ALL PRIVILEGES"
 
 [[obligation]]
-id = "db.security_admin.grant.o003"
+id = "db.security_admin.grant.o011"
+kind = "alternative"
+required = true
+target = "{ ALL PRIVILEGES | <privilege_type> [ , ... ] } → <privilege_type> [ , ... ]"
+
+[[obligation]]
+id = "db.security_admin.grant.o012"
+kind = "required_operand_missing"
+required = true
+target = "<privilege_type>"
+note = "omit <privilege_type>"
+
+[[obligation]]
+id = "db.security_admin.grant.o013"
 kind = "operand_type_class"
 required = true
-target = "<privilege_types>"
-note = "a valid operand"
+target = "<privilege_type>"
+note = "a valid data_type"
+
+[[obligation]]
+id = "db.security_admin.grant.o014"
+kind = "negative_neighbour"
+required = true
+target = "<privilege_type>"
+note = "a string literal in place of <privilege_type>"
+
+[[obligation]]
+id = "db.security_admin.grant.o015"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "db.security_admin.grant.o016"
+kind = "option_absent"
+required = true
+target = "[ , ... ]"
 
 [[obligation]]
 id = "db.security_admin.grant.o004"
@@ -431,6 +513,24 @@ kind = "operand_type_class"
 required = true
 target = "<principal>"
 note = "a valid operand"
+
+[[obligation]]
+id = "db.security_admin.grant.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ALL after GRANT"
+
+[[obligation]]
+id = "db.security_admin.grant.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PRIVILEGES"
+
+[[obligation]]
+id = "db.security_admin.grant.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ALL PRIVILEGES | <privilege_type> [ , ... ] }"
 
 [[obligation]]
 id = "db.security_admin.grant.o008"
@@ -1634,18 +1734,50 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.security_admin.revoke.o002"
-kind = "required_operand_missing"
+id = "db.security_admin.revoke.o010"
+kind = "alternative"
 required = true
-target = "<privilege_types>"
-note = "omit <privilege_types>"
+target = "{ ALL PRIVILEGES | <privilege_type> [ , ... ] } → ALL PRIVILEGES"
 
 [[obligation]]
-id = "db.security_admin.revoke.o003"
+id = "db.security_admin.revoke.o011"
+kind = "alternative"
+required = true
+target = "{ ALL PRIVILEGES | <privilege_type> [ , ... ] } → <privilege_type> [ , ... ]"
+
+[[obligation]]
+id = "db.security_admin.revoke.o012"
+kind = "required_operand_missing"
+required = true
+target = "<privilege_type>"
+note = "omit <privilege_type>"
+
+[[obligation]]
+id = "db.security_admin.revoke.o013"
 kind = "operand_type_class"
 required = true
-target = "<privilege_types>"
-note = "a valid operand"
+target = "<privilege_type>"
+note = "a valid data_type"
+
+[[obligation]]
+id = "db.security_admin.revoke.o014"
+kind = "negative_neighbour"
+required = true
+target = "<privilege_type>"
+note = "a string literal in place of <privilege_type>"
+
+[[obligation]]
+id = "db.security_admin.revoke.o015"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "db.security_admin.revoke.o016"
+kind = "option_absent"
+required = true
+target = "[ , ... ]"
 
 [[obligation]]
 id = "db.security_admin.revoke.o004"
@@ -1674,6 +1806,24 @@ kind = "operand_type_class"
 required = true
 target = "<principal>"
 note = "a valid operand"
+
+[[obligation]]
+id = "db.security_admin.revoke.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ALL after REVOKE"
+
+[[obligation]]
+id = "db.security_admin.revoke.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PRIVILEGES"
+
+[[obligation]]
+id = "db.security_admin.revoke.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { ALL PRIVILEGES | <privilege_type> [ , ... ] }"
 
 [[obligation]]
 id = "db.security_admin.revoke.o008"

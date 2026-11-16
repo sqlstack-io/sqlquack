@@ -28,6 +28,7 @@ from scripts.grammar_obligations.constants import (
     OPEN_PAREN,
     PAIR_SIZE,
     RESERVED_WORD,
+    TOKEN_KEYWORD,
 )
 from scripts.grammar_obligations.exceptions import ObligationError
 from scripts.grammar_obligations.models import Choices, Draft, FormStyle, Node, Rendered, Spec
@@ -254,12 +255,15 @@ def db_choices(self: Renderer, spec: Spec) -> Choices:
 
 
 def _first_operand(*, nodes: tuple[Node, ...], choices: Choices) -> Node | None:
-    """The first operand the case writes: absent options skipped, chosen branches entered."""
+    """The first operand the case writes; a required choice's lone keyword (a unit) counts too."""
     for node in nodes:
         if node.kind == NODE_OPTIONAL and id(node) not in choices.path and not choices.full:
             continue
         if node.branches:
             branch: tuple[Node, ...] = node.branches[choices.branch.get(id(node), 0)]
+            if node.kind != NODE_OPTIONAL and len(branch) == 1:
+                if branch[0].token_kind == TOKEN_KEYWORD and not branch[0].branches:
+                    return branch[0]
             return _first_operand(nodes=branch, choices=choices)
         return node if grammar.placeholder_name(node) else None
     return None

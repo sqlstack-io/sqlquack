@@ -276,6 +276,7 @@ DB_REPEAT_FILLS: dict[tuple[str, str], str] = {
     ("value_name", "'m'"): "'m2'",
     ("option", "o1"): "o2",
     ("property_name", "v1"): "v2",
+    ("privilege_type", "SELECT"): "MODIFY",
     ("property_identifier", "v1"): "v2",
     ("property_string", "'m'"): "'m2'",
     ("function_parameter", "p1 INT"): "p2 INT",
@@ -427,15 +428,11 @@ FORM_FILLS: dict[str, dict[str, str]] = {
     "db.expressions.names-identifier-clause.identifier": {"str_literal": "'c1'"},
     "db.functions.current-time": {"precision": "3"},
     "db.functions.current-timestamp": {"precision": "6"},
-    **dict.fromkeys(
-        (
-            "db.functions.date-add3",
-            "db.functions.dateadd",
-            "db.functions.date-diff",
-            "db.functions.datediff3",
-        ),
-        {"unit": "DAY"},
-    ),
+    "db.functions.ai-top-drivers": {
+        "dimensions": "array ( 'c1' )",
+        "aggregation": "'sum'",
+        "min_support": "0.05",
+    },
     "db.functions.date-part": {"field_str": "'YEAR'"},
     "db.functions.date-trunc": {"unit": "'MONTH'"},
     "db.functions.event-log": {"pipeline_id": "'00000000-0000-0000-0000-000000000000'"},
@@ -528,7 +525,7 @@ FORM_FILLS: dict[str, dict[str, str]] = {
             "db.security_admin.revoke",
             "db.security_admin.show-grant",
         ),
-        {"privilege_types": "SELECT", "securable_object": "TABLE t1"},
+        {"privilege_types": "SELECT", "privilege_type": "SELECT", "securable_object": "TABLE t1"},
     ),
     "db.security_admin.msck": {"object": "TABLE t1"},
     "db.security_admin.principal": {

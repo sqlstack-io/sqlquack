@@ -2587,66 +2587,76 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.query.select-orderby.o002"
+id = "db.query.select-orderby.o026"
 kind = "alternative"
 required = true
-target = "{ { ALL [ <sort_direction> ] [ <nulls_sort_order> ] } | {… → { ALL [ <sort_direction> ] [ <nulls_sort_order> ] }"
+target = "{ { ALL [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } | {… → { ALL [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] }"
 
 [[obligation]]
-id = "db.query.select-orderby.o003"
+id = "db.query.select-orderby.o027"
 kind = "alternative"
 required = true
-target = "{ { ALL [ <sort_direction> ] [ <nulls_sort_order> ] } | {… → { <expression> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ]"
+target = "{ { ALL [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } | {… → { <expression> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ]"
 
 [[obligation]]
-id = "db.query.select-orderby.o004"
+id = "db.query.select-orderby.o028"
 kind = "alternative"
 required = true
-target = "{ ALL [ <sort_direction> ] [ <nulls_sort_order> ] } → ALL [ <sort_direction> ] [ <nulls_sort_order> ]"
+target = "{ ALL [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } → ALL [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.query.select-orderby.o005"
+id = "db.query.select-orderby.o029"
 kind = "option_present"
 required = true
-target = "[ <sort_direction> ]"
+target = "[ ASC | DESC ]"
 
 [[obligation]]
-id = "db.query.select-orderby.o006"
+id = "db.query.select-orderby.o030"
 kind = "option_absent"
 required = true
-target = "[ <sort_direction> ]"
+target = "[ ASC | DESC ]"
 
 [[obligation]]
-id = "db.query.select-orderby.o007"
-kind = "operand_type_class"
-required = true
-target = "<sort_direction> in [ <sort_direction> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.query.select-orderby.o008"
-kind = "option_present"
-required = true
-target = "[ <nulls_sort_order> ]"
-
-[[obligation]]
-id = "db.query.select-orderby.o009"
-kind = "option_absent"
-required = true
-target = "[ <nulls_sort_order> ]"
-
-[[obligation]]
-id = "db.query.select-orderby.o010"
-kind = "operand_type_class"
-required = true
-target = "<nulls_sort_order> in [ <nulls_sort_order> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.query.select-orderby.o011"
+id = "db.query.select-orderby.o031"
 kind = "alternative"
 required = true
-target = "{ <expression> [ <sort_direction> ] [ <nulls_sort_order> ] } → <expression> [ <sort_direction> ] [ <nulls_sort_order> ]"
+target = "[ ASC | DESC ] → ASC"
+
+[[obligation]]
+id = "db.query.select-orderby.o032"
+kind = "alternative"
+required = true
+target = "[ ASC | DESC ] → DESC"
+
+[[obligation]]
+id = "db.query.select-orderby.o033"
+kind = "option_present"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.query.select-orderby.o034"
+kind = "option_absent"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.query.select-orderby.o035"
+kind = "alternative"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS FIRST"
+
+[[obligation]]
+id = "db.query.select-orderby.o036"
+kind = "alternative"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS LAST"
+
+[[obligation]]
+id = "db.query.select-orderby.o037"
+kind = "alternative"
+required = true
+target = "{ <expression> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } → <expression> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
 id = "db.query.select-orderby.o012"
@@ -2663,42 +2673,52 @@ target = "<expression>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.query.select-orderby.o014"
+id = "db.query.select-orderby.o038"
 kind = "option_present"
 required = true
-target = "[ <sort_direction> ] #2"
+target = "[ ASC | DESC ] #2"
 
 [[obligation]]
-id = "db.query.select-orderby.o015"
+id = "db.query.select-orderby.o039"
 kind = "option_absent"
 required = true
-target = "[ <sort_direction> ] #2"
+target = "[ ASC | DESC ] #2"
 
 [[obligation]]
-id = "db.query.select-orderby.o016"
-kind = "operand_type_class"
+id = "db.query.select-orderby.o040"
+kind = "alternative"
 required = true
-target = "<sort_direction> in [ <sort_direction> ] #2"
-note = "a valid operand"
+target = "[ ASC | DESC ] → ASC #2"
 
 [[obligation]]
-id = "db.query.select-orderby.o017"
+id = "db.query.select-orderby.o041"
+kind = "alternative"
+required = true
+target = "[ ASC | DESC ] → DESC #2"
+
+[[obligation]]
+id = "db.query.select-orderby.o042"
 kind = "option_present"
 required = true
-target = "[ <nulls_sort_order> ] #2"
+target = "[ NULLS FIRST | NULLS LAST ] #2"
 
 [[obligation]]
-id = "db.query.select-orderby.o018"
+id = "db.query.select-orderby.o043"
 kind = "option_absent"
 required = true
-target = "[ <nulls_sort_order> ] #2"
+target = "[ NULLS FIRST | NULLS LAST ] #2"
 
 [[obligation]]
-id = "db.query.select-orderby.o019"
-kind = "operand_type_class"
+id = "db.query.select-orderby.o044"
+kind = "alternative"
 required = true
-target = "<nulls_sort_order> in [ <nulls_sort_order> ] #2"
-note = "a valid operand"
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS FIRST #2"
+
+[[obligation]]
+id = "db.query.select-orderby.o045"
+kind = "alternative"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS LAST #2"
 
 [[obligation]]
 id = "db.query.select-orderby.o020"
@@ -2726,10 +2746,34 @@ required = true
 note = "the form without its required ALL after BY"
 
 [[obligation]]
-id = "db.query.select-orderby.o024"
+id = "db.query.select-orderby.o046"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { { ALL [ <sort_direction> ] [ <nulls_sort_order> ] } | { <expression> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] }"
+note = "the form without its required FIRST in [ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.query.select-orderby.o047"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required LAST in [ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.query.select-orderby.o048"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FIRST in [ NULLS FIRST | NULLS LAST ] #2"
+
+[[obligation]]
+id = "db.query.select-orderby.o049"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required LAST in [ NULLS FIRST | NULLS LAST ] #2"
+
+[[obligation]]
+id = "db.query.select-orderby.o050"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { { ALL [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } | { <expression> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] }"
 
 [[obligation]]
 id = "db.query.select-orderby.o025"
@@ -3944,10 +3988,10 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.query.select-sortby.o002"
+id = "db.query.select-sortby.o015"
 kind = "alternative"
 required = true
-target = "{ <expression> [ <sort_direction> <nulls_sort_order> ] } → <expression> [ <sort_direction> <nulls_sort_order> ]"
+target = "{ <expression> [ [ ASC | DESC ] [ NULLS FIRST | NULLS LAST… → <expression> [ [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] ]"
 
 [[obligation]]
 id = "db.query.select-sortby.o003"
@@ -3964,30 +4008,64 @@ target = "<expression>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.query.select-sortby.o005"
+id = "db.query.select-sortby.o016"
 kind = "option_present"
 required = true
-target = "[ <sort_direction> <nulls_sort_order> ]"
+target = "[ [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] ]"
 
 [[obligation]]
-id = "db.query.select-sortby.o006"
+id = "db.query.select-sortby.o017"
 kind = "option_absent"
 required = true
-target = "[ <sort_direction> <nulls_sort_order> ]"
+target = "[ [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] ]"
 
 [[obligation]]
-id = "db.query.select-sortby.o008"
-kind = "operand_type_class"
+id = "db.query.select-sortby.o018"
+kind = "option_present"
 required = true
-target = "<sort_direction> in [ <sort_direction> <nulls_sort_order> ]"
-note = "a valid operand"
+target = "[ ASC | DESC ]"
 
 [[obligation]]
-id = "db.query.select-sortby.o010"
-kind = "operand_type_class"
+id = "db.query.select-sortby.o019"
+kind = "option_absent"
 required = true
-target = "<nulls_sort_order> in [ <sort_direction> <nulls_sort_order> ]"
-note = "a valid operand"
+target = "[ ASC | DESC ]"
+
+[[obligation]]
+id = "db.query.select-sortby.o020"
+kind = "alternative"
+required = true
+target = "[ ASC | DESC ] → ASC"
+
+[[obligation]]
+id = "db.query.select-sortby.o021"
+kind = "alternative"
+required = true
+target = "[ ASC | DESC ] → DESC"
+
+[[obligation]]
+id = "db.query.select-sortby.o022"
+kind = "option_present"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.query.select-sortby.o023"
+kind = "option_absent"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.query.select-sortby.o024"
+kind = "alternative"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS FIRST"
+
+[[obligation]]
+id = "db.query.select-sortby.o025"
+kind = "alternative"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS LAST"
 
 [[obligation]]
 id = "db.query.select-sortby.o011"
@@ -4009,10 +4087,28 @@ required = true
 note = "the form without its required BY"
 
 [[obligation]]
-id = "db.query.select-sortby.o014"
+id = "db.query.select-sortby.o026"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <expression> [ <sort_direction> <nulls_sort_order> ] }"
+note = "the form without its required FIRST in [ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.query.select-sortby.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required LAST in [ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.query.select-sortby.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <expression> [ [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] ] }"
+
+[[obligation]]
+id = "db.query.select-sortby.o029"
+kind = "interaction_all_options"
+required = true
+note = "every independent option of one production together"
 
 [[obligation]]
 id = "db.query.select-table-reference.o001"

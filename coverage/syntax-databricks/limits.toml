@@ -138,6 +138,102 @@ grammar_sha256 = "3c61815adf322d93115205650c91bacdfc29bda80e5c3865ef2bb2426f8b18
 grammar = ["{ CREATE TABLE [ IF NOT EXISTS ] | [ CREATE OR ] REPLACE TABLE } <table_name> [ SHALLOW | DEEP ] CLONE <source_table_name> { [ FOR ] TIMESTAMP AS OF <timestamp_expression> | [ FOR ] VERSION AS OF <version> }"]
 reason = "the names page spells the temporal specification [ FOR ] { SYSTEM_TIMESTAMP | TIMESTAMP } AS OF and [ FOR ] { SYSTEM_VERSION | VERSION } AS OF, while SqlBaseParser temporalClause spells FOR? (SYSTEM_VERSION | VERSION) AS OF and FOR? (SYSTEM_TIME | TIMESTAMP) AS OF: the two sources agree on TIMESTAMP and VERSION only, so those are derived, and SYSTEM_TIMESTAMP, SYSTEM_VERSION and Spark's SYSTEM_TIME are observed [[limit]] rows that a receipt settles. The names page's options specification WITH ( option_key [ = ] option_val [, ...] ) is refused after a clone source in every spelling (PARSE_SYNTAX_ERROR at the opening parenthesis, with and without a temporal specification), so it leaves the derivation and its documented spellings are observed [[limit]] rows. A clone source with neither specification is the clone page's own lines (db.ddl.clone.create-table-clone and replace-table-clone), so the line spells the temporal specification"
 
+[[reading]]
+form = "db.functions.ai-top-drivers"
+grammar_sha256 = "51e6c494e59a7180456796625d84f018139275925835462e238f0932b8b98e24"
+grammar = ["AI_TOP_DRIVERS ( input => <input> , metric => <metric> , is_test => <is_test> [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ] [ ... ] )"]
+reason = "the page defines optional_param as { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> }, so each named optional argument is read in place of the placeholder"
+
+[[reading]]
+form = "db.functions.date-add3"
+grammar_sha256 = "ea53e600cee4c8a031086e709a441123740bd03649e53b267bad80356e8dacf4"
+grammar = ["DATE_ADD ( { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } , <value> , <expr> )"]
+reason = "the page defines unit as the closed choice { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR }, so each documented unit is read in place of the placeholder"
+
+[[reading]]
+form = "db.functions.date-diff"
+grammar_sha256 = "5c5eb27f7ae3edba3e21ae33a678116b3a1a6c9b918dd143ff6fe945075b4ce7"
+grammar = ["DATE_DIFF ( <end_date> , <start_date> )", "DATE_DIFF ( { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } , <start> , <end> )"]
+reason = "the page defines unit as the closed choice { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }, so each documented unit is read in place of the placeholder"
+
+[[reading]]
+form = "db.functions.dateadd"
+grammar_sha256 = "b86c444ab5072fd0c47e2d119dd66955d0d16244170da2a178f164a22a1b84bc"
+grammar = ["DATEADD ( { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } , <value> , <expr> )"]
+reason = "the page defines unit as the closed choice { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR }, so each documented unit is read in place of the placeholder"
+
+[[reading]]
+form = "db.functions.datediff3"
+grammar_sha256 = "6d788d2f120986fd8f0e19bd78c64c5519c81230c00f2e7e66c0fc012556c37e"
+grammar = ["DATEDIFF ( { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } , <start> , <end> )"]
+reason = "the page defines unit as the closed choice { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }, so each documented unit is read in place of the placeholder"
+
+[[reading]]
+form = "db.functions.listagg"
+grammar_sha256 = "addcd1cc43ac64b652e7bd2878887b8b1f3f414fa0878c53e19f79de26bf2014"
+grammar = ["LISTAGG ( [ ALL | DISTINCT ] <expr> [ , <delimiter> ] ) [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ] [ FILTER ( WHERE <cond> ) ]"]
+reason = "the page defines sort_direction as [ ASC | DESC ], so ASC and DESC are read in place of the placeholder; the page defines nulls_sort_order as [ NULLS FIRST | NULLS LAST ], so NULLS FIRST and NULLS LAST are read in place of the placeholder"
+
+[[reading]]
+form = "db.functions.string-agg"
+grammar_sha256 = "4f3b24e3bbd61c3e09d57c8226f55c2a9afc5522ccd772499bfd40c3e5061b3f"
+grammar = ["STRING_AGG ( [ ALL | DISTINCT ] <expr> [ , <delimiter> ] ) [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ] [ FILTER ( WHERE <cond> ) ]"]
+reason = "the page defines sort_direction as [ ASC | DESC ], so ASC and DESC are read in place of the placeholder; the page defines nulls_sort_order as [ NULLS FIRST | NULLS LAST ], so NULLS FIRST and NULLS LAST are read in place of the placeholder"
+
+[[reading]]
+form = "db.functions.time-diff"
+grammar_sha256 = "deec894fdf5ce8ea9366b7cdf30c10cae341fbf01056b6188b90369eba7c14b0"
+grammar = ["TIME_DIFF ( { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR } , <start> , <end> )"]
+reason = "the page defines unit as the closed choice { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR }, so each documented unit is read in place of the placeholder"
+
+[[reading]]
+form = "db.functions.timediff"
+grammar_sha256 = "034a56911aa442023333a36d4bbb4622d2311a38fede00e0135f847fcddbbdaa"
+grammar = ["TIMEDIFF ( { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } , <start> , <end> )"]
+reason = "the page defines unit as the closed choice { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }, so each documented unit is read in place of the placeholder"
+
+[[reading]]
+form = "db.functions.timestampadd"
+grammar_sha256 = "a3f7d0bc05c913540fe26d53979f3b1046b150d9aefd28ea146b546c8568dd50"
+grammar = ["TIMESTAMPADD ( { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } , <value> , <expr> )"]
+reason = "the page defines unit as the closed choice { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR }, so each documented unit is read in place of the placeholder"
+
+[[reading]]
+form = "db.functions.timestampdiff"
+grammar_sha256 = "0a85294d51e8f042cb8d6d8c353bc53152c2596224e96f86a620b477e387d68b"
+grammar = ["TIMESTAMPDIFF ( { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } , <start> , <end> )"]
+reason = "the page defines unit as the closed choice { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }, so each documented unit is read in place of the placeholder"
+
+[[reading]]
+form = "db.query.select-orderby"
+grammar_sha256 = "6e9b187961cbe4e6bcea2f0944af0dff39e89a0e33591320827f3fdf1b89935d"
+grammar = ["ORDER BY { { ALL [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } | { <expression> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] }"]
+reason = "the page defines sort_direction as [ ASC | DESC ], so ASC and DESC are read in place of the placeholder; the page defines nulls_sort_order as [ NULLS FIRST | NULLS LAST ], so NULLS FIRST and NULLS LAST are read in place of the placeholder"
+
+[[reading]]
+form = "db.query.select-sortby"
+grammar_sha256 = "f1b1f497b438cae703b0b1df8e6f56db64a06d2d52f46b03377268ecb8b89d3b"
+grammar = ["SORT BY { <expression> [ [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] ] } [ , ... ]"]
+reason = "the page defines sort_direction as [ ASC | DESC ], so ASC and DESC are read in place of the placeholder; the page defines nulls_sort_order as [ NULLS FIRST | NULLS LAST ], so NULLS FIRST and NULLS LAST are read in place of the placeholder"
+
+[[reading]]
+form = "db.security_admin.deny"
+grammar_sha256 = "e0d60f662a1b8c7ddc5bef13d03d894be5446d468d774ed67c4f11de06893ae9"
+grammar = ["DENY { ALL PRIVILEGES | <privilege_type> [ , ... ] } ON <securable_object> TO <principal>"]
+reason = "the page defines privilege_types as { ALL PRIVLEGES | <privilege_type> [ , ... ] }, so ALL PRIVILEGES and a privilege list are read in place of the placeholder; the page's Syntax prints ALL PRIVLEGES, and its Parameters heading spells it ALL PRIVILEGES, which is read"
+
+[[reading]]
+form = "db.security_admin.grant"
+grammar_sha256 = "d99416a55ca9e0564a6d11aedf298eae4f7198a204e873216908db0660d197cb"
+grammar = ["GRANT { ALL PRIVILEGES | <privilege_type> [ , ... ] } ON <securable_object> TO <principal>"]
+reason = "the page defines privilege_types as { ALL PRIVILEGES | <privilege_type> [ , ... ] }, so ALL PRIVILEGES and a privilege list are read in place of the placeholder"
+
+[[reading]]
+form = "db.security_admin.revoke"
+grammar_sha256 = "83a2f5398ff2af24748f9681a8199dc7d26277c895165de30479db6f0844606c"
+grammar = ["REVOKE { ALL PRIVILEGES | <privilege_type> [ , ... ] } ON <securable_object> FROM <principal>"]
+reason = "the page defines privilege_types as { ALL PRIVILEGES | <privilege_type> [ , ... ] }, so ALL PRIVILEGES and a privilege list are read in place of the placeholder"
+
 [[limit]]
 form = "db.query.select-hints"
 kind = "option_present"

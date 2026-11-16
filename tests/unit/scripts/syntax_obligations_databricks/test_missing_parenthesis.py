@@ -12,6 +12,7 @@ from tests.unit.scripts.syntax_obligations_databricks._test_types import (
 from tests.unit.scripts.syntax_obligations_databricks.helpers import (
     accepted_sql,
     missing_open_cases,
+    missing_open_sql,
     unbalanced,
 )
 
@@ -33,6 +34,28 @@ def test_given_the_built_cases_when_a_required_open_parenthesis_is_dropped_then_
 
     assert cases
     assert tuple(unbalanced(cases)) == test_case.expected_unbalanced
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        BareFormTestCase(
+            description="a unit keyword is replaced, since DATE_ADD MICROSECOND reads as an alias",
+            form="db.functions.date-add3",
+            expected_sql="SELECT ( DATE_ADD 1 , 1 , 1 )",
+        ),
+        BareFormTestCase(
+            description="a keyword outside a choice stays as written",
+            form="db.functions.trim.trim-both-from",
+            expected_sql="SELECT ( TRIM BOTH FROM v1 )",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_call_without_its_open_parenthesis_when_built_then_its_first_operand_cannot_be_a_name(
+    test_case: BareFormTestCase,
+) -> None:
+    assert test_case.expected_sql in missing_open_sql(test_case.form)
 
 
 @pytest.mark.parametrize(

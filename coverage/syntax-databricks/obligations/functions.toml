@@ -2528,22 +2528,75 @@ target = "<is_test>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.ai-top-drivers.o008"
+id = "db.functions.ai-top-drivers.o016"
 kind = "option_present"
 required = true
-target = "[ , <optional_param> ]"
+target = "[ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
 
 [[obligation]]
-id = "db.functions.ai-top-drivers.o009"
+id = "db.functions.ai-top-drivers.o017"
 kind = "option_absent"
 required = true
-target = "[ , <optional_param> ]"
+target = "[ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
 
 [[obligation]]
-id = "db.functions.ai-top-drivers.o010"
+id = "db.functions.ai-top-drivers.o018"
+kind = "alternative"
+required = true
+target = "{ dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support>… → dimensions => <dimensions>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o019"
+kind = "alternative"
+required = true
+target = "{ dimensions => <dimensions> | aggregation => <aggregation> | min_support =>… → aggregation => <aggregation>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o020"
+kind = "alternative"
+required = true
+target = "{ dimensions => <dimensions> | aggregation => <aggregation> | min_support =>… → min_support => <min_support>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o021"
+kind = "required_operand_missing"
+required = true
+target = "<dimensions> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+note = "omit <dimensions>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o022"
 kind = "operand_type_class"
 required = true
-target = "<optional_param> in [ , <optional_param> ]"
+target = "<dimensions> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o023"
+kind = "required_operand_missing"
+required = true
+target = "<aggregation> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+note = "omit <aggregation>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o024"
+kind = "operand_type_class"
+required = true
+target = "<aggregation> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o025"
+kind = "required_operand_missing"
+required = true
+target = "<min_support> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+note = "omit <min_support>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o026"
+kind = "operand_type_class"
+required = true
+target = "<min_support> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -2569,6 +2622,24 @@ id = "db.functions.ai-top-drivers.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required is_test"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required dimensions after , in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required aggregation after , in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required min_support after , in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
 
 [[obligation]]
 id = "db.functions.ai-top-drivers.o015"
@@ -8943,18 +9014,70 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.date-add3.o002"
-kind = "required_operand_missing"
+id = "db.functions.date-add3.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.date-add3.o003"
-kind = "operand_type_class"
+id = "db.functions.date-add3.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.date-add3.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.date-add3.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.date-add3.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.date-add3.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.date-add3.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAYOFYEAR"
+
+[[obligation]]
+id = "db.functions.date-add3.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.date-add3.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.date-add3.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.date-add3.o020"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.date-add3.o004"
@@ -8989,6 +9112,12 @@ id = "db.functions.date-add3.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "db.functions.date-add3.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR }"
 
 [[obligation]]
 id = "db.functions.date-add3.o009"
@@ -9031,18 +9160,64 @@ target = "<start_date>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.date-diff.o006"
-kind = "required_operand_missing"
+id = "db.functions.date-diff.o014"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.date-diff.o007"
-kind = "operand_type_class"
+id = "db.functions.date-diff.o015"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.date-diff.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.date-diff.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.date-diff.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.date-diff.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.date-diff.o020"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.date-diff.o021"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.date-diff.o022"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.date-diff.o023"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.date-diff.o008"
@@ -9083,6 +9258,12 @@ id = "db.functions.date-diff.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.date-diff.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }"
 
 [[obligation]]
 id = "db.functions.date-format.o001"
@@ -9300,18 +9481,70 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.dateadd.o002"
-kind = "required_operand_missing"
+id = "db.functions.dateadd.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.dateadd.o003"
-kind = "operand_type_class"
+id = "db.functions.dateadd.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.dateadd.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.dateadd.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.dateadd.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.dateadd.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.dateadd.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAYOFYEAR"
+
+[[obligation]]
+id = "db.functions.dateadd.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.dateadd.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.dateadd.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.dateadd.o020"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.dateadd.o004"
@@ -9346,6 +9579,12 @@ id = "db.functions.dateadd.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "db.functions.dateadd.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR }"
 
 [[obligation]]
 id = "db.functions.dateadd.o009"
@@ -9452,18 +9691,64 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.datediff3.o002"
-kind = "required_operand_missing"
+id = "db.functions.datediff3.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.datediff3.o003"
-kind = "operand_type_class"
+id = "db.functions.datediff3.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.datediff3.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.datediff3.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.datediff3.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.datediff3.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.datediff3.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.datediff3.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.datediff3.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.datediff3.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.datediff3.o004"
@@ -9498,6 +9783,12 @@ id = "db.functions.datediff3.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "db.functions.datediff3.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }"
 
 [[obligation]]
 id = "db.functions.datediff3.o009"
@@ -18391,74 +18682,84 @@ target = "<delimiter> in [ , <delimiter> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.listagg.o011"
+id = "db.functions.listagg.o040"
 kind = "option_present"
 required = true
-target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o012"
+id = "db.functions.listagg.o041"
 kind = "option_absent"
 required = true
-target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o013"
+id = "db.functions.listagg.o042"
 kind = "alternative"
 required = true
-target = "{ <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } → <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ]"
+target = "{ <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } → <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.listagg.o014"
+id = "db.functions.listagg.o043"
 kind = "required_operand_missing"
 required = true
-target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 note = "omit <sort_key>"
 
 [[obligation]]
-id = "db.functions.listagg.o015"
+id = "db.functions.listagg.o044"
 kind = "operand_type_class"
 required = true
-target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.listagg.o016"
+id = "db.functions.listagg.o045"
 kind = "option_present"
 required = true
-target = "[ <sort_direction> ]"
+target = "[ ASC | DESC ]"
 
 [[obligation]]
-id = "db.functions.listagg.o017"
+id = "db.functions.listagg.o046"
 kind = "option_absent"
 required = true
-target = "[ <sort_direction> ]"
+target = "[ ASC | DESC ]"
 
 [[obligation]]
-id = "db.functions.listagg.o018"
-kind = "operand_type_class"
+id = "db.functions.listagg.o047"
+kind = "alternative"
 required = true
-target = "<sort_direction> in [ <sort_direction> ]"
-note = "a valid operand"
+target = "[ ASC | DESC ] → ASC"
 
 [[obligation]]
-id = "db.functions.listagg.o019"
+id = "db.functions.listagg.o048"
+kind = "alternative"
+required = true
+target = "[ ASC | DESC ] → DESC"
+
+[[obligation]]
+id = "db.functions.listagg.o049"
 kind = "option_present"
 required = true
-target = "[ <nulls_sort_order> ]"
+target = "[ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.listagg.o020"
+id = "db.functions.listagg.o050"
 kind = "option_absent"
 required = true
-target = "[ <nulls_sort_order> ]"
+target = "[ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.listagg.o021"
-kind = "operand_type_class"
+id = "db.functions.listagg.o051"
+kind = "alternative"
 required = true
-target = "<nulls_sort_order> in [ <nulls_sort_order> ]"
-note = "a valid operand"
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS FIRST"
+
+[[obligation]]
+id = "db.functions.listagg.o052"
+kind = "alternative"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS LAST"
 
 [[obligation]]
 id = "db.functions.listagg.o022"
@@ -18512,40 +18813,52 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "db.functions.listagg.o030"
+id = "db.functions.listagg.o053"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required GROUP in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required GROUP in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o031"
+id = "db.functions.listagg.o054"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required ( in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o032"
+id = "db.functions.listagg.o055"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ORDER in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required ORDER in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o033"
+id = "db.functions.listagg.o056"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BY in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required BY in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o034"
+id = "db.functions.listagg.o057"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required FIRST in [ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.listagg.o035"
+id = "db.functions.listagg.o058"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required LAST in [ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.functions.listagg.o059"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
+
+[[obligation]]
+id = "db.functions.listagg.o060"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
 id = "db.functions.listagg.o036"
@@ -33269,74 +33582,84 @@ target = "<delimiter> in [ , <delimiter> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.string-agg.o011"
+id = "db.functions.string-agg.o040"
 kind = "option_present"
 required = true
-target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o012"
+id = "db.functions.string-agg.o041"
 kind = "option_absent"
 required = true
-target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o013"
+id = "db.functions.string-agg.o042"
 kind = "alternative"
 required = true
-target = "{ <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } → <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ]"
+target = "{ <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } → <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o014"
+id = "db.functions.string-agg.o043"
 kind = "required_operand_missing"
 required = true
-target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 note = "omit <sort_key>"
 
 [[obligation]]
-id = "db.functions.string-agg.o015"
+id = "db.functions.string-agg.o044"
 kind = "operand_type_class"
 required = true
-target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.string-agg.o016"
+id = "db.functions.string-agg.o045"
 kind = "option_present"
 required = true
-target = "[ <sort_direction> ]"
+target = "[ ASC | DESC ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o017"
+id = "db.functions.string-agg.o046"
 kind = "option_absent"
 required = true
-target = "[ <sort_direction> ]"
+target = "[ ASC | DESC ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o018"
-kind = "operand_type_class"
+id = "db.functions.string-agg.o047"
+kind = "alternative"
 required = true
-target = "<sort_direction> in [ <sort_direction> ]"
-note = "a valid operand"
+target = "[ ASC | DESC ] → ASC"
 
 [[obligation]]
-id = "db.functions.string-agg.o019"
+id = "db.functions.string-agg.o048"
+kind = "alternative"
+required = true
+target = "[ ASC | DESC ] → DESC"
+
+[[obligation]]
+id = "db.functions.string-agg.o049"
 kind = "option_present"
 required = true
-target = "[ <nulls_sort_order> ]"
+target = "[ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o020"
+id = "db.functions.string-agg.o050"
 kind = "option_absent"
 required = true
-target = "[ <nulls_sort_order> ]"
+target = "[ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o021"
-kind = "operand_type_class"
+id = "db.functions.string-agg.o051"
+kind = "alternative"
 required = true
-target = "<nulls_sort_order> in [ <nulls_sort_order> ]"
-note = "a valid operand"
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS FIRST"
+
+[[obligation]]
+id = "db.functions.string-agg.o052"
+kind = "alternative"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS LAST"
 
 [[obligation]]
 id = "db.functions.string-agg.o022"
@@ -33390,40 +33713,52 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "db.functions.string-agg.o030"
+id = "db.functions.string-agg.o053"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required GROUP in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required GROUP in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o031"
+id = "db.functions.string-agg.o054"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required ( in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o032"
+id = "db.functions.string-agg.o055"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ORDER in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required ORDER in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o033"
+id = "db.functions.string-agg.o056"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BY in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required BY in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o034"
+id = "db.functions.string-agg.o057"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required FIRST in [ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o035"
+id = "db.functions.string-agg.o058"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required LAST in [ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.functions.string-agg.o059"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
+
+[[obligation]]
+id = "db.functions.string-agg.o060"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
 id = "db.functions.string-agg.o036"
@@ -34533,18 +34868,34 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.time-diff.o002"
-kind = "required_operand_missing"
+id = "db.functions.time-diff.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.time-diff.o003"
-kind = "operand_type_class"
+id = "db.functions.time-diff.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.time-diff.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR } → SECOND"
+
+[[obligation]]
+id = "db.functions.time-diff.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.time-diff.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR } → HOUR"
 
 [[obligation]]
 id = "db.functions.time-diff.o004"
@@ -34579,6 +34930,12 @@ id = "db.functions.time-diff.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "db.functions.time-diff.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR }"
 
 [[obligation]]
 id = "db.functions.time-diff.o009"
@@ -34789,18 +35146,64 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.timediff.o002"
-kind = "required_operand_missing"
+id = "db.functions.timediff.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.timediff.o003"
-kind = "operand_type_class"
+id = "db.functions.timediff.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.timediff.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.timediff.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.timediff.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.timediff.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.timediff.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.timediff.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.timediff.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.timediff.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.timediff.o004"
@@ -34835,6 +35238,12 @@ id = "db.functions.timediff.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "db.functions.timediff.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }"
 
 [[obligation]]
 id = "db.functions.timediff.o009"
@@ -34974,18 +35383,70 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.timestampadd.o002"
-kind = "required_operand_missing"
+id = "db.functions.timestampadd.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.timestampadd.o003"
-kind = "operand_type_class"
+id = "db.functions.timestampadd.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.timestampadd.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.timestampadd.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.timestampadd.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.timestampadd.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.timestampadd.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAYOFYEAR"
+
+[[obligation]]
+id = "db.functions.timestampadd.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.timestampadd.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.timestampadd.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.timestampadd.o020"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.timestampadd.o004"
@@ -35022,6 +35483,12 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "db.functions.timestampadd.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR }"
+
+[[obligation]]
 id = "db.functions.timestampadd.o009"
 kind = "negative_neighbour"
 required = true
@@ -35034,18 +35501,64 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.timestampdiff.o002"
-kind = "required_operand_missing"
+id = "db.functions.timestampdiff.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.timestampdiff.o003"
-kind = "operand_type_class"
+id = "db.functions.timestampdiff.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.timestampdiff.o004"
@@ -35080,6 +35593,12 @@ id = "db.functions.timestampdiff.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "db.functions.timestampdiff.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }"
 
 [[obligation]]
 id = "db.functions.timestampdiff.o009"

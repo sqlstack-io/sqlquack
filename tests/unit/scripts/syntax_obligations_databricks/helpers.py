@@ -158,6 +158,16 @@ def missing_open_cases() -> list[Row]:
     )
 
 
+def missing_open_sql(form: str) -> set[str]:
+    """The SQL of every missing-`(` case of `form`."""
+    return {
+        str(case["sql"])
+        for case in filter(
+            lambda case: str(case["case_id"]).rsplit(".k", 1)[0] == form, missing_open_cases()
+        )
+    }
+
+
 def unbalanced(cases: list[Row]) -> list[str]:
     """The ids of `cases` whose SQL, quoted text aside, has unmatched parentheses."""
     bare: list[tuple[str, str]] = [
