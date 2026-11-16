@@ -916,12 +916,6 @@ required = true
 note = "the form without its required { VAR | VARIABLE }"
 
 [[obligation]]
-id = "db.transaction_session.set-variable.set.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.transaction_session.set-variable.set.o015"
 kind = "negative_neighbour"
 required = true

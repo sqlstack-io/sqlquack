@@ -1293,12 +1293,6 @@ required = true
 target = "[ , ... ] #3"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o026"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.expressions.function-invocation.o028"
 kind = "negative_neighbour"
 required = true
@@ -3295,12 +3289,6 @@ id = "db.expressions.names.subscript-dot-3.o008"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
-
-[[obligation]]
-id = "db.expressions.names.subscript-dot-3.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.expressions.names.subscript-dot-3.o010"

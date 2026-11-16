@@ -6495,12 +6495,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.classifier.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.classifier.o003"
 kind = "negative_neighbour"
 required = true
@@ -6697,12 +6691,6 @@ id = "db.functions.collations.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.collations.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.collations.o003"
@@ -8535,12 +8523,6 @@ target = "<over_clause>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.cume-dist.o004"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.cume-dist.o005"
 kind = "negative_neighbour"
 required = true
@@ -8551,12 +8533,6 @@ id = "db.functions.curdate.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.curdate.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.curdate.o003"
@@ -8571,12 +8547,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-catalog.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.current-catalog.o003"
 kind = "negative_neighbour"
 required = true
@@ -8587,12 +8557,6 @@ id = "db.functions.current-database.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.current-database.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.current-database.o003"
@@ -8607,28 +8571,28 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-date.o002"
-kind = "negative_neighbour"
+id = "db.functions.current-date.o004"
+kind = "option_present"
 required = true
-note = "the form without its required ("
+target = "[ ( ) ]"
 
 [[obligation]]
-id = "db.functions.current-date.o003"
+id = "db.functions.current-date.o005"
+kind = "option_absent"
+required = true
+target = "[ ( ) ]"
+
+[[obligation]]
+id = "db.functions.current-date.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( ) ]"
 
 [[obligation]]
 id = "db.functions.current-metastore.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.current-metastore.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.current-metastore.o003"
@@ -8643,12 +8607,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-oauth-custom-identity-claim.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.current-oauth-custom-identity-claim.o003"
 kind = "negative_neighbour"
 required = true
@@ -8661,16 +8619,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-path.o002"
-kind = "negative_neighbour"
+id = "db.functions.current-path.o004"
+kind = "option_present"
 required = true
-note = "the form without its required ("
+target = "[ ( ) ]"
 
 [[obligation]]
-id = "db.functions.current-path.o003"
+id = "db.functions.current-path.o005"
+kind = "option_absent"
+required = true
+target = "[ ( ) ]"
+
+[[obligation]]
+id = "db.functions.current-path.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( ) ]"
 
 [[obligation]]
 id = "db.functions.current-recipient.o001"
@@ -8704,12 +8668,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-schema.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.current-schema.o003"
 kind = "negative_neighbour"
 required = true
@@ -8722,12 +8680,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-snapshot-version.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.current-snapshot-version.o003"
 kind = "negative_neighbour"
 required = true
@@ -8738,6 +8690,18 @@ id = "db.functions.current-time.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "db.functions.current-time.o007"
+kind = "option_present"
+required = true
+target = "[ ( [ <precision> ] ) ]"
+
+[[obligation]]
+id = "db.functions.current-time.o008"
+kind = "option_absent"
+required = true
+target = "[ ( [ <precision> ] ) ]"
 
 [[obligation]]
 id = "db.functions.current-time.o002"
@@ -8759,22 +8723,28 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.current-time.o005"
+id = "db.functions.current-time.o009"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ("
-
-[[obligation]]
-id = "db.functions.current-time.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( [ <precision> ] ) ]"
 
 [[obligation]]
 id = "db.functions.current-timestamp.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "db.functions.current-timestamp.o007"
+kind = "option_present"
+required = true
+target = "[ ( [ <precision> ] ) ]"
+
+[[obligation]]
+id = "db.functions.current-timestamp.o008"
+kind = "option_absent"
+required = true
+target = "[ ( [ <precision> ] ) ]"
 
 [[obligation]]
 id = "db.functions.current-timestamp.o002"
@@ -8796,28 +8766,16 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.current-timestamp.o005"
+id = "db.functions.current-timestamp.o009"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ("
-
-[[obligation]]
-id = "db.functions.current-timestamp.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( [ <precision> ] ) ]"
 
 [[obligation]]
 id = "db.functions.current-timezone.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.current-timezone.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.current-timezone.o003"
@@ -8832,28 +8790,28 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-user.o002"
-kind = "negative_neighbour"
+id = "db.functions.current-user.o004"
+kind = "option_present"
 required = true
-note = "the form without its required ("
+target = "[ ( ) ]"
 
 [[obligation]]
-id = "db.functions.current-user.o003"
+id = "db.functions.current-user.o005"
+kind = "option_absent"
+required = true
+target = "[ ( ) ]"
+
+[[obligation]]
+id = "db.functions.current-user.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( ) ]"
 
 [[obligation]]
 id = "db.functions.current-version.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.current-version.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.current-version.o003"
@@ -9886,12 +9844,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.dense-rank.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.dense-rank.o003"
 kind = "negative_neighbour"
 required = true
@@ -10081,12 +10033,6 @@ id = "db.functions.e.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.e.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.e.o003"
@@ -12143,12 +12089,6 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.getdate.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.getdate.o006"
 kind = "negative_neighbour"
 required = true
@@ -12284,12 +12224,6 @@ id = "db.functions.grouping-id.o006"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
-
-[[obligation]]
-id = "db.functions.grouping-id.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.grouping-id.o008"
@@ -14896,12 +14830,6 @@ target = "<escape> in [ ESCAPE <escape> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.ilike.ilike.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.ilike.ilike.o013"
 kind = "negative_neighbour"
 required = true
@@ -15270,12 +15198,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.input-file-block-length.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.input-file-block-length.o003"
 kind = "negative_neighbour"
 required = true
@@ -15288,12 +15210,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.input-file-block-start.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.input-file-block-start.o003"
 kind = "negative_neighbour"
 required = true
@@ -15304,12 +15220,6 @@ id = "db.functions.input-file-name.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.input-file-name.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.input-file-name.o003"
@@ -17616,12 +17526,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.last-snapshot-version.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.last-snapshot-version.o003"
 kind = "negative_neighbour"
 required = true
@@ -18200,12 +18104,6 @@ target = "<escape> in [ ESCAPE <escape> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.like.like.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.like.like.o013"
 kind = "negative_neighbour"
 required = true
@@ -18445,12 +18343,6 @@ kind = "operand_type_class"
 required = true
 target = "<scope_str> in [ <scope_str> ]"
 note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.list-secrets.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.list-secrets.o006"
@@ -18734,6 +18626,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "db.functions.localtime.o007"
+kind = "option_present"
+required = true
+target = "[ ( [ <precision> ] ) ]"
+
+[[obligation]]
+id = "db.functions.localtime.o008"
+kind = "option_absent"
+required = true
+target = "[ ( [ <precision> ] ) ]"
+
+[[obligation]]
 id = "db.functions.localtime.o002"
 kind = "option_present"
 required = true
@@ -18753,22 +18657,28 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.localtime.o005"
+id = "db.functions.localtime.o009"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ("
-
-[[obligation]]
-id = "db.functions.localtime.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( [ <precision> ] ) ]"
 
 [[obligation]]
 id = "db.functions.localtimestamp.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "db.functions.localtimestamp.o007"
+kind = "option_present"
+required = true
+target = "[ ( [ <precision> ] ) ]"
+
+[[obligation]]
+id = "db.functions.localtimestamp.o008"
+kind = "option_absent"
+required = true
+target = "[ ( [ <precision> ] ) ]"
 
 [[obligation]]
 id = "db.functions.localtimestamp.o002"
@@ -18790,16 +18700,10 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.localtimestamp.o005"
+id = "db.functions.localtimestamp.o009"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ("
-
-[[obligation]]
-id = "db.functions.localtimestamp.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( [ <precision> ] ) ]"
 
 [[obligation]]
 id = "db.functions.locate.o001"
@@ -19492,12 +19396,6 @@ target = "<secs> in [ , <secs> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.make-dt-interval.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.make-dt-interval.o018"
 kind = "negative_neighbour"
 required = true
@@ -19683,12 +19581,6 @@ kind = "operand_type_class"
 required = true
 target = "<secs> in [ , <secs> ]"
 note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.make-interval.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.make-interval.o030"
@@ -20311,12 +20203,6 @@ target = "<months> in [ , <months> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.make-ym-interval.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.make-ym-interval.o010"
 kind = "negative_neighbour"
 required = true
@@ -20375,12 +20261,6 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "db.functions.map.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.map.o010"
 kind = "negative_neighbour"
 required = true
@@ -20429,12 +20309,6 @@ id = "db.functions.map-concat.o006"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
-
-[[obligation]]
-id = "db.functions.map-concat.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.map-concat.o008"
@@ -20874,12 +20748,6 @@ id = "db.functions.match-number.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.match-number.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.match-number.o003"
@@ -22403,12 +22271,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.monotonically-increasing-id.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.monotonically-increasing-id.o003"
 kind = "negative_neighbour"
 required = true
@@ -22759,12 +22621,6 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.now.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.now.o006"
 kind = "negative_neighbour"
 required = true
@@ -22896,12 +22752,6 @@ kind = "operand_type_class"
 required = true
 target = "<n> in [ <n> ]"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "db.functions.ntile.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.ntile.o006"
@@ -23481,12 +23331,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.percent-rank.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.percent-rank.o003"
 kind = "negative_neighbour"
 required = true
@@ -23993,12 +23837,6 @@ id = "db.functions.pi.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.pi.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.pi.o003"
@@ -24662,12 +24500,6 @@ target = "<seed> in [ <seed> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.rand.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.rand.o006"
 kind = "negative_neighbour"
 required = true
@@ -24699,12 +24531,6 @@ target = "<seed> in [ <seed> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.randn.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.randn.o006"
 kind = "negative_neighbour"
 required = true
@@ -24734,12 +24560,6 @@ kind = "operand_type_class"
 required = true
 target = "<seed> in [ <seed> ]"
 note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.random.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.random.o006"
@@ -24903,12 +24723,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.rank.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.rank.o003"
 kind = "negative_neighbour"
 required = true
@@ -25037,12 +24851,6 @@ id = "db.functions.read-kafka.o007"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
-
-[[obligation]]
-id = "db.functions.read-kafka.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.read-kafka.o009"
@@ -27349,12 +27157,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.row-number.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.row-number.o003"
 kind = "negative_neighbour"
 required = true
@@ -28191,16 +27993,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.session-user.o002"
-kind = "negative_neighbour"
+id = "db.functions.session-user.o004"
+kind = "option_present"
 required = true
-note = "the form without its required ("
+target = "[ ( ) ]"
 
 [[obligation]]
-id = "db.functions.session-user.o003"
+id = "db.functions.session-user.o005"
+kind = "option_absent"
+required = true
+target = "[ ( ) ]"
+
+[[obligation]]
+id = "db.functions.session-user.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( ) ]"
 
 [[obligation]]
 id = "db.functions.session-window.o001"
@@ -29027,12 +28835,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.spark-partition.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.spark-partition.o003"
 kind = "negative_neighbour"
 required = true
@@ -29168,12 +28970,6 @@ id = "db.functions.sql-keywords.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.sql-keywords.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.sql-keywords.o003"
@@ -40916,12 +40712,6 @@ target = "<fmt> in [ , <fmt> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.unix-timestamp.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.unix-timestamp.o010"
 kind = "negative_neighbour"
 required = true
@@ -41009,28 +40799,28 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.user.o002"
-kind = "negative_neighbour"
+id = "db.functions.user.o004"
+kind = "option_present"
 required = true
-note = "the form without its required ("
+target = "[ ( ) ]"
 
 [[obligation]]
-id = "db.functions.user.o003"
+id = "db.functions.user.o005"
+kind = "option_absent"
+required = true
+target = "[ ( ) ]"
+
+[[obligation]]
+id = "db.functions.user.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( ) ]"
 
 [[obligation]]
 id = "db.functions.uuid.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.uuid.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.uuid.o003"
@@ -42020,12 +41810,6 @@ id = "db.functions.version.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.version.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.version.o003"

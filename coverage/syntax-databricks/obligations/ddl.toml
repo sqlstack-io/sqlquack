@@ -6598,12 +6598,6 @@ required = true
 note = "the form without its required { COLUMN | COLUMNS }"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.add.o045"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.ddl.alter-table-manage-column.add.o046"
 kind = "negative_neighbour"
 required = true
@@ -7648,12 +7642,6 @@ id = "db.ddl.alter-table-manage-column.drop.o016"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required EXISTS in [ IF EXISTS ]"
-
-[[obligation]]
-id = "db.ddl.alter-table-manage-column.drop.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.drop.o018"

@@ -6,6 +6,7 @@ import dataclasses
 import json
 import re
 import tomllib
+from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
 
@@ -15,20 +16,27 @@ from scripts.grammar_obligations.classes import renderer
 from scripts.grammar_obligations.classes.renderer import Renderer
 from scripts.grammar_obligations.classes.walk import Walk
 from scripts.grammar_obligations.constants import (
+    ACTION_DROP_NODE,
     ACTION_HAND,
     ACTION_RESERVED_WORD,
+    CLOSE_PAREN,
     EXPECT_ACCEPT,
     HAND_CASE_KEYS,
     IDENTIFIER_RESERVED,
+    KIND_NEGATIVE,
+    NODE_OPTIONAL,
+    OPEN_PAREN,
     PAIR_SIZE,
     RESERVED_WORD,
 )
 from scripts.grammar_obligations.exceptions import ObligationError
-from scripts.grammar_obligations.models import Draft, FormStyle, Node, Rendered, Spec
+from scripts.grammar_obligations.models import Choices, Draft, FormStyle, Node, Rendered, Spec
 from scripts.grammar_obligations.types import Key, Row
 from scripts.syntax_obligations_databricks.constants import (
     ALIAS_RESERVED_NOTE,
     ALIAS_RESERVED_WORD,
+    BARE_NAME_PREFIXES,
+    BARE_OPERAND_FILL,
     DB_CLASS_RULES,
     DB_REPEAT_FILLS,
     DB_TOKEN,
@@ -52,6 +60,10 @@ _shared_submissions: Callable[..., list[Rendered]] = Renderer.submissions
 _shared_spec: Callable[..., Spec] = Walk.spec
 _shared_class_note: Callable[..., str] = derive._class_note  # noqa: SLF001
 _shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = grammar.CLASS_RULES
+_shared_choices: Callable[..., Choices] = Renderer._choices  # noqa: SLF001
+_shared_derive_trees: Callable[..., tuple[list[Draft], list[tuple[Node, ...]], Counter[str]]] = (
+    derive.derive_trees
+)
 
 
 def _longest(*, form: str, keys: set[str]) -> str:
@@ -183,6 +195,81 @@ def db_submissions(self: object, *, spec: Spec, depths: tuple[int, ...] = ()) ->
     ]
 
 
+def _siblings(*, nodes: tuple[Node, ...], key: int) -> tuple[tuple[Node, ...], int] | None:
+    """The sequence holding the node whose `id()` is `key`, and its position there."""
+    for position, node in enumerate(nodes):
+        if id(node) == key:
+            return nodes, position
+        for branch in node.branches:
+            if (found := _siblings(nodes=branch, key=key)) is not None:
+                return found
+    return None
+
+
+def _call_parts(*, trees: list[tuple[Node, ...]], spec: Spec) -> tuple[Node, ...] | None:
+    """The nodes between a dropped `(` and its matching `)`, then that `)`; None for other drops."""
+    if spec.action != ACTION_DROP_NODE or spec.production >= len(trees):
+        return None
+    found: tuple[tuple[Node, ...], int] | None = _siblings(
+        nodes=trees[spec.production], key=spec.node
+    )
+    if found is None or found[0][found[1]].text != OPEN_PAREN:
+        return None
+    nodes, start = found
+    depth: int = 0
+    for position in range(start, len(nodes)):
+        depth += {OPEN_PAREN: 1, CLOSE_PAREN: -1}.get(nodes[position].text, 0)
+        if depth == 0:
+            return nodes[start + 1 : position + 1]
+    return None
+
+
+def db_choices(self: Renderer, spec: Spec) -> Choices:
+    """The shared choices; a dropped `(` drops its `)`, and a marked call's operand is a number."""
+    choices: Choices = _shared_choices(self, spec)
+    parts: tuple[Node, ...] | None = _call_parts(trees=self.trees, spec=spec)
+    if not parts:
+        return choices
+    choices = dataclasses.replace(choices, drop=choices.drop | {id(parts[-1])})
+    if spec.payload != BARE_OPERAND_FILL:
+        return choices
+    if (operand := _first_operand(nodes=parts[:-1], choices=choices)) is not None:
+        choices.replace[id(operand)] = BARE_OPERAND_FILL
+    return choices
+
+
+def _first_operand(*, nodes: tuple[Node, ...], choices: Choices) -> Node | None:
+    """The first operand the case writes: absent options skipped, chosen branches entered."""
+    for node in nodes:
+        if node.kind == NODE_OPTIONAL and id(node) not in choices.path and not choices.full:
+            continue
+        if node.branches:
+            branch: tuple[Node, ...] = node.branches[choices.branch.get(id(node), 0)]
+            return _first_operand(nodes=branch, choices=choices)
+        return node if grammar.placeholder_name(node) else None
+    return None
+
+
+def db_derive_trees(
+    *, form: str, grammar: list[str], unpacked: bool = False
+) -> tuple[list[Draft], list[tuple[Node, ...]], Counter[str]]:
+    """Shared drafts less a missing `(` around no required part where a bare name is valid."""
+    drafts, trees, classes = _shared_derive_trees(form=form, grammar=grammar, unpacked=unpacked)
+    kept: list[Draft] = []
+    for draft in drafts:
+        parts: tuple[Node, ...] | None = (
+            _call_parts(trees=trees, spec=draft.spec)
+            if draft.kind == KIND_NEGATIVE and draft.spec is not None
+            else None
+        )
+        if parts is None or not form.startswith(BARE_NAME_PREFIXES) or draft.spec is None:
+            kept.append(draft)
+        elif any(node.kind != NODE_OPTIONAL for node in parts[:-1]):
+            spec: Spec = dataclasses.replace(draft.spec, payload=BARE_OPERAND_FILL)
+            kept.append(dataclasses.replace(draft, spec=spec))
+    return kept, trees, classes
+
+
 def install() -> None:
     """Register the Databricks styles, tokens, operand classes and limit reader."""
     grammar.CLASS_RULES = (*DB_CLASS_RULES, *_shared_class_rules)
@@ -204,3 +291,5 @@ def install() -> None:
     setattr(Renderer, "submissions", db_submissions)  # noqa: B010
     setattr(Walk, "spec", db_spec)  # noqa: B010
     setattr(derive, "_class_note", db_class_note)  # noqa: B010
+    setattr(Renderer, "_choices", db_choices)  # noqa: B010
+    setattr(obligations, "derive_trees", db_derive_trees)  # noqa: B010

@@ -560,6 +560,12 @@ RUNTIME_ONLY_CLAUSES: dict[str, str] = {
 }
 VALUE_CONTEXT: tuple[str, str] = ("SELECT ", "")
 EXPRESSION_CONTEXT: tuple[str, str] = ("SELECT ( ", " )")
+BARE_OPERAND_FILL: str = "1"
+BARE_NAME_PREFIXES: tuple[str, ...] = (
+    "db.functions.",
+    "db.expressions.function-invocation",
+    "db.query.select-tvf",
+)
 CLAUSE_CONTEXT: tuple[str, str] = ("SELECT c1 FROM t1 ", "")
 FROM_CONTEXT: tuple[str, str] = ("SELECT * FROM t1 ", "")
 RELATION_CONTEXT: tuple[str, str] = ("SELECT * FROM ", "")

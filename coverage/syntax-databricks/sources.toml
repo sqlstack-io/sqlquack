@@ -3035,6 +3035,7 @@ syntax_sha256 = "8c2b39f3c8fae81db313df57ffc1e7cf61174401cd8e7646a78114aac651202
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]
@@ -3080,6 +3081,7 @@ syntax_sha256 = "6a5172b6b364c1c654bbfd26853a8916e59642f7fbfca397cec562a35511966
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime 19 and above",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]
@@ -3139,6 +3141,7 @@ syntax_sha256 = "ad3c53076f2db9d3e2da4ae09c466b47f01964ebf93bc2444b1fb68a79ef45c
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime 18 LTS and above",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]
@@ -3154,6 +3157,7 @@ syntax_sha256 = "21eaece2a6fd25d5ddcc5e069c111c27d745840f4fe071c8fd0b5a141d06d03
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]
@@ -3184,6 +3188,7 @@ syntax_sha256 = "2e35c78cb79d15bd6190085ebec4f303f56837a6b55abc733f5cc04a7901cd3
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime 10.4 LTS and above",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]
@@ -6263,6 +6268,7 @@ syntax_sha256 = "33c1880c513c30d97ff42a8a525facc400cd268ee353fb4b885364d98f0550a
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime 18 LTS and above",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]
@@ -6278,6 +6284,7 @@ syntax_sha256 = "cb429be8d0ca59ea2fa7b5085fc9b9ea92c5b976d844c4b2b7ba49b59c0b420
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]
@@ -8597,6 +8604,7 @@ syntax_sha256 = "0c00b7f86670692c1792425f582a3bc635ec2fc6785e4c61275e036a8e94474
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime 14.1 and above",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]
@@ -12642,6 +12650,7 @@ syntax_sha256 = "185bd1245a4a7e206ab9a1bd98745a30136d6f8ead74dfb1001b30c5e67fcc9
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime 13.3 LTS and above",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]

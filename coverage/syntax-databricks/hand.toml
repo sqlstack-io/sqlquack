@@ -1429,3 +1429,75 @@ read = [
   "<str> [ NOT ] LIKE { ANY | SOME | ALL } ( <pattern> [ , ... ] )",
 ]
 reason = "the page's line wraps the pattern list in an optional bracket, so ( ) with no pattern would be a form, but the warehouse refuses it while parsing (EMPTY_QUANTIFIED_PATTERN, the == SQL == excerpt); read with the list required, so the empty list is a negative case"
+
+[[reading]]
+page = "functions/current_date"
+written = "CURRENT_DATE ( )"
+read = [
+  "CURRENT_DATE [ ( ) ]",
+]
+reason = "the page says the braces are optional; read with the parentheses optional"
+
+[[reading]]
+page = "functions/current_path"
+written = "CURRENT_PATH ( )"
+read = [
+  "CURRENT_PATH [ ( ) ]",
+]
+reason = "the page says the parentheses are optional; read with them optional"
+
+[[reading]]
+page = "functions/current_user"
+written = "CURRENT_USER ( )"
+read = [
+  "CURRENT_USER [ ( ) ]",
+]
+reason = "the page says the braces are optional; read with the parentheses optional"
+
+[[reading]]
+page = "functions/session_user"
+written = "SESSION_USER ( )"
+read = [
+  "SESSION_USER [ ( ) ]",
+]
+reason = "the page says the braces are optional; read with the parentheses optional"
+
+[[reading]]
+page = "functions/user"
+written = "USER ( )"
+read = [
+  "USER [ ( ) ]",
+]
+reason = "the page says the braces are optional; read with the parentheses optional"
+
+[[reading]]
+page = "functions/current_time"
+written = "CURRENT_TIME ( [ <precision> ] )"
+read = [
+  "CURRENT_TIME [ ( [ <precision> ] ) ]",
+]
+reason = "the page says the parentheses are optional when no precision is given; read with them optional"
+
+[[reading]]
+page = "functions/current_timestamp"
+written = "CURRENT_TIMESTAMP ( [ <precision> ] )"
+read = [
+  "CURRENT_TIMESTAMP [ ( [ <precision> ] ) ]",
+]
+reason = "the page says the parentheses are optional when no precision is given; read with them optional"
+
+[[reading]]
+page = "functions/localtime"
+written = "LOCALTIME ( [ <precision> ] )"
+read = [
+  "LOCALTIME [ ( [ <precision> ] ) ]",
+]
+reason = "the page says the parentheses are optional when precision is omitted; read with them optional"
+
+[[reading]]
+page = "functions/localtimestamp"
+written = "LOCALTIMESTAMP ( [ <precision> ] )"
+read = [
+  "LOCALTIMESTAMP [ ( [ <precision> ] ) ]",
+]
+reason = "the page says the parentheses are optional when precision is omitted; read with them optional"

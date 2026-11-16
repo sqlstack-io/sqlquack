@@ -39,6 +39,8 @@ EMPTY_CATALOGUE: str = "# no forms\n"
 IDENTIFIER_CLASS_KIND: str = "identifier_class"
 CLASS_NOTE_PREFIXES: tuple[str, ...] = ("reserved:", "keyword:")
 NO_NOTE: tuple[str, str] = ("", "")
+MISSING_OPEN: str = "the form without its required ("
+QUOTED: re.Pattern[str] = re.compile(r"'(?:[^']|'')*'|`[^`]*`")
 
 
 def small_root(*, directory: Path, limits: str, retired: str) -> Path:
@@ -127,3 +129,54 @@ def refused_cases(found: list[tuple[str, str, str, str]]) -> list[tuple[str, str
 def keyword_expects(found: list[tuple[str, str, str, str]]) -> list[str]:
     """The expectation of each keyword class case."""
     return [expect for _, _, expect, _ in filter(lambda row: row[0] == "keyword", found)]
+
+
+def _built_cases() -> list[Row]:
+    """Every built case of every family."""
+    found: list[Row] = []
+    for path in (EVIDENCE / CASES_DIR).glob("*.jsonl"):
+        found += [json.loads(line) for line in path.read_text().splitlines()]
+    return found
+
+
+def _missing_open_ids() -> set[str]:
+    """Every obligation for a form without one of its required `(`."""
+    found: set[str] = set()
+    for path in (ROOT / OBLIGATIONS_DIR).glob("*.toml"):
+        rows: list[Row] = tomllib.loads(path.read_text()).get("obligation", [])
+        found |= {
+            str(row["id"]) for row in filter(lambda row: row.get("note") == MISSING_OPEN, rows)
+        }
+    return found
+
+
+def missing_open_cases() -> list[Row]:
+    """Every case citing a missing-`(` obligation."""
+    wanted: set[str] = _missing_open_ids()
+    return list(
+        filter(lambda case: not wanted.isdisjoint(_texts(case["obligations"])), _built_cases())
+    )
+
+
+def unbalanced(cases: list[Row]) -> list[str]:
+    """The ids of `cases` whose SQL, quoted text aside, has unmatched parentheses."""
+    bare: list[tuple[str, str]] = [
+        (str(case["case_id"]), QUOTED.sub("''", str(case["sql"]))) for case in cases
+    ]
+    return [
+        case_id
+        for case_id, sql in filter(lambda pair: pair[1].count("(") != pair[1].count(")"), bare)
+    ]
+
+
+def accepted_sql(form: str) -> set[str]:
+    """The SQL of every case of `form` expected to be accepted."""
+    return {
+        str(case["sql"])
+        for case in filter(
+            lambda case: (
+                case["expect"] == "accept" and str(case["case_id"]).rsplit(".k", 1)[0] == form
+            ),
+            _built_cases(),
+        )
+    }

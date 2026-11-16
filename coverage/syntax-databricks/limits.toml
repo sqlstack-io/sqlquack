@@ -5933,3 +5933,52 @@ anchor = "doc.data-types.struct-type / Syntax"
 sql = "SELECT CAST ( NULL AS STRUCT < c1 STRING NOT NULL COLLATE UTF8_BINARY > )"
 context = "raw"
 expect = "observe"
+
+[[suppress]]
+form = "db.ddl.alter-table-manage-column.add"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "the page's own example writes ADD COLUMN email STRING COMMENT 'student email' without parentheses, so the column list without its ( and ) is a valid ADD COLUMN"
+
+[[suppress]]
+form = "db.ddl.alter-table-manage-column.drop"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "the page's own example writes DROP COLUMN email without parentheses, so the column list without its ( and ) is a valid DROP COLUMN"
+
+[[suppress]]
+form = "db.dml.insert-into.values-default"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "VALUES is the VALUES clause, whose page writes a row as an expression or a parenthesised list (VALUES { expression | ( expression [, ...] ) } [, ...]), so VALUES 1 , 2 is two one-column rows"
+
+[[suppress]]
+form = "db.dml.insert-overwrite-directory-hive"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "VALUES is the VALUES clause, whose page writes a row as an expression or a parenthesised list (VALUES { expression | ( expression [, ...] ) } [, ...]), so VALUES 1 is a one-row table"
+
+[[suppress]]
+form = "db.functions.ilike.ilike"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "the parentheses only group the pattern: without them the text is the plain ILIKE operator, str [ NOT ] ILIKE pattern, which is valid"
+
+[[suppress]]
+form = "db.functions.like.like"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "the parentheses only group the pattern: without them the text is the plain LIKE operator, str [ NOT ] LIKE pattern, which is valid"
+
+[[suppress]]
+form = "db.transaction_session.set-variable.set"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "the page's own examples set one variable without parentheses (SET VAR myvar1 = 5), so the variable list without its ( and ) is valid"

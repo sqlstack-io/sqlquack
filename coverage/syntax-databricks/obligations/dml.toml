@@ -2092,12 +2092,6 @@ required = true
 note = "the form without its required VALUES"
 
 [[obligation]]
-id = "db.dml.insert-into.values-default.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.dml.insert-into.values-default.o025"
 kind = "negative_neighbour"
 required = true
@@ -2751,12 +2745,6 @@ id = "db.dml.insert-overwrite-directory-hive.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required VALUES after <directory_path>"
-
-[[obligation]]
-id = "db.dml.insert-overwrite-directory-hive.o031"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.dml.insert-overwrite-directory-hive.o032"

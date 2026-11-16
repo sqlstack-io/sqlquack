@@ -37,3 +37,16 @@ class ReservedWordTestCase:
     description: str
     runtime_only: bool
     expected_keyword_expect: str
+
+
+@dataclass(frozen=True)
+class BareFormTestCase:
+    description: str
+    form: str
+    expected_sql: str
+
+
+@dataclass(frozen=True)
+class MissingOpenTestCase:
+    description: str
+    expected_unbalanced: tuple[str, ...]

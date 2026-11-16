@@ -1883,11 +1883,11 @@ id = "db.functions.current-date"
 family = "functions"
 source = "doc.functions.current_date"
 anchor = "Syntax"
-kind = "call"
+kind = "special"
 grammar = [
-  "CURRENT_DATE ( )",
+  "CURRENT_DATE [ ( ) ]",
 ]
-grammar_sha256 = "3c1ef798e6bd171883d46b6d301a20e3dca631ae1d6de20c0c478c56ea2d4b59"
+grammar_sha256 = "64872e3078e7042cb1bed88691b77f7c8179db378d4c1e363f6c8f7bc78b9bdd"
 uses = []
 status = "catalogued"
 
@@ -1922,11 +1922,11 @@ id = "db.functions.current-path"
 family = "functions"
 source = "doc.functions.current_path"
 anchor = "Syntax"
-kind = "call"
+kind = "special"
 grammar = [
-  "CURRENT_PATH ( )",
+  "CURRENT_PATH [ ( ) ]",
 ]
-grammar_sha256 = "04eefb33b99b40c064ff01a0a450b2f75c956a68d5978f56f4e6074ccdc23c07"
+grammar_sha256 = "fc6dacf11cd6b41b34f8fa4e9fe55949e11153d742e1893b299f9ebd49bc29ce"
 uses = []
 status = "catalogued"
 
@@ -1974,11 +1974,11 @@ id = "db.functions.current-time"
 family = "functions"
 source = "doc.functions.current_time"
 anchor = "Syntax"
-kind = "call"
+kind = "special"
 grammar = [
-  "CURRENT_TIME ( [ <precision> ] )",
+  "CURRENT_TIME [ ( [ <precision> ] ) ]",
 ]
-grammar_sha256 = "f40202d9d205dbbb6123cd290450c18bab565cec2c0cbce9536e9d4653b7b1ec"
+grammar_sha256 = "01d47a23c12384631f817d88cb2b9c6d4f90b193dc9e10e6d0233fdbcb4d3688"
 uses = []
 status = "catalogued"
 
@@ -1987,11 +1987,11 @@ id = "db.functions.current-timestamp"
 family = "functions"
 source = "doc.functions.current_timestamp"
 anchor = "Syntax"
-kind = "call"
+kind = "special"
 grammar = [
-  "CURRENT_TIMESTAMP ( [ <precision> ] )",
+  "CURRENT_TIMESTAMP [ ( [ <precision> ] ) ]",
 ]
-grammar_sha256 = "7c9019ac0e0b3751722cfb6aac59441d5c611174fd4e197647b150ef25507198"
+grammar_sha256 = "dd1f9dcbca60f0a966e7a278bfd8ccf814b8c9903f0acd01032be949af2f4b20"
 uses = []
 status = "catalogued"
 
@@ -2013,11 +2013,11 @@ id = "db.functions.current-user"
 family = "functions"
 source = "doc.functions.current_user"
 anchor = "Syntax"
-kind = "call"
+kind = "special"
 grammar = [
-  "CURRENT_USER ( )",
+  "CURRENT_USER [ ( ) ]",
 ]
-grammar_sha256 = "34c1034281dfc167d7772482d38c6f794fbac8df085560d6265bb0f0bd69096c"
+grammar_sha256 = "4e585576207b002aeb0ca4cbb88b563733676b08c6e4e0497155c12b85d5f813"
 uses = []
 status = "catalogued"
 
@@ -4811,11 +4811,11 @@ id = "db.functions.localtime"
 family = "functions"
 source = "doc.functions.localtime"
 anchor = "Syntax"
-kind = "call"
+kind = "special"
 grammar = [
-  "LOCALTIME ( [ <precision> ] )",
+  "LOCALTIME [ ( [ <precision> ] ) ]",
 ]
-grammar_sha256 = "7488d6698966928342dd8e8dbc868a859604e1aebaaf8fce69142ed66e7429c2"
+grammar_sha256 = "f26aad28e47f48ef8bba2c36e4d62497566ee3d33e1c87cac0c759f7aa636ad6"
 uses = []
 status = "catalogued"
 
@@ -4824,11 +4824,11 @@ id = "db.functions.localtimestamp"
 family = "functions"
 source = "doc.functions.localtimestamp"
 anchor = "Syntax"
-kind = "call"
+kind = "special"
 grammar = [
-  "LOCALTIMESTAMP ( [ <precision> ] )",
+  "LOCALTIMESTAMP [ ( [ <precision> ] ) ]",
 ]
-grammar_sha256 = "4a8cddb6e53fb010872e0b137fb0a2520241d368da291c4d3081f016cf20ae25"
+grammar_sha256 = "d82be032d5ec5a715ef822421aafe22f063687455c9f3cbab871bbb1e3a57683"
 uses = []
 status = "catalogued"
 
@@ -6895,11 +6895,11 @@ id = "db.functions.session-user"
 family = "functions"
 source = "doc.functions.session_user"
 anchor = "Syntax"
-kind = "call"
+kind = "special"
 grammar = [
-  "SESSION_USER ( )",
+  "SESSION_USER [ ( ) ]",
 ]
-grammar_sha256 = "47dd3548a757a22233369c36f2ae5d89a5ad360c42aa2a7236c4a338bf6bac85"
+grammar_sha256 = "4c0aa5a9adfd6541b5b609b3850b5d2c05c5e80bc98ff799a7dab6b7b662dc2e"
 uses = []
 status = "catalogued"
 
@@ -10520,11 +10520,11 @@ id = "db.functions.user"
 family = "functions"
 source = "doc.functions.user"
 anchor = "Syntax"
-kind = "call"
+kind = "special"
 grammar = [
-  "USER ( )",
+  "USER [ ( ) ]",
 ]
-grammar_sha256 = "e7df433c0dd7eb84f305cbcd2a209a0c9d2a6c7455678931c817a7ba292d82ca"
+grammar_sha256 = "ea80c1db825c408e9977e56a9c6821956114f52227aec6aa64319a4ee32ef0e3"
 uses = []
 status = "catalogued"
 
