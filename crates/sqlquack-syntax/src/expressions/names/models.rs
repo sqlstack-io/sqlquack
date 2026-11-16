@@ -306,7 +306,7 @@ pub struct TableRef {
     /// MySQL: PARTITION(p0, p1, ...) hint for reading from specific partitions
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub partitions: Vec<Identifier>,
-    /// Snowflake IDENTIFIER(): a table name from a string or variable, used instead of `name`.
+    /// Snowflake IDENTIFIER(), a table name from a string or variable, or a FROM call followed by CHANGES or AT | BEFORE, such as DYNAMIC_TABLE_REFRESH_BOUNDARY( ); used instead of `name`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub identifier_func: Option<Box<Expression>>,
     /// Snowflake CHANGES clause: CHANGES (INFORMATION => ...) AT (...) END (...)
