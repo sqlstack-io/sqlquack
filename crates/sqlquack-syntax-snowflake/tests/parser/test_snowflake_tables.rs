@@ -1638,3 +1638,35 @@ fn given_an_external_table_column_with_not_null_when_parsing_then_it_is_a_constr
         );
     }
 }
+
+#[test]
+fn given_an_online_feature_table_key_when_parsing_then_it_is_a_labelled_column_list() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "the key is labelled PRIMARY KEY",
+            sql: "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) TARGET_LAG = '1 minute' WAREHOUSE = v1 FROM t2 ;",
+            pointer: "/0/create_object/operands/0/property_e_q/left/identifier/name",
+            expected_value: json!("PRIMARY KEY"),
+        },
+        ProjectionTestCase {
+            description: "a key column is a column name with its quoting",
+            sql: "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 , \"SELECT\" ) TARGET_LAG = '1 minute' WAREHOUSE = v1 FROM t2 ;",
+            pointer: "/0/create_object/operands/0/property_e_q/right/tuple/expressions/1/identifier/quoted",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "the source stays the second operand",
+            sql: "CREATE ONLINE FEATURE TABLE v1 PRIMARY KEY ( v1 ) TARGET_LAG = '1 minute' WAREHOUSE = v1 FROM t2 ;",
+            pointer: "/0/create_object/operands/1/table/name/name",
+            expected_value: json!("t2"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
