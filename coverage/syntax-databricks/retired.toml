@@ -2559,3 +2559,41 @@ ids = [
   "db.ddl.create-table-using.o120",
   "db.ddl.create-table-using.o129",
 ]
+
+[[retired]]
+retired_in = "4a5f1e9b5c208ee62b7cbc703160f2d11931e17a"
+reason = "a temporary function takes no IF NOT EXISTS and OR REPLACE excludes IF NOT EXISTS, as the warehouse's parser refuses both, and a Scala or Java function always writes its ENVIRONMENT, so the obligations of the combined openings and of the JVM line without it give way to those of the separate openings"
+ids = [
+  "db.ddl.create-function.o002",
+  "db.ddl.create-function.o003",
+  "db.ddl.create-function.o017",
+  "db.ddl.create-function.o022",
+  "db.ddl.create-sql-function.o076",
+  "db.ddl.create-sql-function.o077",
+  "db.ddl.create-sql-function.o080",
+  "db.ddl.create-sql-function.o081",
+  "db.ddl.create-sql-function.o084",
+  "db.ddl.create-sql-function.o085",
+  "db.ddl.create-sql-function.o102",
+  "db.ddl.create-sql-function.o103",
+  "db.ddl.create-sql-function.o104",
+  "db.ddl.create-sql-function.o105",
+  "db.ddl.create-sql-function.o106",
+  "db.ddl.create-sql-function.o107",
+  "db.ddl.create-sql-function.o157",
+]
+
+[[retired]]
+retired_in = "4a5f1e9b5c208ee62b7cbc703160f2d11931e17a"
+reason = "a parameter marker is written as :name or ?, not as an identifier, so its identifier and operand-class obligations go; CREATE FUNCTION's class name is a STRING literal, so its identifier obligations give way to a string-literal one"
+ids = [
+  "db.ddl.create-function.o012",
+  "db.ddl.create-function.o025",
+  "db.ddl.create-function.o028",
+  "db.expressions.expression.o019",
+  "db.expressions.expression.o021",
+  "db.expressions.expression.o053",
+  "db.expressions.expression.o055",
+  "db.expressions.expression.o060",
+  "db.expressions.expression.o061",
+]

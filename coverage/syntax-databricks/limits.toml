@@ -2697,8 +2697,8 @@ reason = "the page brackets catalog_name ('If you provide no name the default is
 [[reading]]
 form = "db.ddl.create-sql-function"
 grammar_sha256 = "aa5a3494e70a3b857f8621a8c2af6a6f23839e6d60a2b2d46c22276ff793baef"
-grammar = ["CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | [ TEMPORARY ] FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) [ RETURNS <data_type> ] [ <characteristic> [ ... ] ] RETURN { <expression> | <query> }", "CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | [ TEMPORARY ] FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS TABLE [ ( <column_spec> [ , ... ] ) ] [ <characteristic> [ ... ] ] RETURN <query>", "CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | [ TEMPORARY ] FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS <data_type> LANGUAGE PYTHON [ <characteristic> [ ... ] ] { AS <dollar_quoted_string> | HANDLER <handler_name> AS <dollar_quoted_string> }", "CREATE { OR REPLACE FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS <data_type> LANGUAGE { SCALA | JAVA } [ <characteristic> [ ... ] ] HANDLER <handler_name>"]
-reason = "the page writes the SQL, Python and JVM functions on one line. OR REPLACE: 'You cannot specify this parameter with IF NOT EXISTS', so the two are alternatives. RETURN is 'the body of the function' of a SQL function, whose RETURNS 'is optional' for a SQL UDF and whose RETURNS TABLE is supported for LANGUAGE SQL; 'For a table function, it can only be a query', so the table function is its own line; AS dollar_quoted_definition is 'the Python function body', HANDLER names 'the Python function in the dollar-quoted definition' for a row-at-a-time LANGUAGE PYTHON function, and LANGUAGE SCALA or JAVA 'require ... a HANDLER clause that references compiled code supplied through the ENVIRONMENT clause'. Without a language the warehouse reads a SQL function and refuses a body other than RETURN ('Operation not allowed: SQL functions should have a function definition'), so each body goes with its language, and the JVM line, which 'require[s] Unity Catalog', takes no TEMPORARY"
+grammar = ["CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) [ RETURNS <data_type> ] [ <characteristic> [ ... ] ] RETURN { <expression> | <query> }", "CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS TABLE [ ( <column_spec> [ , ... ] ) ] [ <characteristic> [ ... ] ] RETURN <query>", "CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS <data_type> LANGUAGE PYTHON [ <characteristic> [ ... ] ] { AS <dollar_quoted_string> | HANDLER <handler_name> AS <dollar_quoted_string> }", "CREATE { OR REPLACE FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS <data_type> LANGUAGE { SCALA | JAVA } [ <characteristic> [ ... ] ] <environment> HANDLER <handler_name>"]
+reason = "the page writes the SQL, Python and JVM functions on one line. OR REPLACE: 'You cannot specify this parameter with IF NOT EXISTS', so the two are alternatives. RETURN is 'the body of the function' of a SQL function, whose RETURNS 'is optional' for a SQL UDF and whose RETURNS TABLE is supported for LANGUAGE SQL; 'For a table function, it can only be a query', so the table function is its own line; AS dollar_quoted_definition is 'the Python function body', HANDLER names 'the Python function in the dollar-quoted definition' for a row-at-a-time LANGUAGE PYTHON function, and LANGUAGE SCALA or JAVA 'require ... a HANDLER clause that references compiled code supplied through the ENVIRONMENT clause'. Without a language the warehouse reads a SQL function and refuses a body other than RETURN ('Operation not allowed: SQL functions should have a function definition'), so each body goes with its language, and the JVM line, which 'require[s] Unity Catalog', takes no TEMPORARY and always writes the ENVIRONMENT that supplies its compiled code ('The compiled code must be provided as a JAR through the java_dependencies key of the ENVIRONMENT clause'). TEMPORARY with IF NOT EXISTS is refused by the warehouse's parser, so a temporary function takes no IF NOT EXISTS"
 
 [[reading]]
 form = "db.ddl.create-procedure"
@@ -6567,5 +6567,51 @@ target = "DEFAULT"
 note = "DEFAULT backtick-quoted in the query, a column name rather than the keyword"
 anchor = "doc.sql-ref-syntax-dml-insert-into / Syntax"
 sql = "INSERT INTO t1 SELECT `DEFAULT` , 1"
+context = "raw"
+expect = "observe"
+
+[[reading]]
+form = "db.ddl.create-function"
+grammar_sha256 = "5ba5c6dc302b94dcb2fa3e48e56b0a0fa553018d9b5b6fae4ecf11f2dfdab547"
+grammar = ["CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> AS <class_name> [ <resource_locations> ]"]
+reason = "OR REPLACE and IF NOT EXISTS cannot be written together, and a temporary function takes no IF NOT EXISTS: Spark's parse-tree builder refuses both combinations (the warehouse returns syntax_error for TEMPORARY with IF NOT EXISTS on the SQL function form), so the three openings are alternatives"
+
+[[limit]]
+form = "db.expressions.identifiers.subscript-dot"
+kind = "alternative"
+target = "'_'"
+note = "an identifier containing an underscore, the character the page lists"
+anchor = "doc.sql-ref-identifiers / Syntax"
+sql = "SELECT ( v_1 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-materialized-view-refresh-policy"
+kind = "negative_neighbour"
+target = "POLICY"
+note = "REFRESH followed by a policy word without POLICY"
+anchor = "doc.sql-ref-syntax-ddl-create-materialized-view-refresh-policy / Syntax"
+sql = "CREATE MATERIALIZED VIEW mv1 REFRESH AUTO AS SELECT 1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.clone.clone-source-temporal"
+kind = "alternative"
+target = "@"
+note = "the source table at a version written with @V, as the names page allows"
+anchor = "doc.delta-clone / Syntax"
+sql = "CREATE TABLE t3 CLONE t1@v1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.clone.clone-source-temporal"
+kind = "alternative"
+target = "@"
+note = "the source table at a timestamp written with @, as the names page allows"
+anchor = "doc.delta-clone / Syntax"
+sql = "CREATE TABLE t3 CLONE t1@20261101000000000"
 context = "raw"
 expect = "observe"

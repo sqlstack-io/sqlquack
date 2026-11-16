@@ -731,18 +731,18 @@ target = "<literal>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.expressions.expression.o019"
+id = "db.expressions.expression.o074"
 kind = "operand_type_class"
 required = true
 target = "<named_parameter_marker>"
-note = "a valid identifier"
+note = "a valid operand"
 
 [[obligation]]
-id = "db.expressions.expression.o021"
+id = "db.expressions.expression.o075"
 kind = "operand_type_class"
 required = true
 target = "<unnamed_parameter_marker>"
-note = "a valid identifier"
+note = "a valid operand"
 
 [[obligation]]
 id = "db.expressions.expression.o023"
@@ -937,38 +937,6 @@ id = "db.expressions.expression.o052"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "db.expressions.expression.o053"
-kind = "identifier_class"
-required = true
-target = "<named_parameter_marker>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.expression.o060"
-kind = "identifier_class"
-required = true
-target = "<named_parameter_marker>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
-id = "db.expressions.expression.o055"
-kind = "identifier_class"
-required = true
-target = "<unnamed_parameter_marker>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.expression.o061"
-kind = "identifier_class"
-required = true
-target = "<unnamed_parameter_marker>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
 id = "db.expressions.expression.o057"
@@ -1535,6 +1503,14 @@ kind = "operand_type_class"
 required = true
 target = "<digit>"
 note = "a valid operand"
+
+[[obligation]]
+id = "db.expressions.identifiers.subscript-dot.o007"
+kind = "alternative"
+required = true
+target = "'_'"
+anchor = "doc.sql-ref-identifiers / Syntax"
+note = "an identifier containing an underscore, the character the page lists"
 
 [[obligation]]
 id = "db.expressions.identifiers.subscript-dot.syntax.o001"

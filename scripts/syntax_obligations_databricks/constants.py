@@ -235,6 +235,7 @@ FILLS: dict[str, str] = {
     "table_comment": "'x'",
     "table_specification": "( c1 INT , c2 INT )",
     "options_clause": "( 'k' = 'v' )",
+    "constant_literal": "1",
     "tblproperties_clause": "( 'k' = 'v' )",
     "to_column_identifier": "c3",
     "to_field_identifier": "c3",
@@ -398,6 +399,10 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         "column_spec": "c1 INT",
         "characteristic": "DETERMINISTIC",
         "dollar_quoted_string": "$$ return 1 $$",
+        "environment": (
+            "ENVIRONMENT ( java_dependencies = '[\"/Volumes/c1/s1/v1/u1.jar\"]' , "
+            "environment_version = '4' )"
+        ),
     },
     "db.ddl.create-procedure": {
         "procedure_parameter": "p1 INT",
@@ -599,6 +604,15 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         "case_expression": "CASE WHEN 1 = 1 THEN 1 END",
         "collate_expression": "'a' COLLATE UTF8_BINARY",
         "operator": "+",
+        "named_parameter_marker": ":v1",
+        "unnamed_parameter_marker": "?",
+        "field_reference": "named_struct ( 'f1' , 1 ) . f1",
+        "function_invocation": "abs ( 1 )",
+    },
+    "db.expressions.function-invocation": {"table_argument": "TABLE ( t1 )"},
+    "db.ddl.create-function": {
+        "class_name": "'org.example.Udf'",
+        "resource_locations": "USING JAR '/tmp/u1.jar'",
     },
     "db.expressions.date-type.date": {"date_string": "'2026-01-01'"},
     "db.expressions.time-type.time.literals": {"time_string": "'12:00:00'"},
@@ -877,7 +891,11 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
     "db.expressions.collation.order-by-": CLAUSE_CONTEXT,
     "db.expressions.collation.utf8-binary-utf8-lcase-unicode": ("SELECT 'a' COLLATE ", ""),
     "db.expressions.json-path-expression": ("SELECT ( '{}' : ", " )"),
+    "db.expressions.names.identifier": ("SHOW TABLES IN ", ""),
+    "db.expressions.names.identifier-": EXPRESSION_CONTEXT,
+    "db.expressions.names.identifier-2": RELATION_CONTEXT,
     "db.expressions.names.identifier.syntax": RELATION_CONTEXT,
+    "db.expressions.function-invocation": RELATION_CONTEXT,
     "db.expressions.names.subscript": ("SELECT 1 ", ""),
     "db.expressions.names.subscript-dot": EXPRESSION_CONTEXT,
     "db.expressions.names.subscript-dot-2": FROM_CONTEXT,
@@ -895,6 +913,11 @@ FORM_CLASSES: dict[str, dict[str, str]] = {
     ),
     "db.functions.luhn-check": {"num_str": "expression"},
     "db.functions.named-struct": {"name1": "string_literal"},
+    "db.ddl.create-function": {"class_name": "string_literal"},
+    "db.expressions.expression": {
+        "named_parameter_marker": "operand",
+        "unnamed_parameter_marker": "operand",
+    },
     "db.functions.colonsign": {"json_path": "operand"},
     **dict.fromkeys(
         (

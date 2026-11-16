@@ -9624,6 +9624,22 @@ anchor = "doc.sql-ref-names / Table name"
 note = "the options specification with = and two options after a clone source, which the warehouse refuses"
 
 [[obligation]]
+id = "db.ddl.clone.clone-source-temporal.o107"
+kind = "alternative"
+required = true
+target = "@"
+anchor = "doc.delta-clone / Syntax"
+note = "the source table at a version written with @V, as the names page allows"
+
+[[obligation]]
+id = "db.ddl.clone.clone-source-temporal.o108"
+kind = "alternative"
+required = true
+target = "@"
+anchor = "doc.delta-clone / Syntax"
+note = "the source table at a timestamp written with @, as the names page allows"
+
+[[obligation]]
 id = "db.ddl.clone.create-table-clone.o001"
 kind = "positive"
 required = true
@@ -12143,16 +12159,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.ddl.create-function.o002"
-kind = "option_present"
+id = "db.ddl.create-function.o029"
+kind = "alternative"
 required = true
-target = "[ OR REPLACE ]"
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS… → OR REPLACE [ TEMPORARY ] FUNCTION"
 
 [[obligation]]
-id = "db.ddl.create-function.o003"
-kind = "option_absent"
+id = "db.ddl.create-function.o030"
+kind = "alternative"
 required = true
-target = "[ OR REPLACE ]"
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } → TEMPORARY FUNCTION"
+
+[[obligation]]
+id = "db.ddl.create-function.o031"
+kind = "alternative"
+required = true
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } → FUNCTION [ IF NOT EXISTS ]"
 
 [[obligation]]
 id = "db.ddl.create-function.o004"
@@ -12207,11 +12229,18 @@ target = "<class_name>"
 note = "omit <class_name>"
 
 [[obligation]]
-id = "db.ddl.create-function.o012"
+id = "db.ddl.create-function.o032"
 kind = "operand_type_class"
 required = true
 target = "<class_name>"
-note = "a valid identifier"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "db.ddl.create-function.o033"
+kind = "negative_neighbour"
+required = true
+target = "<class_name>"
+note = "an unquoted identifier in place of <class_name>"
 
 [[obligation]]
 id = "db.ddl.create-function.o014"
@@ -12233,16 +12262,34 @@ target = "<resource_locations> in [ <resource_locations> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.ddl.create-function.o017"
+id = "db.ddl.create-function.o034"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required REPLACE in [ OR REPLACE ]"
+note = "the form without its required OR after CREATE"
+
+[[obligation]]
+id = "db.ddl.create-function.o035"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required REPLACE"
 
 [[obligation]]
 id = "db.ddl.create-function.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FUNCTION"
+
+[[obligation]]
+id = "db.ddl.create-function.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FUNCTION after TEMPORARY"
+
+[[obligation]]
+id = "db.ddl.create-function.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FUNCTION after CREATE"
 
 [[obligation]]
 id = "db.ddl.create-function.o019"
@@ -12257,16 +12304,16 @@ required = true
 note = "the form without its required EXISTS in [ IF NOT EXISTS ]"
 
 [[obligation]]
+id = "db.ddl.create-function.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] }"
+
+[[obligation]]
 id = "db.ddl.create-function.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required AS"
-
-[[obligation]]
-id = "db.ddl.create-function.o022"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "db.ddl.create-function.o023"
@@ -12281,22 +12328,6 @@ id = "db.ddl.create-function.o027"
 kind = "identifier_class"
 required = true
 target = "<function_name>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
-id = "db.ddl.create-function.o025"
-kind = "identifier_class"
-required = true
-target = "<class_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.ddl.create-function.o028"
-kind = "identifier_class"
-required = true
-target = "<class_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
@@ -12871,6 +12902,14 @@ id = "db.ddl.create-materialized-view-refresh-policy.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { AUTO | INCREMENTAL | INCREMENTAL STRICT | FULL }"
+
+[[obligation]]
+id = "db.ddl.create-materialized-view-refresh-policy.o011"
+kind = "negative_neighbour"
+required = true
+target = "POLICY"
+anchor = "doc.sql-ref-syntax-ddl-create-materialized-view-refresh-policy / Syntax"
+note = "REFRESH followed by a policy word without POLICY"
 
 [[obligation]]
 id = "db.ddl.create-policy.o001"
@@ -14579,16 +14618,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o076"
+id = "db.ddl.create-sql-function.o189"
 kind = "alternative"
 required = true
-target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | [ TEMPORARY ] FUNCTION [ IF NOT EXISTS ] } → OR REPLACE [ TEMPORARY ] FUNCTION"
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS… → OR REPLACE [ TEMPORARY ] FUNCTION"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o077"
+id = "db.ddl.create-sql-function.o190"
 kind = "alternative"
 required = true
-target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | [ TEMPORARY ] FUNCTION [ IF NOT EXISTS… → [ TEMPORARY ] FUNCTION [ IF NOT EXISTS ]"
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } → TEMPORARY FUNCTION"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o191"
+kind = "alternative"
+required = true
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } → FUNCTION [ IF NOT EXISTS ]"
 
 [[obligation]]
 id = "db.ddl.create-sql-function.o004"
@@ -14601,18 +14646,6 @@ id = "db.ddl.create-sql-function.o005"
 kind = "option_absent"
 required = true
 target = "[ TEMPORARY ]"
-
-[[obligation]]
-id = "db.ddl.create-sql-function.o078"
-kind = "option_present"
-required = true
-target = "[ TEMPORARY ] #2"
-
-[[obligation]]
-id = "db.ddl.create-sql-function.o079"
-kind = "option_absent"
-required = true
-target = "[ TEMPORARY ] #2"
 
 [[obligation]]
 id = "db.ddl.create-sql-function.o006"
@@ -14758,40 +14791,34 @@ target = "<query>"
 note = "a valid query"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o080"
+id = "db.ddl.create-sql-function.o192"
 kind = "alternative"
 required = true
-target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | [ TEMPORARY ] FUNCTION [ IF NOT EXISTS ] } → OR REPLACE [ TEMPORARY ] FUNCTION #2"
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS… → OR REPLACE [ TEMPORARY ] FUNCTION #2"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o081"
+id = "db.ddl.create-sql-function.o193"
 kind = "alternative"
 required = true
-target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | [ TEMPORARY ] FUNCTION [ IF NOT EXISTS… → [ TEMPORARY ] FUNCTION [ IF NOT EXISTS ] #2"
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } → TEMPORARY FUNCTION #2"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o082"
+id = "db.ddl.create-sql-function.o194"
+kind = "alternative"
+required = true
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } → FUNCTION [ IF NOT EXISTS ] #2"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o078"
 kind = "option_present"
 required = true
-target = "[ TEMPORARY ] #3"
+target = "[ TEMPORARY ] #2"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o083"
+id = "db.ddl.create-sql-function.o079"
 kind = "option_absent"
 required = true
-target = "[ TEMPORARY ] #3"
-
-[[obligation]]
-id = "db.ddl.create-sql-function.o084"
-kind = "option_present"
-required = true
-target = "[ TEMPORARY ] #4"
-
-[[obligation]]
-id = "db.ddl.create-sql-function.o085"
-kind = "option_absent"
-required = true
-target = "[ TEMPORARY ] #4"
+target = "[ TEMPORARY ] #2"
 
 [[obligation]]
 id = "db.ddl.create-sql-function.o086"
@@ -14945,40 +14972,34 @@ target = "<query> #2"
 note = "a bare literal in place of <query>"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o102"
+id = "db.ddl.create-sql-function.o195"
 kind = "alternative"
 required = true
-target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | [ TEMPORARY ] FUNCTION [ IF NOT EXISTS ] } → OR REPLACE [ TEMPORARY ] FUNCTION #3"
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS… → OR REPLACE [ TEMPORARY ] FUNCTION #3"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o103"
+id = "db.ddl.create-sql-function.o196"
 kind = "alternative"
 required = true
-target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | [ TEMPORARY ] FUNCTION [ IF NOT EXISTS… → [ TEMPORARY ] FUNCTION [ IF NOT EXISTS ] #3"
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } → TEMPORARY FUNCTION #3"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o104"
+id = "db.ddl.create-sql-function.o197"
+kind = "alternative"
+required = true
+target = "{ OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } → FUNCTION [ IF NOT EXISTS ] #3"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o082"
 kind = "option_present"
 required = true
-target = "[ TEMPORARY ] #5"
+target = "[ TEMPORARY ] #3"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o105"
+id = "db.ddl.create-sql-function.o083"
 kind = "option_absent"
 required = true
-target = "[ TEMPORARY ] #5"
-
-[[obligation]]
-id = "db.ddl.create-sql-function.o106"
-kind = "option_present"
-required = true
-target = "[ TEMPORARY ] #6"
-
-[[obligation]]
-id = "db.ddl.create-sql-function.o107"
-kind = "option_absent"
-required = true
-target = "[ TEMPORARY ] #6"
+target = "[ TEMPORARY ] #3"
 
 [[obligation]]
 id = "db.ddl.create-sql-function.o108"
@@ -15290,6 +15311,20 @@ target = "<characteristic> in [ <characteristic> [ ... ] ] #4"
 note = "a valid operand"
 
 [[obligation]]
+id = "db.ddl.create-sql-function.o198"
+kind = "required_operand_missing"
+required = true
+target = "<environment>"
+note = "omit <environment>"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o199"
+kind = "operand_type_class"
+required = true
+target = "<environment>"
+note = "a valid operand"
+
+[[obligation]]
 id = "db.ddl.create-sql-function.o151"
 kind = "required_operand_missing"
 required = true
@@ -15329,6 +15364,12 @@ required = true
 note = "the form without its required FUNCTION"
 
 [[obligation]]
+id = "db.ddl.create-sql-function.o200"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FUNCTION after TEMPORARY"
+
+[[obligation]]
 id = "db.ddl.create-sql-function.o156"
 kind = "negative_neighbour"
 required = true
@@ -15347,10 +15388,10 @@ required = true
 note = "the form without its required EXISTS in [ IF NOT EXISTS ]"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o157"
+id = "db.ddl.create-sql-function.o201"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { OR REPLACE [ TEMPORARY ] FUNCTION | [ TEMPORARY ] FUNCTION [ IF NOT EXISTS ] }"
+note = "the form without its required { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] }"
 
 [[obligation]]
 id = "db.ddl.create-sql-function.o055"
@@ -15393,6 +15434,12 @@ id = "db.ddl.create-sql-function.o161"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FUNCTION after REPLACE"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o202"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FUNCTION after TEMPORARY #2"
 
 [[obligation]]
 id = "db.ddl.create-sql-function.o162"
@@ -15453,6 +15500,12 @@ id = "db.ddl.create-sql-function.o168"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FUNCTION after REPLACE #2"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o203"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FUNCTION after TEMPORARY #3"
 
 [[obligation]]
 id = "db.ddl.create-sql-function.o169"
