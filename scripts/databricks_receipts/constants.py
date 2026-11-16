@@ -214,6 +214,10 @@ LATER_PHASES: dict[str, str] = {
     "FAILED_TO_CREATE_PLAN_FOR_DIRECT_QUERY": SEMANTIC_ERROR,
     "FILE_TYPE_MISSING_FILESPACE.TABLE_PROPERTY_NOT_SET": UNSUPPORTED_FEATURE,
     "UNSUPPORTED_STREAMING_TABLE_VALUED_FUNCTION": UNSUPPORTED_FEATURE,
+    "INVALID_PARAMETER_VALUE.INVALID_SECURABLE_NAME": SEMANTIC_ERROR,
+    "INVALID_PARAMETER_VALUE.INVALID_SECURABLE_TYPE": UNSUPPORTED_FEATURE,
+    "MATERIALIZED_VIEW_NOT_INCREMENTALIZABLE": SEMANTIC_ERROR,
+    "UC_SCHEMA_REQUIRES_MANAGED_LOCATION": UNSUPPORTED_FEATURE,
     "DELTA_OPERATION_NOT_ALLOWED_DETAIL": UNSUPPORTED_FEATURE,
     "DELTA_TRUNCATE_TABLE_PARTITION_NOT_SUPPORTED": UNSUPPORTED_FEATURE,
     "DELTA_CLUSTER_BY_EXPRESSIONS_NOT_SUPPORTED": UNSUPPORTED_FEATURE,
@@ -333,6 +337,9 @@ UNCLASSED_PARSER: tuple[re.Pattern[str], ...] = (
     re.compile(r"^Directory path and 'path' in OPTIONS should be specified one, but not both\."),
     re.compile(r"^Invalid time zone displacement value\.$", re.M),
     re.compile(r"^Expected keyword 'FOREIGN'\.$", re.M),
+)
+UNCLASSED_PARSER_UNSUPPORTED: tuple[re.Pattern[str], ...] = (
+    re.compile(r"^[A-Z][A-Z ]+ command is not enabled here\.+$", re.M),
 )
 UNCLASSED_LATER: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"^org\.example\.(?:In|Out)$"), RUNTIME_ERROR),

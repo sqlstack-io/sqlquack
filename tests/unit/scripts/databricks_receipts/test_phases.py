@@ -227,6 +227,22 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             expected_parse_only=None,
         ),
         PhaseTestCase(
+            description="the parser refuses a command the workspace has not enabled",
+            message="\nALTER CATALOG SET MANAGED LOCATION command is not enabled here..\n"
+            "== SQL (line 1, position 1) ==\nALTER CATALOG v1 SET MANAGED LOCATION 'm'\n^^^\n",
+            sqlstate="",
+            expected_phase="unsupported_feature",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a policy on a securable type the workspace does not support",
+            message="[RequestId=3945e440-8f50 ErrorClass=INVALID_PARAMETER_VALUE.INVALID_SECURABLE_TYPE] "
+            "on_securable_type must be a securable type that supports policies.",
+            sqlstate="",
+            expected_phase="unsupported_feature",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
             description="an analysis class with no reviewed row",
             message="[DIVIDE_BY_ZERO] Division by zero. SQLSTATE: 22012",
             sqlstate="22012",
