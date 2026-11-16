@@ -726,8 +726,7 @@ impl Parser<'_> {
             .all(|(offset, word)| self.kw_at(offset, word))
     }
 
-    /// Refuses a tag statement that read a securable kind's word as the securable's name: a kind
-    /// word after `ON`, not followed by `.`, opens the kind, as Databricks reads it.
+    /// Refuses a tag statement that read a kind word after `ON`, not before `.`, as the name.
     fn tag_check(&mut self, first: usize, pattern: &'static str) -> Parsing<()> {
         let end: usize = self.at;
         let kind_word: bool = TAG_KINDS.iter().any(|word| {

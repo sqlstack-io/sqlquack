@@ -54,6 +54,8 @@ pub(crate) const LITERAL_STRING: &str = "string";
 pub(crate) const LITERAL_DATE: &str = "date";
 /// The parser's literal type for `TIMESTAMP '...'`.
 pub(crate) const LITERAL_TIMESTAMP: &str = "timestamp";
+/// A call's set quantifier field: `none`, `all` or `distinct`.
+pub(crate) const SET_QUANTIFIER: &str = "set_quantifier";
 
 /// The kind and payload of a one-key node such as `{"add": {...}}`.
 pub(crate) fn node_kind(node: &Value) -> Option<(&str, &Value)> {
@@ -156,9 +158,6 @@ pub(crate) fn list<'a>(payload: &'a Payload, name: &str) -> &'a [Value] {
         .and_then(Value::as_array)
         .map_or(&[], Vec::as_slice)
 }
-
-/// A call's set quantifier field: `none`, `all` or `distinct`.
-pub(crate) const SET_QUANTIFIER: &str = "set_quantifier";
 
 /// Whether a call's set quantifier is DISTINCT; an explicit ALL reads exactly as none.
 pub(crate) fn is_distinct(payload: &Payload) -> bool {

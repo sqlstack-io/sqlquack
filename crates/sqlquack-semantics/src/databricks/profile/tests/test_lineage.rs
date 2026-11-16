@@ -1,5 +1,6 @@
 use crate::databricks::profile::tests::helpers::databricks_findings;
 use crate::databricks::profile::tests::helpers::databricks_outputs;
+use crate::databricks::profile::tests::test_types::AllQuantifierTestCase;
 use crate::databricks::profile::tests::test_types::DatabricksOutputsTestCase;
 use crate::dialects::constants::DATABRICKS;
 use crate::lineage::tests::helpers::duckdb_shop_schema;
@@ -239,30 +240,40 @@ fn given_a_strict_parse_when_tracing_lineage_then_each_output_has_its_items_byte
 
 #[test]
 fn given_an_aggregate_written_with_all_when_analysed_then_it_reads_as_no_quantifier() {
-    let calls = [
-        "sum({q}quantity)",
-        "avg({q}price)",
-        "count({q}status)",
-        "max({q}status)",
+    let test_cases = [
+        AllQuantifierTestCase {
+            description: "SUM with ALL",
+            sql: "SELECT sum(ALL quantity) AS a FROM orders HAVING sum(ALL quantity) > 0",
+            expected_same_as: "SELECT sum(quantity) AS a FROM orders HAVING sum(quantity) > 0",
+        },
+        AllQuantifierTestCase {
+            description: "AVG with ALL",
+            sql: "SELECT avg(ALL price) AS a FROM orders HAVING avg(ALL price) > 0",
+            expected_same_as: "SELECT avg(price) AS a FROM orders HAVING avg(price) > 0",
+        },
+        AllQuantifierTestCase {
+            description: "COUNT with ALL",
+            sql: "SELECT count(ALL status) AS a FROM orders HAVING count(ALL status) > 0",
+            expected_same_as: "SELECT count(status) AS a FROM orders HAVING count(status) > 0",
+        },
+        AllQuantifierTestCase {
+            description: "MAX with ALL",
+            sql: "SELECT max(ALL status) AS a FROM orders HAVING max(ALL status) > 0",
+            expected_same_as: "SELECT max(status) AS a FROM orders HAVING max(status) > 0",
+        },
     ];
-    for call in calls {
-        let sql = |quantifier: &str| {
-            format!(
-                "SELECT {} AS a FROM orders HAVING {} > 0",
-                call.replace("{q}", quantifier),
-                call.replace("{q}", quantifier)
-            )
-        };
-        let (none, all) = (sql(""), sql("ALL "));
+    for test_case in test_cases {
         assert_eq!(
-            databricks_outputs(&all),
-            databricks_outputs(&none),
-            "{call}: outputs"
-        );
-        assert_eq!(
-            databricks_findings(&all),
-            databricks_findings(&none),
-            "{call}: findings"
+            (
+                databricks_outputs(test_case.sql),
+                databricks_findings(test_case.sql)
+            ),
+            (
+                databricks_outputs(test_case.expected_same_as),
+                databricks_findings(test_case.expected_same_as)
+            ),
+            "{}",
+            test_case.description
         );
     }
 }

@@ -12,9 +12,7 @@ use crate::expressions::queries::models::Over;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
 
-/// The set quantifier written at the start of a call's arguments.
-///
-/// `ALL` means the same as writing nothing; it is kept so the tree records what was written.
+/// A call's written set quantifier; `ALL` means no quantifier but is kept as written.
 #[derive(
     sqlquack_derive::AstNode,
     Debug,
