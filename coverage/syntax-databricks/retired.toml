@@ -2597,3 +2597,14 @@ ids = [
   "db.expressions.expression.o060",
   "db.expressions.expression.o061",
 ]
+
+[[retired]]
+retired_in = "1efd961f9cfeaf5fa6a1001e50ac5baf3c19c803"
+reason = "SET without VAR or VARIABLE is a configuration SET outside a compound statement, so the obligations of the optional keyword give way to those of the required one, as the sibling form's reading records"
+ids = [
+  "db.transaction_session.set-variable.set-default.o002",
+  "db.transaction_session.set-variable.set-default.o003",
+  "db.transaction_session.set-variable.set-default.o004",
+  "db.transaction_session.set-variable.set-default.o005",
+  "db.transaction_session.set-variable.set-default.o016",
+]

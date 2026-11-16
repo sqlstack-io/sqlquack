@@ -6496,3 +6496,89 @@ anchor = "doc.delta-clone / Syntax"
 sql = "CREATE TABLE t3 CLONE t1@20261101000000000"
 context = "raw"
 expect = "observe"
+
+[[limit]]
+form = "db.security_admin.alter-group"
+kind = "negative_neighbour"
+target = "GROUP"
+note = "the form without GROUP or USER written after DROP, beside the case written after ADD"
+anchor = "doc.security-alter-group / Syntax"
+sql = "ALTER GROUP v1 DROP v1"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "db.security_admin.alter-group"
+kind = "option_present"
+target = "[ ... ]"
+note = "the ADD or DROP group repeated as a whole"
+anchor = "doc.security-alter-group / Syntax"
+sql = "ALTER GROUP v1 ADD USER v1 DROP GROUP v1"
+context = "raw"
+expect = "observe"
+
+[[reading]]
+form = "db.transaction_session.set-variable.set-default"
+grammar_sha256 = "81a98c043ed8a250c4bf58fd6a5883b4099b81d0bc8c50b8d9710e586685885f"
+grammar = ["SET { VAR | VARIABLE } { <variable_name> = { <expression> | DEFAULT } } [ , ... ]"]
+reason = "the page's note: 'Outside of a compound statement the keywords VAR or VARIABLE are mandatory to disambiguate from a SET config statement.' The cases run outside a compound statement, where SET v1 = 1 is a configuration SET (the page's example: SET var = 5 fails with UNSUPPORTED_FEATURE.SET_VARIABLE_USING_SET), so VAR or VARIABLE is read as required, as the sibling form's reading records"
+
+[[limit]]
+form = "db.transaction_session.timezone"
+kind = "alternative"
+target = "<zone_id>"
+note = "a zone offset, as the page's examples write it"
+anchor = "doc.parameters.timezone / Syntax"
+sql = "SET TIMEZONE = +08:00"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.transaction_session.timezone"
+kind = "alternative"
+target = "<zone_id>"
+note = "the UTC zone"
+anchor = "doc.parameters.timezone / Syntax"
+sql = "SET TIMEZONE = UTC"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.transaction_session.conf-mgmt-set-path"
+kind = "alternative"
+target = "<path_element>"
+note = "the DEFAULT_PATH element"
+anchor = "doc.sql-ref-syntax-aux-conf-mgmt-set-path / Syntax"
+sql = "SET PATH = DEFAULT_PATH"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.transaction_session.conf-mgmt-set-query-tags.query-tags"
+kind = "alternative"
+target = "<tag_value>"
+note = "UNSET as the tag value, which the Parameters section names"
+anchor = "doc.sql-ref-syntax-aux-conf-mgmt-set-query-tags / Syntax"
+sql = "SET QUERY_TAGS [ 'k' ] = UNSET"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.transaction_session.declare-variable"
+kind = "option_present"
+target = "VARIABLE"
+note = "the optional VARIABLE alone, beside the form without it"
+anchor = "doc.sql-ref-syntax-ddl-declare-variable / Syntax"
+sql = "DECLARE VARIABLE v1 INT"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.utility.cache-refresh-table"
+kind = "identifier_class"
+target = "<table_name>"
+note = "a backtick-quoted name after the TABLE spelling"
+anchor = "doc.sql-ref-syntax-aux-cache-refresh-table / Syntax"
+sql = "REFRESH TABLE `t1 Q`"
+context = "raw"
+expect = "observe"

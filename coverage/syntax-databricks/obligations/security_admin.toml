@@ -130,6 +130,22 @@ required = true
 note = "the form without its required { GROUP <group_principal> [ , ... ] | USER <user_principal> [ , ... ] }"
 
 [[obligation]]
+id = "db.security_admin.alter-group.o021"
+kind = "negative_neighbour"
+required = true
+target = "GROUP"
+anchor = "doc.security-alter-group / Syntax"
+note = "the form without GROUP or USER written after DROP, beside the case written after ADD"
+
+[[obligation]]
+id = "db.security_admin.alter-group.o022"
+kind = "option_present"
+required = true
+target = "[ ... ]"
+anchor = "doc.security-alter-group / Syntax"
+note = "the ADD or DROP group repeated as a whole"
+
+[[obligation]]
 id = "db.security_admin.create-group.o001"
 kind = "positive"
 required = true

@@ -598,6 +598,9 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         "statement": "SELECT 1",
     },
     "db.scripting.signal-stmt": {"sqlstate": "'45000'"},
+    "db.transaction_session.max-partition-bytes": {"bytes": "64mb"},
+    "db.transaction_session.statement-timeout": {"seconds": "86400"},
+    "db.transaction_session.timezone": {"zone_id": "America/Los_Angeles"},
     "db.expressions.expression": {
         "literal": "1",
         "cast_expression": "CAST ( 1 AS STRING )",

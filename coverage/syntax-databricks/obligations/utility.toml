@@ -996,6 +996,14 @@ target = "<table_name>"
 note = "quoted: a backquoted name with blanks and mixed case after REFRESH without TABLE, which the warehouse's parser refuses (INVALID_SQL_SYNTAX.INVALID_REFRESH_RESOURCE_PATH), so the answer is recorded rather than expected"
 
 [[obligation]]
+id = "db.utility.cache-refresh-table.o011"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql-ref-syntax-aux-cache-refresh-table / Syntax"
+note = "a backtick-quoted name after the TABLE spelling"
+
+[[obligation]]
 id = "db.utility.cache-uncache-table.o001"
 kind = "positive"
 required = true

@@ -273,6 +273,14 @@ required = true
 note = "the form without its required PATH"
 
 [[obligation]]
+id = "db.transaction_session.conf-mgmt-set-path.o009"
+kind = "alternative"
+required = true
+target = "<path_element>"
+anchor = "doc.sql-ref-syntax-aux-conf-mgmt-set-path / Syntax"
+note = "the DEFAULT_PATH element"
+
+[[obligation]]
 id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o001"
 kind = "positive"
 required = true
@@ -343,6 +351,14 @@ id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required QUERY_TAGS in [ , QUERY_TAGS [ <tag_key> ] = <tag_value> ... ]"
+
+[[obligation]]
+id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o019"
+kind = "alternative"
+required = true
+target = "<tag_value>"
+anchor = "doc.sql-ref-syntax-aux-conf-mgmt-set-query-tags / Syntax"
+note = "UNSET as the tag value, which the Parameters section names"
 
 [[obligation]]
 id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax.o001"
@@ -641,6 +657,14 @@ required = true
 target = "[ <data_type> ] [ { DEFAULT | = } <default_expression> ]"
 anchor = "doc.sql-ref-syntax-ddl-declare-variable / Syntax"
 note = "a variable with neither a type nor a default, as the page's line allows, which the warehouse's parser refuses (INVALID_SQL_SYNTAX.VARIABLE_TYPE_OR_DEFAULT_REQUIRED), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.transaction_session.declare-variable.o035"
+kind = "option_present"
+required = true
+target = "VARIABLE"
+anchor = "doc.sql-ref-syntax-ddl-declare-variable / Syntax"
+note = "the optional VARIABLE alone, beside the form without it"
 
 [[obligation]]
 id = "db.transaction_session.drop-variable.o001"
@@ -960,28 +984,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.transaction_session.set-variable.set-default.o002"
-kind = "option_present"
-required = true
-target = "[ VAR | VARIABLE ]"
-
-[[obligation]]
-id = "db.transaction_session.set-variable.set-default.o003"
-kind = "option_absent"
-required = true
-target = "[ VAR | VARIABLE ]"
-
-[[obligation]]
-id = "db.transaction_session.set-variable.set-default.o004"
+id = "db.transaction_session.set-variable.set-default.o020"
 kind = "alternative"
 required = true
-target = "[ VAR | VARIABLE ] → VAR"
+target = "{ VAR | VARIABLE } → VAR"
 
 [[obligation]]
-id = "db.transaction_session.set-variable.set-default.o005"
+id = "db.transaction_session.set-variable.set-default.o021"
 kind = "alternative"
 required = true
-target = "[ VAR | VARIABLE ] → VARIABLE"
+target = "{ VAR | VARIABLE } → VARIABLE"
 
 [[obligation]]
 id = "db.transaction_session.set-variable.set-default.o006"
@@ -1043,10 +1055,10 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "db.transaction_session.set-variable.set-default.o016"
-kind = "interaction_all_options"
+id = "db.transaction_session.set-variable.set-default.o022"
+kind = "negative_neighbour"
 required = true
-note = "every independent option of one production together"
+note = "the form without its required { <variable_name> = { <expression> | DEFAULT } }"
 
 [[obligation]]
 id = "db.transaction_session.set-variable.set-default.o017"
@@ -1101,6 +1113,22 @@ id = "db.transaction_session.timezone.o004"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TIMEZONE"
+
+[[obligation]]
+id = "db.transaction_session.timezone.o005"
+kind = "alternative"
+required = true
+target = "<zone_id>"
+anchor = "doc.parameters.timezone / Syntax"
+note = "a zone offset, as the page's examples write it"
+
+[[obligation]]
+id = "db.transaction_session.timezone.o006"
+kind = "alternative"
+required = true
+target = "<zone_id>"
+anchor = "doc.parameters.timezone / Syntax"
+note = "the UTC zone"
 
 [[obligation]]
 id = "db.transaction_session.use-cached-result.o001"
