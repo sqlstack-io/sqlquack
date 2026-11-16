@@ -48,7 +48,7 @@ fn order_by(expressions: Vec<Ordered>) -> OrderBy {
     }
 }
 
-fn limit(this: Expression) -> Limit {
+pub(crate) fn limit(this: Expression) -> Limit {
     Limit {
         this,
         percent: false,

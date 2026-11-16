@@ -95,7 +95,7 @@ fn compile(pattern: &'static str) -> Node {
     alternatives(&words, 0).0
 }
 
-fn is_integer(token: &Token) -> bool {
+pub(crate) fn is_integer(token: &Token) -> bool {
     token.kind == TokenKind::Number(NumberKind::Integer)
 }
 
@@ -149,7 +149,7 @@ impl Parser<'_> {
     }
 
     /// The value of `slot` from here.
-    fn slot_value(&mut self, slot: &str) -> Parsing<Expression> {
+    pub(crate) fn slot_value(&mut self, slot: &str) -> Parsing<Expression> {
         let tuple =
             |expressions: Vec<Expression>| Expression::Tuple(Box::new(Tuple { expressions }));
         Ok(match slot {

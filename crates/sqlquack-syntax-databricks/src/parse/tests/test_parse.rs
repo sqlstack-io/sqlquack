@@ -722,6 +722,36 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "FSCK takes its mode before DRY RUN",
+            sql: "FSCK REPAIR TABLE t1 METADATA ONLY DRY RUN",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "SHOW TABLES DROPPED takes a LIMIT",
+            sql: "SHOW TABLES DROPPED FROM s1 LIMIT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "GET copies a volume path to a local path",
+            sql: "GET '/Volumes/workspace/s1/v1/f1.csv' TO '/tmp/f1.csv'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "GET needs TO",
+            sql: "GET '/Volumes/workspace/s1/v1/f1.csv' '/tmp/f1.csv'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "PUT copies a local path into a volume path",
+            sql: "PUT '/tmp/f1.csv' INTO '/Volumes/workspace/s1/v1/f1.csv' OVERWRITE",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "PUT takes string paths",
+            sql: "PUT m1 INTO '/Volumes/workspace/s1/v1/f1.csv'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "BEGIN alone is refused",
             sql: "BEGIN",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },

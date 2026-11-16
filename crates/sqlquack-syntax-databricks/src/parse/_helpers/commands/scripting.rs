@@ -3,8 +3,8 @@
 use sqlquack_syntax::Expression;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
+use crate::parse::_helpers::tree::forms::is_integer;
 use crate::parse::_helpers::tree::nodes::null;
-use crate::scan::models::{NumberKind, Token, TokenKind};
 
 /// The words a labelled statement may start with.
 const LABELLED: [&str; 5] = ["BEGIN", "LOOP", "WHILE", "REPEAT", "FOR"];
@@ -20,11 +20,6 @@ const CONDITION_ITEMS: [&str; 5] = [
 
 /// `statement_info_item`, what `GET DIAGNOSTICS` reads without `CONDITION`.
 const STATEMENT_ITEMS: [&str; 2] = ["TRANSACTION_ACTIVE", "ROW_COUNT"];
-
-/// Whether `token` is an integer literal.
-fn is_integer(token: &Token) -> bool {
-    token.kind == TokenKind::Number(NumberKind::Integer)
-}
 
 impl Parser<'_> {
     /// `BEGIN [NOT ATOMIC] [compoundBody] END [;]`; `BEGIN TRANSACTION` is a documented form.

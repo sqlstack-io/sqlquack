@@ -452,9 +452,19 @@ const FORMS: &[Form] = &[
         ],
     },
     Form {
+        construct: "get",
+        leads: &[&["GET"]],
+        patterns: &["GET str TO str"],
+    },
+    Form {
+        construct: "put",
+        leads: &[&["PUT"]],
+        patterns: &["PUT str INTO str [ OVERWRITE ]"],
+    },
+    Form {
         construct: "fsck",
         leads: &[&["FSCK"]],
-        patterns: &["FSCK REPAIR TABLE name [ DRY RUN ] [ METADATA ONLY ]"],
+        patterns: &["FSCK REPAIR TABLE name [ METADATA ONLY ] [ DRY RUN ]"],
     },
     Form {
         construct: "generate",

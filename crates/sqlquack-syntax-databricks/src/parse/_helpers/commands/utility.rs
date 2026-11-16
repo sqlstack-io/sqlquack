@@ -12,6 +12,7 @@ use sqlquack_syntax::expressions::statements::models::{
 use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::commands::alters::partition;
+use crate::parse::_helpers::commands::queries::limit;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{column_from, joined, null, string, table, tuple, var};
 use crate::parse::constants::{
@@ -205,7 +206,11 @@ impl Parser<'_> {
         let node: Show = match word.as_str() {
             "TABLES" if self.kw_at(1, "DROPPED") => {
                 self.at += 2;
-                scoped(self, "TABLES DROPPED", "SCHEMA")?
+                let mut node: Show = self.show_scope(Show::new("TABLES DROPPED"), "SCHEMA")?;
+                if self.eat_kw("LIMIT") {
+                    node.limit = Some(Box::new(limit(self.slot_value("int")?)));
+                }
+                node
             }
             "TABLES" => {
                 self.at += 1;
