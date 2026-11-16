@@ -2,6 +2,7 @@
 
 use crate::parser::_helpers::ddl::snowflake_alter::property;
 use crate::parser::_helpers::ddl::snowflake_create_table::SnowflakeTableKind;
+use crate::parser::_helpers::ddl::snowflake_semantic_view::part;
 use crate::parser::constants::{EVENT_TABLE, ONLINE_FEATURE_TABLE, TABLE_KEYWORD};
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -204,7 +205,7 @@ impl Parser {
         })))
     }
 
-    /// `PRIMARY KEY ( <columns> ) <property> ... FROM <source>`: the key, the properties, and the source.
+    /// `PRIMARY KEY ( <columns> ) <property> ... FROM <source>`: the key as a PRIMARY KEY part, the properties, and the source.
     fn parse_online_feature_table(
         &mut self,
     ) -> Result<(Expression, Vec<ObjectProperty>, Expression)> {
@@ -213,7 +214,14 @@ impl Parser {
         {
             return Err(self.parse_error("Expected PRIMARY KEY"));
         }
-        let key = self.parse_iceberg_name_list(false)?;
+        let key = match self.parse_iceberg_name_list(false)? {
+            Expression::Tuple(mut columns) => {
+                columns.expressions = columns.expressions.into_iter().map(key_column).collect();
+                Expression::Tuple(columns)
+            }
+            other => other,
+        };
+        let key = part("PRIMARY KEY", key);
         let mut properties: Vec<ObjectProperty> = Vec::new();
         while !self.is_at_end() && !self.check(TokenType::Semicolon) && !self.check(TokenType::From)
         {
@@ -222,5 +230,15 @@ impl Parser {
         self.expect_token(TokenType::From)?;
         let source = Expression::Table(Box::new(self.parse_iceberg_object_name()?));
         Ok((key, properties, source))
+    }
+}
+
+/// A PRIMARY KEY column written as one name, as an identifier with its quoting; a qualified name as written.
+fn key_column(name: Expression) -> Expression {
+    match name {
+        Expression::Table(table) if table.schema.is_none() && table.catalog.is_none() => {
+            Expression::Identifier(table.name)
+        }
+        other => other,
     }
 }
