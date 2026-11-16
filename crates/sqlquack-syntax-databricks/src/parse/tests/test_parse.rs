@@ -442,8 +442,8 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "a schema's tag names are identifiers, not strings",
-            sql: "ALTER SCHEMA s1 SET TAGS ( 'k' = 1 )",
+            description: "a schema's tag names are strings, not identifiers",
+            sql: "ALTER SCHEMA s1 SET TAGS ( m1 = 'v' )",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
@@ -679,6 +679,46 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         VerdictTestCase {
             description: "GET DIAGNOSTICS CONDITION takes a number",
             sql: "BEGIN DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN GET DIAGNOSTICS CONDITION v1 v1 = MESSAGE_TEXT ; END ; SELECT 1 ; END",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER CATALOG tag keys are strings",
+            sql: "ALTER CATALOG v1 SET TAGS ( 'k' = 'v' , 'k2' = 'v' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ALTER CATALOG refuses a name as a tag key",
+            sql: "ALTER CATALOG UNSET TAGS ( m1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ALTER SCHEMA tag keys are strings",
+            sql: "ALTER SCHEMA s1 UNSET TAGS ( 'k' , 'k2' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ALTER SCHEMA refuses a name as a tag key",
+            sql: "ALTER DATABASE s1 SET TAGS ( m1 = 'v' )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "governed tag values are strings",
+            sql: "CREATE GOVERNED TAG v1 DESCRIPTION 'x' VALUES ( 'm' , 'm2' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "governed tag values refuse a name",
+            sql: "ALTER GOVERNED TAG v1 SET VALUES ( m1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "column tags apply to a top-level column",
+            sql: "ALTER TABLE t1 ALTER COLUMN c1.c1 SET TAGS ( 'k' = 'v' )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a column mask applies to a top-level column",
+            sql: "ALTER TABLE t1 ALTER c1.c1 SET MASK f1",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {

@@ -14,8 +14,8 @@ pub(crate) const RULES: &[(&str, &str)] = &[
     ("rename", "RENAME TO name"),
     ("tags", "SET TAGS props | UNSET TAGS keys"),
     (
-        "name_tags",
-        "SET TAGS ( { name = literal } ,... ) | UNSET TAGS ( name ,... )",
+        "string_tags",
+        "SET TAGS ( { str = literal } ,... ) | UNSET TAGS ( str ,... )",
     ),
     ("if_exists", "IF EXISTS"),
     ("if_not_exists", "IF NOT EXISTS"),
@@ -139,7 +139,7 @@ const FORMS: &[Form] = &[
         construct: "alter_catalog",
         leads: &[&["ALTER", "CATALOG"]],
         patterns: &[
-            "ALTER CATALOG [ catalog ] { owner | name_tags | predictive }",
+            "ALTER CATALOG [ catalog ] { owner | string_tags | predictive }",
             "ALTER CATALOG catalog { collation | OPTIONS props | SET MANAGED LOCATION str \
              | [ SET ] RETAIN DROPPED TO int time_unit }",
             "ALTER CATALOG catalog DROP CONNECTION [ RESTRICT | FORCE ]",
@@ -165,7 +165,7 @@ const FORMS: &[Form] = &[
     Form {
         construct: "alter_governed_tag",
         leads: &[&["ALTER", "GOVERNED"]],
-        patterns: &["ALTER GOVERNED TAG id { SET DESCRIPTION text | SET VALUES ( [ id ,... ] ) }"],
+        patterns: &["ALTER GOVERNED TAG id { SET DESCRIPTION text | SET VALUES ( [ str ,... ] ) }"],
     },
     Form {
         construct: "alter_external_location",
@@ -239,7 +239,7 @@ const FORMS: &[Form] = &[
     Form {
         construct: "create_governed_tag",
         leads: &[&["CREATE", "GOVERNED"]],
-        patterns: &["CREATE GOVERNED TAG id [ DESCRIPTION text ] [ VALUES ( [ id ,... ] ) ]"],
+        patterns: &["CREATE GOVERNED TAG id [ DESCRIPTION text ] [ VALUES ( [ str ,... ] ) ]"],
     },
     Form {
         construct: "create_external_location",

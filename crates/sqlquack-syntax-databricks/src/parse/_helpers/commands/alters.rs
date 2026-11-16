@@ -512,7 +512,16 @@ impl Parser<'_> {
         let mut altered: Vec<AlterTableAction> = Vec::new();
         loop {
             let spec_start: usize = self.offset();
-            let name: Identifier = joined(self.multipart_identifier()?);
+            let parts: Vec<Identifier> = self.multipart_identifier()?;
+            if parts.len() > 1 && self.kw("SET") && self.kw_at(1, "MASK") {
+                return Err(self.error_with(
+                    "[COLUMN_MASKS_MULTI_PART_TARGET_COLUMN_NAME] A column mask applies to a \
+                     top-level column, not a nested field",
+                    spec_start,
+                    true,
+                ));
+            }
+            let name: Identifier = joined(parts);
             match self.column_action(spec_start)? {
                 Some(action) => altered.push(AlterTableAction::AlterColumn {
                     name,
@@ -539,13 +548,9 @@ impl Parser<'_> {
         Ok(altered)
     }
 
-    /// Whether `name SET|UNSET TAGS` follows, which only `ALTER COLUMN` takes.
+    /// Whether `name SET|UNSET TAGS` follows, which only `ALTER COLUMN` takes, on a top-level column.
     fn tag_column_ahead(&self) -> bool {
-        let mut offset: usize = 1;
-        while self.char_at(offset, '.') && self.is_at(offset + 1, is_identifier) {
-            offset += 2;
-        }
-        self.kw_in(offset, &["SET", "UNSET"]) && self.kw_at(offset + 1, "TAGS")
+        self.kw_in(1, &["SET", "UNSET"]) && self.kw_at(2, "TAGS")
     }
 
     /// Whether Hive's `CHANGE name newName type` follows: a second name that begins no action.
@@ -847,8 +852,7 @@ impl Parser<'_> {
                 self.at += 2;
                 let set: bool = word == SET_TAGS;
                 let tags: Vec<Expression> = self.parenthesized(|parser| {
-                    let key: Expression =
-                        Expression::Identifier(joined(parser.multipart_identifier()?));
+                    let key: Expression = parser.string_literal()?;
                     match set {
                         true => {
                             parser.expect_char('=')?;
