@@ -491,8 +491,10 @@ impl Parser<'_> {
             ));
         }
         if self.kw("QUERY_TAGS") && self.char_at(1, '[') {
-            self.at -= 1;
-            return self.opaque_statement();
+            let start: usize = self.tokens[self.at - 1].start;
+            self.comma_list(|parser| parser.query_tag(set_at))?;
+            self.gap("set", start);
+            return Ok(null());
         }
         if self.kw("CATALOG") && !self.ends_at(1) && !self.char_at(1, '=') {
             self.at += 1;
@@ -503,6 +505,25 @@ impl Parser<'_> {
             return Ok(set_statement(vec![set_item("CATALOG", value, None)]));
         }
         self.configuration(set_at)
+    }
+
+    /// `QUERY_TAGS [ 'key' ] = { 'value' | NULL | UNSET }`; any other spelling is Databricks' own error.
+    fn query_tag(&mut self, set_at: usize) -> Parsing<()> {
+        let keyed: bool = self.eat_kw("QUERY_TAGS") && self.eat_char('[') && self.string_at(0);
+        self.at += usize::from(keyed);
+        let valued: bool = keyed
+            && self.eat_char(']')
+            && self.eat_char('=')
+            && (self.string_at(0) || self.kw_in(0, &["NULL", "UNSET"]));
+        if !valued {
+            return Err(self.error_with(
+                "[SET_QUERY_TAGS_SYNTAX_INVALID] Invalid QUERY_TAGS syntax.",
+                set_at,
+                true,
+            ));
+        }
+        self.at += 1;
+        Ok(())
     }
 
     /// `SET key [= value]`, `SET -v` or `SET`, as Spark matches the text after `SET`.

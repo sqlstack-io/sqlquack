@@ -181,6 +181,41 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             sql: "CREATE TABLE t3 CLONE t1@2026",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
+        VerdictTestCase {
+            description: "a recipient's sharing id is a string",
+            sql: "CREATE RECIPIENT v1 USING ID 'm'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a recipient's sharing id is not a name",
+            sql: "CREATE RECIPIENT v1 USING ID m1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a catalog given an owner is named, not quoted",
+            sql: "ALTER CATALOG 'v1' OWNER TO v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "each query tag names QUERY_TAGS and a key",
+            sql: "SET QUERY_TAGS [ 'k' ] = 'v' , QUERY_TAGS [ 'k2' ] = UNSET",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a query tag needs a key",
+            sql: "SET QUERY_TAGS [ ] = 'v'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a later query tag repeats QUERY_TAGS",
+            sql: "SET QUERY_TAGS [ 'k' ] = 'v' , [ 'k2' ] = 'v'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "an inventory location is one string",
+            sql: "ANALYZE TABLE t1 COMPUTE STORAGE METRICS USING INVENTORY LOCATION 'm' 'v1'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)
