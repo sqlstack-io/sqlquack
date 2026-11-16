@@ -246,6 +246,46 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             sql: "CREATE PROCEDURE v1 ( ) LANGUAGE SQL SQL SECURITY INVOKER BEGIN TRANSACTION",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
+        VerdictTestCase {
+            description: "a FILE column is managed or external",
+            sql: "CREATE TABLE t3 ( c1 FILE EXTERNAL , c2 FILE MANAGED )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a FILE column names its kind",
+            sql: "CREATE TABLE t3 ( c1 FILE )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "an unqualified interval string names its units",
+            sql: "SELECT INTERVAL '1 day 2 hours'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "an unqualified interval string without units is refused",
+            sql: "SELECT ( INTERVAL '1-2' )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a refresh policy names its mode",
+            sql: "CREATE MATERIALIZED VIEW mv1 REFRESH POLICY INCREMENTAL STRICT AS SELECT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a refresh policy without a mode is refused",
+            sql: "CREATE MATERIALIZED VIEW mv1 REFRESH POLICY AS SELECT 1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "REORG applies a checkpoint",
+            sql: "REORG t1 APPLY ( CHECKPOINT )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "REORG sets the Parquet format version",
+            sql: "REORG t1 APPLY ( SET PARQUET ( FORMAT_VERSION = '2.12.0' ) )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

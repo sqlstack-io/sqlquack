@@ -96,7 +96,7 @@ pub(crate) const RULES: &[(&str, &str)] = &[
     (
         "pipeline_clause",
         "USING id | PARTITIONED BY ( { id [ type ] } ,... ) | CLUSTER BY cluster_spec | comment \
-         | DEFAULT COLLATION id | TBLPROPERTIES props | REFRESH POLICY id [ STRICT ] | schedule \
+         | DEFAULT COLLATION id | TBLPROPERTIES props | REFRESH POLICY { AUTO | INCREMENTAL [ STRICT ] | FULL } | schedule \
          | WITH row_filter",
     ),
     ("cdc_columns", "* EXCEPT columns | name ,..."),
@@ -484,7 +484,8 @@ const FORMS: &[Form] = &[
         construct: "reorg",
         leads: &[&["REORG"]],
         patterns: &["REORG [ TABLE ] name [ WHERE expr ] APPLY ( { PURGE \
-             | UPGRADE UNIFORM ( ICEBERG_COMPAT_VERSION = int ) } )"],
+             | UPGRADE UNIFORM ( ICEBERG_COMPAT_VERSION = int ) | CHECKPOINT \
+             | SET PARQUET ( FORMAT_VERSION = str ) } )"],
     },
     Form {
         construct: "call",

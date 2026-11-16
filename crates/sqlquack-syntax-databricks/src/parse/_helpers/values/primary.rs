@@ -141,7 +141,12 @@ fn is_typed_text(word: &str, text: &str) -> bool {
             .next()
             .is_some_and(|first| first.is_ascii_digit() || matches!(first, '+' | '-' | 'T')),
         "X" => text.chars().all(|character| character.is_ascii_hexdigit()),
-        "INTERVAL" => trimmed.chars().any(|character| character.is_ascii_digit()),
+        "INTERVAL" => {
+            trimmed.chars().any(|character| character.is_ascii_digit())
+                && trimmed
+                    .chars()
+                    .any(|character| character.is_ascii_alphabetic())
+        }
         _ => true,
     }
 }

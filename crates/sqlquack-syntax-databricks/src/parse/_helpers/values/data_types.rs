@@ -217,6 +217,14 @@ impl Parser<'_> {
                 length: None,
             },
             "BINARY" => DataType::Binary { length: None },
+            "FILE" => match self.word_at(0).as_deref() {
+                Some(kind @ ("MANAGED" | "EXTERNAL")) => {
+                    let name: String = format!("FILE {kind}");
+                    self.at += 1;
+                    DataType::Custom { name }
+                }
+                _ => return Err(self.error()),
+            },
             "VOID" | "VARIANT" => DataType::Custom { name: word },
             _ => {
                 if self.eat_char('(') {
