@@ -57450,29 +57450,24 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.rename-to.o004"
-kind = "option_present"
+id = "sf.security_admin.alter-user.rename-to.o021"
+kind = "required_operand_missing"
 required = true
-target = "[ <name> ]"
+target = "<name>"
+note = "omit <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.rename-to.o005"
-kind = "option_absent"
-required = true
-target = "[ <name> ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-user.rename-to.o006"
+id = "sf.security_admin.alter-user.rename-to.o022"
 kind = "operand_type_class"
 required = true
-target = "<name> in [ <name> ]"
+target = "<name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.rename-to.o007"
+id = "sf.security_admin.alter-user.rename-to.o023"
 kind = "negative_neighbour"
 required = true
-target = "<name> in [ <name> ]"
+target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -57513,12 +57508,6 @@ id = "sf.security_admin.alter-user.rename-to.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TO"
-
-[[obligation]]
-id = "sf.security_admin.alter-user.rename-to.o015"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.rename-to.o016"
@@ -59750,29 +59739,24 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.set-authentication-password-session.o004"
-kind = "option_present"
+id = "sf.security_admin.alter-user.set-authentication-password-session.o027"
+kind = "required_operand_missing"
 required = true
-target = "[ <name> ]"
+target = "<name>"
+note = "omit <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.set-authentication-password-session.o005"
-kind = "option_absent"
-required = true
-target = "[ <name> ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-user.set-authentication-password-session.o006"
+id = "sf.security_admin.alter-user.set-authentication-password-session.o028"
 kind = "operand_type_class"
 required = true
-target = "<name> in [ <name> ]"
+target = "<name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.set-authentication-password-session.o007"
+id = "sf.security_admin.alter-user.set-authentication-password-session.o029"
 kind = "negative_neighbour"
 required = true
-target = "<name> in [ <name> ]"
+target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -60363,29 +60347,24 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.unset-authentication-password-session.o004"
-kind = "option_present"
+id = "sf.security_admin.alter-user.unset-authentication-password-session.o020"
+kind = "required_operand_missing"
 required = true
-target = "[ <name> ]"
+target = "<name>"
+note = "omit <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.unset-authentication-password-session.o005"
-kind = "option_absent"
-required = true
-target = "[ <name> ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-user.unset-authentication-password-session.o006"
+id = "sf.security_admin.alter-user.unset-authentication-password-session.o021"
 kind = "operand_type_class"
 required = true
-target = "<name> in [ <name> ]"
+target = "<name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.unset-authentication-password-session.o007"
+id = "sf.security_admin.alter-user.unset-authentication-password-session.o022"
 kind = "negative_neighbour"
 required = true
-target = "<name> in [ <name> ]"
+target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -60417,12 +60396,6 @@ id = "sf.security_admin.alter-user.unset-authentication-password-session.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
-
-[[obligation]]
-id = "sf.security_admin.alter-user.unset-authentication-password-session.o016"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.unset-authentication-password-session.o017"
@@ -60466,29 +60439,24 @@ required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.unset-tag.o004"
-kind = "option_present"
+id = "sf.security_admin.alter-user.unset-tag.o025"
+kind = "required_operand_missing"
 required = true
-target = "[ <name> ]"
+target = "<name>"
+note = "omit <name>"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.unset-tag.o005"
-kind = "option_absent"
-required = true
-target = "[ <name> ]"
-
-[[obligation]]
-id = "sf.security_admin.alter-user.unset-tag.o006"
+id = "sf.security_admin.alter-user.unset-tag.o026"
 kind = "operand_type_class"
 required = true
-target = "<name> in [ <name> ]"
+target = "<name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "sf.security_admin.alter-user.unset-tag.o007"
+id = "sf.security_admin.alter-user.unset-tag.o027"
 kind = "negative_neighbour"
 required = true
-target = "<name> in [ <name> ]"
+target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
@@ -60550,6 +60518,12 @@ id = "sf.security_admin.alter-user.unset-tag.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required UNSET"
+
+[[obligation]]
+id = "sf.security_admin.alter-user.unset-tag.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TAG"
 
 [[obligation]]
 id = "sf.security_admin.alter-user.unset-tag.o016"
