@@ -1262,6 +1262,12 @@ close = "END ;"
 # binds the catalogue grammar it reads by grammar_sha256; a catalogue change invalidates it.
 
 [[reading]]
+form = "sf.ddl.create-procedure.create-procedure-returns-table-3"
+grammar_sha256 = "71ca0046e3d4fa16b4e1853fcee5e96d351dfe7e34307c28354bc1eaf28081af"
+grammar = ["CREATE [ OR REPLACE ] [ SECURE ] PROCEDURE <name> ( [ <arg_name> <arg_data_type> [ DEFAULT <default_value> ] ] [ , ... ] ) [ COPY GRANTS ] RETURNS { <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) } LANGUAGE SCALA RUNTIME_VERSION = '<scala_runtime_version>' PACKAGES = ( 'com.snowflake:snowpark_<scala_version>:<version>' [, '<package_name_and_version>' ...] ) [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [, '<stage_path_and_directory_or_file_name_to_read>' ...] ) ] HANDLER = '<fully_qualified_method_name>' [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] [ VOLATILE | IMMUTABLE ] [ COMMENT = '<string_literal>' ] [ COPY = ( GRANTS ) ] [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]"]
+reason = "the page's Syntax block carries the SQL comment `-- Note: VOLATILE and IMMUTABLE are deprecated.`, which is prose, not grammar, so the grammar leaves it out and keeps VOLATILE and IMMUTABLE as documented"
+
+[[reading]]
 form = "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with"
 grammar_sha256 = "5ce5598618751297a3c6037fb50b850832da5597478f7af61e7e4a490571f86a"
 grammar = ["ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> REPLACE PARTITION BY ( { <old_col_name> | BUCKET ( <num_buckets> , <old_col_name> ) | TRUNCATE ( <width> , <old_col_name> ) | YEAR ( <old_col_name> ) | MONTH ( <old_col_name> ) | DAY ( <old_col_name> ) | HOUR ( <old_col_name> ) } ) WITH ( { <new_col_name> | BUCKET ( <num_buckets> , <new_col_name> ) | TRUNCATE ( <width> , <new_col_name> ) | YEAR ( <new_col_name> ) | MONTH ( <new_col_name> ) | DAY ( <new_col_name> ) | HOUR ( <new_col_name> ) } )"]
@@ -30378,13 +30384,13 @@ reason = "[renderer or setup defect]: The block abbreviates the variant as `CREA
 form = "sf.ddl.create-procedure.create-procedure-returns-table-2"
 grammar_sha256 = "4a021c9332d485db1df65659c23a512c2110ecf20a8a0c473bacc0f6dbb96491"
 grammar = ["CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] PROCEDURE <name> ( [ <arg_name> <arg_data_type> [ DEFAULT <default_value> ] ] [ , ... ] ) [ COPY GRANTS ] RETURNS { <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) } LANGUAGE PYTHON RUNTIME_VERSION = '<python_version>' [ ARTIFACT_REPOSITORY = <repository_name> ] [ PACKAGES = ( '<package_name>' [ , ... ] ) ] [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [, '<stage_path_and_directory_or_file_name_to_read>' ...] ) ] HANDLER = '<module_file_name>.<function_name>' [ EXTERNAL_ACCESS_INTEGRATIONS = ( <name_of_integration> [ , ... ] ) ] [ SECRETS = ('<secret_variable_name>' = <secret_name> [ , ... ] ) ] [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] [ { VOLATILE | IMMUTABLE } ] [ COMMENT = '<string_literal>' ] [ COPY = ( GRANTS ) ] [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]"]
-reason = "[page misreading]: The block wraps <repository_name> in backticks, a Markdown artefact; the parameter reads `ARTIFACT_REPOSITORY = artifact_repository`, so the reading drops the backticks."
+reason = "[page misreading]: The block wraps <repository_name> in backticks, a Markdown artefact; the parameter reads `ARTIFACT_REPOSITORY = artifact_repository`, so the reading drops the backticks.; the page's Syntax block carries the SQL comment `-- Note: VOLATILE and IMMUTABLE are deprecated.`, which is prose, not grammar, so the grammar leaves it out and keeps VOLATILE and IMMUTABLE as documented"
 
 [[reading]]
 form = "sf.ddl.create-procedure.create-procedure-returns-table.python-handler"
 grammar_sha256 = "42909371c7be25f21ea06be4f6122b8ecd0715e57944101c5bcc11bdc28910bf"
 grammar = ["CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] PROCEDURE <name> ( [ <arg_name> <arg_data_type> [ DEFAULT <default_value> ] ] [ , ... ] ) [ COPY GRANTS ] RETURNS { <result_data_type> [ [ NOT ] NULL ] | TABLE ( [ <col_name> <col_data_type> [ , ... ] ] ) } LANGUAGE PYTHON RUNTIME_VERSION = '<python_version>' [ ARTIFACT_REPOSITORY = <repository_name> ] [ PACKAGES = ( '<package_name>' [ , ... ] ) ] [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [, '<stage_path_and_directory_or_file_name_to_read>' ...] ) ] HANDLER = '<function_name>' [ EXTERNAL_ACCESS_INTEGRATIONS = ( <name_of_integration> [ , ... ] ) ] [ SECRETS = ('<secret_variable_name>' = <secret_name> [ , ... ] ) ] [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ] [ { VOLATILE | IMMUTABLE } ] [ COMMENT = '<string_literal>' ] [ COPY = ( GRANTS ) ] [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER }] AS '<procedure_definition>'"]
-reason = "[page misreading]: The block wraps <repository_name> in backticks, a Markdown artefact; the parameter reads `ARTIFACT_REPOSITORY = artifact_repository`, so the reading drops the backticks."
+reason = "[page misreading]: The block wraps <repository_name> in backticks, a Markdown artefact; the parameter reads `ARTIFACT_REPOSITORY = artifact_repository`, so the reading drops the backticks.; the page's Syntax block carries the SQL comment `-- Note: VOLATILE and IMMUTABLE are deprecated.`, which is prose, not grammar, so the grammar leaves it out and keeps VOLATILE and IMMUTABLE as documented"
 
 # ddl receipt triage: remaining contradictions observed, each reason names its category and receipt.
 
