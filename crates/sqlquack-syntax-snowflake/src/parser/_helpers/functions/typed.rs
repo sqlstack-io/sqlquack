@@ -415,6 +415,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 })))
             }
 
@@ -602,6 +603,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             })))
         }
     }
@@ -626,6 +628,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             })));
         }
         if self.check(TokenType::LParen) {
@@ -697,6 +700,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 })));
             } else {
                 self.current = saved_pos;
@@ -724,6 +728,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         })))
     }
 
@@ -854,6 +859,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 })))
             }
         } else {
@@ -1195,6 +1201,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     })))
                 }
             }
@@ -1497,6 +1504,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }));
 
             return Ok(func_expr);
@@ -1606,6 +1614,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             })))
         } else {
             self.expect_token(TokenType::RParen)?;

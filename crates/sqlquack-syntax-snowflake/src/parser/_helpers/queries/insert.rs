@@ -410,6 +410,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))));
         }
         Ok(function_target)
@@ -674,6 +675,7 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        written_as: None,
                     })));
                     if !self.match_token(TokenType::Comma) {
                         break;

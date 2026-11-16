@@ -645,5 +645,6 @@ fn copy_option_pair(left: Expression, right: Expression) -> Expression {
         trailing_comments: Vec::new(),
         inferred_type: None,
         span: SourceSpan::default(),
+        written_as: None,
     }))
 }

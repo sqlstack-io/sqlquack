@@ -252,6 +252,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 }))));
             }
             let args = self.parse_expression_list()?;
@@ -290,6 +291,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 }))));
             } else {
                 return Err(self.parse_error("IF function requires 2 or 3 arguments"));
@@ -1087,6 +1089,7 @@ impl Parser {
                                     trailing_comments: Vec::new(),
                                     inferred_type: None,
                                     span: SourceSpan::default(),
+                                    written_as: None,
                                 }));
                                 assignments.push(assignment);
                             }

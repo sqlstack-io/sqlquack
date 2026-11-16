@@ -489,6 +489,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }));
 
             if self.match_token(TokenType::Within) {
@@ -735,6 +736,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         })))
     }
 
@@ -1036,6 +1038,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         }));
         self.maybe_parse_over(func_expr)
     }
@@ -1408,6 +1411,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         }));
         self.maybe_parse_over(func)
     }
@@ -1437,6 +1441,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         }));
         self.maybe_parse_over(func)
     }
@@ -1488,6 +1493,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }));
             self.maybe_parse_subscript(func)
         } else {
@@ -1508,6 +1514,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }));
             self.maybe_parse_subscript(func)
         }
@@ -1951,6 +1958,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         })))
     }
 

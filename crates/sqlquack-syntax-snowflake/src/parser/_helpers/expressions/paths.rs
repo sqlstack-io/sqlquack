@@ -1079,8 +1079,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 inferred_type: None,
                 export_state: false,
-                from_separator: false,
-            }));
+                from_separator: false, written_as: None }));
             return self.maybe_parse_subscript(func);
         }
 
@@ -1121,6 +1120,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 })));
             }
             return self.maybe_parse_over(func_expr);

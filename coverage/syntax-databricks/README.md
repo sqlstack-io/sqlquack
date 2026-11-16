@@ -565,6 +565,9 @@ others:
 - `ADD COLUMN` against `ADD COLUMNS` and `DROP COLUMN` against `DROP COLUMNS`, because the ALTER
   TABLE page writes `{ COLUMN | COLUMNS }` as alternatives of one clause;
 - the sign written before an interval value, including `+`;
+- the operator written for a construct another documented form shares: `==` against `=`, `!=`
+  against `<>`, `IS [NOT] DISTINCT FROM` against `<=>`, `REGEXP` and `RLIKE` against the `rlike` call, and `>>>`
+  against the `shiftrightunsigned` call, in a `written_as` field that analysis ignores;
 - the parentheses of a `VALUES` row and of a `STREAM` source, which the Syntax blocks write as
   alternatives (`expression | ( expression [, ...] )` and `STREAM ( name ) | STREAM name`).
 

@@ -189,6 +189,7 @@ impl Parser {
                     trailing_comments: Vec::new(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    written_as: None,
                 }));
                 return Ok(Some(Expression::Not(Box::new(UnaryOp {
                     this: is_null,
@@ -335,6 +336,7 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                written_as: None,
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
@@ -356,6 +358,7 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                written_as: None,
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
@@ -377,6 +380,7 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                written_as: None,
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
@@ -432,6 +436,7 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        written_as: None,
                     }))
                 } else {
                     Expression::NullSafeNeq(Box::new(BinaryOp {
@@ -442,6 +447,7 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        written_as: None,
                     }))
                 };
                 return Ok(expr);
@@ -1572,6 +1578,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         }));
 
         if self.match_token(TokenType::As) {

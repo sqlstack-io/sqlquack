@@ -315,6 +315,40 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             written: &["SELECT * FROM STREAM ( t1 )", "SELECT * FROM STREAM t1"],
             expected_distinct_trees: 2,
         },
+        DistinctTreesTestCase {
+            description: "== and =",
+            written: &["SELECT 1 == 2", "SELECT 1 = 2"],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "!= and <>",
+            written: &["SELECT 1 != 2", "SELECT 1 <> 2"],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "<=> and IS NOT DISTINCT FROM",
+            written: &["SELECT 1 <=> 2", "SELECT 1 IS NOT DISTINCT FROM 2"],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "NOT <=> and IS DISTINCT FROM",
+            written: &["SELECT NOT 1 <=> 2", "SELECT 1 IS DISTINCT FROM 2"],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "REGEXP, RLIKE and the rlike call",
+            written: &[
+                "SELECT 'a' REGEXP 'b'",
+                "SELECT 'a' RLIKE 'b'",
+                "SELECT rlike('a', 'b')",
+            ],
+            expected_distinct_trees: 3,
+        },
+        DistinctTreesTestCase {
+            description: ">>> and the shiftrightunsigned call",
+            written: &["SELECT 4 >>> 1", "SELECT shiftrightunsigned(4, 1)"],
+            expected_distinct_trees: 2,
+        },
     ];
     for test_case in test_cases {
         assert_eq!(

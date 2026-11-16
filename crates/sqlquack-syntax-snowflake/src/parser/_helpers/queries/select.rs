@@ -895,6 +895,7 @@ impl Parser {
                             inferred_type: None,
                             export_state: false,
                             from_separator: false,
+                            written_as: None,
                         }))
                     } else {
                         let table_name = third_ident;
@@ -952,6 +953,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))
                 } else {
                     let table_name = second_ident;
@@ -1113,6 +1115,7 @@ impl Parser {
                             inferred_type: None,
                             export_state: false,
                             from_separator: false,
+                            written_as: None,
                         }))
                     } else {
                         let args = if self.check(TokenType::RParen) {
@@ -1172,6 +1175,7 @@ impl Parser {
                                 inferred_type: None,
                                 export_state: false,
                                 from_separator: false,
+                                written_as: None,
                             };
                             let func_expr = Expression::Function(Box::new(func));
 
@@ -1369,6 +1373,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))
                 };
 

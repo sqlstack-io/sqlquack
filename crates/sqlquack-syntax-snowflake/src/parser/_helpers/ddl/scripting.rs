@@ -1140,6 +1140,7 @@ impl Parser {
                                 operator_comments: Vec::new(),
                                 trailing_comments: Vec::new(),
                                 inferred_type: None,
+                                written_as: None,
                             })));
                         } else {
                             values.push(Self::parsed_column(Column {
@@ -1182,6 +1183,7 @@ impl Parser {
                                     trailing_comments: Vec::new(),
                                     inferred_type: None,
                                     span: SourceSpan::default(),
+                                    written_as: None,
                                 })));
                             } else {
                                 values.push(Expression::Literal(Box::new(Literal::String(key))));
@@ -1208,6 +1210,7 @@ impl Parser {
                                     operator_comments: Vec::new(),
                                     trailing_comments: Vec::new(),
                                     inferred_type: None,
+                                    written_as: None,
                                 })));
                             } else {
                                 values.push(Self::parsed_column(Column {

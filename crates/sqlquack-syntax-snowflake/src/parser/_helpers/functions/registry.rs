@@ -429,6 +429,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 }))))
             }
             (
@@ -530,6 +531,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))))
                 }
             }
@@ -553,6 +555,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))))
                 } else if args.len() == BINARY_ARITY {
                     Ok(Some(Expression::Nvl(Box::new(
@@ -580,6 +583,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))))
                 }
             }
@@ -612,6 +616,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))))
                 }
             }
@@ -641,6 +646,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 }))))
             }
             (sqlquack_syntax::functions::typed::models::TypedParseKind::Variadic, "CHAR") => {
@@ -682,6 +688,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))))
                 }
             }
@@ -712,6 +719,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 }))))
             }
             (sqlquack_syntax::functions::typed::models::TypedParseKind::Variadic, "MATCH") => {
@@ -774,6 +782,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 }))))
             }
             (sqlquack_syntax::functions::typed::models::TypedParseKind::CastLike, "TRY_CAST") => {

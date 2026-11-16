@@ -12,7 +12,7 @@ use sqlquack_syntax::expressions::names::models::{
 };
 use sqlquack_syntax::expressions::operators::models::{
     Alias, Between, BinaryOp, Case, Cast, DotAccess, Exists, In, IsNull, LambdaExpr, Lateral,
-    Parameter, ParameterStyle,
+    OperatorSpelling, Parameter, ParameterStyle,
 };
 use sqlquack_syntax::expressions::queries::models::{
     Cte, Except, Intersect, Join, JoinKind, JoinedTable, Ordered, Over, Subquery, Union, Values,
@@ -155,6 +155,18 @@ pub(crate) fn binary(
     right: Expression,
 ) -> Expression {
     kind(Box::new(BinaryOp::new(left, right)))
+}
+
+/// `node` marked with the operator spelling written for it, when another spelling shares it.
+pub(crate) fn written_as(mut node: Expression, spelling: OperatorSpelling) -> Expression {
+    match &mut node {
+        Expression::Eq(op) | Expression::Neq(op) | Expression::NullSafeEq(op) => {
+            op.written_as = Some(spelling)
+        }
+        Expression::Function(call) => call.written_as = Some(spelling),
+        _ => {}
+    }
+    node
 }
 
 pub(crate) fn cast(this: Expression, to: DataType, double_colon_syntax: bool) -> Cast {
