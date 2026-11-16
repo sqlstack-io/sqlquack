@@ -243,6 +243,22 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             expected_parse_only=None,
         ),
         PhaseTestCase(
+            description="a pipeline event log for a pipeline that does not exist",
+            message="[PIPELINE_DOES_NOT_EXIST] Pipeline '00000000-0000-0000-0000-000000000000' "
+            "does not exist SQLSTATE: 42K03",
+            sqlstate="42K03",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a remote function whose HTTP call the service refused",
+            message="[REMOTE_FUNCTION_HTTP_FAILED_ERROR] The remote HTTP request failed with code 400. "
+            "SQLSTATE: 57012",
+            sqlstate="57012",
+            expected_phase="runtime_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
             description="an analysis class with no reviewed row",
             message="[DIVIDE_BY_ZERO] Division by zero. SQLSTATE: 22012",
             sqlstate="22012",
