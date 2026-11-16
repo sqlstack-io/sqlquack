@@ -105,6 +105,66 @@ _TIMED_OUT_ROW: dict[str, object] = replaced(
             expected_classification=("syntax_error", "errno 1003 SQL compilation syntax error"),
         ),
         ClassifyTestCase(
+            description="errno 1003 for an unknown transaction is a check after parsing",
+            errno=1003,
+            message="SQL compilation error:\nInvalid transaction 1",
+            expected_classification=(
+                "semantic_error",
+                "errno 1003 message is a reviewed check after parsing",
+            ),
+        ),
+        ClassifyTestCase(
+            description="errno 1003 for an unsupported version is a check after parsing",
+            errno=1003,
+            message="SQL compilation error:\nVersion m is not supported",
+            expected_classification=(
+                "semantic_error",
+                "errno 1003 message is a reviewed check after parsing",
+            ),
+        ),
+        ClassifyTestCase(
+            description="errno 1003 for an invalid python_version is a check after parsing",
+            errno=1003,
+            message="SQL compilation error:\nInvalid python_version 'm'. Expected format: 'major.minor'.",
+            expected_classification=(
+                "semantic_error",
+                "errno 1003 message is a reviewed check after parsing",
+            ),
+        ),
+        ClassifyTestCase(
+            description="errno 1003 for an invalid domain is a check after parsing",
+            errno=1003,
+            message="SQL compilation error:\nInvalid domain: m",
+            expected_classification=(
+                "semantic_error",
+                "errno 1003 message is a reviewed check after parsing",
+            ),
+        ),
+        ClassifyTestCase(
+            description="errno 1003 at a position stays a syntax error",
+            errno=1003,
+            message="SQL compilation error:\nsyntax error line 1 at position 5 unexpected 'TRANSACTION'.",
+            expected_classification=("syntax_error", "errno 1003 SQL compilation syntax error"),
+        ),
+        ClassifyTestCase(
+            description="errno 1003 quoting a reviewed message after a position stays a syntax error",
+            errno=1003,
+            message="SQL compilation error:\nsyntax error line 1 at position 0 unexpected 'Invalid domain: m'.",
+            expected_classification=("syntax_error", "errno 1003 SQL compilation syntax error"),
+        ),
+        ClassifyTestCase(
+            description="errno 1003 close to a reviewed message stays a syntax error",
+            errno=1003,
+            message="SQL compilation error:\nInvalid transactions 1 2",
+            expected_classification=("syntax_error", "errno 1003 SQL compilation syntax error"),
+        ),
+        ClassifyTestCase(
+            description="errno 1003 starting like a reviewed message but longer stays a syntax error",
+            errno=1003,
+            message="SQL compilation error:\nInvalid transaction 1 2",
+            expected_classification=("syntax_error", "errno 1003 SQL compilation syntax error"),
+        ),
+        ClassifyTestCase(
             description="another compilation error is semantic",
             errno=2003,
             message="SQL compilation error:\nObject 'T' does not exist",

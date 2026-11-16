@@ -13,6 +13,12 @@ PARSE_ERRNO: int = 921
 PARSE_MESSAGE_PREFIX: str = "parse error"
 UNSUPPORTED_ERRNO: int = 2
 COMPILATION_PREFIX: str = "SQL compilation error"
+POST_PARSE_SYNTAX_ERRNO_MESSAGES: tuple[str, ...] = (
+    r"Invalid transaction \S+",
+    r"Version \S+ is not supported",
+    r"Invalid python_version '.*",
+    r"Invalid domain: .*",
+)
 UNCAUGHT_PREFIX: str = "Uncaught exception of type"
 UNSUPPORTED_PREFIX: str = "Unsupported feature"
 RUNTIME_ERRNO_FLOOR: int = 100000
