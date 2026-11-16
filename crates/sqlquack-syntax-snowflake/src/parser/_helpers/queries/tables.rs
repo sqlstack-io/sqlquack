@@ -25,6 +25,19 @@ use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
 impl Parser {
+    /// A FROM call such as `DYNAMIC_TABLE_REFRESH_BOUNDARY ( dt )` as a table reference holding it, so a CHANGES or AT | BEFORE clause after it has a place; any other source unchanged.
+    fn table_of_call(source: Expression) -> Expression {
+        match source {
+            call @ Expression::Function(_) => {
+                let mut table = TableRef::new("");
+                table.name = Identifier::empty();
+                table.identifier_func = Some(Box::new(call));
+                Expression::Table(Box::new(table))
+            }
+            other => other,
+        }
+    }
+
     #[inline(never)]
     pub(crate) fn parse_table_expression_tail(
         &mut self,
@@ -34,21 +47,19 @@ impl Parser {
         self.match_token(TokenType::Star);
 
         if self.check_keyword_text("CHANGES") {
-            if let Some(changes_expr) = self.parse_changes()? {
+            if let Some(Expression::Changes(changes_box)) = self.parse_changes()? {
+                expr = Self::table_of_call(expr);
                 if let Expression::Table(ref mut table) = expr {
-                    if let Expression::Changes(changes_box) = changes_expr {
-                        table.changes = Some(changes_box);
-                    }
+                    table.changes = Some(changes_box);
                 }
             }
         }
 
         if self.check(TokenType::Before) || self.check_keyword_text("AT") {
-            if let Some(historical_expr) = self.parse_historical_data()? {
+            if let Some(Expression::HistoricalData(hd)) = self.parse_historical_data()? {
+                expr = Self::table_of_call(expr);
                 if let Expression::Table(ref mut table) = expr {
-                    if let Expression::HistoricalData(hd) = historical_expr {
-                        table.when = Some(hd);
-                    }
+                    table.when = Some(hd);
                 }
             }
         }
