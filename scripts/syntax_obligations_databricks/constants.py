@@ -411,6 +411,76 @@ FORM_FILLS: dict[str, dict[str, str]] = {
     "db.query.select-tvf": {"function_name": "range"},
     "db.dml.copy-into": {"data_source": "PARQUET", "value": "'true'"},
     "db.dml.merge-into": {"target_table_name": "t1", "table_name": "t2"},
+    "db.expressions.decfloat-type": {"p": "34"},
+    "db.expressions.decimal-type": {"p": "10", "s": "2"},
+    **dict.fromkeys(
+        ("db.expressions.geography-type", "db.expressions.geometry-type"), {"srid": "4326"}
+    ),
+    "db.expressions.time-type.time.syntax": {"p": "3"},
+    **dict.fromkeys(
+        (
+            "db.expressions.timestamp-ntz-type.timestamp-ntz",
+            "db.expressions.timestamp-type.timestamp",
+        ),
+        {"p": "6"},
+    ),
+    "db.expressions.names-identifier-clause.identifier": {"str_literal": "'c1'"},
+    "db.functions.current-time": {"precision": "3"},
+    "db.functions.current-timestamp": {"precision": "6"},
+    **dict.fromkeys(
+        (
+            "db.functions.date-add3",
+            "db.functions.dateadd",
+            "db.functions.date-diff",
+            "db.functions.datediff3",
+        ),
+        {"unit": "DAY"},
+    ),
+    "db.functions.date-part": {"field_str": "'YEAR'"},
+    "db.functions.date-trunc": {"unit": "'MONTH'"},
+    "db.functions.event-log": {"pipeline_id": "'00000000-0000-0000-0000-000000000000'"},
+    "db.functions.exists": {"func": "x -> x > 0"},
+    "db.functions.extract": {"field": "YEAR"},
+    "db.functions.map-filter": {"func": "( k , v ) -> k > v"},
+    "db.functions.mask": {
+        "upper_char": "'X'",
+        "lower_char": "'x'",
+        "digit_char": "'n'",
+        "other_char": "'-'",
+    },
+    **dict.fromkeys(
+        (
+            "db.functions.match-recognize-first",
+            "db.functions.match-recognize-last",
+            "db.functions.match-recognize-next",
+            "db.functions.match-recognize-prev",
+        ),
+        {"offset": "1"},
+    ),
+    "db.functions.reduce": {"merge": "( acc , x ) -> acc + x", "finish": "acc -> acc"},
+    "db.functions.search": {"mode": "'word'"},
+    "db.functions.str-to-map": {"pair_delim": "','", "key_value_delim": "':'"},
+    "db.functions.table-changes": {"table_str": "'t1'"},
+    **dict.fromkeys(
+        ("db.functions.theta-sketch-agg", "db.functions.theta-union-agg"), {"lg_nom_entries": "12"}
+    ),
+    **dict.fromkeys(
+        ("db.functions.tuple-union-agg-double", "db.functions.tuple-union-agg-integer"),
+        {"lg_nom_entries": "12", "mode": "'sum'"},
+    ),
+    "db.functions.to-binary": {"fmt": "'hex'"},
+    **dict.fromkeys(
+        ("db.functions.to-csv", "db.functions.to-json"),
+        {"options": "map ( 'timestampFormat' , 'dd/MM/yyyy' )"},
+    ),
+    **dict.fromkeys(("db.functions.to-number", "db.functions.try-to-number"), {"fmt": "'999'"}),
+    "db.functions.window": {"width": "'5 minutes'", "slide": "'1 minute'", "start": "'0 seconds'"},
+    "db.functions.zip-with": {"func": "( x , y ) -> x + y"},
+    "db.utility.cache-cache-table": {"value": "'DISK_ONLY'"},
+    "db.utility.generate": {"mode": "symlink_format_manifest"},
+    **dict.fromkeys(
+        ("db.ddl.create-connection", "db.ddl.create-server"), {"connection_type": "MYSQL"}
+    ),
     "db.functions.cume-dist": {"over_clause": "OVER ( ORDER BY 1 )"},
     **dict.fromkeys(
         (
@@ -569,6 +639,7 @@ BARE_NAME_PREFIXES: tuple[str, ...] = (
 CLAUSE_CONTEXT: tuple[str, str] = ("SELECT c1 FROM t1 ", "")
 FROM_CONTEXT: tuple[str, str] = ("SELECT * FROM t1 ", "")
 RELATION_CONTEXT: tuple[str, str] = ("SELECT * FROM ", "")
+TYPE_CONTEXT: tuple[str, str] = ("SELECT CAST ( NULL AS ", " )")
 MATCH_OPEN: str = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 "
 FORM_CONTEXTS: dict[str, tuple[str, str]] = {
     **dict.fromkeys(
@@ -742,7 +813,40 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
             "db.expressions.map-type",
             "db.expressions.struct-type",
         ),
-        ("SELECT CAST ( NULL AS ", " )"),
+        TYPE_CONTEXT,
+    ),
+    **dict.fromkeys(
+        (
+            "db.expressions.bigint-type",
+            "db.expressions.binary-type",
+            "db.expressions.boolean-type",
+            "db.expressions.date-type",
+            "db.expressions.decfloat-type",
+            "db.expressions.decimal-type",
+            "db.expressions.double-type",
+            "db.expressions.float-type",
+            "db.expressions.geography-type",
+            "db.expressions.geometry-type",
+            "db.expressions.time-type.time.syntax",
+            "db.expressions.timestamp-ntz-type.timestamp-ntz",
+            "db.expressions.timestamp-type.timestamp",
+        ),
+        TYPE_CONTEXT,
+    ),
+    **dict.fromkeys(
+        (
+            "db.expressions.bigint-type.",
+            "db.expressions.binary-type.",
+            "db.expressions.boolean-type.",
+            "db.expressions.date-type.",
+            "db.expressions.decimal-type.",
+            "db.expressions.double-type.",
+            "db.expressions.float-type.",
+            "db.expressions.timestamp-ntz-type.timestamp-ntz.",
+            "db.expressions.timestamp-type.timestamp.",
+            "db.expressions.timestamp-type.timestamp-ltz.",
+        ),
+        EXPRESSION_CONTEXT,
     ),
     "db.expressions.interval-type.interval": EXPRESSION_CONTEXT,
     "db.expressions.file-type": ("CREATE TABLE t3 ( c1 ", " )"),

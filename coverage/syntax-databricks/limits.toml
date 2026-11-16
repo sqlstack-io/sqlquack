@@ -1480,25 +1480,39 @@ note = "the form without its required { MATERIALIZED VIEW | [ STREAMING ] TABLE 
 reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable: REFRESH TABLE? identifierReference, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
 
 [[suppress]]
+form = "db.expressions.date-type.date"
+kind = "required_operand_missing"
+target = "<date_string>"
+note = "omit <date_string>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.timestamp-ntz-type.timestamp-ntz.literals"
+kind = "required_operand_missing"
+target = "<timestamp_string>"
+note = "omit <timestamp_string>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.timestamp-type.timestamp-ltz.literals"
+kind = "required_operand_missing"
+target = "<timestamp_string>"
+note = "omit <timestamp_string>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
+form = "db.expressions.timestamp-type.timestamp.literals"
+kind = "required_operand_missing"
+target = "<timestamp_string>"
+note = "omit <timestamp_string>"
+reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+
+[[suppress]]
 form = "db.expressions.binary-type.x"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required { '1F' | \"1F\" }"
 reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
-
-[[suppress]]
-form = "db.expressions.decfloat-type"
-kind = "required_operand_missing"
-target = "<p> in [ ( <p> ) ]"
-note = "omit <p>"
-reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
-
-[[suppress]]
-form = "db.expressions.decimal-type"
-kind = "required_operand_missing"
-target = "<p> in [ ( <p> [ , <s> ] ) ]"
-note = "omit <p>"
-reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
 
 [[suppress]]
 form = "db.expressions.expression"
@@ -1548,20 +1562,6 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required EXTERNAL"
 reason = "without MANAGED or EXTERNAL the column's type is FILE alone, which the grammar reads as a type name (SqlBaseParser primitiveType: unsupportedType=identifier) and the page refuses only as a column type ('You can't declare a table column as FILE without specifying either MANAGED or EXTERNAL'), so the text is no certain syntax negative"
-
-[[suppress]]
-form = "db.expressions.geography-type"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { <srid> | ANY }"
-reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
-
-[[suppress]]
-form = "db.expressions.geometry-type"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required { <srid> | ANY }"
-reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
 
 [[suppress]]
 form = "db.expressions.identifiers.subscript-dot.syntax"
@@ -1786,34 +1786,6 @@ kind = "negative_neighbour"
 target = "<view_name>"
 note = "a string literal in place of <view_name>"
 reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.time-type.time.syntax"
-kind = "required_operand_missing"
-target = "<p>"
-note = "omit <p>"
-reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
-
-[[suppress]]
-form = "db.expressions.timestamp-ntz-type.timestamp-ntz"
-kind = "required_operand_missing"
-target = "<p> in [ ( <p> ) ]"
-note = "omit <p>"
-reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
-
-[[suppress]]
-form = "db.expressions.timestamp-type.timestamp-ltz"
-kind = "required_operand_missing"
-target = "<p> in [ ( <p> ) ]"
-note = "omit <p>"
-reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
-
-[[suppress]]
-form = "db.expressions.timestamp-type.timestamp"
-kind = "required_operand_missing"
-target = "<p> in [ ( <p> ) ]"
-note = "omit <p>"
-reason = "a name followed by a parenthesised argument list parses as a function call (SqlBaseParser functionCall), so the type name with empty parentheses parses in an expression; the routine is resolved in analysis"
 
 [[suppress]]
 form = "db.functions.ai-parse-document"
