@@ -284,6 +284,24 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             expected_parse_only=None,
         ),
         PhaseTestCase(
+            description="the parser refuses a datetime unit written as a string literal",
+            message="[INVALID_PARAMETER_VALUE.DATETIME_UNIT] The value of parameter(s) `unit` in "
+            "`DATE_ADD` is invalid: expects one of the units without quotes YEAR, MICROSECOND, but "
+            "got the string literal 'YEAR'. SQLSTATE: 22023\n== SQL (line 1, position 8) ==\n"
+            "SELECT DATE_ADD('YEAR', 1, 1)\n",
+            sqlstate="22023",
+            expected_phase="syntax_error",
+            expected_parse_only="22023",
+        ),
+        PhaseTestCase(
+            description="a function argument of a type the function does not take",
+            message="[UNEXPECTED_INPUT_TYPE] Parameter first of function `current_timestamp` requires "
+            'the "INT" type, however "x" has the type "STRING". SQLSTATE: 42K09; line 1 pos 9',
+            sqlstate="42K09",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
             description="an analysis class with no reviewed row",
             message="[DIVIDE_BY_ZERO] Division by zero. SQLSTATE: 22012",
             sqlstate="22012",
