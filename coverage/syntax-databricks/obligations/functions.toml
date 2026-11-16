@@ -14914,6 +14914,14 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
+id = "db.functions.ilike.ilike.o015"
+kind = "option_present"
+required = true
+target = "[ ESCAPE <escape> ] inside the parentheses"
+anchor = "doc.functions.ilike / Syntax"
+note = "ESCAPE inside the parentheses, as the page's Syntax line writes it, which the warehouse refuses"
+
+[[obligation]]
 id = "db.functions.ilike.ilike-any-some-all.o001"
 kind = "positive"
 required = true
@@ -18208,6 +18216,14 @@ id = "db.functions.like.like.o014"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "db.functions.like.like.o015"
+kind = "option_present"
+required = true
+target = "[ ESCAPE <escape> ] inside the parentheses"
+anchor = "doc.functions.like / Syntax"
+note = "ESCAPE inside the parentheses, as the page's Syntax line writes it, which the warehouse refuses"
 
 [[obligation]]
 id = "db.functions.like.like-any-some-all.o001"

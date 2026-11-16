@@ -150,41 +150,41 @@ target = "<group_principal>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.security_admin.create-group.o004"
+id = "db.security_admin.create-group.o020"
 kind = "option_present"
 required = true
-target = "[ WITH [ USER <user_principal> [ , ... ] ] [ GROUP <subgroup_principal> [ , ... ] ] ]"
+target = "[ WITH { USER <user_principal> [ , ... ] [ GROUP <subgroup_principal> [ , ... ] ] | GROUP <subgroup_principal> [ , ...…"
 
 [[obligation]]
-id = "db.security_admin.create-group.o005"
+id = "db.security_admin.create-group.o021"
 kind = "option_absent"
 required = true
-target = "[ WITH [ USER <user_principal> [ , ... ] ] [ GROUP <subgroup_principal> [ , ... ] ] ]"
+target = "[ WITH { USER <user_principal> [ , ... ] [ GROUP <subgroup_principal> [ , ... ] ] | GROUP <subgroup_principal> [ , ...…"
 
 [[obligation]]
-id = "db.security_admin.create-group.o006"
-kind = "option_present"
+id = "db.security_admin.create-group.o022"
+kind = "alternative"
 required = true
-target = "[ USER <user_principal> [ , ... ] ]"
+target = "{ USER <user_principal> [ , ... ] [ GROUP… → USER <user_principal> [ , ... ] [ GROUP <subgroup_principal> [ , ... ] ]"
 
 [[obligation]]
-id = "db.security_admin.create-group.o007"
-kind = "option_absent"
+id = "db.security_admin.create-group.o023"
+kind = "alternative"
 required = true
-target = "[ USER <user_principal> [ , ... ] ]"
+target = "{ USER <user_principal> [ , ... ] [ GROUP <subgroup_principal> [ , ... ] ] |… → GROUP <subgroup_principal> [ , ... ]"
 
 [[obligation]]
-id = "db.security_admin.create-group.o008"
+id = "db.security_admin.create-group.o024"
 kind = "required_operand_missing"
 required = true
-target = "<user_principal> in [ USER <user_principal> [ , ... ] ]"
+target = "<user_principal> in [ WITH { USER <user_principal> [ , ... ] [ GROUP <subgroup_principal> [ , ... ] ] | GROUP…"
 note = "omit <user_principal>"
 
 [[obligation]]
-id = "db.security_admin.create-group.o009"
+id = "db.security_admin.create-group.o025"
 kind = "operand_type_class"
 required = true
-target = "<user_principal> in [ USER <user_principal> [ , ... ] ]"
+target = "<user_principal> in [ WITH { USER <user_principal> [ , ... ] [ GROUP <subgroup_principal> [ , ... ] ] | GROUP…"
 note = "a valid operand"
 
 [[obligation]]
@@ -240,16 +240,63 @@ required = true
 target = "[ , ... ] #2"
 
 [[obligation]]
+id = "db.security_admin.create-group.o026"
+kind = "required_operand_missing"
+required = true
+target = "<subgroup_principal> in [ WITH { USER <user_principal> [ , ... ] [ GROUP <subgroup_principal> [ , ... ] ] | GROUP…"
+note = "omit <subgroup_principal>"
+
+[[obligation]]
+id = "db.security_admin.create-group.o027"
+kind = "operand_type_class"
+required = true
+target = "<subgroup_principal> in [ WITH { USER <user_principal> [ , ... ] [ GROUP <subgroup_principal> [ , ... ] ] | GROUP…"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.security_admin.create-group.o028"
+kind = "option_present"
+required = true
+target = "[ , ... ] #3"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "db.security_admin.create-group.o029"
+kind = "option_absent"
+required = true
+target = "[ , ... ] #3"
+
+[[obligation]]
 id = "db.security_admin.create-group.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required GROUP"
 
 [[obligation]]
+id = "db.security_admin.create-group.o030"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required USER after WITH in [ WITH { USER <user_principal> [ , ... ] [ GROUP <subgroup_principal> [ , ... ] ] | GROUP <subgroup_principal> [ , ...…"
+
+[[obligation]]
+id = "db.security_admin.create-group.o031"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required GROUP after WITH in [ WITH { USER <user_principal> [ , ... ] [ GROUP <subgroup_principal> [ , ... ] ] | GROUP <subgroup_principal> [ , ...…"
+
+[[obligation]]
 id = "db.security_admin.create-group.o019"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "db.security_admin.create-group.o032"
+kind = "option_absent"
+required = true
+target = "[ USER <user_principal> [ , ... ] ] [ GROUP <subgroup_principal> [ , ... ] ]"
+anchor = "doc.security-create-group / Syntax"
+note = "WITH with neither USER nor GROUP, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.security_admin.deny.o001"
@@ -534,10 +581,10 @@ required = true
 note = "the form without its required REPAIR"
 
 [[obligation]]
-id = "db.security_admin.msck.o005"
+id = "db.security_admin.msck.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required PRIVILEGES"
+note = "the form without its required PRIVILEGES; the warehouse (DBSQL 2026.44) answers unsupported_feature (DELTA_OPERATION_NOT_ALLOWED_DETAIL), so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.security_admin.principal.o001"
@@ -652,12 +699,6 @@ required = true
 target = "{ CATALOG [ <catalog_name> ] | CONNECTION <connection_name> | CLEAN ROOM… → CONNECTION <connection_name>"
 
 [[obligation]]
-id = "db.security_admin.privileges.o004"
-kind = "alternative"
-required = true
-target = "{ CATALOG [ <catalog_name> ] | CONNECTION <connection_name> | CLEAN ROOM… → CLEAN ROOM <clean_room_name>"
-
-[[obligation]]
 id = "db.security_admin.privileges.o005"
 kind = "alternative"
 required = true
@@ -692,12 +733,6 @@ id = "db.security_admin.privileges.o010"
 kind = "alternative"
 required = true
 target = "{ CATALOG [ <catalog_name> ] | CONNECTION <connection_name> | CLEAN ROOM <clean_room_name> |… → SCHEMA <schema_name>"
-
-[[obligation]]
-id = "db.security_admin.privileges.o011"
-kind = "alternative"
-required = true
-target = "{ CATALOG [ <catalog_name> ] | CONNECTION <connection_name> | CLEAN ROOM <clean_room_name> |… → SHARE <share_name>"
 
 [[obligation]]
 id = "db.security_admin.privileges.o012"
@@ -756,13 +791,6 @@ target = "<catalog_name> in [ <catalog_name> ]"
 note = "a string literal in place of <catalog_name>"
 
 [[obligation]]
-id = "db.security_admin.privileges.o021"
-kind = "required_operand_missing"
-required = true
-target = "<connection_name>"
-note = "omit <connection_name>"
-
-[[obligation]]
 id = "db.security_admin.privileges.o022"
 kind = "operand_type_class"
 required = true
@@ -782,13 +810,6 @@ kind = "required_operand_missing"
 required = true
 target = "<clean_room_name>"
 note = "omit <clean_room_name>"
-
-[[obligation]]
-id = "db.security_admin.privileges.o025"
-kind = "operand_type_class"
-required = true
-target = "<clean_room_name>"
-note = "a valid identifier"
 
 [[obligation]]
 id = "db.security_admin.privileges.o026"
@@ -840,13 +861,6 @@ target = "<metadata_name>"
 note = "a string literal in place of <metadata_name>"
 
 [[obligation]]
-id = "db.security_admin.privileges.o033"
-kind = "required_operand_missing"
-required = true
-target = "<function_name>"
-note = "omit <function_name>"
-
-[[obligation]]
 id = "db.security_admin.privileges.o034"
 kind = "operand_type_class"
 required = true
@@ -859,13 +873,6 @@ kind = "negative_neighbour"
 required = true
 target = "<function_name>"
 note = "a string literal in place of <function_name>"
-
-[[obligation]]
-id = "db.security_admin.privileges.o036"
-kind = "required_operand_missing"
-required = true
-target = "<procedure_name>"
-note = "omit <procedure_name>"
 
 [[obligation]]
 id = "db.security_admin.privileges.o037"
@@ -882,13 +889,6 @@ target = "<procedure_name>"
 note = "a string literal in place of <procedure_name>"
 
 [[obligation]]
-id = "db.security_admin.privileges.o039"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name>"
-note = "omit <schema_name>"
-
-[[obligation]]
 id = "db.security_admin.privileges.o040"
 kind = "operand_type_class"
 required = true
@@ -901,20 +901,6 @@ kind = "negative_neighbour"
 required = true
 target = "<schema_name>"
 note = "a string literal in place of <schema_name>"
-
-[[obligation]]
-id = "db.security_admin.privileges.o042"
-kind = "required_operand_missing"
-required = true
-target = "<share_name>"
-note = "omit <share_name>"
-
-[[obligation]]
-id = "db.security_admin.privileges.o043"
-kind = "operand_type_class"
-required = true
-target = "<share_name>"
-note = "a valid identifier"
 
 [[obligation]]
 id = "db.security_admin.privileges.o044"
@@ -946,13 +932,6 @@ id = "db.security_admin.privileges.o048"
 kind = "alternative"
 required = true
 target = "[ STORAGE | SERVICE ] → SERVICE"
-
-[[obligation]]
-id = "db.security_admin.privileges.o049"
-kind = "required_operand_missing"
-required = true
-target = "<credential_name>"
-note = "omit <credential_name>"
 
 [[obligation]]
 id = "db.security_admin.privileges.o050"
@@ -1023,13 +1002,6 @@ target = "<view_name>"
 note = "a string literal in place of <view_name>"
 
 [[obligation]]
-id = "db.security_admin.privileges.o060"
-kind = "required_operand_missing"
-required = true
-target = "<view_name> #2"
-note = "omit <view_name>"
-
-[[obligation]]
 id = "db.security_admin.privileges.o061"
 kind = "operand_type_class"
 required = true
@@ -1042,13 +1014,6 @@ kind = "negative_neighbour"
 required = true
 target = "<view_name> #2"
 note = "a string literal in place of <view_name>"
-
-[[obligation]]
-id = "db.security_admin.privileges.o063"
-kind = "required_operand_missing"
-required = true
-target = "<volume_name>"
-note = "omit <volume_name>"
 
 [[obligation]]
 id = "db.security_admin.privileges.o064"
@@ -1069,12 +1034,6 @@ id = "db.security_admin.privileges.o066"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CATALOG after "
-
-[[obligation]]
-id = "db.security_admin.privileges.o115"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CONNECTION after "
 
 [[obligation]]
 id = "db.security_admin.privileges.o067"
@@ -1113,52 +1072,10 @@ required = true
 note = "the form without its required METADATA"
 
 [[obligation]]
-id = "db.security_admin.privileges.o073"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FUNCTION after "
-
-[[obligation]]
-id = "db.security_admin.privileges.o116"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PROCEDURE after "
-
-[[obligation]]
-id = "db.security_admin.privileges.o074"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after "
-
-[[obligation]]
-id = "db.security_admin.privileges.o117"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SHARE after "
-
-[[obligation]]
-id = "db.security_admin.privileges.o118"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CREDENTIAL"
-
-[[obligation]]
 id = "db.security_admin.privileges.o075"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required VIEW"
-
-[[obligation]]
-id = "db.security_admin.privileges.o119"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required VIEW after "
-
-[[obligation]]
-id = "db.security_admin.privileges.o120"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required VOLUME after "
 
 [[obligation]]
 id = "db.security_admin.privileges.o076"
@@ -1189,22 +1106,6 @@ id = "db.security_admin.privileges.o103"
 kind = "identifier_class"
 required = true
 target = "<connection_name>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
-id = "db.security_admin.privileges.o080"
-kind = "identifier_class"
-required = true
-target = "<clean_room_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.security_admin.privileges.o104"
-kind = "identifier_class"
-required = true
-target = "<clean_room_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
@@ -1289,22 +1190,6 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
-id = "db.security_admin.privileges.o092"
-kind = "identifier_class"
-required = true
-target = "<share_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.security_admin.privileges.o110"
-kind = "identifier_class"
-required = true
-target = "<share_name>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
 id = "db.security_admin.privileges.o094"
 kind = "identifier_class"
 required = true
@@ -1367,6 +1252,94 @@ required = true
 target = "<volume_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.security_admin.privileges.o121"
+kind = "required_operand_missing"
+required = true
+target = "<connection_name>"
+note = "omit <connection_name>; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o122"
+kind = "required_operand_missing"
+required = true
+target = "<function_name>"
+note = "omit <function_name>; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o123"
+kind = "required_operand_missing"
+required = true
+target = "<procedure_name>"
+note = "omit <procedure_name>; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o124"
+kind = "required_operand_missing"
+required = true
+target = "<schema_name>"
+note = "omit <schema_name>; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o125"
+kind = "required_operand_missing"
+required = true
+target = "<share_name>"
+note = "omit <share_name>; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o126"
+kind = "required_operand_missing"
+required = true
+target = "<credential_name>"
+note = "omit <credential_name>; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o127"
+kind = "required_operand_missing"
+required = true
+target = "<view_name> #2"
+note = "omit <view_name>; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o128"
+kind = "required_operand_missing"
+required = true
+target = "<volume_name>"
+note = "omit <volume_name>; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o129"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CONNECTION after ; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o130"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FUNCTION after ; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o131"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SCHEMA after ; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o132"
+kind = "alternative"
+required = true
+target = "{ CATALOG [ <catalog_name> ] | CONNECTION <connection_name> | CLEAN ROOM… → CLEAN ROOM <clean_room_name>"
+note = "the documented securable CLEAN ROOM clean_room_name in GRANT, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges.o133"
+kind = "alternative"
+required = true
+target = "{ CATALOG [ <catalog_name> ] | CONNECTION <connection_name> | CLEAN ROOM <clean_room_name> |… → SHARE <share_name>"
+note = "the documented securable SHARE share_name granted to a principal, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR: missing 'RECIPIENT'), so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.security_admin.privileges-hms.o001"
@@ -1449,13 +1422,6 @@ required = true
 target = "{ SCHEMA | DATABASE } → DATABASE"
 
 [[obligation]]
-id = "db.security_admin.privileges-hms.o014"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name>"
-note = "omit <schema_name>"
-
-[[obligation]]
 id = "db.security_admin.privileges-hms.o015"
 kind = "operand_type_class"
 required = true
@@ -1468,13 +1434,6 @@ kind = "negative_neighbour"
 required = true
 target = "<schema_name>"
 note = "a string literal in place of <schema_name>"
-
-[[obligation]]
-id = "db.security_admin.privileges-hms.o017"
-kind = "required_operand_missing"
-required = true
-target = "<function_name>"
-note = "omit <function_name>"
 
 [[obligation]]
 id = "db.security_admin.privileges-hms.o018"
@@ -1524,13 +1483,6 @@ target = "<table_name>"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
-id = "db.security_admin.privileges-hms.o025"
-kind = "required_operand_missing"
-required = true
-target = "<view_name>"
-note = "omit <view_name>"
-
-[[obligation]]
 id = "db.security_admin.privileges-hms.o026"
 kind = "operand_type_class"
 required = true
@@ -1545,34 +1497,10 @@ target = "<view_name>"
 note = "a string literal in place of <view_name>"
 
 [[obligation]]
-id = "db.security_admin.privileges-hms.o028"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ANY after "
-
-[[obligation]]
-id = "db.security_admin.privileges-hms.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FILE"
-
-[[obligation]]
 id = "db.security_admin.privileges-hms.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required CATALOG after "
-
-[[obligation]]
-id = "db.security_admin.privileges-hms.o031"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FUNCTION after "
-
-[[obligation]]
-id = "db.security_admin.privileges-hms.o047"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required VIEW after "
 
 [[obligation]]
 id = "db.security_admin.privileges-hms.o032"
@@ -1653,6 +1581,51 @@ required = true
 target = "<view_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.security_admin.privileges-hms.o048"
+kind = "required_operand_missing"
+required = true
+target = "<schema_name>"
+note = "omit <schema_name>; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges-hms.o049"
+kind = "required_operand_missing"
+required = true
+target = "<function_name>"
+note = "omit <function_name>; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges-hms.o050"
+kind = "required_operand_missing"
+required = true
+target = "<view_name>"
+note = "omit <view_name>; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges-hms.o051"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ANY after ; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges-hms.o052"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FILE; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges-hms.o053"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FUNCTION after ; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.privileges-hms.o054"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VIEW after ; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.security_admin.revoke.o001"

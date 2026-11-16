@@ -47,59 +47,35 @@ required = true
 target = "{ BIGINT | LONG } → LONG"
 
 [[obligation]]
-id = "db.expressions.bigint-type.subscript-dot.o001"
+id = "db.expressions.bigint-type.subscript-dot.o010"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.data-types.bigint-type / Literals"
+note = "digits with the L postfix"
 
 [[obligation]]
-id = "db.expressions.bigint-type.subscript-dot.o002"
-kind = "option_present"
-required = true
-target = "[ + | - ]"
-
-[[obligation]]
-id = "db.expressions.bigint-type.subscript-dot.o003"
-kind = "option_absent"
-required = true
-target = "[ + | - ]"
-
-[[obligation]]
-id = "db.expressions.bigint-type.subscript-dot.o004"
+id = "db.expressions.bigint-type.subscript-dot.o011"
 kind = "alternative"
 required = true
 target = "[ + | - ] → +"
+anchor = "doc.data-types.bigint-type / Literals"
+note = "a plus sign before the literal"
 
 [[obligation]]
-id = "db.expressions.bigint-type.subscript-dot.o005"
+id = "db.expressions.bigint-type.subscript-dot.o012"
 kind = "alternative"
 required = true
 target = "[ + | - ] → -"
+anchor = "doc.data-types.bigint-type / Literals"
+note = "a minus sign before the literal"
 
 [[obligation]]
-id = "db.expressions.bigint-type.subscript-dot.o006"
-kind = "operand_type_class"
-required = true
-target = "<digit>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.bigint-type.subscript-dot.o007"
-kind = "option_present"
-required = true
-target = "[ L ]"
-
-[[obligation]]
-id = "db.expressions.bigint-type.subscript-dot.o008"
+id = "db.expressions.bigint-type.subscript-dot.o013"
 kind = "option_absent"
 required = true
 target = "[ L ]"
-
-[[obligation]]
-id = "db.expressions.bigint-type.subscript-dot.o009"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
+anchor = "doc.data-types.bigint-type / Literals"
+note = "digits without the L postfix, which the page turns into an INT within its range"
 
 [[obligation]]
 id = "db.expressions.binary-type.o001"
@@ -114,16 +90,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.expressions.binary-type.x.o002"
+id = "db.expressions.binary-type.x.o005"
 kind = "alternative"
 required = true
-target = "{ 'num [ ... ] ' | \"num [ ... ] \" } → 'num [ ... ] '"
+target = "{ '1F' | \"1F\" } → '1F'"
 
 [[obligation]]
-id = "db.expressions.binary-type.x.o003"
+id = "db.expressions.binary-type.x.o006"
 kind = "alternative"
 required = true
-target = "{ 'num [ ... ] ' | \"num [ ... ] \" } → \"num [ ... ] \""
+target = "{ '1F' | \"1F\" } → \"1F\""
 
 [[obligation]]
 id = "db.expressions.boolean-type.o001"
@@ -170,13 +146,6 @@ target = "<col>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.collation.order-by-collate-utf8-lcase.o004"
-kind = "negative_neighbour"
-required = true
-target = "<col>"
-note = "a string literal in place of <col>"
-
-[[obligation]]
 id = "db.expressions.collation.order-by-collate-utf8-lcase.o005"
 kind = "negative_neighbour"
 required = true
@@ -217,13 +186,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.expressions.collation.order-by-lower-collate.o002"
-kind = "required_operand_missing"
-required = true
-target = "<col>"
-note = "omit <col>"
-
-[[obligation]]
 id = "db.expressions.collation.order-by-lower-collate.o003"
 kind = "operand_type_class"
 required = true
@@ -231,23 +193,10 @@ target = "<col>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.collation.order-by-lower-collate.o004"
-kind = "negative_neighbour"
-required = true
-target = "<col>"
-note = "a string literal in place of <col>"
-
-[[obligation]]
 id = "db.expressions.collation.order-by-lower-collate.o005"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY"
-
-[[obligation]]
-id = "db.expressions.collation.order-by-lower-collate.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required LOWER"
 
 [[obligation]]
 id = "db.expressions.collation.order-by-lower-collate.o007"
@@ -296,127 +245,73 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o002"
+id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o012"
 kind = "alternative"
 required = true
-target = "{ UTF8_BINARY | UTF8_LCASE | { UNICODE | <locale> } [ _ <modifier> [ ... ] ] } → UTF8_BINARY"
+target = "{ UTF8_BINARY | UTF8_LCASE | UNICODE | UNICODE_CI | UNICODE_CI_AI | UNICODE_RTRIM | DE | DE_CI_AI |… → UTF8_BINARY"
 
 [[obligation]]
-id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o003"
+id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o013"
 kind = "alternative"
 required = true
-target = "{ UTF8_BINARY | UTF8_LCASE | { UNICODE | <locale> } [ _ <modifier> [ ... ] ] } → UTF8_LCASE"
+target = "{ UTF8_BINARY | UTF8_LCASE | UNICODE | UNICODE_CI | UNICODE_CI_AI | UNICODE_RTRIM | DE | DE_CI_AI |… → UTF8_LCASE"
 
 [[obligation]]
-id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o004"
+id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o014"
 kind = "alternative"
 required = true
-target = "{ UTF8_BINARY | UTF8_LCASE | { UNICODE | <locale> } [ _ <modifier> [… → { UNICODE | <locale> } [ _ <modifier> [ ... ] ]"
+target = "{ UTF8_BINARY | UTF8_LCASE | UNICODE | UNICODE_CI | UNICODE_CI_AI | UNICODE_RTRIM | DE | DE_CI_AI |… → UNICODE"
 
 [[obligation]]
-id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o005"
+id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o015"
 kind = "alternative"
 required = true
-target = "{ UNICODE | <locale> } → UNICODE"
+target = "{ UTF8_BINARY | UTF8_LCASE | UNICODE | UNICODE_CI | UNICODE_CI_AI | UNICODE_RTRIM | DE | DE_CI_AI |… → UNICODE_CI"
 
 [[obligation]]
-id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o006"
+id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o016"
 kind = "alternative"
 required = true
-target = "{ UNICODE | <locale> } → <locale>"
+target = "{ UTF8_BINARY | UTF8_LCASE | UNICODE | UNICODE_CI | UNICODE_CI_AI | UNICODE_RTRIM | DE | DE_CI_AI |… → UNICODE_CI_AI"
 
 [[obligation]]
-id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o007"
-kind = "operand_type_class"
+id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o017"
+kind = "alternative"
 required = true
-target = "<locale>"
-note = "a valid operand"
+target = "{ UTF8_BINARY | UTF8_LCASE | UNICODE | UNICODE_CI | UNICODE_CI_AI | UNICODE_RTRIM | DE | DE_CI_AI |… → UNICODE_RTRIM"
 
 [[obligation]]
-id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o008"
-kind = "option_present"
+id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o018"
+kind = "alternative"
 required = true
-target = "[ _ <modifier> [ ... ] ]"
+target = "{ UTF8_BINARY | UTF8_LCASE | UNICODE | UNICODE_CI | UNICODE_CI_AI | UNICODE_RTRIM | DE | DE_CI_AI |… → DE"
 
 [[obligation]]
-id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o009"
-kind = "option_absent"
+id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o019"
+kind = "alternative"
 required = true
-target = "[ _ <modifier> [ ... ] ]"
+target = "{ UTF8_BINARY | UTF8_LCASE | UNICODE | UNICODE_CI | UNICODE_CI_AI | UNICODE_RTRIM | DE | DE_CI_AI |… → DE_CI_AI"
 
 [[obligation]]
-id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o010"
-kind = "required_operand_missing"
+id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o020"
+kind = "alternative"
 required = true
-target = "<modifier> in [ _ <modifier> [ ... ] ]"
-note = "omit <modifier>"
+target = "{ UTF8_BINARY | UTF8_LCASE | UNICODE | UNICODE_CI | UNICODE_CI_AI | UNICODE_RTRIM | DE | DE_CI_AI |… → SR_CYR_SRN_CS_AS"
 
 [[obligation]]
-id = "db.expressions.collation.utf8-binary-utf8-lcase-unicode.o011"
-kind = "operand_type_class"
-required = true
-target = "<modifier> in [ _ <modifier> [ ... ] ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.comment.o001"
+id = "db.expressions.comment.o010"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.sql-ref-syntax-comment / Syntax"
+note = "a bracketed comment between the select list's keyword and its item, as the page's example writes it"
 
 [[obligation]]
-id = "db.expressions.comment.o002"
-kind = "required_operand_missing"
-required = true
-target = "<text>"
-note = "omit <text>"
-
-[[obligation]]
-id = "db.expressions.comment.o003"
-kind = "operand_type_class"
-required = true
-target = "<text>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.comment.o004"
+id = "db.expressions.comment.o011"
 kind = "option_present"
 required = true
 target = "[ <bracketed_comment> [ ... ] ]"
-
-[[obligation]]
-id = "db.expressions.comment.o005"
-kind = "option_absent"
-required = true
-target = "[ <bracketed_comment> [ ... ] ]"
-
-[[obligation]]
-id = "db.expressions.comment.o006"
-kind = "operand_type_class"
-required = true
-target = "<bracketed_comment> in [ <bracketed_comment> [ ... ] ]"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "db.expressions.comment.o007"
-kind = "negative_neighbour"
-required = true
-target = "<bracketed_comment> in [ <bracketed_comment> [ ... ] ]"
-note = "an unquoted identifier in place of <bracketed_comment>"
-
-[[obligation]]
-id = "db.expressions.comment.o008"
-kind = "required_operand_missing"
-required = true
-target = "<text> #2"
-note = "omit <text>"
-
-[[obligation]]
-id = "db.expressions.comment.o009"
-kind = "operand_type_class"
-required = true
-target = "<text> #2"
-note = "a valid operand"
+anchor = "doc.sql-ref-syntax-comment / Syntax"
+note = "a bracketed comment nested in another, as the page's example writes it"
 
 [[obligation]]
 id = "db.expressions.date-type.o001"
@@ -551,92 +446,66 @@ required = true
 note = "the form without its required ) in [ ( <p> [ , <s> ] ) ]"
 
 [[obligation]]
-id = "db.expressions.decimal-type.bd.o001"
+id = "db.expressions.decimal-type.bd.o007"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.data-types.decimal-type / Literals"
+note = "digits with the BD postfix"
 
 [[obligation]]
-id = "db.expressions.decimal-type.bd.o003"
-kind = "operand_type_class"
-required = true
-target = "<digit>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.decimal-type.bd.o004"
+id = "db.expressions.decimal-type.bd.o008"
 kind = "option_present"
 required = true
 target = "[ <exponent> ]"
+anchor = "doc.data-types.decimal-type / Literals"
+note = "digits with an exponent and the BD postfix"
 
 [[obligation]]
-id = "db.expressions.decimal-type.bd.o005"
-kind = "option_absent"
+id = "db.expressions.decimal-type.bd.o009"
+kind = "option_present"
 required = true
-target = "[ <exponent> ]"
+target = "[ + | - ] in <exponent>"
+anchor = "doc.data-types.decimal-type / Literals"
+note = "an exponent with a sign"
 
 [[obligation]]
-id = "db.expressions.decimal-type.bd.o006"
-kind = "operand_type_class"
-required = true
-target = "<exponent> in [ <exponent> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.decimal-type.subscript.o001"
+id = "db.expressions.decimal-type.subscript.o010"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.data-types.decimal-type / Literals"
+note = "decimal_digits alone"
 
 [[obligation]]
-id = "db.expressions.decimal-type.subscript.o002"
-kind = "operand_type_class"
-required = true
-target = "<decimal_digits>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.decimal-type.subscript.o003"
+id = "db.expressions.decimal-type.subscript.o011"
 kind = "alternative"
 required = true
 target = "{ [ BD ] | [ <exponent> BD ] } → [ BD ]"
+anchor = "doc.data-types.decimal-type / Literals"
+note = "decimal_digits with the BD postfix"
 
 [[obligation]]
-id = "db.expressions.decimal-type.subscript.o004"
+id = "db.expressions.decimal-type.subscript.o012"
 kind = "alternative"
 required = true
 target = "{ [ BD ] | [ <exponent> BD ] } → [ <exponent> BD ]"
+anchor = "doc.data-types.decimal-type / Literals"
+note = "decimal_digits with an exponent and the BD postfix"
 
 [[obligation]]
-id = "db.expressions.decimal-type.subscript.o005"
+id = "db.expressions.decimal-type.subscript.o013"
+kind = "alternative"
+required = true
+target = "<decimal_digits> → . digit [ ... ]"
+anchor = "doc.data-types.decimal-type / Literals"
+note = "decimal_digits with no digit before the point"
+
+[[obligation]]
+id = "db.expressions.decimal-type.subscript.o014"
 kind = "option_present"
 required = true
-target = "[ BD ]"
-
-[[obligation]]
-id = "db.expressions.decimal-type.subscript.o006"
-kind = "option_absent"
-required = true
-target = "[ BD ]"
-
-[[obligation]]
-id = "db.expressions.decimal-type.subscript.o007"
-kind = "option_present"
-required = true
-target = "[ <exponent> BD ]"
-
-[[obligation]]
-id = "db.expressions.decimal-type.subscript.o008"
-kind = "option_absent"
-required = true
-target = "[ <exponent> BD ]"
-
-[[obligation]]
-id = "db.expressions.decimal-type.subscript.o009"
-kind = "operand_type_class"
-required = true
-target = "<exponent> in [ <exponent> BD ]"
-note = "a valid operand"
+target = "[ + | - ] in <decimal_digits>"
+anchor = "doc.data-types.decimal-type / Literals"
+note = "decimal_digits with a sign"
 
 [[obligation]]
 id = "db.expressions.double-type.o001"
@@ -645,111 +514,74 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.expressions.double-type.d.o001"
+id = "db.expressions.double-type.d.o009"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.data-types.double-type / Literals"
+note = "decimal_digits with the D postfix"
 
 [[obligation]]
-id = "db.expressions.double-type.d.o003"
-kind = "operand_type_class"
-required = true
-target = "<decimal_digits>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.double-type.d.o004"
+id = "db.expressions.double-type.d.o010"
 kind = "alternative"
 required = true
-target = "{ D | <exponent> [ D ] } → D"
+target = "{ D | <exponent> [ D ] } → <exponent>"
+anchor = "doc.data-types.double-type / Literals"
+note = "decimal_digits with an exponent and no postfix"
 
 [[obligation]]
-id = "db.expressions.double-type.d.o005"
-kind = "alternative"
-required = true
-target = "{ D | <exponent> [ D ] } → <exponent> [ D ]"
-
-[[obligation]]
-id = "db.expressions.double-type.d.o006"
-kind = "operand_type_class"
-required = true
-target = "<exponent>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.double-type.d.o007"
+id = "db.expressions.double-type.d.o011"
 kind = "option_present"
 required = true
-target = "[ D ]"
+target = "[ D ] after <exponent>"
+anchor = "doc.data-types.double-type / Literals"
+note = "decimal_digits with an exponent and the D postfix"
 
 [[obligation]]
-id = "db.expressions.double-type.d.o008"
-kind = "option_absent"
+id = "db.expressions.double-type.d.o012"
+kind = "option_present"
 required = true
-target = "[ D ]"
+target = "[ + | - ] in <exponent>"
+anchor = "doc.data-types.double-type / Literals"
+note = "an exponent with a sign"
 
 [[obligation]]
-id = "db.expressions.double-type.d.literals.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.expressions.double-type.d.literals.o002"
-kind = "operand_type_class"
-required = true
-target = "<digit>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.double-type.d.literals.o003"
+id = "db.expressions.double-type.d.o013"
 kind = "alternative"
 required = true
-target = "{ <exponent> [ D ] | [ <exponent> ] D } → <exponent> [ D ]"
+target = "<decimal_digits> → . digit [ ... ]"
+anchor = "doc.data-types.double-type / Literals"
+note = "decimal_digits with no digit before the point"
 
 [[obligation]]
-id = "db.expressions.double-type.d.literals.o004"
+id = "db.expressions.double-type.d.o014"
+kind = "option_present"
+required = true
+target = "[ + | - ] in <decimal_digits>"
+anchor = "doc.data-types.double-type / Literals"
+note = "decimal_digits with a sign"
+
+[[obligation]]
+id = "db.expressions.double-type.d.literals.o011"
+kind = "positive"
+required = true
+anchor = "doc.data-types.double-type / Literals"
+note = "digits with an exponent and no postfix"
+
+[[obligation]]
+id = "db.expressions.double-type.d.literals.o012"
+kind = "option_present"
+required = true
+target = "[ D ] after <exponent>"
+anchor = "doc.data-types.double-type / Literals"
+note = "digits with an exponent and the D postfix"
+
+[[obligation]]
+id = "db.expressions.double-type.d.literals.o013"
 kind = "alternative"
 required = true
 target = "{ <exponent> [ D ] | [ <exponent> ] D } → [ <exponent> ] D"
-
-[[obligation]]
-id = "db.expressions.double-type.d.literals.o005"
-kind = "operand_type_class"
-required = true
-target = "<exponent>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.double-type.d.literals.o006"
-kind = "option_present"
-required = true
-target = "[ D ]"
-
-[[obligation]]
-id = "db.expressions.double-type.d.literals.o007"
-kind = "option_absent"
-required = true
-target = "[ D ]"
-
-[[obligation]]
-id = "db.expressions.double-type.d.literals.o008"
-kind = "option_present"
-required = true
-target = "[ <exponent> ]"
-
-[[obligation]]
-id = "db.expressions.double-type.d.literals.o009"
-kind = "option_absent"
-required = true
-target = "[ <exponent> ]"
-
-[[obligation]]
-id = "db.expressions.double-type.d.literals.o010"
-kind = "operand_type_class"
-required = true
-target = "<exponent> in [ <exponent> ]"
-note = "a valid operand"
+anchor = "doc.data-types.double-type / Literals"
+note = "digits with the D postfix and no exponent"
 
 [[obligation]]
 id = "db.expressions.expression.o001"
@@ -794,22 +626,22 @@ required = true
 target = "{ <literal> | <named_parameter_marker> | <unnamed_parameter_marker> | <column_reference> |… → <parameter_reference>"
 
 [[obligation]]
-id = "db.expressions.expression.o008"
+id = "db.expressions.expression.o063"
 kind = "alternative"
 required = true
-target = "{ <literal> | <named_parameter_marker> | <unnamed_parameter_marker> | <column_reference> |… → CAST <expression>"
+target = "{ <literal> | <named_parameter_marker> | <unnamed_parameter_marker> | <column_reference> |… → <cast_expression>"
 
 [[obligation]]
-id = "db.expressions.expression.o009"
+id = "db.expressions.expression.o064"
 kind = "alternative"
 required = true
-target = "{ <literal> | <named_parameter_marker> | <unnamed_parameter_marker> | <column_reference> |… → CASE <expression>"
+target = "{ <literal> | <named_parameter_marker> | <unnamed_parameter_marker> | <column_reference> |… → <case_expression>"
 
 [[obligation]]
-id = "db.expressions.expression.o010"
+id = "db.expressions.expression.o065"
 kind = "alternative"
 required = true
-target = "{ <literal> | <named_parameter_marker> | <unnamed_parameter_marker> | <column_reference> |… → COLLATE <expression>"
+target = "{ <literal> | <named_parameter_marker> | <unnamed_parameter_marker> | <column_reference> |… → <collate_expression>"
 
 [[obligation]]
 id = "db.expressions.expression.o011"
@@ -896,24 +728,24 @@ target = "<parameter_reference>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.expressions.expression.o028"
+id = "db.expressions.expression.o066"
 kind = "operand_type_class"
 required = true
-target = "<expression>"
+target = "<cast_expression>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.expressions.expression.o030"
+id = "db.expressions.expression.o067"
 kind = "operand_type_class"
 required = true
-target = "<expression> #2"
+target = "<case_expression>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.expressions.expression.o032"
+id = "db.expressions.expression.o068"
 kind = "operand_type_class"
 required = true
-target = "<expression> #3"
+target = "<collate_expression>"
 note = "a valid expression"
 
 [[obligation]]
@@ -922,6 +754,13 @@ kind = "operand_type_class"
 required = true
 target = "<expr>"
 note = "a valid expression"
+
+[[obligation]]
+id = "db.expressions.expression.o069"
+kind = "required_operand_missing"
+required = true
+target = "<operator>"
+note = "omit <operator>"
 
 [[obligation]]
 id = "db.expressions.expression.o034"
@@ -952,6 +791,13 @@ target = "<operator> #2"
 note = "a valid operand"
 
 [[obligation]]
+id = "db.expressions.expression.o070"
+kind = "required_operand_missing"
+required = true
+target = "<expr> #3"
+note = "omit <expr>"
+
+[[obligation]]
 id = "db.expressions.expression.o038"
 kind = "operand_type_class"
 required = true
@@ -959,37 +805,18 @@ target = "<expr> #3"
 note = "a valid expression"
 
 [[obligation]]
+id = "db.expressions.expression.o071"
+kind = "required_operand_missing"
+required = true
+target = "<expr> #4"
+note = "omit <expr>"
+
+[[obligation]]
 id = "db.expressions.expression.o039"
 kind = "operand_type_class"
 required = true
 target = "<expr> #4"
 note = "a valid expression"
-
-[[obligation]]
-id = "db.expressions.expression.o040"
-kind = "option_present"
-required = true
-target = "[ <expr> ]"
-
-[[obligation]]
-id = "db.expressions.expression.o041"
-kind = "option_absent"
-required = true
-target = "[ <expr> ]"
-
-[[obligation]]
-id = "db.expressions.expression.o042"
-kind = "operand_type_class"
-required = true
-target = "<expr> in [ <expr> ]"
-note = "a valid expression"
-
-[[obligation]]
-id = "db.expressions.expression.o043"
-kind = "operand_type_class"
-required = true
-target = "<function_invocation>"
-note = "a valid operand"
 
 [[obligation]]
 id = "db.expressions.expression.o044"
@@ -1006,6 +833,13 @@ target = "<expr> #5"
 note = "a valid expression"
 
 [[obligation]]
+id = "db.expressions.expression.o043"
+kind = "operand_type_class"
+required = true
+target = "<function_invocation>"
+note = "a valid operand"
+
+[[obligation]]
 id = "db.expressions.expression.o046"
 kind = "required_operand_missing"
 required = true
@@ -1020,10 +854,24 @@ target = "<expr> #6"
 note = "a valid expression"
 
 [[obligation]]
+id = "db.expressions.expression.o072"
+kind = "required_operand_missing"
+required = true
+target = "<expr> #7"
+note = "omit <expr>"
+
+[[obligation]]
 id = "db.expressions.expression.o048"
 kind = "operand_type_class"
 required = true
 target = "<expr> #7"
+note = "a valid expression"
+
+[[obligation]]
+id = "db.expressions.expression.o073"
+kind = "operand_type_class"
+required = true
+target = "<expr> #8"
 note = "a valid expression"
 
 [[obligation]]
@@ -1147,98 +995,66 @@ required = true
 target = "{ FLOAT | REAL } → REAL"
 
 [[obligation]]
-id = "db.expressions.float-type.f.o001"
+id = "db.expressions.float-type.f.o007"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.data-types.float-type / Literals"
+note = "decimal_digits with the F postfix"
 
 [[obligation]]
-id = "db.expressions.float-type.f.o003"
-kind = "operand_type_class"
-required = true
-target = "<decimal_digits>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.float-type.f.o004"
+id = "db.expressions.float-type.f.o008"
 kind = "option_present"
 required = true
 target = "[ <exponent> ]"
+anchor = "doc.data-types.float-type / Literals"
+note = "decimal_digits with an exponent and the F postfix"
 
 [[obligation]]
-id = "db.expressions.float-type.f.o005"
-kind = "option_absent"
+id = "db.expressions.float-type.f.o009"
+kind = "alternative"
 required = true
-target = "[ <exponent> ]"
+target = "<decimal_digits> → . digit [ ... ]"
+anchor = "doc.data-types.float-type / Literals"
+note = "decimal_digits with no digit before the point"
 
 [[obligation]]
-id = "db.expressions.float-type.f.o006"
-kind = "operand_type_class"
-required = true
-target = "<exponent> in [ <exponent> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.float-type.f.literals.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.expressions.float-type.f.literals.o002"
+id = "db.expressions.float-type.f.o010"
 kind = "option_present"
 required = true
-target = "[ + | - ]"
+target = "[ + | - ] in <decimal_digits>"
+anchor = "doc.data-types.float-type / Literals"
+note = "decimal_digits with a sign"
 
 [[obligation]]
-id = "db.expressions.float-type.f.literals.o003"
-kind = "option_absent"
+id = "db.expressions.float-type.f.literals.o012"
+kind = "positive"
 required = true
-target = "[ + | - ]"
+anchor = "doc.data-types.float-type / Literals"
+note = "digits with the F postfix"
 
 [[obligation]]
-id = "db.expressions.float-type.f.literals.o004"
+id = "db.expressions.float-type.f.literals.o013"
+kind = "option_present"
+required = true
+target = "[ <exponent> ]"
+anchor = "doc.data-types.float-type / Literals"
+note = "digits with an exponent and the F postfix"
+
+[[obligation]]
+id = "db.expressions.float-type.f.literals.o014"
 kind = "alternative"
 required = true
 target = "[ + | - ] → +"
+anchor = "doc.data-types.float-type / Literals"
+note = "a plus sign before the literal"
 
 [[obligation]]
-id = "db.expressions.float-type.f.literals.o005"
+id = "db.expressions.float-type.f.literals.o015"
 kind = "alternative"
 required = true
 target = "[ + | - ] → -"
-
-[[obligation]]
-id = "db.expressions.float-type.f.literals.o007"
-kind = "operand_type_class"
-required = true
-target = "<digit>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.float-type.f.literals.o008"
-kind = "option_present"
-required = true
-target = "[ <exponent> ]"
-
-[[obligation]]
-id = "db.expressions.float-type.f.literals.o009"
-kind = "option_absent"
-required = true
-target = "[ <exponent> ]"
-
-[[obligation]]
-id = "db.expressions.float-type.f.literals.o010"
-kind = "operand_type_class"
-required = true
-target = "<exponent> in [ <exponent> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.float-type.f.literals.o011"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
+anchor = "doc.data-types.float-type / Literals"
+note = "a minus sign before the literal"
 
 [[obligation]]
 id = "db.expressions.function-invocation.o001"
@@ -1268,54 +1084,54 @@ target = "<function_name>"
 note = "a string literal in place of <function_name>"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o005"
+id = "db.expressions.function-invocation.o036"
 kind = "option_present"
 required = true
-target = "[ <arg_expr> | <table_argument> | <star_clause> ]"
+target = "[ { <arg_expr> | <table_argument> | <star_clause> } [ , ... ] ]"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o006"
+id = "db.expressions.function-invocation.o037"
 kind = "option_absent"
 required = true
-target = "[ <arg_expr> | <table_argument> | <star_clause> ]"
+target = "[ { <arg_expr> | <table_argument> | <star_clause> } [ , ... ] ]"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o007"
+id = "db.expressions.function-invocation.o038"
 kind = "alternative"
 required = true
-target = "[ <arg_expr> | <table_argument> | <star_clause> ] → <arg_expr>"
+target = "{ <arg_expr> | <table_argument> | <star_clause> } → <arg_expr>"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o008"
+id = "db.expressions.function-invocation.o039"
 kind = "alternative"
 required = true
-target = "[ <arg_expr> | <table_argument> | <star_clause> ] → <table_argument>"
+target = "{ <arg_expr> | <table_argument> | <star_clause> } → <table_argument>"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o009"
+id = "db.expressions.function-invocation.o040"
 kind = "alternative"
 required = true
-target = "[ <arg_expr> | <table_argument> | <star_clause> ] → <star_clause>"
+target = "{ <arg_expr> | <table_argument> | <star_clause> } → <star_clause>"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o010"
+id = "db.expressions.function-invocation.o041"
 kind = "operand_type_class"
 required = true
-target = "<arg_expr> in [ <arg_expr> | <table_argument> | <star_clause> ]"
+target = "<arg_expr> in [ { <arg_expr> | <table_argument> | <star_clause> } [ , ... ] ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o011"
+id = "db.expressions.function-invocation.o042"
 kind = "operand_type_class"
 required = true
-target = "<table_argument> in [ <arg_expr> | <table_argument> | <star_clause> ]"
+target = "<table_argument> in [ { <arg_expr> | <table_argument> | <star_clause> } [ , ... ] ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o012"
+id = "db.expressions.function-invocation.o043"
 kind = "operand_type_class"
 required = true
-target = "<star_clause> in [ <arg_expr> | <table_argument> | <star_clause> ]"
+target = "<star_clause> in [ { <arg_expr> | <table_argument> | <star_clause> } [ , ... ] ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -1332,62 +1148,75 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o015"
-kind = "option_present"
-required = true
-target = "[ <named_parameter> => { <arg_expr> | <table_argument> } [ , ... ] ]"
-
-[[obligation]]
-id = "db.expressions.function-invocation.o016"
-kind = "option_absent"
-required = true
-target = "[ <named_parameter> => { <arg_expr> | <table_argument> } [ , ... ] ]"
-
-[[obligation]]
-id = "db.expressions.function-invocation.o017"
+id = "db.expressions.function-invocation.o044"
 kind = "required_operand_missing"
 required = true
-target = "<named_parameter> in [ <named_parameter> => { <arg_expr> | <table_argument> } [ , ... ] ]"
-note = "omit <named_parameter>"
+target = "<function_name> #2"
+note = "omit <function_name>"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o018"
+id = "db.expressions.function-invocation.o045"
 kind = "operand_type_class"
 required = true
-target = "<named_parameter> in [ <named_parameter> => { <arg_expr> | <table_argument> } [ , ... ] ]"
+target = "<function_name> #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o019"
+id = "db.expressions.function-invocation.o046"
 kind = "negative_neighbour"
 required = true
-target = "<named_parameter> in [ <named_parameter> => { <arg_expr> | <table_argument> } [ , ... ] ]"
-note = "a string literal in place of <named_parameter>"
+target = "<function_name> #2"
+note = "a string literal in place of <function_name>"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o020"
+id = "db.expressions.function-invocation.o047"
+kind = "option_present"
+required = true
+target = "[ { <arg_expr> | <table_argument> | <star_clause> } [ , ... ] , ]"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o048"
+kind = "option_absent"
+required = true
+target = "[ { <arg_expr> | <table_argument> | <star_clause> } [ , ... ] , ]"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o049"
 kind = "alternative"
 required = true
-target = "{ <arg_expr> | <table_argument> } → <arg_expr>"
+target = "{ <arg_expr> | <table_argument> | <star_clause> } → <arg_expr> #2"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o021"
+id = "db.expressions.function-invocation.o050"
 kind = "alternative"
 required = true
-target = "{ <arg_expr> | <table_argument> } → <table_argument>"
+target = "{ <arg_expr> | <table_argument> | <star_clause> } → <table_argument> #2"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o022"
+id = "db.expressions.function-invocation.o051"
+kind = "alternative"
+required = true
+target = "{ <arg_expr> | <table_argument> | <star_clause> } → <star_clause> #2"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o052"
 kind = "operand_type_class"
 required = true
-target = "<arg_expr> in [ <named_parameter> => { <arg_expr> | <table_argument> } [ , ... ] ]"
+target = "<arg_expr> in [ { <arg_expr> | <table_argument> | <star_clause> } [ , ... ] , ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.expressions.function-invocation.o023"
+id = "db.expressions.function-invocation.o053"
 kind = "operand_type_class"
 required = true
-target = "<table_argument> in [ <named_parameter> => { <arg_expr> | <table_argument> } [ , ... ] ]"
+target = "<table_argument> in [ { <arg_expr> | <table_argument> | <star_clause> } [ , ... ] , ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o054"
+kind = "operand_type_class"
+required = true
+target = "<star_clause> in [ { <arg_expr> | <table_argument> | <star_clause> } [ , ... ] , ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -1404,22 +1233,82 @@ required = true
 target = "[ , ... ] #2"
 
 [[obligation]]
+id = "db.expressions.function-invocation.o055"
+kind = "required_operand_missing"
+required = true
+target = "<named_parameter>"
+note = "omit <named_parameter>"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o056"
+kind = "operand_type_class"
+required = true
+target = "<named_parameter>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o057"
+kind = "negative_neighbour"
+required = true
+target = "<named_parameter>"
+note = "a string literal in place of <named_parameter>"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o020"
+kind = "alternative"
+required = true
+target = "{ <arg_expr> | <table_argument> } → <arg_expr>"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o021"
+kind = "alternative"
+required = true
+target = "{ <arg_expr> | <table_argument> } → <table_argument>"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o058"
+kind = "operand_type_class"
+required = true
+target = "<arg_expr>"
+note = "a valid expression"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o059"
+kind = "operand_type_class"
+required = true
+target = "<table_argument>"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o060"
+kind = "option_present"
+required = true
+target = "[ , ... ] #3"
+note = "the list continued at least once"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o061"
+kind = "option_absent"
+required = true
+target = "[ , ... ] #3"
+
+[[obligation]]
 id = "db.expressions.function-invocation.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "db.expressions.function-invocation.o027"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { <arg_expr> | <table_argument> } in [ <named_parameter> => { <arg_expr> | <table_argument> } [ , ... ] ]"
-
-[[obligation]]
 id = "db.expressions.function-invocation.o028"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.expressions.function-invocation.o062"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <arg_expr> | <table_argument> }"
 
 [[obligation]]
 id = "db.expressions.function-invocation.o029"
@@ -1603,41 +1492,27 @@ required = true
 target = "{ INT | INTEGER } → INTEGER"
 
 [[obligation]]
-id = "db.expressions.int-type.subscript-dot.o001"
+id = "db.expressions.int-type.subscript-dot.o007"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.data-types.int-type / Literals"
+note = "digits"
 
 [[obligation]]
-id = "db.expressions.int-type.subscript-dot.o002"
-kind = "option_present"
-required = true
-target = "[ + | - ]"
-
-[[obligation]]
-id = "db.expressions.int-type.subscript-dot.o003"
-kind = "option_absent"
-required = true
-target = "[ + | - ]"
-
-[[obligation]]
-id = "db.expressions.int-type.subscript-dot.o004"
+id = "db.expressions.int-type.subscript-dot.o008"
 kind = "alternative"
 required = true
 target = "[ + | - ] → +"
+anchor = "doc.data-types.int-type / Literals"
+note = "a plus sign before the literal"
 
 [[obligation]]
-id = "db.expressions.int-type.subscript-dot.o005"
+id = "db.expressions.int-type.subscript-dot.o009"
 kind = "alternative"
 required = true
 target = "[ + | - ] → -"
-
-[[obligation]]
-id = "db.expressions.int-type.subscript-dot.o006"
-kind = "operand_type_class"
-required = true
-target = "<digit>"
-note = "a valid operand"
+anchor = "doc.data-types.int-type / Literals"
+note = "a minus sign before the literal"
 
 [[obligation]]
 id = "db.expressions.interval-type.o001"
@@ -1702,6 +1577,13 @@ required = true
 target = "[ + | - ] → -"
 
 [[obligation]]
+id = "db.expressions.interval-type.interval.o010"
+kind = "required_operand_missing"
+required = true
+target = "<year_month_interval_string>"
+note = "omit <year_month_interval_string>"
+
+[[obligation]]
 id = "db.expressions.interval-type.interval.o006"
 kind = "operand_type_class"
 required = true
@@ -1760,6 +1642,13 @@ required = true
 target = "[ + | - ] → -"
 
 [[obligation]]
+id = "db.expressions.interval-type.interval.literals.o010"
+kind = "required_operand_missing"
+required = true
+target = "<day_time_interval_string>"
+note = "omit <day_time_interval_string>"
+
+[[obligation]]
 id = "db.expressions.interval-type.interval.literals.o006"
 kind = "operand_type_class"
 required = true
@@ -1794,12 +1683,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.expressions.json-path-expression.o002"
-kind = "alternative"
-required = true
-target = "{ { <identifier> | [ <field> ] | [ * ] | [ <index> ] } [ .… → { <identifier> | [ <field> ] | [ * ] | [ <index> ] } [ . <identifier> | [ <field> ] | [ * ] | [ <index> ] ] [ ... ]"
-
-[[obligation]]
 id = "db.expressions.json-path-expression.o003"
 kind = "alternative"
 required = true
@@ -1831,160 +1714,123 @@ target = "<identifier>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.json-path-expression.o009"
-kind = "option_present"
-required = true
-target = "[ <field> ]"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o010"
-kind = "option_absent"
-required = true
-target = "[ <field> ]"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o011"
-kind = "operand_type_class"
-required = true
-target = "<field> in [ <field> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o012"
-kind = "option_present"
-required = true
-target = "[ * ]"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o013"
-kind = "option_absent"
-required = true
-target = "[ * ]"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o014"
-kind = "option_present"
-required = true
-target = "[ <index> ]"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o015"
-kind = "option_absent"
-required = true
-target = "[ <index> ]"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o016"
-kind = "operand_type_class"
-required = true
-target = "<index> in [ <index> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o017"
-kind = "option_present"
-required = true
-target = "[ . <identifier> | [ <field> ] | [ * ] | [ <index> ] ]"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o018"
-kind = "option_absent"
-required = true
-target = "[ . <identifier> | [ <field> ] | [ * ] | [ <index> ] ]"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o019"
-kind = "alternative"
-required = true
-target = "[ . <identifier> | [ <field> ] | [ * ] | [ <index> ] ] → . <identifier>"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o020"
-kind = "alternative"
-required = true
-target = "[ . <identifier> | [ <field> ] | [ * ] | [ <index> ] ] → [ <field> ]"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o021"
-kind = "alternative"
-required = true
-target = "[ . <identifier> | [ <field> ] | [ * ] | [ <index> ] ] → [ * ]"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o022"
-kind = "alternative"
-required = true
-target = "[ . <identifier> | [ <field> ] | [ * ] | [ <index> ] ] → [ <index> ]"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o023"
-kind = "required_operand_missing"
-required = true
-target = "<identifier> in [ . <identifier> | [ <field> ] | [ * ] | [ <index> ] ]"
-note = "omit <identifier>"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o024"
-kind = "operand_type_class"
-required = true
-target = "<identifier> in [ . <identifier> | [ <field> ] | [ * ] | [ <index> ] ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o025"
+id = "db.expressions.json-path-expression.o037"
 kind = "negative_neighbour"
 required = true
-target = "<identifier> in [ . <identifier> | [ <field> ] | [ * ] | [ <index> ] ]"
+target = "<identifier>"
 note = "a string literal in place of <identifier>"
 
 [[obligation]]
-id = "db.expressions.json-path-expression.o026"
-kind = "option_present"
+id = "db.expressions.json-path-expression.o038"
+kind = "required_operand_missing"
 required = true
-target = "[ <field> ] #2"
+target = "<field>"
+note = "omit <field>"
 
 [[obligation]]
-id = "db.expressions.json-path-expression.o027"
-kind = "option_absent"
-required = true
-target = "[ <field> ] #2"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o028"
+id = "db.expressions.json-path-expression.o039"
 kind = "operand_type_class"
 required = true
-target = "<field> in [ <field> ] #2"
+target = "<field>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.expressions.json-path-expression.o029"
-kind = "option_present"
+id = "db.expressions.json-path-expression.o040"
+kind = "required_operand_missing"
 required = true
-target = "[ * ] #2"
+target = "<index>"
+note = "omit <index>"
 
 [[obligation]]
-id = "db.expressions.json-path-expression.o030"
-kind = "option_absent"
-required = true
-target = "[ * ] #2"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o031"
-kind = "option_present"
-required = true
-target = "[ <index> ] #2"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o032"
-kind = "option_absent"
-required = true
-target = "[ <index> ] #2"
-
-[[obligation]]
-id = "db.expressions.json-path-expression.o033"
+id = "db.expressions.json-path-expression.o041"
 kind = "operand_type_class"
 required = true
-target = "<index> in [ <index> ] #2"
+target = "<index>"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o042"
+kind = "option_present"
+required = true
+target = "[ { . <identifier> | [ <field> ] | [ * ] | [ <index> ] } [ ... ] ]"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o043"
+kind = "option_absent"
+required = true
+target = "[ { . <identifier> | [ <field> ] | [ * ] | [ <index> ] } [ ... ] ]"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o044"
+kind = "alternative"
+required = true
+target = "{ . <identifier> | [ <field> ] | [ * ] | [ <index> ] } → . <identifier>"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o045"
+kind = "alternative"
+required = true
+target = "{ . <identifier> | [ <field> ] | [ * ] | [ <index> ] } → [ <field> ]"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o046"
+kind = "alternative"
+required = true
+target = "{ . <identifier> | [ <field> ] | [ * ] | [ <index> ] } → [ * ]"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o047"
+kind = "alternative"
+required = true
+target = "{ . <identifier> | [ <field> ] | [ * ] | [ <index> ] } → [ <index> ]"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o048"
+kind = "required_operand_missing"
+required = true
+target = "<identifier> in [ { . <identifier> | [ <field> ] | [ * ] | [ <index> ] } [ ... ] ]"
+note = "omit <identifier>"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o049"
+kind = "operand_type_class"
+required = true
+target = "<identifier> in [ { . <identifier> | [ <field> ] | [ * ] | [ <index> ] } [ ... ] ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o050"
+kind = "negative_neighbour"
+required = true
+target = "<identifier> in [ { . <identifier> | [ <field> ] | [ * ] | [ <index> ] } [ ... ] ]"
+note = "a string literal in place of <identifier>"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o051"
+kind = "required_operand_missing"
+required = true
+target = "<field> in [ { . <identifier> | [ <field> ] | [ * ] | [ <index> ] } [ ... ] ]"
+note = "omit <field>"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o052"
+kind = "operand_type_class"
+required = true
+target = "<field> in [ { . <identifier> | [ <field> ] | [ * ] | [ <index> ] } [ ... ] ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o053"
+kind = "required_operand_missing"
+required = true
+target = "<index> in [ { . <identifier> | [ <field> ] | [ * ] | [ <index> ] } [ ... ] ]"
+note = "omit <index>"
+
+[[obligation]]
+id = "db.expressions.json-path-expression.o054"
+kind = "operand_type_class"
+required = true
+target = "<index> in [ { . <identifier> | [ <field> ] | [ * ] | [ <index> ] } [ ... ] ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -2010,16 +1856,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.expressions.lambda-functions.o002"
+id = "db.expressions.lambda-functions.o016"
 kind = "alternative"
 required = true
-target = "{ <param> -> <expr> | ( <param1> [ , ... ] ) -> <expr> } → <param> -> <expr>"
+target = "{ <param> -> <expr> | ( <param1> , <param2> [ , ... ] ) -> <expr> } → <param> -> <expr>"
 
 [[obligation]]
-id = "db.expressions.lambda-functions.o003"
+id = "db.expressions.lambda-functions.o017"
 kind = "alternative"
 required = true
-target = "{ <param> -> <expr> | ( <param1> [ , ... ] ) -> <expr> } → ( <param1> [ , ... ] ) -> <expr>"
+target = "{ <param> -> <expr> | ( <param1> , <param2> [ , ... ] ) -> <expr> } → ( <param1> , <param2> [ , ... ] ) -> <expr>"
 
 [[obligation]]
 id = "db.expressions.lambda-functions.o004"
@@ -2064,6 +1910,13 @@ target = "<param1>"
 note = "a valid operand"
 
 [[obligation]]
+id = "db.expressions.lambda-functions.o018"
+kind = "operand_type_class"
+required = true
+target = "<param2>"
+note = "a valid operand"
+
+[[obligation]]
 id = "db.expressions.lambda-functions.o010"
 kind = "option_present"
 required = true
@@ -2091,6 +1944,12 @@ target = "<expr> #2"
 note = "a valid expression"
 
 [[obligation]]
+id = "db.expressions.lambda-functions.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ->"
+
+[[obligation]]
 id = "db.expressions.lambda-functions.o014"
 kind = "negative_neighbour"
 required = true
@@ -2101,6 +1960,14 @@ id = "db.expressions.lambda-functions.o015"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required -> after )"
+
+[[obligation]]
+id = "db.expressions.lambda-functions.o020"
+kind = "alternative"
+required = true
+target = "( <param1> ) -> <expr>"
+anchor = "doc.sql-ref-lambda-functions / Syntax"
+note = "one parameter in parentheses, as the page's line allows, which the warehouse refuses"
 
 [[obligation]]
 id = "db.expressions.map-type.o001"
@@ -2259,6 +2126,13 @@ target = "<catalog_name> in [ <catalog_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier.o023"
+kind = "required_operand_missing"
+required = true
+target = "<schema_identifier>"
+note = "omit <schema_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier.o009"
 kind = "operand_type_class"
 required = true
@@ -2266,18 +2140,11 @@ target = "<schema_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.names.identifier.o012"
+id = "db.expressions.names.identifier.o024"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.expressions.names.identifier.o013"
-kind = "negative_neighbour"
-required = true
-target = "<identifier_clause>"
-note = "a string literal in place of <identifier_clause>"
+note = "a valid operand"
 
 [[obligation]]
 id = "db.expressions.names.identifier.o014"
@@ -2308,22 +2175,6 @@ id = "db.expressions.names.identifier.o021"
 kind = "identifier_class"
 required = true
 target = "<schema_identifier>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
-id = "db.expressions.names.identifier.o018"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.names.identifier.o022"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
@@ -2372,6 +2223,13 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-2.o023"
+kind = "required_operand_missing"
+required = true
+target = "<view_identifier>"
+note = "omit <view_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-2.o009"
 kind = "operand_type_class"
 required = true
@@ -2379,18 +2237,11 @@ target = "<view_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.names.identifier-2.o012"
+id = "db.expressions.names.identifier-2.o024"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.expressions.names.identifier-2.o013"
-kind = "negative_neighbour"
-required = true
-target = "<identifier_clause>"
-note = "a string literal in place of <identifier_clause>"
+note = "a valid operand"
 
 [[obligation]]
 id = "db.expressions.names.identifier-2.o014"
@@ -2421,22 +2272,6 @@ id = "db.expressions.names.identifier-2.o021"
 kind = "identifier_class"
 required = true
 target = "<view_identifier>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
-id = "db.expressions.names.identifier-2.o018"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.names.identifier-2.o022"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
@@ -2485,6 +2320,13 @@ target = "<relation_name> in [ <relation_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-3.o023"
+kind = "required_operand_missing"
+required = true
+target = "<column_identifier>"
+note = "omit <column_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-3.o009"
 kind = "operand_type_class"
 required = true
@@ -2492,18 +2334,11 @@ target = "<column_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.names.identifier-3.o012"
+id = "db.expressions.names.identifier-3.o024"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.expressions.names.identifier-3.o013"
-kind = "negative_neighbour"
-required = true
-target = "<identifier_clause>"
-note = "a string literal in place of <identifier_clause>"
+note = "a valid operand"
 
 [[obligation]]
 id = "db.expressions.names.identifier-3.o014"
@@ -2538,38 +2373,22 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
-id = "db.expressions.names.identifier-3.o018"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.names.identifier-3.o022"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
 id = "db.expressions.names.identifier-4.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.expressions.names.identifier-4.o002"
+id = "db.expressions.names.identifier-4.o021"
 kind = "alternative"
 required = true
-target = "{ <expr> { . <field_identifier> [ . ... ] } | IDENTIFIER… → <expr> { . <field_identifier> [ . ... ] }"
+target = "{ <expr> . <field_identifier> [ . <field_identifier> ... ] |… → <expr> . <field_identifier> [ . <field_identifier> ... ]"
 
 [[obligation]]
-id = "db.expressions.names.identifier-4.o003"
+id = "db.expressions.names.identifier-4.o022"
 kind = "alternative"
 required = true
-target = "{ <expr> { . <field_identifier> [ . ... ] } | IDENTIFIER <identifier_clause> } → IDENTIFIER <identifier_clause>"
+target = "{ <expr> . <field_identifier> [ . <field_identifier> ... ] | IDENTIFIER… → IDENTIFIER <identifier_clause>"
 
 [[obligation]]
 id = "db.expressions.names.identifier-4.o004"
@@ -2584,12 +2403,6 @@ kind = "operand_type_class"
 required = true
 target = "<expr>"
 note = "a valid expression"
-
-[[obligation]]
-id = "db.expressions.names.identifier-4.o006"
-kind = "alternative"
-required = true
-target = "{ . <field_identifier> [ . ... ] } → . <field_identifier> [ . ... ]"
 
 [[obligation]]
 id = "db.expressions.names.identifier-4.o007"
@@ -2613,31 +2426,24 @@ target = "<field_identifier>"
 note = "a string literal in place of <field_identifier>"
 
 [[obligation]]
-id = "db.expressions.names.identifier-4.o010"
+id = "db.expressions.names.identifier-4.o023"
 kind = "option_present"
 required = true
-target = "[ . ... ]"
+target = "[ . <field_identifier> ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "db.expressions.names.identifier-4.o011"
+id = "db.expressions.names.identifier-4.o024"
 kind = "option_absent"
 required = true
-target = "[ . ... ]"
+target = "[ . <field_identifier> ... ]"
 
 [[obligation]]
-id = "db.expressions.names.identifier-4.o013"
+id = "db.expressions.names.identifier-4.o025"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.expressions.names.identifier-4.o014"
-kind = "negative_neighbour"
-required = true
-target = "<identifier_clause>"
-note = "a string literal in place of <identifier_clause>"
+note = "a valid operand"
 
 [[obligation]]
 id = "db.expressions.names.identifier-4.o015"
@@ -2652,22 +2458,6 @@ id = "db.expressions.names.identifier-4.o019"
 kind = "identifier_class"
 required = true
 target = "<field_identifier>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
-id = "db.expressions.names.identifier-4.o017"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.names.identifier-4.o020"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
@@ -2716,6 +2506,13 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-5.o023"
+kind = "required_operand_missing"
+required = true
+target = "<variable_identifier>"
+note = "omit <variable_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-5.o009"
 kind = "operand_type_class"
 required = true
@@ -2723,18 +2520,11 @@ target = "<variable_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.names.identifier-5.o012"
+id = "db.expressions.names.identifier-5.o024"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.expressions.names.identifier-5.o013"
-kind = "negative_neighbour"
-required = true
-target = "<identifier_clause>"
-note = "a string literal in place of <identifier_clause>"
+note = "a valid operand"
 
 [[obligation]]
 id = "db.expressions.names.identifier-5.o014"
@@ -2765,22 +2555,6 @@ id = "db.expressions.names.identifier-5.o021"
 kind = "identifier_class"
 required = true
 target = "<variable_identifier>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
-id = "db.expressions.names.identifier-5.o018"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.names.identifier-5.o022"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
@@ -2829,6 +2603,13 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-6.o023"
+kind = "required_operand_missing"
+required = true
+target = "<function_identifier>"
+note = "omit <function_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-6.o009"
 kind = "operand_type_class"
 required = true
@@ -2836,18 +2617,11 @@ target = "<function_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.names.identifier-6.o012"
+id = "db.expressions.names.identifier-6.o024"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.expressions.names.identifier-6.o013"
-kind = "negative_neighbour"
-required = true
-target = "<identifier_clause>"
-note = "a string literal in place of <identifier_clause>"
+note = "a valid operand"
 
 [[obligation]]
 id = "db.expressions.names.identifier-6.o014"
@@ -2878,22 +2652,6 @@ id = "db.expressions.names.identifier-6.o021"
 kind = "identifier_class"
 required = true
 target = "<function_identifier>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
-id = "db.expressions.names.identifier-6.o018"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.names.identifier-6.o022"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
@@ -2942,6 +2700,13 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-7.o023"
+kind = "required_operand_missing"
+required = true
+target = "<procedure_identifier>"
+note = "omit <procedure_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-7.o009"
 kind = "operand_type_class"
 required = true
@@ -2949,18 +2714,11 @@ target = "<procedure_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.names.identifier-7.o012"
+id = "db.expressions.names.identifier-7.o024"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.expressions.names.identifier-7.o013"
-kind = "negative_neighbour"
-required = true
-target = "<identifier_clause>"
-note = "a string literal in place of <identifier_clause>"
+note = "a valid operand"
 
 [[obligation]]
 id = "db.expressions.names.identifier-7.o014"
@@ -2995,22 +2753,6 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
-id = "db.expressions.names.identifier-7.o018"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.names.identifier-7.o022"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
 id = "db.expressions.names.identifier-8.o001"
 kind = "positive"
 required = true
@@ -3036,18 +2778,11 @@ target = "<label_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.names.identifier-8.o007"
+id = "db.expressions.names.identifier-8.o015"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.expressions.names.identifier-8.o008"
-kind = "negative_neighbour"
-required = true
-target = "<identifier_clause>"
-note = "a string literal in place of <identifier_clause>"
+note = "a valid operand"
 
 [[obligation]]
 id = "db.expressions.names.identifier-8.o009"
@@ -3066,44 +2801,28 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
-id = "db.expressions.names.identifier-8.o011"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.names.identifier-8.o014"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
 id = "db.expressions.names.identifier.syntax.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.expressions.names.identifier.syntax.o002"
+id = "db.expressions.names.identifier.syntax.o038"
 kind = "alternative"
 required = true
-target = "{ [ <schema_name> . ] <table_identifier> | IDENTIFIER <identifier_clause> | {… → [ <schema_name> . ] <table_identifier>"
+target = "{ [ <schema_name> . ] <table_identifier> | IDENTIFIER <identifier_clause> |… → [ <schema_name> . ] <table_identifier>"
 
 [[obligation]]
-id = "db.expressions.names.identifier.syntax.o003"
+id = "db.expressions.names.identifier.syntax.o039"
 kind = "alternative"
 required = true
-target = "{ [ <schema_name> . ] <table_identifier> | IDENTIFIER <identifier_clause> | {… → IDENTIFIER <identifier_clause>"
+target = "{ [ <schema_name> . ] <table_identifier> | IDENTIFIER <identifier_clause> |… → IDENTIFIER <identifier_clause>"
 
 [[obligation]]
-id = "db.expressions.names.identifier.syntax.o004"
+id = "db.expressions.names.identifier.syntax.o040"
 kind = "alternative"
 required = true
-target = "{ [ <schema_name> . ] <table_identifier> | IDENTIFIER… → { <file_format> | ` <file_format> ` } . ` <path_to_table> `"
+target = "{ [ <schema_name> . ] <table_identifier> | IDENTIFIER <identifier_clause> |… → <file_format> . <path_to_table>"
 
 [[obligation]]
 id = "db.expressions.names.identifier.syntax.o005"
@@ -3132,6 +2851,20 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier.syntax.o041"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ <schema_name> . ]"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
+id = "db.expressions.names.identifier.syntax.o042"
+kind = "required_operand_missing"
+required = true
+target = "<table_identifier>"
+note = "omit <table_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier.syntax.o010"
 kind = "operand_type_class"
 required = true
@@ -3139,30 +2872,25 @@ target = "<table_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.names.identifier.syntax.o013"
+id = "db.expressions.names.identifier.syntax.o043"
+kind = "negative_neighbour"
+required = true
+target = "<table_identifier>"
+note = "a string literal in place of <table_identifier>"
+
+[[obligation]]
+id = "db.expressions.names.identifier.syntax.o044"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
-note = "a valid identifier"
+note = "a valid operand"
 
 [[obligation]]
-id = "db.expressions.names.identifier.syntax.o014"
-kind = "negative_neighbour"
+id = "db.expressions.names.identifier.syntax.o045"
+kind = "required_operand_missing"
 required = true
-target = "<identifier_clause>"
-note = "a string literal in place of <identifier_clause>"
-
-[[obligation]]
-id = "db.expressions.names.identifier.syntax.o015"
-kind = "alternative"
-required = true
-target = "{ <file_format> | ` <file_format> ` } → <file_format>"
-
-[[obligation]]
-id = "db.expressions.names.identifier.syntax.o016"
-kind = "alternative"
-required = true
-target = "{ <file_format> | ` <file_format> ` } → ` <file_format> `"
+target = "<file_format>"
+note = "omit <file_format>"
 
 [[obligation]]
 id = "db.expressions.names.identifier.syntax.o017"
@@ -3172,11 +2900,11 @@ target = "<file_format>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.expressions.names.identifier.syntax.o019"
-kind = "operand_type_class"
+id = "db.expressions.names.identifier.syntax.o046"
+kind = "required_operand_missing"
 required = true
-target = "<file_format> #2"
-note = "a valid operand"
+target = "<path_to_table>"
+note = "omit <path_to_table>"
 
 [[obligation]]
 id = "db.expressions.names.identifier.syntax.o021"
@@ -3224,6 +2952,12 @@ target = "<options_spec> in [ <options_spec> ]"
 note = "a valid operand"
 
 [[obligation]]
+id = "db.expressions.names.identifier.syntax.o047"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required IDENTIFIER after "
+
+[[obligation]]
 id = "db.expressions.names.identifier.syntax.o028"
 kind = "interaction_all_options"
 required = true
@@ -3262,20 +2996,12 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
-id = "db.expressions.names.identifier.syntax.o033"
-kind = "identifier_class"
+id = "db.expressions.names.identifier.syntax.o048"
+kind = "alternative"
 required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.names.identifier.syntax.o037"
-kind = "identifier_class"
-required = true
-target = "<identifier_clause>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+target = "` <file_format> ` . ` <path_to_table> `"
+anchor = "doc.sql-ref-names / Table name"
+note = "a back-quoted file format before a back-quoted path, as the page's example `csv`.`spreadsheets/data.csv` writes it"
 
 [[obligation]]
 id = "db.expressions.names.subscript.o001"
@@ -3301,6 +3027,13 @@ kind = "operand_type_class"
 required = true
 target = "<column_identifier>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "db.expressions.names.subscript.o009"
+kind = "negative_neighbour"
+required = true
+target = "<column_identifier>"
+note = "a string literal in place of <column_identifier>"
 
 [[obligation]]
 id = "db.expressions.names.subscript.o006"
@@ -3349,6 +3082,13 @@ kind = "operand_type_class"
 required = true
 target = "<routine_identifier> in [ <routine_identifier> . ]"
 note = "a valid identifier"
+
+[[obligation]]
+id = "db.expressions.names.subscript-dot.o015"
+kind = "required_operand_missing"
+required = true
+target = "<parameter_identifier>"
+note = "omit <parameter_identifier>"
 
 [[obligation]]
 id = "db.expressions.names.subscript-dot.o007"
@@ -3415,6 +3155,13 @@ target = "<table_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.subscript-dot-2.o021"
+kind = "negative_neighbour"
+required = true
+target = "<table_identifier>"
+note = "a string literal in place of <table_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.subscript-dot-2.o006"
 kind = "option_present"
 required = true
@@ -3427,11 +3174,25 @@ required = true
 target = "[ ( <column_identifier1> [ , ... ] ) ]"
 
 [[obligation]]
+id = "db.expressions.names.subscript-dot-2.o022"
+kind = "required_operand_missing"
+required = true
+target = "<column_identifier1> in [ ( <column_identifier1> [ , ... ] ) ]"
+note = "omit <column_identifier1>"
+
+[[obligation]]
 id = "db.expressions.names.subscript-dot-2.o009"
 kind = "operand_type_class"
 required = true
 target = "<column_identifier1> in [ ( <column_identifier1> [ , ... ] ) ]"
 note = "a valid identifier"
+
+[[obligation]]
+id = "db.expressions.names.subscript-dot-2.o023"
+kind = "negative_neighbour"
+required = true
+target = "<column_identifier1> in [ ( <column_identifier1> [ , ... ] ) ]"
+note = "a string literal in place of <column_identifier1>"
 
 [[obligation]]
 id = "db.expressions.names.subscript-dot-2.o011"
@@ -3602,6 +3363,13 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.subscript-dot-4.o015"
+kind = "required_operand_missing"
+required = true
+target = "<volume_identifier>"
+note = "omit <volume_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.subscript-dot-4.o007"
 kind = "operand_type_class"
 required = true
@@ -3645,6 +3413,13 @@ id = "db.expressions.names.subscript-dot.syntax.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "db.expressions.names.subscript-dot.syntax.o012"
+kind = "required_operand_missing"
+required = true
+target = "<cursor_identifier>"
+note = "omit <cursor_identifier>"
 
 [[obligation]]
 id = "db.expressions.names.subscript-dot.syntax.o002"
@@ -3785,111 +3560,27 @@ required = true
 target = "{ NULL | VOID } → VOID"
 
 [[obligation]]
-id = "db.expressions.object-type.o001"
+id = "db.expressions.object-type.o018"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.data-types.object-type / Syntax"
+note = "an OBJECT with no field, in CAST"
 
 [[obligation]]
-id = "db.expressions.object-type.o002"
+id = "db.expressions.object-type.o019"
 kind = "option_present"
 required = true
 target = "[ <field_name> [ : ] <field_type> [ , ... ] ]"
+anchor = "doc.data-types.object-type / Syntax"
+note = "an OBJECT with two fields, each name and type separated by a colon, in CAST"
 
 [[obligation]]
-id = "db.expressions.object-type.o003"
-kind = "option_absent"
-required = true
-target = "[ <field_name> [ : ] <field_type> [ , ... ] ]"
-
-[[obligation]]
-id = "db.expressions.object-type.o004"
-kind = "required_operand_missing"
-required = true
-target = "<field_name> in [ <field_name> [ : ] <field_type> [ , ... ] ]"
-note = "omit <field_name>"
-
-[[obligation]]
-id = "db.expressions.object-type.o005"
-kind = "operand_type_class"
-required = true
-target = "<field_name> in [ <field_name> [ : ] <field_type> [ , ... ] ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.expressions.object-type.o006"
-kind = "negative_neighbour"
-required = true
-target = "<field_name> in [ <field_name> [ : ] <field_type> [ , ... ] ]"
-note = "a string literal in place of <field_name>"
-
-[[obligation]]
-id = "db.expressions.object-type.o007"
-kind = "option_present"
-required = true
-target = "[ : ]"
-
-[[obligation]]
-id = "db.expressions.object-type.o008"
+id = "db.expressions.object-type.o020"
 kind = "option_absent"
 required = true
 target = "[ : ]"
-
-[[obligation]]
-id = "db.expressions.object-type.o009"
-kind = "required_operand_missing"
-required = true
-target = "<field_type> in [ <field_name> [ : ] <field_type> [ , ... ] ]"
-note = "omit <field_type>"
-
-[[obligation]]
-id = "db.expressions.object-type.o010"
-kind = "operand_type_class"
-required = true
-target = "<field_type> in [ <field_name> [ : ] <field_type> [ , ... ] ]"
-note = "a valid data_type"
-
-[[obligation]]
-id = "db.expressions.object-type.o011"
-kind = "negative_neighbour"
-required = true
-target = "<field_type> in [ <field_name> [ : ] <field_type> [ , ... ] ]"
-note = "a string literal in place of <field_type>"
-
-[[obligation]]
-id = "db.expressions.object-type.o012"
-kind = "option_present"
-required = true
-target = "[ , ... ]"
-note = "the list continued at least once"
-
-[[obligation]]
-id = "db.expressions.object-type.o013"
-kind = "option_absent"
-required = true
-target = "[ , ... ]"
-
-[[obligation]]
-id = "db.expressions.object-type.o014"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
-id = "db.expressions.object-type.o015"
-kind = "identifier_class"
-required = true
-target = "<field_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.expressions.object-type.o017"
-kind = "identifier_class"
-required = true
-target = "<field_name>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+anchor = "doc.data-types.object-type / Syntax"
+note = "an OBJECT field without the colon, in CAST"
 
 [[obligation]]
 id = "db.expressions.parameter-marker.colon.o001"
@@ -3959,41 +3650,27 @@ required = true
 target = "{ SMALLINT | SHORT } → SHORT"
 
 [[obligation]]
-id = "db.expressions.smallint-type.s.o001"
+id = "db.expressions.smallint-type.s.o008"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.data-types.smallint-type / Literals"
+note = "digits with the S postfix"
 
 [[obligation]]
-id = "db.expressions.smallint-type.s.o002"
-kind = "option_present"
-required = true
-target = "[ + | - ]"
-
-[[obligation]]
-id = "db.expressions.smallint-type.s.o003"
-kind = "option_absent"
-required = true
-target = "[ + | - ]"
-
-[[obligation]]
-id = "db.expressions.smallint-type.s.o004"
+id = "db.expressions.smallint-type.s.o009"
 kind = "alternative"
 required = true
 target = "[ + | - ] → +"
+anchor = "doc.data-types.smallint-type / Literals"
+note = "a plus sign before the literal"
 
 [[obligation]]
-id = "db.expressions.smallint-type.s.o005"
+id = "db.expressions.smallint-type.s.o010"
 kind = "alternative"
 required = true
 target = "[ + | - ] → -"
-
-[[obligation]]
-id = "db.expressions.smallint-type.s.o007"
-kind = "operand_type_class"
-required = true
-target = "<digit>"
-note = "a valid operand"
+anchor = "doc.data-types.smallint-type / Literals"
+note = "a minus sign before the literal"
 
 [[obligation]]
 id = "db.expressions.string-type.o001"
@@ -4002,41 +3679,35 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.expressions.string-type.subscript-dot.o001"
+id = "db.expressions.string-type.subscript-dot.o007"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.data-types.string-type / Literals"
+note = "a string literal of the page's characters"
 
 [[obligation]]
-id = "db.expressions.string-type.subscript-dot.o002"
+id = "db.expressions.string-type.subscript-dot.o008"
+kind = "alternative"
+required = true
+target = "[ r | R ] → r"
+anchor = "doc.data-types.string-type / Literals"
+note = "a raw literal with the lower-case prefix"
+
+[[obligation]]
+id = "db.expressions.string-type.subscript-dot.o009"
+kind = "alternative"
+required = true
+target = "[ r | R ] → R"
+anchor = "doc.data-types.string-type / Literals"
+note = "a raw literal with the upper-case prefix"
+
+[[obligation]]
+id = "db.expressions.string-type.subscript-dot.o010"
 kind = "option_present"
 required = true
-target = "[ <r> | R ]"
-
-[[obligation]]
-id = "db.expressions.string-type.subscript-dot.o003"
-kind = "option_absent"
-required = true
-target = "[ <r> | R ]"
-
-[[obligation]]
-id = "db.expressions.string-type.subscript-dot.o004"
-kind = "alternative"
-required = true
-target = "[ <r> | R ] → <r>"
-
-[[obligation]]
-id = "db.expressions.string-type.subscript-dot.o005"
-kind = "alternative"
-required = true
-target = "[ <r> | R ] → R"
-
-[[obligation]]
-id = "db.expressions.string-type.subscript-dot.o006"
-kind = "operand_type_class"
-required = true
-target = "<r> in [ <r> | R ]"
-note = "a valid operand"
+target = "[ ... ] after the literal"
+anchor = "doc.data-types.string-type / Chaining literals"
+note = "two chained literals; the page's Chaining literals section carries the banner 'Applies to: Databricks Runtime 18.0 and later', which leaves out Databricks SQL, so the text is observed"
 
 [[obligation]]
 id = "db.expressions.struct-type.o001"
@@ -4045,36 +3716,36 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.expressions.struct-type.o002"
+id = "db.expressions.struct-type.o033"
 kind = "option_present"
 required = true
-target = "[ <field_name> [ : ] <field_type> [ NOT NULL ] [ COLLATE <collation_name> ] [ COMMENT <str> ] [ , ... ] ]"
+target = "[ <field_name> [ : ] <field_type> [ COLLATE <collation_name> ] [ NOT NULL ] [ COMMENT <str> ] [ , <field_name> [ : ]…"
 
 [[obligation]]
-id = "db.expressions.struct-type.o003"
+id = "db.expressions.struct-type.o034"
 kind = "option_absent"
 required = true
-target = "[ <field_name> [ : ] <field_type> [ NOT NULL ] [ COLLATE <collation_name> ] [ COMMENT <str> ] [ , ... ] ]"
+target = "[ <field_name> [ : ] <field_type> [ COLLATE <collation_name> ] [ NOT NULL ] [ COMMENT <str> ] [ , <field_name> [ : ]…"
 
 [[obligation]]
-id = "db.expressions.struct-type.o004"
+id = "db.expressions.struct-type.o035"
 kind = "required_operand_missing"
 required = true
-target = "<field_name> in [ <field_name> [ : ] <field_type> [ NOT NULL ] [ COLLATE <collation_name> ] [ COMMENT <str> ] [ , ... ]…"
+target = "<field_name> in [ <field_name> [ : ] <field_type> [ COLLATE <collation_name> ] [ NOT NULL ] [ COMMENT <str> ] [ ,…"
 note = "omit <field_name>"
 
 [[obligation]]
-id = "db.expressions.struct-type.o005"
+id = "db.expressions.struct-type.o036"
 kind = "operand_type_class"
 required = true
-target = "<field_name> in [ <field_name> [ : ] <field_type> [ NOT NULL ] [ COLLATE <collation_name> ] [ COMMENT <str> ] [ , ... ]…"
+target = "<field_name> in [ <field_name> [ : ] <field_type> [ COLLATE <collation_name> ] [ NOT NULL ] [ COMMENT <str> ] [ ,…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.expressions.struct-type.o006"
+id = "db.expressions.struct-type.o037"
 kind = "negative_neighbour"
 required = true
-target = "<field_name> in [ <field_name> [ : ] <field_type> [ NOT NULL ] [ COLLATE <collation_name> ] [ COMMENT <str> ] [ , ... ]…"
+target = "<field_name> in [ <field_name> [ : ] <field_type> [ COLLATE <collation_name> ] [ NOT NULL ] [ COMMENT <str> ] [ ,…"
 note = "a string literal in place of <field_name>"
 
 [[obligation]]
@@ -4090,37 +3761,25 @@ required = true
 target = "[ : ]"
 
 [[obligation]]
-id = "db.expressions.struct-type.o009"
+id = "db.expressions.struct-type.o038"
 kind = "required_operand_missing"
 required = true
-target = "<field_type> in [ <field_name> [ : ] <field_type> [ NOT NULL ] [ COLLATE <collation_name> ] [ COMMENT <str> ] [ , ... ]…"
+target = "<field_type> in [ <field_name> [ : ] <field_type> [ COLLATE <collation_name> ] [ NOT NULL ] [ COMMENT <str> ] [ ,…"
 note = "omit <field_type>"
 
 [[obligation]]
-id = "db.expressions.struct-type.o010"
+id = "db.expressions.struct-type.o039"
 kind = "operand_type_class"
 required = true
-target = "<field_type> in [ <field_name> [ : ] <field_type> [ NOT NULL ] [ COLLATE <collation_name> ] [ COMMENT <str> ] [ , ... ]…"
+target = "<field_type> in [ <field_name> [ : ] <field_type> [ COLLATE <collation_name> ] [ NOT NULL ] [ COMMENT <str> ] [ ,…"
 note = "a valid data_type"
 
 [[obligation]]
-id = "db.expressions.struct-type.o011"
+id = "db.expressions.struct-type.o040"
 kind = "negative_neighbour"
 required = true
-target = "<field_type> in [ <field_name> [ : ] <field_type> [ NOT NULL ] [ COLLATE <collation_name> ] [ COMMENT <str> ] [ , ... ]…"
+target = "<field_type> in [ <field_name> [ : ] <field_type> [ COLLATE <collation_name> ] [ NOT NULL ] [ COMMENT <str> ] [ ,…"
 note = "a string literal in place of <field_type>"
-
-[[obligation]]
-id = "db.expressions.struct-type.o012"
-kind = "option_present"
-required = true
-target = "[ NOT NULL ]"
-
-[[obligation]]
-id = "db.expressions.struct-type.o013"
-kind = "option_absent"
-required = true
-target = "[ NOT NULL ]"
 
 [[obligation]]
 id = "db.expressions.struct-type.o014"
@@ -4156,6 +3815,18 @@ target = "<collation_name> in [ COLLATE <collation_name> ]"
 note = "a string literal in place of <collation_name>"
 
 [[obligation]]
+id = "db.expressions.struct-type.o012"
+kind = "option_present"
+required = true
+target = "[ NOT NULL ]"
+
+[[obligation]]
+id = "db.expressions.struct-type.o013"
+kind = "option_absent"
+required = true
+target = "[ NOT NULL ]"
+
+[[obligation]]
 id = "db.expressions.struct-type.o019"
 kind = "option_present"
 required = true
@@ -4182,17 +3853,17 @@ target = "<str> in [ COMMENT <str> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.expressions.struct-type.o023"
+id = "db.expressions.struct-type.o041"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
+target = "[ , <field_name> [ : ] <field_type> ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "db.expressions.struct-type.o024"
+id = "db.expressions.struct-type.o042"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <field_name> [ : ] <field_type> ... ]"
 
 [[obligation]]
 id = "db.expressions.struct-type.o025"
@@ -4237,6 +3908,14 @@ required = true
 target = "<collation_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.expressions.struct-type.o043"
+kind = "option_present"
+required = true
+target = "[ COLLATE <collation_name> ] after [ NOT NULL ]"
+anchor = "doc.data-types.struct-type / Syntax"
+note = "COLLATE after NOT NULL, as the page's Syntax line orders them, which Spark's grammar does not parse"
 
 [[obligation]]
 id = "db.expressions.time-type.time.o001"
@@ -4341,60 +4020,19 @@ target = "<timestamp_string>"
 note = "an unquoted identifier in place of <timestamp_string>"
 
 [[obligation]]
-id = "db.expressions.timestamp-ntz-type.timestamp-without-time-zone.o001"
+id = "db.expressions.timestamp-ntz-type.timestamp-without-time-zone.o010"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.data-types.timestamp-ntz-type / Syntax"
+note = "TIMESTAMP WITHOUT TIME ZONE in CAST"
 
 [[obligation]]
-id = "db.expressions.timestamp-ntz-type.timestamp-without-time-zone.o002"
+id = "db.expressions.timestamp-ntz-type.timestamp-without-time-zone.o011"
 kind = "option_present"
 required = true
 target = "[ ( <p> ) ]"
-
-[[obligation]]
-id = "db.expressions.timestamp-ntz-type.timestamp-without-time-zone.o003"
-kind = "option_absent"
-required = true
-target = "[ ( <p> ) ]"
-
-[[obligation]]
-id = "db.expressions.timestamp-ntz-type.timestamp-without-time-zone.o004"
-kind = "required_operand_missing"
-required = true
-target = "<p> in [ ( <p> ) ]"
-note = "omit <p>"
-
-[[obligation]]
-id = "db.expressions.timestamp-ntz-type.timestamp-without-time-zone.o005"
-kind = "operand_type_class"
-required = true
-target = "<p> in [ ( <p> ) ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.timestamp-ntz-type.timestamp-without-time-zone.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ) in [ ( <p> ) ]"
-
-[[obligation]]
-id = "db.expressions.timestamp-ntz-type.timestamp-without-time-zone.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required WITHOUT"
-
-[[obligation]]
-id = "db.expressions.timestamp-ntz-type.timestamp-without-time-zone.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TIME"
-
-[[obligation]]
-id = "db.expressions.timestamp-ntz-type.timestamp-without-time-zone.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ZONE"
+anchor = "doc.data-types.timestamp-ntz-type / Syntax"
+note = "TIMESTAMP ( 6 ) WITHOUT TIME ZONE in CAST; p is 'An optional precision from 6 through 9'"
 
 [[obligation]]
 id = "db.expressions.timestamp-type.timestamp.o001"
@@ -4517,41 +4155,27 @@ required = true
 target = "{ TINYINT | BYTE } → BYTE"
 
 [[obligation]]
-id = "db.expressions.tinyint-type.y.o001"
+id = "db.expressions.tinyint-type.y.o008"
 kind = "positive"
 required = true
-note = "the documented form with every required part and no optional part"
+anchor = "doc.data-types.tinyint-type / Literals"
+note = "digits with the Y postfix"
 
 [[obligation]]
-id = "db.expressions.tinyint-type.y.o002"
-kind = "option_present"
-required = true
-target = "[ + | - ]"
-
-[[obligation]]
-id = "db.expressions.tinyint-type.y.o003"
-kind = "option_absent"
-required = true
-target = "[ + | - ]"
-
-[[obligation]]
-id = "db.expressions.tinyint-type.y.o004"
+id = "db.expressions.tinyint-type.y.o009"
 kind = "alternative"
 required = true
 target = "[ + | - ] → +"
+anchor = "doc.data-types.tinyint-type / Literals"
+note = "a plus sign before the literal"
 
 [[obligation]]
-id = "db.expressions.tinyint-type.y.o005"
+id = "db.expressions.tinyint-type.y.o010"
 kind = "alternative"
 required = true
 target = "[ + | - ] → -"
-
-[[obligation]]
-id = "db.expressions.tinyint-type.y.o007"
-kind = "operand_type_class"
-required = true
-target = "<digit>"
-note = "a valid operand"
+anchor = "doc.data-types.tinyint-type / Literals"
+note = "a minus sign before the literal"
 
 [[obligation]]
 id = "db.expressions.variant-type.o001"
@@ -4685,11 +4309,25 @@ required = true
 target = "{ <frame_mode> <frame_start> | <frame_mode> BETWEEN <frame_start>… → <frame_mode> BETWEEN <frame_start> AND <frame_end>"
 
 [[obligation]]
+id = "db.expressions.window-functions-frame.o014"
+kind = "required_operand_missing"
+required = true
+target = "<frame_mode>"
+note = "omit <frame_mode>"
+
+[[obligation]]
 id = "db.expressions.window-functions-frame.o004"
 kind = "operand_type_class"
 required = true
 target = "<frame_mode>"
 note = "a valid operand"
+
+[[obligation]]
+id = "db.expressions.window-functions-frame.o015"
+kind = "required_operand_missing"
+required = true
+target = "<frame_start>"
+note = "omit <frame_start>"
 
 [[obligation]]
 id = "db.expressions.window-functions-frame.o005"

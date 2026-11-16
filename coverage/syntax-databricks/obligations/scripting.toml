@@ -298,51 +298,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.scripting.compound-stmt.o002"
-kind = "option_present"
-required = true
-target = "[ <label> : ]"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o003"
-kind = "option_absent"
-required = true
-target = "[ <label> : ]"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o004"
-kind = "required_operand_missing"
-required = true
-target = "<label> in [ <label> : ]"
-note = "omit <label>"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o005"
-kind = "operand_type_class"
-required = true
-target = "<label> in [ <label> : ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o006"
-kind = "negative_neighbour"
-required = true
-target = "<label> in [ <label> : ]"
-note = "a string literal in place of <label>"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o007"
-kind = "option_present"
-required = true
-target = "[ ATOMIC ]"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o008"
-kind = "option_absent"
-required = true
-target = "[ ATOMIC ]"
-
-[[obligation]]
 id = "db.scripting.compound-stmt.o009"
 kind = "option_present"
 required = true
@@ -367,27 +322,6 @@ required = true
 target = "{ <declare_variable> | <declare_condition> } → <declare_condition>"
 
 [[obligation]]
-id = "db.scripting.compound-stmt.o013"
-kind = "operand_type_class"
-required = true
-target = "<declare_variable> in [ { <declare_variable> | <declare_condition> } ; [ ... ] ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o014"
-kind = "negative_neighbour"
-required = true
-target = "<declare_variable> in [ { <declare_variable> | <declare_condition> } ; [ ... ] ]"
-note = "a string literal in place of <declare_variable>"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o015"
-kind = "operand_type_class"
-required = true
-target = "<declare_condition> in [ { <declare_variable> | <declare_condition> } ; [ ... ] ]"
-note = "a valid expression"
-
-[[obligation]]
 id = "db.scripting.compound-stmt.o016"
 kind = "option_present"
 required = true
@@ -405,20 +339,6 @@ kind = "required_operand_missing"
 required = true
 target = "<declare_cursor> in [ <declare_cursor> ; [ ... ] ]"
 note = "omit <declare_cursor>"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o019"
-kind = "operand_type_class"
-required = true
-target = "<declare_cursor> in [ <declare_cursor> ; [ ... ] ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o020"
-kind = "negative_neighbour"
-required = true
-target = "<declare_cursor> in [ <declare_cursor> ; [ ... ] ]"
-note = "a string literal in place of <declare_cursor>"
 
 [[obligation]]
 id = "db.scripting.compound-stmt.o021"
@@ -466,36 +386,63 @@ target = "<sql_statement> in [ <sql_statement> ; [ ... ] ]"
 note = "a valid statement"
 
 [[obligation]]
-id = "db.scripting.compound-stmt.o028"
+id = "db.scripting.compound-stmt.o045"
+kind = "negative_neighbour"
+required = true
+target = "<sql_statement> in [ <sql_statement> ; [ ... ] ]"
+note = "a bare literal in place of <sql_statement>"
+
+[[obligation]]
+id = "db.scripting.compound-stmt.o046"
 kind = "option_present"
 required = true
-target = "[ <label> ]"
+target = "[ <declare_variable> ; [ ... ] ]"
 
 [[obligation]]
-id = "db.scripting.compound-stmt.o029"
+id = "db.scripting.compound-stmt.o047"
 kind = "option_absent"
 required = true
-target = "[ <label> ]"
+target = "[ <declare_variable> ; [ ... ] ]"
 
 [[obligation]]
-id = "db.scripting.compound-stmt.o030"
+id = "db.scripting.compound-stmt.o048"
+kind = "required_operand_missing"
+required = true
+target = "<declare_variable> in [ <declare_variable> ; [ ... ] ]"
+note = "omit <declare_variable>"
+
+[[obligation]]
+id = "db.scripting.compound-stmt.o049"
+kind = "option_present"
+required = true
+target = "[ <sql_statement> ; [ ... ] ] #2"
+
+[[obligation]]
+id = "db.scripting.compound-stmt.o050"
+kind = "option_absent"
+required = true
+target = "[ <sql_statement> ; [ ... ] ] #2"
+
+[[obligation]]
+id = "db.scripting.compound-stmt.o051"
+kind = "required_operand_missing"
+required = true
+target = "<sql_statement> in [ <sql_statement> ; [ ... ] ] #2"
+note = "omit <sql_statement>"
+
+[[obligation]]
+id = "db.scripting.compound-stmt.o052"
 kind = "operand_type_class"
 required = true
-target = "<label> in [ <label> ]"
-note = "a valid identifier"
+target = "<sql_statement> in [ <sql_statement> ; [ ... ] ] #2"
+note = "a valid statement"
 
 [[obligation]]
-id = "db.scripting.compound-stmt.o031"
+id = "db.scripting.compound-stmt.o053"
 kind = "negative_neighbour"
 required = true
-target = "<label> in [ <label> ]"
-note = "a string literal in place of <label>"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o032"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required BEGIN"
+target = "<sql_statement> in [ <sql_statement> ; [ ... ] ] #2"
+note = "a bare literal in place of <sql_statement>"
 
 [[obligation]]
 id = "db.scripting.compound-stmt.o033"
@@ -504,58 +451,16 @@ required = true
 note = "the form without its required END"
 
 [[obligation]]
+id = "db.scripting.compound-stmt.o054"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required END after ATOMIC"
+
+[[obligation]]
 id = "db.scripting.compound-stmt.o034"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o035"
-kind = "identifier_class"
-required = true
-target = "<label>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier in mixed case without blanks; blanks inside quotes belong to the double-quoted identifier form"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o042"
-kind = "identifier_class"
-required = true
-target = "<label>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o037"
-kind = "identifier_class"
-required = true
-target = "<declare_variable>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o043"
-kind = "identifier_class"
-required = true
-target = "<declare_variable>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o039"
-kind = "identifier_class"
-required = true
-target = "<declare_cursor>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.scripting.compound-stmt.o044"
-kind = "identifier_class"
-required = true
-target = "<declare_cursor>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
 id = "db.scripting.compound-stmt.o041"
@@ -566,6 +471,30 @@ depths = [
   8,
 ]
 note = "statement operands nested; no documented bound"
+
+[[obligation]]
+id = "db.scripting.compound-stmt.o055"
+kind = "option_present"
+required = true
+target = "[ <label> : ]"
+anchor = "doc.control-flow.compound-stmt / Parameters"
+note = "a labelled compound statement nested in a compound statement, with its END label"
+
+[[obligation]]
+id = "db.scripting.compound-stmt.o056"
+kind = "option_absent"
+required = true
+target = "END [ <label> ]"
+anchor = "doc.control-flow.compound-stmt / Parameters"
+note = "a labelled compound statement nested in a compound statement, without its END label"
+
+[[obligation]]
+id = "db.scripting.compound-stmt.o057"
+kind = "negative_neighbour"
+required = true
+target = "[ <label> : ]"
+anchor = "doc.control-flow.compound-stmt / Parameters"
+note = "a label on a top-level compound statement: 'label must not be specified for a top level compound statement'"
 
 [[obligation]]
 id = "db.scripting.execute-immediate.o001"
@@ -1132,10 +1061,10 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.scripting.get-diagnostics-stmt.diagnostics.o002"
+id = "db.scripting.get-diagnostics-stmt.diagnostics.o017"
 kind = "alternative"
 required = true
-target = "{ <variable_name> = <statement_info_item> } → <variable_name> = <statement_info_item>"
+target = "{ <variable_name> = { TRANSACTION_ACTIVE | ROW_COUNT } } → <variable_name> = { TRANSACTION_ACTIVE | ROW_COUNT }"
 
 [[obligation]]
 id = "db.scripting.get-diagnostics-stmt.diagnostics.o003"
@@ -1159,25 +1088,16 @@ target = "<variable_name>"
 note = "a string literal in place of <variable_name>"
 
 [[obligation]]
-id = "db.scripting.get-diagnostics-stmt.diagnostics.o006"
-kind = "required_operand_missing"
+id = "db.scripting.get-diagnostics-stmt.diagnostics.o018"
+kind = "alternative"
 required = true
-target = "<statement_info_item>"
-note = "omit <statement_info_item>"
+target = "{ TRANSACTION_ACTIVE | ROW_COUNT } → TRANSACTION_ACTIVE"
 
 [[obligation]]
-id = "db.scripting.get-diagnostics-stmt.diagnostics.o007"
-kind = "operand_type_class"
+id = "db.scripting.get-diagnostics-stmt.diagnostics.o019"
+kind = "alternative"
 required = true
-target = "<statement_info_item>"
-note = "a valid statement"
-
-[[obligation]]
-id = "db.scripting.get-diagnostics-stmt.diagnostics.o008"
-kind = "negative_neighbour"
-required = true
-target = "<statement_info_item>"
-note = "a bare literal in place of <statement_info_item>"
+target = "{ TRANSACTION_ACTIVE | ROW_COUNT } → ROW_COUNT"
 
 [[obligation]]
 id = "db.scripting.get-diagnostics-stmt.diagnostics.o009"
@@ -1199,10 +1119,16 @@ required = true
 note = "the form without its required DIAGNOSTICS"
 
 [[obligation]]
-id = "db.scripting.get-diagnostics-stmt.diagnostics.o012"
+id = "db.scripting.get-diagnostics-stmt.diagnostics.o020"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <variable_name> = <statement_info_item> }"
+note = "the form without its required { TRANSACTION_ACTIVE | ROW_COUNT }"
+
+[[obligation]]
+id = "db.scripting.get-diagnostics-stmt.diagnostics.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <variable_name> = { TRANSACTION_ACTIVE | ROW_COUNT } }"
 
 [[obligation]]
 id = "db.scripting.get-diagnostics-stmt.diagnostics.o013"
@@ -1221,26 +1147,16 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
-id = "db.scripting.get-diagnostics-stmt.diagnostics.o015"
-kind = "nesting_depth"
-required = true
-depths = [
-  2,
-  8,
-]
-note = "statement operands nested; no documented bound"
-
-[[obligation]]
 id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o002"
+id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o017"
 kind = "alternative"
 required = true
-target = "{ <variable_name> = <condition_info_item> } → <variable_name> = <condition_info_item>"
+target = "{ <variable_name> = { MESSAGE_TEXT | RETURNED_SQLSTATE |… → <variable_name> = { MESSAGE_TEXT | RETURNED_SQLSTATE | MESSAGE_ARGUMENTS | CONDITION_IDENTIFIER | LINE_NUMBER }"
 
 [[obligation]]
 id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o003"
@@ -1264,18 +1180,34 @@ target = "<variable_name>"
 note = "a string literal in place of <variable_name>"
 
 [[obligation]]
-id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o006"
-kind = "required_operand_missing"
+id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o018"
+kind = "alternative"
 required = true
-target = "<condition_info_item>"
-note = "omit <condition_info_item>"
+target = "{ MESSAGE_TEXT | RETURNED_SQLSTATE | MESSAGE_ARGUMENTS | CONDITION_IDENTIFIER | LINE_NUMBER } → MESSAGE_TEXT"
 
 [[obligation]]
-id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o007"
-kind = "operand_type_class"
+id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o019"
+kind = "alternative"
 required = true
-target = "<condition_info_item>"
-note = "a valid expression"
+target = "{ MESSAGE_TEXT | RETURNED_SQLSTATE | MESSAGE_ARGUMENTS | CONDITION_IDENTIFIER | LINE_NUMBER } → RETURNED_SQLSTATE"
+
+[[obligation]]
+id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o020"
+kind = "alternative"
+required = true
+target = "{ MESSAGE_TEXT | RETURNED_SQLSTATE | MESSAGE_ARGUMENTS | CONDITION_IDENTIFIER | LINE_NUMBER } → MESSAGE_ARGUMENTS"
+
+[[obligation]]
+id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o021"
+kind = "alternative"
+required = true
+target = "{ MESSAGE_TEXT | RETURNED_SQLSTATE | MESSAGE_ARGUMENTS | CONDITION_IDENTIFIER | LINE_NUMBER } → CONDITION_IDENTIFIER"
+
+[[obligation]]
+id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o022"
+kind = "alternative"
+required = true
+target = "{ MESSAGE_TEXT | RETURNED_SQLSTATE | MESSAGE_ARGUMENTS | CONDITION_IDENTIFIER | LINE_NUMBER } → LINE_NUMBER"
 
 [[obligation]]
 id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o008"
@@ -1309,10 +1241,16 @@ required = true
 note = "the form without its required 1"
 
 [[obligation]]
-id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o013"
+id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o023"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <variable_name> = <condition_info_item> }"
+note = "the form without its required { MESSAGE_TEXT | RETURNED_SQLSTATE | MESSAGE_ARGUMENTS | CONDITION_IDENTIFIER | LINE_NUMBER }"
+
+[[obligation]]
+id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <variable_name> = { MESSAGE_TEXT | RETURNED_SQLSTATE | MESSAGE_ARGUMENTS | CONDITION_IDENTIFIER | LINE_NUMBER } }"
 
 [[obligation]]
 id = "db.scripting.get-diagnostics-stmt.diagnostics-condition.o014"
@@ -1797,13 +1735,6 @@ required = true
 target = "[ AS <param_name> ]"
 
 [[obligation]]
-id = "db.scripting.open-stmt.o012"
-kind = "required_operand_missing"
-required = true
-target = "<param_name> in [ AS <param_name> ]"
-note = "omit <param_name>"
-
-[[obligation]]
 id = "db.scripting.open-stmt.o013"
 kind = "operand_type_class"
 required = true
@@ -1867,6 +1798,14 @@ required = true
 target = "<param_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.scripting.open-stmt.o024"
+kind = "required_operand_missing"
+required = true
+target = "<param_name> in [ AS <param_name> ]"
+anchor = "doc.control-flow.open-stmt / Syntax"
+note = "OPEN ... USING with AS and no parameter name, which the warehouse parses"
 
 [[obligation]]
 id = "db.scripting.repeat-stmt.o001"
@@ -2136,13 +2075,6 @@ required = true
 target = "[ VALUE ]"
 
 [[obligation]]
-id = "db.scripting.signal-stmt.o018"
-kind = "required_operand_missing"
-required = true
-target = "<sqlstate>"
-note = "omit <sqlstate>"
-
-[[obligation]]
 id = "db.scripting.signal-stmt.o019"
 kind = "operand_type_class"
 required = true
@@ -2201,6 +2133,12 @@ required = true
 note = "the form without its required { MESSAGE_ARGUMENTS = <argument_map> | MESSAGE_TEXT = <message_str> } in [ SET { MESSAGE_ARGUMENTS = <argument_map> | MESSAGE_TEXT = <message_str> } ]"
 
 [[obligation]]
+id = "db.scripting.signal-stmt.o034"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SQLSTATE after SIGNAL"
+
+[[obligation]]
 id = "db.scripting.signal-stmt.o028"
 kind = "negative_neighbour"
 required = true
@@ -2233,6 +2171,14 @@ required = true
 target = "<condition_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.scripting.signal-stmt.o035"
+kind = "required_operand_missing"
+required = true
+target = "<sqlstate>"
+anchor = "doc.control-flow.signal-stmt / Syntax"
+note = "SIGNAL SQLSTATE with no sqlstate, which the warehouse parses as SIGNAL of a condition named SQLSTATE"
 
 [[obligation]]
 id = "db.scripting.while-stmt.o001"

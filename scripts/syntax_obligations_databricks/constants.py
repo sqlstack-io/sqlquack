@@ -272,6 +272,25 @@ DB_REPEAT_FILLS: dict[tuple[str, str], str] = {
     ("key_column", "c1"): "c2",
     ("foreign_key_column", "c1"): "c2",
     ("parent_column", "c1"): "c2",
+    ("tag_name", "'k'"): "'k2'",
+    ("value_name", "'m'"): "'m2'",
+    ("option", "o1"): "o2",
+    ("property_name", "v1"): "v2",
+    ("property_identifier", "v1"): "v2",
+    ("property_string", "'m'"): "'m2'",
+    ("function_parameter", "p1 INT"): "p2 INT",
+    ("procedure_parameter", "p1 INT"): "p2 INT",
+    ("column_spec", "c1 INT"): "c2 INT",
+    ("key", "c1"): "c2",
+    ("path_element", "workspace.s1"): "workspace.s2",
+    ("tag_key", "'k'"): "'k2'",
+    ("declare_variable", "DECLARE v1 INT"): "DECLARE v2 INT",
+    ("declare_condition", "DECLARE k1 CONDITION"): "DECLARE k2 CONDITION",
+    ("declare_cursor", "DECLARE c1 CURSOR FOR SELECT 1"): "DECLARE c2 CURSOR FOR SELECT 1",
+    (
+        "declare_handler",
+        "DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT 1",
+    ): "DECLARE EXIT HANDLER FOR NOT FOUND SELECT 1",
 }
 CREATE_FILLS: dict[str, str] = {
     "table_name": "t3",
@@ -326,6 +345,61 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         "version": "1",
         "option_val": "'v'",
     },
+    **dict.fromkeys(
+        ("db.ddl.alter-catalog", "db.ddl.alter-database", "db.ddl.alter-schema"),
+        {"tag_name": "'k'", "tag_value": "'v'", "option": "o1"},
+    ),
+    "db.ddl.set-tag": {"tag_value": "v2"},
+    **dict.fromkeys(
+        ("db.ddl.create-governed-tag", "db.ddl.alter-governed-tag"), {"description": "'x'"}
+    ),
+    **dict.fromkeys(
+        ("db.ddl.create-location", "db.ddl.alter-location"), {"url_str": "'s3://b1/p1'"}
+    ),
+    **dict.fromkeys(
+        ("db.ddl.create-schema", "db.ddl.create-database"), {"schema_directory": "'/tmp/x'"}
+    ),
+    "db.ddl.undrop-volume": {"volume_id": "'00000000-0000-0000-0000-000000000000'"},
+    "db.ddl.convert-to-delta": {"partitioned_by_clause": "( c1 INT )"},
+    "db.ddl.create-materialized-view": {"column_list": "( c1 INT )", "view_clauses": "COMMENT 'x'"},
+    "db.ddl.create-streaming-table": {"flow_clause": "FLOW INSERT BY NAME SELECT 1"},
+    "db.ddl.create-streaming-table-auto-cdc.create-streaming-table-auto-cdc-from-snapshot": {
+        "key": "c1"
+    },
+    **dict.fromkeys(
+        (
+            "db.ddl.alter-materialized-view.materialized-view-add-alter",
+            "db.ddl.alter-streaming-table.streaming-table-add-alter",
+        ),
+        {"schedule": "SCHEDULE EVERY 1 HOUR", "column_clause": "c1 COMMENT 'x'"},
+    ),
+    "db.ddl.alter-share": {
+        "alter_add_materialized_view": "ADD MATERIALIZED VIEW mv1",
+        "alter_add_table": "ADD TABLE t1",
+        "alter_add_schema": "ADD SCHEMA s1",
+        "alter_add_view": "ADD VIEW v1",
+        "alter_add_model": "ADD MODEL m1",
+    },
+    "db.ddl.create-policy": {
+        "description": "'x'",
+        "row_filter_body": "ROW FILTER f1 TO `u1` FOR TABLES",
+        "column_mask_body": (
+            "COLUMN MASK f1 TO `u1` FOR TABLES MATCH COLUMNS has_tag ( 'k' ) AS a1 ON COLUMN a1"
+        ),
+        "grant_policy_body": "TO `u1` GRANT EXECUTE FOR MODEL SERVICES",
+    },
+    "db.ddl.create-sql-function": {
+        "function_parameter": "p1 INT",
+        "column_spec": "c1 INT",
+        "characteristic": "DETERMINISTIC",
+        "dollar_quoted_string": "$$ return 1 $$",
+    },
+    "db.ddl.create-procedure": {
+        "procedure_parameter": "p1 INT",
+        "characteristic": "NOT DETERMINISTIC",
+        "compound_statement": "BEGIN SELECT 1 ; END",
+        "statement": "SELECT 1",
+    },
     "db.query.select-cte": {"common_table_expression": "w1 AS ( SELECT 1 )"},
     "db.query.select-match-recognize-define": {"boolean_expr": "TRUE"},
     "db.query.select-lateral-view": {
@@ -378,12 +452,100 @@ FORM_FILLS: dict[str, dict[str, str]] = {
     "db.security_admin.principal": {
         "user_principal": "`u1@example.com`",
         "service_principal": "`00000000-0000-0000-0000-000000000000`",
-        "group_name": "`g1`",
+        "group_name": "g1",
         "users": "users",
         "account_users": "`account users`",
     },
-    "db.utility.list": {"url": "'/Volumes/workspace/s1/v1'"},
+    "db.utility.list": {"url": "'/Volumes/workspace/s1/v1'", "limit": "1"},
+    "db.transaction_session.begin-atomic": {
+        "statement": "SELECT 1",
+        "statement1": "SELECT 1",
+        "statement2": "SELECT 2",
+    },
+    "db.transaction_session.conf-mgmt-set-path": {"path_element": "workspace.s1"},
+    "db.transaction_session.conf-mgmt-set-query-tags.query-tags": {
+        "tag_key": "'k'",
+        "tag_value": "'v'",
+    },
+    "db.transaction_session.conf-mgmt-set-timezone": {
+        "time_zone_value": "'America/Los_Angeles'",
+        "interval_literal": "INTERVAL '08:30:00' HOUR TO SECOND",
+    },
+    "db.utility.analyze-compute-storage-metrics": {"conf_name": "'v1'"},
+    "db.utility.connector-": {
+        "volume_path": "'/Volumes/workspace/s1/v1/f1.csv'",
+        "localfile_path": "'/tmp/f1.csv'",
+    },
+    "db.utility.fsck": {"fsck_mode": "METADATA ONLY"},
+    "db.utility.reorg-table": {"version": "2"},
+    "db.utility.restore": {"time_travel_version": "VERSION AS OF 0"},
+    "db.utility.show-functions": {"function_kind": "USER"},
+    **dict.fromkeys(
+        ("db.utility.show-tables-dropped", "db.utility.show-volumes-dropped"),
+        {"max_results": "1"},
+    ),
+    "db.utility.sync": {"source_table": "hive_metastore.default.t1"},
     "db.functions.colonsign": {"json_path": "a1"},
+    "db.scripting.case-stmt": {"then_stmt": "SELECT 1", "else_stmt": "SELECT 2"},
+    "db.scripting.if-stmt": {"stmt": "SELECT 1", "else_stmt": "SELECT 2"},
+    **dict.fromkeys(
+        ("db.scripting.for-stmt", "db.scripting.repeat-stmt", "db.scripting.while-stmt"),
+        {"stmt": "SELECT 1"},
+    ),
+    "db.scripting.loop-stmt": {"stmt": "LEAVE l1"},
+    "db.scripting.compound-stmt": {
+        "declare_variable": "DECLARE v1 INT",
+        "declare_condition": "DECLARE k1 CONDITION",
+        "declare_cursor": "DECLARE c1 CURSOR FOR SELECT 1",
+        "declare_handler": "DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT 1",
+        "sql_statement": "SELECT 1",
+        "statement": "SELECT 1",
+    },
+    "db.scripting.signal-stmt": {"sqlstate": "'45000'"},
+    "db.expressions.expression": {
+        "literal": "1",
+        "cast_expression": "CAST ( 1 AS STRING )",
+        "case_expression": "CASE WHEN 1 = 1 THEN 1 END",
+        "collate_expression": "'a' COLLATE UTF8_BINARY",
+        "operator": "+",
+    },
+    "db.expressions.date-type.date": {"date_string": "'2026-01-01'"},
+    "db.expressions.time-type.time.literals": {"time_string": "'12:00:00'"},
+    **dict.fromkeys(
+        (
+            "db.expressions.timestamp-type.timestamp.literals",
+            "db.expressions.timestamp-type.timestamp-ltz.literals",
+            "db.expressions.timestamp-ntz-type.timestamp-ntz.literals",
+        ),
+        {"timestamp_string": "'2026-01-01 00:00:00'"},
+    ),
+    "db.expressions.interval-type": {
+        "year_month_interval_qualifier": "YEAR TO MONTH",
+        "day_time_interval_qualifier": "DAY TO SECOND",
+    },
+    "db.expressions.interval-type.interval": {
+        "year_month_interval_string": "'1-2'",
+        "year_month_interval_qualifier": "YEAR TO MONTH",
+    },
+    "db.expressions.interval-type.interval.literals": {
+        "day_time_interval_string": "'1 02:03:04'",
+        "day_time_interval_qualifier": "DAY TO SECOND",
+    },
+    "db.expressions.struct-type": {"field_type": "STRING", "str": "'m'"},
+    "db.expressions.json-path-expression": {"field": "'a1'", "index": "0"},
+    "db.expressions.names.identifier": {"identifier_clause": "( 'v1' )"},
+    "db.expressions.names.identifier.syntax": {
+        "identifier_clause": "( 'v1' )",
+        "path_to_table": "`/tmp/x`",
+        "temporal_spec": "VERSION AS OF 1",
+        "options_spec": "WITH ( 'k' = 'v' )",
+    },
+    "db.expressions.window-functions": {"function": "sum ( c1 )"},
+    "db.expressions.window-functions-frame": {
+        "frame_mode": "ROWS",
+        "frame_start": "UNBOUNDED PRECEDING",
+        "frame_end": "CURRENT ROW",
+    },
 }
 FORM_ELISIONS: dict[str, dict[str, str]] = {}
 RUNTIME_SCOPE_FAMILIES: tuple[str, ...] = ("query", "dml", "ddl")
@@ -567,6 +729,29 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
             " ; END ; SELECT 1 ; END",
         ),
     ),
+    **dict.fromkeys(
+        (
+            "db.expressions.array-type",
+            "db.expressions.interval-type",
+            "db.expressions.map-type",
+            "db.expressions.struct-type",
+        ),
+        ("SELECT CAST ( NULL AS ", " )"),
+    ),
+    "db.expressions.interval-type.interval": EXPRESSION_CONTEXT,
+    "db.expressions.file-type": ("CREATE TABLE t3 ( c1 ", " )"),
+    "db.expressions.collation.order-by-": CLAUSE_CONTEXT,
+    "db.expressions.collation.utf8-binary-utf8-lcase-unicode": ("SELECT 'a' COLLATE ", ""),
+    "db.expressions.json-path-expression": ("SELECT ( '{}' : ", " )"),
+    "db.expressions.names.identifier.syntax": RELATION_CONTEXT,
+    "db.expressions.names.subscript": ("SELECT 1 ", ""),
+    "db.expressions.names.subscript-dot": EXPRESSION_CONTEXT,
+    "db.expressions.names.subscript-dot-2": FROM_CONTEXT,
+    "db.expressions.window-functions": ("SELECT ( ", " ) FROM t1 WINDOW w1 AS ( )"),
+    "db.expressions.window-functions-frame": (
+        "SELECT sum ( c1 ) OVER ( ORDER BY c1 ",
+        " ) FROM t1",
+    ),
 }
 FAMILY_CONTEXTS: dict[str, tuple[str, str]] = {
     **dict.fromkeys(STATEMENT_FAMILIES, ("", "")),
@@ -574,10 +759,20 @@ FAMILY_CONTEXTS: dict[str, tuple[str, str]] = {
     "expressions": EXPRESSION_CONTEXT,
 }
 DB_CLASS_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
-    (re.compile(r"(?:column|partition)_clause$|column_list$|^rename$"), "operand"),
+    (re.compile(r"^(?:tag_name|value_name|sharing_identifier|handler_name)$"), "string_literal"),
+    (
+        re.compile(
+            r"(?:column|partition|identifier)_clause$|column_list$|^rename$|^column_mask_body$"
+        ),
+        "operand",
+    ),
+    (re.compile(r"^declare_(?:variable|condition|cursor)$"), "subgrammar"),
     (re.compile(r"^(?:query|subquery\d?|select_statement)$"), "query"),
     (re.compile(r"^data_type$|^col(?:umn)?_type\d*$"), "data_type"),
-    (re.compile(r"(?:^|_)(?:path|comment|location|pattern)$|^file_name$"), "string_literal"),
+    (
+        re.compile(r"(?:^|_)(?:path|comment|location|pattern)$|^(?:file|conf)_name$"),
+        "string_literal",
+    ),
     (re.compile(r"(?:_name|_alias|_identifier)$|^name$"), "identifier"),
 )
 
