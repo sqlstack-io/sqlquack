@@ -345,6 +345,15 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             expected_parse_only=None,
         ),
         PhaseTestCase(
+            description="a connection created without the options its type requires",
+            message="[RequestId=640b7fb2-c8b4-4b6a-814f-740bf6d47b3c ErrorClass=INVALID_PARAMETER_"
+            "VALUE.MISSING_CONNECTION_OPTION] CONNECTION/CONNECTION_MYSQL must include the "
+            "following option(s): host,user,password.",
+            sqlstate="",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
             description="an analysis class with no reviewed row",
             message="[DIVIDE_BY_ZERO] Division by zero. SQLSTATE: 22012",
             sqlstate="22012",

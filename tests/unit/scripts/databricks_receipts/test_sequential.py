@@ -1289,6 +1289,14 @@ def test_given_the_engine_error_that_proves_no_phase_when_run_then_its_case_alon
             expected_error="no reviewed row maps",
         ),
         NoPhaseTestCase(
+            description="an unreviewed subclass of a reviewed service error class",
+            message="[RequestId=640b7fb2-c8b4-4b6a-814f-740bf6d47b3c ErrorClass=INVALID_PARAMETER_"
+            "VALUE.MISSING_CONNECTION_OPTIONS] CONNECTION/CONNECTION_MYSQL must include the "
+            "following option(s): host.",
+            sqlstate="",
+            expected_error="no reviewed row maps",
+        ),
+        NoPhaseTestCase(
             description="the same error from another shaded library version",
             message=ENGINE_NO_PHASE.replace("shaded.v245.", "shaded.v246."),
             sqlstate="42000",
