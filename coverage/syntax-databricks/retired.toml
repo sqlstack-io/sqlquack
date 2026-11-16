@@ -2383,3 +2383,12 @@ ids = [
   "db.security_admin.revoke.o002",
   "db.security_admin.revoke.o003",
 ]
+
+[[retired]]
+retired_in = "dbd0e997b88dc9c68a0c2935abaf63046392dd0f"
+reason = "DECODE's [ , ... ] is read as a further key and value pair, so the obligations of the { key1 , value1 } group and of its bare continuation give way to those of the optional pair"
+ids = [
+  "db.functions.decode.o004",
+  "db.functions.decode.o008",
+  "db.functions.decode.o009",
+]

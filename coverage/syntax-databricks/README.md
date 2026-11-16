@@ -228,6 +228,10 @@ class rules. The reasons for each choice follow.
   - A control statement runs in a compound statement (control-flow pages): a cursor statement
     after the cursor's declaration, FETCH and CLOSE after OPEN, LEAVE and ITERATE inside the loop
     they name, and GET DIAGNOSTICS and RESIGNAL inside a condition handler.
+- Form qualifiers (`FORM_QUALIFY`): a nested field is a path below its column (the manage-column
+  page: "The fully qualified name of the field"; the update page: "A reference to field within a
+  column of type STRUCT"), so `field_name` is written behind `c1.`, and a quoted field is quoted
+  after the column.
 - Family contexts (`FAMILY_CONTEXTS`): a function or expression is written as a call in
   parentheses, so that a word left at the end of a negative is not read as a column alias.
 - Class rules (`DB_CLASS_RULES`): a clause, a column list or ALTER VIEW's rename is an operand

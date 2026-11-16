@@ -496,10 +496,10 @@ FORM_FILLS: dict[str, dict[str, str]] = {
             "db.functions.counter-diff",
             "db.functions.lag",
             "db.functions.lead",
-            "db.functions.nth-value",
         ),
         {"over_clause": "( ORDER BY 1 )"},
     ),
+    "db.functions.nth-value": {"over_clause": "( ORDER BY 1 )", "offset": "1"},
     "db.functions.ilike.ilike": {"escape": "'!'"},
     "db.functions.like.like": {"escape": "'!'"},
     **dict.fromkeys(
@@ -627,6 +627,9 @@ FORM_FILLS: dict[str, dict[str, str]] = {
     },
 }
 FORM_ELISIONS: dict[str, dict[str, str]] = {}
+FORM_QUALIFY: dict[str, dict[str, str]] = dict.fromkeys(
+    ("db.ddl.alter-table-manage-column.", "db.dml.update"), {"field_name": "c1."}
+)
 RUNTIME_SCOPE_FAMILIES: tuple[str, ...] = ("query", "dml", "ddl")
 RUNTIME_ONLY_CLAUSES: dict[str, str] = {
     "db.ddl.alter-table.alter-table-set-serde": "SET SERDE: Applies to: Databricks Runtime",

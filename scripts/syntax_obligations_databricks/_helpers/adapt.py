@@ -49,6 +49,7 @@ from scripts.syntax_obligations_databricks.constants import (
     FORM_ELISIONS,
     FORM_FILLS,
     FORM_PREFIX,
+    FORM_QUALIFY,
     IDENTIFIER_QUOTE,
     KEYWORD_NOTE,
     RETIRED_FILE,
@@ -89,6 +90,7 @@ def style(*, form: str, family: str) -> FormStyle:
         fills={**FILLS, **FORM_FILLS.get(fills_key, {})},
         elisions=FORM_ELISIONS.get(form, {}),
         terminate=False,
+        qualify=FORM_QUALIFY.get(_longest(form=form, keys=set(FORM_QUALIFY)), {}),
     )
 
 
@@ -147,9 +149,10 @@ def db_existing_ids(path: Path) -> dict[Key, str]:
 
 
 def backticked(text: str) -> str:
-    """A double-quoted identifier as Databricks quotes identifiers, in backticks."""
-    if len(text) > 1 and text.startswith('"') and text.endswith('"'):
-        return f"{IDENTIFIER_QUOTE}{text[1:-1]}{IDENTIFIER_QUOTE}"
+    """A double-quoted identifier, after any qualifier, as Databricks quotes it: in backticks."""
+    start: int = text.find('"')
+    if 0 <= start < len(text) - 1 and text.endswith('"'):
+        return f"{text[:start]}{IDENTIFIER_QUOTE}{text[start + 1 : -1]}{IDENTIFIER_QUOTE}"
     return text
 
 
@@ -300,7 +303,7 @@ def install() -> None:
         styles.update(
             {
                 form: style(form=form, family=family)
-                for form in {*FORM_CONTEXTS, *FORM_FILLS, *FORM_ELISIONS}
+                for form in {*FORM_CONTEXTS, *FORM_FILLS, *FORM_ELISIONS, *FORM_QUALIFY}
                 if form.startswith(f"{FORM_PREFIX}.{family}.")
             }
         )

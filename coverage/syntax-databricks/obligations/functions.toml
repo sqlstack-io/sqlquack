@@ -9967,12 +9967,6 @@ target = "<expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.decode.o004"
-kind = "alternative"
-required = true
-target = "{ <key1> , <value1> } → <key1> , <value1>"
-
-[[obligation]]
 id = "db.functions.decode.o005"
 kind = "required_operand_missing"
 required = true
@@ -9994,17 +9988,17 @@ target = "<value1>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.decode.o008"
+id = "db.functions.decode.o017"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
+target = "[ , <key1> , <value1> ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "db.functions.decode.o009"
+id = "db.functions.decode.o018"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <key1> , <value1> ... ]"
 
 [[obligation]]
 id = "db.functions.decode.o010"

@@ -234,6 +234,12 @@ grammar_sha256 = "83a2f5398ff2af24748f9681a8199dc7d26277c895165de30479db6f084460
 grammar = ["REVOKE { ALL PRIVILEGES | <privilege_type> [ , ... ] } ON <securable_object> FROM <principal>"]
 reason = "the page defines privilege_types as { ALL PRIVILEGES | <privilege_type> [ , ... ] }, so ALL PRIVILEGES and a privilege list are read in place of the placeholder"
 
+[[reading]]
+form = "db.functions.decode"
+grammar_sha256 = "ba7b01c37071fb99cd5e62f883718005c461dd44ad6343c69b7e97dd3c0b1fe4"
+grammar = ["DECODE ( <expr> , <key1> , <value1> [ , <key1> , <value1> ... ] [ , <def_value> ] )"]
+reason = "the [ , ... ] continues the list with another key and value pair (keyN and valueN in the page's Arguments; its examples: decode(5, 6, 'Spark', 5, 'SQL', 4, 'rocks') and, with defValue, decode(7, 6, 'Spark', 5, 'SQL', 'rocks')); the renderer otherwise repeats only the value, which reads as defValue, so a case with defValue could not be told from one with a second pair"
+
 [[limit]]
 form = "db.query.select-hints"
 kind = "option_present"
