@@ -2260,3 +2260,38 @@ ids = [
   "db.query.select-values.values.o030",
   "db.transaction_session.set-variable.set.o014",
 ]
+
+[[retired]]
+retired_in = "8d75b1fe9324c51a63cdd711e8d7e2e5d55c6afc"
+reason = "each operand was classed by its placeholder's name, against what its page says it is: a STRING constant (the connection names), a STRING expression (luhn_check's number), a path (the colon sign's JSON path), a pattern variable's name, the pattern language and keyword phrases of MATCH_RECOGNIZE, a STRING-literal format, or a STRING literal naming a type; the obligations of the wrong class (a valid and a wrong-kind operand) give way to those of the class the page gives"
+ids = [
+  "db.functions.colonsign.o005",
+  "db.functions.colonsign.o006",
+  "db.functions.http-request.o009",
+  "db.functions.http-request.o030",
+  "db.functions.http-request.o032",
+  "db.functions.luhn-check.o002",
+  "db.functions.match-recognize-first.o006",
+  "db.functions.match-recognize-last.o006",
+  "db.functions.match-recognize-next.o006",
+  "db.functions.match-recognize-prev.o006",
+  "db.functions.remote-query.o002",
+  "db.functions.remote-query.o010",
+  "db.functions.remote-query.o012",
+  "db.functions.to-char.o007",
+  "db.functions.to-char.o008",
+  "db.functions.to-varchar.o007",
+  "db.functions.to-varchar.o008",
+  "db.functions.try-variant-get.o007",
+  "db.functions.variant-get.o007",
+  "db.query.select-match-recognize-define.o004",
+  "db.query.select-match-recognize-define.o005",
+  "db.query.select-match-recognize-pattern.o003",
+  "db.query.select-match-recognize-pattern.o004",
+  "db.query.select-match-recognize.o018",
+  "db.query.select-match-recognize.o019",
+  "db.query.select-match-recognize.o023",
+  "db.query.select-match-recognize.o024",
+  "db.query.select-match-recognize.o026",
+  "db.query.select-match-recognize.o027",
+]

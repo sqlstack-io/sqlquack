@@ -6928,18 +6928,11 @@ target = "<json_path>"
 note = "omit <json_path>"
 
 [[obligation]]
-id = "db.functions.colonsign.o005"
+id = "db.functions.colonsign.o007"
 kind = "operand_type_class"
 required = true
 target = "<json_path>"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "db.functions.colonsign.o006"
-kind = "negative_neighbour"
-required = true
-target = "<json_path>"
-note = "an unquoted identifier in place of <json_path>"
+note = "a valid operand"
 
 [[obligation]]
 id = "db.functions.concat.o001"
@@ -14406,11 +14399,11 @@ target = "<connection_name>"
 note = "omit <connection_name>"
 
 [[obligation]]
-id = "db.functions.http-request.o009"
+id = "db.functions.http-request.o035"
 kind = "operand_type_class"
 required = true
 target = "<connection_name>"
-note = "a valid identifier"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.http-request.o010"
@@ -14542,22 +14535,6 @@ id = "db.functions.http-request.o029"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "db.functions.http-request.o030"
-kind = "identifier_class"
-required = true
-target = "<connection_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.functions.http-request.o032"
-kind = "identifier_class"
-required = true
-target = "<connection_name>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
 id = "db.functions.hypot.o001"
@@ -19214,11 +19191,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.luhn-check.o002"
+id = "db.functions.luhn-check.o005"
 kind = "operand_type_class"
 required = true
 target = "<num_str>"
-note = "a valid integer_literal"
+note = "a valid expression"
 
 [[obligation]]
 id = "db.functions.luhn-check.o003"
@@ -20788,11 +20765,11 @@ target = "<row_pattern_var>"
 note = "omit <row_pattern_var>"
 
 [[obligation]]
-id = "db.functions.match-recognize-first.o006"
+id = "db.functions.match-recognize-first.o019"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern_var>"
-note = "a valid string_literal"
+note = "a valid identifier"
 
 [[obligation]]
 id = "db.functions.match-recognize-first.o007"
@@ -20870,6 +20847,22 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.functions.match-recognize-first.o020"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "db.functions.match-recognize-first.o021"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
 id = "db.functions.match-recognize-last.o001"
 kind = "positive"
 required = true
@@ -20902,11 +20895,11 @@ target = "<row_pattern_var>"
 note = "omit <row_pattern_var>"
 
 [[obligation]]
-id = "db.functions.match-recognize-last.o006"
+id = "db.functions.match-recognize-last.o019"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern_var>"
-note = "a valid string_literal"
+note = "a valid identifier"
 
 [[obligation]]
 id = "db.functions.match-recognize-last.o007"
@@ -20984,6 +20977,22 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.functions.match-recognize-last.o020"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "db.functions.match-recognize-last.o021"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
 id = "db.functions.match-recognize-next.o001"
 kind = "positive"
 required = true
@@ -21016,11 +21025,11 @@ target = "<row_pattern_var>"
 note = "omit <row_pattern_var>"
 
 [[obligation]]
-id = "db.functions.match-recognize-next.o006"
+id = "db.functions.match-recognize-next.o019"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern_var>"
-note = "a valid string_literal"
+note = "a valid identifier"
 
 [[obligation]]
 id = "db.functions.match-recognize-next.o007"
@@ -21098,6 +21107,22 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.functions.match-recognize-next.o020"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "db.functions.match-recognize-next.o021"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
 id = "db.functions.match-recognize-prev.o001"
 kind = "positive"
 required = true
@@ -21130,11 +21155,11 @@ target = "<row_pattern_var>"
 note = "omit <row_pattern_var>"
 
 [[obligation]]
-id = "db.functions.match-recognize-prev.o006"
+id = "db.functions.match-recognize-prev.o019"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern_var>"
-note = "a valid string_literal"
+note = "a valid identifier"
 
 [[obligation]]
 id = "db.functions.match-recognize-prev.o007"
@@ -21208,6 +21233,22 @@ id = "db.functions.match-recognize-prev.o018"
 kind = "identifier_class"
 required = true
 target = "<col_name>"
+anchor = "doc.identifiers-syntax"
+note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.functions.match-recognize-prev.o020"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "db.functions.match-recognize-prev.o021"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
@@ -26774,11 +26815,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.remote-query.o002"
+id = "db.functions.remote-query.o013"
 kind = "operand_type_class"
 required = true
 target = "<connection_name>"
-note = "a valid identifier"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.remote-query.o003"
@@ -26823,22 +26864,6 @@ id = "db.functions.remote-query.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "db.functions.remote-query.o010"
-kind = "identifier_class"
-required = true
-target = "<connection_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.functions.remote-query.o012"
-kind = "identifier_class"
-required = true
-target = "<connection_name>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
 id = "db.functions.repeat.o001"
@@ -35228,18 +35253,18 @@ required = true
 target = "{ <numeric_format> | <datetime_format> | <string_format> } → <string_format>"
 
 [[obligation]]
-id = "db.functions.to-char.o007"
+id = "db.functions.to-char.o013"
 kind = "operand_type_class"
 required = true
 target = "<numeric_format>"
-note = "a valid integer_literal"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "db.functions.to-char.o008"
+id = "db.functions.to-char.o014"
 kind = "operand_type_class"
 required = true
 target = "<datetime_format>"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.to-char.o009"
@@ -36029,18 +36054,18 @@ required = true
 target = "{ <numeric_format> | <datetime_format> | <string_format> } → <string_format>"
 
 [[obligation]]
-id = "db.functions.to-varchar.o007"
+id = "db.functions.to-varchar.o013"
 kind = "operand_type_class"
 required = true
 target = "<numeric_format>"
-note = "a valid integer_literal"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "db.functions.to-varchar.o008"
+id = "db.functions.to-varchar.o014"
 kind = "operand_type_class"
 required = true
 target = "<datetime_format>"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.to-varchar.o009"
@@ -38879,11 +38904,11 @@ target = "<type>"
 note = "omit <type>"
 
 [[obligation]]
-id = "db.functions.try-variant-get.o007"
+id = "db.functions.try-variant-get.o010"
 kind = "operand_type_class"
 required = true
 target = "<type>"
-note = "a valid data_type"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.try-variant-get.o008"
@@ -41242,11 +41267,11 @@ target = "<type>"
 note = "omit <type>"
 
 [[obligation]]
-id = "db.functions.variant-get.o007"
+id = "db.functions.variant-get.o010"
 kind = "operand_type_class"
 required = true
 target = "<type>"
-note = "a valid data_type"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.variant-get.o008"

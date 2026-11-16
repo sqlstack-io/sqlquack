@@ -470,6 +470,18 @@ FORM_FILLS: dict[str, dict[str, str]] = {
     ),
     "db.functions.to-binary": {"fmt": "'hex'"},
     **dict.fromkeys(
+        ("db.functions.to-char", "db.functions.to-varchar"),
+        {"numeric_format": "'999'", "datetime_format": "'yyyy-MM-dd'", "string_format": "'hex'"},
+    ),
+    **dict.fromkeys(
+        ("db.functions.try-variant-get", "db.functions.variant-get"),
+        {"type": "'int'", "path": "'$.a'"},
+    ),
+    **dict.fromkeys(
+        ("db.functions.http-request", "db.functions.remote-query"), {"connection_name": "'c1'"}
+    ),
+    "db.functions.luhn-check": {"num_str": "'12344'"},
+    **dict.fromkeys(
         ("db.functions.to-csv", "db.functions.to-json"),
         {"options": "map ( 'timestampFormat' , 'dd/MM/yyyy' )"},
     ),
@@ -861,6 +873,43 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
     "db.expressions.window-functions-frame": (
         "SELECT sum ( c1 ) OVER ( ORDER BY c1 ",
         " ) FROM t1",
+    ),
+}
+FORM_CLASSES: dict[str, dict[str, str]] = {
+    **dict.fromkeys(
+        ("db.functions.http-request", "db.functions.remote-query"),
+        {"connection_name": "string_literal"},
+    ),
+    "db.functions.luhn-check": {"num_str": "expression"},
+    "db.functions.colonsign": {"json_path": "operand"},
+    **dict.fromkeys(
+        (
+            "db.functions.match-recognize-first",
+            "db.functions.match-recognize-last",
+            "db.functions.match-recognize-next",
+            "db.functions.match-recognize-prev",
+            "db.query.select-match-recognize-define",
+        ),
+        {"row_pattern_var": "identifier"},
+    ),
+    **dict.fromkeys(
+        ("db.query.select-match-recognize", "db.query.select-match-recognize-pattern"),
+        {
+            "row_pattern": "word",
+            "row_pattern_rows_per_match": "word",
+            "row_pattern_skip_to": "word",
+        },
+    ),
+    **dict.fromkeys(
+        ("db.functions.to-char", "db.functions.to-varchar"),
+        {
+            "numeric_format": "string_literal",
+            "datetime_format": "string_literal",
+            "string_format": "string_literal",
+        },
+    ),
+    **dict.fromkeys(
+        ("db.functions.try-variant-get", "db.functions.variant-get"), {"type": "string_literal"}
     ),
 }
 FAMILY_CONTEXTS: dict[str, tuple[str, str]] = {

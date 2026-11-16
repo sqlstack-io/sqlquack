@@ -1989,18 +1989,18 @@ required = true
 target = "[ <row_pattern_rows_per_match> ]"
 
 [[obligation]]
-id = "db.query.select-match-recognize.o018"
+id = "db.query.select-match-recognize.o041"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern_rows_per_match> in [ <row_pattern_rows_per_match> ]"
-note = "a valid string_literal"
+note = "a valid word"
 
 [[obligation]]
-id = "db.query.select-match-recognize.o019"
+id = "db.query.select-match-recognize.o042"
 kind = "negative_neighbour"
 required = true
 target = "<row_pattern_rows_per_match> in [ <row_pattern_rows_per_match> ]"
-note = "an unquoted identifier in place of <row_pattern_rows_per_match>"
+note = "a string literal in place of <row_pattern_rows_per_match>"
 
 [[obligation]]
 id = "db.query.select-match-recognize.o020"
@@ -2022,18 +2022,18 @@ target = "<row_pattern_skip_to> in [ AFTER MATCH <row_pattern_skip_to> ]"
 note = "omit <row_pattern_skip_to>"
 
 [[obligation]]
-id = "db.query.select-match-recognize.o023"
+id = "db.query.select-match-recognize.o043"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern_skip_to> in [ AFTER MATCH <row_pattern_skip_to> ]"
-note = "a valid string_literal"
+note = "a valid word"
 
 [[obligation]]
-id = "db.query.select-match-recognize.o024"
+id = "db.query.select-match-recognize.o044"
 kind = "negative_neighbour"
 required = true
 target = "<row_pattern_skip_to> in [ AFTER MATCH <row_pattern_skip_to> ]"
-note = "an unquoted identifier in place of <row_pattern_skip_to>"
+note = "a string literal in place of <row_pattern_skip_to>"
 
 [[obligation]]
 id = "db.query.select-match-recognize.o025"
@@ -2043,18 +2043,18 @@ target = "<row_pattern>"
 note = "omit <row_pattern>"
 
 [[obligation]]
-id = "db.query.select-match-recognize.o026"
+id = "db.query.select-match-recognize.o045"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern>"
-note = "a valid string_literal"
+note = "a valid word"
 
 [[obligation]]
-id = "db.query.select-match-recognize.o027"
+id = "db.query.select-match-recognize.o046"
 kind = "negative_neighbour"
 required = true
 target = "<row_pattern>"
-note = "an unquoted identifier in place of <row_pattern>"
+note = "a string literal in place of <row_pattern>"
 
 [[obligation]]
 id = "db.query.select-match-recognize.o028"
@@ -2157,18 +2157,18 @@ target = "<row_pattern_var>"
 note = "omit <row_pattern_var>"
 
 [[obligation]]
-id = "db.query.select-match-recognize-define.o004"
+id = "db.query.select-match-recognize-define.o012"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern_var>"
-note = "a valid string_literal"
+note = "a valid identifier"
 
 [[obligation]]
-id = "db.query.select-match-recognize-define.o005"
+id = "db.query.select-match-recognize-define.o013"
 kind = "negative_neighbour"
 required = true
 target = "<row_pattern_var>"
-note = "an unquoted identifier in place of <row_pattern_var>"
+note = "a string literal in place of <row_pattern_var>"
 
 [[obligation]]
 id = "db.query.select-match-recognize-define.o006"
@@ -2208,6 +2208,22 @@ id = "db.query.select-match-recognize-define.o011"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { <row_pattern_var> AS <boolean_expr> }"
+
+[[obligation]]
+id = "db.query.select-match-recognize-define.o014"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "db.query.select-match-recognize-define.o015"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
 id = "db.query.select-match-recognize-measures.o001"
@@ -2288,18 +2304,18 @@ target = "<row_pattern>"
 note = "omit <row_pattern>"
 
 [[obligation]]
-id = "db.query.select-match-recognize-pattern.o003"
+id = "db.query.select-match-recognize-pattern.o007"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern>"
-note = "a valid string_literal"
+note = "a valid word"
 
 [[obligation]]
-id = "db.query.select-match-recognize-pattern.o004"
+id = "db.query.select-match-recognize-pattern.o008"
 kind = "negative_neighbour"
 required = true
 target = "<row_pattern>"
-note = "an unquoted identifier in place of <row_pattern>"
+note = "a string literal in place of <row_pattern>"
 
 [[obligation]]
 id = "db.query.select-match-recognize-pattern.o005"

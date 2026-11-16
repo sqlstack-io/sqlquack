@@ -12,7 +12,7 @@ from pathlib import Path
 
 from scripts.grammar_obligations import constants as shared
 from scripts.grammar_obligations._helpers import derive, grammar, ids, obligations
-from scripts.grammar_obligations.classes import renderer
+from scripts.grammar_obligations.classes import renderer, walk
 from scripts.grammar_obligations.classes.renderer import Renderer
 from scripts.grammar_obligations.classes.walk import Walk
 from scripts.grammar_obligations.constants import (
@@ -43,6 +43,7 @@ from scripts.syntax_obligations_databricks.constants import (
     FAMILIES,
     FAMILY_CONTEXTS,
     FILLS,
+    FORM_CLASSES,
     FORM_CONTEXTS,
     FORM_ELISIONS,
     FORM_FILLS,
@@ -58,6 +59,7 @@ _shared_existing_ids: Callable[[Path], dict[Key, str]] = ids.existing_ids
 _shared_token: Callable[..., str] = Renderer._token  # noqa: SLF001
 _shared_submissions: Callable[..., list[Rendered]] = Renderer.submissions
 _shared_spec: Callable[..., Spec] = Walk.spec
+_shared_walk_token: Callable[..., None] = Walk.token
 _shared_class_note: Callable[..., str] = derive._class_note  # noqa: SLF001
 _shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = grammar.CLASS_RULES
 _shared_choices: Callable[..., Choices] = Renderer._choices  # noqa: SLF001
@@ -164,6 +166,19 @@ def db_spec(self: object, *, action: str, node: Node | None = None, payload: str
     if action == ACTION_RESERVED_WORD and node is not None and not payload:
         payload = node.text
     return _shared_spec(self, action=action, node=node, payload=payload)
+
+
+def db_walk_token(self: Walk, *, node: Node, where: str, omission_is_absence: bool) -> None:
+    """The shared operand drafts, with the classes the form's page gives its operands."""
+    overrides: dict[str, str] = FORM_CLASSES.get(
+        _longest(form=self.form, keys=set(FORM_CLASSES)), {}
+    )
+    shared: Callable[[str], str] = walk.operand_class
+    setattr(walk, "operand_class", lambda name: overrides.get(name) or shared(name))  # noqa: B010
+    try:
+        _shared_walk_token(self, node=node, where=where, omission_is_absence=omission_is_absence)
+    finally:
+        setattr(walk, "operand_class", shared)  # noqa: B010
 
 
 def db_class_note(*, label: str, description: str, placeholder: str) -> str:
@@ -290,6 +305,7 @@ def install() -> None:
     setattr(Renderer, "_token", db_token)  # noqa: B010
     setattr(Renderer, "submissions", db_submissions)  # noqa: B010
     setattr(Walk, "spec", db_spec)  # noqa: B010
+    setattr(Walk, "token", db_walk_token)  # noqa: B010
     setattr(derive, "_class_note", db_class_note)  # noqa: B010
     setattr(Renderer, "_choices", db_choices)  # noqa: B010
     setattr(obligations, "derive_trees", db_derive_trees)  # noqa: B010
