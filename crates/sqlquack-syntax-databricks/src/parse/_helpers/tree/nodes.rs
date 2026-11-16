@@ -262,7 +262,6 @@ pub(crate) fn call(name: &str, args: Vec<Expression>) -> Expression {
 
 pub(crate) fn aggregate(
     function: Function,
-    distinct: bool,
     filter: Option<Expression>,
     ignore_nulls: Option<bool>,
 ) -> Expression {
@@ -278,7 +277,7 @@ pub(crate) fn aggregate(
     Expression::AggregateFunction(Box::new(AggregateFunction {
         name,
         args: function.args,
-        distinct,
+        set_quantifier: function.set_quantifier,
         filter,
         ignore_nulls,
         ..AggregateFunction::default()

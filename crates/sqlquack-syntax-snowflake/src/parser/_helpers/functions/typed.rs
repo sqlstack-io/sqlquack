@@ -15,6 +15,7 @@ use sqlquack_syntax::expressions::functions::models::JSONFormat;
 use sqlquack_syntax::expressions::functions::models::JSONKeyValue;
 use sqlquack_syntax::expressions::functions::models::JSONObjectAgg;
 use sqlquack_syntax::expressions::functions::models::JSONTable;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::Null;
@@ -405,7 +406,7 @@ impl Parser {
 
                     name: name.to_string(),
                     args,
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,
@@ -573,7 +574,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args,
-                distinct,
+                set_quantifier: SetQuantifier::from_distinct(distinct),
                 filter,
                 order_by,
                 limit,
@@ -592,7 +593,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -616,7 +617,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args: vec![query],
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -687,7 +688,7 @@ impl Parser {
 
                     name: name.to_string(),
                     args: vec![subquery],
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,
@@ -714,7 +715,7 @@ impl Parser {
 
             name: name.to_string(),
             args,
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,
@@ -825,7 +826,7 @@ impl Parser {
 
                     name: name.to_string(),
                     args,
-                    distinct,
+                    set_quantifier: SetQuantifier::from_distinct(distinct),
                     filter,
                     order_by,
                     limit: None,
@@ -844,7 +845,7 @@ impl Parser {
 
                     name: name.to_string(),
                     args,
-                    distinct,
+                    set_quantifier: SetQuantifier::from_distinct(distinct),
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,
@@ -1185,7 +1186,7 @@ impl Parser {
 
                         name: name.to_string(),
                         args,
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments,
                         use_bracket_syntax: false,
                         no_parens: false,
@@ -1487,7 +1488,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
@@ -1596,7 +1597,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args: all_args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,

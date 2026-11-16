@@ -4,6 +4,7 @@ use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::columns::models::ColumnDef;
 use sqlquack_syntax::expressions::functions::models::AtIndex;
 use sqlquack_syntax::expressions::functions::models::PivotAny;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::Literal;
@@ -1522,7 +1523,7 @@ impl Parser {
 
                     name: "IDENTIFIER".to_string(),
                     args: vec![arg],
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,

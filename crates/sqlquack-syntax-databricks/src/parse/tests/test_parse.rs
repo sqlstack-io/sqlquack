@@ -693,6 +693,30 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "\"t\"",
         },
         ValueTestCase {
+            description: "a call without a quantifier records none",
+            sql: "SELECT sum(a) FROM t",
+            pointer: "/0/select/expressions/0/function/set_quantifier",
+            expected_json: "\"none\"",
+        },
+        ValueTestCase {
+            description: "an explicit ALL is recorded, not folded into none",
+            sql: "SELECT sum(ALL a) FROM t",
+            pointer: "/0/select/expressions/0/function/set_quantifier",
+            expected_json: "\"all\"",
+        },
+        ValueTestCase {
+            description: "ALL survives on an aggregate with FILTER",
+            sql: "SELECT sum(ALL a) FILTER (WHERE a > 0) FROM t",
+            pointer: "/0/select/expressions/0/aggregate_function/set_quantifier",
+            expected_json: "\"all\"",
+        },
+        ValueTestCase {
+            description: "DISTINCT is recorded on the aggregate",
+            sql: "SELECT sum(DISTINCT a) FROM t",
+            pointer: "/0/select/expressions/0/aggregate_function/set_quantifier",
+            expected_json: "\"distinct\"",
+        },
+        ValueTestCase {
             description: "a table keeps its schema",
             sql: "SELECT t.a FROM s.t AS t",
             pointer: "/0/select/from/expressions/0/table/schema/name",

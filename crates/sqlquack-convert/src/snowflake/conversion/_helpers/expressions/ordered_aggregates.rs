@@ -21,8 +21,8 @@ use crate::snowflake::conversion::_helpers::support::scope::{
 };
 use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
 use crate::snowflake::conversion::_helpers::support::tree::{
-    Payload, field, flag, function_construct, list, node_construct, payload_object,
-    require_understood,
+    Payload, SET_QUANTIFIER, field, flag, function_construct, is_distinct, list, node_construct,
+    payload_object, require_understood,
 };
 use crate::snowflake::conversion::_helpers::support::typed_leaves::compared_value;
 use crate::snowflake::conversion::constants::DUPLICATE_VARIANTS;
@@ -54,7 +54,7 @@ pub(crate) fn within_group(
         .unwrap_or_default()
         .to_ascii_uppercase();
     let function = function_construct(&name);
-    require_understood(call, &["args", "distinct", "name"], &function)?;
+    require_understood(call, &["args", SET_QUANTIFIER, "name"], &function)?;
     let ordered = Ordered {
         call,
         order: list(payload, "order_by"),
@@ -144,7 +144,7 @@ impl Ordered<'_> {
         for item in self.order {
             keys.push(order_item(item, self.site)?);
         }
-        let distinct = flag(self.call, "distinct");
+        let distinct = is_distinct(self.call);
         let by_value = self.order_is_value(&value)?;
         if distinct && !by_value {
             return Err(refuse("LISTAGG DISTINCT ordered by anything but its value"));
@@ -199,7 +199,7 @@ impl Ordered<'_> {
             }
             keys.push(format!("{} ASC", emitted.sql));
         }
-        let distinct = flag(self.call, "distinct");
+        let distinct = is_distinct(self.call);
         if distinct && emitted.data_type == SnowflakeType::SemiStructured {
             return Err(refuse(&format!("ARRAY_AGG DISTINCT {DUPLICATE_VARIANTS}")));
         }
@@ -282,7 +282,7 @@ impl Ordered<'_> {
         let log = self.site.context.log;
         let _rule = log.rule(PERCENTILE_RULE);
         let refuse = |reason: String| outside_conditions(construct.clone(), reason);
-        if flag(self.call, "distinct") {
+        if is_distinct(self.call) {
             return Err(refuse(format!("{name} with DISTINCT")));
         }
         let [fraction] = list(self.call, "args") else {

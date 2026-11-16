@@ -1190,7 +1190,7 @@ fn given_snowflake_create_and_begin_name_when_parsing_then_the_tree_keeps_the_el
                 "final_": false, "hints": [],
                 "identifier_func": {"function": {
                     "name": "IDENTIFIER", "args": [{"literal": {"literal_type": "string", "value": "q1"}}],
-                    "distinct": false, "trailing_comments": [], "use_bracket_syntax": false,
+                    "set_quantifier": "none", "trailing_comments": [], "use_bracket_syntax": false,
                     "no_parens": false, "quoted": false,
                 }},
             }),

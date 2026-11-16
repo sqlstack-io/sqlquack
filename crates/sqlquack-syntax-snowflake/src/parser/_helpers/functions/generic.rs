@@ -11,6 +11,7 @@ use sqlquack_syntax::expressions::functions::models::AggregateFunction;
 use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::functions::models::JSONCast;
 use sqlquack_syntax::expressions::functions::models::Keep;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::functions::models::WindowFunction;
 use sqlquack_syntax::expressions::functions::models::WithinGroup;
 use sqlquack_syntax::expressions::names::main::identifier_from_token::identifier_from_token;
@@ -64,6 +65,7 @@ impl Parser {
             return Err(self.parse_error("IN is an operator, not a function"));
         }
         let is_known_agg = self.is_aggregate_function(name);
+        let mut all = false;
 
         let (mut args, distinct) = if self.check(TokenType::RParen) {
             (Vec::new(), false)
@@ -95,10 +97,13 @@ impl Parser {
             self.skip();
             (self.parse_function_arguments_for(Some(name))?, true)
         } else {
-            if is_known_agg {
-                self.match_token(TokenType::All);
-            }
+            all = is_known_agg && self.match_token(TokenType::All);
             (self.parse_function_arguments_for(Some(name))?, false)
+        };
+        let quantifier = match (distinct, all) {
+            (true, _) => SetQuantifier::Distinct,
+            (false, true) => SetQuantifier::All,
+            (false, false) => SetQuantifier::None,
         };
 
         let (ignore_nulls, order_by, agg_limit) = if is_known_agg {
@@ -142,7 +147,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args,
-                distinct,
+                set_quantifier: quantifier,
                 filter: None,
                 order_by: Vec::new(),
                 limit: None,
@@ -162,7 +167,7 @@ impl Parser {
 
                     name: format!("__WITHIN_GROUP_{}", name),
                     args: vec![within, filter_expr],
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     filter: None,
                     order_by: Vec::new(),
                     limit: None,
@@ -192,7 +197,7 @@ impl Parser {
 
                 name: name.to_string(),
                 args,
-                distinct,
+                set_quantifier: quantifier,
                 filter,
                 order_by,
                 limit: agg_limit,
@@ -236,7 +241,7 @@ impl Parser {
             }
             args = self.normalize_date_part_arg(name, args);
             let mut func = Function::new(name.to_string(), args);
-            func.distinct = distinct;
+            func.set_quantifier = quantifier;
             func.trailing_comments = trailing_comments;
             func.quoted = quoted;
             Ok(Expression::Function(Box::new(func)))
@@ -1075,7 +1080,7 @@ impl Parser {
 
             name: "MAP".to_string(),
             args: vec![keys, values],
-            distinct: false,
+            set_quantifier: SetQuantifier::None,
             trailing_comments: Vec::new(),
             use_bracket_syntax: true,
             no_parens: false,

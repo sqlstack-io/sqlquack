@@ -236,3 +236,33 @@ fn given_a_strict_parse_when_tracing_lineage_then_each_output_has_its_items_byte
         );
     }
 }
+
+#[test]
+fn given_an_aggregate_written_with_all_when_analysed_then_it_reads_as_no_quantifier() {
+    let calls = [
+        "sum({q}quantity)",
+        "avg({q}price)",
+        "count({q}status)",
+        "max({q}status)",
+    ];
+    for call in calls {
+        let sql = |quantifier: &str| {
+            format!(
+                "SELECT {} AS a FROM orders HAVING {} > 0",
+                call.replace("{q}", quantifier),
+                call.replace("{q}", quantifier)
+            )
+        };
+        let (none, all) = (sql(""), sql("ALL "));
+        assert_eq!(
+            databricks_outputs(&all),
+            databricks_outputs(&none),
+            "{call}: outputs"
+        );
+        assert_eq!(
+            databricks_findings(&all),
+            databricks_findings(&none),
+            "{call}: findings"
+        );
+    }
+}

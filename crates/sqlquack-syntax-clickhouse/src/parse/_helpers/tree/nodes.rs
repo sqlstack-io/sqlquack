@@ -2,6 +2,7 @@
 
 use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::functions::models::{
     AggregateFunction, Function, WindowFunction,
 };
@@ -275,7 +276,7 @@ pub(crate) fn aggregate(
     Expression::AggregateFunction(Box::new(AggregateFunction {
         name,
         args: function.args,
-        distinct,
+        set_quantifier: SetQuantifier::from_distinct(distinct),
         filter,
         ignore_nulls,
         ..AggregateFunction::default()
