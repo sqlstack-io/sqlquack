@@ -539,7 +539,6 @@ impl Parser<'_> {
         if self.eat_kw("REPEATABLE") {
             self.expect_char('(')?;
             sample.seed = Some(self.primary_expression()?);
-            sample.use_seed_keyword = true;
             self.expect_char(')')?;
         }
         Ok(sample)
@@ -691,7 +690,10 @@ impl Parser<'_> {
                 false => self.comma_list(|parser| parser.expression())?,
             };
             self.expect_char(')')?;
-            let table_alias: Identifier = self.ident()?;
+            let table_alias: Option<Identifier> = match self.kw("AS") {
+                true => None,
+                false => Some(self.ident()?),
+            };
             let mut column_aliases: Vec<Identifier> = Vec::new();
             if self.eat_kw("AS") || self.bare_alias_at(0, false) {
                 column_aliases.push(self.ident()?);
@@ -702,7 +704,7 @@ impl Parser<'_> {
             }
             views.push(LateralView {
                 this: Expression::Function(Box::new(function(name, args))),
-                table_alias: Some(table_alias),
+                table_alias,
                 column_aliases,
                 outer,
             });

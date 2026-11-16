@@ -1373,6 +1373,108 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             pointer: "/0/utility_statement/operands/1/tuple/expressions/0/named_argument/name/name",
             expected_json: "\"a\"",
         },
+        ValueTestCase {
+            description: "TRIM keeps LEADING as its position",
+            sql: "SELECT TRIM(LEADING 'x' FROM s)",
+            pointer: "/0/select/expressions/0/trim/position",
+            expected_json: "\"Leading\"",
+        },
+        ValueTestCase {
+            description: "TRIM keeps the characters apart from the string they trim",
+            sql: "SELECT TRIM(LEADING 'x' FROM s)",
+            pointer: "/0/select/expressions/0/trim/characters/literal/value",
+            expected_json: "\"x\"",
+        },
+        ValueTestCase {
+            description: "TRIM without a position records that none was written",
+            sql: "SELECT TRIM('x' FROM s)",
+            pointer: "/0/select/expressions/0/trim/position_explicit",
+            expected_json: "false",
+        },
+        ValueTestCase {
+            description: "EXTRACT keeps its field as written",
+            sql: "SELECT EXTRACT(YRS FROM d)",
+            pointer: "/0/select/expressions/0/extract/field/Custom",
+            expected_json: "\"YRS\"",
+        },
+        ValueTestCase {
+            description: "TABLESAMPLE REPEATABLE is not recorded as SEED",
+            sql: "SELECT * FROM t TABLESAMPLE (50 PERCENT) REPEATABLE (1)",
+            pointer: "/0/select/from/expressions/0/table/table_sample/use_seed_keyword",
+            expected_json: "false",
+        },
+        ValueTestCase {
+            description: "EXPLAIN EXTENDED sets the extended flag",
+            sql: "EXPLAIN EXTENDED SELECT 1",
+            pointer: "/0/describe/extended",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "EXPLAIN FORMATTED sets the formatted flag",
+            sql: "EXPLAIN FORMATTED SELECT 1",
+            pointer: "/0/describe/formatted",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "SHOW STATISTICS keeps FOR ALL COLUMNS apart from AS JSON",
+            sql: "SHOW STATISTICS t FOR ALL COLUMNS AS JSON",
+            pointer: "/0/utility_statement/operands/2/property/this/var/this",
+            expected_json: "\"AS JSON\"",
+        },
+        ValueTestCase {
+            description: "LATERAL VIEW without a table identifier reads AS as the column aliases",
+            sql: "SELECT x FROM t LATERAL VIEW explode(arr) AS x",
+            pointer: "/0/select/lateral_views/0/table_alias",
+            expected_json: "null",
+        },
+        ValueTestCase {
+            description: "COLLATE keeps a backticked collation's quoting",
+            sql: "SELECT s COLLATE `UTF8_BINARY`",
+            pointer: "/0/select/expressions/0/collation/quoted",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "a named parameter marker keeps its backticks",
+            sql: "SELECT :`p 1`",
+            pointer: "/0/select/expressions/0/parameter/quoted",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "DECFLOAT keeps its precision",
+            sql: "SELECT CAST(1 AS DECFLOAT(34))",
+            pointer: "/0/select/expressions/0/cast/to/precision",
+            expected_json: "34",
+        },
+        ValueTestCase {
+            description: "TIMESTAMP_NTZ keeps its precision",
+            sql: "SELECT CAST(NULL AS TIMESTAMP_NTZ(7))",
+            pointer: "/0/select/expressions/0/cast/to/precision",
+            expected_json: "7",
+        },
+        ValueTestCase {
+            description: "LIMIT ALL keeps ALL",
+            sql: "SELECT a FROM t LIMIT ALL",
+            pointer: "/0/select/limit/this/var/this",
+            expected_json: "\"ALL\"",
+        },
+        ValueTestCase {
+            description: "an inline constraint keeps its name",
+            sql: "CREATE TABLE t (a INT CONSTRAINT k PRIMARY KEY NOT ENFORCED)",
+            pointer: "/0/create_table/columns/0/constraint_names/0/1/name",
+            expected_json: "\"k\"",
+        },
+        ValueTestCase {
+            description: "an inline constraint keeps NOT ENFORCED",
+            sql: "CREATE TABLE t (a INT REFERENCES u NOT ENFORCED)",
+            pointer: "/0/create_table/columns/0/constraint_modifiers/0/1/enforced",
+            expected_json: "false",
+        },
+        ValueTestCase {
+            description: "DEFAULT COLLATION keeps a backticked name's quoting",
+            sql: "CREATE TABLE t (a INT) DEFAULT COLLATION `UTF8_BINARY`",
+            pointer: "/0/create_table/properties/0/property/value/identifier/quoted",
+            expected_json: "true",
+        },
     ];
     for test_case in test_cases {
         let parsed: Parsed = parse_strict(test_case.sql).expect(test_case.description);

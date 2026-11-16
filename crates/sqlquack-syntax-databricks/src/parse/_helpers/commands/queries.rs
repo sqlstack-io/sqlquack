@@ -10,7 +10,7 @@ use sqlquack_syntax::expressions::queries::models::{
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    TableAlias, binary, call, cte, null, set_operation, star, subquery, tuple,
+    TableAlias, binary, call, cte, null, set_operation, star, subquery, tuple, var,
 };
 use crate::parse::constants::{CUBE, GROUPING_SETS, ROLLUP};
 use crate::scan::models::TokenKind;
@@ -570,7 +570,7 @@ impl Parser<'_> {
         }
         if self.eat_kw("LIMIT") {
             organization.limit = Some(match self.eat_kw("ALL") {
-                true => null(),
+                true => var("ALL"),
                 false => self.expression()?,
             });
         }

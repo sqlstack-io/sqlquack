@@ -6,7 +6,9 @@ use sqlquack_syntax::expressions::types::models::StructField;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::var;
-use crate::parse::constants::{DAY_TIME, INTEGER_SPELLING, MONTH, REAL_SPELLING, YEAR_MONTH};
+use crate::parse::constants::{
+    DAY_TIME, INTEGER_SPELLING, LOCAL_TIMESTAMP, MONTH, REAL_SPELLING, YEAR_MONTH,
+};
 use crate::scan::models::{NumberKind, TokenKind};
 
 impl Parser<'_> {
@@ -134,13 +136,14 @@ impl Parser<'_> {
                 DataType::Interval { unit, to }
             }
             "TIMESTAMP" => {
+                let precision: Option<u32> = self.optional_length()?;
                 let timezone: bool = if self.eat_kws(&["WITH", "LOCAL", "TIME", "ZONE"]) {
                     true
                 } else {
                     !self.eat_kws(&["WITHOUT", "TIME", "ZONE"])
                 };
                 DataType::Timestamp {
-                    precision: None,
+                    precision,
                     timezone,
                 }
             }
@@ -188,13 +191,15 @@ impl Parser<'_> {
                 scale: None,
             },
             "DATE" => DataType::Date,
-            "TIMESTAMP_LTZ" => DataType::Timestamp {
-                precision: None,
-                timezone: true,
+            "TIMESTAMP_LTZ" | "TIMESTAMP_NTZ" => DataType::Timestamp {
+                precision: self.optional_length()?,
+                timezone: word == LOCAL_TIMESTAMP,
             },
-            "TIMESTAMP_NTZ" => DataType::Timestamp {
-                precision: None,
-                timezone: false,
+            "DECFLOAT" => DataType::Named {
+                name: word,
+                precision: self.optional_length()?,
+                scale: None,
+                length: None,
             },
             "BINARY" => DataType::Binary { length: None },
             "VOID" | "VARIANT" => DataType::Custom { name: word },

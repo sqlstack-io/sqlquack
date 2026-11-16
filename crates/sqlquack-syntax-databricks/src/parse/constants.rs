@@ -379,6 +379,8 @@ pub(crate) const MONTH: &str = "MONTH";
 pub(crate) const INTEGER_SPELLING: &str = "INTEGER";
 /// The `FLOAT` spelling the tree marks.
 pub(crate) const REAL_SPELLING: &str = "REAL";
+/// The timestamp type spelling with the local time zone.
+pub(crate) const LOCAL_TIMESTAMP: &str = "TIMESTAMP_LTZ";
 /// The true boolean literal.
 pub(crate) const TRUE: &str = "TRUE";
 /// The cast call that yields null instead of failing.

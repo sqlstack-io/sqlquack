@@ -665,6 +665,8 @@ impl Parser<'_> {
             false => self.statement()?,
         };
         let mut node: Describe = Describe::new(statement);
+        node.extended = mode.as_deref() == Some("EXTENDED");
+        node.formatted = mode.as_deref() == Some("FORMATTED");
         node.style = Some(match mode {
             Some(mode) => format!("EXPLAIN {mode}"),
             None => "EXPLAIN".to_owned(),

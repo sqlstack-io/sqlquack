@@ -9,13 +9,13 @@ use sqlquack_syntax::expressions::columns::models::{
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{CreateView, DropView, ViewColumn};
 use sqlquack_syntax::expressions::tables::models::{
-    ClusterByColumnsProperty, CreateTable, DropTable, FileFormatProperty, LocationProperty,
-    OptionEntry, OptionsProperty, PartitionedByProperty, Properties, Property,
+    ClusterByColumnsProperty, ConstraintType, CreateTable, DropTable, FileFormatProperty,
+    LocationProperty, OptionEntry, OptionsProperty, PartitionedByProperty, Properties, Property,
     SchemaCommentProperty,
 };
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
-use crate::parse::_helpers::tree::nodes::{binary, column_from, joined, null, string, tuple, var};
+use crate::parse::_helpers::tree::nodes::{binary, column_from, joined, null, tuple, var};
 use crate::parse::constants::{CREATE_KINDS, DROP_KINDS};
 use crate::scan::models::{NumberKind, TokenKind};
 
@@ -280,7 +280,7 @@ impl Parser<'_> {
             "DEFAULT" if self.kw_at(1, "COLLATION") => {
                 self.at += 2;
                 let name: Identifier = self.ident()?;
-                let collation = property("DEFAULT COLLATION", string(&name.name));
+                let collation = property("DEFAULT COLLATION", Expression::Identifier(name));
                 ("COLLATION", Some(collation))
             }
             "ROW" if self.kw_at(1, "FORMAT") => {
@@ -555,26 +555,39 @@ impl Parser<'_> {
                     "FOREIGN",
                 ],
             ) {
-                if self.eat_kw("CONSTRAINT") {
-                    self.ident()?;
-                }
-                if self.kw("PRIMARY") && self.kw_at(1, "KEY") {
+                let name: Option<Identifier> = match self.eat_kw("CONSTRAINT") {
+                    true => Some(self.ident()?),
+                    false => None,
+                };
+                let kind: ConstraintType = if self.kw("PRIMARY") && self.kw_at(1, "KEY") {
                     self.at += 2;
                     column.primary_key = true;
+                    ConstraintType::PrimaryKey
                 } else if self.eat_kw("UNIQUE") {
                     column.unique = true;
+                    ConstraintType::Unique
                 } else if self.kw("CHECK") {
                     column
                         .constraints
                         .push(ColumnConstraint::Check(self.check_constraint()?));
+                    ConstraintType::Check
                 } else {
                     self.eat_kws(&["FOREIGN", "KEY"]);
                     let reference: ForeignKeyRef = self.reference_spec()?;
                     column
                         .constraints
                         .push(ColumnConstraint::References(Box::new(reference)));
+                    ConstraintType::References
+                };
+                let index: usize = column.constraint_order.len();
+                column.constraint_order.push(kind);
+                column
+                    .constraint_names
+                    .extend(name.map(|name| (index, name)));
+                let modifiers: ConstraintModifiers = self.constraint_characteristics()?;
+                if modifiers != ConstraintModifiers::default() {
+                    column.constraint_modifiers.push((index, modifiers));
                 }
-                self.constraint_characteristics()?;
             } else {
                 return Ok(column);
             }

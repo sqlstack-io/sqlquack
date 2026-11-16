@@ -7,6 +7,9 @@ use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 use sqlquack_syntax::expressions::operators::models::{
     CollationExpr, MethodCall, Subscript, UnaryOp,
 };
+use sqlquack_syntax::expressions::typed_functions::models::{
+    DateTimeField, ExtractFunc, TrimFunc, TrimPosition,
+};
 use sqlquack_syntax::expressions::types::models::{
     Interval, IntervalSpan, IntervalUnit, IntervalUnitSpec,
 };
@@ -202,7 +205,11 @@ impl Parser<'_> {
             TokenKind::Char(':') if self.adjacent(0) && self.is_at(1, is_identifier) => {
                 self.at += 1;
                 let name: Token = self.advance()?;
-                Ok(parameter(Some(name.value)))
+                let mut marker: Expression = parameter(Some(name.value));
+                if let Expression::Parameter(node) = &mut marker {
+                    node.quoted = name.kind == TokenKind::Quoted;
+                }
+                Ok(marker)
             }
             TokenKind::Char('@') if self.adjacent(0) && self.word_at(1).is_some() => {
                 self.macro_call()
@@ -594,7 +601,10 @@ impl Parser<'_> {
                 parser.expect_kw("FROM")?;
                 let source: Expression = parser.value_expression(0)?;
                 parser.expect_char(')')?;
-                Ok(call("extract", vec![string(&field.value), source]))
+                Ok(Expression::Extract(Box::new(ExtractFunc {
+                    this: source,
+                    field: DateTimeField::Custom(field.value),
+                })))
             }),
             "SUBSTR" | "SUBSTRING" => self.attempt(|parser| {
                 parser.at += 2;
@@ -611,15 +621,13 @@ impl Parser<'_> {
             }),
             "TRIM" => self.attempt(|parser| {
                 parser.at += 2;
-                let side: &str = match parser.word_at(0).as_deref() {
-                    Some("LEADING") => "ltrim",
-                    Some("TRAILING") => "rtrim",
-                    Some("BOTH") => "trim",
-                    _ => "",
+                let position: Option<TrimPosition> = match parser.word_at(0).as_deref() {
+                    Some("LEADING") => Some(TrimPosition::Leading),
+                    Some("TRAILING") => Some(TrimPosition::Trailing),
+                    Some("BOTH") => Some(TrimPosition::Both),
+                    _ => None,
                 };
-                if !side.is_empty() {
-                    parser.at += 1;
-                }
+                parser.at += usize::from(position.is_some());
                 let characters: Option<Expression> = match parser.kw("FROM") {
                     true => None,
                     false => Some(parser.value_expression(0)?),
@@ -627,14 +635,14 @@ impl Parser<'_> {
                 parser.expect_kw("FROM")?;
                 let source: Expression = parser.value_expression(0)?;
                 parser.expect_char(')')?;
-                let name: &str = match side {
-                    "" => "trim",
-                    other => other,
-                };
-                Ok(call(
-                    name,
-                    std::iter::once(source).chain(characters).collect(),
-                ))
+                Ok(Expression::Trim(Box::new(TrimFunc {
+                    this: source,
+                    characters,
+                    position: position.unwrap_or(TrimPosition::Both),
+                    sql_standard_syntax: true,
+                    position_explicit: position.is_some(),
+                    inferred_type: None,
+                })))
             }),
             "OVERLAY" => self.attempt(|parser| {
                 parser.at += 2;
@@ -725,8 +733,8 @@ impl Parser<'_> {
                 let name: Identifier = joined(self.multipart_identifier()?);
                 this = Expression::Collation(Box::new(CollationExpr {
                     this,
+                    quoted: name.quoted,
                     collation: name.name,
-                    quoted: false,
                     double_quoted: false,
                 }));
             } else {

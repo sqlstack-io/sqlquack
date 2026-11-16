@@ -204,7 +204,9 @@ fn clauses(parts: &[Part], mut at: usize) -> (Vec<Expression>, usize) {
                     !clause.values.is_empty() && (starts_clause || group == Group::Rule);
                 let flag: bool = starts_clause
                     && clause.values.is_empty()
-                    && matches!(parts.get(at), Some(Part::Begin(Group::Choice)));
+                    && !clause.words.is_empty()
+                    && (group == Group::Rule
+                        || matches!(parts.get(at), Some(Part::Begin(Group::Choice))));
                 if complete || flag {
                     out.extend(clause.flush());
                 }
