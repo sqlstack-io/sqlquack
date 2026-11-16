@@ -4,9 +4,27 @@ use sqlquack_syntax::Expression;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::null;
+use crate::scan::models::{NumberKind, Token, TokenKind};
 
 /// The words a labelled statement may start with.
 const LABELLED: [&str; 5] = ["BEGIN", "LOOP", "WHILE", "REPEAT", "FOR"];
+
+/// `condition_info_item`, what `GET DIAGNOSTICS CONDITION 1` reads.
+const CONDITION_ITEMS: [&str; 5] = [
+    "MESSAGE_TEXT",
+    "RETURNED_SQLSTATE",
+    "MESSAGE_ARGUMENTS",
+    "CONDITION_IDENTIFIER",
+    "LINE_NUMBER",
+];
+
+/// `statement_info_item`, what `GET DIAGNOSTICS` reads without `CONDITION`.
+const STATEMENT_ITEMS: [&str; 2] = ["TRANSACTION_ACTIVE", "ROW_COUNT"];
+
+/// Whether `token` is an integer literal.
+fn is_integer(token: &Token) -> bool {
+    token.kind == TokenKind::Number(NumberKind::Integer)
+}
 
 impl Parser<'_> {
     /// `BEGIN [NOT ATOMIC] [compoundBody] END [;]`; `BEGIN TRANSACTION` is a documented form.
@@ -17,11 +35,13 @@ impl Parser<'_> {
         Ok(null())
     }
 
-    /// `[label :] BEGIN [NOT ATOMIC] [compoundBody] END [label]`; a whole statement takes no labels.
+    /// `[label :] BEGIN [[NOT] ATOMIC] [compoundBody] END [label]`; a whole statement takes no labels.
     fn compound_block(&mut self, labelled: bool) -> Parsing<()> {
         self.expect_kw("BEGIN")?;
         if self.kw("NOT") && self.kw_at(1, "ATOMIC") {
             self.at += 2;
+        } else {
+            self.eat_kw("ATOMIC");
         }
         if !self.kw("END") {
             self.compound_body(&["END"])?;
@@ -70,6 +90,7 @@ impl Parser<'_> {
                 self.ident()?;
                 Ok(())
             }
+            Some("GET") if self.kw_at(1, "DIAGNOSTICS") => self.diagnostics_statement(),
             Some("GET") => Err(self.error()),
             Some("DECLARE") if self.kw_in(1, &["CONTINUE", "EXIT"]) && self.kw_at(2, "HANDLER") => {
                 self.at += 3;
@@ -120,7 +141,10 @@ impl Parser<'_> {
                 if self.is(is_identifier) && self.kw_at(1, "AS") {
                     self.at += 2;
                 }
-                self.query()?;
+                let outer: bool = std::mem::replace(&mut self.for_query, true);
+                let query: Parsing<Expression> = self.query();
+                self.for_query = outer;
+                query?;
                 self.expect_kw("DO")?;
                 self.compound_body(&["END"])?;
                 self.expect_kw("END")?;
@@ -128,6 +152,30 @@ impl Parser<'_> {
             }
         }
         self.end_label()
+    }
+
+    /// `GET DIAGNOSTICS [CONDITION 1] { variable = item } [, ...]`, each item from its closed list.
+    fn diagnostics_statement(&mut self) -> Parsing<()> {
+        self.at += 2;
+        let items: &[&str] = match self.eat_kw("CONDITION") {
+            true => {
+                self.expect_token(is_integer)?;
+                &CONDITION_ITEMS
+            }
+            false => &STATEMENT_ITEMS,
+        };
+        self.comma_list(|parser| {
+            parser.ident()?;
+            parser.expect_char('=')?;
+            match parser.kw_in(0, items) {
+                true => {
+                    parser.at += 1;
+                    Ok(())
+                }
+                false => Err(parser.error()),
+            }
+        })?;
+        Ok(())
     }
 
     /// `IF condition THEN body [ELSEIF condition THEN body]... [ELSE body] END IF`.

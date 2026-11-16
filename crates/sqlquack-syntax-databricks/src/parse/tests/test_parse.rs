@@ -637,6 +637,51 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "a FOR query ends at DO, which names no alias",
+            sql: "BEGIN FOR SELECT 1 DO SELECT 1 ; END FOR ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a FOR query over a derived table ends at DO",
+            sql: "BEGIN FOR SELECT * FROM ( SELECT 1 ) DO SELECT 1 ; END FOR ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a FOR statement needs DO",
+            sql: "BEGIN FOR SELECT 1 SELECT 1 ; END FOR ; END",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "an ATOMIC compound statement is checked",
+            sql: "BEGIN ATOMIC SELECT 1 ; SELECT 2 ; END ;",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "an ATOMIC compound body holds statements",
+            sql: "BEGIN ATOMIC 1 ; END",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "GET DIAGNOSTICS reads a statement item",
+            sql: "BEGIN DECLARE v1 INT ; DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN GET DIAGNOSTICS v1 = ROW_COUNT , v1 = TRANSACTION_ACTIVE ; END ; SELECT 1 ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "GET DIAGNOSTICS CONDITION 1 reads a condition item",
+            sql: "BEGIN DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN DECLARE v1 STRING ; GET DIAGNOSTICS CONDITION 1 v1 = MESSAGE_TEXT ; END ; SELECT 1 ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a condition item needs CONDITION 1",
+            sql: "BEGIN DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN GET DIAGNOSTICS v1 = MESSAGE_TEXT ; END ; SELECT 1 ; END",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "GET DIAGNOSTICS CONDITION takes a number",
+            sql: "BEGIN DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN GET DIAGNOSTICS CONDITION v1 v1 = MESSAGE_TEXT ; END ; SELECT 1 ; END",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "BEGIN alone is refused",
             sql: "BEGIN",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },

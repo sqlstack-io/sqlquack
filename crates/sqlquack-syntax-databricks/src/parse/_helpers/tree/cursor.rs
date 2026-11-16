@@ -35,6 +35,8 @@ pub(crate) struct Parser<'sql> {
     pub(crate) opaque: bool,
     /// The depth limit's error once any reading passed it; every later reading fails with it.
     pub(crate) too_deep: Option<ParseError>,
+    /// Whether a `FOR` statement's query is being read, so `DO` ends it rather than naming an alias.
+    pub(crate) for_query: bool,
 }
 
 /// `identifier`: an unquoted word (every keyword is non-reserved by default) or a quoted name.
@@ -75,6 +77,7 @@ impl<'sql> Parser<'sql> {
             gaps: Vec::new(),
             opaque: false,
             too_deep: None,
+            for_query: false,
         }
     }
 
@@ -415,7 +418,9 @@ impl<'sql> Parser<'sql> {
             true => is_strict_identifier,
             false => is_identifier,
         };
-        self.is_at(offset, test) && !self.starts_clause(offset)
+        self.is_at(offset, test)
+            && !self.starts_clause(offset)
+            && !(self.for_query && self.kw_at(offset, "DO"))
     }
 
     /// `multipartIdentifier`: `identifier ( . identifier )*`.
