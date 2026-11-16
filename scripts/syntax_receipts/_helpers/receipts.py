@@ -14,6 +14,7 @@ from scripts.syntax_receipts.constants import (
     PARSE_ERRNO,
     PARSE_MESSAGE_PREFIX,
     PARSER_SYNTAX_ERRNO,
+    POST_PARSE_SYNTAX_ERRNO_MESSAGES,
     REASON_BY_ERRNO,
     RECEIPT_FORMAT,
     REVIEWED_SEMANTIC_ERRNOS,
@@ -49,6 +50,9 @@ def classify(
         return "runtime_error", f"errno {errno} is an execution-time code"
     compiled: bool = message.lower().startswith(COMPILATION_PREFIX.lower())
     if errno == SYNTAX_ERRNO and compiled:
+        detail: str = message.partition("\n")[2]
+        if any(re.fullmatch(p, detail, re.DOTALL) for p in POST_PARSE_SYNTAX_ERRNO_MESSAGES):
+            return "semantic_error", "errno 1003 message is a reviewed check after parsing"
         return "syntax_error", "errno 1003 SQL compilation syntax error"
     if errno == PARSER_SYNTAX_ERRNO:
         if message.lower().startswith(SYNTAX_MESSAGE_PREFIX):
