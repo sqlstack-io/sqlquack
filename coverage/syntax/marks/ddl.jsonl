@@ -4174,9 +4174,7 @@
 {"case_id":"sf.ddl.desc-streamlit.k09f8055363fa","mark":"settled accept","obligations":["sf.ddl.desc-streamlit.o012"],"sql_sha256":"09f8055363fa4c3e8b1a57ac43afebee52de59ec2d91fcd44dda74a5cdd217a5"}
 {"case_id":"sf.ddl.desc-task-graph.kf06e6d83cbdf","mark":"settled accept","obligations":["sf.ddl.desc-task-graph.o012"],"sql_sha256":"f06e6d83cbdfe9f3748b3fac80df811c92f24bab0dfad4a6306ad5f5dd214734"}
 {"case_id":"sf.ddl.desc-task.k3a9162b589a2","mark":"settled accept","obligations":["sf.ddl.desc-task.o012"],"sql_sha256":"3a9162b589a237eb42f67c0c659a4349b8ae1ccff5016a85ff4af617505c5bb9"}
-{"case_id":"sf.ddl.desc-transaction.k265915e832b4","mark":"settled reject","obligations":["sf.ddl.desc-transaction.o022"],"sql_sha256":"265915e832b43f986e1dc1daa9bdffc2b276e9816646b807a9a2f3501956a899"}
 {"case_id":"sf.ddl.desc-transaction.k661cafcd6286","mark":"settled reject","obligations":["sf.ddl.desc-transaction.o025"],"sql_sha256":"661cafcd62869dfc904ac7f29c9524f68bb611fa18d00281ba5f53dfa1dc08e1"}
-{"case_id":"sf.ddl.desc-transaction.k6eec4c615e6e","mark":"settled reject","obligations":["sf.ddl.desc-transaction.o020","sf.ddl.desc-transaction.o021","sf.ddl.desc-transaction.o023"],"sql_sha256":"6eec4c615e6e1b0ef9f8fe49397f1ba6a59f6b9a3e9651a20d394d66fd4b1951"}
 {"case_id":"sf.ddl.desc-transaction.kbe631f5a889b","mark":"settled accept","obligations":["sf.ddl.desc-transaction.o019"],"sql_sha256":"be631f5a889b1aa1f72aef893a404cfc6add68b9de052bb551991c937c6e5746"}
 {"case_id":"sf.ddl.desc-transaction.kee60ee389a0f","mark":"settled reject","obligations":["sf.ddl.desc-transaction.o026"],"sql_sha256":"ee60ee389a0fd92f9ae40136c2cff38b0e7470530586267aa14e41b59a15607b"}
 {"case_id":"sf.ddl.desc-type.k91add58d6183","mark":"settled accept","obligations":["sf.ddl.desc-type.o011"],"sql_sha256":"91add58d6183af1df57c8abd16916acad4428c6bb15e0ef19f317ed7ba78b2c3"}
