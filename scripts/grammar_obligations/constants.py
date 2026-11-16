@@ -1717,7 +1717,6 @@ CLASS_METHODS_WITH_SELECT: tuple[str, ...] = (
     "sf.classes.custom-classifier.methods.list",
 )
 
-# Event routing rules, whose REGION_GROUP Snowflake takes only as a string ('g1'), never a name.
 EVENT_ROUTING_PAGES: tuple[str, ...] = (
     "sf.ddl.alter-event-routing-table",
     "sf.ddl.create-event-routing-table",

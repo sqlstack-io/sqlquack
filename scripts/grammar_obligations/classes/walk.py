@@ -146,7 +146,7 @@ class Walk:
                 before: tuple[str, bool] = (self.previous, self.named)
                 before_item: Node | None = nodes[position - 1] if position else None
                 whole_list: bool = (
-                    position >= 2
+                    position > 1
                     and nodes[position - 2].text == OPEN_PAREN
                     and position + 1 < len(nodes)
                     and nodes[position + 1].text == CLOSE_PAREN

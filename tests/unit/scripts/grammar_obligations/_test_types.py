@@ -54,3 +54,13 @@ class PackedRefusalTestCase:
     refused_sql: str
     phase: str
     expected_option_sql: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class RenderedCaseTestCase:
+    description: str
+    catalogue: str
+    unpacked: frozenset[str]
+    sql: str
+    expected_expect: str
+    expected_note: str
