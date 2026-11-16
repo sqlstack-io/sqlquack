@@ -39,6 +39,9 @@ fn given_snowflake_table_sequence_and_share_actions_when_parsing_then_only_docum
         AcceptanceTestCase { description: "a share keeps its ADD action", sql: "ALTER SHARE v1 ADD ACCOUNTS = a1 ;", dialect: Dialect::Snowflake, expected_accepted: true },
         AcceptanceTestCase { description: "a share unsets any named property (recorded semantic error 1420)", sql: "ALTER SHARE v1 UNSET v1 ;", dialect: Dialect::Snowflake, expected_accepted: true },
         AcceptanceTestCase { description: "UNSET names a property (catalogued reject)", sql: "ALTER SHARE v1 UNSET ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a database unsets its event table", sql: "ALTER DATABASE v1 UNSET EVENT_TABLE ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "UNSET takes no value (recorded syntax error)", sql: "ALTER DATABASE v1 UNSET EVENT_TABLE = v1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "UNSET takes no quoted value either (recorded syntax error)", sql: "ALTER DATABASE v1 UNSET EVENT_TABLE = \"v1 Q\" ;", dialect: Dialect::Snowflake, expected_accepted: false },
         AcceptanceTestCase { description: "a user group is an organization user group (recorded syntax error)", sql: "ALTER USER GROUP v1 ADD ORGANIZATION USERS v1 ;", dialect: Dialect::Snowflake, expected_accepted: false },
         AcceptanceTestCase { description: "an organization user group adds users", sql: "ALTER ORGANIZATION USER GROUP IF EXISTS v1 ADD ORGANIZATION USERS v1 , v1 ;", dialect: Dialect::Snowflake, expected_accepted: true },
     ];
@@ -425,6 +428,35 @@ fn given_snowflake_policy_and_integration_alters_without_a_name_when_parsing_the
                 .cloned()
                 .unwrap_or_default(),
             test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_snowflake_scopes_and_constraints_without_their_names_or_columns_when_parsing_then_receipted_refusals_are_refused(
+) {
+    let test_cases = [
+        AcceptanceTestCase { description: "parameters are shown for a named table (recorded semantic error)", sql: "SHOW PARAMETERS IN TABLE v1 ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "IN TABLE names its table (recorded syntax error)", sql: "SHOW PARAMETERS IN TABLE ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "IN WAREHOUSE may leave out its name (recorded success)", sql: "SHOW PARAMETERS IN WAREHOUSE ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "primary keys are still shown for the tables of a schema", sql: "SHOW PRIMARY KEYS IN TABLE ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a named constraint is modified", sql: "ALTER TABLE v1 MODIFY CONSTRAINT v1 RELY ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "a named constraint takes no columns (recorded syntax error)", sql: "ALTER TABLE v1 MODIFY CONSTRAINT v1 ( v1 ) NORELY ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a bare named constraint takes no columns either (recorded syntax error)", sql: "ALTER TABLE v1 MODIFY CONSTRAINT v1 ( v1 ) ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a unique key is modified by its columns", sql: "ALTER TABLE v1 MODIFY UNIQUE ( v1 ) RELY ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "an out-of-line unique key names its columns", sql: "CREATE TABLE v1 ( v1 INT , UNIQUE ( v1 ) RELY ) ;", dialect: Dialect::Snowflake, expected_accepted: true },
+        AcceptanceTestCase { description: "an out-of-line unique key without columns (recorded syntax error)", sql: "CREATE TABLE v1 ( v1 INT , UNIQUE RELY ) ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a hybrid table's unique key without columns (recorded syntax error)", sql: "CREATE HYBRID TABLE v1 ( v1 INT , UNIQUE RELY ) ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "CREATE OR ALTER's unique key without columns (recorded syntax error)", sql: "CREATE OR ALTER TABLE v1 ( v1 INT , UNIQUE RELY ) ;", dialect: Dialect::Snowflake, expected_accepted: false },
+        AcceptanceTestCase { description: "a column after an inline unique key still parses", sql: "CREATE TABLE v1 ( v1 INT UNIQUE RELY , v2 INT ) ;", dialect: Dialect::Snowflake, expected_accepted: true },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            accepted(test_case.sql, test_case.dialect),
+            test_case.expected_accepted,
             "{}",
             test_case.description
         );

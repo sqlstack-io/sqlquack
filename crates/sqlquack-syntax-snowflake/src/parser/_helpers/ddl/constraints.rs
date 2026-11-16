@@ -213,6 +213,9 @@ impl Parser {
                 })
             }
         } else {
+            if self.is_snowflake() {
+                return Err(self.parse_error("Expected the unique key's columns in parentheses"));
+            }
             let col_name = self.expect_identifier()?;
             let mut modifiers = self.parse_constraint_modifiers()?;
             modifiers.clustered = clustered;
