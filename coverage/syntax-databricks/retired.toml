@@ -2608,3 +2608,14 @@ ids = [
   "db.transaction_session.set-variable.set-default.o005",
   "db.transaction_session.set-variable.set-default.o016",
 ]
+
+[[retired]]
+retired_in = "a7c4f2be155017e502df5893680e902959f2d219"
+reason = "the warehouse reads these derived negatives as other valid statements, a configuration SET of the key VAR, DESCRIBE of a table named VOLUME and ZORDER BY a single unparenthesised column, so they are suppressed with the receipts that show it"
+ids = [
+  "db.expressions.names.subscript-dot-4.o004",
+  "db.expressions.names.subscript-dot-4.o015",
+  "db.transaction_session.set-variable.set-default.o007",
+  "db.transaction_session.set-variable.set-default.o022",
+  "db.utility.optimize.o019",
+]

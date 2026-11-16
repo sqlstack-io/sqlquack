@@ -3482,13 +3482,6 @@ required = true
 target = "[ <schema_name> . ]"
 
 [[obligation]]
-id = "db.expressions.names.subscript-dot-4.o004"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ <schema_name> . ]"
-note = "omit <schema_name>"
-
-[[obligation]]
 id = "db.expressions.names.subscript-dot-4.o005"
 kind = "operand_type_class"
 required = true
@@ -3501,13 +3494,6 @@ kind = "negative_neighbour"
 required = true
 target = "<schema_name> in [ <schema_name> . ]"
 note = "a string literal in place of <schema_name>"
-
-[[obligation]]
-id = "db.expressions.names.subscript-dot-4.o015"
-kind = "required_operand_missing"
-required = true
-target = "<volume_identifier>"
-note = "omit <volume_identifier>"
 
 [[obligation]]
 id = "db.expressions.names.subscript-dot-4.o007"

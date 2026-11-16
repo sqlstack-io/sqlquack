@@ -2749,6 +2749,22 @@ anchor = "doc.sql-ref-syntax-aux-describe-table / Syntax"
 note = "a column name with AS JSON, as the page's line allows, which the warehouse's parser refuses (UNSUPPORTED_FEATURE.DESC_TABLE_COLUMN_JSON), so the answer is recorded rather than expected"
 
 [[obligation]]
+id = "db.utility.describe-table.o033"
+kind = "alternative"
+required = true
+target = "[ PARTITION <partition_clause> ]"
+anchor = "doc.sql-ref-syntax-aux-describe-table / Syntax"
+note = "the PARTITION clause alone"
+
+[[obligation]]
+id = "db.utility.describe-table.o034"
+kind = "alternative"
+required = true
+target = "FORMATTED"
+anchor = "doc.sql-ref-syntax-aux-describe-table / Syntax"
+note = "FORMATTED, which the page names a synonym of EXTENDED"
+
+[[obligation]]
 id = "db.utility.describe-table.describe-detail.o001"
 kind = "positive"
 required = true
@@ -3435,12 +3451,6 @@ id = "db.utility.optimize.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required BY in [ ZORDER BY ( <col_name1> [ , ... ] ) ]"
-
-[[obligation]]
-id = "db.utility.optimize.o019"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ( in [ ZORDER BY ( <col_name1> [ , ... ] ) ]"
 
 [[obligation]]
 id = "db.utility.optimize.o020"
@@ -4741,6 +4751,22 @@ required = true
 target = "<function_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.show-functions.o030"
+kind = "option_present"
+required = true
+target = "LIKE"
+anchor = "doc.sql-ref-syntax-aux-show-functions / Syntax"
+note = "LIKE before an unquoted function name"
+
+[[obligation]]
+id = "db.utility.show-functions.o031"
+kind = "option_present"
+required = true
+target = "LIKE"
+anchor = "doc.sql-ref-syntax-aux-show-functions / Syntax"
+note = "LIKE before a quoted pattern"
 
 [[obligation]]
 id = "db.utility.show-governed-tags.o001"

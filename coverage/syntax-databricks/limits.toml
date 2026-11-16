@@ -6582,3 +6582,78 @@ anchor = "doc.sql-ref-syntax-aux-cache-refresh-table / Syntax"
 sql = "REFRESH TABLE `t1 Q`"
 context = "raw"
 expect = "observe"
+
+[[suppress]]
+form = "db.transaction_session.set-variable.set-default"
+kind = "required_operand_missing"
+target = "<variable_name>"
+note = "omit <variable_name>"
+reason = "SET VAR = 1 is a configuration SET of the key VAR: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T190107.177192Z) answers CONFIG_NOT_AVAILABLE, an analysis failure, not a syntax error"
+
+[[suppress]]
+form = "db.transaction_session.set-variable.set-default"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <variable_name> = { <expression> | DEFAULT } }"
+reason = "SET VAR is a configuration SET that reads the key VAR: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T190107.177192Z) answers CONFIG_NOT_AVAILABLE, an analysis failure, not a syntax error"
+
+[[suppress]]
+form = "db.expressions.names.subscript-dot-4"
+kind = "required_operand_missing"
+target = "<volume_identifier>"
+note = "omit <volume_identifier>"
+reason = "without a name DESCRIBE VOLUME reads VOLUME as a table name (DESCRIBE [TABLE] table_name): the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T185801.409372Z) answers TABLE_OR_VIEW_NOT_FOUND for `VOLUME`"
+
+[[suppress]]
+form = "db.expressions.names.subscript-dot-4"
+kind = "required_operand_missing"
+target = "<schema_name> in [ <schema_name> . ]"
+note = "omit <schema_name>"
+reason = "DESCRIBE VOLUME . v1 reads VOLUME . v1 as a qualified table name: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T185801.409372Z) answers TABLE_OR_VIEW_NOT_FOUND for `VOLUME`.`v1`"
+
+[[suppress]]
+form = "db.utility.optimize"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ( in [ ZORDER BY ( <col_name1> [ , ... ] ) ]"
+reason = "ZORDER BY takes a single column without parentheses: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T170554.366271Z) accepts OPTIMIZE t1 ZORDER BY c1"
+
+[[limit]]
+form = "db.utility.describe-table"
+kind = "alternative"
+target = "[ PARTITION <partition_clause> ]"
+note = "the PARTITION clause alone"
+anchor = "doc.sql-ref-syntax-aux-describe-table / Syntax"
+sql = "DESC t1 PARTITION ( c1 = 1 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.utility.describe-table"
+kind = "alternative"
+target = "FORMATTED"
+note = "FORMATTED, which the page names a synonym of EXTENDED"
+anchor = "doc.sql-ref-syntax-aux-describe-table / Syntax"
+sql = "DESC FORMATTED t1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.utility.show-functions"
+kind = "option_present"
+target = "LIKE"
+note = "LIKE before an unquoted function name"
+anchor = "doc.sql-ref-syntax-aux-show-functions / Syntax"
+sql = "SHOW FUNCTIONS LIKE abs"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.utility.show-functions"
+kind = "option_present"
+target = "LIKE"
+note = "LIKE before a quoted pattern"
+anchor = "doc.sql-ref-syntax-aux-show-functions / Syntax"
+sql = "SHOW FUNCTIONS LIKE 'a*'"
+context = "raw"
+expect = "observe"

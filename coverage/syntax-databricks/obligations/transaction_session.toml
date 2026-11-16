@@ -1002,13 +1002,6 @@ required = true
 target = "{ <variable_name> = { <expression> | DEFAULT } } → <variable_name> = { <expression> | DEFAULT }"
 
 [[obligation]]
-id = "db.transaction_session.set-variable.set-default.o007"
-kind = "required_operand_missing"
-required = true
-target = "<variable_name>"
-note = "omit <variable_name>"
-
-[[obligation]]
 id = "db.transaction_session.set-variable.set-default.o008"
 kind = "operand_type_class"
 required = true
@@ -1053,12 +1046,6 @@ id = "db.transaction_session.set-variable.set-default.o014"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
-
-[[obligation]]
-id = "db.transaction_session.set-variable.set-default.o022"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { <variable_name> = { <expression> | DEFAULT } }"
 
 [[obligation]]
 id = "db.transaction_session.set-variable.set-default.o017"
