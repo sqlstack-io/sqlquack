@@ -209,6 +209,9 @@ pub(crate) const ROLLUP: &str = "ROLLUP";
 pub(crate) const CUBE: &str = "CUBE";
 pub(crate) const GROUPING_SETS: &str = "GROUPING SETS";
 
+/// The scope kind of a `SHOW` that lists a schema's objects, which an `IDENTIFIER (...)` may name.
+pub(crate) const SCHEMA_SCOPE: &str = "SCHEMA";
+
 /// The function name an `IDENTIFIER (expr)` clause becomes, as lineage reads it.
 pub(crate) const IDENTIFIER_CLAUSE: &str = "IDENTIFIER";
 

@@ -14,11 +14,13 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 use crate::parse::_helpers::commands::alters::partition;
 use crate::parse::_helpers::commands::queries::limit;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
-use crate::parse::_helpers::tree::nodes::{column_from, joined, null, string, table, tuple, var};
+use crate::parse::_helpers::tree::nodes::{
+    call, column_from, joined, null, string, table, tuple, var,
+};
 use crate::parse::constants::{
     ADD_RESOURCE, CATALOG, COMMENT_KINDS, DESCRIBE_KINDS, EXPLAIN_MODES, FUNCTIONS,
-    MIN_BACKQUOTED_LENGTH, MIN_PATH_PARTS, NAMELESS_SECURABLES, PATH_ELEMENTS, SECURABLE_KINDS,
-    SET_VERBOSE,
+    IDENTIFIER_CLAUSE, MIN_BACKQUOTED_LENGTH, MIN_PATH_PARTS, NAMELESS_SECURABLES, PATH_ELEMENTS,
+    SCHEMA_SCOPE, SECURABLE_KINDS, SET_VERBOSE,
 };
 use crate::scan::models::TokenKind;
 
@@ -175,12 +177,25 @@ impl Parser<'_> {
             .map(str::to_owned)
     }
 
-    /// `node` with `[FROM | IN] name` as its scope, when written.
+    /// `node` with `[FROM | IN] name` as its scope, when written; a schema may be an `IDENTIFIER (...)`.
     fn show_scope(&mut self, mut node: Show, scope_kind: &str) -> Parsing<Show> {
         if let Some(keyword) = self.eat_from_or_in() {
             node.scope_keyword = Some(keyword);
             node.scope_kind = Some(scope_kind.to_owned());
-            node.scope = Some(Expression::Identifier(joined(self.multipart_identifier()?)));
+            node.scope = Some(
+                match scope_kind == SCHEMA_SCOPE
+                    && self.kw(IDENTIFIER_CLAUSE)
+                    && self.char_at(1, '(')
+                {
+                    true => {
+                        self.at += 2;
+                        let name: Expression = self.expression()?;
+                        self.expect_char(')')?;
+                        call(IDENTIFIER_CLAUSE, vec![name])
+                    }
+                    false => Expression::Identifier(joined(self.multipart_identifier()?)),
+                },
+            );
         }
         Ok(node)
     }

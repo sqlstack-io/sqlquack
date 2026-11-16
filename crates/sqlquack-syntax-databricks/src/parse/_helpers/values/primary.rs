@@ -323,6 +323,7 @@ impl Parser<'_> {
 
     /// A dotted name: a column reference, `t.*`, or a (qualified) function call.
     pub(crate) fn name_expression(&mut self) -> Parsing<Expression> {
+        let start: usize = self.offset();
         let mut parts: Vec<Identifier> = vec![self.name(is_identifier)?];
         while self.is_char('.') {
             if self.char_at(1, '*') {
@@ -337,7 +338,13 @@ impl Parser<'_> {
             parts.push(self.name(is_identifier)?);
         }
         if self.is_char('(') {
-            return self.function_call(parts);
+            let clause: bool = matches!(parts.as_slice(), [name] if !name.quoted && name.name.eq_ignore_ascii_case(IDENTIFIER_CLAUSE));
+            let named: Expression = self.function_call(parts)?;
+            if clause && self.is_char('(') {
+                self.gap("identifier_clause_function", start);
+                self.function_call(vec![Identifier::new(IDENTIFIER_CLAUSE)])?;
+            }
+            return Ok(named);
         }
         Ok(column_from(parts))
     }

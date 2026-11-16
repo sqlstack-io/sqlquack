@@ -488,7 +488,7 @@ const FORMS: &[Form] = &[
     Form {
         construct: "call",
         leads: &[&["CALL"]],
-        patterns: &["CALL name ( [ { id => expr | expr } ,... ] )"],
+        patterns: &["CALL table ( [ { id => expr | expr } ,... ] )"],
     },
     Form {
         construct: "clear_cache",

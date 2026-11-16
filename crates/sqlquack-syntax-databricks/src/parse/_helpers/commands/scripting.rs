@@ -69,10 +69,16 @@ impl Parser<'_> {
 
     /// One `compoundStatement`.
     fn compound_statement(&mut self) -> Parsing<()> {
+        let clause: bool = self.kw("IDENTIFIER")
+            && self.char_at(1, '(')
+            && self.string_at(2)
+            && self.char_at(3, ')')
+            && self.char_at(4, ':')
+            && self.kw_in(5, &LABELLED);
         let labelled: bool =
-            self.is(is_identifier) && self.char_at(1, ':') && self.kw_in(2, &LABELLED);
+            clause || (self.is(is_identifier) && self.char_at(1, ':') && self.kw_in(2, &LABELLED));
         if labelled {
-            self.at += 2;
+            self.at += if clause { 5 } else { 2 };
         }
         match self.word_at(0).as_deref() {
             Some("BEGIN") => self.compound_block(true),
