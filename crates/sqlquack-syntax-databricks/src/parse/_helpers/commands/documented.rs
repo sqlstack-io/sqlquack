@@ -619,15 +619,21 @@ fn phrase_starts(tokens: &[Token], at: usize, names: &[&str]) -> bool {
 }
 
 impl Parser<'_> {
-    /// The documented statement starting here, checked and kept as its gap, if one begins here.
+    /// The documented statement starting here, checked against its patterns, if one begins here.
     pub(crate) fn documented_statement(&mut self) -> Option<Parsing<Expression>> {
         let form: &Form = FORMS.iter().find(|form| self.begins_form(form))?;
+        let lead: usize = form
+            .leads
+            .iter()
+            .find(|lead| self.words_follow(lead))
+            .map_or(0, |lead| lead.len());
         let start: usize = self.offset();
         let first: usize = self.at;
-        let statement: Expression = match self.checked_form(form.construct, start, form.patterns) {
-            Ok(statement) => statement,
-            Err(error) => return Some(Err(error)),
-        };
+        let statement: Expression =
+            match self.checked_form(form.construct, start, lead, form.patterns) {
+                Ok(statement) => statement,
+                Err(error) => return Some(Err(error)),
+            };
         let check: Parsing<()> = match form.construct {
             CREATE_STREAMING_TABLE => self.auto_cdc_check(first),
             SYNC => self.sync_check(first),

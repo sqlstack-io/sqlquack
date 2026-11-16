@@ -147,9 +147,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
-            description: "CREATE of a kind the shared tree has no node for is kept as a gap",
+            description: "a documented CREATE with no node of its own is a tree of its clauses",
             sql: "CREATE CATALOG IF NOT EXISTS c",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a dollar-placeholder is not Databricks SQL",
@@ -427,9 +427,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "an account statement is checked against its documented syntax and kept as a gap",
+            description: "an account statement is checked against its documented syntax and kept as a tree",
             sql: "UNSET TAG ON COLUMN t1 . c1 k",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "UNSET TAG needs an object kind before its name",
@@ -439,7 +439,7 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         VerdictTestCase {
             description: "SET TAG ON a schema takes an optional value",
             sql: "SET TAG ON SCHEMA s1 k = 'v'",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a schema's tag names are identifiers, not strings",
@@ -494,7 +494,7 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         VerdictTestCase {
             description: "streaming table AUTO CDC flows are checked",
             sql: "CREATE OR REFRESH STREAMING TABLE st FLOW AUTO CDC FROM s KEYS ( k ) SEQUENCE BY v STORED AS SCD TYPE 2",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "SYSTEM SEQUENCE BY needs STORED AS BITEMPORAL",
@@ -509,7 +509,7 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         VerdictTestCase {
             description: "a materialized view's AS is optional",
             sql: "CREATE MATERIALIZED VIEW mv SELECT 1",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ALTER STREAMING TABLE needs an action",
@@ -612,9 +612,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "DROP TEMPORARY VARIABLE is a gap",
+            description: "DROP TEMPORARY VARIABLE is a tree of its clauses",
             sql: "DROP TEMPORARY VARIABLE IF EXISTS v1",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a compound block is checked and kept as a gap",
@@ -1065,6 +1065,54 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             sql: "SELECT * FROM t UNPIVOT ( v FOR k IN ( a , b ) ) ANTI",
             pointer: "/0/select/from/expressions/0/unpivot/alias/name",
             expected_json: "\"ANTI\"",
+        },
+        ValueTestCase {
+            description: "a documented statement's kind keeps the variant written",
+            sql: "ALTER STORAGE CREDENTIAL v1 RENAME TO v2",
+            pointer: "/0/utility_statement/kind",
+            expected_json: "\"ALTER STORAGE CREDENTIAL\"",
+        },
+        ValueTestCase {
+            description: "IF NOT EXISTS is a clause of its own and the name stands alone",
+            sql: "CREATE CATALOG IF NOT EXISTS c",
+            pointer: "/0/utility_statement/operands/1/table/name/name",
+            expected_json: "\"c\"",
+        },
+        ValueTestCase {
+            description: "an optional SET stays among its clause's words",
+            sql: "ALTER CATALOG c SET OWNER TO `u 1`",
+            pointer: "/0/utility_statement/operands/1/property/this/var/this",
+            expected_json: "\"SET OWNER TO\"",
+        },
+        ValueTestCase {
+            description: "a clause's identifier keeps its quoting",
+            sql: "ALTER CATALOG c SET OWNER TO `u 1`",
+            pointer: "/0/utility_statement/operands/1/property/value/identifier/quoted",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "each repeated item keeps its own keyword clause",
+            sql: "EXECUTE IMMEDIATE 'SELECT ?' USING 1 AS v1 , 2 AS v2",
+            pointer: "/0/utility_statement/operands/1/property/value/tuple/expressions/1/tuple/expressions/1/property/value/identifier/name",
+            expected_json: "\"v2\"",
+        },
+        ValueTestCase {
+            description: "an optional flag ends its clause before the next optional part",
+            sql: "REFRESH STREAMING TABLE t1 FULL WHERE c1 = 1",
+            pointer: "/0/utility_statement/operands/1/property/this/var/this",
+            expected_json: "\"FULL\"",
+        },
+        ValueTestCase {
+            description: "an optional LIKE introduces the pattern after it",
+            sql: "SHOW SHARES LIKE 'm'",
+            pointer: "/0/utility_statement/operands/0/property/value/literal/value",
+            expected_json: "\"m\"",
+        },
+        ValueTestCase {
+            description: "a CALL keeps a named argument's name",
+            sql: "CALL p ( a => 1 )",
+            pointer: "/0/utility_statement/operands/1/tuple/expressions/0/named_argument/name/name",
+            expected_json: "\"a\"",
         },
     ];
     for test_case in test_cases {

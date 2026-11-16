@@ -2,6 +2,9 @@
 
 use sqlquack_syntax::expressions::types::models::IntervalUnit;
 
+/// Pattern keywords that flag a statement rather than introduce the value after them.
+pub(crate) const FLAG_PHRASES: &[&str] = &["IF EXISTS", "IF NOT EXISTS"];
+
 /// A statement whose shared tree nests deeper than this is refused after it parses.
 pub(crate) const MAX_TREE_DEPTH: usize = 8000;
 
