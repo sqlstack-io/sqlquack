@@ -280,7 +280,7 @@ const FORMS: &[Form] = &[
             &["CREATE", "POLICY"],
             &["CREATE", "OR", "REPLACE", "POLICY"],
         ],
-        patterns: &["CREATE [ OR REPLACE ] POLICY id ON policy_target [ comment ] policy_body"],
+        patterns: &["CREATE [ OR REPLACE ] POLICY id ON policy_on [ comment ] policy_body"],
     },
     Form {
         construct: "create_procedure",
