@@ -175,15 +175,15 @@ impl Parser {
         })))
     }
 
-    /// `( <region> [ , ... ] )`, each a string or a name; the list may be empty.
+    /// `( '<region>' [ , ... ] )`: at least one string, as Snowflake refuses a name, an empty list and a trailing comma.
     fn parse_routing_regions(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::LParen)?;
         let mut expressions: Vec<Expression> = Vec::new();
-        while !self.check(TokenType::RParen) {
-            expressions.push(match self.check(TokenType::String) {
-                true => self.parse_primary()?,
-                false => Expression::Identifier(self.parse_external_name()?),
-            });
+        loop {
+            if !self.check(TokenType::String) {
+                return Err(self.parse_error("Expected a region as a string"));
+            }
+            expressions.push(self.parse_primary()?);
             if !self.match_token(TokenType::Comma) {
                 break;
             }

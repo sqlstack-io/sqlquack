@@ -814,6 +814,31 @@ fn given_a_snowflake_event_routing_rule_when_parsing_then_the_probed_verdicts_ho
             sql: "ALTER EVENT ROUTING TABLE v1 SET RULES v1 = ( REGION_GROUP = g1 , REGIONS = ( 'm' , 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;",
             expected_kind: None,
         },
+        SnowflakeVerdictTestCase {
+            description: "a rule's regions are strings (recorded semantic error)",
+            sql: "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = 'g1' REGIONS = ( 'm' , 'm' ) DESTINATION_ACCOUNT = v1 . v1 ;",
+            expected_kind: Some("alter_object"),
+        },
+        SnowflakeVerdictTestCase {
+            description: "a region is no name (recorded errno 1003)",
+            sql: "ALTER EVENT ROUTING TABLE v1 SET RULE v1 REGION_GROUP = 'g1' REGIONS = ( 'm' , m1 ) DESTINATION_ACCOUNT = v1 . v1 ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "the region list ends without a comma (recorded errno 1003)",
+            sql: "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = 'g1' , REGIONS = ( 'm' , ) , DESTINATION_ACCOUNT = v1 . v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "the region list is not empty (recorded errno 1003)",
+            sql: "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = 'g1' , REGIONS = ( ) , DESTINATION_ACCOUNT = v1 . v1 ) ;",
+            expected_kind: None,
+        },
+        SnowflakeVerdictTestCase {
+            description: "a second rule's regions are strings too (recorded errno 1003)",
+            sql: "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = 'g1' , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) v1 = ( REGION_GROUP = 'g1' , REGIONS = ( m1 ) , DESTINATION_ACCOUNT = v1 . v1 ) ;",
+            expected_kind: None,
+        },
     ];
     for test_case in test_cases {
         assert_eq!(

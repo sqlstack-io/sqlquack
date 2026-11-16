@@ -67,6 +67,9 @@ impl Parser {
             }
         }
         if matches!(kind.as_str(), "OPENFLOW DATA PLANE INTEGRATIONS") {
+            if self.match_token(TokenType::Like) {
+                show.like = Some(self.parse_show_string("LIKE")?);
+            }
             return Ok(Some(Expression::Show(Box::new(show))));
         }
         if let Some(clause) = kind.strip_prefix("DELEGATED AUTHORIZATIONS ") {
