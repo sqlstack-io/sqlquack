@@ -141,6 +141,26 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             sql: "SHOW TABLES IN IDENTIFIER ( 'v1' )",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
+        VerdictTestCase {
+            description: "a JVM handler is a string after its ENVIRONMENT",
+            sql: "CREATE FUNCTION abs ( ) RETURNS INT LANGUAGE SCALA ENVIRONMENT ( java_dependencies = '[\"/Volumes/c1/s1/v1/u1.jar\"]' , environment_version = '4' ) HANDLER 'm'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a handler is not a name",
+            sql: "CREATE FUNCTION abs ( ) RETURNS INT LANGUAGE SCALA ENVIRONMENT ( java_dependencies = '[\"/Volumes/c1/s1/v1/u1.jar\"]' , environment_version = '4' ) HANDLER m1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a Scala handler needs an ENVIRONMENT",
+            sql: "CREATE FUNCTION abs ( ) RETURNS INT LANGUAGE SCALA HANDLER 'm'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a Python handler is a string before its body",
+            sql: "CREATE FUNCTION abs ( ) RETURNS INT LANGUAGE PYTHON HANDLER 'm' AS $$ return 1 $$",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

@@ -15,7 +15,7 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 use crate::parse::_helpers::commands::creates::{Head, property};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{joined, string, table, var};
-use crate::parse::constants::SQL_LANGUAGE;
+use crate::parse::constants::{SCALA_LANGUAGE, SQL_LANGUAGE};
 use crate::scan::models::{NumberKind, TokenKind};
 
 impl Parser<'_> {
@@ -186,8 +186,21 @@ impl Parser<'_> {
                 .language
                 .as_deref()
                 .is_some_and(|language| language != SQL_LANGUAGE);
-            if foreign && self.eat_kw("HANDLER") {
-                node.handler = Some(joined(self.multipart_identifier()?).name);
+            if foreign && self.kw("HANDLER") {
+                let handler: usize = self.offset();
+                self.at += 1;
+                node.handler = Some(self.string_lit()?);
+                let scala: bool = node
+                    .language
+                    .as_deref()
+                    .is_some_and(|language| language.eq_ignore_ascii_case(SCALA_LANGUAGE));
+                if scala && node.environment.is_empty() {
+                    return Err(self.error_with(
+                        "Operation not allowed: ENVIRONMENT is required for Scala UDF",
+                        handler,
+                        true,
+                    ));
+                }
                 if !self.kw("AS") {
                     return Ok(Expression::CreateFunction(Box::new(node)));
                 }

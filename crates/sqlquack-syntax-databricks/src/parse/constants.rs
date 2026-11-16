@@ -372,6 +372,9 @@ pub(crate) const SECURABLE_KINDS: [(&[&str], bool); 19] = [
 /// The securable kinds that never take a name.
 pub(crate) const NAMELESS_SECURABLES: [&str; 2] = ["ANY FILE", "ANONYMOUS FUNCTION"];
 
+/// The language whose handler needs an `ENVIRONMENT` naming its dependencies.
+pub(crate) const SCALA_LANGUAGE: &str = "SCALA";
+
 /// Interval fields a year-month interval type may start with.
 pub(crate) const YEAR_MONTH: [&str; 2] = ["YEAR", "MONTH"];
 /// Interval fields a day-time interval type may start with.
