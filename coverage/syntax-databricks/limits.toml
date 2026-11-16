@@ -1705,20 +1705,6 @@ reason = "without a qualifier INTERVAL is a type the grammar admits (SqlBasePars
 
 [[suppress]]
 form = "db.expressions.names.identifier-2"
-kind = "negative_neighbour"
-target = "<schema_name> in [ <schema_name> . ]"
-note = "a string literal in place of <schema_name>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.names.identifier-2"
-kind = "negative_neighbour"
-target = "<view_identifier>"
-note = "a string literal in place of <view_identifier>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.names.identifier-2"
 kind = "required_operand_missing"
 target = "<identifier_clause>"
 note = "omit <identifier_clause>"
@@ -1775,38 +1761,10 @@ reason = "in an expression a lone word is a column reference: Databricks formall
 
 [[suppress]]
 form = "db.expressions.names.identifier-6"
-kind = "negative_neighbour"
-target = "<schema_name> in [ <schema_name> . ]"
-note = "a string literal in place of <schema_name>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.names.identifier-6"
-kind = "negative_neighbour"
-target = "<function_identifier>"
-note = "a string literal in place of <function_identifier>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.names.identifier-6"
 kind = "required_operand_missing"
 target = "<identifier_clause>"
 note = "omit <identifier_clause>"
 reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
-
-[[suppress]]
-form = "db.expressions.names.identifier-7"
-kind = "negative_neighbour"
-target = "<schema_name> in [ <schema_name> . ]"
-note = "a string literal in place of <schema_name>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.names.identifier-7"
-kind = "negative_neighbour"
-target = "<procedure_identifier>"
-note = "a string literal in place of <procedure_identifier>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
 
 [[suppress]]
 form = "db.expressions.names.identifier-7"
@@ -1831,20 +1789,6 @@ reason = "in an expression a lone word is a column reference: Databricks formall
 
 [[suppress]]
 form = "db.expressions.names.identifier"
-kind = "negative_neighbour"
-target = "<catalog_name> in [ <catalog_name> . ]"
-note = "a string literal in place of <catalog_name>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.names.identifier"
-kind = "negative_neighbour"
-target = "<schema_identifier>"
-note = "a string literal in place of <schema_identifier>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.names.identifier"
 kind = "required_operand_missing"
 target = "<identifier_clause>"
 note = "omit <identifier_clause>"
@@ -1865,20 +1809,6 @@ note = "the form without its required ("
 reason = "without its ( and ) a single column_identifier is the page's other column alias form, [AS] column_identifier, so the text parses"
 
 [[suppress]]
-form = "db.expressions.names.subscript-dot-4"
-kind = "negative_neighbour"
-target = "<schema_name> in [ <schema_name> . ]"
-note = "a string literal in place of <schema_name>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.names.subscript-dot-4"
-kind = "negative_neighbour"
-target = "<volume_identifier>"
-note = "a string literal in place of <volume_identifier>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
 form = "db.expressions.names.subscript-dot"
 kind = "negative_neighbour"
 target = "<routine_identifier> in [ <routine_identifier> . ]"
@@ -1890,27 +1820,6 @@ form = "db.expressions.names.subscript-dot"
 kind = "negative_neighbour"
 target = "<parameter_identifier>"
 note = "a string literal in place of <parameter_identifier>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.names.subscript-dot.syntax"
-kind = "negative_neighbour"
-target = "<cursor_identifier>"
-note = "a string literal in place of <cursor_identifier>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.names.syntax"
-kind = "negative_neighbour"
-target = "<table_name>"
-note = "a string literal in place of <table_name>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
-
-[[suppress]]
-form = "db.expressions.names.syntax"
-kind = "negative_neighbour"
-target = "<view_name>"
-note = "a string literal in place of <view_name>"
 reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
 
 [[suppress]]
@@ -5954,20 +5863,6 @@ note = "the form without its required LOWER"
 reason = "without LOWER the column in parentheses is a parenthesised expression (SqlBaseParser primaryExpression #parenthesizedExpression), and a collation may follow any primary expression (#collate), so the text parses"
 
 [[suppress]]
-form = "db.expressions.names.identifier"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required IDENTIFIER after "
-reason = "without IDENTIFIER its clause ( 'v1' ) is a string literal in parentheses, itself a valid expression (SqlBaseParser primaryExpression #parenthesizedExpression), so the text parses in the expression context every case is written in"
-
-[[suppress]]
-form = "db.expressions.names.identifier-2"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required IDENTIFIER after "
-reason = "without IDENTIFIER its clause ( 'v1' ) is a string literal in parentheses, itself a valid expression (SqlBaseParser primaryExpression #parenthesizedExpression), so the text parses in the expression context every case is written in"
-
-[[suppress]]
 form = "db.expressions.names.identifier-3"
 kind = "negative_neighbour"
 target = ""
@@ -5983,20 +5878,6 @@ reason = "without IDENTIFIER its clause ( 'v1' ) is a string literal in parenthe
 
 [[suppress]]
 form = "db.expressions.names.identifier-5"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required IDENTIFIER after "
-reason = "without IDENTIFIER its clause ( 'v1' ) is a string literal in parentheses, itself a valid expression (SqlBaseParser primaryExpression #parenthesizedExpression), so the text parses in the expression context every case is written in"
-
-[[suppress]]
-form = "db.expressions.names.identifier-6"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required IDENTIFIER after "
-reason = "without IDENTIFIER its clause ( 'v1' ) is a string literal in parentheses, itself a valid expression (SqlBaseParser primaryExpression #parenthesizedExpression), so the text parses in the expression context every case is written in"
-
-[[suppress]]
-form = "db.expressions.names.identifier-7"
 kind = "negative_neighbour"
 target = ""
 note = "the form without its required IDENTIFIER after "

@@ -2178,6 +2178,13 @@ target = "<catalog_name> in [ <catalog_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier.o025"
+kind = "negative_neighbour"
+required = true
+target = "<catalog_name> in [ <catalog_name> . ]"
+note = "a string literal in place of <catalog_name>"
+
+[[obligation]]
 id = "db.expressions.names.identifier.o023"
 kind = "required_operand_missing"
 required = true
@@ -2192,11 +2199,24 @@ target = "<schema_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier.o026"
+kind = "negative_neighbour"
+required = true
+target = "<schema_identifier>"
+note = "a string literal in place of <schema_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier.o024"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
 note = "a valid operand"
+
+[[obligation]]
+id = "db.expressions.names.identifier.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required IDENTIFIER after "
 
 [[obligation]]
 id = "db.expressions.names.identifier.o014"
@@ -2275,6 +2295,13 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-2.o025"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ <schema_name> . ]"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-2.o023"
 kind = "required_operand_missing"
 required = true
@@ -2289,11 +2316,24 @@ target = "<view_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-2.o026"
+kind = "negative_neighbour"
+required = true
+target = "<view_identifier>"
+note = "a string literal in place of <view_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-2.o024"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
 note = "a valid operand"
+
+[[obligation]]
+id = "db.expressions.names.identifier-2.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required IDENTIFIER after "
 
 [[obligation]]
 id = "db.expressions.names.identifier-2.o014"
@@ -2655,6 +2695,13 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-6.o025"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ <schema_name> . ]"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-6.o023"
 kind = "required_operand_missing"
 required = true
@@ -2669,11 +2716,24 @@ target = "<function_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-6.o026"
+kind = "negative_neighbour"
+required = true
+target = "<function_identifier>"
+note = "a string literal in place of <function_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-6.o024"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
 note = "a valid operand"
+
+[[obligation]]
+id = "db.expressions.names.identifier-6.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required IDENTIFIER after "
 
 [[obligation]]
 id = "db.expressions.names.identifier-6.o014"
@@ -2752,6 +2812,13 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-7.o025"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ <schema_name> . ]"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-7.o023"
 kind = "required_operand_missing"
 required = true
@@ -2766,11 +2833,24 @@ target = "<procedure_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-7.o026"
+kind = "negative_neighbour"
+required = true
+target = "<procedure_identifier>"
+note = "a string literal in place of <procedure_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-7.o024"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
 note = "a valid operand"
+
+[[obligation]]
+id = "db.expressions.names.identifier-7.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required IDENTIFIER after "
 
 [[obligation]]
 id = "db.expressions.names.identifier-7.o014"
@@ -3416,6 +3496,13 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.subscript-dot-4.o016"
+kind = "negative_neighbour"
+required = true
+target = "<schema_name> in [ <schema_name> . ]"
+note = "a string literal in place of <schema_name>"
+
+[[obligation]]
 id = "db.expressions.names.subscript-dot-4.o015"
 kind = "required_operand_missing"
 required = true
@@ -3428,6 +3515,13 @@ kind = "operand_type_class"
 required = true
 target = "<volume_identifier>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "db.expressions.names.subscript-dot-4.o017"
+kind = "negative_neighbour"
+required = true
+target = "<volume_identifier>"
+note = "a string literal in place of <volume_identifier>"
 
 [[obligation]]
 id = "db.expressions.names.subscript-dot-4.o009"
@@ -3480,6 +3574,13 @@ kind = "operand_type_class"
 required = true
 target = "<cursor_identifier>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "db.expressions.names.subscript-dot.syntax.o013"
+kind = "negative_neighbour"
+required = true
+target = "<cursor_identifier>"
+note = "a string literal in place of <cursor_identifier>"
 
 [[obligation]]
 id = "db.expressions.names.subscript-dot.syntax.o004"
@@ -3556,11 +3657,25 @@ target = "<table_name>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.syntax.o014"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+note = "a string literal in place of <table_name>"
+
+[[obligation]]
 id = "db.expressions.names.syntax.o006"
 kind = "operand_type_class"
 required = true
 target = "<view_name>"
 note = "a valid identifier"
+
+[[obligation]]
+id = "db.expressions.names.syntax.o015"
+kind = "negative_neighbour"
+required = true
+target = "<view_name>"
+note = "a string literal in place of <view_name>"
 
 [[obligation]]
 id = "db.expressions.names.syntax.o008"
