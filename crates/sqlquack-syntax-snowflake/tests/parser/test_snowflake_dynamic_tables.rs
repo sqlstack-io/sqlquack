@@ -432,3 +432,56 @@ fn given_optional_words_in_table_and_index_ddl_when_parsing_then_they_are_kept()
         );
     }
 }
+
+#[test]
+fn given_a_refresh_boundary_with_time_travel_when_parsing_then_the_clause_is_kept() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "the call stays the table source",
+            sql: "SELECT * FROM DYNAMIC_TABLE_REFRESH_BOUNDARY ( v1 ) AT ( OFFSET => -60 ) ;",
+            pointer: "/0/select/from/expressions/0/table/identifier_func/function/name",
+            expected_value: json!("DYNAMIC_TABLE_REFRESH_BOUNDARY"),
+        },
+        ProjectionTestCase {
+            description: "AT after the call is its time travel",
+            sql: "SELECT * FROM DYNAMIC_TABLE_REFRESH_BOUNDARY ( v1 ) AT ( OFFSET => -60 ) ;",
+            pointer: "/0/select/from/expressions/0/table/when/kind",
+            expected_value: json!("OFFSET"),
+        },
+        ProjectionTestCase {
+            description: "BEFORE after the call is its time travel",
+            sql: "SELECT * FROM DYNAMIC_TABLE_REFRESH_BOUNDARY ( v1 ) BEFORE ( OFFSET => -60 ) ;",
+            pointer: "/0/select/from/expressions/0/table/when/this/identifier/name",
+            expected_value: json!("BEFORE"),
+        },
+        ProjectionTestCase {
+            description: "CHANGES after the call keeps its information and AT",
+            sql: "SELECT * FROM DYNAMIC_TABLE_REFRESH_BOUNDARY ( v1 ) CHANGES ( INFORMATION => DEFAULT ) AT ( OFFSET => -60 ) ;",
+            pointer: "/0/select/from/expressions/0/table/changes/at_before/historical_data/kind",
+            expected_value: json!("OFFSET"),
+        },
+        ProjectionTestCase {
+            description: "an alias after the clause belongs to the table source",
+            sql: "SELECT * FROM DYNAMIC_TABLE_REFRESH_BOUNDARY ( v1 ) AT ( OFFSET => -60 ) AS x ;",
+            pointer: "/0/select/from/expressions/0/table/alias/name",
+            expected_value: json!("x"),
+        },
+        ProjectionTestCase {
+            description: "the call without a clause stays a call",
+            sql: "SELECT * FROM DYNAMIC_TABLE_REFRESH_BOUNDARY ( v1 ) ;",
+            pointer: "/0/select/from/expressions/0/function/name",
+            expected_value: json!("DYNAMIC_TABLE_REFRESH_BOUNDARY"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statements(test_case.sql, Dialect::Snowflake, CallMode::Faithful)
+                .pointer(test_case.pointer)
+                .cloned()
+                .unwrap_or_default(),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
