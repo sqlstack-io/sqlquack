@@ -1,5 +1,6 @@
 //! Parser queries: select.
 
+use crate::parser::constants::AT_SIGN;
 use crate::parser::constants::SECOND_PREVIOUS_OFFSET;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::functions::models::Function;
@@ -22,6 +23,7 @@ use sqlquack_syntax::expressions::queries::models::Offset;
 use sqlquack_syntax::expressions::queries::models::Select;
 use sqlquack_syntax::expressions::queries::models::Subquery;
 use sqlquack_syntax::expressions::queries::models::Where;
+use sqlquack_syntax::expressions::stages::models::StageReference;
 use sqlquack_syntax::expressions::statements::models::Annotated;
 use sqlquack_syntax::expressions::statements::models::Paren;
 use sqlquack_syntax::expressions::statements::models::Var;
@@ -983,6 +985,22 @@ impl Parser {
         })
     }
 
+    /// The stage of `DIRECTORY ( @stage )`; a bare `@`, which Snowflake parses, is a stage reference with no name.
+    fn parse_directory_stage(&mut self) -> Result<Expression> {
+        if self.peek_text() == AT_SIGN && self.check_next(TokenType::RParen) {
+            self.skip();
+            return Ok(Expression::StageReference(Box::new(StageReference {
+                name: AT_SIGN.to_string(),
+                path: None,
+                file_format: None,
+                pattern: None,
+                quoted: false,
+                stage_name: None,
+            })));
+        }
+        self.parse_stage_location()
+    }
+
     fn parse_table_function_source(&mut self, first_name: String) -> Result<Expression> {
         Ok({
             {
@@ -1097,6 +1115,11 @@ impl Parser {
                     } else {
                         let args = if self.check(TokenType::RParen) {
                             Vec::new()
+                        } else if first_name.eq_ignore_ascii_case("DIRECTORY")
+                            && self.peek_text().starts_with('@')
+                            && !self.check(TokenType::String)
+                        {
+                            vec![self.parse_directory_stage()?]
                         } else {
                             self.parse_function_arguments()?
                         };
