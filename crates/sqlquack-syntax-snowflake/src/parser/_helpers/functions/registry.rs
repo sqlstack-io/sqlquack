@@ -7,6 +7,7 @@ use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::functions::models::AggregateFunction;
 use sqlquack_syntax::expressions::functions::models::CurrentSchemas;
 use sqlquack_syntax::expressions::functions::models::Function;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::operators::models::Cast;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::expressions::typed_functions::main::new_unary_func::new_unary_func;
@@ -419,7 +420,7 @@ impl Parser {
 
                     name: name.to_string(),
                     args,
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,
@@ -520,7 +521,7 @@ impl Parser {
 
                         name: name.to_string(),
                         args,
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments: Vec::new(),
                         use_bracket_syntax: false,
                         no_parens: false,
@@ -543,7 +544,7 @@ impl Parser {
 
                         name: "COALESCE".to_string(),
                         args,
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments: Vec::new(),
                         use_bracket_syntax: false,
                         no_parens: false,
@@ -570,7 +571,7 @@ impl Parser {
 
                         name: name.to_string(),
                         args,
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments: Vec::new(),
                         use_bracket_syntax: false,
                         no_parens: false,
@@ -602,7 +603,7 @@ impl Parser {
 
                         name: name.to_string(),
                         args,
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments: Vec::new(),
                         use_bracket_syntax: false,
                         no_parens: false,
@@ -631,7 +632,7 @@ impl Parser {
 
                     name: name.to_string(),
                     args,
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,
@@ -672,7 +673,7 @@ impl Parser {
 
                         name: name.to_string(),
                         args: Vec::new(),
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments: Vec::new(),
                         use_bracket_syntax: false,
                         no_parens: false,
@@ -702,7 +703,7 @@ impl Parser {
 
                     name: "XMLCOMMENT".to_string(),
                     args,
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,
@@ -764,7 +765,7 @@ impl Parser {
 
                     name: name.to_string(),
                     args,
-                    distinct: false,
+                    set_quantifier: SetQuantifier::None,
                     trailing_comments: Vec::new(),
                     use_bracket_syntax: false,
                     no_parens: false,
@@ -836,7 +837,7 @@ impl Parser {
 
             name: name.to_string(),
             args,
-            distinct,
+            set_quantifier: SetQuantifier::from_distinct(distinct),
             filter,
             order_by: Vec::new(),
             limit: None,

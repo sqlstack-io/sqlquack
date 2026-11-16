@@ -28,7 +28,7 @@ use crate::snowflake::conversion::_helpers::support::divergence::diverge;
 use crate::snowflake::conversion::_helpers::support::scope::Emitted;
 use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
 use crate::snowflake::conversion::_helpers::support::tree::{
-    flag, function_construct, list, payload_object, require_understood,
+    SET_QUANTIFIER, function_construct, is_distinct, list, payload_object, require_understood,
 };
 use crate::snowflake::conversion::_helpers::support::typed_leaves::compared_value;
 use crate::snowflake::conversion::constants::{
@@ -56,8 +56,8 @@ pub(crate) fn named_aggregate(
     let _rule = site.context.log.rule(NAMED_AGGREGATES);
     let refuse = |reason: String| outside_conditions(construct.clone(), reason);
     let payload = payload_object(payload, &construct)?;
-    require_understood(payload, &["name", "args", "distinct"], &construct)?;
-    let distinct = flag(payload, "distinct");
+    require_understood(payload, &["name", "args", SET_QUANTIFIER], &construct)?;
+    let distinct = is_distinct(payload);
     if distinct != (name == MULTI_COUNT) && !is_statistic(name) {
         return Err(refuse(format!(
             "{name} with or without DISTINCT as written"

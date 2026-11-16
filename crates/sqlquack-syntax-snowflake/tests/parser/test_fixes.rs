@@ -574,8 +574,8 @@ fn given_reviewed_tree_findings_when_parsing_faithfully_then_the_tree_records_wh
         ProjectionTestCase {
             description: "HASH_AGG takes DISTINCT over several arguments",
             sql: "SELECT HASH_AGG(DISTINCT 1, 2)",
-            pointer: "/aggregate_function/distinct",
-            expected_value: json!(true),
+            pointer: "/aggregate_function/set_quantifier",
+            expected_value: json!("distinct"),
         },
         ProjectionTestCase {
             description: "OBJECT_AGG takes DISTINCT over its key and value",
@@ -586,8 +586,8 @@ fn given_reviewed_tree_findings_when_parsing_faithfully_then_the_tree_records_wh
         ProjectionTestCase {
             description: "OBJECT_AGG without DISTINCT stays not distinct",
             sql: "SELECT OBJECT_AGG(v1, 1) FROM t1",
-            pointer: "/aggregate_function/distinct",
-            expected_value: json!(false),
+            pointer: "/aggregate_function/set_quantifier",
+            expected_value: json!("none"),
         },
     ];
 
@@ -1691,8 +1691,8 @@ fn given_a_documented_snowflake_element_when_parsing_then_the_tree_keeps_it() {
         ProjectionTestCase {
             description: "DISTINCT is kept on an aggregate of two arguments",
             sql: "SELECT APPROX_COUNT_DISTINCT ( DISTINCT 1 , 1 )",
-            pointer: "/0/select/expressions/0/function/distinct",
-            expected_value: json!(true),
+            pointer: "/0/select/expressions/0/function/set_quantifier",
+            expected_value: json!("distinct"),
         },
         ProjectionTestCase {
             description: "TIMESTAMP WITHOUT TIME ZONE keeps its written name, not bare TIMESTAMP",

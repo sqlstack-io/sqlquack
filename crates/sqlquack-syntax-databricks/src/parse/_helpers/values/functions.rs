@@ -1,6 +1,7 @@
 //! `functionCall` (SqlBaseParser.g4), with `windowSpec`, `windowFrame` and `sortItem`.
 
 use sqlquack_syntax::Expression;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::functions::models::WithinGroup;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::{
@@ -19,14 +20,15 @@ impl Parser<'_> {
     /// A call of `name`: `( [DISTINCT|ALL] args )` and its trailing clauses.
     pub(crate) fn function_call(&mut self, name: Vec<Identifier>) -> Parsing<Expression> {
         self.expect_char('(')?;
-        let mut distinct: bool = false;
+        let mut quantifier: SetQuantifier = SetQuantifier::None;
         let mut args: Vec<Expression> = Vec::new();
         if !self.is_char(')') {
             if self.kw("DISTINCT") && !self.char_at(1, ')') && !self.char_at(1, ',') {
                 self.at += 1;
-                distinct = true;
+                quantifier = SetQuantifier::Distinct;
             } else if self.kw("ALL") && !self.char_at(1, ')') && !self.char_at(1, ',') {
                 self.at += 1;
+                quantifier = SetQuantifier::All;
             }
             args = self.comma_list(|parser| parser.function_argument())?;
         }
@@ -55,11 +57,13 @@ impl Parser<'_> {
             true => Some(self.window_spec()?),
             false => None,
         };
-        let call = function(name, args);
-        let mut node: Expression = match distinct || filter.is_some() || ignore_nulls.is_some() {
-            true => aggregate(call, distinct, filter, ignore_nulls),
-            false => Expression::Function(Box::new(call)),
-        };
+        let mut call = function(name, args);
+        call.set_quantifier = quantifier;
+        let mut node: Expression =
+            match quantifier.is_distinct() || filter.is_some() || ignore_nulls.is_some() {
+                true => aggregate(call, filter, ignore_nulls),
+                false => Expression::Function(Box::new(call)),
+            };
         if let Some(order_by) = within {
             node = Expression::WithinGroup(Box::new(WithinGroup {
                 this: node,

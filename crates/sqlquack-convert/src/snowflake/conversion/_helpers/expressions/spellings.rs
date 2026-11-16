@@ -5,7 +5,7 @@ use serde_json::{Map, Value, json};
 use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::snowflake::conversion::_helpers::support::tree::{
-    Payload, function_construct, is_inert, node_construct, node_kind,
+    Payload, function_construct, is_distinct, is_inert, node_construct, node_kind,
 };
 use crate::snowflake::conversion::constants::{
     AGGREGATE_CALL_KIND, CALL_KIND, CALL_SPELLINGS, REGEXP_LIKE_NAME,
@@ -55,17 +55,14 @@ fn plain(payload: &Payload, aggregate: bool, shape: CallShape) -> bool {
     let unmodified = ["order_by", "limit"]
         .iter()
         .all(|field| payload.get(*field).is_none_or(is_inert));
-    let scalar_only = aggregate
-        || ["distinct", "filter"]
-            .iter()
-            .all(|field| payload.get(*field).is_none_or(is_inert));
+    let scalar_only =
+        aggregate || (!is_distinct(payload) && payload.get("filter").is_none_or(is_inert));
     let nulls = shape == CallShape::FirstLast || payload.get("ignore_nulls").is_none_or(is_inert);
     unquoted && unmodified && scalar_only && nulls
 }
 
 /// The payload `spelling`'s rule reads, or `None` for an arity it does not accept.
 fn shaped(spelling: &SpellingRule, arguments: &[Value], payload: &Payload) -> Option<Value> {
-    let flag = |field: &str| payload.get(field).cloned().unwrap_or(Value::Bool(false));
     let filter = || payload.get("filter").cloned().unwrap_or(Value::Null);
     let typed = match (spelling.shape, arguments) {
         (CallShape::Expressions, [_, ..]) => json!({ "expressions": arguments }),
@@ -108,14 +105,14 @@ fn shaped(spelling: &SpellingRule, arguments: &[Value], payload: &Payload) -> Op
             json!({
                 "this": if star { Value::Null } else { argument.clone() },
                 "star": star,
-                "distinct": flag("distinct"),
+                "distinct": is_distinct(payload),
                 "filter": filter(),
                 "original_name": spelling.name,
             })
         }
         (CallShape::Aggregate, [this]) => json!({
             "this": this,
-            "distinct": flag("distinct"),
+            "distinct": is_distinct(payload),
             "filter": filter(),
             "name": spelling.name,
             "order_by": [],
@@ -126,7 +123,7 @@ fn shaped(spelling: &SpellingRule, arguments: &[Value], payload: &Payload) -> Op
         (CallShape::Offset, [this, offset, default]) => {
             json!({ "this": this, "offset": offset, "default": default })
         }
-        (CallShape::FirstLast, [this]) if is_inert(&flag("distinct")) && filter().is_null() => {
+        (CallShape::FirstLast, [this]) if !is_distinct(payload) && filter().is_null() => {
             let mut typed: Map<String, Value> = Map::new();
             typed.insert("this".to_owned(), this.clone());
             if let Some(ignore) = payload.get("ignore_nulls").filter(|value| !value.is_null()) {
@@ -165,7 +162,6 @@ pub(crate) fn rlike_as_call(payload: &Value) -> Option<Value> {
         json!({ CALL_KIND: {
             "name": REGEXP_LIKE_NAME,
             "args": [text, pattern],
-            "distinct": false,
         }})
     })
 }

@@ -87,6 +87,7 @@ pub(crate) fn unexpected_fields<'a>(payload: &'a Payload, understood: &[&str]) -
             !understood.contains(&field.as_str())
                 && !COSMETIC_FIELDS.contains(&field.as_str())
                 && !is_inert(value)
+                && !(field.as_str() == SET_QUANTIFIER && !is_distinct(payload))
         })
         .map(|(field, _)| field.as_str())
         .collect()
@@ -154,6 +155,14 @@ pub(crate) fn list<'a>(payload: &'a Payload, name: &str) -> &'a [Value] {
         .get(name)
         .and_then(Value::as_array)
         .map_or(&[], Vec::as_slice)
+}
+
+/// A call's set quantifier field: `none`, `all` or `distinct`.
+pub(crate) const SET_QUANTIFIER: &str = "set_quantifier";
+
+/// Whether a call's set quantifier is DISTINCT; an explicit ALL reads exactly as none.
+pub(crate) fn is_distinct(payload: &Payload) -> bool {
+    payload.get(SET_QUANTIFIER).and_then(Value::as_str) == Some("distinct")
 }
 
 /// A boolean field; absent or null reads as false.

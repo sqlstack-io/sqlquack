@@ -3,6 +3,7 @@
 use crate::parser::_helpers::support::dialects::supports_order_by_all;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::functions::models::Function;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::Null;
@@ -134,7 +135,7 @@ impl Parser {
 
                         name: "GROUPING SETS".to_string(),
                         args,
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments: Vec::new(),
                         use_bracket_syntax: false,
                         no_parens: false,
@@ -155,7 +156,7 @@ impl Parser {
 
                         name: "CUBE".to_string(),
                         args,
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments: Vec::new(),
                         use_bracket_syntax: false,
                         no_parens: false,
@@ -176,7 +177,7 @@ impl Parser {
 
                         name: "ROLLUP".to_string(),
                         args,
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments: Vec::new(),
                         use_bracket_syntax: false,
                         no_parens: false,
@@ -275,7 +276,7 @@ impl Parser {
 
                         name: "GROUPING SETS".to_string(),
                         args: inner_args,
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments: Vec::new(),
                         use_bracket_syntax: false,
                         no_parens: false,
@@ -296,7 +297,7 @@ impl Parser {
 
                         name: "CUBE".to_string(),
                         args: inner_args,
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments: Vec::new(),
                         use_bracket_syntax: false,
                         no_parens: false,
@@ -317,7 +318,7 @@ impl Parser {
 
                         name: "ROLLUP".to_string(),
                         args: inner_args,
-                        distinct: false,
+                        set_quantifier: SetQuantifier::None,
                         trailing_comments: Vec::new(),
                         use_bracket_syntax: false,
                         no_parens: false,

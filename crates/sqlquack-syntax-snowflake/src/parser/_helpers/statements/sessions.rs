@@ -16,6 +16,7 @@ use sqlquack_syntax::expressions::columns::models::PrimaryKeyColumnConstraint;
 use sqlquack_syntax::expressions::columns::models::UniqueColumnConstraint;
 use sqlquack_syntax::expressions::functions::models::ForIn;
 use sqlquack_syntax::expressions::functions::models::Function;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::names::main::identifier_from_token::identifier_from_token;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Column;
@@ -1767,7 +1768,7 @@ impl Parser {
 
                 name,
                 args: Vec::new(),
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: true,
@@ -1815,7 +1816,7 @@ impl Parser {
 
             name,
             args,
-            distinct,
+            set_quantifier: SetQuantifier::from_distinct(distinct),
             trailing_comments: Vec::new(),
             use_bracket_syntax: false,
             no_parens: false,

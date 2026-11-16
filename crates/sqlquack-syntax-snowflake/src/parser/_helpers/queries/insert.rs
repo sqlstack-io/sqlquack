@@ -4,6 +4,7 @@ use crate::parser::models::InsertPrefix;
 use crate::parser::models::Parser;
 use crate::parser::types::InsertPartition;
 use sqlquack_syntax::expressions::functions::models::Function;
+use sqlquack_syntax::expressions::functions::models::SetQuantifier;
 use sqlquack_syntax::expressions::names::models::BooleanLiteral;
 use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::expressions::names::models::Identifier;
@@ -400,7 +401,7 @@ impl Parser {
 
                 name: func_name,
                 args,
-                distinct: false,
+                set_quantifier: SetQuantifier::None,
                 trailing_comments: Vec::new(),
                 use_bracket_syntax: false,
                 no_parens: false,
