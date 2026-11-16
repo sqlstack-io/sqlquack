@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import queue
 import threading
 import time
 import urllib.error
@@ -56,6 +57,29 @@ def environment(name: str) -> str:
     return value
 
 
+def exchange(request: urllib.request.Request) -> bytes:
+    """The reply body, or TimeoutError once the whole request outlasts HTTP_SECONDS."""
+    replies: queue.Queue[bytes | Exception] = queue.Queue(maxsize=1)
+    threading.Thread(
+        target=_deliver, kwargs={"request": request, "replies": replies}, daemon=True
+    ).start()
+    try:
+        reply: bytes | Exception = replies.get(timeout=HTTP_SECONDS)
+    except queue.Empty:
+        raise TimeoutError(f"no complete reply within {HTTP_SECONDS:g} s") from None
+    if isinstance(reply, Exception):
+        raise reply
+    return reply
+
+
+def _deliver(*, request: urllib.request.Request, replies: queue.Queue[bytes | Exception]) -> None:
+    try:
+        with urllib.request.urlopen(request, timeout=HTTP_SECONDS) as reply:  # noqa: S310
+            replies.put(reply.read())
+    except Exception as error:  # noqa: BLE001
+        replies.put(error)
+
+
 class Client:
     """One warehouse, one service principal; a token refreshed before it expires; thread-safe."""
 
@@ -88,9 +112,8 @@ class Client:
         """The JSON reply, retried after a 429, a 5xx or a transport failure unless sent `once`."""
         for attempt in range(HTTP_ATTEMPTS):
             try:
-                with urllib.request.urlopen(request, timeout=HTTP_SECONDS) as reply:  # noqa: S310
-                    sent: bytes = reply.read()
-                    return json.loads(sent) if sent.strip() else {}
+                sent: bytes = exchange(request)
+                return json.loads(sent) if sent.strip() else {}
             except urllib.error.HTTPError as error:
                 if (
                     error.code != HTTP_RETRY_STATUS

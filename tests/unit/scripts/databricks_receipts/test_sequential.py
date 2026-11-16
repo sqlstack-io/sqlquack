@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import json
+import threading
+import time
 import urllib.request
+from collections.abc import Callable
 from pathlib import Path
 from typing import cast
 
@@ -41,6 +44,7 @@ from tests.unit.scripts.databricks_receipts._test_types import (
     ResumeRefusalTestCase,
     ResumeTestCase,
     SequentialHeldTestCase,
+    StallTestCase,
     StopTestCase,
     TokenTestCase,
     UndecidedTestCase,
@@ -930,6 +934,93 @@ def test_given_a_reply_that_never_arrives_when_calling_then_only_a_statement_is_
     sent.clear()
     client.check()
     assert sent == test_case.expected_check
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        StallTestCase(
+            description="a statement reply whose read never returns",
+            deadline=0.2,
+            expected_error=f"^{REPLY_LOST}: no complete reply within 0.2 s",
+            expected_seconds=5.0,
+            expected_after={"state": "RUNNING"},
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_stalled_read_when_calling_then_the_reply_is_lost_at_the_deadline(
+    test_case: StallTestCase, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("DATABRICKS_HOST", "https://example.com")
+    monkeypatch.setenv("DATABRICKS_WAREHOUSE_ID", "w1")
+    monkeypatch.setattr(client_module, "HTTP_SECONDS", test_case.deadline)
+    client: Client = Client()
+    monkeypatch.setattr(client, "token", lambda: "t1")
+    stalled: threading.Event = threading.Event()
+    waits: dict[str, Callable[..., bool]] = {"POST": stalled.wait, "GET": lambda **_: True}
+
+    def urlopen(request: urllib.request.Request, timeout: float) -> Reply:
+        waits[request.get_method()](timeout=30)
+        return Reply(b'{"state": "RUNNING"}')
+
+    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+    started: float = time.monotonic()
+
+    with pytest.raises(ReplyLost, match=test_case.expected_error):
+        client._call(method="POST", path="/x", once=True)
+    elapsed: float = time.monotonic() - started
+    stalled.set()
+
+    assert elapsed < test_case.expected_seconds
+    assert client._call(method="GET", path="/x") == test_case.expected_after
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        UndecidedTestCase(
+            description="a case whose statement reply stalls mid-read",
+            expected_receipts=2,
+            expected_undecided=["db.q.k2"],
+            expected_reasons={"db.q.k2": "reply lost"},
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_case_whose_reply_stalls_when_run_sequentially_then_it_alone_is_undecided(
+    test_case: UndecidedTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(client_module, "HTTP_SECONDS", 0.2)
+    stalled: threading.Event = threading.Event()
+
+    def urlopen(request: urllib.request.Request, timeout: float) -> Reply:
+        stalled.wait(timeout=30)
+        return Reply(b"{}")
+
+    def stall(fake: FakeClient) -> Row:
+        return fake._send(request=urllib.request.Request("https://example.com/x"), once=True)
+
+    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+    fake: FakeClient = use(monkeypatch, FakeClient({"SELECT 2": stall}))
+    cases: list[Row] = [
+        case("SELECT 1", "db.q.k1"),
+        case("SELECT 2", "db.q.k2"),
+        case("SELECT 3", "db.q.k3"),
+    ]
+
+    summary: Row = record_sequential(
+        cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
+    )
+    stalled.set()
+
+    assert (summary["receipts"], summary["undecided"]) == (
+        test_case.expected_receipts,
+        test_case.expected_undecided,
+    )
+    assert summary["undecided_reasons"] == test_case.expected_reasons
+    assert "SELECT 3" in fake.statements
+    assert not list((tmp_path / "private").glob("*.sequential-stop.json"))
 
 
 @pytest.mark.parametrize(

@@ -179,6 +179,15 @@ class UndecidedTestCase:
 
 
 @dataclass(frozen=True)
+class StallTestCase:
+    description: str
+    deadline: float
+    expected_error: str
+    expected_seconds: float
+    expected_after: Row
+
+
+@dataclass(frozen=True)
 class CheckTestCase:
     description: str
     failing_checks: frozenset[int]
