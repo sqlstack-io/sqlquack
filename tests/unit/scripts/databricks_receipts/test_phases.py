@@ -302,6 +302,40 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             expected_parse_only=None,
         ),
         PhaseTestCase(
+            description="a time-travel timestamp before the table's earliest version",
+            message="[DELTA_TIMESTAMP_EARLIER_THAN_COMMIT_RETENTION] The provided timestamp "
+            "(2026-11-01 00:00:00.0) is before the earliest version available to this table "
+            "(2026-11-16 18:51:03.147). SQLSTATE: 42816",
+            sqlstate="42816",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a temporary function named like an existing routine",
+            message="[ROUTINE_ALREADY_EXISTS] Cannot create the routine `abs` because a routine of "
+            "that name already exists. SQLSTATE: 42723",
+            sqlstate="42723",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a function dependency that cannot be installed",
+            message="[ISOLATION_ENVIRONMENT_USER_ERROR.UC_VOLUME_NO_MATCHING_DISTRIBUTION] Failed to "
+            "install environment dependencies for f1. Could not find a library file at "
+            "'/Volumes/c1/s1/v1/u1.jar'. SQLSTATE: 39000",
+            sqlstate="39000",
+            expected_phase="runtime_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a table function whose body returns fewer columns than it declares",
+            message="The number of columns produced by the RETURN clause (num: `1`) does not match "
+            "the number of column names specified by the RETURNS clause (num: `2`) of f1.",
+            sqlstate="",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
             description="an analysis class with no reviewed row",
             message="[DIVIDE_BY_ZERO] Division by zero. SQLSTATE: 22012",
             sqlstate="22012",

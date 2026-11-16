@@ -225,6 +225,9 @@ LATER_PHASES: dict[str, str] = {
     "UDTF_ALIAS_NUMBER_MISMATCH": SEMANTIC_ERROR,
     "INVALID_FIELD_NAME": SEMANTIC_ERROR,
     "UNEXPECTED_INPUT_TYPE": SEMANTIC_ERROR,
+    "DELTA_TIMESTAMP_EARLIER_THAN_COMMIT_RETENTION": SEMANTIC_ERROR,
+    "ROUTINE_ALREADY_EXISTS": SEMANTIC_ERROR,
+    "ISOLATION_ENVIRONMENT_USER_ERROR.UC_VOLUME_NO_MATCHING_DISTRIBUTION": RUNTIME_ERROR,
     "DELTA_OPERATION_NOT_ALLOWED_DETAIL": UNSUPPORTED_FEATURE,
     "DELTA_TRUNCATE_TABLE_PARTITION_NOT_SUPPORTED": UNSUPPORTED_FEATURE,
     "DELTA_CLUSTER_BY_EXPRESSIONS_NOT_SUPPORTED": UNSUPPORTED_FEATURE,
@@ -356,6 +359,10 @@ UNCLASSED_LATER: tuple[tuple[re.Pattern[str], str], ...] = (
     ),
     (re.compile(r"^Cannot access non /Workspace local filesystem path: "), RUNTIME_ERROR),
     (re.compile(r"^QUALIFY must be used with at least one window function"), SEMANTIC_ERROR),
+    (
+        re.compile(r"^The number of columns produced by the RETURN clause \(num: `\d+`\) "),
+        SEMANTIC_ERROR,
+    ),
     (
         re.compile(r"^APPLY CHANGES query only support TRACK HISTORY for SCD TYPE 2\.$"),
         SEMANTIC_ERROR,
