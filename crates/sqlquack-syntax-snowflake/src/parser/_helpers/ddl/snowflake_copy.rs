@@ -221,9 +221,6 @@ impl Parser {
             return Ok(());
         }
         let end = self.copy_statement_end();
-        if self.copy_path_comment(end) {
-            return Ok(());
-        }
         let files = self.copy_word(self.current, "FILES");
         let mut at = self.current + usize::from(files);
         if self.copy_type(at) != Some(TokenType::Into) {
@@ -285,19 +282,6 @@ impl Parser {
             at += 1;
         }
         at
-    }
-
-    /// Whether the tokens end in a stage followed directly by `//`, which Snowflake reads as a path and the tokenizer as a comment.
-    fn copy_path_comment(&self, end: usize) -> bool {
-        let (Some(source), Some(last)) = (
-            self.source.as_deref(),
-            end.checked_sub(1).and_then(|at| self.tokens.get(at)),
-        ) else {
-            return false;
-        };
-        end == self.tokens.len()
-            && source.chars().skip(last.span.end).take(2).eq("//".chars())
-            && (self.current..end).any(|at| self.copy_is_stage(at))
     }
 
     fn copy_type(&self, at: usize) -> Option<TokenType> {
