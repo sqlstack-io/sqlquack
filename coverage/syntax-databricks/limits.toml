@@ -6766,3 +6766,17 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required STREAMING"
 reason = "ALTER TABLE takes a schedule clause in the warehouse's parser: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T095943.990438Z) parses ALTER TABLE t1 ADD SCHEDULE EVERY 1 HOUR and answers ALTER_SCHEDULE_INVALID_ENTITY, not a syntax error"
+
+[[suppress]]
+form = "db.ddl.create-policy"
+kind = "required_operand_missing"
+target = "<catalog_name>"
+note = "omit <catalog_name>"
+reason = "CATALOG alone reads as the name of the policy target: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T112320.575489Z) parses CREATE POLICY v1 ON CATALOG ROW FILTER f1 TO `u1` FOR TABLES and answers UC_CATALOG_NAME_NOT_PROVIDED, not a syntax error"
+
+[[suppress]]
+form = "db.ddl.create-policy"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SCHEMA after ON"
+reason = "a policy target may be a bare name: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T112320.575489Z) parses CREATE POLICY v1 ON s1 ROW FILTER f1 TO `u1` FOR TABLES and answers PRINCIPAL_DOES_NOT_EXIST, not a syntax error"

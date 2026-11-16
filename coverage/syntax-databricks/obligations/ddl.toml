@@ -12969,13 +12969,6 @@ required = true
 target = "{ METASTORE | CATALOG <catalog_name> | SCHEMA <schema_name>… → { MODEL SERVICE | MODEL PROVIDER SERVICE | MCP SERVICE | AGENT SERVICE | SKILL } <securable_name>"
 
 [[obligation]]
-id = "db.ddl.create-policy.o012"
-kind = "required_operand_missing"
-required = true
-target = "<catalog_name>"
-note = "omit <catalog_name>"
-
-[[obligation]]
 id = "db.ddl.create-policy.o013"
 kind = "operand_type_class"
 required = true
@@ -13150,12 +13143,6 @@ id = "db.ddl.create-policy.o042"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
-
-[[obligation]]
-id = "db.ddl.create-policy.o044"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after ON"
 
 [[obligation]]
 id = "db.ddl.create-policy.o046"

@@ -2695,3 +2695,11 @@ ids = [
   "db.functions.data-skipping-summary.o004",
   "db.functions.event-log.o007",
 ]
+
+[[retired]]
+retired_in = "436b31a2f5e427009ed637b79258145402b97c95"
+reason = "a CREATE POLICY target may be a bare name in the warehouse's parser, so the negatives without a catalog name and without SCHEMA are suppressed with the receipts that show it"
+ids = [
+  "db.ddl.create-policy.o012",
+  "db.ddl.create-policy.o044",
+]
