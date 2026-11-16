@@ -1256,9 +1256,11 @@ impl Parser {
 
         self.expect_token(TokenType::LParen)?;
 
-        let window_name = if (self.check(TokenType::Identifier)
-            || self.check(TokenType::Var)
-            || self.check_keyword())
+        // A semantic view has no named windows, so its windows never start with a name.
+        let window_name = if !self.config.in_semantic_view
+            && (self.check(TokenType::Identifier)
+                || self.check(TokenType::Var)
+                || self.check_keyword())
             && !self.check(TokenType::Partition)
             && !self.check(TokenType::Order)
             && !self.check(TokenType::Rows)

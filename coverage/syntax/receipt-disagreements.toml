@@ -337,8 +337,6 @@ other_receipts_contradicted = [
   "k8a55ca864f02",
   "kf69b9bf0a4c9",
 ]
-"sf.ddl.create-semantic-view.create-or-alter-semantic" = ["kde5a57ccc35a"]
-"sf.ddl.create-semantic-view.create-semantic-view-tables" = ["kf0a8b4db490a"]
 "sf.ddl.create-table.create-table" = ["k294b45271663"]
 "sf.ddl.drop-iceberg-table" = ["k0c6d88e813a7"]
 "sf.functions.system-explain-plan-json" = ["k34b4a27a76b5"]
