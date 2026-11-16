@@ -6689,3 +6689,17 @@ kind = "operand_type_class"
 target = "<function_name> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
 note = "a valid identifier"
 reason = "the derived case puts the function name after FROM s1, which the warehouse refuses (DBSQL 2026.45, run databricks-2026.45-20261116T090736.200251Z: INVALID_SQL_SYNTAX.SHOW_FUNCTIONS_INVALID_PATTERN); a valid function name is the alternative case SHOW FUNCTIONS abs and the [[limit]] SHOW FUNCTIONS LIKE abs"
+
+[[suppress]]
+form = "db.ddl.create-procedure"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required AS"
+reason = "AS before a compound body is optional in the warehouse's parser: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T095943.990438Z) accepts CREATE OR REPLACE PROCEDURE v1 ( ) LANGUAGE SQL SQL SECURITY INVOKER BEGIN SELECT 1 ; END"
+
+[[suppress]]
+form = "db.ddl.create-location"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required STORAGE"
+reason = "STORAGE before CREDENTIAL is optional in the warehouse's parser: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T112320.575489Z) parses CREATE EXTERNAL LOCATION v1 URL 's3://b1/p1' WITH ( CREDENTIAL v1 ) and answers NO_SUCH_STORAGE_CREDENTIAL_EXCEPTION, not a syntax error"

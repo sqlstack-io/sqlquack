@@ -12608,12 +12608,6 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "db.ddl.create-location.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required STORAGE"
-
-[[obligation]]
 id = "db.ddl.create-location.o025"
 kind = "negative_neighbour"
 required = true
@@ -13559,12 +13553,6 @@ id = "db.ddl.create-procedure.o044"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { INVOKER | DEFINER }"
-
-[[obligation]]
-id = "db.ddl.create-procedure.o026"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required AS"
 
 [[obligation]]
 id = "db.ddl.create-procedure.o027"

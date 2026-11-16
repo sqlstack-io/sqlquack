@@ -2672,3 +2672,11 @@ ids = [
   "db.utility.show-functions.o020",
   "db.utility.show-functions.o021",
 ]
+
+[[retired]]
+retired_in = "d7d9aab0f411c0d2f37b6e792ae7f940632781b0"
+reason = "the warehouse's parser takes a procedure's compound body without AS and a location's CREDENTIAL without STORAGE, so the negatives that drop them are suppressed with the receipts that show it"
+ids = [
+  "db.ddl.create-location.o024",
+  "db.ddl.create-procedure.o026",
+]
