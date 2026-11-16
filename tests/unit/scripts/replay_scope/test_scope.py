@@ -100,6 +100,12 @@ def test_given_changed_paths_when_scoping_then_the_replay_matches_what_they_feed
             expected_site=True,
         ),
         ChecksTestCase(
+            description="the website figures need the code checks that compare them",
+            changed=("website/src/data/figures.json",),
+            expected_code=True,
+            expected_site=True,
+        ),
+        ChecksTestCase(
             description="the README needs neither the code checks nor the site",
             changed=("README.md",),
             expected_code=False,

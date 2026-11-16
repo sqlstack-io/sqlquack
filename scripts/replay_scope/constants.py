@@ -28,6 +28,7 @@ REPLAY_INPUT_PATHS: tuple[str, ...] = (
     "tools/sqlquack-coverage-check/",
 )
 DOCUMENTATION_PATHS: tuple[str, ...] = ("website/", "docs/")
+CHECKED_DOCUMENTATION_FILES: tuple[str, ...] = ("website/src/data/figures.json",)
 SITE_PATHS: tuple[str, ...] = (
     "website/",
     ".github/workflows/website-build.yml",

@@ -39,14 +39,15 @@ A form counts as verified only when it has at least one required obligation, eve
 obligation is satisfied by a case recorded on Snowflake, and an approved review of its family is
 current. Anything missing, ambiguous or stale counts as not verified.
 
-Reproduce it from a checkout:
+Reproduce it from a checkout. `scripts/evidence.sh path` fetches the pinned recorded cases and
+prints where they are:
 
 ```bash
-cargo run --release -p sqlquack-coverage-check -- summary
+cargo run --release -p sqlquack-coverage-check -- summary --evidence "$(scripts/evidence.sh path)/syntax/snowflake"
 ```
 
-Its `checked 3479 forms` line counts the whole catalogue. 128 of those forms no longer appear on any
-pinned documentation page, so the figure counts the remaining {figures.SYNTAX_FORMS}.
+Its `checked … forms` line counts the whole catalogue, including forms that no longer appear on any
+pinned documentation page. The figure counts the remaining {figures.SYNTAX_FORMS}.
 
 ## Rules
 
