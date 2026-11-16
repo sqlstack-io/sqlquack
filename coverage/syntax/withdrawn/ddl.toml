@@ -1046,6 +1046,15 @@ valid_as = "sf.ddl.create-dynamic-table.create-or-alter-dynamic positive the doc
 reason = "the rejection renders SQL the documented grammar also accepts"
 
 [[withdrawn]]
+form = "sf.ddl.create-event-routing-table"
+kind = "positive"
+target = ""
+note = "a rule with a string region group, observed"
+sql = "CREATE EVENT ROUTING TABLE v1 WITH RULES v1 = ( REGION_GROUP = 'g1' , REGIONS = ( 'm' ) , DESTINATION_ACCOUNT = v1 . v1 ) ;"
+valid_as = "sf.ddl.create-event-routing-table operand_type_class <region_group>"
+reason = "the rejection renders SQL the documented grammar also accepts"
+
+[[withdrawn]]
 form = "sf.ddl.create-event-table.table-clone"
 kind = "negative_neighbour"
 target = ""
