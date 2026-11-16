@@ -269,13 +269,17 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
         Some((content_start, content_end))
     }
 
-    /// Whether the text just before the position, up to the last whitespace, is a stage such as `@s1`, so a `//` written straight after it continues its path.
+    /// Whether the text just before the position is a stage such as `@s1/a/`, so a `//` written straight after it continues its path; a character no stage path holds, such as `;` or `)`, ends the stage.
     fn follows_stage_word(&self) -> bool {
         let mut start = self.current;
-        while start > 0 && !self.char_at(start - 1).is_whitespace() {
+        while start > 0 && is_stage_path_char(self.char_at(start - 1)) {
             start -= 1;
         }
-        start < self.current && self.char_at(start) == '@'
+        let at = start.wrapping_sub(1);
+        start > 0
+            && start < self.current
+            && self.char_at(at) == '@'
+            && (at == 0 || !is_identifier_char_before_at(self.char_at(at - 1)))
     }
 
     /// Skips whitespace and comments; an unterminated block comment is an error at its `/*`.
@@ -914,4 +918,14 @@ impl AsciiLookups {
         }
         lookups
     }
+}
+
+/// Whether a character can be part of a stage reference after its `@`: a name, a quoted name, a qualifier, a user (`~`) or table (`%`) stage, or a path with `-` and `=` in its segments.
+fn is_stage_path_char(c: char) -> bool {
+    c.is_alphanumeric() || matches!(c, '_' | '$' | '.' | '/' | '~' | '%' | '"' | '-' | '=')
+}
+
+/// Whether a character before an `@` makes it part of a name, such as `"a@b"`, rather than the start of a stage.
+fn is_identifier_char_before_at(c: char) -> bool {
+    c.is_alphanumeric() || matches!(c, '_' | '$' | '"')
 }
