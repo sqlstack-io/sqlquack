@@ -135,6 +135,12 @@ pub struct CreateView {
     /// Snowflake DCM: written as `DEFINE` instead of `CREATE`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub define: bool,
+    /// Snowflake: RECURSIVE VIEW
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub recursive: bool,
+    /// Snowflake: the words that made the view temporary when they were not TEMPORARY, e.g. `TEMP` or `LOCAL TEMP`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub temporary_spelling: Option<String>,
 }
 
 impl CreateView {
@@ -173,6 +179,8 @@ impl CreateView {
             to_table: None,
             table_properties: Vec::new(),
             define: false,
+            recursive: false,
+            temporary_spelling: None,
         }
     }
 }
