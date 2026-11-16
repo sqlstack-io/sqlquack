@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.17.0](https://github.com/sqlstack-io/sqlquack/compare/v0.16.1...v0.17.0) (2026-11-16)
+
+
+### Features
+
+* **syntax:** keep the FROM in Snowflake's DATE_PART ( part FROM value ) ([5df8007](https://github.com/sqlstack-io/sqlquack/commit/5df80079bfbba305eefe332f2df70b1a5c4929db))
+* **syntax:** type Snowflake's TABLE ( ... ) arguments of data metric functions ([b31c298](https://github.com/sqlstack-io/sqlquack/commit/b31c298397c7ad61411d52a823bd092ebc2df084))
+
+
+### Bug Fixes
+
+* **snowflake:** keep a stage's PATTERN and DIRECTORY's stage as written ([776ddfd](https://github.com/sqlstack-io/sqlquack/commit/776ddfd8c9dfc2c2987b6be5b40431ef6bcab91c))
+* **snowflake:** keep an external table column's NOT NULL and quoted stage ([a3821b0](https://github.com/sqlstack-io/sqlquack/commit/a3821b08b4744cc5e8b9dd777d3903f46f2f9797))
+* **snowflake:** keep AT, BEFORE and CHANGES after a FROM call ([f250959](https://github.com/sqlstack-io/sqlquack/commit/f2509597338d3608e08240d76ca5fcc4a34bd181))
+* **snowflake:** keep BY and = in ALTER SEQUENCE INCREMENT ([203c8dd](https://github.com/sqlstack-io/sqlquack/commit/203c8dd62a8e3fa5c0c6f40e2ba601fc506f67e6))
+* **snowflake:** keep FORCE, ADD, WITH and OR REPLACE in table and index DDL ([f789c72](https://github.com/sqlstack-io/sqlquack/commit/f789c7248a93ecedbd975b4ed0e2f00c03d2a077))
+* **snowflake:** keep NOT ENFORCED after a foreign key's reference ([0fec4c1](https://github.com/sqlstack-io/sqlquack/commit/0fec4c1d1119cdb3d5402effa0e2123edfba62f1))
+* **snowflake:** keep the IDENTITY, START and GENERATED ALWAYS spellings of columns ([b62c6f3](https://github.com/sqlstack-io/sqlquack/commit/b62c6f3891aa9c1c154b8fafe6159ef11a1c552d))
+* **snowflake:** keep the optional WITH before view policies and tags ([6b38506](https://github.com/sqlstack-io/sqlquack/commit/6b385067d51203dcb82e7d7394c63efd6ae194a9))
+* **snowflake:** label an online feature table's PRIMARY KEY ([286d50c](https://github.com/sqlstack-io/sqlquack/commit/286d50cbde003f0084ad472a091f647a86743c9e))
+* **snowflake:** read // straight after a stage as its path ([20f07ed](https://github.com/sqlstack-io/sqlquack/commit/20f07ed8e5186a13b8af2799ca00bf8dfd0e171b))
+* **snowflake:** read a model's quoted stage source as a stage reference ([1b1edf9](https://github.com/sqlstack-io/sqlquack/commit/1b1edf9dc66749dcfa5796c8515123e02ab77710))
+* **snowflake:** read event routing regions as strings and SHOW OPENFLOW DATA PLANE INTEGRATIONS LIKE ([0d76ab1](https://github.com/sqlstack-io/sqlquack/commit/0d76ab1e47e8c7406fba9d47767f4da3799b7ae6))
+* **snowflake:** refuse a window name inside a semantic view metric window ([b364ec6](https://github.com/sqlstack-io/sqlquack/commit/b364ec6311c55a58ea812aedd49914a9413c3265))
+* **snowflake:** refuse UNSET values, a nameless SHOW PARAMETERS IN TABLE, MODIFY CONSTRAINT columns and a bare UNIQUE ([83275ca](https://github.com/sqlstack-io/sqlquack/commit/83275ca61f3af329cd20d3cadeabbca3db52e629))
+* **snowflake:** tell LAST and LATEST deployments and IMPORTS aliases apart ([8d69193](https://github.com/sqlstack-io/sqlquack/commit/8d691932d6ccd341fcabc143d895d5111266495a))
+* **snowflake:** type a view's RECURSIVE and scope and a materialization's REFRESH_MODE ([ff178bc](https://github.com/sqlstack-io/sqlquack/commit/ff178bc62a1a117ea29a7d5d85f2d337b8ef5d85))
+* **snowflake:** type ENABLE, DISABLE and VALIDATE constraint modifiers and keep inline ones ([dde64db](https://github.com/sqlstack-io/sqlquack/commit/dde64db6cbb753badb87e508a635ef063d1ac92b))
+* **snowflake:** type SHOW SERVICES EXCLUDE JOBS and OF TYPE ([b88a9a2](https://github.com/sqlstack-io/sqlquack/commit/b88a9a20d8a82767a6005eb1a53ed8bbbbf0f536))
+* **snowflake:** type the out-of-line constraints of DEFINE, ICEBERG and DYNAMIC tables ([fd26983](https://github.com/sqlstack-io/sqlquack/commit/fd26983a78e1bea2fe78b55f2a43b0ac10551ff1))
+* **syntax-cases:** continue a list whose first item is optional ([a502766](https://github.com/sqlstack-io/sqlquack/commit/a502766274a36f969f647a691eef6f79cbf259f5))
+* **syntax-receipts:** classify four errno 1003 post-parse messages as semantic errors ([303d389](https://github.com/sqlstack-io/sqlquack/commit/303d38950be1f2c469c22286da37c458273d8f47))
+* **tokenizer:** end a stage at punctuation so a following // is still a comment ([fdb054a](https://github.com/sqlstack-io/sqlquack/commit/fdb054a61fd111a427f5f051f25338efe4fb0d24))
+
 ## [0.16.1](https://github.com/sqlstack-io/sqlquack/compare/v0.16.0...v0.16.1) (2026-11-15)
 
 
