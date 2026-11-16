@@ -473,3 +473,44 @@ def test_given_a_refused_case_with_every_option_when_building_cases_then_each_op
         by_obligation[by_kind[KIND_OPTION_PRESENT][1]],
         by_kind[KIND_INTERACTION_ALL][0] in all_options["obligations"],
     ) == (*test_case.expected_option_sql, True), test_case.description
+
+
+GADGET_CATALOGUE: str = """
+[[form]]
+id = "sf.ddl.create-gadget.gadget"
+family = "ddl"
+kind = "statement"
+grammar = ["CREATE GADGET <name> ( [ <arg_name> <arg_data_type> ] [ , ... ] ) [ COMMENT = '<string_literal>' ]"]
+uses = []
+status = "catalogued"
+"""
+
+
+def test_given_an_optional_first_item_and_a_bare_continuation_when_building_cases_then_it_continues(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "catalogue").mkdir()
+    (tmp_path / "catalogue" / "ddl.toml").write_text(GADGET_CATALOGUE)
+    (tmp_path / "limits.toml").write_text("")
+
+    cases: list[Row] = family_cases(
+        root=tmp_path,
+        evidence=tmp_path,
+        family="ddl",
+        setups={},
+        held=frozenset(),
+        unpacked=frozenset({"sf.ddl.create-gadget.gadget"}),
+    )[0]
+
+    numbered: list[tuple[str, Draft]] = family_obligations(
+        root=tmp_path, family="ddl", unpacked=frozenset({"sf.ddl.create-gadget.gadget"})
+    )[0]
+    continued: set[str] = {
+        found
+        for found, draft in numbered
+        if draft.kind == KIND_OPTION_PRESENT and draft.note == "the list continued at least once"
+    }
+    continued_sql: list[str] = [
+        str(case["sql"]) for case in cases if continued & set(case["obligations"])
+    ]
+    assert continued_sql == ["CREATE GADGET v1 ( v1 INT , v1 INT ) ;"]
