@@ -426,6 +426,7 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         {"p": "6"},
     ),
     "db.expressions.names-identifier-clause.identifier": {"str_literal": "'c1'"},
+    "db.expressions.names-identifier-clause.identifier.syntax": {"str_expr": "'c1'"},
     "db.functions.current-time": {"precision": "3"},
     "db.functions.current-timestamp": {"precision": "6"},
     "db.functions.ai-top-drivers": {

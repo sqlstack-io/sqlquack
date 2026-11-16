@@ -252,6 +252,18 @@ grammar_sha256 = "12827d2e459678a8707aa9f712a67ebce09aba5b70b1e7f3ce0101247447cd
 grammar = ["AI_FORECAST ( <observed> , <horizon> , <time_col> , <value_col> [ , group_col => <group_col> ] [ , covariate_col => <covariate_col> ] [ , prediction_interval_width => <prediction_interval_width> ] [ , frequency => <frequency> ] [ , holiday_region => <holiday_region> ] [ , positive_only => <positive_only> ] [ , version => <version> ] )", "AI_FORECAST ( <observed> , <horizon> , <time_col> , <value_col> [ , group_col => <group_col> ] [ , prediction_interval_width => <prediction_interval_width> ] [ , frequency => <frequency> ] [ , seed => <seed> ] [ , parameters => <parameters> ] [ , version => <version> ] )"]
 reason = "an optional argument after one left out can be passed only by name, and the page's examples pass every optional argument by name (covariate_col => 'promotion', holiday_region => 'US', version => '2'), so each optional argument is read as a named argument, which may be written without the ones before it"
 
+[[reading]]
+form = "db.functions.pipesign.syntax"
+grammar_sha256 = "00c0b9ceea4953097684c7f68bdde5215001af221d2569857b14a76eaf59b40d"
+grammar = ["<expr1> \\| <expr2>"]
+reason = "the page's Syntax is expr1 | expr2, the bitwise OR (its Arguments: expr1 and expr2 of an integral numeric type; its example: SELECT 3 | 5), so | is the operator, not a choice the catalogue split into this form"
+
+[[reading]]
+form = "db.functions.pipesign.syntax.syntax"
+grammar_sha256 = "47eea7d016147120943beff1d11900bfc95ed5431ee0febe06c8be8b7777f01e"
+grammar = ["<expr1> \\| <expr2>"]
+reason = "the page's Syntax is expr1 | expr2, the bitwise OR (its Arguments: expr1 and expr2 of an integral numeric type; its example: SELECT 3 | 5), so | is the operator, not a choice the catalogue split into this form"
+
 [[limit]]
 form = "db.query.select-hints"
 kind = "option_present"

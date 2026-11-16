@@ -24473,10 +24473,38 @@ target = "<expr1>"
 note = "a valid expression"
 
 [[obligation]]
+id = "db.functions.pipesign.syntax.o004"
+kind = "required_operand_missing"
+required = true
+target = "<expr2>"
+note = "omit <expr2>"
+
+[[obligation]]
+id = "db.functions.pipesign.syntax.o005"
+kind = "operand_type_class"
+required = true
+target = "<expr2>"
+note = "a valid expression"
+
+[[obligation]]
 id = "db.functions.pipesign.syntax.syntax.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "db.functions.pipesign.syntax.syntax.o004"
+kind = "required_operand_missing"
+required = true
+target = "<expr1>"
+note = "omit <expr1>"
+
+[[obligation]]
+id = "db.functions.pipesign.syntax.syntax.o005"
+kind = "operand_type_class"
+required = true
+target = "<expr1>"
+note = "a valid expression"
 
 [[obligation]]
 id = "db.functions.pipesign.syntax.syntax.o002"
