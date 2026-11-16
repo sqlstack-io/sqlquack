@@ -96,6 +96,15 @@ class StopTestCase:
 
 
 @dataclass(frozen=True)
+class PlatformChangeTestCase:
+    description: str
+    catalog: int
+    field: str
+    value: object
+    expected_receipts: int
+
+
+@dataclass(frozen=True)
 class ErrorTestCase:
     description: str
     expected_error: str

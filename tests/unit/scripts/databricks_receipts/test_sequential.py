@@ -30,6 +30,7 @@ from tests.unit.scripts.databricks_receipts._test_types import (
     ErrorTestCase,
     HistoryTestCase,
     LegacySetupTestCase,
+    PlatformChangeTestCase,
     PolicyAnswerTestCase,
     PolicyRefusalTestCase,
     PolicySweepTestCase,
@@ -186,11 +187,31 @@ def test_given_a_case_that_changes_a_pre_existing_object_when_run_sequentially_t
     assert report["dropped"] == []
 
 
-def test_given_the_platform_updating_the_system_catalog_during_a_case_when_run_sequentially_then_it_is_receipted(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PlatformChangeTestCase(
+            description="the platform updating the system catalog",
+            catalog=1,
+            field="updated_at",
+            value=2,
+            expected_receipts=1,
+        ),
+        PlatformChangeTestCase(
+            description="the platform updating the samples catalog",
+            catalog=0,
+            field="updated_at",
+            value=2,
+            expected_receipts=1,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_system_catalog_changing_during_a_case_when_run_sequentially_then_it_is_receipted(
+    test_case: PlatformChangeTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     def touch(fake: FakeClient) -> None:
-        fake.objects(f"{UC}/catalogs")[1]["updated_at"] = 2
+        fake.objects(f"{UC}/catalogs")[test_case.catalog][test_case.field] = test_case.value
 
     use(monkeypatch, FakeClient({"CREATE SERVER TYPE MYSQL OPTIONS ( v1 1 )": touch}))
     out: Path = tmp_path / "out"
@@ -202,7 +223,7 @@ def test_given_the_platform_updating_the_system_catalog_during_a_case_when_run_s
         seed=None,
     )
 
-    assert summary["receipts"] == 1
+    assert summary["receipts"] == test_case.expected_receipts
     assert not list((tmp_path / "private").glob("*.sequential-stop.json"))
 
 
