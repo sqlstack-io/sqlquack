@@ -23029,12 +23029,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.named-struct.o002"
-kind = "alternative"
-required = true
-target = "{ <name1> , <val1> } → <name1> , <val1>"
-
-[[obligation]]
 id = "db.functions.named-struct.o003"
 kind = "required_operand_missing"
 required = true
@@ -23042,11 +23036,11 @@ target = "<name1>"
 note = "omit <name1>"
 
 [[obligation]]
-id = "db.functions.named-struct.o004"
+id = "db.functions.named-struct.o013"
 kind = "operand_type_class"
 required = true
 target = "<name1>"
-note = "a valid identifier"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.named-struct.o005"
@@ -23056,17 +23050,17 @@ target = "<val1>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.named-struct.o006"
+id = "db.functions.named-struct.o014"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
+target = "[ , <name1> , <val1> ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "db.functions.named-struct.o007"
+id = "db.functions.named-struct.o015"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <name1> , <val1> ... ]"
 
 [[obligation]]
 id = "db.functions.named-struct.o008"
@@ -23079,22 +23073,6 @@ id = "db.functions.named-struct.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "db.functions.named-struct.o010"
-kind = "identifier_class"
-required = true
-target = "<name1>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.functions.named-struct.o012"
-kind = "identifier_class"
-required = true
-target = "<name1>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
 id = "db.functions.nanvl.o001"
@@ -26128,6 +26106,14 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "db.functions.regexp-extract.o011"
+kind = "required_operand_missing"
+required = true
+target = "<regexp>"
+anchor = "doc.functions.regexp_extract / Syntax"
+note = "the call with its required regexp left out entirely"
+
+[[obligation]]
 id = "db.functions.regexp-extract-all.o001"
 kind = "positive"
 required = true
@@ -27482,6 +27468,22 @@ id = "db.functions.remote-query.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.remote-query.o014"
+kind = "operand_type_class"
+required = true
+target = "connectorOptionKey"
+anchor = "doc.functions.remote_query / Syntax"
+note = "a string literal written where the option key goes"
+
+[[obligation]]
+id = "db.functions.remote-query.o015"
+kind = "identifier_class"
+required = true
+target = "connectorOptionKey"
+anchor = "doc.functions.remote_query / Syntax"
+note = "the option key as a backtick-quoted identifier"
 
 [[obligation]]
 id = "db.functions.repeat.o001"
@@ -29547,6 +29549,14 @@ id = "db.functions.split.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.split.o011"
+kind = "required_operand_missing"
+required = true
+target = "<regex>"
+anchor = "doc.functions.split / Syntax"
+note = "the call without its required regex"
 
 [[obligation]]
 id = "db.functions.split-part.o001"
@@ -34090,6 +34100,14 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
+id = "db.functions.string-agg.o061"
+kind = "interaction"
+required = true
+target = "OVER"
+anchor = "doc.functions.string_agg / Syntax"
+note = "a window invocation together with WITHIN GROUP, which the page's prose rules out"
+
+[[obligation]]
 id = "db.functions.struct.o001"
 kind = "positive"
 required = true
@@ -34631,6 +34649,22 @@ id = "db.functions.sum.o016"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "db.functions.sum.o017"
+kind = "required_operand_missing"
+required = true
+target = "<expr>"
+anchor = "doc.functions.sum / Syntax"
+note = "the call with its only argument left out"
+
+[[obligation]]
+id = "db.functions.sum.o018"
+kind = "interaction"
+required = true
+target = "OVER"
+anchor = "doc.functions.sum / Syntax"
+note = "the aggregate invoked as a window function, as the page's prose allows"
 
 [[obligation]]
 id = "db.functions.table-changes.o001"
@@ -35247,6 +35281,22 @@ id = "db.functions.time-diff.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.time-diff.o016"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.time_diff / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
+id = "db.functions.time-diff.o017"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.time_diff / Syntax"
+note = "a unit keyword the page does not list for this function"
 
 [[obligation]]
 id = "db.functions.time-from-micros.o001"

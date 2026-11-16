@@ -1151,6 +1151,14 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
+id = "db.query.select-groupby.hive-grouping-sets.o015"
+kind = "interaction"
+required = true
+target = ","
+anchor = "doc.sql-ref-syntax-qry-select-groupby / Syntax"
+note = "the comma form beside the Hive form, a cross product rather than the Hive reading, recorded so the two can be told apart"
+
+[[obligation]]
 id = "db.query.select-groupby.nested-grouping-sets.o001"
 kind = "positive"
 required = true
@@ -1855,6 +1863,14 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.query.select-lateral-view.o032"
+kind = "option_absent"
+required = true
+target = "AS"
+anchor = "doc.sql-ref-syntax-qry-select-lateral-view / Syntax"
+note = "the column alias written without AS"
+
+[[obligation]]
 id = "db.query.select-limit.o001"
 kind = "positive"
 required = true
@@ -2138,6 +2154,22 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
+id = "db.query.select-match-recognize.o047"
+kind = "alternative"
+required = true
+target = "<row_pattern_rows_per_match>"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize / Syntax"
+note = "ALL ROWS PER MATCH"
+
+[[obligation]]
+id = "db.query.select-match-recognize.o048"
+kind = "alternative"
+required = true
+target = "<row_pattern_rows_per_match>"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize / Syntax"
+note = "ALL ROWS PER MATCH SHOW EMPTY MATCHES"
+
+[[obligation]]
 id = "db.query.select-match-recognize-define.o001"
 kind = "positive"
 required = true
@@ -2328,6 +2360,38 @@ id = "db.query.select-match-recognize-pattern.o006"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.query.select-match-recognize-pattern.o009"
+kind = "alternative"
+required = true
+target = "<row_pattern>"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize-pattern / Syntax"
+note = "quantified pattern variables"
+
+[[obligation]]
+id = "db.query.select-match-recognize-pattern.o010"
+kind = "alternative"
+required = true
+target = "<row_pattern>"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize-pattern / Syntax"
+note = "an alternation of pattern variables"
+
+[[obligation]]
+id = "db.query.select-match-recognize-pattern.o011"
+kind = "alternative"
+required = true
+target = "<row_pattern>"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize-pattern / Syntax"
+note = "PERMUTE of pattern variables"
+
+[[obligation]]
+id = "db.query.select-match-recognize-pattern.o012"
+kind = "alternative"
+required = true
+target = "<row_pattern>"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize-pattern / Syntax"
+note = "anchors and a bounded quantifier"
 
 [[obligation]]
 id = "db.query.select-named-window.o001"

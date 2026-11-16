@@ -6283,3 +6283,179 @@ anchor = "doc.functions.timestampdiff / Syntax"
 sql = "SELECT ( TIMESTAMPDIFF ( 'MICROSECOND' , 1 , 1 ) )"
 context = "raw"
 expect = "observe"
+
+[[reading]]
+form = "db.functions.named-struct"
+grammar_sha256 = "90e85323181b08c217b3a61a5d7510912d25af5085cc552d3930290b632ac0d9"
+grammar = ["NAMED_STRUCT ( <name1> , <val1> [ , <name1> , <val1> ... ] )"]
+reason = "the [ , ... ] continues the list with another name and value pair (nameN and valN in the page's Arguments, nameN a STRING literal); the renderer otherwise repeats only the value, an odd argument count the page's pairs rule out, as the MAP and DECODE readings record"
+
+[[limit]]
+form = "db.query.select-groupby.hive-grouping-sets"
+kind = "interaction"
+target = ","
+note = "the comma form beside the Hive form, a cross product rather than the Hive reading, recorded so the two can be told apart"
+anchor = "doc.sql-ref-syntax-qry-select-groupby / Syntax"
+sql = "SELECT c1 FROM t1 GROUP BY c1 , GROUPING SETS ( c1 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-lateral-view"
+kind = "option_absent"
+target = "AS"
+note = "the column alias written without AS"
+anchor = "doc.sql-ref-syntax-qry-select-lateral-view / Syntax"
+sql = "SELECT * FROM t1 LATERAL VIEW explode ( array ( 1 ) ) a3 x1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-match-recognize"
+kind = "alternative"
+target = "<row_pattern_rows_per_match>"
+note = "ALL ROWS PER MATCH"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 ALL ROWS PER MATCH PATTERN ( A ) DEFINE A AS TRUE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-match-recognize"
+kind = "alternative"
+target = "<row_pattern_rows_per_match>"
+note = "ALL ROWS PER MATCH SHOW EMPTY MATCHES"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 ALL ROWS PER MATCH SHOW EMPTY MATCHES PATTERN ( A ) DEFINE A AS TRUE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-match-recognize-pattern"
+kind = "alternative"
+target = "<row_pattern>"
+note = "quantified pattern variables"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize-pattern / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( A+ B* ) DEFINE A AS TRUE , B AS TRUE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-match-recognize-pattern"
+kind = "alternative"
+target = "<row_pattern>"
+note = "an alternation of pattern variables"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize-pattern / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( A | B ) DEFINE A AS TRUE , B AS TRUE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-match-recognize-pattern"
+kind = "alternative"
+target = "<row_pattern>"
+note = "PERMUTE of pattern variables"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize-pattern / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( PERMUTE ( A , B ) ) DEFINE A AS TRUE , B AS TRUE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.select-match-recognize-pattern"
+kind = "alternative"
+target = "<row_pattern>"
+note = "anchors and a bounded quantifier"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize-pattern / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( ^ A {2,} $ ) DEFINE A AS TRUE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.sum"
+kind = "required_operand_missing"
+target = "<expr>"
+note = "the call with its only argument left out"
+anchor = "doc.functions.sum / Syntax"
+sql = "SELECT ( SUM ( ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.sum"
+kind = "interaction"
+target = "OVER"
+note = "the aggregate invoked as a window function, as the page's prose allows"
+anchor = "doc.functions.sum / Syntax"
+sql = "SELECT ( SUM ( 1 ) OVER ( ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.string-agg"
+kind = "interaction"
+target = "OVER"
+note = "a window invocation together with WITHIN GROUP, which the page's prose rules out"
+anchor = "doc.functions.string_agg / Syntax"
+sql = "SELECT ( STRING_AGG ( 1 ) WITHIN GROUP ( ORDER BY v1 ) OVER ( ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.split"
+kind = "required_operand_missing"
+target = "<regex>"
+note = "the call without its required regex"
+anchor = "doc.functions.split / Syntax"
+sql = "SELECT ( SPLIT ( v1 , ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.regexp-extract"
+kind = "required_operand_missing"
+target = "<regexp>"
+note = "the call with its required regexp left out entirely"
+anchor = "doc.functions.regexp_extract / Syntax"
+sql = "SELECT ( REGEXP_EXTRACT ( v1 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.time-diff"
+kind = "operand_type_class"
+target = "<unit>"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+anchor = "doc.functions.time_diff / Syntax"
+sql = "SELECT ( TIME_DIFF ( 'v1' , 1 , 1 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.time-diff"
+kind = "operand_type_class"
+target = "<unit>"
+note = "a unit keyword the page does not list for this function"
+anchor = "doc.functions.time_diff / Syntax"
+sql = "SELECT ( TIME_DIFF ( DAY , 1 , 1 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.remote-query"
+kind = "operand_type_class"
+target = "connectorOptionKey"
+note = "a string literal written where the option key goes"
+anchor = "doc.functions.remote_query / Syntax"
+sql = "SELECT * FROM REMOTE_QUERY ( 'c1' , 'v1' => 1 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.remote-query"
+kind = "identifier_class"
+target = "connectorOptionKey"
+note = "the option key as a backtick-quoted identifier"
+anchor = "doc.functions.remote_query / Syntax"
+sql = "SELECT * FROM REMOTE_QUERY ( 'c1' , `k 1` => 1 )"
+context = "raw"
+expect = "observe"

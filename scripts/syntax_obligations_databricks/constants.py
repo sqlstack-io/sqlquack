@@ -268,6 +268,7 @@ DB_REPEAT_FILLS: dict[tuple[str, str], str] = {
     ("var_name", "v1"): "v2",
     ("key", "'k'"): "'k2'",
     ("key1", "'k1'"): "'k2'",
+    ("name1", "'v1'"): "'v2'",
     ("option_key", "'k'"): "'k2'",
     ("property_key", "'k'"): "'k2'",
     ("key_column", "c1"): "c2",
@@ -308,6 +309,7 @@ HIVE_IO_FORMATS: dict[str, str] = {
     "output_format": "'org.example.Out'",
 }
 FORM_FILLS: dict[str, dict[str, str]] = {
+    "db.functions.named-struct": {"name1": "'v1'", "val1": "1"},
     **dict.fromkeys(
         (
             "db.ddl.clone.",
@@ -891,6 +893,7 @@ FORM_CLASSES: dict[str, dict[str, str]] = {
         {"connection_name": "string_literal"},
     ),
     "db.functions.luhn-check": {"num_str": "expression"},
+    "db.functions.named-struct": {"name1": "string_literal"},
     "db.functions.colonsign": {"json_path": "operand"},
     **dict.fromkeys(
         (

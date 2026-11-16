@@ -2511,3 +2511,15 @@ ids = [
   "db.functions.map.o008",
   "db.functions.map.o011",
 ]
+
+[[retired]]
+retired_in = "ec23c60d67cc00270125236ffc28755d38a663be"
+reason = "NAMED_STRUCT's [ , ... ] is read as a further name and value pair and its names are STRING literals, as the page's Arguments state, so the obligations of the bare continuation and of identifier-filled names give way to those of the optional pair and string names"
+ids = [
+  "db.functions.named-struct.o002",
+  "db.functions.named-struct.o004",
+  "db.functions.named-struct.o006",
+  "db.functions.named-struct.o007",
+  "db.functions.named-struct.o010",
+  "db.functions.named-struct.o012",
+]
