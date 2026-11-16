@@ -480,6 +480,14 @@ anchor = "doc.sql-ref-syntax-qry-query / Syntax"
 note = "a pipe operation after ORDER BY, in the page's order, which the warehouse refuses"
 
 [[obligation]]
+id = "db.query.query.o056"
+kind = "option_present"
+required = true
+target = "DISTRIBUTE BY"
+anchor = "doc.sql-ref-syntax-qry-query / Syntax"
+note = "the DISTRIBUTE BY and SORT BY branch taken"
+
+[[obligation]]
 id = "db.query.select.o001"
 kind = "positive"
 required = true

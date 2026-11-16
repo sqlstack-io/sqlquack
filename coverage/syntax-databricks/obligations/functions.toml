@@ -25502,6 +25502,30 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
+id = "db.functions.read-kafka.o017"
+kind = "option_absent"
+required = true
+target = "[ , ... ]"
+anchor = "doc.functions.read_kafka / Syntax"
+note = "one option pair with the list not continued"
+
+[[obligation]]
+id = "db.functions.read-kafka.o018"
+kind = "identifier_class"
+required = true
+target = "<option_key>"
+anchor = "doc.functions.read_kafka / Syntax"
+note = "an option key containing dots as a backtick-quoted identifier, as the page requires"
+
+[[obligation]]
+id = "db.functions.read-kafka.o019"
+kind = "operand_type_class"
+required = true
+target = "<option_key>"
+anchor = "doc.functions.read_kafka / Syntax"
+note = "a string literal written where the option key goes"
+
+[[obligation]]
 id = "db.functions.read-kinesis.o001"
 kind = "positive"
 required = true

@@ -3637,6 +3637,22 @@ required = true
 target = "{ NULL | VOID } → VOID"
 
 [[obligation]]
+id = "db.expressions.null-type.o004"
+kind = "alternative"
+required = true
+target = "VOID"
+anchor = "doc.data-types.null-type / Syntax"
+note = "the VOID type in type position, as the page's examples write it"
+
+[[obligation]]
+id = "db.expressions.null-type.o005"
+kind = "alternative"
+required = true
+target = "NULL"
+anchor = "doc.data-types.null-type / Syntax"
+note = "the NULL spelling in type position"
+
+[[obligation]]
 id = "db.expressions.object-type.o018"
 kind = "positive"
 required = true

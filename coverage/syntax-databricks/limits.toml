@@ -6459,3 +6459,113 @@ anchor = "doc.functions.remote_query / Syntax"
 sql = "SELECT * FROM REMOTE_QUERY ( 'c1' , `k 1` => 1 )"
 context = "raw"
 expect = "observe"
+
+[[limit]]
+form = "db.functions.read-kafka"
+kind = "option_absent"
+target = "[ , ... ]"
+note = "one option pair with the list not continued"
+anchor = "doc.functions.read_kafka / Syntax"
+sql = "SELECT * FROM READ_KAFKA ( k1 => 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.read-kafka"
+kind = "identifier_class"
+target = "<option_key>"
+note = "an option key containing dots as a backtick-quoted identifier, as the page requires"
+anchor = "doc.functions.read_kafka / Syntax"
+sql = "SELECT * FROM READ_KAFKA ( `kafka.sasl.mechanism` => 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.read-kafka"
+kind = "operand_type_class"
+target = "<option_key>"
+note = "a string literal written where the option key goes"
+anchor = "doc.functions.read_kafka / Syntax"
+sql = "SELECT * FROM READ_KAFKA ( 'k1' => 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.null-type"
+kind = "alternative"
+target = "VOID"
+note = "the VOID type in type position, as the page's examples write it"
+anchor = "doc.data-types.null-type / Syntax"
+sql = "SELECT CAST ( NULL AS VOID )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.null-type"
+kind = "alternative"
+target = "NULL"
+note = "the NULL spelling in type position"
+anchor = "doc.data-types.null-type / Syntax"
+sql = "SELECT CAST ( NULL AS NULL )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.query.query"
+kind = "option_present"
+target = "DISTRIBUTE BY"
+note = "the DISTRIBUTE BY and SORT BY branch taken"
+anchor = "doc.sql-ref-syntax-qry-query / Syntax"
+sql = "SELECT c1 FROM t1 DISTRIBUTE BY c1 SORT BY c1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-using"
+kind = "option_present"
+target = "OPTIONS"
+note = "OPTIONS on a temporary table with a column list, recorded to settle whether the temporary line takes it"
+anchor = "doc.sql-ref-syntax-ddl-create-table-using / Syntax"
+sql = "CREATE TEMP TABLE t3 ( c1 INT ) OPTIONS ( 'k' = 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-using"
+kind = "option_present"
+target = "OPTIONS"
+note = "OPTIONS on a replaced temporary table"
+anchor = "doc.sql-ref-syntax-ddl-create-table-using / Syntax"
+sql = "CREATE OR REPLACE TEMP TABLE t3 ( c1 INT , c2 INT ) OPTIONS ( 'k' = 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-using"
+kind = "option_present"
+target = "OPTIONS"
+note = "OPTIONS on a temporary table created from a query"
+anchor = "doc.sql-ref-syntax-ddl-create-table-using / Syntax"
+sql = "CREATE TEMP TABLE t3 OPTIONS ( 'k' = 'v' ) AS SELECT 1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-constraint.references"
+kind = "option_present"
+target = "FOREIGN KEY"
+note = "the optional FOREIGN KEY written alone, beside the case without it"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT NOT NULL CONSTRAINT n1 FOREIGN KEY REFERENCES t2 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.dml.insert-into.values-default"
+kind = "identifier_class"
+target = "DEFAULT"
+note = "DEFAULT backtick-quoted in the query, a column name rather than the keyword"
+anchor = "doc.sql-ref-syntax-dml-insert-into / Syntax"
+sql = "INSERT INTO t1 SELECT `DEFAULT` , 1"
+context = "raw"
+expect = "observe"

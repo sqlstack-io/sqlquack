@@ -18720,6 +18720,14 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.ddl.create-table-constraint.references.o049"
+kind = "option_present"
+required = true
+target = "FOREIGN KEY"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "the optional FOREIGN KEY written alone, beside the case without it"
+
+[[obligation]]
 id = "db.ddl.create-table-hiveformat.o001"
 kind = "positive"
 required = true
@@ -20689,6 +20697,30 @@ kind = "required_operand_missing"
 required = true
 target = "<default_collation_name> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
 note = "omit <default_collation_name>; the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o128"
+kind = "option_present"
+required = true
+target = "OPTIONS"
+anchor = "doc.sql-ref-syntax-ddl-create-table-using / Syntax"
+note = "OPTIONS on a temporary table with a column list, recorded to settle whether the temporary line takes it"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o129"
+kind = "option_present"
+required = true
+target = "OPTIONS"
+anchor = "doc.sql-ref-syntax-ddl-create-table-using / Syntax"
+note = "OPTIONS on a replaced temporary table"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o130"
+kind = "option_present"
+required = true
+target = "OPTIONS"
+anchor = "doc.sql-ref-syntax-ddl-create-table-using / Syntax"
+note = "OPTIONS on a temporary table created from a query"
 
 [[obligation]]
 id = "db.ddl.create-view.temporary-view-using.o001"

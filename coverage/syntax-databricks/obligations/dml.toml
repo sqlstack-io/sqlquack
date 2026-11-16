@@ -2150,6 +2150,14 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.dml.insert-into.values-default.o034"
+kind = "identifier_class"
+required = true
+target = "DEFAULT"
+anchor = "doc.sql-ref-syntax-dml-insert-into / Syntax"
+note = "DEFAULT backtick-quoted in the query, a column name rather than the keyword"
+
+[[obligation]]
 id = "db.dml.insert-overwrite-directory.o001"
 kind = "positive"
 required = true
