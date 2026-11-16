@@ -869,6 +869,7 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
     "db.expressions.names.subscript": ("SELECT 1 ", ""),
     "db.expressions.names.subscript-dot": EXPRESSION_CONTEXT,
     "db.expressions.names.subscript-dot-2": FROM_CONTEXT,
+    "db.expressions.names.subscript-dot-3": ("SELECT explode ( map ( 1 , 2 ) ) ", ""),
     "db.expressions.window-functions": ("SELECT ( ", " ) FROM t1 WINDOW w1 AS ( )"),
     "db.expressions.window-functions-frame": (
         "SELECT sum ( c1 ) OVER ( ORDER BY c1 ",

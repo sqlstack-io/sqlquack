@@ -1836,9 +1836,9 @@ reason = "without its clause the word IDENTIFIER is read as a table name: Databr
 [[suppress]]
 form = "db.expressions.names.subscript-dot-3"
 kind = "negative_neighbour"
-target = "<column_identifier>"
-note = "a string literal in place of <column_identifier>"
-reason = "in the expression context every case is written in, a string literal is itself a valid expression, and a dot after it is a field dereference (SqlBaseParser primaryExpression #dereference), so the text parses; the field or type is checked in analysis"
+target = ""
+note = "the form without its required ("
+reason = "without its ( and ) a single column_identifier is the page's other column alias form, [AS] column_identifier, so the text parses"
 
 [[suppress]]
 form = "db.expressions.names.subscript-dot-4"

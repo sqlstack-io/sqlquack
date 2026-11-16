@@ -3304,6 +3304,13 @@ target = "<column_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.subscript-dot-3.o015"
+kind = "negative_neighbour"
+required = true
+target = "<column_identifier>"
+note = "a string literal in place of <column_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.subscript-dot-3.o007"
 kind = "option_present"
 required = true

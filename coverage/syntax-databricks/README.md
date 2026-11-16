@@ -222,6 +222,8 @@ class rules. The reasons for each choice follow.
     in an expression is refused (`UNSUPPORTED_GENERATOR.NESTED_IN_EXPRESSIONS`).
   - The vector-search page's Syntax is a whole query, so it has no context.
   - A clause page's form runs in a statement that the page names as its host.
+  - A column alias list labels the columns of a table-valued generator in the select list
+    (sql-ref-names, Column alias), so it follows one.
   - LIKE in a partition spec is allowed only in ALTER SHARE ADD TABLE (sql-ref-partition).
   - A securable object and a principal are the operands of GRANT (sql-ref-privileges,
     sql-ref-principal).
