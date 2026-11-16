@@ -312,3 +312,53 @@ fn given_a_view_clause_after_an_optional_with_when_parsing_then_the_with_is_kept
         );
     }
 }
+
+#[test]
+fn given_view_scope_and_mode_words_when_parsing_then_each_is_typed() {
+    let test_cases = [
+        ProjectionTestCase {
+            description: "RECURSIVE is a flag on the view",
+            sql: "CREATE OR ALTER RECURSIVE VIEW v1 AS SELECT 1 ;",
+            pointer: "/0/create_view/recursive",
+            expected_value: json!(true),
+        },
+        ProjectionTestCase {
+            description: "RECURSIVE is not left as a property",
+            sql: "CREATE RECURSIVE VIEW v1 AS SELECT 1 ;",
+            pointer: "/0/create_view/table_properties",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "LOCAL TEMP is the view's temporary spelling",
+            sql: "CREATE OR ALTER LOCAL TEMP VIEW v1 AS SELECT 1 ;",
+            pointer: "/0/create_view/temporary_spelling",
+            expected_value: json!("LOCAL TEMP"),
+        },
+        ProjectionTestCase {
+            description: "TEMPORARY needs no spelling",
+            sql: "CREATE TEMPORARY VIEW v1 AS SELECT 1 ;",
+            pointer: "/0/create_view/temporary_spelling",
+            expected_value: json!(null),
+        },
+        ProjectionTestCase {
+            description: "a materialization's REFRESH_MODE is a keyword",
+            sql: "ALTER SEMANTIC VIEW v1 ADD MATERIALIZATION v1 WAREHOUSE = v1 REFRESH_MODE = AUTO AS DIMENSIONS v1 METRICS v1 ;",
+            pointer: "/0/alter_object/properties/1/value/var/this",
+            expected_value: json!("AUTO"),
+        },
+        ProjectionTestCase {
+            description: "a materialization's WAREHOUSE stays a name",
+            sql: "ALTER SEMANTIC VIEW v1 ADD MATERIALIZATION v1 WAREHOUSE = v1 REFRESH_MODE = FULL AS DIMENSIONS v1 METRICS v1 ;",
+            pointer: "/0/alter_object/properties/0/value/table/name/name",
+            expected_value: json!("v1"),
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            statement_at(test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}

@@ -1,6 +1,7 @@
 //! Parser ddl: Snowflake CREATE VIEW and CREATE MATERIALIZED VIEW, checked against their grammar.
 
 use crate::parser::_helpers::ddl::snowflake_semantic_view::{part, tuple};
+use crate::parser::constants::PLAIN_TEMPORARY;
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::BinaryOp;
@@ -81,11 +82,9 @@ impl Parser {
         }
         let name = self.parse_iceberg_object_name()?;
         let temporary = scope.is_some();
-        let mut properties: Vec<Expression> = [scope, recursive.then(|| "RECURSIVE".to_owned())]
+        let mut properties: Vec<Expression> = interactive
+            .then(|| Expression::Identifier(Identifier::new("INTERACTIVE")))
             .into_iter()
-            .chain([interactive.then(|| "INTERACTIVE".to_owned())])
-            .flatten()
-            .map(|word| Expression::Identifier(Identifier::new(word)))
             .collect();
         let mut copy_grants = false;
         if kind == ViewKind::Materialized {
@@ -123,6 +122,8 @@ impl Parser {
         view.if_not_exists = if_not_exists;
         view.materialized = materialized;
         view.temporary = temporary;
+        view.temporary_spelling = scope.filter(|words| words != PLAIN_TEMPORARY);
+        view.recursive = recursive;
         view.secure = secure;
         view.query_parenthesized = query_parenthesized;
         view.copy_grants = copy_grants;
