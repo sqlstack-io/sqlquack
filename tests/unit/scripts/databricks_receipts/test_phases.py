@@ -267,6 +267,23 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             expected_parse_only=None,
         ),
         PhaseTestCase(
+            description="the parser refuses a column mask on a multi-part column name",
+            message="[COLUMN_MASKS_MULTI_PART_TARGET_COLUMN_NAME] This statement attempted to assign "
+            "a column mask policy to a column c1.c2 with multiple name parts, which is invalid. "
+            "SQLSTATE: 42K05\n== SQL (line 1, position 1) ==\nALTER TABLE t1 ALTER c1.c2 SET MASK f1\n",
+            sqlstate="42K05",
+            expected_phase="syntax_error",
+            expected_parse_only="42K05",
+        ),
+        PhaseTestCase(
+            description="a nested field added under a column that is not a struct",
+            message="[INVALID_FIELD_NAME] Field name `c1`.`c2` is invalid: `c1` is not a struct. "
+            "SQLSTATE: 42000; line 1 pos 28",
+            sqlstate="42000",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
             description="an analysis class with no reviewed row",
             message="[DIVIDE_BY_ZERO] Division by zero. SQLSTATE: 22012",
             sqlstate="22012",
