@@ -358,6 +358,13 @@ required = true
 target = "[ ( <p> ) ]"
 
 [[obligation]]
+id = "db.expressions.decfloat-type.o007"
+kind = "required_operand_missing"
+required = true
+target = "<p> in [ ( <p> ) ]"
+note = "omit <p>"
+
+[[obligation]]
 id = "db.expressions.decfloat-type.o005"
 kind = "operand_type_class"
 required = true
@@ -405,6 +412,13 @@ id = "db.expressions.decimal-type.o006"
 kind = "option_absent"
 required = true
 target = "[ ( <p> [ , <s> ] ) ]"
+
+[[obligation]]
+id = "db.expressions.decimal-type.o014"
+kind = "required_operand_missing"
+required = true
+target = "<p> in [ ( <p> [ , <s> ] ) ]"
+note = "omit <p>"
 
 [[obligation]]
 id = "db.expressions.decimal-type.o008"
@@ -1374,6 +1388,12 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "db.expressions.geography-type.o008"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <srid> | ANY }"
+
+[[obligation]]
 id = "db.expressions.geography-type.o007"
 kind = "negative_neighbour"
 required = true
@@ -1409,6 +1429,12 @@ id = "db.expressions.geometry-type.o005"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "db.expressions.geometry-type.o008"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <srid> | ANY }"
 
 [[obligation]]
 id = "db.expressions.geometry-type.o007"
@@ -3938,6 +3964,13 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "db.expressions.time-type.time.syntax.o006"
+kind = "required_operand_missing"
+required = true
+target = "<p>"
+note = "omit <p>"
+
+[[obligation]]
 id = "db.expressions.time-type.time.syntax.o003"
 kind = "operand_type_class"
 required = true
@@ -3973,6 +4006,13 @@ id = "db.expressions.timestamp-ntz-type.timestamp-ntz.o003"
 kind = "option_absent"
 required = true
 target = "[ ( <p> ) ]"
+
+[[obligation]]
+id = "db.expressions.timestamp-ntz-type.timestamp-ntz.o007"
+kind = "required_operand_missing"
+required = true
+target = "<p> in [ ( <p> ) ]"
+note = "omit <p>"
 
 [[obligation]]
 id = "db.expressions.timestamp-ntz-type.timestamp-ntz.o005"
@@ -4041,6 +4081,13 @@ required = true
 target = "[ ( <p> ) ]"
 
 [[obligation]]
+id = "db.expressions.timestamp-type.timestamp.o007"
+kind = "required_operand_missing"
+required = true
+target = "<p> in [ ( <p> ) ]"
+note = "omit <p>"
+
+[[obligation]]
 id = "db.expressions.timestamp-type.timestamp.o005"
 kind = "operand_type_class"
 required = true
@@ -4070,6 +4117,13 @@ id = "db.expressions.timestamp-type.timestamp-ltz.o003"
 kind = "option_absent"
 required = true
 target = "[ ( <p> ) ]"
+
+[[obligation]]
+id = "db.expressions.timestamp-type.timestamp-ltz.o007"
+kind = "required_operand_missing"
+required = true
+target = "<p> in [ ( <p> ) ]"
+note = "omit <p>"
 
 [[obligation]]
 id = "db.expressions.timestamp-type.timestamp-ltz.o005"
