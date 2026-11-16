@@ -3,9 +3,10 @@
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
 
+use crate::parse::_helpers::tree::clauses::Part;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_word};
-use crate::parse::constants::{CREATE_STREAMING_TABLE, SYNC};
-use crate::scan::models::Token;
+use crate::parse::constants::{CREATE_STREAMING_TABLE, SYNC, TAG_FORMS, TAG_KINDS};
+use crate::scan::models::{Token, TokenKind};
 
 /// Named parts the patterns share; a lower-case word in a pattern names one of these or a slot.
 pub(crate) const RULES: &[(&str, &str)] = &[
@@ -26,6 +27,7 @@ pub(crate) const RULES: &[(&str, &str)] = &[
     ("comment", "COMMENT str"),
     ("collation", "DEFAULT COLLATION id"),
     ("text", "str | id"),
+    ("catalog", "str | name"),
     ("argument", "literal | name"),
     ("principals", "id ,..."),
     (
@@ -80,7 +82,7 @@ pub(crate) const RULES: &[(&str, &str)] = &[
     ),
     (
         "share_partition",
-        "PARTITION ( { id [ = literal | LIKE str ] } ,... )",
+        "PARTITION ( { id { = literal | LIKE str } } ,... )",
     ),
     ("cluster_spec", "( name ,... ) | AUTO | NONE"),
     (
@@ -137,16 +139,19 @@ const FORMS: &[Form] = &[
         construct: "alter_catalog",
         leads: &[&["ALTER", "CATALOG"]],
         patterns: &[
-            "ALTER CATALOG [ name ] { collation | owner | name_tags | predictive \
-             | OPTIONS props | SET MANAGED LOCATION str \
+            "ALTER CATALOG [ catalog ] { owner | name_tags | predictive }",
+            "ALTER CATALOG catalog { collation | OPTIONS props | SET MANAGED LOCATION str \
              | [ SET ] RETAIN DROPPED TO int time_unit }",
-            "ALTER CATALOG name DROP CONNECTION { RESTRICT | FORCE }",
+            "ALTER CATALOG catalog DROP CONNECTION [ RESTRICT | FORCE ]",
         ],
     },
     Form {
         construct: "alter_connection",
         leads: &[&["ALTER", "CONNECTION"]],
-        patterns: &["ALTER CONNECTION name { owner | rename | OPTIONS props }"],
+        patterns: &[
+            "ALTER CONNECTION [ name ] owner",
+            "ALTER CONNECTION name { rename | OPTIONS props }",
+        ],
     },
     Form {
         construct: "alter_credential",
@@ -160,7 +165,7 @@ const FORMS: &[Form] = &[
     Form {
         construct: "alter_governed_tag",
         leads: &[&["ALTER", "GOVERNED"]],
-        patterns: &["ALTER GOVERNED TAG id { SET DESCRIPTION text | SET VALUES ( id ,... ) }"],
+        patterns: &["ALTER GOVERNED TAG id { SET DESCRIPTION text | SET VALUES ( [ id ,... ] ) }"],
     },
     Form {
         construct: "alter_external_location",
@@ -189,7 +194,7 @@ const FORMS: &[Form] = &[
         construct: "alter_recipient",
         leads: &[&["ALTER", "RECIPIENT"]],
         patterns: &[
-            "ALTER RECIPIENT name { rename | owner | SET PROPERTIES props \
+            "ALTER RECIPIENT name { rename | owner | SET PROPERTIES { props | keys } \
              | UNSET PROPERTIES keys }",
         ],
     },
@@ -197,7 +202,8 @@ const FORMS: &[Form] = &[
         construct: "alter_share",
         leads: &[&["ALTER", "SHARE"]],
         patterns: &["ALTER SHARE name { { ALTER | ADD } share_object \
-             | REMOVE { MATERIALIZED VIEW | TABLE | SCHEMA | VIEW | MODEL } name | rename | owner }"],
+             | REMOVE { MATERIALIZED VIEW name | { TABLE | SCHEMA | VIEW | MODEL } name | name } \
+             | rename | owner }"],
     },
     Form {
         construct: "alter_volume",
@@ -208,9 +214,8 @@ const FORMS: &[Form] = &[
         construct: "create_catalog",
         leads: &[&["CREATE", "CATALOG"]],
         patterns: &[
-            "CREATE CATALOG [ if_not_exists ] name [ { USING SHARE id . id \
-             | MANAGED LOCATION str | RETAIN DROPPED FOR int time_unit | comment | collation \
-             | OPTIONS props } ... ]",
+            "CREATE CATALOG [ if_not_exists ] catalog [ { USING SHARE id . id \
+             | MANAGED LOCATION str | RETAIN DROPPED FOR int time_unit | comment | collation } ... ]",
         ],
     },
     Form {
@@ -234,7 +239,7 @@ const FORMS: &[Form] = &[
     Form {
         construct: "create_governed_tag",
         leads: &[&["CREATE", "GOVERNED"]],
-        patterns: &["CREATE GOVERNED TAG id [ DESCRIPTION text ] [ VALUES ( id ,... ) ]"],
+        patterns: &["CREATE GOVERNED TAG id [ DESCRIPTION text ] [ VALUES ( [ id ,... ] ) ]"],
     },
     Form {
         construct: "create_external_location",
@@ -314,7 +319,7 @@ const FORMS: &[Form] = &[
     Form {
         construct: "drop_catalog",
         leads: &[&["DROP", "CATALOG"]],
-        patterns: &["DROP CATALOG [ if_exists ] name [ RESTRICT | CASCADE ]"],
+        patterns: &["DROP CATALOG [ if_exists ] catalog [ RESTRICT | CASCADE ]"],
     },
     Form {
         construct: "drop_connection",
@@ -348,7 +353,7 @@ const FORMS: &[Form] = &[
     Form {
         construct: "drop_policy",
         leads: &[&["DROP", "POLICY"]],
-        patterns: &["DROP POLICY [ if_exists ] id ON policy_target"],
+        patterns: &["DROP POLICY [ if_exists ] id ON policy_on"],
     },
     Form {
         construct: "drop_procedure",
@@ -405,7 +410,10 @@ const FORMS: &[Form] = &[
     Form {
         construct: "set_tag",
         leads: &[&["SET", "TAG"]],
-        patterns: &["SET TAG ON tag_target id [ = tag_value ]"],
+        patterns: &[
+            "SET TAG ON tag_target id [ = tag_value ]",
+            "SET TAG ON name id [ = tag_value ]",
+        ],
     },
     Form {
         construct: "signal",
@@ -592,7 +600,68 @@ const FORMS: &[Form] = &[
     Form {
         construct: "unset_tag",
         leads: &[&["UNSET"]],
-        patterns: &["UNSET TAG ON tag_target id"],
+        patterns: &["UNSET TAG ON tag_target id", "UNSET TAG ON name id"],
+    },
+    Form {
+        construct: "optimize",
+        leads: &[&["OPTIMIZE"]],
+        patterns: &["OPTIMIZE { str | table } [ FULL ] [ WHERE expr ] \
+             [ ZORDER BY { ( name ,... ) | name ,... } ]"],
+    },
+    Form {
+        construct: "vacuum",
+        leads: &[&["VACUUM"]],
+        patterns: &[
+            "VACUUM { str | table } [ USING INVENTORY { ( query ) | name } ] \
+             [ { RETAIN num HOURS | DRY RUN | FULL | LITE } ... ]",
+        ],
+    },
+    Form {
+        construct: "repair",
+        leads: &[&["REPAIR", "TABLE"]],
+        patterns: &["REPAIR TABLE table [ { ADD | DROP | SYNC } PARTITIONS | SYNC METADATA ]"],
+    },
+    Form {
+        construct: "msck",
+        leads: &[&["MSCK", "REPAIR", "TABLE"]],
+        patterns: &[
+            "MSCK REPAIR TABLE table [ { ADD | DROP | SYNC } PARTITIONS | SYNC METADATA | PRIVILEGES ]",
+        ],
+    },
+    Form {
+        construct: "commit",
+        leads: &[&["COMMIT"]],
+        patterns: &["COMMIT [ TRANSACTION | WORK ]"],
+    },
+    Form {
+        construct: "rollback",
+        leads: &[&["ROLLBACK"]],
+        patterns: &["ROLLBACK [ TRANSACTION | WORK ]"],
+    },
+    Form {
+        construct: "begin",
+        leads: &[&["BEGIN", "TRANSACTION"], &["BEGIN", "WORK"]],
+        patterns: &["BEGIN { TRANSACTION | WORK }"],
+    },
+    Form {
+        construct: "create_group",
+        leads: &[&["CREATE", "GROUP"]],
+        patterns: &["CREATE GROUP id [ WITH { USER id ,... [ GROUP id ,... ] | GROUP id ,... } ]"],
+    },
+    Form {
+        construct: "alter_group",
+        leads: &[&["ALTER", "GROUP"]],
+        patterns: &["ALTER GROUP id { { ADD | DROP } { GROUP id ,... | USER id ,... } } ..."],
+    },
+    Form {
+        construct: "drop_group",
+        leads: &[&["DROP", "GROUP"]],
+        patterns: &["DROP GROUP id"],
+    },
+    Form {
+        construct: "remove",
+        leads: &[&["REMOVE"]],
+        patterns: &["REMOVE str"],
     },
 ];
 
@@ -637,7 +706,10 @@ impl Parser<'_> {
         let check: Parsing<()> = match form.construct {
             CREATE_STREAMING_TABLE => self.auto_cdc_check(first),
             SYNC => self.sync_check(first),
-            _ => Ok(()),
+            construct => match TAG_FORMS.iter().find(|(name, _)| *name == construct) {
+                Some((_, pattern)) => self.tag_check(first, pattern),
+                None => Ok(()),
+            },
         };
         Some(check.map(|()| statement))
     }
@@ -652,6 +724,27 @@ impl Parser<'_> {
         lead.iter()
             .enumerate()
             .all(|(offset, word)| self.kw_at(offset, word))
+    }
+
+    /// Refuses a tag statement that read a securable kind's word as the securable's name: a kind
+    /// word after `ON`, not followed by `.`, opens the kind, as Databricks reads it.
+    fn tag_check(&mut self, first: usize, pattern: &'static str) -> Parsing<()> {
+        let end: usize = self.at;
+        let kind_word: bool = TAG_KINDS.iter().any(|word| {
+            self.tokens
+                .get(first + 3)
+                .is_some_and(|token| is_word(token, word))
+        }) && !self
+            .tokens
+            .get(first + 4)
+            .is_some_and(|token| token.kind == TokenKind::Char('.'));
+        if !kind_word {
+            return Ok(());
+        }
+        self.at = first;
+        let read: Parsing<Vec<Part>> = self.form(pattern);
+        self.at = end;
+        read.map(|_| ())
     }
 
     /// Refuses `SYNC TABLE target FROM source` whose source is named other than its target.

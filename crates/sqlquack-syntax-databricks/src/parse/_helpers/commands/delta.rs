@@ -198,76 +198,6 @@ impl Parser<'_> {
         Ok(null())
     }
 
-    /// `OPTIMIZE table [FULL] [WHERE predicate] [ZORDER BY (columns)]`, kept as a gap.
-    pub(crate) fn optimize_statement(&mut self) -> Parsing<Expression> {
-        self.checked_gap("optimize", |parser| {
-            match parser.string_at(0) {
-                true => {
-                    parser.string_lit()?;
-                }
-                false => {
-                    parser.table_reference()?;
-                }
-            }
-            parser.eat_kw("FULL");
-            if parser.eat_kw("WHERE") {
-                parser.expression()?;
-            }
-            if parser.eat_kw("ZORDER") {
-                parser.expect_kw("BY")?;
-                match parser.is_char('(') {
-                    true => {
-                        parser.parenthesized(|parser| parser.multipart_identifier())?;
-                    }
-                    false => {
-                        parser.comma_list(|parser| parser.multipart_identifier())?;
-                    }
-                }
-            }
-            Ok(())
-        })
-    }
-
-    /// `VACUUM table [USING INVENTORY ...] [RETAIN n HOURS] [DRY RUN] [FULL | LITE]`, as a gap.
-    pub(crate) fn vacuum_statement(&mut self) -> Parsing<Expression> {
-        self.checked_gap("vacuum", |parser| {
-            match parser.string_at(0) {
-                true => {
-                    parser.string_lit()?;
-                }
-                false => {
-                    parser.table_reference()?;
-                }
-            }
-            if parser.eat_kws(&["USING", "INVENTORY"]) {
-                match parser.eat_char('(') {
-                    true => {
-                        parser.query()?;
-                        parser.expect_char(')')?;
-                    }
-                    false => {
-                        parser.multipart_identifier()?;
-                    }
-                }
-            }
-            loop {
-                if parser.eat_kw("RETAIN") {
-                    parser.expect_token(|token| {
-                        matches!(
-                            token.kind,
-                            TokenKind::Number(NumberKind::Integer | NumberKind::Decimal)
-                        )
-                    })?;
-                    parser.expect_kw("HOURS")?;
-                } else if parser.eat_kw("DRY") {
-                    parser.expect_kw("RUN")?;
-                } else if !(parser.eat_kw("FULL") || parser.eat_kw("LITE")) {
-                    return Ok(());
-                }
-            }
-        })
-    }
-
     /// `RESTORE [TABLE] table [TO] {VERSION | TIMESTAMP} AS OF value`, kept as a gap.
     pub(crate) fn restore_statement(&mut self) -> Parsing<Expression> {
         self.checked_gap("restore", |parser| {
@@ -294,7 +224,7 @@ impl Parser<'_> {
         })
     }
 
-    /// `[MSCK] REPAIR TABLE table [{ADD | DROP | SYNC} PARTITIONS | SYNC METADATA]`, as a gap.
+    /// `REPAIR PRIVILEGES ...`, kept as a gap; `[MSCK] REPAIR TABLE` is a documented form.
     pub(crate) fn repair_statement(&mut self) -> Parsing<Expression> {
         let construct: &'static str = match self.kw("MSCK") {
             true => MSCK,
@@ -303,20 +233,10 @@ impl Parser<'_> {
         self.checked_gap(construct, |parser| {
             if construct == MSCK {
                 parser.expect_kw("REPAIR")?;
-            } else if parser.eat_kw("PRIVILEGES") {
-                return parser.skip_statement_rest();
+                parser.expect_kw("TABLE")?;
             }
-            parser.expect_kw("TABLE")?;
-            parser.table_reference()?;
-            if parser.kw("SYNC") && parser.kw_at(1, "METADATA") {
-                parser.at += 2;
-            } else if construct == MSCK && parser.kw("PRIVILEGES") {
-                parser.at += 1;
-            } else if parser.kw_in(0, &["ADD", "DROP", "SYNC"]) {
-                parser.at += 1;
-                parser.expect_kw("PARTITIONS")?;
-            }
-            Ok(())
+            parser.expect_kw("PRIVILEGES")?;
+            parser.skip_statement_rest()
         })
     }
 

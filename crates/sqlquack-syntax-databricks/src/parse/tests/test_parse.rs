@@ -143,7 +143,7 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         },
         VerdictTestCase {
             description: "a statement the shared tree has no node for is kept as a gap",
-            sql: "OPTIMIZE t ZORDER BY (a)",
+            sql: "CACHE SELECT a FROM t",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
@@ -252,11 +252,6 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "SET of a form Spark's patterns do not read, such as SET RECIPIENT, is a gap",
-            sql: "SET RECIPIENT r",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
-        },
-        VerdictTestCase {
             description: "USE CATALOG and COMMENT ON parse",
             sql: "USE CATALOG main; COMMENT ON TABLE t IS 'x'",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
@@ -282,9 +277,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "OPTIMIZE is checked, then kept as a gap",
+            description: "OPTIMIZE is a documented form",
             sql: "OPTIMIZE t WHERE d > 1 ZORDER BY (a)",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "VACUUM DRY needs RUN",
@@ -432,8 +427,8 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "UNSET TAG needs an object kind before its name",
-            sql: "UNSET TAG ON t1 k",
+            description: "UNSET TAG needs the tag key after the securable",
+            sql: "UNSET TAG ON v1",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
@@ -577,9 +572,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "SET RECIPIENT name is a gap",
+            description: "SET RECIPIENT name is a documented form",
             sql: "SET RECIPIENT r",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "SET PATH needs a schema of two parts",
@@ -664,6 +659,246 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         VerdictTestCase {
             description: "LIKE ANY needs at least one pattern",
             sql: "SELECT ( v1 LIKE ANY ( ) )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+    ];
+    for test_case in test_cases {
+        let verdict: ExpectedVerdict = parse(test_case.sql)
+            .map(|parsed| ExpectedVerdict::Accepted {
+                opaque: !parsed.gaps.is_empty(),
+            })
+            .unwrap_or_else(|error| ExpectedVerdict::Rejected {
+                syntax: error.syntax,
+            });
+        assert_eq!(
+            verdict, test_case.expected_verdict,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_documented_statements_when_parsing_then_the_verdict_is_the_warehouse_receipt() {
+    let test_cases = [
+        VerdictTestCase {
+            description: "a catalog name may be a string literal",
+            sql: "ALTER CATALOG 'v1' DEFAULT COLLATION UTF8_BINARY",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DROP CONNECTION takes no RESTRICT or FORCE",
+            sql: "ALTER CATALOG v1 DROP CONNECTION",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a catalog name may be a string literal when created",
+            sql: "CREATE CATALOG 'v1'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a catalog name may be a string literal when dropped",
+            sql: "DROP CATALOG 'v1'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a catalog name may be a string literal in COMMENT ON",
+            sql: "COMMENT ON CATALOG 'v1' IS 'x'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "an owner change may leave out the connection name",
+            sql: "ALTER CONNECTION OWNER TO v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a governed tag's value list may be empty",
+            sql: "CREATE GOVERNED TAG v1 VALUES ( )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a governed tag's values may be set to an empty list",
+            sql: "ALTER GOVERNED TAG v1 SET VALUES ( )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "recipient properties may be keys without values",
+            sql: "ALTER RECIPIENT v1 SET PROPERTIES ( 'v' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a shared object removed without its kind is a name, even a kind's word",
+            sql: "ALTER SHARE v1 REMOVE MODEL",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a policy's securable may be a bare name",
+            sql: "DROP POLICY v1 ON t1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a policy's securable kind alone is a name",
+            sql: "DROP POLICY v1 ON CATALOG",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a tag's securable may be a bare relation and column",
+            sql: "SET TAG ON t1 . c1 v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "an unset tag's securable may be a bare name",
+            sql: "UNSET TAG ON v1 v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a column's bare relation name may be the word COLUMN",
+            sql: "SET TAG ON COLUMN . c1 v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "EXTERNAL METADATA is a securable",
+            sql: "GRANT SELECT ON EXTERNAL METADATA v1 TO `u1`",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ANY FILE is a securable with no name",
+            sql: "GRANT SELECT ON ANY FILE TO `u1`",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a share is granted to a recipient",
+            sql: "GRANT SELECT ON SHARE v1 TO RECIPIENT v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a group is created with users and subgroups",
+            sql: "CREATE GROUP v1 WITH USER v1 , v2 GROUP v3",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "members are added to and dropped from a group",
+            sql: "ALTER GROUP v1 ADD USER v1 , v2 DROP GROUP v3",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a group is dropped by name",
+            sql: "DROP GROUP v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "REMOVE takes a volume path",
+            sql: "REMOVE '/Volumes/workspace/s1/v1/f1.csv'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "VACUUM keeps its options in its tree",
+            sql: "VACUUM t1 RETAIN 168 HOURS DRY RUN",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "OPTIMIZE keeps its predicate and Z-order columns",
+            sql: "OPTIMIZE t1 WHERE c1 = 1 ZORDER BY ( c1 , c2 )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "MSCK REPAIR TABLE keeps its partition action",
+            sql: "MSCK REPAIR TABLE t1 ADD PARTITIONS",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "REPAIR TABLE keeps SYNC METADATA",
+            sql: "REPAIR TABLE t1 SYNC METADATA",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a transaction is begun, committed and rolled back",
+            sql: "BEGIN TRANSACTION; COMMIT WORK; ROLLBACK",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "SET COLLATION names its collation",
+            sql: "SET COLLATION UTF8_BINARY",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DEFAULT COLLATION needs the catalog name",
+            sql: "ALTER CATALOG DEFAULT COLLATION UTF8_BINARY",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "SET MANAGED LOCATION needs the catalog name",
+            sql: "ALTER CATALOG SET MANAGED LOCATION 'm'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "CREATE CATALOG takes no OPTIONS",
+            sql: "CREATE CATALOG v1 OPTIONS ( v1 = 'v' )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a foreign catalog needs CATALOG",
+            sql: "CREATE FOREIGN v1 USING CONNECTION v1 OPTIONS ( v1 = 'v' )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a shared partition column needs a value or a pattern",
+            sql: "ALTER SHARE sh1 ADD TABLE t1 PARTITION ( v1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ADD needs USER or GROUP and a member",
+            sql: "ALTER GROUP v1 ADD",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a group change needs ADD or DROP",
+            sql: "ALTER GROUP v1 GROUP v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "WITH needs USER or GROUP",
+            sql: "CREATE GROUP v1 WITH",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "DROP GROUP needs the group",
+            sql: "DROP GROUP",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a share is granted only to a RECIPIENT",
+            sql: "GRANT SELECT ON SHARE v1 TO v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "TO RECIPIENT needs a share",
+            sql: "GRANT SELECT ON v1 TO RECIPIENT v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "FROM RECIPIENT needs the recipient",
+            sql: "REVOKE SELECT ON SHARE v1 FROM RECIPIENT",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "REMOVE takes a path string, not a name",
+            sql: "REMOVE m1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "REMOVE needs a path",
+            sql: "REMOVE",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a securable kind's word before a name opens that kind, so the tag key is missing",
+            sql: "SET TAG ON TABLE v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "the same holds when a tag is unset",
+            sql: "UNSET TAG ON VOLUME v1",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
     ];
@@ -1140,7 +1375,7 @@ fn given_sql_when_parsing_strictly_then_any_error_refuses_it() {
         },
         StrictTestCase {
             description: "a gap is kept, not refused",
-            sql: "VACUUM t",
+            sql: "CACHE SELECT a FROM t",
             expected_outcome: Ok((1, 1)),
         },
         StrictTestCase {
@@ -1170,11 +1405,11 @@ fn given_sql_when_parsing_strictly_then_any_error_refuses_it() {
 fn given_a_gap_when_parsing_then_it_names_the_construct_and_its_range() {
     let test_cases = [GapTestCase {
         description: "a statement with no shared node is a gap from its first word to its end",
-        sql: "SELECT 1; VACUUM t",
+        sql: "SELECT 1; CACHE SELECT a FROM t",
         expected_gaps: vec![Gap {
-            construct: "vacuum",
+            construct: "cache_select",
             start: 10,
-            end: 18,
+            end: 31,
         }],
     }];
     for test_case in test_cases {

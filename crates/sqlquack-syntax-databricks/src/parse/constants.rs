@@ -213,7 +213,7 @@ pub(crate) const GROUPING_SETS: &str = "GROUPING SETS";
 pub(crate) const IDENTIFIER_CLAUSE: &str = "IDENTIFIER";
 
 /// The object words a `CREATE` the shared tree has no node for may name; any other word is refused.
-pub(crate) const CREATE_KINDS: [&str; 29] = [
+pub(crate) const CREATE_KINDS: [&str; 28] = [
     "BLOOMFILTER",
     "CATALOG",
     "CLEAN",
@@ -222,7 +222,6 @@ pub(crate) const CREATE_KINDS: [&str; 29] = [
     "DATABASE",
     "EXTERNAL",
     "FLOW",
-    "FOREIGN",
     "FUNCTION",
     "GOVERNED",
     "GROUP",
@@ -345,9 +344,10 @@ pub(crate) const PATH_ELEMENTS: [&str; 5] = [
 ];
 
 /// The securable kinds `GRANT` and `REVOKE` name, longest first, and whether a name is optional.
-pub(crate) const SECURABLE_KINDS: [(&[&str], bool); 18] = [
+pub(crate) const SECURABLE_KINDS: [(&[&str], bool); 19] = [
     (&["MATERIALIZED", "VIEW"], false),
     (&["EXTERNAL", "LOCATION"], false),
+    (&["EXTERNAL", "METADATA"], false),
     (&["STORAGE", "CREDENTIAL"], false),
     (&["SERVICE", "CREDENTIAL"], false),
     (&["ANONYMOUS", "FUNCTION"], true),
@@ -365,6 +365,9 @@ pub(crate) const SECURABLE_KINDS: [(&[&str], bool); 18] = [
     (&["CREDENTIAL"], false),
     (&["MODEL"], false),
 ];
+
+/// The securable kinds that never take a name.
+pub(crate) const NAMELESS_SECURABLES: [&str; 2] = ["ANY FILE", "ANONYMOUS FUNCTION"];
 
 /// Interval fields a year-month interval type may start with.
 pub(crate) const YEAR_MONTH: [&str; 2] = ["YEAR", "MONTH"];
@@ -404,6 +407,25 @@ pub(crate) const MSCK: &str = "msck";
 pub(crate) const CREATE_STREAMING_TABLE: &str = "create_streaming_table";
 /// The documented form whose source and target names are checked further.
 pub(crate) const SYNC: &str = "sync";
+/// `SET TAG` and `UNSET TAG`, with the patterns that read their securable by its kind.
+pub(crate) const TAG_FORMS: [(&str, &str); 2] = [
+    ("set_tag", "SET TAG ON tag_target id [ = tag_value ]"),
+    ("unset_tag", "UNSET TAG ON tag_target id"),
+];
+/// The words that open a tag's securable kind; written before a name, they are that kind.
+pub(crate) const TAG_KINDS: [&str; 11] = [
+    "CATALOG",
+    "COLUMN",
+    "DATABASE",
+    "EXTERNAL",
+    "FUNCTION",
+    "PROCEDURE",
+    "SCHEMA",
+    "SECRET",
+    "TABLE",
+    "VIEW",
+    "VOLUME",
+];
 /// The routine language that takes no handler.
 pub(crate) const SQL_LANGUAGE: &str = "SQL";
 /// The described object a string may name.

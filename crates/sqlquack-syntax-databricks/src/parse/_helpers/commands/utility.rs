@@ -16,7 +16,8 @@ use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{column_from, joined, null, string, table, tuple, var};
 use crate::parse::constants::{
     ADD_RESOURCE, CATALOG, COMMENT_KINDS, DESCRIBE_KINDS, EXPLAIN_MODES, FUNCTIONS,
-    MIN_BACKQUOTED_LENGTH, MIN_PATH_PARTS, PATH_ELEMENTS, SECURABLE_KINDS, SET_VERBOSE,
+    MIN_BACKQUOTED_LENGTH, MIN_PATH_PARTS, NAMELESS_SECURABLES, PATH_ELEMENTS, SECURABLE_KINDS,
+    SET_VERBOSE,
 };
 use crate::scan::models::TokenKind;
 
@@ -537,8 +538,8 @@ impl Parser<'_> {
             && self.is_at(1, is_identifier);
         self.at = end;
         if named {
-            self.gap("set", set_at);
-            return Ok(null());
+            self.at = first - 1;
+            return self.checked_form("set", set_at, 2, &["SET { RECIPIENT | COLLATION } id"]);
         }
         Err(self.error_with(
             "[INVALID_SET_SYNTAX] Expected format is 'SET', 'SET key', or 'SET key=value'.",
@@ -614,11 +615,16 @@ impl Parser<'_> {
             _ => return Err(self.error()),
         };
         self.at += 1;
-        let parts: Vec<Identifier> = self.multipart_identifier()?;
         let this: Expression = match kind {
-            "TABLE" | "VIEW" | "VOLUME" => table_expression(parts),
-            "COLUMN" => column_from(parts),
-            _ => Expression::Identifier(joined(parts)),
+            CATALOG if self.string_at(0) => self.string_literal()?,
+            _ => {
+                let parts: Vec<Identifier> = self.multipart_identifier()?;
+                match kind {
+                    "TABLE" | "VIEW" | "VOLUME" => table_expression(parts),
+                    "COLUMN" => column_from(parts),
+                    _ => Expression::Identifier(joined(parts)),
+                }
+            }
         };
         self.expect_kw("IS")?;
         let expression: Expression = match self.eat_kw("NULL") {
@@ -695,13 +701,16 @@ impl Parser<'_> {
                 .iter()
                 .enumerate()
                 .all(|(offset, word)| self.kw_at(offset, word));
-            let named_by_kind: bool = self.kw_in(words.len(), &["TO", "FROM"])
+            let named_by_kind: bool = words.len() == 1
+                && self.kw_in(words.len(), &["TO", "FROM"])
                 && !self.kw_in(words.len() + 1, &["TO", "FROM"])
                 && !self.ends_at(words.len() + 1);
             if matched && !named_by_kind && (*name_optional || self.kind_at(words.len() - 1)) {
                 self.at += words.len();
-                kind = Some(words.join(" "));
-                if *name_optional && !self.is(is_identifier) {
+                let joined_kind: String = words.join(" ");
+                let nameless: bool = NAMELESS_SECURABLES.contains(&joined_kind.as_str());
+                kind = Some(joined_kind);
+                if nameless || (*name_optional && !self.is(is_identifier)) {
                     return Ok((kind, Identifier::new(String::new())));
                 }
                 break;
@@ -710,10 +719,12 @@ impl Parser<'_> {
         Ok((kind, joined(self.multipart_identifier()?)))
     }
 
-    /// The principals after `TO` or `FROM`; a share's recipient is marked so.
-    fn principals(&mut self) -> Parsing<Vec<GrantPrincipal>> {
-        let recipient: bool = self.kw("RECIPIENT") && self.kind_at(0);
-        self.at += usize::from(recipient);
+    /// The principals after `TO` or `FROM`; a share is granted only to a `RECIPIENT`.
+    fn principals(&mut self, kind: Option<&str>) -> Parsing<Vec<GrantPrincipal>> {
+        let recipient: bool = kind == Some("SHARE");
+        if recipient {
+            self.expect_kw("RECIPIENT")?;
+        }
         self.comma_list(|parser| {
             Ok(GrantPrincipal {
                 name: parser.ident()?,
@@ -738,7 +749,7 @@ impl Parser<'_> {
         let privileges: Vec<Privilege> = self.privileges()?;
         let (kind, securable) = self.securable()?;
         self.expect_kw("TO")?;
-        let principals: Vec<GrantPrincipal> = self.principals()?;
+        let principals: Vec<GrantPrincipal> = self.principals(kind.as_deref())?;
         Ok(Expression::Grant(Box::new(Grant {
             caller: None,
             bulk: None,
@@ -764,9 +775,9 @@ impl Parser<'_> {
         let start: usize = self.offset();
         self.expect_kw("DENY")?;
         self.privileges()?;
-        self.securable()?;
+        let (kind, _) = self.securable()?;
         self.expect_kw("TO")?;
-        self.principals()?;
+        self.principals(kind.as_deref())?;
         self.gap("deny", start);
         Ok(null())
     }
@@ -814,7 +825,7 @@ impl Parser<'_> {
         let privileges: Vec<Privilege> = self.privileges()?;
         let (kind, securable) = self.securable()?;
         self.expect_kw("FROM")?;
-        let principals: Vec<GrantPrincipal> = self.principals()?;
+        let principals: Vec<GrantPrincipal> = self.principals(kind.as_deref())?;
         Ok(Expression::Revoke(Box::new(Revoke {
             caller: None,
             bulk: None,

@@ -9,13 +9,8 @@ use crate::parse::_helpers::tree::nodes::null;
 const LABELLED: [&str; 5] = ["BEGIN", "LOOP", "WHILE", "REPEAT", "FOR"];
 
 impl Parser<'_> {
-    /// `BEGIN [NOT ATOMIC] [compoundBody] END [;]`, or the `BEGIN` of a transaction.
+    /// `BEGIN [NOT ATOMIC] [compoundBody] END [;]`; `BEGIN TRANSACTION` is a documented form.
     pub(crate) fn begin_statement(&mut self) -> Parsing<Expression> {
-        if self.kw_in(1, &["TRANSACTION", "WORK"]) && self.ends_at(2) {
-            self.at += 2;
-            self.gap("begin", self.tokens[self.at - 2].start);
-            return Ok(null());
-        }
         let start: usize = self.offset();
         self.compound_block(false)?;
         self.gap("compound", start);
