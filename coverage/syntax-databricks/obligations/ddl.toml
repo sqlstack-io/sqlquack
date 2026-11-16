@@ -20325,16 +20325,16 @@ target = "<table_name> #2"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o081"
+id = "db.ddl.create-table-using.o131"
 kind = "alternative"
 required = true
-target = "{ [ <table_specification> ] [ COMMENT <table_comment> |… → [ <table_specification> ] [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ] [ ... ]"
+target = "{ [ <table_specification> ] [ OPTIONS <options_clause> |… → [ <table_specification> ] [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ] [ ... ]"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o082"
+id = "db.ddl.create-table-using.o132"
 kind = "alternative"
 required = true
-target = "{ [ <table_specification> ] [ COMMENT <table_comment> |… → [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ] [ ... ] AS <query>"
+target = "{ [ <table_specification> ] [ OPTIONS <options_clause> |… → [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ] [ ... ] AS <query>"
 
 [[obligation]]
 id = "db.ddl.create-table-using.o083"
@@ -20356,168 +20356,208 @@ target = "<table_specification> in [ <table_specification> ] #2"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o086"
+id = "db.ddl.create-table-using.o133"
 kind = "option_present"
 required = true
-target = "[ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ]"
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION…"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o087"
+id = "db.ddl.create-table-using.o134"
 kind = "option_absent"
 required = true
-target = "[ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ]"
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION…"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o088"
+id = "db.ddl.create-table-using.o135"
 kind = "alternative"
 required = true
-target = "[ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… → COMMENT <table_comment>"
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause>… → OPTIONS <options_clause>"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o089"
+id = "db.ddl.create-table-using.o136"
 kind = "alternative"
 required = true
-target = "[ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT… → TBLPROPERTIES <tblproperties_clause>"
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |… → COMMENT <table_comment>"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o090"
+id = "db.ddl.create-table-using.o137"
 kind = "alternative"
 required = true
-target = "[ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT… → DEFAULT COLLATION <default_collation_name>"
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES… → TBLPROPERTIES <tblproperties_clause>"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o091"
+id = "db.ddl.create-table-using.o138"
+kind = "alternative"
+required = true
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES… → DEFAULT COLLATION <default_collation_name>"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o139"
 kind = "required_operand_missing"
 required = true
-target = "<table_comment> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION…"
-note = "omit <table_comment>"
+target = "<options_clause> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |…"
+note = "omit <options_clause>"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o092"
+id = "db.ddl.create-table-using.o140"
 kind = "operand_type_class"
 required = true
-target = "<table_comment> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION…"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "db.ddl.create-table-using.o093"
-kind = "negative_neighbour"
-required = true
-target = "<table_comment> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION…"
-note = "an unquoted identifier in place of <table_comment>"
-
-[[obligation]]
-id = "db.ddl.create-table-using.o094"
-kind = "required_operand_missing"
-required = true
-target = "<tblproperties_clause> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION…"
-note = "omit <tblproperties_clause>"
-
-[[obligation]]
-id = "db.ddl.create-table-using.o095"
-kind = "operand_type_class"
-required = true
-target = "<tblproperties_clause> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION…"
+target = "<options_clause> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |…"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o096"
+id = "db.ddl.create-table-using.o141"
 kind = "required_operand_missing"
 required = true
-target = "<default_collation_name> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION…"
+target = "<table_comment> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |…"
+note = "omit <table_comment>"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o142"
+kind = "operand_type_class"
+required = true
+target = "<table_comment> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |…"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o143"
+kind = "negative_neighbour"
+required = true
+target = "<table_comment> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |…"
+note = "an unquoted identifier in place of <table_comment>"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o144"
+kind = "required_operand_missing"
+required = true
+target = "<tblproperties_clause> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |…"
+note = "omit <tblproperties_clause>"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o145"
+kind = "operand_type_class"
+required = true
+target = "<tblproperties_clause> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |…"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o146"
+kind = "required_operand_missing"
+required = true
+target = "<default_collation_name> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause>…"
 note = "omit <default_collation_name>"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o097"
+id = "db.ddl.create-table-using.o147"
 kind = "operand_type_class"
 required = true
-target = "<default_collation_name> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION…"
+target = "<default_collation_name> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause>…"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o098"
+id = "db.ddl.create-table-using.o148"
 kind = "negative_neighbour"
 required = true
-target = "<default_collation_name> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION…"
+target = "<default_collation_name> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause>…"
 note = "a string literal in place of <default_collation_name>"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o099"
+id = "db.ddl.create-table-using.o149"
 kind = "option_present"
 required = true
-target = "[ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ] #2"
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o100"
+id = "db.ddl.create-table-using.o150"
 kind = "option_absent"
 required = true
-target = "[ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ] #2"
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o101"
+id = "db.ddl.create-table-using.o151"
 kind = "alternative"
 required = true
-target = "[ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… → COMMENT <table_comment> #2"
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause>… → OPTIONS <options_clause> #2"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o102"
+id = "db.ddl.create-table-using.o152"
 kind = "alternative"
 required = true
-target = "[ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT… → TBLPROPERTIES <tblproperties_clause> #2"
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |… → COMMENT <table_comment> #2"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o103"
+id = "db.ddl.create-table-using.o153"
 kind = "alternative"
 required = true
-target = "[ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT… → DEFAULT COLLATION <default_collation_name> #2"
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES… → TBLPROPERTIES <tblproperties_clause> #2"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o104"
+id = "db.ddl.create-table-using.o154"
+kind = "alternative"
+required = true
+target = "[ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES… → DEFAULT COLLATION <default_collation_name> #2"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o155"
 kind = "required_operand_missing"
 required = true
-target = "<table_comment> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
-note = "omit <table_comment>"
+target = "<options_clause> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |… #2"
+note = "omit <options_clause>"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o105"
+id = "db.ddl.create-table-using.o156"
 kind = "operand_type_class"
 required = true
-target = "<table_comment> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "db.ddl.create-table-using.o106"
-kind = "negative_neighbour"
-required = true
-target = "<table_comment> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
-note = "an unquoted identifier in place of <table_comment>"
-
-[[obligation]]
-id = "db.ddl.create-table-using.o107"
-kind = "required_operand_missing"
-required = true
-target = "<tblproperties_clause> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
-note = "omit <tblproperties_clause>"
-
-[[obligation]]
-id = "db.ddl.create-table-using.o108"
-kind = "operand_type_class"
-required = true
-target = "<tblproperties_clause> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
+target = "<options_clause> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |… #2"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o110"
+id = "db.ddl.create-table-using.o157"
+kind = "required_operand_missing"
+required = true
+target = "<table_comment> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |… #2"
+note = "omit <table_comment>"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o158"
 kind = "operand_type_class"
 required = true
-target = "<default_collation_name> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
+target = "<table_comment> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |… #2"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o159"
+kind = "negative_neighbour"
+required = true
+target = "<table_comment> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |… #2"
+note = "an unquoted identifier in place of <table_comment>"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o160"
+kind = "required_operand_missing"
+required = true
+target = "<tblproperties_clause> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |… #2"
+note = "omit <tblproperties_clause>"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o161"
+kind = "operand_type_class"
+required = true
+target = "<tblproperties_clause> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> |… #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.ddl.create-table-using.o162"
+kind = "operand_type_class"
+required = true
+target = "<default_collation_name> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause>… #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o111"
+id = "db.ddl.create-table-using.o163"
 kind = "negative_neighbour"
 required = true
-target = "<default_collation_name> in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
+target = "<default_collation_name> in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause>… #2"
 note = "a string literal in place of <default_collation_name>"
 
 [[obligation]]
@@ -20602,16 +20642,16 @@ required = true
 note = "the form without its required TABLE after TEMPORARY #2"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o119"
+id = "db.ddl.create-table-using.o164"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required COLLATION in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ]"
+note = "the form without its required COLLATION in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION…"
 
 [[obligation]]
-id = "db.ddl.create-table-using.o120"
+id = "db.ddl.create-table-using.o165"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required COLLATION in [ COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION <default_collation_name> ] #2"
+note = "the form without its required COLLATION in [ OPTIONS <options_clause> | COMMENT <table_comment> | TBLPROPERTIES <tblproperties_clause> | DEFAULT COLLATION… #2"
 
 [[obligation]]
 id = "db.ddl.create-table-using.o044"
@@ -20705,14 +20745,6 @@ required = true
 target = "OPTIONS"
 anchor = "doc.sql-ref-syntax-ddl-create-table-using / Syntax"
 note = "OPTIONS on a temporary table with a column list, recorded to settle whether the temporary line takes it"
-
-[[obligation]]
-id = "db.ddl.create-table-using.o129"
-kind = "option_present"
-required = true
-target = "OPTIONS"
-anchor = "doc.sql-ref-syntax-ddl-create-table-using / Syntax"
-note = "OPTIONS on a replaced temporary table"
 
 [[obligation]]
 id = "db.ddl.create-table-using.o130"

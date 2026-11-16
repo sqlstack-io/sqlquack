@@ -234,6 +234,7 @@ FILLS: dict[str, str] = {
     "table_clauses": "COMMENT 'x'",
     "table_comment": "'x'",
     "table_specification": "( c1 INT , c2 INT )",
+    "options_clause": "( 'k' = 'v' )",
     "tblproperties_clause": "( 'k' = 'v' )",
     "to_column_identifier": "c3",
     "to_field_identifier": "c3",

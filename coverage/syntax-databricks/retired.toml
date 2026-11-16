@@ -2523,3 +2523,39 @@ ids = [
   "db.functions.named-struct.o010",
   "db.functions.named-struct.o012",
 ]
+
+[[retired]]
+retired_in = "fa09cfe73cf3df17a3a62c04bcb348447967610d"
+reason = "the temporary line of CREATE TABLE [USING] takes OPTIONS, which the warehouse accepts on a temporary table, so the obligations of the temporary clause list without it give way to those of the list with it"
+ids = [
+  "db.ddl.create-table-using.o081",
+  "db.ddl.create-table-using.o082",
+  "db.ddl.create-table-using.o086",
+  "db.ddl.create-table-using.o087",
+  "db.ddl.create-table-using.o088",
+  "db.ddl.create-table-using.o089",
+  "db.ddl.create-table-using.o090",
+  "db.ddl.create-table-using.o091",
+  "db.ddl.create-table-using.o092",
+  "db.ddl.create-table-using.o093",
+  "db.ddl.create-table-using.o094",
+  "db.ddl.create-table-using.o095",
+  "db.ddl.create-table-using.o096",
+  "db.ddl.create-table-using.o097",
+  "db.ddl.create-table-using.o098",
+  "db.ddl.create-table-using.o099",
+  "db.ddl.create-table-using.o100",
+  "db.ddl.create-table-using.o101",
+  "db.ddl.create-table-using.o102",
+  "db.ddl.create-table-using.o103",
+  "db.ddl.create-table-using.o104",
+  "db.ddl.create-table-using.o105",
+  "db.ddl.create-table-using.o106",
+  "db.ddl.create-table-using.o107",
+  "db.ddl.create-table-using.o108",
+  "db.ddl.create-table-using.o110",
+  "db.ddl.create-table-using.o111",
+  "db.ddl.create-table-using.o119",
+  "db.ddl.create-table-using.o120",
+  "db.ddl.create-table-using.o129",
+]
