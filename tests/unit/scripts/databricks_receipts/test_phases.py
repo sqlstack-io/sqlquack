@@ -311,6 +311,15 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             expected_parse_only=None,
         ),
         PhaseTestCase(
+            description="a partition the table does not have",
+            message="[PARTITIONS_NOT_FOUND] The partition(s) `c1` cannot be found in table "
+            "`workspace`.`s1`.`t1`. Verify the partition specification and table name. "
+            "SQLSTATE: 428FT",
+            sqlstate="428FT",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
             description="a temporary function named like an existing routine",
             message="[ROUTINE_ALREADY_EXISTS] Cannot create the routine `abs` because a routine of "
             "that name already exists. SQLSTATE: 42723",
