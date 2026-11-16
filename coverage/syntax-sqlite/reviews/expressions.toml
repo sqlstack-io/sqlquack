@@ -150,3 +150,41 @@ note = "Read against the pinned SQLite 3.54.1 documentation and the tokenizer, t
 
 [review.definitions]
 "sl.expressions.numeric-literal.fraction" = "60b90ebc35b8ab1f7c4f66a6e3a2914ae81c0709ec0c1e5f6e2997208d9a7518"
+
+[[review]]
+id = "sl-expressions-003"
+family = "expressions"
+parser_tree = "c3d9c006c4baa98888ebbb5e1987ebc4e034be3a"
+reviewed_utc = "2026-11-16T10:00:48Z"
+verdict = "approved"
+forms = [
+  "sl.expressions.aggregate-function-invocation",
+  "sl.expressions.expr.function",
+  "sl.expressions.filter-clause",
+  "sl.expressions.function-arguments",
+  "sl.expressions.literal-value",
+  "sl.expressions.over-clause",
+  "sl.expressions.simple-function-invocation",
+  "sl.expressions.window-function-invocation",
+]
+note = "Re-bound, not re-read: the forms' approved reviews still hold. Every parse tree of their cases equals the reviewed one once the call's distinct flag is read as set_quantifier (false as none, true as distinct), the only change the set quantifier made, checked over all SQLite cases; no case, receipt, obligation or definition changed."
+
+[review.fingerprints]
+"sl.expressions.aggregate-function-invocation" = "2dd15e5bbdba58e348dee834229b2f258f1bf8d0c55e1816591f813e0c84cbab"
+"sl.expressions.expr.function" = "1e8c1a5c0fbf62591cc4e0606854605bbcc41de657466bf6953702b383658f5b"
+"sl.expressions.filter-clause" = "f129e2af42eefe62c75b8a1855b9da671d52c5ac8aa0140515f970ed7b7b8b57"
+"sl.expressions.function-arguments" = "a4119c9499d047262e53a1997db3da11d2d6778812072caa9388835334360b79"
+"sl.expressions.literal-value" = "24ace104b953125bcee2a7607f8fb85f4b601135d070615bae4eda711939ac50"
+"sl.expressions.over-clause" = "5c8966fb2d629f0a3b0a82ac648b406e8dd223c63569be4404f62be8e7500fe2"
+"sl.expressions.simple-function-invocation" = "4fac001e66d56a5417889dbca6b95d0c3447846234dbea5fd4240639651d9823"
+"sl.expressions.window-function-invocation" = "56ce285602ad793ec2b9b6d625563e476460b8db8c4fa9c03fdb608c448571ec"
+
+[review.definitions]
+"sl.expressions.aggregate-function-invocation" = "7d5225a596d1b572feb39060bbea8c5fc38be6353a85445897deecc64a13ea05"
+"sl.expressions.expr.function" = "3337bcf9bfb226cff619db48e02395b7c0cffe08482dca1600adf8caa4220367"
+"sl.expressions.filter-clause" = "1aed64c30d47aaf120012ddc058c08843e30a4c77734ea217ca6f85fe8445c05"
+"sl.expressions.function-arguments" = "5726b9a1b90552dff11342755dfd1bd76301144590c637b604081e40bb2beae6"
+"sl.expressions.literal-value" = "b9a6e951ce91b5b491fac9f265cfe5b8848607b374c1b0b1026d1f0f58d9583c"
+"sl.expressions.over-clause" = "79206d05611519db7fcc2800c9d98100fb9a17ed006cf755639a351f1c526d39"
+"sl.expressions.simple-function-invocation" = "7dd4ba952cfdcb967afe22304caae693c6e70576e509f4461dc837a116928127"
+"sl.expressions.window-function-invocation" = "d44c4af709d52f40941e3daca3edd582ba9b3071bca58db851105250850b436d"

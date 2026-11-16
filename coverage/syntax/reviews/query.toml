@@ -449,3 +449,38 @@ note = "Read in full under review brief version 1 against the documentation page
 [review.definitions]
 "sf.query.match-recognize.match-recognize-pattern-define-as" = "b1575679b90b13ccb0cf1ed3a3bd417e53701b63d2b99baf888c91cec31301db"
 "sf.query.resample" = "ae258470c362d09a2a321c6b7951cfe49fef7128c81448030f5f9bbfb4575a3f"
+
+[[review]]
+id = "query-021"
+family = "query"
+parser_tree = "e3a3c11b087d88ce3023dbb4d1c4152f5b57e1ad"
+reviewed_utc = "2026-11-16T09:56:03Z"
+verdict = "approved"
+forms = [
+  "sf.query.at-before",
+  "sf.query.changes",
+  "sf.query.constructs",
+  "sf.query.group-by-rollup",
+  "sf.query.match-recognize.match-recognize-pattern-define-as",
+  "sf.query.pivot",
+  "sf.query.resample",
+]
+note = "Re-bound, not re-read: the forms' approved reviews still hold. Every parse tree of their cases equals the reviewed one once the call's distinct flag is read as set_quantifier (false as none, true as distinct), the only change the set quantifier made, checked over all Snowflake cases; no case, receipt, obligation or definition changed."
+
+[review.fingerprints]
+"sf.query.at-before" = "f7c9db42396612375b4056b3592d3d0ba69173c808d375edb1e314f6e5a1ec98"
+"sf.query.changes" = "aa6bcca00388662f9065bf7d851c5110ee07b66ba423203dea5fc6e35891ff45"
+"sf.query.constructs" = "a73c45f3b888ceb861e903e64bbe7aedc4a486e0bb97a3a6567019bbee5a1c4d"
+"sf.query.group-by-rollup" = "e8e445cf8429eeef46b7fee7729e2374a387dc0c2cd4d50eeba47ea189b1c7b2"
+"sf.query.match-recognize.match-recognize-pattern-define-as" = "5a90b33369710665e8789ecb27855bd2426611493a96167163e7dd85bc9990dd"
+"sf.query.pivot" = "3efaf0de43b1699f2020e8b8440e814a09c5c96c04d4e117684cab86f6c12585"
+"sf.query.resample" = "f1699b5ca527c712e0517b43cd16cd3f9a75e6ff6124812cc89cff83a50c2469"
+
+[review.definitions]
+"sf.query.at-before" = "c22f44abf00eef2ccb78372a2affdd5f516b17058bd94a8d78d76593d0abcf3a"
+"sf.query.changes" = "9f931de198de4e7f9456eb3354488013e7013b8a94c436c9252fa57bc5ec921c"
+"sf.query.constructs" = "c8a8a6cd0ee6642ea5a89af0b125b637a5efea4df80f5d9eda34370ccd9932c4"
+"sf.query.group-by-rollup" = "34f937067a7c9185f997cdbe30cb8c121ae14d67cf269b5cd063ad2d3cb6c40e"
+"sf.query.match-recognize.match-recognize-pattern-define-as" = "b1575679b90b13ccb0cf1ed3a3bd417e53701b63d2b99baf888c91cec31301db"
+"sf.query.pivot" = "e7ca654000c0c093b06ad8d3f6cca602fda630527b3ae7d2ce868358727b77bd"
+"sf.query.resample" = "ae258470c362d09a2a321c6b7951cfe49fef7128c81448030f5f9bbfb4575a3f"

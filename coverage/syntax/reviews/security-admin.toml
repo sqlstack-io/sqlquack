@@ -3771,3 +3771,44 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.security_admin.alter-user.unset-tag" = "887a22d4899b63426761575fe9b62bc2e373ac086e1b7f0b43e7a5a03d6e34d5"
 "sf.security_admin.show-oflow-data-plane-integration" = "8bf5da4c6f9b547ef3b96a5c008b91fc3a2b340cd478c29d0f4d71c09775767b"
 "sf.security_admin.show-row-access-policies" = "be506ee175eb39d934a5c0860a328fc6074b77245e012e68dc41971a4e877a9c"
+
+[[review]]
+id = "security-admin-035"
+family = "security_admin"
+parser_tree = "e3a3c11b087d88ce3023dbb4d1c4152f5b57e1ad"
+reviewed_utc = "2026-11-16T09:56:03Z"
+verdict = "approved"
+forms = [
+  "sf.security_admin.alter-aggregation-policy.set-body",
+  "sf.security_admin.alter-join-policy.set-body",
+  "sf.security_admin.alter-privacy-policy.set-body",
+  "sf.security_admin.alter-projection-policy.set-body",
+  "sf.security_admin.create-aggregation-policy",
+  "sf.security_admin.create-join-policy",
+  "sf.security_admin.create-privacy-policy",
+  "sf.security_admin.create-projection-policy",
+  "sf.security_admin.create-storage-lifecycle-policy",
+]
+note = "Re-bound, not re-read: the forms' approved reviews still hold. Every parse tree of their cases equals the reviewed one once the call's distinct flag is read as set_quantifier (false as none, true as distinct), the only change the set quantifier made, checked over all Snowflake cases; no case, receipt, obligation or definition changed."
+
+[review.fingerprints]
+"sf.security_admin.alter-aggregation-policy.set-body" = "4a833d5c0735a262bd031bfb04d7e62890531c76edb702652eb91a0f766e9522"
+"sf.security_admin.alter-join-policy.set-body" = "aef6ae3b64241e0066327286efa18837f9326fa8017637037851ab1a07c1694e"
+"sf.security_admin.alter-privacy-policy.set-body" = "d078c84e1caf8500195a1380fd4393f916353944dfe62af7fae06e0b5c4ee5e5"
+"sf.security_admin.alter-projection-policy.set-body" = "acbf0ba62494f56f62a770da95cb6b9db274bee6ecb8edb55fa6873f78aa05c7"
+"sf.security_admin.create-aggregation-policy" = "4a783d202d8f27ef08305ee19f4ffc7e95e25d9de91762fd2abb2d30f3f7df96"
+"sf.security_admin.create-join-policy" = "506360884503b7b8a54d325dec2b4b866957723fbc3b537f4d3541b40ad98a58"
+"sf.security_admin.create-privacy-policy" = "94ad62143654d3157ef731bdc9cca341e67d37cdc47fee41beaad53c4914c9c7"
+"sf.security_admin.create-projection-policy" = "09764ffa586cebaed0d7a0a8cea9fd63d2e959b19e98170145a43f63d81d64b1"
+"sf.security_admin.create-storage-lifecycle-policy" = "cbbc63486352dd92a49481677182db951fa52440c89a3ae4b9fec40ae1344294"
+
+[review.definitions]
+"sf.security_admin.alter-aggregation-policy.set-body" = "1bbe040ba3aa96601b71af9575cbe35e8f677c56575e12654683f194fc9c4b81"
+"sf.security_admin.alter-join-policy.set-body" = "bdfb90b6e646aa501616e5ff211ca5fd23140dfe5a33cf79c02e1a3c659acb8d"
+"sf.security_admin.alter-privacy-policy.set-body" = "4f346997c52e0c194369976d8babcbd46f6bbc172f3b593f514b3ef4dfd86d76"
+"sf.security_admin.alter-projection-policy.set-body" = "41037a70547d014a3a9a6296f1a66f91b92b51e669d40d82c6b64d9d15c81203"
+"sf.security_admin.create-aggregation-policy" = "eb05704303528b7fcea01fd28b42a04832acb4a30094a8e47589e0e6648050b0"
+"sf.security_admin.create-join-policy" = "96ed87d4ee6bc57059da015f2c43e3e8785c7df49b76b19c759b541cbb74b973"
+"sf.security_admin.create-privacy-policy" = "29c1bd06d3932fcabc084bdcd36729f7a57fc6d3368e5a10f9332a8b1bd5f569"
+"sf.security_admin.create-projection-policy" = "0ab83bd3a200e9121b3cb92debeb1310b8cb3397b71e8efb9d38b2ddf2242d60"
+"sf.security_admin.create-storage-lifecycle-policy" = "8665b98dca1048abdea0c35f7990f3f66bc17b725ceca8daee0b251d4ea25610"

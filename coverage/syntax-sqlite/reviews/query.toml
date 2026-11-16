@@ -79,3 +79,20 @@ note = "Read against the pinned SQLite 3.54.1 documentation and parse.y, the obl
 "sl.query.table-or-subquery.subquery" = "3bc9811c67d96be503269ac24174c5d69a8626939b9660adbc582a603dd65c09"
 "sl.query.table-or-subquery.table-function" = "432e782c2956900b479f86a709bdf6b8f9150d9276a0332e3717074763e49e47"
 "sl.query.window-defn" = "58a995b62ccef8866b046bfb8be9acbab772d0dd507efed0502d3ce794962462"
+
+[[review]]
+id = "sl-query-002"
+family = "query"
+parser_tree = "c3d9c006c4baa98888ebbb5e1987ebc4e034be3a"
+reviewed_utc = "2026-11-16T10:00:48Z"
+verdict = "approved"
+forms = [
+  "sl.query.table-or-subquery.table-function",
+]
+note = "Re-bound, not re-read: the forms' approved reviews still hold. Every parse tree of their cases equals the reviewed one once the call's distinct flag is read as set_quantifier (false as none, true as distinct), the only change the set quantifier made, checked over all SQLite cases; no case, receipt, obligation or definition changed."
+
+[review.fingerprints]
+"sl.query.table-or-subquery.table-function" = "52ea3432ae9ef9088177e899b6bdc0a6c374461d0188209077b5855cb137eaa0"
+
+[review.definitions]
+"sl.query.table-or-subquery.table-function" = "432e782c2956900b479f86a709bdf6b8f9150d9276a0332e3717074763e49e47"
