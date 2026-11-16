@@ -597,6 +597,7 @@ impl<'sql> Parser<'sql> {
                         if_not_exists: false,
                         position: None,
                         column_keyword: false,
+                        keyword: None,
                     })
                 })?;
             }
@@ -609,6 +610,7 @@ impl<'sql> Parser<'sql> {
                         if_exists,
                         cascade: false,
                         column_keyword: false,
+                        keyword: None,
                     })
                 })?;
             }
@@ -633,6 +635,7 @@ impl<'sql> Parser<'sql> {
                     use_modify_keyword: false,
                     column_keyword: false,
                     action_words: None,
+                    keyword: None,
                 }];
                 let nullability: Option<AlterColumnAction> = if self.eat_kws(&["NOT", "NULL"]) {
                     Some(AlterColumnAction::SetNotNull)
@@ -648,6 +651,7 @@ impl<'sql> Parser<'sql> {
                         use_modify_keyword: false,
                         column_keyword: false,
                         action_words: None,
+                        keyword: None,
                     });
                 }
                 if self.kw("WITH") && self.char_at(1, '(') {

@@ -695,6 +695,9 @@ pub enum AlterTableAction {
         /// Whether the optional COLUMN keyword was written, as in Snowflake's `ADD COLUMN`
         #[serde(default, skip_serializing_if = "std::ops::Not::not")]
         column_keyword: bool,
+        /// The keyword as written when it is a synonym, such as COLUMNS for COLUMN or CHANGE for ALTER
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        keyword: Option<String>,
     },
     DropColumn {
         name: Identifier,
@@ -703,6 +706,9 @@ pub enum AlterTableAction {
         /// Whether the optional COLUMN keyword was written, as in Snowflake's `DROP COLUMN`
         #[serde(default, skip_serializing_if = "std::ops::Not::not")]
         column_keyword: bool,
+        /// The keyword as written when it is a synonym, such as COLUMNS for COLUMN or CHANGE for ALTER
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        keyword: Option<String>,
     },
     RenameColumn {
         old_name: Identifier,
@@ -721,6 +727,9 @@ pub enum AlterTableAction {
         /// Snowflake: the optional SET, DATA and TYPE words written before the action, e.g. `SET DATA TYPE`
         #[serde(default, skip_serializing_if = "Option::is_none")]
         action_words: Option<String>,
+        /// The keyword as written when it is a synonym, such as COLUMNS for COLUMN or CHANGE for ALTER
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        keyword: Option<String>,
     },
     /// MySQL/TiDB `MODIFY [COLUMN]` with a complete replacement column definition.
     ModifyColumn {
@@ -733,6 +742,9 @@ pub enum AlterTableAction {
     DropConstraint {
         name: Identifier,
         if_exists: bool,
+        /// Databricks: whether RESTRICT, the default behaviour, was written
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        restrict: bool,
     },
     /// DROP FOREIGN KEY action (Oracle/MySQL): ALTER TABLE t DROP FOREIGN KEY fk_name
     DropForeignKey {

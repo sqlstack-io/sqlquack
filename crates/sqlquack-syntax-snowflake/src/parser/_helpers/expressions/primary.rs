@@ -1048,15 +1048,18 @@ impl Parser {
             let type_name = &token.text[sep_pos + 2..];
             let num_expr = Expression::Literal(Box::new(Literal::Number(num_part.to_string())));
             let data_type = match type_name {
-                "BIGINT" => {
-                    sqlquack_syntax::expressions::types::models::DataType::BigInt { length: None }
-                }
-                "SMALLINT" => {
-                    sqlquack_syntax::expressions::types::models::DataType::SmallInt { length: None }
-                }
-                "TINYINT" => {
-                    sqlquack_syntax::expressions::types::models::DataType::TinyInt { length: None }
-                }
+                "BIGINT" => sqlquack_syntax::expressions::types::models::DataType::BigInt {
+                    length: None,
+                    spelling: None,
+                },
+                "SMALLINT" => sqlquack_syntax::expressions::types::models::DataType::SmallInt {
+                    length: None,
+                    spelling: None,
+                },
+                "TINYINT" => sqlquack_syntax::expressions::types::models::DataType::TinyInt {
+                    length: None,
+                    spelling: None,
+                },
                 "DOUBLE" => sqlquack_syntax::expressions::types::models::DataType::Double {
                     precision: None,
                     scale: None,
@@ -1069,6 +1072,7 @@ impl Parser {
                 "DECIMAL" => sqlquack_syntax::expressions::types::models::DataType::Decimal {
                     precision: None,
                     scale: None,
+                    spelling: None,
                 },
                 _ => sqlquack_syntax::expressions::types::models::DataType::Custom {
                     name: type_name.to_string(),
@@ -1522,6 +1526,7 @@ impl Parser {
                     sqlquack_syntax::expressions::types::models::DataType::Decimal {
                         precision: None,
                         scale: None,
+                        spelling: None,
                     }
                 }
                 _ => {

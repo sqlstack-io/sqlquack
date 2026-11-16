@@ -531,6 +531,9 @@ pub struct Use {
     /// Snowflake's qualified name part by part, quoting kept; empty for a one-part name.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub parts: Vec<Identifier>,
+    /// Databricks: whether the name was written as a string literal
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub string_name: bool,
 }
 
 /// Kind of USE statement
@@ -712,6 +715,9 @@ pub struct Describe {
     /// Parenthesized parameter types for DESCRIBE PROCEDURE/FUNCTION (e.g., INT, VARCHAR)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub params: Vec<DataType>,
+    /// Whether the short DESC was written for DESCRIBE
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub short_form: bool,
 }
 
 impl Describe {
@@ -727,6 +733,7 @@ impl Describe {
             leading_comments: Vec::new(),
             as_json: false,
             params: Vec::new(),
+            short_form: false,
         }
     }
 }
@@ -784,6 +791,15 @@ pub struct Show {
     /// Snowflake SHOW SERVICES OF TYPE <type> [ , ... ], upper case in source order
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub service_types: Vec<String>,
+    /// The FROM or IN written before `scope` or `db`, when either was
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub scope_keyword: Option<String>,
+    /// The FROM or IN written before `target`, when either was
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub target_keyword: Option<String>,
+    /// Whether LIKE was written before the `like` pattern
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub like_keyword: bool,
 }
 
 impl Show {
@@ -808,6 +824,9 @@ impl Show {
             listing_filters: Vec::new(),
             exclude_jobs: false,
             service_types: Vec::new(),
+            scope_keyword: None,
+            target_keyword: None,
+            like_keyword: false,
         }
     }
 }
@@ -959,6 +978,9 @@ pub struct DeclareItem {
     pub default: Option<Box<Expression>>,
     #[serde(default)]
     pub has_as: bool,
+    /// Databricks: whether `=` was written for DEFAULT
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub equals: bool,
     /// BigQuery: additional variable names in multi-variable DECLARE (DECLARE X, Y, Z INT64)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub additional_names: Vec<Expression>,
@@ -1081,6 +1103,8 @@ pub struct Version {
     pub kind: String,
     #[serde(default)]
     pub expression: Option<Box<Expression>>,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub for_keyword: bool,
 }
 
 /// Schema

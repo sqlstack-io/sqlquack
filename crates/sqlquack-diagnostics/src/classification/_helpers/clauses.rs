@@ -85,6 +85,7 @@ fn select_clauses(select: &Select) -> Vec<String> {
         total_rowcount,
         source_dialect: _,
         span: _,
+        table_statement: _,
     } = select;
     present(&[
         (with.is_some(), "with"),
@@ -166,6 +167,7 @@ macro_rules! set_operation_clauses {
                 on_columns,
                 locks,
                 with_ties,
+                keyword: _,
                 span: _,
             } = operation;
             present(&[

@@ -35,6 +35,11 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "a pattern quantifier needs a minimum or a maximum",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a { , } ) DEFINE a AS TRUE )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "MINUS is EXCEPT",
             sql: "SELECT 1 MINUS SELECT 2",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
@@ -1522,6 +1527,36 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             sql: "REPLACE TABLE t CLONE u",
             pointer: "/0/create_table/replace_only",
             expected_json: "true",
+        },
+        ValueTestCase {
+            description: "a MATCH_RECOGNIZE pattern opens with its ^ anchor",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( ^ a b* | PERMUTE ( a , b ) {1,} $ ) DEFINE a AS TRUE , b AS TRUE )",
+            pointer: "/0/select/from/expressions/0/match_recognize/row_pattern/Alternation/0/Sequence/0",
+            expected_json: "\"Start\"",
+        },
+        ValueTestCase {
+            description: "a pattern variable keeps its * quantifier",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( ^ a b* | PERMUTE ( a , b ) {1,} $ ) DEFINE a AS TRUE , b AS TRUE )",
+            pointer: "/0/select/from/expressions/0/match_recognize/row_pattern/Alternation/0/Sequence/2/Quantified/quantifier",
+            expected_json: "\"ZeroOrMore\"",
+        },
+        ValueTestCase {
+            description: "PERMUTE keeps its members",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( ^ a b* | PERMUTE ( a , b ) {1,} $ ) DEFINE a AS TRUE , b AS TRUE )",
+            pointer: "/0/select/from/expressions/0/match_recognize/row_pattern/Alternation/1/Sequence/0/Quantified/this/Permute/1/Symbol/name",
+            expected_json: "\"b\"",
+        },
+        ValueTestCase {
+            description: "{1,} is a quantifier with a minimum only",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( ^ a b* | PERMUTE ( a , b ) {1,} $ ) DEFINE a AS TRUE , b AS TRUE )",
+            pointer: "/0/select/from/expressions/0/match_recognize/row_pattern/Alternation/1/Sequence/0/Quantified/quantifier/Between/min",
+            expected_json: "1",
+        },
+        ValueTestCase {
+            description: "a pattern closes with its $ anchor",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( ^ a b* | PERMUTE ( a , b ) {1,} $ ) DEFINE a AS TRUE , b AS TRUE )",
+            pointer: "/0/select/from/expressions/0/match_recognize/row_pattern/Alternation/1/Sequence/1",
+            expected_json: "\"End\"",
         },
         ValueTestCase {
             description: "DEFAULT COLLATION keeps a backticked name's quoting",

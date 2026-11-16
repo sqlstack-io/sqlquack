@@ -663,6 +663,7 @@ pub(crate) fn postgres_cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::Decimal {
             precision: Some(precision),
             scale,
+            spelling: _,
         } => {
             format!("{NUMERIC}({precision},{})", scale.unwrap_or(0))
         }

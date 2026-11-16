@@ -417,6 +417,7 @@ impl Parser {
                     self.detach_unparenthesized_set_operation_modifiers(&mut right);
                 result = Expression::Union(Box::new(Union {
                     with_ties: false,
+                    keyword: None,
                     left: wrap_values_set_operand(left),
                     right: wrap_values_set_operand(right),
                     all,
@@ -465,6 +466,7 @@ impl Parser {
                     self.detach_unparenthesized_set_operation_modifiers(&mut right);
                 result = Expression::Intersect(Box::new(Intersect {
                     with_ties: false,
+                    keyword: None,
                     left: wrap_values_set_operand(left),
                     right: wrap_values_set_operand(right),
                     all,
@@ -518,6 +520,7 @@ impl Parser {
                     self.detach_unparenthesized_set_operation_modifiers(&mut right);
                 result = Expression::Except(Box::new(Except {
                     with_ties: false,
+                    keyword: None,
                     left: wrap_values_set_operand(left),
                     right: wrap_values_set_operand(right),
                     all,

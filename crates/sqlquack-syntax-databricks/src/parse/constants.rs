@@ -377,6 +377,8 @@ pub(crate) const DAY_TIME: [&str; 4] = ["DAY", "HOUR", "MINUTE", "SECOND"];
 pub(crate) const MONTH: &str = "MONTH";
 /// The `INT` spelling the tree marks.
 pub(crate) const INTEGER_SPELLING: &str = "INTEGER";
+/// The set operator Databricks reads as `EXCEPT`, kept as written.
+pub(crate) const MINUS: &str = "MINUS";
 /// The `FLOAT` spelling the tree marks.
 pub(crate) const REAL_SPELLING: &str = "REAL";
 /// The timestamp type spelling with the local time zone.

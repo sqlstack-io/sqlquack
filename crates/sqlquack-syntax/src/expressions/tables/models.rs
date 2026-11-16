@@ -98,6 +98,9 @@ pub struct CreateTable {
     /// Whether the AS SELECT was wrapped in parentheses
     #[serde(default)]
     pub as_select_parenthesized: bool,
+    /// Databricks: whether the query followed without the optional AS
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub as_select_without_as: bool,
     /// ON COMMIT behavior for temporary tables
     #[serde(default)]
     pub on_commit: Option<OnCommit>,
@@ -254,6 +257,7 @@ impl CreateTable {
             with_connection: None,
             temporary_spelling: None,
             replace_only: false,
+            as_select_without_as: false,
         }
     }
 }

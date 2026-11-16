@@ -30,13 +30,23 @@ fn built_in(name: &str, modifiers: &[Modifier], text: &str) -> DataType {
             length: None,
             integer_spelling: name == INTEGER_SPELLING,
         },
-        ("BIGINT", _) => DataType::BigInt { length: None },
-        ("SMALLINT", _) => DataType::SmallInt { length: None },
-        ("TINYINT", _) => DataType::TinyInt { length: None },
+        ("BIGINT", _) => DataType::BigInt {
+            length: None,
+            spelling: None,
+        },
+        ("SMALLINT", _) => DataType::SmallInt {
+            length: None,
+            spelling: None,
+        },
+        ("TINYINT", _) => DataType::TinyInt {
+            length: None,
+            spelling: None,
+        },
         ("BIT", _) => DataType::Bit { length: None },
         ("DECIMAL" | "DEC" | "NUMERIC", _) => DataType::Decimal {
             precision: first,
             scale: second,
+            spelling: None,
         },
         ("REAL", _) => DataType::Float {
             precision: None,

@@ -167,7 +167,11 @@ impl Parser<'_> {
                     self.expect_char(')')?;
                 }
                 match word.as_str() {
-                    "NUMERIC" | "DECIMAL" => DataType::Decimal { precision, scale },
+                    "NUMERIC" | "DECIMAL" => DataType::Decimal {
+                        precision,
+                        scale,
+                        spelling: None,
+                    },
                     _ => DataType::Custom {
                         name: match (precision, scale) {
                             (Some(precision), Some(scale)) => {
@@ -202,7 +206,10 @@ impl Parser<'_> {
             "JSON" => DataType::Json,
             "BOOL" | "BOOLEAN" => DataType::Boolean,
             "INT64" | "INT" | "SMALLINT" | "INTEGER" | "BIGINT" | "TINYINT" | "BYTEINT" => {
-                DataType::BigInt { length: None }
+                DataType::BigInt {
+                    length: None,
+                    spelling: None,
+                }
             }
             "FLOAT64" => DataType::Double {
                 precision: None,

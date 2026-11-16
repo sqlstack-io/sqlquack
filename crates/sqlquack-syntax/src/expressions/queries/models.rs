@@ -93,6 +93,9 @@ pub struct Select {
     /// BigQuery SELECT AS STRUCT / SELECT AS VALUE kind
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub kind: Option<String>,
+    /// Databricks: a TABLE statement, which reads every column of its table
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub table_statement: bool,
     /// MySQL operation modifiers (HIGH_PRIORITY, STRAIGHT_JOIN, SQL_CALC_FOUND_ROWS, etc.)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub operation_modifiers: Vec<String>,
@@ -155,6 +158,7 @@ impl Select {
             leading_comments: Vec::new(),
             post_select_comments: Vec::new(),
             kind: None,
+            table_statement: false,
             operation_modifiers: Vec::new(),
             qualify_after_window: false,
             option: None,
@@ -285,6 +289,9 @@ pub struct Union {
     /// PostgreSQL `FETCH … WITH TIES`: the limit keeps rows that tie with the last one
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub with_ties: bool,
+    /// The operator keyword as written when it is a synonym of the node's, such as MINUS for EXCEPT
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub keyword: Option<String>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -355,6 +362,9 @@ pub struct Intersect {
     /// PostgreSQL `FETCH … WITH TIES`: the limit keeps rows that tie with the last one
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub with_ties: bool,
+    /// The operator keyword as written when it is a synonym of the node's, such as MINUS for EXCEPT
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub keyword: Option<String>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -424,6 +434,9 @@ pub struct Except {
     /// PostgreSQL `FETCH … WITH TIES`: the limit keeps rows that tie with the last one
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub with_ties: bool,
+    /// The operator keyword as written when it is a synonym of the node's, such as MINUS for EXCEPT
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub keyword: Option<String>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -526,6 +539,10 @@ pub struct Values {
     pub alias: Option<Identifier>,
     /// Optional column aliases: AS t(c1, c2)
     pub column_aliases: Vec<Identifier>,
+    /// Databricks: the positions of rows written as a bare expression, without parentheses
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub bare_rows: Vec<usize>,
 }
 
 /// PIVOT/UNPIVOT, in the standard FROM-clause form or DuckDB's statement form.

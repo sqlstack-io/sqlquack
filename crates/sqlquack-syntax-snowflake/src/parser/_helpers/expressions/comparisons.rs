@@ -1721,19 +1721,15 @@ impl Parser {
                 length: None,
                 integer_spelling: type_name == INTEGER,
             },
-            "BIGINT" => DataType::BigInt { length: None },
-            "SMALLINT" => DataType::SmallInt { length: None },
-            "TINYINT" => DataType::TinyInt { length: None },
+            "BIGINT" | "SMALLINT" | "TINYINT" | "DECIMAL" | "NUMERIC" => {
+                self.convert_name_to_type(&type_name)?
+            }
             "FLOAT" => DataType::Float {
                 precision: None,
                 scale: None,
                 real_spelling: false,
             },
             "DOUBLE" => DataType::Double {
-                precision: None,
-                scale: None,
-            },
-            "DECIMAL" | "NUMERIC" => DataType::Decimal {
                 precision: None,
                 scale: None,
             },

@@ -450,6 +450,7 @@ pub(crate) fn set_operation(
                 on_columns: Vec::new(),
                 locks: Vec::new(),
                 with_ties: false,
+                keyword: None,
                 span: SourceSpan(None),
             }))
         };

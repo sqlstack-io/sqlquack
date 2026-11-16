@@ -33,8 +33,14 @@ fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
             length: None,
             integer_spelling: false,
         },
-        ("int2", None) => DataType::SmallInt { length: None },
-        ("int8", None) => DataType::BigInt { length: None },
+        ("int2", None) => DataType::SmallInt {
+            length: None,
+            spelling: None,
+        },
+        ("int8", None) => DataType::BigInt {
+            length: None,
+            spelling: None,
+        },
         ("float4", None) => DataType::Float {
             precision: None,
             scale: None,
@@ -53,6 +59,7 @@ fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
         (NUMERIC_TYPE, _) => DataType::Decimal {
             precision: one,
             scale: modifiers.get(1).copied(),
+            spelling: None,
         },
         ("varchar", length) => DataType::VarChar {
             length,
@@ -227,11 +234,17 @@ impl Parser<'_> {
             }
             Some("smallint") => {
                 self.at += 1;
-                Ok(DataType::SmallInt { length: None })
+                Ok(DataType::SmallInt {
+                    length: None,
+                    spelling: None,
+                })
             }
             Some("bigint") => {
                 self.at += 1;
-                Ok(DataType::BigInt { length: None })
+                Ok(DataType::BigInt {
+                    length: None,
+                    spelling: None,
+                })
             }
             Some("real") => {
                 self.at += 1;

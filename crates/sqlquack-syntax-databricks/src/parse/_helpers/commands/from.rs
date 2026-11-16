@@ -11,7 +11,7 @@ use sqlquack_syntax::expressions::statements::models::Version;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier, is_strict_identifier};
 use crate::parse::_helpers::tree::nodes::{
     JoinConstraint, TableAlias, alias, call, column_from, function, in_list, join, joined_table,
-    lateral, literal, null, subquery, table, tuple, values,
+    lateral, literal, null, paren, subquery, table, tuple, values,
 };
 use crate::parse::constants::IDENTIFIER_CLAUSE;
 use crate::scan::models::{NumberKind, TokenKind};
@@ -228,9 +228,13 @@ impl Parser<'_> {
                     && !self.kw_at(1, "AS")))
         {
             self.at += 1;
+            let parenthesized: bool = self.is_char('(');
             let inner: Expression = self.deeper(|parser| parser.relation_primary_inner(false))?;
             return Ok(Expression::Stream(Box::new(Stream {
-                this: inner,
+                this: match parenthesized {
+                    true => paren(inner),
+                    false => inner,
+                },
                 on: None,
                 show_initial_rows: None,
             })));
@@ -247,13 +251,16 @@ impl Parser<'_> {
         }
         if self.kw("VALUES") {
             self.at += 1;
-            let rows: Vec<Vec<Expression>> = self
-                .comma_list(|parser| parser.expression())?
-                .into_iter()
-                .map(row)
+            let items: Vec<Expression> = self.comma_list(|parser| parser.expression())?;
+            let bare_rows: Vec<usize> = items
+                .iter()
+                .enumerate()
+                .filter(|(_, item)| !matches!(item, Expression::Tuple(_) | Expression::Paren(_)))
+                .map(|(at, _)| at)
                 .collect();
+            let rows: Vec<Vec<Expression>> = items.into_iter().map(row).collect();
             let alias: Option<TableAlias> = self.table_alias()?;
-            return Ok(values(rows, alias));
+            return Ok(values(rows, bare_rows, alias));
         }
         if self.kw("IDENTIFIER") && self.char_at(1, '(') {
             self.at += 2;
@@ -440,6 +447,7 @@ impl Parser<'_> {
             this: Box::new(Expression::Identifier(Identifier::new(kind))),
             kind: "AS OF".to_owned(),
             expression: Some(Box::new(value)),
+            for_keyword: offset == 1,
         })))
     }
 

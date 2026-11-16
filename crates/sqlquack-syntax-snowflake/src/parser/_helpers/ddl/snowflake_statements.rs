@@ -68,6 +68,7 @@ impl Parser {
             leading_comments,
             as_json: false,
             params: Vec::new(),
+            short_form: false,
         })))
     }
 
@@ -88,6 +89,7 @@ impl Parser {
                 leading_comments: leading_comments.to_vec(),
                 as_json: false,
                 params: Vec::new(),
+                short_form: false,
             }))));
         }
         let as_resource = self.match_text_seq(&["AS", "RESOURCE"]);
@@ -161,6 +163,7 @@ impl Parser {
             leading_comments: leading_comments.to_vec(),
             as_json: false,
             params: Vec::new(),
+            short_form: false,
         }))))
     }
 

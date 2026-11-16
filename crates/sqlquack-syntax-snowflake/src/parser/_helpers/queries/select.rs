@@ -507,6 +507,7 @@ impl Parser {
             option: None,
             exclude: None,
             span: SourceSpan::default(),
+            table_statement: false,
         };
 
         let result = Expression::Select(Box::new(select));

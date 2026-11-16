@@ -674,6 +674,7 @@ impl<'sql> Parser<'sql> {
             this: Box::new(Expression::Identifier(Identifier::new("SYSTEM_TIME"))),
             kind: kind.to_owned(),
             expression,
+            for_keyword: false,
         })
     }
 

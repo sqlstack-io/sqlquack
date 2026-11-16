@@ -211,6 +211,7 @@ impl<'sql> Parser<'sql> {
                     this: name,
                     roles: Vec::new(),
                     parts: Vec::new(),
+                    string_name: false,
                 })))
             }
             "RETURN" => {
@@ -506,6 +507,7 @@ impl<'sql> Parser<'sql> {
                 has_as,
                 additional_names: Vec::new(),
                 span: parser.range_from(first),
+                equals: false,
             })))
         })?;
         Ok(Expression::Declare(Box::new(Declare {

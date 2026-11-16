@@ -548,6 +548,7 @@ impl Parser {
                             this: Box::new(Expression::Identifier(Identifier::new(&version_kind))),
                             kind: "AS OF".to_string(),
                             expression: Some(Box::new(value_expr)),
+                            for_keyword: false,
                         };
                         if let Expression::Table(ref mut table) = expr {
                             table.version = Some(Box::new(version));
@@ -579,6 +580,7 @@ impl Parser {
                         this: Box::new(Expression::Identifier(Identifier::new(&version_kind))),
                         kind: "AS OF".to_string(),
                         expression: Some(Box::new(value_expr)),
+                        for_keyword: false,
                     };
                     if let Expression::Table(ref mut table) = expr {
                         table.version = Some(Box::new(version));

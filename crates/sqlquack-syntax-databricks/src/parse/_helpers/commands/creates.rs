@@ -15,7 +15,7 @@ use sqlquack_syntax::expressions::tables::models::{
 };
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
-use crate::parse::_helpers::tree::nodes::{binary, column_from, joined, null, tuple, var};
+use crate::parse::_helpers::tree::nodes::{binary, collate, column_from, joined, null, tuple, var};
 use crate::parse::constants::{CREATE_KINDS, DROP_KINDS};
 use crate::scan::models::{NumberKind, TokenKind};
 
@@ -24,6 +24,7 @@ pub(crate) struct Head {
     pub(crate) or_replace: bool,
     pub(crate) replace_only: bool,
     pub(crate) temporary: bool,
+    pub(crate) temporary_spelling: Option<String>,
     pub(crate) global: bool,
     pub(crate) external: bool,
 }
@@ -43,6 +44,7 @@ impl Parser<'_> {
             or_replace: false,
             replace_only: false,
             temporary: false,
+            temporary_spelling: None,
             global: false,
             external: false,
         };
@@ -62,7 +64,13 @@ impl Parser<'_> {
         }
         let global: bool = self.eat_kw("GLOBAL");
         head.global = global;
+        let temp: bool = self.kw("TEMP");
         head.temporary = self.eat_kw("TEMPORARY") || self.eat_kw("TEMP");
+        head.temporary_spelling = match (global, temp) {
+            (true, _) => Some("GLOBAL TEMPORARY".to_owned()),
+            (false, true) => Some("TEMP".to_owned()),
+            (false, false) => None,
+        };
         if !global {
             head.external = self.eat_kw("EXTERNAL");
         }
@@ -99,6 +107,7 @@ impl Parser<'_> {
         node.or_replace = head.or_replace;
         node.replace_only = head.replace_only;
         node.temporary = head.temporary;
+        node.temporary_spelling = head.temporary_spelling.clone();
         if head.external {
             node.table_modifier = Some("EXTERNAL".to_owned());
         }
@@ -174,6 +183,7 @@ impl Parser<'_> {
             let parenthesized: bool = self.is_char('(');
             node.as_select = Some(self.query()?);
             node.as_select_parenthesized = parenthesized;
+            node.as_select_without_as = !as_query;
         }
         Ok(Expression::CreateTable(Box::new(node)))
     }
@@ -530,9 +540,10 @@ impl Parser<'_> {
     /// `colDefinition`: `name dataType colDefinitionOption*`.
     pub(crate) fn column_definition(&mut self) -> Parsing<ColumnDef> {
         let name: Identifier = self.ident()?;
-        let data_type: DataType = self.data_type()?;
+        let (data_type, collation) = self.collated_type()?;
         let mut column: ColumnDef = ColumnDef::new(String::new(), data_type);
         column.name = name;
+        column = collate(column, collation);
         loop {
             if (self.kw("NOT") || self.is_char('!')) && self.kw_at(1, "NULL") {
                 self.at += 2;
@@ -895,6 +906,7 @@ impl Parser<'_> {
         node.or_replace = head.or_replace;
         node.if_not_exists = if_not_exists;
         node.temporary = head.temporary;
+        node.temporary_spelling = head.temporary_spelling;
         node.comment = comment;
         node.table_properties = table_properties;
         node.query_parenthesized = parenthesized;

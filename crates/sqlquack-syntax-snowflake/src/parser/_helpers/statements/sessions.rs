@@ -1160,6 +1160,7 @@ impl Parser {
                         has_as: false,
                         additional_names: multi_names,
                         span: SourceSpan::default(),
+                        equals: false,
                     })));
                     return Ok(Some(Expression::Declare(Box::new(Declare {
                         expressions,
@@ -1220,6 +1221,7 @@ impl Parser {
                     has_as: false,
                     additional_names: Vec::new(),
                     span: SourceSpan::default(),
+                    equals: false,
                 }))));
             } else {
                 return Ok(Some(Expression::DeclareItem(Box::new(DeclareItem {
@@ -1229,6 +1231,7 @@ impl Parser {
                     has_as: false,
                     additional_names: Vec::new(),
                     span: SourceSpan::default(),
+                    equals: false,
                 }))));
             }
         }
@@ -1262,6 +1265,7 @@ impl Parser {
                     has_as,
                     additional_names: Vec::new(),
                     span: SourceSpan::default(),
+                    equals: false,
                 }))));
             } else {
                 return Ok(Some(Expression::DeclareItem(Box::new(DeclareItem {
@@ -1271,6 +1275,7 @@ impl Parser {
                     has_as,
                     additional_names: Vec::new(),
                     span: SourceSpan::default(),
+                    equals: false,
                 }))));
             }
         }
@@ -1300,6 +1305,7 @@ impl Parser {
             has_as,
             additional_names: Vec::new(),
             span: SourceSpan::default(),
+            equals: false,
         }))))
     }
 
@@ -1313,14 +1319,20 @@ impl Parser {
             DataType::UInt64 => "UBIGINT".to_string(),
             DataType::UInt128 => "UINT128".to_string(),
             DataType::Boolean => "BOOLEAN".to_string(),
-            DataType::TinyInt { length } => {
+            DataType::TinyInt {
+                length,
+                spelling: _,
+            } => {
                 if let Some(n) = length {
                     format!("TINYINT({})", n)
                 } else {
                     "TINYINT".to_string()
                 }
             }
-            DataType::SmallInt { length } => {
+            DataType::SmallInt {
+                length,
+                spelling: _,
+            } => {
                 if let Some(n) = length {
                     format!("SMALLINT({})", n)
                 } else {
@@ -1343,7 +1355,10 @@ impl Parser {
                     "INT".to_string()
                 }
             }
-            DataType::BigInt { length } => {
+            DataType::BigInt {
+                length,
+                spelling: _,
+            } => {
                 if let Some(n) = length {
                     format!("BIGINT({})", n)
                 } else {
@@ -1362,7 +1377,11 @@ impl Parser {
                 (Some(p), None) => format!("DOUBLE({})", p),
                 _ => "DOUBLE".to_string(),
             },
-            DataType::Decimal { precision, scale } => match (precision, scale) {
+            DataType::Decimal {
+                precision,
+                scale,
+                spelling: _,
+            } => match (precision, scale) {
                 (Some(p), Some(s)) => format!("DECIMAL({}, {})", p, s),
                 (Some(p), None) => format!("DECIMAL({})", p),
                 _ => "DECIMAL".to_string(),

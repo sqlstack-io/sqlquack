@@ -602,6 +602,7 @@ impl Parser<'_> {
             this: Box::new(Expression::Identifier(Identifier::new("SYSTEM_TIME"))),
             kind: "AS OF".to_owned(),
             expression: Some(Box::new(value)),
+            for_keyword: false,
         })))
     }
 

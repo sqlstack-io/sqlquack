@@ -101,13 +101,22 @@ fn named_type(name: &str, modifiers: &[Expression]) -> DataType {
     let length: Option<u32> = first_length(modifiers);
     match name {
         "BOOLEAN" | "BOOL" | "LOGICAL" => DataType::Boolean,
-        "TINYINT" | "INT1" => DataType::TinyInt { length: None },
-        "SMALLINT" | "INT2" | "SHORT" => DataType::SmallInt { length: None },
+        "TINYINT" | "INT1" => DataType::TinyInt {
+            length: None,
+            spelling: None,
+        },
+        "SMALLINT" | "INT2" | "SHORT" => DataType::SmallInt {
+            length: None,
+            spelling: None,
+        },
         "INTEGER" | "INT" | "INT4" | "SIGNED" => DataType::Int {
             length: None,
             integer_spelling: name == INTEGER_TYPE,
         },
-        "BIGINT" | "INT8" | "LONG" => DataType::BigInt { length: None },
+        "BIGINT" | "INT8" | "LONG" => DataType::BigInt {
+            length: None,
+            spelling: None,
+        },
         "HUGEINT" | "INT128" => DataType::Int128,
         "UTINYINT" => DataType::UInt8,
         "USMALLINT" => DataType::UInt16,
@@ -126,6 +135,7 @@ fn named_type(name: &str, modifiers: &[Expression]) -> DataType {
         "DECIMAL" | "DEC" | "NUMERIC" => DataType::Decimal {
             precision: length,
             scale: second_length(modifiers),
+            spelling: None,
         },
         "VARCHAR" | "NVARCHAR" => DataType::VarChar {
             length,

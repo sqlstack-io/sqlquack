@@ -63,3 +63,10 @@ pub(crate) struct NestingTestCase {
     pub(crate) sql: fn() -> String,
     pub(crate) expected_refusal: Option<&'static str>,
 }
+
+/// Texts that write one form in different ways, whose trees must all differ.
+pub(crate) struct DistinctTreesTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) written: &'static [&'static str],
+    pub(crate) expected_distinct_trees: usize,
+}

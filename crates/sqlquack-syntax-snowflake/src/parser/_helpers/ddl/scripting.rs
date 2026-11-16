@@ -178,6 +178,7 @@ impl Parser {
             leading_comments,
             as_json,
             params,
+            short_form: false,
         })))
     }
 
@@ -412,6 +413,9 @@ impl Parser {
             listing_filters,
             exclude_jobs: false,
             service_types: Vec::new(),
+            scope_keyword: None,
+            target_keyword: None,
+            like_keyword: false,
         })))
     }
 

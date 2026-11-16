@@ -332,6 +332,7 @@ impl Parser<'_> {
                 select.from = Some(From {
                     expressions: vec![item],
                 });
+                select.table_statement = true;
                 Ok(Expression::Select(Box::new(select)))
             }
             Some("VALUES") => self.inline_table(),

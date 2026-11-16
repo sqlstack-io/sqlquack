@@ -2,19 +2,34 @@
 
 use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::types::models::StructField;
+use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::types::models::{StructField, TypeSpelling};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
-use crate::parse::_helpers::tree::nodes::var;
+use crate::parse::_helpers::tree::nodes::{joined, var};
 use crate::parse::constants::{
     DAY_TIME, INTEGER_SPELLING, LOCAL_TIMESTAMP, MONTH, REAL_SPELLING, YEAR_MONTH,
 };
 use crate::scan::models::{NumberKind, TokenKind};
 
 impl Parser<'_> {
-    /// `dataType`.
+    /// `dataType`, without the collation written after a string type.
     pub(crate) fn data_type(&mut self) -> Parsing<DataType> {
-        self.deeper(|parser| parser.data_type_inner())
+        Ok(self.collated_type()?.0)
+    }
+
+    /// `dataType` and the collation written after a string type, when written.
+    pub(crate) fn collated_type(&mut self) -> Parsing<(DataType, Option<Identifier>)> {
+        let data_type: DataType = self.deeper(|parser| parser.data_type_inner())?;
+        let string: bool = matches!(
+            data_type,
+            DataType::String { .. } | DataType::Char { .. } | DataType::VarChar { .. }
+        );
+        let collation: Option<Identifier> = match string && self.eat_kw("COLLATE") {
+            true => Some(joined(self.multipart_identifier()?)),
+            false => None,
+        };
+        Ok((data_type, collation))
     }
 
     /// An unsigned integer in parentheses' place, such as a length or precision.
@@ -40,14 +55,6 @@ impl Parser<'_> {
         let length: u32 = self.integer()?;
         self.expect_char(')')?;
         Ok(Some(length))
-    }
-
-    /// `COLLATE name` after a string type, read and dropped.
-    fn skip_collate(&mut self) -> Parsing<()> {
-        if self.eat_kw("COLLATE") {
-            self.multipart_identifier()?;
-        }
-        Ok(())
     }
 
     fn incomplete(&self, position: usize) -> crate::parse::errors::ParseError {
@@ -103,18 +110,13 @@ impl Parser<'_> {
                     nested: true,
                 }
             }
-            "STRING" => {
-                self.skip_collate()?;
-                DataType::String { length: None }
-            }
+            "STRING" => DataType::String { length: None },
             "CHARACTER" | "CHAR" => {
                 let length: Option<u32> = self.optional_length()?;
-                self.skip_collate()?;
                 DataType::Char { length }
             }
             "VARCHAR" => {
                 let length: Option<u32> = self.optional_length()?;
-                self.skip_collate()?;
                 DataType::VarChar {
                     length,
                     parenthesized_length: length.is_some(),
@@ -129,7 +131,11 @@ impl Parser<'_> {
                     }
                     self.expect_char(')')?;
                 }
-                DataType::Decimal { precision, scale }
+                DataType::Decimal {
+                    precision,
+                    scale,
+                    spelling: synonym(&word),
+                }
             }
             "INTERVAL" => {
                 let (unit, to) = self.interval_fields()?;
@@ -174,13 +180,22 @@ impl Parser<'_> {
                 }
             }
             "BOOLEAN" => DataType::Boolean,
-            "TINYINT" | "BYTE" => DataType::TinyInt { length: None },
-            "SMALLINT" | "SHORT" => DataType::SmallInt { length: None },
+            "TINYINT" | "BYTE" => DataType::TinyInt {
+                length: None,
+                spelling: synonym(&word),
+            },
+            "SMALLINT" | "SHORT" => DataType::SmallInt {
+                length: None,
+                spelling: synonym(&word),
+            },
             "INT" | "INTEGER" => DataType::Int {
                 length: None,
                 integer_spelling: word == INTEGER_SPELLING,
             },
-            "BIGINT" | "LONG" => DataType::BigInt { length: None },
+            "BIGINT" | "LONG" => DataType::BigInt {
+                length: None,
+                spelling: synonym(&word),
+            },
             "FLOAT" | "REAL" => DataType::Float {
                 precision: None,
                 scale: None,
@@ -246,9 +261,9 @@ impl Parser<'_> {
 
     /// `complexColType`: `name [:] dataType [NOT NULL] [COMMENT '...']`.
     fn struct_field(&mut self) -> Parsing<StructField> {
-        let name = self.ident()?;
+        let name: Identifier = self.ident()?;
         self.eat_char(':');
-        let data_type: DataType = self.data_type()?;
+        let (data_type, collation) = self.collated_type()?;
         let mut options: Vec<Expression> = Vec::new();
         if self.kw("NOT") && self.kw_at(1, "NULL") {
             self.at += 2;
@@ -258,8 +273,25 @@ impl Parser<'_> {
             true => Some(self.string_lit()?),
             false => None,
         };
-        Ok(StructField::with_options_and_comment(
-            name.name, data_type, options, comment,
-        ))
+        let name: String = match name.quoted {
+            true => format!("`{}`", name.name.replace('`', "``")),
+            false => name.name,
+        };
+        let mut field: StructField =
+            StructField::with_options_and_comment(name, data_type, options, comment);
+        field.collation = collation.map(Box::new);
+        Ok(field)
+    }
+}
+
+/// The synonym `word` names, when it is one rather than the type's own name.
+fn synonym(word: &str) -> Option<TypeSpelling> {
+    match word {
+        "BYTE" => Some(TypeSpelling::Byte),
+        "SHORT" => Some(TypeSpelling::Short),
+        "LONG" => Some(TypeSpelling::Long),
+        "DEC" => Some(TypeSpelling::Dec),
+        "NUMERIC" => Some(TypeSpelling::Numeric),
+        _ => None,
     }
 }

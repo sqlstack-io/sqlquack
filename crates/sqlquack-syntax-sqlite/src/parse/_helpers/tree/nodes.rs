@@ -363,6 +363,7 @@ pub(crate) fn set_operation(
                 on_columns: Vec::new(),
                 locks: Vec::new(),
                 with_ties: false,
+                keyword: None,
                 span: SourceSpan(None),
             }))
         };
@@ -386,6 +387,7 @@ pub(crate) fn values(rows: Vec<Vec<Expression>>, alias: Option<TableAlias>) -> E
             .collect(),
         alias,
         column_aliases,
+        bare_rows: Vec::new(),
     }))
 }
 

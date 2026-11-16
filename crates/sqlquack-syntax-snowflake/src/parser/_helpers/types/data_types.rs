@@ -535,18 +535,36 @@ impl Parser {
                 integer_spelling: true,
             } => "INTEGER".to_string(),
             DataType::Int { length: None, .. } => "INT".to_string(),
-            DataType::BigInt { length: Some(n) } => format!("BIGINT({})", n),
-            DataType::BigInt { length: None } => "BIGINT".to_string(),
+            DataType::BigInt {
+                length: Some(n),
+                spelling: _,
+            } => format!("BIGINT({})", n),
+            DataType::BigInt {
+                length: None,
+                spelling: _,
+            } => "BIGINT".to_string(),
             DataType::Int128 => "INT128".to_string(),
             DataType::UInt8 => "UTINYINT".to_string(),
             DataType::UInt16 => "USMALLINT".to_string(),
             DataType::UInt32 => "UINTEGER".to_string(),
             DataType::UInt64 => "UBIGINT".to_string(),
             DataType::UInt128 => "UINT128".to_string(),
-            DataType::SmallInt { length: Some(n) } => format!("SMALLINT({})", n),
-            DataType::SmallInt { length: None } => "SMALLINT".to_string(),
-            DataType::TinyInt { length: Some(n) } => format!("TINYINT({})", n),
-            DataType::TinyInt { length: None } => "TINYINT".to_string(),
+            DataType::SmallInt {
+                length: Some(n),
+                spelling: _,
+            } => format!("SMALLINT({})", n),
+            DataType::SmallInt {
+                length: None,
+                spelling: _,
+            } => "SMALLINT".to_string(),
+            DataType::TinyInt {
+                length: Some(n),
+                spelling: _,
+            } => format!("TINYINT({})", n),
+            DataType::TinyInt {
+                length: None,
+                spelling: _,
+            } => "TINYINT".to_string(),
             DataType::Float {
                 precision: Some(p),
                 scale: Some(s),
@@ -574,10 +592,12 @@ impl Parser {
             DataType::Decimal {
                 precision: Some(p),
                 scale: Some(s),
+                spelling: _,
             } => format!("DECIMAL({}, {})", p, s),
             DataType::Decimal {
                 precision: Some(p),
                 scale: None,
+                spelling: _,
             } => format!("DECIMAL({})", p),
             DataType::Decimal {
                 precision: None, ..
@@ -918,9 +938,18 @@ impl Parser {
                 length: None,
                 integer_spelling: true,
             },
-            "BIGINT" => DataType::BigInt { length: None },
-            "SMALLINT" => DataType::SmallInt { length: None },
-            "TINYINT" => DataType::TinyInt { length: None },
+            "BIGINT" => DataType::BigInt {
+                length: None,
+                spelling: None,
+            },
+            "SMALLINT" => DataType::SmallInt {
+                length: None,
+                spelling: None,
+            },
+            "TINYINT" => DataType::TinyInt {
+                length: None,
+                spelling: None,
+            },
             "FLOAT" | "BINARY_FLOAT" => DataType::Float {
                 precision: None,
                 scale: None,
@@ -938,6 +967,7 @@ impl Parser {
             "DECIMAL" | "NUMERIC" => DataType::Decimal {
                 precision: None,
                 scale: None,
+                spelling: None,
             },
             "BOOLEAN" | "BOOL" => DataType::Boolean,
             "CHAR" | "CHARACTER" | "NCHAR" => DataType::Char { length: None },

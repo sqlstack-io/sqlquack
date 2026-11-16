@@ -118,10 +118,12 @@ pub(crate) fn bigquery_cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::Decimal {
             precision: Some(precision),
             scale: None,
+            spelling: _,
         } => format!("NUMERIC({precision})"),
         DataType::Decimal {
             precision: Some(precision),
             scale: Some(scale),
+            spelling: _,
         } => format!("NUMERIC({precision},{scale})"),
         DataType::String { .. } | DataType::VarChar { .. } | DataType::Text => "STRING".to_owned(),
         DataType::VarBinary { .. } => "BYTES".to_owned(),

@@ -40,9 +40,18 @@ fn number_literal(token: &Token, kind: NumberKind) -> Expression {
     let digits: String = token.value[..token.value.len() - suffix].to_owned();
     let number: Expression = literal(Literal::Number(digits));
     let to: DataType = match kind {
-        NumberKind::BigInt => DataType::BigInt { length: None },
-        NumberKind::SmallInt => DataType::SmallInt { length: None },
-        NumberKind::TinyInt => DataType::TinyInt { length: None },
+        NumberKind::BigInt => DataType::BigInt {
+            length: None,
+            spelling: None,
+        },
+        NumberKind::SmallInt => DataType::SmallInt {
+            length: None,
+            spelling: None,
+        },
+        NumberKind::TinyInt => DataType::TinyInt {
+            length: None,
+            spelling: None,
+        },
         NumberKind::Double => DataType::Double {
             precision: None,
             scale: None,
@@ -55,6 +64,7 @@ fn number_literal(token: &Token, kind: NumberKind) -> Expression {
         NumberKind::BigDecimal => DataType::Decimal {
             precision: None,
             scale: None,
+            spelling: None,
         },
         NumberKind::Integer | NumberKind::Decimal | NumberKind::Exponent => return number,
     };
@@ -465,7 +475,8 @@ impl Parser<'_> {
 
     fn interval_value(&mut self) -> Parsing<Expression> {
         let negative: bool = self.is_char('-');
-        if negative || self.is_char('+') {
+        let positive: bool = self.is_char('+');
+        if negative || positive {
             self.at += 1;
         }
         let token: Token = self.advance()?;
@@ -477,7 +488,10 @@ impl Parser<'_> {
             _ if negative => Expression::Neg(Box::new(UnaryOp::new(string(&token.value)))),
             _ => string(&token.value),
         };
-        Ok(value)
+        Ok(match positive {
+            true => Expression::Pos(Box::new(UnaryOp::new(value))),
+            false => value,
+        })
     }
 
     /// `INTERVAL` with units, a unit range, or a string alone (a typed literal).
@@ -749,13 +763,13 @@ impl Parser<'_> {
         let mut path: String = String::new();
         match self.is_char('[') {
             true => path.push_str(&self.path_bracket(false)?),
-            false => path.push_str(&self.advance()?.value),
+            false => path.push_str(&self.path_name()?),
         }
         loop {
             if self.is_char('.') && self.is_at(1, is_identifier) {
                 self.at += 1;
                 path.push('.');
-                path.push_str(&self.advance()?.value);
+                path.push_str(&self.path_name()?);
             } else if self.is_char('[') {
                 path.push_str(&self.path_bracket(true)?);
             } else {
@@ -774,6 +788,15 @@ impl Parser<'_> {
             on_condition: None,
             requires_json: None,
         })))
+    }
+
+    /// One name in a path, a backticked one in its backticks.
+    fn path_name(&mut self) -> Parsing<String> {
+        let token = self.advance()?;
+        Ok(match token.kind == TokenKind::Quoted {
+            true => format!("`{}`", token.value.replace('`', "``")),
+            false => token.value,
+        })
     }
 
     /// `['key']`, `[n]` or, after the first part, `[name]` in a path.

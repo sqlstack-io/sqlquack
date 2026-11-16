@@ -1641,6 +1641,7 @@ impl Parser {
             option,
             exclude,
             span: SourceSpan::default(),
+            table_statement: false,
         };
 
         Ok(Expression::Select(Box::new(select)))

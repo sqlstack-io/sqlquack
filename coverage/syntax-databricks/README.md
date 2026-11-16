@@ -551,3 +551,26 @@ obligations 11666/14572. The 11 forms without obligations are not counted.
   its run.
 
 A form counts once even when several reasons apply, so the reasons overlap.
+
+### Trees of written forms
+
+Where a page's Syntax block offers different spellings of one construct, each spelling parses to
+its own tree, so a review of the tree can see which one the SQL wrote. The parser keeps, among
+others:
+
+- `DESC` against `DESCRIBE`, `DATABASE`, `SCHEMA` and `NAMESPACE` as written, `FROM` against `IN`,
+  and whether `LIKE` was written before a pattern;
+- `MINUS` against `EXCEPT`, `TEMP` against `TEMPORARY`, and the type synonyms `BYTE`, `SHORT`,
+  `LONG`, `DEC` and `NUMERIC`;
+- `ADD COLUMN` against `ADD COLUMNS` and `DROP COLUMN` against `DROP COLUMNS`, because the ALTER
+  TABLE page writes `{ COLUMN | COLUMNS }` as alternatives of one clause;
+- the sign written before an interval value, including `+`;
+- the parentheses of a `VALUES` row and of a `STREAM` source, which the Syntax blocks write as
+  alternatives (`expression | ( expression [, ...] )` and `STREAM ( name ) | STREAM name`).
+
+`MATCH_RECOGNIZE`'s `PATTERN` parses into the shared row-pattern tree (symbols, sequences,
+alternations, groups, `PERMUTE` and quantifiers) beside the pattern's text, because the page's
+Syntax block defines the pattern as a grammar of its own rather than as a string.
+
+Spellings the language treats as one token stay one tree: the letter case of keywords and of a
+raw-string prefix, the quote character around a string or binary literal, and comments.

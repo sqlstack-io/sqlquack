@@ -1,7 +1,9 @@
 //! Shared-tree nodes with every field set, so the grammar code names only what it parsed.
 
+use crate::parse::constants::MINUS;
 use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
+use sqlquack_syntax::expressions::columns::models::{ColumnConstraint, ColumnDef};
 use sqlquack_syntax::expressions::functions::models::{
     AggregateFunction, Function, WindowFunction,
 };
@@ -19,6 +21,7 @@ use sqlquack_syntax::expressions::queries::models::{
 use sqlquack_syntax::expressions::statements::models::{
     Command, Delete, Insert, Paren, Update, Var,
 };
+use sqlquack_syntax::expressions::tables::models::ConstraintType;
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::SourceSpan;
 
@@ -65,15 +68,18 @@ pub(crate) fn star(table: Option<Identifier>, except: Option<Vec<Identifier>>) -
     }
 }
 
-/// A multi-part name as one identifier: the part itself, or the parts joined by `.`.
+/// A multi-part name as one identifier: the part itself, or the parts joined by `.`, each quoted part in backticks.
 pub(crate) fn joined(mut parts: Vec<Identifier>) -> Identifier {
     match parts.len() {
         1 => parts.remove(0),
         _ => Identifier::new(
             parts
                 .iter()
-                .map(|part| part.name.as_str())
-                .collect::<Vec<&str>>()
+                .map(|part| match part.quoted {
+                    true => format!("`{}`", part.name.replace('`', "``")),
+                    false => part.name.clone(),
+                })
+                .collect::<Vec<String>>()
                 .join("."),
         ),
     }
@@ -475,6 +481,7 @@ pub(crate) fn set_operation(
     quantifier: (bool, bool),
 ) -> Expression {
     let (all, distinct) = quantifier;
+    let keyword: Option<String> = (operator == MINUS).then(|| operator.to_owned());
     macro_rules! node {
         ($variant:ident, $node:ident) => {
             Expression::$variant(Box::new($node {
@@ -497,6 +504,7 @@ pub(crate) fn set_operation(
                 on_columns: Vec::new(),
                 locks: Vec::new(),
                 with_ties: false,
+                keyword,
                 span: SourceSpan(None),
             }))
         };
@@ -508,7 +516,12 @@ pub(crate) fn set_operation(
     }
 }
 
-pub(crate) fn values(rows: Vec<Vec<Expression>>, alias: Option<TableAlias>) -> Expression {
+/// VALUES of `rows`, those at `bare_rows` written without parentheses, and its alias.
+pub(crate) fn values(
+    rows: Vec<Vec<Expression>>,
+    bare_rows: Vec<usize>,
+    alias: Option<TableAlias>,
+) -> Expression {
     let (alias, column_aliases) = match alias {
         Some(alias) => (Some(alias.name), alias.columns),
         None => (None, Vec::new()),
@@ -520,6 +533,7 @@ pub(crate) fn values(rows: Vec<Vec<Expression>>, alias: Option<TableAlias>) -> E
             .collect(),
         alias,
         column_aliases,
+        bare_rows,
     }))
 }
 
@@ -628,4 +642,15 @@ pub(crate) fn delete(table: TableRef) -> Delete {
         no_from: false,
         settings: Vec::new(),
     }
+}
+
+/// `column` with `collation`, when written, as its COLLATE constraint.
+pub(crate) fn collate(mut column: ColumnDef, collation: Option<Identifier>) -> ColumnDef {
+    if let Some(collation) = collation {
+        column
+            .constraints
+            .push(ColumnConstraint::Collate(collation));
+        column.constraint_order.push(ConstraintType::Collate);
+    }
+    column
 }

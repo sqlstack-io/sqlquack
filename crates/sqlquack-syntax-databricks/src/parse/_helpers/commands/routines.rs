@@ -46,7 +46,7 @@ impl Parser<'_> {
             } else if self.eat_kws(&["DEFAULT", "COLLATION"]) {
                 let name: Identifier = self.ident()?;
                 node.properties
-                    .push(property("DEFAULT COLLATION", string(&name.name)));
+                    .push(property("DEFAULT COLLATION", Expression::Identifier(name)));
             } else if self.kw("WITH") && self.kw_in(1, &["DBPROPERTIES", "PROPERTIES"]) {
                 self.at += 2;
                 let expressions: Vec<Expression> = self.property_list()?;
@@ -232,7 +232,7 @@ impl Parser<'_> {
             } else if self.eat_kws(&["DEFAULT", "COLLATION"]) {
                 let name: Identifier = self.ident()?;
                 node.options
-                    .push(property("DEFAULT COLLATION", string(&name.name)));
+                    .push(property("DEFAULT COLLATION", Expression::Identifier(name)));
             } else if self.eat_kws(&["PARAMETER", "STYLE"]) {
                 node.parameter_style = Some(self.ident()?.name.to_ascii_uppercase());
             } else if self.eat_kw("SPECIFIC") {

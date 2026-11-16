@@ -12,7 +12,7 @@ use sqlquack_syntax::expressions::schema_objects::models::{
 use sqlquack_syntax::expressions::tables::models::Partition;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
-use crate::parse::_helpers::tree::nodes::{binary, column_from, joined, null, table, var};
+use crate::parse::_helpers::tree::nodes::{binary, collate, column_from, joined, null, table, var};
 use crate::parse::constants::{ALTER_COLUMN_WORDS, ALTER_KINDS, SET_TAGS};
 
 /// The text of a property key or value: a string's contents, or a name or number as written.
@@ -300,6 +300,7 @@ impl Parser<'_> {
     /// `ADD COLUMN[S] ...`, `ADD [IF NOT EXISTS] PARTITION ...` and `ADD` of a table constraint.
     fn alter_table_add(&mut self) -> Parsing<Vec<AlterTableAction>> {
         self.expect_kw("ADD")?;
+        let plural: bool = self.kw("COLUMNS");
         if self.eat_kw("COLUMN") || self.eat_kw("COLUMNS") {
             let columns = match self.is_char('(') {
                 true => self.parenthesized(|parser| parser.added_column())?,
@@ -312,6 +313,7 @@ impl Parser<'_> {
                     if_not_exists: false,
                     position,
                     column_keyword: false,
+                    keyword: plural.then(|| "COLUMNS".to_owned()),
                 })
                 .collect());
         }
@@ -351,9 +353,10 @@ impl Parser<'_> {
     /// `qualifiedColTypeWithPosition`, with Databricks' `COLLATE` and `MASK` descriptors.
     fn added_column(&mut self) -> Parsing<(ColumnDef, Option<ColumnPosition>)> {
         let name: Identifier = joined(self.multipart_identifier()?);
-        let data_type: DataType = self.data_type()?;
+        let (data_type, collation) = self.collated_type()?;
         let mut column: ColumnDef = ColumnDef::new(String::new(), data_type);
         column.name = name;
+        column = collate(column, collation);
         let mut position: Option<ColumnPosition> = None;
         loop {
             let start: usize = self.offset();
@@ -398,6 +401,7 @@ impl Parser<'_> {
     /// `DROP` of columns, partitions, constraints, keys, a feature or a row filter.
     fn alter_table_drop(&mut self, start: usize) -> Parsing<Vec<AlterTableAction>> {
         self.expect_kw("DROP")?;
+        let plural: bool = self.kw("COLUMNS");
         if self.eat_kw("COLUMN") || self.eat_kw("COLUMNS") {
             let if_exists: bool = self.eat_kws(&["IF", "EXISTS"]);
             let names: Vec<Vec<Identifier>> = match self.is_char('(') {
@@ -411,6 +415,7 @@ impl Parser<'_> {
                     if_exists,
                     cascade: false,
                     column_keyword: false,
+                    keyword: plural.then(|| "COLUMNS".to_owned()),
                 })
                 .collect();
             return Ok(dropped);
@@ -419,12 +424,18 @@ impl Parser<'_> {
             let if_exists: bool = self.eat_kws(&["IF", "EXISTS"]);
             let name: Identifier = self.ident()?;
             let behaviour: usize = self.offset();
-            if self.eat_kw("CASCADE") {
-                self.gap("drop_constraint_cascade", behaviour);
-            } else {
-                self.eat_kw("RESTRICT");
-            }
-            return Ok(vec![AlterTableAction::DropConstraint { name, if_exists }]);
+            let restrict: bool = match self.eat_kw("CASCADE") {
+                true => {
+                    self.gap("drop_constraint_cascade", behaviour);
+                    false
+                }
+                false => self.eat_kw("RESTRICT"),
+            };
+            return Ok(vec![AlterTableAction::DropConstraint {
+                name,
+                if_exists,
+                restrict,
+            }]);
         }
         if self.kw("PRIMARY") {
             self.at += 1;
@@ -507,8 +518,9 @@ impl Parser<'_> {
                     name,
                     action,
                     use_modify_keyword: false,
-                    column_keyword: false,
+                    column_keyword,
                     action_words: None,
+                    keyword: change.then(|| "CHANGE".to_owned()),
                 }),
                 None if self.opaque => {}
                 None => {
@@ -849,7 +861,7 @@ impl Parser<'_> {
                 (format!("{word} TAGS"), tags)
             }
             Some("RETAIN" | "SET") if self.kw_at(0, "RETAIN") || self.kw_at(1, "RETAIN") => {
-                self.eat_kw("SET");
+                let set: bool = self.eat_kw("SET");
                 self.expect_kw("RETAIN")?;
                 self.expect_kw("DROPPED")?;
                 self.expect_kw("TO")?;
@@ -872,7 +884,7 @@ impl Parser<'_> {
                 };
                 self.at += 1;
                 (
-                    "RETAIN DROPPED TO".to_owned(),
+                    format!("{}RETAIN DROPPED TO", if set { "SET " } else { "" }),
                     vec![var(&format!("{count} {unit}"))],
                 )
             }
@@ -896,11 +908,11 @@ impl Parser<'_> {
                 )
             }
             Some("OWNER") | Some("SET") if self.kw_at(1, "TO") || self.kw_at(1, "OWNER") => {
-                self.eat_kw("SET");
+                let set: bool = self.eat_kw("SET");
                 self.expect_kw("OWNER")?;
                 self.expect_kw("TO")?;
                 (
-                    "OWNER TO".to_owned(),
+                    format!("{}OWNER TO", if set { "SET " } else { "" }),
                     vec![Expression::Identifier(self.principal()?)],
                 )
             }

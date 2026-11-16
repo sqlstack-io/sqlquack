@@ -489,6 +489,7 @@ pub(crate) fn set_operation(
             Expression::$variant(Box::new($node {
                 locks: Vec::new(),
                 with_ties: false,
+                keyword: None,
                 left,
                 right,
                 all,
@@ -529,6 +530,7 @@ pub(crate) fn values(rows: Vec<Vec<Expression>>, alias: Option<TableAlias>) -> E
             .collect(),
         alias,
         column_aliases,
+        bare_rows: Vec::new(),
     }))
 }
 
