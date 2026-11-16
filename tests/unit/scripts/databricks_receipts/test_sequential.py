@@ -21,7 +21,12 @@ from scripts.databricks_receipts._helpers.sequential import (
 )
 from scripts.databricks_receipts.classes import client as client_module
 from scripts.databricks_receipts.classes.client import Client
-from scripts.databricks_receipts.constants import REFEREE_CLASS, REPLY_LOST, VERSION_QUERY
+from scripts.databricks_receipts.constants import (
+    REFEREE_CLASS,
+    REPLY_LOST,
+    UNDECIDED_NO_PHASE,
+    VERSION_QUERY,
+)
 from scripts.databricks_receipts.exceptions import RefereeError, ReplyLost, TokenRejected
 from scripts.databricks_receipts.main.run import run_referee
 from scripts.databricks_receipts.models import Failure
@@ -34,6 +39,7 @@ from tests.unit.scripts.databricks_receipts._test_types import (
     ErrorTestCase,
     HistoryTestCase,
     LegacySetupTestCase,
+    NoPhaseTestCase,
     NotResentTestCase,
     PlatformChangeTestCase,
     PolicyAnswerTestCase,
@@ -66,6 +72,7 @@ from tests.unit.scripts.databricks_receipts.helpers import (
     failed,
     frozen_run,
     receipts_in,
+    refused,
     removes,
     stop_report,
     succeeded,
@@ -78,6 +85,10 @@ UNSUPPORTED_ON_METASTORE: str = (
     " policies. Please verify both the securable type and name for correctness and try again."
 )
 UNDECIDED: str = "statement s9 was still running after 300 s; cancelled, so its case is undecided"
+ENGINE_NO_PHASE: str = (
+    "Error running query: shaded.v245.com.fasterxml.jackson.databind.JsonMappingException: "
+    'Cannot invoke "java.lang.CharSequence.length()" because "sequence" is null'
+)
 LEGACY_SETUP: list[str] = ["CREATE TABLE t1 ( c1 INT )", "CREATE TABLE t2 ( c1 INT )"]
 
 
@@ -1225,6 +1236,100 @@ def test_given_a_case_whose_reply_stalls_when_run_sequentially_then_it_alone_is_
     assert summary["undecided_reasons"] == test_case.expected_reasons
     assert "SELECT 3" in fake.statements
     assert not list((tmp_path / "private").glob("*.sequential-stop.json"))
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        UndecidedTestCase(
+            description="the engine error the README records as proving no phase",
+            expected_receipts=2,
+            expected_undecided=["db.q.k2"],
+            expected_reasons={"db.q.k2": UNDECIDED_NO_PHASE},
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_the_engine_error_that_proves_no_phase_when_run_then_its_case_alone_is_undecided(
+    test_case: UndecidedTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def no_phase(_: FakeClient) -> Row:
+        return refused(message=ENGINE_NO_PHASE, sqlstate="42000")
+
+    use(monkeypatch, FakeClient({"SELECT 2": no_phase}))
+    cases: list[Row] = [
+        case("SELECT 1", "db.q.k1"),
+        case("SELECT 2", "db.q.k2"),
+        case("SELECT 3", "db.q.k3"),
+    ]
+
+    summary: Row = record_sequential(
+        cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
+    )
+
+    assert (summary["receipts"], summary["undecided"]) == (
+        test_case.expected_receipts,
+        test_case.expected_undecided,
+    )
+    assert summary["undecided_reasons"] == test_case.expected_reasons
+    assert sorted(str(r["case_id"]) for r in receipts_in(tmp_path / "out")) == [
+        "db.q.k1",
+        "db.q.k3",
+    ]
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        NoPhaseTestCase(
+            description="another unclassed engine error",
+            message="Error running query: shaded.v245.com.fasterxml.jackson.databind."
+            "JsonMappingException: Unexpected end-of-input",
+            sqlstate="42000",
+            expected_error="no reviewed row maps",
+        ),
+        NoPhaseTestCase(
+            description="the same error from another shaded library version",
+            message=ENGINE_NO_PHASE.replace("shaded.v245.", "shaded.v246."),
+            sqlstate="42000",
+            expected_error="no reviewed row maps",
+        ),
+        NoPhaseTestCase(
+            description="the same text with another SQLSTATE",
+            message=ENGINE_NO_PHASE,
+            sqlstate="XX000",
+            expected_error="no reviewed row maps",
+        ),
+        NoPhaseTestCase(
+            description="the same text with more after it",
+            message=ENGINE_NO_PHASE + " (through reference chain: x)",
+            sqlstate="42000",
+            expected_error="no reviewed row maps",
+        ),
+        NoPhaseTestCase(
+            description="the same text raised by the parser",
+            message=ENGINE_NO_PHASE + "\n== SQL (line 1, position 1) ==\nSELECT 2\n^^^\n",
+            sqlstate="42000",
+            expected_error="no reviewed row maps",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_another_unmapped_error_when_run_then_no_receipt_is_written(
+    test_case: NoPhaseTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def other(_: FakeClient) -> Row:
+        return refused(message=test_case.message, sqlstate=test_case.sqlstate)
+
+    use(monkeypatch, FakeClient({"SELECT 2": other}))
+    cases: list[Row] = [case("SELECT 1", "db.q.k1"), case("SELECT 2", "db.q.k2")]
+
+    with pytest.raises(RefereeError, match=test_case.expected_error):
+        record_sequential(
+            cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
+        )
+
+    assert not (tmp_path / "out").exists()
 
 
 @pytest.mark.parametrize(

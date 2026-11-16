@@ -204,6 +204,14 @@ class NotResentTestCase:
 
 
 @dataclass(frozen=True)
+class NoPhaseTestCase:
+    description: str
+    message: str
+    sqlstate: str
+    expected_error: str
+
+
+@dataclass(frozen=True)
 class CheckTestCase:
     description: str
     failing_checks: frozenset[int]

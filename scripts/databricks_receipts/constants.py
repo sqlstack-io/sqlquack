@@ -480,6 +480,17 @@ REPLY_LOST: str = "the reply to a statement was lost, so it may have run and is 
 UNDECIDED_DEADLINE: str = "cancelled at the deadline"
 UNDECIDED_REPLY_LOST: str = "reply lost"
 UNDECIDED_SETUP: str = "setup failed"
+NO_PHASE_PROVEN: re.Pattern[str] = re.compile(
+    r"Error running query: shaded\.v245\.com\.fasterxml\.jackson\.databind\."
+    r'JsonMappingException: Cannot invoke "java\.lang\.CharSequence\.length\(\)" '
+    r'because "sequence" is null'
+)
+NO_PHASE_PROVEN_SQLSTATE: str = "42000"
+UNDECIDED_NO_PHASE: str = (
+    "no phase proven: an internal engine JsonMappingException, observed after about 610 s"
+    " (an observation, not its cause); see coverage/syntax-databricks/README.md on"
+    " db.ddl.create-recipient"
+)
 SETUP_ERROR_CLASS: re.Pattern[str] = re.compile(r"\[([A-Z][A-Z0-9_]*(?:\.[A-Z0-9_]+)*)\]")
 
 ACCOUNT_KINDS: str = (

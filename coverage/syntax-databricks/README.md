@@ -545,7 +545,9 @@ obligations 11666/14572. The 11 forms without obligations are not counted.
   deadline, both answered after about 610 s with an internal engine error (`Cannot invoke
   "java.lang.CharSequence.length()" because "sequence" is null`, SQLSTATE 42000, with no parser
   excerpt). That error proves no phase, so no reviewed row maps it, and the form stays
-  unverified.
+  unverified. The referee leaves a case that answers exactly this message undecided as "no phase
+  proven", like a deadline cancel, so the rest of its run keeps its receipts; any other unmapped
+  error still refuses the run.
   Another is `db.scripting.iterate-stmt` (o001, o003): its case `k1d3a5a4a6874`, a LOOP ITERATE
   with no LEAVE, runs to the 300 s deadline, so no phase can be observed, and it is left out of
   its run.

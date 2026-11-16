@@ -28,6 +28,8 @@ from scripts.databricks_receipts.constants import (
     CAPTURE,
     CATALOG,
     COMPARED_KEYS,
+    NO_PHASE_PROVEN,
+    NO_PHASE_PROVEN_SQLSTATE,
     PHASE_ONLY_CASES,
     REFEREE_CLASS,
     REPLY_LOST,
@@ -35,7 +37,9 @@ from scripts.databricks_receipts.constants import (
     SCHEMA_PREFIX,
     SETUP_COMPOUND_FROM,
     SETUP_ERROR_CLASS,
+    UNCLASSED,
     UNDECIDED_DEADLINE,
+    UNDECIDED_NO_PHASE,
     UNDECIDED_REPLY_LOST,
     UNDECIDED_SETUP,
     WORKERS,
@@ -172,6 +176,12 @@ def record(*, cases: list[Row], out: Path, private: Path, seed: int | None) -> R
 
 def undecided_reason(*, case: Row, failure: Failure) -> str | None:
     """Why the case was left undecided with no phase observed, or None when it was not."""
+    if (
+        failure.error_class == UNCLASSED
+        and failure.sqlstate == NO_PHASE_PROVEN_SQLSTATE
+        and NO_PHASE_PROVEN.fullmatch(failure.message.strip())
+    ):
+        return UNDECIDED_NO_PHASE
     if failure.error_class != REFEREE_CLASS:
         return None
     message: str = failure.message
