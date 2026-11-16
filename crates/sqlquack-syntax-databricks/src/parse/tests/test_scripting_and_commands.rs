@@ -296,6 +296,91 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             sql: "CREATE POLICY v1 ON ROW FILTER f1 TO `u1` FOR TABLES",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
+        VerdictTestCase {
+            description: "ADD of a file is checked",
+            sql: "ADD FILE v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "LIST of jars may name none",
+            sql: "LIST JAR",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ADD needs a resource kind before a string",
+            sql: "ADD 'f1.parquet'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ADD refuses an unclosed string among its resources",
+            sql: "ADD FILE 'f1.parquet",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ADD keeps resources its form cannot split as a gap",
+            sql: "ADD FILE ( f1 ; f2 )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "RESTORE takes a table named by IDENTIFIER",
+            sql: "RESTORE IDENTIFIER ( 't1' ) VERSION AS OF 0",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "RESTORE TABLE needs a table name",
+            sql: "RESTORE TABLE VERSION AS OF 0",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "CACHE SELECT refuses a string after any FROM, even inside an expression",
+            sql: "CACHE SELECT trim ( BOTH FROM 'x' ) FROM t1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "RESTORE is checked against its syntax",
+            sql: "RESTORE TABLE t1 TO VERSION AS OF 0",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "RESTORE needs a version or timestamp",
+            sql: "RESTORE t1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "DENY is checked",
+            sql: "DENY SELECT , MODIFY ON TABLE t1 TO v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DENY needs TO",
+            sql: "DENY ALL PRIVILEGES ON TABLE t1 v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "CACHE SELECT takes text the service reads loosely",
+            sql: "CACHE SELECT c1 FROM",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "CACHE SELECT reads no string as its table",
+            sql: "CACHE SELECT c1 FROM 'v1'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "REFRESH of a table name is a resource path",
+            sql: "REFRESH t1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DESCRIBE of one column is checked",
+            sql: "DESCRIBE TABLE t1 c1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "SHOW PARTITIONS of one partition is checked",
+            sql: "SHOW PARTITIONS t1 PARTITION ( c1 = 1 )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

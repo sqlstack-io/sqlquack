@@ -453,3 +453,11 @@ pub(crate) const MIN_BACKQUOTED_LENGTH: usize = 2;
 pub(crate) const SET_VERBOSE: &str = "-v";
 /// The resource statement that adds a resource, rather than listing them.
 pub(crate) const ADD_RESOURCE: &str = "ADD";
+/// `CACHE SELECT` as its page writes it.
+pub(crate) const CACHE_SELECT: &str = "CACHE SELECT expr ,... FROM name [ WHERE expr ]";
+/// `ADD` of resources: the kind, then any resources.
+pub(crate) const ADD_RESOURCES: &str =
+    "ADD { FILE | FILES | JAR | JARS | ARCHIVE | ARCHIVES } [ resource ... ]";
+/// `LIST` of resources: the kind, then any resources.
+pub(crate) const LIST_RESOURCES: &str =
+    "LIST { FILE | FILES | JAR | JARS | ARCHIVE | ARCHIVES } [ resource ... ]";

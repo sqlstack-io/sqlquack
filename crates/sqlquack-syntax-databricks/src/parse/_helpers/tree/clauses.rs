@@ -2,11 +2,9 @@
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::operators::models::{NamedArgSeparator, NamedArgument};
-use sqlquack_syntax::expressions::statements::models::UtilityStatement;
-use sqlquack_syntax::expressions::tables::models::Property;
 use sqlquack_syntax::expressions::types::models::Tuple;
 
-use crate::parse::_helpers::tree::nodes::{binary, column_from, table, var};
+use crate::parse::_helpers::tree::nodes::{binary, column_from, property, table, utility, var};
 use crate::parse::constants::FLAG_PHRASES;
 
 /// One element a pattern matched, in the order written.
@@ -80,11 +78,7 @@ pub(crate) fn documented_tree(lead: usize, parts: Vec<Part>) -> Expression {
     }));
     let parts: &[Part] = &parts[required..];
     let (operands, _): (Vec<Expression>, usize) = clauses(parts, 0);
-    Expression::UtilityStatement(Box::new(UtilityStatement {
-        kind: kind.join(" "),
-        options: Vec::new(),
-        operands,
-    }))
+    utility(kind.join(" "), operands)
 }
 
 /// The clause being read: its keywords, its values, and an operator before the next value.
@@ -122,17 +116,14 @@ impl Clause {
         if words.is_empty() {
             return values;
         }
-        let value: Option<Box<Expression>> = match values.len() {
+        let value: Option<Expression> = match values.len() {
             0 => None,
-            1 => values.pop().map(Box::new),
-            _ => Some(Box::new(Expression::Tuple(Box::new(Tuple {
+            1 => values.pop(),
+            _ => Some(Expression::Tuple(Box::new(Tuple {
                 expressions: values,
-            })))),
+            }))),
         };
-        vec![Expression::Property(Box::new(Property {
-            this: Box::new(var(&words.join(" "))),
-            value,
-        }))]
+        vec![property(&words.join(" "), value)]
     }
 }
 

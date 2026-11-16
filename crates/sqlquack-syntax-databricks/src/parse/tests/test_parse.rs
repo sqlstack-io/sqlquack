@@ -148,7 +148,7 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         },
         VerdictTestCase {
             description: "a statement the shared tree has no node for is kept as a gap",
-            sql: "CACHE SELECT a FROM t",
+            sql: "REPAIR PRIVILEGES t1",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
@@ -527,9 +527,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "an unquoted REFRESH resource path without blanks is a gap",
+            description: "an unquoted REFRESH resource path without blanks is its operand",
             sql: "REFRESH /data/x",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "REFRESH MATERIALIZED VIEW takes no WHERE",
@@ -1564,6 +1564,78 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             pointer: "/0/create_table/properties/0/property/value/identifier/quoted",
             expected_json: "true",
         },
+        ValueTestCase {
+            description: "ADD splits its resources where a space falls, as Spark does",
+            sql: "ADD FILE '/tmp/a.txt' /tmp/b.txt",
+            pointer: "/0/utility_statement/operands/1/literal/value",
+            expected_json: "\"/tmp/b.txt\"",
+        },
+        ValueTestCase {
+            description: "LIST keeps the resource kind it names",
+            sql: "LIST JARS",
+            pointer: "/0/utility_statement/kind",
+            expected_json: "\"LIST JARS\"",
+        },
+        ValueTestCase {
+            description: "RESTORE keeps the version it restores",
+            sql: "RESTORE t1 VERSION AS OF 3",
+            pointer: "/0/utility_statement/operands/1/property/value/literal/value",
+            expected_json: "\"3\"",
+        },
+        ValueTestCase {
+            description: "DENY keeps the securable's kind",
+            sql: "DENY SELECT , MODIFY ON TABLE t1 TO v1",
+            pointer: "/0/utility_statement/operands/2/property/this/var/this",
+            expected_json: "\"ON TABLE\"",
+        },
+        ValueTestCase {
+            description: "DENY keeps its principals",
+            sql: "DENY SELECT ON TABLE t1 TO v1 , v2",
+            pointer: "/0/utility_statement/operands/2/property/value/tuple/expressions/1/identifier/name",
+            expected_json: "\"v2\"",
+        },
+        ValueTestCase {
+            description: "CACHE SELECT as its page writes it keeps its table",
+            sql: "CACHE SELECT c1 , c2 FROM t1 WHERE c1 = 1",
+            pointer: "/0/utility_statement/operands/2/property/value/table/name/name",
+            expected_json: "\"t1\"",
+        },
+        ValueTestCase {
+            description: "CACHE SELECT keeps other text the service accepts as written",
+            sql: "CACHE SELECT c1 FROM t1 WHERE",
+            pointer: "/0/utility_statement/operands/0/literal/value",
+            expected_json: "\"c1 FROM t1 WHERE\"",
+        },
+        ValueTestCase {
+            description: "REFRESH keeps its resource path",
+            sql: "REFRESH /data/x",
+            pointer: "/0/utility_statement/operands/0/literal/value",
+            expected_json: "\"/data/x\"",
+        },
+        ValueTestCase {
+            description: "DESCRIBE of a column keeps the column's field",
+            sql: "DESCRIBE TABLE t1 c1.f1",
+            pointer: "/0/utility_statement/operands/1/dot/field/name",
+            expected_json: "\"f1\"",
+        },
+        ValueTestCase {
+            description: "DESCRIBE of a column keeps its EXTENDED",
+            sql: "DESC EXTENDED t1 c1",
+            pointer: "/0/utility_statement/kind",
+            expected_json: "\"DESC EXTENDED\"",
+        },
+        ValueTestCase {
+            description: "SHOW PARTITIONS keeps its partition",
+            sql: "SHOW PARTITIONS t1 PARTITION ( c1 = 1 )",
+            pointer: "/0/utility_statement/operands/1/partition/expressions/0/eq/left/column/name/name",
+            expected_json: "\"c1\"",
+        },
+        ValueTestCase {
+            description: "SHOW TABLE EXTENDED keeps its pattern before its partition",
+            sql: "SHOW TABLE EXTENDED IN s1 LIKE 'm' PARTITION ( c1 = 1 )",
+            pointer: "/0/utility_statement/operands/1/property/value/literal/value",
+            expected_json: "\"m\"",
+        },
     ];
     for test_case in test_cases {
         let parsed: Parsed = parse_strict(test_case.sql).expect(test_case.description);
@@ -1590,7 +1662,7 @@ fn given_sql_when_parsing_strictly_then_any_error_refuses_it() {
         },
         StrictTestCase {
             description: "a gap is kept, not refused",
-            sql: "CACHE SELECT a FROM t",
+            sql: "REPAIR PRIVILEGES t1",
             expected_outcome: Ok((1, 1)),
         },
         StrictTestCase {
@@ -1620,11 +1692,11 @@ fn given_sql_when_parsing_strictly_then_any_error_refuses_it() {
 fn given_a_gap_when_parsing_then_it_names_the_construct_and_its_range() {
     let test_cases = [GapTestCase {
         description: "a statement with no shared node is a gap from its first word to its end",
-        sql: "SELECT 1; CACHE SELECT a FROM t",
+        sql: "SELECT 1; REPAIR PRIVILEGES t1",
         expected_gaps: vec![Gap {
-            construct: "cache_select",
+            construct: "repair",
             start: 10,
-            end: 31,
+            end: 30,
         }],
     }];
     for test_case in test_cases {
@@ -1790,6 +1862,17 @@ fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_is_refused_not_abort
             sql: || {
                 let open: String = "(SELECT * FROM ".repeat(40);
                 format!("SELECT * FROM {open}t{}", ")".repeat(40))
+            },
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "CACHE SELECT keeps text too deep for its documented form as written",
+            sql: || {
+                format!(
+                    "CACHE SELECT {}1{} FROM t1",
+                    "(".repeat(300),
+                    ")".repeat(300)
+                )
             },
             expected_refusal: None,
         },

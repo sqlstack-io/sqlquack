@@ -10,7 +10,7 @@ use sqlquack_syntax::expressions::tables::models::Undrop;
 
 use crate::parse::_helpers::commands::alters::{property_pair, property_text};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
-use crate::parse::_helpers::tree::nodes::{literal, null, subquery, var};
+use crate::parse::_helpers::tree::nodes::{literal, null, property, subquery, utility, var};
 use crate::parse::constants::MSCK;
 use crate::scan::models::{NumberKind, TokenKind};
 
@@ -198,30 +198,31 @@ impl Parser<'_> {
         Ok(null())
     }
 
-    /// `RESTORE [TABLE] table [TO] {VERSION | TIMESTAMP} AS OF value`, kept as a gap.
+    /// `RESTORE [TABLE] table [TO] {VERSION | TIMESTAMP} AS OF value`: the table, then its version.
     pub(crate) fn restore_statement(&mut self) -> Parsing<Expression> {
-        self.checked_gap("restore", |parser| {
-            if parser.kw("TABLE") && !parser.kw_at(1, "TO") {
-                parser.at += 1;
-            }
-            parser.table_reference()?;
-            parser.eat_kw("TO");
-            let version: bool = parser.eat_kw("VERSION");
-            if !version {
-                parser.expect_kw("TIMESTAMP")?;
-            }
-            parser.expect_kw("AS")?;
-            parser.expect_kw("OF")?;
-            match version {
-                true => {
-                    parser.expect_token(is_integer)?;
-                }
-                false => {
-                    parser.expression()?;
-                }
-            }
-            Ok(())
-        })
+        self.expect_kw("RESTORE")?;
+        let mut kind: String = "RESTORE".to_owned();
+        if self.kw("TABLE") && !self.kw_at(1, "TO") {
+            self.at += 1;
+            kind.push_str(" TABLE");
+        }
+        let target: Expression = Expression::Table(Box::new(self.table_reference()?));
+        let mut words: Vec<&str> = self.eat_kw("TO").then_some("TO").into_iter().collect();
+        let version: bool = self.eat_kw("VERSION");
+        if !version {
+            self.expect_kw("TIMESTAMP")?;
+        }
+        self.expect_kw("AS")?;
+        self.expect_kw("OF")?;
+        words.extend([if version { "VERSION" } else { "TIMESTAMP" }, "AS", "OF"]);
+        let value: Expression = match version {
+            true => literal(Literal::Number(self.expect_token(is_integer)?.value)),
+            false => self.expression()?,
+        };
+        Ok(utility(
+            kind,
+            vec![target, property(&words.join(" "), Some(value))],
+        ))
     }
 
     /// `REPAIR PRIVILEGES ...`, kept as a gap; `[MSCK] REPAIR TABLE` is a documented form.

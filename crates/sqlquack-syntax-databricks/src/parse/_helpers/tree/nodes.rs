@@ -19,9 +19,9 @@ use sqlquack_syntax::expressions::queries::models::{
     WindowFrame,
 };
 use sqlquack_syntax::expressions::statements::models::{
-    Command, Delete, Insert, Paren, Update, Var,
+    Command, Delete, Insert, Paren, Update, UtilityStatement, Var,
 };
-use sqlquack_syntax::expressions::tables::models::ConstraintType;
+use sqlquack_syntax::expressions::tables::models::{ConstraintType, Property};
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::SourceSpan;
 
@@ -130,6 +130,23 @@ pub(crate) fn default_value(value: Expression) -> Expression {
 pub(crate) fn var(text: &str) -> Expression {
     Expression::Var(Box::new(Var {
         this: text.to_owned(),
+    }))
+}
+
+/// A keyword clause: its words, and its value when one is written.
+pub(crate) fn property(words: &str, value: Option<Expression>) -> Expression {
+    Expression::Property(Box::new(Property {
+        this: Box::new(var(words)),
+        value: value.map(Box::new),
+    }))
+}
+
+/// A statement the shared tree has no node for: its keywords, then its parts in order.
+pub(crate) fn utility(kind: String, operands: Vec<Expression>) -> Expression {
+    Expression::UtilityStatement(Box::new(UtilityStatement {
+        kind,
+        options: Vec::new(),
+        operands,
     }))
 }
 

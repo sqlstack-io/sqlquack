@@ -107,6 +107,11 @@ fn is_string(token: &Token) -> bool {
     matches!(token.kind, TokenKind::String { .. })
 }
 
+/// Whether `parts` hold a slot whose value the shared tree lacks.
+fn has_opaque(parts: &[Part]) -> bool {
+    parts.iter().any(|part| matches!(part, Part::Opaque))
+}
+
 /// The furthest failure seen while matching.
 struct Furthest {
     error: Option<ParseError>,
@@ -157,6 +162,7 @@ impl Parser<'_> {
             "id" => Expression::Identifier(self.ident()?),
             "table" => Expression::Table(Box::new(self.table_reference()?)),
             "str" => self.string_literal()?,
+            "resource" => self.resource()?,
             "single_str" => match self.string_at(0) {
                 true => string(&self.advance()?.value),
                 false => return Err(self.error()),
@@ -346,6 +352,24 @@ impl Parser<'_> {
         })))
     }
 
+    /// `resource`: tokens with no space between them, as Spark splits resources, or a string.
+    fn resource(&mut self) -> Parsing<Expression> {
+        if self.ends_at(0) {
+            return Err(self.error());
+        }
+        if self.string_at(0) && !self.adjacent(0) {
+            return Ok(string(&self.advance()?.value));
+        }
+        let first: usize = self.at;
+        while self.adjacent(0) && !self.ends_at(1) {
+            self.at += 1;
+        }
+        self.at += 1;
+        Ok(string(
+            &self.sql[self.tokens[first].start..self.tokens[self.at - 1].end],
+        ))
+    }
+
     /// `literal`: a number, with an optional sign, a string, a boolean or `NULL`.
     fn literal_value(&mut self) -> Parsing<Expression> {
         if self.is_char('+') {
@@ -388,6 +412,28 @@ impl Parser<'_> {
         }
         self.at = start;
         Err(furthest.error.unwrap_or_else(|| self.error()))
+    }
+
+    /// `pattern`'s tree of tokens `from` to `end`, already checked, when it reads all of them plainly.
+    pub(crate) fn tree_within(
+        &mut self,
+        from: usize,
+        end: usize,
+        lead: usize,
+        pattern: &'static str,
+    ) -> Option<Expression> {
+        let too_deep: bool = self.too_deep.is_some();
+        self.at = from;
+        let read: Parsing<Vec<Part>> = self.form(pattern);
+        let plain: bool = self.at == end && self.too_deep.is_some() == too_deep;
+        if !too_deep {
+            self.too_deep = None;
+        }
+        self.at = end;
+        match read {
+            Ok(parts) if plain && !has_opaque(&parts) => Some(documented_tree(lead, parts)),
+            Ok(_) | Err(_) => None,
+        }
     }
 
     /// The tree of the statement `patterns` match, its kind from `lead` words, or the gap `construct`.
