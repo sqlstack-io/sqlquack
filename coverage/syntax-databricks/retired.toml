@@ -2619,3 +2619,28 @@ ids = [
   "db.transaction_session.set-variable.set-default.o022",
   "db.utility.optimize.o019",
 ]
+
+[[retired]]
+retired_in = "8467e1a6f45ca861354feb6861fba2c9ce87199e"
+reason = "the Hive form requires STORED AS or ROW FORMAT, as the page's note says, so the obligations of the two as independent options give way to those of the required pair, and the clause-order rows that paired them name their orders instead"
+ids = [
+  "db.ddl.create-table-hiveformat.o039",
+  "db.ddl.create-table-hiveformat.o040",
+  "db.ddl.create-table-hiveformat.o041",
+  "db.ddl.create-table-hiveformat.o042",
+  "db.ddl.create-table-hiveformat.o073",
+  "db.ddl.create-table-hiveformat.o122",
+  "db.ddl.create-table-hiveformat.o123",
+  "db.ddl.create-table-hiveformat.o124",
+  "db.ddl.create-table-hiveformat.o125",
+  "db.ddl.create-table-hiveformat.o156",
+  "db.ddl.create-table-hiveformat.o195",
+  "db.ddl.create-table-hiveformat.o196",
+  "db.ddl.create-table-hiveformat.o199",
+  "db.ddl.create-table-hiveformat.o200",
+  "db.ddl.create-table-hiveformat.o203",
+  "db.ddl.create-table-hiveformat.o204",
+  "db.ddl.create-table-hiveformat.o205",
+  "db.ddl.create-table-hiveformat.o206",
+  "db.ddl.create-table-hiveformat.o207",
+]

@@ -19005,29 +19005,29 @@ target = "<col_name2> in [ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT 
 note = "a string literal in place of <col_name2>"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o039"
-kind = "option_present"
+id = "db.ddl.create-table-hiveformat.o209"
+kind = "alternative"
 required = true
-target = "[ ROW FORMAT <row_format> ]"
+target = "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o040"
-kind = "option_absent"
+id = "db.ddl.create-table-hiveformat.o210"
+kind = "alternative"
 required = true
-target = "[ ROW FORMAT <row_format> ]"
+target = "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> }"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o041"
+id = "db.ddl.create-table-hiveformat.o211"
 kind = "required_operand_missing"
 required = true
-target = "<row_format> in [ ROW FORMAT <row_format> ]"
+target = "<row_format>"
 note = "omit <row_format>"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o042"
+id = "db.ddl.create-table-hiveformat.o212"
 kind = "operand_type_class"
 required = true
-target = "<row_format> in [ ROW FORMAT <row_format> ]"
+target = "<row_format>"
 note = "a valid operand"
 
 [[obligation]]
@@ -19087,6 +19087,53 @@ id = "db.ddl.create-table-hiveformat.o177"
 kind = "operand_type_class"
 required = true
 target = "<output_format> in [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o180"
+kind = "alternative"
+required = true
+target = "{ <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } → <file_format> #2"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o181"
+kind = "alternative"
+required = true
+target = "{ <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT… → INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> #2"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o213"
+kind = "operand_type_class"
+required = true
+target = "<file_format>"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o214"
+kind = "required_operand_missing"
+required = true
+target = "<input_format>"
+note = "omit <input_format>"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o215"
+kind = "operand_type_class"
+required = true
+target = "<input_format>"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o216"
+kind = "required_operand_missing"
+required = true
+target = "<output_format>"
+note = "omit <output_format>"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o217"
+kind = "operand_type_class"
+required = true
+target = "<output_format>"
 note = "a valid operand"
 
 [[obligation]]
@@ -19316,29 +19363,29 @@ target = "<col_name2> in [ PARTITIONED BY ( <col_name1> , <col_name2> , ... ) ]"
 note = "a string literal in place of <col_name2>"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o122"
-kind = "option_present"
+id = "db.ddl.create-table-hiveformat.o218"
+kind = "alternative"
 required = true
-target = "[ ROW FORMAT <row_format> ] #2"
+target = "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ] #2"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o123"
-kind = "option_absent"
+id = "db.ddl.create-table-hiveformat.o219"
+kind = "alternative"
 required = true
-target = "[ ROW FORMAT <row_format> ] #2"
+target = "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } #2"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o124"
+id = "db.ddl.create-table-hiveformat.o220"
 kind = "required_operand_missing"
 required = true
-target = "<row_format> in [ ROW FORMAT <row_format> ] #2"
+target = "<row_format> #2"
 note = "omit <row_format>"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o125"
+id = "db.ddl.create-table-hiveformat.o221"
 kind = "operand_type_class"
 required = true
-target = "<row_format> in [ ROW FORMAT <row_format> ] #2"
+target = "<row_format> #2"
 note = "a valid operand"
 
 [[obligation]]
@@ -19354,16 +19401,16 @@ required = true
 target = "[ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ] #2"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o180"
+id = "db.ddl.create-table-hiveformat.o222"
 kind = "alternative"
 required = true
-target = "{ <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } → <file_format> #2"
+target = "{ <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } → <file_format> #3"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o181"
+id = "db.ddl.create-table-hiveformat.o223"
 kind = "alternative"
 required = true
-target = "{ <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT… → INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> #2"
+target = "{ <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT… → INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> #3"
 
 [[obligation]]
 id = "db.ddl.create-table-hiveformat.o182"
@@ -19398,6 +19445,53 @@ id = "db.ddl.create-table-hiveformat.o186"
 kind = "operand_type_class"
 required = true
 target = "<output_format> in [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ] #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o224"
+kind = "alternative"
+required = true
+target = "{ <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } → <file_format> #4"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o225"
+kind = "alternative"
+required = true
+target = "{ <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT… → INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> #4"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o226"
+kind = "operand_type_class"
+required = true
+target = "<file_format> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o227"
+kind = "required_operand_missing"
+required = true
+target = "<input_format> #2"
+note = "omit <input_format>"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o228"
+kind = "operand_type_class"
+required = true
+target = "<input_format> #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o229"
+kind = "required_operand_missing"
+required = true
+target = "<output_format> #2"
+note = "omit <output_format>"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o230"
+kind = "operand_type_class"
+required = true
+target = "<output_format> #2"
 note = "a valid operand"
 
 [[obligation]]
@@ -19559,10 +19653,16 @@ required = true
 note = "the form without its required { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) } in [ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) }…"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o073"
+id = "db.ddl.create-table-hiveformat.o231"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FORMAT in [ ROW FORMAT <row_format> ]"
+note = "the form without its required ROW after <table_identifier>"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o232"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FORMAT"
 
 [[obligation]]
 id = "db.ddl.create-table-hiveformat.o187"
@@ -19587,6 +19687,30 @@ id = "db.ddl.create-table-hiveformat.o190"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } in [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o233"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required STORED after <table_identifier>"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o234"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required INPUTFORMAT after AS"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o235"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OUTPUTFORMAT"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o236"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> }"
 
 [[obligation]]
 id = "db.ddl.create-table-hiveformat.o075"
@@ -19637,10 +19761,16 @@ required = true
 note = "the form without its required ) in [ PARTITIONED BY ( <col_name1> , <col_name2> , ... ) ]"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o156"
+id = "db.ddl.create-table-hiveformat.o237"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required FORMAT in [ ROW FORMAT <row_format> ] #2"
+note = "the form without its required ROW after <table_identifier> #2"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o238"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FORMAT after ROW"
 
 [[obligation]]
 id = "db.ddl.create-table-hiveformat.o191"
@@ -19661,6 +19791,30 @@ required = true
 note = "the form without its required OUTPUTFORMAT in [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ] #2"
 
 [[obligation]]
+id = "db.ddl.create-table-hiveformat.o239"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required STORED after <table_identifier> #2"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o240"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS after STORED"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o241"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required INPUTFORMAT after AS #2"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o242"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required OUTPUTFORMAT after <input_format>"
+
+[[obligation]]
 id = "db.ddl.create-table-hiveformat.o158"
 kind = "negative_neighbour"
 required = true
@@ -19671,6 +19825,12 @@ id = "db.ddl.create-table-hiveformat.o159"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) in [ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ] #2"
+
+[[obligation]]
+id = "db.ddl.create-table-hiveformat.o243"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS after <output_format>"
 
 [[obligation]]
 id = "db.ddl.create-table-hiveformat.o077"
@@ -19780,24 +19940,18 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "PARTITIONED BY before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o195"
+id = "db.ddl.create-table-hiveformat.o244"
 kind = "interaction"
 required = true
-pair = [
-  "db.ddl.create-table-hiveformat.o011",
-  "db.ddl.create-table-hiveformat.o039",
-]
+target = "COMMENT and ROW FORMAT in the other order"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "ROW FORMAT before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o196"
+id = "db.ddl.create-table-hiveformat.o245"
 kind = "interaction"
 required = true
-pair = [
-  "db.ddl.create-table-hiveformat.o011",
-  "db.ddl.create-table-hiveformat.o169",
-]
+target = "COMMENT and STORED AS in the other order"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "STORED AS before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
@@ -19824,24 +19978,18 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o199"
+id = "db.ddl.create-table-hiveformat.o246"
 kind = "interaction"
 required = true
-pair = [
-  "db.ddl.create-table-hiveformat.o089",
-  "db.ddl.create-table-hiveformat.o039",
-]
+target = "PARTITIONED BY and ROW FORMAT in the other order"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "ROW FORMAT before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o200"
+id = "db.ddl.create-table-hiveformat.o247"
 kind = "interaction"
 required = true
-pair = [
-  "db.ddl.create-table-hiveformat.o089",
-  "db.ddl.create-table-hiveformat.o169",
-]
+target = "PARTITIONED BY and STORED AS in the other order"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "STORED AS before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
@@ -19868,57 +20016,42 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o203"
+id = "db.ddl.create-table-hiveformat.o248"
 kind = "interaction"
 required = true
-pair = [
-  "db.ddl.create-table-hiveformat.o039",
-  "db.ddl.create-table-hiveformat.o169",
-]
+target = "ROW FORMAT and STORED AS in the other order"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "STORED AS before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o204"
+id = "db.ddl.create-table-hiveformat.o249"
 kind = "interaction"
 required = true
-pair = [
-  "db.ddl.create-table-hiveformat.o039",
-  "db.ddl.create-table-hiveformat.o047",
-]
+target = "ROW FORMAT and LOCATION in the other order"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "LOCATION before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o205"
+id = "db.ddl.create-table-hiveformat.o250"
 kind = "interaction"
 required = true
-pair = [
-  "db.ddl.create-table-hiveformat.o039",
-  "db.ddl.create-table-hiveformat.o052",
-]
+target = "ROW FORMAT and TBLPROPERTIES in the other order"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o206"
+id = "db.ddl.create-table-hiveformat.o251"
 kind = "interaction"
 required = true
-pair = [
-  "db.ddl.create-table-hiveformat.o169",
-  "db.ddl.create-table-hiveformat.o047",
-]
+target = "STORED AS and LOCATION in the other order"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "LOCATION before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o207"
+id = "db.ddl.create-table-hiveformat.o252"
 kind = "interaction"
 required = true
-pair = [
-  "db.ddl.create-table-hiveformat.o169",
-  "db.ddl.create-table-hiveformat.o052",
-]
+target = "STORED AS and TBLPROPERTIES in the other order"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 

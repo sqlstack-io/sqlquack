@@ -899,6 +899,7 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
     "db.expressions.names.identifier-2": RELATION_CONTEXT,
     "db.expressions.names.identifier-6": ("SELECT ", " ( )"),
     "db.expressions.names.identifier-7": ("CALL ", " ( )"),
+    "db.expressions.names.identifier-8": ("BEGIN ", " : BEGIN SELECT 1 ; END ; END"),
     "db.expressions.names.subscript-dot-4": ("DESCRIBE VOLUME ", ""),
     "db.expressions.names.subscript-dot.syntax": (
         "BEGIN DECLARE v1 CURSOR FOR SELECT 1 ; OPEN ",

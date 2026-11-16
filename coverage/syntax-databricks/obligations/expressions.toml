@@ -2910,11 +2910,24 @@ target = "<label_identifier>"
 note = "a valid identifier"
 
 [[obligation]]
+id = "db.expressions.names.identifier-8.o016"
+kind = "negative_neighbour"
+required = true
+target = "<label_identifier>"
+note = "a string literal in place of <label_identifier>"
+
+[[obligation]]
 id = "db.expressions.names.identifier-8.o015"
 kind = "operand_type_class"
 required = true
 target = "<identifier_clause>"
 note = "a valid operand"
+
+[[obligation]]
+id = "db.expressions.names.identifier-8.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required IDENTIFIER after "
 
 [[obligation]]
 id = "db.expressions.names.identifier-8.o009"
