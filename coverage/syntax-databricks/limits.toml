@@ -6772,7 +6772,7 @@ form = "db.ddl.create-policy"
 kind = "required_operand_missing"
 target = "<catalog_name>"
 note = "omit <catalog_name>"
-reason = "CATALOG alone reads as the name of the policy target: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T112320.575489Z) parses CREATE POLICY v1 ON CATALOG ROW FILTER f1 TO `u1` FOR TABLES and answers UC_CATALOG_NAME_NOT_PROVIDED, not a syntax error"
+reason = "the warehouse parses ON CATALOG without the catalog name: it (DBSQL 2026.45, run databricks-2026.45-20261116T112320.575489Z) parses CREATE POLICY v1 ON CATALOG ROW FILTER f1 TO `u1` FOR TABLES and answers UC_CATALOG_NAME_NOT_PROVIDED, not a syntax error"
 
 [[suppress]]
 form = "db.ddl.create-policy"
@@ -6780,3 +6780,49 @@ kind = "negative_neighbour"
 target = ""
 note = "the form without its required SCHEMA after ON"
 reason = "a policy target may be a bare name: the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T112320.575489Z) parses CREATE POLICY v1 ON s1 ROW FILTER f1 TO `u1` FOR TABLES and answers PRINCIPAL_DOES_NOT_EXIST, not a syntax error"
+
+[[reading]]
+form = "db.expressions.decfloat-type"
+grammar_sha256 = "7897c1dde5bbdf7bb0e9585803e96e12eff47ede0aaaeb5ba473e4813279aad6"
+grammar = []
+reason = "documented but rejected at DBSQL 2026.45: the page applies to Databricks SQL but marks DECFLOAT Beta ('A workspace admin must enable DECFLOAT data type in Previews'), and the warehouse (run databricks-2026.45-20261116T170422.040934Z) refuses both documented spellings with UNSUPPORTED_DATATYPE, so the form is not derived and its spellings are observed [[limit]] rows that do not count as verified"
+
+[[limit]]
+form = "db.expressions.decfloat-type"
+kind = "positive"
+target = ""
+note = "documented but rejected at DBSQL 2026.45 (Beta, not enabled): DECFLOAT without a precision"
+anchor = "doc.data-types.decfloat-type / Syntax"
+sql = "SELECT CAST ( NULL AS DECFLOAT )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.decfloat-type"
+kind = "option_present"
+target = "[ ( <p> ) ]"
+note = "documented but rejected at DBSQL 2026.45 (Beta, not enabled): DECFLOAT with the page's default precision 34"
+anchor = "doc.data-types.decfloat-type / Syntax"
+sql = "SELECT CAST ( NULL AS DECFLOAT ( 34 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.decfloat-type"
+kind = "required_operand_missing"
+target = "<p> in [ ( <p> ) ]"
+note = "omit <p>"
+anchor = "doc.data-types.decfloat-type / Syntax"
+sql = "SELECT CAST ( NULL AS DECFLOAT ( ) )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "db.expressions.decfloat-type"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ) in [ ( <p> ) ]"
+anchor = "doc.data-types.decfloat-type / Syntax"
+sql = "SELECT CAST ( NULL AS DECFLOAT ( 34 )"
+context = "raw"
+expect = "reject"

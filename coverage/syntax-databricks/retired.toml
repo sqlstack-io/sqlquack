@@ -2703,3 +2703,13 @@ ids = [
   "db.ddl.create-policy.o012",
   "db.ddl.create-policy.o044",
 ]
+
+[[retired]]
+retired_in = "e6dd60fa695a7a29d85908982acf0f0b031246a4"
+reason = "DECFLOAT is documented but rejected at DBSQL 2026.45 (Beta, not enabled), so a [[reading]] leaves it out of derivation and its two documented spellings become observed [[limit]] rows with their receipts"
+ids = [
+  "db.expressions.decfloat-type.o001",
+  "db.expressions.decfloat-type.o002",
+  "db.expressions.decfloat-type.o003",
+  "db.expressions.decfloat-type.o005",
+]

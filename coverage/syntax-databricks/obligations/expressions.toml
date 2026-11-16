@@ -340,50 +340,42 @@ target = "<date_string>"
 note = "an unquoted identifier in place of <date_string>"
 
 [[obligation]]
-id = "db.expressions.decfloat-type.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.expressions.decfloat-type.o002"
-kind = "option_present"
-required = true
-target = "[ ( <p> ) ]"
-
-[[obligation]]
-id = "db.expressions.decfloat-type.o003"
-kind = "option_absent"
-required = true
-target = "[ ( <p> ) ]"
-
-[[obligation]]
-id = "db.expressions.decfloat-type.o007"
-kind = "required_operand_missing"
-required = true
-target = "<p> in [ ( <p> ) ]"
-note = "omit <p>"
-
-[[obligation]]
-id = "db.expressions.decfloat-type.o005"
-kind = "operand_type_class"
-required = true
-target = "<p> in [ ( <p> ) ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.expressions.decfloat-type.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ) in [ ( <p> ) ]"
-
-[[obligation]]
 id = "db.expressions.decfloat-type.o008"
 kind = "operand_type_class"
 required = true
 target = "<p>"
 anchor = "doc.data-types.decfloat-type / Syntax"
 note = "a string where the page documents an integer"
+
+[[obligation]]
+id = "db.expressions.decfloat-type.o009"
+kind = "positive"
+required = true
+anchor = "doc.data-types.decfloat-type / Syntax"
+note = "documented but rejected at DBSQL 2026.45 (Beta, not enabled): DECFLOAT without a precision"
+
+[[obligation]]
+id = "db.expressions.decfloat-type.o010"
+kind = "option_present"
+required = true
+target = "[ ( <p> ) ]"
+anchor = "doc.data-types.decfloat-type / Syntax"
+note = "documented but rejected at DBSQL 2026.45 (Beta, not enabled): DECFLOAT with the page's default precision 34"
+
+[[obligation]]
+id = "db.expressions.decfloat-type.o007"
+kind = "required_operand_missing"
+required = true
+target = "<p> in [ ( <p> ) ]"
+anchor = "doc.data-types.decfloat-type / Syntax"
+note = "omit <p>"
+
+[[obligation]]
+id = "db.expressions.decfloat-type.o006"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.data-types.decfloat-type / Syntax"
+note = "the form without its required ) in [ ( <p> ) ]"
 
 [[obligation]]
 id = "db.expressions.decimal-type.o001"
