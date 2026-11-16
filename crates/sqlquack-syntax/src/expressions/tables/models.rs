@@ -179,6 +179,9 @@ pub struct CreateTable {
     /// Snowflake: the words that made the table temporary when they were not TEMPORARY, e.g. `TEMP`, `VOLATILE` or `LOCAL TEMP`
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub temporary_spelling: Option<String>,
+    /// Databricks: REPLACE TABLE without CREATE OR, which replaces only a table that exists
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub replace_only: bool,
 }
 
 /// Teradata index specification for CREATE TABLE
@@ -250,6 +253,7 @@ impl CreateTable {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
         }
     }
 }

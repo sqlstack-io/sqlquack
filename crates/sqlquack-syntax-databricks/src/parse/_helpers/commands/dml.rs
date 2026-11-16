@@ -7,8 +7,8 @@ use sqlquack_syntax::expressions::statements::models::{Merge, When, Whens};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{
-    TableAlias, binary, boolean, call, column_from, delete, insert, joined, star, subquery, table,
-    tuple, update, var,
+    TableAlias, binary, boolean, call, column_from, default_value, delete, insert, joined, star,
+    subquery, table, tuple, update, var,
 };
 use crate::parse::constants::IDENTIFIER_CLAUSE;
 
@@ -218,7 +218,7 @@ impl Parser<'_> {
                 node.values = rows
                     .expressions
                     .into_iter()
-                    .map(|row| row.expressions)
+                    .map(|row| row.expressions.into_iter().map(default_value).collect())
                     .collect();
             }
             other => node.query = Some(other),
@@ -231,7 +231,11 @@ impl Parser<'_> {
         self.comma_list(|parser| {
             let key: Expression = column_from(parser.multipart_identifier()?);
             parser.expect_char('=')?;
-            Ok(binary(Expression::Eq, key, parser.expression()?))
+            Ok(binary(
+                Expression::Eq,
+                key,
+                default_value(parser.expression()?),
+            ))
         })
     }
 
@@ -344,7 +348,7 @@ impl Parser<'_> {
                         .parenthesized(|parser| Ok(column_from(parser.multipart_identifier()?)))?;
                     self.expect_kw("VALUES")?;
                     let values: Vec<Expression> =
-                        self.parenthesized(|parser| parser.expression())?;
+                        self.parenthesized(|parser| parser.expression().map(default_value))?;
                     tuple(vec![var("INSERT"), tuple(columns), tuple(values)])
                 }
             }
@@ -368,7 +372,7 @@ impl Parser<'_> {
         node.set = self.comma_list(|parser| {
             let key: Identifier = joined(parser.multipart_identifier()?);
             parser.expect_char('=')?;
-            Ok((key, parser.expression()?))
+            Ok((key, default_value(parser.expression()?)))
         })?;
         if self.eat_kw("WHERE") {
             node.where_clause = Some(Where {

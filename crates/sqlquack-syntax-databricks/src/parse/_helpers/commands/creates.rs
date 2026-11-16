@@ -22,6 +22,7 @@ use crate::scan::models::{NumberKind, TokenKind};
 /// What `CREATE` heads: a table (`OR REPLACE`, `TEMPORARY`, `EXTERNAL`) or a view.
 pub(crate) struct Head {
     pub(crate) or_replace: bool,
+    pub(crate) replace_only: bool,
     pub(crate) temporary: bool,
     pub(crate) global: bool,
     pub(crate) external: bool,
@@ -40,12 +41,14 @@ impl Parser<'_> {
         let start_at: usize = self.at;
         let mut head = Head {
             or_replace: false,
+            replace_only: false,
             temporary: false,
             global: false,
             external: false,
         };
         if self.eat_kw("REPLACE") {
             head.or_replace = true;
+            head.replace_only = true;
             let temporary: bool = self.kw_in(0, &["TEMP", "TEMPORARY"]) && self.kw_at(1, "TABLE");
             if !self.kw("TABLE") && !temporary {
                 return Err(self.error());
@@ -94,6 +97,7 @@ impl Parser<'_> {
         node.name = name;
         node.if_not_exists = if_not_exists;
         node.or_replace = head.or_replace;
+        node.replace_only = head.replace_only;
         node.temporary = head.temporary;
         if head.external {
             node.table_modifier = Some("EXTERNAL".to_owned());

@@ -605,6 +605,9 @@ pub struct Cache {
     pub options: Vec<(Expression, Expression)>,
     /// Optional AS clause with query
     pub query: Option<Expression>,
+    /// Whether AS was written before the query
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub query_as: bool,
 }
 
 /// UNCACHE TABLE statement (Spark)

@@ -6,7 +6,7 @@ use sqlquack_syntax::expressions::functions::models::{
     AggregateFunction, Function, WindowFunction,
 };
 use sqlquack_syntax::expressions::names::models::{
-    BooleanLiteral, Column, Identifier, Literal, Null, Star, TableRef,
+    BooleanLiteral, Column, DefaultKeyword, Identifier, Literal, Null, Star, TableRef,
 };
 use sqlquack_syntax::expressions::operators::models::{
     Alias, Between, BinaryOp, Case, Cast, DotAccess, Exists, In, IsNull, LambdaExpr, Lateral,
@@ -104,6 +104,20 @@ pub(crate) fn lambda(parameters: Vec<Identifier>, body: Expression) -> Expressio
         colon: false,
         parameter_types,
     }))
+}
+
+/// An assigned value that is the bare word DEFAULT, as the column's default value.
+pub(crate) fn default_value(value: Expression) -> Expression {
+    match &value {
+        Expression::Column(column)
+            if column.table.is_none()
+                && !column.name.quoted
+                && column.name.name.eq_ignore_ascii_case("DEFAULT") =>
+        {
+            Expression::DefaultKeyword(DefaultKeyword)
+        }
+        _ => value,
+    }
 }
 
 /// A keyword written as a word in a keyword tuple, such as `DELETE` or `UPDATE`.

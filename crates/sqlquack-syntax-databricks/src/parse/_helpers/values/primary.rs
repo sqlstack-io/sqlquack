@@ -802,16 +802,20 @@ impl Parser<'_> {
         Ok(text)
     }
 
-    /// `namedExpression`: `expression [AS] alias` or `expression AS (a, b)`.
+    /// `namedExpression`: `expression [AS] alias` or `expression [AS] (a, b)`.
     pub(crate) fn named_expression(&mut self) -> Parsing<Expression> {
         let first: usize = self.at;
         let this: Expression = self.expression()?;
-        let node: Expression = if self.kw("AS") && self.char_at(1, '(') {
-            self.at += 1;
+        let explicit: bool = self.kw("AS") && self.char_at(1, '(');
+        let node: Expression = if explicit
+            || (self.is_char('(')
+                && self.is_at(1, crate::parse::_helpers::tree::cursor::is_identifier))
+        {
+            self.at += usize::from(explicit);
             let names: Vec<Identifier> = self.identifier_list()?;
             let mut node =
                 sqlquack_syntax::expressions::operators::models::Alias::with_columns(this, names);
-            node.alias_explicit_as = true;
+            node.alias_explicit_as = explicit;
             Expression::Alias(Box::new(node))
         } else if self.eat_kw("AS") {
             let name: Identifier = self.ident()?;

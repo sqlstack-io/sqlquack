@@ -1773,10 +1773,8 @@ impl Parser {
             Vec::new()
         };
 
-        let query = if self.match_token(TokenType::As)
-            || self.check(TokenType::Select)
-            || self.check(TokenType::With)
-        {
+        let query_as: bool = self.match_token(TokenType::As);
+        let query = if query_as || self.check(TokenType::Select) || self.check(TokenType::With) {
             Some(self.parse_statement()?)
         } else {
             None
@@ -1787,6 +1785,7 @@ impl Parser {
             lazy,
             options,
             query,
+            query_as,
         })))
     }
 

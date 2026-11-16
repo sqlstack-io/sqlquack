@@ -2,7 +2,7 @@
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
-use sqlquack_syntax::expressions::operators::models::Alias;
+use sqlquack_syntax::expressions::operators::models::{Alias, GroupingSets};
 use sqlquack_syntax::expressions::queries::models::{
     ClusterBy, Cte, DistributeBy, From, GroupBy, Having, Hint, HintExpression, Limit, NamedWindow,
     OrderBy, Ordered, Qualify, Select, SortBy, Where, With,
@@ -481,10 +481,13 @@ impl Parser<'_> {
             vec![call(&name, items)]
         } else if self.kw("GROUPING") && self.kw_at(1, "SETS") {
             self.at += 2;
-            vec![call(
-                GROUPING_SETS,
-                self.parenthesized(|parser| parser.grouping_set())?,
-            )]
+            let sets: Vec<Expression> = self.parenthesized(|parser| parser.grouping_set())?;
+            let mut kept: Vec<Expression> = items;
+            kept.push(Expression::GroupingSets(Box::new(GroupingSets {
+                options: None,
+                expressions: sets,
+            })));
+            kept
         } else {
             items
         };

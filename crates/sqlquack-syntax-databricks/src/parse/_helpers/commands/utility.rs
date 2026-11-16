@@ -951,6 +951,7 @@ impl Parser<'_> {
             lazy,
             options,
             query,
+            query_as: as_query,
         })))
     }
 
