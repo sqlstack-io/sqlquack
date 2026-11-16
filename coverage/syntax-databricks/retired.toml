@@ -2644,3 +2644,10 @@ ids = [
   "db.ddl.create-table-hiveformat.o206",
   "db.ddl.create-table-hiveformat.o207",
 ]
+
+[[retired]]
+retired_in = "08c51597ef83a86b27fed22c05a50391ddc2e4a1"
+reason = "AS before the Hive form's CTAS query is optional in the warehouse's parser, so the negative that drops it is suppressed with the receipt that shows it"
+ids = [
+  "db.ddl.create-table-hiveformat.o243",
+]

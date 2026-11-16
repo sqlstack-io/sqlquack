@@ -6643,3 +6643,10 @@ anchor = "doc.sql-ref-syntax-aux-show-functions / Syntax"
 sql = "SHOW FUNCTIONS LIKE 'a*'"
 context = "raw"
 expect = "observe"
+
+[[suppress]]
+form = "db.ddl.create-table-hiveformat"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required AS after <output_format>"
+reason = "AS before a CTAS query is optional (SqlBaseParser createTable: (AS? query)?): the warehouse (DBSQL 2026.45, run databricks-2026.45-20261116T193029.100477Z) parses CREATE TABLE t3 ROW FORMAT DELIMITED SELECT 1 AS c1 , 2 AS c2 , 3 AS c3 and answers UNSUPPORTED_DATA_SOURCE_WRITE, not a syntax error"

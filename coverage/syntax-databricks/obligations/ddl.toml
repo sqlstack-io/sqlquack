@@ -19827,12 +19827,6 @@ required = true
 note = "the form without its required ) in [ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ] #2"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o243"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required AS after <output_format>"
-
-[[obligation]]
 id = "db.ddl.create-table-hiveformat.o077"
 kind = "interaction_all_options"
 required = true
