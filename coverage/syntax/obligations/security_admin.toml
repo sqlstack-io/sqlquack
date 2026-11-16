@@ -10213,6 +10213,12 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o042"
+kind = "option_present"
+required = true
+target = "[ IF EXISTS ]"
+
+[[obligation]]
 id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o003"
 kind = "option_absent"
 required = true
@@ -10282,6 +10288,13 @@ target = "<account_name>"
 note = "a string literal in place of <account_name>"
 
 [[obligation]]
+id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o043"
+kind = "option_present"
+required = true
+target = "[ , <organization_name> . <account_name> ... ]"
+note = "the list continued at least once"
+
+[[obligation]]
 id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o014"
 kind = "option_absent"
 required = true
@@ -10328,6 +10341,12 @@ kind = "negative_neighbour"
 required = true
 target = "<account_name> in [ , <organization_name> . <account_name> ... ]"
 note = "a string literal in place of <account_name>"
+
+[[obligation]]
+id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o044"
+kind = "option_present"
+required = true
+target = "[ IGNORE EDITION CHECK ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o016"
@@ -10430,30 +10449,6 @@ required = true
 target = "<account_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o032"
-kind = "option_present"
-required = true
-target = "[ IF EXISTS ]"
-anchor = "doc.sql.alter-connection / Syntax"
-note = "option present [ IF EXISTS ], observed"
-
-[[obligation]]
-id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o033"
-kind = "option_present"
-required = true
-target = "[ , <organization_name> . <account_name> ... ]"
-anchor = "doc.sql.alter-connection / Syntax"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o034"
-kind = "option_present"
-required = true
-target = "[ IGNORE EDITION CHECK ]"
-anchor = "doc.sql.alter-connection / Syntax"
-note = "option present [ IGNORE EDITION CHECK ], observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-connection.enable-failover-to-accounts.o035"
@@ -45516,6 +45511,12 @@ anchor = "doc.sql.alter-security-integration-oidc / Syntax"
 note = "omit <name>, observed"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-saml2.refresh.o027"
+kind = "option_present"
+required = true
+target = "[ SECURITY ]"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-saml2.refresh.o004"
 kind = "required_operand_missing"
 required = true
@@ -45523,11 +45524,30 @@ target = "<name>"
 note = "omit <name>"
 
 [[obligation]]
+id = "sf.security_admin.alter-security-integration-saml2.refresh.o028"
+kind = "operand_type_class"
+required = true
+target = "<name>"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.security_admin.alter-security-integration-saml2.refresh.o006"
 kind = "negative_neighbour"
 required = true
 target = "<name>"
 note = "a string literal in place of <name>"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-saml2.refresh.o029"
+kind = "option_present"
+required = true
+target = "[ SAML2_SNOWFLAKE_PRIVATE_KEY ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-security-integration-saml2.refresh.o030"
+kind = "option_present"
+required = true
+target = "[ METADATA_URL ]"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-saml2.refresh.o011"
@@ -45565,14 +45585,6 @@ anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 note = "option absent [ SECURITY ], observed"
 
 [[obligation]]
-id = "sf.security_admin.alter-security-integration-saml2.refresh.o019"
-kind = "operand_type_class"
-required = true
-target = "<name>"
-anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
 id = "sf.security_admin.alter-security-integration-saml2.refresh.o020"
 kind = "option_absent"
 required = true
@@ -45595,30 +45607,6 @@ required = true
 target = "<name>"
 anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance), observed"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-saml2.refresh.o023"
-kind = "option_present"
-required = true
-target = "[ SECURITY ]"
-anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
-note = "option present [ SECURITY ], observed"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-saml2.refresh.o024"
-kind = "option_present"
-required = true
-target = "[ SAML2_SNOWFLAKE_PRIVATE_KEY ]"
-anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
-note = "option present [ SAML2_SNOWFLAKE_PRIVATE_KEY ], observed"
-
-[[obligation]]
-id = "sf.security_admin.alter-security-integration-saml2.refresh.o025"
-kind = "option_present"
-required = true
-target = "[ METADATA_URL ]"
-anchor = "doc.sql.alter-security-integration-saml2 / Syntax"
-note = "option present [ METADATA_URL ], observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-security-integration-saml2.refresh.o026"
@@ -55167,16 +55155,35 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.security_admin.alter-user-modify-workload-identity.unset.o039"
+kind = "option_present"
+required = true
+target = "[ IF EXISTS ]"
+
+[[obligation]]
 id = "sf.security_admin.alter-user-modify-workload-identity.unset.o003"
 kind = "option_absent"
 required = true
 target = "[ IF EXISTS ]"
 
 [[obligation]]
+id = "sf.security_admin.alter-user-modify-workload-identity.unset.o040"
+kind = "option_present"
+required = true
+target = "[ <username> ]"
+
+[[obligation]]
 id = "sf.security_admin.alter-user-modify-workload-identity.unset.o005"
 kind = "option_absent"
 required = true
 target = "[ <username> ]"
+
+[[obligation]]
+id = "sf.security_admin.alter-user-modify-workload-identity.unset.o041"
+kind = "operand_type_class"
+required = true
+target = "<username> in [ <username> ]"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-workload-identity.unset.o007"
@@ -55305,46 +55312,6 @@ required = true
 target = "<workload_identity_name>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: a reserved keyword, unquoted (expected rejection) and double-quoted (expected acceptance)"
-
-[[obligation]]
-id = "sf.security_admin.alter-user-modify-workload-identity.unset.o026"
-kind = "option_present"
-required = true
-target = "[ IF EXISTS ]"
-anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
-note = "option present [ IF EXISTS ], observed"
-
-[[obligation]]
-id = "sf.security_admin.alter-user-modify-workload-identity.unset.o027"
-kind = "option_present"
-required = true
-target = "[ <username> ]"
-anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
-note = "option present [ <username> ], observed"
-
-[[obligation]]
-id = "sf.security_admin.alter-user-modify-workload-identity.unset.o028"
-kind = "operand_type_class"
-required = true
-target = "<username> in [ <username> ]"
-anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.security_admin.alter-user-modify-workload-identity.unset.o029"
-kind = "option_present"
-required = true
-target = "[ DISABLED ]"
-anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
-note = "option present [ DISABLED ], observed"
-
-[[obligation]]
-id = "sf.security_admin.alter-user-modify-workload-identity.unset.o030"
-kind = "option_present"
-required = true
-target = "[ COMMENT ]"
-anchor = "doc.sql.alter-user-modify-workload-identity / Syntax"
-note = "option present [ COMMENT ], observed"
 
 [[obligation]]
 id = "sf.security_admin.alter-user-modify-workload-identity.unset.o031"
@@ -148188,6 +148155,12 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.security_admin.show-oflow-data-plane-integration.o043"
+kind = "option_present"
+required = true
+target = "[ LIKE '<pattern>' ]"
+
+[[obligation]]
 id = "sf.security_admin.show-oflow-data-plane-integration.o003"
 kind = "option_absent"
 required = true
@@ -148201,11 +148174,24 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "omit '<pattern>'"
 
 [[obligation]]
+id = "sf.security_admin.show-oflow-data-plane-integration.o044"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.security_admin.show-oflow-data-plane-integration.o006"
 kind = "negative_neighbour"
 required = true
 target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
+
+[[obligation]]
+id = "sf.security_admin.show-oflow-data-plane-integration.o045"
+kind = "option_present"
+required = true
+target = "[ STARTS WITH '<name_string>' ]"
 
 [[obligation]]
 id = "sf.security_admin.show-oflow-data-plane-integration.o008"
@@ -148221,11 +148207,24 @@ target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
 note = "omit '<name_string>'"
 
 [[obligation]]
+id = "sf.security_admin.show-oflow-data-plane-integration.o046"
+kind = "operand_type_class"
+required = true
+target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.security_admin.show-oflow-data-plane-integration.o011"
 kind = "negative_neighbour"
 required = true
 target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
 note = "an unquoted identifier in place of '<name_string>'"
+
+[[obligation]]
+id = "sf.security_admin.show-oflow-data-plane-integration.o047"
+kind = "option_present"
+required = true
+target = "[ LIMIT <rows> [ FROM '<name_string>' ] ]"
 
 [[obligation]]
 id = "sf.security_admin.show-oflow-data-plane-integration.o013"
@@ -148241,6 +148240,13 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
+id = "sf.security_admin.show-oflow-data-plane-integration.o048"
+kind = "operand_type_class"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a valid integer_literal"
+
+[[obligation]]
 id = "sf.security_admin.show-oflow-data-plane-integration.o042"
 kind = "negative_neighbour"
 required = true
@@ -148248,11 +148254,24 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "a string literal in place of <rows>"
 
 [[obligation]]
+id = "sf.security_admin.show-oflow-data-plane-integration.o049"
+kind = "option_present"
+required = true
+target = "[ FROM '<name_string>' ]"
+
+[[obligation]]
 id = "sf.security_admin.show-oflow-data-plane-integration.o018"
 kind = "required_operand_missing"
 required = true
 target = "'<name_string>' in [ FROM '<name_string>' ]"
 note = "omit '<name_string>'"
+
+[[obligation]]
+id = "sf.security_admin.show-oflow-data-plane-integration.o050"
+kind = "operand_type_class"
+required = true
+target = "'<name_string>' in [ FROM '<name_string>' ]"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.security_admin.show-oflow-data-plane-integration.o020"
@@ -148322,70 +148341,6 @@ required = true
 target = "[ FROM '<name_string>' ]"
 anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
 note = "option absent [ FROM '<name_string>' ], observed"
-
-[[obligation]]
-id = "sf.security_admin.show-oflow-data-plane-integration.o033"
-kind = "option_present"
-required = true
-target = "[ LIKE '<pattern>' ]"
-anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
-note = "option present [ LIKE '<pattern>' ], observed"
-
-[[obligation]]
-id = "sf.security_admin.show-oflow-data-plane-integration.o034"
-kind = "operand_type_class"
-required = true
-target = "'<pattern>' in [ LIKE '<pattern>' ]"
-anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.security_admin.show-oflow-data-plane-integration.o035"
-kind = "option_present"
-required = true
-target = "[ STARTS WITH '<name_string>' ]"
-anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
-note = "option present [ STARTS WITH '<name_string>' ], observed"
-
-[[obligation]]
-id = "sf.security_admin.show-oflow-data-plane-integration.o036"
-kind = "operand_type_class"
-required = true
-target = "'<name_string>' in [ STARTS WITH '<name_string>' ]"
-anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.security_admin.show-oflow-data-plane-integration.o037"
-kind = "option_present"
-required = true
-target = "[ LIMIT <rows> [ FROM '<name_string>' ] ]"
-anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
-note = "option present [ LIMIT <rows> [ FROM '<name_string>' ] ], observed"
-
-[[obligation]]
-id = "sf.security_admin.show-oflow-data-plane-integration.o038"
-kind = "operand_type_class"
-required = true
-target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.security_admin.show-oflow-data-plane-integration.o039"
-kind = "option_present"
-required = true
-target = "[ FROM '<name_string>' ]"
-anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
-note = "option present [ FROM '<name_string>' ], observed"
-
-[[obligation]]
-id = "sf.security_admin.show-oflow-data-plane-integration.o040"
-kind = "operand_type_class"
-required = true
-target = "'<name_string>' in [ FROM '<name_string>' ]"
-anchor = "doc.sql.show-oflow-data-plane-integration / Syntax"
-note = "a valid string_literal, observed"
 
 [[obligation]]
 id = "sf.security_admin.show-oflow-data-plane-integration.o041"
@@ -150007,6 +149962,12 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.security_admin.show-row-access-policies.o070"
+kind = "option_present"
+required = true
+target = "[ LIKE '<pattern>' ]"
+
+[[obligation]]
 id = "sf.security_admin.show-row-access-policies.o003"
 kind = "option_absent"
 required = true
@@ -150020,11 +149981,24 @@ target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "omit '<pattern>'"
 
 [[obligation]]
+id = "sf.security_admin.show-row-access-policies.o071"
+kind = "operand_type_class"
+required = true
+target = "'<pattern>' in [ LIKE '<pattern>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.security_admin.show-row-access-policies.o006"
 kind = "negative_neighbour"
 required = true
 target = "'<pattern>' in [ LIKE '<pattern>' ]"
 note = "an unquoted identifier in place of '<pattern>'"
+
+[[obligation]]
+id = "sf.security_admin.show-row-access-policies.o072"
+kind = "option_present"
+required = true
+target = "[ LIMIT <rows> [ FROM '<name_string>' ] ]"
 
 [[obligation]]
 id = "sf.security_admin.show-row-access-policies.o008"
@@ -150040,11 +150014,24 @@ target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "omit <rows>"
 
 [[obligation]]
+id = "sf.security_admin.show-row-access-policies.o073"
+kind = "operand_type_class"
+required = true
+target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
+note = "a valid integer_literal"
+
+[[obligation]]
 id = "sf.security_admin.show-row-access-policies.o069"
 kind = "negative_neighbour"
 required = true
 target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
 note = "a string literal in place of <rows>"
+
+[[obligation]]
+id = "sf.security_admin.show-row-access-policies.o074"
+kind = "option_present"
+required = true
+target = "[ FROM '<name_string>' ]"
 
 [[obligation]]
 id = "sf.security_admin.show-row-access-policies.o012"
@@ -150060,11 +150047,24 @@ target = "'<name_string>' in [ FROM '<name_string>' ]"
 note = "omit '<name_string>'"
 
 [[obligation]]
+id = "sf.security_admin.show-row-access-policies.o075"
+kind = "operand_type_class"
+required = true
+target = "'<name_string>' in [ FROM '<name_string>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.security_admin.show-row-access-policies.o015"
 kind = "negative_neighbour"
 required = true
 target = "'<name_string>' in [ FROM '<name_string>' ]"
 note = "an unquoted identifier in place of '<name_string>'"
+
+[[obligation]]
+id = "sf.security_admin.show-row-access-policies.o076"
+kind = "option_present"
+required = true
+target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
 
 [[obligation]]
 id = "sf.security_admin.show-row-access-policies.o017"
@@ -150295,62 +150295,6 @@ required = true
 target = "<database_name> in [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name>…"
 anchor = "doc.sql.show-row-access-policies / Syntax"
 note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.security_admin.show-row-access-policies.o056"
-kind = "option_present"
-required = true
-target = "[ LIKE '<pattern>' ]"
-anchor = "doc.sql.show-row-access-policies / Syntax"
-note = "option present [ LIKE '<pattern>' ], observed"
-
-[[obligation]]
-id = "sf.security_admin.show-row-access-policies.o057"
-kind = "operand_type_class"
-required = true
-target = "'<pattern>' in [ LIKE '<pattern>' ]"
-anchor = "doc.sql.show-row-access-policies / Syntax"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.security_admin.show-row-access-policies.o058"
-kind = "option_present"
-required = true
-target = "[ LIMIT <rows> [ FROM '<name_string>' ] ]"
-anchor = "doc.sql.show-row-access-policies / Syntax"
-note = "option present [ LIMIT <rows> [ FROM '<name_string>' ] ], observed"
-
-[[obligation]]
-id = "sf.security_admin.show-row-access-policies.o059"
-kind = "operand_type_class"
-required = true
-target = "<rows> in [ LIMIT <rows> [ FROM '<name_string>' ] ]"
-anchor = "doc.sql.show-row-access-policies / Syntax"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.security_admin.show-row-access-policies.o060"
-kind = "option_present"
-required = true
-target = "[ FROM '<name_string>' ]"
-anchor = "doc.sql.show-row-access-policies / Syntax"
-note = "option present [ FROM '<name_string>' ], observed"
-
-[[obligation]]
-id = "sf.security_admin.show-row-access-policies.o061"
-kind = "operand_type_class"
-required = true
-target = "'<name_string>' in [ FROM '<name_string>' ]"
-anchor = "doc.sql.show-row-access-policies / Syntax"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.security_admin.show-row-access-policies.o062"
-kind = "option_present"
-required = true
-target = "[ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION…"
-anchor = "doc.sql.show-row-access-policies / Syntax"
-note = "option present [ IN { ACCOUNT | DATABASE | DATABASE <database_name> | SCHEMA | SCHEMA <schema_name> | <schema_name> | APPLICATION <app…, observed"
 
 [[obligation]]
 id = "sf.security_admin.show-row-access-policies.o063"

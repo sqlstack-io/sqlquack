@@ -45894,6 +45894,12 @@ target = "<k>"
 note = "a valid operand"
 
 [[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o030"
+kind = "option_present"
+required = true
+target = "[ DISTINCT ]"
+
+[[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o005"
 kind = "option_absent"
 required = true
@@ -45905,6 +45911,13 @@ kind = "operand_type_class"
 required = true
 target = "<expr>"
 note = "a valid expression"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o031"
+kind = "option_present"
+required = true
+target = "[ , <expr> ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o020"
@@ -45927,6 +45940,12 @@ target = "<expr> in [ , <expr> ... ]"
 note = "a valid expression"
 
 [[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o032"
+kind = "option_present"
+required = true
+target = "[ PARTITION BY <expr1> ]"
+
+[[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o009"
 kind = "option_absent"
 required = true
@@ -45938,6 +45957,13 @@ kind = "required_operand_missing"
 required = true
 target = "<expr1> in [ PARTITION BY <expr1> ]"
 note = "omit <expr1>"
+
+[[obligation]]
+id = "sf.functions.minhash.minhash-expr-over.o033"
+kind = "operand_type_class"
+required = true
+target = "<expr1> in [ PARTITION BY <expr1> ]"
+note = "a valid expression"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o012"
@@ -45976,43 +46002,11 @@ required = true
 note = "the form without its required ) #2"
 
 [[obligation]]
-id = "sf.functions.minhash.minhash-expr-over.o021"
-kind = "option_present"
-required = true
-target = "[ DISTINCT ]"
-anchor = "doc.functions.minhash / Syntax"
-note = "option present [ DISTINCT ], observed"
-
-[[obligation]]
-id = "sf.functions.minhash.minhash-expr-over.o022"
-kind = "option_present"
-required = true
-target = "[ PARTITION BY <expr1> ]"
-anchor = "doc.functions.minhash / Syntax"
-note = "option present [ PARTITION BY <expr1> ], observed"
-
-[[obligation]]
-id = "sf.functions.minhash.minhash-expr-over.o023"
-kind = "operand_type_class"
-required = true
-target = "<expr1> in [ PARTITION BY <expr1> ]"
-anchor = "doc.functions.minhash / Syntax"
-note = "a valid expression, observed"
-
-[[obligation]]
 id = "sf.functions.minhash.minhash-expr-over.o024"
 kind = "interaction_all_options"
 required = true
 anchor = "doc.functions.minhash / Syntax"
 note = "every independent option of one production together, observed"
-
-[[obligation]]
-id = "sf.functions.minhash.minhash-expr-over.o025"
-kind = "option_present"
-required = true
-target = "[ , <expr> ... ]"
-anchor = "doc.functions.minhash / Syntax"
-note = "the list continued at least once, observed"
 
 [[obligation]]
 id = "sf.functions.minhash.minhash-over.o001"

@@ -24,8 +24,8 @@
 {"case_id":"sf.query.connect-by.kd99916fdfb3c","mark":"settled accept","obligations":["sf.query.connect-by.o090"],"sql_sha256":"d99916fdfb3c5c1dc533e3cc7b32b989515b3f02336a212cbb22a26d36ca91d4"}
 {"case_id":"sf.query.connect-by.kda5075753fb2","mark":"settled accept","obligations":["sf.query.connect-by.o091"],"sql_sha256":"da5075753fb2b58c07eebdd4169c2a47456fc469f2b76e69a348f5a4ab8c854f"}
 {"case_id":"sf.query.connect-by.kf319e16a66c9","mark":"documented","obligations":["sf.query.connect-by.o096"],"sql_sha256":"f319e16a66c9d7375efae95a7b06ef1b9de40db391851d286c2afaae9dfbf45c"}
-{"case_id":"sf.query.connect-by.kf4ac1afd4e11","mark":"documented","obligations":["sf.query.connect-by.o102","sf.query.connect-by.o103"],"sql_sha256":"f4ac1afd4e115a69ca93e6cb1cdecbd95cc45f47dd70ab86a4fa50ce10440254"}
-{"case_id":"sf.query.connect-by.kfca4d0122195","mark":"documented","obligations":["sf.query.connect-by.o097","sf.query.connect-by.o098","sf.query.connect-by.o099","sf.query.connect-by.o100","sf.query.connect-by.o101"],"sql_sha256":"fca4d01221952c668c5548e07513961b8681b37a0ee72a4e551319e060b7236a"}
+{"case_id":"sf.query.connect-by.kf4ac1afd4e11","mark":"settled reject","obligations":["sf.query.connect-by.o108","sf.query.connect-by.o109"],"sql_sha256":"f4ac1afd4e115a69ca93e6cb1cdecbd95cc45f47dd70ab86a4fa50ce10440254"}
+{"case_id":"sf.query.connect-by.kfca4d0122195","mark":"documented","obligations":["sf.query.connect-by.o098","sf.query.connect-by.o099","sf.query.connect-by.o105","sf.query.connect-by.o106","sf.query.connect-by.o107"],"sql_sha256":"fca4d01221952c668c5548e07513961b8681b37a0ee72a4e551319e060b7236a"}
 {"case_id":"sf.query.from.k255b8bfca391","mark":"settled accept","obligations":["sf.query.from.o154"],"sql_sha256":"255b8bfca391fde2148d4a40dfaacb431d3e09d66f3e4efa4354963d41a8c0fa"}
 {"case_id":"sf.query.from.k34521efda472","mark":"settled accept","obligations":["sf.query.from.o162"],"sql_sha256":"34521efda472fa1759c8af6b28eca3e1cdb40fb8e223b8b900a14475e6e2b8dc"}
 {"case_id":"sf.query.from.k367c765969f5","mark":"settled accept","obligations":["sf.query.from.o168"],"sql_sha256":"367c765969f517a1b21db23156d0b2ac4fad440946e39f32695cde6429f69505"}

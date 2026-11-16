@@ -48627,6 +48627,13 @@ target = "<col1_name> #4"
 note = "omit <col1_name>"
 
 [[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o417"
+kind = "operand_type_class"
+required = true
+target = "<col1_name> #4"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o194"
 kind = "negative_neighbour"
 required = true
@@ -48639,6 +48646,13 @@ kind = "required_operand_missing"
 required = true
 target = "<tag_name> #4"
 note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o418"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> #4"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o182"
@@ -48669,11 +48683,24 @@ target = "<tag_name> in [ , <tag_name> ... ] #2"
 note = "a string literal in place of <tag_name>"
 
 [[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o419"
+kind = "option_present"
+required = true
+target = "[ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ]"
+
+[[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o282"
 kind = "required_operand_missing"
 required = true
 target = "<col2_name> in [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ]"
 note = "omit <col2_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o420"
+kind = "operand_type_class"
+required = true
+target = "<col2_name> in [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ]"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o284"
@@ -48688,6 +48715,13 @@ kind = "required_operand_missing"
 required = true
 target = "<tag_name> in [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ]"
 note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o421"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ]"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o287"
@@ -49366,38 +49400,6 @@ anchor = "doc.sql.alter-iceberg-table / Syntax"
 note = "option absent [ , <tag_name> ... ] #3, observed"
 
 [[obligation]]
-id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o316"
-kind = "option_present"
-required = true
-target = "[ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ]"
-anchor = "doc.sql.alter-iceberg-table / Syntax"
-note = "option present [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ], observed"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o317"
-kind = "operand_type_class"
-required = true
-target = "<col2_name> in [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ]"
-anchor = "doc.sql.alter-iceberg-table / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o318"
-kind = "operand_type_class"
-required = true
-target = "<tag_name> in [ , [ COLUMN ] <col2_name> UNSET TAG <tag_name> [ , <tag_name> ... ] ]"
-anchor = "doc.sql.alter-iceberg-table / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o319"
-kind = "operand_type_class"
-required = true
-target = "<tag_name> #4"
-anchor = "doc.sql.alter-iceberg-table / Syntax"
-note = "a valid identifier, observed"
-
-[[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o320"
 kind = "alternative"
 required = true
@@ -49412,14 +49414,6 @@ required = true
 target = "[ COLUMN ] #6"
 anchor = "doc.sql.alter-iceberg-table / Syntax"
 note = "option absent [ COLUMN ] #6, observed"
-
-[[obligation]]
-id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o322"
-kind = "operand_type_class"
-required = true
-target = "<col1_name> #4"
-anchor = "doc.sql.alter-iceberg-table / Syntax"
-note = "a valid identifier, observed"
 
 [[obligation]]
 id = "sf.ddl.alter-iceberg-table.datagovnpolicytagaction.o323"
@@ -111091,10 +111085,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.ddl.create-agent.o056"
+kind = "option_present"
+required = true
+target = "[ OR REPLACE ]"
+
+[[obligation]]
 id = "sf.ddl.create-agent.o003"
 kind = "option_absent"
 required = true
 target = "[ OR REPLACE ]"
+
+[[obligation]]
+id = "sf.ddl.create-agent.o057"
+kind = "option_present"
+required = true
+target = "[ { TEMP | TEMPORARY } ]"
 
 [[obligation]]
 id = "sf.ddl.create-agent.o005"
@@ -111115,10 +111121,22 @@ required = true
 target = "{ TEMP | TEMPORARY } → TEMPORARY"
 
 [[obligation]]
+id = "sf.ddl.create-agent.o058"
+kind = "option_present"
+required = true
+target = "[ SECURE ]"
+
+[[obligation]]
 id = "sf.ddl.create-agent.o009"
 kind = "option_absent"
 required = true
 target = "[ SECURE ]"
+
+[[obligation]]
+id = "sf.ddl.create-agent.o059"
+kind = "option_present"
+required = true
+target = "[ IF NOT EXISTS ]"
 
 [[obligation]]
 id = "sf.ddl.create-agent.o011"
@@ -111148,10 +111166,22 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
+id = "sf.ddl.create-agent.o060"
+kind = "option_present"
+required = true
+target = "[ COPY GRANTS ]"
+
+[[obligation]]
 id = "sf.ddl.create-agent.o016"
 kind = "option_absent"
 required = true
 target = "[ COPY GRANTS ]"
+
+[[obligation]]
+id = "sf.ddl.create-agent.o061"
+kind = "option_present"
+required = true
+target = "[ SECURE = { TRUE | FALSE } ]"
 
 [[obligation]]
 id = "sf.ddl.create-agent.o018"
@@ -111172,6 +111202,12 @@ required = true
 target = "{ TRUE | FALSE } → FALSE"
 
 [[obligation]]
+id = "sf.ddl.create-agent.o062"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<comment>' ]"
+
+[[obligation]]
 id = "sf.ddl.create-agent.o022"
 kind = "option_absent"
 required = true
@@ -111185,11 +111221,24 @@ target = "'<comment>' in [ COMMENT = '<comment>' ]"
 note = "omit '<comment>'"
 
 [[obligation]]
+id = "sf.ddl.create-agent.o063"
+kind = "operand_type_class"
+required = true
+target = "'<comment>' in [ COMMENT = '<comment>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-agent.o025"
 kind = "negative_neighbour"
 required = true
 target = "'<comment>' in [ COMMENT = '<comment>' ]"
 note = "an unquoted identifier in place of '<comment>'"
+
+[[obligation]]
+id = "sf.ddl.create-agent.o064"
+kind = "option_present"
+required = true
+target = "[ PROFILE = '<profile_object>' ]"
 
 [[obligation]]
 id = "sf.ddl.create-agent.o027"
@@ -111203,6 +111252,13 @@ kind = "required_operand_missing"
 required = true
 target = "'<profile_object>' in [ PROFILE = '<profile_object>' ]"
 note = "omit '<profile_object>'"
+
+[[obligation]]
+id = "sf.ddl.create-agent.o065"
+kind = "operand_type_class"
+required = true
+target = "'<profile_object>' in [ PROFILE = '<profile_object>' ]"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.ddl.create-agent.o030"
@@ -111288,86 +111344,6 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql.create-agent / Syntax"
 note = "omit <specification_object> ($$$$), observed"
-
-[[obligation]]
-id = "sf.ddl.create-agent.o045"
-kind = "option_present"
-required = true
-target = "[ OR REPLACE ]"
-anchor = "doc.sql.create-agent / Syntax"
-note = "option present [ OR REPLACE ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-agent.o046"
-kind = "option_present"
-required = true
-target = "[ { TEMP | TEMPORARY } ]"
-anchor = "doc.sql.create-agent / Syntax"
-note = "option present [ { TEMP | TEMPORARY } ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-agent.o047"
-kind = "option_present"
-required = true
-target = "[ SECURE ]"
-anchor = "doc.sql.create-agent / Syntax"
-note = "option present [ SECURE ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-agent.o048"
-kind = "option_present"
-required = true
-target = "[ IF NOT EXISTS ]"
-anchor = "doc.sql.create-agent / Syntax"
-note = "option present [ IF NOT EXISTS ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-agent.o049"
-kind = "option_present"
-required = true
-target = "[ COPY GRANTS ]"
-anchor = "doc.sql.create-agent / Syntax"
-note = "option present [ COPY GRANTS ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-agent.o050"
-kind = "option_present"
-required = true
-target = "[ SECURE = { TRUE | FALSE } ]"
-anchor = "doc.sql.create-agent / Syntax"
-note = "option present [ SECURE = { TRUE | FALSE } ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-agent.o051"
-kind = "option_present"
-required = true
-target = "[ COMMENT = '<comment>' ]"
-anchor = "doc.sql.create-agent / Syntax"
-note = "option present [ COMMENT = '<comment>' ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-agent.o052"
-kind = "operand_type_class"
-required = true
-target = "'<comment>' in [ COMMENT = '<comment>' ]"
-anchor = "doc.sql.create-agent / Syntax"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-agent.o053"
-kind = "option_present"
-required = true
-target = "[ PROFILE = '<profile_object>' ]"
-anchor = "doc.sql.create-agent / Syntax"
-note = "option present [ PROFILE = '<profile_object>' ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-agent.o054"
-kind = "operand_type_class"
-required = true
-target = "'<profile_object>' in [ PROFILE = '<profile_object>' ]"
-anchor = "doc.sql.create-agent / Syntax"
-note = "a valid string_literal, observed"
 
 [[obligation]]
 id = "sf.ddl.create-agent.o055"
@@ -230066,6 +230042,12 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o664"
+kind = "option_present"
+required = true
+target = "[ <table_alias> AS ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o006"
 kind = "option_absent"
 required = true
@@ -230077,6 +230059,13 @@ kind = "required_operand_missing"
 required = true
 target = "<table_alias> in [ <table_alias> AS ]"
 note = "omit <table_alias>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o665"
+kind = "operand_type_class"
+required = true
+target = "<table_alias> in [ <table_alias> AS ]"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o009"
@@ -230107,6 +230096,12 @@ target = "<table_name>"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o666"
+kind = "option_present"
+required = true
+target = "[ PRIMARY KEY ( <primary_key_column_name> [ , ... ] ) ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o014"
 kind = "option_absent"
 required = true
@@ -230120,11 +230115,25 @@ target = "<primary_key_column_name> in [ PRIMARY KEY ( <primary_key_column_name>
 note = "omit <primary_key_column_name>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o667"
+kind = "operand_type_class"
+required = true
+target = "<primary_key_column_name> in [ PRIMARY KEY ( <primary_key_column_name> [ , ... ] ) ]"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o017"
 kind = "negative_neighbour"
 required = true
 target = "<primary_key_column_name> in [ PRIMARY KEY ( <primary_key_column_name> [ , ... ] ) ]"
 note = "a string literal in place of <primary_key_column_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o668"
+kind = "option_present"
+required = true
+target = "[ , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o019"
@@ -230140,6 +230149,12 @@ target = "... in [ , ... ]"
 note = "the list continued without its item"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o669"
+kind = "option_present"
+required = true
+target = "[ UNIQUE ( <unique_column_name> [ , ... ] ) [ ... ] ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o021"
 kind = "option_absent"
 required = true
@@ -230153,11 +230168,25 @@ target = "<unique_column_name> in [ UNIQUE ( <unique_column_name> [ , ... ] ) [ 
 note = "omit <unique_column_name>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o670"
+kind = "operand_type_class"
+required = true
+target = "<unique_column_name> in [ UNIQUE ( <unique_column_name> [ , ... ] ) [ ... ] ]"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o024"
 kind = "negative_neighbour"
 required = true
 target = "<unique_column_name> in [ UNIQUE ( <unique_column_name> [ , ... ] ) [ ... ] ]"
 note = "a string literal in place of <unique_column_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o671"
+kind = "option_present"
+required = true
+target = "[ , ... ] #2"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o026"
@@ -230173,10 +230202,29 @@ target = "... in [ , ... ] #2"
 note = "the list continued without its item"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o672"
+kind = "option_present"
+required = true
+target = "[ CONSTRAINT [ <constraint_name> ] DISTINCT RANGE BETWEEN <start_column> AND <end_column> EXCLUSIVE ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o028"
 kind = "option_absent"
 required = true
 target = "[ CONSTRAINT [ <constraint_name> ] DISTINCT RANGE BETWEEN <start_column> AND <end_column> EXCLUSIVE ]"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o673"
+kind = "option_present"
+required = true
+target = "[ <constraint_name> ]"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o674"
+kind = "operand_type_class"
+required = true
+target = "<constraint_name> in [ <constraint_name> ]"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o032"
@@ -230193,6 +230241,13 @@ target = "<start_column> in [ CONSTRAINT [ <constraint_name> ] DISTINCT RANGE BE
 note = "omit <start_column>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o675"
+kind = "operand_type_class"
+required = true
+target = "<start_column> in [ CONSTRAINT [ <constraint_name> ] DISTINCT RANGE BETWEEN <start_column> AND <end_column> EXCLUSIVE ]"
+note = "a valid expression"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o035"
 kind = "required_operand_missing"
 required = true
@@ -230200,10 +230255,29 @@ target = "<end_column> in [ CONSTRAINT [ <constraint_name> ] DISTINCT RANGE BETW
 note = "omit <end_column>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o676"
+kind = "operand_type_class"
+required = true
+target = "<end_column> in [ CONSTRAINT [ <constraint_name> ] DISTINCT RANGE BETWEEN <start_column> AND <end_column> EXCLUSIVE ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o677"
+kind = "option_present"
+required = true
+target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o038"
 kind = "option_absent"
 required = true
 target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o678"
+kind = "option_present"
+required = true
+target = "[ = ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o040"
@@ -230219,11 +230293,25 @@ target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ]"
 note = "omit '<synonym>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o679"
+kind = "operand_type_class"
+required = true
+target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o043"
 kind = "negative_neighbour"
 required = true
 target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ]"
 note = "an unquoted identifier in place of '<synonym>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o680"
+kind = "option_present"
+required = true
+target = "[ , ... ] #3"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o045"
@@ -230239,6 +230327,12 @@ target = "... in [ , ... ] #3"
 note = "the list continued without its item"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o681"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<comment_about_table>' ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o047"
 kind = "option_absent"
 required = true
@@ -230252,6 +230346,13 @@ target = "'<comment_about_table>' in [ COMMENT = '<comment_about_table>' ]"
 note = "omit '<comment_about_table>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o682"
+kind = "operand_type_class"
+required = true
+target = "'<comment_about_table>' in [ COMMENT = '<comment_about_table>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o050"
 kind = "negative_neighbour"
 required = true
@@ -230259,10 +230360,22 @@ target = "'<comment_about_table>' in [ COMMENT = '<comment_about_table>' ]"
 note = "an unquoted identifier in place of '<comment_about_table>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o683"
+kind = "option_present"
+required = true
+target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o052"
 kind = "option_absent"
 required = true
 target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o684"
+kind = "option_present"
+required = true
+target = "[ WITH ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o054"
@@ -230276,6 +230389,13 @@ kind = "required_operand_missing"
 required = true
 target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
 note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o685"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o057"
@@ -230292,11 +230412,25 @@ target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_
 note = "omit '<tag_value>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o686"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o060"
 kind = "negative_neighbour"
 required = true
 target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
 note = "an unquoted identifier in place of '<tag_value>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o687"
+kind = "option_present"
+required = true
+target = "[ , <tag_name> = '<tag_value>' , ... ]"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o062"
@@ -230347,6 +230481,13 @@ target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ]"
 note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o688"
+kind = "option_present"
+required = true
+target = "[ , ... ] #4"
+note = "the list continued at least once"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o064"
 kind = "option_absent"
 required = true
@@ -230360,10 +230501,22 @@ target = "... in [ , ... ] #4"
 note = "the list continued without its item"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o689"
+kind = "option_present"
+required = true
+target = "[ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] ) REFERENCES…"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o066"
 kind = "option_absent"
 required = true
 target = "[ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] ) REFERENCES…"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o690"
+kind = "option_present"
+required = true
+target = "[ <relationship_identifier> AS ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o068"
@@ -230377,6 +230530,13 @@ kind = "required_operand_missing"
 required = true
 target = "<relationship_identifier> in [ <relationship_identifier> AS ]"
 note = "omit <relationship_identifier>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o691"
+kind = "operand_type_class"
+required = true
+target = "<relationship_identifier> in [ <relationship_identifier> AS ]"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o071"
@@ -230393,6 +230553,13 @@ target = "<table_alias> in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <t
 note = "omit <table_alias>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o692"
+kind = "operand_type_class"
+required = true
+target = "<table_alias> in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] )…"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o074"
 kind = "negative_neighbour"
 required = true
@@ -230407,11 +230574,25 @@ target = "<column_name> in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <t
 note = "omit <column_name>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o693"
+kind = "operand_type_class"
+required = true
+target = "<column_name> in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] )…"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o077"
 kind = "negative_neighbour"
 required = true
 target = "<column_name> in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] )…"
 note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o694"
+kind = "option_present"
+required = true
+target = "[ , ... ] #5"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o079"
@@ -230434,11 +230615,24 @@ target = "<ref_table_alias> in [ RELATIONSHIPS ( [ <relationship_identifier> AS 
 note = "omit <ref_table_alias>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o695"
+kind = "operand_type_class"
+required = true
+target = "<ref_table_alias> in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] )…"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o082"
 kind = "negative_neighbour"
 required = true
 target = "<ref_table_alias> in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] )…"
 note = "a string literal in place of <ref_table_alias>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o696"
+kind = "option_present"
+required = true
+target = "[ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } ) ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o084"
@@ -230459,6 +230653,12 @@ required = true
 target = "{ [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND… → BETWEEN <start_column> AND <end_column> EXCLUSIVE"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o697"
+kind = "option_present"
+required = true
+target = "[ ASOF ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o088"
 kind = "option_absent"
 required = true
@@ -230472,11 +230672,25 @@ target = "<ref_column_name> in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETW
 note = "omit <ref_column_name>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o698"
+kind = "operand_type_class"
+required = true
+target = "<ref_column_name> in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } )…"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o091"
 kind = "negative_neighbour"
 required = true
 target = "<ref_column_name> in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } )…"
 note = "a string literal in place of <ref_column_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o699"
+kind = "option_present"
+required = true
+target = "[ , ... ] #6"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o093"
@@ -230499,11 +230713,32 @@ target = "<start_column> in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN
 note = "omit <start_column>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o700"
+kind = "operand_type_class"
+required = true
+target = "<start_column> in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } ) ]"
+note = "a valid expression"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o096"
 kind = "required_operand_missing"
 required = true
 target = "<end_column> in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } ) ]"
 note = "omit <end_column>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o701"
+kind = "operand_type_class"
+required = true
+target = "<end_column> in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } ) ]"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o702"
+kind = "option_present"
+required = true
+target = "[ , ... ] #7"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o099"
@@ -230519,10 +230754,22 @@ target = "... in [ , ... ] #7"
 note = "the list continued without its item"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o703"
+kind = "option_present"
+required = true
+target = "[ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH SYNONYMS [ = ] (…"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o101"
 kind = "option_absent"
 required = true
 target = "[ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH SYNONYMS [ = ] (…"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o704"
+kind = "option_present"
+required = true
+target = "[ { PRIVATE | PUBLIC } ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o103"
@@ -230550,6 +230797,13 @@ target = "<table_alias> in [ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <f
 note = "omit <table_alias>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o705"
+kind = "operand_type_class"
+required = true
+target = "<table_alias> in [ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o108"
 kind = "negative_neighbour"
 required = true
@@ -230564,11 +230818,24 @@ target = "<fact> in [ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ 
 note = "omit <fact>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o706"
+kind = "operand_type_class"
+required = true
+target = "<fact> in [ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o610"
 kind = "negative_neighbour"
 required = true
 target = "<fact> in [ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
 note = "a string literal in place of <fact>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o707"
+kind = "option_present"
+required = true
+target = "[ LABELS = ( FILTER ) ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o112"
@@ -230584,10 +230851,29 @@ target = "<sql_expr> in [ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact
 note = "omit <sql_expr>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o708"
+kind = "operand_type_class"
+required = true
+target = "<sql_expr> in [ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o709"
+kind = "option_present"
+required = true
+target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o116"
 kind = "option_absent"
 required = true
 target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #2"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o710"
+kind = "option_present"
+required = true
+target = "[ = ] #2"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o118"
@@ -230603,11 +230889,25 @@ target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #2"
 note = "omit '<synonym>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o711"
+kind = "operand_type_class"
+required = true
+target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #2"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o121"
 kind = "negative_neighbour"
 required = true
 target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #2"
 note = "an unquoted identifier in place of '<synonym>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o712"
+kind = "option_present"
+required = true
+target = "[ , ... ] #8"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o123"
@@ -230623,10 +230923,22 @@ target = "... in [ , ... ] #8"
 note = "the list continued without its item"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o713"
+kind = "option_present"
+required = true
+target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o125"
 kind = "option_absent"
 required = true
 target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #2"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o714"
+kind = "option_present"
+required = true
+target = "[ WITH ] #2"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o127"
@@ -230640,6 +230952,13 @@ kind = "required_operand_missing"
 required = true
 target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #2"
 note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o715"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #2"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o130"
@@ -230656,11 +230975,25 @@ target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_
 note = "omit '<tag_value>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o716"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #2"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o133"
 kind = "negative_neighbour"
 required = true
 target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #2"
 note = "an unquoted identifier in place of '<tag_value>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o717"
+kind = "option_present"
+required = true
+target = "[ , <tag_name> = '<tag_value>' , ... ] #2"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o135"
@@ -230711,6 +231044,12 @@ target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ] #2"
 note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o718"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<comment_about_the_fact>' ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o137"
 kind = "option_absent"
 required = true
@@ -230724,11 +231063,25 @@ target = "'<comment_about_the_fact>' in [ COMMENT = '<comment_about_the_fact>' ]
 note = "omit '<comment_about_the_fact>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o719"
+kind = "operand_type_class"
+required = true
+target = "'<comment_about_the_fact>' in [ COMMENT = '<comment_about_the_fact>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o140"
 kind = "negative_neighbour"
 required = true
 target = "'<comment_about_the_fact>' in [ COMMENT = '<comment_about_the_fact>' ]"
 note = "an unquoted identifier in place of '<comment_about_the_fact>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o720"
+kind = "option_present"
+required = true
+target = "[ , ... ] #9"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o142"
@@ -230744,10 +231097,22 @@ target = "... in [ , ... ] #9"
 note = "the list continued without its item"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o721"
+kind = "option_present"
+required = true
+target = "[ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH SYNONYMS [ = ] (…"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o144"
 kind = "option_absent"
 required = true
 target = "[ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH SYNONYMS [ = ] (…"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o722"
+kind = "option_present"
+required = true
+target = "[ PUBLIC ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o146"
@@ -230761,6 +231126,13 @@ kind = "required_operand_missing"
 required = true
 target = "<table_alias> in [ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
 note = "omit <table_alias>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o723"
+kind = "operand_type_class"
+required = true
+target = "<table_alias> in [ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o149"
@@ -230777,6 +231149,19 @@ target = "<dimension> in [ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [
 note = "omit <dimension>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o724"
+kind = "operand_type_class"
+required = true
+target = "<dimension> in [ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o725"
+kind = "option_present"
+required = true
+target = "[ LABELS = ( FILTER ) ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o153"
 kind = "option_absent"
 required = true
@@ -230790,10 +231175,29 @@ target = "<sql_expr> in [ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ 
 note = "omit <sql_expr>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o726"
+kind = "operand_type_class"
+required = true
+target = "<sql_expr> in [ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o727"
+kind = "option_present"
+required = true
+target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #3"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o157"
 kind = "option_absent"
 required = true
 target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #3"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o728"
+kind = "option_present"
+required = true
+target = "[ = ] #3"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o159"
@@ -230809,11 +231213,25 @@ target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #3"
 note = "omit '<synonym>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o729"
+kind = "operand_type_class"
+required = true
+target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #3"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o162"
 kind = "negative_neighbour"
 required = true
 target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #3"
 note = "an unquoted identifier in place of '<synonym>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o730"
+kind = "option_present"
+required = true
+target = "[ , ... ] #10"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o164"
@@ -230829,10 +231247,22 @@ target = "... in [ , ... ] #10"
 note = "the list continued without its item"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o731"
+kind = "option_present"
+required = true
+target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #3"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o166"
 kind = "option_absent"
 required = true
 target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #3"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o732"
+kind = "option_present"
+required = true
+target = "[ WITH ] #3"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o168"
@@ -230846,6 +231276,13 @@ kind = "required_operand_missing"
 required = true
 target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #3"
 note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o733"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #3"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o171"
@@ -230862,11 +231299,25 @@ target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_
 note = "omit '<tag_value>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o734"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #3"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o174"
 kind = "negative_neighbour"
 required = true
 target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #3"
 note = "an unquoted identifier in place of '<tag_value>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o735"
+kind = "option_present"
+required = true
+target = "[ , <tag_name> = '<tag_value>' , ... ] #3"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o176"
@@ -230917,6 +231368,12 @@ target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ] #3"
 note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o736"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<comment_about_the_dimension>' ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o178"
 kind = "option_absent"
 required = true
@@ -230930,11 +231387,24 @@ target = "'<comment_about_the_dimension>' in [ COMMENT = '<comment_about_the_dim
 note = "omit '<comment_about_the_dimension>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o737"
+kind = "operand_type_class"
+required = true
+target = "'<comment_about_the_dimension>' in [ COMMENT = '<comment_about_the_dimension>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o181"
 kind = "negative_neighbour"
 required = true
 target = "'<comment_about_the_dimension>' in [ COMMENT = '<comment_about_the_dimension>' ]"
 note = "an unquoted identifier in place of '<comment_about_the_dimension>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o738"
+kind = "option_present"
+required = true
+target = "[ WITH CORTEX SEARCH SERVICE <search_service_name> [ USING <search_service_column_name> ] ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o183"
@@ -230950,11 +231420,24 @@ target = "<search_service_name> in [ WITH CORTEX SEARCH SERVICE <search_service_
 note = "omit <search_service_name>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o739"
+kind = "operand_type_class"
+required = true
+target = "<search_service_name> in [ WITH CORTEX SEARCH SERVICE <search_service_name> [ USING <search_service_column_name> ] ]"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o186"
 kind = "negative_neighbour"
 required = true
 target = "<search_service_name> in [ WITH CORTEX SEARCH SERVICE <search_service_name> [ USING <search_service_column_name> ] ]"
 note = "a string literal in place of <search_service_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o740"
+kind = "option_present"
+required = true
+target = "[ USING <search_service_column_name> ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o188"
@@ -230970,11 +231453,25 @@ target = "<search_service_column_name> in [ USING <search_service_column_name> ]
 note = "omit <search_service_column_name>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o741"
+kind = "operand_type_class"
+required = true
+target = "<search_service_column_name> in [ USING <search_service_column_name> ]"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o191"
 kind = "negative_neighbour"
 required = true
 target = "<search_service_column_name> in [ USING <search_service_column_name> ]"
 note = "a string literal in place of <search_service_column_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o742"
+kind = "option_present"
+required = true
+target = "[ , ... ] #11"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o193"
@@ -230988,6 +231485,12 @@ kind = "required_operand_missing"
 required = true
 target = "... in [ , ... ] #11"
 note = "the list continued without its item"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o743"
+kind = "option_present"
+required = true
+target = "[ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON…"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o195"
@@ -231006,6 +231509,12 @@ id = "sf.ddl.create-semantic-view.define-semantic-view.o197"
 kind = "alternative"
 required = true
 target = "{ [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING… → [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> AS <window_function> ( <metric> ) OVER ( [ PARTITION BY { <exprs_using_dimensions_or_metrics> | EXCLUDING <dimensions> } ] [ ORDER BY <exprs_using_dimensions_or_metrics> [ ASC | DESC ] [ NULLS { FIRST | LAST } ] [ , ... ] ] [ <windowFrameClause> ] )"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o744"
+kind = "option_present"
+required = true
+target = "[ { PRIVATE | PUBLIC } ] #2"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o199"
@@ -231033,6 +231542,13 @@ target = "<table_alias> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> 
 note = "omit <table_alias>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o745"
+kind = "operand_type_class"
+required = true
+target = "<table_alias> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ...…"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o204"
 kind = "negative_neighbour"
 required = true
@@ -231047,11 +231563,24 @@ target = "<metric> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <me
 note = "omit <metric>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o746"
+kind = "operand_type_class"
+required = true
+target = "<metric> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ]…"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o611"
 kind = "negative_neighbour"
 required = true
 target = "<metric> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ]…"
 note = "a string literal in place of <metric>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o747"
+kind = "option_present"
+required = true
+target = "[ USING ( <relationship_name> [ , ... ] ) ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o208"
@@ -231067,11 +231596,25 @@ target = "<relationship_name> in [ USING ( <relationship_name> [ , ... ] ) ]"
 note = "omit <relationship_name>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o748"
+kind = "operand_type_class"
+required = true
+target = "<relationship_name> in [ USING ( <relationship_name> [ , ... ] ) ]"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o211"
 kind = "negative_neighbour"
 required = true
 target = "<relationship_name> in [ USING ( <relationship_name> [ , ... ] ) ]"
 note = "a string literal in place of <relationship_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o749"
+kind = "option_present"
+required = true
+target = "[ , ... ] #12"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o213"
@@ -231087,6 +231630,12 @@ target = "... in [ , ... ] #12"
 note = "the list continued without its item"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o750"
+kind = "option_present"
+required = true
+target = "[ NON ADDITIVE BY ( <dimension> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ , ... ] ) ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o215"
 kind = "option_absent"
 required = true
@@ -231098,6 +231647,19 @@ kind = "required_operand_missing"
 required = true
 target = "<dimension> in [ NON ADDITIVE BY ( <dimension> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ , ... ] ) ]"
 note = "omit <dimension>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o751"
+kind = "operand_type_class"
+required = true
+target = "<dimension> in [ NON ADDITIVE BY ( <dimension> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ , ... ] ) ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o752"
+kind = "option_present"
+required = true
+target = "[ { ASC | DESC } ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o219"
@@ -231118,6 +231680,12 @@ required = true
 target = "{ ASC | DESC } → DESC"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o753"
+kind = "option_present"
+required = true
+target = "[ NULLS { FIRST | LAST } ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o223"
 kind = "option_absent"
 required = true
@@ -231134,6 +231702,13 @@ id = "sf.ddl.create-semantic-view.define-semantic-view.o225"
 kind = "alternative"
 required = true
 target = "{ FIRST | LAST } → LAST"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o754"
+kind = "option_present"
+required = true
+target = "[ , ... ] #13"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o227"
@@ -231156,10 +231731,29 @@ target = "<sql_expr> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <
 note = "omit <sql_expr>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o755"
+kind = "operand_type_class"
+required = true
+target = "<sql_expr> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] )…"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o756"
+kind = "option_present"
+required = true
+target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #4"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o231"
 kind = "option_absent"
 required = true
 target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #4"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o757"
+kind = "option_present"
+required = true
+target = "[ = ] #4"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o233"
@@ -231175,11 +231769,25 @@ target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #4"
 note = "omit '<synonym>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o758"
+kind = "operand_type_class"
+required = true
+target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #4"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o236"
 kind = "negative_neighbour"
 required = true
 target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #4"
 note = "an unquoted identifier in place of '<synonym>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o759"
+kind = "option_present"
+required = true
+target = "[ , ... ] #14"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o238"
@@ -231195,10 +231803,22 @@ target = "... in [ , ... ] #14"
 note = "the list continued without its item"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o760"
+kind = "option_present"
+required = true
+target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #4"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o240"
 kind = "option_absent"
 required = true
 target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #4"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o761"
+kind = "option_present"
+required = true
+target = "[ WITH ] #4"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o242"
@@ -231212,6 +231832,13 @@ kind = "required_operand_missing"
 required = true
 target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #4"
 note = "omit <tag_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o762"
+kind = "operand_type_class"
+required = true
+target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #4"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o245"
@@ -231228,11 +231855,25 @@ target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_
 note = "omit '<tag_value>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o763"
+kind = "operand_type_class"
+required = true
+target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #4"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o248"
 kind = "negative_neighbour"
 required = true
 target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #4"
 note = "an unquoted identifier in place of '<tag_value>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o764"
+kind = "option_present"
+required = true
+target = "[ , <tag_name> = '<tag_value>' , ... ] #4"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o250"
@@ -231283,6 +231924,12 @@ target = "'<tag_value>' in [ , <tag_name> = '<tag_value>' , ... ] #4"
 note = "an unquoted identifier in place of '<tag_value>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o765"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<comment_about_the_metric>' ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o252"
 kind = "option_absent"
 required = true
@@ -231296,11 +231943,24 @@ target = "'<comment_about_the_metric>' in [ COMMENT = '<comment_about_the_metric
 note = "omit '<comment_about_the_metric>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o766"
+kind = "operand_type_class"
+required = true
+target = "'<comment_about_the_metric>' in [ COMMENT = '<comment_about_the_metric>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o255"
 kind = "negative_neighbour"
 required = true
 target = "'<comment_about_the_metric>' in [ COMMENT = '<comment_about_the_metric>' ]"
 note = "an unquoted identifier in place of '<comment_about_the_metric>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o767"
+kind = "option_present"
+required = true
+target = "[ { PRIVATE | PUBLIC } ] #3"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o257"
@@ -231328,6 +231988,13 @@ target = "<table_alias> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> 
 note = "omit <table_alias>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o768"
+kind = "operand_type_class"
+required = true
+target = "<table_alias> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ...… #2"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o262"
 kind = "negative_neighbour"
 required = true
@@ -231342,11 +232009,38 @@ target = "<metric> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <me
 note = "omit <metric>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o769"
+kind = "operand_type_class"
+required = true
+target = "<metric> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ]… #2"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o612"
 kind = "negative_neighbour"
 required = true
 target = "<metric> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ]… #2"
 note = "a string literal in place of <metric>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o770"
+kind = "operand_type_class"
+required = true
+target = "<window_function> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ ,…"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o771"
+kind = "operand_type_class"
+required = true
+target = "<metric> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ]… #3"
+note = "a valid identifier"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o772"
+kind = "option_present"
+required = true
+target = "[ PARTITION BY { <exprs_using_dimensions_or_metrics> | EXCLUDING <dimensions> } ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o270"
@@ -231367,11 +232061,24 @@ required = true
 target = "{ <exprs_using_dimensions_or_metrics> | EXCLUDING <dimensions> } → EXCLUDING <dimensions>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o773"
+kind = "operand_type_class"
+required = true
+target = "<exprs_using_dimensions_or_metrics> in [ PARTITION BY { <exprs_using_dimensions_or_metrics> | EXCLUDING <dimensions> } ]"
+note = "a valid expression"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o274"
 kind = "required_operand_missing"
 required = true
 target = "<dimensions> in [ PARTITION BY { <exprs_using_dimensions_or_metrics> | EXCLUDING <dimensions> } ]"
 note = "omit <dimensions>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o774"
+kind = "option_present"
+required = true
+target = "[ ORDER BY <exprs_using_dimensions_or_metrics> [ ASC | DESC ] [ NULLS { FIRST | LAST } ] [ , ... ] ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o277"
@@ -231385,6 +232092,19 @@ kind = "required_operand_missing"
 required = true
 target = "<exprs_using_dimensions_or_metrics> in [ ORDER BY <exprs_using_dimensions_or_metrics> [ ASC | DESC ] [ NULLS { FIRST |…"
 note = "omit <exprs_using_dimensions_or_metrics>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o775"
+kind = "operand_type_class"
+required = true
+target = "<exprs_using_dimensions_or_metrics> in [ ORDER BY <exprs_using_dimensions_or_metrics> [ ASC | DESC ] [ NULLS { FIRST |…"
+note = "a valid expression"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o776"
+kind = "option_present"
+required = true
+target = "[ ASC | DESC ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o281"
@@ -231405,6 +232125,12 @@ required = true
 target = "[ ASC | DESC ] → DESC"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o777"
+kind = "option_present"
+required = true
+target = "[ NULLS { FIRST | LAST } ] #2"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o285"
 kind = "option_absent"
 required = true
@@ -231423,16 +232149,43 @@ required = true
 target = "{ FIRST | LAST } → LAST #2"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o778"
+kind = "option_present"
+required = true
+target = "[ , ... ] #15"
+note = "the list continued at least once"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o289"
 kind = "option_absent"
 required = true
 target = "[ , ... ] #15"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o779"
+kind = "option_present"
+required = true
+target = "[ <windowFrameClause> ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o291"
 kind = "option_absent"
 required = true
 target = "[ <windowFrameClause> ]"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o780"
+kind = "operand_type_class"
+required = true
+target = "<windowFrameClause> in [ <windowFrameClause> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o781"
+kind = "option_present"
+required = true
+target = "[ , ... ] #16"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o294"
@@ -231448,6 +232201,12 @@ target = "... in [ , ... ] #16"
 note = "the list continued without its item"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o782"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<comment_about_semantic_view>' ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o296"
 kind = "option_absent"
 required = true
@@ -231461,11 +232220,24 @@ target = "'<comment_about_semantic_view>' in [ COMMENT = '<comment_about_semanti
 note = "omit '<comment_about_semantic_view>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o783"
+kind = "operand_type_class"
+required = true
+target = "'<comment_about_semantic_view>' in [ COMMENT = '<comment_about_semantic_view>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o299"
 kind = "negative_neighbour"
 required = true
 target = "'<comment_about_semantic_view>' in [ COMMENT = '<comment_about_semantic_view>' ]"
 note = "an unquoted identifier in place of '<comment_about_semantic_view>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o784"
+kind = "option_present"
+required = true
+target = "[ MAX_STALENESS = <integer> ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o301"
@@ -231481,11 +232253,24 @@ target = "<integer> in [ MAX_STALENESS = <integer> ]"
 note = "omit <integer>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o785"
+kind = "operand_type_class"
+required = true
+target = "<integer> in [ MAX_STALENESS = <integer> ]"
+note = "a valid integer_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o609"
 kind = "negative_neighbour"
 required = true
 target = "<integer> in [ MAX_STALENESS = <integer> ]"
 note = "a string literal in place of <integer>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o786"
+kind = "option_present"
+required = true
+target = "[ AI_SQL_GENERATION '<instructions_for_sql_generation>' ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o305"
@@ -231501,11 +232286,24 @@ target = "'<instructions_for_sql_generation>' in [ AI_SQL_GENERATION '<instructi
 note = "omit '<instructions_for_sql_generation>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o787"
+kind = "operand_type_class"
+required = true
+target = "'<instructions_for_sql_generation>' in [ AI_SQL_GENERATION '<instructions_for_sql_generation>' ]"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o308"
 kind = "negative_neighbour"
 required = true
 target = "'<instructions_for_sql_generation>' in [ AI_SQL_GENERATION '<instructions_for_sql_generation>' ]"
 note = "an unquoted identifier in place of '<instructions_for_sql_generation>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o788"
+kind = "option_present"
+required = true
+target = "[ AI_QUESTION_CATEGORIZATION '<instructions_for_question_categorization>' ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o310"
@@ -231521,11 +232319,24 @@ target = "'<instructions_for_question_categorization>' in [ AI_QUESTION_CATEGORI
 note = "omit '<instructions_for_question_categorization>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o789"
+kind = "operand_type_class"
+required = true
+target = "'<instructions_for_question_categorization>' in [ AI_QUESTION_CATEGORIZATION…"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o313"
 kind = "negative_neighbour"
 required = true
 target = "'<instructions_for_question_categorization>' in [ AI_QUESTION_CATEGORIZATION…"
 note = "an unquoted identifier in place of '<instructions_for_question_categorization>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o790"
+kind = "option_present"
+required = true
+target = "[ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] […"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o315"
@@ -231539,6 +232350,13 @@ kind = "required_operand_missing"
 required = true
 target = "<verified_query_name> in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT…"
 note = "omit <verified_query_name>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o791"
+kind = "operand_type_class"
+required = true
+target = "<verified_query_name> in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT…"
+note = "a valid identifier"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o318"
@@ -231555,11 +232373,24 @@ target = "'<question>' in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUE
 note = "omit '<question>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o792"
+kind = "operand_type_class"
+required = true
+target = "'<question>' in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] […"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o321"
 kind = "negative_neighbour"
 required = true
 target = "'<question>' in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] […"
 note = "an unquoted identifier in place of '<question>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o793"
+kind = "option_present"
+required = true
+target = "[ VERIFIED_AT <timestamp> ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o323"
@@ -231575,6 +232406,19 @@ target = "<timestamp> in [ VERIFIED_AT <timestamp> ]"
 note = "omit <timestamp>"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o794"
+kind = "operand_type_class"
+required = true
+target = "<timestamp> in [ VERIFIED_AT <timestamp> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o795"
+kind = "option_present"
+required = true
+target = "[ ONBOARDING_QUESTION <boolean> ]"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o327"
 kind = "option_absent"
 required = true
@@ -231586,6 +232430,19 @@ kind = "required_operand_missing"
 required = true
 target = "<boolean> in [ ONBOARDING_QUESTION <boolean> ]"
 note = "omit <boolean>"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o796"
+kind = "operand_type_class"
+required = true
+target = "<boolean> in [ ONBOARDING_QUESTION <boolean> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o797"
+kind = "option_present"
+required = true
+target = "[ VERIFIED_BY '( <purpose> = <contact> )' ]"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o331"
@@ -231622,11 +232479,25 @@ target = "'<verified_query>' in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS
 note = "omit '<verified_query>'"
 
 [[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o798"
+kind = "operand_type_class"
+required = true
+target = "'<verified_query>' in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT…"
+note = "a valid string_literal"
+
+[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o334"
 kind = "negative_neighbour"
 required = true
 target = "'<verified_query>' in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT…"
 note = "an unquoted identifier in place of '<verified_query>'"
+
+[[obligation]]
+id = "sf.ddl.create-semantic-view.define-semantic-view.o799"
+kind = "option_present"
+required = true
+target = "[ , ... ] #17"
+note = "the list continued at least once"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o336"
@@ -232514,966 +233385,6 @@ anchor = "doc.sql.create-semantic-view / Parameters"
 note = "MAX_STALENESS = 121 against the documented minimum of 120, observed"
 
 [[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o466"
-kind = "option_present"
-required = true
-target = "[ <table_alias> AS ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ <table_alias> AS ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o467"
-kind = "operand_type_class"
-required = true
-target = "<table_alias> in [ <table_alias> AS ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o468"
-kind = "option_present"
-required = true
-target = "[ PRIMARY KEY ( <primary_key_column_name> [ , ... ] ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ PRIMARY KEY ( <primary_key_column_name> [ , ... ] ) ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o469"
-kind = "operand_type_class"
-required = true
-target = "<primary_key_column_name> in [ PRIMARY KEY ( <primary_key_column_name> [ , ... ] ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o470"
-kind = "option_present"
-required = true
-target = "[ , ... ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o471"
-kind = "option_present"
-required = true
-target = "[ UNIQUE ( <unique_column_name> [ , ... ] ) [ ... ] ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ UNIQUE ( <unique_column_name> [ , ... ] ) [ ... ] ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o472"
-kind = "operand_type_class"
-required = true
-target = "<unique_column_name> in [ UNIQUE ( <unique_column_name> [ , ... ] ) [ ... ] ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o473"
-kind = "option_present"
-required = true
-target = "[ , ... ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o474"
-kind = "option_present"
-required = true
-target = "[ CONSTRAINT [ <constraint_name> ] DISTINCT RANGE BETWEEN <start_column> AND <end_column> EXCLUSIVE ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ CONSTRAINT [ <constraint_name> ] DISTINCT RANGE BETWEEN <start_column> AND <end_column> EXCLUSIVE ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o475"
-kind = "option_present"
-required = true
-target = "[ <constraint_name> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ <constraint_name> ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o476"
-kind = "operand_type_class"
-required = true
-target = "<constraint_name> in [ <constraint_name> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o477"
-kind = "operand_type_class"
-required = true
-target = "<start_column> in [ CONSTRAINT [ <constraint_name> ] DISTINCT RANGE BETWEEN <start_column> AND <end_column> EXCLUSIVE ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid expression, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o478"
-kind = "operand_type_class"
-required = true
-target = "<end_column> in [ CONSTRAINT [ <constraint_name> ] DISTINCT RANGE BETWEEN <start_column> AND <end_column> EXCLUSIVE ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid expression, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o479"
-kind = "option_present"
-required = true
-target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o480"
-kind = "option_present"
-required = true
-target = "[ = ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ = ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o481"
-kind = "operand_type_class"
-required = true
-target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o482"
-kind = "option_present"
-required = true
-target = "[ , ... ] #3"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o483"
-kind = "option_present"
-required = true
-target = "[ COMMENT = '<comment_about_table>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ COMMENT = '<comment_about_table>' ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o484"
-kind = "operand_type_class"
-required = true
-target = "'<comment_about_table>' in [ COMMENT = '<comment_about_table>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o485"
-kind = "option_present"
-required = true
-target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o486"
-kind = "option_present"
-required = true
-target = "[ WITH ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ WITH ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o487"
-kind = "operand_type_class"
-required = true
-target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o488"
-kind = "operand_type_class"
-required = true
-target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o489"
-kind = "option_present"
-required = true
-target = "[ , <tag_name> = '<tag_value>' , ... ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o490"
-kind = "option_present"
-required = true
-target = "[ , ... ] #4"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o491"
-kind = "option_present"
-required = true
-target = "[ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] ) REFERENCES…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] ) REFERENCES <ref_table_alia…, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o492"
-kind = "option_present"
-required = true
-target = "[ <relationship_identifier> AS ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ <relationship_identifier> AS ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o493"
-kind = "operand_type_class"
-required = true
-target = "<relationship_identifier> in [ <relationship_identifier> AS ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o494"
-kind = "operand_type_class"
-required = true
-target = "<table_alias> in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] )…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o495"
-kind = "operand_type_class"
-required = true
-target = "<column_name> in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] )…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o496"
-kind = "option_present"
-required = true
-target = "[ , ... ] #5"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o497"
-kind = "operand_type_class"
-required = true
-target = "<ref_table_alias> in [ RELATIONSHIPS ( [ <relationship_identifier> AS ] <table_alias> ( <column_name> [ , ... ] )…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o498"
-kind = "option_present"
-required = true
-target = "[ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } ) ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o499"
-kind = "option_present"
-required = true
-target = "[ ASOF ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ ASOF ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o500"
-kind = "operand_type_class"
-required = true
-target = "<ref_column_name> in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } )…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o501"
-kind = "option_present"
-required = true
-target = "[ , ... ] #6"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o502"
-kind = "option_present"
-required = true
-target = "[ , ... ] #7"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o503"
-kind = "option_present"
-required = true
-target = "[ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH SYNONYMS [ = ] (…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH SYNONYMS [ = ] (…, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o504"
-kind = "option_present"
-required = true
-target = "[ { PRIVATE | PUBLIC } ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ { PRIVATE | PUBLIC } ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o505"
-kind = "operand_type_class"
-required = true
-target = "<table_alias> in [ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o506"
-kind = "operand_type_class"
-required = true
-target = "<fact> in [ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o507"
-kind = "option_present"
-required = true
-target = "[ LABELS = ( FILTER ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ LABELS = ( FILTER ) ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o508"
-kind = "operand_type_class"
-required = true
-target = "<sql_expr> in [ FACTS ( [ { PRIVATE | PUBLIC } ] <table_alias> . <fact> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid expression, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o509"
-kind = "option_present"
-required = true
-target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #2, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o510"
-kind = "option_present"
-required = true
-target = "[ = ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ = ] #2, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o511"
-kind = "operand_type_class"
-required = true
-target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o512"
-kind = "option_present"
-required = true
-target = "[ , ... ] #8"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o513"
-kind = "option_present"
-required = true
-target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #2, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o514"
-kind = "option_present"
-required = true
-target = "[ WITH ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ WITH ] #2, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o515"
-kind = "operand_type_class"
-required = true
-target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o516"
-kind = "operand_type_class"
-required = true
-target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o517"
-kind = "option_present"
-required = true
-target = "[ , <tag_name> = '<tag_value>' , ... ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o518"
-kind = "option_present"
-required = true
-target = "[ COMMENT = '<comment_about_the_fact>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ COMMENT = '<comment_about_the_fact>' ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o519"
-kind = "operand_type_class"
-required = true
-target = "'<comment_about_the_fact>' in [ COMMENT = '<comment_about_the_fact>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o520"
-kind = "option_present"
-required = true
-target = "[ , ... ] #9"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o521"
-kind = "option_present"
-required = true
-target = "[ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH SYNONYMS [ = ] (…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH SYNONYMS [ = ] ( '<s…, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o522"
-kind = "option_present"
-required = true
-target = "[ PUBLIC ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ PUBLIC ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o523"
-kind = "operand_type_class"
-required = true
-target = "<table_alias> in [ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o524"
-kind = "operand_type_class"
-required = true
-target = "<dimension> in [ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o525"
-kind = "option_present"
-required = true
-target = "[ LABELS = ( FILTER ) ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ LABELS = ( FILTER ) ] #2, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o526"
-kind = "operand_type_class"
-required = true
-target = "<sql_expr> in [ DIMENSIONS ( [ PUBLIC ] <table_alias> . <dimension> [ LABELS = ( FILTER ) ] AS <sql_expr> [ WITH…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid expression, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o527"
-kind = "option_present"
-required = true
-target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #3"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #3, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o528"
-kind = "option_present"
-required = true
-target = "[ = ] #3"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ = ] #3, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o529"
-kind = "operand_type_class"
-required = true
-target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #3"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o530"
-kind = "option_present"
-required = true
-target = "[ , ... ] #10"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o531"
-kind = "option_present"
-required = true
-target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #3"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #3, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o532"
-kind = "option_present"
-required = true
-target = "[ WITH ] #3"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ WITH ] #3, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o533"
-kind = "operand_type_class"
-required = true
-target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #3"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o534"
-kind = "operand_type_class"
-required = true
-target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #3"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o535"
-kind = "option_present"
-required = true
-target = "[ , <tag_name> = '<tag_value>' , ... ] #3"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o536"
-kind = "option_present"
-required = true
-target = "[ COMMENT = '<comment_about_the_dimension>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ COMMENT = '<comment_about_the_dimension>' ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o537"
-kind = "operand_type_class"
-required = true
-target = "'<comment_about_the_dimension>' in [ COMMENT = '<comment_about_the_dimension>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o538"
-kind = "option_present"
-required = true
-target = "[ WITH CORTEX SEARCH SERVICE <search_service_name> [ USING <search_service_column_name> ] ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ WITH CORTEX SEARCH SERVICE <search_service_name> [ USING <search_service_column_name> ] ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o539"
-kind = "operand_type_class"
-required = true
-target = "<search_service_name> in [ WITH CORTEX SEARCH SERVICE <search_service_name> [ USING <search_service_column_name> ] ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o540"
-kind = "option_present"
-required = true
-target = "[ USING <search_service_column_name> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ USING <search_service_column_name> ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o541"
-kind = "operand_type_class"
-required = true
-target = "<search_service_column_name> in [ USING <search_service_column_name> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o542"
-kind = "option_present"
-required = true
-target = "[ , ... ] #11"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o543"
-kind = "option_present"
-required = true
-target = "[ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ] [ NON ADDIT…, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o544"
-kind = "option_present"
-required = true
-target = "[ { PRIVATE | PUBLIC } ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ { PRIVATE | PUBLIC } ] #2, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o545"
-kind = "operand_type_class"
-required = true
-target = "<table_alias> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ...…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o546"
-kind = "operand_type_class"
-required = true
-target = "<metric> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ]…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o547"
-kind = "option_present"
-required = true
-target = "[ USING ( <relationship_name> [ , ... ] ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ USING ( <relationship_name> [ , ... ] ) ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o548"
-kind = "operand_type_class"
-required = true
-target = "<relationship_name> in [ USING ( <relationship_name> [ , ... ] ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o549"
-kind = "option_present"
-required = true
-target = "[ , ... ] #12"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o550"
-kind = "option_present"
-required = true
-target = "[ NON ADDITIVE BY ( <dimension> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ , ... ] ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ NON ADDITIVE BY ( <dimension> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ , ... ] ) ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o551"
-kind = "operand_type_class"
-required = true
-target = "<dimension> in [ NON ADDITIVE BY ( <dimension> [ { ASC | DESC } ] [ NULLS { FIRST | LAST } ] [ , ... ] ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o552"
-kind = "option_present"
-required = true
-target = "[ { ASC | DESC } ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ { ASC | DESC } ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o553"
-kind = "option_present"
-required = true
-target = "[ NULLS { FIRST | LAST } ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ NULLS { FIRST | LAST } ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o554"
-kind = "option_present"
-required = true
-target = "[ , ... ] #13"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o555"
-kind = "operand_type_class"
-required = true
-target = "<sql_expr> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] )…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid expression, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o556"
-kind = "option_present"
-required = true
-target = "[ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #4"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #4, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o557"
-kind = "option_present"
-required = true
-target = "[ = ] #4"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ = ] #4, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o558"
-kind = "operand_type_class"
-required = true
-target = "'<synonym>' in [ WITH SYNONYMS [ = ] ( '<synonym>' [ , ... ] ) ] #4"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o559"
-kind = "option_present"
-required = true
-target = "[ , ... ] #14"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o560"
-kind = "option_present"
-required = true
-target = "[ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #4"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #4, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o561"
-kind = "option_present"
-required = true
-target = "[ WITH ] #4"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ WITH ] #4, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o562"
-kind = "operand_type_class"
-required = true
-target = "<tag_name> in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #4"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o563"
-kind = "operand_type_class"
-required = true
-target = "'<tag_value>' in [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ] #4"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o564"
-kind = "option_present"
-required = true
-target = "[ , <tag_name> = '<tag_value>' , ... ] #4"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o565"
-kind = "option_present"
-required = true
-target = "[ COMMENT = '<comment_about_the_metric>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ COMMENT = '<comment_about_the_metric>' ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o566"
-kind = "operand_type_class"
-required = true
-target = "'<comment_about_the_metric>' in [ COMMENT = '<comment_about_the_metric>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o567"
-kind = "option_present"
-required = true
-target = "[ , ... ] #16"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o568"
-kind = "option_present"
-required = true
-target = "[ COMMENT = '<comment_about_semantic_view>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ COMMENT = '<comment_about_semantic_view>' ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o569"
-kind = "operand_type_class"
-required = true
-target = "'<comment_about_semantic_view>' in [ COMMENT = '<comment_about_semantic_view>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o570"
-kind = "option_present"
-required = true
-target = "[ MAX_STALENESS = <integer> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ MAX_STALENESS = <integer> ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o571"
-kind = "operand_type_class"
-required = true
-target = "<integer> in [ MAX_STALENESS = <integer> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o572"
-kind = "option_present"
-required = true
-target = "[ AI_SQL_GENERATION '<instructions_for_sql_generation>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ AI_SQL_GENERATION '<instructions_for_sql_generation>' ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o573"
-kind = "operand_type_class"
-required = true
-target = "'<instructions_for_sql_generation>' in [ AI_SQL_GENERATION '<instructions_for_sql_generation>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o574"
-kind = "option_present"
-required = true
-target = "[ AI_QUESTION_CATEGORIZATION '<instructions_for_question_categorization>' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ AI_QUESTION_CATEGORIZATION '<instructions_for_question_categorization>' ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o575"
-kind = "operand_type_class"
-required = true
-target = "'<instructions_for_question_categorization>' in [ AI_QUESTION_CATEGORIZATION…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o576"
-kind = "option_present"
-required = true
-target = "[ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] […"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] [ ONBOARDING_QUEST…, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o577"
-kind = "operand_type_class"
-required = true
-target = "<verified_query_name> in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o578"
-kind = "operand_type_class"
-required = true
-target = "'<question>' in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT <timestamp> ] […"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o579"
-kind = "option_present"
-required = true
-target = "[ VERIFIED_AT <timestamp> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ VERIFIED_AT <timestamp> ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o580"
-kind = "operand_type_class"
-required = true
-target = "<timestamp> in [ VERIFIED_AT <timestamp> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o581"
-kind = "option_present"
-required = true
-target = "[ ONBOARDING_QUESTION <boolean> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ ONBOARDING_QUESTION <boolean> ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o582"
-kind = "operand_type_class"
-required = true
-target = "<boolean> in [ ONBOARDING_QUESTION <boolean> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o583"
-kind = "option_present"
-required = true
-target = "[ VERIFIED_BY '( <purpose> = <contact> )' ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ VERIFIED_BY '( <purpose> = <contact> )' ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o584"
-kind = "operand_type_class"
-required = true
-target = "'<verified_query>' in [ AI_VERIFIED_QUERIES ( <verified_query_name> AS ( QUESTION '<question>' [ VERIFIED_AT…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid string_literal, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o585"
-kind = "option_present"
-required = true
-target = "[ , ... ] #17"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o586"
 kind = "interaction_all_options"
 required = true
@@ -233495,134 +233406,6 @@ required = true
 target = "<window_function> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ ,…"
 anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
 note = "omit <window_function>, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o589"
-kind = "operand_type_class"
-required = true
-target = "<start_column> in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid expression, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o590"
-kind = "operand_type_class"
-required = true
-target = "<end_column> in [ ( { [ ASOF ] <ref_column_name> [ , ... ] | BETWEEN <start_column> AND <end_column> EXCLUSIVE } ) ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid expression, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o591"
-kind = "option_present"
-required = true
-target = "[ { PRIVATE | PUBLIC } ] #3"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ { PRIVATE | PUBLIC } ] #3, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o592"
-kind = "operand_type_class"
-required = true
-target = "<table_alias> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ...… #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o593"
-kind = "operand_type_class"
-required = true
-target = "<metric> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ]… #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o594"
-kind = "operand_type_class"
-required = true
-target = "<window_function> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ ,…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o595"
-kind = "operand_type_class"
-required = true
-target = "<metric> in [ METRICS ( { [ { PRIVATE | PUBLIC } ] <table_alias> . <metric> [ USING ( <relationship_name> [ , ... ] ) ]… #3"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid operand, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o596"
-kind = "option_present"
-required = true
-target = "[ PARTITION BY { <exprs_using_dimensions_or_metrics> | EXCLUDING <dimensions> } ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ PARTITION BY { <exprs_using_dimensions_or_metrics> | EXCLUDING <dimensions> } ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o597"
-kind = "operand_type_class"
-required = true
-target = "<exprs_using_dimensions_or_metrics> in [ PARTITION BY { <exprs_using_dimensions_or_metrics> | EXCLUDING <dimensions> } ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid expression, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o598"
-kind = "option_present"
-required = true
-target = "[ ORDER BY <exprs_using_dimensions_or_metrics> [ ASC | DESC ] [ NULLS { FIRST | LAST } ] [ , ... ] ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ ORDER BY <exprs_using_dimensions_or_metrics> [ ASC | DESC ] [ NULLS { FIRST | LAST } ] [ , ... ] ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o599"
-kind = "operand_type_class"
-required = true
-target = "<exprs_using_dimensions_or_metrics> in [ ORDER BY <exprs_using_dimensions_or_metrics> [ ASC | DESC ] [ NULLS { FIRST |…"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid expression, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o600"
-kind = "option_present"
-required = true
-target = "[ ASC | DESC ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ ASC | DESC ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o601"
-kind = "option_present"
-required = true
-target = "[ NULLS { FIRST | LAST } ] #2"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ NULLS { FIRST | LAST } ] #2, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o602"
-kind = "option_present"
-required = true
-target = "[ , ... ] #15"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "the list continued at least once, observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o603"
-kind = "option_present"
-required = true
-target = "[ <windowFrameClause> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "option present [ <windowFrameClause> ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-semantic-view.define-semantic-view.o604"
-kind = "operand_type_class"
-required = true
-target = "<windowFrameClause> in [ <windowFrameClause> ]"
-anchor = "doc.sql.create-semantic-view / DEFINE SEMANTIC VIEW"
-note = "a valid operand, observed"
 
 [[obligation]]
 id = "sf.ddl.create-semantic-view.define-semantic-view.o605"
@@ -289936,10 +289719,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "sf.ddl.create-view.define-view.o055"
+kind = "option_present"
+required = true
+target = "[ SECURE ]"
+
+[[obligation]]
 id = "sf.ddl.create-view.define-view.o003"
 kind = "option_absent"
 required = true
 target = "[ SECURE ]"
+
+[[obligation]]
+id = "sf.ddl.create-view.define-view.o056"
+kind = "option_present"
+required = true
+target = "[ { [ { LOCAL | GLOBAL } ] TEMP | TEMPORARY | VOLATILE } ]"
 
 [[obligation]]
 id = "sf.ddl.create-view.define-view.o005"
@@ -289966,6 +289761,12 @@ required = true
 target = "{ [ { LOCAL | GLOBAL } ] TEMP | TEMPORARY | VOLATILE } → VOLATILE"
 
 [[obligation]]
+id = "sf.ddl.create-view.define-view.o057"
+kind = "option_present"
+required = true
+target = "[ { LOCAL | GLOBAL } ]"
+
+[[obligation]]
 id = "sf.ddl.create-view.define-view.o010"
 kind = "option_absent"
 required = true
@@ -289982,6 +289783,12 @@ id = "sf.ddl.create-view.define-view.o012"
 kind = "alternative"
 required = true
 target = "{ LOCAL | GLOBAL } → GLOBAL"
+
+[[obligation]]
+id = "sf.ddl.create-view.define-view.o058"
+kind = "option_present"
+required = true
+target = "[ RECURSIVE ]"
 
 [[obligation]]
 id = "sf.ddl.create-view.define-view.o014"
@@ -290011,6 +289818,12 @@ target = "<name>"
 note = "a string literal in place of <name>"
 
 [[obligation]]
+id = "sf.ddl.create-view.define-view.o059"
+kind = "option_present"
+required = true
+target = "[ ( <column_list> ) ]"
+
+[[obligation]]
 id = "sf.ddl.create-view.define-view.o019"
 kind = "option_absent"
 required = true
@@ -290024,11 +289837,24 @@ target = "<column_list> in [ ( <column_list> ) ]"
 note = "omit <column_list>"
 
 [[obligation]]
+id = "sf.ddl.create-view.define-view.o060"
+kind = "operand_type_class"
+required = true
+target = "<column_list> in [ ( <column_list> ) ]"
+note = "a valid identifier"
+
+[[obligation]]
 id = "sf.ddl.create-view.define-view.o022"
 kind = "negative_neighbour"
 required = true
 target = "<column_list> in [ ( <column_list> ) ]"
 note = "a string literal in place of <column_list>"
+
+[[obligation]]
+id = "sf.ddl.create-view.define-view.o061"
+kind = "option_present"
+required = true
+target = "[ CHANGE_TRACKING = { TRUE | FALSE } ]"
 
 [[obligation]]
 id = "sf.ddl.create-view.define-view.o024"
@@ -290049,6 +289875,12 @@ required = true
 target = "{ TRUE | FALSE } → FALSE"
 
 [[obligation]]
+id = "sf.ddl.create-view.define-view.o062"
+kind = "option_present"
+required = true
+target = "[ COMMENT = '<string_literal>' ]"
+
+[[obligation]]
 id = "sf.ddl.create-view.define-view.o028"
 kind = "option_absent"
 required = true
@@ -290060,6 +289892,13 @@ kind = "required_operand_missing"
 required = true
 target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
 note = "omit '<string_literal>'"
+
+[[obligation]]
+id = "sf.ddl.create-view.define-view.o063"
+kind = "operand_type_class"
+required = true
+target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "sf.ddl.create-view.define-view.o031"
@@ -290154,78 +289993,6 @@ depths = [
   8,
 ]
 note = "query operands nested; no documented bound"
-
-[[obligation]]
-id = "sf.ddl.create-view.define-view.o045"
-kind = "option_present"
-required = true
-target = "[ SECURE ]"
-anchor = "doc.sql.create-view / DEFINE VIEW"
-note = "option present [ SECURE ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-view.define-view.o046"
-kind = "option_present"
-required = true
-target = "[ { [ { LOCAL | GLOBAL } ] TEMP | TEMPORARY | VOLATILE } ]"
-anchor = "doc.sql.create-view / DEFINE VIEW"
-note = "option present [ { [ { LOCAL | GLOBAL } ] TEMP | TEMPORARY | VOLATILE } ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-view.define-view.o047"
-kind = "option_present"
-required = true
-target = "[ { LOCAL | GLOBAL } ]"
-anchor = "doc.sql.create-view / DEFINE VIEW"
-note = "option present [ { LOCAL | GLOBAL } ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-view.define-view.o048"
-kind = "option_present"
-required = true
-target = "[ RECURSIVE ]"
-anchor = "doc.sql.create-view / DEFINE VIEW"
-note = "option present [ RECURSIVE ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-view.define-view.o049"
-kind = "option_present"
-required = true
-target = "[ ( <column_list> ) ]"
-anchor = "doc.sql.create-view / DEFINE VIEW"
-note = "option present [ ( <column_list> ) ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-view.define-view.o050"
-kind = "operand_type_class"
-required = true
-target = "<column_list> in [ ( <column_list> ) ]"
-anchor = "doc.sql.create-view / DEFINE VIEW"
-note = "a valid identifier, observed"
-
-[[obligation]]
-id = "sf.ddl.create-view.define-view.o051"
-kind = "option_present"
-required = true
-target = "[ CHANGE_TRACKING = { TRUE | FALSE } ]"
-anchor = "doc.sql.create-view / DEFINE VIEW"
-note = "option present [ CHANGE_TRACKING = { TRUE | FALSE } ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-view.define-view.o052"
-kind = "option_present"
-required = true
-target = "[ COMMENT = '<string_literal>' ]"
-anchor = "doc.sql.create-view / DEFINE VIEW"
-note = "option present [ COMMENT = '<string_literal>' ], observed"
-
-[[obligation]]
-id = "sf.ddl.create-view.define-view.o053"
-kind = "operand_type_class"
-required = true
-target = "'<string_literal>' in [ COMMENT = '<string_literal>' ]"
-anchor = "doc.sql.create-view / DEFINE VIEW"
-note = "a valid string_literal, observed"
 
 [[obligation]]
 id = "sf.ddl.create-view.define-view.o054"
