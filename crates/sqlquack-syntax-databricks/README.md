@@ -171,7 +171,6 @@ These parse without a gap, but the shared tree keeps less than the source said:
 - A `SET` configuration value, and a time zone that is neither a string nor `LOCAL`, become `Var`
   text.
 - A `MATCH_RECOGNIZE` pattern is kept as its source text, after it is checked.
-- `ALTER SCHEMA … [SET] RETAIN DROPPED TO n unit` keeps `n unit` as one `Var` operand.
 
 ## Implementation notes
 

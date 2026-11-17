@@ -204,6 +204,9 @@ pub(crate) const INTERVAL_UNITS: [(&str, IntervalUnit); 20] = [
     ("YEARS", IntervalUnit::Year),
 ];
 
+/// The units a schema's `RETAIN DROPPED` period may be written in.
+pub(crate) const RETENTION_UNITS: [&str; 6] = ["HOUR", "HOURS", "DAY", "DAYS", "WEEK", "WEEKS"];
+
 /// `unitInUnitToUnit`: the units an `INTERVAL ... TO ...` range may name.
 pub(crate) const UNIT_TO_UNITS: [&str; 6] = ["SECOND", "MINUTE", "HOUR", "DAY", "MONTH", "YEAR"];
 

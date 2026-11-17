@@ -17,12 +17,12 @@ use sqlquack_syntax::expressions::types::models::{
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
     aggregate, binary, boolean, call, case, cast, column_from, dot, function, joined, lambda,
-    literal, null, parameter, paren, star, string, subquery, tuple,
+    literal, null, parameter, paren, star, string, subquery, tuple, var,
 };
 use crate::parse::constants::{
     CURRENT_LIKE, DATETIME_UNITS, DAY_SEGMENT, IDENTIFIER_CLAUSE, INTERVAL_UNITS, LITERAL_TYPES,
-    MIN_LAMBDA_PARAMETERS, TIMESTAMP_ADD_NAMES, TIMESTAMP_DIFF_NAMES, TRUE, TRY_CAST,
-    UNIT_TO_UNITS,
+    MIN_LAMBDA_PARAMETERS, RETENTION_UNITS, TIMESTAMP_ADD_NAMES, TIMESTAMP_DIFF_NAMES, TRUE,
+    TRY_CAST, UNIT_TO_UNITS,
 };
 use crate::scan::models::{NumberKind, Token, TokenKind};
 
@@ -191,6 +191,23 @@ impl Parser<'_> {
     /// `stringLit` as a string literal.
     pub(crate) fn string_literal(&mut self) -> Parsing<Expression> {
         Ok(string(&self.string_lit()?))
+    }
+
+    /// A `RETAIN DROPPED` period, `int time_unit`, as an interval of that unit.
+    pub(crate) fn retention_interval(&mut self) -> Parsing<Expression> {
+        let count: String = self
+            .expect_token(|token| token.kind == TokenKind::Number(NumberKind::Integer))?
+            .value;
+        let word: String = match self.word_at(0) {
+            Some(word) if RETENTION_UNITS.contains(&word.as_str()) => word,
+            _ => return Err(self.error()),
+        };
+        let (unit, use_plural) = interval_unit(&word).ok_or_else(|| self.error())?;
+        self.at += 1;
+        Ok(interval(
+            literal(Literal::Number(count)),
+            Some(IntervalUnitSpec::Simple { unit, use_plural }),
+        ))
     }
 
     fn primary_base(&mut self) -> Parsing<Expression> {
@@ -695,7 +712,7 @@ impl Parser<'_> {
                     let unit: Expression = match parser.word_at(0) {
                         Some(unit) if DATETIME_UNITS.contains(&unit.as_str()) => {
                             parser.at += 1;
-                            string(&unit)
+                            var(&unit)
                         }
                         _ => parser.string_literal()?,
                     };

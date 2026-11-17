@@ -1009,27 +1009,9 @@ impl Parser<'_> {
                 self.expect_kw("RETAIN")?;
                 self.expect_kw("DROPPED")?;
                 self.expect_kw("TO")?;
-                let count: String = self
-                    .expect_token(|token| {
-                        token.kind
-                            == crate::scan::models::TokenKind::Number(
-                                crate::scan::models::NumberKind::Integer,
-                            )
-                    })?
-                    .value;
-                let unit: String = match self.word_at(0) {
-                    Some(unit)
-                        if ["HOUR", "HOURS", "DAY", "DAYS", "WEEK", "WEEKS"]
-                            .contains(&unit.as_str()) =>
-                    {
-                        unit
-                    }
-                    _ => return Err(self.error()),
-                };
-                self.at += 1;
                 (
                     format!("{}RETAIN DROPPED TO", if set { "SET " } else { "" }),
-                    vec![var(&format!("{count} {unit}"))],
+                    vec![self.retention_interval()?],
                 )
             }
             Some("SET") if self.kw_at(1, "LOCATION") => {

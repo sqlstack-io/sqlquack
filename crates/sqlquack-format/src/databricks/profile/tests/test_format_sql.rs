@@ -121,6 +121,13 @@ fn given_databricks_sql_when_formatting_then_it_is_laid_out_or_refused() {
             expected_outcome: Ok("SHOW tblproperties t1(comment)"),
         },
         test_types::FormatSqlTestCase {
+            description: "a path's catalog named like a keyword keeps its case as written",
+            sql: "set path = system.builtin, workspace.s1",
+            line_width: None,
+            dialect: FormatDialect::Databricks,
+            expected_outcome: Ok("SET path = system.builtin, workspace.s1"),
+        },
+        test_types::FormatSqlTestCase {
             description: "a Hive row format, read as a tree not yet reviewed for layout, is refused as opaque",
             sql: "CREATE TABLE t1 ( c1 INT ) ROW FORMAT DELIMITED",
             line_width: None,
