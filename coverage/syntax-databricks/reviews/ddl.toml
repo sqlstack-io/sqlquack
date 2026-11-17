@@ -1157,3 +1157,20 @@ note = "Withdraws this form's approval. The tree-identity sweep over the accepte
 
 [review.definitions]
 "db.ddl.drop-database" = "767fb8a9b00e1535edd084b8adfdd0da511e3e6de92b1c431051f5a841d19b5b"
+
+[[review]]
+id = "db-ddl-060"
+family = "ddl"
+parser_tree = "dc2f893f9c91c3010bbae32b761f949d81a1cd4f"
+reviewed_utc = "2026-11-17T10:02:50Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-catalog",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in c349d361a: ALTER CATALOG takes a name, not a string literal, before a predictive optimization clause. Read against the 2026.45 receipts in evidence set evI. The two new cases, o114 (ALTER CATALOG 'v1' UNSET TAGS ( 'k' )) and o115 (ALTER CATALOG 'v1' ENABLE PREDICTIVE OPTIMIZATION), are refused locally at pos 19, as in their receipts (PARSE_SYNTAX_ERROR at UNSET and at ENABLE). Every other case of the form has the same verdict, refusal position and message, and parse tree as when db-ddl-056 approved it. The mechanical check finds every name and literal of each of the 27 locally accepted cases in its tree. Of the 47 locally rejected cases, 44 fail at the warehouse's position. Three differ, the same three db-ddl-056 read on purpose: o103 and o057 fail one token later in the warehouse, and o039 is a value check with no warehouse position. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.ddl.alter-catalog" = "3b8e77a544c1d05c894442c21987e5a7963966ed76254d47a6a4a80f39acfcb6"
+
+[review.definitions]
+"db.ddl.alter-catalog" = "2aa01db6302fb45617391089b6ac19848cde12bdde7948401d72a22b9891dcff"
