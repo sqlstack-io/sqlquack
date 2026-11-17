@@ -34,9 +34,13 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 2,
         },
         DistinctTreesTestCase {
-            description: "a shown property key written as a name and as a string",
-            written: &["SHOW TBLPROPERTIES t1 ( k1 )", "SHOW TBLPROPERTIES t1 ( 'k1' )"],
-            expected_distinct_trees: 2,
+            description: "a shown property key written as a name, backquoted and as a string",
+            written: &[
+                "SHOW TBLPROPERTIES t1 ( k1 )",
+                "SHOW TBLPROPERTIES t1 ( `k1` )",
+                "SHOW TBLPROPERTIES t1 ( 'k1' )",
+            ],
+            expected_distinct_trees: 3,
         },
         DistinctTreesTestCase {
             description: "DESC and DESCRIBE",
