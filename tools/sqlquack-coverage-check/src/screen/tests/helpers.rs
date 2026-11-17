@@ -40,6 +40,7 @@ pub(crate) fn entry(form: &str, mutation: MutationKind, token: Option<&str>) -> 
         mutation,
         token: token.map(str::to_owned),
         last_token: false,
+        untokenized: false,
         reason: "comment text".to_owned(),
     }
 }

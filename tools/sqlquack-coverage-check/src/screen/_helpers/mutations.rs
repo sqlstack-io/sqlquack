@@ -1,6 +1,6 @@
 //! `mutations`: the one-token variants of a case's text.
 
-use crate::screen::constants::SWAPPED_KEYWORDS;
+use crate::screen::constants::SYNONYMS;
 use crate::screen::models::{Mutation, MutationKind};
 
 /// A name a bare identifier could spell: a letter or underscore, then letters, digits or underscores.
@@ -20,22 +20,43 @@ fn enclosed(token: &str, quote: char) -> Option<&str> {
         .filter(|name| is_name(name))
 }
 
+/// The text inside `token` when it is a string in `quote` with no quote or escape inside.
+fn simple_string(token: &str, quote: char) -> Option<&str> {
+    token
+        .strip_prefix(quote)
+        .and_then(|rest| rest.strip_suffix(quote))
+        .filter(|text| !text.contains(['\'', '"', '\\']))
+}
+
 /// The other spellings of one token, each with how it changes the token.
 fn respellings(token: &str) -> Vec<(MutationKind, String)> {
-    let mut out: Vec<(MutationKind, String)> = SWAPPED_KEYWORDS
+    let spells = |group: &&&[&str]| group.iter().any(|word| token.eq_ignore_ascii_case(word));
+    let mut out: Vec<(MutationKind, String)> = SYNONYMS
         .iter()
-        .filter(|(from, _)| token.eq_ignore_ascii_case(from))
-        .map(|(_, to)| (MutationKind::Swap, (*to).to_owned()))
+        .filter(spells)
+        .flat_map(|group| group.iter())
+        .filter(|word| !token.eq_ignore_ascii_case(word))
+        .map(|word| (MutationKind::Swap, (*word).to_owned()))
         .collect();
     if is_name(token) {
         out.push((MutationKind::Backquote, format!("`{token}`")));
         out.push((MutationKind::String, format!("'{token}'")));
+        out.push((MutationKind::DoubleQuote, format!("\"{token}\"")));
     } else if let Some(name) = enclosed(token, '`') {
         out.push((MutationKind::Unquote, name.to_owned()));
         out.push((MutationKind::String, format!("'{name}'")));
+        out.push((MutationKind::DoubleQuote, format!("\"{name}\"")));
     } else if let Some(name) = enclosed(token, '\'') {
         out.push((MutationKind::Unquote, name.to_owned()));
         out.push((MutationKind::Backquote, format!("`{name}`")));
+    } else if let Some(name) = enclosed(token, '"') {
+        out.push((MutationKind::Unquote, name.to_owned()));
+        out.push((MutationKind::Backquote, format!("`{name}`")));
+    }
+    if let Some(text) = simple_string(token, '\'') {
+        out.push((MutationKind::Requote, format!("\"{text}\"")));
+    } else if let Some(text) = simple_string(token, '"') {
+        out.push((MutationKind::Requote, format!("'{text}'")));
     }
     out
 }
@@ -60,42 +81,100 @@ fn dropped(sql: &str, (start, end): (usize, usize)) -> String {
     let before: Option<char> = sql[..start].chars().next_back();
     let after: Option<char> = sql[end..].chars().next();
     let (from, to, gap) = match (before, after) {
-        (_, Some(' ')) => (start, end + 1, ""),
+        (None | Some(' '), Some(' ')) => (start, end + 1, ""),
         (Some(' '), None) => (start - 1, end, ""),
-        (Some(_), Some(_)) if before != Some(' ') => (start, end, " "),
+        (Some(_), Some(after)) if before != Some(' ') && after != ' ' => (start, end, " "),
         _ => (start, end, ""),
     };
     format!("{}{gap}{}", &sql[..from], &sql[to..])
 }
 
-/// Every distinct, non-blank text dropping or respelling one space-separated or `lexed` token of `sql`.
+/// `sql` with `word` written at byte `at`, kept apart from the text on both sides.
+fn inserted(sql: &str, at: usize, word: &str) -> String {
+    let (head, tail) = sql.split_at(at);
+    let left: &str = match head.chars().next_back() {
+        None | Some(' ') => "",
+        Some(_) => " ",
+    };
+    let right: &str = match tail.chars().next() {
+        None | Some(' ') => "",
+        Some(_) => " ",
+    };
+    format!("{head}{left}{word}{right}{tail}")
+}
+
+/// Every distinct, non-blank text dropping, respelling or preceding with `AS` or `=` one token.
 pub(crate) fn mutations(sql: &str, lexed: &[(usize, usize)]) -> Vec<Mutation> {
+    let lexed: Vec<(usize, usize)> = lexed
+        .iter()
+        .copied()
+        .filter(|(start, end)| start < end)
+        .collect();
     let mut tokens: Vec<(usize, usize)> = space_tokens(sql);
-    tokens.extend(lexed.iter().copied().filter(|(start, end)| start < end));
+    tokens.extend(lexed.iter().copied());
     tokens.sort_unstable();
     tokens.dedup();
+    let covered = |(start, end): (usize, usize)| lexed.iter().any(|&(s, e)| s < end && start < e);
     let mut seen: Vec<String> = vec![sql.to_owned()];
     let mut out: Vec<Mutation> = Vec::new();
+    let mut push = |kind: MutationKind,
+                    token: &str,
+                    (position, last, untokenized): (usize, bool, bool),
+                    text: String| {
+        if text.trim().is_empty() || seen.contains(&text) {
+            return;
+        }
+        seen.push(text.clone());
+        out.push(Mutation {
+            kind,
+            token: token.to_owned(),
+            position,
+            last,
+            untokenized,
+            sql: text,
+        });
+    };
     for (position, &(start, end)) in tokens.iter().enumerate() {
         let token: &str = &sql[start..end];
-        let changes = std::iter::once((MutationKind::Drop, dropped(sql, (start, end)))).chain(
-            respellings(token)
-                .into_iter()
-                .map(|(kind, text)| (kind, format!("{}{text}{}", &sql[..start], &sql[end..]))),
+        let place = (
+            position,
+            sql[end..].trim().is_empty(),
+            !covered((start, end)),
         );
-        for (kind, text) in changes {
-            if text.trim().is_empty() || seen.contains(&text) {
-                continue;
-            }
-            seen.push(text.clone());
-            out.push(Mutation {
+        push(MutationKind::Drop, token, place, dropped(sql, (start, end)));
+        for (kind, text) in respellings(token) {
+            push(
                 kind,
-                token: token.to_owned(),
-                position,
-                last: sql[end..].trim().is_empty(),
-                sql: text,
-            });
+                token,
+                place,
+                format!("{}{text}{}", &sql[..start], &sql[end..]),
+            );
         }
+        push(
+            MutationKind::InsertAs,
+            token,
+            place,
+            inserted(sql, start, "AS"),
+        );
+        push(
+            MutationKind::InsertEquals,
+            token,
+            place,
+            inserted(sql, start, "="),
+        );
     }
+    let end = (tokens.len(), true, false);
+    push(
+        MutationKind::InsertAs,
+        "",
+        end,
+        inserted(sql, sql.len(), "AS"),
+    );
+    push(
+        MutationKind::InsertEquals,
+        "",
+        end,
+        inserted(sql, sql.len(), "="),
+    );
     out
 }

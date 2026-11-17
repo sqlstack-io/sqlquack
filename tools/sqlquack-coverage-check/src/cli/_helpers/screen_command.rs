@@ -34,14 +34,14 @@ fn read_allowlist(root: &Path) -> Result<ScreenAllowlist, ExitCode> {
 }
 
 /// Whether `form` is screened: every form when none is chosen.
-fn chosen(forms: &[String], form: &str) -> bool {
-    forms.is_empty() || forms.iter().any(|wanted| wanted == form)
+fn chosen(forms: Option<&[String]>, form: &str) -> bool {
+    forms.is_none_or(|forms| forms.iter().any(|wanted| wanted == form))
 }
 
 /// Each case of the chosen family and forms, once per form its obligations belong to.
 fn screened_cases(
     coverage: &SyntaxCoverage,
-    forms: &[String],
+    forms: Option<&[String]>,
     family: Option<&str>,
 ) -> Vec<ScreenedCase> {
     let mut out: Vec<ScreenedCase> = Vec::new();
@@ -78,14 +78,16 @@ fn line(found: &SameTree) -> String {
     )
 }
 
-fn text(report: &ScreenReport) -> Vec<String> {
+/// The report's count line, then each flagged form with its variants, then the failing entries.
+pub(crate) fn text(report: &ScreenReport) -> Vec<String> {
     let mut out: Vec<String> = vec![format!(
-        "{} accepted cases, {} variants: {} same-tree variants flagged, {} allowed, {} stale entries",
+        "{} accepted cases, {} variants: {} same-tree variants flagged, {} allowed, {} stale entries, {} unpinned entries",
         report.cases,
         report.variants,
         report.flagged.len(),
         report.allowed.len(),
-        report.stale.len()
+        report.stale.len(),
+        report.unpinned.len()
     )];
     let forms: BTreeSet<&str> = report
         .flagged
@@ -102,31 +104,54 @@ fn text(report: &ScreenReport) -> Vec<String> {
         out.extend(flagged.into_iter().map(line));
     }
     out.extend(report.stale.iter().map(|entry| format!("stale: {entry}")));
+    out.extend(
+        report
+            .unpinned
+            .iter()
+            .map(|entry| format!("unpinned: {entry}")),
+    );
     out
 }
 
-/// Fails when a same-tree variant has no allowing entry, or an entry for a screened form is stale.
-pub(crate) fn screen(
-    forms: &[String],
+/// Whether the report has no flagged variant, stale entry or unpinned entry.
+pub(crate) fn passes(report: &ScreenReport) -> bool {
+    report.flagged.is_empty() && report.stale.is_empty() && report.unpinned.is_empty()
+}
+
+/// The chosen forms' (every form's) screen; unfiltered, an entry for an unscreened form is stale.
+pub(crate) fn screen_report(
+    coverage: &SyntaxCoverage,
+    root: &Path,
+    forms: Option<&[String]>,
     family: Option<&str>,
-    common: &Common,
-) -> Result<ExitCode, ExitCode> {
-    let coverage: SyntaxCoverage = load(common)?;
-    let allowlist: ScreenAllowlist = read_allowlist(&common.root)?;
+) -> Result<ScreenReport, ExitCode> {
+    let allowlist: ScreenAllowlist = read_allowlist(root)?;
     let Some(parse) = local_statements(current_dialect().local_parser) else {
         say("FAILED, this dialect has no local parser to screen with");
         return Err(ExitCode::FAILURE);
     };
-    let cases: Vec<ScreenedCase> = screened_cases(&coverage, forms, family);
+    let cases: Vec<ScreenedCase> = screened_cases(coverage, forms, family);
     say(&format!("screening {} cases", cases.len()));
     let tree = move |sql: &str| -> Option<Value> { parse(sql).as_deref().map(written_tree) };
     let tokens = local_tokens(current_dialect().local_parser);
     let lexed = move |sql: &str| -> Vec<(usize, usize)> {
         tokens.map_or_else(Vec::new, |ranges| ranges(sql))
     };
-    let report: ScreenReport = screen_cases(&cases, (&tree, &lexed), &allowlist);
+    let full: bool = forms.is_none() && family.is_none();
+    Ok(screen_cases(&cases, (&tree, &lexed), &allowlist, full))
+}
+
+/// Fails when a same-tree variant has no allowing entry, or an entry is stale or unpinned.
+pub(crate) fn screen(
+    forms: &[String],
+    family: Option<&str>,
+    common: &Common,
+) -> Result<ExitCode, ExitCode> {
+    let coverage: SyntaxCoverage = load(common)?;
+    let chosen: Option<&[String]> = (!forms.is_empty()).then_some(forms);
+    let report: ScreenReport = screen_report(&coverage, &common.root, chosen, family)?;
     print(common.json, &report, &text(&report));
-    Ok(match report.flagged.is_empty() && report.stale.is_empty() {
+    Ok(match passes(&report) {
         true => ExitCode::SUCCESS,
         false => ExitCode::FAILURE,
     })

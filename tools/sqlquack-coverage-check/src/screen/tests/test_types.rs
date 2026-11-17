@@ -28,7 +28,10 @@ pub(crate) struct KnownCollapseTestCase {
 pub(crate) struct AllowlistTestCase {
     pub(crate) description: &'static str,
     pub(crate) entries: Vec<AllowedSameTree>,
+    /// Whether the run screens every form, so entries for unscreened forms are judged.
+    pub(crate) full: bool,
     pub(crate) expected_flagged: usize,
     pub(crate) expected_allowed: usize,
     pub(crate) expected_stale: usize,
+    pub(crate) expected_unpinned: usize,
 }

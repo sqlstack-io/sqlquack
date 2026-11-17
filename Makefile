@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage website-figures website-figures-update depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-obligations syntax-cases dialect-cases corpus-rerecord corpus-verdicts corpus-verdicts-baseline generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-build python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate check-pr-metadata evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage website-figures website-figures-update depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-obligations syntax-cases dialect-cases dialect-validate corpus-rerecord corpus-verdicts corpus-verdicts-baseline generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-build python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate check-pr-metadata evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -225,6 +225,11 @@ DIALECT_CASE_DIALECTS ?= databricks
 dialect-cases:
 	@set -e; $(foreach d,$(DIALECT_CASE_DIALECTS),uv run python -m scripts.build_syntax_obligations_$(d) --check --evidence $(call syntax_evidence_dir,$(d));)
 
+# Fails on a broken reference in a dialect root, or when the tree screen finds a one-token variant of
+# an approved form's case that parses to the same tree and screen.toml does not allow.
+dialect-validate: gate-build
+	@set -e; $(foreach d,$(DIALECT_CASE_DIALECTS),$(GATE_DIR)/syntax-coverage validate --root $(call suite_dir,syntax,$(d)) --evidence $(call syntax_evidence_dir,$(d));)
+
 # Where the generated referee cases live: the evidence once it is pinned, referee/ until then. The
 # environments stay in referee/environments/.
 REFEREE_CASE_ARGS = $(if $(EVIDENCE_PINNED),--cases $(EVIDENCE_ROOT)/referee/snowflake/cases)
@@ -244,7 +249,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage website-figures depth-probe instruction-counts corpus-verdicts evidence-pin-check clutter-guard engine-free bundled-extensions dialect-builds generated-cases syntax-obligations syntax-cases dialect-cases referee-cases translation-files python-api distribution-notices replay-scope ## The static gate CI runs.
+check-ci: rust-lint python-check fensu syntax-coverage website-figures depth-probe instruction-counts corpus-verdicts evidence-pin-check clutter-guard engine-free bundled-extensions dialect-builds generated-cases syntax-obligations syntax-cases dialect-cases dialect-validate referee-cases translation-files python-api distribution-notices replay-scope ## The static gate CI runs.
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:

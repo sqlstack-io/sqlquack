@@ -93,6 +93,48 @@ fn given_a_spelling_the_grammar_keeps_when_screening_then_its_variant_has_its_ow
             expected_same_tree: false,
         },
         KnownCollapseTestCase {
+            description: "a backquoted function name",
+            sql: "SELECT abs ( 1 )",
+            variant: "SELECT `abs` ( 1 )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a DBPROPERTIES value written without =",
+            sql: "CREATE SCHEMA s1 WITH DBPROPERTIES ( 'k' = 'v' )",
+            variant: "CREATE SCHEMA s1 WITH DBPROPERTIES ( 'k' 'v' )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a connection OPTIONS value written without =",
+            sql: "CREATE CONNECTION c1 TYPE mysql OPTIONS ( host = 'h' )",
+            variant: "CREATE CONNECTION c1 TYPE mysql OPTIONS ( host 'h' )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a COPY INTO format option written without =",
+            sql: "COPY INTO t1 FROM '/tmp/x' FILEFORMAT = PARQUET FORMAT_OPTIONS ( 'k' = 'v' )",
+            variant: "COPY INTO t1 FROM '/tmp/x' FILEFORMAT = PARQUET FORMAT_OPTIONS ( 'k' 'v' )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a COPY INTO copy option written without =",
+            sql: "COPY INTO t1 FROM '/tmp/x' FILEFORMAT = PARQUET COPY_OPTIONS ( 'k' = 'v' )",
+            variant: "COPY INTO t1 FROM '/tmp/x' FILEFORMAT = PARQUET COPY_OPTIONS ( 'k' 'v' )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a table alias written with AS",
+            sql: "SELECT 1 FROM t1 a1",
+            variant: "SELECT 1 FROM t1 AS a1",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "control: a string written in double quotes is the same literal",
+            sql: "SELECT 'v'",
+            variant: "SELECT \"v\"",
+            expected_same_tree: true,
+        },
+        KnownCollapseTestCase {
             description: "a LATERAL VIEW written without AS",
             sql: "SELECT * FROM t1 LATERAL VIEW explode ( array ( 1 ) ) a3 AS x1",
             variant: "SELECT * FROM t1 LATERAL VIEW explode ( array ( 1 ) ) a3 x1",
@@ -122,6 +164,7 @@ fn given_a_spelling_the_grammar_keeps_when_screening_then_its_variant_has_its_ow
             &[case(test_case.sql)],
             (&databricks_tree, &databricks_tokens),
             &ScreenAllowlist::default(),
+            true,
         );
         let flagged: bool = report
             .flagged
@@ -138,73 +181,112 @@ fn given_a_spelling_the_grammar_keeps_when_screening_then_its_variant_has_its_ow
 #[test]
 fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unused_entries_are_stale()
  {
-    let constant =
-        |sql: &str| -> Option<Value> { (!sql.contains(['\'', '`'])).then(|| json!(["one tree"])) };
+    let constant = |sql: &str| -> Option<Value> {
+        (!sql.contains(['\'', '`', '"', '=']) && !sql.split(' ').any(|word| word == "AS"))
+            .then(|| json!(["one tree"]))
+    };
     let test_cases = [
         AllowlistTestCase {
             description: "no entry: both one-token drops that parse alike are flagged",
             entries: vec![],
+            full: true,
             expected_flagged: 2,
             expected_allowed: 0,
             expected_stale: 0,
-        },
-        AllowlistTestCase {
-            description: "an entry for the form and kind allows every token",
-            entries: vec![entry(FORM, MutationKind::Drop, None)],
-            expected_flagged: 0,
-            expected_allowed: 2,
-            expected_stale: 0,
+            expected_unpinned: 0,
         },
         AllowlistTestCase {
             description: "an entry for one token allows only that token",
             entries: vec![entry(FORM, MutationKind::Drop, Some("m2"))],
+            full: true,
             expected_flagged: 1,
             expected_allowed: 1,
             expected_stale: 0,
+            expected_unpinned: 0,
+        },
+        AllowlistTestCase {
+            description: "an entry pinned to neither a token nor untokenized text fails as unpinned",
+            entries: vec![entry(FORM, MutationKind::Drop, None)],
+            full: true,
+            expected_flagged: 0,
+            expected_allowed: 2,
+            expected_stale: 0,
+            expected_unpinned: 1,
+        },
+        AllowlistTestCase {
+            description: "an untokenized entry does not allow a change to a lexer token",
+            entries: vec![AllowedSameTree {
+                untokenized: true,
+                ..entry(FORM, MutationKind::Drop, None)
+            }],
+            full: true,
+            expected_flagged: 2,
+            expected_allowed: 0,
+            expected_stale: 1,
+            expected_unpinned: 0,
         },
         AllowlistTestCase {
             description: "an entry no same-tree variant matches is stale",
             entries: vec![entry(FORM, MutationKind::Drop, Some("m3"))],
+            full: true,
             expected_flagged: 2,
             expected_allowed: 0,
             expected_stale: 1,
+            expected_unpinned: 0,
         },
         AllowlistTestCase {
             description: "an entry for the last token allows only the last token's drop",
             entries: vec![AllowedSameTree {
                 last_token: true,
-                ..entry(FORM, MutationKind::Drop, None)
+                ..entry(FORM, MutationKind::Drop, Some("m2"))
             }],
+            full: true,
             expected_flagged: 1,
             expected_allowed: 1,
             expected_stale: 0,
+            expected_unpinned: 0,
         },
         AllowlistTestCase {
-            description: "an entry for a form not screened is never stale",
-            entries: vec![entry("db.ddl.other", MutationKind::Drop, None)],
+            description: "on a full run an entry for a form with no screened case is stale",
+            entries: vec![entry("db.ddl.other", MutationKind::Drop, Some("m1"))],
+            full: true,
+            expected_flagged: 2,
+            expected_allowed: 0,
+            expected_stale: 1,
+            expected_unpinned: 0,
+        },
+        AllowlistTestCase {
+            description: "on a run of chosen forms an entry for another form is not judged",
+            entries: vec![entry("db.ddl.other", MutationKind::Drop, Some("m1"))],
+            full: false,
             expected_flagged: 2,
             expected_allowed: 0,
             expected_stale: 0,
+            expected_unpinned: 0,
         },
     ];
     for test_case in test_cases {
         let report: ScreenReport = screen_cases(
             &[case("m1 m2")],
-            (&constant, &|_: &str| Vec::new()),
+            (&constant, &|sql: &str| vec![(0, 2), (3, sql.len())]),
             &ScreenAllowlist {
+                lexical: vec![],
                 allowed: test_case.entries,
             },
+            test_case.full,
         );
         assert_eq!(
             (
                 report.flagged.len(),
                 report.allowed.len(),
-                report.stale.len()
+                report.stale.len(),
+                report.unpinned.len()
             ),
             (
                 test_case.expected_flagged,
                 test_case.expected_allowed,
-                test_case.expected_stale
+                test_case.expected_stale,
+                test_case.expected_unpinned
             ),
             "{}",
             test_case.description
