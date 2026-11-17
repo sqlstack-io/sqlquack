@@ -42,6 +42,18 @@ pub enum LocalFailure {
     NoParser,
 }
 
+impl LocalVerdict {
+    /// A parser's refusal: a resource guard's fails as never a syntax verdict, any other rejects.
+    pub(crate) fn refused(guard: bool) -> Self {
+        match guard {
+            true => Self::Failed {
+                failure: LocalFailure::Guard,
+            },
+            false => Self::Rejected,
+        }
+    }
+}
+
 /// Why an obligation or a form is not satisfied; every failure names one.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[serde(rename_all = "snake_case")]

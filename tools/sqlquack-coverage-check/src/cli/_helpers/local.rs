@@ -35,10 +35,7 @@ fn snowflake_verdict(sql: &str) -> LocalVerdict {
         CallMode::Faithful,
     ) {
         Ok(statements) => accepted(&statements, false),
-        Err(error) if is_guard_error(&error) => LocalVerdict::Failed {
-            failure: LocalFailure::Guard,
-        },
-        Err(_) => LocalVerdict::Rejected,
+        Err(error) => LocalVerdict::refused(is_guard_error(&error)),
     }
 }
 
@@ -46,10 +43,7 @@ fn snowflake_verdict(sql: &str) -> LocalVerdict {
 fn native_verdict(parsed: Result<Parsed, bool>) -> LocalVerdict {
     match parsed {
         Ok(parsed) => accepted(&parsed.statements, !parsed.gaps.is_empty()),
-        Err(true) => LocalVerdict::Failed {
-            failure: LocalFailure::Guard,
-        },
-        Err(false) => LocalVerdict::Rejected,
+        Err(guard) => LocalVerdict::refused(guard),
     }
 }
 

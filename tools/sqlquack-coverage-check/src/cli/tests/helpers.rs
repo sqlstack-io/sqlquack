@@ -10,6 +10,16 @@ pub(crate) fn deep() -> String {
     format!("SELECT {}1{}", "(".repeat(2000), ")".repeat(2000))
 }
 
+/// `SELECT 1 + 1 …` of 1,500 terms, past the chain-length limit of each parser that has one.
+pub(crate) fn chain() -> String {
+    format!("SELECT {}", vec!["1"; 1500].join(" + "))
+}
+
+/// A WHERE of 9,000 `OR` terms, past every native parser's tree limit.
+pub(crate) fn tree() -> String {
+    format!("SELECT 1 WHERE {}", vec!["1 = 1"; 9000].join(" OR "))
+}
+
 /// A compound SELECT of 600 terms, past SQLite's `SQLITE_MAX_COMPOUND_SELECT` of 500.
 pub(crate) fn many_terms() -> String {
     vec!["SELECT 1"; 600].join(" UNION ALL ")

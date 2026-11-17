@@ -64,3 +64,13 @@ pub(crate) fn subjects(lines: &[String]) -> Vec<&str> {
         .map(|line| line.split(':').next().unwrap_or_default())
         .collect()
 }
+
+/// `SELECT` of 1 inside 2,000 parentheses, past every native parser's depth limit.
+pub(crate) fn deep() -> String {
+    format!("SELECT {}1{}", "(".repeat(2000), ")".repeat(2000))
+}
+
+/// A statement every native parser refuses as a syntax error.
+pub(crate) fn syntax_error() -> String {
+    "SELECT (1".to_owned()
+}

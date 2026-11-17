@@ -5,6 +5,7 @@ use sqlquack_semantics::dialects::types::DialectProfile;
 use sqlquack_semantics::lineage::models::{LineageContext, Nullability, SchemaColumn};
 use sqlquack_semantics::lineage::types::LineageSchema;
 use sqlquack_semantics::{statement_lineage, statement_name_findings};
+use sqlquack_syntax::guard::main::is_guard_error::is_guard_error;
 use sqlquack_syntax::{CallMode, Dialect, Expression, ParseOptions};
 
 use crate::check::models::{LocalFailure, LocalVerdict};
@@ -73,23 +74,22 @@ fn parsed(parser: LocalParser, sql: &str) -> Result<Vec<Expression>, LocalVerdic
             &ParseOptions::default(),
             CallMode::Faithful,
         )
-        .map_err(|error| match error {
-            sqlquack_syntax::Error::Parse { message, .. } if message.starts_with("E_GUARD_") => {
-                LocalVerdict::Failed {
-                    failure: LocalFailure::Guard,
-                }
-            }
-            _ => LocalVerdict::Rejected,
-        }),
+        .map_err(|error| LocalVerdict::refused(is_guard_error(&error))),
         LocalParser::DuckDb => sqlquack_syntax_duckdb::parse_strict(sql)
             .map(|parsed| parsed.statements)
-            .map_err(|_| LocalVerdict::Rejected),
+            .map_err(|failure| {
+                LocalVerdict::refused(failure.parse_error().is_some_and(|error| error.guard))
+            }),
         LocalParser::Postgres => sqlquack_syntax_postgres::parse_strict(sql)
             .map(|parsed| parsed.statements)
-            .map_err(|_| LocalVerdict::Rejected),
+            .map_err(|failure| {
+                LocalVerdict::refused(failure.parse_error().is_some_and(|error| error.guard))
+            }),
         LocalParser::Sqlite => sqlquack_syntax_sqlite::parse_strict(sql)
             .map(|parsed| parsed.statements)
-            .map_err(|_| LocalVerdict::Rejected),
+            .map_err(|failure| {
+                LocalVerdict::refused(failure.parse_error().is_some_and(|error| error.guard))
+            }),
         LocalParser::BigQuery
         | LocalParser::Databricks
         | LocalParser::SqlServer

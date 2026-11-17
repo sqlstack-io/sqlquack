@@ -2,7 +2,7 @@ use serde_json::Value;
 
 use crate::check::models::{LocalFailure, LocalVerdict};
 use crate::cli::_helpers::local::{local_verdict, postgres_verdict};
-use crate::cli::tests::helpers::{deep, failed, many_terms, syntax_error};
+use crate::cli::tests::helpers::{chain, deep, failed, many_terms, syntax_error, tree};
 use crate::cli::tests::test_types::{NativeVerdictTestCase, PostgresVerdictTestCase};
 use crate::formats::models::LocalParser;
 
@@ -152,6 +152,66 @@ fn given_a_local_parser_when_a_guard_refuses_then_the_verdict_is_a_guard_failure
             parser: LocalParser::SqlServer,
             sql: syntax_error,
             expected_verdict: LocalVerdict::Rejected,
+        },
+        NativeVerdictTestCase {
+            description: "PostgreSQL: a chain past the chain-length limit is a guard failure",
+            parser: LocalParser::Postgres,
+            sql: chain,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "DuckDB: a chain past the chain-length limit is a guard failure",
+            parser: LocalParser::DuckDb,
+            sql: chain,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "SQLite: a chain past the chain-length limit is a guard failure",
+            parser: LocalParser::Sqlite,
+            sql: chain,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "SQL Server: a chain past the chain-length limit is a guard failure",
+            parser: LocalParser::SqlServer,
+            sql: chain,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "PostgreSQL: a tree past the tree limit is a guard failure",
+            parser: LocalParser::Postgres,
+            sql: tree,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "BigQuery: a tree past the tree limit is a guard failure",
+            parser: LocalParser::BigQuery,
+            sql: tree,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "DuckDB: a tree past the tree limit is a guard failure",
+            parser: LocalParser::DuckDb,
+            sql: tree,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "Databricks: a tree past the tree limit is a guard failure",
+            parser: LocalParser::Databricks,
+            sql: tree,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "SQLite: a tree past the tree limit is a guard failure",
+            parser: LocalParser::Sqlite,
+            sql: tree,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "SQL Server: a tree past the tree limit is a guard failure",
+            parser: LocalParser::SqlServer,
+            sql: tree,
+            expected_verdict: failed(LocalFailure::Guard),
         },
         NativeVerdictTestCase {
             description: "SQLite: a compound SELECT past the engine's own term limit is the engine's refusal, not a guard",
