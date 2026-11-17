@@ -1555,3 +1555,20 @@ note = "Re-read after the parser batch at b98f25d91 (parser tree 6546c748), from
 
 [review.definitions]
 "db.ddl.alter-view" = "56fc1c89f9d4baab97b97e987d993d5ae80c4de4091e8a1a1c958ff5da286e11"
+
+[[review]]
+id = "db-ddl-076"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:25:08Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-connection",
+]
+note = "Re-read after the parser batch at 99821e58b (parser tree 6546c748), from the existing 2026.45 receipts and the local trees; the earlier records are unchanged. Form by form: alter-connection: db-ddl-003 still holds. o037's accepted case ALTER v1 OWNER TO v1 still gives an opaque command node, so the form keeps its opaque fallback. Parser fix."
+
+[review.fingerprints]
+"db.ddl.alter-connection" = "19735dd647974642e218f6558b435785c0de59ef7cae1561adfc6bd7a47ad88e"
+
+[review.definitions]
+"db.ddl.alter-connection" = "fe2e1f4ef5f428e259a59f4c6b721e68bf34be8f88ce03d0ad4317804db2273c"
