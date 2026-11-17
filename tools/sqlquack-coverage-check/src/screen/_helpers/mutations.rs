@@ -68,6 +68,7 @@ pub(crate) fn mutations(sql: &str) -> Vec<Mutation> {
                 kind,
                 token: (*token).to_owned(),
                 position,
+                last: position + 1 == tokens.len(),
                 sql: text,
             });
         }

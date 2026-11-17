@@ -25,6 +25,8 @@ pub struct Mutation {
     /// The token as the case wrote it, and its place among the text's tokens.
     pub token: String,
     pub position: usize,
+    /// Whether the token is the text's last.
+    pub last: bool,
     pub sql: String,
 }
 
@@ -61,6 +63,9 @@ pub struct AllowedSameTree {
     pub mutation: MutationKind,
     #[serde(default)]
     pub token: Option<String>,
+    /// Only when the changed token is the text's last, such as the `;` that ends the statement.
+    #[serde(default)]
+    pub last_token: bool,
     pub reason: String,
 }
 

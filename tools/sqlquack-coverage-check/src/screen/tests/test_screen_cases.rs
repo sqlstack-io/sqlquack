@@ -1,7 +1,7 @@
 use serde_json::{Value, json};
 
 use crate::screen::main::screen_cases::screen_cases;
-use crate::screen::models::{MutationKind, ScreenAllowlist, ScreenReport};
+use crate::screen::models::{AllowedSameTree, MutationKind, ScreenAllowlist, ScreenReport};
 use crate::screen::tests::helpers::{FORM, case, databricks_tree, entry};
 use crate::screen::tests::test_types::{AllowlistTestCase, KnownCollapseTestCase};
 
@@ -168,6 +168,16 @@ fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unus
             expected_flagged: 2,
             expected_allowed: 0,
             expected_stale: 1,
+        },
+        AllowlistTestCase {
+            description: "an entry for the last token allows only the last token's drop",
+            entries: vec![AllowedSameTree {
+                last_token: true,
+                ..entry(FORM, MutationKind::Drop, None)
+            }],
+            expected_flagged: 1,
+            expected_allowed: 1,
+            expected_stale: 0,
         },
         AllowlistTestCase {
             description: "an entry for a form not screened is never stale",

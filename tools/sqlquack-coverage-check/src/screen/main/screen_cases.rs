@@ -16,6 +16,7 @@ fn allows(entry: &AllowedSameTree, found: &SameTree) -> bool {
             .token
             .as_ref()
             .is_none_or(|token| *token == found.mutation.token)
+        && (!entry.last_token || found.mutation.last)
 }
 
 /// Parses each case and its variants with `tree`, which gives none for a refused text.

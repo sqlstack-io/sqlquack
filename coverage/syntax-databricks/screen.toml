@@ -1,11 +1,13 @@
 # Same-tree variants the tree screen (syntax-coverage screen) accepts, each with why the two texts
-# are no collapse. Every other accepted variant that changes one token (drop, TEMP/TEMPORARY, quote,
+# are no collapse. An entry covers only text the grammar reads as carrying no syntax: a name or
+# keyword the grammar parses stays in the tree. Every other accepted variant that changes one token (drop, TEMP/TEMPORARY, quote,
 # unquote, backquote) and parses to the same tree blocks a form's approval.
 #
 # [[allowed]]
 # form = "<form id>"
 # mutation = "drop | swap | backquote | string | unquote"
 # token = "<the token as the case writes it>"   # optional: only this token
+# last_token = true                              # optional: only when it is the text's last token
 # reason = "<why the grammar treats the two texts the same>"
 
 [[allowed]]
@@ -24,12 +26,21 @@ mutation = "string"
 reason = "the changed token is inside a /* ... */ comment, whose text the grammar never reads; the tree keeps no comment text"
 
 [[allowed]]
-form = "db.query.select-hints.join-hint-alias"
-mutation = "backquote"
-reason = "a hint is a comment the warehouse reads as hint text: a backquoted hint name or relation inside /*+ ... */ is no identifier the statement's grammar parses, so the statement's tree is the same"
+form = "db.query.select-hints"
+mutation = "drop"
+token = ","
+reason = "the comma between hints is optional: Spark's grammar reads a hint as HENT_START hintStatement (COMMA? hintStatement)* HENT_END, so hints written with and without it are the same list"
+
+[[allowed]]
+form = "db.transaction_session.begin-atomic"
+mutation = "drop"
+token = ";"
+last_token = true
+reason = "the ; after the closing END ends the whole statement and is no part of it; a ; inside the body is required (compoundBody: (compoundStatement SEMICOLON)*) and is not covered"
 
 [[allowed]]
 form = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax"
 mutation = "drop"
 token = ";"
+last_token = true
 reason = "a trailing ; ends the statement and is no part of it; the text with and without it is the same statement"

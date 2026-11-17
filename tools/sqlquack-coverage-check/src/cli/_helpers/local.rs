@@ -141,8 +141,8 @@ pub(crate) fn local_statements(parser: LocalParser) -> Option<Statements> {
                     &ParseOptions::default(),
                     CallMode::Faithful,
                 ) {
-                    Ok(statements) => Some(statements),
-                    Err(_) => None,
+                    Ok(statements) if !statements.is_empty() => Some(statements),
+                    Ok(_) | Err(_) => None,
                 }
             })
         }
