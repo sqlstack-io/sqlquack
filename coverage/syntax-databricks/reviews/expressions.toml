@@ -785,3 +785,76 @@ note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evid
 "db.expressions.decimal-type.bd" = "45f325e88a727aa900305955ec2faa026fdc8aaf5f16f7bf3467dc158da8ef86"
 "db.expressions.decimal-type.subscript" = "d0442ec9c717f778177e0089da13fcb6e6a6822587ec8c7e8dcfafb3ebf6ee56"
 "db.expressions.timestamp-type.timestamp-ltz" = "eb75a41f925abdc2952cd1aec6fca3f1772de8afb6fab78f4c2c8d16ee6385b9"
+
+[[review]]
+id = "db-expressions-039"
+family = "expressions"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.expressions.decimal-type",
+  "db.expressions.expression",
+  "db.expressions.names.identifier",
+  "db.expressions.names.identifier-2",
+  "db.expressions.names.identifier-7",
+  "db.expressions.names.subscript-dot.syntax",
+  "db.expressions.names.syntax",
+  "db.expressions.null-type",
+  "db.expressions.time-type.time.syntax",
+  "db.expressions.timestamp-ntz-type.timestamp-ntz",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.expressions.decimal-type" = "5245d68cf68d5ca2074d9f9b1528412a7e9c9daa6f69c30392b195394da24621"
+"db.expressions.expression" = "d0f48ce2240a47f0612ca121e1c9f6904a9323d4abf7e0d19fe9bbf1ad77b069"
+"db.expressions.names.identifier" = "ac7525859a87aad36feceae9685e098b921122e6cbc01baff535eb7ee14c1309"
+"db.expressions.names.identifier-2" = "28ac6725404f471c537687829c9800d6fe99a69ded606c3a893584b359527d14"
+"db.expressions.names.identifier-7" = "425a2e188af18f4a1b1c813ea5c53eb284807701827d3c323fcfc692d1684f16"
+"db.expressions.names.subscript-dot.syntax" = "1889b334147e0ee12606b04b4d5bd22bd04caddf79f1c6ead270dbf3ba361381"
+"db.expressions.names.syntax" = "57c4e9e2f95e068046d5c9ed028d93c4001800fe040b40fee2f901011852cd5e"
+"db.expressions.null-type" = "04cc77910cdd3ad2696dcdab72e301a070595a323be12f53f17cb32ec56d17ec"
+"db.expressions.time-type.time.syntax" = "70e072fd1ab2bc408791acdf0df870c244d35f7f85d27a3ed69402a493200fca"
+"db.expressions.timestamp-ntz-type.timestamp-ntz" = "30f01270f56d5e19c15b8482db94a3dc3cf00ad648a0f41e43d5db5cba0de3a8"
+
+[review.definitions]
+"db.expressions.decimal-type" = "3a3e4ead1b44bc5736883f65671ba4cf7e9a852bcb29a92c365dd8e59a5c8b1c"
+"db.expressions.expression" = "c071610c126a1a9d7528c7e1e96d400e05cd20ac72018089482abaab5bad4852"
+"db.expressions.names.identifier" = "121f195fca0604ea4265a47b6fa366ce4157970edaa0be1600f5652ee72917b9"
+"db.expressions.names.identifier-2" = "ddec66de9ded585f47ccf7e934add2c314746c0173bdd07eefb8a67a3b64ecad"
+"db.expressions.names.identifier-7" = "264c5f0c2ab748e5c9b7aaa40147b2d994c173cdeb46961b04be26fa6edb1446"
+"db.expressions.names.subscript-dot.syntax" = "d9228a23fd108d427cc2ace0e91fc1b679f83dcc031932f32570b077251ce0b1"
+"db.expressions.names.syntax" = "7bf76f01ab15f18677c226018804c6f70d9c1bc6e2e768236d64bbf6a2c717e6"
+"db.expressions.null-type" = "df2ea479f849a9f9be7c60c1f2a25b68ed7f04689e41e958a78d120c63c48205"
+"db.expressions.time-type.time.syntax" = "37c1c12ba7eec330dcfc1a2eb52401560879c1e2145441a6c5ba63df15c5e087"
+"db.expressions.timestamp-ntz-type.timestamp-ntz" = "15e05b5f20d436724a5d8560590c91a5c2306ac1321ef92a377eef5fd5ad0c5a"
+
+[[review]]
+id = "db-expressions-040"
+family = "expressions"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.geography-type",
+  "db.expressions.geometry-type",
+  "db.expressions.identifiers.subscript-dot",
+  "db.expressions.names.subscript-dot-4",
+  "db.expressions.string-type.subscript-dot",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: geography-type: db-expressions-007's finding still holds: CAST ( NULL AS GEOGRAPHY ( ANY ) ) gives {data_type: geography} with no mark for ANY; only the absent srid stands for it. No accepted text collides today (bare GEOGRAPHY is refused on both sides), but the written keyword is not kept. Parser fix. geometry-type: db-expressions-008's finding still holds: CAST ( NULL AS GEOMETRY ( ANY ) ) gives {data_type: geometry} with no mark for ANY. Parser fix, as for geography-type. identifiers.subscript-dot: db-expressions-009's finding still holds: o004, the alternative '_', is still SELECT ( '_' ), a string literal rather than an identifier containing an underscore (o007 now uses v_1, which is right). Obligation and case fix; the new case needs a receipt. names.subscript-dot-4: New in this re-read: the volume name in DESCRIBE VOLUME `SELECT` . v1 is one identifier whose name is the text `SELECT`.v1, backquotes included, so its parts and their quoting are not kept. db-expressions-018's case finding is answered (the cases now name volumes). Parser fix. string-type.subscript-dot: db-expressions-022's (d) finding still holds: 'c' 'c' gives one literal \"cc\", the same tree as 'cc'. Its (a) finding is answered by the [[reading]] row. Parser fix (keep adjacent string literals apart or mark the concatenation)."
+
+[review.fingerprints]
+"db.expressions.geography-type" = "6f09a793793d90e456b9c6fecf81d7776ffb37a2e84bdb53d672aa4049a43297"
+"db.expressions.geometry-type" = "164baf1d344c94a8eee60787ea8c5ecf960c8fb3785697a98861a4dc56a17100"
+"db.expressions.identifiers.subscript-dot" = "ecc9d4264c5114c7b4e76b06ac2f27916339aa3abaa586cf0f0c97ef0b667e6b"
+"db.expressions.names.subscript-dot-4" = "227e2cbee485c799755dac2dee441967770dee6f533d68e60dd36d4e52ffec65"
+"db.expressions.string-type.subscript-dot" = "f8bd468f1c524b7dbfd2e2be3846b040b88e688d5a855ce816dfcbdc013e04fe"
+
+[review.definitions]
+"db.expressions.geography-type" = "2c23e30498830495c2b78307067f752a2480c5b79ec25c87dae63e4f359f9c03"
+"db.expressions.geometry-type" = "f94e39103c70f6ef2c37a7d156a9ee2094ec892bcf09fff5896f278d04950784"
+"db.expressions.identifiers.subscript-dot" = "dc23d04ece0e0b486ae15f83f55ebe51dcf6d3ede358cac71986fc1910e85d3e"
+"db.expressions.names.subscript-dot-4" = "fa451d49a6b82678c24014646569df70b3f38cb5ce8fe939bdc888fd4d733a40"
+"db.expressions.string-type.subscript-dot" = "6e0e70498e32940a8ecb5d77d0d34cfc3c73896223f0d392bac3582b9b4442b9"

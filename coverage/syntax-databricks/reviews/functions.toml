@@ -6036,3 +6036,106 @@ note = "Re-read on 17 Nov 2026 at 67a98c60d against the 2026.45 receipts in evid
 
 [review.definitions]
 "db.functions.colonsign" = "0f9546134feb15b17cd7da450b327c87ca50cac63faa69bc53164d398c50ec94"
+
+[[review]]
+id = "db-functions-069"
+family = "functions"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.functions.cloud-files-state",
+  "db.functions.data-skipping-summary",
+  "db.functions.date-diff",
+  "db.functions.event-log",
+  "db.functions.localtimestamp",
+  "db.functions.map",
+  "db.functions.named-struct",
+  "db.functions.regexp-extract",
+  "db.functions.remote-query",
+  "db.functions.split",
+  "db.functions.sum",
+  "db.functions.time-diff",
+  "db.functions.try-variant-get",
+  "db.functions.vector-search.query-num-results",
+  "db.functions.vector-search.query-text-query-vector",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.functions.cloud-files-state" = "172e8a0de1ec3012599c6a759e2d60895a9443b82c36df3ddceba93f4bbb50a5"
+"db.functions.data-skipping-summary" = "5fb77f57bfae2d9ce9f101ef769602ecd72a912f148ce12f68281497d6d4a378"
+"db.functions.date-diff" = "d32170ca3003432e96457657f8ffe7a8aa36217f9db50f06406753053a4f80b0"
+"db.functions.event-log" = "d1c2bbbba1fcf2b1c5e77e216aed300ecb8ae3b756285de144f467fd189ef9d3"
+"db.functions.localtimestamp" = "e115934f2947f4b81cec13e6b73a49516f94f0cc908187c9036c27b83255105d"
+"db.functions.map" = "74cf90bbdc2e2ca1f698981394267e9ab2487db85b95567009466c33c29cce08"
+"db.functions.named-struct" = "a98c5a30305f86c6b7ae4ba8088315d5f33b3b8a79b052332a279d965ab4aa0c"
+"db.functions.regexp-extract" = "c5caba41d52255a15f22b8adc22ad2d2ee59d9af61d81522c4fee01f0437dc1a"
+"db.functions.remote-query" = "a278e5b3005dbfb9f2918e69ea864e8c7cbf0d0dc58bc31c89c374650c537e06"
+"db.functions.split" = "17e2f15625c8c17ac99ff6ebd45ad3a3ff7934345c8b402d5f08a7119437fbb1"
+"db.functions.sum" = "04db0c054e5698eb1fdd6372eb75b18e70f73b526e57efa45e91e15566c686a9"
+"db.functions.time-diff" = "1fe1bf706505fbda859f0560f5df29bef26a71287ff3daeed7a85231ede17df7"
+"db.functions.try-variant-get" = "db278e9293f6e9098d0e662087b984014fac376a61225df06e4720b199fe2217"
+"db.functions.vector-search.query-num-results" = "110877b78df721ab93550dd1a5c8ebb6bda467f2e31342b86a6cb5015ecfe1f0"
+"db.functions.vector-search.query-text-query-vector" = "e8219c28269475575eae351fbd48cc8be5695232afc4d701b024f712552dbf29"
+
+[review.definitions]
+"db.functions.cloud-files-state" = "82517a5b7f0518cd5bd75342790491b5dce5c11bc8a4d04952d011148e876470"
+"db.functions.data-skipping-summary" = "aa325efa950be0c51ebe74f0fc3d1f46efaf68bab07d7bc73b5ebea7f3e6abf1"
+"db.functions.date-diff" = "64f69e10569e01a564af34cf20ada8ad777028801331c4229dce8f5f87e63a9b"
+"db.functions.event-log" = "b97849444997b460ce0f088f02a46d1b96b2175bc7120d75ea3896cd52fc24b4"
+"db.functions.localtimestamp" = "b7f0f08a1e79893846d19792e72dfa5393c21ca58f0ccb2667f20e5ac5e61eaf"
+"db.functions.map" = "aea6610fc6ec8718825048c333c74045de8cf401779bb9b2547b1017ad01b3ee"
+"db.functions.named-struct" = "fe54015099f0c2808c80378d99935838de9883f0296533c26ab961d5c9ddf399"
+"db.functions.regexp-extract" = "42a3145b7f8723deb57667ae5ff302686a1e677198f021a2221a3bd4f2cd710f"
+"db.functions.remote-query" = "414a5ea7087efa5adcaa198f3c1afacdda40ef34ec6474218f1bd079e2867602"
+"db.functions.split" = "ddc09988798ebbdfd9805e22911b78cbef3fb61f23b64caf958b2ec46a25978e"
+"db.functions.sum" = "9e160590ff87d60cce638853439da1f7e1e508d10f0863b53ef0b9cb8d062824"
+"db.functions.time-diff" = "ea9c5f50c37855afc5f29ea3ae0a9a408d878f66478e30716edea269e566e58a"
+"db.functions.try-variant-get" = "0f20d2901cb8e77d3fd144497f1a2955ea4314558453257f9ae19dee30eecdea"
+"db.functions.vector-search.query-num-results" = "6850f90fea9c5a9f29d257b010424285cf8bbb5a773ecdbb43bb6b0b5cdef5d8"
+"db.functions.vector-search.query-text-query-vector" = "6391c5276a3e0578cb4bdca3d2ff513a87600ab8160e5a0d218c882c5b632355"
+
+[[review]]
+id = "db-functions-070"
+family = "functions"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.current-timestamp",
+  "db.functions.date-add3",
+  "db.functions.dateadd",
+  "db.functions.datediff3",
+  "db.functions.extract",
+  "db.functions.http-request",
+  "db.functions.read-kafka",
+  "db.functions.timediff",
+  "db.functions.timestampadd",
+  "db.functions.timestampdiff",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: current-timestamp: db-functions-006's finding still holds: the catalogue writes CURRENT_TIMESTAMP [ ( [ <precision> ] ) ] while the page writes current_timestamp( [ precision ] ), and no [[reading]] row states the optional parentheses. Catalogue or reading fix; no recording needed. date-add3: db-functions-008's (d) finding is answered (a bare unit is now a keyword var, not a string literal), but its (b) finding still holds: o008, SELECT ( DATE_ADD 1 , 1 , 1 ), drops the unit as well as the parenthesis, so it does not isolate the missing (. Needs a new negative case and its receipt. dateadd: As date-add3: the unit is now a keyword var, but o008, SELECT ( DATEADD 1 , 1 , 1 ), still drops the unit with the parenthesis. Needs a new negative case and its receipt. datediff3: As date-add3: the unit is now a keyword var, but o008, SELECT ( DATEDIFF 1 , 1 , 1 ), still drops the unit with the parenthesis. Needs a new negative case and its receipt. extract: db-functions-012's finding still holds: o006, SELECT ( EXTRACT 1 FROM v1 ), replaces the field keyword as well as dropping the parenthesis, so it does not isolate the missing (. Needs a new negative case and its receipt. http-request: db-functions-013's finding still holds: the page writes } [, ..] ) and the catalogue } [ , ... ] ), with no [[reading]] row stating the change. Reading fix; no recording needed. read-kafka: db-functions-018's finding still holds: o007 (option_absent [ , ... ]) is still READ_KAFKA ( ), which drops the first pair too; no case has exactly one option. Needs a new case such as READ_KAFKA ( k1 => 'v' ) and its receipt. timediff: As date-add3: the unit is now a keyword var, but o008, SELECT ( TIMEDIFF 1 , 1 , 1 ), still drops the unit with the parenthesis. Needs a new negative case and its receipt. timestampadd: As date-add3: the unit is now a keyword var, but o008, SELECT ( TIMESTAMPADD 1 , 1 , 1 ), still drops the unit with the parenthesis. Needs a new negative case and its receipt. timestampdiff: As date-add3: the unit is now a keyword var, but o008, SELECT ( TIMESTAMPDIFF 1 , 1 , 1 ), still drops the unit with the parenthesis. Needs a new negative case and its receipt."
+
+[review.fingerprints]
+"db.functions.current-timestamp" = "a204a76594733a68f04c98d0238b84e3259cc27dc0ed23fb926333a3a1ea5234"
+"db.functions.date-add3" = "12b878a04c04fcadac2f5899991ad92371c80bdccb8e91515362091c961a4d3c"
+"db.functions.dateadd" = "00c81c0ce3e20892430cb4ea6d0705a079a1c1f714c22076ccfa2602a29570a4"
+"db.functions.datediff3" = "36566ffdab49a0358c3413c295830c85dcadc1b692b51a58005c61db62f00b88"
+"db.functions.extract" = "e1033541f833e947a67ea072e4d62eebb40d59ff0d145ece892bf729b52fc4ab"
+"db.functions.http-request" = "b19b924c6d3b4a3d914a50da9680f0160891b4abf4d36e29f0e8ca0598fa4cbc"
+"db.functions.read-kafka" = "f6e0de72b8a26e18653311f5b34b98b169d1a46ff30b015de03ed29c1e0bfcc7"
+"db.functions.timediff" = "37ebce2a646d2b98ad2b100efca343453fbdb5b439409fad85b66fbdde5cc4cc"
+"db.functions.timestampadd" = "225c8e994be0e45555e6860caa661df7a77816319e84e16c0cf919a8b7095828"
+"db.functions.timestampdiff" = "a50af0879af9ebea2a6eba041b9afd2c801709e640cf0f93fd4497fb75856119"
+
+[review.definitions]
+"db.functions.current-timestamp" = "374f0ee3d52ef1ea1476c3f707942fcad5c526faf88758c7c94566fef3a62252"
+"db.functions.date-add3" = "0f32fdb3030a9e0bcabd56f3239e0474881d1269636e75472868750a13a0bd49"
+"db.functions.dateadd" = "8ee356755860f1b2c19365f708cda159cf23ac3170ddd4b2b697781f872585bc"
+"db.functions.datediff3" = "fb9025b09ecea9e0b0fe9df3f0fa8a3a17d15751b011c00f2372c06420bef74b"
+"db.functions.extract" = "71d25575030065e09305b099545ac41f8380400ef0f7949117c1d6828e6b320a"
+"db.functions.http-request" = "b1ca217798d1a061a18b5a116ad292177c1928e53b6ed255d5f256c2517cb729"
+"db.functions.read-kafka" = "cf08078fb01874d3b10b7b879a4ee7910ac14f2f3fa862d2dc023de9d80e9f3e"
+"db.functions.timediff" = "afbcf632754ec9ea7298617106693d90cc461419337c534e9761358923dbc00e"
+"db.functions.timestampadd" = "203c49d2f7f7a646ff9c2d3a3bc97ddf484c7d3c8f4bf9464ccba6304e1d9ce6"
+"db.functions.timestampdiff" = "c120fa42d48c27d8bcfdfc365d12c161a8a0b0de1e40ad0b0e931c55e866287e"

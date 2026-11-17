@@ -1384,3 +1384,76 @@ note = "Holds this form after the parser commit at 0f34dd46f, which answers db-d
 
 [review.definitions]
 "db.ddl.tblproperties.unset-tblproperties" = "408768c265877074fb6c5c876fdbc7c2d4cf8378edb13ec137000bb5ce51d6a8"
+
+[[review]]
+id = "db-ddl-070"
+family = "ddl"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-materialized-view.materialized-view-add-alter",
+  "db.ddl.alter-streaming-table.streaming-table-add-alter",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask",
+  "db.ddl.clone.clone-source-temporal",
+  "db.ddl.column-mask",
+  "db.ddl.create-location",
+  "db.ddl.create-materialized-view-refresh-policy",
+  "db.ddl.create-policy",
+  "db.ddl.create-procedure",
+  "db.ddl.create-streaming-table-auto-cdc",
+  "db.ddl.create-table-constraint.references",
+  "db.ddl.create-table-using",
+  "db.ddl.refresh-full",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.ddl.alter-materialized-view.materialized-view-add-alter" = "a5cdb00b171b3e4c6c8c2918d0c28500d3161e9a3ffac4e54b5945763e6720b3"
+"db.ddl.alter-streaming-table.streaming-table-add-alter" = "f8c4ca4caf33102dc1ecc2ac78796f34b9175f69cc46efa991c20e96249f9fcf"
+"db.ddl.alter-table-manage-column.alter-change-set-mask" = "c7891289e79be30a7772ab0b8173808d27fa4a57dbfe1d419794a89e2f2bafe9"
+"db.ddl.clone.clone-source-temporal" = "6799e0b7070afba6ab579e53f9732d9febdfc4536949613083a087504d8b6c2c"
+"db.ddl.column-mask" = "402e045f55be76476fac3759a2c7d4a24922c6203f62931d1e8adec3b8848da4"
+"db.ddl.create-location" = "5b2f3736cbe72722104186045111e06a0aee01500d968165f8d1c2663b091650"
+"db.ddl.create-materialized-view-refresh-policy" = "7c2ef63eb04a7a38ce116ff64dd69b7a8fcfd41710fbdf3e6468503972c0aa19"
+"db.ddl.create-policy" = "a5d4899f907ae8aee8ea6349bdea9e5bf586decb72781e41da90eee1b43b5966"
+"db.ddl.create-procedure" = "08592d63007288934f82138f0b5a0b6c0e218b30d8abda4da58227b44cc919dc"
+"db.ddl.create-streaming-table-auto-cdc" = "c352961c44f045686c92141004b6b0650481d56e7bd271393d2f3a37afdc124f"
+"db.ddl.create-table-constraint.references" = "aa718a5187a88366bdc0a8a0863fe5d973f19324b4f16bfd5607ebf7723b2751"
+"db.ddl.create-table-using" = "dd3f44c727738173695bf68b510cd3d7e6099b14072ba41e9d5d383e13cd0293"
+"db.ddl.refresh-full" = "7151791fefba991e297ff0470d9e4e6c4e72394f504520de3d5b4b65a9cd249c"
+
+[review.definitions]
+"db.ddl.alter-materialized-view.materialized-view-add-alter" = "f460337c72c002c789481804c0cb90ca274b5c8715d35b76b0dc4667f5590c8d"
+"db.ddl.alter-streaming-table.streaming-table-add-alter" = "c515f90d96ce7d610762905dfecc52608ed0f5e73a21b15a706bd0392e8b85ee"
+"db.ddl.alter-table-manage-column.alter-change-set-mask" = "77bb212a48096a6ba7611960078271210158595f03ac44f55e28252b2185c5f1"
+"db.ddl.clone.clone-source-temporal" = "22d30339f40b6217220797c32c6ae547b4868e18bdc60cf97d5f52f82409d3e6"
+"db.ddl.column-mask" = "854be88662e862c58eada96231665f47507a43098ef051f085926072971e9e81"
+"db.ddl.create-location" = "71b2ad21cbb86e53d59d420973789b820e702122b8bd3a1fd60a6fb7723cab82"
+"db.ddl.create-materialized-view-refresh-policy" = "eda5fa518d73158371067948830c613863ad027c2298ea350798caf6f608e80e"
+"db.ddl.create-policy" = "c65499650c1ad2b83acf8580fcc9a2e172a050519e1af059e1065349a17d98b9"
+"db.ddl.create-procedure" = "6b164f03bc9625c737708a7be5f66e7f0dc15bdc6f0bc8208b8cd176f6edc070"
+"db.ddl.create-streaming-table-auto-cdc" = "156ef5145efe97ef5237f15c0a7e144a6300bbb9044fe7883f8a7a67d0793169"
+"db.ddl.create-table-constraint.references" = "f6472fe96d4fe0ace03669ba0e60a80176d2419b6892193d28dc90e567b29b41"
+"db.ddl.create-table-using" = "e1dd34b4831737cb839c53ce56fdc73fe0a89b019a56f360bdb02905caa36e71"
+"db.ddl.refresh-full" = "e68fd175fd389743ce49b89bc04df37eca1ef88bf6f2129b9901f3c4a2a60ef9"
+
+[[review]]
+id = "db-ddl-071"
+family = "ddl"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-recipient",
+  "db.ddl.create-sql-function",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: alter-recipient: db-ddl-005's finding still holds: SET PROPERTIES ( v1 'v' ) and ( v1 = 'v' ) give the same eq node, so a written and an omitted optional = leave no mark. Parser fix (keep whether = was written). create-sql-function: db-ddl-033's tree finding still holds: RETURNS TABLE ( c1 INT , c2 INT ) is kept only as the raw string returns_table_body, not as columns. New in this re-read: TEMPORARY and TEMP give the same tree (the spelling probe swaps them in 6 accepted cases, e.g. CREATE OR REPLACE TEMPORARY FUNCTION abs ...). Parser fix for both."
+
+[review.fingerprints]
+"db.ddl.alter-recipient" = "e08b63104a2101dc5caaab6fdc0a2a983c9b091610efe830a8b61f9eabf1aed3"
+"db.ddl.create-sql-function" = "5be501cf5b93746fde993934a95640a77f6004ecdd504a466fda43849a110341"
+
+[review.definitions]
+"db.ddl.alter-recipient" = "5ee0078712bd30844a58d578c337613cbc92dd08b65fdd024f79645f9214ae81"
+"db.ddl.create-sql-function" = "d2f16ee0e1dea784ade8149bb0e7c7710be4a58c9f8cd3564545213da67b0687"
