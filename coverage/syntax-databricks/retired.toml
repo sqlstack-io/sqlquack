@@ -2713,3 +2713,84 @@ ids = [
   "db.expressions.decfloat-type.o003",
   "db.expressions.decfloat-type.o005",
 ]
+
+[[retired]]
+retired_in = "089f3b2632bb5e374219481b2d258ecde766783f"
+reason = "a clause-order interaction written with one free-text target, which an interaction cannot hold: each is issued again as an interaction whose pair is the two clauses the page names, ROW FORMAT and the bare STORED AS being the two alternatives of the line's required choice, and keeps its recorded SQL"
+ids = [
+  "db.ddl.create-table-hiveformat.o244",
+  "db.ddl.create-table-hiveformat.o245",
+  "db.ddl.create-table-hiveformat.o246",
+  "db.ddl.create-table-hiveformat.o247",
+  "db.ddl.create-table-hiveformat.o248",
+  "db.ddl.create-table-hiveformat.o249",
+  "db.ddl.create-table-hiveformat.o250",
+  "db.ddl.create-table-hiveformat.o251",
+  "db.ddl.create-table-hiveformat.o252",
+]
+
+[[retired]]
+retired_in = "089f3b2632bb5e374219481b2d258ecde766783f"
+reason = "an interaction with one target that its page's Syntax block does not write: OVER on SUM and STRING_AGG is named only in the pages' prose, and the comma before GROUPING SETS is not part of the Hive form, so there is no pair of the line's options or alternatives to observe, and the obligation is withdrawn rather than given an invented second target"
+ids = [
+  "db.functions.string-agg.o061",
+  "db.functions.sum.o018",
+  "db.query.select-groupby.hive-grouping-sets.o015",
+]
+
+[[retired]]
+retired_in = "7de4580ad2fc119bda0ebd3f5ae499dc0f10d3c7"
+reason = "the null type read in type position as VOID: the NULL and VOID expression alternatives (a bare NULL is the null literal, a bare VOID a column) no longer exist, and the observed VOID cast is the form's positive case"
+ids = [
+  "db.expressions.null-type.o002",
+  "db.expressions.null-type.o003",
+  "db.expressions.null-type.o004",
+]
+
+[[retired]]
+retired_in = "24d36f8c3115b047c3c339d5b554c82beb5122d2"
+reason = "LOCALTIMESTAMP read with its written parentheses: the warehouse resolves the bare word as a column, so the optional-parentheses obligations and the neighbour derived from them no longer exist; the bare form is an observed limit"
+ids = [
+  "db.functions.localtimestamp.o007",
+  "db.functions.localtimestamp.o008",
+  "db.functions.localtimestamp.o009",
+]
+
+[[retired]]
+retired_in = "7058798904fd13aac164833c0f327bda70b4a691"
+reason = "REMOTE_QUERY's connectorOptionKey read as the placeholder <connector_option_key> rather than a keyword: the optional pair's obligations are derived again under the placeholder's targets with the same SQL"
+ids = [
+  "db.functions.remote-query.o003",
+  "db.functions.remote-query.o004",
+  "db.functions.remote-query.o005",
+  "db.functions.remote-query.o006",
+  "db.functions.remote-query.o008",
+]
+
+[[retired]]
+retired_in = "449b03100abb17a8d9b949a79028725ef9ba0af1"
+reason = "REMOTE_QUERY's option key observations retargeted from the keyword connectorOptionKey, which the reading no longer writes, to the placeholder <connector_option_key>; issued again with the same recorded SQL"
+ids = [
+  "db.functions.remote-query.o014",
+  "db.functions.remote-query.o015",
+]
+
+[[retired]]
+retired_in = "e4af94629313bbb9aec8848c88ecfc8d8bbff8c1"
+reason = "SET MASK, SET TAGS and UNSET TAGS read with a column only, since the warehouse refuses a nested field before them while parsing; the field alternative moves into DROP MASK alone, so the obligations derived from the old choice are issued again under the new grammar and the field forms of the other clauses become observed limits"
+ids = [
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o023",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o024",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o027",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o029",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o031",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o038",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o039",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o040",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o041",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o042",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o043",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o046",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o047",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o050",
+]

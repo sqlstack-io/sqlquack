@@ -7036,16 +7036,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o038"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o059"
 kind = "alternative"
 required = true
-target = "{ { ALTER | CHANGE } [ COLUMN ] { <column_identifier> |… → { ALTER | CHANGE } [ COLUMN ] { <column_identifier> | <field_name> } { SET { MASK <mask_clause> } | DROP MASK }"
+target = "{ { ALTER | CHANGE } [ COLUMN ] { <column_identifier> SET {… → { ALTER | CHANGE } [ COLUMN ] { <column_identifier> SET { MASK <mask_clause> } | { <column_identifier> | <field_name> } DROP MASK }"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o039"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o060"
 kind = "alternative"
 required = true
-target = "{ { ALTER | CHANGE } [ COLUMN ] { <column_identifier> |… → ALTER COLUMN { <column_identifier> | <field_name> } { SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> }"
+target = "{ { ALTER | CHANGE } [ COLUMN ] { <column_identifier> SET {… → ALTER COLUMN <column_identifier> { SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> }"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o002"
@@ -7072,16 +7072,23 @@ required = true
 target = "[ COLUMN ]"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o006"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o061"
 kind = "alternative"
 required = true
-target = "{ <column_identifier> | <field_name> } → <column_identifier>"
+target = "{ <column_identifier> SET { MASK <mask_clause> } | {… → <column_identifier> SET { MASK <mask_clause> }"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o007"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o062"
 kind = "alternative"
 required = true
-target = "{ <column_identifier> | <field_name> } → <field_name>"
+target = "{ <column_identifier> SET { MASK <mask_clause> } | {… → { <column_identifier> | <field_name> } DROP MASK"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o063"
+kind = "required_operand_missing"
+required = true
+target = "<column_identifier>"
+note = "omit <column_identifier>"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o008"
@@ -7096,32 +7103,6 @@ kind = "negative_neighbour"
 required = true
 target = "<column_identifier>"
 note = "a string literal in place of <column_identifier>"
-
-[[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o010"
-kind = "operand_type_class"
-required = true
-target = "<field_name>"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o011"
-kind = "negative_neighbour"
-required = true
-target = "<field_name>"
-note = "a string literal in place of <field_name>"
-
-[[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o040"
-kind = "alternative"
-required = true
-target = "{ SET { MASK <mask_clause> } | DROP MASK } → SET { MASK <mask_clause> }"
-
-[[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o041"
-kind = "alternative"
-required = true
-target = "{ SET { MASK <mask_clause> } | DROP MASK } → DROP MASK"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o016"
@@ -7144,16 +7125,16 @@ target = "<mask_clause>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o042"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o006"
 kind = "alternative"
 required = true
-target = "{ <column_identifier> | <field_name> } → <column_identifier> #2"
+target = "{ <column_identifier> | <field_name> } → <column_identifier>"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o043"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o007"
 kind = "alternative"
 required = true
-target = "{ <column_identifier> | <field_name> } → <field_name> #2"
+target = "{ <column_identifier> | <field_name> } → <field_name>"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o044"
@@ -7170,18 +7151,39 @@ target = "<column_identifier> #2"
 note = "a string literal in place of <column_identifier>"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o046"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o010"
 kind = "operand_type_class"
 required = true
-target = "<field_name> #2"
+target = "<field_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o047"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o011"
 kind = "negative_neighbour"
 required = true
-target = "<field_name> #2"
+target = "<field_name>"
 note = "a string literal in place of <field_name>"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o064"
+kind = "required_operand_missing"
+required = true
+target = "<column_identifier> #3"
+note = "omit <column_identifier>"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o065"
+kind = "operand_type_class"
+required = true
+target = "<column_identifier> #3"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o066"
+kind = "negative_neighbour"
+required = true
+target = "<column_identifier> #3"
+note = "a string literal in place of <column_identifier>"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o048"
@@ -7224,16 +7226,10 @@ target = "<unset_tags_clause>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o023"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o067"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <column_identifier> | <field_name> }"
-
-[[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SET after <field_name>"
+note = "the form without its required SET"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o025"
@@ -7248,10 +7244,10 @@ required = true
 note = "the form without its required { MASK <mask_clause> }"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o027"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o068"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required DROP after <field_name>"
+note = "the form without its required DROP"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o028"
@@ -7260,10 +7256,10 @@ required = true
 note = "the form without its required MASK"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o050"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o069"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { SET { MASK <mask_clause> } | DROP MASK }"
+note = "the form without its required { <column_identifier> SET { MASK <mask_clause> } | { <column_identifier> | <field_name> } DROP MASK }"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o051"
@@ -7272,10 +7268,10 @@ required = true
 note = "the form without its required ALTER after "
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o029"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o070"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required SET after <field_name> #2"
+note = "the form without its required SET after <column_identifier>"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o030"
@@ -7284,10 +7280,10 @@ required = true
 note = "the form without its required TAGS"
 
 [[obligation]]
-id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o031"
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o071"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required UNSET after <field_name>"
+note = "the form without its required UNSET after <column_identifier>"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o032"
@@ -7332,6 +7328,30 @@ required = true
 target = "<field_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o072"
+kind = "alternative"
+required = true
+target = "<field_name> SET MASK"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+note = "a nested field before SET MASK, which the warehouse refuses"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o073"
+kind = "alternative"
+required = true
+target = "<field_name> SET TAGS"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+note = "a nested field before SET TAGS, which the warehouse refuses"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o074"
+kind = "alternative"
+required = true
+target = "<field_name> UNSET TAGS"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+note = "a nested field before UNSET TAGS, which the warehouse refuses"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o055"
@@ -19877,18 +19897,24 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "PARTITIONED BY before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o244"
+id = "db.ddl.create-table-hiveformat.o253"
 kind = "interaction"
 required = true
-target = "COMMENT and ROW FORMAT in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o011",
+  "db.ddl.create-table-hiveformat.o209",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "ROW FORMAT before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o245"
+id = "db.ddl.create-table-hiveformat.o254"
 kind = "interaction"
 required = true
-target = "COMMENT and STORED AS in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o011",
+  "db.ddl.create-table-hiveformat.o210",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "STORED AS before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
@@ -19915,18 +19941,24 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o246"
+id = "db.ddl.create-table-hiveformat.o255"
 kind = "interaction"
 required = true
-target = "PARTITIONED BY and ROW FORMAT in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o089",
+  "db.ddl.create-table-hiveformat.o209",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "ROW FORMAT before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o247"
+id = "db.ddl.create-table-hiveformat.o256"
 kind = "interaction"
 required = true
-target = "PARTITIONED BY and STORED AS in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o089",
+  "db.ddl.create-table-hiveformat.o210",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "STORED AS before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
@@ -19953,42 +19985,57 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o248"
+id = "db.ddl.create-table-hiveformat.o257"
 kind = "interaction"
 required = true
-target = "ROW FORMAT and STORED AS in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o209",
+  "db.ddl.create-table-hiveformat.o169",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "STORED AS before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o249"
+id = "db.ddl.create-table-hiveformat.o258"
 kind = "interaction"
 required = true
-target = "ROW FORMAT and LOCATION in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o209",
+  "db.ddl.create-table-hiveformat.o047",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "LOCATION before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o250"
+id = "db.ddl.create-table-hiveformat.o259"
 kind = "interaction"
 required = true
-target = "ROW FORMAT and TBLPROPERTIES in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o209",
+  "db.ddl.create-table-hiveformat.o052",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o251"
+id = "db.ddl.create-table-hiveformat.o260"
 kind = "interaction"
 required = true
-target = "STORED AS and LOCATION in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o210",
+  "db.ddl.create-table-hiveformat.o047",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "LOCATION before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o252"
+id = "db.ddl.create-table-hiveformat.o261"
 kind = "interaction"
 required = true
-target = "STORED AS and TBLPROPERTIES in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o210",
+  "db.ddl.create-table-hiveformat.o052",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 

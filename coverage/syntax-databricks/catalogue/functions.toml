@@ -4824,11 +4824,11 @@ id = "db.functions.localtimestamp"
 family = "functions"
 source = "doc.functions.localtimestamp"
 anchor = "Syntax"
-kind = "special"
+kind = "call"
 grammar = [
-  "LOCALTIMESTAMP [ ( [ <precision> ] ) ]",
+  "LOCALTIMESTAMP ( [ <precision> ] )",
 ]
-grammar_sha256 = "d82be032d5ec5a715ef822421aafe22f063687455c9f3cbab871bbb1e3a57683"
+grammar_sha256 = "4a8cddb6e53fb010872e0b137fb0a2520241d368da291c4d3081f016cf20ae25"
 uses = []
 status = "catalogued"
 

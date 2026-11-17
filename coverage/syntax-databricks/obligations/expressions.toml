@@ -3707,24 +3707,20 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.expressions.null-type.o002"
-kind = "alternative"
+id = "db.expressions.null-type.o006"
+kind = "positive"
 required = true
-target = "{ NULL | VOID } → NULL"
+target = "the NULL literal"
+anchor = "doc.data-types.null-type / Literals"
+note = "NULL written as an expression, the literal the page's Literals section names, not the type"
 
 [[obligation]]
-id = "db.expressions.null-type.o003"
-kind = "alternative"
+id = "db.expressions.null-type.o007"
+kind = "negative_neighbour"
 required = true
-target = "{ NULL | VOID } → VOID"
-
-[[obligation]]
-id = "db.expressions.null-type.o004"
-kind = "alternative"
-required = true
-target = "VOID"
+target = "VOID as an expression"
 anchor = "doc.data-types.null-type / Syntax"
-note = "the VOID type in type position, as the page's examples write it"
+note = "VOID written as an expression, which the warehouse parses as a column name, not a value of the type"
 
 [[obligation]]
 id = "db.expressions.null-type.o005"

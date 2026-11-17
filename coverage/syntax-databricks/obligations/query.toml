@@ -1159,14 +1159,6 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "db.query.select-groupby.hive-grouping-sets.o015"
-kind = "interaction"
-required = true
-target = ","
-anchor = "doc.sql-ref-syntax-qry-select-groupby / Syntax"
-note = "the comma form beside the Hive form, a cross product rather than the Hive reading, recorded so the two can be told apart"
-
-[[obligation]]
 id = "db.query.select-groupby.nested-grouping-sets.o001"
 kind = "positive"
 required = true

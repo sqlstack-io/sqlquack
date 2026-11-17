@@ -491,9 +491,11 @@ FORM_FILLS: dict[str, dict[str, str]] = {
         "query_str": "'v1'",
         "query_vector": "ARRAY ( 1.0 )",
     },
-    **dict.fromkeys(
-        ("db.functions.http-request", "db.functions.remote-query"), {"connection_name": "'c1'"}
-    ),
+    "db.functions.http-request": {"connection_name": "'c1'"},
+    "db.functions.remote-query": {
+        "connection_name": "'c1'",
+        "connector_option_key": "connectorOptionKey",
+    },
     "db.functions.luhn-check": {"num_str": "'12344'"},
     **dict.fromkeys(
         ("db.functions.to-csv", "db.functions.to-json"),
@@ -852,6 +854,7 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
             "db.expressions.array-type",
             "db.expressions.interval-type",
             "db.expressions.map-type",
+            "db.expressions.null-type",
             "db.expressions.struct-type",
         ),
         TYPE_CONTEXT,

@@ -99,8 +99,8 @@ reason = "the warehouse refuses DROP without COLUMN or COLUMNS (SqlBaseParser #d
 [[reading]]
 form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
 grammar_sha256 = "02e014fa5b99e0ba0edda62bf5de1ff76fdf9cf965698269de7e9eff74b686bf"
-grammar = ["{ { ALTER | CHANGE } [ COLUMN ] { <column_identifier> | <field_name> } { SET { MASK <mask_clause> } | DROP MASK } | ALTER COLUMN { <column_identifier> | <field_name> } { SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> } }"]
-reason = "the warehouse takes SET TAGS and UNSET TAGS on a column only after ALTER COLUMN (it refuses them after ALTER without COLUMN and after CHANGE), while MASK takes every spelling; the other documented spellings of the tag clauses are kept as observed [[limit]] rows"
+grammar = ["{ { ALTER | CHANGE } [ COLUMN ] { <column_identifier> SET { MASK <mask_clause> } | { <column_identifier> | <field_name> } DROP MASK } | ALTER COLUMN <column_identifier> { SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> } }"]
+reason = "the warehouse takes SET TAGS and UNSET TAGS on a column only after ALTER COLUMN (it refuses them after ALTER without COLUMN and after CHANGE), while MASK takes every spelling; the other documented spellings of the tag clauses are kept as observed [[limit]] rows. It refuses a nested <field_name> before SET MASK, SET TAGS and UNSET TAGS while parsing and takes it before DROP MASK, so <field_name> is read into DROP MASK alone and the field forms of the other clauses are observed [[limit]] rows"
 
 [[reading]]
 form = "db.ddl.create-table-using"
@@ -112,7 +112,13 @@ reason = "a temporary table is its own line: 'When creating or replacing a tempo
 form = "db.ddl.create-view.temporary-view-using"
 grammar_sha256 = "3f0891d2b8f44f8307c7918b5a8218970cf40540a077c618934ae8623101b578"
 grammar = ["CREATE [ OR REPLACE ] TEMPORARY VIEW <view_name> [ <column_list> ] USING <data_source> [ OPTIONS ( <option_key> [ = ] <option_value> [ , ... ] ) ]"]
-reason = "the warehouse refuses IF NOT EXISTS in a data-source temporary view (PARSE_SYNTAX_ERROR at USING; SqlBaseParser #createTempViewUsing has no IF NOT EXISTS), so the documented IF NOT EXISTS is kept as an observed [[limit]] row. GLOBAL TEMPORARY carries the banner 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so GLOBAL leaves the derivation and the documented global temporary views are observed [[limit]] rows"
+reason = "the warehouse refuses IF NOT EXISTS in a data-source temporary view (PARSE_SYNTAX_ERROR at USING; SqlBaseParser #createTempViewUsing has no IF NOT EXISTS), so the documented IF NOT EXISTS is kept as an observed [[limit]] row. GLOBAL TEMPORARY carries the banner 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so GLOBAL leaves the derivation and the documented global temporary views are observed [[limit]] rows. <column_list> is a list of typed columns, ( c1 INT ), as SqlBaseParser #createTempViewUsing reads it (tableIdentifier (LEFT_PAREN colTypeList RIGHT_PAREN)? tableProvider), unlike a query view's list of names"
+
+[[reading]]
+form = "db.functions.remote-query"
+grammar_sha256 = "797d1f3dc9d31bb2b2711d33a086691b6fa9978569c31ff11ff463115bd42c1b"
+grammar = ["REMOTE_QUERY ( <connection_name> [ , <connector_option_key> => <connector_option_value> ] [ ... ] )"]
+reason = "connectorOptionKey is an argument, not a keyword (the page's Arguments: 'connectorOptionKey A connector option key which is a case-sensitive identifier'): read as the placeholder <connector_option_key>, filled with the page's own name for it"
 
 [[reading]]
 form = "db.ddl.create-table-hiveformat"
@@ -357,6 +363,36 @@ expect = "observe"
 [[limit]]
 form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
 kind = "alternative"
+target = "<field_name> SET MASK"
+note = "a nested field before SET MASK, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ALTER c1.c1 SET MASK f1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "alternative"
+target = "<field_name> SET TAGS"
+note = "a nested field before SET TAGS, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ALTER COLUMN c1.c1 SET TAGS ( 'k' = 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "alternative"
+target = "<field_name> UNSET TAGS"
+note = "a nested field before UNSET TAGS, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ALTER COLUMN c1.c1 UNSET TAGS ( 'k' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "alternative"
 target = "ALTER SET TAGS"
 note = "SET TAGS after ALTER without COLUMN, which the warehouse refuses"
 anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
@@ -528,7 +564,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "COMMENT and ROW FORMAT in the other order"
+pair = ["[ COMMENT <table_comment> ]", "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"]
 note = "ROW FORMAT before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) ROW FORMAT DELIMITED COMMENT 'x' STORED AS TEXTFILE"
@@ -539,7 +575,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "COMMENT and STORED AS in the other order"
+pair = ["[ COMMENT <table_comment> ]", "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> }"]
 note = "STORED AS before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE COMMENT 'x'"
@@ -572,7 +608,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "PARTITIONED BY and ROW FORMAT in the other order"
+pair = ["[ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) }…", "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"]
 note = "ROW FORMAT before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) ROW FORMAT DELIMITED PARTITIONED BY ( c3 INT ) STORED AS TEXTFILE"
@@ -583,7 +619,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "PARTITIONED BY and STORED AS in the other order"
+pair = ["[ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) }…", "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> }"]
 note = "STORED AS before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE PARTITIONED BY ( c3 INT )"
@@ -616,7 +652,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "ROW FORMAT and STORED AS in the other order"
+pair = ["{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]", "[ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"]
 note = "STORED AS before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE ROW FORMAT DELIMITED"
@@ -627,7 +663,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "ROW FORMAT and LOCATION in the other order"
+pair = ["{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]", "[ LOCATION <path> ]"]
 note = "LOCATION before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE LOCATION '/tmp/x' ROW FORMAT DELIMITED"
@@ -638,7 +674,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "ROW FORMAT and TBLPROPERTIES in the other order"
+pair = ["{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]", "[ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ]"]
 note = "TBLPROPERTIES before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE TBLPROPERTIES ( 'k' = 'v' ) ROW FORMAT DELIMITED"
@@ -649,7 +685,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "STORED AS and LOCATION in the other order"
+pair = ["{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> }", "[ LOCATION <path> ]"]
 note = "LOCATION before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) LOCATION '/tmp/x' STORED AS TEXTFILE"
@@ -660,7 +696,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "STORED AS and TBLPROPERTIES in the other order"
+pair = ["{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> }", "[ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ]"]
 note = "TBLPROPERTIES before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) TBLPROPERTIES ( 'k' = 'v' ) STORED AS TEXTFILE"
@@ -1534,20 +1570,6 @@ kind = "negative_neighbour"
 target = "<class_name>"
 note = "a string literal in place of <class_name>"
 reason = "the class name is a string literal (SqlBaseParser #createFunction: AS className=stringLit; the page's examples quote it), so a string literal in its place is the documented operand, no negative"
-
-[[suppress]]
-form = "db.ddl.create-materialized-view-refresh-policy"
-kind = "required_operand_missing"
-target = "<refresh_policy>"
-note = "omit <refresh_policy>"
-reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable: REFRESH TABLE? identifierReference, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
-
-[[suppress]]
-form = "db.ddl.create-materialized-view-refresh-policy"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required POLICY"
-reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable: REFRESH TABLE? identifierReference, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
 
 [[suppress]]
 form = "db.ddl.create-materialized-view"
@@ -6158,16 +6180,6 @@ grammar = ["NAMED_STRUCT ( <name1> , <val1> [ , <name1> , <val1> ... ] )"]
 reason = "the [ , ... ] continues the list with another name and value pair (nameN and valN in the page's Arguments, nameN a STRING literal); the renderer otherwise repeats only the value, an odd argument count the page's pairs rule out, as the MAP and DECODE readings record"
 
 [[limit]]
-form = "db.query.select-groupby.hive-grouping-sets"
-kind = "interaction"
-target = ","
-note = "the comma form beside the Hive form, a cross product rather than the Hive reading, recorded so the two can be told apart"
-anchor = "doc.sql-ref-syntax-qry-select-groupby / Syntax"
-sql = "SELECT c1 FROM t1 GROUP BY c1 , GROUPING SETS ( c1 )"
-context = "raw"
-expect = "observe"
-
-[[limit]]
 form = "db.query.select-lateral-view"
 kind = "option_absent"
 target = "AS"
@@ -6248,26 +6260,6 @@ context = "raw"
 expect = "observe"
 
 [[limit]]
-form = "db.functions.sum"
-kind = "interaction"
-target = "OVER"
-note = "the aggregate invoked as a window function, as the page's prose allows"
-anchor = "doc.functions.sum / Syntax"
-sql = "SELECT ( SUM ( 1 ) OVER ( ) )"
-context = "raw"
-expect = "observe"
-
-[[limit]]
-form = "db.functions.string-agg"
-kind = "interaction"
-target = "OVER"
-note = "a window invocation together with WITHIN GROUP, which the page's prose rules out"
-anchor = "doc.functions.string_agg / Syntax"
-sql = "SELECT ( STRING_AGG ( 1 ) WITHIN GROUP ( ORDER BY v1 ) OVER ( ) )"
-context = "raw"
-expect = "observe"
-
-[[limit]]
 form = "db.functions.split"
 kind = "required_operand_missing"
 target = "<regex>"
@@ -6310,7 +6302,7 @@ expect = "observe"
 [[limit]]
 form = "db.functions.remote-query"
 kind = "operand_type_class"
-target = "connectorOptionKey"
+target = "<connector_option_key>"
 note = "a string literal written where the option key goes"
 anchor = "doc.functions.remote_query / Syntax"
 sql = "SELECT * FROM REMOTE_QUERY ( 'c1' , 'v1' => 1 )"
@@ -6320,7 +6312,7 @@ expect = "observe"
 [[limit]]
 form = "db.functions.remote-query"
 kind = "identifier_class"
-target = "connectorOptionKey"
+target = "<connector_option_key>"
 note = "the option key as a backtick-quoted identifier"
 anchor = "doc.functions.remote_query / Syntax"
 sql = "SELECT * FROM REMOTE_QUERY ( 'c1' , `k 1` => 1 )"
@@ -6358,12 +6350,32 @@ context = "raw"
 expect = "observe"
 
 [[limit]]
+form = "db.functions.localtimestamp"
+kind = "option_absent"
+target = "the parentheses"
+note = "LOCALTIMESTAMP without parentheses, which the page says is allowed when precision is omitted: the warehouse parses it but resolves it as a column (UNRESOLVED_COLUMN), not as the function, so the form keeps its written parentheses and the bare word is observed"
+anchor = "doc.functions.localtimestamp / Syntax"
+sql = "SELECT ( LOCALTIMESTAMP )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
 form = "db.expressions.null-type"
-kind = "alternative"
-target = "VOID"
-note = "the VOID type in type position, as the page's examples write it"
+kind = "positive"
+target = "the NULL literal"
+note = "NULL written as an expression, the literal the page's Literals section names, not the type"
+anchor = "doc.data-types.null-type / Literals"
+sql = "SELECT ( NULL )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.expressions.null-type"
+kind = "negative_neighbour"
+target = "VOID as an expression"
+note = "VOID written as an expression, which the warehouse parses as a column name, not a value of the type"
 anchor = "doc.data-types.null-type / Syntax"
-sql = "SELECT CAST ( NULL AS VOID )"
+sql = "SELECT ( VOID )"
 context = "raw"
 expect = "observe"
 

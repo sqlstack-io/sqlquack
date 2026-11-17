@@ -19217,18 +19217,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.localtimestamp.o007"
-kind = "option_present"
-required = true
-target = "[ ( [ <precision> ] ) ]"
-
-[[obligation]]
-id = "db.functions.localtimestamp.o008"
-kind = "option_absent"
-required = true
-target = "[ ( [ <precision> ] ) ]"
-
-[[obligation]]
 id = "db.functions.localtimestamp.o002"
 kind = "option_present"
 required = true
@@ -19248,10 +19236,18 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.localtimestamp.o009"
+id = "db.functions.localtimestamp.o010"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ ( [ <precision> ] ) ]"
+note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.localtimestamp.o011"
+kind = "option_absent"
+required = true
+target = "the parentheses"
+anchor = "doc.functions.localtimestamp / Syntax"
+note = "LOCALTIMESTAMP without parentheses, which the page says is allowed when precision is omitted: the warehouse parses it but resolves it as a column (UNRESOLVED_COLUMN), not as the function, so the form keeps its written parentheses and the bare word is observed"
 
 [[obligation]]
 id = "db.functions.locate.o001"
@@ -27432,29 +27428,43 @@ target = "<connection_name>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.functions.remote-query.o003"
+id = "db.functions.remote-query.o016"
 kind = "option_present"
 required = true
-target = "[ , connectorOptionKey => <connector_option_value> ]"
+target = "[ , <connector_option_key> => <connector_option_value> ]"
 
 [[obligation]]
-id = "db.functions.remote-query.o004"
+id = "db.functions.remote-query.o017"
 kind = "option_absent"
 required = true
-target = "[ , connectorOptionKey => <connector_option_value> ]"
+target = "[ , <connector_option_key> => <connector_option_value> ]"
 
 [[obligation]]
-id = "db.functions.remote-query.o005"
+id = "db.functions.remote-query.o018"
 kind = "required_operand_missing"
 required = true
-target = "<connector_option_value> in [ , connectorOptionKey => <connector_option_value> ]"
+target = "<connector_option_key> in [ , <connector_option_key> => <connector_option_value> ]"
+note = "omit <connector_option_key>"
+
+[[obligation]]
+id = "db.functions.remote-query.o019"
+kind = "operand_type_class"
+required = true
+target = "<connector_option_key> in [ , <connector_option_key> => <connector_option_value> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.remote-query.o020"
+kind = "required_operand_missing"
+required = true
+target = "<connector_option_value> in [ , <connector_option_key> => <connector_option_value> ]"
 note = "omit <connector_option_value>"
 
 [[obligation]]
-id = "db.functions.remote-query.o006"
+id = "db.functions.remote-query.o021"
 kind = "operand_type_class"
 required = true
-target = "<connector_option_value> in [ , connectorOptionKey => <connector_option_value> ]"
+target = "<connector_option_value> in [ , <connector_option_key> => <connector_option_value> ]"
 note = "a valid expression"
 
 [[obligation]]
@@ -27464,30 +27474,24 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "db.functions.remote-query.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required connectorOptionKey in [ , connectorOptionKey => <connector_option_value> ]"
-
-[[obligation]]
 id = "db.functions.remote-query.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "db.functions.remote-query.o014"
+id = "db.functions.remote-query.o022"
 kind = "operand_type_class"
 required = true
-target = "connectorOptionKey"
+target = "<connector_option_key>"
 anchor = "doc.functions.remote_query / Syntax"
 note = "a string literal written where the option key goes"
 
 [[obligation]]
-id = "db.functions.remote-query.o015"
+id = "db.functions.remote-query.o023"
 kind = "identifier_class"
 required = true
-target = "connectorOptionKey"
+target = "<connector_option_key>"
 anchor = "doc.functions.remote_query / Syntax"
 note = "the option key as a backtick-quoted identifier"
 
@@ -34106,14 +34110,6 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "db.functions.string-agg.o061"
-kind = "interaction"
-required = true
-target = "OVER"
-anchor = "doc.functions.string_agg / Syntax"
-note = "a window invocation together with WITHIN GROUP, which the page's prose rules out"
-
-[[obligation]]
 id = "db.functions.struct.o001"
 kind = "positive"
 required = true
@@ -34663,14 +34659,6 @@ required = true
 target = "<expr>"
 anchor = "doc.functions.sum / Syntax"
 note = "the call with its only argument left out"
-
-[[obligation]]
-id = "db.functions.sum.o018"
-kind = "interaction"
-required = true
-target = "OVER"
-anchor = "doc.functions.sum / Syntax"
-note = "the aggregate invoked as a window function, as the page's prose allows"
 
 [[obligation]]
 id = "db.functions.table-changes.o001"
