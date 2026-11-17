@@ -711,3 +711,20 @@ note = "Re-read on 17 Nov 2026. The 16 Nov full reading approved each of these f
 "db.expressions.names.identifier-5" = "210c8eabaf67233603adac6380620c0af709e0a43e3b7efdd62358f75f46ee69"
 "db.expressions.names.subscript-dot" = "60073fcda5eb56033f6a66bffa54bd4598371331db747eb77c8fa5c131f155d1"
 "db.expressions.parameter-marker.colon" = "2440f0458000efe15ff564ab63d019dfa297a0961c8a27f37f33ce8c5c1db671"
+
+[[review]]
+id = "db-expressions-035"
+family = "expressions"
+catalogue_sha256 = "ffc590e2daad0e5c31541285aca1a5a7d1ce7e7bedb0c1ccdc4c1cfcdd32473c"
+obligations_sha256 = "697332d6178cfd5465cf1ebae8c6d98f956a76ed507c8807032c76c97f48bc11"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:50:48Z"
+verdict = "approved"
+forms = [
+  "db.expressions.object-type",
+]
+note = "Exclusion only, naming no other form: the OBJECT type is output-only, so no statement can write it as input."
+
+[[review.exclusion]]
+form = "db.expressions.object-type"
+reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
