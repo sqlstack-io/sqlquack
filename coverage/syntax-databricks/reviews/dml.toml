@@ -323,3 +323,20 @@ note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) again
 
 [review.definitions]
 "db.dml.insert-into.values-default" = "29a397b1c61663fe6a7ca68f133dd4f9bd2ef8f88aaa46549cba9a9c1b0ba68c"
+
+[[review]]
+id = "db-dml-018"
+family = "dml"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T21:58:43Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-overwrite-directory-hive",
+]
+note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds accepted one-token variants that parse to the same tree as the case they change; each is reproduced locally at parser tree 6546c748; earlier records are unchanged. Form by form: insert-overwrite-directory-hive: STORED AS TEXTFILE and STORED AS `TEXTFILE` parse to the same tree (k8053d9bcbcb1, k88b94e8170e3): the file format is a name the grammar parses, and the tree does not keep the backquotes. Next parser batch."
+
+[review.fingerprints]
+"db.dml.insert-overwrite-directory-hive" = "58f5d7f57852a1134509e133977e0ea4f02286176c3d8ce6c2c527a591e1d936"
+
+[review.definitions]
+"db.dml.insert-overwrite-directory-hive" = "a78eadd0568c02a06eb41ddb7021072d5e9c8875b0cb2a2f9e9c1614ab2139cb"

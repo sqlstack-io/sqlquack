@@ -1521,3 +1521,20 @@ note = "Withdraws approvals after an independent review of 312903a4b..106d09af4 
 "db.ddl.create-table-constraint.foreign-key-references" = "ae15898d3df608a2686de40d032bb8c43cce6c9b77ddf133e09e3077404895b1"
 "db.ddl.create-table-constraint.references" = "f6472fe96d4fe0ace03669ba0e60a80176d2419b6892193d28dc90e567b29b41"
 "db.ddl.create-table-using" = "e1dd34b4831737cb839c53ce56fdc73fe0a89b019a56f360bdb02905caa36e71"
+
+[[review]]
+id = "db-ddl-074"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T21:58:43Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-function",
+]
+note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds accepted one-token variants that parse to the same tree as the case they change; each is reproduced locally at parser tree 6546c748; earlier records are unchanged. Form by form: create-function: USING JAR '/tmp/u1.jar' and USING `JAR` '/tmp/u1.jar' parse to the same tree (k4997f4ab86d7, kd0894550ac00): the resource type is a keyword the grammar reads, and the tree does not keep that it was backquoted. Next parser batch."
+
+[review.fingerprints]
+"db.ddl.create-function" = "db5e080b755c084a6ab1f2bc4d5c58f9f788499e83e837a655ccc1b3324a1f53"
+
+[review.definitions]
+"db.ddl.create-function" = "e69ba1b50cc24bb392903612f790bd271b801e835807d5b8396f04fcbbc30ee5"

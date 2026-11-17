@@ -392,3 +392,20 @@ note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) again
 [review.definitions]
 "db.transaction_session.conf-mgmt-set-path" = "cfddfe09d7dd6decbe3184ea9611b10e293b6a3de4b8e38e6b73b92906cc238b"
 "db.transaction_session.declare-variable" = "6ba55f226593ba2ead11a8ffdd0bf65e0900f5c01b15e234b2f15d38771454ea"
+
+[[review]]
+id = "db-transaction_session-018"
+family = "transaction_session"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T21:58:43Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.declare-variable",
+]
+note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds accepted one-token variants that parse to the same tree as the case they change; each is reproduced locally at parser tree 6546c748; earlier records are unchanged. Form by form: declare-variable: DECLARE VARIABLE v1 INT and DECLARE v1 INT parse to the same tree (k8d32413a0428, kb1a3d4f53537): the optional VARIABLE keyword leaves no mark, a collapse. Next parser batch. The earlier changes_requested findings on this form still stand."
+
+[review.fingerprints]
+"db.transaction_session.declare-variable" = "d01941cce1d38a180a697f7a6de8edc7087f9263d66985bcf661012f50bd5533"
+
+[review.definitions]
+"db.transaction_session.declare-variable" = "6ba55f226593ba2ead11a8ffdd0bf65e0900f5c01b15e234b2f15d38771454ea"

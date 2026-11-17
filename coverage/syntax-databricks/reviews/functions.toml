@@ -6139,3 +6139,20 @@ note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) again
 "db.functions.timediff" = "afbcf632754ec9ea7298617106693d90cc461419337c534e9761358923dbc00e"
 "db.functions.timestampadd" = "203c49d2f7f7a646ff9c2d3a3bc97ddf484c7d3c8f4bf9464ccba6304e1d9ce6"
 "db.functions.timestampdiff" = "c120fa42d48c27d8bcfdfc365d12c161a8a0b0de1e40ad0b0e931c55e866287e"
+
+[[review]]
+id = "db-functions-071"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T21:58:43Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.extract",
+]
+note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds accepted one-token variants that parse to the same tree as the case they change; each is reproduced locally at parser tree 6546c748; earlier records are unchanged. Form by form: extract: EXTRACT ( YEAR FROM v1 ) and EXTRACT ( `YEAR` FROM v1 ) parse to the same tree (k11d53d828745): the field is an identifier the grammar parses, and the tree does not keep the backquotes. Next parser batch. The earlier changes_requested findings on this form still stand."
+
+[review.fingerprints]
+"db.functions.extract" = "e1033541f833e947a67ea072e4d62eebb40d59ff0d145ece892bf729b52fc4ab"
+
+[review.definitions]
+"db.functions.extract" = "71d25575030065e09305b099545ac41f8380400ef0f7949117c1d6828e6b320a"

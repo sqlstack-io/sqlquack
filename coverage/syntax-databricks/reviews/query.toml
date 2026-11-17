@@ -555,3 +555,26 @@ note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) again
 [review.definitions]
 "db.query.select-lateral-view" = "69f85a97bb1c2ee38d1bfcce70c281aaf6185ec8b2851d427a912643ad19563e"
 "db.query.select-match-recognize" = "c88ee837b4a816ee79ecd3bab69cb432a7b57ce5aab184c49c7956b77d044ce0"
+
+[[review]]
+id = "db-query-023"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T21:58:43Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-column-list",
+  "db.query.select-hints",
+  "db.query.select-hints.join-hint-alias",
+]
+note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds accepted one-token variants that parse to the same tree as the case they change; each is reproduced locally at parser tree 6546c748; earlier records are unchanged. Form by form: select-column-list: a backquoted hint name, /*+ `REPARTITION` ( 1 ) */, parses to the same tree as the bare name (k034c4b99e2b7): Spark parses a hint name as an identifier, so the tree must keep how it was written. Next parser batch. select-hints: a backquoted hint name (BROADCAST, REPARTITION, SKEW) parses to the same tree as the bare name (k129e5618d2e2, k38b109fcdb15, k536a5110a7f5, k67eef125e017): Spark parses a hint name as an identifier, so the tree must keep how it was written. Next parser batch. The comma between hints is optional in the grammar and is allowlisted in screen.toml, not a finding. select-hints.join-hint-alias: a backquoted join hint name or hinted relation (BROADCASTJOIN, MAPJOIN, SHUFFLE_MERGE, MERGEJOIN, t1) parses to the same tree as the bare name (k27ed29c68c3d, k45db50fb4cc9, ka23057e61539, kb2b1eb58c168, kb6ccf3a1b206, kdb1d088d21fb, kefd7bbf64832, kf96763538a99): Spark parses both as identifiers. The screen allowlist no longer excuses them, because it covers only text the grammar reads as carrying no syntax. Next parser batch."
+
+[review.fingerprints]
+"db.query.select-column-list" = "2cd57bb65f3713b85a2612441403a8041c9ea030cb182b5d15c217f714400cc4"
+"db.query.select-hints" = "c85e42902fe8b8ea7ef4b0ed981fcc0f04539a060278e1dcf5482d684fba92ae"
+"db.query.select-hints.join-hint-alias" = "ac0e5fdeaef48f63ba3fbe8197d3c3efb8bc977d5eec88922f2f94da96ba408a"
+
+[review.definitions]
+"db.query.select-column-list" = "e4f949af985da9abcd0595503f4d46814cfe5912a85a7d7dc5a55a7d5a811ba0"
+"db.query.select-hints" = "f1bd064ee44c2eed8827c43932ed8a81545f5ab19e60213f3e4516cddcd75860"
+"db.query.select-hints.join-hint-alias" = "4aa02c2a49b11e126ba14477f62aa8856796fe6143adee3dc7d7fdc5add9918b"
