@@ -512,3 +512,46 @@ note = "Re-read on 17 Nov 2026 at 95dd2ae37 against the 2026.45 receipts in evid
 "db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
 "db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
 "db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
+
+[[review]]
+id = "db-query-021"
+family = "query"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.query.select-match-recognize-pattern",
+  "db.query.select-orderby",
+  "db.query.select-sortby",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.query.select-match-recognize-pattern" = "69b93255b62ed9a3edf8e7bbbe34f3cf3c2e2ff5c2c8d9826f36ea2c1dcc398b"
+"db.query.select-orderby" = "9293920d52389e8e6ec74980cd179a76d7aeb9a6c34d80db315517b7dcd92429"
+"db.query.select-sortby" = "f11455f232465727b071e9a46ea46e01ca550f437a6e69d5925b018921c6318c"
+
+[review.definitions]
+"db.query.select-match-recognize-pattern" = "692a9e4d948c3e059a2f6a31e82a1e14b4e3e5a4a687c7091ad4f6a640065bc2"
+"db.query.select-orderby" = "374d9122ae8429cf93e52daae8d62c969899928ed17032f71295bfc1c9d38018"
+"db.query.select-sortby" = "293c1a2b4c2cdb5150ffe0d6069a8d726a89e6e3c896455b48af66895f9f9865"
+
+[[review]]
+id = "db-query-022"
+family = "query"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-lateral-view",
+  "db.query.select-match-recognize",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: select-lateral-view: New in this re-read: the optional AS before the column aliases leaves no mark. explode ( array ( 1 ) ) SELECT AS x1 (k3b265a6e0be7) and explode ( array ( 1 ) ) a3 x1 (kcb8385e888a5) give the same tree apart from the table alias name, with no explicit-AS flag on the column aliases, while table aliases elsewhere keep alias_explicit_as. Both receipts are accepted. Parser fix. select-match-recognize: db-query-005's finding still holds: o029/o030 still class <row_pattern_definition_list> as a string and o030 (DEFINE m1) fails for the missing AS <cond>, not for a wrong kind. Obligation and case fix; the new case needs a receipt."
+
+[review.fingerprints]
+"db.query.select-lateral-view" = "f37f3a0640ba3c02d0e21f0977ce00f49fe2c08d2c4f04397c804667cc0730f6"
+"db.query.select-match-recognize" = "74fe7e5013243ea86f948b97af9d3c08550727e4d7169016cb455c0768a014cf"
+
+[review.definitions]
+"db.query.select-lateral-view" = "69f85a97bb1c2ee38d1bfcce70c281aaf6185ec8b2851d427a912643ad19563e"
+"db.query.select-match-recognize" = "c88ee837b4a816ee79ecd3bab69cb432a7b57ce5aab184c49c7956b77d044ce0"

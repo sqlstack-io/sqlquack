@@ -301,7 +301,7 @@ impl Parser<'_> {
     }
 
     /// `expr [[AS] id]`: a word after the value names it, `AS` itself included.
-    fn using_item(&mut self) -> Parsing<Expression> {
+    pub(crate) fn using_item(&mut self) -> Parsing<Expression> {
         let value: Expression = self.expression()?;
         if self.kw("AS") && self.is_at(1, is_identifier) {
             self.at += 1;

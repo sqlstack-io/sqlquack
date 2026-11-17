@@ -742,3 +742,40 @@ note = "Re-read on 17 Nov 2026 at 67a98c60d against the 2026.45 receipts in evid
 "db.utility.show-partitions" = "fc2e736c4f492592e6f8c2e8f044fd9e7abcb909ca82869830b42c29f772ccf7"
 "db.utility.show-table" = "96a080e384bbd0f5df4c68c660c1ad5dd2168163be29885638368aaef82412bc"
 "db.utility.show-tblproperties" = "b360463e3bd3b897e6f4c117ce4914ab6cbbf8aed5c57c813cd3c50652a7a51b"
+
+[[review]]
+id = "db-utility-034"
+family = "utility"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.utility.optimize",
+  "db.utility.show-functions",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.utility.optimize" = "f9f2a9c7900cc3d0183d02340c25e33115e9ddb66a95cf84d61799bfae4f8acf"
+"db.utility.show-functions" = "adcd1cfe9274c1eab63e23e15bd4720cd848dce1fb7e13e9ce17fa20ecf396e7"
+
+[review.definitions]
+"db.utility.optimize" = "eedc05c6514793ae2c8230ab6705e6daf66be667d140e5ca9f0a7848023f91e9"
+"db.utility.show-functions" = "1f8af9bd7f6b34619f75c2ba80e3c6aba6c77a4c5b0fc5fd2ba99ab96e046bbf"
+
+[[review]]
+id = "db-utility-035"
+family = "utility"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.describe-table",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: describe-table: db-utility-009's (b) finding still holds: o011 (PARTITION branch) and o012 (<column_name> branch) are still credited to DESC t1 and DESCRIBE t1, which take neither branch. Its (d) finding is answered (column cases are trees). Obligation fix; the cases exist with receipts."
+
+[review.fingerprints]
+"db.utility.describe-table" = "d03c9d3e4da265dc7b1e0d74ccdbf0576af2b0a546f3046a1ccea756177638de"
+
+[review.definitions]
+"db.utility.describe-table" = "8f56d4b7ca15ab0078e8416067fd0d0ba7ae21bb1d588c7e663c8ad29f6cfdbf"

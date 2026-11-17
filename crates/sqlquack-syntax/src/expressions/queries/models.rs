@@ -644,6 +644,9 @@ pub struct Stream {
     pub on: Option<Expression>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub show_initial_rows: Option<bool>,
+    /// Databricks: `WATERMARK ... DELAY OF ...` after `STREAM ( ... )`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub watermark: Option<Box<Watermark>>,
 }
 
 /// USING DATA clause for data import statements

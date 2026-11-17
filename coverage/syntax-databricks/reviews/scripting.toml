@@ -393,3 +393,20 @@ note = "Re-read on 17 Nov 2026 at a67bc51e4, after the change that reads SET ins
 
 [review.definitions]
 "db.scripting.iterate-stmt" = "b5adf592da5446a6ad329965ebb545df29417b4807f6e736cd6cebd3a556924f"
+
+[[review]]
+id = "db-scripting-021"
+family = "scripting"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:41:26Z"
+verdict = "approved"
+forms = [
+  "db.scripting.execute-immediate",
+]
+note = "Re-read on 17 Nov 2026 at 0f34dd46f against the existing 2026.45 receipts, after the parser commit that keeps USING aliases and TBLPROPERTIES keys and values as written. It answers db-ddl-067 (alter-view) and db-scripting-019 (execute-immediate), and re-reads alter-table, whose binding went stale when its UNSET TBLPROPERTIES case k769d23311612 changed tree. Of these forms' 169 cases, 64 are accepted locally and each is a tree that keeps each word of its text (the screen flags none); 105 are rejected, 97 at the warehouse's position, 7 a few characters earlier (all PARSE_SYNTAX_ERROR on the warehouse side and syntax errors locally, the same cases as before), 1 whose receipt gives no position. alter-view: SET TBLPROPERTIES keeps each key and value as written (k83dd4f39ba83: string key, string value) and UNSET TBLPROPERTIES keeps each key as written (k897fc9e5f983: a string key), both accepted by the warehouse. execute-immediate: an alias after a USING argument is that argument's alias, with whether AS was written: k805f71ec931f gives two aliased arguments with AS, and k393fb1cc3084, k49edafa1aac3 and kc99e87121429 each give one argument aliased without AS (SELECT, `v1 Q`, `SELECT`); the warehouse accepts all three, which a second argument would not allow without a comma. alter-table: k769d23311612 keeps its string key. Not settled here: EXECUTE IMMEDIATE ... USING ( 1 , AS , x ) has no receipt yet (pending recording); INTO targets are table nodes, a naming item on the fix list."
+
+[review.fingerprints]
+"db.scripting.execute-immediate" = "651a57f982765fce783c5ba8dc4704d5d3efafc29db15239f4c8c66407d0455e"
+
+[review.definitions]
+"db.scripting.execute-immediate" = "68acd2680b5122a062cf7a293f02b39b2839d2eef3ec6e2516305a28a77d0806"

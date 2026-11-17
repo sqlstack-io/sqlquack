@@ -352,3 +352,43 @@ note = "Re-read on 17 Nov 2026 after the hand reading in 535c8ff63, which requir
 [review.definitions]
 "db.transaction_session.use-catalog" = "4880df0a0bb5e1408647670faeaeffae8cb1211dd75c6d4e6ff94b0b6ffeaf64"
 "db.transaction_session.use-schema" = "9086fedaf7a4a5a1b1bc7d4e1451d249467bf85f86d0e0abaf5d67a27f066bf4"
+
+[[review]]
+id = "db-transaction_session-016"
+family = "transaction_session"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.set-variable.set-default",
+  "db.transaction_session.timezone",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.transaction_session.set-variable.set-default" = "f1ea74d204347434213f302c88bfc79d86a70ab79959506d411ec0a7f77fbadc"
+"db.transaction_session.timezone" = "a08c26cd6cec5ae89aed87179faf0dc455b4e5f062439004c92a348374b3eb5f"
+
+[review.definitions]
+"db.transaction_session.set-variable.set-default" = "d3cfde454a873752ac7b9bba97e6ac330ecb7b2bd99c136a705324ee43371a5c"
+"db.transaction_session.timezone" = "09ce196ebe61e357d453bbf779d100c6234f5fc524e439f589bec33b1893b2db"
+
+[[review]]
+id = "db-transaction_session-017"
+family = "transaction_session"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.conf-mgmt-set-path",
+  "db.transaction_session.declare-variable",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: conf-mgmt-set-path: db-transaction_session-003's finding still holds: SET PATH = workspace.s1 gives one identifier named workspace.s1, not catalog and schema parts. Parser fix. declare-variable: db-transaction_session-005's finding still holds, and the strict tree sweep confirms it: DECLARE v1 INT and DECLARE VARIABLE v1 INT give the same tree, so the optional VARIABLE leaves no mark. Parser fix."
+
+[review.fingerprints]
+"db.transaction_session.conf-mgmt-set-path" = "03b1fe6873692df2664387404342e26630d262798b6c43feeac6e3ab4e28279f"
+"db.transaction_session.declare-variable" = "d01941cce1d38a180a697f7a6de8edc7087f9263d66985bcf661012f50bd5533"
+
+[review.definitions]
+"db.transaction_session.conf-mgmt-set-path" = "cfddfe09d7dd6decbe3184ea9611b10e293b6a3de4b8e38e6b73b92906cc238b"
+"db.transaction_session.declare-variable" = "6ba55f226593ba2ead11a8ffdd0bf65e0900f5c01b15e234b2f15d38771454ea"

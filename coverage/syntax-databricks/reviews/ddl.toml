@@ -1330,3 +1330,156 @@ note = "Withdraws this form's approval in db-ddl-065, which stays as written. UN
 
 [review.definitions]
 "db.ddl.tblproperties.unset-tblproperties" = "408768c265877074fb6c5c876fdbc7c2d4cf8378edb13ec137000bb5ce51d6a8"
+
+[[review]]
+id = "db-ddl-067"
+family = "ddl"
+parser_tree = "f08262db76019bd47d298a9aac4680f424c924e7"
+reviewed_utc = "2026-11-17T19:10:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-view",
+]
+note = "Withdraws this form's approval in db-ddl-065, which stays as written. ALTER VIEW ... SET TBLPROPERTIES keeps its keys and values only as plain strings, so a string value and a number, or a string and a boolean, give the same tree: ( 'k' = 1 ) and ( 'k' = '1' ) both give [[\"k\", \"1\"]], as do ( k = true ) and ( 'k' = 'true' ); recorded case k83dd4f39ba83, ALTER VIEW v1 SET TBLPROPERTIES ( 'k' = 'v' ), has this shape. ALTER VIEW ... UNSET TBLPROPERTIES gives a quoted and an unquoted key the same tree, as db-ddl-066 found for the tblproperties form; recorded case k897fc9e5f983, ALTER VIEW v1 UNSET TBLPROPERTIES ( 'k' ), has this shape. ALTER TABLE ... SET TBLPROPERTIES keeps each key and value as written and is not affected. Needs: ALTER VIEW's SET and UNSET TBLPROPERTIES keys and values kept as written, with IF EXISTS on UNSET."
+
+[review.fingerprints]
+"db.ddl.alter-view" = "038a0947515c93400cd6c9b5212c2c49ab3c6eeb5d0bbfc27be1297d96bf5f43"
+
+[review.definitions]
+"db.ddl.alter-view" = "56fc1c89f9d4baab97b97e987d993d5ae80c4de4091e8a1a1c958ff5da286e11"
+
+[[review]]
+id = "db-ddl-068"
+family = "ddl"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:41:26Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table",
+  "db.ddl.alter-view",
+]
+note = "Re-read on 17 Nov 2026 at 0f34dd46f against the existing 2026.45 receipts, after the parser commit that keeps USING aliases and TBLPROPERTIES keys and values as written. It answers db-ddl-067 (alter-view) and db-scripting-019 (execute-immediate), and re-reads alter-table, whose binding went stale when its UNSET TBLPROPERTIES case k769d23311612 changed tree. Of these forms' 169 cases, 64 are accepted locally and each is a tree that keeps each word of its text (the screen flags none); 105 are rejected, 97 at the warehouse's position, 7 a few characters earlier (all PARSE_SYNTAX_ERROR on the warehouse side and syntax errors locally, the same cases as before), 1 whose receipt gives no position. alter-view: SET TBLPROPERTIES keeps each key and value as written (k83dd4f39ba83: string key, string value) and UNSET TBLPROPERTIES keeps each key as written (k897fc9e5f983: a string key), both accepted by the warehouse. execute-immediate: an alias after a USING argument is that argument's alias, with whether AS was written: k805f71ec931f gives two aliased arguments with AS, and k393fb1cc3084, k49edafa1aac3 and kc99e87121429 each give one argument aliased without AS (SELECT, `v1 Q`, `SELECT`); the warehouse accepts all three, which a second argument would not allow without a comma. alter-table: k769d23311612 keeps its string key. Not settled here: EXECUTE IMMEDIATE ... USING ( 1 , AS , x ) has no receipt yet (pending recording); INTO targets are table nodes, a naming item on the fix list."
+
+[review.fingerprints]
+"db.ddl.alter-table" = "9971243b14809aa1a90ad519a452f8b3cc34988a937476bbba6102a3e612af56"
+"db.ddl.alter-view" = "3f24b5839044ae2ae38d704077af41673482184134abb9f1d29cb4acecef8954"
+
+[review.definitions]
+"db.ddl.alter-table" = "45f8d3c275e44a178729e82ee86a7ddf4b83d6b1a93ca41cd0a895c42ad47906"
+"db.ddl.alter-view" = "56fc1c89f9d4baab97b97e987d993d5ae80c4de4091e8a1a1c958ff5da286e11"
+
+[[review]]
+id = "db-ddl-069"
+family = "ddl"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:45:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.tblproperties.unset-tblproperties",
+]
+note = "Holds this form after the parser commit at 0f34dd46f, which answers db-ddl-066's tree finding: UNSET TBLPROPERTIES now keeps each key as written (a string, a name or a backquoted name give different trees, for tables and views) and ALTER VIEW ... UNSET TBLPROPERTIES IF EXISTS is a tree. Its 12 obligations here are met by existing receipts and its accepted cases read faithfully (k769d23311612, k531c1eaf7df7, string keys). Not approved yet, because db-ddl-066 also asked for receipts of the spellings that finding was about, and none exists: ALTER TABLE t1 UNSET TBLPROPERTIES ( k ) (an unquoted key) and ALTER VIEW v1 UNSET TBLPROPERTIES IF EXISTS ( 'k' ) are on the pending recording bundle, where the unquoted key is obligation o013. Re-read and approve once they have receipts."
+
+[review.fingerprints]
+"db.ddl.tblproperties.unset-tblproperties" = "6b0c05a3610cbe05158cf2afd93cd098d14bf974fe53c42fd8c890099f112ee0"
+
+[review.definitions]
+"db.ddl.tblproperties.unset-tblproperties" = "408768c265877074fb6c5c876fdbc7c2d4cf8378edb13ec137000bb5ce51d6a8"
+
+[[review]]
+id = "db-ddl-070"
+family = "ddl"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-materialized-view.materialized-view-add-alter",
+  "db.ddl.alter-streaming-table.streaming-table-add-alter",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask",
+  "db.ddl.clone.clone-source-temporal",
+  "db.ddl.column-mask",
+  "db.ddl.create-location",
+  "db.ddl.create-materialized-view-refresh-policy",
+  "db.ddl.create-policy",
+  "db.ddl.create-procedure",
+  "db.ddl.create-streaming-table-auto-cdc",
+  "db.ddl.create-table-constraint.references",
+  "db.ddl.create-table-using",
+  "db.ddl.refresh-full",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.ddl.alter-materialized-view.materialized-view-add-alter" = "a5cdb00b171b3e4c6c8c2918d0c28500d3161e9a3ffac4e54b5945763e6720b3"
+"db.ddl.alter-streaming-table.streaming-table-add-alter" = "f8c4ca4caf33102dc1ecc2ac78796f34b9175f69cc46efa991c20e96249f9fcf"
+"db.ddl.alter-table-manage-column.alter-change-set-mask" = "c7891289e79be30a7772ab0b8173808d27fa4a57dbfe1d419794a89e2f2bafe9"
+"db.ddl.clone.clone-source-temporal" = "6799e0b7070afba6ab579e53f9732d9febdfc4536949613083a087504d8b6c2c"
+"db.ddl.column-mask" = "402e045f55be76476fac3759a2c7d4a24922c6203f62931d1e8adec3b8848da4"
+"db.ddl.create-location" = "5b2f3736cbe72722104186045111e06a0aee01500d968165f8d1c2663b091650"
+"db.ddl.create-materialized-view-refresh-policy" = "7c2ef63eb04a7a38ce116ff64dd69b7a8fcfd41710fbdf3e6468503972c0aa19"
+"db.ddl.create-policy" = "a5d4899f907ae8aee8ea6349bdea9e5bf586decb72781e41da90eee1b43b5966"
+"db.ddl.create-procedure" = "08592d63007288934f82138f0b5a0b6c0e218b30d8abda4da58227b44cc919dc"
+"db.ddl.create-streaming-table-auto-cdc" = "c352961c44f045686c92141004b6b0650481d56e7bd271393d2f3a37afdc124f"
+"db.ddl.create-table-constraint.references" = "aa718a5187a88366bdc0a8a0863fe5d973f19324b4f16bfd5607ebf7723b2751"
+"db.ddl.create-table-using" = "dd3f44c727738173695bf68b510cd3d7e6099b14072ba41e9d5d383e13cd0293"
+"db.ddl.refresh-full" = "7151791fefba991e297ff0470d9e4e6c4e72394f504520de3d5b4b65a9cd249c"
+
+[review.definitions]
+"db.ddl.alter-materialized-view.materialized-view-add-alter" = "f460337c72c002c789481804c0cb90ca274b5c8715d35b76b0dc4667f5590c8d"
+"db.ddl.alter-streaming-table.streaming-table-add-alter" = "c515f90d96ce7d610762905dfecc52608ed0f5e73a21b15a706bd0392e8b85ee"
+"db.ddl.alter-table-manage-column.alter-change-set-mask" = "77bb212a48096a6ba7611960078271210158595f03ac44f55e28252b2185c5f1"
+"db.ddl.clone.clone-source-temporal" = "22d30339f40b6217220797c32c6ae547b4868e18bdc60cf97d5f52f82409d3e6"
+"db.ddl.column-mask" = "854be88662e862c58eada96231665f47507a43098ef051f085926072971e9e81"
+"db.ddl.create-location" = "71b2ad21cbb86e53d59d420973789b820e702122b8bd3a1fd60a6fb7723cab82"
+"db.ddl.create-materialized-view-refresh-policy" = "eda5fa518d73158371067948830c613863ad027c2298ea350798caf6f608e80e"
+"db.ddl.create-policy" = "c65499650c1ad2b83acf8580fcc9a2e172a050519e1af059e1065349a17d98b9"
+"db.ddl.create-procedure" = "6b164f03bc9625c737708a7be5f66e7f0dc15bdc6f0bc8208b8cd176f6edc070"
+"db.ddl.create-streaming-table-auto-cdc" = "156ef5145efe97ef5237f15c0a7e144a6300bbb9044fe7883f8a7a67d0793169"
+"db.ddl.create-table-constraint.references" = "f6472fe96d4fe0ace03669ba0e60a80176d2419b6892193d28dc90e567b29b41"
+"db.ddl.create-table-using" = "e1dd34b4831737cb839c53ce56fdc73fe0a89b019a56f360bdb02905caa36e71"
+"db.ddl.refresh-full" = "e68fd175fd389743ce49b89bc04df37eca1ef88bf6f2129b9901f3c4a2a60ef9"
+
+[[review]]
+id = "db-ddl-071"
+family = "ddl"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-recipient",
+  "db.ddl.create-sql-function",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: alter-recipient: db-ddl-005's finding still holds: SET PROPERTIES ( v1 'v' ) and ( v1 = 'v' ) give the same eq node, so a written and an omitted optional = leave no mark. Parser fix (keep whether = was written). create-sql-function: db-ddl-033's tree finding still holds: RETURNS TABLE ( c1 INT , c2 INT ) is kept only as the raw string returns_table_body, not as columns. New in this re-read: TEMPORARY and TEMP give the same tree (the spelling probe swaps them in 6 accepted cases, e.g. CREATE OR REPLACE TEMPORARY FUNCTION abs ...). Parser fix for both."
+
+[review.fingerprints]
+"db.ddl.alter-recipient" = "e08b63104a2101dc5caaab6fdc0a2a983c9b091610efe830a8b61f9eabf1aed3"
+"db.ddl.create-sql-function" = "5be501cf5b93746fde993934a95640a77f6004ecdd504a466fda43849a110341"
+
+[review.definitions]
+"db.ddl.alter-recipient" = "5ee0078712bd30844a58d578c337613cbc92dd08b65fdd024f79645f9214ae81"
+"db.ddl.create-sql-function" = "d2f16ee0e1dea784ade8149bb0e7c7710be4a58c9f8cd3564545213da67b0687"
+
+[[review]]
+id = "db-ddl-072"
+family = "ddl"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T20:01:58Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-view",
+  "db.ddl.tblproperties.options",
+  "db.ddl.tblproperties.set-tblproperties",
+  "db.ddl.tblproperties.tblproperties",
+]
+note = "Withdraws the approvals of these forms (db-ddl-058 and the older db-ddl-001 for the three tblproperties forms, db-ddl-068 for alter-view) after an independent review of the parser commit at 0f34dd46f. A missing = between a property key and its value leaves no mark: ALTER TABLE t1 SET TBLPROPERTIES ( 'k' 'v' ) and ( 'k' = 'v' ) give the same tree, and so do CREATE TABLE ... TBLPROPERTIES, CREATE TABLE ... USING DELTA OPTIONS and ALTER VIEW v1 SET TBLPROPERTIES, while CACHE TABLE and INSERT OVERWRITE DIRECTORY keep the spelling as options_without_equals. The collapse predates 0f34dd46f. set-tblproperties, tblproperties, options: their option_present and option_absent [ = ] obligations o005 and o006 are met by accepted cases whose trees do not show which spelling was written (k6dcd709d831a and k2ba1115a3184; k7112e6e629dc and k1794cbe9ac57; k64fdc5b93158 and k62525e799669), and the coverage README requires that pair to stay distinct. Parser fix (carry whether = was written), then re-read from these existing receipts. alter-view: the view SET TBLPROPERTIES node from 0f34dd46f has the same collapse, and none of its new spellings (an unquoted key, a typed value, a view SET without =, view UNSET TBLPROPERTIES IF EXISTS) has a receipt; they are added to the pending recording bundle, and alter-view waits for them. db-ddl-067's note says view SET TBLPROPERTIES keeps each key and value as written; that is not true for =."
+
+[review.fingerprints]
+"db.ddl.alter-view" = "3f24b5839044ae2ae38d704077af41673482184134abb9f1d29cb4acecef8954"
+"db.ddl.tblproperties.options" = "e192e4bb28745d21d24052511e5e4be13487c419602f468b51a685d19d0e6935"
+"db.ddl.tblproperties.set-tblproperties" = "dda9e66aeee1f85054ca350439abfb016380ec1e92427c794ca720dc41881d2d"
+"db.ddl.tblproperties.tblproperties" = "d9153ea965e4f65cb554fddd18c835a2b760040477ef23d497aa4153eb029dbf"
+
+[review.definitions]
+"db.ddl.alter-view" = "56fc1c89f9d4baab97b97e987d993d5ae80c4de4091e8a1a1c958ff5da286e11"
+"db.ddl.tblproperties.options" = "4118a50f166bea208d0f88d2e4365b2c5515d48e90031baba4b4aa61b3f123d0"
+"db.ddl.tblproperties.set-tblproperties" = "c302c44e30e8f9469b1e406faf5e494658bfd3d53210cce0fab299b826f7e271"
+"db.ddl.tblproperties.tblproperties" = "33a663860db33db453a93672d44de95038003a966864e197d834f62809324eee"

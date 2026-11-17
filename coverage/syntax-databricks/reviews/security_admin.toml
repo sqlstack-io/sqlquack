@@ -241,3 +241,43 @@ note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evid
 [review.definitions]
 "db.security_admin.privileges" = "9bd1366bc81d5ba58c3c6a695d03ce84033a448206f60da2be7e686ecf653a9b"
 "db.security_admin.privileges-hms" = "c5f210a7c5cdd328c813342a90191475289328160c66d8cb3e5b157c8beadbd9"
+
+[[review]]
+id = "db-security_admin-013"
+family = "security_admin"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.deny",
+  "db.security_admin.grant",
+  "db.security_admin.revoke",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.security_admin.deny" = "735e2f8a30663c020ad4d5f79441abe9938e122c9a7df53973a10d5dc18e7287"
+"db.security_admin.grant" = "3fd2d04d6bbe20633d11720cacc6a45ac9f20c8cff50036eb306c5d43a9dcf07"
+"db.security_admin.revoke" = "39fe5bc058f7aa665251cc53eac247131a6902cfd7108b66bff77f2a27c51b77"
+
+[review.definitions]
+"db.security_admin.deny" = "880b5d54a47f19ebec89f39ec5e8f3e6acf1bf1086078eadd9daa75b46fd6ccb"
+"db.security_admin.grant" = "7bedd6ac3b0c8770f07af2508f92a24d7c2b20dac66fdaf03bd7afaf8472d8f4"
+"db.security_admin.revoke" = "6c1e0138da98e5fcae106727e9dd7aa085bdafb9097ceafd45a2e49edf9604a6"
+
+[[review]]
+id = "db-security_admin-014"
+family = "security_admin"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.alter-group",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: alter-group: db-security_admin-003's finding still holds: o018/o019 ('without its required GROUP/USER after DROP') are still ALTER GROUP v1 ADD v1, so no case leaves the keyword out after DROP. Needs new cases and their receipts."
+
+[review.fingerprints]
+"db.security_admin.alter-group" = "6081d4d74df9f7301ebcd7c8c0d7d9635a8ef79ce16ff21a30588c683b346dbb"
+
+[review.definitions]
+"db.security_admin.alter-group" = "723efe6d90faea0fd300a8aad2bd90a46f473b10459e359bc9c9ac2acd126b64"
