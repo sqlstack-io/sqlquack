@@ -409,3 +409,20 @@ note = "Re-read on 17 Nov 2026 after the pipe-marks parser fix; carries forward 
 
 [review.definitions]
 "db.query.query" = "05ca82c79f7715a6d9c31e02155c05714239afdd71189c9277d3d5db32a3765e"
+
+[[review]]
+id = "db-query-016"
+family = "query"
+parser_tree = "1c5f0bae2afa31f7a0706bb6d0906e5c53a44da4"
+reviewed_utc = "2026-11-17T11:13:51Z"
+verdict = "approved"
+forms = [
+  "db.query.select-groupby.group-by",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in 11c98eccb, which keeps a trailing WITH ROLLUP or WITH CUBE in the group_by node's with_modifier. Read against the 2026.45 receipts in evidence set evJ. All 3 locally accepted WITH cases carry with_modifier true over a ROLLUP or CUBE call of their items, so none shares a tree with GROUP BY ROLLUP ( ... ) or CUBE ( ... ), whose 7 cases in group-by-rollup-cube keep byte-identical trees; the 4th accepted case, GROUP BY c1, keeps its single item. The mechanical check finds every name and literal in each tree. Of the 3 locally rejected cases, 1 fails at the warehouse's position. GROUP BY with no item fails locally at end of input (pos 26) and at the warehouse at 'BY' (pos 24); its repair, GROUP BY c1, is accepted locally and by its receipt (k1595d0daadb9). GROUP BY c1 WITH has no warehouse position; its repair, GROUP BY c1 WITH ROLLUP, is accepted locally and by its receipt (k5fecd35059ee). This supersedes the concern of db-query-013. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.select-groupby.group-by" = "f769770e14d9143991846e9b823c031406cad33e43d7aba94ff5b85081384ff8"
+
+[review.definitions]
+"db.query.select-groupby.group-by" = "466e6081b946b74b6accb69b8307427b364773a8b63e68176861331c001adaee"
