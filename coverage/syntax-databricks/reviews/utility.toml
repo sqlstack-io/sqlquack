@@ -689,3 +689,56 @@ note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evid
 
 [review.definitions]
 "db.utility.cache-cache-table" = "6a0d27100c17b7c0b2f8104da08e2814b325e8e4872c1080ecf466d59f700cbb"
+
+[[review]]
+id = "db-utility-033"
+family = "utility"
+parser_tree = "35d5c2c80f5764cfedd60956a5eb6572a578a3b7"
+reviewed_utc = "2026-11-17T16:22:17Z"
+verdict = "approved"
+forms = [
+  "db.utility.cache",
+  "db.utility.cache-refresh",
+  "db.utility.cache-refresh-table",
+  "db.utility.resource-mgmt-add-archive",
+  "db.utility.resource-mgmt-add-file",
+  "db.utility.resource-mgmt-add-jar",
+  "db.utility.resource-mgmt-list-archive",
+  "db.utility.resource-mgmt-list-file",
+  "db.utility.resource-mgmt-list-jar",
+  "db.utility.restore",
+  "db.utility.show-partitions",
+  "db.utility.show-table",
+  "db.utility.show-tblproperties",
+]
+note = "Re-read on 17 Nov 2026 at 67a98c60d against the 2026.45 receipts in evidence set evL, after the parser-fixes merge and the utility gap fixes. It answers the (d) findings of db-utility-003, -005, -006, -011 to -019 and -021, whose bindings went stale with these trees: every accepted case parses to a tree. CACHE SELECT's columns, FROM table and WHERE condition are operands; where the warehouse reads FROM or WHERE as a name, so does the tree, as the receipts show: UNRESOLVED_COLUMN `FROM` at position 13 for CACHE SELECT FROM t1, `c1` for CACHE SELECT c1 FROM, and accepted for CACHE SELECT c1 FROM t1 WHERE. REFRESH and ADD or LIST FILE, JAR and ARCHIVE keep the resource path as written, quotes included, as the warehouse does (REFRESH `t1 Q` fails on its space), and the singular and plural keywords stay apart. RESTORE records TABLE and TO; SHOW PARTITIONS and SHOW TABLE EXTENDED keep the partition spec; SHOW TBLPROPERTIES t1 ( v1 ) gives an identifier and ( 'm' ) a string, answering db-utility-021. Rejects: those off the warehouse's position are syntax errors on both sides, refused at the misspelt or missing keyword up to 9 characters earlier; REFRESH alone, REFRESH `t1 Q` and ADD v1 are refused with the warehouse's reason, whose receipts give no position (the empty REFRESH's local error class name differs from the warehouse's, a fix-list item). The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.utility.cache" = "16a07f390fa360c62ef7107dafa3c3f276ff021fa510ecdfc4eb7a7d2499c76b"
+"db.utility.cache-refresh" = "b43b4f210f0735f9be28deed7618045664b4f9dee2a37fbd10828e4174fb8b1d"
+"db.utility.cache-refresh-table" = "6cb2b4d18a080af8f55f49c18846258d1bb455a4f92fc780e09db326a0620e0e"
+"db.utility.resource-mgmt-add-archive" = "b00b3459637eb91bce824af26d2d2088aaaf6c9e6b3db181b0fdfc268fed3115"
+"db.utility.resource-mgmt-add-file" = "016c7039cdf8f7ab979b5661173b1c58b09a7e713a66c418ca6319d9fbb14f6a"
+"db.utility.resource-mgmt-add-jar" = "4b30106753bcd1c7184e1228f210a605d46c1fadb90f74b0aa79777f131fb6b3"
+"db.utility.resource-mgmt-list-archive" = "636d1e5b3b50fc6194871d84d195f9de27f60018a5c0c500fd3b706fc021c275"
+"db.utility.resource-mgmt-list-file" = "af5ac95d4ceda61d17e7bdfad4a1134b01ce92ac74b0d1f8f388af41be30852b"
+"db.utility.resource-mgmt-list-jar" = "fadc5b013a00cc20641a32cc905dd9d059361d28131acc2e5bcf43a04dc89a61"
+"db.utility.restore" = "82315cb33fc780089742dda6f385af614647137b2bc771a3bceeba3a5d018ae4"
+"db.utility.show-partitions" = "66f6663d5764f63b7f6433b633191c7ef7cbace3085ee5c7c769d02cc59f722c"
+"db.utility.show-table" = "45fc59c572f03b324926a5bf8deca829a7595d069bc25ec45d08038e53889c36"
+"db.utility.show-tblproperties" = "a4f101ef7e6f337709dbd423f9d605dba95a14d46a3501fd85622675f137b3d9"
+
+[review.definitions]
+"db.utility.cache" = "cfa1fbbb651cfaf8c6c790e13806317fe60b7e48369eb917dfb22e25def07f61"
+"db.utility.cache-refresh" = "281794a48e0817cdd63862ef9049c39401084068a8beb3e2dad8e20d226a300a"
+"db.utility.cache-refresh-table" = "015c23487378d10999628e63a7f4eebc5c37295630ce2d19c32119d3f638c141"
+"db.utility.resource-mgmt-add-archive" = "c01cd1da624b7e043937280b500231981b050e004ead853ffaeeb85c0c0539a5"
+"db.utility.resource-mgmt-add-file" = "ae60aaa793e0243ec41d2a4c034e404a58dace75e15914b73d96af3c4ac98e12"
+"db.utility.resource-mgmt-add-jar" = "246f89f4803f8e695f62d93be17e9ef3a20cd4fb97befccf68e89188f5827e6d"
+"db.utility.resource-mgmt-list-archive" = "b68e0e6f4ebb40d9782fc6337a520c8c19193bdc5bc434ef0959e6271b18404d"
+"db.utility.resource-mgmt-list-file" = "1ff09263d0a0fe1ed4222eb2e7eac3618785f19c4869295ccef53d8fd3a989e4"
+"db.utility.resource-mgmt-list-jar" = "318408d6fc9bf1d93bca3107cb7d736e88c471b8f5480c3c1920f29872bc2634"
+"db.utility.restore" = "0285301c3db41f5695c90e25ba961875964c4d395204f74a2a5965e055f458eb"
+"db.utility.show-partitions" = "fc2e736c4f492592e6f8c2e8f044fd9e7abcb909ca82869830b42c29f772ccf7"
+"db.utility.show-table" = "96a080e384bbd0f5df4c68c660c1ad5dd2168163be29885638368aaef82412bc"
+"db.utility.show-tblproperties" = "b360463e3bd3b897e6f4c117ce4914ab6cbbf8aed5c57c813cd3c50652a7a51b"

@@ -1251,3 +1251,65 @@ note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evid
 "db.ddl.alter-schema" = "5aadbf4088719804914c28c4c24c0cebfdc14dfbc7d171c8a33df3424f069614"
 "db.ddl.create-database" = "26f34aeba313ad48ff98fc9a1ef1fcabe7c49126f456d2ccb91a5624018005f1"
 "db.ddl.create-schema" = "82f3b1ae9d14f3a03ba974c1ccc77685354e395844f7701cfc9f410419b9438f"
+
+[[review]]
+id = "db-ddl-065"
+family = "ddl"
+parser_tree = "35d5c2c80f5764cfedd60956a5eb6572a578a3b7"
+reviewed_utc = "2026-11-17T16:22:17Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table",
+  "db.ddl.alter-table-add-constraint.enable-novalidate",
+  "db.ddl.alter-table-drop-constraint",
+  "db.ddl.alter-table-manage-partition.alter-table-add-partition",
+  "db.ddl.alter-table-manage-partition.drop-partition",
+  "db.ddl.alter-table-manage-partition.recover-partitions",
+  "db.ddl.alter-table-manage-partition.rename-to",
+  "db.ddl.alter-table.alter-table-drop-feature",
+  "db.ddl.alter-view",
+  "db.ddl.cluster-by",
+  "db.ddl.create-table-constraint.enable-novalidate",
+  "db.ddl.drop-function",
+  "db.ddl.drop-table.table",
+  "db.ddl.drop-table.temp-temporary-table",
+  "db.ddl.tblproperties.unset-tblproperties",
+  "db.ddl.undrop-table",
+]
+note = "Re-read on 17 Nov 2026 at 67a98c60d against the 2026.45 receipts in evidence set evL, after the parser-fixes merge and the DDL gap fixes. It answers the (d) findings of db-ddl-007, -008, -009, -013 to -017, -021, -024, -036, -043 to -045, -047 and -048, whose bindings went stale with these trees: every accepted case now parses to a tree, none to opaque text. ENABLE and NOVALIDATE set the constraint's enabled and validated modifiers alone or together, as the warehouse reads them: it accepts ENABLE alone and NOVALIDATE alone, and reads REFERENCES ENABLE NOVALIDATE as a table named enable (TABLE_OR_VIEW_NOT_FOUND). The hand forms' stricter reading, no UNIQUE before ENABLE NOVALIDATE, matches the warehouse's rejects. DROP CONSTRAINT records IF EXISTS, RESTRICT and CASCADE; DROP PARTITION records IF EXISTS, each partition and PURGE; UNSET TBLPROPERTIES records IF EXISTS and every key. ALTER VIEW's tags, WITH SCHEMA BINDING and relationship constraints are VIEW objects with their operands. CLUSTER BY ( 'v1' ) is a CLUSTER BY tuple, apart from the column list. DROP TEMPORARY FUNCTION, DROP TABLE ... FORCE, DROP TEMP and TEMPORARY TABLE, and UNDROP ... WITH ID keep their keywords and operands. Rejects: those off the warehouse's position are syntax errors on both sides, refused at the misspelt or missing keyword up to 8 characters earlier; ALTER TABLE t1 ALTER COLUMN and the NOVALIDATE data type are refused on both sides, and their receipts give no position. The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.ddl.alter-table" = "a173903b111ffa484f978e0e3255b1d66f6f168f69808c73c1896f0187e758de"
+"db.ddl.alter-table-add-constraint.enable-novalidate" = "b92077588c7beba0fdda2da053a6d97ffa1c53d58f129d5aa403b88518538914"
+"db.ddl.alter-table-drop-constraint" = "012b139123f39211568ee5ec49011b44c5a017469bfc91e6c6927ac59b68c3e7"
+"db.ddl.alter-table-manage-partition.alter-table-add-partition" = "778cab344962ab5a43322b0c165f5b64d9801d25546a2f9c80aa2ef0b68d5c18"
+"db.ddl.alter-table-manage-partition.drop-partition" = "8c30af497318b7c32e56470bdb6697348b5a0720e71e2dcd33b4c3f5ffd73be8"
+"db.ddl.alter-table-manage-partition.recover-partitions" = "c83945c6f4aab32d61ba626d97cf9982d7d7902eb4b74aa8aa9abfa31eab0e1c"
+"db.ddl.alter-table-manage-partition.rename-to" = "dd17da99d0f0e925bab6c3c0d1c65ee8cba216e8888621a9eae35677fee032aa"
+"db.ddl.alter-table.alter-table-drop-feature" = "ed7875b9f8c31ae206c1520a23ff5027a9fc62d7d8b7fb87eaae42faf790ce82"
+"db.ddl.alter-view" = "038a0947515c93400cd6c9b5212c2c49ab3c6eeb5d0bbfc27be1297d96bf5f43"
+"db.ddl.cluster-by" = "ab7a8c37dd611a04a9a04436604e7751a13c3a116a5a7e08b444f403125cef8b"
+"db.ddl.create-table-constraint.enable-novalidate" = "a4c9676f3f49f09effb3d930870e8ead8eee3156cc284bf2ce8cca4af74cae76"
+"db.ddl.drop-function" = "9224f7f4bab96ed23cdeabdb2def435d3f738c396bda1f144591c6182effbb79"
+"db.ddl.drop-table.table" = "5aa7bfb8e6c15de540e298020a2b8ef8cf5311f960fe81807ed604e362835380"
+"db.ddl.drop-table.temp-temporary-table" = "b04c814798a5ddd87aeae552d4fb58b310a9de1c07487a6b317b0bbc23c284d5"
+"db.ddl.tblproperties.unset-tblproperties" = "5d507e591ecb0f48de70f690c26be37de93f68ef10cc7eeaf6ee6726a682133a"
+"db.ddl.undrop-table" = "05a256665ca9e290c25eedeed4295aa51dfdb8afd2dff0ebb8b327466d430625"
+
+[review.definitions]
+"db.ddl.alter-table" = "45f8d3c275e44a178729e82ee86a7ddf4b83d6b1a93ca41cd0a895c42ad47906"
+"db.ddl.alter-table-add-constraint.enable-novalidate" = "22cc01cc29a6d62501563e6eab0832075fdb3cd3e51d3216c4cea7bac2addeee"
+"db.ddl.alter-table-drop-constraint" = "d62a4868acd719edd54809ad1fd395731e572a13b3d71d2c1f98aa1879d134e6"
+"db.ddl.alter-table-manage-partition.alter-table-add-partition" = "983839db6e4cd834ad180b994619697a764b756b996f02c66618c685501bfc7d"
+"db.ddl.alter-table-manage-partition.drop-partition" = "fd2239bdd818472f00ac7f2e987d90187e040434a6aa6d17ca5ac42314080bfa"
+"db.ddl.alter-table-manage-partition.recover-partitions" = "bdfb16de262b2675959276df7fc932f26508dd0bb29aaa13cea0935b71ee4c4d"
+"db.ddl.alter-table-manage-partition.rename-to" = "38c33661197e1befd2af158341e87fe6d4103ea7c34181294e20476e33132ae3"
+"db.ddl.alter-table.alter-table-drop-feature" = "75e0f74dde4ca3ddd92e49cefaa4b42dbdfaa685806c228f565cd014c737b3c8"
+"db.ddl.alter-view" = "56fc1c89f9d4baab97b97e987d993d5ae80c4de4091e8a1a1c958ff5da286e11"
+"db.ddl.cluster-by" = "5500a5bc22852ab1216f63ef3488643233a4a451a97919d183647ae4f4f8db28"
+"db.ddl.create-table-constraint.enable-novalidate" = "37fcc7fd37e5a289a01554b2178afcc17535d250119d0c95ffb4a1cd84d475d7"
+"db.ddl.drop-function" = "d4e5279e905a085eb862290f6e597b8ba84b9f6d4e602fccf4a8f1e5a55ff187"
+"db.ddl.drop-table.table" = "5c646bb9817808cc4cb1c194c70fccba89add19fd115732fe670c1025263e6b6"
+"db.ddl.drop-table.temp-temporary-table" = "328ae9f5b8347dbc59bb71dbc44c6bb2379319d029a221a26a1044e2990a18f8"
+"db.ddl.tblproperties.unset-tblproperties" = "408768c265877074fb6c5c876fdbc7c2d4cf8378edb13ec137000bb5ce51d6a8"
+"db.ddl.undrop-table" = "3df9572a1572d83b5fbb3f1d06354faf39037b570863b28bc020177df33c6880"

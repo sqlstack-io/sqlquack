@@ -6019,3 +6019,20 @@ note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evid
 
 [review.definitions]
 "db.functions.localtime" = "277fb28f18acd84b4728b774689e2cf3593106a730fdc3d7063c64ceaf8620d5"
+
+[[review]]
+id = "db-functions-068"
+family = "functions"
+parser_tree = "35d5c2c80f5764cfedd60956a5eb6572a578a3b7"
+reviewed_utc = "2026-11-17T16:22:17Z"
+verdict = "approved"
+forms = [
+  "db.functions.colonsign",
+]
+note = "Re-read on 17 Nov 2026 at 67a98c60d against the 2026.45 receipts in evidence set evL, because the parser-fixes merge changed this verified form's tree: SELECT ( 1 :a1 ) (accepted) now reads the key as a JSON path of one key, a1, where it was the string 'a1'; nothing else changed. The verdicts of ( 1 : ) and the :: and ?:: cases are unchanged; ( 1 : ) is refused at the colon, 2 characters before the warehouse's ), and the others at the warehouse's position. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.functions.colonsign" = "2fc6f8dfe0d9c5cc06d83e0c21029f84545eff7fc27f3c9a7dfda93ec164cfbf"
+
+[review.definitions]
+"db.functions.colonsign" = "0f9546134feb15b17cd7da450b327c87ca50cac63faa69bc53164d398c50ec94"
