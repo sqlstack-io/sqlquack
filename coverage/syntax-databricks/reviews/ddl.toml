@@ -1330,3 +1330,20 @@ note = "Withdraws this form's approval in db-ddl-065, which stays as written. UN
 
 [review.definitions]
 "db.ddl.tblproperties.unset-tblproperties" = "408768c265877074fb6c5c876fdbc7c2d4cf8378edb13ec137000bb5ce51d6a8"
+
+[[review]]
+id = "db-ddl-067"
+family = "ddl"
+parser_tree = "f08262db76019bd47d298a9aac4680f424c924e7"
+reviewed_utc = "2026-11-17T19:10:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-view",
+]
+note = "Withdraws this form's approval in db-ddl-065, which stays as written. ALTER VIEW ... SET TBLPROPERTIES keeps its keys and values only as plain strings, so a string value and a number, or a string and a boolean, give the same tree: ( 'k' = 1 ) and ( 'k' = '1' ) both give [[\"k\", \"1\"]], as do ( k = true ) and ( 'k' = 'true' ); recorded case k83dd4f39ba83, ALTER VIEW v1 SET TBLPROPERTIES ( 'k' = 'v' ), has this shape. ALTER VIEW ... UNSET TBLPROPERTIES gives a quoted and an unquoted key the same tree, as db-ddl-066 found for the tblproperties form; recorded case k897fc9e5f983, ALTER VIEW v1 UNSET TBLPROPERTIES ( 'k' ), has this shape. ALTER TABLE ... SET TBLPROPERTIES keeps each key and value as written and is not affected. Needs: ALTER VIEW's SET and UNSET TBLPROPERTIES keys and values kept as written, with IF EXISTS on UNSET."
+
+[review.fingerprints]
+"db.ddl.alter-view" = "038a0947515c93400cd6c9b5212c2c49ab3c6eeb5d0bbfc27be1297d96bf5f43"
+
+[review.definitions]
+"db.ddl.alter-view" = "56fc1c89f9d4baab97b97e987d993d5ae80c4de4091e8a1a1c958ff5da286e11"
