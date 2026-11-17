@@ -474,6 +474,37 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 4,
         },
         DistinctTreesTestCase {
+            description: "an unset table property key written as a name, backquoted and as a string",
+            written: &[
+                "ALTER TABLE t1 UNSET TBLPROPERTIES ( k )",
+                "ALTER TABLE t1 UNSET TBLPROPERTIES ( `k` )",
+                "ALTER TABLE t1 UNSET TBLPROPERTIES ( 'k' )",
+            ],
+            expected_distinct_trees: 3,
+        },
+        DistinctTreesTestCase {
+            description: "an unset view property key as a name or a string, with or without IF EXISTS (recorded accept alter-view.k897fc9e5f983)",
+            written: &[
+                "ALTER VIEW v1 UNSET TBLPROPERTIES ( 'k' )",
+                "ALTER VIEW v1 UNSET TBLPROPERTIES ( k )",
+                "ALTER VIEW v1 UNSET TBLPROPERTIES IF EXISTS ( 'k' )",
+                "ALTER VIEW v1 UNSET TBLPROPERTIES IF EXISTS ( k )",
+            ],
+            expected_distinct_trees: 4,
+        },
+        DistinctTreesTestCase {
+            description: "a view property's key and value as written: string, name, number, boolean (recorded accept alter-view.k83dd4f39ba83)",
+            written: &[
+                "ALTER VIEW v1 SET TBLPROPERTIES ( 'k' = 'v' )",
+                "ALTER VIEW v1 SET TBLPROPERTIES ( 'k' = 1 )",
+                "ALTER VIEW v1 SET TBLPROPERTIES ( 'k' = '1' )",
+                "ALTER VIEW v1 SET TBLPROPERTIES ( k = 1 )",
+                "ALTER VIEW v1 SET TBLPROPERTIES ( 'k' = true )",
+                "ALTER VIEW v1 SET TBLPROPERTIES ( 'k' = 'true' )",
+            ],
+            expected_distinct_trees: 6,
+        },
+        DistinctTreesTestCase {
             description: "a view's relationship constraint: named or not, cardinality, ON or USING, aliased or not",
             written: &[
                 "ALTER VIEW v1 ADD CONSTRAINT k1 MANY TO ONE RELATIONSHIP TO v2 ON 1 = 1",

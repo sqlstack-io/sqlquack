@@ -171,6 +171,7 @@ impl Parser<'_> {
             "num" => self.number(true, is_number)?,
             "literal" => self.literal_value()?,
             "expr" => self.expression()?,
+            "using_arg" => self.using_item()?,
             "query" => self.query()?,
             "type" => Expression::DataType(self.data_type()?),
             "props" | "keys" => {

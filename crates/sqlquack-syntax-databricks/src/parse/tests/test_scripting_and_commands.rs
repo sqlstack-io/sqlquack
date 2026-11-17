@@ -711,6 +711,11 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "a view's UNSET TBLPROPERTIES IF EXISTS is a tree",
+            sql: "ALTER VIEW v1 UNSET TBLPROPERTIES IF EXISTS ( 'k' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "a directory whose row format escapes stays a gap",
             sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' ESCAPED BY '#' SELECT 1",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },

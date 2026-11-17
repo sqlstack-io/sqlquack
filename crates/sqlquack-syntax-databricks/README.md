@@ -144,7 +144,6 @@ next top-level `;` is not checked further; every other gap's text is checked.
 | `changes`, `relation_options`, `watermark`, `identified_by`, `nearest_by`, `subquery_sample`, `parenthesized_relation_sample` | `CHANGES`, `WITH (options)` on a relation, `WATERMARK … DELAY OF INTERVAL …` (checked), `IDENTIFIED BY`, `NEAREST BY`, a sample or later relation clause after a parenthesized subquery or relation |
 | `table_argument_partitioning` | `TABLE t PARTITION BY … ORDER BY …` as a function argument |
 | `pivot_after_lateral_view`, `identifier_clause_function` | `PIVOT` after `LATERAL VIEW`, `IDENTIFIER(…)(…)` calls |
-| `unset_if_exists` | `UNSET TBLPROPERTIES IF EXISTS` on `ALTER VIEW` |
 | `change_column_position`, `change_column_not_null`, `replace_columns`, `partition_change_column`, `view_partition`, `alter_column_without_action` | column moves with `CHANGE`, `REPLACE COLUMNS`, Hive column changes in a partition, partitions of a view, a column named with no action after an action kept as a tree |
 | `show_create_table_serde` | `SHOW CREATE TABLE … AS SERDE` |
 | `declare_cursor`, `function_credentials`, `function_secrets` | `DECLARE … CURSOR`, a function's `CREDENTIALS` and `SECRETS` |

@@ -858,6 +858,12 @@ pub enum AlterTableAction {
     SetTableProperties {
         properties: Vec<(Expression, Expression)>,
     },
+    /// Databricks: ALTER TABLE t UNSET TBLPROPERTIES [ IF EXISTS ] ( k1 , 'k2' ), each key as written.
+    UnsetTableProperties {
+        properties: Vec<Expression>,
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        if_exists: bool,
+    },
     /// Redshift: ALTER TABLE t SET LOCATION 's3://bucket/folder/'
     SetLocation {
         location: String,

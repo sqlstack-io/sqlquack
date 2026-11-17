@@ -508,8 +508,7 @@ const FORMS: &[Form] = &[
         construct: "execute_immediate",
         leads: &[&["EXECUTE"]],
         patterns: &[
-            "EXECUTE IMMEDIATE expr [ INTO name ,... ] [ USING { ( { expr [ [ AS ] id ] } ,... ) \
-             | { expr [ [ AS ] id ] } ,... } ]",
+            "EXECUTE IMMEDIATE expr [ INTO name ,... ] [ USING { ( using_arg ,... ) | using_arg ,... } ]",
         ],
     },
     Form {
