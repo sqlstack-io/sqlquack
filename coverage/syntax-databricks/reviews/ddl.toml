@@ -1457,3 +1457,29 @@ note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) again
 [review.definitions]
 "db.ddl.alter-recipient" = "5ee0078712bd30844a58d578c337613cbc92dd08b65fdd024f79645f9214ae81"
 "db.ddl.create-sql-function" = "d2f16ee0e1dea784ade8149bb0e7c7710be4a58c9f8cd3564545213da67b0687"
+
+[[review]]
+id = "db-ddl-072"
+family = "ddl"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T20:01:58Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-view",
+  "db.ddl.tblproperties.options",
+  "db.ddl.tblproperties.set-tblproperties",
+  "db.ddl.tblproperties.tblproperties",
+]
+note = "Withdraws the approvals of these forms (db-ddl-058 and the older db-ddl-001 for the three tblproperties forms, db-ddl-068 for alter-view) after an independent review of the parser commit at 0f34dd46f. A missing = between a property key and its value leaves no mark: ALTER TABLE t1 SET TBLPROPERTIES ( 'k' 'v' ) and ( 'k' = 'v' ) give the same tree, and so do CREATE TABLE ... TBLPROPERTIES, CREATE TABLE ... USING DELTA OPTIONS and ALTER VIEW v1 SET TBLPROPERTIES, while CACHE TABLE and INSERT OVERWRITE DIRECTORY keep the spelling as options_without_equals. The collapse predates 0f34dd46f. set-tblproperties, tblproperties, options: their option_present and option_absent [ = ] obligations o005 and o006 are met by accepted cases whose trees do not show which spelling was written (k6dcd709d831a and k2ba1115a3184; k7112e6e629dc and k1794cbe9ac57; k64fdc5b93158 and k62525e799669), and the coverage README requires that pair to stay distinct. Parser fix (carry whether = was written), then re-read from these existing receipts. alter-view: the view SET TBLPROPERTIES node from 0f34dd46f has the same collapse, and none of its new spellings (an unquoted key, a typed value, a view SET without =, view UNSET TBLPROPERTIES IF EXISTS) has a receipt; they are added to the pending recording bundle, and alter-view waits for them. db-ddl-067's note says view SET TBLPROPERTIES keeps each key and value as written; that is not true for =."
+
+[review.fingerprints]
+"db.ddl.alter-view" = "3f24b5839044ae2ae38d704077af41673482184134abb9f1d29cb4acecef8954"
+"db.ddl.tblproperties.options" = "e192e4bb28745d21d24052511e5e4be13487c419602f468b51a685d19d0e6935"
+"db.ddl.tblproperties.set-tblproperties" = "dda9e66aeee1f85054ca350439abfb016380ec1e92427c794ca720dc41881d2d"
+"db.ddl.tblproperties.tblproperties" = "d9153ea965e4f65cb554fddd18c835a2b760040477ef23d497aa4153eb029dbf"
+
+[review.definitions]
+"db.ddl.alter-view" = "56fc1c89f9d4baab97b97e987d993d5ae80c4de4091e8a1a1c958ff5da286e11"
+"db.ddl.tblproperties.options" = "4118a50f166bea208d0f88d2e4365b2c5515d48e90031baba4b4aa61b3f123d0"
+"db.ddl.tblproperties.set-tblproperties" = "c302c44e30e8f9469b1e406faf5e494658bfd3d53210cce0fab299b826f7e271"
+"db.ddl.tblproperties.tblproperties" = "33a663860db33db453a93672d44de95038003a966864e197d834f62809324eee"
