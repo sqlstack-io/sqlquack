@@ -21,8 +21,10 @@ use crate::scan::models::{NumberKind, TokenKind};
 impl Parser<'_> {
     /// `createNamespace` after `CREATE`: `SCHEMA [IF NOT EXISTS] name` and its clauses.
     pub(crate) fn create_schema(&mut self) -> Parsing<Expression> {
+        let keyword: Option<String> = self.schema_synonym();
         self.at += 1;
         let mut node: CreateSchema = CreateSchema::new(String::new());
+        node.keyword = keyword;
         node.if_not_exists = self.eat_kws(&["IF", "NOT", "EXISTS"]);
         node.name = self.multipart_identifier()?;
         loop {
@@ -78,13 +80,21 @@ impl Parser<'_> {
 
     /// `dropNamespace` after `DROP`: `SCHEMA [IF EXISTS] name [RESTRICT | CASCADE]`.
     pub(crate) fn drop_schema(&mut self) -> Parsing<Expression> {
+        let keyword: Option<String> = self.schema_synonym();
         self.at += 1;
         let mut node: DropSchema = DropSchema::new(String::new());
+        node.keyword = keyword;
         node.if_exists = self.eat_kws(&["IF", "EXISTS"]);
         node.name = joined(self.multipart_identifier()?);
         node.cascade = self.eat_kw("CASCADE");
         node.restrict = !node.cascade && self.eat_kw("RESTRICT");
         Ok(Expression::DropSchema(Box::new(node)))
+    }
+
+    /// DATABASE or NAMESPACE when the word at the cursor writes one for SCHEMA.
+    fn schema_synonym(&self) -> Option<String> {
+        self.word_at(0)
+            .filter(|word| word == "DATABASE" || word == "NAMESPACE")
     }
 
     /// `dropFunction` after `DROP [TEMPORARY]`; a temporary function's drop is a gap.

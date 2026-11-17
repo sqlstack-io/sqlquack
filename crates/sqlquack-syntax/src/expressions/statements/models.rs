@@ -534,6 +534,10 @@ pub struct Use {
     /// Databricks: whether the name was written as a string literal
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub string_name: bool,
+    /// Databricks: NAMESPACE as written for the DATABASE kind
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub keyword: Option<String>,
 }
 
 /// Kind of USE statement

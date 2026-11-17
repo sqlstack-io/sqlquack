@@ -1325,6 +1325,7 @@ impl Parser {
             or_alter: false,
             define: false,
             modifier: None,
+            keyword: None,
         })))
     }
 
@@ -1343,6 +1344,7 @@ impl Parser {
             if_exists,
             cascade,
             restrict,
+            keyword: None,
         })))
     }
 

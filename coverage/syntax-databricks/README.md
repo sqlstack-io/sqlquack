@@ -560,8 +560,9 @@ Where a page's Syntax block offers different spellings of one construct, each sp
 its own tree, so a review of the tree can see which one the SQL wrote. The parser keeps, among
 others:
 
-- `DESC` against `DESCRIBE`, `DATABASE`, `SCHEMA` and `NAMESPACE` as written, `FROM` against `IN`,
-  and whether `LIKE` was written before a pattern;
+- `DESC` against `DESCRIBE`, `DATABASE`, `SCHEMA` and `NAMESPACE` as written (in `DESCRIBE`,
+  `CREATE`, `ALTER`, `DROP` and `USE`), `FROM` against `IN`, and whether `LIKE` was written before
+  a pattern;
 - `MINUS` against `EXCEPT`, `TEMP` against `TEMPORARY`, and the type synonyms `BYTE`, `SHORT`,
   `LONG`, `DEC` and `NUMERIC`;
 - `ADD COLUMN` against `ADD COLUMNS` and `DROP COLUMN` against `DROP COLUMNS`, because the ALTER

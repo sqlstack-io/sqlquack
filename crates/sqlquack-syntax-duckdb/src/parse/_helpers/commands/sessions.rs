@@ -125,5 +125,6 @@ fn use_node(parts: Vec<Identifier>) -> Expression {
         roles: Vec::new(),
         parts,
         string_name: false,
+        keyword: None,
     }))
 }

@@ -1650,6 +1650,7 @@ impl Parser {
                     roles,
                     parts: Vec::new(),
                     string_name: false,
+                    keyword: None,
                 })));
             }
         }
@@ -1698,6 +1699,7 @@ impl Parser {
             roles: Vec::new(),
             parts,
             string_name: false,
+            keyword: None,
         })))
     }
 

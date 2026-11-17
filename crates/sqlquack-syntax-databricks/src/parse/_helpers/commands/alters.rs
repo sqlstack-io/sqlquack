@@ -840,6 +840,7 @@ impl Parser<'_> {
 
     /// `ALTER SCHEMA` as an `AlterObject` whose action names the clause and holds its operands.
     fn alter_schema(&mut self) -> Parsing<Expression> {
+        let kind: String = self.word_at(0).unwrap_or_default();
         self.at += 1;
         let name: TableRef = table(self.multipart_identifier()?);
         let (action, operands): (String, Vec<Expression>) = match self.word_at(0).as_deref() {
@@ -930,7 +931,7 @@ impl Parser<'_> {
             _ => return Err(self.error()),
         };
         Ok(Expression::AlterObject(Box::new(AlterObject {
-            kind: "SCHEMA".to_owned(),
+            kind,
             name: Some(name),
             arguments: Vec::new(),
             if_exists: false,

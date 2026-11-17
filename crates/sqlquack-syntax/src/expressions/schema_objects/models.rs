@@ -324,6 +324,10 @@ pub struct CreateSchema {
     /// Snowflake: the modifier before SCHEMA as written, e.g. "TRANSIENT"
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub modifier: Option<String>,
+    /// Databricks: the keyword written for the schema when it is a synonym, DATABASE or NAMESPACE
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub keyword: Option<String>,
 }
 
 impl CreateSchema {
@@ -340,6 +344,7 @@ impl CreateSchema {
             or_alter: false,
             define: false,
             modifier: None,
+            keyword: None,
         }
     }
 }
@@ -353,6 +358,10 @@ pub struct DropSchema {
     /// RESTRICT, kept apart from the default; left out of the tree when absent
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub restrict: bool,
+    /// Databricks: the keyword written for the schema when it is a synonym, DATABASE or NAMESPACE
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub keyword: Option<String>,
 }
 
 impl DropSchema {
@@ -362,6 +371,7 @@ impl DropSchema {
             if_exists: false,
             cascade: false,
             restrict: false,
+            keyword: None,
         }
     }
 }

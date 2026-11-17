@@ -359,6 +359,7 @@ impl Parser<'_> {
             or_alter: false,
             define: false,
             modifier: None,
+            keyword: None,
         })))
     }
 

@@ -212,6 +212,7 @@ impl<'sql> Parser<'sql> {
                     roles: Vec::new(),
                     parts: Vec::new(),
                     string_name: false,
+                    keyword: None,
                 })))
             }
             "RETURN" => {

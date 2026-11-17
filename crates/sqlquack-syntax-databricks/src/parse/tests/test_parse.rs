@@ -993,6 +993,36 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "true",
         },
         ValueTestCase {
+            description: "DROP DATABASE keeps DATABASE",
+            sql: "DROP DATABASE s1",
+            pointer: "/0/drop_schema/keyword",
+            expected_json: "\"DATABASE\"",
+        },
+        ValueTestCase {
+            description: "DROP NAMESPACE keeps NAMESPACE",
+            sql: "DROP NAMESPACE IF EXISTS s1 CASCADE",
+            pointer: "/0/drop_schema/keyword",
+            expected_json: "\"NAMESPACE\"",
+        },
+        ValueTestCase {
+            description: "CREATE DATABASE keeps DATABASE",
+            sql: "CREATE DATABASE s1",
+            pointer: "/0/create_schema/keyword",
+            expected_json: "\"DATABASE\"",
+        },
+        ValueTestCase {
+            description: "ALTER DATABASE keeps DATABASE",
+            sql: "ALTER DATABASE s1 SET DBPROPERTIES ( 'k' = 'v' )",
+            pointer: "/0/alter_object/kind",
+            expected_json: "\"DATABASE\"",
+        },
+        ValueTestCase {
+            description: "USE NAMESPACE keeps NAMESPACE",
+            sql: "USE NAMESPACE s1",
+            pointer: "/0/use/keyword",
+            expected_json: "\"NAMESPACE\"",
+        },
+        ValueTestCase {
             description: "an explicit ALL is recorded, not folded into none",
             sql: "SELECT sum(ALL a) FROM t",
             pointer: "/0/select/expressions/0/function/set_quantifier",

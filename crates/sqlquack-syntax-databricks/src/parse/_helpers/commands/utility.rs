@@ -626,6 +626,10 @@ impl Parser<'_> {
             Some("DATABASE" | "NAMESPACE") if self.kind_at(0) => Some(UseKind::Database),
             _ => None,
         };
+        let keyword: Option<String> = (kind == Some(UseKind::Database))
+            .then(|| self.word_at(0))
+            .flatten()
+            .filter(|word| word == "NAMESPACE");
         self.at += usize::from(kind.is_some());
         let string_name: bool = kind == Some(UseKind::Catalog) && self.string_at(0);
         let parts: Vec<Identifier> = match string_name {
@@ -638,6 +642,7 @@ impl Parser<'_> {
             roles: Vec::new(),
             parts,
             string_name,
+            keyword,
         })))
     }
 
