@@ -34106,14 +34106,6 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "db.functions.string-agg.o061"
-kind = "interaction"
-required = true
-target = "OVER"
-anchor = "doc.functions.string_agg / Syntax"
-note = "a window invocation together with WITHIN GROUP, which the page's prose rules out"
-
-[[obligation]]
 id = "db.functions.struct.o001"
 kind = "positive"
 required = true
@@ -34663,14 +34655,6 @@ required = true
 target = "<expr>"
 anchor = "doc.functions.sum / Syntax"
 note = "the call with its only argument left out"
-
-[[obligation]]
-id = "db.functions.sum.o018"
-kind = "interaction"
-required = true
-target = "OVER"
-anchor = "doc.functions.sum / Syntax"
-note = "the aggregate invoked as a window function, as the page's prose allows"
 
 [[obligation]]
 id = "db.functions.table-changes.o001"

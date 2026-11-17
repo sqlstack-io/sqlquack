@@ -19877,18 +19877,24 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "PARTITIONED BY before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o244"
+id = "db.ddl.create-table-hiveformat.o253"
 kind = "interaction"
 required = true
-target = "COMMENT and ROW FORMAT in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o011",
+  "db.ddl.create-table-hiveformat.o209",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "ROW FORMAT before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o245"
+id = "db.ddl.create-table-hiveformat.o254"
 kind = "interaction"
 required = true
-target = "COMMENT and STORED AS in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o011",
+  "db.ddl.create-table-hiveformat.o210",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "STORED AS before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
@@ -19915,18 +19921,24 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o246"
+id = "db.ddl.create-table-hiveformat.o255"
 kind = "interaction"
 required = true
-target = "PARTITIONED BY and ROW FORMAT in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o089",
+  "db.ddl.create-table-hiveformat.o209",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "ROW FORMAT before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o247"
+id = "db.ddl.create-table-hiveformat.o256"
 kind = "interaction"
 required = true
-target = "PARTITIONED BY and STORED AS in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o089",
+  "db.ddl.create-table-hiveformat.o210",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "STORED AS before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
@@ -19953,42 +19965,57 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o248"
+id = "db.ddl.create-table-hiveformat.o257"
 kind = "interaction"
 required = true
-target = "ROW FORMAT and STORED AS in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o209",
+  "db.ddl.create-table-hiveformat.o169",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "STORED AS before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o249"
+id = "db.ddl.create-table-hiveformat.o258"
 kind = "interaction"
 required = true
-target = "ROW FORMAT and LOCATION in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o209",
+  "db.ddl.create-table-hiveformat.o047",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "LOCATION before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o250"
+id = "db.ddl.create-table-hiveformat.o259"
 kind = "interaction"
 required = true
-target = "ROW FORMAT and TBLPROPERTIES in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o209",
+  "db.ddl.create-table-hiveformat.o052",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o251"
+id = "db.ddl.create-table-hiveformat.o260"
 kind = "interaction"
 required = true
-target = "STORED AS and LOCATION in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o210",
+  "db.ddl.create-table-hiveformat.o047",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "LOCATION before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 
 [[obligation]]
-id = "db.ddl.create-table-hiveformat.o252"
+id = "db.ddl.create-table-hiveformat.o261"
 kind = "interaction"
 required = true
-target = "STORED AS and TBLPROPERTIES in the other order"
+pair = [
+  "db.ddl.create-table-hiveformat.o210",
+  "db.ddl.create-table-hiveformat.o052",
+]
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 note = "TBLPROPERTIES before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 

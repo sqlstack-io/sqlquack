@@ -23,6 +23,7 @@ from scripts.grammar_obligations.constants import (
     EXPECT_OBSERVE,
     EXPECT_REJECT,
     HAND_CASE_KEYS,
+    KIND_ALTERNATIVE,
     KIND_EXTREME,
     KIND_NEGATIVE,
     KIND_OPTION_PRESENT,
@@ -110,12 +111,15 @@ def _suppressed(*, draft: Draft, rows: list[Row]) -> bool:
 
 
 def obligation_rows(numbered: list[tuple[str, Draft]]) -> list[Row]:
-    """TOML rows; an interaction's pair names the option_present obligations of its two targets."""
-    by_target: dict[tuple[str, str], str] = {
-        (draft.form, draft.target): identifier
-        for identifier, draft in numbered
-        if draft.kind == KIND_OPTION_PRESENT
-    }
+    """TOML rows; an interaction's pair names the obligations of two options or alternatives."""
+    by_target: dict[tuple[str, str], str] = {}
+    for kind in (KIND_ALTERNATIVE, KIND_OPTION_PRESENT):
+        named: dict[tuple[str, str], str] = {
+            (draft.form, draft.target): identifier
+            for identifier, draft in numbered
+            if draft.kind == kind
+        }
+        by_target.update(named)
     rows: list[Row] = []
     seen: set[str] = set()
     for identifier, draft in numbered:
@@ -131,7 +135,8 @@ def obligation_rows(numbered: list[tuple[str, Draft]]) -> list[Row]:
             members: list[str] = [by_target.get((draft.form, member), "") for member in draft.pair]
             if not all(members):
                 raise ObligationError(
-                    f"{identifier}: pair {draft.pair} is not two options of {draft.form}"
+                    f"{identifier}: pair {draft.pair} is not two options or alternatives of "
+                    f"{draft.form}"
                 )
             row["pair"] = members
         if draft.anchor:

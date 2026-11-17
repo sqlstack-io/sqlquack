@@ -2713,3 +2713,27 @@ ids = [
   "db.expressions.decfloat-type.o003",
   "db.expressions.decfloat-type.o005",
 ]
+
+[[retired]]
+retired_in = "089f3b2632bb5e374219481b2d258ecde766783f"
+reason = "a clause-order interaction written with one free-text target, which an interaction cannot hold: each is issued again as an interaction whose pair is the two clauses the page names, ROW FORMAT and the bare STORED AS being the two alternatives of the line's required choice, and keeps its recorded SQL"
+ids = [
+  "db.ddl.create-table-hiveformat.o244",
+  "db.ddl.create-table-hiveformat.o245",
+  "db.ddl.create-table-hiveformat.o246",
+  "db.ddl.create-table-hiveformat.o247",
+  "db.ddl.create-table-hiveformat.o248",
+  "db.ddl.create-table-hiveformat.o249",
+  "db.ddl.create-table-hiveformat.o250",
+  "db.ddl.create-table-hiveformat.o251",
+  "db.ddl.create-table-hiveformat.o252",
+]
+
+[[retired]]
+retired_in = "089f3b2632bb5e374219481b2d258ecde766783f"
+reason = "an interaction with one target that its page's Syntax block does not write: OVER on SUM and STRING_AGG is named only in the pages' prose, and the comma before GROUPING SETS is not part of the Hive form, so there is no pair of the line's options or alternatives to observe, and the obligation is withdrawn rather than given an invented second target"
+ids = [
+  "db.functions.string-agg.o061",
+  "db.functions.sum.o018",
+  "db.query.select-groupby.hive-grouping-sets.o015",
+]

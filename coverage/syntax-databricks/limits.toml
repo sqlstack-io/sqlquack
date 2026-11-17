@@ -528,7 +528,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "COMMENT and ROW FORMAT in the other order"
+pair = ["[ COMMENT <table_comment> ]", "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"]
 note = "ROW FORMAT before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) ROW FORMAT DELIMITED COMMENT 'x' STORED AS TEXTFILE"
@@ -539,7 +539,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "COMMENT and STORED AS in the other order"
+pair = ["[ COMMENT <table_comment> ]", "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> }"]
 note = "STORED AS before COMMENT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE COMMENT 'x'"
@@ -572,7 +572,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "PARTITIONED BY and ROW FORMAT in the other order"
+pair = ["[ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) }…", "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"]
 note = "ROW FORMAT before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) ROW FORMAT DELIMITED PARTITIONED BY ( c3 INT ) STORED AS TEXTFILE"
@@ -583,7 +583,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "PARTITIONED BY and STORED AS in the other order"
+pair = ["[ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) }…", "{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> }"]
 note = "STORED AS before PARTITIONED BY, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE PARTITIONED BY ( c3 INT )"
@@ -616,7 +616,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "ROW FORMAT and STORED AS in the other order"
+pair = ["{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]", "[ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]"]
 note = "STORED AS before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE ROW FORMAT DELIMITED"
@@ -627,7 +627,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "ROW FORMAT and LOCATION in the other order"
+pair = ["{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]", "[ LOCATION <path> ]"]
 note = "LOCATION before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE LOCATION '/tmp/x' ROW FORMAT DELIMITED"
@@ -638,7 +638,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "ROW FORMAT and TBLPROPERTIES in the other order"
+pair = ["{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ]", "[ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ]"]
 note = "TBLPROPERTIES before ROW FORMAT, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) STORED AS TEXTFILE TBLPROPERTIES ( 'k' = 'v' ) ROW FORMAT DELIMITED"
@@ -649,7 +649,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "STORED AS and LOCATION in the other order"
+pair = ["{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> }", "[ LOCATION <path> ]"]
 note = "LOCATION before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) LOCATION '/tmp/x' STORED AS TEXTFILE"
@@ -660,7 +660,7 @@ documented = true
 [[limit]]
 form = "db.ddl.create-table-hiveformat"
 kind = "interaction"
-target = "STORED AS and TBLPROPERTIES in the other order"
+pair = ["{ ROW FORMAT <row_format> [ STORED AS { <file_format> |… → STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> }", "[ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ]"]
 note = "TBLPROPERTIES before STORED AS, the reverse of the line's order: 'The clauses between the column definition clause and the AS SELECT clause can appear in any order'; observed, since the page applies to Databricks Runtime only"
 anchor = "doc.sql-ref-syntax-ddl-create-table-hiveformat / Syntax"
 sql = "CREATE TABLE t3 ( c1 INT , c2 INT ) TBLPROPERTIES ( 'k' = 'v' ) STORED AS TEXTFILE"
@@ -6158,16 +6158,6 @@ grammar = ["NAMED_STRUCT ( <name1> , <val1> [ , <name1> , <val1> ... ] )"]
 reason = "the [ , ... ] continues the list with another name and value pair (nameN and valN in the page's Arguments, nameN a STRING literal); the renderer otherwise repeats only the value, an odd argument count the page's pairs rule out, as the MAP and DECODE readings record"
 
 [[limit]]
-form = "db.query.select-groupby.hive-grouping-sets"
-kind = "interaction"
-target = ","
-note = "the comma form beside the Hive form, a cross product rather than the Hive reading, recorded so the two can be told apart"
-anchor = "doc.sql-ref-syntax-qry-select-groupby / Syntax"
-sql = "SELECT c1 FROM t1 GROUP BY c1 , GROUPING SETS ( c1 )"
-context = "raw"
-expect = "observe"
-
-[[limit]]
 form = "db.query.select-lateral-view"
 kind = "option_absent"
 target = "AS"
@@ -6244,26 +6234,6 @@ target = "<expr>"
 note = "the call with its only argument left out"
 anchor = "doc.functions.sum / Syntax"
 sql = "SELECT ( SUM ( ) )"
-context = "raw"
-expect = "observe"
-
-[[limit]]
-form = "db.functions.sum"
-kind = "interaction"
-target = "OVER"
-note = "the aggregate invoked as a window function, as the page's prose allows"
-anchor = "doc.functions.sum / Syntax"
-sql = "SELECT ( SUM ( 1 ) OVER ( ) )"
-context = "raw"
-expect = "observe"
-
-[[limit]]
-form = "db.functions.string-agg"
-kind = "interaction"
-target = "OVER"
-note = "a window invocation together with WITHIN GROUP, which the page's prose rules out"
-anchor = "doc.functions.string_agg / Syntax"
-sql = "SELECT ( STRING_AGG ( 1 ) WITHIN GROUP ( ORDER BY v1 ) OVER ( ) )"
 context = "raw"
 expect = "observe"
 
