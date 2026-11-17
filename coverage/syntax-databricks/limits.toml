@@ -112,7 +112,7 @@ reason = "a temporary table is its own line: 'When creating or replacing a tempo
 form = "db.ddl.create-view.temporary-view-using"
 grammar_sha256 = "3f0891d2b8f44f8307c7918b5a8218970cf40540a077c618934ae8623101b578"
 grammar = ["CREATE [ OR REPLACE ] TEMPORARY VIEW <view_name> [ <column_list> ] USING <data_source> [ OPTIONS ( <option_key> [ = ] <option_value> [ , ... ] ) ]"]
-reason = "the warehouse refuses IF NOT EXISTS in a data-source temporary view (PARSE_SYNTAX_ERROR at USING; SqlBaseParser #createTempViewUsing has no IF NOT EXISTS), so the documented IF NOT EXISTS is kept as an observed [[limit]] row. GLOBAL TEMPORARY carries the banner 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so GLOBAL leaves the derivation and the documented global temporary views are observed [[limit]] rows"
+reason = "the warehouse refuses IF NOT EXISTS in a data-source temporary view (PARSE_SYNTAX_ERROR at USING; SqlBaseParser #createTempViewUsing has no IF NOT EXISTS), so the documented IF NOT EXISTS is kept as an observed [[limit]] row. GLOBAL TEMPORARY carries the banner 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so GLOBAL leaves the derivation and the documented global temporary views are observed [[limit]] rows. <column_list> is a list of typed columns, ( c1 INT ), as SqlBaseParser #createTempViewUsing reads it (tableIdentifier (LEFT_PAREN colTypeList RIGHT_PAREN)? tableProvider), unlike a query view's list of names"
 
 [[reading]]
 form = "db.ddl.create-table-hiveformat"
