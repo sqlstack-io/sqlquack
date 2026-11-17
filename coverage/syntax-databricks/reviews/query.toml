@@ -466,3 +466,49 @@ note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evid
 
 [review.definitions]
 "db.query.select-groupby.hive-grouping-sets" = "85bfba731332bf9f53018fc6044b84ed9b34be412986814337225d7a3bfe7943"
+
+[[review]]
+id = "db-query-019"
+family = "query"
+parser_tree = "40b4300fd9806078edccc072481fc116d6c367c4"
+reviewed_utc = "2026-11-17T15:04:19Z"
+verdict = "approved"
+forms = [
+  "db.query.select-nearest-by",
+  "db.query.select-table-reference",
+  "db.query.select-watermark",
+]
+note = "Re-read on 17 Nov 2026 at 95dd2ae37 against the 2026.45 receipts in evidence set evL-17nov, after the NEAREST BY, WATERMARK and subquery TABLESAMPLE parser fix. It answers db-query-006, db-query-008 and db-query-009, whose bindings went stale with this tree. Each asked for trees that were opaque, and no accepted case of these forms is opaque now. select-nearest-by: the join keeps its kind and its INNER or OUTER keyword, and nearest_by holds EXACT as exact, SIMILARITY as similarity, the written count as results and the ranking expression as by; APPROX, DISTANCE and an omitted count leave those unset (parsed, all seven spellings). select-table-reference: APPROX NEAREST 1 BY DISTANCE is the same nearest_by; LATERAL ( SELECT 1 ) TABLESAMPLE ( 50 PERCENT ) a1 is a lateral subquery that keeps its sample and alias; STREAM ( t1 ) a1 is now an alias around a stream of the parenthesised table, so the alias is outside the parentheses as written, while STREAM t1 a1 keeps the alias on the table; VERSION, TIMESTAMP, FOR SYSTEM_TIME and FOR SYSTEM_VERSION AS OF stay version clauses with for_keyword marking FOR. select-watermark: WATERMARK c1 DELAY OF INTERVAL 1 MINUTE is a watermark with the column as this and the interval as delay, on the table and on the lateral subquery, after TABLESAMPLE and before the alias. The mechanical screen finds every name and literal in all 53 accepted case readings (40 distinct cases). Of 35 local rejects, 31 are at the warehouse's position and 4 are elsewhere, all syntax errors on both sides and unchanged from the previous tree: ANTI at the end (the warehouse reports at ANTI, locally the end of input), FOR SYSTEM_TIMESTAMP (the warehouse reports at SYSTEM_TIMESTAMP, locally at FOR), FROM SELECT 1 (the warehouse at SELECT, locally at 1, since SELECT is read as a table name) and an unclosed ( SELECT 1 (one position apart at the end of input). STREAM ( t1 a1 ), an alias inside the parentheses, is now refused locally; no receipt covers it."
+
+[review.fingerprints]
+"db.query.select-nearest-by" = "19d82814ca09eaf7937ca9850c6a917adf2744c25b538dbcc1611fe6d875be45"
+"db.query.select-table-reference" = "58fa0ec4261bf24b8e87fe2d50d302cd59e668f3dd63ed3a09c7f084610223f3"
+"db.query.select-watermark" = "8644e1026473b4be6c9843ad09086b0ac8d1ca2a6ecc91e0c9440b3fcfe76dfd"
+
+[review.definitions]
+"db.query.select-nearest-by" = "e4af8a94c4e1f52762ad8dd6d15ca7de9d30e79ef57b67af7eeaeb27fac9e399"
+"db.query.select-table-reference" = "d2a4dacf989a91964280f05d75f94ba34e1754f4e40e1dece0654bf0bef28c07"
+"db.query.select-watermark" = "f7848a7ca823a2825c8b15df53dc7eed9d8906e0047df793440ce859e57939a6"
+
+[[review]]
+id = "db-query-020"
+family = "query"
+parser_tree = "40b4300fd9806078edccc072481fc116d6c367c4"
+reviewed_utc = "2026-11-17T15:05:35Z"
+verdict = "approved"
+forms = [
+  "db.query.pipeline.table",
+  "db.query.pipeline.table.syntax",
+  "db.query.select-pipeop",
+]
+note = "Re-read on 17 Nov 2026 at 95dd2ae37 against the 2026.45 receipts in evidence set evL-17nov. This record supersedes db-query-014 and db-query-017 for these forms. db-query-014's statement that no pipe case shares a tree with its desugared plain query is withdrawn as written: it held for the recorded cases, which all start FROM t1 |> or TABLE t1 |>, but before f43b15021 an organizing pipe operator (ORDER BY, LIMIT, OFFSET, CLUSTER BY, DISTRIBUTE BY, SORT BY) written directly after an unpiped set operation, such as SELECT 1 UNION SELECT 2 |> LIMIT 1, shared the tree of the plain query apart from spans. The claim this record makes instead: at this parser tree, a generated sweep of pipe operators over FROM, TABLE, a select, a set operation, VALUES and a parenthesised query, each piped with |> and with | beside its desugared plain query, finds 0 of 342 texts where a piped text and its plain query share a tree, and 0 piped texts without a mark; 6 plain texts are refused locally and are not compared. |> SET has no plain spelling to compare. A FROM-first query with no pipe operator (FROM t1) still shares the tree of SELECT * FROM t1; that is not a pipe case and is on the fix list. Every case's verdict, refusal position and tree are those db-query-017 read: 83 cases, 41 accepted, every one with a pipe and carrying its marks, and the mechanical check finds every name and literal of each accepted case in its tree; of 42 local rejects, 37 are at the warehouse's position, and the other 5 are the select-pipeop differences db-query-014 read (four operands missing at the end of input, and GROUP BY c1 AS a1, whose receipt gives no position). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "2858125f06064ea0fed04851b3277709e3f6c3e2eea3f58a3511f181b2f9f379"
+"db.query.pipeline.table.syntax" = "6c768709f68a7a1b99790cd91c8223af8506ba90e93939edbffbe84135551e3b"
+"db.query.select-pipeop" = "7a6e18f771214e6d696569a7336428f19994edf21eddd90d5a3a61dd42539da7"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
