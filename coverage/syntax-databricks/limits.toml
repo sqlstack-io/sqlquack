@@ -7398,3 +7398,23 @@ anchor = "doc.security-alter-group / Syntax"
 sql = "ALTER GROUP v1 ADD USER v1 DROP GROUP v1"
 context = "raw"
 expect = "reject"
+
+[[limit]]
+form = "db.functions.ai-predict-class"
+kind = "negative_neighbour"
+target = "TABLE ( <table_name> ) with its ) restored after the named arguments"
+note = "the o016 negative (the form without its required )) with the ) put back at the end instead: the warehouse reads TABLE ( v1 , target_col => v1 , feature_cols => v1 ) as a call of a function named TABLE (semantic_error UNRESOLVED_ROUTINE TABLE), so it parses; this shows the o016 refusal is the missing ), at end of input. Observed, so its receipt settles it"
+anchor = "doc.functions.ai_predict_class / Syntax"
+sql = "SELECT * FROM AI_PREDICT_CLASS ( input => TABLE ( v1 , target_col => v1 , feature_cols => v1 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.ai-predict-value"
+kind = "negative_neighbour"
+target = "TABLE ( <table_name> ) with its ) restored after the named arguments"
+note = "the o016 negative (the form without its required )) with the ) put back at the end instead: the warehouse reads TABLE ( v1 , target_col => v1 , feature_cols => v1 ) as a call of a function named TABLE (semantic_error UNRESOLVED_ROUTINE TABLE), so it parses; this shows the o016 refusal is the missing ), at end of input. Observed, so its receipt settles it"
+anchor = "doc.functions.ai_predict_value / Syntax"
+sql = "SELECT * FROM AI_PREDICT_VALUE ( input => TABLE ( v1 , target_col => v1 , feature_cols => v1 ) )"
+context = "raw"
+expect = "observe"

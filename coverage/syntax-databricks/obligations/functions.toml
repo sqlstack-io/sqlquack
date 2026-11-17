@@ -2219,6 +2219,14 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.functions.ai-predict-class.o027"
+kind = "negative_neighbour"
+required = true
+target = "TABLE ( <table_name> ) with its ) restored after the named arguments"
+anchor = "doc.functions.ai_predict_class / Syntax"
+note = "the o016 negative (the form without its required )) with the ) put back at the end instead: the warehouse reads TABLE ( v1 , target_col => v1 , feature_cols => v1 ) as a call of a function named TABLE (semantic_error UNRESOLVED_ROUTINE TABLE), so it parses; this shows the o016 refusal is the missing ), at end of input. Observed, so its receipt settles it"
+
+[[obligation]]
 id = "db.functions.ai-predict-value.o001"
 kind = "positive"
 required = true
@@ -2364,6 +2372,14 @@ required = true
 target = "<feature_cols>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.functions.ai-predict-value.o027"
+kind = "negative_neighbour"
+required = true
+target = "TABLE ( <table_name> ) with its ) restored after the named arguments"
+anchor = "doc.functions.ai_predict_value / Syntax"
+note = "the o016 negative (the form without its required )) with the ) put back at the end instead: the warehouse reads TABLE ( v1 , target_col => v1 , feature_cols => v1 ) as a call of a function named TABLE (semantic_error UNRESOLVED_ROUTINE TABLE), so it parses; this shows the o016 refusal is the missing ), at end of input. Observed, so its receipt settles it"
 
 [[obligation]]
 id = "db.functions.ai-prep-search.o001"

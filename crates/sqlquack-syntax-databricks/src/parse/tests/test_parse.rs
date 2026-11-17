@@ -939,6 +939,18 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "\"none\"",
         },
         ValueTestCase {
+            description: "TABLE with named arguments after its name is a call of a function named TABLE",
+            sql: "SELECT * FROM AI_PREDICT_CLASS ( input => TABLE ( v1 , target_col => v1 ) )",
+            pointer: "/0/select/from/expressions/0/function/args/0/named_argument/value/function/name",
+            expected_json: "\"TABLE\"",
+        },
+        ValueTestCase {
+            description: "TABLE around one name stays a table argument",
+            sql: "SELECT * FROM AI_PREDICT_CLASS ( input => TABLE ( v1 ) , target_col => v1 )",
+            pointer: "/0/select/from/expressions/0/function/args/0/named_argument/value/table_argument/prefix",
+            expected_json: "\"TABLE\"",
+        },
+        ValueTestCase {
             description: "an explicit ALL is recorded, not folded into none",
             sql: "SELECT sum(ALL a) FROM t",
             pointer: "/0/select/expressions/0/function/set_quantifier",

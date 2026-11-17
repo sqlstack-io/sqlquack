@@ -207,6 +207,11 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "a TABLE argument missing its ) is refused at the end, not at its comma",
+            sql: "SELECT * FROM AI_PREDICT_VALUE ( input => TABLE ( v1 , target_col => v1 , feature_cols => v1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "a catalog given predictive optimization is named, not quoted",
             sql: "ALTER CATALOG 'v1' ENABLE PREDICTIVE OPTIMIZATION",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },

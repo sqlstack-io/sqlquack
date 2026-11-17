@@ -79,13 +79,13 @@ impl Parser<'_> {
     /// `functionTableArgument`: a `TABLE` argument, a named argument or an expression.
     pub(crate) fn function_argument(&mut self) -> Parsing<Expression> {
         if self.kw("TABLE") && (self.char_at(1, '(') || self.is_at(1, is_identifier)) {
-            return self.table_argument();
+            return self.table_argument_or_call();
         }
         if self.is(is_identifier) && self.op_at(1, "=>") {
             let name: Identifier = self.name(is_identifier)?;
             self.at += 1;
             let value: Expression = match self.kw("TABLE") {
-                true => self.table_argument()?,
+                true => self.table_argument_or_call()?,
                 false => self.expression()?,
             };
             return Ok(Expression::NamedArgument(Box::new(NamedArgument {
@@ -95,6 +95,15 @@ impl Parser<'_> {
             })));
         }
         self.expression()
+    }
+
+    /// A `TABLE` argument or, when what follows `TABLE` is not one, an expression: the warehouse
+    /// reads `TABLE ( v1 , k => v1 )` as a call of a function named TABLE (UNRESOLVED_ROUTINE).
+    fn table_argument_or_call(&mut self) -> Parsing<Expression> {
+        match self.attempt(|parser| parser.table_argument()) {
+            Ok(argument) => Ok(argument),
+            Err(_) => self.expression(),
+        }
     }
 
     /// `functionTableSubqueryArgument`, partitioning and ordering parsed and not kept.
