@@ -5664,3 +5664,248 @@ note = "Re-read on 17 Nov 2026, (c) batch 6: a form whose earlier approval went 
 "db.functions.translate" = "40a5339d625e47571c7d600997df3d2d327f5841121695e2b7c1e98015a7b625"
 "db.functions.trim.trim" = "2722f3b9f1148167a7826d5236e9a75819f2455ab28689f06ee8a8b4a791ad98"
 "db.functions.trunc" = "ff6bc71ac41412d5a1f498999c1a6bb9dd58b13b55a99bee67b91438eb67d44a"
+
+[[review]]
+id = "db-functions-062"
+family = "functions"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:28:47Z"
+verdict = "approved"
+forms = [
+  "db.functions.try-add",
+  "db.functions.try-aes-decrypt",
+  "db.functions.try-cast",
+  "db.functions.try-copy-file",
+  "db.functions.try-divide",
+  "db.functions.try-element-at",
+  "db.functions.try-ip-as-binary",
+  "db.functions.try-ip-as-string",
+  "db.functions.try-ip-cidr",
+  "db.functions.try-ip-host",
+  "db.functions.try-make-interval",
+  "db.functions.try-make-timestamp",
+  "db.functions.try-make-timestamp-ltz",
+  "db.functions.try-make-timestamp-ntz",
+  "db.functions.try-mod",
+  "db.functions.try-multiply",
+  "db.functions.try-parse-json",
+  "db.functions.try-parse-timestamp",
+  "db.functions.try-reflect",
+  "db.functions.try-secret",
+  "db.functions.try-subtract",
+  "db.functions.try-to-binary",
+  "db.functions.try-to-date",
+  "db.functions.try-to-file",
+  "db.functions.try-to-geography",
+  "db.functions.try-to-geometry",
+  "db.functions.try-to-time",
+  "db.functions.try-to-timestamp",
+  "db.functions.try-url-decode",
+  "db.functions.try-validate-utf8",
+  "db.functions.try-zstd-decompress",
+  "db.functions.tuple-difference-double",
+  "db.functions.tuple-difference-integer",
+  "db.functions.tuple-difference-theta-double",
+  "db.functions.tuple-difference-theta-integer",
+  "db.functions.tuple-intersection-agg-double",
+  "db.functions.tuple-intersection-agg-integer",
+  "db.functions.tuple-intersection-double",
+  "db.functions.tuple-intersection-integer",
+  "db.functions.tuple-intersection-theta-double",
+  "db.functions.tuple-intersection-theta-integer",
+  "db.functions.tuple-sketch-agg-double",
+  "db.functions.tuple-sketch-agg-integer",
+  "db.functions.tuple-sketch-estimate-double",
+  "db.functions.tuple-sketch-estimate-integer",
+  "db.functions.tuple-sketch-summary-double",
+  "db.functions.tuple-sketch-summary-integer",
+  "db.functions.tuple-sketch-theta-double",
+  "db.functions.tuple-sketch-theta-integer",
+  "db.functions.typeof",
+  "db.functions.ucase",
+  "db.functions.unbase64",
+  "db.functions.unhex",
+  "db.functions.uniform",
+  "db.functions.unix-date",
+  "db.functions.unix-micros",
+  "db.functions.unix-millis",
+  "db.functions.unix-nanos",
+  "db.functions.unix-seconds",
+  "db.functions.upper",
+  "db.functions.url-decode",
+  "db.functions.url-encode",
+  "db.functions.validate-utf8",
+  "db.functions.variant-explode-outer",
+  "db.functions.vector-avg",
+  "db.functions.vector-norm",
+  "db.functions.vector-normalize",
+  "db.functions.vector-sum",
+  "db.functions.weekday",
+  "db.functions.weekofyear",
+  "db.functions.width-bucket",
+  "db.functions.window-time",
+  "db.functions.xxhash64",
+  "db.functions.year",
+  "db.functions.zeroifnull",
+  "db.functions.zstd-compress",
+  "db.functions.zstd-decompress",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 6: a form whose earlier approval went stale and that gained cases after it, nearly all missing-parenthesis negatives. Read on e8c8ae5f7 against the 2026.45 receipts. Every new case was read. Each new reject fails where its receipt does, at the token where the parenthesis belongs; the position differences were read on purpose: the warehouse reads FILTER or file as an alias before failing, reports SET with no key without a position, or fails at the missing operand where the parser reports the start of the failed alternative (SUBSTR ... FROM, GROUPING SETS). The mechanical repair of each differing reject (restoring the operand or the parentheses) is accepted locally and matches a recorded positive. The new accepts (a hint list without parentheses, two session settings) were read as trees. Every accepted case of the form passed the check that its SQL's names and literals all appear in its tree. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.functions.try-add" = "43af72fb9eab7a4d1cfe038feea26e4bae8437ec487767e6f0a421217c970d91"
+"db.functions.try-aes-decrypt" = "7240818d39d0acb7356c81a5c2ec38e87d62ef85d22cbb7e4ca7bab7ec051cbe"
+"db.functions.try-cast" = "a1af060c71bc54bf2c13d612ba7522256099622b387054458272d045ddf71d7a"
+"db.functions.try-copy-file" = "b233d5eab2208d6e235d45bb1bd7cf9b6dcd83b38310f72a2430cd310ed5e1be"
+"db.functions.try-divide" = "9981e2f765ba38d08c1e6f7d9128c5ba9e526b21d5bf8f8367e020527b20e1d3"
+"db.functions.try-element-at" = "426e707774a836314b076f62cf800c89d64d53d4b690dfc490268893e061458d"
+"db.functions.try-ip-as-binary" = "f79ebe56b2ef05aa7781d768a3893710d1634262f94fcbb0d6365546d4aebcd1"
+"db.functions.try-ip-as-string" = "2e26bc9b15b74d134add941bbaeebabda4f60d65f1bb719fbf54ac05255ac13d"
+"db.functions.try-ip-cidr" = "16e6feb7190c6b3772c02f0e11c2406ceb2737160bd041add49138a6ff4d1b6e"
+"db.functions.try-ip-host" = "320d9bbad8515c355aed731b4a698b2bebd707318998467e0bc3411e3db49114"
+"db.functions.try-make-interval" = "36210ddf3416adbe5bbbb17701dffec02b020607d87057cdee6adddc51df0c5a"
+"db.functions.try-make-timestamp" = "dddce329040f7126a23ea34f806de195cbdc9671932d2c2378c7a8a405731d9e"
+"db.functions.try-make-timestamp-ltz" = "b42ddc8ad615bed9f9f6db8158e02621523a896fb760099d0e5fc501e31c8f74"
+"db.functions.try-make-timestamp-ntz" = "e667bb92e92f4bde6760ec6c3ebcc0532da80cb9383fb887fa5b0763065a57b8"
+"db.functions.try-mod" = "c3c9511c8230e956aedd67124cbfa347319c165d3fd7eee11af7023d7b0c679d"
+"db.functions.try-multiply" = "3f95cea2a77eb01f159be8b46194b4771dd4be723bd26518900879e7b774acaa"
+"db.functions.try-parse-json" = "785a52dd7a73611a44619cbd68fa769e23208496c8e2571be4a59157a0af2a64"
+"db.functions.try-parse-timestamp" = "52b10fd721e7609f717c88a9b7362087fb265d5e8acf1c62c436bbbf9f55a047"
+"db.functions.try-reflect" = "470a63d572b3f57bb2afb964fa035f01c94e84edf4f0015c956f8dfbfc7b2017"
+"db.functions.try-secret" = "5514bc08b89176dad93d27c618103b9df65bc5179608f754dbad5a4f5906a9cf"
+"db.functions.try-subtract" = "5ef69bfc08b8c03fc486bab7bbe87a31a7b07a863f1787a3ac1d7477a3481603"
+"db.functions.try-to-binary" = "5d0c29e1ed8bbb236830ea48a849eb11bd0d820e0d9a8ef7c57630657dacc2e1"
+"db.functions.try-to-date" = "fe49310ae39c37bc7e73a521c0bf8c602c6f1c080ec2a8508e195a18b9376db3"
+"db.functions.try-to-file" = "7946fe11006af797927b223dbfecd41d83c7fc53b6c863d56c85a75b09265dd5"
+"db.functions.try-to-geography" = "66a9fd09fd543079b6c4f5733d8e560990400377032fa50054cf306749b74383"
+"db.functions.try-to-geometry" = "0fd20177d1655b9bde3f2809fee779ae56077f26d8928517a514efbe41f279aa"
+"db.functions.try-to-time" = "5e67da7c532fa1a84ba99529b4c140ff73715cce6568f7e27b48e0d2e65c94bb"
+"db.functions.try-to-timestamp" = "54b2a7f421bace4e7b5bdd7385d8a756a1df30f6dad4a8f3f73ff3a1c06ef986"
+"db.functions.try-url-decode" = "5dcb50b0b9819137badd60f138d37850449a54fc4a6dbaf59ecb4380075cf011"
+"db.functions.try-validate-utf8" = "de407e3c623e6fd4bb8ae33b36e99e83d043c9d282cc67a5c0f8b064936a32fb"
+"db.functions.try-zstd-decompress" = "c1b43fc727b2b724df38e6807f1ceb4b5c3e75094e4607cf1de4619cbc70dba6"
+"db.functions.tuple-difference-double" = "057efceb70c35537207840cb5cf8aa8469f49dc5d9572fcf02912a03209fc070"
+"db.functions.tuple-difference-integer" = "4864ffd10d9ed1f5b272529935583bd5e57c322931cbb0d0d825a0abf8a54a7c"
+"db.functions.tuple-difference-theta-double" = "86904581944c2031a9c19ede92a78fec9acca2c11b0462bf6f7d16545004d6ed"
+"db.functions.tuple-difference-theta-integer" = "86b863e639bad665a16926f4c20599eae71287ace789f872e1bb9ee718e9c43e"
+"db.functions.tuple-intersection-agg-double" = "9b58061b1a36f9c7639c6a78bca3ab7cfa7dc3efd38651f3b1ab8d3a31a20151"
+"db.functions.tuple-intersection-agg-integer" = "e576912b3bf5b8ae4ee80a45c106d53ebc7c7c4f7c9ad835f9870f725a0e19f8"
+"db.functions.tuple-intersection-double" = "0f77a4576e03f7f9b2b5ca3f54f246bfa9bae1ce5c3c78a0b5d6907bada876b8"
+"db.functions.tuple-intersection-integer" = "44df861e0b626a34bd073e430271bc42ce7f3a79fad5a635aeb46475010015e1"
+"db.functions.tuple-intersection-theta-double" = "d801b37cc175210e984a8c0c9db2c4db221be01c0bcf75ee73fdfc373dbf82a2"
+"db.functions.tuple-intersection-theta-integer" = "49fe5947ff2c4898d85b8138e0add9c0f35c69bb0604e6c619942b4b77a67c18"
+"db.functions.tuple-sketch-agg-double" = "6f5d3bef35bcf6348824635010e8fe1a47f26dc0f5f651f88347aefd0ff939c9"
+"db.functions.tuple-sketch-agg-integer" = "d3d4453c795f299e57dc7809ba8a08c293a580957810a99f38b84998f4c48b42"
+"db.functions.tuple-sketch-estimate-double" = "4f5b1a3f66f90211410c8798232d7ec98effe17d6e77aa0944191ba78ac1c142"
+"db.functions.tuple-sketch-estimate-integer" = "064dade3f823834bea21a3b9413fd5589b28b6b5b8f3d29577e1b493016fcab1"
+"db.functions.tuple-sketch-summary-double" = "c7f8cca78bec40248f6394ad7435ccf6f438f749251da472edae2633e67c74f3"
+"db.functions.tuple-sketch-summary-integer" = "ef2b82a919a303e161b6a8fba47c107eab1e351385e83f7aac63eb5991f2fad6"
+"db.functions.tuple-sketch-theta-double" = "90644340147c8d73ef58de60cbd2794110b806a69c44238576f51d52329986f7"
+"db.functions.tuple-sketch-theta-integer" = "f4d04143164e8cc59c83d9195e35bd5091c5daeda6f9ae8dd3a21acce8f5cae8"
+"db.functions.typeof" = "0e558c6df5cb0cf076de2ad51ebaae15c1a9c38e3e8fcbe3f306852fb407e0c7"
+"db.functions.ucase" = "37ffa30608c2f6617c98d6380fdff62d6a62847c03a3254fc29d0ce7721f3eb2"
+"db.functions.unbase64" = "4c00c98b058d5203c3c97a9021bbedbaf9c782e79ecb5dda935977190fe9d780"
+"db.functions.unhex" = "8d6fe1118e18efc3a04ca8094bab86da79a5416fb9f758ce62c01719ea6ed923"
+"db.functions.uniform" = "4a4c9042d09b7b985c2bd58d4302527170ec647966c6936187e1948659c4b1fa"
+"db.functions.unix-date" = "845333ee0e9102c3ebcd87f5085d26ba69fd32a698eb66a8c44d0b4cc7ba1910"
+"db.functions.unix-micros" = "1da80ebae3588f910c2d6ea4aedac7be168947ea7da02a28a59ba1d069b37a84"
+"db.functions.unix-millis" = "59f6c6e22813161232308a1c53ff38c3731516e1a881f805174d1579c3d34326"
+"db.functions.unix-nanos" = "9afb18c69eea3d0b69f8f1e5bb021a6d3e856fd2bbd71dfe171c108e8c86f723"
+"db.functions.unix-seconds" = "6b651e69436be66a6a2c2092fdd7859efedb7f0213a9db2394f1eb36e4c2c191"
+"db.functions.upper" = "aac0c5c49b1cd5a5d419a6f8540d3bd7ebdffdf5c8ee07e3cef7f67245a6c0e1"
+"db.functions.url-decode" = "e52972b11b939e2ab319d49108cd8a4f8e023c8c768c814e8c27450d57cfb23f"
+"db.functions.url-encode" = "a9d7e25ce4f2e95add215b8c6ba1fdb41032ad66e32b82f7bda6269d93035dd9"
+"db.functions.validate-utf8" = "dcb629cb786e291e33ee7e90672f3698c3850c0eb9b04b3b1e80454f0a612337"
+"db.functions.variant-explode-outer" = "1e6be6f9ec4edae58880061acd04433189acac6ee3a91870ea351ccd244e8b89"
+"db.functions.vector-avg" = "89400d55241730ca361fbe7f0e19b67e26cd25eb193da64a80f1d8378ed6d64e"
+"db.functions.vector-norm" = "dfd7627aa81dc2a6676433d5a1fef69cb8133cff09e2a02221c0cea0765a2b68"
+"db.functions.vector-normalize" = "b7335f8bcc68f19ea5afde880785906b1cc3400a25d4cb5a12f8b6afa720edfd"
+"db.functions.vector-sum" = "cc10b444d523f9e127a8d2622e1379f710c9501ac527bfee74e6e62f454367b3"
+"db.functions.weekday" = "5939deccf3b8ac6aea742ced4271cb2a588c610b1e9fff402f4363d35a040d0d"
+"db.functions.weekofyear" = "7fe8ed9a15e4666ec438e0ad9bc28947abdbf1243a6caa1d495fc95baff5051f"
+"db.functions.width-bucket" = "46e0e26e649d3ecd4bb32668535ffe2672c2819224b4f379f1119b4aebc1d0af"
+"db.functions.window-time" = "0f226f1e66471d197e5b67639a78cceb9435eca1474c6d50a566907d888f7bdd"
+"db.functions.xxhash64" = "d3eaf9452a9a6e580c2e0505102870620fd1033989d949a26b1962ebdaa5a3db"
+"db.functions.year" = "dc665fea334eb8ecd7a3c78f348d7e0ff7c7243d698871a8e85073d18b133285"
+"db.functions.zeroifnull" = "b3f627be774a291daf6043cf5200afcdc3d3ca60e5defe256daf7a7908371379"
+"db.functions.zstd-compress" = "884e7b7a335746e1a7ab5525697dbcb2f9e752d1386546cebfa7970c4af6cc3c"
+"db.functions.zstd-decompress" = "619b49c4e45947b033a7d3175b6054c4948a87abe01d6c3456456eaaa8f1a9c1"
+
+[review.definitions]
+"db.functions.try-add" = "cf4f4390ff65d4452f5315c656684147dd5f00422dfeac22e5bc1225c4bd25e5"
+"db.functions.try-aes-decrypt" = "7b214f888539abc9b34aa3490bbc9ede393d9fe598d1e0567784da985e1e543b"
+"db.functions.try-cast" = "8165153df7c86b0af876d07583226088c229f046ca15ffff4f884304474c9a4f"
+"db.functions.try-copy-file" = "7f07b8f6641ab33e55566ba74bf0705aeda459333ea9ab21c610db7e7290edb0"
+"db.functions.try-divide" = "a60e63ba8880f0a39517e333d3a7bd813b72d5d2f36621f626a93f0ff6017dfe"
+"db.functions.try-element-at" = "9810aa8d48881f11105aea94e9e288eefb3e882be0db2dbf02ff2ecf0ce1c08a"
+"db.functions.try-ip-as-binary" = "1dcf2e3fa44cc0b3495aeaef823d67cb3e6c38ff48b745fed24d2c2383d813ba"
+"db.functions.try-ip-as-string" = "a9e59766fe716acbaafe2ef2b2019e1470c37b05d8896d43f744039d431d10ad"
+"db.functions.try-ip-cidr" = "84fc8b9e1f17c0c33090a502919a88f8a25433a2f85ed2f1f2ed03b2a8cc31ff"
+"db.functions.try-ip-host" = "9cef22301f1a32070c77a1b070112f920192bb63dda2556b043083bb24c3ada3"
+"db.functions.try-make-interval" = "c88ef7587af71d9de52b5080eede590687d716a051fe62125e2f815038fc9c0e"
+"db.functions.try-make-timestamp" = "ba2b619135a8f1432f759e5eea2648d6e7808012290b5295cd0a910ccb68b3af"
+"db.functions.try-make-timestamp-ltz" = "6f83c59e19ad408b23855dc4a5e6eedcfb9706decd2414568b8e2f2ca89586d0"
+"db.functions.try-make-timestamp-ntz" = "25b1ea518c17a593e1c7ba2007aec72e6ba13c5df27755d61a24081e94d15518"
+"db.functions.try-mod" = "b3bc455e3e3f6cd4d86d7b5ce20a4553ebf6bfe0418f9ea9d70dee6d4d72e118"
+"db.functions.try-multiply" = "aa0fec04becb084436485bf9694406880055d3e9b45762188142517daae7db44"
+"db.functions.try-parse-json" = "3a28553cd4d703f1bb8820edef0d5f2dc93d0af8ad75fa1e98c8aba12c0aa40d"
+"db.functions.try-parse-timestamp" = "6691cb4b21bce5a7f7d7f5ae9bf472a35a97ed20b0c7c8eda3820ffd85a3bbb5"
+"db.functions.try-reflect" = "550fe4603999d5f6552b509ca790533c369a8eaf8ede6c3099a01f5a194b9e07"
+"db.functions.try-secret" = "fb5cb6501e230300e426765d909d094c37bf424187eb67cba15558b9880cea30"
+"db.functions.try-subtract" = "4e1f572330396732d6f952f10c866593eae730e417f0f761fa9ff3c774f1b91d"
+"db.functions.try-to-binary" = "0f9de3547454b3c777af85eae4ceb2ad200f2d9ab7f97f9536475136c74a1fcb"
+"db.functions.try-to-date" = "6710c7c759e9bb32ea40ffd5ab3255bc66ee25d2ffdd6024db83f42e9749991d"
+"db.functions.try-to-file" = "ab6da9470f5f2fdf714cd349911132d4a048b027b98a607317fec7ae6390c656"
+"db.functions.try-to-geography" = "9383a76282f5eed9e93881f48e89e67c3f0253a9ed5c5f2f6de8f18699b4afe7"
+"db.functions.try-to-geometry" = "c037682c36581aafb29912de93a23c4551bb3c7ce336653454937d9fcb1438d0"
+"db.functions.try-to-time" = "adf2e9b736a4395b9821030d293fdd5fa0bed1119666ef0825b0de2e544b1f98"
+"db.functions.try-to-timestamp" = "1b48e6d1208cbdc26572bec54af39f2cafd25556d47964841eadcd6490b33f39"
+"db.functions.try-url-decode" = "60f1d48020bb76f6ce93ad88801a642789669f17e901d40f7060f53e76e7e9ff"
+"db.functions.try-validate-utf8" = "b6f88fbc14765366df7b68b58ec17f3bd7c1e107a00564fb29dc65f07c5273d6"
+"db.functions.try-zstd-decompress" = "1973f00da556e5d003c554bd6164763c57fc430179552bd84b549b7ffc8878d9"
+"db.functions.tuple-difference-double" = "b80c78c9e0cced4c29cffcb795d827cbed8605dca61515e4cff64c408c834c33"
+"db.functions.tuple-difference-integer" = "31f1b76c17e523228a260c8c952694339e53889d76424b4d2a78688168dff126"
+"db.functions.tuple-difference-theta-double" = "00a137e4391beb7f788936489557c6227c45e35d4028db8d63f08c73f6a4fe5e"
+"db.functions.tuple-difference-theta-integer" = "f8801da0e679016d3444f8674d088bcdb1c4219433357d1bcc004b665a50a2aa"
+"db.functions.tuple-intersection-agg-double" = "59feaf39c344a751fcd726b24619682dfca0d57c4b3518f24db316539cd80d84"
+"db.functions.tuple-intersection-agg-integer" = "ca93e7a6b97cd8bd9636feef22dc3ac24e75af2d948ef1cc7fbc6c0b327f52e8"
+"db.functions.tuple-intersection-double" = "25661265845a51f417d27e786bffff0ef61887438a4e445f007e1009dc7118f0"
+"db.functions.tuple-intersection-integer" = "a0abca23a54fd6694e90bf710b7e73a09a4fb1a8c1db41ea98ac4dcff382e4d4"
+"db.functions.tuple-intersection-theta-double" = "eaf4f58e222b3f7a2a5cd620bf463086825b6a2c31c0e8c31e10033fe0612947"
+"db.functions.tuple-intersection-theta-integer" = "74acbf5bb7228aeab6ea2a27abce6432ad596f219d014b22a0bfc4599182c00c"
+"db.functions.tuple-sketch-agg-double" = "13b8af858f0b453dbe1001ea0d2e7e61f7510c3b4530a631ef30c169444c0e75"
+"db.functions.tuple-sketch-agg-integer" = "2167e15136152a7a606e9cfdfcf0dffb27dfb59f7a7888a9245b1f81ef9008d4"
+"db.functions.tuple-sketch-estimate-double" = "24299b092d113566fe93a4d62f106bb69a6b8e87e8e5867052bcd81441944383"
+"db.functions.tuple-sketch-estimate-integer" = "7961cee48408c827132ce8654d399b4e558275882497d770bb7eb224c143a2d3"
+"db.functions.tuple-sketch-summary-double" = "6b823e069d4576156411c508c2ed19285a206cf867b2dd08f65bc438856f87d3"
+"db.functions.tuple-sketch-summary-integer" = "4a29184e5935ed2ca8709e836793bdcc4036a0f8e2934b171e15a0c10cd14eca"
+"db.functions.tuple-sketch-theta-double" = "e864338c405b34ed5dee5258872461743eeb08d163d83f11715bd449fe1fc8d5"
+"db.functions.tuple-sketch-theta-integer" = "f1e77d4c4cdfbd049a80899e4e6ece2c8b3d43f86bb1d74b44a4ba37dd33747a"
+"db.functions.typeof" = "a7829d3d93229c65c2d3a7fd4fc51f0f261736e742998caffb14d720f5128ac9"
+"db.functions.ucase" = "85a697a47fc0aa72ada649f792cd644d8507dec4d2bc8e0892038f4f2dfab6a1"
+"db.functions.unbase64" = "4e0f230d22a1eae70028578260e869c29a5aebf5d49b949f39183acdd622fbe3"
+"db.functions.unhex" = "2bafa7bef16c567a41eff31e62816ce48cec4649505a2fabbb43c147d1080c90"
+"db.functions.uniform" = "39309516e201a2e8df26a60e562f81967e7e434e1eca464c0182e931a117fba7"
+"db.functions.unix-date" = "4ae3f471bc61f4b1b52189b29fea901d6d6698078f76a11c1038c75f69f4a7cc"
+"db.functions.unix-micros" = "ad7bc5a14a77c610f751c5efbc1882ac9cf037d3e01a07e2baf4415b8f92153e"
+"db.functions.unix-millis" = "dc1afdc3867a4546a3f20f44da8a8f8dc228a8043fd81357f2242856323174a6"
+"db.functions.unix-nanos" = "619c887f9762cb56415d9f6c4a840de3a09836e76e7acb9ddb759b7d25a27383"
+"db.functions.unix-seconds" = "c70c704478ec80a95eb18b217d7fb23336a6b539e6cc56f08471dcd2fe934045"
+"db.functions.upper" = "fb7f156fea89fb86b7909f76dce44a0a0eefdf9dd664e3c51a72426a510a3352"
+"db.functions.url-decode" = "99b9b78afe52c3aef6b7aa6e6326735535786377b5b55f9129c6ace8659db659"
+"db.functions.url-encode" = "f5b9da754e768b21735862d16a8277efd7e0f83e9b7e03452e57bbdeb1c17534"
+"db.functions.validate-utf8" = "33b4f5f3924f19eeb2fab0d4426b6fe2a9965d1a794341a91aabbb6a179b47a3"
+"db.functions.variant-explode-outer" = "85e5fc54e6441fe118d2a68fba5c555bf4f3099a84d4982ea148c304468aba4e"
+"db.functions.vector-avg" = "8563ec3a3791eb02b8dec5a48f304251aeb5652cd6546992832d9e433b7431c8"
+"db.functions.vector-norm" = "702c81c39c248bed440b5ea41ccd13bbb073bf2597c7f52707c919bc91f3ec9c"
+"db.functions.vector-normalize" = "e2d77bc432b371b5418c84ae501f8c74abf1fb1c4f78508086aa94b36e4d554c"
+"db.functions.vector-sum" = "76091491a4634347562f39d866250fb0073ee36d899c0618cd750bb23eb52382"
+"db.functions.weekday" = "85d83731d8c461f073fd7d820219c37effc054de267e0a61d7e9d7f17648bb09"
+"db.functions.weekofyear" = "c780ec9bd1863f2664a24f7ca9d9d52b17336358fe05c688afb490db2e2c6788"
+"db.functions.width-bucket" = "3779ae81547fd58d5f4b9513a0edf000488c96662b0d4d20f3bbbaa21a3f2ea0"
+"db.functions.window-time" = "ae68143377ea669b719165119003905399bd10b7e1a8380421a3d0c09c9aaa22"
+"db.functions.xxhash64" = "2fbd7e780fc9e1ace6a53171a4beb362c0ac94c16817b37eceb54abd00159c44"
+"db.functions.year" = "a47c276648e8d5b6659306b1c42177474fd7c464e7f73a632a1f1f4fa869a1b3"
+"db.functions.zeroifnull" = "55563ff2bed637a29c328198b6714bf0697b934d5dbb356f6f73920c469602fc"
+"db.functions.zstd-compress" = "82fe2a1d56a244c02b797fc539c1f0d485e485d664f03955a322784d383afc3f"
+"db.functions.zstd-decompress" = "f668a4b69c1934e99bbe1dbcea7a364e8ca961d36535c210b6a2df3d5a6142c4"

@@ -295,3 +295,23 @@ note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2
 "db.transaction_session.legacy-time-parser-policy" = "a6c9a16624f1ba6d89ddabc2a07e4c64515a10499f3775a30d3e3959baa739d0"
 "db.transaction_session.use-schema" = "9086fedaf7a4a5a1b1bc7d4e1451d249467bf85f86d0e0abaf5d67a27f066bf4"
 "db.transaction_session.usedb" = "0a00ed90a5bb723e022aaecd1129291dc97e89e2e23e623abd4bfe0c4d191cf0"
+
+[[review]]
+id = "db-transaction_session-013"
+family = "transaction_session"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:28:47Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.max-partition-bytes",
+  "db.transaction_session.statement-timeout",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 6: a form whose earlier approval went stale and that gained cases after it, nearly all missing-parenthesis negatives. Read on e8c8ae5f7 against the 2026.45 receipts. Every new case was read. Each new reject fails where its receipt does, at the token where the parenthesis belongs; the position differences were read on purpose: the warehouse reads FILTER or file as an alias before failing, reports SET with no key without a position, or fails at the missing operand where the parser reports the start of the failed alternative (SUBSTR ... FROM, GROUPING SETS). The mechanical repair of each differing reject (restoring the operand or the parentheses) is accepted locally and matches a recorded positive. The new accepts (a hint list without parentheses, two session settings) were read as trees. Every accepted case of the form passed the check that its SQL's names and literals all appear in its tree. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.transaction_session.max-partition-bytes" = "f7218e5c1f04c7b9f4483319a6b32a3f3cf067f3d7ee7f1583a48bf6bce5764a"
+"db.transaction_session.statement-timeout" = "a7dd44ec19f15497aa17e0b08d51ae61765f3112742f7aff40c7ee311db03647"
+
+[review.definitions]
+"db.transaction_session.max-partition-bytes" = "731e9c4b55cc298dc7ac1135f8fc9a870a92146faca20a31bae9458362f56915"
+"db.transaction_session.statement-timeout" = "46863e76053168f418af5a24dc86c13520eb537627143cd86599af16061679db"

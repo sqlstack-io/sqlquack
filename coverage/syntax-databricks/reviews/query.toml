@@ -323,3 +323,32 @@ note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2
 "db.query.select-setops" = "ef6bddadec818c3e805bb7b8084e5c214234d71fa19f170a6d66bfb17909853f"
 "db.query.select-values.select" = "90f5d9b4130452acf461fedaecc1a1d8501063737cb2e57921f2cfa66dd27456"
 "db.query.star" = "164b0d09702bed1e4f3243bf557f5ea71a523e969996d731243fb5ef7519b02a"
+
+[[review]]
+id = "db-query-012"
+family = "query"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:28:47Z"
+verdict = "approved"
+forms = [
+  "db.query.select-groupby.group-by-rollup-cube",
+  "db.query.select-groupby.nested-grouping-sets",
+  "db.query.select-groupby.subscript-dot",
+  "db.query.select-hints.join-hint-alias",
+  "db.query.select-pivot",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 6: a form whose earlier approval went stale and that gained cases after it, nearly all missing-parenthesis negatives. Read on e8c8ae5f7 against the 2026.45 receipts. Every new case was read. Each new reject fails where its receipt does, at the token where the parenthesis belongs; the position differences were read on purpose: the warehouse reads FILTER or file as an alias before failing, reports SET with no key without a position, or fails at the missing operand where the parser reports the start of the failed alternative (SUBSTR ... FROM, GROUPING SETS). The mechanical repair of each differing reject (restoring the operand or the parentheses) is accepted locally and matches a recorded positive. The new accepts (a hint list without parentheses, two session settings) were read as trees. Every accepted case of the form passed the check that its SQL's names and literals all appear in its tree. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.select-groupby.group-by-rollup-cube" = "ee4538e7e24137701d09a62f3744f05c017da69a645d39c9fcf3d38bc2874e0d"
+"db.query.select-groupby.nested-grouping-sets" = "5aa7a243a56e827c572dd2503f33ce9ecad8fad1f68a68efd621b38e1170b7e5"
+"db.query.select-groupby.subscript-dot" = "13aed3cfc3a79926508279e702e8e3eaf453b297293bb32978d90fd1cd5cbde3"
+"db.query.select-hints.join-hint-alias" = "ac0e5fdeaef48f63ba3fbe8197d3c3efb8bc977d5eec88922f2f94da96ba408a"
+"db.query.select-pivot" = "af41e1f41a592426154b560797a17f03a0a049538a06e615f5669fc419034666"
+
+[review.definitions]
+"db.query.select-groupby.group-by-rollup-cube" = "082253722d146a7c94983c8f75d09a73c6fa0babb503871a4f451ac54ed0cce8"
+"db.query.select-groupby.nested-grouping-sets" = "bfcad8d728918fb014efe9913a078941efab771931173b89c9d6e85306590033"
+"db.query.select-groupby.subscript-dot" = "d48fa943701abfff4856461d7cd0dd852594ee4e236ab764f5464e5dd90d8f1f"
+"db.query.select-hints.join-hint-alias" = "4aa02c2a49b11e126ba14477f62aa8856796fe6143adee3dc7d7fdc5add9918b"
+"db.query.select-pivot" = "d3197b6aa0ebe2d38ba40b2e5936295f348d2fcb646ea41bd1925898a384792c"
