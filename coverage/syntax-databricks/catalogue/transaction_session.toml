@@ -334,9 +334,9 @@ source = "doc.sql-ref-syntax-ddl-use-catalog"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "{ USE | SET } CATALOG [ <catalog_name> | ' catalog_name ' ]",
+  "{ USE | SET } CATALOG { <catalog_name> | ' catalog_name ' }",
 ]
-grammar_sha256 = "4ea3441f47f0f032b43a5a462581831340e30e82f93a2d756cafe467d4fee2cf"
+grammar_sha256 = "edcc74ba9ace1b4ec1ed9714c06de2b7e8991420095e22bfc0b689b3fa1612cf"
 uses = []
 status = "catalogued"
 

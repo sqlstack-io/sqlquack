@@ -184,9 +184,9 @@ source = "doc.security-show-grant-on-share"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "SHOW GRANTS ON SHARE",
+  "SHOW GRANTS ON SHARE <share_name>",
 ]
-grammar_sha256 = "144e568d66c91368dcf0a8a030eeabc83d4d4f28f5037b9be0b1425409d26970"
+grammar_sha256 = "667035191f701c4a43ff52e8b1d7d1aaa8d6e1795f6da5c0c8053ac91a433d30"
 uses = []
 status = "catalogued"
 

@@ -14250,6 +14250,7 @@ syntax_sha256 = "144e568d66c91368dcf0a8a030eeabc83d4d4f28f5037b9be0b1425409d2697
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime 10.4 LTS and above Unity Catalog only",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]
@@ -17289,6 +17290,7 @@ syntax_sha256 = "92060487029230c6baed5259c6b04f3cbd3926f6a0120bdd92c36dd4055a79f
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime 10.4 LTS and above Unity Catalog only",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]

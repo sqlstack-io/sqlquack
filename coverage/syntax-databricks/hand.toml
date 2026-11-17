@@ -1501,3 +1501,19 @@ read = [
   "LOCALTIME [ ( [ <precision> ] ) ]",
 ]
 reason = "the page says the parentheses are optional when precision is omitted; read with them optional"
+
+[[reading]]
+page = "security-show-grant-on-share"
+written = "SHOW GRANTS ON SHARE"
+read = [
+  "SHOW GRANTS ON SHARE <share_name>",
+]
+reason = "the page's Syntax line omits the share name that its Parameters list (share_name) and its example (SHOW GRANTS ON SHARE shared_date) write; the warehouse reads SHOW GRANTS ON SHARE alone as grants on a table named share (TABLE_DOES_NOT_EXIST, recorded); read with the name"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-use-catalog"
+written = "{ USE | SET } CATALOG [ <catalog_name> | ' catalog_name ' ]"
+read = [
+  "{ USE | SET } CATALOG { <catalog_name> | ' catalog_name ' }",
+]
+reason = "the brackets choose between the name and its string; the page's Parameters give catalog_name as the catalog to use and every example writes one, and the warehouse reads USE CATALOG alone as USE of a schema named catalog (SCHEMA_NOT_FOUND workspace.catalog) and SET CATALOG alone as a configuration key (CONFIG_NOT_AVAILABLE CATALOG), both recorded; read with the name required"

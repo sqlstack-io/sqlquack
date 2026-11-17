@@ -2017,6 +2017,20 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "db.security_admin.show-grant-on-share.o005"
+kind = "operand_type_class"
+required = true
+target = "<share_name>"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.security_admin.show-grant-on-share.o006"
+kind = "negative_neighbour"
+required = true
+target = "<share_name>"
+note = "a string literal in place of <share_name>"
+
+[[obligation]]
 id = "db.security_admin.show-grant-on-share.o002"
 kind = "negative_neighbour"
 required = true
@@ -2029,10 +2043,36 @@ required = true
 note = "the form without its required ON"
 
 [[obligation]]
-id = "db.security_admin.show-grant-on-share.o004"
+id = "db.security_admin.show-grant-on-share.o007"
+kind = "identifier_class"
+required = true
+target = "<share_name>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "db.security_admin.show-grant-on-share.o008"
+kind = "identifier_class"
+required = true
+target = "<share_name>"
+anchor = "doc.identifiers-syntax"
+note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.security_admin.show-grant-on-share.o009"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required SHARE"
+target = "SHOW GRANTS ON without SHARE"
+anchor = "doc.security-show-grant-on-share / Syntax"
+note = "the form without SHARE, which reads as SHOW GRANTS on a table or view; the warehouse accepts it, so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.show-grant-on-share.o010"
+kind = "required_operand_missing"
+required = true
+target = "SHOW GRANTS ON SHARE without a name"
+anchor = "doc.security-show-grant-on-share / Syntax"
+note = "the form without its share name, which reads as SHOW GRANTS on a table named share; the warehouse answers TABLE_DOES_NOT_EXIST, so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.security_admin.show-grant-to-recipient.o001"

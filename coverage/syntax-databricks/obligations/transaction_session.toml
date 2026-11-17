@@ -1160,41 +1160,23 @@ required = true
 target = "{ USE | SET } → SET"
 
 [[obligation]]
-id = "db.transaction_session.use-catalog.o004"
-kind = "option_present"
-required = true
-target = "[ <catalog_name> | ' catalog_name ' ]"
-
-[[obligation]]
-id = "db.transaction_session.use-catalog.o005"
-kind = "option_absent"
-required = true
-target = "[ <catalog_name> | ' catalog_name ' ]"
-
-[[obligation]]
-id = "db.transaction_session.use-catalog.o006"
+id = "db.transaction_session.use-catalog.o015"
 kind = "alternative"
 required = true
-target = "[ <catalog_name> | ' catalog_name ' ] → <catalog_name>"
+target = "{ <catalog_name> | ' catalog_name ' } → <catalog_name>"
 
 [[obligation]]
-id = "db.transaction_session.use-catalog.o007"
+id = "db.transaction_session.use-catalog.o016"
 kind = "alternative"
 required = true
-target = "[ <catalog_name> | ' catalog_name ' ] → ' catalog_name '"
+target = "{ <catalog_name> | ' catalog_name ' } → ' catalog_name '"
 
 [[obligation]]
-id = "db.transaction_session.use-catalog.o008"
+id = "db.transaction_session.use-catalog.o017"
 kind = "operand_type_class"
 required = true
-target = "<catalog_name> in [ <catalog_name> | ' catalog_name ' ]"
+target = "<catalog_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "db.transaction_session.use-catalog.o010"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CATALOG"
 
 [[obligation]]
 id = "db.transaction_session.use-catalog.o011"
@@ -1218,6 +1200,30 @@ kind = "negative_neighbour"
 required = true
 target = "<catalog_name> in [ <catalog_name> | ' catalog_name ' ]"
 note = "a string literal in place of <catalog_name>; the warehouse (DBSQL 2026.44) answers semantic_error (NO_SUCH_CATALOG_EXCEPTION), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.transaction_session.use-catalog.o018"
+kind = "alternative"
+required = true
+target = "{ USE | SET } → SET with <catalog_name>"
+anchor = "doc.sql-ref-syntax-ddl-use-catalog / Syntax"
+note = "SET CATALOG with a catalog name: the derived SET case writes the string spelling, and the warehouse reads SET CATALOG alone as a configuration key (CONFIG_NOT_AVAILABLE CATALOG, recorded), so SET with a name is observed on its own"
+
+[[obligation]]
+id = "db.transaction_session.use-catalog.o019"
+kind = "negative_neighbour"
+required = true
+target = "USE without CATALOG"
+anchor = "doc.sql-ref-syntax-ddl-use-catalog / Syntax"
+note = "the form without CATALOG, which reads as USE of a schema; the warehouse answers SCHEMA_NOT_FOUND, so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.transaction_session.use-catalog.o020"
+kind = "negative_neighbour"
+required = true
+target = "USE CATALOG without a name"
+anchor = "doc.sql-ref-syntax-ddl-use-catalog / Syntax"
+note = "the form without its catalog name, which reads as USE of a schema named catalog; the warehouse answers SCHEMA_NOT_FOUND, so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.transaction_session.use-schema.o001"

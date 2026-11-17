@@ -7418,3 +7418,81 @@ anchor = "doc.functions.ai_predict_value / Syntax"
 sql = "SELECT * FROM AI_PREDICT_VALUE ( input => TABLE ( v1 , target_col => v1 , feature_cols => v1 ) )"
 context = "raw"
 expect = "observe"
+
+[[limit]]
+form = "db.transaction_session.use-catalog"
+kind = "alternative"
+target = "{ USE | SET } → SET with <catalog_name>"
+note = "SET CATALOG with a catalog name: the derived SET case writes the string spelling, and the warehouse reads SET CATALOG alone as a configuration key (CONFIG_NOT_AVAILABLE CATALOG, recorded), so SET with a name is observed on its own"
+anchor = "doc.sql-ref-syntax-ddl-use-catalog / Syntax"
+sql = "SET CATALOG v1"
+context = "raw"
+expect = "accept"
+
+[[suppress]]
+form = "db.transaction_session.use-catalog"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required CATALOG"
+reason = "without CATALOG the text is USE of a schema (the use-schema page's USE [ SCHEMA ] schema_name), so 'USE v1' parses: the warehouse answers SCHEMA_NOT_FOUND for workspace.v1 (recorded); it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.transaction_session.use-catalog"
+kind = "negative_neighbour"
+target = "USE without CATALOG"
+note = "the form without CATALOG, which reads as USE of a schema; the warehouse answers SCHEMA_NOT_FOUND, so the answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-use-catalog / Syntax"
+sql = "USE v1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.transaction_session.use-catalog"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <catalog_name> | ' catalog_name ' }"
+reason = "without the name, CATALOG is itself read as a schema name: 'USE CATALOG' is USE of a schema named catalog (SCHEMA_NOT_FOUND workspace.catalog, recorded); it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.transaction_session.use-catalog"
+kind = "negative_neighbour"
+target = "USE CATALOG without a name"
+note = "the form without its catalog name, which reads as USE of a schema named catalog; the warehouse answers SCHEMA_NOT_FOUND, so the answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-use-catalog / Syntax"
+sql = "USE CATALOG"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.security_admin.show-grant-on-share"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required SHARE"
+reason = "without SHARE the name is a table or view (the show-grant page's SHOW GRANTS ON securable_object), so 'SHOW GRANTS ON v1' runs on the view v1 (accepted, recorded); it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.security_admin.show-grant-on-share"
+kind = "negative_neighbour"
+target = "SHOW GRANTS ON without SHARE"
+note = "the form without SHARE, which reads as SHOW GRANTS on a table or view; the warehouse accepts it, so the answer is recorded rather than expected"
+anchor = "doc.security-show-grant-on-share / Syntax"
+sql = "SHOW GRANTS ON v1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.security_admin.show-grant-on-share"
+kind = "required_operand_missing"
+target = "<share_name>"
+note = "omit <share_name>"
+reason = "without the share name, SHARE is itself read as a table name: 'SHOW GRANTS ON SHARE' answers TABLE_DOES_NOT_EXIST for a table named share (recorded); it is kept as an observed [[limit]] whose receipt settles it"
+
+[[limit]]
+form = "db.security_admin.show-grant-on-share"
+kind = "required_operand_missing"
+target = "SHOW GRANTS ON SHARE without a name"
+note = "the form without its share name, which reads as SHOW GRANTS on a table named share; the warehouse answers TABLE_DOES_NOT_EXIST, so the answer is recorded rather than expected"
+anchor = "doc.security-show-grant-on-share / Syntax"
+sql = "SHOW GRANTS ON SHARE"
+context = "raw"
+expect = "observe"

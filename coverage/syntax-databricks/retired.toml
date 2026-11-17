@@ -2844,3 +2844,22 @@ ids = [
   "db.utility.show-functions.o037",
   "db.utility.show-tblproperties.o025",
 ]
+
+[[retired]]
+retired_in = "9492f5eed794d8de443a087c23afdf97f6c6210a"
+reason = "use-catalog's catalog name is required by a hand reading of the page (its Parameters and every example write one, and the warehouse reads USE CATALOG and SET CATALOG alone as a schema named catalog and a configuration key), so the obligations for the optional name, its absence and its two alternatives inside the optional bracket no longer exist; the alternatives return under new ids inside the required choice"
+ids = [
+  "db.transaction_session.use-catalog.o004",
+  "db.transaction_session.use-catalog.o005",
+  "db.transaction_session.use-catalog.o006",
+  "db.transaction_session.use-catalog.o007",
+  "db.transaction_session.use-catalog.o008",
+]
+
+[[retired]]
+retired_in = "9492f5eed794d8de443a087c23afdf97f6c6210a"
+reason = "a negative neighbour that the warehouse parses once the name is required, now an observed [[limit]] with its recorded SQL: use-catalog without CATALOG is USE v1, USE of a schema (SCHEMA_NOT_FOUND), and show-grant-on-share without SHARE is SHOW GRANTS ON a table or view (accepted)"
+ids = [
+  "db.security_admin.show-grant-on-share.o004",
+  "db.transaction_session.use-catalog.o010",
+]
