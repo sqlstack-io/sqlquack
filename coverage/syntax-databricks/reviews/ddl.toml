@@ -1347,3 +1347,40 @@ note = "Withdraws this form's approval in db-ddl-065, which stays as written. AL
 
 [review.definitions]
 "db.ddl.alter-view" = "56fc1c89f9d4baab97b97e987d993d5ae80c4de4091e8a1a1c958ff5da286e11"
+
+[[review]]
+id = "db-ddl-068"
+family = "ddl"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:41:26Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table",
+  "db.ddl.alter-view",
+]
+note = "Re-read on 17 Nov 2026 at 0f34dd46f against the existing 2026.45 receipts, after the parser commit that keeps USING aliases and TBLPROPERTIES keys and values as written. It answers db-ddl-067 (alter-view) and db-scripting-019 (execute-immediate), and re-reads alter-table, whose binding went stale when its UNSET TBLPROPERTIES case k769d23311612 changed tree. Of these forms' 169 cases, 64 are accepted locally and each is a tree that keeps each word of its text (the screen flags none); 105 are rejected, 97 at the warehouse's position, 7 a few characters earlier (all PARSE_SYNTAX_ERROR on the warehouse side and syntax errors locally, the same cases as before), 1 whose receipt gives no position. alter-view: SET TBLPROPERTIES keeps each key and value as written (k83dd4f39ba83: string key, string value) and UNSET TBLPROPERTIES keeps each key as written (k897fc9e5f983: a string key), both accepted by the warehouse. execute-immediate: an alias after a USING argument is that argument's alias, with whether AS was written: k805f71ec931f gives two aliased arguments with AS, and k393fb1cc3084, k49edafa1aac3 and kc99e87121429 each give one argument aliased without AS (SELECT, `v1 Q`, `SELECT`); the warehouse accepts all three, which a second argument would not allow without a comma. alter-table: k769d23311612 keeps its string key. Not settled here: EXECUTE IMMEDIATE ... USING ( 1 , AS , x ) has no receipt yet (pending recording); INTO targets are table nodes, a naming item on the fix list."
+
+[review.fingerprints]
+"db.ddl.alter-table" = "9971243b14809aa1a90ad519a452f8b3cc34988a937476bbba6102a3e612af56"
+"db.ddl.alter-view" = "3f24b5839044ae2ae38d704077af41673482184134abb9f1d29cb4acecef8954"
+
+[review.definitions]
+"db.ddl.alter-table" = "45f8d3c275e44a178729e82ee86a7ddf4b83d6b1a93ca41cd0a895c42ad47906"
+"db.ddl.alter-view" = "56fc1c89f9d4baab97b97e987d993d5ae80c4de4091e8a1a1c958ff5da286e11"
+
+[[review]]
+id = "db-ddl-069"
+family = "ddl"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:45:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.tblproperties.unset-tblproperties",
+]
+note = "Holds this form after the parser commit at 0f34dd46f, which answers db-ddl-066's tree finding: UNSET TBLPROPERTIES now keeps each key as written (a string, a name or a backquoted name give different trees, for tables and views) and ALTER VIEW ... UNSET TBLPROPERTIES IF EXISTS is a tree. Its 12 obligations here are met by existing receipts and its accepted cases read faithfully (k769d23311612, k531c1eaf7df7, string keys). Not approved yet, because db-ddl-066 also asked for receipts of the spellings that finding was about, and none exists: ALTER TABLE t1 UNSET TBLPROPERTIES ( k ) (an unquoted key) and ALTER VIEW v1 UNSET TBLPROPERTIES IF EXISTS ( 'k' ) are on the pending recording bundle, where the unquoted key is obligation o013. Re-read and approve once they have receipts."
+
+[review.fingerprints]
+"db.ddl.tblproperties.unset-tblproperties" = "6b0c05a3610cbe05158cf2afd93cd098d14bf974fe53c42fd8c890099f112ee0"
+
+[review.definitions]
+"db.ddl.tblproperties.unset-tblproperties" = "408768c265877074fb6c5c876fdbc7c2d4cf8378edb13ec137000bb5ce51d6a8"
