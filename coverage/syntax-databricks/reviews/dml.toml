@@ -248,3 +248,44 @@ note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2
 
 [review.definitions]
 "db.dml.delete-from" = "f992cfb93fee5d6d0e818d2f23445fd436498696d18dc31653080aa64f9279e5"
+
+[[review]]
+id = "db-dml-015"
+family = "dml"
+parser_tree = "8ecd64b31886e72fb403a850c8c9aef24419ac40"
+reviewed_utc = "2026-11-17T14:12:44Z"
+verdict = "approved"
+forms = [
+  "db.dml.copy-into",
+  "db.dml.copy-into.target-credential",
+  "db.dml.insert-into.into",
+  "db.dml.insert-into.into-replace-on",
+  "db.dml.insert-into.into.syntax",
+  "db.dml.insert-into.overwrite-into",
+  "db.dml.insert-overwrite-directory",
+  "db.dml.insert-overwrite-directory-hive",
+  "db.dml.merge-into",
+]
+note = "Re-read on 17 Nov 2026 at 79bd022b7 against the 2026.45 receipts in evidence set evK-17nov, after the DML parser fix. It answers db-dml-003 to db-dml-008 and db-dml-010 to db-dml-012, whose bindings went stale with this tree; each asked for clauses that were opaque, and no accepted case of these forms is opaque now. copy-into: BY POSITION (DBFS_DISABLED, parsed) is by_position and the target's column list is columns; VALIDATE, FILES, PATTERN, FORMAT_OPTIONS and COPY_OPTIONS stay params. copy-into.target-credential: WITH ( CREDENTIAL v1 ) on the target (WITH_CREDENTIAL for a table identifier, parsed) is target_credentials. insert-into.into, into.syntax and overwrite-into: the CTE is with, WITH SCHEMA EVOLUTION is schema_evolution, INTO TABLE or OVERWRITE TABLE is table_keyword, REPLACE WHERE is replace_where, REPLACE USING ( c1 , c2 ) is replace_using, PARTITION ( c1 = 1 ) is partition, and BY NAME is by_name; the all-options cases (INSERT_COLUMN_ARITY_MISMATCH, parsed) keep every one. into-replace-on: REPLACE ON 1 = 1 is replace_on, a parenthesised query is a subquery that keeps its alias, and an unparenthesised one is the query itself, so the two spellings the page writes differ. insert-overwrite-directory: an insert with a directory holding its path, LOCAL, USING format and OPTIONS; a value written without = is marked in options_without_equals, and a path given only as the 'path' option leaves path empty (DBFS_DISABLED, parsed, both spellings). insert-overwrite-directory-hive: ROW FORMAT DELIMITED is the row format, STORED AS a name is stored_as, and STORED AS INPUTFORMAT ... OUTPUTFORMAT ... are input_format and output_format (UNSUPPORTED_DATA_SOURCE_WRITE, parsed); its positives stay observed because the form is Runtime-only, so it remains awaiting observation. merge-into: the CTE is with_, WITH SCHEMA EVOLUTION is schema_evolution, AND conditions are each clause's condition, and NOT MATCHED BY SOURCE and BY TARGET set source true and false, apart from a bare NOT MATCHED, which has none. The mechanical check finds every name and literal in all 108 accepted trees. Of 171 local rejects, 139 are at the warehouse's position, 4 have no warehouse position (Values must be specified for key(s) twice, a directory with no path at all, and MERGE_WITHOUT_WHEN, each refused locally with the warehouse's own message), and 28 are elsewhere, all syntax errors on both sides and unchanged from the previous tree: the warehouse reports at the token after an unfinished clause (missing 'SCHEMA', 'EVOLUTION', 'NAME', '(' or ')') where the parser reports at the clause's start, or reads REPLACE after the target as an alias and fails at ON or USING with missing 'REPLACE' where the parser fails later at the clause's operand. The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.dml.copy-into" = "d39a5cc2b35d3081b48b05f7e2185bb22be807637d6a21c491d3a41a70ed1c60"
+"db.dml.copy-into.target-credential" = "79da2ec87d12f4d181e424befaf9af596bf4fef0eb779e7f69a0659c205c4c2d"
+"db.dml.insert-into.into" = "eb6877cfb64dbd4eb33210e5b5d326e559461bf0cd070441ff809bdb88e8ddc2"
+"db.dml.insert-into.into-replace-on" = "4fb9a27722e79d0ab38dbc2c4c2ededb9f85c75fd32b2f588fc0d00a8b985336"
+"db.dml.insert-into.into.syntax" = "4a0f7ab09203e4b5e70cdbbbd4c6b81ec0d4c5bb0dd541f7adfc6bd9ff9a9bfe"
+"db.dml.insert-into.overwrite-into" = "b55538c3b1103a71a16fe77f56d0d4bc61441f3c3eb7c2f89be7aa8f2c0bc695"
+"db.dml.insert-overwrite-directory" = "af6fb502f93f0d589e7010b7077b0fc0e24409a00ae7e78f239ca65bf68c5bde"
+"db.dml.insert-overwrite-directory-hive" = "58f5d7f57852a1134509e133977e0ea4f02286176c3d8ce6c2c527a591e1d936"
+"db.dml.merge-into" = "c2fe251570918a62953c023648702ad105bd2764020e8cee5dfd2ac9e1c303e5"
+
+[review.definitions]
+"db.dml.copy-into" = "039164a1c4735379b9bfb586fabdd14c8622163415771c5406cf218f92a53d2d"
+"db.dml.copy-into.target-credential" = "8b65a4fed862127c0d65aa67af816373d8c5a0ef83e840fffbcaa3567ef9180e"
+"db.dml.insert-into.into" = "bbeed8067b71875040cb15b95f10fc3faa9a7c2f09fcbcfd5364d774334a9429"
+"db.dml.insert-into.into-replace-on" = "9322af7c96037cd88169632fcf591ddfc0346888f18d5149a5810914156a4334"
+"db.dml.insert-into.into.syntax" = "d988f85f607c63e19381b4e6c16912a0e887353c3a65d8ece2fafff3bcc1226f"
+"db.dml.insert-into.overwrite-into" = "cb93fb3cf88b9836ea9a654fcd04efec50d8e1dd4c34d302ee85b1318a2391b6"
+"db.dml.insert-overwrite-directory" = "cf7d61dcfc0a14da22b6006a83f9aecb963171ba49e82213b349b89a6cd6069c"
+"db.dml.insert-overwrite-directory-hive" = "a78eadd0568c02a06eb41ddb7021072d5e9c8875b0cb2a2f9e9c1614ab2139cb"
+"db.dml.merge-into" = "3d7cc611d0b78bf231a134cc5b49ab32eee7548cdcb3a876471585ae0452da54"
