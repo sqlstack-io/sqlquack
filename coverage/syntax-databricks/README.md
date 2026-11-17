@@ -572,6 +572,8 @@ others:
   against the `shiftrightunsigned` call, in a `written_as` field that analysis ignores;
 - the parentheses of a `VALUES` row and of a `STREAM` source, which the Syntax blocks write as
   alternatives (`expression | ( expression [, ...] )` and `STREAM ( name ) | STREAM name`).
+- `FROM` against a comma after the first argument of `SUBSTR` and `SUBSTRING`, in the call's
+  `from_separator`, as `TRIM` keeps its SQL-standard spelling;
 - each pipe operator with the pipe written before it (`|>` or `|`), in the `pipe_operators` of
   the select it amounts to, so `FROM t1 |> AGGREGATE sum ( c1 )` keeps `|> AGGREGATE` apart from
   `SELECT sum ( c1 ) FROM t1` and from `FROM t1 | AGGREGATE sum ( c1 )`; a trailing `|>` with

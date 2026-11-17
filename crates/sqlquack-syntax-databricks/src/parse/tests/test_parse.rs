@@ -981,6 +981,18 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "[\"|> WHERE\",\"|> DROP\"]",
         },
         ValueTestCase {
+            description: "SUBSTR written with FROM keeps the FROM spelling",
+            sql: "SELECT SUBSTR ( 1 FROM v1 FOR v1 )",
+            pointer: "/0/select/expressions/0/function/from_separator",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "SUBSTRING written with FROM keeps the FROM spelling",
+            sql: "SELECT SUBSTRING ( 1 FROM v1 )",
+            pointer: "/0/select/expressions/0/function/from_separator",
+            expected_json: "true",
+        },
+        ValueTestCase {
             description: "an explicit ALL is recorded, not folded into none",
             sql: "SELECT sum(ALL a) FROM t",
             pointer: "/0/select/expressions/0/function/set_quantifier",

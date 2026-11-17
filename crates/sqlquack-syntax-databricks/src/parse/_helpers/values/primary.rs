@@ -2,7 +2,7 @@
 
 use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::functions::models::JSONExtract;
+use sqlquack_syntax::expressions::functions::models::{Function, JSONExtract};
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 use sqlquack_syntax::expressions::operators::models::{
     CollationExpr, MethodCall, Subscript, UnaryOp,
@@ -635,7 +635,8 @@ impl Parser<'_> {
             "SUBSTR" | "SUBSTRING" => self.attempt(|parser| {
                 parser.at += 2;
                 let text: Expression = parser.value_expression(0)?;
-                if !(parser.eat_kw("FROM") || parser.eat_char(',')) {
+                let from_separator: bool = parser.eat_kw("FROM");
+                if !(from_separator || parser.eat_char(',')) {
                     return Err(parser.error());
                 }
                 let mut args: Vec<Expression> = vec![text, parser.value_expression(0)?];
@@ -643,7 +644,9 @@ impl Parser<'_> {
                     args.push(parser.value_expression(0)?);
                 }
                 parser.expect_char(')')?;
-                Ok(call(&lower, args))
+                let mut node: Function = function(vec![Identifier::new(&lower)], args);
+                node.from_separator = from_separator;
+                Ok(Expression::Function(Box::new(node)))
             }),
             "TRIM" => self.attempt(|parser| {
                 parser.at += 2;
