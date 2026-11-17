@@ -98,7 +98,7 @@ as they refuse any gap.
 | Form | Construct | Tree |
 | --- | --- | --- |
 | `add`, `list` | `ADD` and `LIST` of a file, jar or archive (another resource type is refused) | a `UtilityStatement` of the keywords and each resource, split where a space falls, as Spark splits them |
-| `restore`, `deny`, `refresh` | `RESTORE … {TIMESTAMP \| VERSION} AS OF`, `DENY privileges ON securable TO principal` (read as `GRANT`), `REFRESH path` (checked as Spark checks the resource path) | a `UtilityStatement` of the keywords and parts |
+| `restore`, `deny`, `refresh` | `RESTORE … {TIMESTAMP \| VERSION} AS OF`, `DENY privileges ON securable TO principal` (read as `GRANT`), `REFRESH path` (checked as Spark checks the resource path) | a `UtilityStatement` of the keywords and parts; `REFRESH` keeps a quoted path as a string and an unquoted one as its text as written |
 | `cache_select` | `CACHE SELECT expr, … FROM name [WHERE expr]`, as documented | a `UtilityStatement` of its clauses; any other text the service accepts stays the gap, unchecked but for a string after `FROM` |
 | `describe_column`, `show_partition` | `DESCRIBE t column`, `PARTITION (…)` on `SHOW PARTITIONS` and `SHOW TABLE EXTENDED` | the `Describe` or `Show` holding the column or partition |
 | `row_format`, `stored_as` | `ROW FORMAT DELIMITED \| SERDE` and `STORED AS \| BY` on `CREATE TABLE [… LIKE]` | properties of the table; `STORED AS` is marked as the Hive spelling, unlike `USING`. A storage handler's `SERDEPROPERTIES` stays the gap |

@@ -1619,8 +1619,14 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "\"t1\"",
         },
         ValueTestCase {
-            description: "REFRESH keeps its resource path",
+            description: "REFRESH keeps an unquoted resource path as written",
             sql: "REFRESH /data/x",
+            pointer: "/0/utility_statement/operands/0/var/this",
+            expected_json: "\"/data/x\"",
+        },
+        ValueTestCase {
+            description: "REFRESH keeps a quoted resource path as a string",
+            sql: "REFRESH '/data/x'",
             pointer: "/0/utility_statement/operands/0/literal/value",
             expected_json: "\"/data/x\"",
         },

@@ -5,7 +5,7 @@ use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::parse::_helpers::tree::clauses::Part;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_word};
-use crate::parse::_helpers::tree::nodes::{string, utility};
+use crate::parse::_helpers::tree::nodes::{utility, var};
 use crate::parse::constants::{CREATE_STREAMING_TABLE, SYNC, TAG_FORMS, TAG_KINDS};
 use crate::scan::models::{Token, TokenKind};
 
@@ -847,7 +847,7 @@ impl Parser<'_> {
                 true,
             ));
         }
-        let path: Expression = string(path);
+        let path: Expression = var(path);
         self.treed("refresh", start);
         Ok(utility("REFRESH".to_owned(), vec![path]))
     }
