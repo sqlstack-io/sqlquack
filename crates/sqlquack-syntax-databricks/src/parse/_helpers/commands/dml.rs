@@ -2,8 +2,11 @@
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
+use sqlquack_syntax::expressions::queries::models::RowFormat;
 use sqlquack_syntax::expressions::queries::models::{Where, With};
-use sqlquack_syntax::expressions::statements::models::{Merge, When, Whens};
+use sqlquack_syntax::expressions::statements::models::{DirectoryInsert, Merge, When, Whens};
+
+use crate::parse::_helpers::commands::alters::property_text;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{
@@ -18,6 +21,50 @@ enum MergeStage {
     Matched,
     NotMatched,
     BySource,
+}
+
+/// The text of a string literal the parser read.
+fn text(value: Option<Box<Expression>>) -> Option<String> {
+    value.map(|value| property_text(&value))
+}
+
+/// Hive's directory, its row format delimited without escaping and its storage a bare format name; none otherwise.
+fn hive_directory(
+    local: bool,
+    path: String,
+    row_format: Option<Expression>,
+    stored: Option<Option<Expression>>,
+) -> Option<DirectoryInsert> {
+    let row_format: Option<RowFormat> = match row_format {
+        None => None,
+        Some(Expression::RowFormatDelimitedProperty(row))
+            if row.escaped.is_none() && row.serde.is_none() =>
+        {
+            Some(RowFormat {
+                delimited: true,
+                fields_terminated_by: text(row.fields),
+                collection_items_terminated_by: text(row.collection_items),
+                map_keys_terminated_by: text(row.map_keys),
+                lines_terminated_by: text(row.lines),
+                null_defined_as: text(row.null),
+            })
+        }
+        Some(_) => return None,
+    };
+    let stored_as: Option<String> = match stored {
+        None => None,
+        Some(Some(Expression::FileFormatProperty(format))) => match format.this.as_deref() {
+            Some(Expression::Identifier(name)) if !name.quoted => Some(name.name.clone()),
+            _ => return None,
+        },
+        Some(_) => return None,
+    };
+    Some(DirectoryInsert {
+        local,
+        path,
+        row_format,
+        stored_as,
+    })
 }
 
 fn with_alias(mut relation: TableRef, alias: Option<TableAlias>) -> TableRef {
@@ -78,24 +125,27 @@ impl Parser<'_> {
         })
     }
 
-    /// `[LOCAL] DIRECTORY …` after `INSERT OVERWRITE`, in Spark's or Hive's form.
-    fn overwrite_directory(&mut self) -> Parsing<()> {
+    /// `[LOCAL] DIRECTORY …` after `INSERT OVERWRITE`, in Spark's or Hive's form; Hive's when the shared directory node holds all of it.
+    fn overwrite_directory(&mut self) -> Parsing<Option<DirectoryInsert>> {
         let start: usize = self.offset();
-        self.eat_kw("LOCAL");
+        let local: bool = self.eat_kw("LOCAL");
         self.expect_kw("DIRECTORY")?;
-        let path: bool = self.string_at(0);
-        if path {
-            self.string_lit()?;
+        let path: Option<String> = match self.string_at(0) {
+            true => Some(self.string_lit()?),
+            false => None,
+        };
+        if let Some(path) = path.clone().filter(|_| !self.kw("USING")) {
+            let row_format: Option<Expression> = match self.kw("ROW") {
+                true => Some(self.row_format()?),
+                false => None,
+            };
+            let stored: Option<Option<Expression>> = match self.kw("STORED") {
+                true => Some(self.create_file_format()?),
+                false => None,
+            };
+            return Ok(hive_directory(local, path, row_format, stored));
         }
-        if !self.kw("USING") && path {
-            if self.kw("ROW") {
-                self.row_format()?;
-            }
-            if self.kw("STORED") {
-                self.create_file_format()?;
-            }
-            return Ok(());
-        }
+        let path: bool = path.is_some();
         self.expect_kw("USING")?;
         self.multipart_identifier()?;
         let mut path_option: bool = false;
@@ -113,10 +163,7 @@ impl Parser<'_> {
                 ));
             }
             path_option = options.iter().any(|option| match option {
-                Expression::Eq(pair) => {
-                    crate::parse::_helpers::commands::alters::property_text(&pair.left)
-                        .eq_ignore_ascii_case("path")
-                }
+                Expression::Eq(pair) => property_text(&pair.left).eq_ignore_ascii_case("path"),
                 _ => false,
             });
         }
@@ -127,7 +174,7 @@ impl Parser<'_> {
                 true,
             ));
         }
-        Ok(())
+        Ok(None)
     }
 
     /// `singleInsertQuery`: `insertInto` and its query, or `( query ) alias`.
@@ -140,12 +187,21 @@ impl Parser<'_> {
         }
         if overwrite && (self.kw("DIRECTORY") || (self.kw("LOCAL") && self.kw_at(1, "DIRECTORY"))) {
             let start: usize = self.offset();
-            self.overwrite_directory()?;
-            self.query()?;
-            self.gap("insert_overwrite_directory", start);
-            return Ok(Expression::Null(
-                sqlquack_syntax::expressions::names::models::Null,
-            ));
+            let directory: Option<DirectoryInsert> = self.overwrite_directory()?;
+            let query: Expression = self.query()?;
+            let Some(directory) = directory else {
+                self.gap("insert_overwrite_directory", start);
+                return Ok(Expression::Null(
+                    sqlquack_syntax::expressions::names::models::Null,
+                ));
+            };
+            self.treed("insert_overwrite_directory", start);
+            let mut node = insert(TableRef::new(String::new()));
+            node.overwrite = true;
+            node.with = with;
+            node.directory = Some(directory);
+            node.query = Some(query);
+            return Ok(Expression::Insert(Box::new(node)));
         }
         self.eat_kw("TABLE");
         let mut node = insert(self.table_reference()?);

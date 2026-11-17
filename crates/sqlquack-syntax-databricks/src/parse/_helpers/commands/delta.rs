@@ -4,13 +4,15 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
 use sqlquack_syntax::expressions::queries::models::{From, Select};
 use sqlquack_syntax::expressions::statements::models::{
-    CopyParameter, CopyStmt, Credentials, LoadData,
+    CopyParameter, CopyStmt, Credentials, LoadData, Schema,
 };
 use sqlquack_syntax::expressions::tables::models::Undrop;
 
 use crate::parse::_helpers::commands::alters::{property_pair, property_text};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
-use crate::parse::_helpers::tree::nodes::{literal, null, property, subquery, utility, var};
+use crate::parse::_helpers::tree::nodes::{
+    column_from, literal, null, property, subquery, utility, var,
+};
 use crate::parse::constants::{MSCK, UNDROP_WITH_ID};
 use crate::scan::models::{NumberKind, TokenKind};
 
@@ -101,11 +103,20 @@ impl Parser<'_> {
             self.gap("copy_target_credential", start);
         }
         let start: usize = self.offset();
+        let mut this: Expression = Expression::Table(Box::new(target));
         if self.eat_kws(&["BY", "POSITION"]) {
             self.gap("copy_by_position", start);
         } else if self.is_char('(') {
-            self.identifier_list()?;
-            self.gap("copy_columns", start);
+            let columns: Vec<Expression> = self
+                .identifier_list()?
+                .into_iter()
+                .map(|name| column_from(vec![name]))
+                .collect();
+            self.treed("copy_columns", start);
+            this = Expression::Schema(Box::new(Schema {
+                this: Some(Box::new(this)),
+                expressions: columns,
+            }));
         }
         self.expect_kw("FROM")?;
         let mut credentials: Option<Box<Credentials>> = None;
@@ -175,7 +186,7 @@ impl Parser<'_> {
         Ok(Expression::Copy(Box::new(CopyStmt {
             where_clause: None,
             copy_files: false,
-            this: Expression::Table(Box::new(target)),
+            this,
             kind: true,
             files: vec![source],
             params,

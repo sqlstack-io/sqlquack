@@ -268,6 +268,18 @@ fn given_a_databricks_form_read_as_a_tree_but_not_reviewed_when_linting_then_it_
             dialect: "databricks",
             expected_refusal: OPAQUE_REFUSAL,
         },
+        test_types::LintRefusalTestCase {
+            description: "a Hive directory written by INSERT OVERWRITE",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' SELECT 1",
+            dialect: "databricks",
+            expected_refusal: OPAQUE_REFUSAL,
+        },
+        test_types::LintRefusalTestCase {
+            description: "COPY INTO with its target's columns",
+            sql: "COPY INTO t1 ( c1 ) FROM '/tmp/x' FILEFORMAT = CSV",
+            dialect: "databricks",
+            expected_refusal: OPAQUE_REFUSAL,
+        },
     ];
     for test_case in test_cases {
         let refusal: Result<Vec<serde_json::Value>, String> =

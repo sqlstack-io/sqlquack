@@ -264,6 +264,20 @@ fn given_each_treed_form_before_a_relaxed_statement_when_parsing_then_the_verdic
             expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
             expected_as_script: ExpectedVerdict::Rejected { syntax: true },
         },
+        TreedFormTestCase {
+            description: "copy_columns",
+            construct: "copy_columns",
+            sql: "COPY INTO t1 ( c1 ) FROM '/tmp/x' FILEFORMAT = PARQUET",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
+        TreedFormTestCase {
+            description: "insert_overwrite_directory",
+            construct: "insert_overwrite_directory",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' SELECT 1",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
     ];
     let covered: Vec<&str> = test_cases
         .iter()

@@ -358,6 +358,20 @@ fn given_databricks_sql_when_formatting_then_it_is_laid_out_or_refused() {
             dialect: FormatDialect::Databricks,
             expected_outcome: Err(OPAQUE_STATEMENT_FAILURE),
         },
+        test_types::FormatSqlTestCase {
+            description: "A Hive directory written by INSERT OVERWRITE, read as a tree not yet reviewed for layout, is refused as opaque",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' SELECT 1",
+            line_width: None,
+            dialect: FormatDialect::Databricks,
+            expected_outcome: Err(OPAQUE_STATEMENT_FAILURE),
+        },
+        test_types::FormatSqlTestCase {
+            description: "COPY INTO with its target's columns, read as a tree not yet reviewed for layout, is refused as opaque",
+            sql: "COPY INTO t1 ( c1 ) FROM '/tmp/x' FILEFORMAT = CSV",
+            line_width: None,
+            dialect: FormatDialect::Databricks,
+            expected_outcome: Err(OPAQUE_STATEMENT_FAILURE),
+        },
     ];
     for test_case in test_cases {
         assert_eq!(

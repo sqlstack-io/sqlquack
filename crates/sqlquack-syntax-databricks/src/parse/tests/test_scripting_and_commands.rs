@@ -496,6 +496,56 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             sql: "ALTER TABLE t1 UNSET TBLPROPERTIES IF EXISTS ( 'k' )",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
+        VerdictTestCase {
+            description: "a directory whose row format escapes stays a gap",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' ESCAPED BY '#' SELECT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a directory with a SerDe stays a gap",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' ROW FORMAT SERDE 's1' SELECT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a directory stored with input and output formats stays a gap",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' STORED AS INPUTFORMAT 'i1' OUTPUTFORMAT 'o1' SELECT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a directory stored as a quoted format stays a gap",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' STORED AS `ORC` SELECT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a directory stored by a handler stays a gap",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' STORED BY 'h1' SELECT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a directory written through a data source stays a gap",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' USING parquet SELECT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a Hive directory is kept",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' STORED AS TEXTFILE VALUES ( 1 )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "COPY INTO columns are kept",
+            sql: "COPY INTO t1 ( c1 , c2 ) FROM '/tmp/x' FILEFORMAT = CSV",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "COPY INTO BY POSITION stays a gap",
+            sql: "COPY INTO t1 BY POSITION FROM '/tmp/x' FILEFORMAT = CSV",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "INSERT REPLACE ON stays a gap",
+            sql: "INSERT INTO t1 REPLACE ON t1.c1 = s.c1 SELECT * FROM s",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

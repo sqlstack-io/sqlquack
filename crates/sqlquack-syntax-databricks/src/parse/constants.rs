@@ -477,7 +477,7 @@ pub(crate) const DROP_TEMPORARY_FUNCTION: &str =
 pub(crate) const UNDROP_WITH_ID: &str = "UNDROP { TABLE | VOLUME | MATERIALIZED VIEW } WITH ID str";
 
 /// Forms read as trees that the formatter and lint still refuse as gaps until their layout is reviewed; any future Databricks translator or renderer must handle each of these, and every key of `KEYED_ACTIONS`, or refuse it.
-pub(crate) const TREED_FORMS: [&str; 36] = [
+pub(crate) const TREED_FORMS: [&str; 38] = [
     "add",
     "list",
     "restore",
@@ -514,6 +514,8 @@ pub(crate) const TREED_FORMS: [&str; 36] = [
     "drop_table_force",
     "drop_temporary_function",
     "undrop_with_id",
+    "copy_columns",
+    "insert_overwrite_directory",
 ];
 
 /// `ALTER TABLE ... OWNER TO`.

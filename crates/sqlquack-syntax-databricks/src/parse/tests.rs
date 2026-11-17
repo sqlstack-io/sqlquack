@@ -2,6 +2,8 @@
 mod helpers;
 #[path = "tests/test_ddl_trees.rs"]
 mod test_ddl_trees;
+#[path = "tests/test_dml_trees.rs"]
+mod test_dml_trees;
 #[path = "tests/test_parse.rs"]
 mod test_parse;
 #[path = "tests/test_scripting_and_commands.rs"]
