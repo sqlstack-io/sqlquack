@@ -15,7 +15,7 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 use crate::parse::_helpers::commands::creates::{Head, property};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{joined, string, table, var};
-use crate::parse::constants::{SCALA_LANGUAGE, SQL_LANGUAGE};
+use crate::parse::constants::{DROP_TEMPORARY_FUNCTION, SCALA_LANGUAGE, SQL_LANGUAGE};
 use crate::scan::models::{NumberKind, TokenKind};
 
 impl Parser<'_> {
@@ -89,15 +89,25 @@ impl Parser<'_> {
 
     /// `dropFunction` after `DROP [TEMPORARY]`; a temporary function's drop is a gap.
     pub(crate) fn drop_function(&mut self, temporary: bool) -> Parsing<Expression> {
-        let start: usize = self.tokens[self.at.saturating_sub(1 + usize::from(temporary))].start;
+        let first: usize = self.at.saturating_sub(1 + usize::from(temporary));
+        let start: usize = self.tokens[first].start;
         self.expect_kw("FUNCTION")?;
         let mut node: DropFunction = DropFunction::new(String::new());
         node.if_exists = self.eat_kws(&["IF", "EXISTS"]);
         node.name = self.table_reference()?;
-        if temporary {
-            self.gap("drop_temporary_function", start);
+        if !temporary {
+            return Ok(Expression::DropFunction(Box::new(node)));
         }
-        Ok(Expression::DropFunction(Box::new(node)))
+        match self.tree_within(first, self.at, 3, DROP_TEMPORARY_FUNCTION) {
+            Some(tree) => {
+                self.treed("drop_temporary_function", start);
+                Ok(tree)
+            }
+            None => {
+                self.gap("drop_temporary_function", start);
+                Ok(Expression::DropFunction(Box::new(node)))
+            }
+        }
     }
 
     /// `colDefinition` as a routine parameter: `name type [NOT NULL] [DEFAULT expr] [COMMENT 'x']`.

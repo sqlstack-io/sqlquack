@@ -19,7 +19,9 @@ use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
     binary, boolean, collate, column_from, joined, null, table, tuple, var,
 };
-use crate::parse::constants::{CREATE_KINDS, DROP_KINDS};
+use crate::parse::constants::{
+    CREATE_KINDS, DROP_KINDS, DROP_TABLE_FORCE, DROP_TEMPORARY_TABLE, TEMPORARY_VIEW_USING,
+};
 use crate::scan::models::{NumberKind, TokenKind};
 
 /// What `CREATE` heads: a table (`OR REPLACE`, `TEMPORARY`, `EXTERNAL`) or a view.
@@ -30,6 +32,8 @@ pub(crate) struct Head {
     pub(crate) temporary_spelling: Option<String>,
     pub(crate) global: bool,
     pub(crate) external: bool,
+    /// The token `CREATE` or `REPLACE` is at.
+    pub(crate) at: usize,
 }
 
 pub(crate) fn property(name: &str, value: Expression) -> Expression {
@@ -81,6 +85,7 @@ impl Parser<'_> {
             temporary_spelling: None,
             global: false,
             external: false,
+            at: start_at,
         };
         if self.eat_kw("REPLACE") {
             head.or_replace = true;
@@ -939,7 +944,7 @@ impl Parser<'_> {
         let name: TableRef = self.table_reference()?;
         if head.temporary && !if_not_exists && self.temporary_view_using_ahead() {
             self.at = name_at;
-            return self.temporary_view_using();
+            return self.temporary_view_using(head.at, name_at - 1);
         }
         let mut columns: Vec<ViewColumn> = Vec::new();
         if self.is_char('(') {
@@ -955,8 +960,13 @@ impl Parser<'_> {
         let mut comment: Option<String> = None;
         let mut table_properties: Vec<Expression> = Vec::new();
         let mut copy_grants: bool = false;
+        let mut options: Vec<Expression> = Vec::new();
         loop {
             let start: usize = self.offset();
+            if let Some(option) = self.view_option(start)? {
+                options.push(option);
+                continue;
+            }
             if self.eat_kw("COMMENT") {
                 if comment.is_some() {
                     return Err(self.error_with("Found duplicate clauses: COMMENT", start, true));
@@ -965,36 +975,15 @@ impl Parser<'_> {
             } else if self.eat_kw("TBLPROPERTIES") {
                 let expressions: Vec<Expression> = self.property_list()?;
                 table_properties.push(Expression::Properties(Box::new(Properties { expressions })));
-            } else if self.kw("WITH") && self.kw_at(1, "SCHEMA") {
-                self.at += 2;
-                if !(self.eat_kw("BINDING")
-                    || self.eat_kw("COMPENSATION")
-                    || self.eat_kw("EVOLUTION")
-                    || self.eat_kws(&["TYPE", "EVOLUTION"]))
-                {
-                    return Err(self.error());
-                }
-                self.gap("schema_binding", start);
             } else if self.kw("WITH") && self.kw_at(1, "METRICS") {
                 if head.global {
                     self.at += 1;
                     return Err(self.error());
                 }
                 return self.metric_view(start);
-            } else if self.kw("DEFAULT") && self.kw_at(1, "COLLATION") {
-                self.at += 2;
-                self.ident()?;
-                self.gap("view_collation", start);
-            } else if self.kw("PARTITIONED") && self.kw_at(1, "ON") {
-                self.at += 2;
-                self.identifier_list()?;
-                self.gap("view_partitioned_on", start);
             } else if self.kw("COPY") && self.char_at(1, '*') {
                 self.at += 2;
                 copy_grants = true;
-            } else if self.kw("NOCOPY") && self.char_at(1, '*') {
-                self.at += 2;
-                self.gap("view_nocopy", start);
             } else {
                 break;
             }
@@ -1027,7 +1016,49 @@ impl Parser<'_> {
         node.table_properties = table_properties;
         node.query_parenthesized = parenthesized;
         node.copy_grants = copy_grants;
+        node.options = options;
         Ok(Expression::CreateView(Box::new(node)))
+    }
+
+    /// A view's schema binding, default collation, partitioning columns or `NOCOPY *`, read from `start`.
+    fn view_option(&mut self, start: usize) -> Parsing<Option<Expression>> {
+        let (construct, option) = if self.kw("WITH") && self.kw_at(1, "SCHEMA") {
+            self.at += 2;
+            let mode: &str = match self.word_at(0).as_deref() {
+                Some("BINDING") => "BINDING",
+                Some("COMPENSATION") => "COMPENSATION",
+                Some("EVOLUTION") => "EVOLUTION",
+                Some("TYPE") if self.kw_at(1, "EVOLUTION") => "TYPE EVOLUTION",
+                _ => return Err(self.error()),
+            };
+            self.at += mode.split(' ').count();
+            ("schema_binding", property("WITH SCHEMA", var(mode)))
+        } else if self.kw("DEFAULT") && self.kw_at(1, "COLLATION") {
+            self.at += 2;
+            let name: Identifier = self.ident()?;
+            (
+                "view_collation",
+                property("DEFAULT COLLATION", Expression::Identifier(name)),
+            )
+        } else if self.kw("PARTITIONED") && self.kw_at(1, "ON") {
+            self.at += 2;
+            let columns: Vec<Expression> = self
+                .identifier_list()?
+                .into_iter()
+                .map(Expression::Identifier)
+                .collect();
+            (
+                "view_partitioned_on",
+                property("PARTITIONED ON", tuple(columns)),
+            )
+        } else if self.kw("NOCOPY") && self.char_at(1, '*') {
+            self.at += 2;
+            ("view_nocopy", property("NOCOPY", var("*")))
+        } else {
+            return Ok(None);
+        };
+        self.treed(construct, start);
+        Ok(Some(option))
     }
 
     /// `createMetricView` from `WITH METRICS`: its clauses, then `AS $$ body $$`; kept as a gap.
@@ -1062,8 +1093,8 @@ impl Parser<'_> {
                 && !self.kw_at(2, "COMMENT"))
     }
 
-    /// `createTempViewUsing` after the view, every option with a value; kept as a gap.
-    fn temporary_view_using(&mut self) -> Parsing<Expression> {
+    /// `createTempViewUsing` after the view, from `CREATE` at `from` to `VIEW` at `view`; a gap unless its documented form reads it all.
+    fn temporary_view_using(&mut self, from: usize, view: usize) -> Parsing<Expression> {
         let start: usize = self.offset();
         self.ident()?;
         if self.is_char('.') {
@@ -1099,8 +1130,16 @@ impl Parser<'_> {
                 ));
             }
         }
-        self.gap("temporary_view_using", start);
-        Ok(null())
+        match self.tree_within(from, self.at, view + 1 - from, TEMPORARY_VIEW_USING) {
+            Some(tree) => {
+                self.treed("temporary_view_using", start);
+                Ok(tree)
+            }
+            None => {
+                self.gap("temporary_view_using", start);
+                Ok(null())
+            }
+        }
     }
 
     /// `DROP TABLE` and `DROP VIEW`; any other `DROP` is an opaque gap.
@@ -1120,17 +1159,28 @@ impl Parser<'_> {
                 node.names = vec![name];
                 node.if_exists = if_exists;
                 node.purge = self.eat_kw("PURGE");
-                if !temporary {
-                    let start: usize = self.offset();
-                    if self.eat_kw("FORCE") {
-                        self.gap("drop_table_force", start);
+                let (construct, start, lead, pattern) = match temporary {
+                    true => (
+                        "drop_temporary_table",
+                        self.tokens[start_at].start,
+                        3,
+                        DROP_TEMPORARY_TABLE,
+                    ),
+                    false => ("drop_table_force", self.offset(), 2, DROP_TABLE_FORCE),
+                };
+                if !(temporary || self.eat_kw("FORCE")) {
+                    return Ok(Expression::DropTable(Box::new(node)));
+                }
+                match self.tree_within(start_at, self.at, lead, pattern) {
+                    Some(tree) => {
+                        self.treed(construct, start);
+                        Ok(tree)
+                    }
+                    None => {
+                        self.gap(construct, start);
+                        Ok(Expression::DropTable(Box::new(node)))
                     }
                 }
-                if temporary {
-                    let start: usize = self.tokens[start_at].start;
-                    self.gap("drop_temporary_table", start);
-                }
-                Ok(Expression::DropTable(Box::new(node)))
             }
             Some("VIEW") => {
                 self.at += 1;

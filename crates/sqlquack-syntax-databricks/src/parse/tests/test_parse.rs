@@ -182,9 +182,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "NOCOPY * parses, kept as a gap",
+            description: "NOCOPY * parses and is kept",
             sql: "CREATE OR REPLACE VIEW v NOCOPY * AS SELECT 1",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a metric view refuses COPY *",

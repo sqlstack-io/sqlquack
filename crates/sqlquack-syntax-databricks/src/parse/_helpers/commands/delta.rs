@@ -11,7 +11,7 @@ use sqlquack_syntax::expressions::tables::models::Undrop;
 use crate::parse::_helpers::commands::alters::{property_pair, property_text};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{literal, null, property, subquery, utility, var};
-use crate::parse::constants::MSCK;
+use crate::parse::constants::{MSCK, UNDROP_WITH_ID};
 use crate::scan::models::{NumberKind, TokenKind};
 
 fn parameter(
@@ -245,6 +245,7 @@ impl Parser<'_> {
 
     /// `UNDROP {TABLE | MATERIALIZED VIEW | VOLUME} name`; `WITH ID 'id'` is a gap.
     pub(crate) fn undrop_statement(&mut self) -> Parsing<Expression> {
+        let first: usize = self.at;
         self.expect_kw("UNDROP")?;
         let kind: &str = match self.word_at(0).as_deref() {
             Some("TABLE") => "TABLE",
@@ -261,8 +262,13 @@ impl Parser<'_> {
         self.at += 1;
         let start: usize = self.offset();
         if self.kw("WITH") && self.kw_at(1, "ID") {
+            let lead: usize = self.at - first;
             self.at += 2;
             self.string_lit()?;
+            if let Some(tree) = self.tree_within(first, self.at, lead, UNDROP_WITH_ID) {
+                self.treed("undrop_with_id", start);
+                return Ok(tree);
+            }
             self.gap("undrop_with_id", start);
             return Ok(null());
         }

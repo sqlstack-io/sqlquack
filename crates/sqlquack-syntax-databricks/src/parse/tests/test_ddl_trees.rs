@@ -1,4 +1,4 @@
-//! `ALTER TABLE` actions with no shared variant, kept as `SetProperty` entries under fixed keys.
+//! DDL clauses with no shared field: keyed `ALTER TABLE` actions, view options and documented drops.
 
 use serde_json::Value;
 use sqlquack_syntax::Parsed;
@@ -10,7 +10,7 @@ const KEY: &str = "/0/alter_table/actions/0/SetProperty/properties/0/0";
 const VALUE: &str = "/0/alter_table/actions/0/SetProperty/properties/0/1";
 
 #[test]
-fn given_an_action_with_no_shared_variant_when_parsing_then_it_keeps_its_canonical_key() {
+fn given_a_ddl_clause_with_no_shared_field_when_parsing_then_its_tree_keeps_it() {
     let test_cases = [
         ValueTestCase {
             description: "an owner change written in lower case with extra spaces",
@@ -77,6 +77,36 @@ fn given_an_action_with_no_shared_variant_when_parsing_then_it_keeps_its_canonic
             sql: "ALTER TABLE t1 ALTER COLUMN c1 FIRST , c2 SYNC IDENTITY",
             pointer: "/0/alter_table/actions/1/SetProperty/properties/0/0",
             expected_json: "\"COLUMN SYNC IDENTITY\"",
+        },
+        ValueTestCase {
+            description: "a view keeps its schema binding mode",
+            sql: "CREATE VIEW v1 WITH SCHEMA TYPE EVOLUTION AS SELECT 1",
+            pointer: "/0/create_view/options/0/property/value/var/this",
+            expected_json: "\"TYPE EVOLUTION\"",
+        },
+        ValueTestCase {
+            description: "a view keeps the columns it is partitioned on",
+            sql: "CREATE VIEW v1 PARTITIONED ON ( c1 , c2 ) AS SELECT 1 AS c1 , 2 AS c2",
+            pointer: "/0/create_view/options/0/property/value/tuple/expressions/1/identifier/name",
+            expected_json: "\"c2\"",
+        },
+        ValueTestCase {
+            description: "a temporary view over a source keeps its provider",
+            sql: "CREATE TEMPORARY VIEW v1 ( c1 INT ) USING csv OPTIONS ( 'k' = 'v' )",
+            pointer: "/0/utility_statement/kind",
+            expected_json: "\"CREATE TEMPORARY VIEW\"",
+        },
+        ValueTestCase {
+            description: "dropping a temporary table is its own kind",
+            sql: "DROP TEMP TABLE IF EXISTS t1",
+            pointer: "/0/utility_statement/kind",
+            expected_json: "\"DROP TEMP TABLE\"",
+        },
+        ValueTestCase {
+            description: "UNDROP by identifier is its own kind",
+            sql: "UNDROP MATERIALIZED VIEW WITH ID '0'",
+            pointer: "/0/utility_statement/kind",
+            expected_json: "\"UNDROP MATERIALIZED VIEW WITH ID\"",
         },
     ];
     for test_case in test_cases {

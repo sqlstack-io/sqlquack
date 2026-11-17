@@ -462,8 +462,22 @@ pub(crate) const ADD_RESOURCES: &str =
 pub(crate) const LIST_RESOURCES: &str =
     "LIST { FILE | FILES | JAR | JARS | ARCHIVE | ARCHIVES } [ resource ... ]";
 
+/// `createTempViewUsing` as its page writes it.
+pub(crate) const TEMPORARY_VIEW_USING: &str = "CREATE [ OR REPLACE ] [ GLOBAL ] { TEMPORARY | TEMP } \
+     VIEW name [ ( column ,... ) ] USING name [ OPTIONS props ]";
+/// `DROP TEMPORARY TABLE`.
+pub(crate) const DROP_TEMPORARY_TABLE: &str =
+    "DROP { TEMPORARY | TEMP } TABLE [ IF EXISTS ] table [ PURGE ]";
+/// `DROP TABLE ... FORCE`.
+pub(crate) const DROP_TABLE_FORCE: &str = "DROP TABLE [ IF EXISTS ] table [ PURGE ] FORCE";
+/// `DROP TEMPORARY FUNCTION`.
+pub(crate) const DROP_TEMPORARY_FUNCTION: &str =
+    "DROP { TEMPORARY | TEMP } FUNCTION [ IF EXISTS ] table";
+/// `UNDROP ... WITH ID`.
+pub(crate) const UNDROP_WITH_ID: &str = "UNDROP { TABLE | VOLUME | MATERIALIZED VIEW } WITH ID str";
+
 /// Forms read as trees that the formatter and lint still refuse as gaps until their layout is reviewed; any future Databricks translator or renderer must handle each of these, and every key of `KEYED_ACTIONS`, or refuse it.
-pub(crate) const TREED_FORMS: [&str; 27] = [
+pub(crate) const TREED_FORMS: [&str; 36] = [
     "add",
     "list",
     "restore",
@@ -491,6 +505,15 @@ pub(crate) const TREED_FORMS: [&str; 27] = [
     "alter_column_position",
     "identity_sync",
     "column_tags",
+    "schema_binding",
+    "view_collation",
+    "view_partitioned_on",
+    "view_nocopy",
+    "temporary_view_using",
+    "drop_temporary_table",
+    "drop_table_force",
+    "drop_temporary_function",
+    "undrop_with_id",
 ];
 
 /// `ALTER TABLE ... OWNER TO`.

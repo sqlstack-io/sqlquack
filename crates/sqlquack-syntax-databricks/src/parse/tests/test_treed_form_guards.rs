@@ -201,6 +201,69 @@ fn given_each_treed_form_before_a_relaxed_statement_when_parsing_then_the_verdic
             expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
             expected_as_script: ExpectedVerdict::Rejected { syntax: true },
         },
+        TreedFormTestCase {
+            description: "schema_binding",
+            construct: "schema_binding",
+            sql: "CREATE VIEW v3 WITH SCHEMA BINDING AS SELECT 1",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
+        TreedFormTestCase {
+            description: "view_collation",
+            construct: "view_collation",
+            sql: "CREATE VIEW v3 DEFAULT COLLATION UTF8_BINARY AS SELECT 1",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
+        TreedFormTestCase {
+            description: "view_partitioned_on",
+            construct: "view_partitioned_on",
+            sql: "CREATE VIEW v3 PARTITIONED ON ( c1 ) AS SELECT 1 AS c1",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
+        TreedFormTestCase {
+            description: "view_nocopy",
+            construct: "view_nocopy",
+            sql: "CREATE OR REPLACE VIEW v3 NOCOPY * AS SELECT 1",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
+        TreedFormTestCase {
+            description: "temporary_view_using",
+            construct: "temporary_view_using",
+            sql: "CREATE TEMPORARY VIEW v3 USING DELTA",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
+        TreedFormTestCase {
+            description: "drop_temporary_table",
+            construct: "drop_temporary_table",
+            sql: "DROP TEMP TABLE t1",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
+        TreedFormTestCase {
+            description: "drop_table_force",
+            construct: "drop_table_force",
+            sql: "DROP TABLE IF EXISTS t1 FORCE",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
+        TreedFormTestCase {
+            description: "drop_temporary_function",
+            construct: "drop_temporary_function",
+            sql: "DROP TEMPORARY FUNCTION IF EXISTS abs",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
+        TreedFormTestCase {
+            description: "undrop_with_id",
+            construct: "undrop_with_id",
+            sql: "UNDROP TABLE WITH ID '00000000-0000-0000-0000-000000000000'",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
     ];
     let covered: Vec<&str> = test_cases
         .iter()
@@ -217,7 +280,16 @@ fn given_each_treed_form_before_a_relaxed_statement_when_parsing_then_the_verdic
             .gaps
             .iter()
             .any(|gap| gap.construct == test_case.construct);
-        assert!(reviewed, "{} is read as a tree", test_case.description);
+        let gapped: bool = parse_as(test_case.sql, Reading::Trees)
+            .expect(test_case.description)
+            .gaps
+            .iter()
+            .any(|gap| gap.construct == test_case.construct);
+        assert!(
+            reviewed && !gapped,
+            "{} is read as a tree",
+            test_case.description
+        );
         assert_eq!(
             verdict(&format!("BEGIN {} ; {RELAXED} ; END", test_case.sql)),
             test_case.expected_in_compound,

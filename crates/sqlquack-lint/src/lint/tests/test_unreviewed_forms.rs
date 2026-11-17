@@ -214,6 +214,60 @@ fn given_a_databricks_form_read_as_a_tree_but_not_reviewed_when_linting_then_it_
             dialect: "databricks",
             expected_refusal: OPAQUE_REFUSAL,
         },
+        test_types::LintRefusalTestCase {
+            description: "a view's schema binding",
+            sql: "CREATE VIEW v1 WITH SCHEMA BINDING AS SELECT 1",
+            dialect: "databricks",
+            expected_refusal: OPAQUE_REFUSAL,
+        },
+        test_types::LintRefusalTestCase {
+            description: "a view's default collation",
+            sql: "CREATE VIEW v1 DEFAULT COLLATION UTF8_BINARY AS SELECT 1",
+            dialect: "databricks",
+            expected_refusal: OPAQUE_REFUSAL,
+        },
+        test_types::LintRefusalTestCase {
+            description: "a view partitioned on columns",
+            sql: "CREATE VIEW v1 PARTITIONED ON ( c1 ) AS SELECT 1 AS c1",
+            dialect: "databricks",
+            expected_refusal: OPAQUE_REFUSAL,
+        },
+        test_types::LintRefusalTestCase {
+            description: "a view's NOCOPY",
+            sql: "CREATE VIEW v1 NOCOPY * AS SELECT 1",
+            dialect: "databricks",
+            expected_refusal: OPAQUE_REFUSAL,
+        },
+        test_types::LintRefusalTestCase {
+            description: "a temporary view over a source",
+            sql: "CREATE TEMPORARY VIEW v1 USING parquet",
+            dialect: "databricks",
+            expected_refusal: OPAQUE_REFUSAL,
+        },
+        test_types::LintRefusalTestCase {
+            description: "a temporary table dropped",
+            sql: "DROP TEMPORARY TABLE t1",
+            dialect: "databricks",
+            expected_refusal: OPAQUE_REFUSAL,
+        },
+        test_types::LintRefusalTestCase {
+            description: "a table dropped with FORCE",
+            sql: "DROP TABLE t1 FORCE",
+            dialect: "databricks",
+            expected_refusal: OPAQUE_REFUSAL,
+        },
+        test_types::LintRefusalTestCase {
+            description: "a temporary function dropped",
+            sql: "DROP TEMPORARY FUNCTION f1",
+            dialect: "databricks",
+            expected_refusal: OPAQUE_REFUSAL,
+        },
+        test_types::LintRefusalTestCase {
+            description: "a table undropped by identifier",
+            sql: "UNDROP TABLE WITH ID '0'",
+            dialect: "databricks",
+            expected_refusal: OPAQUE_REFUSAL,
+        },
     ];
     for test_case in test_cases {
         let refusal: Result<Vec<serde_json::Value>, String> =
