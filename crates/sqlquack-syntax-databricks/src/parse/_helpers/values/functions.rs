@@ -15,6 +15,7 @@ use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
     aggregate, function, joined, ordered, over, subquery, table, window_function,
 };
+use crate::parse::errors::ParseError;
 
 impl Parser<'_> {
     /// A call of `name`: `( [DISTINCT|ALL] args )` and its trailing clauses.
@@ -99,10 +100,24 @@ impl Parser<'_> {
 
     /// A `TABLE` argument or, when what follows `TABLE` is not one, an expression: the warehouse
     /// reads `TABLE ( v1 , k => v1 )` as a call of a function named TABLE (UNRESOLVED_ROUTINE).
+    /// When the call reading fails too, or stops short of the argument's end, the argument
+    /// reading's error is kept if it hit a resource guard or got further.
     fn table_argument_or_call(&mut self) -> Parsing<Expression> {
-        match self.attempt(|parser| parser.table_argument()) {
-            Ok(argument) => Ok(argument),
-            Err(_) => self.expression(),
+        let (argument_error, _) = match self.attempt(|parser| parser.table_argument()) {
+            Ok(argument) => return Ok(argument),
+            Err(failure) => failure,
+        };
+        let call: Parsing<Expression> = self.expression();
+        let call_stop: ParseError = match &call {
+            Ok(_) if self.is_char(',') || self.is_char(')') => return call,
+            Ok(_) => self.error(),
+            Err(call_error) => call_error.clone(),
+        };
+        match !call_stop.guard
+            && (argument_error.guard || argument_error.position > call_stop.position)
+        {
+            true => Err(argument_error),
+            false => call,
         }
     }
 

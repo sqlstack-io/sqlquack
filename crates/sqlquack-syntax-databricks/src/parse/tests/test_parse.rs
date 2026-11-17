@@ -7,8 +7,8 @@ use crate::parse::errors::StrictFailure;
 use crate::parse::main::parse::parse;
 use crate::parse::main::parse_strict::parse_strict;
 use crate::parse::tests::test_types::{
-    ChainTestCase, ExpectedVerdict, GapTestCase, NestingTestCase, StrictFailureTestCase,
-    StrictTestCase, ValueTestCase, VerdictTestCase,
+    ChainTestCase, ExpectedVerdict, GapTestCase, NestingTestCase, RefusalTestCase,
+    StrictFailureTestCase, StrictTestCase, ValueTestCase, VerdictTestCase,
 };
 
 #[test]
@@ -963,6 +963,12 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "[\"|> UNION\"]",
         },
         ValueTestCase {
+            description: "a pipe operator after an unpiped set operation is kept as written",
+            sql: "SELECT 1 UNION SELECT 2 |> LIMIT 1",
+            pointer: "/0/select/pipe_operators",
+            expected_json: "[\"|> LIMIT\"]",
+        },
+        ValueTestCase {
             description: "a bare | before a pipe operator is kept apart from |>",
             sql: "FROM t1 | WHERE 1 = 1",
             pointer: "/0/select/pipe_operators",
@@ -1670,6 +1676,30 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
                 .map(Value::to_string)
                 .as_deref(),
             Some(test_case.expected_json),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_table_argument_and_a_call_both_failing_when_parsing_then_the_further_error_is_kept() {
+    let test_cases = [
+        RefusalTestCase {
+            description: "a TABLE argument's PARTITION BY with no expression fails at its )",
+            sql: "SELECT * FROM f1 ( TABLE ( v1 ) PARTITION BY )",
+            expected_position: 45,
+        },
+        RefusalTestCase {
+            description: "a TABLE call missing its ) fails at the end of input",
+            sql: "SELECT * FROM AI_PREDICT_VALUE ( input => TABLE ( v1 , target_col => v1 , feature_cols => v1 )",
+            expected_position: 94,
+        },
+    ];
+    for test_case in test_cases {
+        let error = parse(test_case.sql).expect_err(test_case.description);
+        assert_eq!(
+            error.position, test_case.expected_position,
             "{}",
             test_case.description
         );

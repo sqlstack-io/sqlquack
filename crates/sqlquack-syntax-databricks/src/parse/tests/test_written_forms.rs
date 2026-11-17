@@ -289,6 +289,36 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 2,
         },
         DistinctTreesTestCase {
+            description: "LIMIT piped and written after a set operation",
+            written: &[
+                "SELECT 1 UNION SELECT 2 |> LIMIT 1",
+                "SELECT 1 UNION SELECT 2 LIMIT 1",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "ORDER BY piped and written after a set operation",
+            written: &[
+                "SELECT 1 UNION SELECT 2 |> ORDER BY 1",
+                "SELECT 1 UNION SELECT 2 ORDER BY 1",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "OFFSET, CLUSTER BY, DISTRIBUTE BY and SORT BY piped after a set operation",
+            written: &[
+                "SELECT 1 UNION SELECT 2 |> OFFSET 1",
+                "SELECT 1 UNION SELECT 2 OFFSET 1",
+                "SELECT 1 UNION SELECT 2 |> CLUSTER BY 1",
+                "SELECT 1 UNION SELECT 2 CLUSTER BY 1",
+                "SELECT 1 UNION SELECT 2 |> DISTRIBUTE BY 1",
+                "SELECT 1 UNION SELECT 2 DISTRIBUTE BY 1",
+                "SELECT 1 UNION SELECT 2 |> SORT BY 1",
+                "SELECT 1 UNION SELECT 2 SORT BY 1",
+            ],
+            expected_distinct_trees: 8,
+        },
+        DistinctTreesTestCase {
             description: "a MATCH_RECOGNIZE pattern's quantifiers",
             written: &[
                 "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a b+ ) DEFINE b AS TRUE )",

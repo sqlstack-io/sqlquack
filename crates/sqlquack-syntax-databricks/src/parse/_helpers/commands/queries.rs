@@ -716,13 +716,10 @@ impl Parser<'_> {
                 if organization.is_empty() {
                     return Err(self.error());
                 }
-                return Ok(match organized(left, organization) {
-                    Expression::Select(mut select) => {
-                        select.pipe_operators.push(mark(&word));
-                        Expression::Select(select)
-                    }
-                    other => other,
-                });
+                match organized(left, organization) {
+                    Expression::Select(select) => *select,
+                    other => wrapped(other),
+                }
             }
             "AGGREGATE" => {
                 self.at += 1;

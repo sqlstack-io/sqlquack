@@ -28,6 +28,13 @@ pub(crate) struct ValueTestCase {
     pub(crate) expected_json: &'static str,
 }
 
+/// A refused input and the byte offset its error is at.
+pub(crate) struct RefusalTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_position: usize,
+}
+
 /// An input's strict statement and gap counts, or whether its failure is a syntax refusal.
 pub(crate) struct StrictTestCase {
     pub(crate) description: &'static str,
