@@ -459,39 +459,7 @@ impl Parser<'_> {
         {
             let keyword: String = self.word_at(0).unwrap_or_default();
             self.at += 1;
-            if self.is_char('(') {
-                let names: Vec<Expression> =
-                    self.parenthesized(|parser| parser.multipart_identifier().map(column_from))?;
-                self.expect_char('=')?;
-                self.expect_char('(')?;
-                let query: Expression = self.query()?;
-                self.expect_char(')')?;
-                let item: SetItem = SetItem {
-                    name: tuple(names),
-                    value: query,
-                    kind: Some(keyword),
-                    no_equals: false,
-                };
-                return Ok(set_statement(vec![item]));
-            }
-            let items: Vec<SetItem> = self.comma_list(|parser| {
-                let name: Expression = column_from(parser.multipart_identifier()?);
-                parser.expect_char('=')?;
-                let value: Expression = match parser.kw("DEFAULT") && parser.terminal_at(1) {
-                    true => {
-                        parser.at += 1;
-                        var("DEFAULT")
-                    }
-                    false => parser.expression()?,
-                };
-                Ok(SetItem {
-                    name,
-                    value,
-                    kind: Some(keyword.clone()),
-                    no_equals: false,
-                })
-            })?;
-            return Ok(set_statement(items));
+            return self.variable_assignments(Some(keyword));
         }
         if self.kw("PATH") && self.char_at(1, '=') {
             let path = self.attempt(|parser| {
@@ -572,6 +540,43 @@ impl Parser<'_> {
             })));
         }
         self.configuration(set_at)
+    }
+
+    /// `name = value [, ...]` or `( names ) = ( query )` after `SET`; `keyword` is the VAR or VARIABLE written.
+    pub(crate) fn variable_assignments(&mut self, keyword: Option<String>) -> Parsing<Expression> {
+        if self.is_char('(') {
+            let names: Vec<Expression> =
+                self.parenthesized(|parser| parser.multipart_identifier().map(column_from))?;
+            self.expect_char('=')?;
+            self.expect_char('(')?;
+            let query: Expression = self.query()?;
+            self.expect_char(')')?;
+            let item: SetItem = SetItem {
+                name: tuple(names),
+                value: query,
+                kind: keyword,
+                no_equals: false,
+            };
+            return Ok(set_statement(vec![item]));
+        }
+        let items: Vec<SetItem> = self.comma_list(|parser| {
+            let name: Expression = column_from(parser.multipart_identifier()?);
+            parser.expect_char('=')?;
+            let value: Expression = match parser.kw("DEFAULT") && parser.terminal_at(1) {
+                true => {
+                    parser.at += 1;
+                    var("DEFAULT")
+                }
+                false => parser.expression()?,
+            };
+            Ok(SetItem {
+                name,
+                value,
+                kind: keyword.clone(),
+                no_equals: false,
+            })
+        })?;
+        Ok(set_statement(items))
     }
 
     /// `QUERY_TAGS [ 'key' ] = { 'value' | NULL | UNSET }`; any other spelling is Databricks' own error.

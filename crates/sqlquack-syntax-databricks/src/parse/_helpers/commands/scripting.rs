@@ -15,7 +15,7 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::forms::is_integer;
-use crate::parse::_helpers::tree::nodes::{alias, joined, literal};
+use crate::parse::_helpers::tree::nodes::{alias, joined, literal, null, too_deep_to_keep};
 use crate::parse::constants::RESIGNAL;
 
 /// The words a labelled statement may start with.
@@ -36,6 +36,19 @@ const STATEMENT_ITEMS: [&str; 2] = ["TRANSACTION_ACTIVE", "ROW_COUNT"];
 /// The items `SIGNAL ... SET` assigns.
 const SIGNAL_ITEMS: [&str; 2] = ["MESSAGE_ARGUMENTS", "MESSAGE_TEXT"];
 
+/// Words after `SET` that keep their own statement inside a compound rather than naming a variable.
+const SET_KEYWORDS: [&str; 9] = [
+    "VAR",
+    "VARIABLE",
+    "TIME",
+    "PATH",
+    "CATALOG",
+    "QUERY_TAGS",
+    "ROLE",
+    "RECIPIENT",
+    "COLLATION",
+];
+
 /// Documented statements a compound also reads as scripting nodes, once their documented form accepts them.
 const CHECKED_STATEMENTS: [&str; 5] = ["OPEN", "FETCH", "CLOSE", "SIGNAL", "RESIGNAL"];
 
@@ -48,12 +61,17 @@ fn sql(statement: Expression) -> ScriptingStatement {
 }
 
 impl Parser<'_> {
-    /// `BEGIN [NOT ATOMIC] [compoundBody] END`, the form `compound`, or its gap when a label is an IDENTIFIER clause.
+    /// `BEGIN [NOT ATOMIC] [compoundBody] END`, the form `compound`, or its gap for an IDENTIFIER-clause label or a tree too deep to keep.
     pub(crate) fn begin_statement(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
         let first: usize = self.at;
         let block: ScriptingBlock = self.compound_block(None, false)?;
         let end: usize = self.at;
+        let block: Expression = Expression::ScriptingBlock(Box::new(block));
+        if too_deep_to_keep(&block) {
+            self.gap("compound", start);
+            return Ok(null());
+        }
         let clause: bool = (first..end).any(|token| {
             self.at = token;
             self.label_clause()
@@ -63,7 +81,7 @@ impl Parser<'_> {
             true => self.gap("compound", start),
             false => self.treed("compound", start),
         }
-        Ok(Expression::ScriptingBlock(Box::new(block)))
+        Ok(block)
     }
 
     /// Whether `IDENTIFIER ( 'label' ) :` and a labelled statement's first word follow.
@@ -184,7 +202,26 @@ impl Parser<'_> {
             {
                 self.deeper(|parser| parser.cursor_declaration())
             }
-            _ => self.simple_statement(),
+            _ => self.script_statement(),
+        }
+    }
+
+    /// A statement or, as `SET name = value` is inside a script, a variable assignment like `SET VAR`'s.
+    fn script_statement(&mut self) -> Parsing<ScriptingStatement> {
+        if !self.kw("SET") || self.kw_in(1, &SET_KEYWORDS) {
+            return self.simple_statement();
+        }
+        let assignment = self.attempt(|parser| {
+            parser.at += 1;
+            let statement: Expression = parser.variable_assignments(None)?;
+            match parser.ends_at(0) {
+                true => Ok(statement),
+                false => Err(parser.error()),
+            }
+        });
+        match assignment {
+            Ok(statement) => Ok(sql(statement)),
+            Err(_) => self.simple_statement(),
         }
     }
 
@@ -348,7 +385,7 @@ impl Parser<'_> {
             self.comma_list(|parser| parser.condition_value())?;
         let body: ScriptingStatement = match self.kw("BEGIN") {
             true => ScriptingStatement::Block(self.compound_block(None, true)?),
-            false => self.simple_statement()?,
+            false => self.script_statement()?,
         };
         Ok(ScriptingStatement::Declare(ScriptingDeclaration::Handler(
             Box::new(ScriptingHandler {

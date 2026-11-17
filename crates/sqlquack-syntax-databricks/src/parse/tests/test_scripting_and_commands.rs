@@ -787,6 +787,18 @@ fn given_a_recorded_compound_statement_when_parsing_then_its_scripting_tree_keep
             expected_json: "\"l1\"",
         },
         ValueTestCase {
+            description: "SET inside a compound assigns the variable it names (accepted; the loop ends, so c1 was assigned)",
+            sql: "BEGIN DECLARE c1 INT DEFAULT 0 ; l1 : LOOP SET c1 = c1 + 1 ; IF c1 > 1 THEN LEAVE l1 ; END IF ; ITERATE l1 ; END LOOP l1 ; END",
+            pointer: "/0/scripting_block/body/1/loop/body/0/sql/statement/set_statement/items/0/name/column/name/name",
+            expected_json: "\"c1\"",
+        },
+        ValueTestCase {
+            description: "SET inside a compound reads its value as an expression (accepted; the loop ends, so c1 was assigned)",
+            sql: "BEGIN DECLARE c1 INT DEFAULT 0 ; l1 : LOOP SET c1 = c1 + 1 ; IF c1 > 1 THEN LEAVE l1 ; END IF ; ITERATE l1 ; END LOOP l1 ; END",
+            pointer: "/0/scripting_block/body/1/loop/body/0/sql/statement/set_statement/items/0/value/add/left/column/name/name",
+            expected_json: "\"c1\"",
+        },
+        ValueTestCase {
             description: "a FOR with no variable has none (accepted)",
             sql: "BEGIN FOR SELECT 1 DO SELECT 1 ; END FOR ; END",
             pointer: "/0/scripting_block/body/0/for/variable",

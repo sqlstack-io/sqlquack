@@ -61,6 +61,26 @@ fn given_a_treed_form_holding_a_value_past_the_depth_limit_when_parsing_then_it_
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         DeepValueTestCase {
+            description: "an IF condition in a compound, which its gap left opaque",
+            shape: "BEGIN IF {E} = 1 THEN SELECT 1 ; END IF ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        DeepValueTestCase {
+            description: "a variable a compound assigns",
+            shape: "BEGIN DECLARE c1 INT ; SET c1 = {E} ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        DeepValueTestCase {
+            description: "a variable a handler assigns",
+            shape: "BEGIN DECLARE c1 INT ; DECLARE EXIT HANDLER FOR SQLEXCEPTION SET c1 = {E} ; SELECT 1 ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        DeepValueTestCase {
+            description: "a WHILE condition in a procedure's compound body",
+            shape: "CREATE PROCEDURE p1 ( ) LANGUAGE SQL AS BEGIN WHILE {E} = 1 DO SELECT 1 ; END WHILE ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        DeepValueTestCase {
             description: "a value kept outside any treed form is still refused",
             shape: "ALTER TABLE t1 ADD CONSTRAINT k1 CHECK ( {E} > 0 )",
             expected_verdict: ExpectedVerdict::Rejected { syntax: false },
