@@ -2871,3 +2871,10 @@ ids = [
   "db.scripting.iterate-stmt.o001",
   "db.scripting.iterate-stmt.o003",
 ]
+
+[[retired]]
+retired_in = "5dec95f66b1f6b46ef11e77c8dffe29e00ca3650"
+reason = "auto-cdc's 'omit <order_by_column>' of the bitemporal line cannot be written: SYSTEM is non-reserved, so a text without the operand reads SYSTEM as it and then meets a second SEQUENCE BY (DUPLICATE_CLAUSES on the warehouse); the obligation is suppressed with that reason and its text kept as an observed [[limit]]"
+ids = [
+  "db.ddl.create-streaming-table-auto-cdc.o179",
+]

@@ -100,6 +100,16 @@ pub enum Command {
         #[command(flatten)]
         common: Common,
     },
+    /// Variants of each accepted case that change one token and parse to the same tree.
+    Screen {
+        /// Screen only these forms; every form when none is given.
+        #[arg(long)]
+        form: Vec<String>,
+        #[arg(long)]
+        family: Option<String>,
+        #[command(flatten)]
+        common: Common,
+    },
     /// The current claims as JSON, bound to the frozen catalogue commit, as baseline.json holds.
     Snapshot {
         /// The commit whose catalogue must equal the working tree's.

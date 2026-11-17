@@ -119,6 +119,48 @@ pub(crate) fn local_verdict(parser: LocalParser) -> Option<fn(&str) -> LocalVerd
     }
 }
 
+/// A native parser's statements when it accepts the text with no gap.
+fn gap_free<E>(parsed: Result<Parsed, E>) -> Option<Vec<Expression>> {
+    match parsed {
+        Ok(parsed) if parsed.gaps.is_empty() => Some(parsed.statements),
+        Ok(_) | Err(_) => None,
+    }
+}
+
+/// A text's statements when the parser accepts it, or none.
+pub(crate) type Statements = fn(&str) -> Option<Vec<Expression>>;
+
+/// Each dialect's local parser as the statements it accepts, or none when the dialect has none.
+pub(crate) fn local_statements(parser: LocalParser) -> Option<Statements> {
+    match parser {
+        LocalParser::Snowflake => {
+            Some(|sql| {
+                match sqlquack_syntax_snowflake::parse_statements_with(
+                    sql,
+                    Dialect::Snowflake,
+                    &ParseOptions::default(),
+                    CallMode::Faithful,
+                ) {
+                    Ok(statements) => Some(statements),
+                    Err(_) => None,
+                }
+            })
+        }
+        LocalParser::Postgres => Some(|sql| gap_free(sqlquack_syntax_postgres::parse_strict(sql))),
+        LocalParser::BigQuery => Some(|sql| gap_free(sqlquack_syntax_bigquery::parse_strict(sql))),
+        LocalParser::DuckDb => Some(|sql| gap_free(sqlquack_syntax_duckdb::parse_strict(sql))),
+        LocalParser::Databricks => {
+            Some(|sql| gap_free(sqlquack_syntax_databricks::parse_strict(sql)))
+        }
+        LocalParser::SqlServer => Some(|sql| match sqlquack_syntax_sqlserver::parse_strict(sql) {
+            Ok(parsed) if parsed.gaps.is_empty() => Some(parsed.statements),
+            Ok(_) | Err(_) => None,
+        }),
+        LocalParser::Sqlite => Some(|sql| gap_free(sqlquack_syntax_sqlite::parse_strict(sql))),
+        LocalParser::None => None,
+    }
+}
+
 /// Runs git; its exit code, and its trimmed stdout, or why it could not run.
 pub(crate) fn git(arguments: &[&str]) -> Result<(i32, String), String> {
     match Command::new("git").args(arguments).output() {

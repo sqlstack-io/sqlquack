@@ -1,0 +1,203 @@
+use serde_json::{Value, json};
+
+use crate::screen::main::screen_cases::screen_cases;
+use crate::screen::models::{MutationKind, ScreenAllowlist, ScreenReport};
+use crate::screen::tests::helpers::{FORM, case, databricks_tree, entry};
+use crate::screen::tests::test_types::{AllowlistTestCase, KnownCollapseTestCase};
+
+#[test]
+fn given_a_spelling_the_grammar_keeps_when_screening_then_its_variant_has_its_own_tree() {
+    let test_cases = [
+        KnownCollapseTestCase {
+            description: "control: text inside a comment is not read",
+            sql: "SELECT /* m */ 1",
+            variant: "SELECT /* */ 1",
+            expected_same_tree: true,
+        },
+        KnownCollapseTestCase {
+            description: "a TBLPROPERTIES value written without =",
+            sql: "ALTER TABLE t1 SET TBLPROPERTIES ( 'k' = 'v' )",
+            variant: "ALTER TABLE t1 SET TBLPROPERTIES ( 'k' 'v' )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "an OPTIONS key written as a name",
+            sql: "CREATE TABLE t1 ( c1 INT ) USING DELTA OPTIONS ( 'k' = 'v' )",
+            variant: "CREATE TABLE t1 ( c1 INT ) USING DELTA OPTIONS ( k = 'v' )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "REFERENCES without ON DELETE NO ACTION",
+            sql: "CREATE TABLE t3 ( c1 INT REFERENCES t2 ON DELETE NO ACTION )",
+            variant: "CREATE TABLE t3 ( c1 INT REFERENCES t2 )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "ON UPDATE written for ON DELETE",
+            sql: "CREATE TABLE t3 ( c1 INT REFERENCES t2 ON DELETE NO ACTION )",
+            variant: "CREATE TABLE t3 ( c1 INT REFERENCES t2 ON UPDATE NO ACTION )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a backquoted part of a qualified name",
+            sql: "SHOW TABLES IN s1 . v1",
+            variant: "SHOW TABLES IN `s1` . v1",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "TEMP for TEMPORARY",
+            sql: "CREATE TEMPORARY FUNCTION f1 ( ) RETURNS INT RETURN 1",
+            variant: "CREATE TEMP FUNCTION f1 ( ) RETURNS INT RETURN 1",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "GLOBAL TEMP for GLOBAL TEMPORARY",
+            sql: "CREATE GLOBAL TEMPORARY VIEW v1 AS SELECT 1",
+            variant: "CREATE GLOBAL TEMP VIEW v1 AS SELECT 1",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a CTE written without AS",
+            sql: "WITH w1 AS ( SELECT 1 ) SELECT 1",
+            variant: "WITH w1 ( SELECT 1 ) SELECT 1",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "ALTER VIEW written without AS",
+            sql: "ALTER VIEW v1 AS SELECT 1",
+            variant: "ALTER VIEW v1 SELECT 1",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a backquoted COPY INTO file format",
+            sql: "COPY INTO t1 FROM '/tmp/x' FILEFORMAT = PARQUET",
+            variant: "COPY INTO t1 FROM '/tmp/x' FILEFORMAT = `PARQUET`",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a backquoted CREDENTIAL name",
+            sql: "COPY INTO t1 WITH ( CREDENTIAL v1 ) FROM '/tmp/x' FILEFORMAT = PARQUET",
+            variant: "COPY INTO t1 WITH ( CREDENTIAL `v1` ) FROM '/tmp/x' FILEFORMAT = PARQUET",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a backquoted INSERT OVERWRITE DIRECTORY format",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET SELECT 1",
+            variant: "INSERT OVERWRITE DIRECTORY '/tmp/x' USING `PARQUET` SELECT 1",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a backquoted RESET key",
+            sql: "RESET v1",
+            variant: "RESET `v1`",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a LATERAL VIEW written without AS",
+            sql: "SELECT * FROM t1 LATERAL VIEW explode ( array ( 1 ) ) a3 AS x1",
+            variant: "SELECT * FROM t1 LATERAL VIEW explode ( array ( 1 ) ) a3 x1",
+            expected_same_tree: false,
+        },
+    ];
+    for test_case in test_cases {
+        let original: Option<Value> = databricks_tree(test_case.sql);
+        let variant: Option<Value> = databricks_tree(test_case.variant);
+        assert!(
+            original.is_some(),
+            "{}: the text parses",
+            test_case.description
+        );
+        assert!(
+            variant.is_some(),
+            "{}: the variant parses",
+            test_case.description
+        );
+        assert_eq!(
+            original == variant,
+            test_case.expected_same_tree,
+            "{}",
+            test_case.description
+        );
+        let report: ScreenReport = screen_cases(
+            &[case(test_case.sql)],
+            &databricks_tree,
+            &ScreenAllowlist::default(),
+        );
+        let flagged: bool = report
+            .flagged
+            .iter()
+            .any(|found| found.mutation.sql == test_case.variant);
+        assert_eq!(
+            flagged, test_case.expected_same_tree,
+            "{}: the screen flags the variant",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unused_entries_are_stale()
+ {
+    let constant =
+        |sql: &str| -> Option<Value> { (!sql.contains(['\'', '`'])).then(|| json!(["one tree"])) };
+    let test_cases = [
+        AllowlistTestCase {
+            description: "no entry: both one-token drops that parse alike are flagged",
+            entries: vec![],
+            expected_flagged: 2,
+            expected_allowed: 0,
+            expected_stale: 0,
+        },
+        AllowlistTestCase {
+            description: "an entry for the form and kind allows every token",
+            entries: vec![entry(FORM, MutationKind::Drop, None)],
+            expected_flagged: 0,
+            expected_allowed: 2,
+            expected_stale: 0,
+        },
+        AllowlistTestCase {
+            description: "an entry for one token allows only that token",
+            entries: vec![entry(FORM, MutationKind::Drop, Some("m2"))],
+            expected_flagged: 1,
+            expected_allowed: 1,
+            expected_stale: 0,
+        },
+        AllowlistTestCase {
+            description: "an entry no same-tree variant matches is stale",
+            entries: vec![entry(FORM, MutationKind::Drop, Some("m3"))],
+            expected_flagged: 2,
+            expected_allowed: 0,
+            expected_stale: 1,
+        },
+        AllowlistTestCase {
+            description: "an entry for a form not screened is never stale",
+            entries: vec![entry("db.ddl.other", MutationKind::Drop, None)],
+            expected_flagged: 2,
+            expected_allowed: 0,
+            expected_stale: 0,
+        },
+    ];
+    for test_case in test_cases {
+        let report: ScreenReport = screen_cases(
+            &[case("m1 m2")],
+            &constant,
+            &ScreenAllowlist {
+                allowed: test_case.entries,
+            },
+        );
+        assert_eq!(
+            (
+                report.flagged.len(),
+                report.allowed.len(),
+                report.stale.len()
+            ),
+            (
+                test_case.expected_flagged,
+                test_case.expected_allowed,
+                test_case.expected_stale
+            ),
+            "{}",
+            test_case.description
+        );
+    }
+}

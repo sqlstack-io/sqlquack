@@ -16582,13 +16582,6 @@ target = "<condition> in [ APPLY AS DELETE WHEN <condition> ] #3"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.ddl.create-streaming-table-auto-cdc.o179"
-kind = "required_operand_missing"
-required = true
-target = "<order_by_column> #3"
-note = "omit <order_by_column>"
-
-[[obligation]]
 id = "db.ddl.create-streaming-table-auto-cdc.o180"
 kind = "operand_type_class"
 required = true
@@ -17372,6 +17365,14 @@ required = true
 target = "<order_by_column>"
 anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
 note = "a string literal in place of <order_by_column>; the warehouse (DBSQL 2026.44) answers semantic_error (UNRESOLVED_COLUMN.WITH_SUGGESTION), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.ddl.create-streaming-table-auto-cdc.o278"
+kind = "required_operand_missing"
+required = true
+target = "<order_by_column> #3"
+anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
+note = "SYSTEM read as the <order_by_column> of the bitemporal line, then a second SEQUENCE BY; the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.ddl.create-streaming-table-auto-cdc.o272"

@@ -82,7 +82,7 @@ pub(crate) fn worker_command(
     })
 }
 
-fn load(common: &Common) -> Result<SyntaxCoverage, ExitCode> {
+pub(crate) fn load(common: &Common) -> Result<SyntaxCoverage, ExitCode> {
     say(&format!("loading {}", common.root.display()));
     load_coverage(&common.root, common.evidence.as_deref()).map_err(|problems| {
         for problem in &problems {
