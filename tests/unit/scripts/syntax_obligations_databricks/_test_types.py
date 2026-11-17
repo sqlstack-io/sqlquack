@@ -50,3 +50,10 @@ class BareFormTestCase:
 class MissingOpenTestCase:
     description: str
     expected_unbalanced: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class PreviewSettlementTestCase:
+    description: str
+    case_id: str
+    expected_settlement: tuple[str, str] | None

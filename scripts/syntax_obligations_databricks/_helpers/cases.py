@@ -36,6 +36,7 @@ from scripts.syntax_obligations_databricks.constants import (
     FAMILIES,
     OBLIGATIONS_DIR,
     OBLIGATIONS_HEADER,
+    PREVIEW_ONLY_FORMS,
     REJECTING_KINDS,
     RUNTIME_ONLY_CLAUSES,
     RUNTIME_SCOPE_FAMILIES,
@@ -156,9 +157,11 @@ def family_cases(  # noqa: PLR0913
 def kind_settlement(
     *, case: Row, settlement: tuple[str, str] | None, kinds: set[str]
 ) -> tuple[str, str] | None:
-    """The receipts' settlement, unless a derived citing obligation's kind contradicts it."""
+    """The receipts' settlement, unless a preview gates the form or a citing kind refutes it."""
     if settlement is None or case["expect"] != EXPECT_OBSERVE:
         return settlement
+    if str(case["case_id"]).rsplit(".k", 1)[0] in PREVIEW_ONLY_FORMS:
+        return None
     contradicting: list[str] = sorted(
         kinds & REJECTING_KINDS if settlement[0] == EXPECT_ACCEPT else kinds - REJECTING_KINDS
     )
