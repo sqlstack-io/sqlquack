@@ -99,8 +99,8 @@ reason = "the warehouse refuses DROP without COLUMN or COLUMNS (SqlBaseParser #d
 [[reading]]
 form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
 grammar_sha256 = "02e014fa5b99e0ba0edda62bf5de1ff76fdf9cf965698269de7e9eff74b686bf"
-grammar = ["{ { ALTER | CHANGE } [ COLUMN ] { <column_identifier> | <field_name> } { SET { MASK <mask_clause> } | DROP MASK } | ALTER COLUMN { <column_identifier> | <field_name> } { SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> } }"]
-reason = "the warehouse takes SET TAGS and UNSET TAGS on a column only after ALTER COLUMN (it refuses them after ALTER without COLUMN and after CHANGE), while MASK takes every spelling; the other documented spellings of the tag clauses are kept as observed [[limit]] rows"
+grammar = ["{ { ALTER | CHANGE } [ COLUMN ] { <column_identifier> SET { MASK <mask_clause> } | { <column_identifier> | <field_name> } DROP MASK } | ALTER COLUMN <column_identifier> { SET TAGS <set_tags_clause> | UNSET TAGS <unset_tags_clause> } }"]
+reason = "the warehouse takes SET TAGS and UNSET TAGS on a column only after ALTER COLUMN (it refuses them after ALTER without COLUMN and after CHANGE), while MASK takes every spelling; the other documented spellings of the tag clauses are kept as observed [[limit]] rows. It refuses a nested <field_name> before SET MASK, SET TAGS and UNSET TAGS while parsing and takes it before DROP MASK, so <field_name> is read into DROP MASK alone and the field forms of the other clauses are observed [[limit]] rows"
 
 [[reading]]
 form = "db.ddl.create-table-using"
@@ -357,6 +357,36 @@ target = "[ COLUMN | COLUMNS ]"
 note = "DROP without COLUMN or COLUMNS, as the page allows, which the warehouse refuses"
 anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
 sql = "ALTER TABLE t1 DROP ( c2 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "alternative"
+target = "<field_name> SET MASK"
+note = "a nested field before SET MASK, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ALTER c1.c1 SET MASK f1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "alternative"
+target = "<field_name> SET TAGS"
+note = "a nested field before SET TAGS, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ALTER COLUMN c1.c1 SET TAGS ( 'k' = 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "alternative"
+target = "<field_name> UNSET TAGS"
+note = "a nested field before UNSET TAGS, which the warehouse refuses"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ALTER COLUMN c1.c1 UNSET TAGS ( 'k' )"
 context = "raw"
 expect = "observe"
 

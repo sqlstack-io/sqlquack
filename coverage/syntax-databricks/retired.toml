@@ -2774,3 +2774,23 @@ ids = [
   "db.functions.remote-query.o014",
   "db.functions.remote-query.o015",
 ]
+
+[[retired]]
+retired_in = "e4af94629313bbb9aec8848c88ecfc8d8bbff8c1"
+reason = "SET MASK, SET TAGS and UNSET TAGS read with a column only, since the warehouse refuses a nested field before them while parsing; the field alternative moves into DROP MASK alone, so the obligations derived from the old choice are issued again under the new grammar and the field forms of the other clauses become observed limits"
+ids = [
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o023",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o024",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o027",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o029",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o031",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o038",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o039",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o040",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o041",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o042",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o043",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o046",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o047",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask.o050",
+]
