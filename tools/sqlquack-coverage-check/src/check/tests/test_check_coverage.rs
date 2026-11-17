@@ -12,6 +12,8 @@ use crate::check::tests::helpers::{
 use crate::check::tests::test_types::{
     AccountStateTestCase, CheckTestCase, Parameters, ReceiptCheckTestCase, ValidateTestCase,
 };
+use crate::cli::_helpers::commands::validate;
+use crate::cli::models::Common;
 use crate::formats::main::load_coverage::load_coverage;
 
 #[test]
@@ -1470,6 +1472,17 @@ fn given_an_approval_resolving_reviews_when_validating_then_only_a_bad_resolve_i
         let coverage = load_coverage(directory.path(), None)
             .unwrap_or_else(|problems| panic!("{}: {problems:#?}", test_case.description));
         let problems: Vec<String> = validation_problems(&coverage);
+        let command = validate(&Common {
+            root: directory.path().to_path_buf(),
+            evidence: None,
+            json: true,
+        });
+        assert_eq!(
+            command.is_err(),
+            test_case.expected_problem.is_some(),
+            "{}: the validate command's exit",
+            test_case.description
+        );
         let problem_found: bool = test_case
             .expected_problem
             .map_or(problems.is_empty(), |problem| {
