@@ -7,6 +7,14 @@ use crate::parse::tests::test_types::DistinctTreesTestCase;
 fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_what_was_written() {
     let test_cases = [
         DistinctTreesTestCase {
+            description: "a table format written with USING and with STORED AS",
+            written: &[
+                "CREATE TABLE t3 USING PARQUET",
+                "CREATE TABLE t3 STORED AS PARQUET",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
             description: "DESC and DESCRIBE",
             written: &["DESC SCHEMA s1", "DESCRIBE SCHEMA s1"],
             expected_distinct_trees: 2,

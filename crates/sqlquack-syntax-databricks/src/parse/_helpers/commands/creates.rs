@@ -10,12 +10,15 @@ use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{CreateView, DropView, ViewColumn};
 use sqlquack_syntax::expressions::tables::models::{
     ClusterByColumnsProperty, ConstraintType, CreateTable, DropTable, FileFormatProperty,
-    LocationProperty, OptionEntry, OptionsProperty, PartitionedByProperty, Properties, Property,
-    SchemaCommentProperty,
+    InputOutputFormat, LocationProperty, OptionEntry, OptionsProperty, PartitionedByProperty,
+    Properties, Property, RowFormatDelimitedProperty, RowFormatSerdeProperty,
+    SchemaCommentProperty, SerdeProperties, StorageHandlerProperty,
 };
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
-use crate::parse::_helpers::tree::nodes::{binary, collate, column_from, joined, null, tuple, var};
+use crate::parse::_helpers::tree::nodes::{
+    binary, boolean, collate, column_from, joined, null, tuple, var,
+};
 use crate::parse::constants::{CREATE_KINDS, DROP_KINDS};
 use crate::scan::models::{NumberKind, TokenKind};
 
@@ -297,15 +300,13 @@ impl Parser<'_> {
                 let collation = property("DEFAULT COLLATION", Expression::Identifier(name));
                 ("COLLATION", Some(collation))
             }
-            "ROW" if self.kw_at(1, "FORMAT") => {
-                self.row_format()?;
-                self.gap("row_format", start);
-                ("ROW", None)
-            }
+            "ROW" if self.kw_at(1, "FORMAT") => ("ROW", Some(self.row_format()?)),
             "STORED" if self.kw_in(1, &["AS", "BY"]) => {
-                self.create_file_format()?;
-                self.gap("stored_as", start);
-                ("STORED", None)
+                let format: Option<Expression> = self.create_file_format()?;
+                if format.is_none() {
+                    self.gap("stored_as", start);
+                }
+                ("STORED", format)
             }
             "CLUSTERED" if self.kw_at(1, "BY") => {
                 self.bucket_spec()?;
@@ -384,24 +385,39 @@ impl Parser<'_> {
     }
 
     /// `createFileFormat`: `STORED AS format` or `STORED BY handler`.
-    pub(crate) fn create_file_format(&mut self) -> Parsing<()> {
+    pub(crate) fn create_file_format(&mut self) -> Parsing<Option<Expression>> {
         self.expect_kw("STORED")?;
         if self.eat_kw("BY") {
-            self.string_lit()?;
+            let handler: Expression = self.string_literal()?;
             if self.eat_kws(&["WITH", "SERDEPROPERTIES"]) {
                 self.property_list()?;
+                return Ok(None);
             }
-            return Ok(());
+            return Ok(Some(Expression::StorageHandlerProperty(Box::new(
+                StorageHandlerProperty {
+                    this: Box::new(handler),
+                },
+            ))));
         }
         self.expect_kw("AS")?;
-        if self.eat_kw("INPUTFORMAT") {
-            self.string_lit()?;
-            self.expect_kw("OUTPUTFORMAT")?;
-            self.string_lit()?;
-        } else {
-            self.ident()?;
-        }
-        Ok(())
+        let format: Expression = match self.eat_kw("INPUTFORMAT") {
+            true => {
+                let input: Expression = self.string_literal()?;
+                self.expect_kw("OUTPUTFORMAT")?;
+                Expression::InputOutputFormat(Box::new(InputOutputFormat {
+                    input_format: Some(Box::new(input)),
+                    output_format: Some(Box::new(self.string_literal()?)),
+                }))
+            }
+            false => Expression::Identifier(self.ident()?),
+        };
+        Ok(Some(Expression::FileFormatProperty(Box::new(
+            FileFormatProperty {
+                this: Some(Box::new(format)),
+                expressions: Vec::new(),
+                hive_format: Some(Box::new(boolean(true))),
+            },
+        ))))
     }
 
     /// `createTableLike` after the new table's name: `LIKE source` and its clauses.
@@ -435,11 +451,13 @@ impl Parser<'_> {
                 node.properties
                     .push(Expression::Properties(Box::new(Properties { expressions })));
             } else if self.kw("ROW") && self.kw_at(1, "FORMAT") {
-                self.row_format()?;
-                self.gap("row_format", start);
+                let format: Expression = self.row_format()?;
+                node.properties.push(format);
             } else if self.kw("STORED") && self.kw_in(1, &["AS", "BY"]) {
-                self.create_file_format()?;
-                self.gap("stored_as", start);
+                match self.create_file_format()? {
+                    Some(format) => node.properties.push(format),
+                    None => self.gap("stored_as", start),
+                }
             } else {
                 return Ok(Expression::CreateTable(Box::new(node)));
             }
@@ -486,36 +504,57 @@ impl Parser<'_> {
     }
 
     /// `rowFormat`.
-    pub(crate) fn row_format(&mut self) -> Parsing<()> {
+    pub(crate) fn row_format(&mut self) -> Parsing<Expression> {
         self.expect_kw("ROW")?;
         self.expect_kw("FORMAT")?;
         if self.eat_kw("SERDE") {
-            self.string_lit()?;
-            if self.eat_kws(&["WITH", "SERDEPROPERTIES"]) {
-                self.property_list()?;
-            }
-            return Ok(());
+            let serde: Expression = self.string_literal()?;
+            let serde_properties: Option<Box<Expression>> =
+                match self.eat_kws(&["WITH", "SERDEPROPERTIES"]) {
+                    true => Some(Box::new(Expression::SerdeProperties(Box::new(
+                        SerdeProperties {
+                            expressions: self.property_list()?,
+                            with_: Some(Box::new(boolean(true))),
+                        },
+                    )))),
+                    false => None,
+                };
+            return Ok(Expression::RowFormatSerdeProperty(Box::new(
+                RowFormatSerdeProperty {
+                    this: Box::new(serde),
+                    serde_properties,
+                },
+            )));
         }
         self.expect_kw("DELIMITED")?;
+        let mut node: RowFormatDelimitedProperty = RowFormatDelimitedProperty {
+            fields: None,
+            escaped: None,
+            collection_items: None,
+            map_keys: None,
+            lines: None,
+            null: None,
+            serde: None,
+        };
         if self.eat_kws(&["FIELDS", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            node.fields = Some(Box::new(self.string_literal()?));
             if self.eat_kws(&["ESCAPED", "BY"]) {
-                self.string_lit()?;
+                node.escaped = Some(Box::new(self.string_literal()?));
             }
         }
         if self.eat_kws(&["COLLECTION", "ITEMS", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            node.collection_items = Some(Box::new(self.string_literal()?));
         }
         if self.eat_kws(&["MAP", "KEYS", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            node.map_keys = Some(Box::new(self.string_literal()?));
         }
         if self.eat_kws(&["LINES", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            node.lines = Some(Box::new(self.string_literal()?));
         }
         if self.eat_kws(&["NULL", "DEFINED", "AS"]) {
-            self.string_lit()?;
+            node.null = Some(Box::new(self.string_literal()?));
         }
-        Ok(())
+        Ok(Expression::RowFormatDelimitedProperty(Box::new(node)))
     }
 
     /// `partitionField`: a column (`name type`), a column name, or a transform call.

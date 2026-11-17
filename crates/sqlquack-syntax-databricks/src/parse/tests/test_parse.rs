@@ -1565,6 +1565,24 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "true",
         },
         ValueTestCase {
+            description: "ROW FORMAT DELIMITED keeps its field terminator",
+            sql: "CREATE TABLE t3 ( c1 INT ) ROW FORMAT DELIMITED FIELDS TERMINATED BY ','",
+            pointer: "/0/create_table/properties/0/row_format_delimited_property/fields/literal/value",
+            expected_json: "\",\"",
+        },
+        ValueTestCase {
+            description: "ROW FORMAT SERDE keeps its properties",
+            sql: "CREATE TABLE t3 ROW FORMAT SERDE 's1' WITH SERDEPROPERTIES ( 'k' = 'v' )",
+            pointer: "/0/create_table/properties/0/row_format_serde_property/serde_properties/serde_properties/expressions/0/eq/right/literal/value",
+            expected_json: "\"v\"",
+        },
+        ValueTestCase {
+            description: "STORED AS keeps its input and output formats",
+            sql: "CREATE TABLE t3 STORED AS INPUTFORMAT 'i1' OUTPUTFORMAT 'o1'",
+            pointer: "/0/create_table/properties/0/file_format_property/this/input_output_format/output_format/literal/value",
+            expected_json: "\"o1\"",
+        },
+        ValueTestCase {
             description: "ADD splits its resources where a space falls, as Spark does",
             sql: "ADD FILE '/tmp/a.txt' /tmp/b.txt",
             pointer: "/0/utility_statement/operands/1/literal/value",

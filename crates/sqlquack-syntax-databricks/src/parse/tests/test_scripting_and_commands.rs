@@ -337,6 +337,21 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "CREATE TABLE keeps a Hive row format and storage format",
+            sql: "CREATE TABLE t3 ( c1 INT ) ROW FORMAT DELIMITED STORED AS TEXTFILE",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "CREATE TABLE LIKE keeps a Hive row format",
+            sql: "CREATE TABLE t4 LIKE t3 ROW FORMAT SERDE 's1' STORED AS INPUTFORMAT 'i1' OUTPUTFORMAT 'o1'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a storage handler's SERDEPROPERTIES, which no node holds, stay a gap",
+            sql: "CREATE TABLE t3 STORED BY 'h1' WITH SERDEPROPERTIES ( 'k' = 'v' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
             description: "RESTORE is checked against its syntax",
             sql: "RESTORE TABLE t1 TO VERSION AS OF 0",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
