@@ -359,3 +359,37 @@ note = "Re-read on 17 Nov 2026 at 1ac76dd68 against the 2026.45 receipts in evid
 "db.scripting.resignal-stmt" = "463f33ba420af1bdca6c6ab1efc3085757225bf79543d8afe427d61480126c64"
 "db.scripting.signal-stmt" = "8d0778e8a905c36f5fb595413f8951d07d6d22bfab650308a24df9b5b109af13"
 "db.scripting.while-stmt" = "91c85b0c9ddcf3cf35e911e6a46d46128890a72960a5f440b6875413429e69ba"
+
+[[review]]
+id = "db-scripting-019"
+family = "scripting"
+parser_tree = "f08262db76019bd47d298a9aac4680f424c924e7"
+reviewed_utc = "2026-11-17T18:36:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.execute-immediate",
+]
+note = "Withdraws this form's approval in db-scripting-018, which stays as written. USING arguments do not keep their aliases: EXECUTE IMMEDIATE 'SELECT ?' USING 1 x gives the argument list [1, x], the shape of two arguments; USING 1 AS x gives a flat [1, AS x] pair as the list itself, while USING 1 AS x , 2 nests [1, AS x] as one item of the list. Recorded accepted cases k393fb1cc3084, k49edafa1aac3 and kc99e87121429 have the alias written without AS, so their trees cannot be told from two arguments. USING ( 1 , AS , x ) is also accepted locally, with AS read as a column. Needs: one argument node holding its expression and optional alias, keeping whether AS was written, and a receipt for the parenthesised AS text. The INTO targets being table nodes is a naming item on the fix list, not part of this finding."
+
+[review.fingerprints]
+"db.scripting.execute-immediate" = "0866fa2f6a14851d5105f3757b5d0ae2236b0433f8b66a9574341491f78e65a4"
+
+[review.definitions]
+"db.scripting.execute-immediate" = "68acd2680b5122a062cf7a293f02b39b2839d2eef3ec6e2516305a28a77d0806"
+
+[[review]]
+id = "db-scripting-020"
+family = "scripting"
+parser_tree = "f08262db76019bd47d298a9aac4680f424c924e7"
+reviewed_utc = "2026-11-17T18:36:33Z"
+verdict = "approved"
+forms = [
+  "db.scripting.iterate-stmt",
+]
+note = "Re-read on 17 Nov 2026 at a67bc51e4, after the change that reads SET inside a compound as a variable assignment. That change altered one of this form's trees: in the positive kb2c39e2ec633 (BEGIN DECLARE c1 INT DEFAULT 0 ; l1 : LOOP SET c1 = c1 + 1 ; IF c1 > 1 THEN LEAVE l1 ; END IF ; ITERATE l1 ; END LOOP l1 ; END), SET c1 = c1 + 1 is now a set_statement item naming c1 with the value c1 + 1 as an expression, where it was raw configuration text. The warehouse accepted that text and the loop ends, so the SET did assign c1, as the tree now reads it. The form's other trees are unchanged from db-scripting-018's reading. db-scripting-018 bound this form at the fingerprint of the tree before the change, because the checker that wrote it was built before that change; this review binds it at the current fingerprint and definition."
+
+[review.fingerprints]
+"db.scripting.iterate-stmt" = "d0bdf0f772a025905a792decc8248389ebf51164b31034608066c59a64502e5c"
+
+[review.definitions]
+"db.scripting.iterate-stmt" = "b5adf592da5446a6ad329965ebb545df29417b4807f6e736cd6cebd3a556924f"

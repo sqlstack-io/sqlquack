@@ -1313,3 +1313,20 @@ note = "Re-read on 17 Nov 2026 at 67a98c60d against the 2026.45 receipts in evid
 "db.ddl.drop-table.temp-temporary-table" = "328ae9f5b8347dbc59bb71dbc44c6bb2379319d029a221a26a1044e2990a18f8"
 "db.ddl.tblproperties.unset-tblproperties" = "408768c265877074fb6c5c876fdbc7c2d4cf8378edb13ec137000bb5ce51d6a8"
 "db.ddl.undrop-table" = "3df9572a1572d83b5fbb3f1d06354faf39037b570863b28bc020177df33c6880"
+
+[[review]]
+id = "db-ddl-066"
+family = "ddl"
+parser_tree = "f08262db76019bd47d298a9aac4680f424c924e7"
+reviewed_utc = "2026-11-17T18:36:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.tblproperties.unset-tblproperties",
+]
+note = "Withdraws this form's approval in db-ddl-065, which stays as written. UNSET TBLPROPERTIES ( 'k' ) and UNSET TBLPROPERTIES ( k ) give the same tree, UnsetProperty with properties [\"k\"], while SET TBLPROPERTIES keeps a string key and a name apart; ALTER VIEW does the same. ALTER VIEW v1 UNSET TBLPROPERTIES IF EXISTS ( 'k' ) is accepted only as an opaque command. Needs: the key kept as written (string or name) for tables and views, IF EXISTS read on ALTER VIEW, and receipts for ALTER TABLE t1 UNSET TBLPROPERTIES ( k ) and the ALTER VIEW IF EXISTS text."
+
+[review.fingerprints]
+"db.ddl.tblproperties.unset-tblproperties" = "5d507e591ecb0f48de70f690c26be37de93f68ef10cc7eeaf6ee6726a682133a"
+
+[review.definitions]
+"db.ddl.tblproperties.unset-tblproperties" = "408768c265877074fb6c5c876fdbc7c2d4cf8378edb13ec137000bb5ce51d6a8"
