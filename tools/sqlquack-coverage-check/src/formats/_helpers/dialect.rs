@@ -29,6 +29,7 @@ pub(crate) fn snowflake() -> Dialect {
         parser_path: SNOWFLAKE_PARSER_PATH.to_owned(),
         local_parser: LocalParser::Snowflake,
         syntax_codes: Vec::new(),
+        engine_pin: None,
     }
 }
 
@@ -58,6 +59,16 @@ fn is_engine_code(code: &str) -> bool {
             .all(|byte| byte.is_ascii_digit() || byte.is_ascii_uppercase())
 }
 
+/// The `(year, release)` of an engine version such as `2026.45`, or none when it is not one.
+pub(crate) fn engine_release(version: &str) -> Option<(u32, u32)> {
+    let (year, release) = version.split_once('.')?;
+    let digits = |part: &str| !part.is_empty() && part.bytes().all(|byte| byte.is_ascii_digit());
+    match digits(year) && digits(release) {
+        true => Some((year.parse().ok()?, release.parse().ok()?)),
+        false => None,
+    }
+}
+
 /// Families that are distinct and known, at least one.
 fn valid_families(families: &[String]) -> bool {
     let distinct: BTreeSet<&String> = families.iter().collect();
@@ -71,7 +82,7 @@ fn valid_families(families: &[String]) -> bool {
 /// Every problem in a dialect file.
 fn check_dialect(dialect: &Dialect) -> Vec<String> {
     let engine: bool = dialect.receipt_format == RECEIPT_FORMAT_ENGINE;
-    let faults: [(bool, String); 6] = [
+    let faults: [(bool, String); 7] = [
         (
             dialect.format != DIALECT_FORMAT,
             format!("format is not {DIALECT_FORMAT}"),
@@ -97,6 +108,13 @@ fn check_dialect(dialect: &Dialect) -> Vec<String> {
                 || !dialect.syntax_codes.iter().all(|code| is_engine_code(code)),
             "syntax_codes are five-character codes, required with receipt format /2 only"
                 .to_owned(),
+        ),
+        (
+            dialect
+                .engine_pin
+                .as_deref()
+                .is_some_and(|pin| !engine || engine_release(pin).is_none()),
+            "engine_pin is a YEAR.N release, allowed with receipt format /2 only".to_owned(),
         ),
     ];
     faults

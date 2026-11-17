@@ -664,6 +664,9 @@ pub struct Dialect {
     /// Engine codes that are syntax errors, for `/2` receipts.
     #[serde(default)]
     pub syntax_codes: Vec<String>,
+    /// The engine release the referee pins, `YEAR.N`; a `/2` receipt counts only from a release of that year.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub engine_pin: Option<String>,
 }
 
 /// The parser the checker compares receipts with; `local_verdict` maps each to its verdict.

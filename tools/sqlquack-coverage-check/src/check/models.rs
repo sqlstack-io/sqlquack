@@ -62,6 +62,8 @@ pub enum Reason {
     StaleReceipt,
     /// A citing case has admissible receipts of different phases.
     AmbiguousReceipts,
+    /// Two engine releases of the pinned year record different phases for a citing case, so it needs review.
+    ReleaseDisagreement,
     /// Snowflake's recorded phase contradicts what the case expects, so it is no evidence.
     UnexpectedOutcome,
     /// The local parse panicked, crashed, hit a guard or ran past its time or memory bound.

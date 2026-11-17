@@ -352,7 +352,11 @@ agrees. A case agrees when all of these hold:
 
 - It has a receipt whose SQL, setup and session hashes and capture method equal the case's, and
   that has a query id or its hash. A receipt that is not bound this way is stale.
-- All of its admissible receipts record the same phase.
+- All of its admissible receipts record the same phase. When the root's `dialect.toml` sets
+  `engine_pin` (a `YEAR.N` release, receipt format `/2` only), only receipts from a release of the
+  pin's year count, and the newest such release decides. If two releases of that year record
+  different phases, the case fails as `release_disagreement` until it is reviewed; other cases are
+  unaffected.
 - That phase is what the case's `expect` allows, when it has one.
 - The current parser's verdict matches that phase: a `syntax_error` receipt matches a local
   rejection, and every other phase matches a local acceptance.
@@ -391,7 +395,7 @@ catalogued forms: 3,348 on the frozen catalogue `e863d7de`.
 
 Anything missing, ambiguous, stale, mismatched or opaque fails closed with a named reason:
 `no_obligations`, `missing_case`, `unverifiable_internal_error`, `missing_receipt`,
-`awaiting_observation`, `stale_receipt`, `ambiguous_receipts`, `unexpected_outcome`,
+`awaiting_observation`, `stale_receipt`, `ambiguous_receipts`, `release_disagreement`, `unexpected_outcome`,
 `local_parse_failure`, `disagreement`, `opaque_fallback`, `unreviewed` or `stale_review`. A reference that does not
 resolve fails every check command. Examples are an obligation of an uncatalogued form, a case
 citing an undeclared obligation, an alias whose source is not absent or whose target is unknown,
