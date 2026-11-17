@@ -157,6 +157,7 @@ impl Parser<'_> {
                 node.extended = self.eat_kw("EXTENDED");
                 node.target = match kind == CATALOG && self.string_at(0) {
                     true => self.string_literal()?,
+                    false if kind == "VOLUME" => table_expression(self.multipart_identifier()?),
                     false => Expression::Identifier(joined(self.multipart_identifier()?)),
                 };
             }

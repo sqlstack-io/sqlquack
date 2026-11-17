@@ -857,6 +857,9 @@ pub enum AlterTableAction {
     /// Redshift: ALTER TABLE t SET TABLE PROPERTIES ('a' = '5', 'b' = 'c')
     SetTableProperties {
         properties: Vec<(Expression, Expression)>,
+        /// Databricks: the positions in `properties` of values written without the optional `=`
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        without_equals: Vec<usize>,
     },
     /// Databricks: ALTER TABLE t UNSET TBLPROPERTIES [ IF EXISTS ] ( k1 , 'k2' ), each key as written.
     UnsetTableProperties {

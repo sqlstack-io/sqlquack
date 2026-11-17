@@ -11,14 +11,13 @@ use sqlquack_syntax::expressions::schema_objects::models::{CreateView, DropView,
 use sqlquack_syntax::expressions::tables::models::{
     ClusterByColumnsProperty, ConstraintType, CreateTable, DropTable, FileFormatProperty,
     InputOutputFormat, LocationProperty, OptionEntry, OptionsProperty, PartitionedByProperty,
-    Properties, Property, RowFormatDelimitedProperty, RowFormatSerdeProperty,
-    SchemaCommentProperty, SerdeProperties, StorageHandlerProperty,
+    Property, RowFormatDelimitedProperty, RowFormatSerdeProperty, SchemaCommentProperty,
+    SerdeProperties, StorageHandlerProperty,
 };
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    binary, boolean, collate, column_from, joined, literal, null, table, too_deep_to_keep, tuple,
-    var,
+    boolean, collate, column_from, joined, literal, null, table, too_deep_to_keep, tuple, var,
 };
 use crate::parse::constants::{
     CREATE_KINDS, DROP_KINDS, DROP_TABLE_FORCE, DROP_TEMPORARY_TABLE, TEMPORARY_VIEW_USING,
@@ -259,9 +258,25 @@ impl Parser<'_> {
         let clause: (&'static str, Option<Expression>) = match word.as_str() {
             "OPTIONS" if self.char_at(1, '(') => {
                 self.at += 1;
-                let entries: Vec<OptionEntry> =
+                let spelled: Vec<(OptionEntry, bool, bool)> =
                     self.parenthesized(|parser| parser.table_option())?;
-                let options = Expression::OptionsProperty(Box::new(OptionsProperty { entries }));
+                let mut entries: Vec<OptionEntry> = Vec::new();
+                let mut string_keys: Vec<usize> = Vec::new();
+                let mut without_equals: Vec<usize> = Vec::new();
+                for (at, (entry, string_key, without)) in spelled.into_iter().enumerate() {
+                    if string_key {
+                        string_keys.push(at);
+                    }
+                    if without {
+                        without_equals.push(at);
+                    }
+                    entries.push(entry);
+                }
+                let options = Expression::OptionsProperty(Box::new(OptionsProperty {
+                    entries,
+                    string_keys,
+                    without_equals,
+                }));
                 ("OPTIONS", Some(options))
             }
             "PARTITIONED" if self.kw_at(1, "BY") => {
@@ -310,13 +325,7 @@ impl Parser<'_> {
             }
             "TBLPROPERTIES" => {
                 self.at += 1;
-                let expressions: Vec<Expression> = self
-                    .valued_property_list()?
-                    .into_iter()
-                    .map(|(key, value)| binary(Expression::Eq, key, value))
-                    .collect();
-                let properties = Expression::Properties(Box::new(Properties { expressions }));
-                ("TBLPROPERTIES", Some(properties))
+                ("TBLPROPERTIES", Some(self.properties_node(true)?))
             }
             "WITH" if self.kw_at(1, "ROW") && self.kw_at(2, "FILTER") => {
                 self.at += 3;
@@ -359,13 +368,15 @@ impl Parser<'_> {
         Ok(Some(clause))
     }
 
-    /// One `OPTIONS` entry: adjacent strings are the key and its value unless `=` follows them.
-    fn table_option(&mut self) -> Parsing<OptionEntry> {
+    /// One `OPTIONS` entry, whether its key is a string and whether its value lacks `=`;
+    /// adjacent strings are the key and its value unless `=` follows them.
+    fn table_option(&mut self) -> Parsing<(OptionEntry, bool, bool)> {
         let mut strings: usize = 0;
         while self.string_at(strings) {
             strings += 1;
         }
-        let key: Identifier = match self.string_at(0) {
+        let string_key: bool = self.string_at(0);
+        let key: Identifier = match string_key {
             true if !self.char_at(strings, '=') => Identifier::new(self.advance()?.value),
             true => Identifier::new(self.string_lit()?),
             false => joined(self.multipart_identifier()?),
@@ -382,7 +393,7 @@ impl Parser<'_> {
             ));
         }
         let value: Expression = self.expression()?;
-        Ok(OptionEntry { key, value })
+        Ok((OptionEntry { key, value }, string_key, !equals))
     }
 
     /// `bucketSpec`: `CLUSTERED BY (columns) [SORTED BY (columns)] INTO n BUCKETS`.
@@ -486,9 +497,8 @@ impl Parser<'_> {
                         this: Box::new(path),
                     })));
             } else if self.eat_kw("TBLPROPERTIES") {
-                let expressions: Vec<Expression> = self.property_list()?;
-                node.properties
-                    .push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                node.properties.push(properties);
             } else if self.kw("ROW") && self.kw_at(1, "FORMAT") {
                 let format: Expression = self.row_format()?;
                 node.properties.push(format);
@@ -517,9 +527,8 @@ impl Parser<'_> {
         loop {
             let start: usize = self.offset();
             let clause: &str = if self.eat_kw("TBLPROPERTIES") {
-                let expressions: Vec<Expression> = self.property_list()?;
-                node.properties
-                    .push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                node.properties.push(properties);
                 "TBLPROPERTIES"
             } else if self.eat_kw("LOCATION") {
                 let path: Expression = self.string_literal()?;
@@ -989,8 +998,8 @@ impl Parser<'_> {
                 }
                 comment = Some(self.string_lit()?);
             } else if self.eat_kw("TBLPROPERTIES") {
-                let expressions: Vec<Expression> = self.property_list()?;
-                table_properties.push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                table_properties.push(properties);
             } else if self.kw("WITH") && self.kw_at(1, "METRICS") {
                 if head.global {
                     self.at += 1;
@@ -1100,9 +1109,8 @@ impl Parser<'_> {
             } else if self.eat_kw("COMMENT") {
                 node.comment = Some(self.string_lit()?);
             } else if self.eat_kw("TBLPROPERTIES") {
-                let expressions: Vec<Expression> = self.property_list()?;
-                node.table_properties
-                    .push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                node.table_properties.push(properties);
             } else {
                 break;
             }

@@ -964,6 +964,9 @@ pub struct LateralView {
     pub table_alias: Option<Identifier>,
     /// Column aliases for the generated columns
     pub column_aliases: Vec<Identifier>,
+    /// Databricks: whether AS was written before the column aliases
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub column_aliases_explicit_as: bool,
     /// OUTER keyword - preserve nulls when input is empty/null
     pub outer: bool,
 }

@@ -1373,6 +1373,7 @@ impl Parser {
         self.expect_token(TokenType::RParen)?;
         properties.push(Expression::Properties(Box::new(Properties {
             expressions: prop_exprs,
+            without_equals: Vec::new(),
         })));
         Ok(properties)
     }

@@ -415,6 +415,7 @@ impl Parser {
                     let options = self.parse_options_list()?;
                     table_properties.push(Expression::Properties(Box::new(Properties {
                         expressions: options,
+                        without_equals: Vec::new(),
                     })));
                 }
             }
@@ -529,6 +530,7 @@ impl Parser {
             let options = self.parse_options_list()?;
             table_properties.push(Expression::Properties(Box::new(Properties {
                 expressions: options,
+                without_equals: Vec::new(),
             })));
         }
 

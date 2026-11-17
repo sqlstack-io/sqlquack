@@ -7,9 +7,7 @@ use sqlquack_syntax::expressions::schema_objects::models::{
     CreateFunction, CreateSchema, DropFunction, DropSchema, FunctionBody, FunctionParameter,
     FunctionSecurity, FunctionUsingResource, SqlDataAccess,
 };
-use sqlquack_syntax::expressions::tables::models::{
-    LocationProperty, Properties, SchemaCommentProperty,
-};
+use sqlquack_syntax::expressions::tables::models::{LocationProperty, SchemaCommentProperty};
 use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::commands::creates::{Head, property};
@@ -51,9 +49,8 @@ impl Parser<'_> {
                     .push(property("DEFAULT COLLATION", Expression::Identifier(name)));
             } else if self.kw("WITH") && self.kw_in(1, &["DBPROPERTIES", "PROPERTIES"]) {
                 self.at += 2;
-                let expressions: Vec<Expression> = self.property_list()?;
-                node.properties
-                    .push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                node.properties.push(properties);
             } else if self.eat_kws(&["RETAIN", "DROPPED", "FOR"]) {
                 let period: Expression = self.retention_period()?;
                 node.properties.push(property("RETAIN DROPPED FOR", period));
@@ -137,6 +134,7 @@ impl Parser<'_> {
         let mut node: CreateFunction = CreateFunction::new(String::new());
         node.or_replace = head.or_replace;
         node.temporary = head.temporary;
+        node.temporary_spelling = head.temporary_spelling;
         node.if_not_exists = self.eat_kws(&["IF", "NOT", "EXISTS"]);
         if node.or_replace && node.if_not_exists {
             return Err(self.error_with(

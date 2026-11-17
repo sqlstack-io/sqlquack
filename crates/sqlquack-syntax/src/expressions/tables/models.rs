@@ -1370,6 +1370,10 @@ pub struct IncludeProperty {
 pub struct Properties {
     #[serde(default)]
     pub expressions: Vec<Expression>,
+    /// Databricks: the positions in `expressions` of values written without the optional `=`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub without_equals: Vec<usize>,
 }
 
 /// Key/value pair in a BigQuery OPTIONS (...) clause.
@@ -1384,6 +1388,14 @@ pub struct OptionEntry {
 pub struct OptionsProperty {
     #[serde(default)]
     pub entries: Vec<OptionEntry>,
+    /// Databricks: the positions in `entries` of keys written as string literals
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub string_keys: Vec<usize>,
+    /// Databricks: the positions in `entries` of values written without the optional `=`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub without_equals: Vec<usize>,
 }
 
 /// InputOutputFormat

@@ -126,6 +126,11 @@ pub(crate) fn default_value(value: Expression) -> Expression {
     }
 }
 
+/// The positions of the items whose flag is set, such as values written without `=`.
+pub(crate) fn flagged<T>(items: &[(T, bool)]) -> Vec<usize> {
+    (0..items.len()).filter(|at| items[*at].1).collect()
+}
+
 /// A keyword written as a word in a keyword tuple, such as `DELETE` or `UPDATE`.
 pub(crate) fn var(text: &str) -> Expression {
     Expression::Var(Box::new(Var {

@@ -1795,6 +1795,7 @@ impl Parser {
                 this,
                 table_alias,
                 column_aliases,
+                column_aliases_explicit_as: false,
                 outer,
             });
         }

@@ -799,7 +799,8 @@ impl Parser<'_> {
                 false => Some(self.ident()?),
             };
             let mut column_aliases: Vec<Identifier> = Vec::new();
-            if self.eat_kw("AS") || self.bare_alias_at(0, false) {
+            let column_aliases_explicit_as: bool = self.eat_kw("AS");
+            if column_aliases_explicit_as || self.bare_alias_at(0, false) {
                 column_aliases.push(self.ident()?);
                 while self.is_char(',') && self.bare_alias_at(1, false) {
                     self.at += 1;
@@ -810,6 +811,7 @@ impl Parser<'_> {
                 this: Expression::Function(Box::new(function(name, args))),
                 table_alias,
                 column_aliases,
+                column_aliases_explicit_as,
                 outer,
             });
         }

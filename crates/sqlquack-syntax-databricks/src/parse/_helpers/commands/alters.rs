@@ -10,11 +10,12 @@ use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{
     AlterObject, AlterView, AlterViewAction,
 };
-use sqlquack_syntax::expressions::tables::models::Partition;
+use sqlquack_syntax::expressions::tables::models::{Partition, Properties};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    binary, collate, column_from, joined, null, property, table, too_deep_to_keep, tuple, var,
+    binary, collate, column_from, flagged, joined, null, property, table, too_deep_to_keep, tuple,
+    var,
 };
 use crate::parse::constants::{
     ALTER_COLUMN_WORDS, ALTER_KINDS, COLUMN_DROP_MASK, COLUMN_POSITION, COLUMN_SET_MASK,
@@ -180,6 +181,38 @@ impl Parser<'_> {
             .into_iter()
             .map(|(property, without_equals)| (property_pair(property), without_equals))
             .collect())
+    }
+
+    /// `valued_property_list` with the positions of the values written without `=`.
+    pub(crate) fn valued_properties(
+        &mut self,
+    ) -> Parsing<(Vec<(Expression, Expression)>, Vec<usize>)> {
+        let spelled: Vec<((Expression, Expression), bool)> = self.spelled_valued_property_list()?;
+        let without_equals: Vec<usize> = flagged(&spelled);
+        Ok((
+            spelled.into_iter().map(|(pair, _)| pair).collect(),
+            without_equals,
+        ))
+    }
+
+    /// `propertyList` as a `Properties` node that keeps which values were written without `=`;
+    /// `valued` refuses a key without a value, as Spark does where one is required.
+    pub(crate) fn properties_node(&mut self, valued: bool) -> Parsing<Expression> {
+        let spelled: Vec<(Expression, bool)> = match valued {
+            true => self
+                .spelled_valued_property_list()?
+                .into_iter()
+                .map(|((key, value), without)| (binary(Expression::Eq, key, value), without))
+                .collect(),
+            false => self.spelled_property_list()?,
+        };
+        let without_equals: Vec<usize> = flagged(&spelled);
+        let expressions: Vec<Expression> =
+            spelled.into_iter().map(|(property, _)| property).collect();
+        Ok(Expression::Properties(Box::new(Properties {
+            expressions,
+            without_equals,
+        })))
     }
 
     /// `propertyList` of keys only, refused as Spark refuses one with a value.
@@ -807,9 +840,13 @@ impl Parser<'_> {
         };
         self.at += 1;
         match word.as_str() {
-            "TBLPROPERTIES" => Ok(Some(AlterTableAction::SetTableProperties {
-                properties: self.valued_property_list()?,
-            })),
+            "TBLPROPERTIES" => {
+                let (properties, without_equals) = self.valued_properties()?;
+                Ok(Some(AlterTableAction::SetTableProperties {
+                    properties,
+                    without_equals,
+                }))
+            }
             "LOCATION" => Ok(Some(AlterTableAction::SetLocation {
                 location: self.string_lit()?,
             })),
@@ -909,9 +946,11 @@ impl Parser<'_> {
             }
             Some("SET") if self.kw_at(1, "TBLPROPERTIES") => {
                 self.at += 2;
-                Some(AlterViewAction::SetTableProperties(
-                    self.valued_property_list()?,
-                ))
+                let (properties, without_equals) = self.valued_properties()?;
+                Some(AlterViewAction::SetTableProperties {
+                    properties,
+                    without_equals,
+                })
             }
             Some("UNSET") if self.kw_at(1, "TBLPROPERTIES") => {
                 self.at += 2;
