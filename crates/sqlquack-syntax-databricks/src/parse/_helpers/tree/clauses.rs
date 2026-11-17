@@ -4,7 +4,9 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::operators::models::{NamedArgSeparator, NamedArgument};
 use sqlquack_syntax::expressions::types::models::Tuple;
 
-use crate::parse::_helpers::tree::nodes::{binary, column_from, property, table, utility, var};
+use crate::parse::_helpers::tree::nodes::{
+    binary, column_from, property, star, table, utility, var,
+};
 use crate::parse::constants::FLAG_PHRASES;
 
 /// One element a pattern matched, in the order written.
@@ -87,9 +89,18 @@ struct Clause {
     words: Vec<&'static str>,
     values: Vec<Expression>,
     joiner: Option<&'static str>,
+    /// How many groups were open at the clause's last keyword.
+    depth: usize,
 }
 
 impl Clause {
+    /// Whether a keyword at `depth`, in a group of kind `innermost`, starts a clause after this flag.
+    fn ends_flag_before(&self, depth: usize, innermost: Option<Group>) -> bool {
+        self.values.is_empty()
+            && FLAG_PHRASES.contains(&self.words.join(" ").as_str())
+            && (depth <= self.depth || innermost == Some(Group::Rule))
+    }
+
     /// Adds `value`, first ending a flag such as `IF EXISTS` before it, which it returns.
     fn push(&mut self, value: Expression) -> Vec<Expression> {
         let mut ended: Vec<Expression> = Vec::new();
@@ -141,6 +152,24 @@ fn join(joiner: &str, last: Expression, value: Expression) -> Expression {
         (".", Expression::Identifier(first), Expression::Identifier(second)) => {
             Expression::Table(Box::new(table(vec![first, second])))
         }
+        ("EXCEPT", Expression::Star(mut all), Expression::Tuple(columns))
+            if columns
+                .expressions
+                .iter()
+                .all(|column| matches!(column, Expression::Identifier(_))) =>
+        {
+            all.except = Some(
+                columns
+                    .expressions
+                    .into_iter()
+                    .filter_map(|column| match column {
+                        Expression::Identifier(name) => Some(name),
+                        _ => None,
+                    })
+                    .collect(),
+            );
+            Expression::Star(all)
+        }
         (".", Expression::Identifier(first), Expression::Table(table)) => {
             let mut parts = vec![first];
             parts.extend(table.catalog);
@@ -162,11 +191,19 @@ fn clauses(parts: &[Part], mut at: usize) -> (Vec<Expression>, usize) {
     while let Some(part) = parts.get(at) {
         at += 1;
         match part {
+            Part::Word("EXCEPT")
+                if clause.joiner.is_none()
+                    && matches!(clause.values.last(), Some(Expression::Star(all)) if all.except.is_none()) =>
+            {
+                clause.joiner = Some("EXCEPT");
+            }
             Part::Word(word) => {
-                if !clause.values.is_empty() {
+                let innermost: Option<Group> = opened.last().map(|(_, group)| *group);
+                if !clause.values.is_empty() || clause.ends_flag_before(opened.len(), innermost) {
                     out.extend(clause.flush());
                 }
                 clause.words.push(word);
+                clause.depth = opened.len();
             }
             Part::Value(value) => out.extend(clause.push(value.clone())),
             Part::Punct("(") => {
@@ -175,6 +212,9 @@ fn clauses(parts: &[Part], mut at: usize) -> (Vec<Expression>, usize) {
                 out.extend(clause.push(Expression::Tuple(Box::new(Tuple { expressions: inner }))));
             }
             Part::Punct(")") => break,
+            Part::Punct("*") => {
+                out.extend(clause.push(Expression::Star(Box::new(star(None, None)))))
+            }
             Part::Punct(",") => {}
             Part::Punct(joiner) => clause.joiner = Some(joiner),
             Part::Begin(Group::Item) => {
@@ -186,7 +226,9 @@ fn clauses(parts: &[Part], mut at: usize) -> (Vec<Expression>, usize) {
                 };
                 out.extend(clause.push(item));
             }
-            Part::Begin(group) => opened.push((clause.words.is_empty(), *group)),
+            Part::Begin(group) => {
+                opened.push((clause.words.is_empty() || !clause.values.is_empty(), *group))
+            }
             Part::End => {
                 let Some((starts_clause, group)) = opened.pop() else {
                     break;

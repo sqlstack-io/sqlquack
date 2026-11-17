@@ -138,6 +138,39 @@ fn given_a_ddl_clause_with_no_shared_field_when_parsing_then_its_tree_keeps_it()
             pointer: "/0/revoke/kind",
             expected_json: "\"METASTORE\"",
         },
+        ValueTestCase {
+            description: "an auto CDC flow's star keeps the columns it excepts",
+            sql: "CREATE OR REFRESH STREAMING TABLE st1 FLOW AUTO CDC FROM v1 KEYS ( c1 ) \
+                  SEQUENCE BY c2 COLUMNS * EXCEPT ( c3 , c4 )",
+            pointer: "/0/utility_statement/operands/4/property/value/star/except/1/name",
+            expected_json: "\"c4\"",
+        },
+        ValueTestCase {
+            description: "IGNORE NULL UPDATES is a clause of its own before SEQUENCE BY",
+            sql: "CREATE OR REFRESH STREAMING TABLE st1 FLOW AUTO CDC FROM v1 KEYS ( c1 ) \
+                  IGNORE NULL UPDATES SEQUENCE BY c2",
+            pointer: "/0/utility_statement/operands/3/property/this/var/this",
+            expected_json: "\"IGNORE NULL UPDATES\"",
+        },
+        ValueTestCase {
+            description: "a snapshot flow's history star keeps the columns it excepts",
+            sql: "CREATE OR REFRESH STREAMING TABLE st1 FLOW AUTO CDC FROM SNAPSHOT ( SELECT 1 ) \
+                  KEYS ( c1 ) TRACK HISTORY ON * EXCEPT ( c3 )",
+            pointer: "/0/utility_statement/operands/3/property/value/star/except/0/name",
+            expected_json: "\"c3\"",
+        },
+        ValueTestCase {
+            description: "a policy on the metastore keeps ON METASTORE apart from its row filter",
+            sql: "CREATE POLICY p1 ON METASTORE ROW FILTER f1 TO `u1` FOR TABLES",
+            pointer: "/0/utility_statement/operands/1/property/this/var/this",
+            expected_json: "\"ON METASTORE\"",
+        },
+        ValueTestCase {
+            description: "FOR TABLES is a clause of its own before a mask's column",
+            sql: "CREATE POLICY p1 ON SCHEMA s1 COLUMN MASK m1 TO `u1` FOR TABLES ON COLUMN c1",
+            pointer: "/0/utility_statement/operands/4/property/this/var/this",
+            expected_json: "\"FOR TABLES\"",
+        },
     ];
     for test_case in test_cases {
         let parsed: Parsed = parse_strict(test_case.sql).expect(test_case.description);
