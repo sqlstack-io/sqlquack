@@ -5929,3 +5929,23 @@ note = "Withdraws these forms from the 17 Nov approval db-functions-061. The par
 [review.definitions]
 "db.functions.substr.substr-from" = "5fb173146d7f30267c9cf854324c4912c2d22015a03ac708980d77fe63ac7b32"
 "db.functions.substring.substring-from" = "1a495fbea39685205684a74124e048eb8beff18e1ca2458a23525d6983eaa0ec"
+
+[[review]]
+id = "db-functions-064"
+family = "functions"
+parser_tree = "eb0475f37886df99ae094b28c40c963fd477c899"
+reviewed_utc = "2026-11-17T10:08:51Z"
+verdict = "approved"
+forms = [
+  "db.functions.ai-predict-class",
+  "db.functions.ai-predict-value",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in fb98beeac. A TABLE argument that is not one is now read as a call of a function named TABLE, as the warehouse reads it. Read against the 2026.45 receipts in evidence set evJ. Every locally accepted case's parse tree was read (18 cases, 9 per form). The mechanical check finds every name and literal of each case's SQL in its tree. The input argument is a table_argument over v1 in every case except the recorded repair text, TABLE ( v1 , target_col => v1 , feature_cols => v1 ). That text parses as a call named TABLE with its named arguments, which matches its receipt (UNRESOLVED_ROUTINE `TABLE`). All 22 locally rejected cases fail at the warehouse's position. That includes o016, the form without its closing parenthesis, which now fails at end of input (pos 94) instead of at the comma. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.functions.ai-predict-class" = "4c4a233efea57b2789ff1d0f66d17d156616b50db0bbae43a107abd81827ed9d"
+"db.functions.ai-predict-value" = "404de61482d36e34b87a7f12113bc4323d38736f51d11fef8dcdfe1e996c58de"
+
+[review.definitions]
+"db.functions.ai-predict-class" = "f6b6f3c8a8b05865b58111b69b2517011e4406e0c16fa588e8dcb70bbde256a2"
+"db.functions.ai-predict-value" = "59e12b1845a55fc213378662f7a33b95aaa614d1eeef88353cc1b65a0c3e8e06"
