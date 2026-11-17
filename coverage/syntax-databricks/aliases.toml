@@ -1,0 +1,68 @@
+# Retired form ids of the Databricks catalogue. Each old id stays in the catalogue with status
+# absent_from_source, is never reused, and counts in no total; `to` lists the forms that now carry
+# its grammar, and `reason` cites the pinned page revision that shows it.
+
+[[alias]]
+from = "db.functions.ilike.any-some-all"
+to = ["db.functions.ilike.ilike-any-some-all"]
+reason = "the pinned functions/ilike page (page_sha256 a17d734d8e8b3864..., retrieved 2026-11-16) still shows str [ NOT ] ilike { ANY | SOME | ALL } ( [ pattern [, ...] ] ); this id read the lower-case ilike as a placeholder, and the line is now read with ILIKE as the operator, its pattern list required as hand.toml records (EMPTY_QUANTIFIED_PATTERN)"
+
+[[alias]]
+from = "db.functions.ilike.subscript"
+to = ["db.functions.ilike.ilike"]
+reason = "the pinned functions/ilike page (page_sha256 a17d734d8e8b3864..., retrieved 2026-11-16) still shows str [ NOT ] ilike ( pattern [ ESCAPE escape ] ); this id read the lower-case ilike as a placeholder, and the line is now read with ILIKE as the operator"
+
+[[alias]]
+from = "db.functions.like.any-some-all"
+to = ["db.functions.like.like-any-some-all"]
+reason = "the pinned functions/like page (page_sha256 cc5cbda129a27a23..., retrieved 2026-11-16) still shows str [ NOT ] like { ANY | SOME | ALL } ( [ pattern [, ...] ] ); this id read the lower-case like as a placeholder, and the line is now read with LIKE as the operator, its pattern list required as hand.toml records (EMPTY_QUANTIFIED_PATTERN)"
+
+[[alias]]
+from = "db.functions.like.subscript"
+to = ["db.functions.like.like"]
+reason = "the pinned functions/like page (page_sha256 cc5cbda129a27a23..., retrieved 2026-11-16) still shows str [ NOT ] like ( pattern [ ESCAPE escape ] ); this id read the lower-case like as a placeholder, and the line is now read with LIKE as the operator"
+
+[[alias]]
+from = "db.functions.in.subscript-dot"
+to = ["db.functions.in.in.syntax"]
+reason = "the pinned functions/in page (page_sha256 265a150b2ef73d13..., retrieved 2026-11-16) still shows elem in ( expr1 [, ...] ); this id read the lower-case in as a placeholder, and the line is now read with IN as the predicate"
+
+[[alias]]
+from = "db.functions.in.syntax"
+to = ["db.functions.in.in-2"]
+reason = "the pinned functions/in page (page_sha256 265a150b2ef73d13..., retrieved 2026-11-16) still shows elem in ( query ); this id read the lower-case in as a placeholder, and the line is now read with IN as the predicate"
+
+[[alias]]
+from = "db.functions.trim.trim-from-both-from"
+to = ["db.functions.trim.trim-from", "db.functions.trim.trim-both-from.syntax"]
+reason = "the pinned functions/trim page (page_sha256 164f61a9896e0850..., retrieved 2026-11-16) still shows trim(trimStr FROM str) and trim(BOTH trimStr FROM str) as separate lines; this id joined the two into one form and read the second trim as a placeholder, and each line is now its own form"
+
+[[alias]]
+from = "db.functions.vector-search.from"
+to = ["db.functions.vector-search.query-text-query-vector"]
+reason = "the pinned functions/vector_search page (page_sha256 8bd15371d35fac48..., retrieved 2026-11-16) still shows SELECT * FROM vector_search( index, { query_text | query_vector }, [ num_results ]); this id read the lower-case vector_search as a placeholder and its arguments as positional, while the page's Arguments say all arguments must be passed by name, so the line is now read with named arguments (hand.toml)"
+
+[[alias]]
+from = "db.functions.vector-search.from.syntax"
+to = ["db.functions.vector-search.query-num-results"]
+reason = "the pinned functions/vector_search page (page_sha256 8bd15371d35fac48..., retrieved 2026-11-16) still shows SELECT * FROM vector_search( index, query, num_results ) for Databricks Runtime 15.2 and below; this id read the lower-case vector_search as a placeholder and its arguments as positional, while the page's Arguments say all arguments must be passed by name, so the line is now read with named arguments (hand.toml)"
+
+[[alias]]
+from = "db.functions.vector-search.vector-search"
+to = ["db.functions.vector-search.query-text-query-vector"]
+reason = "the pinned functions/vector_search page (page_sha256 8bd15371d35fac48..., retrieved 2026-11-16) still shows SELECT * FROM vector_search( index, { query_text | query_vector }, [ num_results ]); this id read its arguments as positional, while the page's Arguments say all arguments must be passed by name, so the line is now read with named arguments (hand.toml)"
+
+[[alias]]
+from = "db.functions.vector-search.vector-search-2"
+to = ["db.functions.vector-search.query-num-results"]
+reason = "the pinned functions/vector_search page (page_sha256 8bd15371d35fac48..., retrieved 2026-11-16) still shows SELECT * FROM vector_search( index, query, num_results ); this id read its arguments as positional, while the page's Arguments say all arguments must be passed by name, so the line is now read with named arguments (hand.toml)"
+
+[[alias]]
+from = "db.functions.vector-search.vector-search.syntax"
+to = ["db.functions.vector-search.query-num-results"]
+reason = "the pinned functions/vector_search page (page_sha256 8bd15371d35fac48..., retrieved 2026-11-16) still shows SELECT * FROM vector_search( index, query, num_results ); this id read its arguments as positional and query as a query, while the page's Arguments say all arguments must be passed by name and query is a STRING, so the line is now read with named arguments (hand.toml)"
+
+[[alias]]
+from = "db.utility.call"
+to = ["db.utility.call.call", "db.utility.call.call.syntax"]
+reason = "the pinned sql-ref-syntax-aux-call page (page_sha256 7c95f94809b7ff0d..., retrieved 2026-11-16) still shows CALL procedure_name( [ argument [, ...] ] [ namedParameter => argument ] [, ...] ); this id read namedParameter as a keyword and left out the comma between positional and named arguments. hand.toml reads the line as two forms: call.call (positional arguments only, none included) and call.call.syntax (optional positional arguments, a comma, then one or more named ones). Between them they carry every argument list this id read"
