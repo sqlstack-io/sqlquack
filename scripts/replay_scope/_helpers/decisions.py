@@ -9,6 +9,7 @@ from scripts.replay_scope._helpers.crates import crate_dirs, manifest_dependenci
 from scripts.replay_scope._helpers.git import changed, tracked
 from scripts.replay_scope.constants import (
     BINARY_PACKAGE,
+    CHECKED_DOCUMENTATION_FILES,
     DIRECTORY_SUFFIX,
     DOCUMENTATION_PATHS,
     FULL_REPLAY_PATHS,
@@ -40,7 +41,9 @@ def needs_code_checks(*, paths: list[str]) -> bool:
 
 
 def documentation(*, path: str) -> bool:
-    """Whether `path` is documentation: under a documentation path, or top-level Markdown."""
+    """Whether `path` is documentation, other than the figures file check-ci compares."""
+    if path in CHECKED_DOCUMENTATION_FILES:
+        return False
     top_level_markdown: bool = path.endswith(MARKDOWN_SUFFIX) and DIRECTORY_SUFFIX not in path
     return top_level_markdown or under(path=path, prefixes=DOCUMENTATION_PATHS)
 

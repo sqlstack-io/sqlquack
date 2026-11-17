@@ -1,0 +1,1 @@
+"""Website figure tests."""
