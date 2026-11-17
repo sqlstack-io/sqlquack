@@ -26,3 +26,4 @@ class Rebound:
     form_id: str
     fingerprint: str
     previous: str | None
+    diff_class: str

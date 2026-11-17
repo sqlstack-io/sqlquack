@@ -1,4 +1,4 @@
-"""The re-bound review check refuses every tree change but the set-quantifier rename."""
+"""The re-bound review check refuses every change but the one its class allows."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from pathlib import Path
 import pytest
 
 from scripts.rebound_reviews.main.check import run_rebound_check
-from tests.unit.scripts.rebound_reviews._test_types import ReboundTestCase
-from tests.unit.scripts.rebound_reviews.helpers import call, write_inputs
+from tests.unit.scripts.rebound_reviews._test_types import ReboundTestCase, StageReboundTestCase
+from tests.unit.scripts.rebound_reviews.helpers import call, write_inputs, write_stage_inputs
 
 _SQL: str = "SELECT COUNT(c1) FROM t1"
 _FALSE: str = call('"distinct":false')
@@ -114,6 +114,77 @@ def test_given_a_rebound_review_when_checked_then_only_the_quantifier_rename_pas
         new_tree=test_case.new_tree,
         reviewed_tree=test_case.reviewed_tree,
         note_field=test_case.note_field,
+    )
+
+    code: int = run_rebound_check(arguments)
+
+    assert code == test_case.expected_code
+    assert test_case.expected_fragment in capsys.readouterr().err
+
+
+_ACCEPT: dict[str, object] = {"expect": "accept"}
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        StageReboundTestCase(
+            description="a stage added that is its receipt's phase passes",
+            phase="semantic_error",
+            reviewed_stage=None,
+            old_case=_ACCEPT,
+            new_case={**_ACCEPT, "stage": "semantic"},
+            expected_code=0,
+            expected_fragment="1 of 1 forms in 1 reviews diff-checked; passed",
+        ),
+        StageReboundTestCase(
+            description="a stage added that is not its receipt's phase is refused",
+            phase="semantic_error",
+            reviewed_stage=None,
+            old_case=_ACCEPT,
+            new_case={**_ACCEPT, "stage": "runtime"},
+            expected_code=1,
+            expected_fragment="stage 'runtime' is not the stage of its receipt's semantic_error",
+        ),
+        StageReboundTestCase(
+            description="a stage dropped from a case whose receipt accepted it passes",
+            phase="accepted",
+            reviewed_stage="semantic",
+            old_case={**_ACCEPT, "stage": "semantic"},
+            new_case=_ACCEPT,
+            expected_code=0,
+            expected_fragment="passed",
+        ),
+        StageReboundTestCase(
+            description="another field changed beside the stage is refused",
+            phase="semantic_error",
+            reviewed_stage=None,
+            old_case={"expect": "observe"},
+            new_case={**_ACCEPT, "stage": "semantic"},
+            expected_code=1,
+            expected_fragment="expect changed, not only its stage",
+        ),
+        StageReboundTestCase(
+            description="old cases other than the reviewed ones are refused",
+            phase="semantic_error",
+            reviewed_stage="runtime",
+            old_case=_ACCEPT,
+            new_case={**_ACCEPT, "stage": "semantic"},
+            expected_code=1,
+            expected_fragment="the old cases are not the ones the earlier review approved",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_stage_rebound_review_when_checked_then_only_its_receipt_stage_passes(
+    test_case: StageReboundTestCase, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    arguments: list[str] = write_stage_inputs(
+        tmp_path,
+        phase=test_case.phase,
+        reviewed_stage=test_case.reviewed_stage,
+        old_case=test_case.old_case,
+        new_case=test_case.new_case,
     )
 
     code: int = run_rebound_check(arguments)

@@ -41,6 +41,21 @@ SETUP: list[str] = [
 CAPTURE: str = "execute_autocommit_in_throwaway_database"
 DIGEST_WIDTH: int = 12
 STAGE_KEY: str = "stage"
+# The expect a receipt may settle an observed case to, by the kinds of obligation citing it; a
+# kind that is in neither set (extremes, boundaries, nesting) does not constrain the settlement.
+ACCEPTING_KINDS: frozenset[str] = frozenset(
+    {
+        "positive",
+        "option_present",
+        "option_absent",
+        "operand_type_class",
+        "identifier_class",
+        "alternative",
+        "interaction",
+        "interaction_all_options",
+    }
+)
+REJECTING_KINDS: frozenset[str] = frozenset({"negative_neighbour", "required_operand_missing"})
 
 FILLS: dict[str, str] = {
     "query": "SELECT 1",

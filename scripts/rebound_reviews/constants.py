@@ -5,6 +5,16 @@ from __future__ import annotations
 import re
 
 REBOUND_NOTE: str = "re-bound: set_quantifier rename, diff-checked"
+STAGE_REBOUND_NOTE: str = "re-bound: stage from its receipt, diff-checked"
+QUANTIFIER_CLASS: str = "set_quantifier"
+STAGE_CLASS: str = "stage"
+STAGE_KEY: str = "stage"
+# The stage a case settled by its receipt carries, by the receipt's phase.
+STAGE_OF_PHASE: dict[str, str] = {
+    "semantic_error": "semantic",
+    "runtime_error": "runtime",
+    "unsupported_feature": "error",
+}
 CALL_NODES: tuple[str, ...] = ("function", "aggregate_function")
 OLD_FIELD: str = "distinct"
 NEW_FIELD: str = "set_quantifier"

@@ -18,12 +18,18 @@ from scripts.grammar_obligations._helpers.cases import (
 )
 from scripts.grammar_obligations._helpers.obligations import family_obligations, obligation_rows
 from scripts.grammar_obligations._helpers.render import style_of, submissions
-from scripts.grammar_obligations.constants import EXPECT_ACCEPT, EXPECT_OBSERVE, KIND_EXTREME
+from scripts.grammar_obligations.constants import (
+    ACTION_HAND,
+    EXPECT_ACCEPT,
+    EXPECT_OBSERVE,
+    KIND_EXTREME,
+)
 from scripts.grammar_obligations.exceptions import ObligationError
 from scripts.grammar_obligations.models import Draft, Node, ReceiptView, Rendered
 from scripts.grammar_obligations.types import Row
 from scripts.syntax_catalogue_databricks.constants import DECISION_RUNTIME_ONLY, SOURCES_FILE
 from scripts.syntax_obligations_databricks.constants import (
+    ACCEPTING_KINDS,
     CAPTURE,
     CASES_DIR,
     CATALOGUE_DIR,
@@ -31,6 +37,7 @@ from scripts.syntax_obligations_databricks.constants import (
     FAMILIES,
     OBLIGATIONS_DIR,
     OBLIGATIONS_HEADER,
+    REJECTING_KINDS,
     RUNTIME_ONLY_CLAUSES,
     RUNTIME_SCOPE_FAMILIES,
     SESSION,
@@ -104,6 +111,11 @@ def family_cases(  # noqa: PLR0913
                 extremes.add(rendered.sql)
     if conflicts:
         raise ObligationError("one SQL text with two expectations:\n" + "\n".join(conflicts))
+    kinds: dict[str, str] = {
+        identifier: draft.kind
+        for identifier, draft in numbered
+        if draft.spec is not None and draft.spec.action != ACTION_HAND
+    }
     session_sha: str = digest(canonical(SESSION))
     setup: list[str] = list(SETUP)
     cases: list[Row] = []
@@ -130,10 +142,31 @@ def family_cases(  # noqa: PLR0913
                 phase=receipts.phases.get(key),
                 extreme=sql in extremes,
                 documented=rendered.documented,
-                settlement=receipts.settlements.get((*key, str(case["setup_sha256"]), session_sha)),
+                settlement=_kind_settlement(
+                    case=case,
+                    settlement=receipts.settlements.get(
+                        (*key, str(case["setup_sha256"]), session_sha)
+                    ),
+                    kinds={kinds[identifier] for identifier in obligations if identifier in kinds},
+                ),
             )
         )
     return sorted(cases, key=lambda case: str(case["case_id"]))
+
+
+def _kind_settlement(
+    *, case: Row, settlement: tuple[str, str] | None, kinds: set[str]
+) -> tuple[str, str] | None:
+    """The receipts' settlement, unless a derived citing obligation's kind contradicts it."""
+    if settlement is None or case["expect"] != EXPECT_OBSERVE:
+        return settlement
+    against: frozenset[str] = REJECTING_KINDS if settlement[0] == EXPECT_ACCEPT else ACCEPTING_KINDS
+    contradicting: list[str] = sorted(kinds & against)
+    if not contradicting:
+        return settlement
+    against_kinds: str = ", ".join(contradicting)
+    print(f"unsettled {case['case_id']}: settles to {settlement[0]} against {against_kinds}")
+    return None
 
 
 def _warehouse_accepted(

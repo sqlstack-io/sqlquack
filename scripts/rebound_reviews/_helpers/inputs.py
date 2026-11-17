@@ -7,7 +7,14 @@ import tomllib
 from pathlib import Path
 from typing import Any
 
-from scripts.rebound_reviews.constants import APPROVED, FAILED_VERDICT, REBOUND_NOTE
+from scripts.rebound_reviews.constants import (
+    APPROVED,
+    FAILED_VERDICT,
+    QUANTIFIER_CLASS,
+    REBOUND_NOTE,
+    STAGE_CLASS,
+    STAGE_REBOUND_NOTE,
+)
 from scripts.rebound_reviews.models import CaseLine, Rebound
 
 
@@ -60,7 +67,7 @@ def form_cases(
 
 
 def rebound(*, reviews: Path) -> list[Rebound]:
-    """Each form a re-bound review names, with the fingerprint the review before it approved."""
+    """Each form a re-bound review names, its diff class, and the fingerprint approved before it."""
     found: list[Rebound] = []
     for path in sorted(reviews.glob("*.toml")):
         approved: dict[str, str] = {}
@@ -68,13 +75,22 @@ def rebound(*, reviews: Path) -> list[Rebound]:
             if review.get("verdict") != APPROVED:
                 continue
             fingerprints: dict[str, str] = review.get("fingerprints", {})
-            if str(review.get("note", "")).startswith(REBOUND_NOTE):
+            note: str = str(review.get("note", ""))
+            diff_class: str | None = (
+                QUANTIFIER_CLASS
+                if note.startswith(REBOUND_NOTE)
+                else STAGE_CLASS
+                if note.startswith(STAGE_REBOUND_NOTE)
+                else None
+            )
+            if diff_class is not None:
                 found += [
                     Rebound(
                         review_id=review["id"],
                         form_id=form_id,
                         fingerprint=fingerprints.get(form_id, ""),
                         previous=approved.get(form_id),
+                        diff_class=diff_class,
                     )
                     for form_id in review.get("forms", [])
                 ]

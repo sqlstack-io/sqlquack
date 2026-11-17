@@ -43,15 +43,15 @@ MISSING_OPEN: str = "the form without its required ("
 QUOTED: re.Pattern[str] = re.compile(r"'(?:[^']|'')*'|`[^`]*`")
 
 
-def small_root(*, directory: Path, limits: str, retired: str) -> Path:
+def small_root(*, directory: Path, limits: str, retired: str, family: str = FAMILY) -> Path:
     """One committed family, its obligations and limits.toml, plus extra limits and retired ids."""
     root: Path = directory / "root"
     (root / "catalogue").mkdir(parents=True)
     (root / "obligations").mkdir()
-    for family in FAMILIES:
-        (root / "catalogue" / f"{family}.toml").write_text(EMPTY_CATALOGUE)
+    for other in FAMILIES:
+        (root / "catalogue" / f"{other}.toml").write_text(EMPTY_CATALOGUE)
     for part in ("catalogue", "obligations"):
-        shutil.copy(ROOT / part / f"{FAMILY}.toml", root / part / f"{FAMILY}.toml")
+        shutil.copy(ROOT / part / f"{family}.toml", root / part / f"{family}.toml")
     (root / "limits.toml").write_text((ROOT / "limits.toml").read_text() + "\n" + limits)
     (root / "retired.toml").write_text(retired)
     return root

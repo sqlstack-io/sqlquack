@@ -15,3 +15,14 @@ class ReboundTestCase:
     expected_code: int
     expected_fragment: str
     note_field: str = "note"
+
+
+@dataclass(frozen=True)
+class StageReboundTestCase:
+    description: str
+    phase: str
+    reviewed_stage: str | None
+    old_case: dict[str, object]
+    new_case: dict[str, object]
+    expected_code: int
+    expected_fragment: str

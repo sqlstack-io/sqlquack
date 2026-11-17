@@ -6,7 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from scripts.rebound_reviews.constants import REBOUND_NOTE
+from scripts.rebound_reviews.constants import REBOUND_NOTE, STAGE_REBOUND_NOTE
 
 _FORM: str = "sf.functions.count"
 _CASE: str = "sf.functions.count.k1"
@@ -19,10 +19,13 @@ def call(quantifier: str) -> str:
     return f'[{{"select":{{"expressions":[{{"function":{function}}}]}}}}]'
 
 
-def fingerprint(tree: str) -> str:
+def fingerprint(tree: str, *, stage: str | None = None, phase: str = "accepted") -> str:
     """The fingerprint `syntax-coverage` gives the form whose one accepted case parsed to `tree`."""
     tree_hash: str = hashlib.sha256(tree.encode()).hexdigest()
-    line: str = f'{_CASE}\t{_SQL_SHA256}\taccepted\t{tree_hash}\t"accept"\tnull\t"accepted"\n'
+    line: str = (
+        f'{_CASE}\t{_SQL_SHA256}\taccepted\t{tree_hash}\t"accept"\t{json.dumps(stage)}\t'
+        f"{json.dumps(phase)}\n"
+    )
     return hashlib.sha256(line.encode()).hexdigest()
 
 
@@ -61,4 +64,49 @@ def write_inputs(
         "--reviews", str(root / "reviews"), "--cases", str(root / "cases"),
         "--family", str(root / "family.json"),
         "--old", str(root / "old.tsv"), "--new", str(root / "new.tsv"),
+    ]  # fmt: skip
+
+
+def write_stage_inputs(  # noqa: PLR0913
+    root: Path,
+    *,
+    phase: str,
+    reviewed_stage: str | None,
+    old_case: dict[str, object],
+    new_case: dict[str, object],
+) -> list[str]:
+    """The check's arguments over a form approved at `reviewed_stage`, re-bound by stage alone."""
+    tree: str = call('"set_quantifier":"none"')
+    for name, case in (("old-cases", old_case), ("cases", new_case)):
+        (root / name).mkdir()
+        row: dict[str, object] = {"case_id": _CASE, "sql": "SELECT COUNT(c1) FROM t1", **case}
+        (root / name / "functions.jsonl").write_text(json.dumps(row) + "\n")
+    stage: object = new_case.get("stage")
+    new_stage: str | None = stage if isinstance(stage, str) else None
+    (root / "reviews").mkdir()
+    (root / "reviews" / "functions.toml").write_text(
+        f'[[review]]\nid = "r-001"\nverdict = "approved"\nforms = ["{_FORM}"]\n'
+        f'[review.fingerprints]\n"{_FORM}" = '
+        f'"{fingerprint(tree, stage=reviewed_stage, phase=phase)}"\n\n'
+        f'[[review]]\nid = "r-002"\nverdict = "approved"\nforms = ["{_FORM}"]\n'
+        f'note = "{STAGE_REBOUND_NOTE}"\n'
+        f'[review.fingerprints]\n"{_FORM}" = '
+        f'"{fingerprint(tree, stage=new_stage, phase=phase)}"\n'
+    )
+    case: dict[str, object] = {
+        "case_id": _CASE,
+        "sql_sha256": _SQL_SHA256,
+        "phase": phase,
+        "local": {
+            "verdict": "accepted",
+            "opaque": False,
+            "tree_sha256": hashlib.sha256(tree.encode()).hexdigest(),
+        },
+    }
+    (root / "family.json").write_text(
+        json.dumps([{"id": _FORM, "obligations": [{"cases": [case]}]}])
+    )
+    return [
+        "--reviews", str(root / "reviews"), "--cases", str(root / "cases"),
+        "--family", str(root / "family.json"), "--old-cases", str(root / "old-cases"),
     ]  # fmt: skip
