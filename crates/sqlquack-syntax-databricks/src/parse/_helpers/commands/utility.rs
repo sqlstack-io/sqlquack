@@ -1014,8 +1014,9 @@ impl Parser<'_> {
         })))
     }
 
-    /// `CACHE [LAZY] TABLE name ...`, or `CACHE SELECT` as documented, else its text as written.
+    /// `CACHE [LAZY] TABLE name ...`, or `CACHE SELECT` as documented, else a gap of its text.
     pub(crate) fn cache_statement(&mut self) -> Parsing<Expression> {
+        let start: usize = self.offset();
         self.expect_kw("CACHE")?;
         if self.kw("SELECT") {
             let first: usize = self.at;
@@ -1033,13 +1034,8 @@ impl Parser<'_> {
             if let Some(tree) = self.tree_within(first - 1, self.at, 2, CACHE_SELECT) {
                 return Ok(tree);
             }
-            let text: Vec<Expression> = (self.at > first + 1)
-                .then(|| {
-                    string(&self.sql[self.tokens[first + 1].start..self.tokens[self.at - 1].end])
-                })
-                .into_iter()
-                .collect();
-            return Ok(utility("CACHE SELECT".to_owned(), text));
+            self.gap("cache_select", start);
+            return Ok(null());
         }
         let lazy: bool = self.eat_kw("LAZY");
         self.expect_kw("TABLE")?;

@@ -1601,12 +1601,6 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "\"t1\"",
         },
         ValueTestCase {
-            description: "CACHE SELECT keeps other text the service accepts as written",
-            sql: "CACHE SELECT c1 FROM t1 WHERE",
-            pointer: "/0/utility_statement/operands/0/literal/value",
-            expected_json: "\"c1 FROM t1 WHERE\"",
-        },
-        ValueTestCase {
             description: "REFRESH keeps its resource path",
             sql: "REFRESH /data/x",
             pointer: "/0/utility_statement/operands/0/literal/value",
@@ -1866,7 +1860,7 @@ fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_is_refused_not_abort
             expected_refusal: None,
         },
         NestingTestCase {
-            description: "CACHE SELECT keeps text too deep for its documented form as written",
+            description: "CACHE SELECT keeps text too deep for its documented form as a gap",
             sql: || {
                 format!(
                     "CACHE SELECT {}1{} FROM t1",
