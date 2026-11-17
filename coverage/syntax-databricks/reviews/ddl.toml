@@ -1174,3 +1174,54 @@ note = "Re-read on 17 Nov 2026 after the parser fix in c349d361a: ALTER CATALOG 
 
 [review.definitions]
 "db.ddl.alter-catalog" = "2aa01db6302fb45617391089b6ac19848cde12bdde7948401d72a22b9891dcff"
+
+[[review]]
+id = "db-ddl-061"
+family = "ddl"
+parser_tree = "8e3016ed1d0343005f031721d9bd553d8c236446"
+reviewed_utc = "2026-11-17T10:56:21Z"
+verdict = "approved"
+forms = [
+  "db.ddl.drop-database",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in cbbb66659, which keeps DATABASE as written in the drop_schema node's keyword. Read against the 2026.45 receipts in evidence set evJ. All 7 locally accepted cases carry keyword DATABASE, so none shares a tree with DROP SCHEMA, whose 10 cases keep byte-identical trees. The mechanical check finds every name and literal in each tree. All 4 locally rejected cases fail at the warehouse's position. This supersedes the concern of db-ddl-059, whose binding is now stale. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.ddl.drop-database" = "518b402d079cb8c24a734f8111fedfe6f0ca8e32c6cc2394397a51395819aa4b"
+
+[review.definitions]
+"db.ddl.drop-database" = "767fb8a9b00e1535edd084b8adfdd0da511e3e6de92b1c431051f5a841d19b5b"
+
+[[review]]
+id = "db-ddl-062"
+family = "ddl"
+parser_tree = "8e3016ed1d0343005f031721d9bd553d8c236446"
+reviewed_utc = "2026-11-17T10:56:21Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-database",
+]
+note = "Re-read on 17 Nov 2026 after the DATABASE-keyword parser fix; carries forward db-ddl-026, whose binding went stale. Resolved: CREATE DATABASE now keeps keyword DATABASE, so it no longer shares a tree with CREATE SCHEMA. Still open: o012 RETAIN DROPPED FOR 1 HOUR keeps the number and unit in one raw string (var \"1 HOUR\"), so the tree does not show them as separate operands. This needs a parser fix before the form can be approved."
+
+[review.fingerprints]
+"db.ddl.create-database" = "7480ed90a16e9824b1904164184d8ae3a0d813580a261478d71710c37364078d"
+
+[review.definitions]
+"db.ddl.create-database" = "26f34aeba313ad48ff98fc9a1ef1fcabe7c49126f456d2ccb91a5624018005f1"
+
+[[review]]
+id = "db-ddl-063"
+family = "ddl"
+parser_tree = "8e3016ed1d0343005f031721d9bd553d8c236446"
+reviewed_utc = "2026-11-17T10:56:21Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-database",
+]
+note = "Re-read on 17 Nov 2026 after the DATABASE-keyword parser fix; carries forward db-ddl-004, whose binding went stale. Resolved: ALTER DATABASE's alter_object kind is now DATABASE as written, so it no longer shares a tree with ALTER SCHEMA. Still open: o012 and o049 RETAIN DROPPED TO 1 HOUR keep the number and unit in one raw string operand (var \"1 HOUR\"). This needs a parser fix before the form can be approved."
+
+[review.fingerprints]
+"db.ddl.alter-database" = "bc4ee1a09fe2f7900009bece20109bf38cd691a9f56767699ea1eb8c4bff68bc"
+
+[review.definitions]
+"db.ddl.alter-database" = "1eee606977f083ba0806e2a9e6d93c7e9cd3dcb2dc06f993bf02c8c9bf57285d"
