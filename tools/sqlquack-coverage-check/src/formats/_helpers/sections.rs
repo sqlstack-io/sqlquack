@@ -277,11 +277,23 @@ pub(crate) fn load_unobservable(root: &Path) -> Section<(Vec<Unobservable>, Vec<
     Section::of((records, diagnostics), Vec::new(), problems)
 }
 
-/// The readings in `limits.toml`, which must exist: without it no form's definition holds its reading.
-pub(crate) fn load_readings(root: &Path) -> Section<Vec<Reading>> {
+/// The readings in `limits.toml`, which must exist, and its `[[suppress]]` row count per family.
+pub(crate) fn load_readings(root: &Path) -> Section<(Vec<Reading>, BTreeMap<String, usize>)> {
     match read_toml::<LimitsFile>(&root.join(LIMITS_FILE)) {
         Ok((file, _)) => {
             let mut problems: Vec<String> = file.readings.iter().flat_map(check_reading).collect();
+            let mut suppressed: BTreeMap<String, usize> = BTreeMap::new();
+            for (index, row) in file.suppressions.iter().enumerate() {
+                match row
+                    .get("form")
+                    .and_then(|form| form.as_str()?.split('.').nth(1))
+                {
+                    Some(family) => *suppressed.entry(family.to_owned()).or_insert(0) += 1,
+                    None => {
+                        problems.push(format!("suppress {}: no form id with a family", index + 1))
+                    }
+                }
+            }
             let mut seen: BTreeSet<&str> = BTreeSet::new();
             problems.extend(
                 file.readings
@@ -289,9 +301,9 @@ pub(crate) fn load_readings(root: &Path) -> Section<Vec<Reading>> {
                     .filter(|reading| !seen.insert(reading.form.as_str()))
                     .map(|reading| format!("reading {}: listed twice", reading.form)),
             );
-            Section::of(file.readings, Vec::new(), problems)
+            Section::of((file.readings, suppressed), Vec::new(), problems)
         }
-        Err(problem) => Section::of(Vec::new(), Vec::new(), vec![problem]),
+        Err(problem) => Section::of((Vec::new(), BTreeMap::new()), Vec::new(), vec![problem]),
     }
 }
 
@@ -323,7 +335,7 @@ pub(crate) struct Sections {
     pub(crate) receipts: Section<LoadedReceipts>,
     pub(crate) reviews: Section<Vec<Review>>,
     pub(crate) unobservable: Section<(Vec<Unobservable>, Vec<Diagnostic>)>,
-    pub(crate) readings: Section<Vec<Reading>>,
+    pub(crate) readings: Section<(Vec<Reading>, BTreeMap<String, usize>)>,
     pub(crate) marks: Section<Vec<Mark>>,
 }
 

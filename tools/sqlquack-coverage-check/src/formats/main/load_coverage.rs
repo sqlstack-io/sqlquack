@@ -41,7 +41,8 @@ pub fn load_coverage(root: &Path, evidence: Option<&Path>) -> Result<SyntaxCover
         reviews: sections.reviews.records,
         unobservable: sections.unobservable.records.0,
         diagnostics: sections.unobservable.records.1,
-        readings: sections.readings.records,
+        readings: sections.readings.records.0,
+        suppressed: sections.readings.records.1,
         file_hashes,
         documented_cases: sections
             .marks

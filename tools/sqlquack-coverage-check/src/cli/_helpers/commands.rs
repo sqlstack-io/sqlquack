@@ -204,6 +204,7 @@ pub(crate) fn summary(focus: Option<&Path>, common: &Common) -> Result<ExitCode,
         total.satisfied_obligations,
         total.required_obligations
     )];
+    text.push(suppressed_line(&summary));
     text.extend(
         summary
             .forms_by_reason
@@ -700,4 +701,19 @@ pub(crate) fn translation(
     }
     print(common.json, &report, &text);
     Ok(ExitCode::SUCCESS)
+}
+
+/// How many derived negatives the summary's obligation counts leave out, in total and by family.
+fn suppressed_line(summary: &Summary) -> String {
+    let families: Vec<String> = summary
+        .families
+        .iter()
+        .filter(|(_, family)| family.suppressed_obligations > 0)
+        .map(|(name, family)| format!("{name} {}", family.suppressed_obligations))
+        .collect();
+    format!(
+        "  suppressed obligations, in no count above: {} ({})",
+        summary.suppressed_obligations,
+        families.join(", ")
+    )
 }

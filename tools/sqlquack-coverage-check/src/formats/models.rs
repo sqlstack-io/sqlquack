@@ -637,6 +637,8 @@ pub struct SyntaxCoverage {
     pub diagnostics: Vec<Diagnostic>,
     /// Each form's reading from `limits.toml`, hashed into its definition.
     pub readings: Vec<Reading>,
+    /// Derived obligations `limits.toml` suppresses, by family: never issued, so never counted.
+    pub suppressed: BTreeMap<String, usize>,
     /// SHA-256 of the sources, aliases, catalogue and obligation files, by relative path.
     pub file_hashes: BTreeMap<String, String>,
     /// Cases marked documented, whose acceptance against a syntax error is intended.

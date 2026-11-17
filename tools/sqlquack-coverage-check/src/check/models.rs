@@ -176,6 +176,8 @@ pub struct CheckResult {
     pub receipt_contradictions: BTreeSet<String>,
     /// Receipt case ids whose SQL no case or run report gives, so no verdict can be compared.
     pub unjudged_receipts: BTreeSet<String>,
+    /// Derived obligations `limits.toml` suppresses, by family; reported, never counted.
+    pub suppressed: BTreeMap<String, usize>,
 }
 
 /// The files joined for checking, with every case already judged.
