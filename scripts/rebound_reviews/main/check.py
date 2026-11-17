@@ -18,6 +18,8 @@ from scripts.rebound_reviews._helpers.inputs import cases, dump, form_cases, reb
 from scripts.rebound_reviews._helpers.trees import quantifier_difference
 from scripts.rebound_reviews.constants import (
     ACCEPTED_VERDICT,
+    EXPECT_ACCEPT,
+    EXPECT_KEY,
     REJECTED,
     STAGE_CLASS,
     STAGE_KEY,
@@ -145,10 +147,23 @@ def _stage_refusal(
         )
         if changed:
             return f"{line.case_id}: {', '.join(changed)} changed, not only its stage"
-        stage: Any = now.get(STAGE_KEY)
-        if stage != then.get(STAGE_KEY) and stage != STAGE_OF_PHASE.get(str(line.phase)):
-            return f"{line.case_id}: stage {stage!r} is not the stage of its receipt's {line.phase}"
+        if now.get(STAGE_KEY) != then.get(STAGE_KEY):
+            stage_reason: str | None = _new_stage_refusal(line=line, case=now)
+            if stage_reason is not None:
+                return f"{line.case_id}: {stage_reason}"
         reviewed.append(replace(line, stage=then.get(STAGE_KEY)))
     if form_fingerprint(lines=reviewed, trees=current) != claim.previous:
         return "the old cases are not the ones the earlier review approved"
+    return None
+
+
+def _new_stage_refusal(*, line: CaseLine, case: dict[str, Any]) -> str | None:
+    """Why a case's changed stage is refused: unless accepted, its receipt phase's stage."""
+    stage: Any = case.get(STAGE_KEY)
+    if case.get(EXPECT_KEY) != EXPECT_ACCEPT:
+        return "its stage changed, but it is not expected to be accepted"
+    if line.phase not in STAGE_OF_PHASE:
+        return f"its stage changed, but {line.phase!r} is no receipt phase that gives a stage"
+    if stage != STAGE_OF_PHASE[line.phase]:
+        return f"stage {stage!r} is not the stage of its receipt's {line.phase}"
     return None

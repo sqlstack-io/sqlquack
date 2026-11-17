@@ -19,11 +19,13 @@ def call(quantifier: str) -> str:
     return f'[{{"select":{{"expressions":[{{"function":{function}}}]}}}}]'
 
 
-def fingerprint(tree: str, *, stage: str | None = None, phase: str = "accepted") -> str:
+def fingerprint(
+    tree: str, *, stage: str | None = None, phase: str | None = "accepted", expect: str = "accept"
+) -> str:
     """The fingerprint `syntax-coverage` gives the form whose one accepted case parsed to `tree`."""
     tree_hash: str = hashlib.sha256(tree.encode()).hexdigest()
     line: str = (
-        f'{_CASE}\t{_SQL_SHA256}\taccepted\t{tree_hash}\t"accept"\t{json.dumps(stage)}\t'
+        f"{_CASE}\t{_SQL_SHA256}\taccepted\t{tree_hash}\t{json.dumps(expect)}\t{json.dumps(stage)}\t"
         f"{json.dumps(phase)}\n"
     )
     return hashlib.sha256(line.encode()).hexdigest()
@@ -70,7 +72,7 @@ def write_inputs(
 def write_stage_inputs(  # noqa: PLR0913
     root: Path,
     *,
-    phase: str,
+    phase: str | None,
     reviewed_stage: str | None,
     old_case: dict[str, object],
     new_case: dict[str, object],
@@ -83,15 +85,17 @@ def write_stage_inputs(  # noqa: PLR0913
         (root / name / "functions.jsonl").write_text(json.dumps(row) + "\n")
     stage: object = new_case.get("stage")
     new_stage: str | None = stage if isinstance(stage, str) else None
+    old_expect: str = str(old_case.get("expect"))
+    new_expect: str = str(new_case.get("expect"))
     (root / "reviews").mkdir()
     (root / "reviews" / "functions.toml").write_text(
         f'[[review]]\nid = "r-001"\nverdict = "approved"\nforms = ["{_FORM}"]\n'
         f'[review.fingerprints]\n"{_FORM}" = '
-        f'"{fingerprint(tree, stage=reviewed_stage, phase=phase)}"\n\n'
+        f'"{fingerprint(tree, stage=reviewed_stage, phase=phase, expect=old_expect)}"\n\n'
         f'[[review]]\nid = "r-002"\nverdict = "approved"\nforms = ["{_FORM}"]\n'
         f'note = "{STAGE_REBOUND_NOTE}"\n'
         f'[review.fingerprints]\n"{_FORM}" = '
-        f'"{fingerprint(tree, stage=new_stage, phase=phase)}"\n'
+        f'"{fingerprint(tree, stage=new_stage, phase=phase, expect=new_expect)}"\n'
     )
     case: dict[str, object] = {
         "case_id": _CASE,

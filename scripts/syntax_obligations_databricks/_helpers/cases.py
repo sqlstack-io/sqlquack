@@ -29,7 +29,6 @@ from scripts.grammar_obligations.models import Draft, Node, ReceiptView, Rendere
 from scripts.grammar_obligations.types import Row
 from scripts.syntax_catalogue_databricks.constants import DECISION_RUNTIME_ONLY, SOURCES_FILE
 from scripts.syntax_obligations_databricks.constants import (
-    ACCEPTING_KINDS,
     CAPTURE,
     CASES_DIR,
     CATALOGUE_DIR,
@@ -142,7 +141,7 @@ def family_cases(  # noqa: PLR0913
                 phase=receipts.phases.get(key),
                 extreme=sql in extremes,
                 documented=rendered.documented,
-                settlement=_kind_settlement(
+                settlement=kind_settlement(
                     case=case,
                     settlement=receipts.settlements.get(
                         (*key, str(case["setup_sha256"]), session_sha)
@@ -154,14 +153,15 @@ def family_cases(  # noqa: PLR0913
     return sorted(cases, key=lambda case: str(case["case_id"]))
 
 
-def _kind_settlement(
+def kind_settlement(
     *, case: Row, settlement: tuple[str, str] | None, kinds: set[str]
 ) -> tuple[str, str] | None:
     """The receipts' settlement, unless a derived citing obligation's kind contradicts it."""
     if settlement is None or case["expect"] != EXPECT_OBSERVE:
         return settlement
-    against: frozenset[str] = REJECTING_KINDS if settlement[0] == EXPECT_ACCEPT else ACCEPTING_KINDS
-    contradicting: list[str] = sorted(kinds & against)
+    contradicting: list[str] = sorted(
+        kinds & REJECTING_KINDS if settlement[0] == EXPECT_ACCEPT else kinds - REJECTING_KINDS
+    )
     if not contradicting:
         return settlement
     against_kinds: str = ", ".join(contradicting)

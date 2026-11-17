@@ -9,8 +9,12 @@ STAGE_REBOUND_NOTE: str = "re-bound: stage from its receipt, diff-checked"
 QUANTIFIER_CLASS: str = "set_quantifier"
 STAGE_CLASS: str = "stage"
 STAGE_KEY: str = "stage"
-# The stage a case settled by its receipt carries, by the receipt's phase.
-STAGE_OF_PHASE: dict[str, str] = {
+EXPECT_KEY: str = "expect"
+EXPECT_ACCEPT: str = "accept"
+# The stage a case settled to accept carries, by its receipt's phase; accepted carries none. A phase
+# not listed here, a syntax error among them, gives no stage a re-bind may take.
+STAGE_OF_PHASE: dict[str, str | None] = {
+    "accepted": None,
     "semantic_error": "semantic",
     "runtime_error": "runtime",
     "unsupported_feature": "error",

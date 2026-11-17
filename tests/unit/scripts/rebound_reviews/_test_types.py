@@ -20,7 +20,7 @@ class ReboundTestCase:
 @dataclass(frozen=True)
 class StageReboundTestCase:
     description: str
-    phase: str
+    phase: str | None
     reviewed_stage: str | None
     old_case: dict[str, object]
     new_case: dict[str, object]

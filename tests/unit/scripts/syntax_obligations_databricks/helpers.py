@@ -53,6 +53,7 @@ def small_root(*, directory: Path, limits: str, retired: str, family: str = FAMI
     for part in ("catalogue", "obligations"):
         shutil.copy(ROOT / part / f"{family}.toml", root / part / f"{family}.toml")
     (root / "limits.toml").write_text((ROOT / "limits.toml").read_text() + "\n" + limits)
+    shutil.copy(ROOT / "sources.toml", root / "sources.toml")
     (root / "retired.toml").write_text(retired)
     return root
 
