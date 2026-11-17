@@ -2871,3 +2871,26 @@ ids = [
   "db.scripting.iterate-stmt.o001",
   "db.scripting.iterate-stmt.o003",
 ]
+
+[[retired]]
+retired_in = "0268006a47851619fc466806a3ac194034a56326"
+reason = "query's ORDER BY ... CLUSTER BY bracket is read with its middle choice as DISTRIBUTE BY with an optional SORT BY, or SORT BY alone, because both clauses written optional gave that choice a shortest text with neither, the same text as the bracket left out; the obligations whose target quotes the bracket no longer exist and return under new ids"
+ids = [
+  "db.query.query.o011",
+  "db.query.query.o012",
+  "db.query.query.o013",
+  "db.query.query.o014",
+  "db.query.query.o015",
+  "db.query.query.o016",
+  "db.query.query.o017",
+  "db.query.query.o018",
+  "db.query.query.o019",
+  "db.query.query.o020",
+  "db.query.query.o021",
+  "db.query.query.o022",
+  "db.query.query.o027",
+  "db.query.query.o028",
+  "db.query.query.o046",
+  "db.query.query.o047",
+  "db.query.query.o049",
+]

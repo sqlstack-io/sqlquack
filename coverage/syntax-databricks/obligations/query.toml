@@ -243,79 +243,73 @@ target = "<piped_operation> in [ { |> <piped_operation> } [ ... ] ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.query.query.o011"
+id = "db.query.query.o057"
 kind = "option_present"
 required = true
-target = "[ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ] } | CLUSTER BY…"
+target = "[ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ] | SORT BY…"
 
 [[obligation]]
-id = "db.query.query.o012"
+id = "db.query.query.o058"
 kind = "option_absent"
 required = true
-target = "[ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ] } | CLUSTER BY…"
+target = "[ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ] | SORT BY…"
 
 [[obligation]]
-id = "db.query.query.o013"
+id = "db.query.query.o059"
 kind = "alternative"
 required = true
-target = "[ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY… → ORDER BY <order_by_clause>"
+target = "[ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY… → ORDER BY <order_by_clause>"
 
 [[obligation]]
-id = "db.query.query.o014"
+id = "db.query.query.o060"
 kind = "alternative"
 required = true
-target = "[ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY… → { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ] }"
+target = "[ ORDER BY <order_by_clause> | { DISTRIBUTE BY… → { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ] | SORT BY <sort_by_clause> }"
 
 [[obligation]]
-id = "db.query.query.o015"
+id = "db.query.query.o061"
 kind = "alternative"
 required = true
-target = "[ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY… → CLUSTER BY <cluster_by_clause>"
+target = "[ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY… → CLUSTER BY <cluster_by_clause>"
 
 [[obligation]]
-id = "db.query.query.o016"
+id = "db.query.query.o062"
 kind = "required_operand_missing"
 required = true
-target = "<order_by_clause> in [ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY…"
+target = "<order_by_clause> in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ]…"
 note = "omit <order_by_clause>"
 
 [[obligation]]
-id = "db.query.query.o017"
+id = "db.query.query.o063"
 kind = "operand_type_class"
 required = true
-target = "<order_by_clause> in [ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY…"
+target = "<order_by_clause> in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ]…"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.query.query.o018"
+id = "db.query.query.o064"
 kind = "alternative"
 required = true
-target = "{ [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY… → [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ]"
+target = "{ DISTRIBUTE BY <distribute_by_clause> [ SORT BY… → DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ]"
 
 [[obligation]]
-id = "db.query.query.o019"
-kind = "option_present"
+id = "db.query.query.o065"
+kind = "alternative"
 required = true
-target = "[ DISTRIBUTE BY <distribute_by_clause> ]"
+target = "{ DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ] | SORT BY… → SORT BY <sort_by_clause>"
 
 [[obligation]]
-id = "db.query.query.o020"
-kind = "option_absent"
-required = true
-target = "[ DISTRIBUTE BY <distribute_by_clause> ]"
-
-[[obligation]]
-id = "db.query.query.o021"
+id = "db.query.query.o066"
 kind = "required_operand_missing"
 required = true
-target = "<distribute_by_clause> in [ DISTRIBUTE BY <distribute_by_clause> ]"
+target = "<distribute_by_clause> in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY…"
 note = "omit <distribute_by_clause>"
 
 [[obligation]]
-id = "db.query.query.o022"
+id = "db.query.query.o067"
 kind = "operand_type_class"
 required = true
-target = "<distribute_by_clause> in [ DISTRIBUTE BY <distribute_by_clause> ]"
+target = "<distribute_by_clause> in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY…"
 note = "a valid operand"
 
 [[obligation]]
@@ -345,17 +339,31 @@ target = "<sort_by_clause> in [ SORT BY <sort_by_clause> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.query.query.o027"
+id = "db.query.query.o068"
 kind = "required_operand_missing"
 required = true
-target = "<cluster_by_clause> in [ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY…"
+target = "<sort_by_clause> in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ]…"
+note = "omit <sort_by_clause>"
+
+[[obligation]]
+id = "db.query.query.o069"
+kind = "operand_type_class"
+required = true
+target = "<sort_by_clause> in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ]…"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.query.query.o070"
+kind = "required_operand_missing"
+required = true
+target = "<cluster_by_clause> in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause>…"
 note = "omit <cluster_by_clause>"
 
 [[obligation]]
-id = "db.query.query.o028"
+id = "db.query.query.o071"
 kind = "operand_type_class"
 required = true
-target = "<cluster_by_clause> in [ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY…"
+target = "<cluster_by_clause> in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause>…"
 note = "a valid operand"
 
 [[obligation]]
@@ -416,16 +424,22 @@ target = "<offset_clause> in [ OFFSET <offset_clause> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.query.query.o046"
+id = "db.query.query.o072"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BY in [ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ] } | CLUSTER BY…"
+note = "the form without its required BY in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ] | SORT BY…"
 
 [[obligation]]
-id = "db.query.query.o047"
+id = "db.query.query.o073"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BY in [ DISTRIBUTE BY <distribute_by_clause> ]"
+note = "the form without its required DISTRIBUTE after <subquery> in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ] | SORT BY…"
+
+[[obligation]]
+id = "db.query.query.o074"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BY after DISTRIBUTE in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ] | SORT BY…"
 
 [[obligation]]
 id = "db.query.query.o048"
@@ -434,10 +448,22 @@ required = true
 note = "the form without its required BY in [ SORT BY <sort_by_clause> ]"
 
 [[obligation]]
-id = "db.query.query.o049"
+id = "db.query.query.o075"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BY after CLUSTER in [ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ] } | CLUSTER BY…"
+note = "the form without its required SORT after <subquery> in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ] | SORT BY…"
+
+[[obligation]]
+id = "db.query.query.o076"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BY after SORT in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ] | SORT BY…"
+
+[[obligation]]
+id = "db.query.query.o077"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required BY after CLUSTER in [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ] | SORT BY…"
 
 [[obligation]]
 id = "db.query.query.o050"
