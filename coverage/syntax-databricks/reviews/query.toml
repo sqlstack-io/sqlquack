@@ -449,3 +449,20 @@ note = "Re-read on 17 Nov 2026 after the parser fix in f43b15021, which marks an
 "db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
 "db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
 "db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
+
+[[review]]
+id = "db-query-018"
+family = "query"
+parser_tree = "fe929d66181dd6dace2630744e5bd823f3cee506"
+reviewed_utc = "2026-11-17T13:08:12Z"
+verdict = "approved"
+forms = [
+  "db.query.select-groupby.hive-grouping-sets",
+]
+note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evidence set evK-17nov, after the Hive GROUPING SETS parser fix. It answers db-query-004, whose binding went stale with this tree: GROUP BY c1 GROUPING SETS ( c1 ) and GROUP BY c1 , c1 GROUPING SETS ( c1 , c1 ) (both accepted) now set the GROUP BY clause's with_modifier, so they no longer share the tree of the comma form GROUP BY c1 , GROUPING SETS ( c1 ), which keeps it unset. Rejects: SETS ( c1 ) and GROUPING ( c1 ) after the list are refused at the misspelt keyword, 5 and 9 characters before the warehouse's (, the class the earlier reviews accepted; the others are at the warehouse's position. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.select-groupby.hive-grouping-sets" = "005802566a3db7cf9be09d6c49c09a5da04d7a12846fed1cc88a86170c11e6d4"
+
+[review.definitions]
+"db.query.select-groupby.hive-grouping-sets" = "85bfba731332bf9f53018fc6044b84ed9b34be412986814337225d7a3bfe7943"

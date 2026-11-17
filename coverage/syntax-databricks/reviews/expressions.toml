@@ -762,3 +762,26 @@ note = "Re-read on 17 Nov 2026, (c) batch 2: a form whose earlier approval went 
 
 [review.definitions]
 "db.expressions.parameter-marker.syntax" = "282c4a2c4e3a04f58c598970a5ea66ac0615ceb64d9f0061b6898af6b38453af"
+
+[[review]]
+id = "db-expressions-038"
+family = "expressions"
+parser_tree = "fe929d66181dd6dace2630744e5bd823f3cee506"
+reviewed_utc = "2026-11-17T13:08:12Z"
+verdict = "approved"
+forms = [
+  "db.expressions.decimal-type.bd",
+  "db.expressions.decimal-type.subscript",
+  "db.expressions.timestamp-type.timestamp-ltz",
+]
+note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evidence set evK-17nov, after the BD and TIMESTAMP_LTZ parser fixes. It answers db-expressions-003 (decimal-type.bd), db-expressions-004 (decimal-type.subscript) and db-expressions-025 (timestamp-type.timestamp-ltz), whose bindings went stale with this tree. BD: the cast of a BD literal now carries the precision and scale Spark's BigDecimal gives the digits instead of a bare DECIMAL, so it no longer reads as DECIMAL(10,0): SELECT ( 12E-1BD ) is DECIMAL(2,1), ( 1.5BD ) DECIMAL(2,1), ( .5BD ) DECIMAL(1,1), ( 12BD ) DECIMAL(2,0), ( 12E1BD ) DECIMAL(3,0) and ( 1.5E1BD ) DECIMAL(2,0), all accepted; -1.5BD is the negation of 1.5BD. The mechanical check flags E1BD in 12E1BD and 1.5E1BD only because it splits the token there; the literal keeps 12E1 and 1.5E1. TIMESTAMP_LTZ: CAST ( NULL AS TIMESTAMP_LTZ ) and TIMESTAMP_LTZ ( 6 ) (accepted) keep spelling TIMESTAMP_LTZ, so they no longer share TIMESTAMP's tree; the refused TIMESTAMP_LTZ ( ) and the missing ) are refused at the warehouse's position. The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.expressions.decimal-type.bd" = "a25886e3ed7051e878fc46ee32c9dd587d57e24496a63a4bd08ab068c31ad1e1"
+"db.expressions.decimal-type.subscript" = "df7b2d49812915e220f58908414214f292ebbd405797f77673129a83bfe060fc"
+"db.expressions.timestamp-type.timestamp-ltz" = "e56247698ab1ebdd0b0306c321890cdd923ce487b1d59ec0d655837dc20d8008"
+
+[review.definitions]
+"db.expressions.decimal-type.bd" = "45f325e88a727aa900305955ec2faa026fdc8aaf5f16f7bf3467dc158da8ef86"
+"db.expressions.decimal-type.subscript" = "d0442ec9c717f778177e0089da13fcb6e6a6822587ec8c7e8dcfafb3ebf6ee56"
+"db.expressions.timestamp-type.timestamp-ltz" = "eb75a41f925abdc2952cd1aec6fca3f1772de8afb6fab78f4c2c8d16ee6385b9"

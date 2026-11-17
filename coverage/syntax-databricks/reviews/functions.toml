@@ -6002,3 +6002,20 @@ note = "Re-read on 17 Nov 2026 against the 2026.45 receipts in evidence set evK-
 "db.functions.current-user" = "a7eb56a0d9b5bfc0aaae91dc56040e85b7eaf1c93f4c62f94a3eb43387bc3a10"
 "db.functions.session-user" = "a57364540f228121d34940ca9c92870ff23ddc823d0050732e25c7c1543e407c"
 "db.functions.user" = "79d7930db95639e59c4e53dfe89f36b1d24dc59d06461d98aae744e73c0fc587"
+
+[[review]]
+id = "db-functions-067"
+family = "functions"
+parser_tree = "fe929d66181dd6dace2630744e5bd823f3cee506"
+reviewed_utc = "2026-11-17T13:08:12Z"
+verdict = "approved"
+forms = [
+  "db.functions.localtime",
+]
+note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evidence set evK-17nov, after the LOCALTIME parser fix. It answers db-functions-014, whose binding went stale with this tree. (d): SELECT ( LOCALTIME ) (accepted) was a column named LOCALTIME; it is now a call of LOCALTIME with no_parens true, apart from LOCALTIME ( ) (accepted), which has no such flag, and LOCALTIME ( v1 ) keeps its argument. A bare LOCALTIMESTAMP stays a column, as its receipt (UNRESOLVED_COLUMN) and the observed limit in limits.toml say. (a) does not hold: hand.toml has a [[reading]] row for functions/localtime reading the page's LOCALTIME ( [ <precision> ] ) as LOCALTIME [ ( [ <precision> ] ) ] because the page says the parentheses are optional when precision is omitted; it came in with 6c6648a93 on 16 Nov 2026 at 10:31Z, before that review (16 Nov, 19:09Z). The refused LOCALTIME ( with no ) is refused at the warehouse's position. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.functions.localtime" = "8e89ada47c59ebfe1d0d5565c7fce502d131fecfbec054c7abbc48e06adffaff"
+
+[review.definitions]
+"db.functions.localtime" = "277fb28f18acd84b4728b774689e2cf3593106a730fdc3d7063c64ceaf8620d5"

@@ -672,3 +672,20 @@ note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2
 "db.utility.show-schemas" = "30f1397eb99ed92b97e1978e16b583edcd6e0464af22c840773ea787ddff465c"
 "db.utility.show-tables" = "412afaf90b9a51f559675abaac631e1b28f8abbf1e9c99a10b0d80020119a130"
 "db.utility.show-views" = "b7d5b4940d075dd22c6ecb5c8bb403d2a9d5cab23859255a04f2f10280e84293"
+
+[[review]]
+id = "db-utility-032"
+family = "utility"
+parser_tree = "fe929d66181dd6dace2630744e5bd823f3cee506"
+reviewed_utc = "2026-11-17T13:08:12Z"
+verdict = "approved"
+forms = [
+  "db.utility.cache-cache-table",
+]
+note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evidence set evK-17nov, after the CACHE TABLE OPTIONS parser fix. It answers db-utility-004, whose binding went stale with this tree: OPTIONS ( 'storageLevel' 'DISK_ONLY' ) (NOT_SUPPORTED_WITH_DB_SQL, parsed) now records position 0 in options_without_equals, and OPTIONS ( 'storageLevel' = 'DISK_ONLY' ) (accepted, with LAZY and AS) leaves it empty, so the page's optional = has a mark. LAZY and AS stay marked. Rejects: OPTIONS ( 'storageLevel' ) is refused with the warehouse's message, Values must be specified for key(s), whose receipt gives no position; the others are at the warehouse's position. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.utility.cache-cache-table" = "b3dcaeb036729023c39b17aa6aa1e6cd723028a92dd90dc25d4a83bfa668bd0d"
+
+[review.definitions]
+"db.utility.cache-cache-table" = "6a0d27100c17b7c0b2f8104da08e2814b325e8e4872c1080ecf466d59f700cbb"

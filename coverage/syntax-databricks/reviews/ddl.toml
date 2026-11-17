@@ -1225,3 +1225,29 @@ note = "Re-read on 17 Nov 2026 after the DATABASE-keyword parser fix; carries fo
 
 [review.definitions]
 "db.ddl.alter-database" = "1eee606977f083ba0806e2a9e6d93c7e9cd3dcb2dc06f993bf02c8c9bf57285d"
+
+[[review]]
+id = "db-ddl-064"
+family = "ddl"
+parser_tree = "fe929d66181dd6dace2630744e5bd823f3cee506"
+reviewed_utc = "2026-11-17T13:08:12Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-database",
+  "db.ddl.alter-schema",
+  "db.ddl.create-database",
+  "db.ddl.create-schema",
+]
+note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evidence set evK-17nov, after the RETAIN DROPPED parser fix. It answers the open concern of db-ddl-062 (create-database) and db-ddl-063 (alter-database), whose bindings went stale with this tree: RETAIN DROPPED FOR 1 HOUR and RETAIN DROPPED TO 1 HOUR kept the number and unit in one raw var \"1 HOUR\". The period is now an interval whose value is the count literal and whose unit is the word written, with HOUR against HOURS kept (use_plural), so CREATE DATABASE s1 RETAIN DROPPED FOR 1 WEEK (accepted) and ALTER DATABASE s1 RETAIN DROPPED TO 1 HOUR (SCHEMA_NOT_FOUND, parsed) show both operands. alter-schema and create-schema share the clause and are re-read for the same change; their other trees are byte-identical to the previous tree apart from it. The DATABASE and SCHEMA keywords stay as written. Rejects: 25 of the four forms' locally rejected cases are refused at the clause keyword (SET, DEFAULT, OWNER, UNSET) where the warehouse refuses at the token after it; positions are unchanged from the tree the earlier approvals and reviews read, and every reject is still a reject. The mechanical check finds every name and literal in each accepted tree. The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.ddl.alter-database" = "786e968ba70f544cc5f9920aaf04adf29bfbee47e831a8eef8e69aa5d91bdfdf"
+"db.ddl.alter-schema" = "83bdbaa72cad7665b7975c835b53c7b209975ba8c22a31026e05224bbfad88a9"
+"db.ddl.create-database" = "906049676a33d114d24ec9957ebc7b27f01ae2b7bf1bd81c507eea410b659222"
+"db.ddl.create-schema" = "c0df196844ef6f2584b2cd90a16959317458165ba8920749f4d286590284fefe"
+
+[review.definitions]
+"db.ddl.alter-database" = "1eee606977f083ba0806e2a9e6d93c7e9cd3dcb2dc06f993bf02c8c9bf57285d"
+"db.ddl.alter-schema" = "5aadbf4088719804914c28c4c24c0cebfdc14dfbc7d171c8a33df3424f069614"
+"db.ddl.create-database" = "26f34aeba313ad48ff98fc9a1ef1fcabe7c49126f456d2ccb91a5624018005f1"
+"db.ddl.create-schema" = "82f3b1ae9d14f3a03ba974c1ccc77685354e395844f7701cfc9f410419b9438f"

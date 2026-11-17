@@ -221,3 +221,23 @@ note = "Re-read on 17 Nov 2026 after the hand reading in 535c8ff63, which reads 
 
 [review.definitions]
 "db.security_admin.show-grant-on-share" = "ca6c1a1178bd4211b132f144c7358fa4b0de4760bb5ff903d9c402f83935b43c"
+
+[[review]]
+id = "db-security_admin-012"
+family = "security_admin"
+parser_tree = "fe929d66181dd6dace2630744e5bd823f3cee506"
+reviewed_utc = "2026-11-17T13:08:12Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.privileges",
+  "db.security_admin.privileges-hms",
+]
+note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evidence set evK-17nov, after the keyword-securable parser fix. It answers db-security_admin-005 (privileges) and db-security_admin-006 (privileges-hms), whose bindings went stale with this tree. GRANT SELECT ON CATALOG TO `u1` (UC_CATALOG_NAME_NOT_PROVIDED) is now kind CATALOG with no securable name, not a securable named CATALOG; ON METASTORE TO `u1` (PRINCIPAL_DOES_NOT_EXIST for u1) is kind METASTORE with no name, as the page's securable_object writes METASTORE; ON ANY FILE TO `u1` (RESOURCE_DOES_NOT_EXIST for the principal) has no name instead of an empty one. A named catalog (ON CATALOG `v1 Q`, ON CATALOG SELECT) keeps its name, and ON t1 stays a bare name with no kind, so the keyword kinds and a table of that name have different trees. Rejects: the three quoted-name cases under EXTERNAL METADATA, MATERIALIZED VIEW and EXTERNAL LOCATION are refused at the string, where the warehouse refuses at the kind's second word; positions are unchanged from the tree the earlier reviews read, which held (a)(b)(c). The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.security_admin.privileges" = "954646c15bd016933f0b4aa1f51c298902a963283261db2e6f1f3f363559299a"
+"db.security_admin.privileges-hms" = "40b9186aedc331dd84739f2ca90fc28b3a7b4b5d74b50446e1fa9b3ce498f85b"
+
+[review.definitions]
+"db.security_admin.privileges" = "9bd1366bc81d5ba58c3c6a695d03ce84033a448206f60da2be7e686ecf653a9b"
+"db.security_admin.privileges-hms" = "c5f210a7c5cdd328c813342a90191475289328160c66d8cb3e5b157c8beadbd9"
