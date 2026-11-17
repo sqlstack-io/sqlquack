@@ -366,7 +366,7 @@ impl Parser<'_> {
         }
         self.at += 1;
         Ok(var(
-            &self.sql[self.tokens[first].start..self.tokens[self.at - 1].end],
+            &self.sql[self.tokens[first].start..self.tokens[self.at - 1].end]
         ))
     }
 

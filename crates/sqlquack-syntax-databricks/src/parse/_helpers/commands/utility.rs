@@ -780,9 +780,7 @@ impl Parser<'_> {
         })
     }
 
-    /// `ON securable`: its kind, when written, and its name; a catalog may go unnamed. A bare
-    /// `CATALOG` or `METASTORE` just before the principals is that securable, unnamed, not a table
-    /// so named, as the service reads `ON CATALOG TO`.
+    /// `ON securable`: its kind and name; a bare `CATALOG` or `METASTORE` before `TO` is unnamed.
     fn securable(&mut self) -> Parsing<(Option<String>, Identifier)> {
         self.expect_kw("ON")?;
         if self.kw_in(0, &["CATALOG", "METASTORE"])

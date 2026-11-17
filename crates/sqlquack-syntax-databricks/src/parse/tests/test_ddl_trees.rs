@@ -127,6 +127,12 @@ fn given_a_ddl_clause_with_no_shared_field_when_parsing_then_its_tree_keeps_it()
             expected_json: "\"CATALOG\"",
         },
         ValueTestCase {
+            description: "a grant on the unnamed catalog names no table CATALOG",
+            sql: "GRANT SELECT ON CATALOG TO u1",
+            pointer: "/0/grant/securable/name",
+            expected_json: "\"\"",
+        },
+        ValueTestCase {
             description: "a revoke on the metastore keeps METASTORE as its kind",
             sql: "REVOKE SELECT ON METASTORE FROM u1",
             pointer: "/0/revoke/kind",
