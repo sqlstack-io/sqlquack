@@ -355,6 +355,7 @@ impl Parser {
                     DataType::Timestamp {
                         precision,
                         timezone: true,
+                        spelling: None,
                     }
                 }
             } else if self.match_keyword("WITHOUT") {
@@ -364,6 +365,7 @@ impl Parser {
                 DataType::Timestamp {
                     precision,
                     timezone: false,
+                    spelling: None,
                 }
             }
         })
@@ -376,6 +378,7 @@ impl Parser {
             false => DataType::Timestamp {
                 precision,
                 timezone: false,
+                spelling: None,
             },
         }
     }
@@ -392,6 +395,7 @@ impl Parser {
             DataType::Timestamp {
                 precision,
                 timezone: true,
+                spelling: None,
             }
         })
     }

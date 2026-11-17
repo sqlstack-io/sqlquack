@@ -73,10 +73,12 @@ fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
         ("timestamp", precision) => DataType::Timestamp {
             precision,
             timezone: false,
+            spelling: None,
         },
         ("timestamptz", precision) => DataType::Timestamp {
             precision,
             timezone: true,
+            spelling: None,
         },
         ("time", precision) => DataType::Time {
             precision,
@@ -326,6 +328,7 @@ impl Parser<'_> {
                     _ => DataType::Timestamp {
                         precision,
                         timezone,
+                        spelling: None,
                     },
                 })
             }

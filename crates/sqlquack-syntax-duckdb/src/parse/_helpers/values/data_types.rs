@@ -155,10 +155,12 @@ fn named_type(name: &str, modifiers: &[Expression]) -> DataType {
         "TIMESTAMPTZ" => DataType::Timestamp {
             precision: length,
             timezone: true,
+            spelling: None,
         },
         "DATETIME" => DataType::Timestamp {
             precision: length,
             timezone: false,
+            spelling: None,
         },
         "UUID" => DataType::Uuid,
         "JSON" => DataType::Json,
@@ -317,6 +319,7 @@ impl Parser<'_> {
                     _ => DataType::Timestamp {
                         precision,
                         timezone,
+                        spelling: None,
                     },
                 });
             }

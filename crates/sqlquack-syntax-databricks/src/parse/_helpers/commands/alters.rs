@@ -105,11 +105,22 @@ impl Parser<'_> {
 
     /// `propertyList` whose every key has a value, refused as Spark refuses one without.
     pub(crate) fn valued_property_list(&mut self) -> Parsing<Vec<(Expression, Expression)>> {
+        Ok(self
+            .spelled_valued_property_list()?
+            .into_iter()
+            .map(|(pair, _)| pair)
+            .collect())
+    }
+
+    /// `valued_property_list`, each pair with whether its value followed the key without `=`.
+    pub(crate) fn spelled_valued_property_list(
+        &mut self,
+    ) -> Parsing<Vec<((Expression, Expression), bool)>> {
         let at: usize = self.offset();
-        let properties: Vec<Expression> = self.property_list()?;
+        let properties: Vec<(Expression, bool)> = self.spelled_property_list()?;
         if properties
             .iter()
-            .any(|property| !matches!(property, Expression::Eq(_)))
+            .any(|(property, _)| !matches!(property, Expression::Eq(_)))
         {
             return Err(self.error_with(
                 "Operation not allowed: Values must be specified for key(s)",
@@ -117,7 +128,10 @@ impl Parser<'_> {
                 true,
             ));
         }
-        Ok(properties.into_iter().map(property_pair).collect())
+        Ok(properties
+            .into_iter()
+            .map(|(property, without_equals)| (property_pair(property), without_equals))
+            .collect())
     }
 
     /// `propertyList` of keys only, refused as Spark refuses one with a value.
@@ -870,27 +884,9 @@ impl Parser<'_> {
                 self.expect_kw("RETAIN")?;
                 self.expect_kw("DROPPED")?;
                 self.expect_kw("TO")?;
-                let count: String = self
-                    .expect_token(|token| {
-                        token.kind
-                            == crate::scan::models::TokenKind::Number(
-                                crate::scan::models::NumberKind::Integer,
-                            )
-                    })?
-                    .value;
-                let unit: String = match self.word_at(0) {
-                    Some(unit)
-                        if ["HOUR", "HOURS", "DAY", "DAYS", "WEEK", "WEEKS"]
-                            .contains(&unit.as_str()) =>
-                    {
-                        unit
-                    }
-                    _ => return Err(self.error()),
-                };
-                self.at += 1;
                 (
                     format!("{}RETAIN DROPPED TO", if set { "SET " } else { "" }),
-                    vec![var(&format!("{count} {unit}"))],
+                    vec![self.retention_period()?],
                 )
             }
             Some("SET") if self.kw_at(1, "LOCATION") => {

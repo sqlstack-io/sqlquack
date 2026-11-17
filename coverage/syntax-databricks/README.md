@@ -565,7 +565,7 @@ others:
   a pattern;
 - `SET CATALOG` against `USE CATALOG`, which both choose the catalog (the use node's `keyword`);
 - `MINUS` against `EXCEPT`, `TEMP` against `TEMPORARY`, and the type synonyms `BYTE`, `SHORT`,
-  `LONG`, `DEC` and `NUMERIC`;
+  `LONG`, `DEC`, `NUMERIC` and `TIMESTAMP_LTZ`;
 - `ADD COLUMN` against `ADD COLUMNS` and `DROP COLUMN` against `DROP COLUMNS`, because the ALTER
   TABLE page writes `{ COLUMN | COLUMNS }` as alternatives of one clause;
 - the sign written before an interval value, including `+`;
@@ -574,10 +574,13 @@ others:
   against the `shiftrightunsigned` call, in a `written_as` field that analysis ignores;
 - the parentheses of a `VALUES` row and of a `STREAM` source, which the Syntax blocks write as
   alternatives (`expression | ( expression [, ...] )` and `STREAM ( name ) | STREAM name`).
-- a trailing `WITH ROLLUP` or `WITH CUBE` against `ROLLUP ( ... )` and `CUBE ( ... )`, in the
-  `GROUP BY` clause's `with_modifier`;
+- a trailing `WITH ROLLUP` or `WITH CUBE` against `ROLLUP ( ... )` and `CUBE ( ... )`, and the
+  Hive `GROUP BY c1 GROUPING SETS ( ... )` against a comma before the sets, in the `GROUP BY`
+  clause's `with_modifier`;
 - `FROM` against a comma after the first argument of `SUBSTR` and `SUBSTRING`, in the call's
   `from_separator`, as `TRIM` keeps its SQL-standard spelling;
+- a `CACHE TABLE` option's value written without `=`, which the page marks optional, in the cache
+  node's `options_without_equals`;
 - each pipe operator with the pipe written before it (`|>` or `|`), in the `pipe_operators` of
   the select it amounts to, so `FROM t1 |> AGGREGATE sum ( c1 )` keeps `|> AGGREGATE` apart from
   `SELECT sum ( c1 ) FROM t1` and from `FROM t1 | AGGREGATE sum ( c1 )`; a trailing `|>` with

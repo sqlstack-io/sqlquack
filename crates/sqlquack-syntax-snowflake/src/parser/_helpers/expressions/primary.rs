@@ -800,6 +800,7 @@ impl Parser {
                 to: DataType::Timestamp {
                     precision,
                     timezone: true,
+                    spelling: None,
                 },
                 trailing_comments: Vec::new(),
                 double_colon_syntax: false,
@@ -838,6 +839,7 @@ impl Parser {
                     to: DataType::Timestamp {
                         precision: None,
                         timezone: false,
+                        spelling: None,
                     },
                     trailing_comments: Vec::new(),
                     double_colon_syntax: false,
@@ -883,19 +885,18 @@ impl Parser {
                         DataType::Timestamp {
                             precision,
                             timezone: true,
+                            spelling: None,
                         }
                     }
-                } else if self.match_keyword("WITHOUT") {
-                    self.match_keyword("TIME");
-                    self.match_keyword("ZONE");
-                    DataType::Timestamp {
-                        precision,
-                        timezone: false,
-                    }
                 } else {
+                    if self.match_keyword("WITHOUT") {
+                        self.match_keyword("TIME");
+                        self.match_keyword("ZONE");
+                    }
                     DataType::Timestamp {
                         precision,
                         timezone: false,
+                        spelling: None,
                     }
                 };
 
@@ -938,6 +939,7 @@ impl Parser {
                     DataType::Timestamp {
                         precision: None,
                         timezone: true,
+                        spelling: None,
                     }
                 }
             } else if self.match_keyword("WITHOUT") {
@@ -946,11 +948,13 @@ impl Parser {
                 DataType::Timestamp {
                     precision: None,
                     timezone: false,
+                    spelling: None,
                 }
             } else {
                 DataType::Timestamp {
                     precision: None,
                     timezone: false,
+                    spelling: None,
                 }
             };
 

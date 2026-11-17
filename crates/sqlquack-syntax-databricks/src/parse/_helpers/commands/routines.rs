@@ -14,9 +14,9 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::commands::creates::{Head, property};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
-use crate::parse::_helpers::tree::nodes::{joined, string, table, var};
+use crate::parse::_helpers::tree::nodes::{joined, string, table};
 use crate::parse::constants::{SCALA_LANGUAGE, SQL_LANGUAGE};
-use crate::scan::models::{NumberKind, TokenKind};
+use crate::scan::models::TokenKind;
 
 impl Parser<'_> {
     /// `createNamespace` after `CREATE`: `SCHEMA [IF NOT EXISTS] name` and its clauses.
@@ -55,23 +55,8 @@ impl Parser<'_> {
                 node.properties
                     .push(Expression::Properties(Box::new(Properties { expressions })));
             } else if self.eat_kws(&["RETAIN", "DROPPED", "FOR"]) {
-                let count: String = self
-                    .expect_token(|token| token.kind == TokenKind::Number(NumberKind::Integer))?
-                    .value;
-                let unit: String = match self.word_at(0) {
-                    Some(unit)
-                        if ["HOUR", "HOURS", "DAY", "DAYS", "WEEK", "WEEKS"]
-                            .contains(&unit.as_str()) =>
-                    {
-                        unit
-                    }
-                    _ => return Err(self.error()),
-                };
-                self.at += 1;
-                node.properties.push(property(
-                    "RETAIN DROPPED FOR",
-                    var(&format!("{count} {unit}")),
-                ));
+                let period: Expression = self.retention_period()?;
+                node.properties.push(property("RETAIN DROPPED FOR", period));
             } else {
                 return Ok(Expression::CreateSchema(Box::new(node)));
             }

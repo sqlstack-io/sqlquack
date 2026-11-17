@@ -336,6 +336,51 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             sql: "CREATE POLICY v1 ON ROW FILTER f1 TO `u1` FOR TABLES",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
+        VerdictTestCase {
+            description: "GRANT on an unnamed catalog parses (UC_CATALOG_NAME_NOT_PROVIDED: please specify the catalog name explicitly)",
+            sql: "GRANT SELECT ON CATALOG TO `u1`",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "GRANT on the metastore parses (PRINCIPAL_DOES_NOT_EXIST: Could not find principal with name u1)",
+            sql: "GRANT SELECT ON METASTORE TO `u1`",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a bare LOCALTIME parses (accepted)",
+            sql: "SELECT ( LOCALTIME )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a CACHE TABLE option without = parses (NOT_SUPPORTED_WITH_DB_SQL: CACHE TABLE is not supported on a SQL warehouse)",
+            sql: "CACHE TABLE t1 OPTIONS ( 'storageLevel' 'DISK_ONLY' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "RETAIN DROPPED TO a count and unit parses (SCHEMA_NOT_FOUND: The schema `workspace.s1` cannot be found)",
+            sql: "ALTER DATABASE s1 RETAIN DROPPED TO 1 HOUR",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "RETAIN DROPPED FOR needs its unit (missing {'DAY', 'DAYS', 'HOUR', 'HOURS', 'MINUTE', 'MINUTES', 'WEEK', 'WEEKS'})",
+            sql: "CREATE CATALOG v1 RETAIN DROPPED FOR 1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a BD literal with an exponent parses (accepted)",
+            sql: "SELECT ( 12E-1BD )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "TIMESTAMP_LTZ with a precision parses (accepted)",
+            sql: "SELECT CAST ( NULL AS TIMESTAMP_LTZ ( 6 ) )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a Hive GROUPING SETS after the GROUP BY list parses (accepted)",
+            sql: "SELECT c1 FROM t1 GROUP BY c1 GROUPING SETS ( c1 )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

@@ -21,10 +21,31 @@ use crate::parse::_helpers::tree::nodes::{
 };
 use crate::parse::constants::{
     CURRENT_LIKE, DATETIME_UNITS, DAY_SEGMENT, IDENTIFIER_CLAUSE, INTERVAL_UNITS, LITERAL_TYPES,
-    MIN_LAMBDA_PARAMETERS, TIMESTAMP_ADD_NAMES, TIMESTAMP_DIFF_NAMES, TRUE, TRY_CAST,
-    UNIT_TO_UNITS,
+    MIN_LAMBDA_PARAMETERS, RETENTION_UNITS, TIMESTAMP_ADD_NAMES, TIMESTAMP_DIFF_NAMES, TRUE,
+    TRY_CAST, UNIT_TO_UNITS,
 };
 use crate::scan::models::{NumberKind, Token, TokenKind};
+
+/// The decimal type Spark gives a `BD` literal's digits: their scale, at least 0, and precision.
+fn big_decimal_type(digits: &str) -> (u32, u32) {
+    let (mantissa, exponent) = digits
+        .split_once(['E', 'e'])
+        .map_or((digits, 0), |(mantissa, exponent)| {
+            (mantissa, exponent.parse::<i64>().unwrap_or(0))
+        });
+    let (whole, fraction) = mantissa.split_once('.').unwrap_or((mantissa, ""));
+    let unscaled: String = format!("{whole}{fraction}");
+    let significant: i64 = unscaled.trim_start_matches('0').len().max(1) as i64;
+    let scale: i64 = fraction.len() as i64 - exponent;
+    let (precision, scale) = match scale < 0 {
+        true => (significant - scale, 0),
+        false => (significant.max(scale), scale),
+    };
+    (
+        u32::try_from(precision).unwrap_or(u32::MAX),
+        u32::try_from(scale).unwrap_or(u32::MAX),
+    )
+}
 
 /// A numeric literal; a suffixed one is its digits cast to the type its suffix names.
 fn number_literal(token: &Token, kind: NumberKind) -> Expression {
@@ -38,7 +59,7 @@ fn number_literal(token: &Token, kind: NumberKind) -> Expression {
         NumberKind::Integer | NumberKind::Decimal | NumberKind::Exponent => 0,
     };
     let digits: String = token.value[..token.value.len() - suffix].to_owned();
-    let number: Expression = literal(Literal::Number(digits));
+    let number: Expression = literal(Literal::Number(digits.clone()));
     let to: DataType = match kind {
         NumberKind::BigInt => DataType::BigInt {
             length: None,
@@ -61,11 +82,14 @@ fn number_literal(token: &Token, kind: NumberKind) -> Expression {
             scale: None,
             real_spelling: false,
         },
-        NumberKind::BigDecimal => DataType::Decimal {
-            precision: None,
-            scale: None,
-            spelling: None,
-        },
+        NumberKind::BigDecimal => {
+            let (precision, scale) = big_decimal_type(&digits);
+            DataType::Decimal {
+                precision: Some(precision),
+                scale: Some(scale),
+                spelling: None,
+            }
+        }
         NumberKind::Integer | NumberKind::Decimal | NumberKind::Exponent => return number,
     };
     Expression::Cast(Box::new(cast(number, to, false)))
@@ -152,6 +176,23 @@ fn is_typed_text(word: &str, text: &str) -> bool {
 }
 
 impl Parser<'_> {
+    /// A `RETAIN DROPPED` period: an interval of the integer count in the unit as written.
+    pub(crate) fn retention_period(&mut self) -> Parsing<Expression> {
+        let count: String = self
+            .expect_token(|token| token.kind == TokenKind::Number(NumberKind::Integer))?
+            .value;
+        let (unit, use_plural) = self
+            .word_at(0)
+            .filter(|word| RETENTION_UNITS.contains(&word.as_str()))
+            .and_then(|word| interval_unit(&word))
+            .ok_or_else(|| self.error())?;
+        self.at += 1;
+        Ok(interval(
+            literal(Literal::Number(count)),
+            Some(IntervalUnitSpec::Simple { unit, use_plural }),
+        ))
+    }
+
     /// `INVALID_TYPED_LITERAL`, Spark's refusal of a typed literal whose text is no such value.
     fn invalid_typed_literal(
         &self,

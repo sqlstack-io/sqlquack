@@ -621,18 +621,22 @@ impl Parser {
             DataType::Timestamp {
                 precision: Some(p),
                 timezone: true,
+                ..
             } => format!("TIMESTAMPTZ({})", p),
             DataType::Timestamp {
                 precision: Some(p),
                 timezone: false,
+                ..
             } => format!("TIMESTAMP({})", p),
             DataType::Timestamp {
                 precision: None,
                 timezone: true,
+                ..
             } => "TIMESTAMPTZ".to_string(),
             DataType::Timestamp {
                 precision: None,
                 timezone: false,
+                ..
             } => "TIMESTAMP".to_string(),
             DataType::Json => "JSON".to_string(),
             DataType::JsonB => "JSONB".to_string(),
@@ -988,6 +992,7 @@ impl Parser {
             "TIMESTAMP" => DataType::Timestamp {
                 precision: None,
                 timezone: false,
+                spelling: None,
             },
             "INTERVAL" => DataType::Interval {
                 unit: None,

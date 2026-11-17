@@ -756,11 +756,20 @@ impl Parser<'_> {
 
     /// `propertyList`: `( key [=] value, ... )`, as `key = value` pairs.
     pub(crate) fn property_list(&mut self) -> Parsing<Vec<Expression>> {
+        Ok(self
+            .spelled_property_list()?
+            .into_iter()
+            .map(|(property, _)| property)
+            .collect())
+    }
+
+    /// `propertyList`, each property with whether its value followed the key without `=`.
+    pub(crate) fn spelled_property_list(&mut self) -> Parsing<Vec<(Expression, bool)>> {
         self.parenthesized(|parser| parser.property(false))
     }
 
-    /// `property`, or with `expressions` an `expressionProperty`, whose value is any expression.
-    pub(crate) fn property(&mut self, expressions: bool) -> Parsing<Expression> {
+    /// `property` (with `expressions`, `expressionProperty`) and whether its value lacks an `=`.
+    pub(crate) fn property(&mut self, expressions: bool) -> Parsing<(Expression, bool)> {
         let mut strings: usize = 0;
         while self.string_at(strings) {
             strings += 1;
@@ -784,8 +793,11 @@ impl Parser<'_> {
             None
         };
         Ok(match value {
-            Some(value) => crate::parse::_helpers::tree::nodes::binary(Expression::Eq, key, value),
-            None => key,
+            Some(value) => (
+                crate::parse::_helpers::tree::nodes::binary(Expression::Eq, key, value),
+                !equals,
+            ),
+            None => (key, false),
         })
     }
 

@@ -190,10 +190,12 @@ impl Parser<'_> {
             "TIMESTAMP" => DataType::Timestamp {
                 precision: None,
                 timezone: true,
+                spelling: None,
             },
             "DATETIME" => DataType::Timestamp {
                 precision: None,
                 timezone: false,
+                spelling: None,
             },
             "TIME" => DataType::Time {
                 precision: None,

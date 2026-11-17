@@ -673,6 +673,7 @@ pub(crate) fn postgres_cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::Timestamp {
             precision,
             timezone,
+            ..
         } => length(
             ["TIMESTAMP", "TIMESTAMPTZ"][usize::from(*timezone)],
             precision,

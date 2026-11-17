@@ -481,12 +481,14 @@ impl Parser<'_> {
             });
         }
         let items: Vec<Expression> = self.comma_list(|parser| parser.group_item())?;
-        let with_modifier: bool = self.kw("WITH") && self.kw_in(1, &[ROLLUP, CUBE]);
-        let expressions: Vec<Expression> = if with_modifier {
+        let with_kind: bool = self.kw("WITH") && self.kw_in(1, &[ROLLUP, CUBE]);
+        let hive_sets: bool = self.kw("GROUPING") && self.kw_at(1, "SETS");
+        let with_modifier: bool = with_kind || hive_sets;
+        let expressions: Vec<Expression> = if with_kind {
             let name: String = self.word_at(1).unwrap_or_default();
             self.at += 2;
             vec![call(&name, items)]
-        } else if self.kw("GROUPING") && self.kw_at(1, "SETS") {
+        } else if hive_sets {
             self.at += 2;
             let sets: Vec<Expression> = self.parenthesized(|parser| parser.grouping_set())?;
             let mut kept: Vec<Expression> = items;

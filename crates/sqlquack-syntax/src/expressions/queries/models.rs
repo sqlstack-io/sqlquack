@@ -795,8 +795,8 @@ pub struct GroupBy {
     /// ClickHouse: WITH TOTALS modifier
     #[serde(default)]
     pub totals: bool,
-    /// Hive and Databricks: the ROLLUP or CUBE call in `expressions` was written as a trailing
-    /// `WITH ROLLUP` or `WITH CUBE` modifier rather than as `ROLLUP ( ... )`
+    /// Hive and Databricks: the item list ends with a trailing `WITH ROLLUP`, `WITH CUBE` or
+    /// `GROUPING SETS ( ... )` rather than a `ROLLUP ( ... )` call or a comma before the sets
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     #[ast(skip)]
     pub with_modifier: bool,

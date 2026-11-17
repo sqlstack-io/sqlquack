@@ -1800,6 +1800,7 @@ impl Parser {
             table,
             lazy,
             options,
+            options_without_equals: Vec::new(),
             query,
             query_as,
         })))

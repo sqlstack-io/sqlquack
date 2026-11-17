@@ -284,6 +284,22 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 3,
         },
         DistinctTreesTestCase {
+            description: "Hive GROUPING SETS after the item list and a comma before the sets",
+            written: &[
+                "SELECT c1 FROM t1 GROUP BY c1 GROUPING SETS ( c1 )",
+                "SELECT c1 FROM t1 GROUP BY c1 , GROUPING SETS ( c1 )",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "TIMESTAMP and its synonym TIMESTAMP_LTZ",
+            written: &[
+                "SELECT CAST ( NULL AS TIMESTAMP )",
+                "SELECT CAST ( NULL AS TIMESTAMP_LTZ )",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
             description: "USE CATALOG and SET CATALOG",
             written: &["USE CATALOG v1", "SET CATALOG v1"],
             expected_distinct_trees: 2,
@@ -358,6 +374,22 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
         DistinctTreesTestCase {
             description: "!= and <>",
             written: &["SELECT 1 != 2", "SELECT 1 <> 2"],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "CACHE TABLE OPTIONS with and without =",
+            written: &[
+                "CACHE TABLE t1 OPTIONS ( 'storageLevel' = 'DISK_ONLY' )",
+                "CACHE TABLE t1 OPTIONS ( 'storageLevel' 'DISK_ONLY' )",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "RETAIN DROPPED in the singular and plural unit",
+            written: &[
+                "ALTER SCHEMA s1 RETAIN DROPPED TO 1 DAY",
+                "ALTER SCHEMA s1 RETAIN DROPPED TO 1 DAYS",
+            ],
             expected_distinct_trees: 2,
         },
         DistinctTreesTestCase {

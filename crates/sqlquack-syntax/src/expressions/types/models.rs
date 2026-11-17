@@ -135,7 +135,7 @@ pub struct TableArgumentType {
     pub column_types: Vec<DataType>,
 }
 
-/// A synonym written for a numeric type's name, which the tree keeps as written.
+/// A synonym written for a type's name, which the tree keeps as written.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum TypeSpelling {
@@ -149,6 +149,9 @@ pub enum TypeSpelling {
     Dec,
     /// `NUMERIC` for `DECIMAL`.
     Numeric,
+    /// `TIMESTAMP_LTZ` for `TIMESTAMP`.
+    #[serde(rename = "TIMESTAMP_LTZ")]
+    TimestampLtz,
 }
 
 /// Every data type the parser recognizes, standard and dialect-specific.
@@ -278,6 +281,10 @@ pub enum DataType {
     Timestamp {
         precision: Option<u32>,
         timezone: bool,
+        /// The synonym written for the type's name, such as TIMESTAMP_LTZ for TIMESTAMP
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[ast(skip)]
+        spelling: Option<TypeSpelling>,
     },
     Interval {
         unit: Option<String>,

@@ -353,7 +353,7 @@ impl Parser<'_> {
                 Some(kind) => format!("ON {kind}"),
                 None => "ON".to_owned(),
             });
-            if !name.name.is_empty() {
+            if let Some(name) = name {
                 node.scope = Some(Expression::Identifier(name));
             }
         }
@@ -748,8 +748,8 @@ impl Parser<'_> {
         })
     }
 
-    /// `ON securable`: its kind, when written, and its name; a catalog may go unnamed.
-    fn securable(&mut self) -> Parsing<(Option<String>, Identifier)> {
+    /// `ON securable`: kind and name; a kind alone before `TO` is a name unless it may be unnamed.
+    fn securable(&mut self) -> Parsing<(Option<String>, Option<Identifier>)> {
         self.expect_kw("ON")?;
         let mut kind: Option<String> = None;
         for (words, name_optional) in SECURABLE_KINDS.iter() {
@@ -757,22 +757,23 @@ impl Parser<'_> {
                 .iter()
                 .enumerate()
                 .all(|(offset, word)| self.kw_at(offset, word));
-            let named_by_kind: bool = words.len() == 1
+            let before_principal: bool = words.len() == 1
                 && self.kw_in(words.len(), &["TO", "FROM"])
                 && !self.kw_in(words.len() + 1, &["TO", "FROM"])
                 && !self.ends_at(words.len() + 1);
+            let named_by_kind: bool = before_principal && !*name_optional;
             if matched && !named_by_kind && (*name_optional || self.kind_at(words.len() - 1)) {
                 self.at += words.len();
                 let joined_kind: String = words.join(" ");
                 let nameless: bool = NAMELESS_SECURABLES.contains(&joined_kind.as_str());
                 kind = Some(joined_kind);
-                if nameless || (*name_optional && !self.is(is_identifier)) {
-                    return Ok((kind, Identifier::new(String::new())));
+                if nameless || (*name_optional && (before_principal || !self.is(is_identifier))) {
+                    return Ok((kind, None));
                 }
                 break;
             }
         }
-        Ok((kind, joined(self.multipart_identifier()?)))
+        Ok((kind, Some(joined(self.multipart_identifier()?))))
     }
 
     /// The principals after `TO` or `FROM`; a share is granted only to a `RECIPIENT`.
@@ -815,7 +816,7 @@ impl Parser<'_> {
             options: Vec::new(),
             privileges,
             kind,
-            securable: Some(securable),
+            securable,
             function_params: Vec::new(),
             principals,
             grant_option: false,
@@ -891,7 +892,7 @@ impl Parser<'_> {
             options: Vec::new(),
             privileges,
             kind,
-            securable: Some(securable),
+            securable,
             function_params: Vec::new(),
             principals,
             grant_option: false,
@@ -993,10 +994,15 @@ impl Parser<'_> {
         let lazy: bool = self.eat_kw("LAZY");
         self.expect_kw("TABLE")?;
         let table: Identifier = joined(self.multipart_identifier()?);
-        let options: Vec<(Expression, Expression)> = match self.eat_kw("OPTIONS") {
-            true => self.valued_property_list()?,
+        let spelled: Vec<((Expression, Expression), bool)> = match self.eat_kw("OPTIONS") {
+            true => self.spelled_valued_property_list()?,
             false => Vec::new(),
         };
+        let options_without_equals: Vec<usize> = (0..spelled.len())
+            .filter(|position| spelled[*position].1)
+            .collect();
+        let options: Vec<(Expression, Expression)> =
+            spelled.into_iter().map(|(pair, _)| pair).collect();
         let as_query: bool = self.eat_kw("AS");
         let query: Option<Expression> = match as_query || self.starts_query_at(0) {
             true => Some(self.query()?),
@@ -1006,6 +1012,7 @@ impl Parser<'_> {
             table,
             lazy,
             options,
+            options_without_equals,
             query,
             query_as: as_query,
         })))

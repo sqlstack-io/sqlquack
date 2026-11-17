@@ -611,6 +611,10 @@ pub struct Cache {
     pub lazy: bool,
     /// Optional OPTIONS clause (key-value pairs)
     pub options: Vec<(Expression, Expression)>,
+    /// Databricks: the positions in `options` of values written without the optional `=`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub options_without_equals: Vec<usize>,
     /// Optional AS clause with query
     pub query: Option<Expression>,
     /// Whether AS was written before the query

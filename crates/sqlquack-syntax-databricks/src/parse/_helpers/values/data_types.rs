@@ -151,6 +151,7 @@ impl Parser<'_> {
                 DataType::Timestamp {
                     precision,
                     timezone,
+                    spelling: None,
                 }
             }
             "TIME" => {
@@ -209,6 +210,7 @@ impl Parser<'_> {
             "TIMESTAMP_LTZ" | "TIMESTAMP_NTZ" => DataType::Timestamp {
                 precision: self.optional_length()?,
                 timezone: word == LOCAL_TIMESTAMP,
+                spelling: (word == LOCAL_TIMESTAMP).then_some(TypeSpelling::TimestampLtz),
             },
             "DECFLOAT" => DataType::Named {
                 name: word,

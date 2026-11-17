@@ -151,8 +151,8 @@ pub(crate) const DATETIME_UNITS: [&str; 11] = [
     "MICROSECOND",
 ];
 
-/// The `currentLike` words, valid without parentheses.
-pub(crate) const CURRENT_LIKE: [&str; 7] = [
+/// The `currentLike` words and `LOCALTIME`, which the warehouse also reads bare as the call.
+pub(crate) const CURRENT_LIKE: [&str; 8] = [
     "CURRENT_DATE",
     "CURRENT_TIMESTAMP",
     "CURRENT_USER",
@@ -160,6 +160,7 @@ pub(crate) const CURRENT_LIKE: [&str; 7] = [
     "SESSION_USER",
     "CURRENT_TIME",
     "CURRENT_PATH",
+    "LOCALTIME",
 ];
 
 /// `literalType` keywords before a string: a typed literal.
@@ -201,6 +202,8 @@ pub(crate) const INTERVAL_UNITS: [(&str, IntervalUnit); 20] = [
     ("YEARS", IntervalUnit::Year),
 ];
 
+/// The units a `RETAIN DROPPED` period may be written in.
+pub(crate) const RETENTION_UNITS: [&str; 6] = ["HOUR", "HOURS", "DAY", "DAYS", "WEEK", "WEEKS"];
 /// `unitInUnitToUnit`: the units an `INTERVAL ... TO ...` range may name.
 pub(crate) const UNIT_TO_UNITS: [&str; 6] = ["SECOND", "MINUTE", "HOUR", "DAY", "MONTH", "YEAR"];
 
@@ -350,7 +353,7 @@ pub(crate) const PATH_ELEMENTS: [&str; 5] = [
 ];
 
 /// The securable kinds `GRANT` and `REVOKE` name, longest first, and whether a name is optional.
-pub(crate) const SECURABLE_KINDS: [(&[&str], bool); 19] = [
+pub(crate) const SECURABLE_KINDS: [(&[&str], bool); 20] = [
     (&["MATERIALIZED", "VIEW"], false),
     (&["EXTERNAL", "LOCATION"], false),
     (&["EXTERNAL", "METADATA"], false),
@@ -359,6 +362,7 @@ pub(crate) const SECURABLE_KINDS: [(&[&str], bool); 19] = [
     (&["ANONYMOUS", "FUNCTION"], true),
     (&["ANY", "FILE"], true),
     (&["CATALOG"], true),
+    (&["METASTORE"], true),
     (&["SCHEMA"], false),
     (&["DATABASE"], false),
     (&["TABLE"], false),
@@ -373,7 +377,7 @@ pub(crate) const SECURABLE_KINDS: [(&[&str], bool); 19] = [
 ];
 
 /// The securable kinds that never take a name.
-pub(crate) const NAMELESS_SECURABLES: [&str; 2] = ["ANY FILE", "ANONYMOUS FUNCTION"];
+pub(crate) const NAMELESS_SECURABLES: [&str; 3] = ["ANY FILE", "ANONYMOUS FUNCTION", "METASTORE"];
 
 /// The language whose handler needs an `ENVIRONMENT` naming its dependencies.
 pub(crate) const SCALA_LANGUAGE: &str = "SCALA";

@@ -73,6 +73,7 @@ fn named_type(name: &str, modifiers: &[u32]) -> Option<DataType> {
         "TIMESTAMP" if plain => DataType::Timestamp {
             precision: None,
             timezone: false,
+            spelling: None,
         },
         _ => return None,
     })

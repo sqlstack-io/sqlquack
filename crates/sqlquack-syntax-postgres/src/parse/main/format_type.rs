@@ -47,6 +47,7 @@ pub fn format_type(data_type: &DataType) -> Option<String> {
         DataType::Timestamp {
             precision,
             timezone,
+            ..
         } => temporal("timestamp", *precision, *timezone),
         DataType::Interval { unit, to } => {
             let fields: Vec<String> = [unit, to]
