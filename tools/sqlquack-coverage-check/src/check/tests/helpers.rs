@@ -354,7 +354,7 @@ pub(crate) fn exclusion_review(root: &Path, verdict: &str, tree: &str) {
         .replace("id = \"query-1\"", "id = \"query-2\"")
         .replace(
             "verdict = \"approved\"",
-            &format!("verdict = \"{verdict}\""),
+            &format!("verdict = \"{verdict}\"\nforms = [\"sf.query.select.top\"]"),
         )
         .replace(TREE, tree);
     write(

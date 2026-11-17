@@ -716,6 +716,22 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
              lists, and the review excludes nothing"
         ));
     }
+    let excluded: BTreeSet<&str> = review
+        .exclusions
+        .iter()
+        .filter_map(|exclusion| exclusion.form.as_deref())
+        .collect();
+    if !review.family.is_empty()
+        && !review.exclusions.is_empty()
+        && review.forms.as_ref().is_none_or(|forms| {
+            forms.iter().map(String::as_str).collect::<BTreeSet<&str>>() != excluded
+        })
+    {
+        problems.push(format!(
+            "review {id}: a family review that excludes forms lists exactly those forms, so it \
+             approves no other"
+        ));
+    }
     if !is_utc(&review.reviewed_utc) {
         problems.push(format!(
             "review {id}: reviewed_utc is not YYYY-MM-DDTHH:MM:SSZ"

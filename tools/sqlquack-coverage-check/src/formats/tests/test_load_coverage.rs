@@ -58,7 +58,7 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
         cases: 1,
         receipts,
         retired_receipts: 0,
-        reviews: 2,
+        reviews: 3,
         file_hashes: 2 * FAMILIES.len() + 2,
     };
     let test_cases = [
@@ -658,7 +658,7 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                     "source = \"doc.billing\"",
                 )
             },
-            expected_problem: "review query-1: an exclusion needs exactly one target",
+            expected_problem: "review query-2: an exclusion needs exactly one target",
         },
         FormatFaultTestCase {
             description: "an interaction without the anchor of its usage note",
@@ -1426,11 +1426,35 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 replace(
                     root,
                     "reviews/query.toml",
-                    "sf.query.select.define-view",
-                    "sf.dml.insert",
+                    "form = \"sf.query.select.define-view\"",
+                    "form = \"sf.dml.insert\"",
                 )
             },
             expected_problem: "an exclusion needs exactly one target: a form id of its family",
+        },
+        FormatFaultTestCase {
+            description: "a family review excluding a form without listing it, which would approve the whole family",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "forms = [\"sf.query.select.define-view\"]\n",
+                    "",
+                )
+            },
+            expected_problem: "review query-2: a family review that excludes forms lists exactly those forms",
+        },
+        FormatFaultTestCase {
+            description: "a family review excluding a form and listing another",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "forms = [\"sf.query.select.define-view\"]",
+                    "forms = [\"sf.query.select.define-view\", \"sf.query.select\"]",
+                )
+            },
+            expected_problem: "review query-2: a family review that excludes forms lists exactly those forms",
         },
         FormatFaultTestCase {
             description: "a review accepting an exclusion without a reason",
@@ -1442,7 +1466,7 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                     " ",
                 )
             },
-            expected_problem: "review query-1: an exclusion needs a reason",
+            expected_problem: "review query-2: an exclusion needs a reason",
         },
         FormatFaultTestCase {
             description: "an alias renaming a form to itself",
@@ -1476,7 +1500,7 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                     "form = \"sf.query.select.define-view\"\nsource = \"doc.select\"",
                 )
             },
-            expected_problem: "review query-1: an exclusion needs exactly one",
+            expected_problem: "review query-2: an exclusion needs exactly one",
         },
         FormatFaultTestCase {
             description: "a page review excluding a form",
