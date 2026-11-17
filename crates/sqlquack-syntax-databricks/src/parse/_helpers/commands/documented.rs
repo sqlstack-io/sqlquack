@@ -5,6 +5,7 @@ use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::parse::_helpers::tree::clauses::Part;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_word};
+use crate::parse::_helpers::tree::nodes::{utility, var};
 use crate::parse::constants::{CREATE_STREAMING_TABLE, SYNC, TAG_FORMS, TAG_KINDS};
 use crate::scan::models::{Token, TokenKind};
 
@@ -816,39 +817,39 @@ impl Parser<'_> {
         }
     }
 
-    /// Spark's `REFRESH (stringLit | .*?)`: a resource path, quoted or as written.
+    /// Spark's `REFRESH (stringLit | .*?)`: a resource path, quoted or as written, its one operand.
     pub(crate) fn refresh_resource(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
         self.expect_kw("REFRESH")?;
         if self.string_at(0) && self.ends_at(1) {
-            self.string_lit()?;
-        } else {
-            let first: usize = self.at;
-            self.skip_statement_rest()?;
-            let path: &str = match self.at > first {
-                true => &self.sql[self.tokens[first].start..self.tokens[self.at - 1].end],
-                false => "",
-            };
-            if path.is_empty() {
-                return Err(self.error_with(
-                    "[INVALID_SQL_SYNTAX.EMPTY_RESOURCE_PATH] Resource paths cannot be empty in \
-                     REFRESH statements.",
-                    start,
-                    true,
-                ));
-            }
-            if path.contains([' ', '\n', '\r', '\t']) {
-                return Err(self.error_with(
-                    "[INVALID_SQL_SYNTAX.INVALID_REFRESH_RESOURCE_PATH] REFRESH statements cannot \
-                     contain ' ', '\\n', '\\r', '\\t' inside unquoted resource paths.",
-                    start,
-                    true,
-                ));
-            }
+            let path: Expression = self.string_literal()?;
+            self.treed("refresh", start);
+            return Ok(utility("REFRESH".to_owned(), vec![path]));
         }
-        self.gap("refresh", start);
-        Ok(Expression::Null(
-            sqlquack_syntax::expressions::names::models::Null,
-        ))
+        let first: usize = self.at;
+        self.skip_statement_rest()?;
+        let path: &str = match self.at > first {
+            true => &self.sql[self.tokens[first].start..self.tokens[self.at - 1].end],
+            false => "",
+        };
+        if path.is_empty() {
+            return Err(self.error_with(
+                "[INVALID_SQL_SYNTAX.EMPTY_RESOURCE_PATH] Resource paths cannot be empty in \
+                 REFRESH statements.",
+                start,
+                true,
+            ));
+        }
+        if path.contains([' ', '\n', '\r', '\t']) {
+            return Err(self.error_with(
+                "[INVALID_SQL_SYNTAX.INVALID_REFRESH_RESOURCE_PATH] REFRESH statements cannot \
+                 contain ' ', '\\n', '\\r', '\\t' inside unquoted resource paths.",
+                start,
+                true,
+            ));
+        }
+        let path: Expression = var(path);
+        self.treed("refresh", start);
+        Ok(utility("REFRESH".to_owned(), vec![path]))
     }
 }

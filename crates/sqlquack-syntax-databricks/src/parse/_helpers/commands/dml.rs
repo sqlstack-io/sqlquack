@@ -2,11 +2,12 @@
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
-use sqlquack_syntax::expressions::queries::models::{Where, With};
+use sqlquack_syntax::expressions::queries::models::{RowFormat, Where, With};
 use sqlquack_syntax::expressions::statements::models::{
     DirectoryInsert, Insert, Merge, When, Whens,
 };
 
+use crate::parse::_helpers::commands::alters::property_text;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{
     TableAlias, binary, boolean, call, column_from, default_value, delete, insert, joined, star,
@@ -35,6 +36,30 @@ fn with_source(mut node: Insert, query: Expression) -> Insert {
         other => node.query = Some(other),
     }
     node
+}
+
+/// The text of a string literal the parser read.
+fn text(value: Option<Box<Expression>>) -> Option<String> {
+    value.map(|value| property_text(&value))
+}
+
+/// A Hive directory's row format: a delimited one without escaping; none otherwise.
+fn directory_row_format(row_format: Expression) -> Option<RowFormat> {
+    match row_format {
+        Expression::RowFormatDelimitedProperty(row)
+            if row.escaped.is_none() && row.serde.is_none() =>
+        {
+            Some(RowFormat {
+                delimited: true,
+                fields_terminated_by: text(row.fields),
+                collection_items_terminated_by: text(row.collection_items),
+                map_keys_terminated_by: text(row.map_keys),
+                lines_terminated_by: text(row.lines),
+                null_defined_as: text(row.null),
+            })
+        }
+        _ => None,
+    }
 }
 
 fn with_alias(mut relation: TableRef, alias: Option<TableAlias>) -> TableRef {
@@ -115,7 +140,7 @@ impl Parser<'_> {
         if !self.kw("USING") && path {
             if self.kw("ROW") {
                 let row: usize = self.offset();
-                node.row_format = self.row_format()?;
+                node.row_format = directory_row_format(self.read_row_format()?);
                 if node.row_format.is_none() {
                     self.gap("directory_row_format", row);
                 }
@@ -135,10 +160,10 @@ impl Parser<'_> {
                 .collect();
             node.options = spelled.into_iter().map(|(pair, _)| pair).collect();
         }
-        let path_option: bool = node.options.iter().any(|(key, _)| {
-            crate::parse::_helpers::commands::alters::property_text(key)
-                .eq_ignore_ascii_case("path")
-        });
+        let path_option: bool = node
+            .options
+            .iter()
+            .any(|(key, _)| property_text(key).eq_ignore_ascii_case("path"));
         if path == path_option {
             return Err(self.error_with(
                 "Directory path and 'path' in OPTIONS should be specified one, but not both",

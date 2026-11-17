@@ -7,6 +7,42 @@ use crate::parse::tests::test_types::DistinctTreesTestCase;
 fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_what_was_written() {
     let test_cases = [
         DistinctTreesTestCase {
+            description: "a table format written with USING and with STORED AS",
+            written: &[
+                "CREATE TABLE t3 USING PARQUET",
+                "CREATE TABLE t3 STORED AS PARQUET",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "a key constraint with and without ENABLE before NOVALIDATE",
+            written: &[
+                "CREATE TABLE t3 ( c1 INT , PRIMARY KEY ( c1 ) ENABLE NOVALIDATE )",
+                "CREATE TABLE t3 ( c1 INT , PRIMARY KEY ( c1 ) NOVALIDATE )",
+                "CREATE TABLE t3 ( c1 INT , PRIMARY KEY ( c1 ) ENABLE )",
+            ],
+            expected_distinct_trees: 3,
+        },
+        DistinctTreesTestCase {
+            description: "a resource written unquoted, backquoted and as a string",
+            written: &["ADD FILE v1", "ADD FILE `v1`", "ADD FILE 'v1'"],
+            expected_distinct_trees: 3,
+        },
+        DistinctTreesTestCase {
+            description: "a listed resource written backquoted and as a string holding the backquotes",
+            written: &["LIST FILE `v1 Q`", "LIST FILE '`v1 Q`'"],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "a shown property key written as a name, backquoted and as a string",
+            written: &[
+                "SHOW TBLPROPERTIES t1 ( k1 )",
+                "SHOW TBLPROPERTIES t1 ( `k1` )",
+                "SHOW TBLPROPERTIES t1 ( 'k1' )",
+            ],
+            expected_distinct_trees: 3,
+        },
+        DistinctTreesTestCase {
             description: "DESC and DESCRIBE",
             written: &["DESC SCHEMA s1", "DESCRIBE SCHEMA s1"],
             expected_distinct_trees: 2,
@@ -461,6 +497,77 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             description: ">>> and the shiftrightunsigned call",
             written: &["SELECT 4 >>> 1", "SELECT shiftrightunsigned(4, 1)"],
             expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "OWNER TO with and without SET",
+            written: &[
+                "ALTER TABLE t1 OWNER TO u1",
+                "ALTER TABLE t1 SET OWNER TO u1",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "SET MANAGED with each mode",
+            written: &[
+                "ALTER TABLE t1 SET MANAGED",
+                "ALTER TABLE t1 SET MANAGED COPY",
+                "ALTER TABLE t1 SET MANAGED MOVE",
+                "ALTER TABLE t1 SET MANAGED TRUNCATE UNIFORM HISTORY",
+            ],
+            expected_distinct_trees: 4,
+        },
+        DistinctTreesTestCase {
+            description: "SET EXTERNAL with and without DRY RUN",
+            written: &[
+                "ALTER TABLE t1 SET EXTERNAL",
+                "ALTER TABLE t1 SET EXTERNAL DRY RUN",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "DROP FEATURE with and without TRUNCATE HISTORY",
+            written: &[
+                "ALTER TABLE t1 DROP FEATURE f1",
+                "ALTER TABLE t1 DROP FEATURE f1 TRUNCATE HISTORY",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "a column's position after each lead word",
+            written: &[
+                "ALTER TABLE t1 ALTER c1 FIRST",
+                "ALTER TABLE t1 ALTER COLUMN c1 FIRST",
+                "ALTER TABLE t1 CHANGE c1 FIRST",
+                "ALTER TABLE t1 CHANGE COLUMN c1 FIRST",
+            ],
+            expected_distinct_trees: 4,
+        },
+        DistinctTreesTestCase {
+            description: "a dropped primary key with each option",
+            written: &[
+                "ALTER TABLE t1 DROP PRIMARY KEY",
+                "ALTER TABLE t1 DROP PRIMARY KEY IF EXISTS",
+                "ALTER TABLE t1 DROP PRIMARY KEY CASCADE",
+                "ALTER TABLE t1 DROP PRIMARY KEY RESTRICT",
+            ],
+            expected_distinct_trees: 4,
+        },
+        DistinctTreesTestCase {
+            description: "a row filter with and without columns",
+            written: &[
+                "ALTER TABLE t1 SET ROW FILTER f1 ON ( )",
+                "ALTER TABLE t1 SET ROW FILTER f1 ON ( c1 )",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "SET SERDE with and without SERDEPROPERTIES, and SERDEPROPERTIES alone",
+            written: &[
+                "ALTER TABLE t1 SET SERDE 's1'",
+                "ALTER TABLE t1 SET SERDE 's1' WITH SERDEPROPERTIES ( 'k' = 'v' )",
+                "ALTER TABLE t1 SET SERDEPROPERTIES ( 'k' = 'v' )",
+            ],
+            expected_distinct_trees: 3,
         },
     ];
     for test_case in test_cases {

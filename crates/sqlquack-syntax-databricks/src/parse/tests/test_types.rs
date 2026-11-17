@@ -77,3 +77,19 @@ pub(crate) struct DistinctTreesTestCase {
     pub(crate) written: &'static [&'static str],
     pub(crate) expected_distinct_trees: usize,
 }
+
+/// A form of `TREED_FORMS`, written as `sql`, before `ALTER TABLE t1 ALTER COLUMN c1` in one compound and in two statements.
+pub(crate) struct TreedFormTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) construct: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_in_compound: ExpectedVerdict,
+    pub(crate) expected_as_script: ExpectedVerdict,
+}
+
+/// A treed form written around `{E}`, a left-deep sum the tree depth limit would refuse were it kept.
+pub(crate) struct DeepValueTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) shape: &'static str,
+    pub(crate) expected_verdict: ExpectedVerdict,
+}

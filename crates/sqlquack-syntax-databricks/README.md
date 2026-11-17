@@ -12,7 +12,9 @@ the message, the byte position and whether it is a syntax refusal (`PARSE_SYNTAX
 have `syntax = false`; a typed literal whose text cannot be its value (`DATE 'm'`, `X'zz'`,
 `INTERVAL 'm'`, a time or timestamp not starting as one) is `INVALID_TYPED_LITERAL`, a syntax
 refusal. `parse_strict(sql)` returns `Result<Parsed, StrictFailure>` and also refuses
-an input with a byte that no token, blank or comment covers.
+an input with a byte that no token, blank or comment covers. `parse_strict_reviewed(sql)` returns
+the same verdict but keeps each form listed under Treed forms as a gap; the formatter and lint read
+Databricks SQL through it.
 
 Beyond the Spark grammar, the scanner takes Databricks' `?::` (try cast) operator, and the parser
 takes Databricks' own additions and checks: `REPLACE TEMPORARY TABLE`, session temporary
@@ -48,8 +50,8 @@ their documented syntax (`parse/_helpers/commands/documented.rs`, in the notatio
   `ANTI` unless a join begins there; a table alias may not.
 - Expressions: literals, including typed and suffixed ones and `INTERVAL`, `CASE`, `CAST`,
   `TRY_CAST`, `::`, calls with `DISTINCT`, `FILTER`, `IGNORE`/`RESPECT NULLS` and `OVER` with frames,
-  lambdas, field, subscript and semi-structured `:path` access, the predicates, `EXISTS`, scalar
-  subqueries, and the complex data types.
+  lambdas, field, subscript and semi-structured `:path` access (a JSON path of keys and
+  subscripts), the predicates, `EXISTS`, scalar subqueries, and the complex data types.
 - `INSERT INTO`/`OVERWRITE`, `MERGE INTO`, `UPDATE`, `DELETE`, `COPY INTO` (`Copy`) and
   `LOAD DATA` (`LoadData`).
 - `CREATE [OR REPLACE] TABLE`, `REPLACE TABLE`, `CREATE TABLE … LIKE` (a `Like` constraint),
@@ -85,6 +87,29 @@ their documented syntax (`parse/_helpers/commands/documented.rs`, in the notatio
   `COMMENT ON`; `TRUNCATE TABLE`; `GRANT` and `REVOKE`; `DECLARE [OR REPLACE] [VARIABLE]`;
   `CACHE [LAZY] TABLE` and `UNCACHE TABLE`.
 
+## Treed forms
+
+`parse` and `parse_strict` keep these forms in the tree when the shape below reads every token the
+parser checked. Otherwise, or when a kept value would take the tree past the nesting limit, the
+form stays the gap named in the first column, and the verdict is the same either way.
+`parse_strict_reviewed` keeps every one of them as that gap, so the formatter and lint refuse them
+as they refuse any gap.
+
+| Form | Construct | Tree |
+| --- | --- | --- |
+| `add`, `list` | `ADD` and `LIST` of a file, jar or archive (another resource type is refused) | a `UtilityStatement` of the keywords and each resource, split where a space falls, as Spark splits them: a resource written wholly as a string literal as a string, any other as its text as written |
+| `restore`, `deny`, `refresh` | `RESTORE … {TIMESTAMP \| VERSION} AS OF`, `DENY privileges ON securable TO principal` (read as `GRANT`), `REFRESH path` (checked as Spark checks the resource path) | a `UtilityStatement` of the keywords and parts; `REFRESH` keeps a quoted path as a string and an unquoted one as its text as written |
+| `cache_select` | `CACHE SELECT expr, … FROM name [WHERE expr]`, as documented | a `UtilityStatement` of its clauses; any other text the service accepts stays the gap, unchecked but for a string after `FROM` |
+| `describe_column`, `show_partition` | `DESCRIBE t column`, `PARTITION (…)` on `SHOW PARTITIONS` and `SHOW TABLE EXTENDED` | the `Describe` or `Show` holding the column or partition |
+| `row_format`, `stored_as` | `ROW FORMAT DELIMITED \| SERDE` and `STORED AS \| BY` on `CREATE TABLE [… LIKE]` | properties of the table; `STORED AS` is marked as the Hive spelling, unlike `USING`. A storage handler's `SERDEPROPERTIES` stays the gap |
+| `insert_overwrite_directory` | `INSERT OVERWRITE [LOCAL] DIRECTORY path` in Hive's form | an `Insert` whose directory holds the path, a delimited row format and a bare format name. `ESCAPED BY`, a SerDe, a quoted format name, input and output formats, `STORED BY` and the `USING` form stay the gap |
+| `copy_columns` | `COPY INTO t (columns)` | the target as a `Schema` of the table and its columns |
+| `constraint_validation` | `ENABLE \| DISABLE` then `VALIDATE \| NOVALIDATE` after a key in `CREATE TABLE` or a constraint in `ALTER TABLE ADD` | the constraint's modifiers; words repeated or out of that order stay the gap |
+| `column_mask`, `row_filter` | `MASK` on a created or added column, `WITH ROW FILTER` on `CREATE TABLE` | a masking policy among the column's options; a property of the table |
+| `owner`, `managed`, `serde`, `table_collation`, `recover_partitions`, `replace_partitioning`, `predictive_optimization`, `rename_partition`, `drop_primary_key`, `drop_foreign_key`, `drop_feature`, `row_filter`, `alter_column_position`, `column_mask`, `identity_sync`, `column_tags` | those `ALTER TABLE` actions: `[SET] OWNER TO`, `SET \| UNSET MANAGED`, `SET EXTERNAL`, `SET SERDE` and `SERDEPROPERTIES`, `DEFAULT COLLATION`, `RECOVER PARTITIONS`, `REPLACE PARTITIONED BY WITH CLUSTER BY`, predictive optimization, partition renames, dropped keys and features, `SET \| DROP ROW FILTER`, and a column's position, mask, `SYNC IDENTITY` and tags | a `SetProperty` under a fixed upper-case key from a closed list (`KEYED_ACTIONS`), such as `OWNER TO` or `COLUMN POSITION`, never the text as written |
+| `schema_binding`, `view_collation`, `view_partitioned_on`, `view_nocopy` | `WITH SCHEMA …`, `DEFAULT COLLATION`, `PARTITIONED ON` and `NOCOPY *` on `CREATE VIEW` | options of the view |
+| `temporary_view_using`, `drop_temporary_table`, `drop_table_force`, `drop_temporary_function`, `undrop_with_id` | `CREATE TEMPORARY VIEW … USING`, `DROP TEMPORARY TABLE`, `DROP TABLE … FORCE`, `DROP TEMPORARY FUNCTION`, `UNDROP … WITH ID` | a `UtilityStatement` of the documented form |
+
 ## Gaps
 
 A statement holding a construct the shared tree cannot hold becomes a `Command` with the
@@ -100,30 +125,25 @@ next top-level `;` is not checked further; every other gap's text is checked.
 | `describe_policy`, `describe_credential`, `describe_location`, `describe_governed_tag` | `DESCRIBE POLICY`, `DESCRIBE {SERVICE \| STORAGE} CREDENTIAL`, `DESCRIBE EXTERNAL LOCATION`, `DESCRIBE GOVERNED TAG`: checked, no shared node |
 | `show_policies`, `show_shares`, `show_all_in_share`, `show_groups`, `show_principals`, `show_volumes`, `show_statistics`, `show_governed_tags`, `show_securables` | the documented `SHOW` statements the shared `Show` does not hold: policies, shares, `ALL IN SHARE`, groups, users, providers, recipients, volumes, statistics, governed tags, connections, credentials and external locations; checked. Any other `SHOW` is refused, as Spark refuses it |
 | `compound`, `signal`, `open_cursor`, `fetch_cursor`, `close_cursor` | `BEGIN … END` blocks and their labelled `LOOP`, `WHILE`, `REPEAT`, `FOR`, `IF`, `CASE`, `LEAVE`, `ITERATE`, handlers and conditions, `SIGNAL`, `RESIGNAL` and the cursor statements: checked against Spark's `compoundBody` (a whole block takes no label; `GET DIAGNOSTICS` is refused, as Databricks refuses it) |
-| `add`, `list` | `ADD` and `LIST` of a file, jar or archive (another resource type is refused) |
-| `deny`, `cache_select` | `DENY privileges ON securable TO principal` (read as `GRANT`), Databricks' `CACHE SELECT …` (its text unchecked but a string after `FROM`) |
-| `refresh` | `REFRESH path`, checked as Spark checks the resource path |
 | `alter_owner` | `ALTER name [SET] OWNER TO principal`, a securable named without its kind |
-| `optimize`, `vacuum`, `restore`, `repair`, `msck` | `OPTIMIZE`, `VACUUM`, `RESTORE`, `[MSCK] REPAIR TABLE`: checked, but the shared tree has no node |
+| `optimize`, `vacuum`, `repair`, `msck` | `OPTIMIZE`, `VACUUM`, `[MSCK] REPAIR TABLE`: checked, but the shared tree has no node |
 | `alter`, `create`, `drop`, `describe` | those statements of any other object kind with no documented form above, such as a group |
 | `set` | `SET ROLE`, `SET RECIPIENT name`, `SET COLLATION name` and `SET QUERY_TAGS[key] = value`; any other `SET` text Spark's patterns do not read is refused (`INVALID_SET_SYNTAX`), as are `SET QUERY_TAGS` without a key, `SET PATH` with a one-part schema and `SET TIME ZONE` with no zone |
-| `row_format`, `stored_as`, `bucket_spec`, `skew_spec` | the Hive table clauses |
-| `temporary_view_using`, `metric_view`, `view_nocopy` | `CREATE TEMPORARY VIEW … USING`, `CREATE VIEW … WITH METRICS`, a view's `NOCOPY *` |
-| `schema_binding`, `view_collation`, `view_partitioned_on` | `WITH SCHEMA …`, `DEFAULT COLLATION`, `PARTITIONED ON` on a view |
-| `drop_table_force`, `drop_temporary_table`, `drop_temporary_function` | `DROP TABLE … FORCE`, `DROP TEMPORARY TABLE`, `DROP TEMPORARY FUNCTION` |
-| `insert_options`, `insert_overwrite_directory`, `insert_replace_on`, `insert_replace_using`, `schema_evolution` | `INSERT … WITH (options)`, `INSERT OVERWRITE [LOCAL] DIRECTORY`, `REPLACE ON`/`REPLACE USING`, `WITH SCHEMA EVOLUTION` |
-| `copy_columns`, `copy_by_position`, `copy_target_credential` | `COPY INTO t (columns)`, `COPY INTO t BY POSITION`, a credential on `COPY INTO`'s target |
+| `bucket_spec`, `skew_spec` | the Hive `CLUSTERED BY … INTO … BUCKETS` and `SKEWED BY` table clauses |
+| `metric_view` | `CREATE VIEW … WITH METRICS` |
+| `insert_options`, `insert_replace_on`, `insert_replace_using`, `schema_evolution` | `INSERT … WITH (options)`, `REPLACE ON`/`REPLACE USING`, `WITH SCHEMA EVOLUTION` |
+| `copy_by_position`, `copy_target_credential` | `COPY INTO t BY POSITION`, a credential on `COPY INTO`'s target |
 | `multi_select_from` | `FROM … INSERT …` / `FROM … SELECT …` with more than one body |
 | `changes`, `relation_options`, `watermark`, `identified_by`, `nearest_by`, `subquery_sample`, `parenthesized_relation_sample` | `CHANGES`, `WITH (options)` on a relation, `WATERMARK … DELAY OF INTERVAL …` (checked), `IDENTIFIED BY`, `NEAREST BY`, a sample or later relation clause after a parenthesized subquery or relation |
 | `table_argument_partitioning` | `TABLE t PARTITION BY … ORDER BY …` as a function argument |
 | `pivot_after_lateral_view`, `identifier_clause_function` | `PIVOT` after `LATERAL VIEW`, `IDENTIFIER(…)(…)` calls |
-| `owner`, `managed`, `row_filter`, `column_mask`, `column_tags`, `view_tags`, `view_constraint` | `ALTER TABLE … [SET] OWNER TO`, `SET \| UNSET MANAGED` and `SET EXTERNAL`, row filters (on `ALTER TABLE` and `CREATE TABLE … WITH ROW FILTER`), column masks (on added and created columns), column and view tags, view constraints |
+| `view_tags`, `view_constraint`, `managed`, `schema_binding` | on `ALTER VIEW`: tags, constraints, `SET MANAGED` and `WITH SCHEMA …` |
 | `cluster_by_expression` | `CLUSTER BY ('text', …)` on `CREATE TABLE`: an expression, parsed and refused later than the parser |
-| `drop_feature`, `drop_primary_key`, `drop_foreign_key`, `drop_constraint_cascade`, `drop_partition_purge` | `DROP FEATURE`, `DROP PRIMARY KEY`, `DROP FOREIGN KEY`, `DROP CONSTRAINT … CASCADE`, `DROP PARTITION … PURGE` |
-| `constraint_validation` (also after a primary or foreign key in `CREATE TABLE`), `predictive_optimization`, `identity_sync`, `table_collation`, `unset_if_exists` | `ENABLE`/`NOVALIDATE` after an added constraint, `{ENABLE \| DISABLE \| INHERIT} PREDICTIVE OPTIMIZATION` on a table, `SYNC IDENTITY`, a table's `DEFAULT COLLATION`, `UNSET TBLPROPERTIES IF EXISTS` |
-| `alter_column_position`, `change_column_position`, `change_column_not_null`, `replace_columns`, `replace_partitioning`, `recover_partitions`, `rename_partition`, `serde`, `partition_change_column`, `view_partition` | column moves, `REPLACE COLUMNS`, `REPLACE PARTITIONED BY WITH CLUSTER BY`, `RECOVER PARTITIONS`, partition renames, SerDe clauses, Hive column changes in a partition, partitions of a view |
-| `describe_column`, `show_partition`, `show_create_table_serde` | `DESCRIBE t column`, `PARTITION (…)` on `SHOW`, `SHOW CREATE TABLE … AS SERDE` |
-| `declare_cursor`, `undrop_with_id`, `function_credentials`, `function_secrets` | `DECLARE … CURSOR`, `UNDROP … WITH ID`, a function's `CREDENTIALS` and `SECRETS` |
+| `drop_constraint_cascade`, `drop_partition_purge` | `DROP CONSTRAINT … CASCADE`, `DROP PARTITION … PURGE` |
+| `unset_if_exists` | `UNSET TBLPROPERTIES IF EXISTS` |
+| `change_column_position`, `change_column_not_null`, `replace_columns`, `partition_change_column`, `view_partition`, `alter_column_without_action` | column moves with `CHANGE`, `REPLACE COLUMNS`, Hive column changes in a partition, partitions of a view, a column named with no action after an action kept as a tree |
+| `show_create_table_serde` | `SHOW CREATE TABLE … AS SERDE` |
+| `declare_cursor`, `function_credentials`, `function_secrets` | `DECLARE … CURSOR`, a function's `CREDENTIALS` and `SECRETS` |
 
 ## Lossy mappings
 
@@ -144,13 +164,13 @@ These parse without a gap, but the shared tree keeps less than the source said:
 - A function's `RETURNS TABLE (columns)` keeps the column list as `returns_table_body` text; its
   `COMMENT`, `SPECIFIC` and `DEFAULT COLLATION` become `options` properties, and parameter
   comments and `NOT NULL` are dropped.
-- `SHOW TBLPROPERTIES t (key)` holds the key as a string `scope` of `scope_kind` `PROPERTY`: the
-  shared `Show` has no field for a property key.
+- `SHOW TBLPROPERTIES t (key)` holds the key as the `scope` of `scope_kind` `PROPERTY`, a key
+  written as a string literal as a string and any other as its dotted identifier: the shared `Show` has no field for
+  a property key.
 - `GRANT`, `REVOKE`, `CACHE` and `UNCACHE` keep their object's name as one dotted identifier.
 - A `SET` configuration value, and a time zone that is neither a string nor `LOCAL`, become `Var`
   text.
 - A `MATCH_RECOGNIZE` pattern is kept as its source text, after it is checked.
-- `ALTER SCHEMA … [SET] RETAIN DROPPED TO n unit` keeps `n unit` as one `Var` operand.
 
 ## Implementation notes
 
@@ -160,7 +180,11 @@ These parse without a gap, but the shared tree keeps less than the source said:
   alternatives, and a `...` or `,...` after an item for one or more of it, bare or
   comma-separated. Matching follows every reading at once, as a set of token positions, so an
   optional part never hides a later one. When no pattern reads a statement, the furthest failure
-  is reported.
+  is reported. A matched statement's tree is its keyword clauses in order, each a property of its
+  keywords and values. `IF [NOT] EXISTS`, `IGNORE NULL UPDATES`, `ON METASTORE` and `FOR TABLES`
+  end their clause unless an optional part opened right after them goes on with it, as
+  `IGNORE NULL UPDATES ON columns` and `FOR TABLES WHEN expr` do. `* EXCEPT (columns)` is a star
+  with those columns excepted.
 - The scanner has no `>>` or `>>>` operator: `>` is always one token, as Spark's lexer makes it
   inside `ARRAY<…>`, `MAP<…>` and `STRUCT<…>`, and the grammar joins adjacent `>`s into a shift.
   `REGEXP` is the same token as `RLIKE`. A doubled quote stands for one quote; where backslash
@@ -185,4 +209,5 @@ These parse without a gap, but the shared tree keeps less than the source said:
 - `SET PATH = …` text that the path elements do not read to its end is a configuration, as in
   Spark.
 - In `GRANT … ON VIEW TO u`, a kind word followed by `TO` or `FROM` and then a principal is the
-  securable's name.
+  securable's name, except a bare `CATALOG` or `METASTORE`, which is that securable left unnamed:
+  the service answers `ON CATALOG TO u` by asking for the catalog's name.

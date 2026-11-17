@@ -15,12 +15,13 @@ use crate::parse::_helpers::commands::alters::partition;
 use crate::parse::_helpers::commands::queries::limit;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    call, column_from, joined, null, string, table, tuple, var,
+    call, column, column_from, dot, joined, null, property, string, table, too_deep_to_keep, tuple,
+    utility, var,
 };
 use crate::parse::constants::{
-    ADD_RESOURCE, CATALOG, COMMENT_KINDS, DESCRIBE_KINDS, EXPLAIN_MODES, FUNCTIONS,
-    IDENTIFIER_CLAUSE, MIN_BACKQUOTED_LENGTH, MIN_PATH_PARTS, NAMELESS_SECURABLES, PATH_ELEMENTS,
-    SCHEMA_SCOPE, SECURABLE_KINDS, SET_VERBOSE,
+    ADD_RESOURCE, ADD_RESOURCES, CACHE_SELECT, CATALOG, COMMENT_KINDS, DESCRIBE_KINDS,
+    EXPLAIN_MODES, FUNCTIONS, IDENTIFIER_CLAUSE, LIST_RESOURCES, MIN_BACKQUOTED_LENGTH,
+    MIN_PATH_PARTS, NAMELESS_SECURABLES, PATH_ELEMENTS, SCHEMA_SCOPE, SECURABLE_KINDS, SET_VERBOSE,
 };
 use crate::scan::models::TokenKind;
 
@@ -47,6 +48,34 @@ fn set_item(name: &str, value: Expression, kind: Option<&str>) -> SetItem {
 
 fn set_statement(items: Vec<SetItem>) -> Expression {
     Expression::SetStatement(Box::new(SetStatement { items }))
+}
+
+/// `SHOW` of `node` for one partition, which `Show` cannot hold: its parts, then the partition.
+fn shown_partition(node: Show, spec: Expression) -> Expression {
+    let mut operands: Vec<Expression> = node.target.into_iter().collect();
+    if let (Some(keyword), Some(scope)) = (node.scope_keyword, node.scope) {
+        operands.push(property(&keyword, Some(scope)));
+    }
+    if let Some(pattern) = node.like {
+        operands.push(property("LIKE", Some(pattern)));
+    }
+    operands.push(spec);
+    utility(format!("SHOW {}", node.this), operands)
+}
+
+/// `DESCRIBE` of one column, which `Describe` cannot hold: the table, any partition, the column.
+fn described_column(node: Describe, column: Expression) -> Expression {
+    let mut words: Vec<&str> = vec![match node.short_form {
+        true => "DESC",
+        false => "DESCRIBE",
+    }];
+    words.extend(node.kind.as_deref());
+    words.extend(node.extended.then_some("EXTENDED"));
+    words.extend(node.formatted.then_some("FORMATTED"));
+    let mut operands: Vec<Expression> = vec![node.target];
+    operands.extend(node.partition.map(|partition| *partition));
+    operands.push(column);
+    utility(words.join(" "), operands)
 }
 
 impl Parser<'_> {
@@ -147,9 +176,11 @@ impl Parser<'_> {
                 if self.kw("PARTITION") && self.char_at(1, '(') {
                     node.partition = Some(Box::new(partition(self.partition_spec()?)));
                 }
-                let column: usize = self.offset();
                 if self.is(is_identifier) && !(self.kw("AS") && self.kw_at(1, "JSON")) {
-                    self.multipart_identifier()?;
+                    let column_start: usize = self.offset();
+                    let mut names = self.multipart_identifier()?.into_iter();
+                    let first: Identifier = names.next().unwrap_or_else(Identifier::empty);
+                    let column: Expression = names.fold(column(None, first), dot);
                     if self.kw("AS") && self.kw_at(1, "JSON") {
                         return Err(self.error_with(
                             "[UNSUPPORTED_FEATURE.DESC_TABLE_COLUMN_JSON] The feature is not \
@@ -158,7 +189,13 @@ impl Parser<'_> {
                             true,
                         ));
                     }
-                    self.gap("describe_column", column);
+                    let described: Expression = described_column(node.clone(), column);
+                    if too_deep_to_keep(&described) {
+                        self.gap("describe_column", column_start);
+                        return Ok(Expression::Describe(Box::new(node)));
+                    }
+                    self.treed("describe_column", column_start);
+                    return Ok(described);
                 }
                 if self.kw("AS") && self.kw_at(1, "JSON") {
                     self.at += 2;
@@ -231,7 +268,7 @@ impl Parser<'_> {
                 self.at += 1;
                 scoped(self, "TABLES", "SCHEMA")?
             }
-            "TABLE" if self.kw_at(1, "EXTENDED") => self.show_table_extended()?,
+            "TABLE" if self.kw_at(1, "EXTENDED") => return self.show_table_extended(),
             "VIEWS" => {
                 self.at += 1;
                 scoped(self, "VIEWS", "SCHEMA")?
@@ -270,10 +307,16 @@ impl Parser<'_> {
                 self.at += 1;
                 let mut node: Show = Show::new("PARTITIONS");
                 node.target = Some(Expression::Table(Box::new(self.table_reference()?)));
-                let at: usize = self.offset();
                 if self.kw("PARTITION") {
-                    self.partition_spec()?;
-                    self.gap("show_partition", at);
+                    let at: usize = self.offset();
+                    let spec: Expression = partition(self.partition_spec()?);
+                    let shown: Expression = shown_partition(node, spec);
+                    if too_deep_to_keep(&shown) {
+                        self.gap("show_partition", at);
+                        return Ok(null());
+                    }
+                    self.treed("show_partition", at);
+                    return Ok(shown);
                 }
                 node
             }
@@ -305,18 +348,24 @@ impl Parser<'_> {
     }
 
     /// `SHOW TABLE EXTENDED [scope] LIKE pattern [PARTITION (...)]`.
-    fn show_table_extended(&mut self) -> Parsing<Show> {
+    fn show_table_extended(&mut self) -> Parsing<Expression> {
         self.at += 2;
         let mut node: Show = self.show_scope(Show::new("TABLE EXTENDED"), "SCHEMA")?;
         self.expect_kw("LIKE")?;
         node.like_keyword = true;
         node.like = Some(self.string_literal()?);
-        let at: usize = self.offset();
         if self.kw("PARTITION") {
-            self.partition_spec()?;
-            self.gap("show_partition", at);
+            let at: usize = self.offset();
+            let spec: Expression = partition(self.partition_spec()?);
+            let shown: Expression = shown_partition(node, spec);
+            if too_deep_to_keep(&shown) {
+                self.gap("show_partition", at);
+                return Ok(null());
+            }
+            self.treed("show_partition", at);
+            return Ok(shown);
         }
-        Ok(node)
+        Ok(Expression::Show(Box::new(node)))
     }
 
     /// `SHOW [USER | SYSTEM | ALL] FUNCTIONS [scope] [[LIKE] pattern]`, from `word`.
@@ -366,13 +415,13 @@ impl Parser<'_> {
         let mut node: Show = Show::new("TBLPROPERTIES");
         node.target = Some(Expression::Table(Box::new(self.table_reference()?)));
         if self.eat_char('(') {
-            let key: String = match self.string_at(0) {
-                true => self.string_lit()?,
-                false => joined(self.multipart_identifier()?).name,
+            let key: Expression = match self.string_at(0) {
+                true => string(&self.string_lit()?),
+                false => Expression::Identifier(joined(self.multipart_identifier()?)),
             };
             self.expect_char(')')?;
             node.scope_kind = Some("PROPERTY".to_owned());
-            node.scope = Some(string(&key));
+            node.scope = Some(key);
         }
         Ok(node)
     }
@@ -827,19 +876,41 @@ impl Parser<'_> {
         })))
     }
 
-    /// `DENY privileges ON securable TO principal`, read as `GRANT` is; no shared node holds it.
+    /// `DENY privileges ON securable TO principal`, read as `GRANT` is, as privileges and clauses.
     pub(crate) fn deny_statement(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
         self.expect_kw("DENY")?;
-        self.privileges()?;
-        let (kind, _) = self.securable()?;
+        let mut operands: Vec<Expression> = self
+            .privileges()?
+            .into_iter()
+            .map(|privilege| var(&privilege.name))
+            .collect();
+        let (kind, securable) = self.securable()?;
+        let on: String = match &kind {
+            Some(kind) => format!("ON {kind}"),
+            None => "ON".to_owned(),
+        };
+        operands.push(property(&on, securable.map(Expression::Identifier)));
         self.expect_kw("TO")?;
-        self.principals(kind.as_deref())?;
-        self.gap("deny", start);
-        Ok(null())
+        let mut principals: Vec<Expression> = self
+            .principals(kind.as_deref())?
+            .into_iter()
+            .map(|principal| Expression::Identifier(principal.name))
+            .collect();
+        let to: &str = match kind.as_deref() {
+            Some("SHARE") => "TO RECIPIENT",
+            _ => "TO",
+        };
+        let principals: Expression = match principals.len() {
+            1 => principals.remove(0),
+            _ => tuple(principals),
+        };
+        operands.push(property(to, Some(principals)));
+        self.treed("deny", start);
+        Ok(utility("DENY".to_owned(), operands))
     }
 
-    /// Spark's `(ADD | LIST) resourceType .*?`: the type must be a file, jar or archive.
+    /// Spark's `(ADD | LIST) resourceType .*?`: a file, jar or archive type, then string resources.
     pub(crate) fn manage_resource(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
         let op: String = self.advance()?.value.to_ascii_uppercase();
@@ -864,9 +935,22 @@ impl Parser<'_> {
                 true,
             ));
         }
+        let from: usize = self.at - 1;
         self.skip_statement_rest()?;
-        self.gap(if op == ADD_RESOURCE { "add" } else { "list" }, start);
-        Ok(null())
+        let (construct, pattern): (&str, &str) = match op == ADD_RESOURCE {
+            true => ("add", ADD_RESOURCES),
+            false => ("list", LIST_RESOURCES),
+        };
+        match self.tree_within(from, self.at, 2, pattern) {
+            Some(tree) => {
+                self.treed(construct, start);
+                Ok(tree)
+            }
+            None => {
+                self.gap(construct, start);
+                Ok(null())
+            }
+        }
     }
 
     /// `REVOKE privileges ON securable FROM principal`.
@@ -971,7 +1055,7 @@ impl Parser<'_> {
         })))
     }
 
-    /// `CACHE [LAZY] TABLE name [OPTIONS (...)] [[AS] query]`.
+    /// `CACHE [LAZY] TABLE name ...`, or `CACHE SELECT` as documented, else a gap of its text.
     pub(crate) fn cache_statement(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
         self.expect_kw("CACHE")?;
@@ -987,6 +1071,10 @@ impl Parser<'_> {
             }) {
                 self.at = at + 1;
                 return Err(self.error());
+            }
+            if let Some(tree) = self.tree_within(first - 1, self.at, 2, CACHE_SELECT) {
+                self.treed("cache_select", start);
+                return Ok(tree);
             }
             self.gap("cache_select", start);
             return Ok(null());

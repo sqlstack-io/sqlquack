@@ -153,7 +153,7 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         },
         VerdictTestCase {
             description: "a statement the shared tree has no node for is kept as a gap",
-            sql: "CACHE SELECT a FROM t",
+            sql: "REPAIR PRIVILEGES t1",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
@@ -187,9 +187,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "NOCOPY * parses, kept as a gap",
+            description: "NOCOPY * parses and is kept",
             sql: "CREATE OR REPLACE VIEW v NOCOPY * AS SELECT 1",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a metric view refuses COPY *",
@@ -217,9 +217,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "ALTER TABLE DROP FEATURE is a gap",
+            description: "ALTER TABLE DROP FEATURE keeps its feature and TRUNCATE HISTORY",
             sql: "ALTER TABLE t DROP FEATURE deletionVectors TRUNCATE HISTORY",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "DROP FEATURE TRUNCATE needs HISTORY",
@@ -472,14 +472,14 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "a column mask and a row filter on CREATE TABLE are gaps",
+            description: "a column mask and a row filter on CREATE TABLE are kept",
             sql: "CREATE TABLE t ( c INT MASK f USING COLUMNS ( 1 ) ) WITH ROW FILTER g ON ( c )",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ENABLE NOVALIDATE follows a primary key in CREATE TABLE",
             sql: "CREATE TABLE t ( c INT NOT NULL , PRIMARY KEY ( c ) ENABLE NOVALIDATE )",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ENABLE NOVALIDATE may not follow a UNIQUE constraint",
@@ -532,9 +532,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "an unquoted REFRESH resource path without blanks is a gap",
+            description: "an unquoted REFRESH resource path without blanks is its operand",
             sql: "REFRESH /data/x",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "REFRESH MATERIALIZED VIEW takes no WHERE",
@@ -1612,10 +1612,10 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "\"h\"",
         },
         ValueTestCase {
-            description: "a path wildcard stays in the path text",
+            description: "a path wildcard is a keyword in the path, not a star of columns",
             sql: "SELECT c1:item[*].price FROM VALUES ('x') AS T(c1)",
-            pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/literal/value",
-            expected_json: "\"item[*].price\"",
+            pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/j_s_o_n_path/expressions/1/j_s_o_n_path_subscript/this/var/this",
+            expected_json: "\"*\"",
         },
         ValueTestCase {
             description: "SHOW GRANTS ON keeps the securable kind",
@@ -1911,6 +1911,96 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             pointer: "/0/create_table/properties/0/property/value/identifier/quoted",
             expected_json: "true",
         },
+        ValueTestCase {
+            description: "ROW FORMAT DELIMITED keeps its field terminator",
+            sql: "CREATE TABLE t3 ( c1 INT ) ROW FORMAT DELIMITED FIELDS TERMINATED BY ','",
+            pointer: "/0/create_table/properties/0/row_format_delimited_property/fields/literal/value",
+            expected_json: "\",\"",
+        },
+        ValueTestCase {
+            description: "ROW FORMAT SERDE keeps its properties",
+            sql: "CREATE TABLE t3 ROW FORMAT SERDE 's1' WITH SERDEPROPERTIES ( 'k' = 'v' )",
+            pointer: "/0/create_table/properties/0/row_format_serde_property/serde_properties/serde_properties/expressions/0/eq/right/literal/value",
+            expected_json: "\"v\"",
+        },
+        ValueTestCase {
+            description: "STORED AS keeps its input and output formats",
+            sql: "CREATE TABLE t3 STORED AS INPUTFORMAT 'i1' OUTPUTFORMAT 'o1'",
+            pointer: "/0/create_table/properties/0/file_format_property/this/input_output_format/output_format/literal/value",
+            expected_json: "\"o1\"",
+        },
+        ValueTestCase {
+            description: "ADD splits its resources where a space falls, as Spark does",
+            sql: "ADD FILE '/tmp/a.txt' /tmp/b.txt",
+            pointer: "/0/utility_statement/operands/1/var/this",
+            expected_json: "\"/tmp/b.txt\"",
+        },
+        ValueTestCase {
+            description: "LIST keeps the resource kind it names",
+            sql: "LIST JARS",
+            pointer: "/0/utility_statement/kind",
+            expected_json: "\"LIST JARS\"",
+        },
+        ValueTestCase {
+            description: "RESTORE keeps the version it restores",
+            sql: "RESTORE t1 VERSION AS OF 3",
+            pointer: "/0/utility_statement/operands/1/property/value/literal/value",
+            expected_json: "\"3\"",
+        },
+        ValueTestCase {
+            description: "DENY keeps the securable's kind",
+            sql: "DENY SELECT , MODIFY ON TABLE t1 TO v1",
+            pointer: "/0/utility_statement/operands/2/property/this/var/this",
+            expected_json: "\"ON TABLE\"",
+        },
+        ValueTestCase {
+            description: "DENY keeps its principals",
+            sql: "DENY SELECT ON TABLE t1 TO v1 , v2",
+            pointer: "/0/utility_statement/operands/2/property/value/tuple/expressions/1/identifier/name",
+            expected_json: "\"v2\"",
+        },
+        ValueTestCase {
+            description: "CACHE SELECT as its page writes it keeps its table",
+            sql: "CACHE SELECT c1 , c2 FROM t1 WHERE c1 = 1",
+            pointer: "/0/utility_statement/operands/2/property/value/table/name/name",
+            expected_json: "\"t1\"",
+        },
+        ValueTestCase {
+            description: "REFRESH keeps an unquoted resource path as written",
+            sql: "REFRESH /data/x",
+            pointer: "/0/utility_statement/operands/0/var/this",
+            expected_json: "\"/data/x\"",
+        },
+        ValueTestCase {
+            description: "REFRESH keeps a quoted resource path as a string",
+            sql: "REFRESH '/data/x'",
+            pointer: "/0/utility_statement/operands/0/literal/value",
+            expected_json: "\"/data/x\"",
+        },
+        ValueTestCase {
+            description: "DESCRIBE of a column keeps the column's field",
+            sql: "DESCRIBE TABLE t1 c1.f1",
+            pointer: "/0/utility_statement/operands/1/dot/field/name",
+            expected_json: "\"f1\"",
+        },
+        ValueTestCase {
+            description: "DESCRIBE of a column keeps its EXTENDED",
+            sql: "DESC EXTENDED t1 c1",
+            pointer: "/0/utility_statement/kind",
+            expected_json: "\"DESC EXTENDED\"",
+        },
+        ValueTestCase {
+            description: "SHOW PARTITIONS keeps its partition",
+            sql: "SHOW PARTITIONS t1 PARTITION ( c1 = 1 )",
+            pointer: "/0/utility_statement/operands/1/partition/expressions/0/eq/left/column/name/name",
+            expected_json: "\"c1\"",
+        },
+        ValueTestCase {
+            description: "SHOW TABLE EXTENDED keeps its pattern before its partition",
+            sql: "SHOW TABLE EXTENDED IN s1 LIKE 'm' PARTITION ( c1 = 1 )",
+            pointer: "/0/utility_statement/operands/1/property/value/literal/value",
+            expected_json: "\"m\"",
+        },
     ];
     for test_case in test_cases {
         let parsed: Parsed = parse_strict(test_case.sql).expect(test_case.description);
@@ -1961,7 +2051,7 @@ fn given_sql_when_parsing_strictly_then_any_error_refuses_it() {
         },
         StrictTestCase {
             description: "a gap is kept, not refused",
-            sql: "CACHE SELECT a FROM t",
+            sql: "REPAIR PRIVILEGES t1",
             expected_outcome: Ok((1, 1)),
         },
         StrictTestCase {
@@ -1992,11 +2082,11 @@ fn given_a_gap_when_parsing_then_it_names_the_construct_and_its_range() {
     let test_cases = [
         GapTestCase {
             description: "a statement with no shared node is a gap from its first word to its end",
-            sql: "SELECT 1; CACHE SELECT a FROM t",
+            sql: "SELECT 1; REPAIR PRIVILEGES t1",
             expected_gaps: vec![Gap {
-                construct: "cache_select",
+                construct: "repair",
                 start: 10,
-                end: 31,
+                end: 30,
             }],
         },
         GapTestCase {
@@ -2172,6 +2262,17 @@ fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_is_refused_not_abort
             sql: || {
                 let open: String = "(SELECT * FROM ".repeat(40);
                 format!("SELECT * FROM {open}t{}", ")".repeat(40))
+            },
+            expected_refusal: None,
+        },
+        NestingTestCase {
+            description: "CACHE SELECT keeps text too deep for its documented form as a gap",
+            sql: || {
+                format!(
+                    "CACHE SELECT {}1{} FROM t1",
+                    "(".repeat(300),
+                    ")".repeat(300)
+                )
             },
             expected_refusal: None,
         },
