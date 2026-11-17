@@ -47,6 +47,19 @@ pub(crate) fn column_from(parts: Vec<Identifier>) -> Expression {
     parts.fold(column(Some(first), second), dot)
 }
 
+/// A qualified name with each part kept: the name itself, or its later parts as dot access.
+pub(crate) fn qualified(parts: Vec<Identifier>) -> Expression {
+    let mut parts = parts.into_iter();
+    let first: Identifier = parts.next().unwrap_or_else(Identifier::empty);
+    parts.fold(Expression::Identifier(first), dot)
+}
+
+/// A qualified name's leading parts and its last part.
+pub(crate) fn qualifier_and_name(mut parts: Vec<Identifier>) -> (Vec<Identifier>, Identifier) {
+    let name: Identifier = parts.pop().unwrap_or_else(Identifier::empty);
+    (parts, name)
+}
+
 pub(crate) fn dot(this: Expression, field: Identifier) -> Expression {
     Expression::Dot(Box::new(DotAccess {
         this,

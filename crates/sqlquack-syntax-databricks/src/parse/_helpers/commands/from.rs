@@ -844,9 +844,7 @@ impl Parser<'_> {
                 crate::parse::_helpers::tree::nodes::string(&token.value)
             }
             true => self.string_literal()?,
-            false => Expression::Identifier(crate::parse::_helpers::tree::nodes::joined(
-                self.multipart_identifier()?,
-            )),
+            false => crate::parse::_helpers::tree::nodes::qualified(self.multipart_identifier()?),
         };
         let equals: bool = self.eat_char('=');
         let value: Option<Expression> = if expressions && (equals || !self.terminal_at(0)) {

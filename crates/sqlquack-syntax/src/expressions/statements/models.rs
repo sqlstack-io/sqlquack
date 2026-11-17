@@ -1991,6 +1991,9 @@ pub struct ScriptingOpen {
     #[ast(skip)]
     pub span: SourceSpan,
     pub cursor: Identifier,
+    /// Databricks: the parts written before the cursor's name, such as a label
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub cursor_qualifier: Vec<Identifier>,
     pub using: Option<Vec<Expression>>,
     /// Databricks: the USING list written without parentheses.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
@@ -2004,6 +2007,9 @@ pub struct ScriptingFetch {
     #[ast(skip)]
     pub span: SourceSpan,
     pub cursor: Identifier,
+    /// Databricks: the parts written before the cursor's name, such as a label
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub cursor_qualifier: Vec<Identifier>,
     pub targets: Vec<Identifier>,
     /// Databricks: `FROM` or `NEXT FROM` before the cursor, as written.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -2017,6 +2023,9 @@ pub struct ScriptingName {
     #[ast(skip)]
     pub span: SourceSpan,
     pub name: Identifier,
+    /// Databricks: the parts written before the name, such as a label
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub qualifier: Vec<Identifier>,
 }
 
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]

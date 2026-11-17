@@ -15,8 +15,8 @@ use crate::parse::_helpers::commands::alters::partition;
 use crate::parse::_helpers::commands::queries::limit;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    alias, call, column, column_from, dot, joined, null, property, string, table, too_deep_to_keep,
-    tuple, utility, var,
+    alias, call, column, column_from, dot, joined, null, property, qualified, string, table,
+    too_deep_to_keep, tuple, utility, var,
 };
 use crate::parse::constants::{
     ADD_RESOURCE, ADD_RESOURCES, CACHE_SELECT, CATALOG, COMMENT_KINDS, DESCRIBE_KINDS,
@@ -141,7 +141,7 @@ impl Parser<'_> {
                 node.kind = Some(kind.to_owned());
                 self.at += 1;
                 node.extended = self.eat_kw("EXTENDED");
-                node.target = Expression::Identifier(joined(self.multipart_identifier()?));
+                node.target = qualified(self.multipart_identifier()?);
             }
             Some(style @ ("HISTORY" | "DETAIL")) if self.kind_at(0) => {
                 node.style = Some(style.to_owned());
@@ -158,7 +158,7 @@ impl Parser<'_> {
                 node.target = match kind == CATALOG && self.string_at(0) {
                     true => self.string_literal()?,
                     false if kind == "VOLUME" => table_expression(self.multipart_identifier()?),
-                    false => Expression::Identifier(joined(self.multipart_identifier()?)),
+                    false => qualified(self.multipart_identifier()?),
                 };
             }
             Some("EXTERNAL" | "STORAGE" | "GOVERNED" | "POLICY" | "MATERIALIZED")
@@ -237,7 +237,7 @@ impl Parser<'_> {
                         self.expect_char(')')?;
                         call(IDENTIFIER_CLAUSE, vec![name])
                     }
-                    false => Expression::Identifier(joined(self.multipart_identifier()?)),
+                    false => qualified(self.multipart_identifier()?),
                 },
             );
         }
@@ -304,7 +304,7 @@ impl Parser<'_> {
                 node.target = Some(Expression::Table(Box::new(self.table_reference()?)));
                 if let Some(keyword) = self.eat_from_or_in() {
                     node.scope_keyword = Some(keyword);
-                    node.db = Some(Expression::Identifier(joined(self.multipart_identifier()?)));
+                    node.db = Some(qualified(self.multipart_identifier()?));
                 }
                 node
             }
@@ -387,7 +387,7 @@ impl Parser<'_> {
         if self.string_at(0) {
             node.like = Some(self.string_literal()?);
         } else if node.like_keyword || self.is(is_identifier) {
-            node.like = Some(Expression::Identifier(joined(self.multipart_identifier()?)));
+            node.like = Some(qualified(self.multipart_identifier()?));
         }
         Ok(node)
     }
@@ -424,7 +424,7 @@ impl Parser<'_> {
         if self.eat_char('(') {
             let key: Expression = match self.string_at(0) {
                 true => string(&self.string_lit()?),
-                false => Expression::Identifier(joined(self.multipart_identifier()?)),
+                false => qualified(self.multipart_identifier()?),
             };
             self.expect_char(')')?;
             node.scope_kind = Some("PROPERTY".to_owned());
@@ -477,7 +477,7 @@ impl Parser<'_> {
                         _ => {
                             let parts: Vec<Identifier> = parser.multipart_identifier()?;
                             let count: usize = parts.len();
-                            Ok((Expression::Identifier(joined(parts)), count))
+                            Ok((qualified(parts), count))
                         }
                     })?;
                 match parser.ends_at(0) {
@@ -737,7 +737,7 @@ impl Parser<'_> {
                 match kind {
                     "TABLE" | "VIEW" | "VOLUME" => table_expression(parts),
                     "COLUMN" => column_from(parts),
-                    _ => Expression::Identifier(joined(parts)),
+                    _ => qualified(parts),
                 }
             }
         };
@@ -1023,11 +1023,8 @@ impl Parser<'_> {
         if self.kw_in(0, &["VAR", "VARIABLE"]) && self.is_at(1, is_identifier) {
             self.at += 1;
         }
-        let mut names: Vec<Expression> = self.comma_list(|parser| {
-            Ok(Expression::Identifier(joined(
-                parser.multipart_identifier()?,
-            )))
-        })?;
+        let mut names: Vec<Expression> =
+            self.comma_list(|parser| Ok(qualified(parser.multipart_identifier()?)))?;
         let type_first: usize = self.at;
         let kind: Option<String> = match self.kw("DEFAULT") || self.is_char('=') || self.ends_at(0)
         {

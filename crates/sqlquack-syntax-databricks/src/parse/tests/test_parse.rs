@@ -1221,6 +1221,36 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "\"s1\"",
         },
         ValueTestCase {
+            description: "a column's REFERENCES keeps ON DELETE NO ACTION",
+            sql: "CREATE TABLE t3 ( c1 INT REFERENCES t2 ON DELETE NO ACTION )",
+            pointer: "/0/create_table/columns/0/constraints/0/References/on_delete",
+            expected_json: "\"NoAction\"",
+        },
+        ValueTestCase {
+            description: "a FOREIGN KEY's ON UPDATE NO ACTION is not read as ON DELETE",
+            sql: "CREATE TABLE t3 ( c1 INT , FOREIGN KEY ( c1 ) REFERENCES t2 ON UPDATE NO ACTION )",
+            pointer: "/0/create_table/constraints/0/ForeignKey/references/on_delete",
+            expected_json: "null",
+        },
+        ValueTestCase {
+            description: "ADD CONSTRAINT keeps ON UPDATE NO ACTION after ON DELETE",
+            sql: "ALTER TABLE t3 ADD CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 ON DELETE NO ACTION ON UPDATE NO ACTION",
+            pointer: "/0/alter_table/actions/0/AddConstraint/ForeignKey/references/on_update",
+            expected_json: "\"NoAction\"",
+        },
+        ValueTestCase {
+            description: "a qualified schema name keeps its first part as written",
+            sql: "SHOW TABLES IN `SELECT` . v1",
+            pointer: "/0/show/scope/dot/this/identifier/quoted",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "a qualified cursor name keeps its qualifier apart",
+            sql: "BEGIN DECLARE v1 CURSOR FOR SELECT 1 ; OPEN l1 . v1 ; END",
+            pointer: "/0/scripting_block/body/1/open/cursor_qualifier/0/name",
+            expected_json: "\"l1\"",
+        },
+        ValueTestCase {
             description: "CREATE's RETAIN DROPPED FOR keeps the count apart from the unit",
             sql: "CREATE DATABASE d1 RETAIN DROPPED FOR 1 HOUR",
             pointer: "/0/create_schema/properties/0/property/value/interval/this/literal/value",

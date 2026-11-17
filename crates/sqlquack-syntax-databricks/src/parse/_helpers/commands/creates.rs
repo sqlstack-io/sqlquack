@@ -4,7 +4,7 @@ use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::columns::models::{
     ColumnConstraint, ColumnDef, ComputedColumn, ConstraintModifiers, ForeignKeyRef,
-    GeneratedAsIdentity, TableConstraint,
+    GeneratedAsIdentity, ReferentialAction, TableConstraint,
 };
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{CreateView, DropView, ViewColumn};
@@ -797,14 +797,26 @@ impl Parser<'_> {
             false => Vec::new(),
         };
         let mut match_full: bool = false;
+        let mut on_delete: Option<ReferentialAction> = None;
+        let mut on_update: Option<ReferentialAction> = None;
+        let mut on_update_first: bool = false;
+        let mut match_after_actions: bool = false;
         loop {
             if self.eat_kws(&["MATCH", "FULL"]) {
                 match_full = true;
+                match_after_actions = on_delete.is_some() || on_update.is_some();
             } else if self.kw("ON")
                 && self.kw_in(1, &["DELETE", "UPDATE"])
                 && self.kw_at(2, "NO")
                 && self.kw_at(3, "ACTION")
             {
+                match self.kw_at(1, "UPDATE") {
+                    true => {
+                        on_update_first = on_delete.is_none();
+                        on_update = Some(ReferentialAction::NoAction);
+                    }
+                    false => on_delete = Some(ReferentialAction::NoAction),
+                }
                 self.at += 4;
             } else {
                 break;
@@ -813,12 +825,12 @@ impl Parser<'_> {
         Ok(ForeignKeyRef {
             table,
             columns,
-            on_delete: None,
-            on_update: None,
-            on_update_first: false,
+            on_delete,
+            on_update,
+            on_update_first,
             match_type: match_full
                 .then_some(sqlquack_syntax::expressions::columns::models::MatchType::Full),
-            match_after_actions: false,
+            match_after_actions,
             constraint_name: None,
             deferrable: None,
             has_foreign_key_keywords: false,
