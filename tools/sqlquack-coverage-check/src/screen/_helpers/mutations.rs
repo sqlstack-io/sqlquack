@@ -103,7 +103,78 @@ fn inserted(sql: &str, at: usize, word: &str) -> String {
     format!("{head}{left}{word}{right}{tail}")
 }
 
-/// Every distinct, non-blank text dropping, respelling or preceding with `AS` or `=` one token.
+/// The byte ranges inside the delimiters of each comment in the text the `lexed` tokens leave.
+pub(crate) fn comment_bodies(sql: &str, lexed: &[(usize, usize)]) -> Vec<(usize, usize)> {
+    let mut gaps: Vec<(usize, usize)> = Vec::new();
+    let mut from: usize = 0;
+    for &(start, end) in lexed {
+        if start > from {
+            gaps.push((from, start));
+        }
+        from = from.max(end);
+    }
+    gaps.push((from, sql.len()));
+    let mut out: Vec<(usize, usize)> = Vec::new();
+    for (start, end) in gaps {
+        let gap: &str = &sql[start..end];
+        let mut at: usize = 0;
+        while at < gap.len() {
+            let rest: &str = &gap[at..];
+            let body: Option<(usize, usize)> = match () {
+                () if rest.starts_with("/*") => nested_close(rest).map(|close| (2, close)),
+                () if rest.starts_with("--") => Some((2, rest.find('\n').unwrap_or(rest.len()))),
+                () => None,
+            };
+            match body {
+                Some((open, close)) if close >= open => {
+                    out.push((start + at + open, start + at + close));
+                    at += close.max(open);
+                }
+                _ => at += rest.chars().next().map_or(1, char::len_utf8),
+            }
+        }
+    }
+    out
+}
+
+/// Where the `*/` closing the `/*` that opens `text` starts, counting nested comments as Spark does.
+fn nested_close(text: &str) -> Option<usize> {
+    let mut depth: usize = 0;
+    let mut at: usize = 0;
+    while at + 1 < text.len() {
+        match &text.as_bytes()[at..at + 2] {
+            b"/*" => {
+                depth += 1;
+                at += 2;
+            }
+            b"*/" => {
+                depth -= 1;
+                if depth == 0 {
+                    return Some(at);
+                }
+                at += 2;
+            }
+            _ => at += 1,
+        }
+    }
+    None
+}
+
+/// The byte ranges of each `(` among the `lexed` tokens and its matching `)`.
+fn paren_pairs(sql: &str, lexed: &[(usize, usize)]) -> Vec<((usize, usize), (usize, usize))> {
+    let mut open: Vec<(usize, usize)> = Vec::new();
+    let mut out: Vec<((usize, usize), (usize, usize))> = Vec::new();
+    for &(start, end) in lexed {
+        match &sql[start..end] {
+            "(" => open.push((start, end)),
+            ")" => out.extend(open.pop().map(|left| (left, (start, end)))),
+            _ => {}
+        }
+    }
+    out
+}
+
+/// Every distinct, non-blank one-token or parenthesis-pair change to `sql` that could collapse.
 pub(crate) fn mutations(sql: &str, lexed: &[(usize, usize)]) -> Vec<Mutation> {
     let lexed: Vec<(usize, usize)> = lexed
         .iter()
@@ -114,12 +185,14 @@ pub(crate) fn mutations(sql: &str, lexed: &[(usize, usize)]) -> Vec<Mutation> {
     tokens.extend(lexed.iter().copied());
     tokens.sort_unstable();
     tokens.dedup();
-    let covered = |(start, end): (usize, usize)| lexed.iter().any(|&(s, e)| s < end && start < e);
+    let bodies: Vec<(usize, usize)> = comment_bodies(sql, &lexed);
+    let inside =
+        |(start, end): (usize, usize)| bodies.iter().any(|&(from, to)| from <= start && end <= to);
     let mut seen: Vec<String> = vec![sql.to_owned()];
     let mut out: Vec<Mutation> = Vec::new();
     let mut push = |kind: MutationKind,
                     token: &str,
-                    (position, last, untokenized): (usize, bool, bool),
+                    (position, last, changed): (usize, bool, (usize, usize)),
                     text: String| {
         if text.trim().is_empty() || seen.contains(&text) {
             return;
@@ -130,40 +203,52 @@ pub(crate) fn mutations(sql: &str, lexed: &[(usize, usize)]) -> Vec<Mutation> {
             token: token.to_owned(),
             position,
             last,
-            untokenized,
+            untokenized: inside(changed),
             sql: text,
         });
     };
     for (position, &(start, end)) in tokens.iter().enumerate() {
         let token: &str = &sql[start..end];
-        let place = (
-            position,
-            sql[end..].trim().is_empty(),
-            !covered((start, end)),
-        );
-        push(MutationKind::Drop, token, place, dropped(sql, (start, end)));
+        let last: bool = sql[end..].trim().is_empty();
+        let whole = (position, last, (start, end));
+        let before = (position, last, (start, start));
+        push(MutationKind::Drop, token, whole, dropped(sql, (start, end)));
         for (kind, text) in respellings(token) {
             push(
                 kind,
                 token,
-                place,
+                whole,
                 format!("{}{text}{}", &sql[..start], &sql[end..]),
             );
         }
         push(
             MutationKind::InsertAs,
             token,
-            place,
+            before,
             inserted(sql, start, "AS"),
         );
         push(
             MutationKind::InsertEquals,
             token,
-            place,
+            before,
             inserted(sql, start, "="),
         );
+        if lexed.contains(&(start, end)) && !matches!(token, "(" | ")") {
+            let wrapped: String = format!("{}( {token} ){}", &sql[..start], &sql[end..]);
+            push(MutationKind::ParenPair, token, whole, wrapped);
+        }
     }
-    let end = (tokens.len(), true, false);
+    for (open, close) in paren_pairs(sql, &lexed) {
+        let position: usize = tokens.iter().position(|token| *token == open).unwrap_or(0);
+        let text: String = dropped(&dropped(sql, close), open);
+        let place = (
+            position,
+            sql[close.1..].trim().is_empty(),
+            (open.0, close.1),
+        );
+        push(MutationKind::ParenPair, "(", place, text);
+    }
+    let end = (tokens.len(), true, (sql.len(), sql.len()));
     push(
         MutationKind::InsertAs,
         "",

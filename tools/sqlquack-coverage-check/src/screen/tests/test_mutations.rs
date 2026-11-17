@@ -1,10 +1,12 @@
 use crate::screen::_helpers::mutations::mutations;
-use crate::screen::models::MutationKind;
 use crate::screen::models::MutationKind::{
-    Backquote, DoubleQuote, Drop, InsertAs, InsertEquals, Requote, String, Swap, Unquote,
+    Backquote, DoubleQuote, Drop, InsertAs, InsertEquals, ParenPair, Requote, String, Swap, Unquote,
 };
+use crate::screen::models::{Mutation, MutationKind};
 use crate::screen::tests::helpers::{databricks_tokens, no_tokens};
-use crate::screen::tests::test_types::{GluedTokenTestCase, MutationsTestCase};
+use crate::screen::tests::test_types::{
+    CommentBodyTestCase, GluedTokenTestCase, MutationsTestCase,
+};
 
 #[test]
 fn given_a_text_when_listing_its_mutations_then_each_token_is_dropped_and_respelled_once() {
@@ -165,6 +167,100 @@ fn given_a_glued_token_when_listing_its_mutations_then_the_lexer_changes_it_alon
         let written: bool = mutations(test_case.sql, &lexed)
             .iter()
             .any(|mutation| mutation.sql == test_case.variant);
+        assert_eq!(
+            written, test_case.expected_written,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_comment_when_listing_mutations_then_only_changes_inside_its_body_are_untokenized() {
+    let test_cases = [
+        CommentBodyTestCase {
+            description: "a word of the comment's body is dropped inside it",
+            sql: "SELECT /* m */ 1",
+            variant: "SELECT /* */ 1",
+            expected_untokenized: true,
+        },
+        CommentBodyTestCase {
+            description: "AS written before the comment is outside its body",
+            sql: "SELECT /* m */ 1",
+            variant: "SELECT AS /* m */ 1",
+            expected_untokenized: false,
+        },
+        CommentBodyTestCase {
+            description: "dropping the comment's opening delimiter is outside its body",
+            sql: "SELECT /* m */ 1",
+            variant: "SELECT m */ 1",
+            expected_untokenized: false,
+        },
+        CommentBodyTestCase {
+            description: "a nested comment's body runs to the */ that closes the outer one",
+            sql: "SELECT /* m /* m */ m */ 1",
+            variant: "SELECT /* m /* m */ AS m */ 1",
+            expected_untokenized: true,
+        },
+        CommentBodyTestCase {
+            description: "a line comment's body runs to the end of its line",
+            sql: "SELECT 1 -- m",
+            variant: "SELECT 1 --",
+            expected_untokenized: true,
+        },
+    ];
+    for test_case in test_cases {
+        let lexed: Vec<(usize, usize)> = databricks_tokens(test_case.sql);
+        let written: Vec<Mutation> = mutations(test_case.sql, &lexed);
+        let found: Option<&Mutation> = written
+            .iter()
+            .find(|mutation| mutation.sql == test_case.variant);
+        assert_eq!(
+            found.map(|mutation| mutation.untokenized),
+            Some(test_case.expected_untokenized),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_parentheses_when_listing_mutations_then_a_matching_pair_is_dropped_and_a_token_wrapped() {
+    let test_cases = [
+        GluedTokenTestCase {
+            description: "a matching pair around a table argument is dropped",
+            sql: "SELECT * FROM abs ( TABLE ( t1 ) )",
+            variant: "SELECT * FROM abs ( TABLE t1 )",
+            lexed: databricks_tokens,
+            expected_written: true,
+        },
+        GluedTokenTestCase {
+            description: "the outer pair is dropped on its own, keeping the inner one",
+            sql: "SELECT * FROM abs ( TABLE ( t1 ) )",
+            variant: "SELECT * FROM abs TABLE ( t1 )",
+            lexed: databricks_tokens,
+            expected_written: true,
+        },
+        GluedTokenTestCase {
+            description: "a bare value is wrapped in a new pair",
+            sql: "VALUES 1",
+            variant: "VALUES ( 1 )",
+            lexed: databricks_tokens,
+            expected_written: true,
+        },
+        GluedTokenTestCase {
+            description: "a parenthesis inside a string is no pair",
+            sql: "SELECT '(' , ')'",
+            variant: "SELECT '' , ''",
+            lexed: databricks_tokens,
+            expected_written: false,
+        },
+    ];
+    for test_case in test_cases {
+        let lexed: Vec<(usize, usize)> = (test_case.lexed)(test_case.sql);
+        let written: bool = mutations(test_case.sql, &lexed)
+            .iter()
+            .any(|mutation| mutation.kind == ParenPair && mutation.sql == test_case.variant);
         assert_eq!(
             written, test_case.expected_written,
             "{}",

@@ -1,7 +1,9 @@
 use serde_json::{Value, json};
 
 use crate::screen::main::screen_cases::screen_cases;
-use crate::screen::models::{AllowedSameTree, MutationKind, ScreenAllowlist, ScreenReport};
+use crate::screen::models::{
+    AllowedSameTree, LexicalSpelling, MutationKind, ScreenAllowlist, ScreenReport,
+};
 use crate::screen::tests::helpers::{FORM, case, databricks_tokens, databricks_tree, entry};
 use crate::screen::tests::test_types::{AllowlistTestCase, KnownCollapseTestCase};
 
@@ -236,13 +238,14 @@ fn given_a_spelling_the_grammar_keeps_when_screening_then_its_variant_has_its_ow
 fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unused_entries_are_stale()
  {
     let constant = |sql: &str| -> Option<Value> {
-        (!sql.contains(['\'', '`', '"', '=']) && !sql.split(' ').any(|word| word == "AS"))
+        (!sql.contains(['\'', '`', '"', '=', '(']) && !sql.split(' ').any(|word| word == "AS"))
             .then(|| json!(["one tree"]))
     };
     let test_cases = [
         AllowlistTestCase {
             description: "no entry: both one-token drops that parse alike are flagged",
             entries: vec![],
+            lexical: vec![],
             full: true,
             expected_flagged: 2,
             expected_allowed: 0,
@@ -252,6 +255,7 @@ fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unus
         AllowlistTestCase {
             description: "an entry for one token allows only that token",
             entries: vec![entry(FORM, MutationKind::Drop, Some("m2"))],
+            lexical: vec![],
             full: true,
             expected_flagged: 1,
             expected_allowed: 1,
@@ -261,6 +265,7 @@ fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unus
         AllowlistTestCase {
             description: "an entry pinned to neither a token nor untokenized text fails as unpinned",
             entries: vec![entry(FORM, MutationKind::Drop, None)],
+            lexical: vec![],
             full: true,
             expected_flagged: 0,
             expected_allowed: 2,
@@ -273,6 +278,7 @@ fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unus
                 untokenized: true,
                 ..entry(FORM, MutationKind::Drop, None)
             }],
+            lexical: vec![],
             full: true,
             expected_flagged: 2,
             expected_allowed: 0,
@@ -282,6 +288,7 @@ fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unus
         AllowlistTestCase {
             description: "an entry no same-tree variant matches is stale",
             entries: vec![entry(FORM, MutationKind::Drop, Some("m3"))],
+            lexical: vec![],
             full: true,
             expected_flagged: 2,
             expected_allowed: 0,
@@ -294,6 +301,7 @@ fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unus
                 last_token: true,
                 ..entry(FORM, MutationKind::Drop, Some("m2"))
             }],
+            lexical: vec![],
             full: true,
             expected_flagged: 1,
             expected_allowed: 1,
@@ -303,6 +311,7 @@ fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unus
         AllowlistTestCase {
             description: "on a full run an entry for a form with no screened case is stale",
             entries: vec![entry("db.ddl.other", MutationKind::Drop, Some("m1"))],
+            lexical: vec![],
             full: true,
             expected_flagged: 2,
             expected_allowed: 0,
@@ -312,11 +321,25 @@ fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unus
         AllowlistTestCase {
             description: "on a run of chosen forms an entry for another form is not judged",
             entries: vec![entry("db.ddl.other", MutationKind::Drop, Some("m1"))],
+            lexical: vec![],
             full: false,
             expected_flagged: 2,
             expected_allowed: 0,
             expected_stale: 0,
             expected_unpinned: 0,
+        },
+        AllowlistTestCase {
+            description: "a lexical entry of a kind other than requote allows nothing and fails",
+            entries: vec![],
+            lexical: vec![LexicalSpelling {
+                mutation: MutationKind::Drop,
+                reason: "not a respelling".to_owned(),
+            }],
+            full: true,
+            expected_flagged: 2,
+            expected_allowed: 0,
+            expected_stale: 0,
+            expected_unpinned: 1,
         },
     ];
     for test_case in test_cases {
@@ -324,7 +347,7 @@ fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unus
             &[case("m1 m2")],
             (&constant, &|sql: &str| vec![(0, 2), (3, sql.len())]),
             &ScreenAllowlist {
-                lexical: vec![],
+                lexical: test_case.lexical,
                 allowed: test_case.entries,
             },
             test_case.full,

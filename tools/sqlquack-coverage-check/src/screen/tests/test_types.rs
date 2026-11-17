@@ -1,4 +1,4 @@
-use crate::screen::models::{AllowedSameTree, MutationKind};
+use crate::screen::models::{AllowedSameTree, LexicalSpelling, MutationKind};
 
 /// A text, and the (kind, token) of every variant `mutations` must write for it, in order.
 pub(crate) struct MutationsTestCase {
@@ -16,6 +16,14 @@ pub(crate) struct GluedTokenTestCase {
     pub(crate) expected_written: bool,
 }
 
+/// A text with a comment, one variant of it, and whether that variant's change lies inside the comment's body.
+pub(crate) struct CommentBodyTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) variant: &'static str,
+    pub(crate) expected_untokenized: bool,
+}
+
 /// A Databricks text, a one-token variant of it, and whether the two must parse to the same tree.
 pub(crate) struct KnownCollapseTestCase {
     pub(crate) description: &'static str,
@@ -28,6 +36,7 @@ pub(crate) struct KnownCollapseTestCase {
 pub(crate) struct AllowlistTestCase {
     pub(crate) description: &'static str,
     pub(crate) entries: Vec<AllowedSameTree>,
+    pub(crate) lexical: Vec<LexicalSpelling>,
     /// Whether the run screens every form, so entries for unscreened forms are judged.
     pub(crate) full: bool,
     pub(crate) expected_flagged: usize,

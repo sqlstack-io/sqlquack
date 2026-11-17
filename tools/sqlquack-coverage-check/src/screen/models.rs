@@ -24,6 +24,8 @@ pub enum MutationKind {
     InsertAs,
     /// `=` is written before the token, or after the last one.
     InsertEquals,
+    /// A matching `(` and `)` are both removed, or one token is wrapped in a new pair.
+    ParenPair,
 }
 
 /// One variant of a case's text.
@@ -35,7 +37,7 @@ pub struct Mutation {
     pub position: usize,
     /// Whether the token is the text's last.
     pub last: bool,
-    /// Whether the change lies inside text no lexer token covers, such as a comment's.
+    /// Whether the changed bytes lie wholly inside a comment's body, between its delimiters.
     pub untokenized: bool,
     pub sql: String,
 }
@@ -87,7 +89,7 @@ pub struct AllowedSameTree {
     /// Only when the changed token is the text's last, such as the `;` that ends the statement.
     #[serde(default)]
     pub last_token: bool,
-    /// Only changes inside text no lexer token covers, such as a comment's; set when `token` is not.
+    /// Only changes wholly inside a comment's body; set when `token` is not.
     #[serde(default)]
     pub untokenized: bool,
     pub reason: String,

@@ -138,7 +138,30 @@ pub(crate) fn screen_report(
         tokens.map_or_else(Vec::new, |ranges| ranges(sql))
     };
     let full: bool = forms.is_none() && family.is_none();
-    Ok(screen_cases(&cases, (&tree, &lexed), &allowlist, full))
+    let mut report: ScreenReport = screen_cases(&cases, (&tree, &lexed), &allowlist, full);
+    report.unpinned.extend(uncatalogued(coverage, &allowlist));
+    Ok(report)
+}
+
+/// Allowlist entries whose form the catalogue does not hold, on every run, chosen forms or not.
+fn uncatalogued(coverage: &SyntaxCoverage, allowlist: &ScreenAllowlist) -> Vec<String> {
+    let known: BTreeSet<&str> = coverage
+        .catalogue
+        .values()
+        .flatten()
+        .map(|form| form.id.as_str())
+        .collect();
+    allowlist
+        .allowed
+        .iter()
+        .filter(|entry| !known.contains(entry.form.as_str()))
+        .map(|entry| {
+            format!(
+                "{} {:?}: the form is not catalogued",
+                entry.form, entry.mutation
+            )
+        })
+        .collect()
 }
 
 /// Fails when a same-tree variant has no allowing entry, or an entry is stale or unpinned.

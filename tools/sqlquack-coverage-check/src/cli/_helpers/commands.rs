@@ -184,6 +184,16 @@ fn screen_gate(coverage: &SyntaxCoverage, root: &Path) -> Result<(), ExitCode> {
         return Ok(());
     }
     let check: CheckResult = checked(coverage)?;
+    if !check.problems.is_empty() {
+        for problem in &check.problems {
+            say(problem);
+        }
+        say(&format!(
+            "FAILED, {} problems: the screen cannot tell which forms are approved",
+            check.problems.len()
+        ));
+        return Err(ExitCode::FAILURE);
+    }
     let approved: Vec<String> = check
         .forms
         .iter()
