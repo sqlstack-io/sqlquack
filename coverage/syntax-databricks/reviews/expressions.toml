@@ -901,3 +901,20 @@ note = "Re-read after the parser batch at b98f25d91 (parser tree 6546c748), from
 "db.expressions.names.subscript-dot-3" = "d6ad0859887458aa7a2ca606b1ef275aa6ab0f1094a5d12287f6c346fc740600"
 "db.expressions.struct-type" = "4257549739c84540535a90be31319c108c3dfe850e500b391b5c443d32c21a7b"
 "db.expressions.timestamp-ntz-type.timestamp-without-time-zone" = "ef35019816ea431684c6c873ddefc6c159f22b64d2e14c39428c5d015413ffc8"
+
+[[review]]
+id = "db-expressions-043"
+family = "expressions"
+catalogue_sha256 = "ffc590e2daad0e5c31541285aca1a5a7d1ce7e7bedb0c1ccdc4c1cfcdd32473c"
+obligations_sha256 = "697332d6178cfd5465cf1ebae8c6d98f956a76ed507c8807032c76c97f48bc11"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:57:49Z"
+verdict = "approved"
+forms = [
+  "db.expressions.object-type",
+]
+note = "Re-binds db-expressions-035, not a re-read: that exclusion was bound to parser tree 880c142a and went stale when the parser batch changed the tree, so object-type silently left the excluded count. The catalogue and obligation files are byte-identical to the ones it bound (catalogue ffc590e2, obligations 697332d6), the page is unchanged, and the local parser at 6546c748 still refuses OBJECT as input in all three cases (o018, o019, o020). Exclusion only, naming no other form: the OBJECT type is output-only, so no statement can write it as input."
+
+[[review.exclusion]]
+form = "db.expressions.object-type"
+reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
