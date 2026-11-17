@@ -570,15 +570,29 @@ parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
 reviewed_utc = "2026-11-17T06:47:23Z"
 verdict = "approved"
 forms = [
-  "db.utility.analyze-compute-storage-metrics",
   "db.utility.reorg-table",
 ]
 note = "Re-read on 17 Nov 2026. The 16 Nov full reading approved each of these forms at an earlier fingerprint with the same definition hash; every case that changed since (receipts now attached, local verdicts that now agree with them, replaced or whitespace-normalised texts) was read against its receipt and its local parse tree on 6e28c6100, and each form is bound at its current fingerprint and definition."
 
 [review.fingerprints]
-"db.utility.analyze-compute-storage-metrics" = "42a62252e9488df1fe181b303303148ad790b12e2c099945fb322d9f49a9390e"
 "db.utility.reorg-table" = "e82860c096b07d6836f511f4ebbd991de8f980aff79c204b30d7e28afe641aec"
 
 [review.definitions]
-"db.utility.analyze-compute-storage-metrics" = "40345f68df0482cadc53f9b24485832263ce96b892b381760ba35ba8ad88684f"
 "db.utility.reorg-table" = "dd4de5c4937bc97fe339fb7146fb35642df25f5bdf6dfa14273c18f8f38527b2"
+
+[[review]]
+id = "db-utility-029"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T07:20:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.analyze-compute-storage-metrics",
+]
+note = "Withdraws this form from the 17 Nov approval db-utility-028. o019 (the inventory path followed by a second string, CONF left out) is met by accident: the warehouse joins 'm' 'v1' into one path and refuses at the end of input because CONF is missing, but the local parser refuses at 'v1', and with one path string and no CONF (USING INVENTORY LOCATION 'm') it accepts. The parser must require CONF; a case with CONF left out and one path string needs a receipt."
+
+[review.fingerprints]
+"db.utility.analyze-compute-storage-metrics" = "42a62252e9488df1fe181b303303148ad790b12e2c099945fb322d9f49a9390e"
+
+[review.definitions]
+"db.utility.analyze-compute-storage-metrics" = "40345f68df0482cadc53f9b24485832263ce96b892b381760ba35ba8ad88684f"
