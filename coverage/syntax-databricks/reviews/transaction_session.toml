@@ -332,3 +332,23 @@ note = "Withdraws this form's approval. A sweep for grammar keywords that the pa
 
 [review.definitions]
 "db.transaction_session.use-catalog" = "d9bf33bfb16a40670377a100bc19b8b130d2e546d78459992dd2e3de4156aed6"
+
+[[review]]
+id = "db-transaction_session-015"
+family = "transaction_session"
+parser_tree = "4109a513b38f100406891e449ac7bbb0b975fffb"
+reviewed_utc = "2026-11-17T11:50:12Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.use-catalog",
+  "db.transaction_session.use-schema",
+]
+note = "Re-read on 17 Nov 2026 after the hand reading in 535c8ff63, which requires use-catalog's name, and the parser fix in 8d5fb7e14, which reads SET CATALOG with a name or string as a use of kind Catalog with keyword SET. Read against the 2026.45 receipts in evidence set evK-17nov (evJ-17nov plus the recI and recJ recordings). use-catalog: every positive writes a catalog name or string, and each tree is a use of kind Catalog with that name; SET CATALOG v1 (NO_SUCH_CATALOG_EXCEPTION 'v1', recorded) and SET CATALOG ' catalog_name ' keep keyword SET and, for the string, string_name, so neither shares a tree with its USE spelling. The observed USE v1 and USE CATALOG parse in the warehouse as USE of a schema (SCHEMA_NOT_FOUND workspace.v1 and workspace.catalog), and locally as a use with no kind naming v1 and CATALOG, which is the same reading. use-schema: re-read because the bare USE case is now its own (re-recorded under its id: syntax error at end of input, pos 3), and it fails locally at the warehouse's position; its other cases are unchanged. The mechanical check finds every name and literal in each accepted tree. The forms are bound at their current fingerprints and definitions; use-catalog's approval supersedes the concern of db-transaction_session-014."
+
+[review.fingerprints]
+"db.transaction_session.use-catalog" = "d06fbb5e4bb218e79b5bc58bd5d90b439f2637764bb43882f1bc1df9fb8b2986"
+"db.transaction_session.use-schema" = "d995053a79f00236112a4bfd1b8d67b095767b147cde185b8eabe6feb1b719b8"
+
+[review.definitions]
+"db.transaction_session.use-catalog" = "4880df0a0bb5e1408647670faeaeffae8cb1211dd75c6d4e6ff94b0b6ffeaf64"
+"db.transaction_session.use-schema" = "9086fedaf7a4a5a1b1bc7d4e1451d249467bf85f86d0e0abaf5d67a27f066bf4"

@@ -204,3 +204,20 @@ note = "Withdraws this form from the 17 Nov approval db-security_admin-009. Its 
 
 [review.definitions]
 "db.security_admin.show-grant-on-share" = "36715f789f5d82931fd9372236e945d7aca1b617bfc3325c5df462506a1619c9"
+
+[[review]]
+id = "db-security_admin-011"
+family = "security_admin"
+parser_tree = "4109a513b38f100406891e449ac7bbb0b975fffb"
+reviewed_utc = "2026-11-17T11:50:12Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.show-grant-on-share",
+]
+note = "Re-read on 17 Nov 2026 after the hand reading in 535c8ff63, which reads the Syntax line as SHOW GRANTS ON SHARE <share_name> from the page's Parameters and example. Read against the 2026.45 receipts in evidence set evK-17nov (evJ-17nov plus the recI recording). Every positive names a share, and each tree is a show of GRANTS with scope_kind ON SHARE and the share as its scope, so none shares a tree with SHOW GRANTS ON a table (scope_kind ON). The observed SHOW GRANTS ON v1 (accepted, a view) and SHOW GRANTS ON SHARE (TABLE_DOES_NOT_EXIST for a table named share) parse locally as SHOW GRANTS ON a name, the warehouse's reading. Of the 3 locally rejected cases, SHOW GRANTS ON SHARE 'v1' fails at the warehouse's position (pos 21). SHOW GRANTS SHARE v1 fails locally at v1 (pos 18) and in the warehouse at end of input (pos 20), and SHOW ON SHARE v1 locally at ON (pos 5) and in the warehouse at SHARE (pos 8), the same two differences show-grant's approved cases have; their repairs (adding ON, and adding GRANTS) give SHOW GRANTS ON SHARE v1, which parses locally and in its receipt (SHARE_DOES_NOT_EXIST). The mechanical check finds every name and literal in each accepted tree. This supersedes the concern of db-security_admin-010. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.security_admin.show-grant-on-share" = "18706107e501d7fd6e698d54a9522e0e7f37fd724bd265d0f8c871e9b732c6ef"
+
+[review.definitions]
+"db.security_admin.show-grant-on-share" = "ca6c1a1178bd4211b132f144c7358fa4b0de4760bb5ff903d9c402f83935b43c"
