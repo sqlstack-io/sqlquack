@@ -9,4 +9,5 @@ pub mod scan;
 pub use crate::parse::errors::{ParseError, StrictFailure};
 pub use crate::parse::main::parse::parse;
 pub use crate::parse::main::parse_strict::parse_strict;
+pub use crate::parse::main::parse_strict_reviewed::parse_strict_reviewed;
 pub use sqlquack_syntax::{Gap, Parsed};

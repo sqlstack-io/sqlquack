@@ -461,3 +461,18 @@ pub(crate) const ADD_RESOURCES: &str =
 /// `LIST` of resources: the kind, then any resources.
 pub(crate) const LIST_RESOURCES: &str =
     "LIST { FILE | FILES | JAR | JARS | ARCHIVE | ARCHIVES } [ resource ... ]";
+
+/// Forms read as trees that the formatter and lint still refuse as gaps until their layout is reviewed; any future Databricks translator or renderer must handle each of these, and every key of `KEYED_ACTIONS`, or refuse it.
+pub(crate) const TREED_FORMS: [&str; 11] = [
+    "add",
+    "list",
+    "restore",
+    "deny",
+    "cache_select",
+    "refresh",
+    "describe_column",
+    "show_partition",
+    "row_format",
+    "stored_as",
+    "constraint_validation",
+];

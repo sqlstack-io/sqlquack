@@ -5,7 +5,7 @@ use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::keywords::main::is_strict_non_reserved::is_strict_non_reserved;
 use crate::parse::constants::{
-    CLAUSE_WORDS, FOR, MATCH_RECOGNIZE, PAIRED_CLAUSE_WORDS, QUERY_STARTS,
+    CLAUSE_WORDS, FOR, MATCH_RECOGNIZE, PAIRED_CLAUSE_WORDS, QUERY_STARTS, TREED_FORMS,
 };
 use crate::parse::errors::ParseError;
 use crate::scan::models::{Token, TokenKind};
@@ -31,6 +31,8 @@ pub(crate) struct Parser<'sql> {
     pub(crate) at: usize,
     depth: usize,
     pub(crate) gaps: Vec<Gap>,
+    /// Forms of `TREED_FORMS` read as trees whose layout has not been reviewed.
+    pub(crate) treed: Vec<Gap>,
     /// Whether the statement being parsed holds a gap, so it becomes a `Command`.
     pub(crate) opaque: bool,
     /// The depth limit's error once any reading passed it; every later reading fails with it.
@@ -75,6 +77,7 @@ impl<'sql> Parser<'sql> {
             at: 0,
             depth: 0,
             gaps: Vec::new(),
+            treed: Vec::new(),
             opaque: false,
             too_deep: None,
             for_query: false,
@@ -261,16 +264,33 @@ impl<'sql> Parser<'sql> {
     /// Records a construct the shared tree cannot hold, from `start` to here.
     pub(crate) fn gap(&mut self, construct: &'static str, start: usize) {
         self.opaque = true;
+        let gap: Gap = self.span(construct, start);
+        self.gaps.push(gap);
+    }
+
+    /// Records the form `construct` of `TREED_FORMS`, from `start` to here, read as a tree.
+    pub(crate) fn treed(&mut self, construct: &'static str, start: usize) {
+        match TREED_FORMS.contains(&construct) {
+            true => {
+                let form: Gap = self.span(construct, start);
+                self.treed.push(form);
+            }
+            false => self.gap(construct, start),
+        }
+    }
+
+    /// The range from `start` to the end of the last token read, named `construct`.
+    fn span(&self, construct: &'static str, start: usize) -> Gap {
         let end: usize = self
             .at
             .checked_sub(1)
             .and_then(|last| self.tokens.get(last))
             .map_or(start, |token| token.end);
-        self.gaps.push(Gap {
+        Gap {
             construct,
             start,
             end: end.max(start),
-        });
+        }
     }
 
     /// Runs `parse` one level deeper, failing past the depth limit.
@@ -298,10 +318,12 @@ impl<'sql> Parser<'sql> {
         parse: impl FnOnce(&mut Self) -> Parsing<T>,
     ) -> Result<T, (ParseError, usize)> {
         let (at, gaps, opaque, depth) = (self.at, self.gaps.len(), self.opaque, self.depth);
+        let treed: usize = self.treed.len();
         parse(self).map_err(|error| {
             let reached: usize = self.at;
             self.at = at;
             self.gaps.truncate(gaps);
+            self.treed.truncate(treed);
             self.opaque = opaque;
             self.depth = depth;
             (error, reached)

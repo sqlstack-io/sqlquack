@@ -20,6 +20,8 @@ mod sql_lint;
 mod test_types;
 #[path = "tests/test_trailing_from.rs"]
 mod trailing_from;
+#[path = "tests/test_unreviewed_forms.rs"]
+mod unreviewed_forms;
 #[path = "tests/test_unused_ctes.rs"]
 mod unused_ctes;
 #[path = "tests/test_unused_table_alias.rs"]

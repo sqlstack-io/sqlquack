@@ -3,7 +3,7 @@
 use sqlquack_parse::databricks::scan::main::scan::scan;
 use sqlquack_parse::databricks::scan::main::uncovered::uncovered;
 use sqlquack_parse::databricks::scan::models::{Token, TokenKind};
-use sqlquack_parse::databricks::{StrictFailure, parse_strict};
+use sqlquack_parse::databricks::{StrictFailure, parse_strict_reviewed};
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::{Dialect, Expression};
 
@@ -22,9 +22,9 @@ const DATABRICKS_COMMENTS: CommentSyntax = CommentSyntax {
     nested: true,
 };
 
-/// The statements Databricks' grammar reads from `sql`, refused when any is kept as opaque text.
+/// The statements Databricks' grammar reads from `sql`, refused when any is opaque or not yet reviewed.
 pub(crate) fn parse_databricks(sql: &str) -> Result<(Vec<Expression>, Vec<StatementSpan>), String> {
-    let parsed = parse_strict(sql).map_err(|failure| match failure {
+    let parsed = parse_strict_reviewed(sql).map_err(|failure| match failure {
         StrictFailure::Parse(error) => format!("{PARSE_FAILURE}: {}", error.message),
         StrictFailure::Uncovered { position } => {
             format!("{PARSE_FAILURE}: no token covers byte {position}")

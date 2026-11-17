@@ -416,6 +416,7 @@ impl Parser<'_> {
 
     /// `createFileFormat`: `STORED AS format` or `STORED BY handler`.
     pub(crate) fn create_file_format(&mut self) -> Parsing<Option<Expression>> {
+        let start: usize = self.offset();
         self.expect_kw("STORED")?;
         if self.eat_kw("BY") {
             let handler: Expression = self.string_literal()?;
@@ -423,6 +424,7 @@ impl Parser<'_> {
                 self.property_list()?;
                 return Ok(None);
             }
+            self.treed("stored_as", start);
             return Ok(Some(Expression::StorageHandlerProperty(Box::new(
                 StorageHandlerProperty {
                     this: Box::new(handler),
@@ -441,6 +443,7 @@ impl Parser<'_> {
             }
             false => Expression::Identifier(self.ident()?),
         };
+        self.treed("stored_as", start);
         Ok(Some(Expression::FileFormatProperty(Box::new(
             FileFormatProperty {
                 this: Some(Box::new(format)),
@@ -535,6 +538,7 @@ impl Parser<'_> {
 
     /// `rowFormat`.
     pub(crate) fn row_format(&mut self) -> Parsing<Expression> {
+        let start: usize = self.offset();
         self.expect_kw("ROW")?;
         self.expect_kw("FORMAT")?;
         if self.eat_kw("SERDE") {
@@ -549,6 +553,7 @@ impl Parser<'_> {
                     )))),
                     false => None,
                 };
+            self.treed("row_format", start);
             return Ok(Expression::RowFormatSerdeProperty(Box::new(
                 RowFormatSerdeProperty {
                     this: Box::new(serde),
@@ -584,6 +589,7 @@ impl Parser<'_> {
         if self.eat_kws(&["NULL", "DEFINED", "AS"]) {
             node.null = Some(Box::new(self.string_literal()?));
         }
+        self.treed("row_format", start);
         Ok(Expression::RowFormatDelimitedProperty(Box::new(node)))
     }
 
@@ -845,6 +851,7 @@ impl Parser<'_> {
             (Some((enabled, validated)), Some(modifiers)) => {
                 modifiers.enabled = enabled;
                 modifiers.validated = validated;
+                self.treed("constraint_validation", start);
             }
             _ => self.gap("constraint_validation", start),
         }

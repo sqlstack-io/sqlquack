@@ -200,6 +200,7 @@ impl Parser<'_> {
 
     /// `RESTORE [TABLE] table [TO] {VERSION | TIMESTAMP} AS OF value`: the table, then its version.
     pub(crate) fn restore_statement(&mut self) -> Parsing<Expression> {
+        let start: usize = self.offset();
         self.expect_kw("RESTORE")?;
         let mut kind: String = "RESTORE".to_owned();
         if self.kw("TABLE") && !self.kw_at(1, "TO") {
@@ -219,6 +220,7 @@ impl Parser<'_> {
             true => literal(Literal::Number(self.expect_token(is_integer)?.value)),
             false => self.expression()?,
         };
+        self.treed("restore", start);
         Ok(utility(
             kind,
             vec![target, property(&words.join(" "), Some(value))],

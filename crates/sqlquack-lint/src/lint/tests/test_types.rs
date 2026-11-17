@@ -178,3 +178,10 @@ pub(crate) struct KeywordAliasTestCase {
     pub rule: &'static str,
     pub expected_anchor: Option<&'static str>,
 }
+
+pub(crate) struct LintRefusalTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) dialect: &'static str,
+    pub(crate) expected_refusal: &'static str,
+}

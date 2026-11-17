@@ -822,6 +822,7 @@ impl Parser<'_> {
         self.expect_kw("REFRESH")?;
         if self.string_at(0) && self.ends_at(1) {
             let path: Expression = self.string_literal()?;
+            self.treed("refresh", start);
             return Ok(utility("REFRESH".to_owned(), vec![path]));
         }
         let first: usize = self.at;
@@ -846,6 +847,8 @@ impl Parser<'_> {
                 true,
             ));
         }
-        Ok(utility("REFRESH".to_owned(), vec![string(path)]))
+        let path: Expression = string(path);
+        self.treed("refresh", start);
+        Ok(utility("REFRESH".to_owned(), vec![path]))
     }
 }

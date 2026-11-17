@@ -176,6 +176,7 @@ impl Parser<'_> {
                     node.partition = Some(Box::new(partition(self.partition_spec()?)));
                 }
                 if self.is(is_identifier) && !(self.kw("AS") && self.kw_at(1, "JSON")) {
+                    let column_start: usize = self.offset();
                     let mut names = self.multipart_identifier()?.into_iter();
                     let first: Identifier = names.next().unwrap_or_else(Identifier::empty);
                     let column: Expression = names.fold(column(None, first), dot);
@@ -187,6 +188,7 @@ impl Parser<'_> {
                             true,
                         ));
                     }
+                    self.treed("describe_column", column_start);
                     return Ok(described_column(node, column));
                 }
                 if self.kw("AS") && self.kw_at(1, "JSON") {
@@ -300,7 +302,9 @@ impl Parser<'_> {
                 let mut node: Show = Show::new("PARTITIONS");
                 node.target = Some(Expression::Table(Box::new(self.table_reference()?)));
                 if self.kw("PARTITION") {
+                    let at: usize = self.offset();
                     let spec: Expression = partition(self.partition_spec()?);
+                    self.treed("show_partition", at);
                     return Ok(shown_partition(node, spec));
                 }
                 node
@@ -340,7 +344,9 @@ impl Parser<'_> {
         node.like_keyword = true;
         node.like = Some(self.string_literal()?);
         if self.kw("PARTITION") {
+            let at: usize = self.offset();
             let spec: Expression = partition(self.partition_spec()?);
+            self.treed("show_partition", at);
             return Ok(shown_partition(node, spec));
         }
         Ok(Expression::Show(Box::new(node)))
@@ -838,6 +844,7 @@ impl Parser<'_> {
 
     /// `DENY privileges ON securable TO principal`, read as `GRANT` is, as privileges and clauses.
     pub(crate) fn deny_statement(&mut self) -> Parsing<Expression> {
+        let start: usize = self.offset();
         self.expect_kw("DENY")?;
         let mut operands: Vec<Expression> = self
             .privileges()?
@@ -869,6 +876,7 @@ impl Parser<'_> {
             _ => tuple(principals),
         };
         operands.push(property(to, Some(principals)));
+        self.treed("deny", start);
         Ok(utility("DENY".to_owned(), operands))
     }
 
@@ -904,7 +912,10 @@ impl Parser<'_> {
             false => ("list", LIST_RESOURCES),
         };
         match self.tree_within(from, self.at, 2, pattern) {
-            Some(tree) => Ok(tree),
+            Some(tree) => {
+                self.treed(construct, start);
+                Ok(tree)
+            }
             None => {
                 self.gap(construct, start);
                 Ok(null())
@@ -1032,6 +1043,7 @@ impl Parser<'_> {
                 return Err(self.error());
             }
             if let Some(tree) = self.tree_within(first - 1, self.at, 2, CACHE_SELECT) {
+                self.treed("cache_select", start);
                 return Ok(tree);
             }
             self.gap("cache_select", start);
