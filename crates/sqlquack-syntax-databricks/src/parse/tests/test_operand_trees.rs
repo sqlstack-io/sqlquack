@@ -1,4 +1,4 @@
-//! Operands kept in shared nodes: a retention period and a datetime unit.
+//! Operands kept in shared nodes: a retention period, a datetime unit and a JSON path's segments.
 
 use serde_json::Value;
 use sqlquack_syntax::Parsed;
@@ -38,6 +38,30 @@ fn given_an_operand_with_a_shared_node_when_parsing_then_its_tree_uses_that_node
             sql: "SELECT timestampdiff ( HOUR , c1 , c2 )",
             pointer: "/0/select/expressions/0/function/args/0/var/this",
             expected_json: "\"HOUR\"",
+        },
+        ValueTestCase {
+            description: "a path's name is a key holding the name",
+            sql: "SELECT c1:a1.b1 FROM t1",
+            pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/j_s_o_n_path/expressions/1/j_s_o_n_path_key/this/identifier/name",
+            expected_json: "\"b1\"",
+        },
+        ValueTestCase {
+            description: "a path's backquoted name stays quoted",
+            sql: "SELECT c1:`a b` FROM t1",
+            pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/j_s_o_n_path/expressions/0/j_s_o_n_path_key/this/identifier/quoted",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "a path's bracketed string is a subscript of that string",
+            sql: "SELECT c1:['a1'] FROM t1",
+            pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/j_s_o_n_path/expressions/0/j_s_o_n_path_subscript/this/literal/value",
+            expected_json: "\"a1\"",
+        },
+        ValueTestCase {
+            description: "a path's index is a subscript of that number",
+            sql: "SELECT c1:a1[0] FROM t1",
+            pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/j_s_o_n_path/expressions/1/j_s_o_n_path_subscript/this/literal/literal_type",
+            expected_json: "\"number\"",
         },
     ];
     for test_case in test_cases {

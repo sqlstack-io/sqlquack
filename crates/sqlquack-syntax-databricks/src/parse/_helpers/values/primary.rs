@@ -2,7 +2,9 @@
 
 use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::functions::models::JSONExtract;
+use sqlquack_syntax::expressions::functions::models::{
+    JSONExtract, JSONPath, JSONPathKey, JSONPathSubscript,
+};
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 use sqlquack_syntax::expressions::operators::models::{
     CollationExpr, MethodCall, Subscript, UnaryOp,
@@ -69,6 +71,15 @@ fn number_literal(token: &Token, kind: NumberKind) -> Expression {
         NumberKind::Integer | NumberKind::Decimal | NumberKind::Exponent => return number,
     };
     Expression::Cast(Box::new(cast(number, to, false)))
+}
+
+/// A path name as a key: its name as written, and whether it was backquoted.
+fn path_key(token: &Token) -> Expression {
+    let mut name: Identifier = Identifier::new(token.value.clone());
+    name.quoted = token.kind == TokenKind::Quoted;
+    Expression::JSONPathKey(Box::new(JSONPathKey {
+        this: Box::new(Expression::Identifier(name)),
+    }))
 }
 
 /// The shared-tree unit an interval unit word names, and whether it was plural.
@@ -786,28 +797,30 @@ impl Parser<'_> {
         }
     }
 
-    /// `col : path`, the path written as text, as the shared tree's variant extraction holds it.
+    /// `col : path`, each segment of the path a key or a subscript of the shared tree's JSON path.
     fn semi_structured(&mut self, this: Expression) -> Parsing<Expression> {
         self.at += 1;
-        let mut path: String = String::new();
-        match self.is_char('[') {
-            true => path.push_str(&self.path_bracket(false)?),
-            false => path.push_str(&self.path_name()?),
-        }
+        let mut segments: Vec<Expression> = vec![match self.is_char('[') {
+            true => self.path_bracket(false)?,
+            false => self.path_name()?,
+        }];
         loop {
             if self.is_char('.') && self.is_at(1, is_identifier) {
                 self.at += 1;
-                path.push('.');
-                path.push_str(&self.path_name()?);
+                segments.push(self.path_name()?);
             } else if self.is_char('[') {
-                path.push_str(&self.path_bracket(true)?);
+                segments.push(self.path_bracket(true)?);
             } else {
                 break;
             }
         }
+        let path: Expression = Expression::JSONPath(Box::new(JSONPath {
+            expressions: segments,
+            escape: None,
+        }));
         Ok(Expression::JSONExtract(Box::new(JSONExtract {
             this: Box::new(this),
-            expression: Box::new(string(&path)),
+            expression: Box::new(path),
             only_json_types: None,
             expressions: Vec::new(),
             variant_extract: Some(Box::new(boolean(true))),
@@ -819,39 +832,28 @@ impl Parser<'_> {
         })))
     }
 
-    /// One name in a path, a backticked one in its backticks.
-    fn path_name(&mut self) -> Parsing<String> {
+    /// One name in a path, as a key holding the name as written.
+    fn path_name(&mut self) -> Parsing<Expression> {
         let token = self.advance()?;
-        Ok(match token.kind == TokenKind::Quoted {
-            true => format!("`{}`", token.value.replace('`', "``")),
-            false => token.value,
-        })
+        Ok(path_key(&token))
     }
 
-    /// `['key']`, `[n]` or, after the first part, `[name]` in a path.
-    fn path_bracket(&mut self, names: bool) -> Parsing<String> {
+    /// `['key']`, `[n]`, `[*]` (a keyword, not a star of columns) or, after the first part, `[name]`.
+    fn path_bracket(&mut self, names: bool) -> Parsing<Expression> {
         self.expect_char('[')?;
-        let text: String = match self.peek().map(|token| token.kind) {
-            Some(TokenKind::String { .. }) => {
-                let key: Token = self.advance()?;
-                format!("['{}']", key.value)
-            }
+        let index: Expression = match self.peek().map(|token| token.kind) {
+            Some(TokenKind::String { .. }) => string(&self.advance()?.value),
             Some(TokenKind::Number(NumberKind::Integer)) => {
-                let index: Token = self.advance()?;
-                format!("[{}]", index.value)
+                literal(Literal::Number(self.advance()?.value))
             }
-            Some(TokenKind::Char('*')) => {
-                self.advance()?;
-                "[*]".to_owned()
-            }
-            _ if names && self.is(is_identifier) => {
-                let name: Token = self.advance()?;
-                format!("[{}]", name.value)
-            }
+            Some(TokenKind::Char('*')) => var(&self.advance()?.value),
+            _ if names && self.is(is_identifier) => path_key(&self.advance()?),
             _ => return Err(self.error()),
         };
         self.expect_char(']')?;
-        Ok(text)
+        Ok(Expression::JSONPathSubscript(Box::new(JSONPathSubscript {
+            this: Box::new(index),
+        })))
     }
 
     /// `namedExpression`: `expression [AS] alias` or `expression [AS] (a, b)`.

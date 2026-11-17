@@ -50,8 +50,8 @@ their documented syntax (`parse/_helpers/commands/documented.rs`, in the notatio
   `ANTI` unless a join begins there; a table alias may not.
 - Expressions: literals, including typed and suffixed ones and `INTERVAL`, `CASE`, `CAST`,
   `TRY_CAST`, `::`, calls with `DISTINCT`, `FILTER`, `IGNORE`/`RESPECT NULLS` and `OVER` with frames,
-  lambdas, field, subscript and semi-structured `:path` access, the predicates, `EXISTS`, scalar
-  subqueries, and the complex data types.
+  lambdas, field, subscript and semi-structured `:path` access (a JSON path of keys and
+  subscripts), the predicates, `EXISTS`, scalar subqueries, and the complex data types.
 - `INSERT INTO`/`OVERWRITE`, `MERGE INTO`, `UPDATE`, `DELETE`, `COPY INTO` (`Copy`) and
   `LOAD DATA` (`LoadData`).
 - `CREATE [OR REPLACE] TABLE`, `REPLACE TABLE`, `CREATE TABLE … LIKE` (a `Like` constraint),

@@ -1265,10 +1265,10 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "\"h\"",
         },
         ValueTestCase {
-            description: "a path wildcard stays in the path text",
+            description: "a path wildcard is a keyword in the path, not a star of columns",
             sql: "SELECT c1:item[*].price FROM VALUES ('x') AS T(c1)",
-            pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/literal/value",
-            expected_json: "\"item[*].price\"",
+            pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/j_s_o_n_path/expressions/1/j_s_o_n_path_subscript/this/var/this",
+            expected_json: "\"*\"",
         },
         ValueTestCase {
             description: "SHOW GRANTS ON keeps the securable kind",
