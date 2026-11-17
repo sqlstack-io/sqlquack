@@ -264,6 +264,20 @@ fn given_each_treed_form_before_a_relaxed_statement_when_parsing_then_the_verdic
             expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
             expected_as_script: ExpectedVerdict::Rejected { syntax: true },
         },
+        TreedFormTestCase {
+            description: "compound, which nested in a compound is a block, not the form",
+            construct: "compound",
+            sql: "BEGIN SELECT 1 ; END",
+            expected_in_compound: ExpectedVerdict::Rejected { syntax: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
+        TreedFormTestCase {
+            description: "compound_cursor, a cursor declared in a compound",
+            construct: "compound_cursor",
+            sql: "BEGIN DECLARE c1 CURSOR FOR SELECT 1 ; END",
+            expected_in_compound: ExpectedVerdict::Accepted { opaque: true },
+            expected_as_script: ExpectedVerdict::Rejected { syntax: true },
+        },
     ];
     let covered: Vec<&str> = test_cases
         .iter()

@@ -86,6 +86,8 @@ fn block(body: Vec<ScriptingStatement>) -> ScriptingBlock {
         body,
         exception_handlers: Vec::new(),
         label: None,
+        begin_label: None,
+        atomic: None,
     }
 }
 
@@ -335,6 +337,7 @@ impl<'sql> Parser<'sql> {
                 keyword: ScriptingLoopKeyword::Do,
                 body,
                 label: None,
+                begin_label: None,
             }),
         ]))))
     }

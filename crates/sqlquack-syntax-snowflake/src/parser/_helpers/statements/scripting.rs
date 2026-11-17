@@ -158,6 +158,8 @@ impl Parser {
             body,
             exception_handlers,
             label,
+            begin_label: None,
+            atomic: None,
         })
     }
 
@@ -435,6 +437,7 @@ impl Parser {
             span: self.source_range(start),
             body,
             label,
+            begin_label: None,
         }))
     }
 
@@ -476,6 +479,7 @@ impl Parser {
             span: self.source_range(start),
             cursor,
             using,
+            using_bare: false,
         }))
     }
 
@@ -493,6 +497,7 @@ impl Parser {
             span: self.source_range(start),
             cursor,
             targets,
+            keyword: None,
         }))
     }
 
@@ -691,11 +696,12 @@ impl Parser {
         let label = self.expect_scripting_loop_end(keyword, "FOR")?;
         Ok(ScriptingStatement::For(ScriptingFor {
             span: self.source_range(start),
-            variable,
+            variable: Some(variable),
             iteration,
             keyword,
             body,
             label,
+            begin_label: None,
         }))
     }
 
@@ -711,6 +717,7 @@ impl Parser {
             keyword,
             body,
             label,
+            begin_label: None,
         }))
     }
 
@@ -726,6 +733,7 @@ impl Parser {
             body,
             condition,
             label,
+            begin_label: None,
         }))
     }
 

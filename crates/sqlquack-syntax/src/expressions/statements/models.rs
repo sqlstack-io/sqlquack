@@ -1676,6 +1676,12 @@ pub struct ScriptingBlock {
     pub body: Vec<ScriptingStatement>,
     pub exception_handlers: Vec<ScriptingExceptionHandler>,
     pub label: Option<Identifier>,
+    /// Databricks: the label written before the statement, `label :`; `label` is the one after its END.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub begin_label: Option<Identifier>,
+    /// Databricks: `ATOMIC` (true) or `NOT ATOMIC` (false) after BEGIN, when written.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub atomic: Option<bool>,
 }
 
 /// One DECLARE or LET member; LET-only and DECLARE-only forms are separated by the parser.
@@ -1687,6 +1693,10 @@ pub enum ScriptingDeclaration {
     Resultset(ScriptingResultset),
     Exception(ScriptingException),
     Procedure(Box<ScriptingProcedure>),
+    /// Databricks: `DECLARE {CONTINUE | EXIT} HANDLER`, written in a block's body.
+    Handler(Box<ScriptingHandler>),
+    /// Databricks: `DECLARE name CONDITION`, written in a block's body.
+    Condition(ScriptingCondition),
 }
 
 /// `name [type] [{DEFAULT | :=} expression]`.
@@ -1797,6 +1807,12 @@ pub enum ScriptingStatement {
     Null(ScriptingNull),
     Raise(ScriptingRaise),
     Return(ScriptingReturn),
+    /// Databricks: a cursor, handler or condition declared among the body's statements.
+    Declare(ScriptingDeclaration),
+    /// Databricks: SIGNAL or RESIGNAL.
+    Signal(ScriptingSignal),
+    /// Databricks: GET DIAGNOSTICS.
+    Diagnostics(ScriptingDiagnostics),
 }
 
 /// An ordinary SQL statement inside a block.
@@ -1866,17 +1882,20 @@ pub struct ScriptingCase {
     pub end_case: bool,
 }
 
-/// `FOR name IN {source | [REVERSE] start TO end} {DO | LOOP} ... END {FOR | LOOP} [label]`.
+/// `FOR name IN {source | [REVERSE] start TO end} {DO | LOOP} ... END {FOR | LOOP} [label]`, or Databricks' `FOR [name AS] query DO`.
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingFor {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
-    pub variable: Identifier,
+    pub variable: Option<Identifier>,
     pub iteration: ScriptingForIteration,
     pub keyword: ScriptingLoopKeyword,
     pub body: Vec<ScriptingStatement>,
     pub label: Option<Identifier>,
+    /// Databricks: the label written before the statement, `label :`; `label` is the one after its END.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub begin_label: Option<Identifier>,
 }
 
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1885,6 +1904,8 @@ pub enum ScriptingForIteration {
     /// A cursor or RESULTSET name; which one is not resolved here.
     Rows(Identifier),
     Range(Box<ScriptingRange>),
+    /// Databricks: the rows of a query.
+    Query(Expression),
 }
 
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1911,6 +1932,9 @@ pub struct ScriptingWhile {
     pub keyword: ScriptingLoopKeyword,
     pub body: Vec<ScriptingStatement>,
     pub label: Option<Identifier>,
+    /// Databricks: the label written before the statement, `label :`; `label` is the one after its END.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub begin_label: Option<Identifier>,
 }
 
 /// `REPEAT ... UNTIL (c) END REPEAT [label]`: the condition follows the body.
@@ -1922,6 +1946,9 @@ pub struct ScriptingRepeat {
     pub body: Vec<ScriptingStatement>,
     pub condition: Expression,
     pub label: Option<Identifier>,
+    /// Databricks: the label written before the statement, `label :`; `label` is the one after its END.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub begin_label: Option<Identifier>,
 }
 
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -1931,9 +1958,12 @@ pub struct ScriptingLoop {
     pub span: SourceSpan,
     pub body: Vec<ScriptingStatement>,
     pub label: Option<Identifier>,
+    /// Databricks: the label written before the statement, `label :`; `label` is the one after its END.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub begin_label: Option<Identifier>,
 }
 
-/// BREAK/EXIT or CONTINUE/ITERATE, keeping the synonym written.
+/// BREAK/EXIT/LEAVE or CONTINUE/ITERATE, keeping the synonym written.
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingJump {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
@@ -1950,6 +1980,8 @@ pub enum ScriptingJumpKeyword {
     Exit,
     Continue,
     Iterate,
+    /// Databricks' BREAK.
+    Leave,
 }
 
 /// `OPEN cursor [USING (bind, ...)]`.
@@ -1960,6 +1992,9 @@ pub struct ScriptingOpen {
     pub span: SourceSpan,
     pub cursor: Identifier,
     pub using: Option<Vec<Expression>>,
+    /// Databricks: the USING list written without parentheses.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub using_bare: bool,
 }
 
 /// `FETCH cursor INTO variable, ...`.
@@ -1970,6 +2005,9 @@ pub struct ScriptingFetch {
     pub span: SourceSpan,
     pub cursor: Identifier,
     pub targets: Vec<Identifier>,
+    /// Databricks: `FROM` or `NEXT FROM` before the cursor, as written.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub keyword: Option<String>,
 }
 
 /// A statement whose only operand is a cursor or RESULTSET name: CLOSE and CANCEL.
@@ -2055,4 +2093,84 @@ pub enum ScriptingHandledExceptions {
 pub enum ScriptingHandlerAction {
     Exit,
     Continue,
+}
+
+/// `DECLARE {CONTINUE | EXIT} HANDLER FOR condition, ... body` (Databricks): a block or one statement.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingHandler {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub action: ScriptingHandlerAction,
+    pub conditions: Vec<ScriptingConditionValue>,
+    pub body: ScriptingStatement,
+}
+
+/// `DECLARE name CONDITION [FOR SQLSTATE [VALUE] 'state']` (Databricks).
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingCondition {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    pub name: Identifier,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sqlstate: Option<ScriptingSqlstate>,
+}
+
+/// `SQLSTATE [VALUE] 'state'`.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingSqlstate {
+    pub state: String,
+    /// VALUE written before the state.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub value_keyword: bool,
+}
+
+/// A condition a handler catches or a SIGNAL raises.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ScriptingConditionValue {
+    Sqlstate(ScriptingSqlstate),
+    Sqlexception,
+    NotFound,
+    /// A declared condition's name; a quoted `SQLEXCEPTION` is a name too.
+    Named(Identifier),
+}
+
+/// `SIGNAL condition [SET item = value]`, or `RESIGNAL [condition] [SET item = value]` (Databricks).
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingSignal {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub resignal: bool,
+    pub condition: Option<ScriptingConditionValue>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub set: Option<ScriptingSignalSet>,
+}
+
+/// `SET {MESSAGE_ARGUMENTS | MESSAGE_TEXT} = value`, the item upper-cased.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingSignalSet {
+    pub item: String,
+    pub value: Expression,
+}
+
+/// `GET DIAGNOSTICS [CONDITION number] target = item, ...` (Databricks).
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingDiagnostics {
+    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
+    #[ast(skip)]
+    pub span: SourceSpan,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub condition: Option<Expression>,
+    pub items: Vec<ScriptingDiagnosticsItem>,
+}
+
+/// One `target = item`, the item upper-cased.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScriptingDiagnosticsItem {
+    pub target: Identifier,
+    pub item: String,
 }

@@ -490,7 +490,7 @@ pub(crate) const DROP_TEMPORARY_FUNCTION: &str =
 pub(crate) const UNDROP_WITH_ID: &str = "UNDROP { TABLE | VOLUME | MATERIALIZED VIEW } WITH ID str";
 
 /// Forms read as trees that the formatter and lint still refuse as gaps until their layout is reviewed; any future Databricks translator or renderer must handle each of these, and every key of `KEYED_ACTIONS`, or refuse it.
-pub(crate) const TREED_FORMS: [&str; 36] = [
+pub(crate) const TREED_FORMS: [&str; 38] = [
     "add",
     "list",
     "restore",
@@ -527,10 +527,14 @@ pub(crate) const TREED_FORMS: [&str; 36] = [
     "drop_table_force",
     "drop_temporary_function",
     "undrop_with_id",
+    "compound",
+    "compound_cursor",
 ];
 
 /// `ALTER TABLE ... OWNER TO`.
 pub(crate) const OWNER_TO: &str = "OWNER TO";
+/// The scripting statement that re-raises a condition, which may then be left out.
+pub(crate) const RESIGNAL: &str = "RESIGNAL";
 /// `ALTER TABLE ... SET OWNER TO`.
 pub(crate) const SET_OWNER_TO: &str = "SET OWNER TO";
 /// `ALTER TABLE ... SET ROW FILTER`.

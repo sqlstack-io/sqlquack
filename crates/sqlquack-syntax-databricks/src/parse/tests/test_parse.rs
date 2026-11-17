@@ -642,14 +642,14 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "a compound block is checked and kept as a gap",
+            description: "a compound block with a cursor is read as a tree",
             sql: "BEGIN DECLARE c1 CURSOR FOR SELECT 1 ; OPEN c1 ; CLOSE c1 ; END",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a labelled loop may LEAVE its label",
             sql: "BEGIN l1 : LOOP LEAVE l1 ; END LOOP l1 ; END",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a compound body holds statements, not names",

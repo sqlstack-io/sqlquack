@@ -1,7 +1,11 @@
-//! Verdicts of compound statements, tags, file commands and IDENTIFIER clauses, as the warehouse gave them.
+//! Verdicts of compound statements, tags, file commands and IDENTIFIER clauses as recorded, and the compounds' trees.
+
+use serde_json::Value;
+use sqlquack_syntax::Parsed;
 
 use crate::parse::main::parse::parse;
-use crate::parse::tests::test_types::{ExpectedVerdict, VerdictTestCase};
+use crate::parse::main::parse_strict::parse_strict;
+use crate::parse::tests::test_types::{ExpectedVerdict, ValueTestCase, VerdictTestCase};
 
 #[test]
 fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse() {
@@ -9,12 +13,12 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
         VerdictTestCase {
             description: "a FOR query ends at DO, which names no alias",
             sql: "BEGIN FOR SELECT 1 DO SELECT 1 ; END FOR ; END",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a FOR query over a derived table ends at DO",
             sql: "BEGIN FOR SELECT * FROM ( SELECT 1 ) DO SELECT 1 ; END FOR ; END",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a FOR statement needs DO",
@@ -24,7 +28,7 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
         VerdictTestCase {
             description: "an ATOMIC compound statement is checked",
             sql: "BEGIN ATOMIC SELECT 1 ; SELECT 2 ; END ;",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "an ATOMIC compound body holds statements",
@@ -34,12 +38,12 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
         VerdictTestCase {
             description: "GET DIAGNOSTICS reads a statement item",
             sql: "BEGIN DECLARE v1 INT ; DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN GET DIAGNOSTICS v1 = ROW_COUNT , v1 = TRANSACTION_ACTIVE ; END ; SELECT 1 ; END",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "GET DIAGNOSTICS CONDITION 1 reads a condition item",
             sql: "BEGIN DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN DECLARE v1 STRING ; GET DIAGNOSTICS CONDITION 1 v1 = MESSAGE_TEXT ; END ; SELECT 1 ; END",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a condition item needs CONDITION 1",
@@ -259,7 +263,7 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
         VerdictTestCase {
             description: "a procedure's compound body may follow without AS",
             sql: "CREATE PROCEDURE v1 ( ) LANGUAGE SQL SQL SECURITY INVOKER BEGIN SELECT 1 ; END",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a procedure's other body needs AS",
@@ -274,12 +278,12 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
         VerdictTestCase {
             description: "a do alias inside a FOR query's subquery is still an alias",
             sql: "BEGIN FOR r AS SELECT * FROM ( SELECT * FROM t1 do ) DO SELECT 1 ; END FOR ; END",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a label named atomic is a label",
             sql: "BEGIN atomic : BEGIN SELECT 1 ; END ; END",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a procedure body without AS is a compound statement, not a transaction",
@@ -742,6 +746,176 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             });
         assert_eq!(
             verdict, test_case.expected_verdict,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_recorded_compound_statement_when_parsing_then_its_scripting_tree_keeps_what_was_written()
+{
+    let test_cases = [
+        ValueTestCase {
+            description: "a label before a nested BEGIN is its begin label (accepted)",
+            sql: "BEGIN l1 : BEGIN SELECT 1 ; END ; END",
+            pointer: "/0/scripting_block/body/0/block/begin_label/name",
+            expected_json: "\"l1\"",
+        },
+        ValueTestCase {
+            description: "a nested BEGIN with no end label has none (accepted)",
+            sql: "BEGIN l1 : BEGIN SELECT 1 ; END ; END",
+            pointer: "/0/scripting_block/body/0/block/label",
+            expected_json: "null",
+        },
+        ValueTestCase {
+            description: "BEGIN ATOMIC is marked (accepted)",
+            sql: "BEGIN ATOMIC END",
+            pointer: "/0/scripting_block/atomic",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "LEAVE keeps its keyword (accepted)",
+            sql: "BEGIN DECLARE c1 INT DEFAULT 0 ; l1 : LOOP SET c1 = c1 + 1 ; IF c1 > 1 THEN LEAVE l1 ; END IF ; ITERATE l1 ; END LOOP l1 ; END",
+            pointer: "/0/scripting_block/body/1/loop/body/1/if/branches/0/body/0/break/keyword",
+            expected_json: "\"leave\"",
+        },
+        ValueTestCase {
+            description: "ITERATE keeps its keyword and label (accepted)",
+            sql: "BEGIN DECLARE c1 INT DEFAULT 0 ; l1 : LOOP SET c1 = c1 + 1 ; IF c1 > 1 THEN LEAVE l1 ; END IF ; ITERATE l1 ; END LOOP l1 ; END",
+            pointer: "/0/scripting_block/body/1/loop/body/2/continue/label/name",
+            expected_json: "\"l1\"",
+        },
+        ValueTestCase {
+            description: "a FOR with no variable has none (accepted)",
+            sql: "BEGIN FOR SELECT 1 DO SELECT 1 ; END FOR ; END",
+            pointer: "/0/scripting_block/body/0/for/variable",
+            expected_json: "null",
+        },
+        ValueTestCase {
+            description: "a FOR variable may be named SELECT (accepted)",
+            sql: "BEGIN FOR SELECT AS SELECT 1 DO SELECT 1 ; END FOR ; END",
+            pointer: "/0/scripting_block/body/0/for/variable/name",
+            expected_json: "\"SELECT\"",
+        },
+        ValueTestCase {
+            description: "a quoted begin label is kept before WHILE (UNRESOLVED_COLUMN v1, after parsing)",
+            sql: "BEGIN `l1Q` :WHILE v1 DO SELECT 1 ; END WHILE ; END",
+            pointer: "/0/scripting_block/body/0/while/begin_label/name",
+            expected_json: "\"l1Q\"",
+        },
+        ValueTestCase {
+            description: "OPEN ... USING 1 AS names the value AS (accepted)",
+            sql: "BEGIN DECLARE c1 CURSOR FOR SELECT 1 ; OPEN c1 USING 1 AS ; END",
+            pointer: "/0/scripting_block/body/1/open/using/0/alias/alias/name",
+            expected_json: "\"AS\"",
+        },
+        ValueTestCase {
+            description: "OPEN's USING list without parentheses is marked (accepted)",
+            sql: "BEGIN DECLARE c1 CURSOR FOR SELECT 1 ; OPEN c1 USING 1 AS v1 , 1 AS v1 ; END",
+            pointer: "/0/scripting_block/body/1/open/using_bare",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "FETCH FROM keeps FROM (accepted)",
+            sql: "BEGIN DECLARE v1 INT ; DECLARE c1 CURSOR FOR SELECT 1 ; OPEN c1 ; FETCH FROM c1 INTO v1 ; END",
+            pointer: "/0/scripting_block/body/3/fetch/keyword",
+            expected_json: "\"FROM\"",
+        },
+        ValueTestCase {
+            description: "FETCH keeps every target (DUPLICATE_ASSIGNMENTS v1, after parsing)",
+            sql: "BEGIN DECLARE v1 INT ; DECLARE c1 CURSOR FOR SELECT 1 ; OPEN c1 ; FETCH NEXT FROM c1 INTO v1 , v1 ; END",
+            pointer: "/0/scripting_block/body/3/fetch/targets/1/name",
+            expected_json: "\"v1\"",
+        },
+        ValueTestCase {
+            description: "CLOSE keeps a quoted cursor name (CURSOR_NOT_FOUND `c1 Q`)",
+            sql: "BEGIN DECLARE v1 INT ; DECLARE c1 CURSOR FOR SELECT 1 ; OPEN c1 ; CLOSE `c1 Q` ; END",
+            pointer: "/0/scripting_block/body/3/close/name/name",
+            expected_json: "\"c1 Q\"",
+        },
+        ValueTestCase {
+            description: "SIGNAL SQLSTATE alone names a condition SQLSTATE (CONDITION_NOT_FOUND SQLSTATE)",
+            sql: "BEGIN SIGNAL SQLSTATE ; END",
+            pointer: "/0/scripting_block/body/0/signal/condition/named/name",
+            expected_json: "\"SQLSTATE\"",
+        },
+        ValueTestCase {
+            description: "SIGNAL keeps SQLSTATE VALUE (USER_RAISED_EXCEPTION 45000)",
+            sql: "BEGIN SIGNAL SQLSTATE VALUE '45000' SET MESSAGE_TEXT = 'm' ; END",
+            pointer: "/0/scripting_block/body/0/signal/condition/sqlstate/value_keyword",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "SIGNAL keeps its SET item (USER_RAISED_EXCEPTION m)",
+            sql: "BEGIN SIGNAL SQLSTATE VALUE '45000' SET MESSAGE_TEXT = 'm' ; END",
+            pointer: "/0/scripting_block/body/0/signal/set/item",
+            expected_json: "\"MESSAGE_TEXT\"",
+        },
+        ValueTestCase {
+            description: "a handler keeps EXIT (accepted)",
+            sql: "BEGIN DECLARE v1 INT ; DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN RESIGNAL ; END ; SELECT 1 ; END",
+            pointer: "/0/scripting_block/body/1/declare/handler/action",
+            expected_json: "\"exit\"",
+        },
+        ValueTestCase {
+            description: "a handler catches SQLEXCEPTION (accepted)",
+            sql: "BEGIN DECLARE v1 INT ; DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN RESIGNAL ; END ; SELECT 1 ; END",
+            pointer: "/0/scripting_block/body/1/declare/handler/conditions/0",
+            expected_json: "\"sqlexception\"",
+        },
+        ValueTestCase {
+            description: "RESIGNAL alone has no condition (accepted)",
+            sql: "BEGIN DECLARE v1 INT ; DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN RESIGNAL ; END ; SELECT 1 ; END",
+            pointer: "/0/scripting_block/body/1/declare/handler/body/block/body/0/signal/condition",
+            expected_json: "null",
+        },
+        ValueTestCase {
+            description: "GET DIAGNOSTICS CONDITION keeps its item (accepted)",
+            sql: "BEGIN DECLARE v1 INT ; DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN GET DIAGNOSTICS CONDITION 1 v1 = CONDITION_IDENTIFIER ; END ; SELECT 1 ; END",
+            pointer: "/0/scripting_block/body/1/declare/handler/body/block/body/0/diagnostics/items/0/item",
+            expected_json: "\"CONDITION_IDENTIFIER\"",
+        },
+        ValueTestCase {
+            description: "GET DIAGNOSTICS keeps a target named SELECT (accepted)",
+            sql: "BEGIN DECLARE v1 INT ; DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN GET DIAGNOSTICS SELECT = TRANSACTION_ACTIVE ; END ; SELECT 1 ; END",
+            pointer: "/0/scripting_block/body/1/declare/handler/body/block/body/0/diagnostics/items/0/target/name",
+            expected_json: "\"SELECT\"",
+        },
+        ValueTestCase {
+            description: "a declared condition keeps its name (accepted)",
+            sql: "BEGIN DECLARE k1 CONDITION ; END",
+            pointer: "/0/scripting_block/body/0/declare/condition/name/name",
+            expected_json: "\"k1\"",
+        },
+        ValueTestCase {
+            description: "a simple CASE keeps its operand (UNRESOLVED_COLUMN v1, after parsing)",
+            sql: "BEGIN CASE 1 WHEN v1 THEN SELECT 1 ; END CASE ; END",
+            pointer: "/0/scripting_block/body/0/case/operand/literal/value",
+            expected_json: "\"1\"",
+        },
+        ValueTestCase {
+            description: "a searched CASE has no operand (UNRESOLVED_COLUMN v1, after parsing)",
+            sql: "BEGIN CASE WHEN v1 THEN SELECT 1 ; END CASE ; END",
+            pointer: "/0/scripting_block/body/0/case/operand",
+            expected_json: "null",
+        },
+        ValueTestCase {
+            description: "ELSEIF is a second IF branch (UNRESOLVED_COLUMN c1, after parsing)",
+            sql: "BEGIN IF c1 = 1 THEN SELECT 1 ; ELSEIF c1 = 1 THEN SELECT 1 ; END IF ; END",
+            pointer: "/0/scripting_block/body/0/if/branches/1/body/0/sql/statement/select/expressions/0/literal/value",
+            expected_json: "\"1\"",
+        },
+    ];
+    for test_case in test_cases {
+        let parsed: Parsed = parse_strict(test_case.sql).expect(test_case.description);
+        assert!(parsed.gaps.is_empty(), "{}", test_case.description);
+        let tree: Value = serde_json::to_value(&parsed.statements).expect(test_case.description);
+        assert_eq!(
+            tree.pointer(test_case.pointer)
+                .map(Value::to_string)
+                .as_deref(),
+            Some(test_case.expected_json),
             "{}",
             test_case.description
         );
