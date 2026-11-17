@@ -79,3 +79,10 @@ pub(crate) struct TreedFormTestCase {
     pub(crate) expected_in_compound: ExpectedVerdict,
     pub(crate) expected_as_script: ExpectedVerdict,
 }
+
+/// A treed form written around `{E}`, a left-deep sum the tree depth limit would refuse were it kept.
+pub(crate) struct DeepValueTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) shape: &'static str,
+    pub(crate) expected_verdict: ExpectedVerdict,
+}

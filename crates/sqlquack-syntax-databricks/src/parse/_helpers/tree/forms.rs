@@ -8,7 +8,7 @@ use crate::parse::_helpers::commands::alters::partition;
 use crate::parse::_helpers::commands::documented::rule;
 use crate::parse::_helpers::tree::clauses::{Group, Part, documented_tree};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_word};
-use crate::parse::_helpers::tree::nodes::{literal, string, table};
+use crate::parse::_helpers::tree::nodes::{literal, string, table, too_deep_to_keep};
 use crate::parse::constants::COMMA_SEPARATED_REPEAT;
 use crate::parse::errors::ParseError;
 use crate::scan::models::{NumberKind, Token, TokenKind};
@@ -431,7 +431,9 @@ impl Parser<'_> {
         }
         self.at = end;
         match read {
-            Ok(parts) if plain && !has_opaque(&parts) => Some(documented_tree(lead, parts)),
+            Ok(parts) if plain && !has_opaque(&parts) => {
+                Some(documented_tree(lead, parts)).filter(|tree| !too_deep_to_keep(tree))
+            }
             Ok(_) | Err(_) => None,
         }
     }

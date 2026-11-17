@@ -462,9 +462,9 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "a column with no action after a kept one is still accepted",
+            description: "a column with no action after a kept one is accepted as a gap, since no tree holds it",
             sql: "ALTER TABLE t1 ALTER COLUMN c1 FIRST , c2",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
             description: "a column with no action is refused",

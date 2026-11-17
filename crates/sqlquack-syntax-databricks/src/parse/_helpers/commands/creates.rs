@@ -17,7 +17,7 @@ use sqlquack_syntax::expressions::tables::models::{
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    binary, boolean, collate, column_from, joined, null, table, tuple, var,
+    binary, boolean, collate, column_from, joined, null, table, too_deep_to_keep, tuple, var,
 };
 use crate::parse::constants::{
     CREATE_KINDS, DROP_KINDS, DROP_TABLE_FORCE, DROP_TEMPORARY_TABLE, TEMPORARY_VIEW_USING,
@@ -321,8 +321,12 @@ impl Parser<'_> {
                 self.at += 3;
                 let filter = Expression::Table(Box::new(table(self.multipart_identifier()?)));
                 let columns: Vec<Expression> = self.row_filter_columns()?;
-                self.treed("row_filter", start);
                 let row_filter = property("WITH ROW FILTER", tuple(vec![filter, tuple(columns)]));
+                if too_deep_to_keep(&row_filter) {
+                    self.gap("row_filter", start);
+                    return Ok(Some(("WITH", None)));
+                }
+                self.treed("row_filter", start);
                 ("WITH", Some(row_filter))
             }
             "DEFAULT" if self.kw_at(1, "COLLATION") => {
@@ -637,8 +641,13 @@ impl Parser<'_> {
                 let start: usize = self.offset();
                 self.at += 1;
                 let mask: Expression = self.column_mask()?;
-                column.options.push(mask);
-                self.treed("column_mask", start);
+                match too_deep_to_keep(&mask) {
+                    true => self.gap("column_mask", start),
+                    false => {
+                        column.options.push(mask);
+                        self.treed("column_mask", start);
+                    }
+                }
             } else if self.kw_in(
                 0,
                 &[

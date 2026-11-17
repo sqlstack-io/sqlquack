@@ -1,8 +1,7 @@
 //! Shared-tree nodes with every field set, so the grammar code names only what it parsed.
 
-use crate::parse::constants::MINUS;
+use crate::parse::constants::{KEPT_VALUE_WRAPPERS, MAX_TREE_DEPTH, MINUS};
 use sqlquack_syntax::DataType;
-use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::columns::models::{ColumnConstraint, ColumnDef};
 use sqlquack_syntax::expressions::functions::models::{
     AggregateFunction, Function, WindowFunction,
@@ -24,6 +23,7 @@ use sqlquack_syntax::expressions::statements::models::{
 use sqlquack_syntax::expressions::tables::models::{ConstraintType, Property};
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::SourceSpan;
+use sqlquack_syntax::{Expression, ExpressionWalk};
 
 pub(crate) fn column(table: Option<Identifier>, name: Identifier) -> Expression {
     let span = name.span;
@@ -682,4 +682,9 @@ pub(crate) fn collate(mut column: ColumnDef, collation: Option<Identifier>) -> C
         column.constraint_order.push(ConstraintType::Collate);
     }
     column
+}
+
+/// Whether `value` nests too deeply to keep where a gap used to drop it, so keeping it could refuse the statement.
+pub(crate) fn too_deep_to_keep(value: &Expression) -> bool {
+    value.tree_depth() + KEPT_VALUE_WRAPPERS > MAX_TREE_DEPTH
 }

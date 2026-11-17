@@ -15,7 +15,8 @@ use crate::parse::_helpers::commands::alters::partition;
 use crate::parse::_helpers::commands::queries::limit;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    call, column, column_from, dot, joined, null, property, string, table, tuple, utility, var,
+    call, column, column_from, dot, joined, null, property, string, table, too_deep_to_keep, tuple,
+    utility, var,
 };
 use crate::parse::constants::{
     ADD_RESOURCE, ADD_RESOURCES, CACHE_SELECT, CATALOG, COMMENT_KINDS, DESCRIBE_KINDS,
@@ -188,8 +189,13 @@ impl Parser<'_> {
                             true,
                         ));
                     }
+                    let described: Expression = described_column(node.clone(), column);
+                    if too_deep_to_keep(&described) {
+                        self.gap("describe_column", column_start);
+                        return Ok(Expression::Describe(Box::new(node)));
+                    }
                     self.treed("describe_column", column_start);
-                    return Ok(described_column(node, column));
+                    return Ok(described);
                 }
                 if self.kw("AS") && self.kw_at(1, "JSON") {
                     self.at += 2;
@@ -304,8 +310,13 @@ impl Parser<'_> {
                 if self.kw("PARTITION") {
                     let at: usize = self.offset();
                     let spec: Expression = partition(self.partition_spec()?);
+                    let shown: Expression = shown_partition(node, spec);
+                    if too_deep_to_keep(&shown) {
+                        self.gap("show_partition", at);
+                        return Ok(null());
+                    }
                     self.treed("show_partition", at);
-                    return Ok(shown_partition(node, spec));
+                    return Ok(shown);
                 }
                 node
             }
@@ -346,8 +357,13 @@ impl Parser<'_> {
         if self.kw("PARTITION") {
             let at: usize = self.offset();
             let spec: Expression = partition(self.partition_spec()?);
+            let shown: Expression = shown_partition(node, spec);
+            if too_deep_to_keep(&shown) {
+                self.gap("show_partition", at);
+                return Ok(null());
+            }
             self.treed("show_partition", at);
-            return Ok(shown_partition(node, spec));
+            return Ok(shown);
         }
         Ok(Expression::Show(Box::new(node)))
     }

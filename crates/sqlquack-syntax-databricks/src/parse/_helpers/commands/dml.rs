@@ -11,7 +11,7 @@ use crate::parse::_helpers::commands::alters::property_text;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{
     TableAlias, binary, boolean, call, column_from, default_value, delete, insert, joined, star,
-    subquery, table, tuple, update, var,
+    subquery, table, too_deep_to_keep, tuple, update, var,
 };
 use crate::parse::constants::IDENTIFIER_CLAUSE;
 
@@ -195,13 +195,20 @@ impl Parser<'_> {
                     sqlquack_syntax::expressions::names::models::Null,
                 ));
             };
-            self.treed("insert_overwrite_directory", start);
             let mut node = insert(TableRef::new(String::new()));
             node.overwrite = true;
             node.with = with;
             node.directory = Some(directory);
             node.query = Some(query);
-            return Ok(Expression::Insert(Box::new(node)));
+            let inserted: Expression = Expression::Insert(Box::new(node));
+            if too_deep_to_keep(&inserted) {
+                self.gap("insert_overwrite_directory", start);
+                return Ok(Expression::Null(
+                    sqlquack_syntax::expressions::names::models::Null,
+                ));
+            }
+            self.treed("insert_overwrite_directory", start);
+            return Ok(inserted);
         }
         self.eat_kw("TABLE");
         let mut node = insert(self.table_reference()?);

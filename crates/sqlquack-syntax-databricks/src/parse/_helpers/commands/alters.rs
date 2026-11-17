@@ -14,7 +14,7 @@ use sqlquack_syntax::expressions::tables::models::Partition;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    binary, collate, column_from, joined, null, table, tuple, var,
+    binary, collate, column_from, joined, null, table, too_deep_to_keep, tuple, var,
 };
 use crate::parse::constants::{
     ALTER_COLUMN_WORDS, ALTER_KINDS, COLUMN_DROP_MASK, COLUMN_POSITION, COLUMN_SET_MASK,
@@ -120,7 +120,7 @@ impl Parser<'_> {
         key: &str,
         mut values: Vec<Expression>,
     ) -> Parsing<Option<AlterTableAction>> {
-        if !KEYED_ACTIONS.contains(&key) {
+        if !KEYED_ACTIONS.contains(&key) || values.iter().any(too_deep_to_keep) {
             return self.alter_gap(construct, start);
         }
         self.treed(construct, start);
@@ -191,9 +191,14 @@ impl Parser<'_> {
     /// An action after `ALTER TABLE t PARTITION (...)`: a rename, a location, a SerDe or columns.
     fn partition_alter(&mut self, mut node: AlterTable, start: usize) -> Parsing<AlterTable> {
         let spec = self.partition_spec()?;
+        let deep: bool = too_deep_to_keep(&partition(spec.clone()));
         if self.eat_kw("RENAME") {
             self.expect_kw("TO")?;
             let to: Expression = partition(self.partition_spec()?);
+            if deep {
+                self.gap("rename_partition", start);
+                return Ok(node);
+            }
             node.partition = Some(partition_pairs(spec));
             node.actions.extend(self.keyed_action(
                 ("rename_partition", start),
@@ -208,6 +213,10 @@ impl Parser<'_> {
                 .push(AlterTableAction::SetLocation { location });
         } else if self.kw("SET") && self.kw_in(1, &["SERDE", "SERDEPROPERTIES"]) {
             let (key, values) = self.serde_clause()?;
+            if deep {
+                self.gap("serde", start);
+                return Ok(node);
+            }
             node.partition = Some(partition_pairs(spec));
             node.actions
                 .extend(self.keyed_action(("serde", start), key, values)?);
@@ -419,8 +428,13 @@ impl Parser<'_> {
                 position = Some(self.column_position()?);
             } else if self.eat_kw("MASK") {
                 let mask: Expression = self.column_mask()?;
-                column.options.push(mask);
-                self.treed("column_mask", start);
+                match too_deep_to_keep(&mask) {
+                    true => self.gap("column_mask", start),
+                    false => {
+                        column.options.push(mask);
+                        self.treed("column_mask", start);
+                    }
+                }
             } else {
                 return Ok((column, position));
             }
@@ -661,7 +675,8 @@ impl Parser<'_> {
                         action_words: None,
                         keyword: change.then(|| "CHANGE".to_owned()),
                     }),
-                    None if self.read_gap() => {}
+                    None if self.opaque => {}
+                    None if self.read_gap() => self.gap("alter_column_without_action", spec_start),
                     None => {
                         return Err(self.error_with(
                             "Operation not allowed: ALTER TABLE table ALTER COLUMN requires a TYPE, \

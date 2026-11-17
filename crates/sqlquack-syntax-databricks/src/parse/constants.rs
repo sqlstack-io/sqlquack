@@ -8,6 +8,9 @@ pub(crate) const FLAG_PHRASES: &[&str] = &["IF EXISTS", "IF NOT EXISTS"];
 /// A statement whose shared tree nests deeper than this is refused after it parses.
 pub(crate) const MAX_TREE_DEPTH: usize = 8000;
 
+/// Levels a statement may wrap around a value kept where a gap used to drop it; a deeper value stays a gap.
+pub(crate) const KEPT_VALUE_WRAPPERS: usize = 64;
+
 /// `comparisonOperator`.
 pub(crate) const COMPARE: u8 = 1;
 /// `|` (bitwise or).

@@ -11,7 +11,7 @@ use sqlquack_syntax::expressions::tables::models::Undrop;
 use crate::parse::_helpers::commands::alters::{property_pair, property_text};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{
-    column_from, literal, null, property, subquery, utility, var,
+    column_from, literal, null, property, subquery, too_deep_to_keep, utility, var,
 };
 use crate::parse::constants::{MSCK, UNDROP_WITH_ID};
 use crate::scan::models::{NumberKind, TokenKind};
@@ -231,11 +231,14 @@ impl Parser<'_> {
             true => literal(Literal::Number(self.expect_token(is_integer)?.value)),
             false => self.expression()?,
         };
+        let restored: Expression =
+            utility(kind, vec![target, property(&words.join(" "), Some(value))]);
+        if too_deep_to_keep(&restored) {
+            self.gap("restore", start);
+            return Ok(null());
+        }
         self.treed("restore", start);
-        Ok(utility(
-            kind,
-            vec![target, property(&words.join(" "), Some(value))],
-        ))
+        Ok(restored)
     }
 
     /// `REPAIR PRIVILEGES ...`, kept as a gap; `[MSCK] REPAIR TABLE` is a documented form.
