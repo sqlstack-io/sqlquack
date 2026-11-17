@@ -1024,3 +1024,38 @@ note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Finge
 
 [review.definitions]
 "db.ddl.set-tag" = "e09b2fc6a9a6abda889b99697a500d16cbb71ce87a0ebefb1e62489a7770c758"
+
+[[review]]
+id = "db-ddl-055"
+family = "ddl"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:47:23Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-catalog",
+  "db.ddl.alter-governed-tag",
+  "db.ddl.create-catalog.foreign-catalog-using-connection",
+  "db.ddl.create-connection",
+  "db.ddl.create-governed-tag",
+  "db.ddl.create-server",
+  "db.ddl.partition.partition-spec",
+]
+note = "Re-read on 17 Nov 2026. The 16 Nov full reading approved each of these forms at an earlier fingerprint with the same definition hash; every case that changed since (receipts now attached, local verdicts that now agree with them, replaced or whitespace-normalised texts) was read against its receipt and its local parse tree on 6e28c6100, and each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.ddl.alter-catalog" = "1616ca06aab16378dc067b029bb5b5ce801bbacb9dc314af3904a8fb6dd9483b"
+"db.ddl.alter-governed-tag" = "4bbc8836da3c4a40a26d94da17dd502d3b3a31a95106dfe79b6ab01571c518c9"
+"db.ddl.create-catalog.foreign-catalog-using-connection" = "9b296813ffce4531e12e49e0336a3d8b93d18aa0651a2651059bc50fc4c1146c"
+"db.ddl.create-connection" = "f087fa30fffa82a543f635387cbe7add3c3570656f5424f388b44f0f88666013"
+"db.ddl.create-governed-tag" = "8e4b2df178ca18c349ffbeb317d2f8c6263a015172a5cd5ed2670f9dcfbf44c7"
+"db.ddl.create-server" = "da723726ffe095c09dabcb3c1e088b75758933afd2bf1e22cec6c80d30e649b8"
+"db.ddl.partition.partition-spec" = "66810195549ce47d997ff3d785d0fbfafa42b10b745bb2d99760fcabbc0c843f"
+
+[review.definitions]
+"db.ddl.alter-catalog" = "a051e0d52a31534730c40e4b9580adcf13847bc28134af160668f69f524c0bf5"
+"db.ddl.alter-governed-tag" = "459cba30d1f399695bc88fda924218a73b61b5276ac02d0ef26e0d896e667f5e"
+"db.ddl.create-catalog.foreign-catalog-using-connection" = "63c53c7c09c2a90ce0892ceef95e0855a696effe0961536fe21e8c046e19fb19"
+"db.ddl.create-connection" = "f8f9fdecc5f2ca1c9a0869526d414e62c0a2981037c5cf6f25266212a44cf64b"
+"db.ddl.create-governed-tag" = "20e868a69fba7f35fdb1f6dd5b87b233d1356b3a37378542d57a89469f41575c"
+"db.ddl.create-server" = "3659c6fb8959bcf4a5824c6291cd741e31ad563f6136a46830c505ceb7cad962"
+"db.ddl.partition.partition-spec" = "70992caa13ab1bc06d8340b6c791cb57381ff91af6b2e3187208115e3a6ea128"

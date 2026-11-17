@@ -673,3 +673,41 @@ note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Finge
 
 [review.definitions]
 "db.expressions.window-functions" = "8d8b5f177789ba363b04161b506230cb79610400a28fa923e130299ea0793ad7"
+
+[[review]]
+id = "db-expressions-034"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:47:23Z"
+verdict = "approved"
+forms = [
+  "db.expressions.file-type",
+  "db.expressions.interval-type.interval",
+  "db.expressions.interval-type.interval.literals",
+  "db.expressions.names.identifier-3",
+  "db.expressions.names.identifier-4",
+  "db.expressions.names.identifier-5",
+  "db.expressions.names.subscript-dot",
+  "db.expressions.parameter-marker.colon",
+]
+note = "Re-read on 17 Nov 2026. The 16 Nov full reading approved each of these forms at an earlier fingerprint with the same definition hash; every case that changed since (receipts now attached, local verdicts that now agree with them, replaced or whitespace-normalised texts) was read against its receipt and its local parse tree on 6e28c6100, and each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.expressions.file-type" = "4a2f4efff7e35f19abbb0d3bfb36225dd90a3c80aeba34ea709369294b32b3fb"
+"db.expressions.interval-type.interval" = "3a32b1b0e1bf2ced6a721b7b5e25d3bfbac529a80de8e4dbd0dfb42340737e07"
+"db.expressions.interval-type.interval.literals" = "42c85d3264b6f582e6bb203eac5ab168f5f846174ba1d1e22d1b2bd2238101ed"
+"db.expressions.names.identifier-3" = "cc5f9d4abd1adda547168bc0a311d82c7dcee2102819517c27a6514127d8c6ff"
+"db.expressions.names.identifier-4" = "518b6bfaf7a910ef19b25013b5de712dcf7c187ed9ca26174fdb7f803911ce88"
+"db.expressions.names.identifier-5" = "e9cbc4a8cb00870ac2dbcc21e2669fb6c50a91c59b80481e1a538fc0bb14c546"
+"db.expressions.names.subscript-dot" = "c7e99cb199abc1b8fd56b80864bc782b342bc35624b62742f2b5dd0346ab75e3"
+"db.expressions.parameter-marker.colon" = "2cca4e877678d7588a3fc98978bc9ca66c7975846cd2b8d3a071190c37fcb254"
+
+[review.definitions]
+"db.expressions.file-type" = "24aa14dd27226d154eaca2c5ebac77cae36b8a5a544c4d2a6f8ff1655d1ffb53"
+"db.expressions.interval-type.interval" = "e73fc9e5f3f6bae1222aba950741d57b7d7427db8c00d39302b2a39a8d8991db"
+"db.expressions.interval-type.interval.literals" = "6fdacb610326eb34973913dff8dbaa68795881414478dfd15e7279a14746a770"
+"db.expressions.names.identifier-3" = "6a69e3cbf933a9790728e3e7fd4ea8a2cf40317022a651231b0afdd7f69386bf"
+"db.expressions.names.identifier-4" = "a1eb2e8149f6201ac784c0a86c4533ff0edcf302596a800f0e454f359ad038b0"
+"db.expressions.names.identifier-5" = "210c8eabaf67233603adac6380620c0af709e0a43e3b7efdd62358f75f46ee69"
+"db.expressions.names.subscript-dot" = "60073fcda5eb56033f6a66bffa54bd4598371331db747eb77c8fa5c131f155d1"
+"db.expressions.parameter-marker.colon" = "2440f0458000efe15ff564ab63d019dfa297a0961c8a27f37f33ce8c5c1db671"

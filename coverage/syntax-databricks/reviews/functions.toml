@@ -4006,3 +4006,23 @@ note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Finge
 
 [review.definitions]
 "db.functions.zip-with" = "4f20280818a3c3cceb5e47a88afbbcc1851ea4a63d339a5760239a2f7cb0db37"
+
+[[review]]
+id = "db-functions-055"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:47:23Z"
+verdict = "approved"
+forms = [
+  "db.functions.decode",
+  "db.functions.now",
+]
+note = "Re-read on 17 Nov 2026. The 16 Nov full reading approved each of these forms at an earlier fingerprint with the same definition hash; every case that changed since (receipts now attached, local verdicts that now agree with them, replaced or whitespace-normalised texts) was read against its receipt and its local parse tree on 6e28c6100, and each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.functions.decode" = "8bb17266fb51ce5cf3bffe5ce6b20e4d5a7c58451a6e4baa7ea5889564bac7b1"
+"db.functions.now" = "626950cc096edb36df42a4a897343e362e04ef3231d90cd94da1ca0860341ec4"
+
+[review.definitions]
+"db.functions.decode" = "3a18855f0983d57cf450e8e2afb2909ceec18e902d8c37a653dced69cfb4fc14"
+"db.functions.now" = "04ee6451a32691a4c5224e0b8a5285e7861be8bbd038f933745f38828b9166d0"
