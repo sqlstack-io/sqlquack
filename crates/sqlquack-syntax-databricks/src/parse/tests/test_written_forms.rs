@@ -455,6 +455,46 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 3,
         },
         DistinctTreesTestCase {
+            description: "DROP CONSTRAINT with neither, RESTRICT or CASCADE",
+            written: &[
+                "ALTER TABLE t1 DROP CONSTRAINT n1",
+                "ALTER TABLE t1 DROP CONSTRAINT n1 RESTRICT",
+                "ALTER TABLE t1 DROP CONSTRAINT n1 CASCADE",
+            ],
+            expected_distinct_trees: 3,
+        },
+        DistinctTreesTestCase {
+            description: "DROP PARTITION with or without PURGE, and UNSET TBLPROPERTIES with or without IF EXISTS",
+            written: &[
+                "ALTER TABLE t1 DROP PARTITION ( c1 = 1 )",
+                "ALTER TABLE t1 DROP PARTITION ( c1 = 1 ) PURGE",
+                "ALTER TABLE t1 UNSET TBLPROPERTIES ( 'k' )",
+                "ALTER TABLE t1 UNSET TBLPROPERTIES IF EXISTS ( 'k' )",
+            ],
+            expected_distinct_trees: 4,
+        },
+        DistinctTreesTestCase {
+            description: "a view's relationship constraint: named or not, cardinality, ON or USING, aliased or not",
+            written: &[
+                "ALTER VIEW v1 ADD CONSTRAINT k1 MANY TO ONE RELATIONSHIP TO v2 ON 1 = 1",
+                "ALTER VIEW v1 ADD MANY TO ONE RELATIONSHIP TO v2 ON 1 = 1",
+                "ALTER VIEW v1 ADD CONSTRAINT k1 ONE TO MANY RELATIONSHIP TO v2 ON 1 = 1",
+                "ALTER VIEW v1 ADD CONSTRAINT k1 MANY TO ONE RELATIONSHIP TO v2 USING ( c1 )",
+                "ALTER VIEW v1 ADD CONSTRAINT k1 MANY TO ONE RELATIONSHIP TO v2 AS a1 ON 1 = 1",
+            ],
+            expected_distinct_trees: 5,
+        },
+        DistinctTreesTestCase {
+            description: "CACHE SELECT's FROM as a clause, as an alias, and as a column",
+            written: &[
+                "CACHE SELECT c1 FROM t1",
+                "CACHE SELECT c1 FROM",
+                "CACHE SELECT FROM t1",
+                "CACHE SELECT c1 FROM t1 WHERE",
+            ],
+            expected_distinct_trees: 4,
+        },
+        DistinctTreesTestCase {
             description: "NEAREST BY: APPROX or EXACT, with or without a count, DISTANCE or SIMILARITY",
             written: &[
                 "SELECT * FROM t1 JOIN t2 APPROX NEAREST BY DISTANCE f1 ( 1 )",

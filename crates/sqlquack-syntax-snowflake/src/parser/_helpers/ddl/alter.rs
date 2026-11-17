@@ -393,7 +393,10 @@ impl Parser {
                     break;
                 }
             }
-            Ok(AlterTableAction::UnsetProperty { properties })
+            Ok(AlterTableAction::UnsetProperty {
+                properties,
+                if_exists: false,
+            })
         }
     }
 
@@ -747,6 +750,7 @@ impl Parser {
                 name,
                 if_exists,
                 restrict: false,
+                cascade: false,
             })
         } else if self.match_keywords(&[TokenType::ForeignKey, TokenType::Key]) {
             let name = self.expect_identifier_with_quoted()?;
@@ -823,6 +827,7 @@ impl Parser {
         Ok(AlterTableAction::DropPartition {
             partitions,
             if_exists,
+            purge: false,
         })
     }
 

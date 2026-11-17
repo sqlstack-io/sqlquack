@@ -236,6 +236,21 @@ impl Parser<'_> {
         Ok(self.spanned(first, node))
     }
 
+    /// What `STREAM ( … )` reads: a table name, or a table function call, with no alias.
+    fn stream_source(&mut self) -> Parsing<Expression> {
+        if self.kw("IDENTIFIER") && self.char_at(1, '(') {
+            self.at += 2;
+            let name: Expression = self.expression()?;
+            self.expect_char(')')?;
+            return Ok(call(IDENTIFIER_CLAUSE, vec![name]));
+        }
+        let name: Vec<Identifier> = self.multipart_identifier()?;
+        match self.is_char('(') {
+            true => self.function_call(name),
+            false => Ok(Expression::Table(Box::new(table(name)))),
+        }
+    }
+
     fn relation_primary_inner(&mut self, is_lateral: bool) -> Parsing<Expression> {
         let start: usize = self.offset();
         if self.kw("STREAM")
@@ -246,12 +261,21 @@ impl Parser<'_> {
         {
             self.at += 1;
             if self.eat_char('(') {
-                let mut relation: TableRef = table(self.multipart_identifier()?);
+                let inner: Expression = self.stream_source()?;
                 self.expect_char(')')?;
-                relation.watermark = self.watermark()?.map(Box::new);
+                let inner: Expression = match inner {
+                    Expression::Table(mut relation) => {
+                        relation.watermark = self.watermark()?.map(Box::new);
+                        Expression::Table(relation)
+                    }
+                    call => {
+                        self.watermark_gap()?;
+                        call
+                    }
+                };
                 let alias: Option<TableAlias> = self.table_alias()?;
                 let stream: Expression = Expression::Stream(Box::new(Stream {
-                    this: paren(Expression::Table(Box::new(relation))),
+                    this: paren(inner),
                     on: None,
                     show_initial_rows: None,
                 }));

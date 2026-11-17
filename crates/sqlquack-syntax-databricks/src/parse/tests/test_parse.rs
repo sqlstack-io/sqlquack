@@ -20,9 +20,29 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "STREAM's parentheses hold only a table name (STREAM ( multipartIdentifier ))",
+            description: "STREAM's parentheses hold a table name or a table function call, with no alias",
             sql: "SELECT * FROM STREAM ( t1 a1 )",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "STREAM's parentheses hold no query",
+            sql: "SELECT * FROM STREAM ( SELECT 1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "STREAM's parentheses may hold a table function call (STREAM ( tableFunctionCall ))",
+            sql: "SELECT * FROM STREAM ( range ( 1 ) )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a table function call in STREAM's parentheses takes the alias after them",
+            sql: "SELECT * FROM STREAM ( read_files ( '/x' ) ) a1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "STREAM's parentheses may hold an IDENTIFIER clause",
+            sql: "SELECT * FROM STREAM ( IDENTIFIER ( 't1' ) )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ANTI is strict non-reserved, so it cannot be a bare table alias",
@@ -1170,6 +1190,36 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             sql: "INSERT INTO TABLE t1 SELECT 1",
             pointer: "/0/insert/table_keyword",
             expected_json: "true",
+        },
+        ValueTestCase {
+            description: "a name before a parenthesised query ends REPLACE ON's condition, as its page writes it",
+            sql: "INSERT INTO TABLE students AS t REPLACE ON t.name <=> s.name ( SELECT * FROM people ) AS s",
+            pointer: "/0/insert/replace_on/null_safe_eq/right/column/name/name",
+            expected_json: "\"name\"",
+        },
+        ValueTestCase {
+            description: "the parenthesised query after REPLACE ON's condition is the insert's, with its alias",
+            sql: "INSERT INTO TABLE students AS t REPLACE ON t.name <=> s.name ( SELECT * FROM people ) AS s",
+            pointer: "/0/insert/query/subquery/alias/name",
+            expected_json: "\"s\"",
+        },
+        ValueTestCase {
+            description: "an alias written with AS after the column list is the insert's",
+            sql: "INSERT INTO TABLE students ( row_origin , name ) AS t REPLACE ON t.name <=> s.name ( SELECT * FROM people ) AS s",
+            pointer: "/0/insert/alias/name",
+            expected_json: "\"t\"",
+        },
+        ValueTestCase {
+            description: "the column list before AS alias is kept",
+            sql: "INSERT INTO TABLE students ( row_origin , name ) AS t REPLACE ON t.name <=> s.name ( SELECT * FROM people ) AS s",
+            pointer: "/0/insert/columns/1/name",
+            expected_json: "\"name\"",
+        },
+        ValueTestCase {
+            description: "EXISTS takes the parenthesised query in REPLACE ON's condition",
+            sql: "INSERT INTO t1 REPLACE ON EXISTS ( SELECT 1 ) SELECT 1",
+            pointer: "/0/insert/replace_on/exists/this/subquery/this/select/expressions/0/literal/value",
+            expected_json: "\"1\"",
         },
         ValueTestCase {
             description: "INSERT keeps its REPLACE ON condition",

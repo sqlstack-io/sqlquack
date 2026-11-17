@@ -586,6 +586,10 @@ others:
 - an `INSERT OVERWRITE DIRECTORY` option's value written without `=`, in the directory's
   `options_without_equals`, and a path written after `DIRECTORY` against one given only as the
   `'path'` option;
+- `DROP CONSTRAINT` with neither, `RESTRICT` or `CASCADE`; `DROP PARTITION` with or without
+  `PURGE`; `UNSET TBLPROPERTIES` with or without `IF EXISTS`; a view's relationship constraint
+  named or not, by cardinality, with `ON` or `USING` and with or without an alias; and `CACHE
+  SELECT`'s `FROM` as a clause, as an alias and as a column;
 - a join's `NEAREST BY`: `APPROX` against `EXACT`, `DISTANCE` against `SIMILARITY`, and the number
   of results written or not; a `WATERMARK` expression bare, with an alias, with `AS` and with
   `AS ( aliases )`;

@@ -745,6 +745,9 @@ pub enum AlterTableAction {
         /// Databricks: whether RESTRICT, the default behaviour, was written
         #[serde(default, skip_serializing_if = "std::ops::Not::not")]
         restrict: bool,
+        /// Databricks: whether CASCADE was written
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        cascade: bool,
     },
     /// DROP FOREIGN KEY action (Oracle/MySQL): ALTER TABLE t DROP FOREIGN KEY fk_name
     DropForeignKey {
@@ -755,6 +758,9 @@ pub enum AlterTableAction {
         /// List of partitions to drop (each partition is a list of key=value pairs)
         partitions: Vec<Vec<(Identifier, Expression)>>,
         if_exists: bool,
+        /// Databricks: whether PURGE was written
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        purge: bool,
     },
     /// ADD PARTITION action (Hive/Spark)
     AddPartition {
@@ -776,6 +782,9 @@ pub enum AlterTableAction {
     /// UNSET property action (Snowflake): ALTER TABLE t UNSET property
     UnsetProperty {
         properties: Vec<String>,
+        /// Databricks: whether IF EXISTS was written
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        if_exists: bool,
     },
     /// CLUSTER BY action (Snowflake): ALTER TABLE t CLUSTER BY (col1, col2)
     ClusterBy {

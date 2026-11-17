@@ -357,6 +357,76 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "DROP CONSTRAINT with CASCADE is kept (NO_SUCH_CONSTRAINT_EXCEPTION)",
+            sql: "ALTER TABLE t1 DROP CONSTRAINT n1 CASCADE",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DROP of several partitions with PURGE is kept (DELTA_OPERATION_NOT_ALLOWED_DETAIL)",
+            sql: "ALTER TABLE t1 DROP IF EXISTS PARTITION ( c1 = 1 ) , PARTITION ( c1 = 1 ) PURGE",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ALTER VIEW WITH SCHEMA BINDING is kept (accepted)",
+            sql: "ALTER VIEW v1 WITH SCHEMA BINDING",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ALTER VIEW SET TAGS is kept (accepted)",
+            sql: "ALTER VIEW v1 SET TAGS ( 'k' = 'v' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ALTER VIEW UNSET TAGS is kept (accepted)",
+            sql: "ALTER VIEW v1 UNSET TAGS ( 'k' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a view's relationship constraint is kept (MISSING_CLAUSES_FOR_OPERATION: AS <alias>, after parsing)",
+            sql: "ALTER VIEW v1 ADD CONSTRAINT k1 MANY TO ONE RELATIONSHIP TO v1 ON 1 = 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ALTER VIEW DROP CONSTRAINT is kept (INVALID_PARAMETER_VALUE: cannot delete constraint on a view)",
+            sql: "ALTER VIEW v1 DROP CONSTRAINT k1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ALTER VIEW SET MANAGED is kept (FOREIGN_VIEW_CONVERSION_UNSUPPORTED)",
+            sql: "ALTER VIEW v1 SET MANAGED",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "CLUSTER BY a string is kept (DELTA_CLUSTER_BY_EXPRESSIONS_NOT_SUPPORTED)",
+            sql: "CREATE TABLE t3 ( c1 INT ) CLUSTER BY ( 'v1' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a metric view is kept with its YAML body (accepted)",
+            sql: "CREATE VIEW v3 WITH METRICS LANGUAGE YAML AS $${\"version\": \"1.1\", \"source\": \"t1\", \"dimensions\": [{\"name\": \"d1\", \"expr\": \"c1\"}], \"measures\": [{\"name\": \"m1\", \"expr\": \"count(1)\"}]} $$",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "CACHE SELECT reads FROM as a column before a name (UNRESOLVED_COLUMN: `FROM`)",
+            sql: "CACHE SELECT FROM t1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "CACHE SELECT reads a final FROM as an alias (UNRESOLVED_COLUMN: `c1`)",
+            sql: "CACHE SELECT c1 FROM",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "CACHE SELECT reads a bare word after an item as its alias (UNRESOLVED_COLUMN: `c1`)",
+            sql: "CACHE SELECT c1 t1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "CACHE SELECT reads a final WHERE as the table's alias (accepted)",
+            sql: "CACHE SELECT c1 FROM t1 WHERE",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "RETAIN DROPPED TO a count and unit parses (SCHEMA_NOT_FOUND: The schema `workspace.s1` cannot be found)",
             sql: "ALTER DATABASE s1 RETAIN DROPPED TO 1 HOUR",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
@@ -537,11 +607,6 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "CACHE SELECT keeps text the service reads loosely as a gap",
-            sql: "CACHE SELECT c1 FROM",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
-        },
-        VerdictTestCase {
             description: "CACHE SELECT keeps an opaque part as a gap",
             sql: "CACHE SELECT IDENTIFIER ( 'f1' ) ( 1 ) FROM t1",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
@@ -637,9 +702,9 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "UNSET TBLPROPERTIES IF EXISTS stays a gap",
+            description: "UNSET TBLPROPERTIES IF EXISTS is kept",
             sql: "ALTER TABLE t1 UNSET TBLPROPERTIES IF EXISTS ( 'k' )",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a directory whose row format escapes stays a gap",

@@ -604,3 +604,6 @@ pub(crate) const KEYED_ACTIONS: [&str; 23] = [
     COLUMN_SET_TAGS,
     COLUMN_UNSET_TAGS,
 ];
+
+/// Words that take a parenthesised query in an expression, so `REPLACE ON` does not end before it.
+pub(crate) const REPLACE_ON_QUERY_TAKERS: [&str; 5] = ["EXISTS", "IN", "ANY", "SOME", "ALL"];

@@ -62,9 +62,11 @@ their documented syntax (`parse/_helpers/commands/documented.rs`, in the notatio
 - `ALTER TABLE` (`AlterTable`): `ADD COLUMN[S]`, `DROP COLUMN[S]`, `RENAME [COLUMN]`,
   `ALTER | CHANGE [COLUMN]` with `TYPE`, `COMMENT`, `SET | DROP NOT NULL`, `SET DEFAULT`,
   `DROP DEFAULT`, Hive's `CHANGE old new type`, `ADD | DROP PARTITION`, `PARTITION (…) SET
-  LOCATION`, `ADD CONSTRAINT`, `DROP CONSTRAINT`, `SET | UNSET TBLPROPERTIES`, `SET | UNSET TAGS`,
-  `SET LOCATION`, `CLUSTER BY`. `ALTER VIEW` (`AlterView`): `AS query`, `RENAME TO`,
-  `SET | UNSET TBLPROPERTIES`, `[SET] OWNER TO`. `ALTER SCHEMA` (`AlterObject` of kind `SCHEMA`,
+  LOCATION`, `ADD CONSTRAINT`, `DROP CONSTRAINT` (with `CASCADE`), `DROP PARTITION` (with
+  `PURGE`), `SET | UNSET TBLPROPERTIES` (with `IF EXISTS`), `SET | UNSET TAGS`, `SET LOCATION`,
+  `CLUSTER BY`. `ALTER VIEW` (`AlterView`): `AS query`, `RENAME TO`, `SET | UNSET TBLPROPERTIES`,
+  `[SET] OWNER TO`; its tags, `SET MANAGED`, `WITH SCHEMA …` and relationship constraints are an
+  `AlterObject` of kind `VIEW`, its action naming the clause. `ALTER SCHEMA` (`AlterObject` of kind `SCHEMA`,
   its action naming the clause): properties, tags (named by identifiers, not strings), locations,
   collation, owner, `RETAIN DROPPED TO` and predictive optimization.
 - `DESCRIBE` (`Describe`) of tables (`EXTENDED`, `FORMATTED`, `PARTITION`, `AS JSON`), queries,
@@ -78,7 +80,11 @@ their documented syntax (`parse/_helpers/commands/documented.rs`, in the notatio
 - `RESET [key]` (`ResetStatement`): the key as its name, such as `STATEMENT_TIMEOUT` or
   `spark.sql.ansi.enabled`, or no name for a bare `RESET`; text Spark's pattern does not read is
   refused. `EXPLAIN RESET` holds the same node.
-- `FROM STREAM t` and `FROM STREAM(t)` are a `Stream` holding the relation read.
+- `FROM STREAM t`, `FROM STREAM(t)` and `FROM STREAM(f(…))` are a `Stream` holding the relation
+  or table function call read; the parentheses hold no alias and no query.
+- `CREATE VIEW … WITH METRICS` (`CreateView`): the YAML body is the view's query, a dollar-quoted
+  literal, and `WITH METRICS` and `LANGUAGE` are its options. `CLUSTER BY ('text', …)` on
+  `CREATE TABLE` is a `CLUSTER BY` property of the expressions.
 - `@name.method(args)`, a templating macro call left in the text (such as `@py.f(a)`), is a
   `MethodCall` on the column `@name` (a dotted `@name.a.f()` qualifies the column), the shape
   Polyglot gives it; its arguments are expressions.
@@ -99,7 +105,7 @@ as they refuse any gap.
 | --- | --- | --- |
 | `add`, `list` | `ADD` and `LIST` of a file, jar or archive (another resource type is refused) | a `UtilityStatement` of the keywords and each resource, split where a space falls, as Spark splits them: a resource written wholly as a string literal as a string, any other as its text as written |
 | `restore`, `deny`, `refresh` | `RESTORE … {TIMESTAMP \| VERSION} AS OF`, `DENY privileges ON securable TO principal` (read as `GRANT`), `REFRESH path` (checked as Spark checks the resource path) | a `UtilityStatement` of the keywords and parts; `REFRESH` keeps a quoted path as a string and an unquoted one as its text as written |
-| `cache_select` | `CACHE SELECT expr, … FROM name [WHERE expr]`, as documented | a `UtilityStatement` of its clauses; any other text the service accepts stays the gap, unchecked but for a string after `FROM` |
+| `cache_select` | `CACHE SELECT expr, … FROM name [WHERE expr]`, as documented | a `UtilityStatement` of its clauses; text the service reads as a query with `FROM` or `WHERE` as a name, as in `CACHE SELECT c1 FROM`, has an alias in their place; any other text it accepts stays the gap, unchecked but for a string after `FROM` |
 | `describe_column`, `show_partition` | `DESCRIBE t column`, `PARTITION (…)` on `SHOW PARTITIONS` and `SHOW TABLE EXTENDED` | the `Describe` or `Show` holding the column or partition |
 | `row_format`, `stored_as` | `ROW FORMAT DELIMITED \| SERDE` and `STORED AS \| BY` on `CREATE TABLE [… LIKE]` | properties of the table; `STORED AS` is marked as the Hive spelling, unlike `USING`. A storage handler's `SERDEPROPERTIES` stays the gap |
 | `insert_overwrite_directory` | `INSERT OVERWRITE [LOCAL] DIRECTORY path` in Hive's form | an `Insert` whose directory holds the path, a delimited row format and a bare format name. `ESCAPED BY`, a SerDe, a quoted format name, input and output formats, `STORED BY` and the `USING` form stay the gap |
@@ -130,17 +136,13 @@ next top-level `;` is not checked further; every other gap's text is checked.
 | `alter`, `create`, `drop`, `describe` | those statements of any other object kind with no documented form above, such as a group |
 | `set` | `SET ROLE`, `SET RECIPIENT name`, `SET COLLATION name` and `SET QUERY_TAGS[key] = value`; any other `SET` text Spark's patterns do not read is refused (`INVALID_SET_SYNTAX`), as are `SET QUERY_TAGS` without a key, `SET PATH` with a one-part schema and `SET TIME ZONE` with no zone |
 | `bucket_spec`, `skew_spec` | the Hive `CLUSTERED BY … INTO … BUCKETS` and `SKEWED BY` table clauses |
-| `metric_view` | `CREATE VIEW … WITH METRICS` |
 | `insert_options`, `insert_replace_on`, `insert_replace_using`, `schema_evolution` | `INSERT … WITH (options)`, `REPLACE ON`/`REPLACE USING`, `WITH SCHEMA EVOLUTION` |
 | `copy_by_position`, `copy_target_credential` | `COPY INTO t BY POSITION`, a credential on `COPY INTO`'s target |
 | `multi_select_from` | `FROM … INSERT …` / `FROM … SELECT …` with more than one body |
 | `changes`, `relation_options`, `watermark`, `identified_by`, `nearest_by`, `subquery_sample`, `parenthesized_relation_sample` | `CHANGES`, `WITH (options)` on a relation, `WATERMARK … DELAY OF INTERVAL …` (checked), `IDENTIFIED BY`, `NEAREST BY`, a sample or later relation clause after a parenthesized subquery or relation |
 | `table_argument_partitioning` | `TABLE t PARTITION BY … ORDER BY …` as a function argument |
 | `pivot_after_lateral_view`, `identifier_clause_function` | `PIVOT` after `LATERAL VIEW`, `IDENTIFIER(…)(…)` calls |
-| `view_tags`, `view_constraint`, `managed`, `schema_binding` | on `ALTER VIEW`: tags, constraints, `SET MANAGED` and `WITH SCHEMA …` |
-| `cluster_by_expression` | `CLUSTER BY ('text', …)` on `CREATE TABLE`: an expression, parsed and refused later than the parser |
-| `drop_constraint_cascade`, `drop_partition_purge` | `DROP CONSTRAINT … CASCADE`, `DROP PARTITION … PURGE` |
-| `unset_if_exists` | `UNSET TBLPROPERTIES IF EXISTS` |
+| `unset_if_exists` | `UNSET TBLPROPERTIES IF EXISTS` on `ALTER VIEW` |
 | `change_column_position`, `change_column_not_null`, `replace_columns`, `partition_change_column`, `view_partition`, `alter_column_without_action` | column moves with `CHANGE`, `REPLACE COLUMNS`, Hive column changes in a partition, partitions of a view, a column named with no action after an action kept as a tree |
 | `show_create_table_serde` | `SHOW CREATE TABLE … AS SERDE` |
 | `declare_cursor`, `function_credentials`, `function_secrets` | `DECLARE … CURSOR`, a function's `CREDENTIALS` and `SECRETS` |

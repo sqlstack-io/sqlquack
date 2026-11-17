@@ -14,7 +14,7 @@ use sqlquack_syntax::expressions::tables::models::Partition;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    binary, collate, column_from, joined, null, table, too_deep_to_keep, tuple, var,
+    binary, collate, column_from, joined, null, property, table, too_deep_to_keep, tuple, var,
 };
 use crate::parse::constants::{
     ALTER_COLUMN_WORDS, ALTER_KINDS, COLUMN_DROP_MASK, COLUMN_POSITION, COLUMN_SET_MASK,
@@ -72,6 +72,23 @@ fn partition_pairs(spec: Vec<(Identifier, Option<Expression>)>) -> Vec<(Identifi
     spec.into_iter()
         .map(|(name, value)| (name, value.unwrap_or_else(null)))
         .collect()
+}
+
+/// An `ALTER VIEW` action with no shared variant, as an `AlterObject` of kind `VIEW`.
+fn view_object(
+    name: TableRef,
+    action: String,
+    if_exists: bool,
+    operands: Vec<Expression>,
+) -> Expression {
+    Expression::AlterObject(Box::new(AlterObject {
+        kind: "VIEW".to_owned(),
+        name: Some(name),
+        action,
+        operand_if_exists: if_exists,
+        operands,
+        ..Default::default()
+    }))
 }
 
 impl Parser<'_> {
@@ -550,18 +567,13 @@ impl Parser<'_> {
         if self.eat_kw("CONSTRAINT") {
             let if_exists: bool = self.eat_kws(&["IF", "EXISTS"]);
             let name: Identifier = self.ident()?;
-            let behaviour: usize = self.offset();
-            let restrict: bool = match self.eat_kw("CASCADE") {
-                true => {
-                    self.gap("drop_constraint_cascade", behaviour);
-                    false
-                }
-                false => self.eat_kw("RESTRICT"),
-            };
+            let cascade: bool = self.eat_kw("CASCADE");
+            let restrict: bool = !cascade && self.eat_kw("RESTRICT");
             return Ok(vec![AlterTableAction::DropConstraint {
                 name,
                 if_exists,
                 restrict,
+                cascade,
             }]);
         }
         if self.kw("PRIMARY") {
@@ -625,13 +637,10 @@ impl Parser<'_> {
         while self.eat_char(',') {
             partitions.push(partition_pairs(self.partition_spec()?));
         }
-        let purge: usize = self.offset();
-        if self.eat_kw("PURGE") {
-            self.gap("drop_partition_purge", purge);
-        }
         Ok(vec![AlterTableAction::DropPartition {
             partitions,
             if_exists,
+            purge: self.eat_kw("PURGE"),
         }])
     }
 
@@ -863,12 +872,10 @@ impl Parser<'_> {
     fn alter_table_unset(&mut self, start: usize) -> Parsing<Option<AlterTableAction>> {
         self.expect_kw("UNSET")?;
         if self.eat_kw("TBLPROPERTIES") {
-            let if_exists: usize = self.offset();
-            if self.eat_kws(&["IF", "EXISTS"]) {
-                self.gap("unset_if_exists", if_exists);
-            }
+            let if_exists: bool = self.eat_kws(&["IF", "EXISTS"]);
             return Ok(Some(AlterTableAction::UnsetProperty {
                 properties: self.key_property_list()?,
+                if_exists,
             }));
         }
         if self.eat_kw("TAGS") {
@@ -929,35 +936,62 @@ impl Parser<'_> {
                 self.expect_kw("TO")?;
                 Some(AlterViewAction::OwnerTo(self.principal()?))
             }
-            Some("SET" | "UNSET") if self.kw_at(1, "TAGS") => {
+            Some(word @ ("SET" | "UNSET")) if self.kw_at(1, "TAGS") => {
+                let action: String = format!("{word} TAGS");
                 self.at += 2;
-                self.property_list()?;
-                self.gap("view_tags", start);
-                None
+                let tags: Vec<Expression> = self.tags(word == SET_TAGS)?;
+                return Ok(view_object(node.name, action, false, tags));
             }
             Some("SET") if self.kw_at(1, "MANAGED") => {
                 self.at += 2;
-                self.gap("managed", start);
-                None
+                return Ok(view_object(
+                    node.name,
+                    SET_MANAGED.to_owned(),
+                    false,
+                    Vec::new(),
+                ));
             }
             Some("WITH") if self.kw_at(1, "SCHEMA") => {
                 self.at += 2;
-                if !(self.eat_kw("BINDING")
-                    || self.eat_kw("COMPENSATION")
-                    || self.eat_kw("EVOLUTION")
-                    || self.eat_kws(&["TYPE", "EVOLUTION"]))
-                {
-                    return Err(self.error());
-                }
-                self.gap("schema_binding", start);
-                None
+                let binding: &str = match self.word_at(0).as_deref() {
+                    Some("BINDING") => "BINDING",
+                    Some("COMPENSATION") => "COMPENSATION",
+                    Some("EVOLUTION") => "EVOLUTION",
+                    Some("TYPE") if self.kw_at(1, "EVOLUTION") => "TYPE EVOLUTION",
+                    _ => return Err(self.error()),
+                };
+                self.at += binding.split(' ').count();
+                let operands: Vec<Expression> = vec![var(binding)];
+                return Ok(view_object(
+                    node.name,
+                    "WITH SCHEMA".to_owned(),
+                    false,
+                    operands,
+                ));
             }
-            Some("ADD" | "DROP") if self.kw_at(1, "CONSTRAINT") => {
+            Some("ADD") if self.kw_at(1, "CONSTRAINT") || self.kw_in(1, &["MANY", "ONE"]) => {
+                self.at += 1;
+                let mut operands: Vec<Expression> = Vec::new();
+                let action: &str = match self.eat_kw("CONSTRAINT") {
+                    true => {
+                        operands.push(Expression::Identifier(self.ident()?));
+                        "ADD CONSTRAINT"
+                    }
+                    false => "ADD",
+                };
+                operands.extend(self.relationship_constraint()?);
+                return Ok(view_object(node.name, action.to_owned(), false, operands));
+            }
+            Some("DROP") if self.kw_at(1, "CONSTRAINT") => {
                 self.at += 2;
-                self.ident()?;
-                self.skip_statement_rest()?;
-                self.gap("view_constraint", start);
-                None
+                let if_exists: bool = self.eat_kws(&["IF", "EXISTS"]);
+                let operands: Vec<Expression> = vec![Expression::Identifier(self.ident()?)];
+                return Ok(view_object(
+                    node.name,
+                    "DROP CONSTRAINT".to_owned(),
+                    if_exists,
+                    operands,
+                ));
             }
             Some("ADD") if self.kw_at(1, "PARTITION") || self.kw_at(1, "IF") => {
                 self.at += 1;
@@ -991,6 +1025,64 @@ impl Parser<'_> {
         Ok(Expression::AlterView(Box::new(node)))
     }
 
+    /// `( 'key' = value, ... )` after `SET TAGS`, or `( 'key', ... )` after `UNSET TAGS`.
+    fn tags(&mut self, set: bool) -> Parsing<Vec<Expression>> {
+        self.parenthesized(|parser| {
+            let key: Expression = parser.string_literal()?;
+            match set {
+                true => {
+                    parser.expect_char('=')?;
+                    let value: Expression = parser.primary_expression()?;
+                    Ok(binary(Expression::Eq, key, value))
+                }
+                false => Ok(key),
+            }
+        })
+    }
+
+    /// A view's `relationship_constraint`: cardinality, target view with alias, then `ON` or `USING`.
+    fn relationship_constraint(&mut self) -> Parsing<Vec<Expression>> {
+        let mut cardinality: Vec<String> = Vec::new();
+        for expected in [Some(["MANY", "ONE"]), None, Some(["MANY", "ONE"])] {
+            match expected {
+                Some(words) if self.kw_in(0, &words) => {
+                    cardinality.push(self.word_at(0).unwrap_or_default());
+                    self.at += 1;
+                }
+                Some(_) => return Err(self.error()),
+                None => {
+                    self.expect_kw("TO")?;
+                    cardinality.push("TO".to_owned());
+                }
+            }
+        }
+        self.expect_kw("RELATIONSHIP")?;
+        self.expect_kw("TO")?;
+        let mut target: TableRef = self.table_reference()?;
+        if let Some(alias) = self.table_alias()? {
+            target.alias = Some(alias.name);
+            target.alias_explicit_as = alias.explicit;
+            target.column_aliases = alias.columns;
+        }
+        let join: Expression = match self.eat_kw("ON") {
+            true => property("ON", Some(self.expression()?)),
+            false => {
+                self.expect_kw("USING")?;
+                let columns: Vec<Expression> = self
+                    .identifier_list()?
+                    .into_iter()
+                    .map(Expression::Identifier)
+                    .collect();
+                property("USING", Some(tuple(columns)))
+            }
+        };
+        Ok(vec![
+            var(&cardinality.join(" ")),
+            property("RELATIONSHIP TO", Some(Expression::Table(Box::new(target)))),
+            join,
+        ])
+    }
+
     /// `ALTER SCHEMA` as an `AlterObject` whose action names the clause and holds its operands.
     fn alter_schema(&mut self) -> Parsing<Expression> {
         let kind: String = self.word_at(0).unwrap_or_default();
@@ -1004,18 +1096,7 @@ impl Parser<'_> {
             }
             Some(word @ ("SET" | "UNSET")) if self.kw_at(1, "TAGS") => {
                 self.at += 2;
-                let set: bool = word == SET_TAGS;
-                let tags: Vec<Expression> = self.parenthesized(|parser| {
-                    let key: Expression = parser.string_literal()?;
-                    match set {
-                        true => {
-                            parser.expect_char('=')?;
-                            let value: Expression = parser.primary_expression()?;
-                            Ok(binary(Expression::Eq, key, value))
-                        }
-                        false => Ok(key),
-                    }
-                })?;
+                let tags: Vec<Expression> = self.tags(word == SET_TAGS)?;
                 (format!("{word} TAGS"), tags)
             }
             Some("RETAIN" | "SET") if self.kw_at(0, "RETAIN") || self.kw_at(1, "RETAIN") => {

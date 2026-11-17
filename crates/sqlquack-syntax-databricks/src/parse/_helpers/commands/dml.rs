@@ -8,12 +8,15 @@ use sqlquack_syntax::expressions::statements::models::{
 };
 
 use crate::parse::_helpers::commands::alters::property_text;
-use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
+use crate::parse::_helpers::tree::cursor::{
+    Parser, Parsing, is_identifier, is_strict_identifier, is_word,
+};
 use crate::parse::_helpers::tree::nodes::{
     TableAlias, binary, boolean, call, column_from, default_value, delete, insert, joined, star,
     subquery, table, tuple, update, var,
 };
-use crate::parse::constants::IDENTIFIER_CLAUSE;
+use crate::parse::constants::{IDENTIFIER_CLAUSE, REPLACE_ON_QUERY_TAKERS};
+use crate::scan::models::{Token, TokenKind};
 
 /// Which `WHEN` clauses a `MERGE` may still take: matched, then not matched, then by source.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -232,15 +235,15 @@ impl Parser<'_> {
             self.at += 2;
             node.by_name = true;
         } else if self.is_char('(')
-            && self.is_at(1, crate::parse::_helpers::tree::cursor::is_identifier)
+            && self.is_at(1, is_identifier)
             && (self.char_at(2, ',') || self.char_at(2, ')'))
         {
             node.columns = self.identifier_list()?;
         }
-        let alias: Option<TableAlias> = match alias.is_none()
-            && !overwrite
-            && self.bare_alias_at(0, true)
-            && self.kw_at(1, "REPLACE")
+        let alias_before_replace: bool =
+            (self.kw("AS") && self.is_at(1, is_strict_identifier) && self.kw_at(2, "REPLACE"))
+                || (self.bare_alias_at(0, true) && self.kw_at(1, "REPLACE"));
+        let alias: Option<TableAlias> = match alias.is_none() && !overwrite && alias_before_replace
         {
             true => self.table_alias()?,
             false => alias,
@@ -250,7 +253,7 @@ impl Parser<'_> {
             if self.eat_kw("WHERE") {
                 node.replace_where = Some(Box::new(self.expression()?));
             } else if self.eat_kw("ON") {
-                node.replace_on = Some(Box::new(self.expression()?));
+                node.replace_on = Some(Box::new(self.replace_on_condition()?));
             } else {
                 self.expect_kw("USING")?;
                 node.replace_using = self.identifier_list()?;
@@ -277,6 +280,48 @@ impl Parser<'_> {
             false => self.query()?,
         };
         Ok(Expression::Insert(Box::new(with_source(node, query))))
+    }
+
+    /// `REPLACE ON`'s condition, ended by a name before `( query`, which is the insert's query.
+    fn replace_on_condition(&mut self) -> Parsing<Expression> {
+        let mut depth: usize = 0;
+        let mut end: Option<usize> = None;
+        for index in self.at..self.tokens.len() {
+            match self.tokens[index].kind {
+                TokenKind::Char('(') => {
+                    let after_name: bool = index > self.at
+                        && is_identifier(&self.tokens[index - 1])
+                        && !REPLACE_ON_QUERY_TAKERS
+                            .iter()
+                            .any(|word| is_word(&self.tokens[index - 1], word));
+                    if depth == 0 && after_name && self.starts_query_at(index + 1 - self.at) {
+                        end = Some(index);
+                        break;
+                    }
+                    depth += 1;
+                }
+                TokenKind::Char(')') if depth == 0 => break,
+                TokenKind::Char(')') => depth -= 1,
+                TokenKind::Char(';') if depth == 0 => break,
+                _ => {}
+            }
+        }
+        let Some(end) = end else {
+            return self.expression();
+        };
+        let rest: Vec<Token> = self.tokens.split_off(end);
+        let condition = self.attempt(|parser| {
+            let condition: Expression = parser.expression()?;
+            match parser.at == end {
+                true => Ok(condition),
+                false => Err(parser.error()),
+            }
+        });
+        self.tokens.extend(rest);
+        match condition {
+            Ok(condition) => Ok(condition),
+            Err(_) => self.expression(),
+        }
     }
 
     /// `assignmentList`: `key = value, ...`, each as an equality of a column and its value.

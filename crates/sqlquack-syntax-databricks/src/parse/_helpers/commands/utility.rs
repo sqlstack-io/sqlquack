@@ -1,7 +1,7 @@
 //! The auxiliary statements (SqlBaseParser.g4), such as `DESCRIBE`, `SHOW` and `SET`.
 
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{
     Grant, GrantPrincipal, Privilege, Revoke,
 };
@@ -13,17 +13,18 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::commands::alters::partition;
 use crate::parse::_helpers::commands::queries::limit;
-use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    call, column, column_from, dot, joined, null, property, string, table, too_deep_to_keep, tuple,
-    utility, var,
+    alias, call, column, column_from, dot, joined, null, property, string, table, too_deep_to_keep,
+    tuple, utility, var,
 };
 use crate::parse::constants::{
     ADD_RESOURCE, ADD_RESOURCES, CACHE_SELECT, CATALOG, COMMENT_KINDS, DESCRIBE_KINDS,
     EXPLAIN_MODES, FUNCTIONS, IDENTIFIER_CLAUSE, LIST_RESOURCES, MIN_BACKQUOTED_LENGTH,
     MIN_PATH_PARTS, NAMELESS_SECURABLES, PATH_ELEMENTS, SCHEMA_SCOPE, SECURABLE_KINDS, SET_VERBOSE,
 };
-use crate::scan::models::TokenKind;
+use crate::parse::errors::ParseError;
+use crate::scan::models::{Token, TokenKind};
 
 /// `configKeyDef`: the characters a configuration key written without quotes may hold.
 fn is_config_key(text: &str) -> bool {
@@ -76,6 +77,11 @@ fn described_column(node: Describe, column: Expression) -> Expression {
     operands.extend(node.partition.map(|partition| *partition));
     operands.push(column);
     utility(words.join(" "), operands)
+}
+
+/// Whether `token` is a word or a name: any keyword included, as the service reads a loose `CACHE SELECT`.
+fn is_word_token(token: &Token) -> bool {
+    token.kind == TokenKind::Word || is_identifier(token)
 }
 
 impl Parser<'_> {
@@ -1076,6 +1082,10 @@ impl Parser<'_> {
                 self.treed("cache_select", start);
                 return Ok(tree);
             }
+            if let Some(tree) = self.loose_cache_select(first) {
+                self.treed("cache_select", start);
+                return Ok(tree);
+            }
             self.gap("cache_select", start);
             return Ok(null());
         }
@@ -1104,6 +1114,63 @@ impl Parser<'_> {
             query,
             query_as: as_query,
         })))
+    }
+
+    /// `CACHE SELECT` read loosely: `FROM` or `WHERE` as a name when no clause follows it.
+    fn loose_cache_select(&mut self, first: usize) -> Option<Expression> {
+        let end: usize = self.at;
+        let rest: Vec<Token> = self.tokens.split_off(end);
+        let too_deep: Option<ParseError> = self.too_deep.take();
+        self.at = first + 1;
+        let read = self.attempt(|parser| {
+            let operands: Vec<Expression> = parser.loose_cache_body()?;
+            match parser.at == end {
+                true => Ok(operands),
+                false => Err(parser.error()),
+            }
+        });
+        self.tokens.extend(rest);
+        self.at = end;
+        self.too_deep = too_deep;
+        match read {
+            Ok(operands) => Some(utility("CACHE SELECT".to_owned(), operands))
+                .filter(|tree| !too_deep_to_keep(tree)),
+            Err(_) => None,
+        }
+    }
+
+    /// The items, then `FROM name [alias]` and `WHERE expr` when they start their clauses.
+    fn loose_cache_body(&mut self) -> Parsing<Vec<Expression>> {
+        let mut operands: Vec<Expression> = self.comma_list(|parser| parser.loose_cache_item())?;
+        if self.kw("FROM") && self.is_at(1, is_identifier) {
+            self.at += 1;
+            let mut relation: TableRef = table(self.multipart_identifier()?);
+            let where_clause: bool = self.kw("WHERE") && !self.ends_at(1);
+            if self.is_at(0, is_word_token) && !where_clause {
+                relation.alias = Some(identifier(&self.advance()?));
+            }
+            operands.push(property(
+                "FROM",
+                Some(Expression::Table(Box::new(relation))),
+            ));
+            if self.eat_kw("WHERE") {
+                operands.push(property("WHERE", Some(self.expression()?)));
+            }
+        }
+        Ok(operands)
+    }
+
+    /// An item, `FROM` or `WHERE` as a column, then any word as its alias but `FROM` before a name.
+    fn loose_cache_item(&mut self) -> Parsing<Expression> {
+        let this: Expression = match self.kw_in(0, &["FROM", "WHERE"]) {
+            true => column_from(vec![identifier(&self.advance()?)]),
+            false => self.expression()?,
+        };
+        let clause: bool = self.kw("FROM") && self.is_at(1, is_identifier);
+        match !clause && self.is_at(0, is_word_token) {
+            true => Ok(alias(this, identifier(&self.advance()?), false)),
+            false => Ok(this),
+        }
     }
 
     /// `UNCACHE TABLE [IF EXISTS] name`.

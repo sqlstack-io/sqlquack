@@ -214,6 +214,7 @@ impl Parser<'_> {
         let action: AlterTableAction = match reset {
             true => AlterTableAction::UnsetProperty {
                 properties: options.into_iter().map(|option| option.name).collect(),
+                if_exists: false,
             },
             false => AlterTableAction::SetProperty {
                 properties: options

@@ -6,7 +6,7 @@ use sqlquack_syntax::expressions::columns::models::{
     ColumnConstraint, ColumnDef, ComputedColumn, ConstraintModifiers, ForeignKeyRef,
     GeneratedAsIdentity, TableConstraint,
 };
-use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
+use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{CreateView, DropView, ViewColumn};
 use sqlquack_syntax::expressions::tables::models::{
     ClusterByColumnsProperty, ConstraintType, CreateTable, DropTable, FileFormatProperty,
@@ -17,12 +17,13 @@ use sqlquack_syntax::expressions::tables::models::{
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    binary, boolean, collate, column_from, joined, null, table, too_deep_to_keep, tuple, var,
+    binary, boolean, collate, column_from, joined, literal, null, table, too_deep_to_keep, tuple,
+    var,
 };
 use crate::parse::constants::{
     CREATE_KINDS, DROP_KINDS, DROP_TABLE_FORCE, DROP_TEMPORARY_TABLE, TEMPORARY_VIEW_USING,
 };
-use crate::scan::models::{NumberKind, TokenKind};
+use crate::scan::models::{NumberKind, Token, TokenKind};
 
 /// What `CREATE` heads: a table (`OR REPLACE`, `TEMPORARY`, `EXTERNAL`) or a view.
 pub(crate) struct Head {
@@ -279,9 +280,9 @@ impl Parser<'_> {
                     self.at += 1;
                     Some(property("CLUSTER BY", var("AUTO")))
                 } else if self.char_at(0, '(') && self.string_at(1) {
-                    self.parenthesized(|parser| parser.expression())?;
-                    self.gap("cluster_by_expression", start);
-                    None
+                    let expressions: Vec<Expression> =
+                        self.parenthesized(|parser| parser.expression())?;
+                    Some(property("CLUSTER BY", tuple(expressions)))
                 } else {
                     let columns: Vec<Identifier> =
                         self.parenthesized(|parser| parser.multipart_identifier().map(joined))?;
@@ -764,7 +765,7 @@ impl Parser<'_> {
             false => digits,
         };
         Ok(crate::parse::_helpers::tree::nodes::literal(
-            sqlquack_syntax::expressions::names::models::Literal::Number(text),
+            Literal::Number(text),
         ))
     }
 
@@ -995,7 +996,18 @@ impl Parser<'_> {
                     self.at += 1;
                     return Err(self.error());
                 }
-                return self.metric_view(start);
+                let mut node: CreateView = CreateView::new(String::new(), null());
+                node.name = name;
+                node.columns = columns;
+                node.or_replace = head.or_replace;
+                node.if_not_exists = if_not_exists;
+                node.temporary = head.temporary;
+                node.temporary_spelling = head.temporary_spelling;
+                node.comment = comment;
+                node.table_properties = table_properties;
+                node.copy_grants = copy_grants;
+                node.options = options;
+                return self.metric_view(node);
             } else if self.kw("COPY") && self.char_at(1, '*') {
                 self.at += 2;
                 copy_grants = true;
@@ -1076,26 +1088,31 @@ impl Parser<'_> {
         Ok(Some(option))
     }
 
-    /// `createMetricView` from `WITH METRICS`: its clauses, then `AS $$ body $$`; kept as a gap.
-    fn metric_view(&mut self, start: usize) -> Parsing<Expression> {
+    /// `createMetricView` from `WITH METRICS`: its clauses, then `AS $$ body $$`, the body as the view's query.
+    fn metric_view(&mut self, mut node: CreateView) -> Parsing<Expression> {
         loop {
             if self.eat_kws(&["WITH", "METRICS"]) {
+                node.options.push(property("WITH", var("METRICS")));
             } else if self.eat_kw("LANGUAGE") {
-                self.expect_token(|token| token.kind == TokenKind::Word)?;
+                let language: Token = self.expect_token(|token| token.kind == TokenKind::Word)?;
+                node.options
+                    .push(property("LANGUAGE", var(&language.value)));
             } else if self.eat_kw("COMMENT") {
-                self.string_lit()?;
+                node.comment = Some(self.string_lit()?);
             } else if self.eat_kw("TBLPROPERTIES") {
-                self.property_list()?;
+                let expressions: Vec<Expression> = self.property_list()?;
+                node.table_properties
+                    .push(Expression::Properties(Box::new(Properties { expressions })));
             } else {
                 break;
             }
         }
         self.expect_kw("AS")?;
-        self.expect_token(|token| {
+        let body: Token = self.expect_token(|token| {
             token.kind == TokenKind::DollarString && !token.value.is_empty()
         })?;
-        self.gap("metric_view", start);
-        Ok(null())
+        node.query = literal(Literal::DollarString(body.value));
+        Ok(Expression::CreateView(Box::new(node)))
     }
 
     /// Whether `createTempViewUsing` follows the view name: `USING`, or a column list with types.
