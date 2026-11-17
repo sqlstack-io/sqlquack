@@ -4163,3 +4163,296 @@ note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2
 "db.functions.rlike" = "65479a6f443ab764cf2f282fb502742e54645e7107160ce3fca365485af94e13"
 "db.functions.slashsign" = "5339b9e50bd858d6aa815fb65d100766ab16366851f21c209b87261cfc723396"
 "db.functions.tildesign" = "bacf920737918b109b3e43714d137c64a0010c39bf5b1e94e92990a693efc7fb"
+
+[[review]]
+id = "db-functions-057"
+family = "functions"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:21:47Z"
+verdict = "approved"
+forms = [
+  "db.functions.abs",
+  "db.functions.acos",
+  "db.functions.acosh",
+  "db.functions.aes-decrypt",
+  "db.functions.aes-encrypt",
+  "db.functions.agg",
+  "db.functions.aggregate",
+  "db.functions.ai-analyze-sentiment",
+  "db.functions.ai-classify",
+  "db.functions.ai-decide",
+  "db.functions.ai-enrich",
+  "db.functions.ai-extract",
+  "db.functions.ai-fix-grammar",
+  "db.functions.ai-gen",
+  "db.functions.ai-mask",
+  "db.functions.ai-parse-document",
+  "db.functions.ai-prep-search",
+  "db.functions.ai-search",
+  "db.functions.ai-similarity",
+  "db.functions.ai-summarize",
+  "db.functions.ai-transcribe",
+  "db.functions.ai-translate",
+  "db.functions.any",
+  "db.functions.approx-top-k-estimate",
+  "db.functions.array",
+  "db.functions.array-append",
+  "db.functions.array-compact",
+  "db.functions.array-contains",
+  "db.functions.array-distinct",
+  "db.functions.array-except",
+  "db.functions.array-insert",
+  "db.functions.array-intersect",
+  "db.functions.array-max",
+  "db.functions.array-min",
+  "db.functions.array-position",
+  "db.functions.array-prepend",
+  "db.functions.array-remove",
+  "db.functions.array-repeat",
+  "db.functions.array-size",
+  "db.functions.array-sort",
+  "db.functions.array-union",
+  "db.functions.arrays-overlap",
+  "db.functions.arrays-zip",
+  "db.functions.ascii",
+  "db.functions.asin",
+  "db.functions.asinh",
+  "db.functions.assert-true",
+  "db.functions.atan",
+  "db.functions.atan2",
+  "db.functions.atanh",
+  "db.functions.base64",
+  "db.functions.bigint",
+  "db.functions.bin",
+  "db.functions.binary",
+  "db.functions.bit-and",
+  "db.functions.bit-count",
+  "db.functions.bit-get",
+  "db.functions.bit-length",
+  "db.functions.bit-or",
+  "db.functions.bit-reverse",
+  "db.functions.bitmap-and-agg",
+  "db.functions.bitmap-bit-position",
+  "db.functions.bitmap-bucket-number",
+  "db.functions.bitmap-construct-agg",
+  "db.functions.bitmap-count",
+  "db.functions.bitmap-or-agg",
+  "db.functions.bool-and",
+  "db.functions.bool-or",
+  "db.functions.boolean",
+  "db.functions.bround",
+  "db.functions.btrim",
+  "db.functions.cardinality",
+  "db.functions.cast",
+  "db.functions.cbrt",
+  "db.functions.ceil",
+  "db.functions.ceiling",
+  "db.functions.char",
+  "db.functions.char-length",
+  "db.functions.character-length",
+  "db.functions.charindex",
+  "db.functions.chr",
+  "db.functions.coalesce",
+  "db.functions.collation",
+  "db.functions.collect-set",
+  "db.functions.concat",
+  "db.functions.concat-ws",
+  "db.functions.contains",
+  "db.functions.conv",
+  "db.functions.copy-file",
+  "db.functions.cos",
+  "db.functions.cosh",
+  "db.functions.cot",
+  "db.functions.crc32",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 2: a form whose earlier approval went stale and that gained cases after it, nearly all missing-parenthesis negatives. Read on 683748ea8 against the 2026.45 receipts. Every new case was read. Each new reject fails where its receipt does, at the token where the parenthesis or bracket belongs; the position differences were read on purpose: the warehouse reads FILTER or file as an alias before failing, reports a value check (a key with no value) without a position, or looks for BY or ( one token later. The one new accept (SELECT ( ? )) is a positional parameter. The mechanical repair of each differing or syntax:false reject (adding the parenthesis, writing map(...) for the MAP typed literal) is accepted locally and matches a recorded positive. Every accepted case of the form passed the check that its SQL's names and literals all appear in its tree. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.functions.abs" = "48458de28644a0bb5b679523bedd9f909ed7f5f9c30ed8cc87c8a08cebb56b1e"
+"db.functions.acos" = "3576945da3601eb490428b7e832195b9084175dd6f31190cb65a52aed9d99ba4"
+"db.functions.acosh" = "d9b79a3ed85cafe3d519b0d66ec8281a57dc5d833e39f589baffbc258bd06b2f"
+"db.functions.aes-decrypt" = "e713cc168072afbfc0abe70108caa515b21ec9f91026b87d663f2c0253818f91"
+"db.functions.aes-encrypt" = "6ef56233e089e6c7ea03ea589236be1cf79a227e88aed42b1931d6a8ba27a3e9"
+"db.functions.agg" = "3dca5a2fc3c6da20961ac5c9802394b811e7a2c865e0528d79c4ccbfea54a380"
+"db.functions.aggregate" = "2fce506d4ad34a4900c7585c897dfd007aefcfb018fd9aa2ad38aef826a1343c"
+"db.functions.ai-analyze-sentiment" = "d7ec8c5c553cff99890a1c1aa861f0d26bdcc5df238f71f9df1f8f3f8c4cb297"
+"db.functions.ai-classify" = "602010a3694f8be68756570fe58b13aa13a0680779fb09201299825a30b1c531"
+"db.functions.ai-decide" = "c4484398fd9f962481cf9ac7054d60900690e30a9a8983ee4fa60a5fe0d4e363"
+"db.functions.ai-enrich" = "fdbd7d10f9746e0cd09d41b8281d558978f9018f1652bc1e86d192a6372968f6"
+"db.functions.ai-extract" = "a5ab3654f16770594856b9b77ae6b4b2d116679d5919f1477ebbfb74dc613176"
+"db.functions.ai-fix-grammar" = "b6ba4b79da324478c9bfcc88b840cc09e2c1cf878bdef5168c0a7de2d774c318"
+"db.functions.ai-gen" = "739b27a124bd89bf7d5fe74b0fd63c92816f0fecf4edb115b8b6f6333a18b63c"
+"db.functions.ai-mask" = "17163d63a061cabe6c0faa67e849dbfdcc74a9ee1d81c10ab17adf7fe5a57cde"
+"db.functions.ai-parse-document" = "13970862f02e3b0a1dae0245ef4e2a8e846d276f4971fa6dc2cc1f972ef3fb58"
+"db.functions.ai-prep-search" = "dce63328a5904190eaf09b704b38910c4c0d33c53f32232d81e6eddf21b76917"
+"db.functions.ai-search" = "8167dbb67320de58c21b601fdcef3387d5b1aa294ef4ba188bd9fec728fce519"
+"db.functions.ai-similarity" = "09915d2f98d4bfd35ebc334bcf5490d085399d88af4d7d8d70339e6511089a52"
+"db.functions.ai-summarize" = "0743fb0074c2c520aaa8d6f5e7d8963ffd825717c2ea4399336228c65087da15"
+"db.functions.ai-transcribe" = "cd9def3a0b9f2bba2f0c2a9ef6d71256014053bd52fdc5812ba09679eae0f852"
+"db.functions.ai-translate" = "2b05198826f755324a1c09b3a5f79904dbd2ed1cb039c54973522efe76ec7a99"
+"db.functions.any" = "7bef0341c1eba05fc9a338cb0894321e0a1622314d73c1aa828976b24eb7866d"
+"db.functions.approx-top-k-estimate" = "2466b7ad0f99f61436b6442a55cbda0b49f7ebe787495f88ac8c0c66cc3c2397"
+"db.functions.array" = "4440c174fc93ba5b76b6310eba93f7dac21dedfdf57fb9cd43a54ca9b460a88c"
+"db.functions.array-append" = "3677693bf1fded6a35f9fc8707906131bcc5e6b321787110cd8f3beea98fa3fa"
+"db.functions.array-compact" = "db0eef078743b7c1f0401f894934f8d7f31b80e773b17eb6e801d5112f15826e"
+"db.functions.array-contains" = "e05c01e0a1a2857f8e3ca1b6c95081434e108db5244de488e5deaf292c5f6e3f"
+"db.functions.array-distinct" = "fb944623455637cea70ce99703a115d97a9032ca9ab2360f3b5312f978deb2f5"
+"db.functions.array-except" = "ad56ed8b2a907bc309b086b534911bd9e99a829dfa26a5e72ca46d7b36c238cd"
+"db.functions.array-insert" = "749b68649cde6e44c4cf60f611f385f585ab32477c930b020002f8a4e20dca93"
+"db.functions.array-intersect" = "702022250371a5312c86e146f4dc973e77cddd997fc5f7398105c528f685fa6a"
+"db.functions.array-max" = "25b56e8c8b5af4c477bfdce98e27d69f20c38e536c2223103a0009bbdaf0f3cd"
+"db.functions.array-min" = "9c3cea75ecb5de0ec66b58677d20f7543560e12c3244ebc4d3830b6ce6ff0e4d"
+"db.functions.array-position" = "c9e67febbac96cd4d958aededc8f8ed612f9db3f214197b6cb113f89bc4e9301"
+"db.functions.array-prepend" = "481258d6797d743261fb8f00fd23a3df906b7c44b2a774b37b6c794f9e42f278"
+"db.functions.array-remove" = "bbf703bd7923d7c64cba445c0c6268bbd54fe951213cf03b580c6d74eff8b63f"
+"db.functions.array-repeat" = "111bd268bebfa20b117354588811aa6427f2cef2d7223d945d0dee83bf786f43"
+"db.functions.array-size" = "b248f61f9075e1dd137657c6959a3794177cc9ed986388c16a8809431d45ed88"
+"db.functions.array-sort" = "3e1387fa6e7853f61397bae9f22b9d07ad02961d9dad802f306109dd3b0ac8d2"
+"db.functions.array-union" = "32753cf03b577f3242cfdfcbf351453984ce9247857f7c0044315ae3f668209b"
+"db.functions.arrays-overlap" = "bcd5545f8db1d1690ef27cf10ce26befe3b85dc2024e744328862582cb3ec2c1"
+"db.functions.arrays-zip" = "4e639166454a653ce8d689f6d55b005de6727d83ba66cb570715ccec73e0483d"
+"db.functions.ascii" = "06d8604e70d0ac9167b2e1133d20d081f6397f7940bf64e558e7e4c6d5b081c2"
+"db.functions.asin" = "f9b7df3dd4842a16e27490cb3f22c8618ff77057d856586323c77936cb231b9f"
+"db.functions.asinh" = "0c24b25e7ac5ebaf2f82efc8aefef31f53f0fd249a7f1ef1574fdc2ce149bc64"
+"db.functions.assert-true" = "6ec91ae148284af35093c0040c32f33b2a4dc2035221b838893b95a0883def7a"
+"db.functions.atan" = "d3eda999c3fc903f104b52ae2a52a0d143d0d192e86e93de261c4b10318d4eb3"
+"db.functions.atan2" = "1a7f0ba86f24c6e97412f278934d30a70f308e664f5dbf34c3fdfe081aedd2cd"
+"db.functions.atanh" = "5e57138e87e049dd83b61b25786a2861a4b645b51a275184666a341a02a4face"
+"db.functions.base64" = "e1d8be45963d6370c94f2b72b5ddb694146fa73d5307413e9567afa0405f87df"
+"db.functions.bigint" = "aef3b44c8e87d23120175961fe8fe0bfe3080f59511ea791f9ac915eef24d14c"
+"db.functions.bin" = "53335a47968a4aab487ff967d91861ae671dd092d3394444b8810a9a2c65e64d"
+"db.functions.binary" = "4fa5419483bd065b5690c072491d16af85fa1260521b94a71c5cb241760cf125"
+"db.functions.bit-and" = "4a845c85e4ca6518de35e084f194dff70a7ac773e956150ed5d5aa7afe03fe1f"
+"db.functions.bit-count" = "dfe28ef1926bc8f04a9b0fb28925aa8270de675b738b243bd0e339971e264bf2"
+"db.functions.bit-get" = "e6618053bb2f7cfa0d5d3bef5123a62b35d4eb4234e4decacc383a24e2aba6f4"
+"db.functions.bit-length" = "05b287b43a5b2517dfaa162a06e34c3295399770d83b46eec621dfcda7af67b3"
+"db.functions.bit-or" = "487400f9563d8ace6a0661ff5bb8d2c291aa10569142995599acca26458be981"
+"db.functions.bit-reverse" = "f412faf3e61cae3e50408b7b3627703052c8c6dfc3a187ed599bfe8c6ed09a0f"
+"db.functions.bitmap-and-agg" = "7ba3066d3162031ce40c4b985b6fff772131fd1d4d8893e5292159ec3b709690"
+"db.functions.bitmap-bit-position" = "f8fda23553fc58b12954e45af4b6eedea4bafda3e9e49c4cd1c008a21ee129bd"
+"db.functions.bitmap-bucket-number" = "838304ee9a739afcf3dd113017413e999d89209fc3d135a9cb0e1c06a97d3f64"
+"db.functions.bitmap-construct-agg" = "39f20d3bf1425417ab64efdd6c9fb90ef0c4ae24676d1cd9bc499741cf86da1f"
+"db.functions.bitmap-count" = "d9d0ae0bd94e41cc16113340216c2f7e026d3219c816b843e0a25f01e74f5785"
+"db.functions.bitmap-or-agg" = "8f2dd0c6d7834ad1b519fc44e29fafc926eca03a259424f1303e9547d5f8732e"
+"db.functions.bool-and" = "cc460847c9b714b9a04b71dfcdd85ae425d56c65313b8fbec3bf3e8df5bc6984"
+"db.functions.bool-or" = "782f1c62a1487d08581b65e69db2b3fbd23e52019664292a6a284ddfdef8db6d"
+"db.functions.boolean" = "60fc26d7fa39449459bbce018cbd3b040aad4c23984898a09235cd4b55737308"
+"db.functions.bround" = "32e5e550566e6c90169b16d859cd6349d12e2755fb6e6cb132449ff8a90f1608"
+"db.functions.btrim" = "04b9ea9b482169ca6880b517e3df0d3270baa88140792248693a929641023269"
+"db.functions.cardinality" = "b97505bc4b5653f6d87a70f11192739e621e46511cbf731e04841fbf97d2d47f"
+"db.functions.cast" = "d2bafca972be87016d2eebab0fabd7950b00b8e280b3a0157f31f4098c422803"
+"db.functions.cbrt" = "7eb4c07285ee20f18e91cff7c61a0dcb25c693910a9804cbf82107ab4e3dba6e"
+"db.functions.ceil" = "5896132c6b9d9bf2aca6bf7e18af3aceb66f5a023d6fae41fa432a4b3908976a"
+"db.functions.ceiling" = "79242c53114ce2ac905ff7bc8866848e527d2384d5dc9ace305a63f4455ddcff"
+"db.functions.char" = "797d6370b955a7d3d2ebd6efbd817724a8092ba63b422bd19a965fb11547adaa"
+"db.functions.char-length" = "db3448de3b10a7c960c6501219ce9d6ed240e25783d608427e77b5f45e003347"
+"db.functions.character-length" = "1453814898408ac96c8f62a99bcf705b2cecc95ed6bb394d7e40f38906c1f7e7"
+"db.functions.charindex" = "75c3cc1c6f44afe42bfa57b191f4c17f28a0e0c402fec6966a7fdfec0ad0a5f5"
+"db.functions.chr" = "2425a054683b5cfe3c7f9b1edc3b59fe82766829557b37d59c57b50ddf38be1c"
+"db.functions.coalesce" = "7f2086e1a9901ddb1ca0925a5263d1305f83923fa40c82a61368298527fab192"
+"db.functions.collation" = "6087bd7a200d699534f6b6ae87541614d5fe790162ba20e874d641a30f2b391c"
+"db.functions.collect-set" = "c6fa6e1ebd721e541f84507a38b4bc30230d70558be18e1a859f2bf4439de1b2"
+"db.functions.concat" = "49cd24b1da3e93cb651ead2069dc4005b9252a9b98ad0c1396849be9b2dd1716"
+"db.functions.concat-ws" = "9bd6cc488cc87fc67f7e2d41d8fa547593c2b2cff51d68a4f64981b42349fb7f"
+"db.functions.contains" = "ac6e03ca6cf2f298aed57bb12dfcf0d990998b6cd7b9d52cd211c896ba81ffdf"
+"db.functions.conv" = "e06488a97e2740dfc7043c812ad4d65bf0789872e62cfe7f2d251467d8e98511"
+"db.functions.copy-file" = "a754cb3aea595ce51517b0f5248345a991ff38cb3406a8520c710bae18f22374"
+"db.functions.cos" = "347bae514e78c134f4e560c8f4260d355e826b6d6f3aa2e711129590c8329117"
+"db.functions.cosh" = "9529c770a7256f71be47043eba666ae498771bb35b5342a3297404cd2895e329"
+"db.functions.cot" = "26afccd712bef6e7c1dafdb936d99b791d13c638b7a104fa3c12a029e88cc8e8"
+"db.functions.crc32" = "a35120ab2ff721ce4102e37fadf383e966301fefe89ef09365b2c1c5c6428487"
+
+[review.definitions]
+"db.functions.abs" = "ff4341efba89db6e2a6d56ec9b7124ba7615eedf1cc31456233c532d7a2d2336"
+"db.functions.acos" = "b829ccffbce4847e2cb0d38fb82ab0b40307a5b44fbc9be0069eec57149f200f"
+"db.functions.acosh" = "6cceecf19d6703f343230af8f7c29c53a352c86f1169cb304b28fc76061b1bd4"
+"db.functions.aes-decrypt" = "a024b8519f74d1fc6256d09569455820eb480796bef81fa06d9e64f1541b3ba0"
+"db.functions.aes-encrypt" = "e5e8ef747731d0da7b73c51de959efa0bc51f554f1cad357e176984cb58b913a"
+"db.functions.agg" = "dac78cd86af05ace33aaf1d3530804a0c8c3ec65ba70b646d02640b24d5e529c"
+"db.functions.aggregate" = "094636bcfbb71b6203ea48fdac4516ad48fedb74646a0b6bb1c4db57d363b91c"
+"db.functions.ai-analyze-sentiment" = "6ceb19bf3dd7f49e61f453d7a07bb4ea69cfb379c725a836130dc2561a5abd5e"
+"db.functions.ai-classify" = "7dda6e9d8490afce8401c30c3245a027dede9415ae443c9fc60755f0fcbcfeb5"
+"db.functions.ai-decide" = "453a9aa65139f0d41b2e31eb52a9bcc24148c236dc7b7e01756918df73c11dcd"
+"db.functions.ai-enrich" = "381929bc0ca42ca3a9ce5bb5ffb7ad1ab2be47df9644988778a4f05e4ed48cfd"
+"db.functions.ai-extract" = "ca8239704c66176be1901fff158fa4bc257fa05aad62aa72d354ffba97074e20"
+"db.functions.ai-fix-grammar" = "c5e76dede92d513ab768d670fa3bbb2032a847d387edb4a58e9fc5f45c5426bf"
+"db.functions.ai-gen" = "53fa4cbbcfd905078cb614de1073f88c7eb87fb1609dd1073c5084a2caf8a16e"
+"db.functions.ai-mask" = "0881e51465e6d0216a35e36453c329427ac7f2c1a97c794569ae218903afef5c"
+"db.functions.ai-parse-document" = "998331ab4bcd1a336f8538214f6ea98be06a22b3bd05a19f609565df8e821b66"
+"db.functions.ai-prep-search" = "3da09758a4ce891fc8b3037b137a3849db98015a46aecadc9b94f5e367329264"
+"db.functions.ai-search" = "a396160c92a6db4ed1dbb3975bff35346f607a3b9dbe51122ef3cb497fa3831b"
+"db.functions.ai-similarity" = "bc35924e7ff7ec39775471a44be1b7e97d52c3562aa4c1125298c1aabec9ecb4"
+"db.functions.ai-summarize" = "23b2b69dff6361d3c3ca10a66a3b6a2b5243f8a266acbdbac34585622350ddf2"
+"db.functions.ai-transcribe" = "5e1d49d045b6365516cc03f486706b4003aaafaf97be109f7456c678f9d734b9"
+"db.functions.ai-translate" = "606898c85d48680b974d42ebc89a52cddc2b2f87487c820cd133af4bc2ea52c4"
+"db.functions.any" = "93d1d9f040cfe1cf49266e78a3c88aaaa93e6393470747f647c2c23639128a95"
+"db.functions.approx-top-k-estimate" = "e85026d3d5c0b19b53c061f6569c990109f6115ee091ae6b60102282bfe7ff5c"
+"db.functions.array" = "f6adf14860f98ec69ad97a5d5d0e93e03deb55a8a6775063ccb9cc66deb93caf"
+"db.functions.array-append" = "4f5ac2ee56104f159aabbdbafa28104cb04192d1579f52337f26d82b7fbcc0bd"
+"db.functions.array-compact" = "651651b468b2f3fb3ee22142c002dea8df291d9491f0e6e79e39684106180735"
+"db.functions.array-contains" = "6ecc32f500f9e247bbd223955055ffc4c6bfe9ab9c6d6d317e25dfdf7d1d8a31"
+"db.functions.array-distinct" = "ed2bb3c2d14955acd3fb2fc123012a512afa2d83a68259627f7dc0200b143695"
+"db.functions.array-except" = "72ed21fd62445247da60fac7f3c3dab301d027be844849f545de61075316e047"
+"db.functions.array-insert" = "41a1fb7030002994460d82ad920a3d5f99397e1ee9af06ff2e7110e12638e0d3"
+"db.functions.array-intersect" = "c2ef2c2b98211a4a74a797404d9b99c1c43d2cfc845093c4f78798859e4202da"
+"db.functions.array-max" = "55925361bb20ecd09bc9b037657e58fb33230590f6d8dac0c73651df34dc3d2c"
+"db.functions.array-min" = "d1a6dc438f4278263b1b246ba59e4f737fdd4758b2887a32ce5a93cf1742d5e1"
+"db.functions.array-position" = "da9f4cfdeb4447033b8745825ac5dec8c3fab18e6d91493f2394d5a1868a7fb0"
+"db.functions.array-prepend" = "468bbc46f9e92c3ba3827549d5f60e19a97d65bc23c707340356eb0791a6b92d"
+"db.functions.array-remove" = "07aecce6c949f753be3b0be7acc28a1ab6d12d854795457e57a858ccd1e61044"
+"db.functions.array-repeat" = "b71bdcce328d177f74265907c44d7df0dc762ac3cc4425299092451e0cfbbba4"
+"db.functions.array-size" = "f54343fc913ddabae6cbc04973d2c80cdd8bdc35c7aeaf7f0a26559455075373"
+"db.functions.array-sort" = "14bdc75a7baf1bfc8da2db1c493560904122e644637cc283e241e15965fcf20c"
+"db.functions.array-union" = "4a8a4a30da36ca25024753673aab3abe44f07efa1915501b6deb881066e396cd"
+"db.functions.arrays-overlap" = "1f82652ddadd96a50ae1b111cfa1f830d488500b56c4a05ef3ec8bf9c2e27ad6"
+"db.functions.arrays-zip" = "6eec8d589edc5c5baf81ea800863644cff5b86121fc19d557cfacf3cbc0fed84"
+"db.functions.ascii" = "6b34f27ee5b02d6214d7b4bb7bec9a956e2686e1386b0bf1af1e586a96591732"
+"db.functions.asin" = "4c3f60425355a0055352d4a3c5dfb875ece1e43556c883c83f4a673e88f189c5"
+"db.functions.asinh" = "5073415abfa1d4de6e300b8126f56099dc43bf2f78ec21a125136fcd86ff53b3"
+"db.functions.assert-true" = "16e209da74b4105665f49bb6c98c0502eb4b43e1621767f4d8ad1c0b48fbb9a6"
+"db.functions.atan" = "ec64378594ac5ce85dd7693790d7f7b83319ce0d297ebb60562ffc0370b0b0a6"
+"db.functions.atan2" = "4a62fc2acb74a045dbf14677722b2e46933b4b8a548268a91d5178cfbb4f53e4"
+"db.functions.atanh" = "17105ac1ed0c879a284098c627fe1c1c76d527a8fc11a3857ea3d0a95601d716"
+"db.functions.base64" = "ca5bd7d023c82707023b0332ddf4a5cf3f896d4bbb50e32980ef299e4fd4916f"
+"db.functions.bigint" = "759f4067e3ac9e0149c5803fdc29a38371b3fee2ed1b4b05a59c70da8562a6d3"
+"db.functions.bin" = "c00f919bfaf2c1028918d95894f1e2b865527e1468d8d6ce42d069afc9aa330b"
+"db.functions.binary" = "61934751f693fcfffc76a9cc2a60c3a3b5cfa117c6fffe55796bf2c4e05364a6"
+"db.functions.bit-and" = "c44e52f5c56db9ba542f213d8422bb7cf08d5bd1474db9b63f5f1a2bc110907a"
+"db.functions.bit-count" = "669fd800faa171e224796439c379d7b47a6d8dd0810e3e7455a056c71a5686ac"
+"db.functions.bit-get" = "d57c8088fcd6fa549530e75d4a94faab23f7131cae7c605dcd0d98343d9c6bbd"
+"db.functions.bit-length" = "857212bd91ad2d7a6387857d611e71f0ffa67144258a18f80f24a45e0a7558a4"
+"db.functions.bit-or" = "a17729f0c142ec150c5ad951e20480e41973a4616584a65873d71b3072b04267"
+"db.functions.bit-reverse" = "e930cd428f596964c5a25a567cbd78a3f22dfb7da350040347f4e65101e5ca6a"
+"db.functions.bitmap-and-agg" = "8de8c588145f1c1a53903fdc65962d8ae70c2f42ef398dd985ec1a78e4f483b5"
+"db.functions.bitmap-bit-position" = "bbd4d66d21fe200a353efcd0e9bcab3f596560058cb183131ef950dab5ac311f"
+"db.functions.bitmap-bucket-number" = "66e2c56d77e4080490fa7153366201e1b3b7a1c15d4d638c3f51440002c276b0"
+"db.functions.bitmap-construct-agg" = "9ef36ab52476f48a516368ab5118499c5c550327b76acab0534d49953f5a464f"
+"db.functions.bitmap-count" = "cdb0f9435404feafba3a6977078e67d433996bd65c282445d89ba564d2732003"
+"db.functions.bitmap-or-agg" = "dd79b6eac15d8a5aa412606bf1de6779c446f25bc7458eb2dbe7e33e768a1296"
+"db.functions.bool-and" = "18090c13d2fd977a2f0e5dcfd2a67fd725bc0b249f45831e82285fc88883b8d7"
+"db.functions.bool-or" = "747e6df00b2a3d8328a2ee581c6419ff738a12a1ad4d66f78220de163a3b8ed9"
+"db.functions.boolean" = "ffedd2457bf94ee314ebfbf0addcd6bb5d5ccbcde7b6aced0d08b0495e150adf"
+"db.functions.bround" = "e6b103dc9cc7c0034dae2ebc53e272d31d5c198adeb47ff69dfcc97282d0fd7c"
+"db.functions.btrim" = "8c3b534a57de5d2025ee1142179abfe98cc143f77f0e704e372d30465bd31ec7"
+"db.functions.cardinality" = "9188dca154b733721dfadc519f63380138ff4c5eef70fdf9ad0bb656078e827f"
+"db.functions.cast" = "05aee9fa63b5c39e0a185472d4ebe4853e320d4887ee48f45e7f99bbbc575f8b"
+"db.functions.cbrt" = "86221fe6f73769fa441912e843c70e7782dc753d49517649860d2047cbed82d8"
+"db.functions.ceil" = "da3803591d283a0f5bb32dbbbff9b87e49506dc18b94941593d32a6f9c022842"
+"db.functions.ceiling" = "ca844ba6e92a5572db835f45153765bec997172b6e916aa63e433046378f0b56"
+"db.functions.char" = "bbc6694c06873a36ce3ffeb816e859f372585515d6f3009ab6080184f6a702f7"
+"db.functions.char-length" = "4d6f43b0446a3a62a1a47c2f05b8f0b68061d69f7a030f29a2cfabc67466f740"
+"db.functions.character-length" = "04271e3b689847bb46e6d79044bec42b5cd24767cfc8fd81c93d8cece8c13de4"
+"db.functions.charindex" = "374795460baa9d04c9468e1f85f28201cf3c63d207a83117f5fc85637bed2ff9"
+"db.functions.chr" = "4b14da9d0ae26782d2f7de452f2b8753a377c6058a3f57aaa74beffa1d46aaf0"
+"db.functions.coalesce" = "426114ab47f3d26d25c6b5e983e035f254105befcbb4efb25751d7cf2958d46f"
+"db.functions.collation" = "c60d1132dbab26b322938e09a13f4d00889c1f07b49cb2b777d7ef371fc9a60b"
+"db.functions.collect-set" = "7455c6336d461b0e8469ec51fa1fcb4954be9584108b7e8459c50cf6a741a497"
+"db.functions.concat" = "4ec02822c7bf9f32822b0ab7977bea9007c6292e86e7c2403e7089e33a17f5dd"
+"db.functions.concat-ws" = "bbd7c8a2e8f79cdb27ff2d3a5f6caf949b0d62c7f7fdc1e16646644fd27de3da"
+"db.functions.contains" = "d5ac0f6ccf9fcf150feb4fc9bc5089ecaeca8cf1b726f3a4b3e3b94c02c9ec4f"
+"db.functions.conv" = "25b38e44a82b4bbf0184a82e465e568f2e86974c42af1e05caf828fc6003f384"
+"db.functions.copy-file" = "5209169f91dc8dbfdbad2d4d84a1e3de846b370375d8e779f0649c877a9dc49a"
+"db.functions.cos" = "0fb323c7f08681d5e51dcfa77d45dbb6e72d5023f34d80e5c67592db4edff5ab"
+"db.functions.cosh" = "0c3f1430b81f0e1b47544ca95d333ae9f79556e7161f7d92450e7dc93ca8dcf8"
+"db.functions.cot" = "c4759f5a5aa51df7ed94f813e15ecafda7646a20d8198b2e3e5a8e4d2bb2770f"
+"db.functions.crc32" = "3270ef1559db31fb5888447da7476070c4c35ed4d9914b94f0b51281d6b9db0a"

@@ -1114,3 +1114,29 @@ note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2
 "db.ddl.clone.create-table-clone" = "1ff56520187cd2c3ed80434aaf873573d8340a90fd94b346762bc8e1be8e03a0"
 "db.ddl.drop-database" = "767fb8a9b00e1535edd084b8adfdd0da511e3e6de92b1c431051f5a841d19b5b"
 "db.ddl.drop-schema" = "1652e9e051a38ca429672dea8a0f2bde6e739c5ef5553e759b7e3ca7e4daf549"
+
+[[review]]
+id = "db-ddl-058"
+family = "ddl"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:21:47Z"
+verdict = "approved"
+forms = [
+  "db.ddl.partition",
+  "db.ddl.tblproperties.options",
+  "db.ddl.tblproperties.set-tblproperties",
+  "db.ddl.tblproperties.tblproperties",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 2: a form whose earlier approval went stale and that gained cases after it, nearly all missing-parenthesis negatives. Read on 683748ea8 against the 2026.45 receipts. Every new case was read. Each new reject fails where its receipt does, at the token where the parenthesis or bracket belongs; the position differences were read on purpose: the warehouse reads FILTER or file as an alias before failing, reports a value check (a key with no value) without a position, or looks for BY or ( one token later. The one new accept (SELECT ( ? )) is a positional parameter. The mechanical repair of each differing or syntax:false reject (adding the parenthesis, writing map(...) for the MAP typed literal) is accepted locally and matches a recorded positive. Every accepted case of the form passed the check that its SQL's names and literals all appear in its tree. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.ddl.partition" = "829592d7044b4afdc5a5533a986e224bbae88bba5911626f36f7d4ff88d1d7c2"
+"db.ddl.tblproperties.options" = "e192e4bb28745d21d24052511e5e4be13487c419602f468b51a685d19d0e6935"
+"db.ddl.tblproperties.set-tblproperties" = "dda9e66aeee1f85054ca350439abfb016380ec1e92427c794ca720dc41881d2d"
+"db.ddl.tblproperties.tblproperties" = "d9153ea965e4f65cb554fddd18c835a2b760040477ef23d497aa4153eb029dbf"
+
+[review.definitions]
+"db.ddl.partition" = "7c11eb16709427596917f1fbf0e7247074a5c69f2b7228b7a615dc101ce68401"
+"db.ddl.tblproperties.options" = "4118a50f166bea208d0f88d2e4365b2c5515d48e90031baba4b4aa61b3f123d0"
+"db.ddl.tblproperties.set-tblproperties" = "c302c44e30e8f9469b1e406faf5e494658bfd3d53210cce0fab299b826f7e271"
+"db.ddl.tblproperties.tblproperties" = "33a663860db33db453a93672d44de95038003a966864e197d834f62809324eee"
