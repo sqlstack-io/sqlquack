@@ -426,3 +426,26 @@ note = "Re-read on 17 Nov 2026 after the parser fix in 11c98eccb, which keeps a 
 
 [review.definitions]
 "db.query.select-groupby.group-by" = "466e6081b946b74b6accb69b8307427b364773a8b63e68176861331c001adaee"
+
+[[review]]
+id = "db-query-017"
+family = "query"
+parser_tree = "51280e7e93e4d765dfda1383f4a2c26be5c5be04"
+reviewed_utc = "2026-11-17T11:24:23Z"
+verdict = "approved"
+forms = [
+  "db.query.pipeline.table",
+  "db.query.pipeline.table.syntax",
+  "db.query.select-pipeop",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in f43b15021, which marks an organizing pipe operator (ORDER BY, LIMIT, OFFSET, CLUSTER BY, DISTRIBUTE BY, SORT BY) written directly after an unpiped set operation. Read against the 2026.45 receipts in evidence set evJ. No recorded case of these forms has that shape, so every case's verdict, refusal position and tree are those db-query-014 read, and the mechanical check again finds every name and literal of each accepted case in its tree. Correction to db-query-014's note: its claim that no pipe case shares a tree with its desugared plain query held for the recorded cases, which all start FROM t1 |> or TABLE t1 |>, but not for every pipe shape. Before the fix, SELECT 1 UNION SELECT 2 |> LIMIT 1 shared a tree with SELECT 1 UNION SELECT 2 LIMIT 1, apart from spans, and likewise for ORDER BY, OFFSET, CLUSTER BY, DISTRIBUTE BY and SORT BY, with |> or a bare |. A generated sweep of 19 pipe operators over 6 inputs (FROM, TABLE, a select, a set operation, VALUES, a parenthesised query), each piped with |> and with | beside its desugared plain query, found those 12 pairs before the fix and 0 after it, and every piped text now carries a mark. |> SET has no plain spelling to compare, because the warehouse's SELECT takes no REPLACE. The 5 position differences of select-pipeop are those db-query-014 read, and their repairs still parse locally and in their receipts. This supersedes db-query-014's note; the forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "2858125f06064ea0fed04851b3277709e3f6c3e2eea3f58a3511f181b2f9f379"
+"db.query.pipeline.table.syntax" = "6c768709f68a7a1b99790cd91c8223af8506ba90e93939edbffbe84135551e3b"
+"db.query.select-pipeop" = "7a6e18f771214e6d696569a7336428f19994edf21eddd90d5a3a61dd42539da7"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
