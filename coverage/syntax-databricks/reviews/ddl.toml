@@ -1483,3 +1483,41 @@ note = "Withdraws the approvals of these forms (db-ddl-058 and the older db-ddl-
 "db.ddl.tblproperties.options" = "4118a50f166bea208d0f88d2e4365b2c5515d48e90031baba4b4aa61b3f123d0"
 "db.ddl.tblproperties.set-tblproperties" = "c302c44e30e8f9469b1e406faf5e494658bfd3d53210cce0fab299b826f7e271"
 "db.ddl.tblproperties.tblproperties" = "33a663860db33db453a93672d44de95038003a966864e197d834f62809324eee"
+
+[[review]]
+id = "db-ddl-073"
+family = "ddl"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T20:31:05Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-materialized-view.materialized-view-add-alter",
+  "db.ddl.alter-streaming-table.streaming-table-add-alter",
+  "db.ddl.alter-table",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask",
+  "db.ddl.create-streaming-table-auto-cdc",
+  "db.ddl.create-table-constraint.foreign-key-references",
+  "db.ddl.create-table-constraint.references",
+  "db.ddl.create-table-using",
+]
+note = "Withdraws approvals after an independent review of 312903a4b..106d09af4 found trees that do not keep what the text wrote, each reproduced locally at parser tree 880c142a; earlier records are unchanged. Form by form: alter-materialized-view.materialized-view-add-alter: withdraws db-ddl-070. SET TAGS ( 'k' 'v' ) without = (k8c1d869a0612) is accepted locally with the same tree as the form with =, while ALTER CATALOG and ALTER SCHEMA refuse it and no receipt shows what the warehouse does. Held until a receipt exists; the text is added to the pending recording bundle, and the parser is not changed on a guess. alter-streaming-table.streaming-table-add-alter: withdraws db-ddl-070. SET TAGS ( 'k' 'v' ) without = (k8e34debf50aa) is accepted locally with the same tree as the form with =; no receipt shows what the warehouse does. Held until one exists, as for materialized-view-add-alter. alter-table: withdraws db-ddl-068. SET TBLPROPERTIES without = (k807254b3e917) gives the same tree as with = (the collapse db-ddl-072 records for alter-view); a REFERENCES ... ON DELETE NO ACTION or ON UPDATE NO ACTION in ADD CONSTRAINT leaves no mark (see references); and SET TAGS ( 'k' 'v' ) is accepted with the same tree as kcba4490330d8 ( 'k' = 'v' ) although the grammar requires =, with no receipt for the form without =. Parser fixes for the first two; SET TAGS waits on a receipt. alter-table-manage-column.alter-change-set-mask: withdraws db-ddl-070. A column's SET TAGS ( 'k' 'v' ) without = (k609f4e87d0a0) is accepted locally with the same tree as the form with =; no receipt shows what the warehouse does. Held until one exists. create-streaming-table-auto-cdc: withdraws db-ddl-070. o179 (the required operand order_by_column missing) is met only by accident by k8cab64a557ea, SEQUENCE BY SYSTEM SEQUENCE BY v1: the warehouse reads SYSTEM as the operand and refuses the text with DUPLICATE_CLAUSES, so no operand is missing. Needs a case where the operand really is missing, and its receipt. create-table-constraint.foreign-key-references: withdraws its earlier approval. reference_spec skips ON DELETE NO ACTION and ON UPDATE NO ACTION without keeping either, so REFERENCES t2 ON DELETE NO ACTION, REFERENCES t2 ON UPDATE NO ACTION and REFERENCES t2 give the same tree, here in a table FOREIGN KEY. Parser fix. create-table-constraint.references: withdraws db-ddl-070. As foreign-key-references: REFERENCES t2 ON DELETE NO ACTION, ON UPDATE NO ACTION and REFERENCES t2 alone give the same tree in a column constraint. Parser fix. create-table-using: withdraws db-ddl-070. A missing = leaves no mark in OPTIONS (k098c68947c12, k47c2f303562b, k5f3645031143, k8a5dc62ebf39, kc85433b1d459, kfd6315c896ba) or TBLPROPERTIES (k179f97bd438d, k48b039dcc6aa, k546900518d33, kd02ba852c75d), and an OPTIONS key written as a name gives the same tree as the same key written as a string (k = 'v' and 'k' = 'v'). Parser fix."
+
+[review.fingerprints]
+"db.ddl.alter-materialized-view.materialized-view-add-alter" = "a5cdb00b171b3e4c6c8c2918d0c28500d3161e9a3ffac4e54b5945763e6720b3"
+"db.ddl.alter-streaming-table.streaming-table-add-alter" = "f8c4ca4caf33102dc1ecc2ac78796f34b9175f69cc46efa991c20e96249f9fcf"
+"db.ddl.alter-table" = "9971243b14809aa1a90ad519a452f8b3cc34988a937476bbba6102a3e612af56"
+"db.ddl.alter-table-manage-column.alter-change-set-mask" = "c7891289e79be30a7772ab0b8173808d27fa4a57dbfe1d419794a89e2f2bafe9"
+"db.ddl.create-streaming-table-auto-cdc" = "c352961c44f045686c92141004b6b0650481d56e7bd271393d2f3a37afdc124f"
+"db.ddl.create-table-constraint.foreign-key-references" = "cec00ce79ff2b1dc5cc33d366019062ffa2baeaa68e4722b2dec4e06f131c8c5"
+"db.ddl.create-table-constraint.references" = "aa718a5187a88366bdc0a8a0863fe5d973f19324b4f16bfd5607ebf7723b2751"
+"db.ddl.create-table-using" = "dd3f44c727738173695bf68b510cd3d7e6099b14072ba41e9d5d383e13cd0293"
+
+[review.definitions]
+"db.ddl.alter-materialized-view.materialized-view-add-alter" = "f460337c72c002c789481804c0cb90ca274b5c8715d35b76b0dc4667f5590c8d"
+"db.ddl.alter-streaming-table.streaming-table-add-alter" = "c515f90d96ce7d610762905dfecc52608ed0f5e73a21b15a706bd0392e8b85ee"
+"db.ddl.alter-table" = "45f8d3c275e44a178729e82ee86a7ddf4b83d6b1a93ca41cd0a895c42ad47906"
+"db.ddl.alter-table-manage-column.alter-change-set-mask" = "77bb212a48096a6ba7611960078271210158595f03ac44f55e28252b2185c5f1"
+"db.ddl.create-streaming-table-auto-cdc" = "156ef5145efe97ef5237f15c0a7e144a6300bbb9044fe7883f8a7a67d0793169"
+"db.ddl.create-table-constraint.foreign-key-references" = "ae15898d3df608a2686de40d032bb8c43cce6c9b77ddf133e09e3077404895b1"
+"db.ddl.create-table-constraint.references" = "f6472fe96d4fe0ace03669ba0e60a80176d2419b6892193d28dc90e567b29b41"
+"db.ddl.create-table-using" = "e1dd34b4831737cb839c53ce56fdc73fe0a89b019a56f360bdb02905caa36e71"

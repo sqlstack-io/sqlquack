@@ -858,3 +858,23 @@ note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) again
 "db.expressions.identifiers.subscript-dot" = "dc23d04ece0e0b486ae15f83f55ebe51dcf6d3ede358cac71986fc1910e85d3e"
 "db.expressions.names.subscript-dot-4" = "fa451d49a6b82678c24014646569df70b3f38cb5ce8fe939bdc888fd4d733a40"
 "db.expressions.string-type.subscript-dot" = "6e0e70498e32940a8ecb5d77d0d34cfc3c73896223f0d392bac3582b9b4442b9"
+
+[[review]]
+id = "db-expressions-041"
+family = "expressions"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T20:31:05Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.identifier",
+  "db.expressions.names.subscript-dot.syntax",
+]
+note = "Withdraws approvals after an independent review of 312903a4b..106d09af4 found trees that do not keep what the text wrote, each reproduced locally at parser tree 880c142a; earlier records are unchanged. Form by form: names.identifier: withdraws db-expressions-039. A qualified name is flattened into one identifier with the backquotes inside its name, so its parts are not kept: SHOW TABLES IN `SELECT` . v1 gives scope `SELECT`.v1 (k0e1636bef15c, k5db9d3bd4fad, k944ca008d0ce). This is the reason db-expressions-040 holds names.subscript-dot-4, applied consistently. Parser fix (qualified names as parts). names.subscript-dot.syntax: withdraws db-expressions-039. As names.identifier: OPEN v1 . v1 (k94bd15a99805) keeps the qualified name as one flattened identifier rather than its parts. Parser fix."
+
+[review.fingerprints]
+"db.expressions.names.identifier" = "ac7525859a87aad36feceae9685e098b921122e6cbc01baff535eb7ee14c1309"
+"db.expressions.names.subscript-dot.syntax" = "1889b334147e0ee12606b04b4d5bd22bd04caddf79f1c6ead270dbf3ba361381"
+
+[review.definitions]
+"db.expressions.names.identifier" = "121f195fca0604ea4265a47b6fa366ce4157970edaa0be1600f5652ee72917b9"
+"db.expressions.names.subscript-dot.syntax" = "d9228a23fd108d427cc2ace0e91fc1b679f83dcc031932f32570b077251ce0b1"
