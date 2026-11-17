@@ -1,7 +1,10 @@
 use serde_json::Value;
 
-use crate::cli::_helpers::local::postgres_verdict;
-use crate::cli::tests::test_types::PostgresVerdictTestCase;
+use crate::check::models::{LocalFailure, LocalVerdict};
+use crate::cli::_helpers::local::{local_verdict, postgres_verdict};
+use crate::cli::tests::helpers::{deep, failed, many_terms, syntax_error};
+use crate::cli::tests::test_types::{NativeVerdictTestCase, PostgresVerdictTestCase};
+use crate::formats::models::LocalParser;
 
 #[test]
 fn given_sql_when_the_postgres_parser_judges_it_then_gaps_are_never_parsed() {
@@ -56,6 +59,112 @@ fn given_sql_when_the_postgres_parser_judges_it_then_gaps_are_never_parsed() {
                 test_case.expected_opaque,
                 test_case.expected_tree,
             ),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+/// A parser's resource guard is never a syntax verdict: it fails, where a syntax error rejects.
+#[test]
+fn given_a_local_parser_when_a_guard_refuses_then_the_verdict_is_a_guard_failure() {
+    let test_cases = [
+        NativeVerdictTestCase {
+            description: "Snowflake: nesting past the depth limit is a guard failure, not a rejection",
+            parser: LocalParser::Snowflake,
+            sql: deep,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "Snowflake: a syntax error is still a rejection",
+            parser: LocalParser::Snowflake,
+            sql: syntax_error,
+            expected_verdict: LocalVerdict::Rejected,
+        },
+        NativeVerdictTestCase {
+            description: "PostgreSQL: nesting past the depth limit is a guard failure, not a rejection",
+            parser: LocalParser::Postgres,
+            sql: deep,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "PostgreSQL: a syntax error is still a rejection",
+            parser: LocalParser::Postgres,
+            sql: syntax_error,
+            expected_verdict: LocalVerdict::Rejected,
+        },
+        NativeVerdictTestCase {
+            description: "BigQuery: nesting past the depth limit is a guard failure, not a rejection",
+            parser: LocalParser::BigQuery,
+            sql: deep,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "BigQuery: a syntax error is still a rejection",
+            parser: LocalParser::BigQuery,
+            sql: syntax_error,
+            expected_verdict: LocalVerdict::Rejected,
+        },
+        NativeVerdictTestCase {
+            description: "DuckDB: nesting past the depth limit is a guard failure, not a rejection",
+            parser: LocalParser::DuckDb,
+            sql: deep,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "DuckDB: a syntax error is still a rejection",
+            parser: LocalParser::DuckDb,
+            sql: syntax_error,
+            expected_verdict: LocalVerdict::Rejected,
+        },
+        NativeVerdictTestCase {
+            description: "Databricks: nesting past the depth limit is a guard failure, not a rejection",
+            parser: LocalParser::Databricks,
+            sql: deep,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "Databricks: a syntax error is still a rejection",
+            parser: LocalParser::Databricks,
+            sql: syntax_error,
+            expected_verdict: LocalVerdict::Rejected,
+        },
+        NativeVerdictTestCase {
+            description: "SQLite: nesting past the depth limit is a guard failure, not a rejection",
+            parser: LocalParser::Sqlite,
+            sql: deep,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "SQLite: a syntax error is still a rejection",
+            parser: LocalParser::Sqlite,
+            sql: syntax_error,
+            expected_verdict: LocalVerdict::Rejected,
+        },
+        NativeVerdictTestCase {
+            description: "SQL Server: nesting past the depth limit is a guard failure, not a rejection",
+            parser: LocalParser::SqlServer,
+            sql: deep,
+            expected_verdict: failed(LocalFailure::Guard),
+        },
+        NativeVerdictTestCase {
+            description: "SQL Server: a syntax error is still a rejection",
+            parser: LocalParser::SqlServer,
+            sql: syntax_error,
+            expected_verdict: LocalVerdict::Rejected,
+        },
+        NativeVerdictTestCase {
+            description: "SQLite: a compound SELECT past the engine's own term limit is the engine's refusal, not a guard",
+            parser: LocalParser::Sqlite,
+            sql: many_terms,
+            expected_verdict: LocalVerdict::Rejected,
+        },
+    ];
+    for test_case in test_cases {
+        let verdict = local_verdict(test_case.parser).expect(test_case.description);
+        assert_eq!(
+            verdict(&(test_case.sql)()),
+            test_case.expected_verdict,
             "{}",
             test_case.description
         );

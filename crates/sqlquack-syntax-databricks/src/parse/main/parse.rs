@@ -39,7 +39,10 @@ pub fn parse(sql: &str) -> Result<Parsed, ParseError> {
         }
         let start: usize = parser.tokens[first].start;
         if statement.tree_depth() > MAX_TREE_DEPTH {
-            return Err(parser.error_with("the statement nests too deeply", start, false));
+            return Err(ParseError {
+                guard: true,
+                ..parser.error_with("the statement nests too deeply", start, false)
+            });
         }
         let end: usize = parser.tokens[parser.at - 1].end;
         statements.push(match parser.opaque {

@@ -225,12 +225,14 @@ impl<'sql> Parser<'sql> {
                 message: "Syntax error at or near end of input".to_owned(),
                 position: self.sql.len(),
                 syntax: true,
+                guard: false,
             },
             Some(token) => match token.kind {
                 TokenKind::Fault(syntax) => ParseError {
                     message: token.value.clone(),
                     position: token.start,
                     syntax,
+                    guard: false,
                 },
                 _ => ParseError {
                     message: format!(
@@ -239,6 +241,7 @@ impl<'sql> Parser<'sql> {
                     ),
                     position: token.start,
                     syntax: true,
+                    guard: false,
                 },
             },
         }
@@ -250,6 +253,7 @@ impl<'sql> Parser<'sql> {
             message: message.to_owned(),
             position,
             syntax,
+            guard: false,
         }
     }
 
@@ -283,6 +287,7 @@ impl<'sql> Parser<'sql> {
                 message: "the statement nests too deeply".to_owned(),
                 position: self.offset(),
                 syntax: false,
+                guard: true,
             };
             return Err(self.too_deep.get_or_insert(error).clone());
         }

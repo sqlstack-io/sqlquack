@@ -20,6 +20,7 @@ pub fn parse_type(text: &str) -> Result<DataType, ParseError> {
             message: format!("invalid type name \"{}\"", text.trim()),
             position: 0,
             syntax: true,
+            guard: false,
         });
     }
     Ok(data_type)

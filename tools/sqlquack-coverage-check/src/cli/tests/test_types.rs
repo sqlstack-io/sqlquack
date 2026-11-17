@@ -1,4 +1,5 @@
 use crate::check::models::LocalVerdict;
+use crate::formats::models::LocalParser;
 
 /// A worker script given two SQL texts, and the verdict it must yield on each.
 pub(crate) struct WorkerTestCase {
@@ -28,4 +29,12 @@ pub(crate) struct PostgresVerdictTestCase {
     pub(crate) expected_opaque: Option<bool>,
     /// Whether the verdict carries a tree fingerprint.
     pub(crate) expected_tree: bool,
+}
+
+/// A dialect's parser, a SQL text built for it, and the verdict the checker must give it.
+pub(crate) struct NativeVerdictTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parser: LocalParser,
+    pub(crate) sql: fn() -> String,
+    pub(crate) expected_verdict: LocalVerdict,
 }

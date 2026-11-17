@@ -14,7 +14,7 @@ use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_any_n
 use crate::parse::_helpers::tree::nodes::{column_from, paren, var};
 use crate::parse::_helpers::values::primary::variable;
 use crate::parse::constants::{
-    MAX_DEPTH, STATISTICS_SWITCH, THROW_OUTSIDE_CATCH, UNREAD_STATEMENTS,
+    MAX_DEPTH, NESTING_DEPTH_GAP, STATISTICS_SWITCH, THROW_OUTSIDE_CATCH, UNREAD_STATEMENTS,
 };
 use crate::scan::models::{Token, TokenKind};
 
@@ -120,10 +120,10 @@ impl<'sql> Parser<'sql> {
         }
     }
 
-    /// `statement`, or the gap `nesting_depth` from `start` when its tree is deeper than the limit.
+    /// `statement`, or the gap `NESTING_DEPTH_GAP` from `start` when its tree is deeper than the limit.
     fn within_depth(&mut self, statement: Expression, start: usize) -> Parsing<Expression> {
         match statement.tree_depth() > MAX_DEPTH {
-            true => Err(self.gap("nesting_depth", start)),
+            true => Err(self.gap(NESTING_DEPTH_GAP, start)),
             false => Ok(statement),
         }
     }

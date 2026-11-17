@@ -270,6 +270,7 @@ impl Parser<'_> {
                         message: message.to_owned(),
                         position: start,
                         syntax: false,
+                        guard: false,
                     });
                 }
                 Ok(match precision {

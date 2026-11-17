@@ -40,7 +40,10 @@ pub fn parse(sql: &str) -> Result<Parsed, ParseError> {
             }
             (Err(error), None) => return Err(error),
             (Ok(statement), None) if statement.tree_depth() > MAX_TREE_DEPTH => {
-                return Err(parser.error_with(TOO_DEEP, start, false));
+                return Err(ParseError {
+                    guard: true,
+                    ..parser.error_with(TOO_DEEP, start, false)
+                });
             }
             (Ok(statement), None) => statements.push(match parser.opaque {
                 true => command(parser.text_from(first)),

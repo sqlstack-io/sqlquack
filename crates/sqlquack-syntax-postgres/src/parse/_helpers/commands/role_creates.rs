@@ -64,6 +64,7 @@ impl Parser<'_> {
                 message: format!("{} cannot be used as a role name here", word.this),
                 position: start,
                 syntax: false,
+                guard: false,
             }),
             _ => Err(self.error()),
         }
