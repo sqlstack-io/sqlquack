@@ -7370,6 +7370,26 @@ context = "raw"
 expect = "reject"
 
 [[limit]]
+form = "db.ddl.alter-catalog"
+kind = "negative_neighbour"
+target = "<catalog_name> in [ <catalog_name> ] with UNSET TAGS"
+note = "a string literal in place of <catalog_name> before UNSET TAGS: the warehouse refuses it (PARSE_SYNTAX_ERROR at UNSET, pos 19), as it does before SET TAGS"
+anchor = "doc.sql-ref-syntax-ddl-alter-catalog / Syntax"
+sql = "ALTER CATALOG 'v1' UNSET TAGS ( 'k' )"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "db.ddl.alter-catalog"
+kind = "negative_neighbour"
+target = "<catalog_name> in [ <catalog_name> ] with ENABLE PREDICTIVE OPTIMIZATION"
+note = "a string literal in place of <catalog_name> before a predictive optimization clause: the warehouse refuses it (PARSE_SYNTAX_ERROR at ENABLE, pos 19)"
+anchor = "doc.sql-ref-syntax-ddl-alter-catalog / Syntax"
+sql = "ALTER CATALOG 'v1' ENABLE PREDICTIVE OPTIMIZATION"
+context = "raw"
+expect = "reject"
+
+[[limit]]
 form = "db.security_admin.alter-group"
 kind = "negative_neighbour"
 target = "{ ADD | DROP } repeated"

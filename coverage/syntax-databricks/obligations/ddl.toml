@@ -603,6 +603,22 @@ anchor = "doc.sql-ref-syntax-ddl-alter-catalog / Syntax"
 note = "a string literal in place of <catalog_name> before SET TAGS: the derived negative ALTER CATALOG 'v1' OWNER TO v1 is refused at OWNER, so it does not show which part the warehouse refuses; this one is refused in the tag clause (PARSE_SYNTAX_ERROR at TAGS), which takes no string literal as the catalog name"
 
 [[obligation]]
+id = "db.ddl.alter-catalog.o114"
+kind = "negative_neighbour"
+required = true
+target = "<catalog_name> in [ <catalog_name> ] with UNSET TAGS"
+anchor = "doc.sql-ref-syntax-ddl-alter-catalog / Syntax"
+note = "a string literal in place of <catalog_name> before UNSET TAGS: the warehouse refuses it (PARSE_SYNTAX_ERROR at UNSET, pos 19), as it does before SET TAGS"
+
+[[obligation]]
+id = "db.ddl.alter-catalog.o115"
+kind = "negative_neighbour"
+required = true
+target = "<catalog_name> in [ <catalog_name> ] with ENABLE PREDICTIVE OPTIMIZATION"
+anchor = "doc.sql-ref-syntax-ddl-alter-catalog / Syntax"
+note = "a string literal in place of <catalog_name> before a predictive optimization clause: the warehouse refuses it (PARSE_SYNTAX_ERROR at ENABLE, pos 19)"
+
+[[obligation]]
 id = "db.ddl.alter-catalog-drop-connection.o001"
 kind = "positive"
 required = true

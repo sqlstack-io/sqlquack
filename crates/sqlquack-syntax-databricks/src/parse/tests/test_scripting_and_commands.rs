@@ -207,6 +207,16 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "a catalog given predictive optimization is named, not quoted",
+            sql: "ALTER CATALOG 'v1' ENABLE PREDICTIVE OPTIMIZATION",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a catalog's tags are unset by name, not by a quoted name",
+            sql: "ALTER CATALOG 'v1' UNSET TAGS ( 'k' )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "each query tag names QUERY_TAGS and a key",
             sql: "SET QUERY_TAGS [ 'k' ] = 'v' , QUERY_TAGS [ 'k2' ] = UNSET",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },

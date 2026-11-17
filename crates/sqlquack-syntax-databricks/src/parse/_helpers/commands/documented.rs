@@ -141,7 +141,7 @@ const FORMS: &[Form] = &[
         patterns: &[
             "ALTER CATALOG [ name ] owner",
             "ALTER CATALOG [ name ] string_tags",
-            "ALTER CATALOG [ catalog ] predictive",
+            "ALTER CATALOG [ name ] predictive",
             "ALTER CATALOG catalog { collation | OPTIONS props | SET MANAGED LOCATION str \
              | [ SET ] RETAIN DROPPED TO int time_unit }",
             "ALTER CATALOG catalog DROP CONNECTION [ RESTRICT | FORCE ]",
