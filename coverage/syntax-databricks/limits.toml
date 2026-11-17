@@ -1536,20 +1536,6 @@ note = "a string literal in place of <class_name>"
 reason = "the class name is a string literal (SqlBaseParser #createFunction: AS className=stringLit; the page's examples quote it), so a string literal in its place is the documented operand, no negative"
 
 [[suppress]]
-form = "db.ddl.create-materialized-view-refresh-policy"
-kind = "required_operand_missing"
-target = "<refresh_policy>"
-note = "omit <refresh_policy>"
-reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable: REFRESH TABLE? identifierReference, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
-
-[[suppress]]
-form = "db.ddl.create-materialized-view-refresh-policy"
-kind = "negative_neighbour"
-target = ""
-note = "the form without its required POLICY"
-reason = "REFRESH followed by any text parses as Spark's REFRESH resource or REFRESH TABLE (SqlBaseParser #refreshTable: REFRESH TABLE? identifierReference, #refreshResource: REFRESH .*?), so the text without the rest of the form parses; the resource is looked up when it runs"
-
-[[suppress]]
 form = "db.ddl.create-materialized-view"
 kind = "negative_neighbour"
 target = ""
