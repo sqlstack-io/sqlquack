@@ -39,6 +39,37 @@ pub(crate) fn property(name: &str, value: Expression) -> Expression {
     }))
 }
 
+/// `ENABLE` or `DISABLE`, then `VALIDATE` or `NOVALIDATE`, as modifier values, when both read.
+fn validation_words(
+    enable: Option<&str>,
+    validate: Option<&str>,
+) -> Option<(Option<bool>, Option<bool>)> {
+    let enabled: Option<bool> = match enable {
+        None => None,
+        Some("ENABLE") => Some(true),
+        Some("DISABLE") => Some(false),
+        Some(_) => return None,
+    };
+    let validated: Option<bool> = match validate {
+        None => None,
+        Some("VALIDATE") => Some(true),
+        Some("NOVALIDATE") => Some(false),
+        Some(_) => return None,
+    };
+    Some((enabled, validated))
+}
+
+/// The modifiers `constraint` holds, if its kind has them.
+fn modifiers_of(constraint: &mut TableConstraint) -> Option<&mut ConstraintModifiers> {
+    match constraint {
+        TableConstraint::PrimaryKey { modifiers, .. }
+        | TableConstraint::ForeignKey { modifiers, .. }
+        | TableConstraint::Unique { modifiers, .. }
+        | TableConstraint::Check { modifiers, .. } => Some(modifiers),
+        _ => None,
+    }
+}
+
 impl Parser<'_> {
     /// `CREATE ...` or `REPLACE TABLE ...`; any other `CREATE` is an opaque gap.
     pub(crate) fn create_statement(&mut self) -> Parsing<Expression> {
@@ -135,11 +166,10 @@ impl Parser<'_> {
                         constraint,
                         TableConstraint::PrimaryKey { .. } | TableConstraint::ForeignKey { .. }
                     );
-                    let validation: usize = self.offset();
-                    if keyed && self.kw_in(0, &["ENABLE", "NOVALIDATE"]) {
-                        while self.eat_kw("ENABLE") || self.eat_kw("NOVALIDATE") {}
-                        self.gap("constraint_validation", validation);
-                    }
+                    let constraint: TableConstraint = match keyed {
+                        true => self.constraint_validation(constraint, &["ENABLE", "NOVALIDATE"]),
+                        false => constraint,
+                    };
                     node.constraints.push(constraint);
                 } else {
                     node.columns.push(self.column_definition()?);
@@ -779,6 +809,46 @@ impl Parser<'_> {
                 return Ok(modifiers);
             }
         }
+    }
+
+    /// `constraint` with the `words` after it as its modifiers when written once each, else a gap.
+    pub(crate) fn constraint_validation(
+        &mut self,
+        mut constraint: TableConstraint,
+        words: &[&str],
+    ) -> TableConstraint {
+        let start: usize = self.offset();
+        let mut written: Vec<String> = Vec::new();
+        while let Some(word) = self
+            .word_at(0)
+            .filter(|word| words.contains(&word.as_str()))
+        {
+            self.at += 1;
+            written.push(word);
+        }
+        if written.is_empty() {
+            return constraint;
+        }
+        let read: Option<(Option<bool>, Option<bool>)> = match written
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<&str>>()
+            .as_slice()
+        {
+            [enable] => {
+                validation_words(None, Some(enable)).or(validation_words(Some(enable), None))
+            }
+            [enable, validate] => validation_words(Some(enable), Some(validate)),
+            _ => None,
+        };
+        match (read, modifiers_of(&mut constraint)) {
+            (Some((enabled, validated)), Some(modifiers)) => {
+                modifiers.enabled = enabled;
+                modifiers.validated = validated;
+            }
+            _ => self.gap("constraint_validation", start),
+        }
+        constraint
     }
 
     /// `tableConstraintDefinition`.

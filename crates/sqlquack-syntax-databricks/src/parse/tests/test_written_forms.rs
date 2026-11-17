@@ -15,6 +15,15 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 2,
         },
         DistinctTreesTestCase {
+            description: "a key constraint with and without ENABLE before NOVALIDATE",
+            written: &[
+                "CREATE TABLE t3 ( c1 INT , PRIMARY KEY ( c1 ) ENABLE NOVALIDATE )",
+                "CREATE TABLE t3 ( c1 INT , PRIMARY KEY ( c1 ) NOVALIDATE )",
+                "CREATE TABLE t3 ( c1 INT , PRIMARY KEY ( c1 ) ENABLE )",
+            ],
+            expected_distinct_trees: 3,
+        },
+        DistinctTreesTestCase {
             description: "DESC and DESCRIBE",
             written: &["DESC SCHEMA s1", "DESCRIBE SCHEMA s1"],
             expected_distinct_trees: 2,

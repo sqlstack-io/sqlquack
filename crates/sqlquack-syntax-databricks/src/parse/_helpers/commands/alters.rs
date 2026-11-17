@@ -338,15 +338,8 @@ impl Parser<'_> {
             return Ok(added);
         }
         let constraint = self.table_constraint()?;
-        let validation: usize = self.offset();
-        let mut validated: bool = false;
-        while self.kw_in(0, &["ENABLE", "DISABLE", "VALIDATE", "NOVALIDATE"]) {
-            self.at += 1;
-            validated = true;
-        }
-        if validated {
-            self.gap("constraint_validation", validation);
-        }
+        let constraint = self
+            .constraint_validation(constraint, &["ENABLE", "DISABLE", "VALIDATE", "NOVALIDATE"]);
         Ok(vec![AlterTableAction::AddConstraint(constraint)])
     }
 

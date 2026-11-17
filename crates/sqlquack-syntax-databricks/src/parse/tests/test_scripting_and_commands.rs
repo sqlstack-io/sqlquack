@@ -352,6 +352,26 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
+            description: "a key constraint keeps ENABLE NOVALIDATE",
+            sql: "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 PRIMARY KEY ( c1 ) ENABLE NOVALIDATE )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "an added constraint keeps DISABLE VALIDATE",
+            sql: "ALTER TABLE t3 ADD CONSTRAINT k1 CHECK ( c1 > 0 ) DISABLE VALIDATE",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "validation words out of their order, which no modifier holds, stay a gap",
+            sql: "ALTER TABLE t3 ADD CONSTRAINT k1 CHECK ( c1 > 0 ) VALIDATE ENABLE",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a repeated validation word stays a gap",
+            sql: "CREATE TABLE t3 ( c1 INT , PRIMARY KEY ( c1 ) NOVALIDATE NOVALIDATE )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
             description: "RESTORE is checked against its syntax",
             sql: "RESTORE TABLE t1 TO VERSION AS OF 0",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },

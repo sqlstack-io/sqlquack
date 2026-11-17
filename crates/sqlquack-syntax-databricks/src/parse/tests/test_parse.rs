@@ -474,7 +474,7 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         VerdictTestCase {
             description: "ENABLE NOVALIDATE follows a primary key in CREATE TABLE",
             sql: "CREATE TABLE t ( c INT NOT NULL , PRIMARY KEY ( c ) ENABLE NOVALIDATE )",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ENABLE NOVALIDATE may not follow a UNIQUE constraint",
