@@ -1501,11 +1501,3 @@ read = [
   "LOCALTIME [ ( [ <precision> ] ) ]",
 ]
 reason = "the page says the parentheses are optional when precision is omitted; read with them optional"
-
-[[reading]]
-page = "functions/localtimestamp"
-written = "LOCALTIMESTAMP ( [ <precision> ] )"
-read = [
-  "LOCALTIMESTAMP [ ( [ <precision> ] ) ]",
-]
-reason = "the page says the parentheses are optional when precision is omitted; read with them optional"

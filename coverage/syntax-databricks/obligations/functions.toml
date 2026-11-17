@@ -19217,18 +19217,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.localtimestamp.o007"
-kind = "option_present"
-required = true
-target = "[ ( [ <precision> ] ) ]"
-
-[[obligation]]
-id = "db.functions.localtimestamp.o008"
-kind = "option_absent"
-required = true
-target = "[ ( [ <precision> ] ) ]"
-
-[[obligation]]
 id = "db.functions.localtimestamp.o002"
 kind = "option_present"
 required = true
@@ -19248,10 +19236,18 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.localtimestamp.o009"
+id = "db.functions.localtimestamp.o010"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ ( [ <precision> ] ) ]"
+note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.localtimestamp.o011"
+kind = "option_absent"
+required = true
+target = "the parentheses"
+anchor = "doc.functions.localtimestamp / Syntax"
+note = "LOCALTIMESTAMP without parentheses, which the page says is allowed when precision is omitted: the warehouse parses it but resolves it as a column (UNRESOLVED_COLUMN), not as the function, so the form keeps its written parentheses and the bare word is observed"
 
 [[obligation]]
 id = "db.functions.locate.o001"

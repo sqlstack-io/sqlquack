@@ -6328,6 +6328,16 @@ context = "raw"
 expect = "observe"
 
 [[limit]]
+form = "db.functions.localtimestamp"
+kind = "option_absent"
+target = "the parentheses"
+note = "LOCALTIMESTAMP without parentheses, which the page says is allowed when precision is omitted: the warehouse parses it but resolves it as a column (UNRESOLVED_COLUMN), not as the function, so the form keeps its written parentheses and the bare word is observed"
+anchor = "doc.functions.localtimestamp / Syntax"
+sql = "SELECT ( LOCALTIMESTAMP )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
 form = "db.expressions.null-type"
 kind = "alternative"
 target = "NULL"

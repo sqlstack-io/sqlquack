@@ -2746,3 +2746,12 @@ ids = [
   "db.expressions.null-type.o003",
   "db.expressions.null-type.o004",
 ]
+
+[[retired]]
+retired_in = "24d36f8c3115b047c3c339d5b554c82beb5122d2"
+reason = "LOCALTIMESTAMP read with its written parentheses: the warehouse resolves the bare word as a column, so the optional-parentheses obligations and the neighbour derived from them no longer exist; the bare form is an observed limit"
+ids = [
+  "db.functions.localtimestamp.o007",
+  "db.functions.localtimestamp.o008",
+  "db.functions.localtimestamp.o009",
+]
