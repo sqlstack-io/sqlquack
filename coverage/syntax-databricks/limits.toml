@@ -7708,3 +7708,83 @@ anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
 sql = "ALTER TABLE t1 UNSET TBLPROPERTIES ( a.b )"
 context = "raw"
 expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table"
+kind = "option_absent"
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+note = "SET TAGS on a table with no = between a tag's name and value"
+anchor = "doc.sql-ref-syntax-ddl-alter-table / Syntax"
+sql = "ALTER TABLE t1 SET TAGS ( 'k' 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-materialized-view.materialized-view-add-alter"
+kind = "option_absent"
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+note = "SET TAGS on a materialized view with no = between a tag's name and value"
+anchor = "doc.sql-ref-syntax-ddl-alter-materialized-view / Syntax"
+sql = "ALTER MATERIALIZED VIEW v1 SET TAGS ( 'k' 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-streaming-table.streaming-table-add-alter"
+kind = "option_absent"
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+note = "SET TAGS on a streaming table with no = between a tag's name and value"
+anchor = "doc.sql-ref-syntax-ddl-alter-streaming-table / Syntax"
+sql = "ALTER STREAMING TABLE t1 SET TAGS ( 'k' 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "option_absent"
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+note = "SET TAGS on a column with no = between a tag's name and value"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ALTER COLUMN c1 SET TAGS ( 'k' 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-constraint.references"
+kind = "option_present"
+target = "ON DELETE NO ACTION"
+note = "a column REFERENCES with ON DELETE NO ACTION"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT REFERENCES t2 ON DELETE NO ACTION )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-constraint.references"
+kind = "option_present"
+target = "ON UPDATE NO ACTION"
+note = "a column REFERENCES with ON UPDATE NO ACTION"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT REFERENCES t2 ON UPDATE NO ACTION )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-constraint.foreign-key-references"
+kind = "option_present"
+target = "DEFERRABLE"
+note = "a FOREIGN KEY with the documented constraint option DEFERRABLE, which the local parser refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 DEFERRABLE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-constraint.foreign-key-references"
+kind = "option_present"
+target = "INITIALLY DEFERRED"
+note = "a FOREIGN KEY with the documented constraint option INITIALLY DEFERRED, which the local parser refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 INITIALLY DEFERRED )"
+context = "raw"
+expect = "observe"

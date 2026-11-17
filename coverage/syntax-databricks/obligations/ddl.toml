@@ -2558,6 +2558,14 @@ anchor = "doc.sql-ref-syntax-ddl-alter-materialized-view / Syntax"
 note = "the form without its required COLUMN; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
+id = "db.ddl.alter-materialized-view.materialized-view-add-alter.o056"
+kind = "option_absent"
+required = true
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+anchor = "doc.sql-ref-syntax-ddl-alter-materialized-view / Syntax"
+note = "SET TAGS on a materialized view with no = between a tag's name and value"
+
+[[obligation]]
 id = "db.ddl.alter-provider.o001"
 kind = "positive"
 required = true
@@ -4721,6 +4729,14 @@ anchor = "doc.sql-ref-syntax-ddl-alter-streaming-table / Syntax"
 note = "the form without its required COLUMN; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
+id = "db.ddl.alter-streaming-table.streaming-table-add-alter.o057"
+kind = "option_absent"
+required = true
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+anchor = "doc.sql-ref-syntax-ddl-alter-streaming-table / Syntax"
+note = "SET TAGS on a streaming table with no = between a tag's name and value"
+
+[[obligation]]
 id = "db.ddl.alter-table.o001"
 kind = "positive"
 required = true
@@ -5721,6 +5737,14 @@ kind = "negative_neighbour"
 required = true
 target = "<clustering_columns> in [ ( <clustering_columns> ) | AUTO ]"
 note = "a string literal in place of <clustering_columns>; the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers unsupported_feature (DELTA_CLUSTER_BY_EXPRESSIONS_NOT_SUPPORTED), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.ddl.alter-table.o228"
+kind = "option_absent"
+required = true
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+anchor = "doc.sql-ref-syntax-ddl-alter-table / Syntax"
+note = "SET TAGS on a table with no = between a tag's name and value"
 
 [[obligation]]
 id = "db.ddl.alter-table-add-constraint.o001"
@@ -7414,6 +7438,14 @@ required = true
 target = "CHANGE UNSET TAGS"
 anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
 note = "UNSET TAGS after CHANGE COLUMN, which the warehouse refuses"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o075"
+kind = "option_absent"
+required = true
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+note = "SET TAGS on a column with no = between a tag's name and value"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-table-add-column.o001"
@@ -18569,6 +18601,22 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
 note = "TIMESERIES on two primary key columns, as the page's line allows, which the warehouse refuses"
 
 [[obligation]]
+id = "db.ddl.create-table-constraint.foreign-key-references.o081"
+kind = "option_present"
+required = true
+target = "DEFERRABLE"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "a FOREIGN KEY with the documented constraint option DEFERRABLE, which the local parser refuses"
+
+[[obligation]]
+id = "db.ddl.create-table-constraint.foreign-key-references.o082"
+kind = "option_present"
+required = true
+target = "INITIALLY DEFERRED"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "a FOREIGN KEY with the documented constraint option INITIALLY DEFERRED, which the local parser refuses"
+
+[[obligation]]
 id = "db.ddl.create-table-constraint.references.o001"
 kind = "positive"
 required = true
@@ -18860,6 +18908,22 @@ required = true
 target = "FOREIGN KEY"
 anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
 note = "the optional FOREIGN KEY written alone, beside the case without it"
+
+[[obligation]]
+id = "db.ddl.create-table-constraint.references.o050"
+kind = "option_present"
+required = true
+target = "ON DELETE NO ACTION"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "a column REFERENCES with ON DELETE NO ACTION"
+
+[[obligation]]
+id = "db.ddl.create-table-constraint.references.o051"
+kind = "option_present"
+required = true
+target = "ON UPDATE NO ACTION"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "a column REFERENCES with ON UPDATE NO ACTION"
 
 [[obligation]]
 id = "db.ddl.create-table-hiveformat.o001"
