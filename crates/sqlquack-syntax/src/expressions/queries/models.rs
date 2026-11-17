@@ -96,6 +96,12 @@ pub struct Select {
     /// Databricks: a TABLE statement, which reads every column of its table
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub table_statement: bool,
+    /// Databricks: the pipe operators written into this select, in order, each with the pipe
+    /// token as written (`|> WHERE`, `| WHERE`, or `|>` alone when nothing follows it); the select already applies them, so analysis
+    /// reads nothing from them
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub pipe_operators: Vec<String>,
     /// MySQL operation modifiers (HIGH_PRIORITY, STRAIGHT_JOIN, SQL_CALC_FOUND_ROWS, etc.)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub operation_modifiers: Vec<String>,
@@ -159,6 +165,7 @@ impl Select {
             post_select_comments: Vec::new(),
             kind: None,
             table_statement: false,
+            pipe_operators: Vec::new(),
             operation_modifiers: Vec::new(),
             qualify_after_window: false,
             option: None,

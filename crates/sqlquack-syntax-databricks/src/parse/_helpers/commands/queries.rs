@@ -283,8 +283,12 @@ impl Parser<'_> {
                 if min > 1 {
                     return Ok(left);
                 }
+                let token: &str = match self.is_op("|>") {
+                    true => "|>",
+                    false => "|",
+                };
                 self.at += 1;
-                left = self.deeper(|parser| parser.pipe(left))?;
+                left = self.deeper(|parser| parser.pipe(left, token))?;
                 continue;
             }
             let operator: String = match self.word_at(0) {
@@ -584,9 +588,11 @@ impl Parser<'_> {
         Ok(organization)
     }
 
-    /// `operatorPipeRightSide` after `|>`, applied to `left` as the select it amounts to.
-    fn pipe(&mut self, left: Expression) -> Parsing<Expression> {
+    /// `operatorPipeRightSide` after `token` (`|>`, or `|` where `isOperatorPipeStart` reads it
+    /// as one), applied to `left` as the select it amounts to, which records both as written.
+    fn pipe(&mut self, left: Expression, token: &str) -> Parsing<Expression> {
         let word: String = self.word_at(0).unwrap_or_default();
+        let mark = |operator: &str| format!("{token} {operator}");
         let select: Select = match word.as_str() {
             "SELECT" => {
                 let mut select: Select = self.select_clause(pipe_input(left, false))?;
@@ -700,14 +706,20 @@ impl Parser<'_> {
                 let all: bool = self.eat_kw("ALL");
                 let distinct: bool = !all && self.eat_kw("DISTINCT");
                 let right: Expression = self.query_primary()?;
-                return Ok(set_operation(&word, left, right, (all, distinct)));
+                wrapped(set_operation(&word, left, right, (all, distinct)))
             }
             "ORDER" | "CLUSTER" | "DISTRIBUTE" | "SORT" | "WINDOW" | "LIMIT" | "OFFSET" => {
                 let organization: Organization = self.organization()?;
                 if organization.is_empty() {
                     return Err(self.error());
                 }
-                return Ok(organized(left, organization));
+                return Ok(match organized(left, organization) {
+                    Expression::Select(mut select) => {
+                        select.pipe_operators.push(mark(&word));
+                        Expression::Select(select)
+                    }
+                    other => other,
+                });
             }
             "AGGREGATE" => {
                 self.at += 1;
@@ -729,15 +741,25 @@ impl Parser<'_> {
                 select.group_by = group;
                 select
             }
-            _ if self.terminal_at(0) => return Ok(left),
+            _ if self.terminal_at(0) => {
+                let mut select: Select = match left {
+                    Expression::Select(select) => *select,
+                    other => wrapped(other),
+                };
+                select.pipe_operators.push(token.to_owned());
+                return Ok(Expression::Select(Box::new(select)));
+            }
             _ if self.at_join() => {
                 let join = self.join_relation()?;
                 let mut select: Select = pipe_input(left, true);
                 select.joins.push(join);
-                select
+                select.pipe_operators.push(mark("JOIN"));
+                return Ok(Expression::Select(Box::new(select)));
             }
             _ => return Err(self.error()),
         };
+        let mut select: Select = select;
+        select.pipe_operators.push(mark(&word));
         Ok(Expression::Select(Box::new(select)))
     }
 

@@ -572,6 +572,10 @@ others:
   against the `shiftrightunsigned` call, in a `written_as` field that analysis ignores;
 - the parentheses of a `VALUES` row and of a `STREAM` source, which the Syntax blocks write as
   alternatives (`expression | ( expression [, ...] )` and `STREAM ( name ) | STREAM name`).
+- each pipe operator with the pipe written before it (`|>` or `|`), in the `pipe_operators` of
+  the select it amounts to, so `FROM t1 |> AGGREGATE sum ( c1 )` keeps `|> AGGREGATE` apart from
+  `SELECT sum ( c1 ) FROM t1` and from `FROM t1 | AGGREGATE sum ( c1 )`; a trailing `|>` with
+  no operation after it is kept as the token alone.
 
 `MATCH_RECOGNIZE`'s `PATTERN` parses into the shared row-pattern tree (symbols, sequences,
 alternations, groups, `PERMUTE` and quantifiers) beside the pattern's text, because the page's

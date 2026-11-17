@@ -951,6 +951,36 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "\"TABLE\"",
         },
         ValueTestCase {
+            description: "a pipe operator is kept as written",
+            sql: "FROM t1 |> AGGREGATE sum ( c1 )",
+            pointer: "/0/select/pipe_operators",
+            expected_json: "[\"|> AGGREGATE\"]",
+        },
+        ValueTestCase {
+            description: "a piped set operation is kept as written",
+            sql: "FROM t1 |> UNION SELECT 1",
+            pointer: "/0/select/pipe_operators",
+            expected_json: "[\"|> UNION\"]",
+        },
+        ValueTestCase {
+            description: "a bare | before a pipe operator is kept apart from |>",
+            sql: "FROM t1 | WHERE 1 = 1",
+            pointer: "/0/select/pipe_operators",
+            expected_json: "[\"| WHERE\"]",
+        },
+        ValueTestCase {
+            description: "a trailing |> with no operation is kept",
+            sql: "SELECT c1 FROM t1 |>",
+            pointer: "/0/select/pipe_operators",
+            expected_json: "[\"|>\"]",
+        },
+        ValueTestCase {
+            description: "pipe operators folded into one select are kept in order",
+            sql: "FROM t1 |> WHERE c1 = 1 |> DROP c2",
+            pointer: "/0/select/pipe_operators",
+            expected_json: "[\"|> WHERE\",\"|> DROP\"]",
+        },
+        ValueTestCase {
             description: "an explicit ALL is recorded, not folded into none",
             sql: "SELECT sum(ALL a) FROM t",
             pointer: "/0/select/expressions/0/function/set_quantifier",

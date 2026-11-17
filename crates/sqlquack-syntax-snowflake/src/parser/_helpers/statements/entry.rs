@@ -1642,6 +1642,7 @@ impl Parser {
             exclude,
             span: SourceSpan::default(),
             table_statement: false,
+            pipe_operators: Vec::new(),
         };
 
         Ok(Expression::Select(Box::new(select)))

@@ -508,6 +508,7 @@ impl Parser {
             exclude: None,
             span: SourceSpan::default(),
             table_statement: false,
+            pipe_operators: Vec::new(),
         };
 
         let result = Expression::Select(Box::new(select));
