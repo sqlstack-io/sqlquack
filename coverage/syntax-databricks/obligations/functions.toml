@@ -27480,18 +27480,18 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "db.functions.remote-query.o014"
+id = "db.functions.remote-query.o022"
 kind = "operand_type_class"
 required = true
-target = "connectorOptionKey"
+target = "<connector_option_key>"
 anchor = "doc.functions.remote_query / Syntax"
 note = "a string literal written where the option key goes"
 
 [[obligation]]
-id = "db.functions.remote-query.o015"
+id = "db.functions.remote-query.o023"
 kind = "identifier_class"
 required = true
-target = "connectorOptionKey"
+target = "<connector_option_key>"
 anchor = "doc.functions.remote_query / Syntax"
 note = "the option key as a backtick-quoted identifier"
 

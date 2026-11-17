@@ -2766,3 +2766,11 @@ ids = [
   "db.functions.remote-query.o006",
   "db.functions.remote-query.o008",
 ]
+
+[[retired]]
+retired_in = "449b03100abb17a8d9b949a79028725ef9ba0af1"
+reason = "REMOTE_QUERY's option key observations retargeted from the keyword connectorOptionKey, which the reading no longer writes, to the placeholder <connector_option_key>; issued again with the same recorded SQL"
+ids = [
+  "db.functions.remote-query.o014",
+  "db.functions.remote-query.o015",
+]
