@@ -6,6 +6,8 @@ mod test_keyed_actions;
 mod test_parse;
 #[path = "tests/test_scripting_and_commands.rs"]
 mod test_scripting_and_commands;
+#[path = "tests/test_treed_form_guards.rs"]
+mod test_treed_form_guards;
 #[path = "tests/test_types.rs"]
 mod test_types;
 #[path = "tests/test_written_forms.rs"]

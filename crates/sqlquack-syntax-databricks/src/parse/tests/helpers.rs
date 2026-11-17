@@ -1,6 +1,8 @@
 use serde_json::Value;
 
+use crate::parse::_helpers::tree::reading::{Reading, parse_as};
 use crate::parse::main::parse_strict::parse_strict;
+use crate::parse::tests::test_types::ExpectedVerdict;
 
 /// How many different trees, spans aside, the strict parser gives `written`.
 pub(crate) fn distinct_trees(written: &[&str], description: &str) -> usize {
@@ -32,4 +34,15 @@ fn without_spans(mut value: Value) -> Value {
         .flatten()
         .for_each(|item| *item = without_spans(item.take()));
     value
+}
+
+/// The verdict `parse` gives `sql`.
+pub(crate) fn verdict(sql: &str) -> ExpectedVerdict {
+    parse_as(sql, Reading::Trees)
+        .map(|parsed| ExpectedVerdict::Accepted {
+            opaque: !parsed.gaps.is_empty(),
+        })
+        .unwrap_or_else(|error| ExpectedVerdict::Rejected {
+            syntax: error.syntax,
+        })
 }

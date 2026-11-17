@@ -70,3 +70,12 @@ pub(crate) struct DistinctTreesTestCase {
     pub(crate) written: &'static [&'static str],
     pub(crate) expected_distinct_trees: usize,
 }
+
+/// A form of `TREED_FORMS`, written as `sql`, before `ALTER TABLE t1 ALTER COLUMN c1` in one compound and in two statements.
+pub(crate) struct TreedFormTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) construct: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_in_compound: ExpectedVerdict,
+    pub(crate) expected_as_script: ExpectedVerdict,
+}
