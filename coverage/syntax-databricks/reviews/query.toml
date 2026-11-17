@@ -369,3 +369,43 @@ note = "Withdraws this form's approval. The tree-identity sweep over the accepte
 
 [review.definitions]
 "db.query.select-groupby.group-by" = "466e6081b946b74b6accb69b8307427b364773a8b63e68176861331c001adaee"
+
+[[review]]
+id = "db-query-014"
+family = "query"
+parser_tree = "ac626497e83bc4a52c51aecec5a64b5b8dffc625"
+reviewed_utc = "2026-11-17T10:37:59Z"
+verdict = "approved"
+forms = [
+  "db.query.pipeline.table",
+  "db.query.pipeline.table.syntax",
+  "db.query.select-pipeop",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in 47360432d, which keeps each pipe operator and its pipe token in the select's pipe_operators. Read against the 2026.45 receipts in evidence set evJ. Every locally accepted case's parse tree was read. Each piped case now carries its marks (|> AGGREGATE, |> SET, |> DROP, |> EXTEND, |> UNION and so on, | WHERE for the bare pipe, and |> alone for a trailing pipe), beside the operands the select applies, so no pipe case shares a tree with its desugared plain query. The mechanical check finds every name and literal of each case in its tree. Of the locally rejected cases, five differ in position, all in select-pipeop, and were read on purpose. In four (|> OFFSET, |> ORDER BY, |> LIMIT, |> LIMIT 1 OFFSET) the operand is missing at the end: the warehouse backtracks to the clause keyword, and the local parser fails at end of input. The fifth (|> SELECT c1 GROUP BY c1 AS a1) is refused at AS locally and at a1 in the warehouse, which gives no position. Every mechanical repair (adding the operand, or dropping AS a1) parses locally, and the recorded receipts of the same texts parse. This supersedes the concern of db-query-007, whose binding is now stale. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "2858125f06064ea0fed04851b3277709e3f6c3e2eea3f58a3511f181b2f9f379"
+"db.query.pipeline.table.syntax" = "6c768709f68a7a1b99790cd91c8223af8506ba90e93939edbffbe84135551e3b"
+"db.query.select-pipeop" = "7a6e18f771214e6d696569a7336428f19994edf21eddd90d5a3a61dd42539da7"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
+
+[[review]]
+id = "db-query-015"
+family = "query"
+parser_tree = "ac626497e83bc4a52c51aecec5a64b5b8dffc625"
+reviewed_utc = "2026-11-17T10:38:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.query",
+]
+note = "Re-read on 17 Nov 2026 after the pipe-marks parser fix; carries forward db-query-003, whose binding went stale. The pipe concerns are resolved: o043 SELECT 1 |> WHERE 1 = 1 now keeps |> WHERE, and o055 SELECT c1 FROM t1 |> keeps the trailing |>. Still open: the o014 and o018 DISTRIBUTE BY and SORT BY branch cases are a bare SELECT 1, the same text as the option_absent case, so nothing shows those branches. The cases need regenerating before this form can be approved."
+
+[review.fingerprints]
+"db.query.query" = "0e7a3e724f5ee5f228fc0f5e063ebd4f871274edb4715e99221b46622291c565"
+
+[review.definitions]
+"db.query.query" = "05ca82c79f7715a6d9c31e02155c05714239afdd71189c9277d3d5db32a3765e"
