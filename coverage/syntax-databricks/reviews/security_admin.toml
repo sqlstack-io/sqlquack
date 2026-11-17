@@ -187,3 +187,20 @@ note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2
 "db.security_admin.show-grant" = "e632ff336f2ee478df322687496af8b62729166c95f1413dac2010858d9f8af9"
 "db.security_admin.show-grant-on-share" = "36715f789f5d82931fd9372236e945d7aca1b617bfc3325c5df462506a1619c9"
 "db.security_admin.show-grant-to-recipient" = "a77b29d603336821ef27495e98f9ac58637fdc3cd225416cb485187629227632"
+
+[[review]]
+id = "db-security_admin-010"
+family = "security_admin"
+parser_tree = "3c548df564a937f1ee8115bf76553e2f84fb9f13"
+reviewed_utc = "2026-11-17T09:41:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.show-grant-on-share",
+]
+note = "Withdraws this form from the 17 Nov approval db-security_admin-009. Its only positive, SHOW GRANTS ON SHARE, passes by accident: the warehouse (TABLE_DOES_NOT_EXIST for a table named share) and the local parser both read SHARE as a table name, which is evidence for SHOW GRANTS ON <table>, not for the share form. The catalogue copied the page's Syntax line, which has no name, but the page's Parameters list has share_name and its example names a share. A hand reading SHOW GRANTS ON SHARE <share_name> is needed, with recorded cases that reach the local ON SHARE scope."
+
+[review.fingerprints]
+"db.security_admin.show-grant-on-share" = "c8cb4c330926e58b761099f23342f786fb96ceea4dbef55ef913c4a4284371e1"
+
+[review.definitions]
+"db.security_admin.show-grant-on-share" = "36715f789f5d82931fd9372236e945d7aca1b617bfc3325c5df462506a1619c9"

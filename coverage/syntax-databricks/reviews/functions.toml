@@ -5909,3 +5909,23 @@ note = "Re-read on 17 Nov 2026, (c) batch 6: a form whose earlier approval went 
 "db.functions.zeroifnull" = "55563ff2bed637a29c328198b6714bf0697b934d5dbb356f6f73920c469602fc"
 "db.functions.zstd-compress" = "82fe2a1d56a244c02b797fc539c1f0d485e485d664f03955a322784d383afc3f"
 "db.functions.zstd-decompress" = "f668a4b69c1934e99bbe1dbcea7a364e8ca961d36535c210b6a2df3d5a6142c4"
+
+[[review]]
+id = "db-functions-063"
+family = "functions"
+parser_tree = "3c548df564a937f1ee8115bf76553e2f84fb9f13"
+reviewed_utc = "2026-11-17T09:41:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.substr.substr-from",
+  "db.functions.substring.substring-from",
+]
+note = "Withdraws these forms from the 17 Nov approval db-functions-061. The parse tree of SUBSTR ( 1 FROM v1 FOR v1 ) is identical, apart from spans, to that of SUBSTR ( 1 , v1 , v1 ), and likewise for SUBSTRING: the FROM and FOR spelling is lost from the tree. The tree must mark the FROM spelling, as TRIM marks its SQL-standard syntax, before these forms can be approved."
+
+[review.fingerprints]
+"db.functions.substr.substr-from" = "9706e08280f7c7f6b3cc35bce985046b5bb1248f04e0baffd97c6aa7fd863e02"
+"db.functions.substring.substring-from" = "466eeb8ee5d71e33a1beeed26c8e9376e4221028f456aced2594f6dae0c32a1e"
+
+[review.definitions]
+"db.functions.substr.substr-from" = "5fb173146d7f30267c9cf854324c4912c2d22015a03ac708980d77fe63ac7b32"
+"db.functions.substring.substring-from" = "1a495fbea39685205684a74124e048eb8beff18e1ca2458a23525d6983eaa0ec"
