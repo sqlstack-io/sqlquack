@@ -5969,3 +5969,36 @@ note = "Re-read on 17 Nov 2026 after the parser fix in 3c30d862e, which keeps th
 [review.definitions]
 "db.functions.substr.substr-from" = "5fb173146d7f30267c9cf854324c4912c2d22015a03ac708980d77fe63ac7b32"
 "db.functions.substring.substring-from" = "1a495fbea39685205684a74124e048eb8beff18e1ca2458a23525d6983eaa0ec"
+
+[[review]]
+id = "db-functions-066"
+family = "functions"
+parser_tree = "4109a513b38f100406891e449ac7bbb0b975fffb"
+reviewed_utc = "2026-11-17T12:15:24Z"
+verdict = "approved"
+resolves = ["db-functions-003", "db-functions-004", "db-functions-005", "db-functions-007", "db-functions-020", "db-functions-024"]
+forms = [
+  "db.functions.current-date",
+  "db.functions.current-path",
+  "db.functions.current-time",
+  "db.functions.current-user",
+  "db.functions.session-user",
+  "db.functions.user",
+]
+note = "Re-read on 17 Nov 2026 against the 2026.45 receipts in evidence set evK-17nov, and resolves db-functions-003 (current-date), -004 (current-path), -005 (current-time), -007 (current-user), -020 (session-user) and -024 (user). Each of those reviews raised one concern, (a): that no [[reading]] row states the catalogue's optional parentheses against the page's name ( ) Syntax line. It does not hold for any of the six. hand.toml has a [[reading]] row for each page (functions/current_date, functions/current_path, functions/current_time, functions/current_user, functions/session_user and functions/user), each reading the page's written name ( ) (current_time: name ( [ <precision> ] )) as name [ ( ) ] because the page says the braces or parentheses are optional; all six rows came in with 6c6648a93 on 16 Nov 2026 at 10:31Z, before those reviews (16 Nov, 19:09Z), and the catalogue grammar each form carries is that reading. The warehouse confirms the bare spelling for each: SELECT ( CURRENT_DATE ) (kdb353f3b95b4), SELECT ( CURRENT_PATH ) (k073af60ad64c), SELECT ( CURRENT_TIME ) (k5f30977232eb), SELECT ( CURRENT_USER ) (kddd1077163f6), SELECT ( SESSION_USER ) (kdcdd3c7c4477) and SELECT ( USER ) (k820ca7728555) are all accepted. Every accepted case's tree is a function call of the documented name, with no_parens true for the bare spelling and absent for the written parentheses, so the two spellings keep their own trees; CURRENT_TIME ( 3 ) keeps its precision argument. The mechanical check finds every name and literal in each tree, and all locally rejected cases fail at the warehouse's position. The six resolved reviews are at the fingerprints and definitions this review binds. The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.functions.current-date" = "47f7ab9ae32b911c07ea3369f5d1ff0c358215b19276703e59bb28d3ce165fce"
+"db.functions.current-path" = "d1d00eb601da5cd3897c47b80ae128cf2cd8169bf52bc4493f23444cb6811c88"
+"db.functions.current-time" = "83d8f40e9afb1090484b221f182a5946602993a75af886ada936a75738453132"
+"db.functions.current-user" = "e1a965de070f44398291fb2dc999ef1b19fe5b3d43a478ebdc67359cdc15ecb4"
+"db.functions.session-user" = "0ec070dac9ea7956d163405f02a58501528cc3cf30fecd211a56e4ed217322e3"
+"db.functions.user" = "0a2e082aa42b4245cf13b30f52a25b3a2bbd23d2dc4f5c2b8dac29a6c905e743"
+
+[review.definitions]
+"db.functions.current-date" = "f55da284dedff56d38b1cf017b1169fedf04eb3b99516190e110d4b26ed85fb6"
+"db.functions.current-path" = "9314a8205be2e247fd71ec3ea6772ce822301fd492141cea4fa8e368c810fccf"
+"db.functions.current-time" = "4d893db64cd80a8e1256f188bc5b078f9c75540ec77c49ac465fc3e3f5abfe32"
+"db.functions.current-user" = "a7eb56a0d9b5bfc0aaae91dc56040e85b7eaf1c93f4c62f94a3eb43387bc3a10"
+"db.functions.session-user" = "a57364540f228121d34940ca9c92870ff23ddc823d0050732e25c7c1543e407c"
+"db.functions.user" = "79d7930db95639e59c4e53dfe89f36b1d24dc59d06461d98aae744e73c0fc587"
