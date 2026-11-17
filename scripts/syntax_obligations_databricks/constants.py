@@ -679,6 +679,11 @@ RUNTIME_ONLY_CLAUSES: dict[str, str] = {
         "SET MANAGED and UNSET MANAGED: Applies to: Databricks Runtime 17.3 LTS and above"
     ),
 }
+PREVIEW_ONLY_FORMS: dict[str, str] = {
+    "db.expressions.decfloat-type": (
+        "DECFLOAT: Beta; a workspace admin must enable DECFLOAT data type in Previews"
+    ),
+}
 VALUE_CONTEXT: tuple[str, str] = ("SELECT ", "")
 EXPRESSION_CONTEXT: tuple[str, str] = ("SELECT ( ", " )")
 BARE_OPERAND_FILL: str = "1"

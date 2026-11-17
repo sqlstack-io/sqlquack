@@ -6797,7 +6797,7 @@ reason = "a policy target may be a bare name: the warehouse (DBSQL 2026.45, run 
 form = "db.expressions.decfloat-type"
 grammar_sha256 = "7897c1dde5bbdf7bb0e9585803e96e12eff47ede0aaaeb5ba473e4813279aad6"
 grammar = []
-reason = "documented but rejected at DBSQL 2026.45: the page applies to Databricks SQL but marks DECFLOAT Beta ('A workspace admin must enable DECFLOAT data type in Previews'), and the warehouse (run databricks-2026.45-20261116T170422.040934Z) refuses both documented spellings with UNSUPPORTED_DATATYPE, so the form is not derived and its spellings are observed [[limit]] rows that do not count as verified"
+reason = "documented but rejected at DBSQL 2026.45: the page applies to Databricks SQL but marks DECFLOAT Beta ('A workspace admin must enable DECFLOAT data type in Previews'), and the warehouse (run databricks-2026.45-20261116T170422.040934Z) refuses both documented spellings with UNSUPPORTED_DATATYPE, so the form is not derived and its spellings are observed [[limit]] rows that do not count as verified; the receipts come from a warehouse without the preview, so they stay observed until a warehouse with the preview enabled answers them"
 
 [[limit]]
 form = "db.expressions.decfloat-type"

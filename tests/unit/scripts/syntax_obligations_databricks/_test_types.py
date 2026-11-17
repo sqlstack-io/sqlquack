@@ -57,3 +57,10 @@ class CaseSetupTestCase:
     description: str
     sql: str
     expected_fixtures: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class PreviewSettlementTestCase:
+    description: str
+    case_id: str
+    expected_settlement: tuple[str, str] | None
