@@ -473,11 +473,12 @@ pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: boo
 }
 
 pub(crate) fn lateral(this: Expression, alias: Option<TableAlias>) -> Expression {
-    let (alias, columns) = match alias {
-        Some(alias) => (Some(alias.name), alias.columns),
-        None => (None, Vec::new()),
+    let (alias, columns, alias_explicit_as) = match alias {
+        Some(alias) => (Some(alias.name), alias.columns, alias.explicit),
+        None => (None, Vec::new(), false),
     };
     Expression::Lateral(Box::new(Lateral {
+        alias_explicit_as,
         this: Box::new(this),
         view: None,
         outer: None,
@@ -587,11 +588,12 @@ pub(crate) fn values(
     bare_rows: Vec<usize>,
     alias: Option<TableAlias>,
 ) -> Expression {
-    let (alias, column_aliases) = match alias {
-        Some(alias) => (Some(alias.name), alias.columns),
-        None => (None, Vec::new()),
+    let (alias, column_aliases, alias_explicit_as) = match alias {
+        Some(alias) => (Some(alias.name), alias.columns, alias.explicit),
+        None => (None, Vec::new(), false),
     };
     Expression::Values(Box::new(Values {
+        alias_explicit_as,
         expressions: rows
             .into_iter()
             .map(|expressions| Tuple { expressions })

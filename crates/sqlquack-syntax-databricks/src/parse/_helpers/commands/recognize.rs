@@ -67,8 +67,7 @@ impl Parser<'_> {
             Ok((name, parser.expression()?))
         })?;
         self.expect_char(')')?;
-        let alias_explicit_as: bool = self.kw("AS");
-        let name: Option<Identifier> = self.pivot_alias()?;
+        let (name, alias_explicit_as) = self.pivot_alias()?;
         Ok(Expression::MatchRecognize(Box::new(MatchRecognize {
             options: Vec::new(),
             this: Some(Box::new(input)),

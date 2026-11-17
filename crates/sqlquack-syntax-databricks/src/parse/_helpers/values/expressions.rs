@@ -47,9 +47,12 @@ impl Parser<'_> {
 
     /// `(NOT | !) booleanExpression`, `EXISTS (query)` and `valueExpression predicate?`.
     fn not_expression(&mut self) -> Parsing<Expression> {
+        let bang: bool = self.is_char('!');
         if self.eat_kw("NOT") || self.eat_char('!') {
             let this: Expression = self.deeper(|parser| parser.not_expression())?;
-            return Ok(unary(Expression::Not, this));
+            let mut node: UnaryOp = UnaryOp::new(this);
+            node.written_as = bang.then_some(OperatorSpelling::Bang);
+            return Ok(Expression::Not(Box::new(node)));
         }
         if self.kw("EXISTS") && self.char_at(1, '(') && self.starts_query_at(1) {
             self.at += 2;

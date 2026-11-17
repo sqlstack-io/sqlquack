@@ -550,6 +550,10 @@ pub struct Values {
     pub expressions: Vec<Tuple>,
     /// Optional alias for the table
     pub alias: Option<Identifier>,
+    /// Databricks: whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub alias_explicit_as: bool,
     /// Optional column aliases: AS t(c1, c2)
     pub column_aliases: Vec<Identifier>,
     /// Databricks: the positions of rows written as a bare expression, without parentheses
@@ -584,6 +588,10 @@ pub struct Pivot {
     /// Optional alias
     #[serde(default)]
     pub alias: Option<Identifier>,
+    /// Databricks: whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub alias_explicit_as: bool,
     /// Optional output column aliases from `PIVOT(...) AS alias(col1, col2, ...)`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub alias_columns: Vec<Identifier>,
@@ -606,6 +614,10 @@ pub struct Unpivot {
     pub name_column: Identifier,
     pub columns: Vec<Expression>,
     pub alias: Option<Identifier>,
+    /// Databricks: whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub alias_explicit_as: bool,
     /// Optional output column aliases from `UNPIVOT(...) AS alias(col1, col2, ...)`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub alias_columns: Vec<Identifier>,
@@ -978,6 +990,14 @@ pub struct Hint {
     #[ast(skip)]
     pub source_dialect: Option<crate::tokens::models::DialectType>,
     pub expressions: Vec<HintExpression>,
+    /// Databricks: the positions in `expressions` of hints whose name was written in backquotes
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub quoted_names: Vec<usize>,
+    /// Databricks: the positions in `expressions` of hints written without the optional comma before
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub without_commas: Vec<usize>,
 }
 
 /// Individual hint expression

@@ -1469,6 +1469,7 @@ impl Parser {
                 }
 
                 Expression::Lateral(Box::new(Lateral {
+                    alias_explicit_as: false,
                     this: Box::new(func_expr),
                     view: None,
                     outer: None,

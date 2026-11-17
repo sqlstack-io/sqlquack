@@ -660,13 +660,13 @@ impl Parser<'_> {
     }
 
     /// The alias after a pivot, unpivot or match recognition: `[AS] errorCapturingIdentifier`.
-    pub(crate) fn pivot_alias(&mut self) -> Parsing<Option<Identifier>> {
+    pub(crate) fn pivot_alias(&mut self) -> Parsing<(Option<Identifier>, bool)> {
         if self.eat_kw("AS") {
-            return Ok(Some(self.ident()?));
+            return Ok((Some(self.ident()?), true));
         }
         match self.bare_alias_at(0, false) && !self.join_ahead() {
-            true => Ok(Some(self.ident()?)),
-            false => Ok(None),
+            true => Ok((Some(self.ident()?), false)),
+            false => Ok((None, false)),
         }
     }
 
@@ -707,8 +707,9 @@ impl Parser<'_> {
             }
         })?;
         self.expect_char(')')?;
-        let name: Option<Identifier> = self.pivot_alias()?;
+        let (name, alias_explicit_as) = self.pivot_alias()?;
         Ok(Expression::Pivot(Box::new(Pivot {
+            alias_explicit_as,
             this: input,
             expressions: aggregates,
             fields: vec![in_list(column, pivoted, None, false)],
@@ -766,9 +767,10 @@ impl Parser<'_> {
             false => parser.unpivot_column(),
         })?;
         self.expect_char(')')?;
-        let name: Option<Identifier> = self.pivot_alias()?;
+        let (name, alias_explicit_as) = self.pivot_alias()?;
         let value_column: Identifier = value_columns.remove(0);
         Ok(Expression::Unpivot(Box::new(Unpivot {
+            alias_explicit_as,
             this: input,
             value_column,
             name_column,

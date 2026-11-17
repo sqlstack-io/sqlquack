@@ -1169,6 +1169,7 @@ impl Parser {
         self.expect_token(TokenType::RParen)?;
 
         Ok(Expression::Pivot(Box::new(Pivot {
+            alias_explicit_as: false,
             this: source,
             expressions,
             fields,
@@ -1389,6 +1390,7 @@ impl Parser {
         self.expect_token(TokenType::RParen)?;
 
         Ok(Expression::Unpivot(Box::new(Unpivot {
+            alias_explicit_as: false,
             this: source,
             value_column,
             name_column,
@@ -1418,6 +1420,7 @@ impl Parser {
         };
 
         Ok(Expression::Pivot(Box::new(Pivot {
+            alias_explicit_as: false,
             this,
             expressions: Vec::new(),
             fields: Vec::new(),

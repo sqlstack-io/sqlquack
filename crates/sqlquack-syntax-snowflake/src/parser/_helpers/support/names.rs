@@ -163,6 +163,7 @@ impl Parser {
             let in_expr = self.parse_in_with_expr(this.clone())?;
             this = if negate {
                 Some(Expression::Not(Box::new(UnaryOp {
+                    written_as: None,
                     this: in_expr,
                     inferred_type: None,
                     span: SourceSpan::default(),
@@ -192,6 +193,7 @@ impl Parser {
                     written_as: None,
                 }));
                 return Ok(Some(Expression::Not(Box::new(UnaryOp {
+                    written_as: None,
                     this: is_null,
                     inferred_type: None,
                     span: SourceSpan::default(),
@@ -340,6 +342,7 @@ impl Parser {
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
+                    written_as: None,
                     this: is_null,
                     inferred_type: None,
                     span: SourceSpan::default(),
@@ -362,6 +365,7 @@ impl Parser {
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
+                    written_as: None,
                     this: is_true,
                     inferred_type: None,
                     span: SourceSpan::default(),
@@ -384,6 +388,7 @@ impl Parser {
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
+                    written_as: None,
                     this: is_false,
                     inferred_type: None,
                     span: SourceSpan::default(),
@@ -1176,6 +1181,7 @@ impl Parser {
         })?;
 
         Ok(Some(Expression::Pivot(Box::new(Pivot {
+            alias_explicit_as: false,
             this: source,
             expressions,
             fields: Vec::new(),

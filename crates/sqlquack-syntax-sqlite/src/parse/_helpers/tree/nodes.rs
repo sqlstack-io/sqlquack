@@ -384,6 +384,7 @@ pub(crate) fn values(rows: Vec<Vec<Expression>>, alias: Option<TableAlias>) -> E
         None => (None, Vec::new()),
     };
     Expression::Values(Box::new(Values {
+        alias_explicit_as: false,
         expressions: rows
             .into_iter()
             .map(|expressions| Tuple { expressions })

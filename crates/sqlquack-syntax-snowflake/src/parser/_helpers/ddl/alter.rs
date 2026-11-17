@@ -1572,8 +1572,8 @@ impl Parser {
         } else {
             (None, Vec::new())
         };
-
         let values_expr = Expression::Values(Box::new(Values {
+            alias_explicit_as: false,
             expressions,
             alias,
             column_aliases,

@@ -379,6 +379,7 @@ pub(crate) fn lateral(this: Expression, alias: Option<TableAlias>) -> Expression
         None => (None, Vec::new()),
     };
     Expression::Lateral(Box::new(Lateral {
+        alias_explicit_as: false,
         this: Box::new(this),
         view: None,
         outer: None,
@@ -487,6 +488,7 @@ pub(crate) fn values(rows: Vec<Vec<Expression>>, alias: Option<TableAlias>) -> E
         None => (None, Vec::new()),
     };
     Expression::Values(Box::new(Values {
+        alias_explicit_as: false,
         expressions: rows
             .into_iter()
             .map(|expressions| Tuple { expressions })

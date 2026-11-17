@@ -918,6 +918,7 @@ impl Parser<'_> {
         self.expect_char(')')?;
         let name: Option<Identifier> = self.pivot_alias()?;
         Ok(Expression::Pivot(Box::new(Pivot {
+            alias_explicit_as: false,
             this: input,
             expressions: aggregates,
             fields: vec![in_list(column, pivoted, None, false)],
@@ -1000,6 +1001,7 @@ impl Parser<'_> {
         let name: Option<Identifier> = self.pivot_alias()?;
         let value_column: Identifier = value_columns.remove(0);
         Ok(Expression::Unpivot(Box::new(Unpivot {
+            alias_explicit_as: false,
             this: input,
             value_column,
             name_column,

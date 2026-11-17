@@ -398,29 +398,39 @@ impl Parser<'_> {
 
     /// One or more `/*+ ... */` hints.
     fn hints(&mut self) -> Parsing<Hint> {
-        let mut expressions: Vec<HintExpression> = Vec::new();
+        let mut hint: Hint = Hint {
+            source_dialect: None,
+            expressions: Vec::new(),
+            quoted_names: Vec::new(),
+            without_commas: Vec::new(),
+        };
         while self.is_kind(TokenKind::HintStart) {
             self.at += 1;
+            let mut comma: bool = true;
             loop {
                 let name: Identifier = self.name(is_identifier)?;
-                expressions.push(match self.is_char('(') {
+                let at: usize = hint.expressions.len();
+                if name.quoted {
+                    hint.quoted_names.push(at);
+                }
+                if !comma {
+                    hint.without_commas.push(at);
+                }
+                hint.expressions.push(match self.is_char('(') {
                     true => HintExpression::Function {
                         name: name.name,
                         args: self.parenthesized(|parser| parser.primary_expression())?,
                     },
                     false => HintExpression::Identifier(name.name),
                 });
-                self.eat_char(',');
+                comma = self.eat_char(',');
                 if self.is_kind(TokenKind::HintEnd) {
                     break;
                 }
             }
             self.at += 1;
         }
-        Ok(Hint {
-            source_dialect: None,
-            expressions,
-        })
+        Ok(hint)
     }
 
     /// Whether the current token is of `kind`.

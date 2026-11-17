@@ -345,6 +345,10 @@ pub struct CreateSchema {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub keyword: Option<String>,
+    /// Databricks: PROPERTIES when written for the documented WITH DBPROPERTIES
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub properties_keyword: Option<String>,
 }
 
 impl CreateSchema {
@@ -362,6 +366,7 @@ impl CreateSchema {
             define: false,
             modifier: None,
             keyword: None,
+            properties_keyword: None,
         }
     }
 }

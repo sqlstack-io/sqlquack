@@ -48,6 +48,9 @@ impl Parser<'_> {
                 node.properties
                     .push(property("DEFAULT COLLATION", Expression::Identifier(name)));
             } else if self.kw("WITH") && self.kw_in(1, &["DBPROPERTIES", "PROPERTIES"]) {
+                if self.kw_at(1, "PROPERTIES") {
+                    node.properties_keyword = Some("PROPERTIES".to_owned());
+                }
                 self.at += 2;
                 let properties: Expression = self.properties_node(false)?;
                 node.properties.push(properties);

@@ -167,6 +167,9 @@ pub enum OperatorSpelling {
     /// `!=` for `<>`.
     #[serde(rename = "!=")]
     BangEquals,
+    /// Databricks: `!` for prefix `NOT`.
+    #[serde(rename = "!")]
+    Bang,
     /// `IS NOT DISTINCT FROM` for `<=>`.
     #[serde(rename = "IS NOT DISTINCT FROM")]
     IsNotDistinctFrom,
@@ -293,6 +296,10 @@ pub struct UnaryOp {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// Databricks: the operator as written, when another documented spelling shares this node
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub written_as: Option<OperatorSpelling>,
 }
 
 impl UnaryOp {
@@ -301,6 +308,7 @@ impl UnaryOp {
             this,
             inferred_type: None,
             span: SourceSpan::default(),
+            written_as: None,
         }
     }
 }
@@ -1076,6 +1084,10 @@ pub struct Lateral {
     /// Whether the alias was originally quoted (backtick/double-quote)
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub alias_quoted: bool,
+    /// Databricks: whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub alias_explicit_as: bool,
     #[serde(default)]
     pub cross_apply: Option<Box<Expression>>,
     #[serde(default)]

@@ -370,6 +370,7 @@ pub(crate) fn lateral(
     columns: Vec<Identifier>,
 ) -> Expression {
     Expression::Lateral(Box::new(Lateral {
+        alias_explicit_as: false,
         this: Box::new(this),
         view: None,
         outer: None,
@@ -474,6 +475,7 @@ pub(crate) fn set_operation(
 
 pub(crate) fn values(rows: Vec<Vec<Expression>>) -> Expression {
     Expression::Values(Box::new(Values {
+        alias_explicit_as: false,
         expressions: rows
             .into_iter()
             .map(|expressions| Tuple { expressions })

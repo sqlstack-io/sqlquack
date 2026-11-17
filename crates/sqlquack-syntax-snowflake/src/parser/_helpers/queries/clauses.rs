@@ -1883,6 +1883,8 @@ impl Parser {
         Ok(Hint {
             source_dialect: None,
             expressions,
+            quoted_names: Vec::new(),
+            without_commas: Vec::new(),
         })
     }
 }
