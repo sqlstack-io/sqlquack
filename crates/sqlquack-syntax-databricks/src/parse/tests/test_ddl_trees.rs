@@ -108,6 +108,30 @@ fn given_a_ddl_clause_with_no_shared_field_when_parsing_then_its_tree_keeps_it()
             pointer: "/0/utility_statement/kind",
             expected_json: "\"UNDROP MATERIALIZED VIEW WITH ID\"",
         },
+        ValueTestCase {
+            description: "ALTER DATABASE keeps DATABASE as its kind",
+            sql: "ALTER DATABASE s1 SET OWNER TO u1",
+            pointer: "/0/alter_object/kind",
+            expected_json: "\"DATABASE\"",
+        },
+        ValueTestCase {
+            description: "a column's reference keeps FOREIGN KEY when written",
+            sql: "CREATE TABLE t1 ( c1 INT CONSTRAINT n1 FOREIGN KEY REFERENCES t2 )",
+            pointer: "/0/create_table/columns/0/constraints/0/References/has_foreign_key_keywords",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "a grant on the unnamed catalog keeps CATALOG as its kind",
+            sql: "GRANT SELECT ON CATALOG TO u1",
+            pointer: "/0/grant/kind",
+            expected_json: "\"CATALOG\"",
+        },
+        ValueTestCase {
+            description: "a revoke on the metastore keeps METASTORE as its kind",
+            sql: "REVOKE SELECT ON METASTORE FROM u1",
+            pointer: "/0/revoke/kind",
+            expected_json: "\"METASTORE\"",
+        },
     ];
     for test_case in test_cases {
         let parsed: Parsed = parse_strict(test_case.sql).expect(test_case.description);

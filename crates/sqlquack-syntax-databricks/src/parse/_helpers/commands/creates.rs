@@ -676,8 +676,9 @@ impl Parser<'_> {
                         .push(ColumnConstraint::Check(self.check_constraint()?));
                     ConstraintType::Check
                 } else {
-                    self.eat_kws(&["FOREIGN", "KEY"]);
-                    let reference: ForeignKeyRef = self.reference_spec()?;
+                    let has_foreign_key_keywords: bool = self.eat_kws(&["FOREIGN", "KEY"]);
+                    let mut reference: ForeignKeyRef = self.reference_spec()?;
+                    reference.has_foreign_key_keywords = has_foreign_key_keywords;
                     column
                         .constraints
                         .push(ColumnConstraint::References(Box::new(reference)));

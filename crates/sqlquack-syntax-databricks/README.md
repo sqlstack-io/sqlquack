@@ -206,4 +206,5 @@ These parse without a gap, but the shared tree keeps less than the source said:
 - `SET PATH = …` text that the path elements do not read to its end is a configuration, as in
   Spark.
 - In `GRANT … ON VIEW TO u`, a kind word followed by `TO` or `FROM` and then a principal is the
-  securable's name.
+  securable's name, except `CATALOG` and `METASTORE`, which are that securable left unnamed: the
+  service answers `ON CATALOG TO u` by asking for the catalog's name.
