@@ -878,3 +878,26 @@ note = "Withdraws approvals after an independent review of 312903a4b..106d09af4 
 [review.definitions]
 "db.expressions.names.identifier" = "121f195fca0604ea4265a47b6fa366ce4157970edaa0be1600f5652ee72917b9"
 "db.expressions.names.subscript-dot.syntax" = "d9228a23fd108d427cc2ace0e91fc1b679f83dcc031932f32570b077251ce0b1"
+
+[[review]]
+id = "db-expressions-042"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:10:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.subscript-dot-3",
+  "db.expressions.struct-type",
+  "db.expressions.timestamp-ntz-type.timestamp-without-time-zone",
+]
+note = "Re-read after the parser batch at b98f25d91 (parser tree 6546c748), from the existing 2026.45 receipts and the local trees; the earlier records are unchanged. Form by form: names.subscript-dot-3: db-expressions-017 still holds. SELECT explode ( map ( 1 , 2 ) ) ( c1 ) gives an alias whose name is empty next to column_aliases [c1], a name nothing wrote. Parser fix. struct-type: db-expressions-023 still holds. STRUCT < c1 : STRING > and STRUCT < c1 STRING > give the same field tree, so the optional colon leaves no mark. The tree screen did not catch it, because the case writes c1 :STRING as one token. Parser fix. timestamp-ntz-type.timestamp-without-time-zone: db-expressions-024 still holds. CAST ( NULL AS TIMESTAMP WITHOUT TIME ZONE ) and CAST ( NULL AS TIMESTAMP_NTZ ) give the same tree, so the synonym spelling is lost. Parser fix."
+
+[review.fingerprints]
+"db.expressions.names.subscript-dot-3" = "9cbe654d9f8acdd77427110b105bc632db840273a93e9990872cbc964f10f13b"
+"db.expressions.struct-type" = "21b4c4df14b5c3ab03e141d2e404bd0e21a7331fe60eab28423ed3cea94e8134"
+"db.expressions.timestamp-ntz-type.timestamp-without-time-zone" = "005e18c1fb0003f491f536f484068c93daa4f0f770f6ae8df7dbd71556b00748"
+
+[review.definitions]
+"db.expressions.names.subscript-dot-3" = "d6ad0859887458aa7a2ca606b1ef275aa6ab0f1094a5d12287f6c346fc740600"
+"db.expressions.struct-type" = "4257549739c84540535a90be31319c108c3dfe850e500b391b5c443d32c21a7b"
+"db.expressions.timestamp-ntz-type.timestamp-without-time-zone" = "ef35019816ea431684c6c873ddefc6c159f22b64d2e14c39428c5d015413ffc8"

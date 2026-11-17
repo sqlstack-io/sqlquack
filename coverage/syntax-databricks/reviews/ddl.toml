@@ -1538,3 +1538,20 @@ note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds acce
 
 [review.definitions]
 "db.ddl.create-function" = "e69ba1b50cc24bb392903612f790bd271b801e835807d5b8396f04fcbbc30ee5"
+
+[[review]]
+id = "db-ddl-075"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:10:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-view",
+]
+note = "Re-read after the parser batch at b98f25d91 (parser tree 6546c748), from the existing 2026.45 receipts and the local trees; the earlier records are unchanged. Form by form: alter-view: db-ddl-072 still holds. The view SET TBLPROPERTIES node now marks a value written without =, but its unquoted key, typed value, SET without = and UNSET TBLPROPERTIES IF EXISTS spellings have no receipt yet. They are in the pending recording bundle, and the form waits for them."
+
+[review.fingerprints]
+"db.ddl.alter-view" = "9f9170c0777d547fc9e42ca3bc72e500bce3222a41d1f416b9d0852fd5c568e9"
+
+[review.definitions]
+"db.ddl.alter-view" = "56fc1c89f9d4baab97b97e987d993d5ae80c4de4091e8a1a1c958ff5da286e11"
