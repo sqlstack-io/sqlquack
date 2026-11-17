@@ -1023,6 +1023,18 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "\"NAMESPACE\"",
         },
         ValueTestCase {
+            description: "GROUP BY ... WITH ROLLUP keeps the WITH spelling",
+            sql: "SELECT c1 FROM t1 GROUP BY c1 WITH ROLLUP",
+            pointer: "/0/select/group_by/with_modifier",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "GROUP BY ... WITH CUBE keeps the WITH spelling",
+            sql: "SELECT c1 FROM t1 GROUP BY c1 WITH CUBE",
+            pointer: "/0/select/group_by/with_modifier",
+            expected_json: "true",
+        },
+        ValueTestCase {
             description: "an explicit ALL is recorded, not folded into none",
             sql: "SELECT sum(ALL a) FROM t",
             pointer: "/0/select/expressions/0/function/set_quantifier",

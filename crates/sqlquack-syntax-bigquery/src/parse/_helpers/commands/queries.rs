@@ -590,6 +590,7 @@ impl Parser<'_> {
                 all: Some(true),
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             });
         }
         let items: Vec<Expression> = self.comma_list(|parser| parser.group_item())?;
@@ -611,6 +612,7 @@ impl Parser<'_> {
             all: None,
             totals: false,
             comments: Vec::new(),
+            with_modifier: false,
         })
     }
 
@@ -947,6 +949,7 @@ impl Parser<'_> {
                 all: None,
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             });
         }
         select.expressions = aggregates;

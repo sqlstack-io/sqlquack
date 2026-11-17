@@ -312,6 +312,7 @@ impl<'sql> Parser<'sql> {
                 all: None,
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             });
         }
         if self.eat_kw("HAVING") {

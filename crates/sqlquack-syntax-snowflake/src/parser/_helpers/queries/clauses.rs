@@ -74,6 +74,7 @@ impl Parser {
                 all,
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             });
         }
 
@@ -110,6 +111,7 @@ impl Parser {
                 all,
                 totals,
                 comments: Vec::new(),
+                with_modifier: false,
             });
         }
 
@@ -245,6 +247,7 @@ impl Parser {
             all,
             totals,
             comments: Vec::new(),
+            with_modifier: false,
         })
     }
 

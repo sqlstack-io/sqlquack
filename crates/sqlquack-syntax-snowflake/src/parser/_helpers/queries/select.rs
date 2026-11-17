@@ -413,6 +413,7 @@ impl Parser {
                 all: None,
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             })
         } else {
             None

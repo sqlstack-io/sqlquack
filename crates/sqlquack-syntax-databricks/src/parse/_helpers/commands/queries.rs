@@ -477,10 +477,12 @@ impl Parser<'_> {
                 all: Some(true),
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             });
         }
         let items: Vec<Expression> = self.comma_list(|parser| parser.group_item())?;
-        let expressions: Vec<Expression> = if self.kw("WITH") && self.kw_in(1, &[ROLLUP, CUBE]) {
+        let with_modifier: bool = self.kw("WITH") && self.kw_in(1, &[ROLLUP, CUBE]);
+        let expressions: Vec<Expression> = if with_modifier {
             let name: String = self.word_at(1).unwrap_or_default();
             self.at += 2;
             vec![call(&name, items)]
@@ -501,6 +503,7 @@ impl Parser<'_> {
             all: None,
             totals: false,
             comments: Vec::new(),
+            with_modifier,
         })
     }
 

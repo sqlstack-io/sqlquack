@@ -573,6 +573,8 @@ others:
   against the `shiftrightunsigned` call, in a `written_as` field that analysis ignores;
 - the parentheses of a `VALUES` row and of a `STREAM` source, which the Syntax blocks write as
   alternatives (`expression | ( expression [, ...] )` and `STREAM ( name ) | STREAM name`).
+- a trailing `WITH ROLLUP` or `WITH CUBE` against `ROLLUP ( ... )` and `CUBE ( ... )`, in the
+  `GROUP BY` clause's `with_modifier`;
 - `FROM` against a comma after the first argument of `SUBSTR` and `SUBSTRING`, in the call's
   `from_separator`, as `TRIM` keeps its SQL-standard spelling;
 - each pipe operator with the pipe written before it (`|>` or `|`), in the `pipe_operators` of
