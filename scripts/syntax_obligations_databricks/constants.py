@@ -282,6 +282,7 @@ DB_REPEAT_FILLS: dict[tuple[str, str], str] = {
     ("tag_name", "'k'"): "'k2'",
     ("value_name", "'m'"): "'m2'",
     ("option", "o1"): "o2",
+    ("option", "v1"): "v2",
     ("property_name", "v1"): "v2",
     ("privilege_type", "SELECT"): "MODIFY",
     ("property_identifier", "v1"): "v2",

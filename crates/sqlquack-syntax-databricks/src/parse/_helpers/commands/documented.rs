@@ -140,7 +140,8 @@ const FORMS: &[Form] = &[
         leads: &[&["ALTER", "CATALOG"]],
         patterns: &[
             "ALTER CATALOG [ name ] owner",
-            "ALTER CATALOG [ catalog ] { string_tags | predictive }",
+            "ALTER CATALOG [ name ] string_tags",
+            "ALTER CATALOG [ catalog ] predictive",
             "ALTER CATALOG catalog { collation | OPTIONS props | SET MANAGED LOCATION str \
              | [ SET ] RETAIN DROPPED TO int time_unit }",
             "ALTER CATALOG catalog DROP CONNECTION [ RESTRICT | FORCE ]",
@@ -447,7 +448,7 @@ const FORMS: &[Form] = &[
         patterns: &[
             "ANALYZE TABLE name [ partition ] COMPUTE { STATISTICS [ NOSCAN | columns_for ] \
              | DELTA STATISTICS }",
-            "ANALYZE TABLE name COMPUTE STORAGE METRICS [ USING INVENTORY LOCATION single_str [ CONF str ] ]",
+            "ANALYZE TABLE name COMPUTE STORAGE METRICS [ USING INVENTORY LOCATION str CONF str ]",
             "ANALYZE TABLE name DROP [ ALL | AUTO | MANUAL ] STATISTICS",
             "ANALYZE TABLES [ { FROM | IN } name ] COMPUTE STATISTICS [ NOSCAN ]",
         ],

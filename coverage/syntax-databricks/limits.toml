@@ -7348,3 +7348,23 @@ anchor = "doc.sql-ref-syntax-aux-show-tblproperties / Syntax"
 sql = "SHOW TBLPROPERTIES t1 ( m1 )"
 context = "raw"
 expect = "observe"
+
+[[limit]]
+form = "db.utility.analyze-compute-storage-metrics"
+kind = "negative_neighbour"
+target = "CONF <conf_name> in [ USING INVENTORY LOCATION <inventory_path> CONF <conf_name> ]"
+note = "an inventory location of one string with no CONF: the derived negative drops only CONF, and the warehouse joins its two adjacent strings into one path, so this text shows CONF is required without relying on that join"
+anchor = "doc.sql-ref-syntax-aux-analyze-compute-storage-metrics / Syntax"
+sql = "ANALYZE TABLE t1 COMPUTE STORAGE METRICS USING INVENTORY LOCATION 'm'"
+context = "raw"
+expect = "reject"
+
+[[limit]]
+form = "db.ddl.alter-catalog"
+kind = "negative_neighbour"
+target = "<catalog_name> in [ <catalog_name> ] with SET TAGS"
+note = "a string literal in place of <catalog_name> before SET TAGS: the derived negative ALTER CATALOG 'v1' OWNER TO v1 is refused at OWNER, so it does not show which part the warehouse refuses; this one is refused in the tag clause (PARSE_SYNTAX_ERROR at TAGS), which takes no string literal as the catalog name"
+anchor = "doc.sql-ref-syntax-ddl-alter-catalog / Syntax"
+sql = "ALTER CATALOG 'v1' SET TAGS ( 'k' = 'v' )"
+context = "raw"
+expect = "reject"

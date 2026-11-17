@@ -8,7 +8,7 @@ use crate::parse::_helpers::commands::alters::partition;
 use crate::parse::_helpers::commands::documented::rule;
 use crate::parse::_helpers::tree::clauses::{Group, Part, documented_tree};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_word};
-use crate::parse::_helpers::tree::nodes::{literal, string, table};
+use crate::parse::_helpers::tree::nodes::{literal, table};
 use crate::parse::constants::COMMA_SEPARATED_REPEAT;
 use crate::parse::errors::ParseError;
 use crate::scan::models::{NumberKind, Token, TokenKind};
@@ -157,10 +157,6 @@ impl Parser<'_> {
             "id" => Expression::Identifier(self.ident()?),
             "table" => Expression::Table(Box::new(self.table_reference()?)),
             "str" => self.string_literal()?,
-            "single_str" => match self.string_at(0) {
-                true => string(&self.advance()?.value),
-                false => return Err(self.error()),
-            },
             "int" => self.number(false, is_integer)?,
             "num" => self.number(true, is_number)?,
             "literal" => self.literal_value()?,

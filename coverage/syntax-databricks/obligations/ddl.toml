@@ -595,6 +595,14 @@ anchor = "doc.sql-ref-syntax-ddl-alter-catalog / Syntax"
 note = "RETAIN DROPPED without a catalog name, as the page's line allows, which the warehouse refuses"
 
 [[obligation]]
+id = "db.ddl.alter-catalog.o113"
+kind = "negative_neighbour"
+required = true
+target = "<catalog_name> in [ <catalog_name> ] with SET TAGS"
+anchor = "doc.sql-ref-syntax-ddl-alter-catalog / Syntax"
+note = "a string literal in place of <catalog_name> before SET TAGS: the derived negative ALTER CATALOG 'v1' OWNER TO v1 is refused at OWNER, so it does not show which part the warehouse refuses; this one is refused in the tag clause (PARSE_SYNTAX_ERROR at TAGS), which takes no string literal as the catalog name"
+
+[[obligation]]
 id = "db.ddl.alter-catalog-drop-connection.o001"
 kind = "positive"
 required = true

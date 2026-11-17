@@ -481,6 +481,14 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.utility.analyze-compute-storage-metrics.o028"
+kind = "negative_neighbour"
+required = true
+target = "CONF <conf_name> in [ USING INVENTORY LOCATION <inventory_path> CONF <conf_name> ]"
+anchor = "doc.sql-ref-syntax-aux-analyze-compute-storage-metrics / Syntax"
+note = "an inventory location of one string with no CONF: the derived negative drops only CONF, and the warehouse joins its two adjacent strings into one path, so this text shows CONF is required without relying on that join"
+
+[[obligation]]
 id = "db.utility.analyze-drop-statistics.o001"
 kind = "positive"
 required = true
