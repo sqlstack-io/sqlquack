@@ -75,8 +75,8 @@ reason = "directory_path 'can also be specified in OPTIONS using path' (the page
 [[reading]]
 form = "db.query.query"
 grammar_sha256 = "94d967cb37722eb5ba5cf2d2ed0324cb559289f8043689136a5aec333e4a857e"
-grammar = ["[ <common_table_expression> ] <subquery> [ <set_operator> ] [ { |> <piped_operation> } [ ... ] ] [ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ] } | CLUSTER BY <cluster_by_clause> ] [ WINDOW <window_clause> ] [ LIMIT <limit_clause> ] [ OFFSET <offset_clause> ]"]
-reason = "a pipe operation applies to a query term, before the query's ORDER BY ... OFFSET clauses (SqlBaseParser query: ctes? queryTerm queryOrganization, and #operatorPipeStatement: queryTerm |> operatorPipeRightSide); the warehouse refuses |> after ORDER BY or LIMIT, so the page's order is kept as observed [[limit]] rows"
+grammar = ["[ <common_table_expression> ] <subquery> [ <set_operator> ] [ { |> <piped_operation> } [ ... ] ] [ ORDER BY <order_by_clause> | { DISTRIBUTE BY <distribute_by_clause> [ SORT BY <sort_by_clause> ] | SORT BY <sort_by_clause> } | CLUSTER BY <cluster_by_clause> ] [ WINDOW <window_clause> ] [ LIMIT <limit_clause> ] [ OFFSET <offset_clause> ]"]
+reason = "a pipe operation applies to a query term, before the query's ORDER BY ... OFFSET clauses (SqlBaseParser query: ctes? queryTerm queryOrganization, and #operatorPipeStatement: queryTerm |> operatorPipeRightSide); the warehouse refuses |> after ORDER BY or LIMIT, so the page's order is kept as observed [[limit]] rows. The middle choice writes both of its clauses optional, so its shortest text has neither, which is the whole bracket left out; it is read as DISTRIBUTE BY with an optional SORT BY, or SORT BY alone, which allows the same texts"
 
 [[reading]]
 form = "db.query.select-pipeop"
