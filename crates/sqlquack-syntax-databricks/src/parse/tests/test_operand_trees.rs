@@ -63,6 +63,12 @@ fn given_an_operand_with_a_shared_node_when_parsing_then_its_tree_uses_that_node
             pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/j_s_o_n_path/expressions/1/j_s_o_n_path_subscript/this/literal/literal_type",
             expected_json: "\"number\"",
         },
+        ValueTestCase {
+            description: "a path's bracketed name is a subscript of a key",
+            sql: "SELECT c1:a1[b1] FROM t1",
+            pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/j_s_o_n_path/expressions/1/j_s_o_n_path_subscript/this/j_s_o_n_path_key/this/identifier/name",
+            expected_json: "\"b1\"",
+        },
     ];
     for test_case in test_cases {
         let parsed: Parsed = parse_strict(test_case.sql).expect(test_case.description);
