@@ -7496,3 +7496,35 @@ anchor = "doc.security-show-grant-on-share / Syntax"
 sql = "SHOW GRANTS ON SHARE"
 context = "raw"
 expect = "observe"
+
+[[suppress]]
+form = "db.scripting.iterate-stmt"
+kind = "positive"
+target = ""
+reason = "ITERATE inside the shared LOOP context with no LEAVE never ends: the warehouse runs it to the 300 s deadline, so no phase can be observed. The positive and the valid-label case are written instead as a loop that counts to 2 and leaves, which the warehouse runs and accepts (recorded on 17 Nov 2026); the label's negatives keep the shared context, since each is refused or resolved before the loop runs"
+
+[[suppress]]
+form = "db.scripting.iterate-stmt"
+kind = "operand_type_class"
+target = "<label>"
+reason = "ITERATE inside the shared LOOP context with no LEAVE never ends: the warehouse runs it to the 300 s deadline, so no phase can be observed. The positive and the valid-label case are written instead as a loop that counts to 2 and leaves, which the warehouse runs and accepts (recorded on 17 Nov 2026); the label's negatives keep the shared context, since each is refused or resolved before the loop runs"
+
+[[limit]]
+form = "db.scripting.iterate-stmt"
+kind = "positive"
+target = ""
+note = "ITERATE l1 in a loop that counts to 2 and then leaves"
+anchor = "doc.control-flow.iterate-stmt / Syntax"
+sql = "BEGIN DECLARE c1 INT DEFAULT 0 ; l1 : LOOP SET c1 = c1 + 1 ; IF c1 > 1 THEN LEAVE l1 ; END IF ; ITERATE l1 ; END LOOP l1 ; END"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.scripting.iterate-stmt"
+kind = "operand_type_class"
+target = "<label>"
+note = "a valid identifier: the enclosing loop's label, in a loop that counts to 2 and then leaves"
+anchor = "doc.control-flow.iterate-stmt / Syntax"
+sql = "BEGIN DECLARE c1 INT DEFAULT 0 ; l1 : LOOP SET c1 = c1 + 1 ; IF c1 > 1 THEN LEAVE l1 ; END IF ; ITERATE l1 ; END LOOP l1 ; END"
+context = "raw"
+expect = "accept"

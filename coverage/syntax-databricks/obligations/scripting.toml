@@ -1448,24 +1448,11 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
-id = "db.scripting.iterate-stmt.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
 id = "db.scripting.iterate-stmt.o002"
 kind = "required_operand_missing"
 required = true
 target = "<label>"
 note = "omit <label>"
-
-[[obligation]]
-id = "db.scripting.iterate-stmt.o003"
-kind = "operand_type_class"
-required = true
-target = "<label>"
-note = "a valid identifier"
 
 [[obligation]]
 id = "db.scripting.iterate-stmt.o004"
@@ -1489,6 +1476,21 @@ required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.scripting.iterate-stmt.o008"
+kind = "positive"
+required = true
+anchor = "doc.control-flow.iterate-stmt / Syntax"
+note = "ITERATE l1 in a loop that counts to 2 and then leaves"
+
+[[obligation]]
+id = "db.scripting.iterate-stmt.o009"
+kind = "operand_type_class"
+required = true
+target = "<label>"
+anchor = "doc.control-flow.iterate-stmt / Syntax"
+note = "a valid identifier: the enclosing loop's label, in a loop that counts to 2 and then leaves"
 
 [[obligation]]
 id = "db.scripting.leave-stmt.o001"

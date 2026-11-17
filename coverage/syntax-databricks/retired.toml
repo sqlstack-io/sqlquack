@@ -2863,3 +2863,11 @@ ids = [
   "db.security_admin.show-grant-on-share.o004",
   "db.transaction_session.use-catalog.o010",
 ]
+
+[[retired]]
+retired_in = "4abbb035ac80a709d484f5b99aa935f69c0d0811"
+reason = "iterate-stmt's positive and valid-label case wrote ITERATE in a loop with no LEAVE, which the warehouse runs to the 300 s deadline, so no phase could be observed; both are written instead as hand [[limit]] rows of a loop that counts to 2 and leaves, whose receipt (accepted) was recorded on 17 Nov 2026"
+ids = [
+  "db.scripting.iterate-stmt.o001",
+  "db.scripting.iterate-stmt.o003",
+]
