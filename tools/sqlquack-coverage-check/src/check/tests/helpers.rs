@@ -11,6 +11,9 @@ use crate::formats::constants::FAMILIES;
 pub(crate) const TREE: &str = "0123456789abcdef0123456789abcdef01234567";
 /// Another committed parser tree.
 pub(crate) const OTHER_TREE: &str = "89abcdef0123456789abcdef0123456789abcdef";
+/// A form fingerprint no current form has, as an earlier reading would record.
+pub(crate) const OLD_FINGERPRINT: &str =
+    "1111111111111111111111111111111111111111111111111111111111111111";
 const SHA_A: &str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
 pub(crate) fn sha256(text: &str) -> String {
@@ -125,6 +128,24 @@ pub(crate) fn pin_definitions(root: &Path) {
         pins(|form| &form.definition_sha256),
     );
     write(root, "reviews/query.toml", &review);
+}
+
+/// Adds a changes_requested copy of the `pin_definitions` review, with `sf.query.select` at `fingerprint`.
+pub(crate) fn request_changes(root: &Path, fingerprint: Option<&str>) {
+    let coverage = crate::formats::main::load_coverage::load_coverage(root, None).expect("load");
+    let check =
+        crate::check::main::check_coverage::check_coverage(&coverage, Some(TREE), &structural);
+    let current: &str = &check
+        .forms
+        .iter()
+        .find(|form| form.id == "sf.query.select")
+        .expect("sf.query.select")
+        .fingerprint;
+    let requested: String = read(root, "reviews/query.toml")
+        .replace("id = \"query-1\"", "id = \"query-2\"")
+        .replace("verdict = \"approved\"", "verdict = \"changes_requested\"")
+        .replacen(current, fingerprint.unwrap_or(current), 1);
+    write(root, "reviews/requested.toml", &requested);
 }
 
 /// A local parse that crashes on everything.

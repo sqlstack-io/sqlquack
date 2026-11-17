@@ -396,7 +396,9 @@ catalogued forms: 3,348 on the frozen catalogue `e863d7de`.
 Anything missing, ambiguous, stale, mismatched or opaque fails closed with a named reason:
 `no_obligations`, `missing_case`, `unverifiable_internal_error`, `missing_receipt`,
 `awaiting_observation`, `stale_receipt`, `ambiguous_receipts`, `release_disagreement`, `unexpected_outcome`,
-`local_parse_failure`, `disagreement`, `opaque_fallback`, `unreviewed` or `stale_review`. A reference that does not
+`local_parse_failure`, `disagreement`, `opaque_fallback`, `unreviewed`, `stale_review` or
+`changes_requested`, which a changes_requested review bound to the form's current fingerprint and definition
+gives even beside a current approval. A reference that does not
 resolve fails every check command. Examples are an obligation of an uncatalogued form, a case
 citing an undeclared obligation, an alias whose source is not absent or whose target is unknown,
 and an exclusion naming an unknown form or page.

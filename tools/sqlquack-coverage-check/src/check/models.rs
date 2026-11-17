@@ -76,6 +76,8 @@ pub enum Reason {
     Unreviewed,
     /// No approved review matches the files and the form's fingerprint, or else the parser tree.
     StaleReview,
+    /// A review bound to the form's current fingerprint and definition requests changes; no approval overrides it.
+    ChangesRequested,
     /// Reserved for a capture hold; no current form is held.
     BlockedByHold,
 }

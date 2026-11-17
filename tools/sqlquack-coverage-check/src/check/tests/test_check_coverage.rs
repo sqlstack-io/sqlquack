@@ -1,11 +1,12 @@
 use crate::check::main::check_coverage::check_coverage;
 use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
-    OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, crashing,
+    OLD_FINGERPRINT, OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, crashing,
     crashing_on_select_from, drop_lines, exclusion_review, form, hanging, move_form, not_submitted,
     note_obligation, obligation, opaque, pin_definitions, pin_fingerprints, read, receipt_line,
-    rejecting, replace, report_input, reshaped, retired_receipt, rewrite_select_17, select_17,
-    select_17_setup_sha256, sha256, structural, unobservable, verified_tree, with_fields, write,
+    rejecting, replace, report_input, request_changes, reshaped, retired_receipt,
+    rewrite_select_17, select_17, select_17_setup_sha256, sha256, structural, unobservable,
+    verified_tree, with_fields, write,
 };
 use crate::check::tests::test_types::{
     AccountStateTestCase, CheckTestCase, Parameters, ReceiptCheckTestCase,
@@ -1056,6 +1057,32 @@ fn given_a_review_binding_each_form_when_its_family_files_change_then_only_that_
         CheckTestCase {
             description: "a review binding each form, with nothing changed",
             mutate: pin_definitions,
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an approval and a changes_requested review at the same binding",
+            mutate: |root| {
+                pin_definitions(root);
+                request_changes(root, None);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::ChangesRequested),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a changes_requested review at an older fingerprint beside a current approval",
+            mutate: |root| {
+                pin_definitions(root);
+                request_changes(root, Some(OLD_FINGERPRINT));
+            },
             parse: structural,
             parser_tree: Some(TREE),
             form: "sf.query.select",
