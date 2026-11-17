@@ -15,7 +15,9 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::forms::is_integer;
-use crate::parse::_helpers::tree::nodes::{alias, joined, literal, null, too_deep_to_keep};
+use crate::parse::_helpers::tree::nodes::{
+    alias, joined, literal, null, qualifier_and_name, too_deep_to_keep,
+};
 use crate::parse::constants::RESIGNAL;
 
 /// The words a labelled statement may start with.
@@ -250,10 +252,12 @@ impl Parser<'_> {
             "FETCH" => self.fetch_cursor(),
             "CLOSE" => {
                 self.at += 1;
-                self.multipart_identifier().map(|name| {
+                self.multipart_identifier().map(|parts| {
+                    let (qualifier, name) = qualifier_and_name(parts);
                     ScriptingStatement::Close(ScriptingName {
                         span: SourceSpan::default(),
-                        name: joined(name),
+                        name,
+                        qualifier,
                     })
                 })
             }
@@ -271,7 +275,7 @@ impl Parser<'_> {
     /// `OPEN name [USING { ( item, ... ) | item, ... }]`, each item `expr [[AS] id]`; a failed parenthesized read falls back to the bare list.
     fn open_cursor(&mut self) -> Parsing<ScriptingStatement> {
         self.at += 1;
-        let cursor: Identifier = joined(self.multipart_identifier()?);
+        let (cursor_qualifier, cursor) = qualifier_and_name(self.multipart_identifier()?);
         let mut using: Option<Vec<Expression>> = None;
         let mut using_bare: bool = false;
         if self.eat_kw("USING") {
@@ -295,6 +299,7 @@ impl Parser<'_> {
         Ok(ScriptingStatement::Open(ScriptingOpen {
             span: SourceSpan::default(),
             cursor,
+            cursor_qualifier,
             using,
             using_bare,
         }))
@@ -325,13 +330,14 @@ impl Parser<'_> {
         } else {
             None
         };
-        let cursor: Identifier = joined(self.multipart_identifier()?);
+        let (cursor_qualifier, cursor) = qualifier_and_name(self.multipart_identifier()?);
         self.expect_kw("INTO")?;
         let targets: Vec<Identifier> =
             self.comma_list(|parser| parser.multipart_identifier().map(joined))?;
         Ok(ScriptingStatement::Fetch(ScriptingFetch {
             span: SourceSpan::default(),
             cursor,
+            cursor_qualifier,
             targets,
             keyword,
         }))

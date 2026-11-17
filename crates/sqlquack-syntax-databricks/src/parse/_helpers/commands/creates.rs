@@ -4,21 +4,20 @@ use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::columns::models::{
     ColumnConstraint, ColumnDef, ComputedColumn, ConstraintModifiers, ForeignKeyRef,
-    GeneratedAsIdentity, TableConstraint,
+    GeneratedAsIdentity, ReferentialAction, TableConstraint,
 };
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{CreateView, DropView, ViewColumn};
 use sqlquack_syntax::expressions::tables::models::{
     ClusterByColumnsProperty, ConstraintType, CreateTable, DropTable, FileFormatProperty,
     InputOutputFormat, LocationProperty, OptionEntry, OptionsProperty, PartitionedByProperty,
-    Properties, Property, RowFormatDelimitedProperty, RowFormatSerdeProperty,
-    SchemaCommentProperty, SerdeProperties, StorageHandlerProperty,
+    Property, RowFormatDelimitedProperty, RowFormatSerdeProperty, SchemaCommentProperty,
+    SerdeProperties, StorageHandlerProperty,
 };
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    binary, boolean, collate, column_from, joined, literal, null, table, too_deep_to_keep, tuple,
-    var,
+    boolean, collate, column_from, joined, literal, null, table, too_deep_to_keep, tuple, var,
 };
 use crate::parse::constants::{
     CREATE_KINDS, DROP_KINDS, DROP_TABLE_FORCE, DROP_TEMPORARY_TABLE, TEMPORARY_VIEW_USING,
@@ -107,7 +106,8 @@ impl Parser<'_> {
         let temp: bool = self.kw("TEMP");
         head.temporary = self.eat_kw("TEMPORARY") || self.eat_kw("TEMP");
         head.temporary_spelling = match (global, temp) {
-            (true, _) => Some("GLOBAL TEMPORARY".to_owned()),
+            (true, true) => Some("GLOBAL TEMP".to_owned()),
+            (true, false) => Some("GLOBAL TEMPORARY".to_owned()),
             (false, true) => Some("TEMP".to_owned()),
             (false, false) => None,
         };
@@ -259,9 +259,25 @@ impl Parser<'_> {
         let clause: (&'static str, Option<Expression>) = match word.as_str() {
             "OPTIONS" if self.char_at(1, '(') => {
                 self.at += 1;
-                let entries: Vec<OptionEntry> =
+                let spelled: Vec<(OptionEntry, bool, bool)> =
                     self.parenthesized(|parser| parser.table_option())?;
-                let options = Expression::OptionsProperty(Box::new(OptionsProperty { entries }));
+                let mut entries: Vec<OptionEntry> = Vec::new();
+                let mut string_keys: Vec<usize> = Vec::new();
+                let mut without_equals: Vec<usize> = Vec::new();
+                for (at, (entry, string_key, without)) in spelled.into_iter().enumerate() {
+                    if string_key {
+                        string_keys.push(at);
+                    }
+                    if without {
+                        without_equals.push(at);
+                    }
+                    entries.push(entry);
+                }
+                let options = Expression::OptionsProperty(Box::new(OptionsProperty {
+                    entries,
+                    string_keys,
+                    without_equals,
+                }));
                 ("OPTIONS", Some(options))
             }
             "PARTITIONED" if self.kw_at(1, "BY") => {
@@ -310,13 +326,7 @@ impl Parser<'_> {
             }
             "TBLPROPERTIES" => {
                 self.at += 1;
-                let expressions: Vec<Expression> = self
-                    .valued_property_list()?
-                    .into_iter()
-                    .map(|(key, value)| binary(Expression::Eq, key, value))
-                    .collect();
-                let properties = Expression::Properties(Box::new(Properties { expressions }));
-                ("TBLPROPERTIES", Some(properties))
+                ("TBLPROPERTIES", Some(self.properties_node(true)?))
             }
             "WITH" if self.kw_at(1, "ROW") && self.kw_at(2, "FILTER") => {
                 self.at += 3;
@@ -359,13 +369,14 @@ impl Parser<'_> {
         Ok(Some(clause))
     }
 
-    /// One `OPTIONS` entry: adjacent strings are the key and its value unless `=` follows them.
-    fn table_option(&mut self) -> Parsing<OptionEntry> {
+    /// One `OPTIONS` entry, whether its key is a string and whether its value lacks `=`.
+    fn table_option(&mut self) -> Parsing<(OptionEntry, bool, bool)> {
         let mut strings: usize = 0;
         while self.string_at(strings) {
             strings += 1;
         }
-        let key: Identifier = match self.string_at(0) {
+        let string_key: bool = self.string_at(0);
+        let key: Identifier = match string_key {
             true if !self.char_at(strings, '=') => Identifier::new(self.advance()?.value),
             true => Identifier::new(self.string_lit()?),
             false => joined(self.multipart_identifier()?),
@@ -382,7 +393,7 @@ impl Parser<'_> {
             ));
         }
         let value: Expression = self.expression()?;
-        Ok(OptionEntry { key, value })
+        Ok((OptionEntry { key, value }, string_key, !equals))
     }
 
     /// `bucketSpec`: `CLUSTERED BY (columns) [SORTED BY (columns)] INTO n BUCKETS`.
@@ -486,9 +497,8 @@ impl Parser<'_> {
                         this: Box::new(path),
                     })));
             } else if self.eat_kw("TBLPROPERTIES") {
-                let expressions: Vec<Expression> = self.property_list()?;
-                node.properties
-                    .push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                node.properties.push(properties);
             } else if self.kw("ROW") && self.kw_at(1, "FORMAT") {
                 let format: Expression = self.row_format()?;
                 node.properties.push(format);
@@ -517,9 +527,8 @@ impl Parser<'_> {
         loop {
             let start: usize = self.offset();
             let clause: &str = if self.eat_kw("TBLPROPERTIES") {
-                let expressions: Vec<Expression> = self.property_list()?;
-                node.properties
-                    .push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                node.properties.push(properties);
                 "TBLPROPERTIES"
             } else if self.eat_kw("LOCATION") {
                 let path: Expression = self.string_literal()?;
@@ -788,14 +797,26 @@ impl Parser<'_> {
             false => Vec::new(),
         };
         let mut match_full: bool = false;
+        let mut on_delete: Option<ReferentialAction> = None;
+        let mut on_update: Option<ReferentialAction> = None;
+        let mut on_update_first: bool = false;
+        let mut match_after_actions: bool = false;
         loop {
             if self.eat_kws(&["MATCH", "FULL"]) {
                 match_full = true;
+                match_after_actions = on_delete.is_some() || on_update.is_some();
             } else if self.kw("ON")
                 && self.kw_in(1, &["DELETE", "UPDATE"])
                 && self.kw_at(2, "NO")
                 && self.kw_at(3, "ACTION")
             {
+                match self.kw_at(1, "UPDATE") {
+                    true => {
+                        on_update_first = on_delete.is_none();
+                        on_update = Some(ReferentialAction::NoAction);
+                    }
+                    false => on_delete = Some(ReferentialAction::NoAction),
+                }
                 self.at += 4;
             } else {
                 break;
@@ -804,12 +825,12 @@ impl Parser<'_> {
         Ok(ForeignKeyRef {
             table,
             columns,
-            on_delete: None,
-            on_update: None,
-            on_update_first: false,
+            on_delete,
+            on_update,
+            on_update_first,
             match_type: match_full
                 .then_some(sqlquack_syntax::expressions::columns::models::MatchType::Full),
-            match_after_actions: false,
+            match_after_actions,
             constraint_name: None,
             deferrable: None,
             has_foreign_key_keywords: false,
@@ -989,8 +1010,8 @@ impl Parser<'_> {
                 }
                 comment = Some(self.string_lit()?);
             } else if self.eat_kw("TBLPROPERTIES") {
-                let expressions: Vec<Expression> = self.property_list()?;
-                table_properties.push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                table_properties.push(properties);
             } else if self.kw("WITH") && self.kw_at(1, "METRICS") {
                 if head.global {
                     self.at += 1;
@@ -1100,9 +1121,8 @@ impl Parser<'_> {
             } else if self.eat_kw("COMMENT") {
                 node.comment = Some(self.string_lit()?);
             } else if self.eat_kw("TBLPROPERTIES") {
-                let expressions: Vec<Expression> = self.property_list()?;
-                node.table_properties
-                    .push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                node.table_properties.push(properties);
             } else {
                 break;
             }

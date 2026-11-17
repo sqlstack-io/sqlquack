@@ -1038,6 +1038,7 @@ impl Parser<'_> {
                 this: Expression::Function(Box::new(function(name, args))),
                 table_alias: Some(table_alias),
                 column_aliases,
+                column_aliases_explicit_as: false,
                 outer,
             });
         }

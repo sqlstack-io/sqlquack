@@ -478,6 +478,7 @@ impl Parser {
         Ok(ScriptingStatement::Open(ScriptingOpen {
             span: self.source_range(start),
             cursor,
+            cursor_qualifier: Vec::new(),
             using,
             using_bare: false,
         }))
@@ -496,6 +497,7 @@ impl Parser {
         Ok(ScriptingStatement::Fetch(ScriptingFetch {
             span: self.source_range(start),
             cursor,
+            cursor_qualifier: Vec::new(),
             targets,
             keyword: None,
         }))
@@ -507,6 +509,7 @@ impl Parser {
         Ok(ScriptingName {
             name: self.expect_scripting_name()?,
             span: self.source_range(start),
+            qualifier: Vec::new(),
         })
     }
 

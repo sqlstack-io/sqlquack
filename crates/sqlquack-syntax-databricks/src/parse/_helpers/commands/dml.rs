@@ -137,6 +137,7 @@ impl Parser<'_> {
             input_format: None,
             output_format: None,
             using: None,
+            using_quoted: false,
             options: Vec::new(),
             options_without_equals: Vec::new(),
         };
@@ -154,7 +155,9 @@ impl Parser<'_> {
             return Ok(node);
         }
         self.expect_kw("USING")?;
-        node.using = Some(joined(self.multipart_identifier()?).name);
+        let format: Identifier = joined(self.multipart_identifier()?);
+        node.using_quoted = format.quoted;
+        node.using = Some(format.name);
         if self.eat_kw("OPTIONS") {
             let spelled: Vec<((Expression, Expression), bool)> =
                 self.spelled_valued_property_list()?;

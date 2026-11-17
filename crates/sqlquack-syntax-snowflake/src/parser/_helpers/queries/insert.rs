@@ -364,6 +364,7 @@ impl Parser {
                 input_format: None,
                 output_format: None,
                 using: None,
+                using_quoted: false,
                 options: Vec::new(),
                 options_without_equals: Vec::new(),
             }),

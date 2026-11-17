@@ -60,6 +60,7 @@ impl Parser<'_> {
             credentials: Vec::new(),
             encryption: None,
             storage: None,
+            name_quoted: false,
         };
         if self.eat_kw("CREDENTIAL") {
             match self.is_char('(') {
@@ -73,6 +74,7 @@ impl Parser<'_> {
                 }
                 false => {
                     let name: Identifier = self.ident()?;
+                    credentials.name_quoted = name.quoted;
                     credentials
                         .credentials
                         .push(("CREDENTIAL".to_owned(), name.name));
@@ -141,7 +143,10 @@ impl Parser<'_> {
         let format: Identifier = self.ident()?;
         params.push(parameter(
             "FILEFORMAT",
-            Some(var(&format.name)),
+            Some(match format.quoted {
+                true => Expression::Identifier(format),
+                false => var(&format.name),
+            }),
             Vec::new(),
             true,
         ));

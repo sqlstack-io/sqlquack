@@ -456,6 +456,8 @@ pub(crate) const TAG_KINDS: [&str; 11] = [
 pub(crate) const SQL_LANGUAGE: &str = "SQL";
 /// The described object a string may name.
 pub(crate) const CATALOG: &str = "CATALOG";
+/// The object kind whose DESCRIBE target is a table-like name with parts.
+pub(crate) const VOLUME: &str = "VOLUME";
 /// The `SHOW` word naming functions.
 pub(crate) const FUNCTIONS: &str = "FUNCTIONS";
 /// The fewest parts a `SET PATH` schema reference names.

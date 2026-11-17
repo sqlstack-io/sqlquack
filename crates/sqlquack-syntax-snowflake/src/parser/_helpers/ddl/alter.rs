@@ -606,7 +606,10 @@ impl Parser {
             }
         }
         self.expect_token(TokenType::RParen)?;
-        Ok(AlterTableAction::SetTableProperties { properties })
+        Ok(AlterTableAction::SetTableProperties {
+            properties,
+            without_equals: Vec::new(),
+        })
     }
 
     fn parse_alter_set_raw(&mut self) -> Result<AlterTableAction> {

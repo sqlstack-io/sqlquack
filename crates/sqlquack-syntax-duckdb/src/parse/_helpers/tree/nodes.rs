@@ -509,6 +509,7 @@ pub(crate) fn cte(alias: Identifier, columns: Vec<Identifier>, this: Expression)
         span: SourceSpan(None),
         key_items: Vec::new(),
         search_cycle: Vec::new(),
+        as_omitted: false,
     }
 }
 

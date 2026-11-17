@@ -223,6 +223,9 @@ pub struct AlterView {
     /// Hive: Column aliases with optional comments: (c1 COMMENT 'text', c2)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub columns: Vec<ViewColumn>,
+    /// Databricks: the optional `AS` before a redefining query was not written
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub as_omitted: bool,
 }
 
 /// Actions for ALTER VIEW
@@ -248,8 +251,13 @@ pub enum AlterViewAction {
     SetTblproperties(Vec<(String, String)>),
     /// Hive: UNSET TBLPROPERTIES ('key1', 'key2', ...)
     UnsetTblproperties(Vec<String>),
-    /// Databricks: SET TBLPROPERTIES ( k = v , ... ), each key and value as written.
-    SetTableProperties(Vec<(Expression, Expression)>),
+    /// Databricks: SET TBLPROPERTIES ( k [ = ] v , ... ), each key and value as written.
+    SetTableProperties {
+        properties: Vec<(Expression, Expression)>,
+        /// The positions in `properties` of values written without the optional `=`
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        without_equals: Vec<usize>,
+    },
     /// Databricks: UNSET TBLPROPERTIES [ IF EXISTS ] ( k , ... ), each key as written.
     UnsetTableProperties {
         properties: Vec<Expression>,
@@ -268,6 +276,7 @@ impl AlterView {
             sql_security: None,
             with_option: None,
             columns: Vec::new(),
+            as_omitted: false,
         }
     }
 }

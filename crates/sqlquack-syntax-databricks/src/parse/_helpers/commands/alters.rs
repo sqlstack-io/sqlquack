@@ -10,11 +10,12 @@ use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{
     AlterObject, AlterView, AlterViewAction,
 };
-use sqlquack_syntax::expressions::tables::models::Partition;
+use sqlquack_syntax::expressions::tables::models::{Partition, Properties};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    binary, collate, column_from, joined, null, property, table, too_deep_to_keep, tuple, var,
+    binary, collate, column_from, flagged, joined, null, property, property_node, table,
+    too_deep_to_keep, tuple, var,
 };
 use crate::parse::constants::{
     ALTER_COLUMN_WORDS, ALTER_KINDS, COLUMN_DROP_MASK, COLUMN_POSITION, COLUMN_SET_MASK,
@@ -24,6 +25,9 @@ use crate::parse::constants::{
     SET_EXTERNAL, SET_MANAGED, SET_OWNER_TO, SET_ROW_FILTER, SET_SERDE, SET_SERDEPROPERTIES,
     SET_TAGS, TRUNCATE_UNIFORM_HISTORY, UNSET_MANAGED,
 };
+
+/// Key and value pairs with the positions of the values written without `=`.
+type ValuedProperties = (Vec<(Expression, Expression)>, Vec<usize>);
 
 /// The text of a property key or value: a string's contents, or a name or number as written.
 pub(crate) fn property_text(expression: &Expression) -> String {
@@ -180,6 +184,29 @@ impl Parser<'_> {
             .into_iter()
             .map(|(property, without_equals)| (property_pair(property), without_equals))
             .collect())
+    }
+
+    /// `valued_property_list` with the positions of the values written without `=`.
+    pub(crate) fn valued_properties(&mut self) -> Parsing<ValuedProperties> {
+        let spelled: Vec<((Expression, Expression), bool)> = self.spelled_valued_property_list()?;
+        let without_equals: Vec<usize> = flagged(&spelled);
+        Ok((
+            spelled.into_iter().map(|(pair, _)| pair).collect(),
+            without_equals,
+        ))
+    }
+
+    /// `propertyList` as a `Properties` node; `valued` refuses a key without a value.
+    pub(crate) fn properties_node(&mut self, valued: bool) -> Parsing<Expression> {
+        let expressions: Vec<Expression> = match valued {
+            true => self
+                .spelled_valued_property_list()?
+                .into_iter()
+                .map(|((key, value), without)| property_node(key, value, without))
+                .collect(),
+            false => self.property_list()?,
+        };
+        Ok(Expression::Properties(Box::new(Properties { expressions })))
     }
 
     /// `propertyList` of keys only, refused as Spark refuses one with a value.
@@ -807,9 +834,13 @@ impl Parser<'_> {
         };
         self.at += 1;
         match word.as_str() {
-            "TBLPROPERTIES" => Ok(Some(AlterTableAction::SetTableProperties {
-                properties: self.valued_property_list()?,
-            })),
+            "TBLPROPERTIES" => {
+                let (properties, without_equals) = self.valued_properties()?;
+                Ok(Some(AlterTableAction::SetTableProperties {
+                    properties,
+                    without_equals,
+                }))
+            }
             "LOCATION" => Ok(Some(AlterTableAction::SetLocation {
                 location: self.string_lit()?,
             })),
@@ -909,9 +940,11 @@ impl Parser<'_> {
             }
             Some("SET") if self.kw_at(1, "TBLPROPERTIES") => {
                 self.at += 2;
-                Some(AlterViewAction::SetTableProperties(
-                    self.valued_property_list()?,
-                ))
+                let (properties, without_equals) = self.valued_properties()?;
+                Some(AlterViewAction::SetTableProperties {
+                    properties,
+                    without_equals,
+                })
             }
             Some("UNSET") if self.kw_at(1, "TBLPROPERTIES") => {
                 self.at += 2;
@@ -1012,7 +1045,7 @@ impl Parser<'_> {
                 None
             }
             _ => {
-                self.eat_kw("AS");
+                node.as_omitted = !self.eat_kw("AS");
                 Some(AlterViewAction::AsSelect(Box::new(self.query()?)))
             }
         };

@@ -1384,6 +1384,14 @@ pub struct OptionEntry {
 pub struct OptionsProperty {
     #[serde(default)]
     pub entries: Vec<OptionEntry>,
+    /// Databricks: the positions in `entries` of keys written as string literals
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub string_keys: Vec<usize>,
+    /// Databricks: the positions in `entries` of values written without the optional `=`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub without_equals: Vec<usize>,
 }
 
 /// InputOutputFormat

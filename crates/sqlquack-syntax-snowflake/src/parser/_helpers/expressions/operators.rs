@@ -1658,6 +1658,7 @@ impl Parser {
             sql_security,
             with_option,
             columns,
+            as_omitted: false,
         })))
     }
 

@@ -918,6 +918,7 @@ impl Parser {
                                 credentials: vec![("".to_string(), s.clone())],
                                 storage: None,
                                 encryption: None,
+                                name_quoted: false,
                             };
                             credentials = Some(Box::new(creds));
                         }
@@ -950,6 +951,7 @@ impl Parser {
                                 .collect(),
                             storage: None,
                             encryption: None,
+                            name_quoted: false,
                         };
                         credentials = Some(Box::new(creds));
                     }

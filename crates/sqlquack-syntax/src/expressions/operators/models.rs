@@ -182,6 +182,9 @@ pub enum OperatorSpelling {
     /// The `>>>` operator for the `shiftrightunsigned` call.
     #[serde(rename = ">>>")]
     ShiftRightUnsigned,
+    /// Databricks: no `=` written between a property's key and its value.
+    #[serde(rename = "omitted")]
+    Omitted,
 }
 
 /// The payload of every binary operator variant: arithmetic, comparison, logical, bitwise.

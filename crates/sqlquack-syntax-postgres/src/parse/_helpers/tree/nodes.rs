@@ -501,6 +501,7 @@ pub(crate) fn cte(
         comments: Vec::new(),
         span: SourceSpan(None),
         key_items: Vec::new(),
+        as_omitted: false,
     }
 }
 

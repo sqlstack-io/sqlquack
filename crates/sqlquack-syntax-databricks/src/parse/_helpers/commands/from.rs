@@ -12,7 +12,7 @@ use sqlquack_syntax::expressions::statements::models::Version;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier, is_strict_identifier};
 use crate::parse::_helpers::tree::nodes::{
     JoinConstraint, TableAlias, alias, call, column_from, function, in_list, join, joined_table,
-    lateral, literal, null, paren, string, subquery, table, tuple, values,
+    lateral, literal, null, paren, property_node, string, subquery, table, tuple, values,
 };
 use crate::parse::constants::{AT_TIMESTAMP_DIGITS, IDENTIFIER_CLAUSE};
 use crate::scan::models::{NumberKind, TokenKind};
@@ -799,7 +799,8 @@ impl Parser<'_> {
                 false => Some(self.ident()?),
             };
             let mut column_aliases: Vec<Identifier> = Vec::new();
-            if self.eat_kw("AS") || self.bare_alias_at(0, false) {
+            let column_aliases_explicit_as: bool = self.eat_kw("AS");
+            if column_aliases_explicit_as || self.bare_alias_at(0, false) {
                 column_aliases.push(self.ident()?);
                 while self.is_char(',') && self.bare_alias_at(1, false) {
                     self.at += 1;
@@ -810,6 +811,7 @@ impl Parser<'_> {
                 this: Expression::Function(Box::new(function(name, args))),
                 table_alias,
                 column_aliases,
+                column_aliases_explicit_as,
                 outer,
             });
         }
@@ -842,9 +844,7 @@ impl Parser<'_> {
                 crate::parse::_helpers::tree::nodes::string(&token.value)
             }
             true => self.string_literal()?,
-            false => Expression::Identifier(crate::parse::_helpers::tree::nodes::joined(
-                self.multipart_identifier()?,
-            )),
+            false => crate::parse::_helpers::tree::nodes::qualified(self.multipart_identifier()?),
         };
         let equals: bool = self.eat_char('=');
         let value: Option<Expression> = if expressions && (equals || !self.terminal_at(0)) {
@@ -855,10 +855,7 @@ impl Parser<'_> {
             None
         };
         Ok(match value {
-            Some(value) => (
-                crate::parse::_helpers::tree::nodes::binary(Expression::Eq, key, value),
-                !equals,
-            ),
+            Some(value) => (property_node(key, value, !equals), !equals),
             None => (key, false),
         })
     }

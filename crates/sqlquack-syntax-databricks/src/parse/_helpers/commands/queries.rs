@@ -267,11 +267,13 @@ impl Parser<'_> {
                 token.kind == TokenKind::Number(crate::scan::models::NumberKind::Integer)
             })?;
         }
-        self.eat_kw("AS");
+        let as_omitted: bool = !self.eat_kw("AS");
         self.expect_char('(')?;
         let body: Expression = self.query()?;
         self.expect_char(')')?;
-        Ok(cte(name, columns, body))
+        let mut node: Cte = cte(name, columns, body);
+        node.as_omitted = as_omitted;
+        Ok(node)
     }
 
     /// `queryTerm` of at least precedence `min`, every operator left-associative.

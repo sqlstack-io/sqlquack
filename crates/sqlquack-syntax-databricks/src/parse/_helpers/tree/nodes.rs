@@ -47,6 +47,19 @@ pub(crate) fn column_from(parts: Vec<Identifier>) -> Expression {
     parts.fold(column(Some(first), second), dot)
 }
 
+/// A qualified name with each part kept: the name itself, or its later parts as dot access.
+pub(crate) fn qualified(parts: Vec<Identifier>) -> Expression {
+    let mut parts = parts.into_iter();
+    let first: Identifier = parts.next().unwrap_or_else(Identifier::empty);
+    parts.fold(Expression::Identifier(first), dot)
+}
+
+/// A qualified name's leading parts and its last part.
+pub(crate) fn qualifier_and_name(mut parts: Vec<Identifier>) -> (Vec<Identifier>, Identifier) {
+    let name: Identifier = parts.pop().unwrap_or_else(Identifier::empty);
+    (parts, name)
+}
+
 pub(crate) fn dot(this: Expression, field: Identifier) -> Expression {
     Expression::Dot(Box::new(DotAccess {
         this,
@@ -126,6 +139,11 @@ pub(crate) fn default_value(value: Expression) -> Expression {
     }
 }
 
+/// The positions of the items whose flag is set, such as values written without `=`.
+pub(crate) fn flagged<T>(items: &[(T, bool)]) -> Vec<usize> {
+    (0..items.len()).filter(|at| items[*at].1).collect()
+}
+
 /// A keyword written as a word in a keyword tuple, such as `DELETE` or `UPDATE`.
 pub(crate) fn var(text: &str) -> Expression {
     Expression::Var(Box::new(Var {
@@ -172,6 +190,19 @@ pub(crate) fn binary(
     right: Expression,
 ) -> Expression {
     kind(Box::new(BinaryOp::new(left, right)))
+}
+
+/// A property's `key = value`, marked when its value followed the key without `=`.
+pub(crate) fn property_node(
+    key: Expression,
+    value: Expression,
+    without_equals: bool,
+) -> Expression {
+    let node: Expression = binary(Expression::Eq, key, value);
+    match without_equals {
+        true => written_as(node, OperatorSpelling::Omitted),
+        false => node,
+    }
 }
 
 /// `node` marked with the operator spelling written for it, when another spelling shares it.
@@ -329,6 +360,8 @@ pub(crate) fn aggregate(
         set_quantifier: function.set_quantifier,
         filter,
         ignore_nulls,
+        qualified_name: function.qualified_name,
+        quoted: function.quoted,
         ..AggregateFunction::default()
     }))
 }
@@ -581,6 +614,7 @@ pub(crate) fn cte(alias: Identifier, columns: Vec<Identifier>, this: Expression)
         search_cycle: Vec::new(),
         span: SourceSpan(None),
         key_items: Vec::new(),
+        as_omitted: false,
     }
 }
 

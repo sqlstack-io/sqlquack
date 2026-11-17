@@ -964,6 +964,9 @@ pub struct LateralView {
     pub table_alias: Option<Identifier>,
     /// Column aliases for the generated columns
     pub column_aliases: Vec<Identifier>,
+    /// Databricks: whether AS was written before the column aliases
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub column_aliases_explicit_as: bool,
     /// OUTER keyword - preserve nulls when input is empty/null
     pub outer: bool,
 }
@@ -1387,6 +1390,9 @@ pub struct Cte {
     /// DuckDB `USING KEY` entries as expressions, when any is more than a bare column.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub key_items: Vec<Expression>,
+    /// Databricks: the optional `AS` before the body was not written
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub as_omitted: bool,
 }
 
 /// Window specification
