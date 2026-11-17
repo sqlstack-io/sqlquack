@@ -498,11 +498,23 @@ impl Parser<'_> {
         }
         if self.kw("CATALOG") && !self.ends_at(1) && !self.char_at(1, '=') {
             self.at += 1;
-            let value: Expression = match self.is(is_identifier) && self.ends_at(1) {
-                true => Expression::Identifier(self.ident()?),
-                false => self.expression()?,
+            let string_name: bool = self.string_at(0) && self.ends_at(1);
+            if !string_name && !(self.is(is_identifier) && self.ends_at(1)) {
+                let value: Expression = self.expression()?;
+                return Ok(set_statement(vec![set_item("CATALOG", value, None)]));
+            }
+            let parts: Vec<Identifier> = match string_name {
+                true => vec![Identifier::new(self.string_lit()?)],
+                false => vec![self.ident()?],
             };
-            return Ok(set_statement(vec![set_item("CATALOG", value, None)]));
+            return Ok(Expression::Use(Box::new(Use {
+                kind: Some(UseKind::Catalog),
+                this: joined(parts.clone()),
+                roles: Vec::new(),
+                parts,
+                string_name,
+                keyword: Some("SET".to_owned()),
+            })));
         }
         self.configuration(set_at)
     }

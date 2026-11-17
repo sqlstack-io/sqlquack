@@ -284,6 +284,11 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 3,
         },
         DistinctTreesTestCase {
+            description: "USE CATALOG and SET CATALOG",
+            written: &["USE CATALOG v1", "SET CATALOG v1"],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
             description: "a pipeline from FROM and from TABLE",
             written: &["FROM t1 |> WHERE 1 = 1", "TABLE t1 |> WHERE 1 = 1"],
             expected_distinct_trees: 2,

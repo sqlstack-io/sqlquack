@@ -563,6 +563,7 @@ others:
 - `DESC` against `DESCRIBE`, `DATABASE`, `SCHEMA` and `NAMESPACE` as written (in `DESCRIBE`,
   `CREATE`, `ALTER`, `DROP` and `USE`), `FROM` against `IN`, and whether `LIKE` was written before
   a pattern;
+- `SET CATALOG` against `USE CATALOG`, which both choose the catalog (the use node's `keyword`);
 - `MINUS` against `EXCEPT`, `TEMP` against `TEMPORARY`, and the type synonyms `BYTE`, `SHORT`,
   `LONG`, `DEC` and `NUMERIC`;
 - `ADD COLUMN` against `ADD COLUMNS` and `DROP COLUMN` against `DROP COLUMNS`, because the ALTER

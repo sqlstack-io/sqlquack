@@ -1023,6 +1023,24 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "\"DATABASE\"",
         },
         ValueTestCase {
+            description: "SET CATALOG with a name chooses the catalog, as USE CATALOG does",
+            sql: "SET CATALOG v1",
+            pointer: "/0/use/kind",
+            expected_json: "\"Catalog\"",
+        },
+        ValueTestCase {
+            description: "SET CATALOG keeps SET",
+            sql: "SET CATALOG v1",
+            pointer: "/0/use/keyword",
+            expected_json: "\"SET\"",
+        },
+        ValueTestCase {
+            description: "SET CATALOG with a string keeps the string spelling",
+            sql: "SET CATALOG ' catalog_name '",
+            pointer: "/0/use/string_name",
+            expected_json: "true",
+        },
+        ValueTestCase {
             description: "USE NAMESPACE keeps NAMESPACE",
             sql: "USE NAMESPACE s1",
             pointer: "/0/use/keyword",
