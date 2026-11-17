@@ -17,7 +17,7 @@ use sqlquack_syntax::expressions::tables::models::{
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    binary, boolean, collate, column_from, joined, null, tuple, var,
+    binary, boolean, collate, column_from, joined, null, table, tuple, var,
 };
 use crate::parse::constants::{CREATE_KINDS, DROP_KINDS};
 use crate::scan::models::{NumberKind, TokenKind};
@@ -314,15 +314,11 @@ impl Parser<'_> {
             }
             "WITH" if self.kw_at(1, "ROW") && self.kw_at(2, "FILTER") => {
                 self.at += 3;
-                self.multipart_identifier()?;
-                self.expect_kw("ON")?;
-                self.expect_char('(')?;
-                if !self.is_char(')') {
-                    self.comma_list(|parser| parser.expression())?;
-                }
-                self.expect_char(')')?;
-                self.gap("row_filter", start);
-                ("WITH", None)
+                let filter = Expression::Table(Box::new(table(self.multipart_identifier()?)));
+                let columns: Vec<Expression> = self.row_filter_columns()?;
+                self.treed("row_filter", start);
+                let row_filter = property("WITH ROW FILTER", tuple(vec![filter, tuple(columns)]));
+                ("WITH", Some(row_filter))
             }
             "DEFAULT" if self.kw_at(1, "COLLATION") => {
                 self.at += 2;
@@ -635,8 +631,9 @@ impl Parser<'_> {
             } else if self.kw("MASK") {
                 let start: usize = self.offset();
                 self.at += 1;
-                self.column_mask()?;
-                self.gap("column_mask", start);
+                let mask: Expression = self.column_mask()?;
+                column.options.push(mask);
+                self.treed("column_mask", start);
             } else if self.kw_in(
                 0,
                 &[

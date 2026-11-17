@@ -212,9 +212,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "ALTER TABLE DROP FEATURE is a gap",
+            description: "ALTER TABLE DROP FEATURE keeps its feature and TRUNCATE HISTORY",
             sql: "ALTER TABLE t DROP FEATURE deletionVectors TRUNCATE HISTORY",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "DROP FEATURE TRUNCATE needs HISTORY",
@@ -467,9 +467,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "a column mask and a row filter on CREATE TABLE are gaps",
+            description: "a column mask and a row filter on CREATE TABLE are kept",
             sql: "CREATE TABLE t ( c INT MASK f USING COLUMNS ( 1 ) ) WITH ROW FILTER g ON ( c )",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ENABLE NOVALIDATE follows a primary key in CREATE TABLE",

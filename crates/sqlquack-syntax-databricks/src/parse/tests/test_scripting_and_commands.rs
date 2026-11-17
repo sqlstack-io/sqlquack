@@ -426,6 +426,76 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             sql: "SHOW PARTITIONS t1 PARTITION ( c1 = 1 )",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
+        VerdictTestCase {
+            description: "an owner change is checked",
+            sql: "ALTER TABLE t1 OWNER TO u1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a row filter set on a table is checked",
+            sql: "ALTER TABLE t1 SET ROW FILTER f1 ON ( )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a row filter needs the columns passed to it",
+            sql: "ALTER TABLE t1 SET ROW FILTER f1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "SET MANAGED TRUNCATE needs UNIFORM HISTORY",
+            sql: "ALTER TABLE t1 SET MANAGED TRUNCATE HISTORY",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "SET EXTERNAL DRY RUN is checked",
+            sql: "ALTER TABLE t1 SET EXTERNAL DRY RUN",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a dropped foreign key is checked",
+            sql: "ALTER TABLE t1 DROP FOREIGN KEY IF EXISTS ( c1 , c2 )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "each column of a list keeps its own action",
+            sql: "ALTER TABLE t1 ALTER COLUMN c1 FIRST , c2 DROP MASK",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a column with no action after a kept one is still accepted",
+            sql: "ALTER TABLE t1 ALTER COLUMN c1 FIRST , c2",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a column with no action is refused",
+            sql: "ALTER TABLE t1 ALTER COLUMN c1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a column with no action after a kept form earlier in its block is accepted, as after a gap",
+            sql: "BEGIN ALTER TABLE t1 OWNER TO u1 ; ALTER TABLE t1 ALTER COLUMN c1 ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a column with no action after a kept Hive format earlier in its block is accepted, as after a gap",
+            sql: "BEGIN CREATE TABLE t2 ( c1 INT ) STORED AS PARQUET ; ALTER TABLE t1 ALTER COLUMN c1 ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a column with no action after RESTORE earlier in its block is accepted, as after a gap",
+            sql: "BEGIN RESTORE t2 VERSION AS OF 1 ; ALTER TABLE t1 ALTER COLUMN c1 ; END",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
+        VerdictTestCase {
+            description: "a column with no action after a kept form in an earlier statement is refused",
+            sql: "ALTER TABLE t1 OWNER TO u1 ; ALTER TABLE t1 ALTER COLUMN c1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "UNSET TBLPROPERTIES IF EXISTS stays a gap",
+            sql: "ALTER TABLE t1 UNSET TBLPROPERTIES IF EXISTS ( 'k' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

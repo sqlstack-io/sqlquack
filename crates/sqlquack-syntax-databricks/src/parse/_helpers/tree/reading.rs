@@ -39,6 +39,7 @@ pub(crate) fn parse_as(sql: &str, reading: Reading) -> Result<Parsed, ParseError
         }
         let first: usize = parser.at;
         let treed: usize = parser.treed.len();
+        parser.statement_treed = treed;
         parser.opaque = false;
         let parsed: Result<Expression, ParseError> = parser.statement();
         if let Some(too_deep) = parser.too_deep.take() {

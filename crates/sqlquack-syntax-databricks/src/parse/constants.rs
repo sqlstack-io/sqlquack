@@ -463,7 +463,7 @@ pub(crate) const LIST_RESOURCES: &str =
     "LIST { FILE | FILES | JAR | JARS | ARCHIVE | ARCHIVES } [ resource ... ]";
 
 /// Forms read as trees that the formatter and lint still refuse as gaps until their layout is reviewed; any future Databricks translator or renderer must handle each of these, and every key of `KEYED_ACTIONS`, or refuse it.
-pub(crate) const TREED_FORMS: [&str; 11] = [
+pub(crate) const TREED_FORMS: [&str; 27] = [
     "add",
     "list",
     "restore",
@@ -475,4 +475,96 @@ pub(crate) const TREED_FORMS: [&str; 11] = [
     "row_format",
     "stored_as",
     "constraint_validation",
+    "column_mask",
+    "row_filter",
+    "owner",
+    "managed",
+    "serde",
+    "table_collation",
+    "recover_partitions",
+    "replace_partitioning",
+    "predictive_optimization",
+    "rename_partition",
+    "drop_primary_key",
+    "drop_foreign_key",
+    "drop_feature",
+    "alter_column_position",
+    "identity_sync",
+    "column_tags",
+];
+
+/// `ALTER TABLE ... OWNER TO`.
+pub(crate) const OWNER_TO: &str = "OWNER TO";
+/// `ALTER TABLE ... SET OWNER TO`.
+pub(crate) const SET_OWNER_TO: &str = "SET OWNER TO";
+/// `ALTER TABLE ... SET ROW FILTER`.
+pub(crate) const SET_ROW_FILTER: &str = "SET ROW FILTER";
+/// `ALTER TABLE ... DROP ROW FILTER`.
+pub(crate) const DROP_ROW_FILTER: &str = "DROP ROW FILTER";
+/// `ALTER TABLE ... SET MANAGED`.
+pub(crate) const SET_MANAGED: &str = "SET MANAGED";
+/// `ALTER TABLE ... SET EXTERNAL`.
+pub(crate) const SET_EXTERNAL: &str = "SET EXTERNAL";
+/// `ALTER TABLE ... UNSET MANAGED`.
+pub(crate) const UNSET_MANAGED: &str = "UNSET MANAGED";
+/// `ALTER TABLE ... SET SERDE`.
+pub(crate) const SET_SERDE: &str = "SET SERDE";
+/// `ALTER TABLE ... SET SERDEPROPERTIES`.
+pub(crate) const SET_SERDEPROPERTIES: &str = "SET SERDEPROPERTIES";
+/// `ALTER TABLE ... DEFAULT COLLATION`.
+pub(crate) const DEFAULT_COLLATION: &str = "DEFAULT COLLATION";
+/// `ALTER TABLE ... RECOVER PARTITIONS`.
+pub(crate) const RECOVER_PARTITIONS: &str = "RECOVER PARTITIONS";
+/// `ALTER TABLE ... REPLACE PARTITIONED BY WITH CLUSTER BY`.
+pub(crate) const REPLACE_PARTITIONING: &str = "REPLACE PARTITIONED BY WITH CLUSTER BY";
+/// `ALTER TABLE ... { ENABLE | DISABLE | INHERIT } PREDICTIVE OPTIMIZATION`.
+pub(crate) const PREDICTIVE_OPTIMIZATION: &str = "PREDICTIVE OPTIMIZATION";
+/// `ALTER TABLE ... PARTITION (...) RENAME TO PARTITION (...)`.
+pub(crate) const RENAME_PARTITION: &str = "RENAME TO PARTITION";
+/// `ALTER TABLE ... DROP PRIMARY KEY`.
+pub(crate) const DROP_PRIMARY_KEY: &str = "DROP PRIMARY KEY";
+/// `ALTER TABLE ... DROP FOREIGN KEY`.
+pub(crate) const DROP_FOREIGN_KEY: &str = "DROP FOREIGN KEY";
+/// `ALTER TABLE ... DROP FEATURE`.
+pub(crate) const DROP_FEATURE: &str = "DROP FEATURE";
+/// `ALTER TABLE ... ALTER COLUMN c { FIRST | AFTER c2 }`.
+pub(crate) const COLUMN_POSITION: &str = "COLUMN POSITION";
+/// `ALTER TABLE ... ALTER COLUMN c SET MASK`.
+pub(crate) const COLUMN_SET_MASK: &str = "COLUMN SET MASK";
+/// `ALTER TABLE ... ALTER COLUMN c DROP MASK`.
+pub(crate) const COLUMN_DROP_MASK: &str = "COLUMN DROP MASK";
+/// `ALTER TABLE ... ALTER COLUMN c SYNC IDENTITY`.
+pub(crate) const COLUMN_SYNC_IDENTITY: &str = "COLUMN SYNC IDENTITY";
+/// `ALTER TABLE ... ALTER COLUMN c SET TAGS`.
+pub(crate) const COLUMN_SET_TAGS: &str = "COLUMN SET TAGS";
+/// `ALTER TABLE ... ALTER COLUMN c UNSET TAGS`.
+pub(crate) const COLUMN_UNSET_TAGS: &str = "COLUMN UNSET TAGS";
+/// The words `SET MANAGED` and `UNSET MANAGED` take to truncate Uniform history.
+pub(crate) const TRUNCATE_UNIFORM_HISTORY: &str = "TRUNCATE UNIFORM HISTORY";
+
+/// Keys of the `ALTER TABLE` actions with no shared variant, each a `SetProperty` entry; any future Databricks translator or renderer must handle every key or refuse it.
+pub(crate) const KEYED_ACTIONS: [&str; 23] = [
+    OWNER_TO,
+    SET_OWNER_TO,
+    SET_ROW_FILTER,
+    DROP_ROW_FILTER,
+    SET_MANAGED,
+    SET_EXTERNAL,
+    UNSET_MANAGED,
+    SET_SERDE,
+    SET_SERDEPROPERTIES,
+    DEFAULT_COLLATION,
+    RECOVER_PARTITIONS,
+    REPLACE_PARTITIONING,
+    PREDICTIVE_OPTIMIZATION,
+    RENAME_PARTITION,
+    DROP_PRIMARY_KEY,
+    DROP_FOREIGN_KEY,
+    DROP_FEATURE,
+    COLUMN_POSITION,
+    COLUMN_SET_MASK,
+    COLUMN_DROP_MASK,
+    COLUMN_SYNC_IDENTITY,
+    COLUMN_SET_TAGS,
+    COLUMN_UNSET_TAGS,
 ];

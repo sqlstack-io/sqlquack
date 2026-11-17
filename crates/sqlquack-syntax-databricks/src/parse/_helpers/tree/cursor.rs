@@ -33,6 +33,8 @@ pub(crate) struct Parser<'sql> {
     pub(crate) gaps: Vec<Gap>,
     /// Forms of `TREED_FORMS` read as trees whose layout has not been reviewed.
     pub(crate) treed: Vec<Gap>,
+    /// How many of `treed` came before the statement being parsed.
+    pub(crate) statement_treed: usize,
     /// Whether the statement being parsed holds a gap, so it becomes a `Command`.
     pub(crate) opaque: bool,
     /// The depth limit's error once any reading passed it; every later reading fails with it.
@@ -78,6 +80,7 @@ impl<'sql> Parser<'sql> {
             depth: 0,
             gaps: Vec::new(),
             treed: Vec::new(),
+            statement_treed: 0,
             opaque: false,
             too_deep: None,
             for_query: false,
@@ -277,6 +280,11 @@ impl<'sql> Parser<'sql> {
             }
             false => self.gap(construct, start),
         }
+    }
+
+    /// Whether the statement so far holds a gap or a form of `TREED_FORMS`, each once a gap.
+    pub(crate) fn read_gap(&self) -> bool {
+        self.opaque || self.treed.len() > self.statement_treed
     }
 
     /// The range from `start` to the end of the last token read, named `construct`.

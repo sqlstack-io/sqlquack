@@ -1,5 +1,7 @@
 #[path = "tests/helpers.rs"]
 mod helpers;
+#[path = "tests/test_keyed_actions.rs"]
+mod test_keyed_actions;
 #[path = "tests/test_parse.rs"]
 mod test_parse;
 #[path = "tests/test_scripting_and_commands.rs"]
