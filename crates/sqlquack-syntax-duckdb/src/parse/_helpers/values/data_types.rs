@@ -149,6 +149,7 @@ fn named_type(name: &str, modifiers: &[Expression]) -> DataType {
         "BIT" | "BITSTRING" => DataType::Bit { length },
         "DATE" => DataType::Date,
         "TIMETZ" => DataType::Time {
+            spelling: None,
             precision: length,
             timezone: true,
         },
@@ -313,6 +314,7 @@ impl Parser<'_> {
                 let precision: Option<u32> = first_length(&modifiers);
                 return Ok(match word.as_str() {
                     "TIME" => DataType::Time {
+                        spelling: None,
                         precision,
                         timezone,
                     },

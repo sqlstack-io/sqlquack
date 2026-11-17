@@ -982,10 +982,12 @@ impl Parser {
             "TEXT" | "STRING" | "NTEXT" => DataType::Text,
             "DATE" => DataType::Date,
             "TIME" => DataType::Time {
+                spelling: None,
                 precision: None,
                 timezone: false,
             },
             "TIMETZ" => DataType::Time {
+                spelling: None,
                 precision: None,
                 timezone: true,
             },

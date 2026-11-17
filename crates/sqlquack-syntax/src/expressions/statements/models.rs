@@ -1027,6 +1027,10 @@ pub struct Declare {
     pub expressions: Vec<Expression>,
     #[serde(default)]
     pub replace: bool,
+    /// Databricks: VAR or VARIABLE as written after DECLARE [OR REPLACE]; none when omitted
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub keyword: Option<String>,
 }
 
 /// DeclareItem

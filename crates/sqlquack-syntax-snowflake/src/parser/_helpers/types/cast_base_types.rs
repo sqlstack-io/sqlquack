@@ -290,6 +290,7 @@ impl Parser {
                 false
             };
             DataType::Time {
+                spelling: None,
                 precision,
                 timezone,
             }
@@ -306,6 +307,7 @@ impl Parser {
                 None
             };
             DataType::Time {
+                spelling: None,
                 precision,
                 timezone: true,
             }

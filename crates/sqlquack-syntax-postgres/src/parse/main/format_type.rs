@@ -43,6 +43,7 @@ pub fn format_type(data_type: &DataType) -> Option<String> {
         DataType::Time {
             precision,
             timezone,
+            ..
         } => temporal("time", *precision, *timezone),
         DataType::Timestamp {
             precision,

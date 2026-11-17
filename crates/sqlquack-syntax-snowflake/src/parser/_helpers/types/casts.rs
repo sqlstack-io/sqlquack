@@ -555,6 +555,7 @@ impl Parser {
                     None
                 };
                 Ok(DataType::Time {
+                    spelling: None,
                     precision,
                     timezone: true,
                 })
@@ -948,6 +949,7 @@ impl Parser {
             false
         };
         Ok(DataType::Time {
+            spelling: None,
             precision,
             timezone,
         })

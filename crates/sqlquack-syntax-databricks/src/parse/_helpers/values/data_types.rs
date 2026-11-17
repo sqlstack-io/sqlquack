@@ -143,23 +143,21 @@ impl Parser<'_> {
             }
             "TIMESTAMP" => {
                 let precision: Option<u32> = self.optional_length()?;
-                let timezone: bool = if self.eat_kws(&["WITH", "LOCAL", "TIME", "ZONE"]) {
-                    true
-                } else {
-                    !self.eat_kws(&["WITHOUT", "TIME", "ZONE"])
-                };
+                let without: bool = !self.kw("WITH") && self.eat_kws(&["WITHOUT", "TIME", "ZONE"]);
+                let timezone: bool = self.eat_kws(&["WITH", "LOCAL", "TIME", "ZONE"]) || !without;
                 DataType::Timestamp {
                     precision,
                     timezone,
-                    spelling: None,
+                    spelling: without.then_some(TypeSpelling::WithoutTimeZone),
                 }
             }
             "TIME" => {
                 let precision: Option<u32> = self.optional_length()?;
-                self.eat_kws(&["WITHOUT", "TIME", "ZONE"]);
+                let without: bool = self.eat_kws(&["WITHOUT", "TIME", "ZONE"]);
                 DataType::Time {
                     precision,
                     timezone: false,
+                    spelling: without.then_some(TypeSpelling::WithoutTimeZone),
                 }
             }
             "GEOGRAPHY" | "GEOMETRY" => {
@@ -272,7 +270,7 @@ impl Parser<'_> {
     /// `complexColType`: `name [:] dataType [NOT NULL] [COMMENT '...']`.
     fn struct_field(&mut self) -> Parsing<StructField> {
         let name: Identifier = self.ident()?;
-        self.eat_char(':');
+        let colon: bool = self.eat_char(':');
         let (data_type, collation) = self.collated_type()?;
         let mut options: Vec<Expression> = Vec::new();
         if self.kw("NOT") && self.kw_at(1, "NULL") {
@@ -290,6 +288,7 @@ impl Parser<'_> {
         let mut field: StructField =
             StructField::with_options_and_comment(name, data_type, options, comment);
         field.collation = collation.map(Box::new);
+        field.colon = colon;
         Ok(field)
     }
 }
