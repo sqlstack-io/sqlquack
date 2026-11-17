@@ -539,6 +539,10 @@ pub(crate) fn insert(table: TableRef, columns: Vec<Identifier>) -> Insert {
         settings: Vec::new(),
         overriding: None,
         returning_aliases: Vec::new(),
+        schema_evolution: false,
+        replace_on: None,
+        replace_using: Vec::new(),
+        table_keyword: false,
     }
 }
 

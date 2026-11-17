@@ -27,11 +27,32 @@ use crate::expressions::types::models::StructField;
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DirectoryInsert {
     pub local: bool,
+    /// The directory; empty when only Databricks' `OPTIONS ( 'path' ... )` names it
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub path: String,
     pub row_format: Option<RowFormat>,
     /// STORED AS clause (e.g., TEXTFILE, ORC, PARQUET)
     #[serde(default)]
     pub stored_as: Option<String>,
+    /// Hive: `STORED AS INPUTFORMAT` class
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub input_format: Option<String>,
+    /// Hive: `STORED AS ... OUTPUTFORMAT` class
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub output_format: Option<String>,
+    /// Databricks: `USING format`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub using: Option<String>,
+    /// Databricks: `OPTIONS ( key [=] value, ... )`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<(Expression, Expression)>,
+    /// Databricks: the positions in `options` of values written without the optional `=`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub options_without_equals: Vec<usize>,
 }
 
 /// INSERT statement
@@ -117,6 +138,20 @@ pub struct Insert {
     /// PostgreSQL: the column list when a column has a subfield or subscript; `columns` is empty
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub column_targets: Vec<Expression>,
+    /// Databricks: `WITH SCHEMA EVOLUTION` after `INSERT`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub schema_evolution: bool,
+    /// Databricks: whether `TABLE` was written before the target
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub table_keyword: bool,
+    /// Databricks: `REPLACE ON condition`, the rows the query replaces
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub replace_on: Option<Box<Expression>>,
+    /// Databricks: `REPLACE USING ( columns )`, the columns whose matching rows the query replaces
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub replace_using: Vec<Identifier>,
 }
 
 /// OUTPUT clause (TSQL) - used in INSERT, UPDATE, DELETE
@@ -273,6 +308,16 @@ pub struct CopyStmt {
     /// Snowflake `COPY FILES INTO`, which copies files between stages
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub copy_files: bool,
+    /// Databricks: `BY POSITION` after the target, matching source columns by position
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub by_position: bool,
+    /// Databricks: the target's column list
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub columns: Vec<Identifier>,
+    /// Databricks: the target's own `WITH ( CREDENTIAL ... )`, apart from the source's
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub target_credentials: Option<Box<Credentials>>,
 }
 
 /// COPY parameter (e.g., FILE_FORMAT = CSV or FORMAT PARQUET)
@@ -1386,6 +1431,10 @@ pub struct Merge {
     /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub returning_aliases: Vec<Expression>,
+    /// Databricks: `WITH SCHEMA EVOLUTION` after `MERGE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub schema_evolution: bool,
 }
 
 /// When

@@ -78,6 +78,7 @@ impl Parser<'_> {
                 })))),
             },
             returning_aliases: Vec::new(),
+            schema_evolution: false,
         })))
     }
 

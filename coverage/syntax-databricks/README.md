@@ -581,6 +581,11 @@ others:
   `from_separator`, as `TRIM` keeps its SQL-standard spelling;
 - a `CACHE TABLE` option's value written without `=`, which the page marks optional, in the cache
   node's `options_without_equals`;
+- `INSERT INTO TABLE` against `INSERT INTO` (the insert's `table_keyword`), and a `REPLACE ON`
+  query in parentheses against one without, as the page writes `( query ) [ alias ] | query`;
+- an `INSERT OVERWRITE DIRECTORY` option's value written without `=`, in the directory's
+  `options_without_equals`, and a path written after `DIRECTORY` against one given only as the
+  `'path'` option;
 - each pipe operator with the pipe written before it (`|>` or `|`), in the `pipe_operators` of
   the select it amounts to, so `FROM t1 |> AGGREGATE sum ( c1 )` keeps `|> AGGREGATE` apart from
   `SELECT sum ( c1 ) FROM t1` and from `FROM t1 | AGGREGATE sum ( c1 )`; a trailing `|>` with

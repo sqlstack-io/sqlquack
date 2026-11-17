@@ -7,6 +7,7 @@ use sqlquack_syntax::expressions::columns::models::{
     GeneratedAsIdentity, TableConstraint,
 };
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
+use sqlquack_syntax::expressions::queries::models::RowFormat;
 use sqlquack_syntax::expressions::schema_objects::models::{CreateView, DropView, ViewColumn};
 use sqlquack_syntax::expressions::tables::models::{
     ClusterByColumnsProperty, ConstraintType, CreateTable, DropTable, FileFormatProperty,
@@ -485,8 +486,8 @@ impl Parser<'_> {
         }
     }
 
-    /// `rowFormat`.
-    pub(crate) fn row_format(&mut self) -> Parsing<()> {
+    /// `rowFormat`; none for a SERDE format, or one with ESCAPED BY, which the tree cannot hold.
+    pub(crate) fn row_format(&mut self) -> Parsing<Option<RowFormat>> {
         self.expect_kw("ROW")?;
         self.expect_kw("FORMAT")?;
         if self.eat_kw("SERDE") {
@@ -494,28 +495,38 @@ impl Parser<'_> {
             if self.eat_kws(&["WITH", "SERDEPROPERTIES"]) {
                 self.property_list()?;
             }
-            return Ok(());
+            return Ok(None);
         }
         self.expect_kw("DELIMITED")?;
+        let mut format: RowFormat = RowFormat {
+            delimited: true,
+            fields_terminated_by: None,
+            collection_items_terminated_by: None,
+            map_keys_terminated_by: None,
+            lines_terminated_by: None,
+            null_defined_as: None,
+        };
+        let mut escaped: bool = false;
         if self.eat_kws(&["FIELDS", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            format.fields_terminated_by = Some(self.string_lit()?);
             if self.eat_kws(&["ESCAPED", "BY"]) {
                 self.string_lit()?;
+                escaped = true;
             }
         }
         if self.eat_kws(&["COLLECTION", "ITEMS", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            format.collection_items_terminated_by = Some(self.string_lit()?);
         }
         if self.eat_kws(&["MAP", "KEYS", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            format.map_keys_terminated_by = Some(self.string_lit()?);
         }
         if self.eat_kws(&["LINES", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            format.lines_terminated_by = Some(self.string_lit()?);
         }
         if self.eat_kws(&["NULL", "DEFINED", "AS"]) {
-            self.string_lit()?;
+            format.null_defined_as = Some(self.string_lit()?);
         }
-        Ok(())
+        Ok((!escaped).then_some(format))
     }
 
     /// `partitionField`: a column (`name type`), a column name, or a transform call.

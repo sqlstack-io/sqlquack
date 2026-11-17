@@ -416,5 +416,8 @@ fn copy(
         with_wrapped,
         where_clause: None,
         copy_files: false,
+        by_position: false,
+        columns: Vec::new(),
+        target_credentials: None,
     }))
 }

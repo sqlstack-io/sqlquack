@@ -381,6 +381,46 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             sql: "SELECT c1 FROM t1 GROUP BY c1 GROUPING SETS ( c1 )",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
+        VerdictTestCase {
+            description: "INSERT WITH SCHEMA EVOLUTION INTO TABLE parses (INSERT_COLUMN_ARITY_MISMATCH.NOT_ENOUGH_DATA_COLUMNS)",
+            sql: "WITH w1 AS ( SELECT 1 ) INSERT WITH SCHEMA EVOLUTION INTO TABLE t1 ( c1 , c2 ) REPLACE WHERE c1 = 1 SELECT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "REPLACE ON with a parenthesised query parses (DELTA_INSERT_COLUMN_ARITY_MISMATCH)",
+            sql: "INSERT INTO t1 REPLACE ON 1 = 1 ( SELECT 1 )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "REPLACE USING parses (DELTA_INSERT_COLUMN_ARITY_MISMATCH)",
+            sql: "INSERT INTO t1 REPLACE USING ( c1 ) SELECT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "MERGE WITH SCHEMA EVOLUTION after a CTE parses (accepted)",
+            sql: "WITH w1 AS ( SELECT 1 ) MERGE WITH SCHEMA EVOLUTION INTO t1 a1 USING t2 a2 ON a1.c1 = a2.c1 WHEN MATCHED AND a1.c2 = 2 THEN DELETE",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "COPY INTO BY POSITION parses (DBFS_DISABLED, a runtime error)",
+            sql: "COPY INTO t1 BY POSITION FROM '/tmp/x' FILEFORMAT = PARQUET",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "COPY INTO with a target credential parses (WITH_CREDENTIAL: not supported for table identifiers)",
+            sql: "COPY INTO t1 WITH ( CREDENTIAL v1 ) FROM '/tmp/x' FILEFORMAT = PARQUET",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "INSERT OVERWRITE DIRECTORY with USING parses (DBFS_DISABLED, a runtime error)",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET SELECT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a directory named by its path option parses (DBFS_DISABLED, a runtime error)",
+            sql: "INSERT OVERWRITE DIRECTORY USING PARQUET OPTIONS ( 'path' '/tmp/x' ) SELECT 1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

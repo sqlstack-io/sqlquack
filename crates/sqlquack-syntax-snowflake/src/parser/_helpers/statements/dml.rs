@@ -892,6 +892,10 @@ impl Parser {
                 settings: Vec::new(),
                 overriding: None,
                 returning_aliases: Vec::new(),
+                schema_evolution: false,
+                replace_on: None,
+                replace_using: Vec::new(),
+                table_keyword: false,
             }));
 
             let conditional_insert = Expression::ConditionalInsert(Box::new(ConditionalInsert {

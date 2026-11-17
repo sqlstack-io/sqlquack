@@ -188,6 +188,10 @@ impl Parser {
             settings: insert_settings,
             overriding: None,
             returning_aliases: Vec::new(),
+            schema_evolution: false,
+            replace_on: None,
+            replace_using: Vec::new(),
+            table_keyword: false,
         })))
     }
 
@@ -357,6 +361,11 @@ impl Parser {
                 path,
                 row_format,
                 stored_as,
+                input_format: None,
+                output_format: None,
+                using: None,
+                options: Vec::new(),
+                options_without_equals: Vec::new(),
             }),
             returning: Vec::new(),
             output: None,
@@ -380,6 +389,10 @@ impl Parser {
             settings: Vec::new(),
             overriding: None,
             returning_aliases: Vec::new(),
+            schema_evolution: false,
+            table_keyword: false,
+            replace_on: None,
+            replace_using: Vec::new(),
         })))
     }
 

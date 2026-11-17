@@ -3,7 +3,9 @@
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::queries::models::{Where, With};
-use sqlquack_syntax::expressions::statements::models::{Merge, When, Whens};
+use sqlquack_syntax::expressions::statements::models::{
+    DirectoryInsert, Insert, Merge, When, Whens,
+};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{
@@ -18,6 +20,21 @@ enum MergeStage {
     Matched,
     NotMatched,
     BySource,
+}
+
+/// The insert's source: a bare `VALUES` list as its rows, any other query as its query.
+fn with_source(mut node: Insert, query: Expression) -> Insert {
+    match query {
+        Expression::Values(rows) if rows.alias.is_none() => {
+            node.values = rows
+                .expressions
+                .into_iter()
+                .map(|row| row.expressions.into_iter().map(default_value).collect())
+                .collect();
+        }
+        other => node.query = Some(other),
+    }
+    node
 }
 
 fn with_alias(mut relation: TableRef, alias: Option<TableAlias>) -> TableRef {
@@ -43,12 +60,9 @@ impl Parser<'_> {
         Ok(table(self.multipart_identifier()?))
     }
 
-    /// `WITH SCHEMA EVOLUTION` after `INSERT` or `MERGE`, as a gap.
-    fn schema_evolution(&mut self) {
-        let start: usize = self.offset();
-        if self.eat_kws(&["WITH", "SCHEMA", "EVOLUTION"]) {
-            self.gap("schema_evolution", start);
-        }
+    /// Whether `WITH SCHEMA EVOLUTION` follows `INSERT` or `MERGE`.
+    fn schema_evolution(&mut self) -> bool {
+        self.eat_kws(&["WITH", "SCHEMA", "EVOLUTION"])
     }
 
     /// `WITH (options)` after an `INSERT` target, as a gap.
@@ -79,47 +93,52 @@ impl Parser<'_> {
     }
 
     /// `[LOCAL] DIRECTORY …` after `INSERT OVERWRITE`, in Spark's or Hive's form.
-    fn overwrite_directory(&mut self) -> Parsing<()> {
+    fn overwrite_directory(&mut self) -> Parsing<DirectoryInsert> {
         let start: usize = self.offset();
-        self.eat_kw("LOCAL");
+        let local: bool = self.eat_kw("LOCAL");
         self.expect_kw("DIRECTORY")?;
         let path: bool = self.string_at(0);
-        if path {
-            self.string_lit()?;
-        }
+        let mut node: DirectoryInsert = DirectoryInsert {
+            local,
+            path: match path {
+                true => self.string_lit()?,
+                false => String::new(),
+            },
+            row_format: None,
+            stored_as: None,
+            input_format: None,
+            output_format: None,
+            using: None,
+            options: Vec::new(),
+            options_without_equals: Vec::new(),
+        };
         if !self.kw("USING") && path {
             if self.kw("ROW") {
-                self.row_format()?;
+                let row: usize = self.offset();
+                node.row_format = self.row_format()?;
+                if node.row_format.is_none() {
+                    self.gap("directory_row_format", row);
+                }
             }
             if self.kw("STORED") {
-                self.create_file_format()?;
+                return self.directory_file_format(node);
             }
-            return Ok(());
+            return Ok(node);
         }
         self.expect_kw("USING")?;
-        self.multipart_identifier()?;
-        let mut path_option: bool = false;
+        node.using = Some(joined(self.multipart_identifier()?).name);
         if self.eat_kw("OPTIONS") {
-            let at: usize = self.offset();
-            let options: Vec<Expression> = self.property_list()?;
-            if options
-                .iter()
-                .any(|option| !matches!(option, Expression::Eq(_)))
-            {
-                return Err(self.error_with(
-                    "Operation not allowed: Values must be specified for key(s)",
-                    at,
-                    true,
-                ));
-            }
-            path_option = options.iter().any(|option| match option {
-                Expression::Eq(pair) => {
-                    crate::parse::_helpers::commands::alters::property_text(&pair.left)
-                        .eq_ignore_ascii_case("path")
-                }
-                _ => false,
-            });
+            let spelled: Vec<((Expression, Expression), bool)> =
+                self.spelled_valued_property_list()?;
+            node.options_without_equals = (0..spelled.len())
+                .filter(|position| spelled[*position].1)
+                .collect();
+            node.options = spelled.into_iter().map(|(pair, _)| pair).collect();
         }
+        let path_option: bool = node.options.iter().any(|(key, _)| {
+            crate::parse::_helpers::commands::alters::property_text(key)
+                .eq_ignore_ascii_case("path")
+        });
         if path == path_option {
             return Err(self.error_with(
                 "Directory path and 'path' in OPTIONS should be specified one, but not both",
@@ -127,28 +146,49 @@ impl Parser<'_> {
                 true,
             ));
         }
-        Ok(())
+        Ok(node)
+    }
+
+    /// Hive's `STORED AS` a format name or input and output classes; a storage handler is a gap.
+    fn directory_file_format(&mut self, mut node: DirectoryInsert) -> Parsing<DirectoryInsert> {
+        if !self.kw_at(1, "AS") {
+            let start: usize = self.offset();
+            self.create_file_format()?;
+            self.gap("directory_storage_handler", start);
+            return Ok(node);
+        }
+        self.at += 2;
+        if self.eat_kw("INPUTFORMAT") {
+            node.input_format = Some(self.string_lit()?);
+            self.expect_kw("OUTPUTFORMAT")?;
+            node.output_format = Some(self.string_lit()?);
+        } else {
+            node.stored_as = Some(self.ident()?.name);
+        }
+        Ok(node)
     }
 
     /// `singleInsertQuery`: `insertInto` and its query, or `( query ) alias`.
     pub(crate) fn insert_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("INSERT")?;
-        self.schema_evolution();
+        let schema_evolution: bool = self.schema_evolution();
         let overwrite: bool = self.eat_kw("OVERWRITE");
         if !overwrite {
             self.expect_kw("INTO")?;
         }
         if overwrite && (self.kw("DIRECTORY") || (self.kw("LOCAL") && self.kw_at(1, "DIRECTORY"))) {
-            let start: usize = self.offset();
-            self.overwrite_directory()?;
-            self.query()?;
-            self.gap("insert_overwrite_directory", start);
-            return Ok(Expression::Null(
-                sqlquack_syntax::expressions::names::models::Null,
-            ));
+            let mut node = insert(TableRef::new(String::new()));
+            node.overwrite = true;
+            node.with = with;
+            node.schema_evolution = schema_evolution;
+            node.directory = Some(self.overwrite_directory()?);
+            let query: Expression = self.query()?;
+            return Ok(Expression::Insert(Box::new(with_source(node, query))));
         }
-        self.eat_kw("TABLE");
+        let table_keyword: bool = self.eat_kw("TABLE");
         let mut node = insert(self.table_reference()?);
+        node.schema_evolution = schema_evolution;
+        node.table_keyword = table_keyword;
         node.overwrite = overwrite;
         node.with = with;
         let alias: Option<TableAlias> = match overwrite {
@@ -182,16 +222,13 @@ impl Parser<'_> {
         };
         if !overwrite && self.kw("REPLACE") {
             self.at += 1;
-            let start: usize = self.offset();
             if self.eat_kw("WHERE") {
                 node.replace_where = Some(Box::new(self.expression()?));
             } else if self.eat_kw("ON") {
-                self.expression()?;
-                self.gap("insert_replace_on", start);
+                node.replace_on = Some(Box::new(self.expression()?));
             } else {
                 self.expect_kw("USING")?;
-                self.identifier_list()?;
-                self.gap("insert_replace_using", start);
+                node.replace_using = self.identifier_list()?;
             }
         } else if alias.is_some() {
             return Err(self.error());
@@ -208,22 +245,13 @@ impl Parser<'_> {
                 let alias: Option<TableAlias> = self.table_alias()?;
                 match alias {
                     Some(alias) => subquery(query, Some(alias), false),
+                    None if node.replace_on.is_some() => subquery(query, None, false),
                     None => query,
                 }
             }
             false => self.query()?,
         };
-        match query {
-            Expression::Values(rows) if rows.alias.is_none() => {
-                node.values = rows
-                    .expressions
-                    .into_iter()
-                    .map(|row| row.expressions.into_iter().map(default_value).collect())
-                    .collect();
-            }
-            other => node.query = Some(other),
-        }
-        Ok(Expression::Insert(Box::new(node)))
+        Ok(Expression::Insert(Box::new(with_source(node, query))))
     }
 
     /// `assignmentList`: `key = value, ...`, each as an equality of a column and its value.
@@ -242,7 +270,7 @@ impl Parser<'_> {
     /// `mergeIntoTable`.
     pub(crate) fn merge_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("MERGE")?;
-        self.schema_evolution();
+        let schema_evolution: bool = self.schema_evolution();
         self.expect_kw("INTO")?;
         let target_name: TableRef = self.table_reference()?;
         let target: TableRef = with_alias(target_name, self.table_alias()?);
@@ -292,6 +320,7 @@ impl Parser<'_> {
             },
             with_: with.map(|with| Box::new(Expression::With(Box::new(with)))),
             returning: None,
+            schema_evolution,
         })))
     }
 

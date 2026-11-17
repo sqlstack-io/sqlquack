@@ -587,6 +587,10 @@ pub(crate) fn insert(table: TableRef) -> Insert {
         function_target: None,
         partition_by: None,
         settings: Vec::new(),
+        schema_evolution: false,
+        replace_on: None,
+        replace_using: Vec::new(),
+        table_keyword: false,
     }
 }
 

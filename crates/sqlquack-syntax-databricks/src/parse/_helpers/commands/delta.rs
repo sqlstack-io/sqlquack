@@ -95,18 +95,16 @@ impl Parser<'_> {
         self.expect_kw("COPY")?;
         self.expect_kw("INTO")?;
         let target: TableRef = self.table_reference()?;
-        let start: usize = self.offset();
-        if self.kw("WITH") && self.char_at(1, '(') {
-            self.copy_credentials()?;
-            self.gap("copy_target_credential", start);
-        }
-        let start: usize = self.offset();
-        if self.eat_kws(&["BY", "POSITION"]) {
-            self.gap("copy_by_position", start);
-        } else if self.is_char('(') {
-            self.identifier_list()?;
-            self.gap("copy_columns", start);
-        }
+        let target_credentials: Option<Box<Credentials>> =
+            match self.kw("WITH") && self.char_at(1, '(') {
+                true => Some(Box::new(self.copy_credentials()?)),
+                false => None,
+            };
+        let by_position: bool = self.eat_kws(&["BY", "POSITION"]);
+        let columns: Vec<Identifier> = match !by_position && self.is_char('(') {
+            true => self.identifier_list()?,
+            false => Vec::new(),
+        };
         self.expect_kw("FROM")?;
         let mut credentials: Option<Box<Credentials>> = None;
         let source: Expression = match self.eat_char('(') {
@@ -182,6 +180,9 @@ impl Parser<'_> {
             credentials,
             is_into: true,
             with_wrapped: false,
+            by_position,
+            columns,
+            target_credentials,
         })))
     }
 

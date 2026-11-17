@@ -1155,6 +1155,84 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "true",
         },
         ValueTestCase {
+            description: "INSERT keeps WITH SCHEMA EVOLUTION",
+            sql: "INSERT WITH SCHEMA EVOLUTION INTO t1 SELECT 1",
+            pointer: "/0/insert/schema_evolution",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "INSERT keeps the TABLE written before its target",
+            sql: "INSERT INTO TABLE t1 SELECT 1",
+            pointer: "/0/insert/table_keyword",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "INSERT keeps its REPLACE ON condition",
+            sql: "INSERT INTO t1 REPLACE ON c1 = 1 SELECT 1",
+            pointer: "/0/insert/replace_on/eq/left/column/name/name",
+            expected_json: "\"c1\"",
+        },
+        ValueTestCase {
+            description: "INSERT keeps its REPLACE USING columns",
+            sql: "INSERT INTO t1 REPLACE USING ( c1 ) SELECT 1",
+            pointer: "/0/insert/replace_using/0/name",
+            expected_json: "\"c1\"",
+        },
+        ValueTestCase {
+            description: "MERGE keeps WITH SCHEMA EVOLUTION",
+            sql: "MERGE WITH SCHEMA EVOLUTION INTO t1 USING t2 ON t1.c1 = t2.c1 WHEN MATCHED THEN DELETE",
+            pointer: "/0/merge/schema_evolution",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "COPY INTO keeps BY POSITION",
+            sql: "COPY INTO t1 BY POSITION FROM '/tmp/x' FILEFORMAT = PARQUET",
+            pointer: "/0/copy/by_position",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "COPY INTO keeps the target's column list",
+            sql: "COPY INTO t1 ( c1 ) FROM '/tmp/x' FILEFORMAT = PARQUET",
+            pointer: "/0/copy/columns/0/name",
+            expected_json: "\"c1\"",
+        },
+        ValueTestCase {
+            description: "COPY INTO keeps the target's credential apart from the source's",
+            sql: "COPY INTO t1 WITH ( CREDENTIAL v1 ) FROM '/tmp/x' FILEFORMAT = PARQUET",
+            pointer: "/0/copy/target_credentials/credentials/0/1",
+            expected_json: "\"v1\"",
+        },
+        ValueTestCase {
+            description: "INSERT OVERWRITE DIRECTORY keeps its path",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET SELECT 1",
+            pointer: "/0/insert/directory/path",
+            expected_json: "\"/tmp/x\"",
+        },
+        ValueTestCase {
+            description: "INSERT OVERWRITE DIRECTORY keeps its USING format",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET SELECT 1",
+            pointer: "/0/insert/directory/using",
+            expected_json: "\"PARQUET\"",
+        },
+        ValueTestCase {
+            description: "a directory named only by its path option keeps the option",
+            sql: "INSERT OVERWRITE DIRECTORY USING PARQUET OPTIONS ( 'path' '/tmp/x' ) SELECT 1",
+            pointer: "/0/insert/directory/options/0/1/literal/value",
+            expected_json: "\"/tmp/x\"",
+        },
+        ValueTestCase {
+            description: "a Hive directory keeps its input format class",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' STORED AS INPUTFORMAT 'a.In' OUTPUTFORMAT 'a.Out' SELECT 1",
+            pointer: "/0/insert/directory/input_format",
+            expected_json: "\"a.In\"",
+        },
+        ValueTestCase {
+            description: "a Hive directory keeps its delimited row format",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' SELECT 1",
+            pointer: "/0/insert/directory/row_format/fields_terminated_by",
+            expected_json: "\",\"",
+        },
+        ValueTestCase {
             description: "an explicit ALL is recorded, not folded into none",
             sql: "SELECT sum(ALL a) FROM t",
             pointer: "/0/select/expressions/0/function/set_quantifier",
@@ -1858,15 +1936,26 @@ fn given_sql_when_parsing_strictly_then_any_error_refuses_it() {
 
 #[test]
 fn given_a_gap_when_parsing_then_it_names_the_construct_and_its_range() {
-    let test_cases = [GapTestCase {
-        description: "a statement with no shared node is a gap from its first word to its end",
-        sql: "SELECT 1; CACHE SELECT a FROM t",
-        expected_gaps: vec![Gap {
-            construct: "cache_select",
-            start: 10,
-            end: 31,
-        }],
-    }];
+    let test_cases = [
+        GapTestCase {
+            description: "a statement with no shared node is a gap from its first word to its end",
+            sql: "SELECT 1; CACHE SELECT a FROM t",
+            expected_gaps: vec![Gap {
+                construct: "cache_select",
+                start: 10,
+                end: 31,
+            }],
+        },
+        GapTestCase {
+            description: "a directory's SERDE row format, which the tree cannot hold, is a gap",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' ROW FORMAT SERDE 'a.S' SELECT 1",
+            expected_gaps: vec![Gap {
+                construct: "directory_row_format",
+                start: 36,
+                end: 58,
+            }],
+        },
+    ];
     for test_case in test_cases {
         let parsed: Parsed = parse(test_case.sql)
             .unwrap_or_else(|error| panic!("{}: {error:?}", test_case.description));

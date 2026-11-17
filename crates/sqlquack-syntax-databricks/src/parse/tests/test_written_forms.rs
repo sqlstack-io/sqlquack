@@ -393,6 +393,32 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 2,
         },
         DistinctTreesTestCase {
+            description: "INSERT INTO with and without TABLE, and with WITH SCHEMA EVOLUTION",
+            written: &[
+                "INSERT INTO t1 SELECT 1",
+                "INSERT INTO TABLE t1 SELECT 1",
+                "INSERT WITH SCHEMA EVOLUTION INTO t1 SELECT 1",
+            ],
+            expected_distinct_trees: 3,
+        },
+        DistinctTreesTestCase {
+            description: "REPLACE ON's query with and without parentheses",
+            written: &[
+                "INSERT INTO t1 REPLACE ON 1 = 1 SELECT 1",
+                "INSERT INTO t1 REPLACE ON 1 = 1 ( SELECT 1 )",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
+            description: "a directory's OPTIONS with and without =, and its path written or as an option",
+            written: &[
+                "INSERT OVERWRITE DIRECTORY USING PARQUET OPTIONS ( 'path' = '/tmp/x' ) SELECT 1",
+                "INSERT OVERWRITE DIRECTORY USING PARQUET OPTIONS ( 'path' '/tmp/x' ) SELECT 1",
+                "INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET SELECT 1",
+            ],
+            expected_distinct_trees: 3,
+        },
+        DistinctTreesTestCase {
             description: "<=> and IS NOT DISTINCT FROM",
             written: &["SELECT 1 <=> 2", "SELECT 1 IS NOT DISTINCT FROM 2"],
             expected_distinct_trees: 2,

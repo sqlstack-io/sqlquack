@@ -411,6 +411,7 @@ impl Parser<'_> {
                 })))),
             },
             returning_aliases,
+            schema_evolution: false,
         })))
     }
 

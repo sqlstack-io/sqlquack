@@ -784,6 +784,7 @@ impl Parser {
             with_: None,
             returning: returning.map(Box::new),
             returning_aliases: Vec::new(),
+            schema_evolution: false,
         }))))
     }
 

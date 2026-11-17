@@ -66,6 +66,9 @@ impl Parser {
             with_wrapped: false,
             where_clause: None,
             copy_files,
+            by_position: false,
+            columns: Vec::new(),
+            target_credentials: None,
         })))
     }
 
