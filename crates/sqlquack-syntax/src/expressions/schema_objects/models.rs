@@ -324,6 +324,9 @@ pub struct CreateSchema {
     /// Snowflake: the modifier before SCHEMA as written, e.g. "TRANSIENT"
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub modifier: Option<String>,
+    /// Databricks: the word written instead of SCHEMA, "DATABASE" or "NAMESPACE"
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kind: Option<String>,
 }
 
 impl CreateSchema {
@@ -340,6 +343,7 @@ impl CreateSchema {
             or_alter: false,
             define: false,
             modifier: None,
+            kind: None,
         }
     }
 }

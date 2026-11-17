@@ -15,14 +15,15 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 use crate::parse::_helpers::commands::creates::{Head, property};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{joined, string, table};
-use crate::parse::constants::{DROP_TEMPORARY_FUNCTION, SCALA_LANGUAGE, SQL_LANGUAGE};
+use crate::parse::constants::{DROP_TEMPORARY_FUNCTION, SCALA_LANGUAGE, SCHEMA_KIND, SQL_LANGUAGE};
 use crate::scan::models::TokenKind;
 
 impl Parser<'_> {
-    /// `createNamespace` after `CREATE`: `SCHEMA [IF NOT EXISTS] name` and its clauses.
+    /// `createNamespace` after `CREATE`: `SCHEMA [IF NOT EXISTS] name` and its clauses, keeping DATABASE or NAMESPACE as its kind.
     pub(crate) fn create_schema(&mut self) -> Parsing<Expression> {
-        self.at += 1;
         let mut node: CreateSchema = CreateSchema::new(String::new());
+        node.kind = self.word_at(0).filter(|kind| kind != SCHEMA_KIND);
+        self.at += 1;
         node.if_not_exists = self.eat_kws(&["IF", "NOT", "EXISTS"]);
         node.name = self.multipart_identifier()?;
         loop {

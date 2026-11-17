@@ -1325,6 +1325,7 @@ impl Parser {
             or_alter: false,
             define: false,
             modifier: None,
+            kind: None,
         })))
     }
 

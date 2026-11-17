@@ -115,6 +115,18 @@ fn given_a_ddl_clause_with_no_shared_field_when_parsing_then_its_tree_keeps_it()
             expected_json: "\"DATABASE\"",
         },
         ValueTestCase {
+            description: "CREATE DATABASE keeps DATABASE as its kind",
+            sql: "CREATE DATABASE IF NOT EXISTS s1 COMMENT 'x'",
+            pointer: "/0/create_schema/kind",
+            expected_json: "\"DATABASE\"",
+        },
+        ValueTestCase {
+            description: "CREATE NAMESPACE keeps NAMESPACE as its kind",
+            sql: "create namespace s1",
+            pointer: "/0/create_schema/kind",
+            expected_json: "\"NAMESPACE\"",
+        },
+        ValueTestCase {
             description: "a column's reference keeps FOREIGN KEY when written",
             sql: "CREATE TABLE t1 ( c1 INT CONSTRAINT n1 FOREIGN KEY REFERENCES t2 )",
             pointer: "/0/create_table/columns/0/constraints/0/References/has_foreign_key_keywords",
