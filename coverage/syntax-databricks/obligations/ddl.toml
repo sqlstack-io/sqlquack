@@ -17367,14 +17367,6 @@ anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
 note = "a string literal in place of <order_by_column>; the warehouse (DBSQL 2026.44) answers semantic_error (UNRESOLVED_COLUMN.WITH_SUGGESTION), so the answer is recorded rather than expected"
 
 [[obligation]]
-id = "db.ddl.create-streaming-table-auto-cdc.o278"
-kind = "required_operand_missing"
-required = true
-target = "<order_by_column> #3"
-anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
-note = "SYSTEM read as the <order_by_column> of the bitemporal line, then a second SEQUENCE BY; the answer is recorded rather than expected"
-
-[[obligation]]
 id = "db.ddl.create-streaming-table-auto-cdc.o272"
 kind = "negative_neighbour"
 required = true

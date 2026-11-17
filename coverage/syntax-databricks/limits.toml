@@ -3254,17 +3254,7 @@ form = "db.ddl.create-streaming-table-auto-cdc"
 kind = "required_operand_missing"
 target = "<order_by_column> #3"
 note = "omit <order_by_column>"
-reason = "the bitemporal line reads '... SEQUENCE BY <order_by_column> SYSTEM SEQUENCE BY <system_order_by_column> ... STORED AS BITEMPORAL', and SYSTEM is a non-reserved word, so any text that omits <order_by_column> reads SYSTEM as the operand: the derived negative \"... SEQUENCE BY SYSTEM SEQUENCE BY v1 STORED AS BITEMPORAL\" has an operand and a second SEQUENCE BY clause, which the warehouse refuses as DUPLICATE_CLAUSES, so no text writes this omission; the derived text is kept as an observed [[limit]] whose receipt settles it"
-
-[[limit]]
-form = "db.ddl.create-streaming-table-auto-cdc"
-kind = "required_operand_missing"
-target = "<order_by_column> #3"
-note = "SYSTEM read as the <order_by_column> of the bitemporal line, then a second SEQUENCE BY; the answer is recorded rather than expected"
-anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
-sql = "CREATE OR REFRESH STREAMING TABLE st1 FLOW AUTO CDC FROM v1 KEYS ( v1 ) SEQUENCE BY SYSTEM SEQUENCE BY v1 STORED AS BITEMPORAL"
-context = "raw"
-expect = "observe"
+reason = "the bitemporal line reads '... SEQUENCE BY <order_by_column> SYSTEM SEQUENCE BY <system_order_by_column> ... STORED AS BITEMPORAL', and SYSTEM is a non-reserved word, so any text that omits <order_by_column> reads SYSTEM as the operand: the derived negative \"... SEQUENCE BY SYSTEM SEQUENCE BY v1 STORED AS BITEMPORAL\" has an operand and a second SEQUENCE BY clause, which the warehouse refuses as DUPLICATE_CLAUSES, so no text writes this omission and nothing replaces it"
 
 [[suppress]]
 form = "db.ddl.create-streaming-table-auto-cdc"

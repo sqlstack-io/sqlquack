@@ -2878,3 +2878,8 @@ reason = "auto-cdc's 'omit <order_by_column>' of the bitemporal line cannot be w
 ids = [
   "db.ddl.create-streaming-table-auto-cdc.o179",
 ]
+
+[[retired]]
+retired_in = "086cab96efcfbb1407b1ce54605bad1da651030e"
+reason = "an observed [[limit]] that re-claimed exactly what the suppressed o179 of create-streaming-table-auto-cdc suppresses (the same SQL, kind, target and required flag): any text that omits <order_by_column> reads the non-reserved SYSTEM as the operand, so no text writes the omission and nothing replaces it"
+ids = ["db.ddl.create-streaming-table-auto-cdc.o278"]
