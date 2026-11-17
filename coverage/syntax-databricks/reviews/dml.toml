@@ -24,3 +24,193 @@ note = "Read against the pinned Databricks documentation pages and the Spark 4.2
 "db.dml.delete-from" = "f992cfb93fee5d6d0e818d2f23445fd436498696d18dc31653080aa64f9279e5"
 "db.dml.insert-into.values-default" = "31253ad16e121434be8b85477a9bf639b31c85946c5c3b7afeebbbd82aee1e5f"
 "db.dml.update" = "d38c51f6c28d4ef4166a3468df152a07ce5ab5fba56af530c8071696a085839e"
+
+[[review]]
+id = "db-dml-002"
+family = "dml"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T05:37:21Z"
+verdict = "approved"
+forms = [
+  "db.dml.load",
+  "db.dml.update",
+]
+note = "Re-read in full on 16 Nov 2026 against the documentation page, the form's obligations, its cases with their Databricks receipts and the local parse trees. Bound on 251cfd3dc only where the form's fingerprint and definition hash still equal those of the dossier that was read; forms that changed since are left for a new reading."
+
+[review.fingerprints]
+"db.dml.load" = "d9ddcd2da657065443c35a2e6859296929821cbbf12ea959023dc334c746cc06"
+"db.dml.update" = "5d2dd72a93765071b028cf7a58ea82646b320e7cfed80a5b308f3c3c53489b48"
+
+[review.definitions]
+"db.dml.load" = "7258b7c3d4a2485b016858a9416d7e3bae3ccc543e30501f1635da6a8089b9f9"
+"db.dml.update" = "d38c51f6c28d4ef4166a3468df152a07ce5ab5fba56af530c8071696a085839e"
+
+[[review]]
+id = "db-dml-003"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.copy-into",
+]
+note = "(d) 25 accepted cases opaque: o006 'COPY INTO t1 BY POSITION FROM '/tmp/x' FILEFORMAT = PARQUET', o007/o012 '( c1 )' column list -> {command:{this:...}}; BY POSITION and the column list never structured."
+
+[review.fingerprints]
+"db.dml.copy-into" = "9d569809bf0ce118887aafb047829a8ff86a486ea18b554cb341cc11ee3a353e"
+
+[review.definitions]
+"db.dml.copy-into" = "039164a1c4735379b9bfb586fabdd14c8622163415771c5406cf218f92a53d2d"
+
+[[review]]
+id = "db-dml-004"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.copy-into.target-credential",
+]
+note = "(d) every accepted case opaque: o001 'COPY INTO t1 WITH ( CREDENTIAL v1 ) FROM '/tmp/x' FILEFORMAT = PARQUET' -> {command:{this:...}}; CREDENTIAL never structured."
+
+[review.fingerprints]
+"db.dml.copy-into.target-credential" = "6d7d75db3e3442b8b269314dd2624d0d4565d5aab4f714268e82b5948d90057d"
+
+[review.definitions]
+"db.dml.copy-into.target-credential" = "8b65a4fed862127c0d65aa67af816373d8c5a0ef83e840fffbcaa3567ef9180e"
+
+[[review]]
+id = "db-dml-005"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.into",
+]
+note = "(d) o002/o005/o007/o012/o021 'WITH w1 AS ( SELECT 1 ) INSERT WITH SCHEMA EVOLUTION INTO TABLE t1 ( c1 , c2 ) REPLACE WHERE c1 = 1 SELECT 1' -> {command:{this:...}}; CTE, WITH SCHEMA EVOLUTION, TABLE, REPLACE WHERE never structured."
+
+[review.fingerprints]
+"db.dml.insert-into.into" = "2bca04e69434c8ca399c4acf69f852c6e80db1208f8d3e7653de007a6e16d7a5"
+
+[review.definitions]
+"db.dml.insert-into.into" = "bbeed8067b71875040cb15b95f10fc3faa9a7c2f09fcbcfd5364d774334a9429"
+
+[[review]]
+id = "db-dml-006"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.into-replace-on",
+]
+note = "(d) every accepted case opaque: o001 'INSERT INTO t1 REPLACE ON 1 = 1 ( SELECT 1 )', o015 BY NAME, o021/o032 aliases -> {command:{this:...}}; REPLACE ON never structured."
+
+[review.fingerprints]
+"db.dml.insert-into.into-replace-on" = "283ce368a284a883be26d50c8a37d9fe3405f70953256ef6ef71d65816a337fa"
+
+[review.definitions]
+"db.dml.insert-into.into-replace-on" = "9322af7c96037cd88169632fcf591ddfc0346888f18d5149a5810914156a4334"
+
+[[review]]
+id = "db-dml-007"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.into.syntax",
+]
+note = "(d) o002/o012/o014/o020 'INSERT INTO t1 REPLACE USING ( c1 ) SELECT 1' and the all-options case -> {command:{this:...}}; REPLACE USING, CTE, WITH SCHEMA EVOLUTION, TABLE never structured."
+
+[review.fingerprints]
+"db.dml.insert-into.into.syntax" = "57eafbdb6131ae64afbbdfee2dbc67611d83707737a741f393107489f3ad4b82"
+
+[review.definitions]
+"db.dml.insert-into.into.syntax" = "d988f85f607c63e19381b4e6c16912a0e887353c3a65d8ece2fafff3bcc1226f"
+
+[[review]]
+id = "db-dml-008"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.overwrite-into",
+]
+note = "(d) o002/o005/o009/o014/o018 'WITH w1 AS ( SELECT 1 ) INSERT WITH SCHEMA EVOLUTION OVERWRITE TABLE t1 PARTITION ( c1 = 1 ) ( c1 , c2 ) SELECT 1' -> {command:{this:...}}; PARTITION, TABLE, CTE never structured."
+
+[review.fingerprints]
+"db.dml.insert-into.overwrite-into" = "8d399d52d83dcccb583b20e967adb9bd1d255f8e871600fd3846ffa28c3d1509"
+
+[review.definitions]
+"db.dml.insert-into.overwrite-into" = "cb93fb3cf88b9836ea9a654fcd04efec50d8e1dd4c34d302ee85b1318a2391b6"
+
+[[review]]
+id = "db-dml-009"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.values-default",
+]
+note = "(d) stricter reading: o017/o020 'INSERT INTO t1 SELECT DEFAULT , DEFAULT' gives {\"column\":{\"name\":\"DEFAULT\"}}, so the DEFAULT alternative becomes a column reference, while VALUES gives {\"default_keyword\":null}. (a)(b)(c) pass; the suppress row holds."
+
+[review.fingerprints]
+"db.dml.insert-into.values-default" = "10ebe3c489fe77f511373c048ee53d48abad672816b6cd90dd74b38b590592d8"
+
+[review.definitions]
+"db.dml.insert-into.values-default" = "fb2757f09df0062491d404e4338c05ece4c7d1c1dde54735a98731710f41a9b2"
+
+[[review]]
+id = "db-dml-010"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-overwrite-directory",
+]
+note = "(d) every accepted case opaque: o001 'INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET VALUES ( 1 )', o046 OPTIONS ( 'path' ... ) -> {command:{this:...}}; directory, USING, OPTIONS, VALUES never structured."
+
+[review.fingerprints]
+"db.dml.insert-overwrite-directory" = "b5895ab884c115bda5fdb820725a88aebba7b5b288ab139f7b9eda736ad44f4a"
+
+[review.definitions]
+"db.dml.insert-overwrite-directory" = "cf7d61dcfc0a14da22b6006a83f9aecb963171ba49e82213b349b89a6cd6069c"
+
+[[review]]
+id = "db-dml-011"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-overwrite-directory-hive",
+]
+note = "(d) every positive case opaque: o001 'INSERT OVERWRITE DIRECTORY '/tmp/x' VALUES ( 1 )', o007 ROW FORMAT DELIMITED STORED AS TEXTFILE -> {command:{this:...}} (receipts still pending)."
+
+[review.fingerprints]
+"db.dml.insert-overwrite-directory-hive" = "c02ed6bb632415c124640c3ab6c8df98355f77aceb8edb523cc08a4b21864f10"
+
+[review.definitions]
+"db.dml.insert-overwrite-directory-hive" = "a78eadd0568c02a06eb41ddb7021072d5e9c8875b0cb2a2f9e9c1614ab2139cb"
+
+[[review]]
+id = "db-dml-012"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.merge-into",
+]
+note = "(d) o002/o005/o010/o025/o031/o033/o039 'WITH w1 AS ( SELECT 1 ) MERGE WITH SCHEMA EVOLUTION INTO t1 a1 USING t2 a2 ... WHEN MATCHED AND a1.c2 = 2 THEN DELETE' -> {command:{this:...}}; CTE, SCHEMA EVOLUTION, AND conditions, BY TARGET never structured."
+
+[review.fingerprints]
+"db.dml.merge-into" = "994864028e67b71a4ce0442c4cccf31179c3a177216bedd807aafb301c8924b5"
+
+[review.definitions]
+"db.dml.merge-into" = "3d7cc611d0b78bf231a134cc5b49ab32eee7548cdcb3a876471585ae0452da54"

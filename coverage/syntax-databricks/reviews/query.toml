@@ -102,3 +102,154 @@ note = "Read against the pinned Databricks documentation pages and the Spark 4.2
 "db.query.select-values.select" = "90f5d9b4130452acf461fedaecc1a1d8501063737cb2e57921f2cfa66dd27456"
 "db.query.select-values.values" = "a6db7aa8f5c62ba3c3a5baca1a5ed5b2a2543b3b997855eea36478ac5a8081a7"
 "db.query.star" = "164b0d09702bed1e4f3243bf557f5ea71a523e969996d731243fb5ef7519b02a"
+
+[[review]]
+id = "db-query-002"
+family = "query"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T05:37:21Z"
+verdict = "approved"
+forms = [
+  "db.query.select",
+  "db.query.select-limit",
+  "db.query.select-match-recognize-define",
+  "db.query.select-sampling",
+  "db.query.select-tvf",
+  "db.query.select-values.values",
+]
+note = "Re-read in full on 16 Nov 2026 against the documentation page, the form's obligations, its cases with their Databricks receipts and the local parse trees. Bound on 251cfd3dc only where the form's fingerprint and definition hash still equal those of the dossier that was read; forms that changed since are left for a new reading."
+
+[review.fingerprints]
+"db.query.select" = "017a1accce338de1ac7ed64681c65099887dc7fa60f07b59149dcf12d5375cde"
+"db.query.select-limit" = "ed39b1fffb5b68fb62819aaf7ea4b2fcc54036f03f1827e0fc1bf0b5e17d2833"
+"db.query.select-match-recognize-define" = "01f7bed5206e7d82cd0b0c0d7f44039b1d4ee609fc4534031629a6d436a54e6e"
+"db.query.select-sampling" = "4dfee87db56486b2b6038e6d406982534bade213fa2d952179d55bec7a5b07ba"
+"db.query.select-tvf" = "d49aff2865ed26e781eff61478ef0586e3e013c2713dc968cfc1157c1b03c69d"
+"db.query.select-values.values" = "747d1d4b00b3cc00da44d5da74f105652039db660679c0a857ed68b9753302b0"
+
+[review.definitions]
+"db.query.select" = "fcd9b40d1fc28db0f7e428cb6540faa5805aee233e8526a0011dd44ecc1489a3"
+"db.query.select-limit" = "c3a6537b389984ab892dc6c2d0ad4b6cb535b1d38b99e78742309981c3ae4e4f"
+"db.query.select-match-recognize-define" = "286148bb6ea73adb7fa607d51d8ffe5c15a2c89e2357521cc21ff776e3e60be9"
+"db.query.select-sampling" = "0224367882da90c10a5d28b0de27850cb7c7b4bbbbabc01644e17ea9293ccd18"
+"db.query.select-tvf" = "3be2ea2ae0d59522a44e854d58e4cf409433455c7a934cdf5ea5ba98ed0d9f85"
+"db.query.select-values.values" = "900853f1f1a0a1c114635211640df146f9df2ff21e217a5e83db4f94cfbd010f"
+
+[[review]]
+id = "db-query-003"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.query",
+]
+note = "(d) pipe desugared: o043 SELECT 1 |> WHERE 1 = 1 gives select * from subquery + where_clause, no |> mark; o055 SELECT c1 FROM t1 |> tree equals SELECT c1 FROM t1. (b) stricter: o014/o018 DISTRIBUTE/SORT branch case is bare SELECT 1, same as option_absent."
+
+[review.fingerprints]
+"db.query.query" = "387e1cf6ad1f636b02386350e2cf65c0fe3ee995956ceb1a00c0175f3b0940c5"
+
+[review.definitions]
+"db.query.query" = "6353907c6e1eb9910f8c7c00033ff01a987b5c149f55860a6e3afe2c45535b05"
+
+[[review]]
+id = "db-query-004"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-groupby.hive-grouping-sets",
+]
+note = "(d) strict call: o001 GROUP BY c1 GROUPING SETS ( c1 ) -> group_by.expressions [column c1, grouping_sets] with no Hive mark, the shape the comma (cross-product) form GROUP BY c1 , GROUPING SETS ( c1 ) takes; page says Hive form ignores the GROUP BY list."
+
+[review.fingerprints]
+"db.query.select-groupby.hive-grouping-sets" = "a9106995bf9a7fce5ceb1388b9032d0e6236f8060fa90de12bda60e542f99a7d"
+
+[review.definitions]
+"db.query.select-groupby.hive-grouping-sets" = "85bfba731332bf9f53018fc6044b84ed9b34be412986814337225d7a3bfe7943"
+
+[[review]]
+id = "db-query-005"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-match-recognize",
+]
+note = "(c) strict call: o029/o030 class <row_pattern_definition_list> as a string; page says it defines boolean variables (var AS cond). o030 DEFINE m1 fails for the missing AS <cond>, not wrong kind; fill the name: ... DEFINE 'v1' AS TRUE ). Grammar, trees, outcomes fine."
+
+[review.fingerprints]
+"db.query.select-match-recognize" = "743b791fd5aa12920b1ee628f310d0bbd25dd97c33d355c5490848cd3f82a7db"
+
+[review.definitions]
+"db.query.select-match-recognize" = "e5176762d86e68527e7b8ba4c350b512ade4abc0257531619c486ab57b0088a4"
+
+[[review]]
+id = "db-query-006"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-nearest-by",
+]
+note = "(d) every accepted case is an opaque command tree, e.g. o001 SELECT * FROM t1 JOIN t2 APPROX NEAREST BY DISTANCE vector_l2_distance ( 1 , 1 ) -> {\"command\":{\"this\":\"SELECT * ...\"}}; APPROX/EXACT, DISTANCE/SIMILARITY, num_results not in fields. (a) with join-type reading, (b)(c) hold."
+
+[review.fingerprints]
+"db.query.select-nearest-by" = "b6b0f5332c03bb4aec57d37ea0fbbe0a6e45cb5166abe5d1f4cd6801eb58d651"
+
+[review.definitions]
+"db.query.select-nearest-by" = "e4af8a94c4e1f52762ad8dd6d15ca7de9d30e79ef57b67af7eeaeb27fac9e399"
+
+[[review]]
+id = "db-query-007"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-pipeop",
+]
+note = "(d) pipe operations desugared, keywords lost: FROM t1 |> AGGREGATE sum ( c1 ) -> plain select sum(c1) from t1; |> SET c1 = 1 -> star replace; |> DROP c1 -> star except; |> EXTEND 1 -> select *, 1; no |> mark anywhere. (a)(b)(c) hold with readings. Parser fix."
+
+[review.fingerprints]
+"db.query.select-pipeop" = "61d350e40f53818b1703f43e64fb7023261198b9f56c755c249f5789af92e40b"
+
+[review.definitions]
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
+
+[[review]]
+id = "db-query-008"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-table-reference",
+]
+note = "(d) opaque command trees: o117/o052/o054 (... JOIN t2 APPROX NEAREST 1 BY ...) and o085/o090/o093/o094/o096 (LATERAL ( SELECT 1 ) TABLESAMPLE ( 50 PERCENT ) a1). Also o037 STREAM ( t1 ) a1 puts the alias inside paren. (a) with NEAREST BY reading, (b)(c) hold."
+
+[review.fingerprints]
+"db.query.select-table-reference" = "a1338eb28e74a8cea83faf68c5f30d5a903046079c28766714bfded1ed53fd13"
+
+[review.definitions]
+"db.query.select-table-reference" = "d2a4dacf989a91964280f05d75f94ba34e1754f4e40e1dece0654bf0bef28c07"
+
+[[review]]
+id = "db-query-009"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-watermark",
+]
+note = "(d) every WATERMARK case is an opaque command tree, e.g. o014 SELECT * FROM t1 TABLESAMPLE ( 50 PERCENT ) WATERMARK c1 DELAY OF INTERVAL 1 MINUTE a1 -> {\"command\":...}; also o010-o019, o033-o047, o053. (a) with JOIN/VALUES reading, (b)(c) hold."
+
+[review.fingerprints]
+"db.query.select-watermark" = "eb226863d10fb5fd90121d0d20afc2acabadebea9aa213a4bb8b9f64c64011ac"
+
+[review.definitions]
+"db.query.select-watermark" = "f7848a7ca823a2825c8b15df53dc7eed9d8906e0047df793440ce859e57939a6"

@@ -24,3 +24,109 @@ note = "Read against the pinned Databricks documentation pages and the Spark 4.2
 "db.security_admin.show-grant" = "e632ff336f2ee478df322687496af8b62729166c95f1413dac2010858d9f8af9"
 "db.security_admin.show-grant-on-share" = "36715f789f5d82931fd9372236e945d7aca1b617bfc3325c5df462506a1619c9"
 "db.security_admin.show-grant-to-recipient" = "a77b29d603336821ef27495e98f9ac58637fdc3cd225416cb485187629227632"
+
+[[review]]
+id = "db-security_admin-002"
+family = "security_admin"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T05:37:21Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.create-group",
+  "db.security_admin.drop-group",
+  "db.security_admin.grant",
+  "db.security_admin.grant-share",
+  "db.security_admin.msck",
+  "db.security_admin.principal",
+  "db.security_admin.revoke",
+  "db.security_admin.revoke-share",
+]
+note = "Re-read in full on 16 Nov 2026 against the documentation page, the form's obligations, its cases with their Databricks receipts and the local parse trees. Bound on 251cfd3dc only where the form's fingerprint and definition hash still equal those of the dossier that was read; forms that changed since are left for a new reading."
+
+[review.fingerprints]
+"db.security_admin.create-group" = "a7b4b3779cad9684786b070a46f96e4542cfaf5ffbc724fcabc354df943fec91"
+"db.security_admin.drop-group" = "58f334c3e07fe5cc4f6e6f32fb5ab164b6c11512ba3ca64468ac58d16268a3df"
+"db.security_admin.grant" = "8e0b84a15598c45dd106c1801ea3c7656380bb1b29938ad35b4d0cfd7e3165e8"
+"db.security_admin.grant-share" = "93be245db9266b54c54d5d66338596bceb220f345b57227bf3ff21ca63b5f741"
+"db.security_admin.msck" = "d426c9addec8cf29f85d14539c0bd459fea07f3e4d0dca72861630f8cfca27dc"
+"db.security_admin.principal" = "60c278cb596d3e78ef8007b9229772e3684c094f36c96ce60dd7682c6d040085"
+"db.security_admin.revoke" = "eb23abe9b7686a88401bf4c47ed7a4aa3a53a824eaf828fca968bed66388b1c9"
+"db.security_admin.revoke-share" = "800d70379622ce5644d4795e8a9b369fb8a7025d8251a738aff3d48aca8237e1"
+
+[review.definitions]
+"db.security_admin.create-group" = "bf7efb687b6f75920e7235df0091d85a822a8e3597f67084ba76b096f87fccce"
+"db.security_admin.drop-group" = "e2ed335a5250565d61acc1bb147d79b3eb4170030bd031e3309a8b7669b25ac8"
+"db.security_admin.grant" = "5b4873b0386a8b8e153edb3dac997624ecca7658abbaf92ea66f8b8f8a5275e0"
+"db.security_admin.grant-share" = "a80a61d773945ac032d6b4ecfa0adb6706282bd1b385255f405f5939dbf3bd1d"
+"db.security_admin.msck" = "997c07125da8d7238b786f4850c6d52da1f5918c3d81221d8a261e0c0d69fd5e"
+"db.security_admin.principal" = "79088c253c35e2140686d01bff6a00571f6d89dca689e78ecf83fbdbd2b60ef5"
+"db.security_admin.revoke" = "4afab9c6caf93aa9395e13ec9d05673159bfafd04ad3dccef9093ed7dbd73121"
+"db.security_admin.revoke-share" = "fa307b733463d3a6d145d7f987c56672b9dee307575db94f78662d292d6c6757"
+
+[[review]]
+id = "db-security_admin-003"
+family = "security_admin"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.alter-group",
+]
+note = "(b) stricter call: o018/o019 are 'the form without its required GROUP/USER after DROP' but both use ALTER GROUP v1 ADD v1, so no case leaves the keyword out after DROP. (a) matches page; (c) holds; (d) ADD/DROP, GROUP/USER as properties, lists as tuples."
+
+[review.fingerprints]
+"db.security_admin.alter-group" = "af4fa22b1c5e1133f1c29cfea46eaabfa6937b22620fea15a99ecb0fc3bd9190"
+
+[review.definitions]
+"db.security_admin.alter-group" = "bbda8de10c5832f7bc70463133bca9a801e43b2b2053132a80448d2f7b48f83e"
+
+[[review]]
+id = "db-security_admin-004"
+family = "security_admin"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.deny",
+]
+note = "(d) every accepted case opaque: o001 DENY ALL PRIVILEGES ON TABLE t1 TO v1, o011 DENY SELECT ..., o015 DENY SELECT , MODIFY ... -> {\"command\":...}. Also o017 DENY PRIVILEGES / o018 DENY ALL expect reject but got unsupported_feature, with no suppress row. (a) with reading holds."
+
+[review.fingerprints]
+"db.security_admin.deny" = "da7fdfda16cf90ac93bcabca6ee43faf8d0bd529f3b39d69ab91e661a043c3de"
+
+[review.definitions]
+"db.security_admin.deny" = "a0e176f1515955c925371538995a4288dfdadfb36da837919eb0091e12eb26e3"
+
+[[review]]
+id = "db-security_admin-005"
+family = "security_admin"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.privileges",
+]
+note = "(d) stricter call: documented keyword securables land as names: o001/o018 GRANT SELECT ON CATALOG TO `u1` and o008 ON METASTORE -> \"securable\":\"CATALOG\"/\"METASTORE\" with no kind, the tree of a table named so (cf. o053 ON t1). (a)(b)(c) and suppress rows hold."
+
+[review.fingerprints]
+"db.security_admin.privileges" = "16d337a7e576610f52e2a3cff5d04d2f0d40950b66e57fa54faf9c604da55a6b"
+
+[review.definitions]
+"db.security_admin.privileges" = "9bd1366bc81d5ba58c3c6a695d03ce84033a448206f60da2be7e686ecf653a9b"
+
+[[review]]
+id = "db-security_admin-006"
+family = "security_admin"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.privileges-hms",
+]
+note = "(d) o001/o002 GRANT SELECT ON ANY FILE TO `u1` -> \"kind\":\"ANY FILE\",\"securable\":\"\" (invented empty name); o003/o009 ON CATALOG TO `u1` -> \"securable\":\"CATALOG\" with no kind (stricter call). (a)(b)(c) and suppress rows hold."
+
+[review.fingerprints]
+"db.security_admin.privileges-hms" = "89ace3d6bf349ba431c4d87a3b22b474e860d890e63eb53f81df88e808fb1b98"
+
+[review.definitions]
+"db.security_admin.privileges-hms" = "c5f210a7c5cdd328c813342a90191475289328160c66d8cb3e5b157c8beadbd9"

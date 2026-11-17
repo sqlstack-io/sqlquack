@@ -57,3 +57,885 @@ note = "Read against the pinned Databricks documentation pages and the Spark 4.2
 "db.ddl.tblproperties.set-tblproperties" = "c302c44e30e8f9469b1e406faf5e494658bfd3d53210cce0fab299b826f7e271"
 "db.ddl.tblproperties.tblproperties" = "33a663860db33db453a93672d44de95038003a966864e197d834f62809324eee"
 "db.ddl.truncate-table" = "924f42e74bf60636f12a2ea190ebbd1f558dbb9c0c4ce42e868190a4ee4e54ff"
+
+[[review]]
+id = "db-ddl-002"
+family = "ddl"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T05:37:21Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-catalog-drop-connection",
+  "db.ddl.alter-location",
+  "db.ddl.alter-materialized-view.column-comment-set-mask",
+  "db.ddl.alter-materialized-view.materialized-view-add-alter",
+  "db.ddl.alter-schema-set-managed-location",
+  "db.ddl.alter-share",
+  "db.ddl.alter-streaming-table.column-comment-set-mask",
+  "db.ddl.alter-table-manage-column.drop",
+  "db.ddl.alter-table-manage-column.rename-column-to-to",
+  "db.ddl.clone.replace-table-clone",
+  "db.ddl.comment",
+  "db.ddl.convert-to-delta",
+  "db.ddl.create-catalog.catalog",
+  "db.ddl.create-materialized-view",
+  "db.ddl.create-streaming-table",
+  "db.ddl.create-table-constraint.foreign-key-references",
+  "db.ddl.drop-bloomfilter-index",
+  "db.ddl.drop-catalog",
+  "db.ddl.drop-policy",
+  "db.ddl.repair-table",
+  "db.ddl.set-tag",
+  "db.ddl.truncate-table",
+  "db.ddl.unset-tag",
+]
+note = "Re-read in full on 16 Nov 2026 against the documentation page, the form's obligations, its cases with their Databricks receipts and the local parse trees. Bound on 251cfd3dc only where the form's fingerprint and definition hash still equal those of the dossier that was read; forms that changed since are left for a new reading."
+
+[review.fingerprints]
+"db.ddl.alter-catalog-drop-connection" = "abcc35c472dbbd3995b8a152629de02222595f087688ef390b6a0fc0a1b8bb30"
+"db.ddl.alter-location" = "c05814ef54a70725d2349ae233fe87881579cb419feb23151ff30834acd705ac"
+"db.ddl.alter-materialized-view.column-comment-set-mask" = "876ffc471e5422f52476cb30c27c56408b34ba899a7df34d2ae821b75bcc3074"
+"db.ddl.alter-materialized-view.materialized-view-add-alter" = "51fb05541d44b38cd90c7fd7c83744704ec6ea579e14d628eefd8dac8fd57b3c"
+"db.ddl.alter-schema-set-managed-location" = "3f07eae0dc72e521c2f4d8fe2203c34bb2857cfaead3722a8a0563a4c469b696"
+"db.ddl.alter-share" = "1ec09566bd2c551df9d6b2f8f3b7c9dbe574b13b511e726b25a43fb5a8ea03de"
+"db.ddl.alter-streaming-table.column-comment-set-mask" = "88704f5d9fc87d6e32d968c5c207b20c15e94a745ea9af29e621903f7325635c"
+"db.ddl.alter-table-manage-column.drop" = "23c8155b8546ff097747c20c401aaca48dba6651a77091f88758b8c00c4f8e19"
+"db.ddl.alter-table-manage-column.rename-column-to-to" = "2984924f88bf13c10e87d69217ea79442d1f3cf068a0bb7e30725b2a71113cbb"
+"db.ddl.clone.replace-table-clone" = "7817664ad4733fa5cf3a392646ed911327eb2fe4c63060516de3684d2d74566e"
+"db.ddl.comment" = "c22679dee7d79ea1007f04ee53d7775287084cbf06a3134d486f3227579a67f4"
+"db.ddl.convert-to-delta" = "e5ee8892cab4eb83d9363fb6d0fcd5e712b38fde018612b5139a44e97de2ece3"
+"db.ddl.create-catalog.catalog" = "57fa4a74383aae01e730473e559dc27eb20d861e51e9a30550e14f7950a21b79"
+"db.ddl.create-materialized-view" = "c8f94002e79410491d5c2a8167c43bb9148ff2d45532bcabcdd4c6bff2f648e7"
+"db.ddl.create-streaming-table" = "acc0561ec41c21b028f9ba5c580bd4ddac1308aeb93bb90dc6a7be2cc85fa8ce"
+"db.ddl.create-table-constraint.foreign-key-references" = "cec00ce79ff2b1dc5cc33d366019062ffa2baeaa68e4722b2dec4e06f131c8c5"
+"db.ddl.drop-bloomfilter-index" = "06249563d94d168a55aef06e075a5575554f02209674a5565fe690165538deb3"
+"db.ddl.drop-catalog" = "ac4cc94be77d635a9caca269f30f5e031d866f2da038c934cd7ad59e9fe60081"
+"db.ddl.drop-policy" = "55cb6abfb61727f7326319928720a454eb3823b6de33249c70eaa7d940a31785"
+"db.ddl.repair-table" = "e8a04854e5a95e268ae57865ad006f613e76ffdbf9e15f843d89b37962eb1f48"
+"db.ddl.set-tag" = "2e507637218aa34bbe970e792ff72d40f750308146d2d8d8567fe0e3cae31509"
+"db.ddl.truncate-table" = "4d1998dc106b0eea992d766e62da5047163be49a8cb322c7374141f6015e63d0"
+"db.ddl.unset-tag" = "12ec45a5e0700867b7e19890b5bce4e0689c4acf05a6e661fbc8399e7236edf7"
+
+[review.definitions]
+"db.ddl.alter-catalog-drop-connection" = "710bfd2d98fc3f76a73b8c609bbfde34018b4b8ed162951d4cd756166d708815"
+"db.ddl.alter-location" = "e549954a084fd8073271c13eca1da3c2efa046fd1b603cbdfe23cd78334dae58"
+"db.ddl.alter-materialized-view.column-comment-set-mask" = "cdbf0cbe0837036c3d061138d4fb397c487863908c7493b1471c76a8159938e3"
+"db.ddl.alter-materialized-view.materialized-view-add-alter" = "0e76e125d731210e36fd43a78784b944410a782af91cf37deea2b6a75455d94b"
+"db.ddl.alter-schema-set-managed-location" = "15b8aa9b57f8fc225800974cd0b5c9cd86a25f5dbdf8d265caa523ea40938fb4"
+"db.ddl.alter-share" = "c5a95d893e5edcede178871c68a3f874e7464d7f3fe20aa74c274cac9731b0c6"
+"db.ddl.alter-streaming-table.column-comment-set-mask" = "0defccce4aa69a1b60045e95fa2121dcc10a5a6b7b465b957faf0ce481983fab"
+"db.ddl.alter-table-manage-column.drop" = "b5c71c3d6eef6fddb2a808e461f0015f6858267d54b9c0679d319fceaff31135"
+"db.ddl.alter-table-manage-column.rename-column-to-to" = "e823a7d4e94c04d20197a93a5cf0581a34be8c995d45ecbeebd820fb76927888"
+"db.ddl.clone.replace-table-clone" = "d3de77384cd3073fd39ca3fc2a5affee1140477f540f71e5feaf69cf70dbcd58"
+"db.ddl.comment" = "2c0b557d49f1f71f931e14a5bd415e95fc7f584180e01d3ba076c9ce2138b1b9"
+"db.ddl.convert-to-delta" = "3fa668b6864ff6214b6a8e8ad028055060a4565d3fa87b1bc677b35822877df8"
+"db.ddl.create-catalog.catalog" = "98cd4a427930e0fc0aa8371688f974ae694f59371414d5a88418036ebc643221"
+"db.ddl.create-materialized-view" = "ded4b6bf6fa3e49c19ee6816112b3b060baf2ceae4fa0963dc81518355a633ec"
+"db.ddl.create-streaming-table" = "8410d55b8ab29c880611cdc1e12acaa2ea9c34c8604aab791a76f0bb36aab6a1"
+"db.ddl.create-table-constraint.foreign-key-references" = "ae15898d3df608a2686de40d032bb8c43cce6c9b77ddf133e09e3077404895b1"
+"db.ddl.drop-bloomfilter-index" = "89d1438ca352dbe419bfdda584e8628c3fae99a473c6d67ed3275ce8cbca1f2c"
+"db.ddl.drop-catalog" = "f3410d919a5395e249cbb108a478dd65b498dc5e6b67775508fd5e5afdafd627"
+"db.ddl.drop-policy" = "62b1f818ba40a52deb4f61941cf67e1bfb6106483a23d397213d976271b4a0ee"
+"db.ddl.repair-table" = "ea6e81750c4585befaad7469e4ab919b2e0e367a60b14f5723e5cd2773e94062"
+"db.ddl.set-tag" = "e09b2fc6a9a6abda889b99697a500d16cbb71ce87a0ebefb1e62489a7770c758"
+"db.ddl.truncate-table" = "924f42e74bf60636f12a2ea190ebbd1f558dbb9c0c4ce42e868190a4ee4e54ff"
+"db.ddl.unset-tag" = "bcd239e1a5703488167f657b7f198945ce2b3f4886e7d4293ab0fb89e49ec5bd"
+
+[[review]]
+id = "db-ddl-003"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-connection",
+]
+note = "(d) stricter reading: o037 \"ALTER v1 OWNER TO v1\" (warehouse semantic_error) gives raw [{\"command\":{\"this\":\"ALTER v1 OWNER TO v1\"}}]; opaque tree. Rest passes; brace reading supported."
+
+[review.fingerprints]
+"db.ddl.alter-connection" = "583b16169cb3bf2d79f278e8761023cfbdd1ff274358f5900680f54d4f577bb4"
+
+[review.definitions]
+"db.ddl.alter-connection" = "fe2e1f4ef5f428e259a59f4c6b721e68bf34be8f88ce03d0ad4317804db2273c"
+
+[[review]]
+id = "db-ddl-004"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-database",
+]
+note = "(d) DATABASE lost: o001 tree \"alter_object\":{\"kind\":\"SCHEMA\"...}, identical to ALTER SCHEMA; and o012/o049 \"RETAIN DROPPED TO 1 HOUR\" puts number and unit in raw string operands [{\"var\":{\"this\":\"1 HOUR\"}}]."
+
+[review.fingerprints]
+"db.ddl.alter-database" = "eb89c9a6aa94c922b8faf30ef9c674bb435975484ec567621e3849f6c6bf11bd"
+
+[review.definitions]
+"db.ddl.alter-database" = "1eee606977f083ba0806e2a9e6d93c7e9cd3dcb2dc06f993bf02c8c9bf57285d"
+
+[[review]]
+id = "db-ddl-005"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-recipient",
+]
+note = "(d) stricter reading: optional [ = ] leaves no mark: o019 \"SET PROPERTIES ( v1 'v' )\" builds the same eq node as the = spelling (o018 eq{left,right}); written and omitted = are indistinguishable."
+
+[review.fingerprints]
+"db.ddl.alter-recipient" = "05cea2b3fff486a316976c537444ae71884da8da39c7843ec0f7ea29e370a62f"
+
+[review.definitions]
+"db.ddl.alter-recipient" = "b84b56f3cda841c76a4ebfc44c22c361f2d84d2843d2abd2174aec5d45b33438"
+
+[[review]]
+id = "db-ddl-006"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-schema",
+]
+note = "(d) o012/o049 \"ALTER SCHEMA s1 RETAIN DROPPED TO 1 HOUR\" puts number and unit in one raw string operands [{\"var\":{\"this\":\"1 HOUR\"}}]; 1 is not a literal and HOUR not its own field (o051-o056 same)."
+
+[review.fingerprints]
+"db.ddl.alter-schema" = "3eb6d7f243e98a5387a1cb2bb2b758fca533a8fb1d09138daa8381d99ae806e3"
+
+[review.definitions]
+"db.ddl.alter-schema" = "5aadbf4088719804914c28c4c24c0cebfdc14dfbc7d171c8a33df3424f069614"
+
+[[review]]
+id = "db-ddl-007"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table",
+]
+note = "(d) opaque raw trees for accepted cases: o010 DEFAULT COLLATION, o013 DROP FEATURE, o186, o179, o019/o020 ROW FILTER, o187/o203/o204 OWNER TO, o188/o207-o212 REPLACE PARTITIONED BY, o189/o213-o215 PREDICTIVE OPTIMIZATION -> [{\"command\":{\"this\":...}}]."
+
+[review.fingerprints]
+"db.ddl.alter-table" = "69c022fc3b73a833b7f7767c7a9b8bf4aeb9f3adcd399ad259cdb35431d5664f"
+
+[review.definitions]
+"db.ddl.alter-table" = "45f8d3c275e44a178729e82ee86a7ddf4b83d6b1a93ca41cd0a895c42ad47906"
+
+[[review]]
+id = "db-ddl-008"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-add-constraint.enable-novalidate",
+]
+note = "(d) every accepted case is opaque, e.g. o001 \"ALTER TABLE t1 ADD PRIMARY KEY ( c1 ) ENABLE NOVALIDATE\" -> [{\"command\":{\"this\":...}}]. Stricter (a): hand form drops UNIQUE and renames parent_relation to <parent_table>."
+
+[review.fingerprints]
+"db.ddl.alter-table-add-constraint.enable-novalidate" = "7afc4b4890c9e6bca7bbdb5d72ab93e8a9d47f58cd14e83becc506e6a6759638"
+
+[review.definitions]
+"db.ddl.alter-table-add-constraint.enable-novalidate" = "22cc01cc29a6d62501563e6eab0832075fdb3cd3e51d3216c4cea7bac2addeee"
+
+[[review]]
+id = "db-ddl-009"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-drop-constraint",
+]
+note = "(d) opaque raw trees: o001 \"ALTER TABLE t1 DROP PRIMARY KEY\", o003 DROP FOREIGN KEY ( c1 ), o005 IF EXISTS RESTRICT, o026 \"DROP CONSTRAINT n1 CASCADE\" -> [{\"command\":{\"this\":...}}] while RESTRICT gets a flag."
+
+[review.fingerprints]
+"db.ddl.alter-table-drop-constraint" = "0e3a24e3fd78088424d281dfe0a51b4d0e391691e5137f0b74de1a21902f2135"
+
+[review.definitions]
+"db.ddl.alter-table-drop-constraint" = "d62a4868acd719edd54809ad1fd395731e572a13b3d71d2c1f98aa1879d134e6"
+
+[[review]]
+id = "db-ddl-010"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-column.add",
+]
+note = "(d) o017/o020/o022/o026/o031/o036/o038/o041/o042/o048 \"ADD COLUMN ( c1 STRING COLLATE UTF8_BINARY DEFAULT 'a' COMMENT 'x' FIRST MASK f1 , ... )\" -> opaque [{\"command\":{\"this\":...}}]; DEFAULT, COMMENT, MASK lost as fields."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.add" = "3f6f74da03ff73e1205d4b0dd2ea513341503319abd6a550de2dffa26a4422a1"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.add" = "ee5b4f4d0ef8af066f5d041e68832cd3ee0089840e26af20512be74cf3b88ee1"
+
+[[review]]
+id = "db-ddl-011"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-column.alter-change-comment-first",
+]
+note = "(d) opaque raw trees: o014/o023 \"ALTER TABLE t1 ALTER c1 FIRST\", o024 \"CHANGE c1.c1 AFTER c1\", o026 \"ALTER c1 AFTER c2\", o019 \"ALTER c1 SYNC IDENTITY\" -> [{\"command\":{\"this\":...}}]."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.alter-change-comment-first" = "0a8ef7bd3f097f3de0e07bbc0a4f35987c3f07c3300536c61c70e2106ff7befd"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.alter-change-comment-first" = "3709e5844dbea3eaccaa0bb47488dc103019ff9da9af82d88ba55bc5bec75d7d"
+
+[[review]]
+id = "db-ddl-012"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-column.alter-change-set-mask",
+]
+note = "(d) every accepted case opaque, e.g. o001 \"ALTER TABLE t1 ALTER c1 SET MASK f1\", o042 \"ALTER COLUMN c1 SET TAGS ( 'k' = 'v' )\" -> [{\"command\":{\"this\":...}}]. Also field_name cases o010/o036/o039/o043/o046/o049/o054 got syntax_error."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.alter-change-set-mask" = "493b772a345145fc727e9c8a9f2e54d6f78d670d768d6726c851b4d3a00dd200"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.alter-change-set-mask" = "688814e3a638fdc5394a16dd7b7ee7835c285c50b3608d929962677f1fda6386"
+
+[[review]]
+id = "db-ddl-013"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-partition.alter-table-add-partition",
+]
+note = "(d) opaque raw trees: o041/o049/o051 \"ALTER TABLE t1 PARTITION ( c1 = 1 ) RENAME TO PARTITION ( c1 = 2 )\" and o042 \"ALTER TABLE t1 RECOVER PARTITIONS\" -> [{\"command\":{\"this\":...}}]."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-partition.alter-table-add-partition" = "a6b0ce6d3045eb7400d90df4bf796e78994896e357ec32e98c1cedb83e59d57f"
+
+[review.definitions]
+"db.ddl.alter-table-manage-partition.alter-table-add-partition" = "983839db6e4cd834ad180b994619697a764b756b996f02c66618c685501bfc7d"
+
+[[review]]
+id = "db-ddl-014"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-partition.drop-partition",
+]
+note = "(d) o002/o013/o016/o008/o012 \"ALTER TABLE t1 DROP IF EXISTS PARTITION ( c1 = 1 ) , PARTITION ( c1 = 1 ) PURGE\" -> opaque [{\"command\":{\"this\":...}}]; IF EXISTS, second partition and PURGE not in fields."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-partition.drop-partition" = "bac46081709a8e3eeed6ca6c7551a263dc8eceb583075c27004ad644ca51d2f0"
+
+[review.definitions]
+"db.ddl.alter-table-manage-partition.drop-partition" = "fd2239bdd818472f00ac7f2e987d90187e040434a6aa6d17ca5ac42314080bfa"
+
+[[review]]
+id = "db-ddl-015"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-partition.recover-partitions",
+]
+note = "(d) o001 \"ALTER TABLE t1 RECOVER PARTITIONS\" -> opaque [{\"command\":{\"this\":\"ALTER TABLE t1 RECOVER PARTITIONS\"}}]; table name and action not in fields. (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-partition.recover-partitions" = "c698f04262b1cdf440610f1e98b0e3e4be169d0b8797b7035367f7fa51897bf6"
+
+[review.definitions]
+"db.ddl.alter-table-manage-partition.recover-partitions" = "bdfb16de262b2675959276df7fc932f26508dd0bb29aaa13cea0935b71ee4c4d"
+
+[[review]]
+id = "db-ddl-016"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-partition.rename-to",
+]
+note = "(d) o001/o003/o005 \"ALTER TABLE t1 PARTITION ( c1 = 1 ) RENAME TO PARTITION ( c1 = 2 )\" -> opaque [{\"command\":{\"this\":...}}]; from/to partition specs not in fields. (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-partition.rename-to" = "76387e64decfef40ed735262ebdac72cf9741f55bc21f17604cb26276397dc59"
+
+[review.definitions]
+"db.ddl.alter-table-manage-partition.rename-to" = "38c33661197e1befd2af158341e87fe6d4103ea7c34181294e20476e33132ae3"
+
+[[review]]
+id = "db-ddl-017"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table.alter-table-drop-feature",
+]
+note = "(d) every accepted case is an opaque raw string: o001 ALTER TABLE t1 DROP FEATURE deletionVectors -> {\"command\":{\"this\":\"ALTER TABLE t1 DROP FEATURE deletionVectors\"}}; also o005 TRUNCATE HISTORY, o009/o010 names. (a)-(c) hold."
+
+[review.fingerprints]
+"db.ddl.alter-table.alter-table-drop-feature" = "173982b096cae9ec4a384a4e3cb0edaa2eef4650920035ea4c8bc44396f94451"
+
+[review.definitions]
+"db.ddl.alter-table.alter-table-drop-feature" = "75e0f74dde4ca3ddd92e49cefaa4b42dbdfaa685806c228f565cd014c737b3c8"
+
+[[review]]
+id = "db-ddl-018"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table.alter-table-set-external",
+]
+note = "(d) o001/o002 trees are opaque raw strings: ALTER TABLE t1 SET EXTERNAL DRY RUN -> {\"command\":{\"this\":\"ALTER TABLE t1 SET EXTERNAL DRY RUN\"}}; DRY RUN has no flag. (a)-(c) hold."
+
+[review.fingerprints]
+"db.ddl.alter-table.alter-table-set-external" = "34be0d5efca6ca38d5631043d056b4633f340845d3bd3b8c3aa6f520adbb6383"
+
+[review.definitions]
+"db.ddl.alter-table.alter-table-set-external" = "8ee92f8a6d1a63c726c866bef575af111bad63a106d7757a7319a8ec2cc2bcfa"
+
+[[review]]
+id = "db-ddl-019"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table.alter-table-set-managed",
+]
+note = "(d) all valid cases opaque: o004 ALTER TABLE t1 SET MANAGED MOVE -> {\"command\":{\"this\":\"ALTER TABLE t1 SET MANAGED MOVE\"}}; MOVE/COPY and TRUNCATE UNIFORM HISTORY get no field. (a)-(c) hold."
+
+[review.fingerprints]
+"db.ddl.alter-table.alter-table-set-managed" = "28f0f719382121024440915358b68b836306fff43414ce936ecf928a6668251a"
+
+[review.definitions]
+"db.ddl.alter-table.alter-table-set-managed" = "28167077a390781949efc2ddfb4e7c13cb5cddfb5a577e7aee7ab4d14c4ffaaa"
+
+[[review]]
+id = "db-ddl-020"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table.alter-table-set-serde",
+]
+note = "(d) all valid cases opaque: o004 ... SET SERDE 'org.example.Serde' WITH SERDEPROPERTIES ( 'k' = 'v' , 'k2' = 'v' ) -> {\"command\":{\"this\":...}} raw string. (a) prose-built grammar matches the page example."
+
+[review.fingerprints]
+"db.ddl.alter-table.alter-table-set-serde" = "cd05067eda07fb29a5f37513551eaebc96205b56f3a00191f7bc0b2a6131faa9"
+
+[review.definitions]
+"db.ddl.alter-table.alter-table-set-serde" = "760d321cbea7a668ebf0b1fbded61083e61bb3460d3dc5e6251eabefc63a4c21"
+
+[[review]]
+id = "db-ddl-021"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-view",
+]
+note = "(d) five alternatives are opaque raw strings: o009 ALTER VIEW v1 WITH SCHEMA BINDING, o011 SET TAGS ( 'k' = 'v' ), o012 UNSET TAGS, o013 ADD CONSTRAINT k1 MANY TO ONE RELATIONSHIP ..., o014 DROP CONSTRAINT k1 -> {\"command\":{\"this\":...}}."
+
+[review.fingerprints]
+"db.ddl.alter-view" = "fc0e26463048e8b4060fff574e13206199682e06a8aeec411534766c96b28a15"
+
+[review.definitions]
+"db.ddl.alter-view" = "56fc1c89f9d4baab97b97e987d993d5ae80c4de4091e8a1a1c958ff5da286e11"
+
+[[review]]
+id = "db-ddl-022"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-view-set-managed",
+]
+note = "(d) o001/o003/o008/o010 trees are opaque raw strings, e.g. ALTER VIEW `v1 Q` SET MANAGED -> {\"command\":{\"this\":\"ALTER VIEW `v1 Q` SET MANAGED\"}}; name and SET MANAGED get no field. (a)-(c) hold."
+
+[review.fingerprints]
+"db.ddl.alter-view-set-managed" = "9fbcf20bb68f073b65f85f8afad930c0d5ea39a2ac0f5bf25aee68402b96b3f7"
+
+[review.definitions]
+"db.ddl.alter-view-set-managed" = "8ffecef0b440777e3b34fdf68ad573ad31c70df44f323d8a2b3fa9c455d5a562"
+
+[[review]]
+id = "db-ddl-023"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.clone.clone-source-temporal",
+]
+note = "(a) stricter call: the temporal_spec the line spells (sql-ref-names) also has @ timestamp_encoding | @V version; catalogue and [[reading]] drop them with no stated reason. (b)-(d) hold; trees keep FOR, SYSTEM_TIME, SHALLOW/DEEP, replace_only."
+
+[review.fingerprints]
+"db.ddl.clone.clone-source-temporal" = "70a56c2743eac081b7ba36cabcc17eaf5708dca5cacf10d07750b118f18da120"
+
+[review.definitions]
+"db.ddl.clone.clone-source-temporal" = "31db190f2426f79a78ccdf7bb28dd8f38ef8fad2d6657c27f953d2da5bc2682b"
+
+[[review]]
+id = "db-ddl-024"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.cluster-by",
+]
+note = "(d) o019 CREATE TABLE t3 ( c1 INT ) CLUSTER BY ( 'v1' ) (unsupported_feature, past the parser) -> opaque {\"command\":{\"this\":...}} raw string. Other trees good. NONE has only the refused CREATE TABLE case; see proposed kinds."
+
+[review.fingerprints]
+"db.ddl.cluster-by" = "cd3adea59892078a0ee9419c5349f52b2015fbbe2de006875ff1caf32db442da"
+
+[review.definitions]
+"db.ddl.cluster-by" = "5500a5bc22852ab1216f63ef3488643233a4a451a97919d183647ae4f4f8db28"
+
+[[review]]
+id = "db-ddl-025"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.column-mask",
+]
+note = "(b) o028 alternative <constant_literal> and o031 type class use only column v1: ... USING COLUMNS ( v1 ) / ( v1 , v1 ), no constant. (d) every accepted tree is opaque, e.g. CREATE TABLE t3 ( c1 INT MASK v1 ) -> {\"command\":{\"this\":...}}."
+
+[review.fingerprints]
+"db.ddl.column-mask" = "6f2163a51053a1ed99aacf9f4fddd11c90715d4d0a02ff4158cdcdd0c8ae789f"
+
+[review.definitions]
+"db.ddl.column-mask" = "c31701d2e2e4a6d69362f0aaed15052293245a4dc92eb3f9d130b90bf07be6b2"
+
+[[review]]
+id = "db-ddl-026"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-database",
+]
+note = "(d) DATABASE leaves no mark: CREATE DATABASE s1 -> {\"create_schema\":{\"name\":[\"s1\"],...}}, identical to CREATE SCHEMA s1; and o012 RETAIN DROPPED FOR 1 HOUR -> value {\"var\":{\"this\":\"1 HOUR\"}}, number and unit in one raw string."
+
+[review.fingerprints]
+"db.ddl.create-database" = "6f0a94c1ae7aaf7b8c763ef125efd1e0283292e06b0abdbde799ef08bd5eac69"
+
+[review.definitions]
+"db.ddl.create-database" = "26f34aeba313ad48ff98fc9a1ef1fcabe7c49126f456d2ccb91a5624018005f1"
+
+[[review]]
+id = "db-ddl-027"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-function",
+]
+note = "(c) class_name is a string (the form's own suppress: AS className=stringLit) but valid cases write AS v1 (o001,o003,o009,o012); (b) o002/o004/o006/o014/o022 use OR REPLACE with IF NOT EXISTS (page: exclusive) and v1 as <resource_locations>."
+
+[review.fingerprints]
+"db.ddl.create-function" = "238995d07efedea5bda9f14e9819859b3d5dda57c299f3f82293bd7bbcddd9c9"
+
+[review.definitions]
+"db.ddl.create-function" = "a6d4d73f877b4e62476b21db0351cb382f91620b640e95c297dfb088e7c32b63"
+
+[[review]]
+id = "db-ddl-028"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-materialized-view-refresh-policy",
+]
+note = "(b) stricter call: suppress rows for omit <refresh_policy> and without POLICY cite bare REFRESH statements, but cases sit in CREATE MATERIALIZED VIEW, where o010 ... REFRESH POLICY AS SELECT 1 is syntax_error; no case for ... REFRESH AUTO AS SELECT 1."
+
+[review.fingerprints]
+"db.ddl.create-materialized-view-refresh-policy" = "13bde5ea5bc450e5d903a66f3fd6ac2942a5551391e1e7bec2d1f7dc8af366ce"
+
+[review.definitions]
+"db.ddl.create-materialized-view-refresh-policy" = "f7f3b11d33dfda76723ca7cb81959daf395f93593315a686c83df58838e52bc9"
+
+[[review]]
+id = "db-ddl-029"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-policy",
+]
+note = "(d) stricter call: separate clauses fused in one property: o001 {\"this\":\"ON METASTORE ROW FILTER\"},value f1; o002 \"ON METASTORE COMMENT\"; o035 \"ON METASTORE TO\"; o034 \"FOR TABLES MATCH COLUMNS\". ON METASTORE gets no operand of its own."
+
+[review.fingerprints]
+"db.ddl.create-policy" = "c3cb8467da0724bb902c4f6f35c69bd8578c8caf230b38382732b4b68ce40115"
+
+[review.definitions]
+"db.ddl.create-policy" = "22008e61f994b2d428166c966e19f049ca470a08d025e8eec674ec242ec57604"
+
+[[review]]
+id = "db-ddl-030"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-procedure",
+]
+note = "(d) every accepted case is opaque: o001 CREATE OR REPLACE PROCEDURE v1 ( ) LANGUAGE SQL SQL SECURITY INVOKER AS BEGIN SELECT 1 ; END -> {\"command\":{\"this\":...}}; parameters, characteristics and body get no fields."
+
+[review.fingerprints]
+"db.ddl.create-procedure" = "94b271d971e38fd486b866f913bdb94aea02c844d229f9d91f363a1b110819c7"
+
+[review.definitions]
+"db.ddl.create-procedure" = "17fe67da1a581b58128dda5437063e7906265503cca7e0c12088bb58a0f52e39"
+
+[[review]]
+id = "db-ddl-031"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-recipient",
+]
+note = "(d) stricter call: an omitted optional = leaves no mark: o022/o062 PROPERTIES ( v1 'v' ) -> {\"eq\":{\"left\":{\"identifier\":\"v1\"},...}}, the node a written v1 = 'v' gives (create-schema o013). (a)-(c) hold."
+
+[review.fingerprints]
+"db.ddl.create-recipient" = "3be74cd8ca44c70946faeaf8350b6c0263fbd4c1006c2334ff9939e688ffa2bc"
+
+[review.definitions]
+"db.ddl.create-recipient" = "f9bc3fc25961d31654f3d0a271af62a5cb16aa73f33644794f8e092d6b2d7c1f"
+
+[[review]]
+id = "db-ddl-032"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-schema",
+]
+note = "(d) o012 CREATE SCHEMA s1 RETAIN DROPPED FOR 1 HOUR -> value {\"var\":{\"this\":\"1 HOUR\"}}: the number and unit are one raw string (create-catalog splits them). o028/o031-o035 same. (a)-(c) hold."
+
+[review.fingerprints]
+"db.ddl.create-schema" = "c40b6aa9d24d4640cfaea214276a281df836e0652b79db88bbce5136e93b2c29"
+
+[review.definitions]
+"db.ddl.create-schema" = "82f3b1ae9d14f3a03ba974c1ccc77685354e395844f7701cfc9f410419b9438f"
+
+[[review]]
+id = "db-ddl-033"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-sql-function",
+]
+note = "(d) o082 RETURNS TABLE ( c1 INT , c2 INT ) -> \"returns_table_body\":\"( c1 INT , c2 INT )\", a raw string. (b)/(c) TEMPORARY+IF NOT EXISTS valid cases are syntax_error (o006,o078,o084,o086,o106,o108); JVM cases lack ENVIRONMENT; o068/o074 quote the type."
+
+[review.fingerprints]
+"db.ddl.create-sql-function" = "03202564fc0f3f03af11b0255d4ee9865eb898f414a990c09d2a5fe465556e26"
+
+[review.definitions]
+"db.ddl.create-sql-function" = "b3d7468d5828c063128344f7a2aeb636800d2d258cdeb2589b6b5d9baf2e27a8"
+
+[[review]]
+id = "db-ddl-034"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-streaming-table-auto-cdc",
+]
+note = "(d) * EXCEPT loses *: o036 COLUMNS * EXCEPT ( v1 ) -> {\"this\":\"COLUMNS EXCEPT\"}; same for IGNORE NULL UPDATES ON and TRACK HISTORY ON. o009 fuses clauses: {\"this\":\"IGNORE NULL UPDATES SEQUENCE BY\"},value v1."
+
+[review.fingerprints]
+"db.ddl.create-streaming-table-auto-cdc" = "7715ee8dc91b3873234f350be6755f186e4292377e37dcad9546814c82780b4d"
+
+[review.definitions]
+"db.ddl.create-streaming-table-auto-cdc" = "fdf377deba99af30103a3d6cf653b57dd6efed2263d8c100afd70ec15a0da3f7"
+
+[[review]]
+id = "db-ddl-035"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-streaming-table-auto-cdc.create-streaming-table-auto-cdc-from-snapshot",
+]
+note = "(d) * is lost: o023 TRACK HISTORY ON * EXCEPT ( v1 ) -> {\"this\":\"TRACK HISTORY ON EXCEPT\"}, the same tree TRACK HISTORY ON EXCEPT ( v1 ) would give. (a)-(c) hold; ONCE and WITH VERSION are kept."
+
+[review.fingerprints]
+"db.ddl.create-streaming-table-auto-cdc.create-streaming-table-auto-cdc-from-snapshot" = "df6f11915df1086d9dfbdb75a7acb56d96e37394e9673d4269eed9a134636661"
+
+[review.definitions]
+"db.ddl.create-streaming-table-auto-cdc.create-streaming-table-auto-cdc-from-snapshot" = "294d241309311c16371231370bd8cc5bf377481f1ec897fe8a7e3474f94d8780"
+
+[[review]]
+id = "db-ddl-036"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-table-constraint.enable-novalidate",
+]
+note = "(d) every accepted case is opaque: o001 CREATE TABLE t3 ( ... , PRIMARY KEY ( c1 ) ENABLE NOVALIDATE ) -> {\"command\":{\"this\":...}}; constraint kind, columns, REFERENCES and ENABLE NOVALIDATE get no fields."
+
+[review.fingerprints]
+"db.ddl.create-table-constraint.enable-novalidate" = "ddbf20de6f8b1bb17350309f3d81066b9a4f3c6268de3fdebcb3dae3ba838aee"
+
+[review.definitions]
+"db.ddl.create-table-constraint.enable-novalidate" = "37fcc7fd37e5a289a01554b2178afcc17535d250119d0c95ffb4a1cd84d475d7"
+
+[[review]]
+id = "db-ddl-037"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-table-constraint.references",
+]
+note = "(d) o018/o034 'CONSTRAINT n1 FOREIGN KEY REFERENCES t2 ( c1 , c2 ) ...': the References node has \"has_foreign_key_keywords\":false, the same as o019 'REFERENCES t2'. The written optional FOREIGN KEY leaves no mark. (a)(b)(c) pass; both suppress rows hold."
+
+[review.fingerprints]
+"db.ddl.create-table-constraint.references" = "b4458e578f2ba775f7886085291aa939ca94c6af4e7abf7489ad0bd9bef8709a"
+
+[review.definitions]
+"db.ddl.create-table-constraint.references" = "e006ac47dae6c00458099c2ff2ff7b394d0bcc72b9e33a12a15f35fbefed9f27"
+
+[[review]]
+id = "db-ddl-038"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-table-hiveformat",
+]
+note = "(d) 65 accepted cases opaque: o039/o169 'CREATE EXTERNAL TABLE IF NOT EXISTS t3 (...) ROW FORMAT DELIMITED STORED AS TEXTFILE ...' -> {command:{this:...}}. Stricter (b): o001 'CREATE TABLE t3' lacks STORED AS/ROW FORMAT, which the page says makes it CREATE TABLE USING."
+
+[review.fingerprints]
+"db.ddl.create-table-hiveformat" = "a05eed2f333614dadce0641dcc341a787fca51044b503d4380a9ec92d41d7f54"
+
+[review.definitions]
+"db.ddl.create-table-hiveformat" = "a8e6c672e0ac40f0179e5ba448ef56130a856ea829c7ccef78c85ffa4f00db45"
+
+[[review]]
+id = "db-ddl-039"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-table-like",
+]
+note = "(d) o026 'CREATE TABLE t3 LIKE t1 STORED AS INPUTFORMAT 'org.example.In' OUTPUTFORMAT 'org.example.Out'' (accepted) -> {command:{this:...}} raw string; STORED AS clause not structured. Grammar, coverage and other trees fine."
+
+[review.fingerprints]
+"db.ddl.create-table-like" = "c3874a8a8edcff31a8ae9982f1f1e8caf6d4a85dd7589d9f3892c225f2f15e81"
+
+[review.definitions]
+"db.ddl.create-table-like" = "53781d308bf71782cdf55b0ee4826fa5f4874a39ae955832d4993aa9594357fa"
+
+[[review]]
+id = "db-ddl-040"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-table-using",
+]
+note = "(a) stricter reading: the limits [[reading]] drops OPTIONS from the temporary-table line, but the page names only USING, LOCATION, PARTITIONED BY, CLUSTER BY, CLUSTERED BY and ROW FILTER as unsupported there. No receipt is cited. (b)(c)(d) pass: TEMP spelling, AS-less query and EXTERNAL are marked."
+
+[review.fingerprints]
+"db.ddl.create-table-using" = "e9a86eddf13e3bf12054c4624bc0e87b0d2a097d612a6dc343fdabd9d3c289dc"
+
+[review.definitions]
+"db.ddl.create-table-using" = "29faee090bac374e7974dbdaec18a638c99caeff60133a098d49d0fea41a12e1"
+
+[[review]]
+id = "db-ddl-041"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-view.temporary-view-using",
+]
+note = "(d) every accepted case opaque, e.g. o001 'CREATE TEMPORARY VIEW v3 USING DELTA' -> {command:{this:...}}; USING, OPTIONS, OR REPLACE never structured. Also o011/o040 fill <column_list> as typed '( c1 INT )', not the page's alias list, with no [[reading]]."
+
+[review.fingerprints]
+"db.ddl.create-view.temporary-view-using" = "c600f8ea45c6d3272e8f90fab828b53aa34e9c668b956184f2c3f3a8bbeff1a9"
+
+[review.definitions]
+"db.ddl.create-view.temporary-view-using" = "94fe7824dc260eed01ae30931a6e00f41e5a04a970aca4b5c3bedfc4f8c80446"
+
+[[review]]
+id = "db-ddl-042"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-view.view-as",
+]
+note = "(d) 42 accepted cases opaque: o013 'CREATE OR REPLACE VIEW v3 ( c1 ) WITH SCHEMA BINDING AS SELECT 1', o035 'NOCOPY *', o021 DEFAULT COLLATION and every WITH METRICS LANGUAGE YAML case -> {command:{this:...}}."
+
+[review.fingerprints]
+"db.ddl.create-view.view-as" = "51a69eb7726e9ac0e34f6d0a1a05f4ae25361d04fbcc27c8b8ffa968cfd3e4e3"
+
+[review.definitions]
+"db.ddl.create-view.view-as" = "f975a200c6819ae6098d32432440345ca219615fe6dae929cd3ebde6361587f3"
+
+[[review]]
+id = "db-ddl-043"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.drop-function",
+]
+note = "(d) o002/o004/o011 'DROP TEMPORARY FUNCTION IF EXISTS abs' -> {command:{this:...}} raw string; TEMPORARY and IF EXISTS never reach drop_function (if_exists never set true in any case)."
+
+[review.fingerprints]
+"db.ddl.drop-function" = "d4d028e4e1f4aedeeb3b06f460b8008e0ce81280980e2a53d980212ae38afe21"
+
+[review.definitions]
+"db.ddl.drop-function" = "d4e5279e905a085eb862290f6e597b8ba84b9f6d4e602fccf4a8f1e5a55ff187"
+
+[[review]]
+id = "db-ddl-044"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.drop-table.table",
+]
+note = "(d) o002/o007/o011 'DROP TABLE IF EXISTS t1 FORCE' -> {command:{this:...}}; IF EXISTS and FORCE never land in drop_table fields."
+
+[review.fingerprints]
+"db.ddl.drop-table.table" = "afad41a89176da5d0b92e6a2daff975a8cced7ed7183f385b34523b4fe0b124c"
+
+[review.definitions]
+"db.ddl.drop-table.table" = "5c646bb9817808cc4cb1c194c70fccba89add19fd115732fe670c1025263e6b6"
+
+[[review]]
+id = "db-ddl-045"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.drop-table.temp-temporary-table",
+]
+note = "(d) every accepted case opaque: o002 'DROP TEMP TABLE t1', o003 'DROP TEMPORARY TABLE t1', o004 IF EXISTS -> {command:{this:...}}; TEMP vs TEMPORARY and IF EXISTS never structured."
+
+[review.fingerprints]
+"db.ddl.drop-table.temp-temporary-table" = "6b96a0eb6d6d2fb660b0241e72aa3614577e977d22895e4dcc8493cbe2a6fe81"
+
+[review.definitions]
+"db.ddl.drop-table.temp-temporary-table" = "328ae9f5b8347dbc59bb71dbc44c6bb2379319d029a221a26a1044e2990a18f8"
+
+[[review]]
+id = "db-ddl-046"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.row-filter",
+]
+note = "(d) every accepted case opaque, e.g. o001 'CREATE TABLE t3 ( c1 INT ) WITH ROW FILTER v1 ON ( )' -> {command:{this:...}}. (b)/(c) o008/o011/o012/o013 fill <constant_literal> with identifier v1: 'ON ( v1 )', 'ON ( v1 , v1 )'."
+
+[review.fingerprints]
+"db.ddl.row-filter" = "975417bd24b61dd58c5c9d36eb180180e4b3a5de9f30ac3f944980b0aa05bd91"
+
+[review.definitions]
+"db.ddl.row-filter" = "21b321a14715c2a108bedb0dbb674336191150befd38464e688aaac9af3b38d5"
+
+[[review]]
+id = "db-ddl-047"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.tblproperties.unset-tblproperties",
+]
+note = "(d) o002/o006/o012 'ALTER TABLE t1 UNSET TBLPROPERTIES IF EXISTS ( 'k' , 'k2' )' -> {command:{this:...}}; IF EXISTS and the continued key list never reach UnsetProperty."
+
+[review.fingerprints]
+"db.ddl.tblproperties.unset-tblproperties" = "3acf4f58178b4817fa16a0d02ea908b9667d588fd8344666ba43d2e05edcb3e5"
+
+[review.definitions]
+"db.ddl.tblproperties.unset-tblproperties" = "408768c265877074fb6c5c876fdbc7c2d4cf8378edb13ec137000bb5ce51d6a8"
+
+[[review]]
+id = "db-ddl-048"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.undrop-table",
+]
+note = "(d) o003/o005/o009 'UNDROP TABLE WITH ID '00000000-...'' and 'UNDROP MATERIALIZED VIEW WITH ID ...' -> {command:{this:...}}; TABLE kind and the WITH ID branch never structured."
+
+[review.fingerprints]
+"db.ddl.undrop-table" = "3798aba47162f2b6f369f774e7936bbe3cff1a252f0de4090b51fe9eb99c653b"
+
+[review.definitions]
+"db.ddl.undrop-table" = "3df9572a1572d83b5fbb3f1d06354faf39037b570863b28bc020177df33c6880"
+
+[[review]]
+id = "db-ddl-049"
+family = "ddl"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.undrop-volume",
+]
+note = "(d) o001/o003 'UNDROP VOLUME WITH ID '00000000-0000-0000-0000-000000000000'' -> {command:{this:...}}; the only accepted form is a raw string."
+
+[review.fingerprints]
+"db.ddl.undrop-volume" = "307b0af57873b0e1f3a6e87a2cc6fa6691875d53e6b6b258ccc59017579b9695"
+
+[review.definitions]
+"db.ddl.undrop-volume" = "472c73d80e757b2ad71f2f43b1d4cccddb95e3c8c8fd9166865063145d651971"
