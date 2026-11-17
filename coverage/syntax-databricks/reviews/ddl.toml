@@ -1140,3 +1140,20 @@ note = "Re-read on 17 Nov 2026, (c) batch 2: a form whose earlier approval went 
 "db.ddl.tblproperties.options" = "4118a50f166bea208d0f88d2e4365b2c5515d48e90031baba4b4aa61b3f123d0"
 "db.ddl.tblproperties.set-tblproperties" = "c302c44e30e8f9469b1e406faf5e494658bfd3d53210cce0fab299b826f7e271"
 "db.ddl.tblproperties.tblproperties" = "33a663860db33db453a93672d44de95038003a966864e197d834f62809324eee"
+
+[[review]]
+id = "db-ddl-059"
+family = "ddl"
+parser_tree = "3c548df564a937f1ee8115bf76553e2f84fb9f13"
+reviewed_utc = "2026-11-17T09:50:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.drop-database",
+]
+note = "Withdraws this form's approval. The tree-identity sweep over the accepted cases of every verified form found DROP DATABASE s1 and DROP SCHEMA s1 (and their IF EXISTS, RESTRICT, CASCADE and keyword-name variants, 7 pairs) parse to the same tree apart from spans: the drop_schema node does not keep which keyword was written, although both pages document their own spelling. The tree must keep DATABASE as written before this form can be approved."
+
+[review.fingerprints]
+"db.ddl.drop-database" = "1e6b387307116c4e8070ac65b7d24f0440dfa9728030be1e82ba46d589296b5b"
+
+[review.definitions]
+"db.ddl.drop-database" = "767fb8a9b00e1535edd084b8adfdd0da511e3e6de92b1c431051f5a841d19b5b"

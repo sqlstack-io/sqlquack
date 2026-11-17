@@ -315,3 +315,20 @@ note = "Re-read on 17 Nov 2026, (c) batch 6: a form whose earlier approval went 
 [review.definitions]
 "db.transaction_session.max-partition-bytes" = "731e9c4b55cc298dc7ac1135f8fc9a870a92146faca20a31bae9458362f56915"
 "db.transaction_session.statement-timeout" = "46863e76053168f418af5a24dc86c13520eb537627143cd86599af16061679db"
+
+[[review]]
+id = "db-transaction_session-014"
+family = "transaction_session"
+parser_tree = "3c548df564a937f1ee8115bf76553e2f84fb9f13"
+reviewed_utc = "2026-11-17T09:50:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.use-catalog",
+]
+note = "Withdraws this form's approval. A sweep for grammar keywords that the parse tree holds only as a name found that the form's positive USE CATALOG (o001, o002, o005) and SET CATALOG (o003) pass by accident: the warehouse reads USE CATALOG as USE of a schema named catalog (SCHEMA_NOT_FOUND workspace.catalog) and SET CATALOG as a configuration key (CONFIG_NOT_AVAILABLE CATALOG), and the local parser reads CATALOG as a name in both. The catalogue copied the page's [ <catalog_name> | ' catalog_name ' ] as optional; a hand reading that requires the name, and recorded cases for SET CATALOG with a name, are needed."
+
+[review.fingerprints]
+"db.transaction_session.use-catalog" = "d066747fc7f1e5a2c5eb6d1dee6d1f99e864c7a9b111111d7c92e3ed57b4198e"
+
+[review.definitions]
+"db.transaction_session.use-catalog" = "d9bf33bfb16a40670377a100bc19b8b130d2e546d78459992dd2e3de4156aed6"

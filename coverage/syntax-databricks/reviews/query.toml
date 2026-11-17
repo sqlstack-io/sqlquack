@@ -352,3 +352,20 @@ note = "Re-read on 17 Nov 2026, (c) batch 6: a form whose earlier approval went 
 "db.query.select-groupby.subscript-dot" = "d48fa943701abfff4856461d7cd0dd852594ee4e236ab764f5464e5dd90d8f1f"
 "db.query.select-hints.join-hint-alias" = "4aa02c2a49b11e126ba14477f62aa8856796fe6143adee3dc7d7fdc5add9918b"
 "db.query.select-pivot" = "d3197b6aa0ebe2d38ba40b2e5936295f348d2fcb646ea41bd1925898a384792c"
+
+[[review]]
+id = "db-query-013"
+family = "query"
+parser_tree = "3c548df564a937f1ee8115bf76553e2f84fb9f13"
+reviewed_utc = "2026-11-17T09:50:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-groupby.group-by",
+]
+note = "Withdraws this form's approval. The tree-identity sweep over the accepted cases of every verified form found GROUP BY c1 WITH ROLLUP and GROUP BY c1 WITH CUBE parse to the same tree, apart from spans, as GROUP BY ROLLUP ( c1 ) and GROUP BY CUBE ( c1 ): the WITH spelling, which the page's Syntax block offers beside the function spelling, is lost. The tree must keep the WITH spelling before this form can be approved."
+
+[review.fingerprints]
+"db.query.select-groupby.group-by" = "fbff42c0d570951d9cee0074fea6fe67f42a8651e8b2ca1bc8f41a1eb91d1cab"
+
+[review.definitions]
+"db.query.select-groupby.group-by" = "466e6081b946b74b6accb69b8307427b364773a8b63e68176861331c001adaee"
