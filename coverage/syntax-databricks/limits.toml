@@ -6330,16 +6330,6 @@ expect = "observe"
 [[limit]]
 form = "db.expressions.null-type"
 kind = "alternative"
-target = "VOID"
-note = "the VOID type in type position, as the page's examples write it"
-anchor = "doc.data-types.null-type / Syntax"
-sql = "SELECT CAST ( NULL AS VOID )"
-context = "raw"
-expect = "observe"
-
-[[limit]]
-form = "db.expressions.null-type"
-kind = "alternative"
 target = "NULL"
 note = "the NULL spelling in type position"
 anchor = "doc.data-types.null-type / Syntax"

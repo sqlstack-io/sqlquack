@@ -487,6 +487,7 @@ syntax_sha256 = "050ca33f86bbbc40749712bd7d3d91cf8e878b3841fb9ac7c08763166d56f51
 syntax_blocks = 1
 status = "forms"
 decisions = [
+  "a syntax line read by hand (hand.toml [[reading]])",
   "applies to: Databricks SQL Databricks Runtime",
   "the page's Syntax blocks transcribed into the catalogue notation",
 ]

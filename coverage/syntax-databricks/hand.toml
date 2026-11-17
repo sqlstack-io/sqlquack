@@ -1002,6 +1002,14 @@ read = [
 reason = "braces for brackets: the block makes TEMP or TEMPORARY required after REPLACE, while the page's parameters describe CREATE OR REPLACE TABLE for tables that are not temporary (IF NOT EXISTS cannot coexist with REPLACE); read with TEMP optional"
 
 [[reading]]
+page = "data-types/null-type"
+written = "{ NULL | VOID }"
+read = [
+  "VOID",
+]
+reason = "the page names the type NULL or VOID, but only VOID is a type spelling: in type position the warehouse accepts CAST ( NULL AS VOID ) and refuses CAST ( NULL AS NULL ) while parsing (both recorded), and a bare NULL or VOID in an expression is the null literal or a column; read as the VOID type, checked in type position, with the NULL spelling kept as an observed limit"
+
+[[reading]]
 page = "data-types/interval-type"
 written = "<year> - <month> <interval> INTERVAL [ + | - ] <year_month_interval_string> <year_month_interval_qualifier>"
 read = [

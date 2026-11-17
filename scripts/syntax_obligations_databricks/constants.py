@@ -852,6 +852,7 @@ FORM_CONTEXTS: dict[str, tuple[str, str]] = {
             "db.expressions.array-type",
             "db.expressions.interval-type",
             "db.expressions.map-type",
+            "db.expressions.null-type",
             "db.expressions.struct-type",
         ),
         TYPE_CONTEXT,
