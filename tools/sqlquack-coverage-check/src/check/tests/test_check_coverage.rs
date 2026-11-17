@@ -551,6 +551,24 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             expected_problem: Some("review query-1: form sf.query.nowhere is not catalogued"),
         },
         CheckTestCase {
+            description: "a retired form brought back or reused is still named by its tombstone",
+            mutate: |root| {
+                write(
+                    root,
+                    "aliases.toml",
+                    "[[alias]]\nfrom = \"sf.query.select.top\"\nto = [\"sf.query.select\"]\nreason = \"read again\"\n",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: Some(
+                "alias sf.query.select.top: not catalogued as absent_from_source",
+            ),
+        },
+        CheckTestCase {
             description: "an unobservable obligation whose case otherwise agrees",
             mutate: |root| unobservable(root, "sf.query.select.o001", "select-17", "SELECT 17"),
             parse: structural,

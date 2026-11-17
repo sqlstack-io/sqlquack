@@ -205,11 +205,12 @@ pub(crate) fn summary(focus: Option<&Path>, common: &Common) -> Result<ExitCode,
     let summary: Summary = summarize(&check);
     let total = &summary.total;
     let mut text: Vec<String> = vec![format!(
-        "{} of {} forms verified ({}%), {} excluded; obligations {}/{}",
+        "{} of {} forms verified ({}%), {} excluded, {} retired (absent from the pinned pages); obligations {}/{}",
         total.verified,
         total.forms,
         summary.verified_percent,
         total.excluded,
+        summary.absent_forms,
         total.satisfied_obligations,
         total.required_obligations
     )];
