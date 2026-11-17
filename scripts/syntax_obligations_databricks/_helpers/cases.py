@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import dataclasses
+import re
 import tempfile
 import tomllib
 from pathlib import Path
@@ -30,6 +31,7 @@ from scripts.grammar_obligations.types import Row
 from scripts.syntax_catalogue_databricks.constants import DECISION_RUNTIME_ONLY, SOURCES_FILE
 from scripts.syntax_obligations_databricks.constants import (
     CAPTURE,
+    CASE_FIXTURES,
     CASES_DIR,
     CATALOGUE_DIR,
     DIGEST_WIDTH,
@@ -116,10 +118,10 @@ def family_cases(  # noqa: PLR0913
         if draft.spec is not None and draft.spec.action != ACTION_HAND
     }
     session_sha: str = digest(canonical(SESSION))
-    setup: list[str] = list(SETUP)
     cases: list[Row] = []
     for sql, (form, rendered, obligations) in by_sql.items():
         sha: str = digest(sql)
+        setup: list[str] = case_setup(sql)
         case: Row = {
             "case_id": f"{form}.k{sha[:DIGEST_WIDTH]}",
             "obligations": sorted(set(obligations)),
@@ -151,6 +153,12 @@ def family_cases(  # noqa: PLR0913
             )
         )
     return sorted(cases, key=lambda case: str(case["case_id"]))
+
+
+def case_setup(sql: str) -> list[str]:
+    """SETUP, then each CASE_FIXTURES table the text names, so a page example has its own tables."""
+    words: set[str] = set(re.findall(r"\w+", sql.lower()))
+    return [*SETUP, *(ddl for name, ddl in CASE_FIXTURES.items() if name in words)]
 
 
 def kind_settlement(

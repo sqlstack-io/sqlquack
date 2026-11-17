@@ -1427,6 +1427,20 @@ depths = [
 note = "query operands nested; no documented bound"
 
 [[obligation]]
+id = "db.dml.insert-into.into-replace-on.o062"
+kind = "positive"
+required = true
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+note = "the page's REPLACE ON example with a parenthesised source query and its alias, run on its own students and people tables"
+
+[[obligation]]
+id = "db.dml.insert-into.into-replace-on.o063"
+kind = "positive"
+required = true
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+note = "the page's REPLACE ON example with a column list before the target alias, run on its own students and people tables"
+
+[[obligation]]
 id = "db.dml.insert-into.into.syntax.o001"
 kind = "positive"
 required = true

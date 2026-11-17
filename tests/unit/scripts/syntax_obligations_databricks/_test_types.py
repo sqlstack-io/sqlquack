@@ -50,3 +50,10 @@ class BareFormTestCase:
 class MissingOpenTestCase:
     description: str
     expected_unbalanced: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class CaseSetupTestCase:
+    description: str
+    sql: str
+    expected_fixtures: tuple[str, ...]

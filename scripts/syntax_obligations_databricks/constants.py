@@ -38,6 +38,10 @@ SETUP: list[str] = [
     "INSERT INTO t1 VALUES ( 1 , 2 )",
     "CREATE VIEW v1 AS SELECT c1 , c2 FROM t1",
 ]
+CASE_FIXTURES: dict[str, str] = {
+    "students": "CREATE TABLE students ( row_origin STRING , name STRING )",
+    "people": "CREATE TABLE people ( row_origin STRING , name STRING )",
+}
 CAPTURE: str = "execute_autocommit_in_throwaway_database"
 DIGEST_WIDTH: int = 12
 STAGE_KEY: str = "stage"

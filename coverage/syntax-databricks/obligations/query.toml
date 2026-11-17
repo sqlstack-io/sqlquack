@@ -4905,6 +4905,38 @@ anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
 note = "a table name with FOR SYSTEM_VERSION AS OF; the names page writes SYSTEM_TIMESTAMP and SYSTEM_VERSION, SqlBaseParser temporalClause SYSTEM_TIME and SYSTEM_VERSION; observed, so that a receipt settles which the warehouse takes"
 
 [[obligation]]
+id = "db.query.select-table-reference.o128"
+kind = "option_present"
+required = true
+target = "STREAM ( <table_valued_function> )"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+note = "a table-valued function call inside STREAM ( ), which SqlBaseParser allows (STREAM ( tableFunctionCall ) identifiedByClause? watermarkClause? tableAlias)"
+
+[[obligation]]
+id = "db.query.select-table-reference.o129"
+kind = "option_present"
+required = true
+target = "STREAM ( <table_valued_function> ) <table_alias>"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+note = "a table-valued function call inside STREAM ( ) with a table alias after the parenthesis"
+
+[[obligation]]
+id = "db.query.select-table-reference.o130"
+kind = "option_present"
+required = true
+target = "STREAM ( IDENTIFIER ( <name> ) )"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+note = "an IDENTIFIER clause inside STREAM ( ), which SqlBaseParser reads as a table function call"
+
+[[obligation]]
+id = "db.query.select-table-reference.o131"
+kind = "negative_neighbour"
+required = true
+target = "STREAM ( <table_name> )"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+note = "a table alias inside STREAM ( ): the alias belongs after the parenthesis (STREAM ( table_name ) [ table_alias ])"
+
+[[obligation]]
 id = "db.query.select-tvf.o001"
 kind = "positive"
 required = true

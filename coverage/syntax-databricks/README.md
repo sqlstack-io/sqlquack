@@ -172,7 +172,8 @@ written in backticks.
 class rules. The reasons for each choice follow.
 
 - `SETUP` runs in a fresh schema of its own for every case. The referee creates the schema and
-  drops it.
+  drops it. A case whose text names a table in `CASE_FIXTURES` (`students`, `people`) also
+  creates it after `SETUP`, so a page's example runs on its own tables; no other case does.
 - Repeated fills (`DB_REPEAT_FILLS`): EXECUTE IMMEDIATE refuses two USING arguments with one
   alias, so a repeated `alias` or `var_name` takes `v2`. A list of keys names distinct keys: the
   parser refuses a repeated option or property key (`DUPLICATE_KEY`), and a constraint's column
@@ -283,7 +284,8 @@ earlier core runs, whose receipts were all either re-recorded or of SQL texts no
 
 The referee runs each case through the SQL Statement Execution API in a schema of its own in
 catalog `workspace`: it creates the schema, runs the setup (`SETUP` in
-`scripts/syntax_obligations_databricks/constants.py`), runs the case with autocommit, and drops
+`scripts/syntax_obligations_databricks/constants.py`, and the `CASE_FIXTURES` tables the
+case names), runs the case with autocommit, and drops
 the schema with `CASCADE`, so no case sees another's objects; the shuffled repeat checks that.
 A run fails if any of its schemas is left behind. Sixteen cases run at a time, each under one
 300 s deadline.
