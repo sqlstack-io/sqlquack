@@ -2894,3 +2894,10 @@ ids = [
   "db.query.query.o047",
   "db.query.query.o049",
 ]
+
+[[retired]]
+retired_in = "f7c2f4ee805400f3645f0cde26a04d988d978cc8"
+reason = "issued for the REPLACE ON page example with a column list and a parenthesised source query as an expected accept; the page notes column lists for REPLACE ON apply to Databricks Runtime 19 and above, so before any recording or review the row became an observation with a new note, and its obligation returns as db.dml.insert-into.into-replace-on.o064"
+ids = [
+  "db.dml.insert-into.into-replace-on.o063",
+]

@@ -25855,6 +25855,22 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
+id = "db.ddl.tblproperties.unset-tblproperties.o013"
+kind = "option_present"
+required = true
+target = "<property_key>"
+anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
+note = "an unquoted property key on a table"
+
+[[obligation]]
+id = "db.ddl.tblproperties.unset-tblproperties.o014"
+kind = "option_present"
+required = true
+target = "IF EXISTS"
+anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
+note = "UNSET TBLPROPERTIES IF EXISTS on a view"
+
+[[obligation]]
 id = "db.ddl.truncate-table.o001"
 kind = "positive"
 required = true

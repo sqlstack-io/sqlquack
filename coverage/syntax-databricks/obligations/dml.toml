@@ -1434,11 +1434,27 @@ anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
 note = "the page's REPLACE ON example with a parenthesised source query and its alias, run on its own students and people tables"
 
 [[obligation]]
-id = "db.dml.insert-into.into-replace-on.o063"
+id = "db.dml.insert-into.into-replace-on.o064"
 kind = "positive"
 required = true
 anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
-note = "the page's REPLACE ON example with a column list before the target alias, run on its own students and people tables"
+note = "a column list before the target alias with a parenthesised source query and its alias, run on the page's students and people tables; observed, since the page notes column lists for REPLACE ON apply to Databricks Runtime 19 and above"
+
+[[obligation]]
+id = "db.dml.insert-into.into-replace-on.o065"
+kind = "option_present"
+required = true
+target = "BY NAME"
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+note = "the page's REPLACE ON example inserting by name, with the target alias before BY NAME as the page writes it; observed, since the page notes BY NAME for REPLACE ON applies to Databricks Runtime 18.1 and above"
+
+[[obligation]]
+id = "db.dml.insert-into.into-replace-on.o066"
+kind = "option_present"
+required = true
+target = "( <column_name> [ , ... ] )"
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+note = "the page's REPLACE ON example with a column list and an unparenthesised source query; observed, since the page notes column lists for REPLACE ON apply to Databricks Runtime 19 and above"
 
 [[obligation]]
 id = "db.dml.insert-into.into.syntax.o001"

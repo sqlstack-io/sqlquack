@@ -39,8 +39,8 @@ SETUP: list[str] = [
     "CREATE VIEW v1 AS SELECT c1 , c2 FROM t1",
 ]
 CASE_FIXTURES: dict[str, str] = {
-    "students": "CREATE TABLE students ( row_origin STRING , name STRING )",
-    "people": "CREATE TABLE people ( row_origin STRING , name STRING )",
+    "students": "CREATE TABLE students ( name STRING , row_origin STRING )",
+    "people": "CREATE TABLE people ( name STRING , row_origin STRING )",
 }
 CAPTURE: str = "execute_autocommit_in_throwaway_database"
 DIGEST_WIDTH: int = 12
