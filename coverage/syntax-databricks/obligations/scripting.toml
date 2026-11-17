@@ -517,13 +517,6 @@ target = "<sql_string>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.scripting.execute-immediate.o004"
-kind = "negative_neighbour"
-required = true
-target = "<sql_string>"
-note = "an unquoted identifier in place of <sql_string>"
-
-[[obligation]]
 id = "db.scripting.execute-immediate.o005"
 kind = "option_present"
 required = true
@@ -701,6 +694,14 @@ required = true
 target = "<alias>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.scripting.execute-immediate.o034"
+kind = "negative_neighbour"
+required = true
+target = "<sql_string>"
+anchor = "doc.sql-ref-syntax-aux-execute-immediate / Syntax"
+note = "an unquoted identifier in place of <sql_string>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.scripting.fetch-stmt.o001"
@@ -2056,13 +2057,6 @@ target = "<message_str> in [ SET { MESSAGE_ARGUMENTS = <argument_map> | MESSAGE_
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.scripting.signal-stmt.o015"
-kind = "negative_neighbour"
-required = true
-target = "<message_str> in [ SET { MESSAGE_ARGUMENTS = <argument_map> | MESSAGE_TEXT = <message_str> } ]"
-note = "an unquoted identifier in place of <message_str>"
-
-[[obligation]]
 id = "db.scripting.signal-stmt.o016"
 kind = "option_present"
 required = true
@@ -2106,13 +2100,6 @@ kind = "operand_type_class"
 required = true
 target = "<message_str> in [ SET MESSAGE_TEXT = <message_str> ]"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "db.scripting.signal-stmt.o024"
-kind = "negative_neighbour"
-required = true
-target = "<message_str> in [ SET MESSAGE_TEXT = <message_str> ]"
-note = "an unquoted identifier in place of <message_str>"
 
 [[obligation]]
 id = "db.scripting.signal-stmt.o025"
@@ -2179,6 +2166,22 @@ required = true
 target = "<sqlstate>"
 anchor = "doc.control-flow.signal-stmt / Syntax"
 note = "SIGNAL SQLSTATE with no sqlstate, which the warehouse parses as SIGNAL of a condition named SQLSTATE"
+
+[[obligation]]
+id = "db.scripting.signal-stmt.o036"
+kind = "negative_neighbour"
+required = true
+target = "<message_str> in [ SET { MESSAGE_ARGUMENTS = <argument_map> | MESSAGE_TEXT = <message_str> } ]"
+anchor = "doc.control-flow.signal-stmt / Syntax"
+note = "an unquoted identifier in place of <message_str>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.scripting.signal-stmt.o037"
+kind = "negative_neighbour"
+required = true
+target = "<message_str> in [ SET MESSAGE_TEXT = <message_str> ]"
+anchor = "doc.control-flow.signal-stmt / Syntax"
+note = "an unquoted identifier in place of <message_str>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.scripting.while-stmt.o001"

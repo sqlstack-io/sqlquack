@@ -2794,3 +2794,53 @@ ids = [
   "db.ddl.alter-table-manage-column.alter-change-set-mask.o047",
   "db.ddl.alter-table-manage-column.alter-change-set-mask.o050",
 ]
+
+[[retired]]
+retired_in = "a6b622c214f25bf73398cfe48158859f6169edd7"
+reason = "the table function's <column_spec> read as its definition on the page, <column_name> <data_type> [ COMMENT <column_comment> ]: the operand was classed as an identifier by its name, so its identifier classes replaced the whole name and type (both refused while parsing at DBSQL 2026.45); the obligations derived from the operand as a whole no longer exist, and the column name, type and comment carry their own"
+ids = [
+  "db.ddl.create-sql-function.o023",
+  "db.ddl.create-sql-function.o024",
+  "db.ddl.create-sql-function.o025",
+  "db.ddl.create-sql-function.o026",
+  "db.ddl.create-sql-function.o027",
+  "db.ddl.create-sql-function.o059",
+  "db.ddl.create-sql-function.o068",
+  "db.ddl.create-sql-function.o074",
+]
+
+[[retired]]
+retired_in = "a6b622c214f25bf73398cfe48158859f6169edd7"
+reason = "These derived negatives parse on the warehouse (DBSQL 2026.45): it answers a later phase, not a syntax error. Each text is kept as an observed [[limit]] that its receipt settles."
+ids = [
+  "db.ddl.alter-materialized-view.materialized-view-add-alter.o053",
+  "db.ddl.alter-recipient.o059",
+  "db.ddl.alter-recipient.o068",
+  "db.ddl.alter-streaming-table.streaming-table-add-alter.o053",
+  "db.ddl.column-mask.o030",
+  "db.ddl.create-recipient.o069",
+  "db.ddl.create-sql-function.o101",
+  "db.ddl.create-streaming-table-auto-cdc.o141",
+  "db.ddl.create-streaming-table-auto-cdc.o181",
+  "db.ddl.create-streaming-table-auto-cdc.o184",
+  "db.expressions.names.identifier-2.o023",
+  "db.expressions.names.identifier.syntax.o042",
+  "db.query.select-hints.join-hint-alias.o009",
+  "db.scripting.execute-immediate.o004",
+  "db.scripting.signal-stmt.o015",
+  "db.scripting.signal-stmt.o024",
+  "db.security_admin.grant.o017",
+  "db.security_admin.grant.o018",
+  "db.security_admin.revoke.o017",
+  "db.security_admin.revoke.o018",
+  "db.utility.cache-refresh.o004",
+  "db.utility.resource-mgmt-add-archive.o006",
+  "db.utility.resource-mgmt-add-archive.o008",
+  "db.utility.resource-mgmt-add-file.o006",
+  "db.utility.resource-mgmt-add-jar.o006",
+  "db.utility.resource-mgmt-add-jar.o008",
+  "db.utility.resource-mgmt-list-archive.o009",
+  "db.utility.resource-mgmt-list-jar.o009",
+  "db.utility.show-functions.o037",
+  "db.utility.show-tblproperties.o025",
+]

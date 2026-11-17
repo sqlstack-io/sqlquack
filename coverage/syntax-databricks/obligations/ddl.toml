@@ -2425,12 +2425,6 @@ required = true
 note = "the form without its required ALTER after <view_name>"
 
 [[obligation]]
-id = "db.ddl.alter-materialized-view.materialized-view-add-alter.o053"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required COLUMN"
-
-[[obligation]]
 id = "db.ddl.alter-materialized-view.materialized-view-add-alter.o033"
 kind = "negative_neighbour"
 required = true
@@ -2530,6 +2524,14 @@ kind = "negative_neighbour"
 required = true
 anchor = "doc.sql-ref-syntax-ddl-alter-materialized-view / Syntax"
 note = "the form without its required SET after <view_name> #3; the warehouse (DBSQL 2026.44) answers semantic_error (PRINCIPAL_DOES_NOT_EXIST.PRINCIPAL_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.ddl.alter-materialized-view.materialized-view-add-alter.o055"
+kind = "negative_neighbour"
+required = true
+target = "the form without its required COLUMN"
+anchor = "doc.sql-ref-syntax-ddl-alter-materialized-view / Syntax"
+note = "the form without its required COLUMN; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.ddl.alter-provider.o001"
@@ -2823,13 +2825,6 @@ target = "<property_string>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.ddl.alter-recipient.o059"
-kind = "negative_neighbour"
-required = true
-target = "<property_string>"
-note = "an unquoted identifier in place of <property_string>"
-
-[[obligation]]
 id = "db.ddl.alter-recipient.o018"
 kind = "option_present"
 required = true
@@ -2906,13 +2901,6 @@ kind = "operand_type_class"
 required = true
 target = "<property_string> #2"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "db.ddl.alter-recipient.o068"
-kind = "negative_neighbour"
-required = true
-target = "<property_string> #2"
-note = "an unquoted identifier in place of <property_string>"
 
 [[obligation]]
 id = "db.ddl.alter-recipient.o026"
@@ -3084,6 +3072,22 @@ required = true
 target = "<property_identifier> #2"
 anchor = "doc.sql-ref-syntax-ddl-alter-recipient / Syntax"
 note = "a string literal in place of <property_identifier>; the warehouse (DBSQL 2026.44) answers semantic_error (RECIPIENT_DOES_NOT_EXIST.RESOURCE_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.ddl.alter-recipient.o088"
+kind = "negative_neighbour"
+required = true
+target = "<property_string>"
+anchor = "doc.sql-ref-syntax-ddl-alter-recipient / Syntax"
+note = "an unquoted identifier in place of <property_string>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.ddl.alter-recipient.o089"
+kind = "negative_neighbour"
+required = true
+target = "<property_string> #2"
+anchor = "doc.sql-ref-syntax-ddl-alter-recipient / Syntax"
+note = "an unquoted identifier in place of <property_string>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.ddl.alter-schema.o001"
@@ -4582,12 +4586,6 @@ required = true
 note = "the form without its required ALTER after <table_name>"
 
 [[obligation]]
-id = "db.ddl.alter-streaming-table.streaming-table-add-alter.o053"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required COLUMN"
-
-[[obligation]]
 id = "db.ddl.alter-streaming-table.streaming-table-add-alter.o034"
 kind = "negative_neighbour"
 required = true
@@ -4689,6 +4687,14 @@ required = true
 target = "the empty action after the last '|'"
 anchor = "doc.sql-ref-syntax-ddl-alter-streaming-table / Syntax"
 note = "the statement with no action, as the page's stray '|' allows, which the warehouse refuses"
+
+[[obligation]]
+id = "db.ddl.alter-streaming-table.streaming-table-add-alter.o056"
+kind = "negative_neighbour"
+required = true
+target = "the form without its required COLUMN"
+anchor = "doc.sql-ref-syntax-ddl-alter-streaming-table / Syntax"
+note = "the form without its required COLUMN; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.ddl.alter-table.o001"
@@ -10217,13 +10223,6 @@ target = "<other_column_name> in [ USING COLUMNS ( { <other_column_name> | <cons
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.ddl.column-mask.o030"
-kind = "negative_neighbour"
-required = true
-target = "<other_column_name> in [ USING COLUMNS ( { <other_column_name> | <constant_literal> } [ , ... ] ) ]"
-note = "a string literal in place of <other_column_name>"
-
-[[obligation]]
 id = "db.ddl.column-mask.o031"
 kind = "operand_type_class"
 required = true
@@ -10298,6 +10297,14 @@ required = true
 target = "<other_column_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.ddl.column-mask.o036"
+kind = "negative_neighbour"
+required = true
+target = "<other_column_name> in [ USING COLUMNS ( { <other_column_name> | <constant_literal> } [ , ... ] ) ]"
+anchor = "doc.sql-ref-syntax-ddl-column-mask / Syntax"
+note = "a string literal in place of <other_column_name>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.ddl.comment.o001"
@@ -13725,13 +13732,6 @@ target = "<property_string> in [ PROPERTIES ( { <property_identifier> [ . <prope
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.ddl.create-recipient.o069"
-kind = "negative_neighbour"
-required = true
-target = "<property_string> in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } [ = ]…"
-note = "an unquoted identifier in place of <property_string>"
-
-[[obligation]]
 id = "db.ddl.create-recipient.o021"
 kind = "option_present"
 required = true
@@ -13857,6 +13857,14 @@ required = true
 target = "<property_identifier> in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } […"
 anchor = "doc.sql-ref-syntax-ddl-create-recipient / Syntax"
 note = "a string literal in place of <property_identifier>; the warehouse (DBSQL 2026.44) answers unsupported_feature (PERMISSION_DENIED), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.ddl.create-recipient.o076"
+kind = "negative_neighbour"
+required = true
+target = "<property_string> in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } [ = ]…"
+anchor = "doc.sql-ref-syntax-ddl-create-recipient / Syntax"
+note = "an unquoted identifier in place of <property_string>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.ddl.create-schema.o001"
@@ -14849,37 +14857,97 @@ required = true
 target = "[ , ... ] #2"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o023"
+id = "db.ddl.create-sql-function.o204"
 kind = "option_present"
 required = true
-target = "[ ( <column_spec> [ , ... ] ) ]"
+target = "[ ( { <column_name> <data_type> [ COMMENT <column_comment> ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o024"
+id = "db.ddl.create-sql-function.o205"
 kind = "option_absent"
 required = true
-target = "[ ( <column_spec> [ , ... ] ) ]"
+target = "[ ( { <column_name> <data_type> [ COMMENT <column_comment> ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o025"
+id = "db.ddl.create-sql-function.o206"
+kind = "alternative"
+required = true
+target = "{ <column_name> <data_type> [ COMMENT <column_comment> ] } → <column_name> <data_type> [ COMMENT <column_comment> ]"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o207"
 kind = "required_operand_missing"
 required = true
-target = "<column_spec> in [ ( <column_spec> [ , ... ] ) ]"
-note = "omit <column_spec>"
+target = "<column_name> in [ ( { <column_name> <data_type> [ COMMENT <column_comment> ] } [ , ... ] ) ]"
+note = "omit <column_name>"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o026"
+id = "db.ddl.create-sql-function.o208"
 kind = "operand_type_class"
 required = true
-target = "<column_spec> in [ ( <column_spec> [ , ... ] ) ]"
+target = "<column_name> in [ ( { <column_name> <data_type> [ COMMENT <column_comment> ] } [ , ... ] ) ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o027"
+id = "db.ddl.create-sql-function.o209"
 kind = "negative_neighbour"
 required = true
-target = "<column_spec> in [ ( <column_spec> [ , ... ] ) ]"
-note = "a string literal in place of <column_spec>"
+target = "<column_name> in [ ( { <column_name> <data_type> [ COMMENT <column_comment> ] } [ , ... ] ) ]"
+note = "a string literal in place of <column_name>"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o210"
+kind = "required_operand_missing"
+required = true
+target = "<data_type> in [ ( { <column_name> <data_type> [ COMMENT <column_comment> ] } [ , ... ] ) ]"
+note = "omit <data_type>"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o211"
+kind = "operand_type_class"
+required = true
+target = "<data_type> in [ ( { <column_name> <data_type> [ COMMENT <column_comment> ] } [ , ... ] ) ]"
+note = "a valid data_type"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o212"
+kind = "negative_neighbour"
+required = true
+target = "<data_type> in [ ( { <column_name> <data_type> [ COMMENT <column_comment> ] } [ , ... ] ) ]"
+note = "a string literal in place of <data_type>"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o213"
+kind = "option_present"
+required = true
+target = "[ COMMENT <column_comment> ]"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o214"
+kind = "option_absent"
+required = true
+target = "[ COMMENT <column_comment> ]"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o215"
+kind = "required_operand_missing"
+required = true
+target = "<column_comment> in [ COMMENT <column_comment> ]"
+note = "omit <column_comment>"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o216"
+kind = "operand_type_class"
+required = true
+target = "<column_comment> in [ COMMENT <column_comment> ]"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o217"
+kind = "negative_neighbour"
+required = true
+target = "<column_comment> in [ COMMENT <column_comment> ]"
+note = "an unquoted identifier in place of <column_comment>"
 
 [[obligation]]
 id = "db.ddl.create-sql-function.o094"
@@ -14926,13 +14994,6 @@ kind = "operand_type_class"
 required = true
 target = "<query> #2"
 note = "a valid query"
-
-[[obligation]]
-id = "db.ddl.create-sql-function.o101"
-kind = "negative_neighbour"
-required = true
-target = "<query> #2"
-note = "a bare literal in place of <query>"
 
 [[obligation]]
 id = "db.ddl.create-sql-function.o195"
@@ -15435,10 +15496,16 @@ required = true
 note = "the form without its required TABLE"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o059"
+id = "db.ddl.create-sql-function.o218"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ ( <column_spec> [ , ... ] ) ]"
+note = "the form without its required { <column_name> <data_type> [ COMMENT <column_comment> ] } in [ ( { <column_name> <data_type> [ COMMENT <column_comment> ] } [ , ... ] ) ]"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o219"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ ( { <column_name> <data_type> [ COMMENT <column_comment> ] } [ , ... ] ) ]"
 
 [[obligation]]
 id = "db.ddl.create-sql-function.o062"
@@ -15619,18 +15686,18 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o068"
+id = "db.ddl.create-sql-function.o220"
 kind = "identifier_class"
 required = true
-target = "<column_spec>"
+target = "<column_name>"
 anchor = "doc.identifiers-syntax"
 note = "quoted: a double-quoted identifier with blanks and mixed case"
 
 [[obligation]]
-id = "db.ddl.create-sql-function.o074"
+id = "db.ddl.create-sql-function.o221"
 kind = "identifier_class"
 required = true
-target = "<column_spec>"
+target = "<column_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
@@ -15643,6 +15710,14 @@ depths = [
   8,
 ]
 note = "query operands nested; no documented bound"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o222"
+kind = "negative_neighbour"
+required = true
+target = "<query> #2"
+anchor = "doc.sql-ref-syntax-ddl-create-sql-function / Syntax"
+note = "a bare literal in place of <query>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.ddl.create-streaming-table.o001"
@@ -16244,13 +16319,6 @@ target = "<order_by_column> #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.ddl.create-streaming-table-auto-cdc.o141"
-kind = "negative_neighbour"
-required = true
-target = "<order_by_column> #2"
-note = "a string literal in place of <order_by_column>"
-
-[[obligation]]
 id = "db.ddl.create-streaming-table-auto-cdc.o142"
 kind = "option_present"
 required = true
@@ -16504,13 +16572,6 @@ target = "<order_by_column> #3"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.ddl.create-streaming-table-auto-cdc.o181"
-kind = "negative_neighbour"
-required = true
-target = "<order_by_column> #3"
-note = "a string literal in place of <order_by_column>"
-
-[[obligation]]
 id = "db.ddl.create-streaming-table-auto-cdc.o182"
 kind = "required_operand_missing"
 required = true
@@ -16523,13 +16584,6 @@ kind = "operand_type_class"
 required = true
 target = "<system_order_by_column>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "db.ddl.create-streaming-table-auto-cdc.o184"
-kind = "negative_neighbour"
-required = true
-target = "<system_order_by_column>"
-note = "a string literal in place of <system_order_by_column>"
 
 [[obligation]]
 id = "db.ddl.create-streaming-table-auto-cdc.o185"
@@ -17318,6 +17372,30 @@ required = true
 target = "SYSTEM SEQUENCE BY without STORED AS BITEMPORAL"
 anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
 note = "SYSTEM SEQUENCE BY without a bitemporal table, as the page's line allows, which the warehouse refuses"
+
+[[obligation]]
+id = "db.ddl.create-streaming-table-auto-cdc.o275"
+kind = "negative_neighbour"
+required = true
+target = "<order_by_column> #2"
+anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
+note = "a string literal in place of <order_by_column>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.ddl.create-streaming-table-auto-cdc.o276"
+kind = "negative_neighbour"
+required = true
+target = "<order_by_column> #3"
+anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
+note = "a string literal in place of <order_by_column>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.ddl.create-streaming-table-auto-cdc.o277"
+kind = "negative_neighbour"
+required = true
+target = "<system_order_by_column>"
+anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
+note = "a string literal in place of <system_order_by_column>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.ddl.create-streaming-table-auto-cdc.create-streaming-table-auto-cdc-from-snapshot.o001"

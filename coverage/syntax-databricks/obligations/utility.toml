@@ -906,11 +906,12 @@ target = "<resource_path>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.cache-refresh.o004"
+id = "db.utility.cache-refresh.o005"
 kind = "negative_neighbour"
 required = true
 target = "<resource_path>"
-note = "an unquoted identifier in place of <resource_path>"
+anchor = "doc.sql-ref-syntax-aux-cache-refresh / Syntax"
+note = "an unquoted identifier in place of <resource_path>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.cache-refresh-function.o001"
@@ -3711,13 +3712,6 @@ required = true
 target = "{ ARCHIVE | ARCHIVES } → ARCHIVES"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-archive.o006"
-kind = "required_operand_missing"
-required = true
-target = "<file_name>"
-note = "omit <file_name>"
-
-[[obligation]]
 id = "db.utility.resource-mgmt-add-archive.o007"
 kind = "operand_type_class"
 required = true
@@ -3725,18 +3719,27 @@ target = "<file_name>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-archive.o008"
-kind = "negative_neighbour"
-required = true
-target = "<file_name>"
-note = "an unquoted identifier in place of <file_name>"
-
-[[obligation]]
 id = "db.utility.resource-mgmt-add-archive.o011"
 kind = "option_absent"
 required = true
 target = "the resource type after ADD"
 note = "ADD without its resource type, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-add-archive.o012"
+kind = "required_operand_missing"
+required = true
+target = "<file_name>"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-archive / Syntax"
+note = "omit <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-add-archive.o013"
+kind = "negative_neighbour"
+required = true
+target = "<file_name>"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-archive / Syntax"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-add-file.o001"
@@ -3755,13 +3758,6 @@ id = "db.utility.resource-mgmt-add-file.o013"
 kind = "alternative"
 required = true
 target = "{ FILE | FILES } → FILES"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-add-file.o006"
-kind = "required_operand_missing"
-required = true
-target = "<resource_name>"
-note = "omit <resource_name>"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-add-file.o007"
@@ -3794,6 +3790,14 @@ target = "[ FILE | FILES ]"
 note = "ADD without FILE or FILES, as the page's line allows, which the warehouse refuses ('Operation not allowed: ADD with resource type'), so the answer is recorded rather than expected"
 
 [[obligation]]
+id = "db.utility.resource-mgmt-add-file.o015"
+kind = "required_operand_missing"
+required = true
+target = "<resource_name>"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-file / Syntax"
+note = "omit <resource_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
 id = "db.utility.resource-mgmt-add-jar.o001"
 kind = "positive"
 required = true
@@ -3812,13 +3816,6 @@ required = true
 target = "{ JAR | JARS } → JARS"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-jar.o006"
-kind = "required_operand_missing"
-required = true
-target = "<file_name>"
-note = "omit <file_name>"
-
-[[obligation]]
 id = "db.utility.resource-mgmt-add-jar.o007"
 kind = "operand_type_class"
 required = true
@@ -3826,18 +3823,27 @@ target = "<file_name>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-jar.o008"
-kind = "negative_neighbour"
-required = true
-target = "<file_name>"
-note = "an unquoted identifier in place of <file_name>"
-
-[[obligation]]
 id = "db.utility.resource-mgmt-add-jar.o011"
 kind = "option_absent"
 required = true
 target = "the resource type after ADD"
 note = "ADD without its resource type, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-add-jar.o012"
+kind = "required_operand_missing"
+required = true
+target = "<file_name>"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-jar / Syntax"
+note = "omit <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-add-jar.o013"
+kind = "negative_neighbour"
+required = true
+target = "<file_name>"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-jar / Syntax"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-list-archive.o001"
@@ -3877,18 +3883,19 @@ target = "<file_name> in [ <file_name> [ ... ] ]"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-list-archive.o009"
-kind = "negative_neighbour"
-required = true
-target = "<file_name> in [ <file_name> [ ... ] ]"
-note = "an unquoted identifier in place of <file_name>"
-
-[[obligation]]
 id = "db.utility.resource-mgmt-list-archive.o013"
 kind = "option_absent"
 required = true
 target = "the resource type after LIST"
 note = "LIST without its resource type, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-list-archive.o014"
+kind = "negative_neighbour"
+required = true
+target = "<file_name> in [ <file_name> [ ... ] ]"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-list-archive / Syntax"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-list-file.o001"
@@ -3988,18 +3995,19 @@ target = "<file_name> in [ <file_name> [ ... ] ]"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-list-jar.o009"
-kind = "negative_neighbour"
-required = true
-target = "<file_name> in [ <file_name> [ ... ] ]"
-note = "an unquoted identifier in place of <file_name>"
-
-[[obligation]]
 id = "db.utility.resource-mgmt-list-jar.o013"
 kind = "option_absent"
 required = true
 target = "the resource type after LIST"
 note = "LIST without its resource type, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-list-jar.o014"
+kind = "negative_neighbour"
+required = true
+target = "<file_name> in [ <file_name> [ ... ] ]"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-list-jar / Syntax"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.restore.o001"
@@ -4695,13 +4703,6 @@ target = "<regex_pattern> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.show-functions.o037"
-kind = "negative_neighbour"
-required = true
-target = "<regex_pattern> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
-note = "an unquoted identifier in place of <regex_pattern>"
-
-[[obligation]]
 id = "db.utility.show-functions.o022"
 kind = "negative_neighbour"
 required = true
@@ -4760,6 +4761,14 @@ required = true
 target = "LIKE"
 anchor = "doc.sql-ref-syntax-aux-show-functions / Syntax"
 note = "LIKE before a quoted pattern"
+
+[[obligation]]
+id = "db.utility.show-functions.o038"
+kind = "negative_neighbour"
+required = true
+target = "<regex_pattern> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
+anchor = "doc.sql-ref-syntax-aux-show-functions / Syntax"
+note = "an unquoted identifier in place of <regex_pattern>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.show-governed-tags.o001"
@@ -6388,13 +6397,6 @@ target = "<property_key_as_string_literal> in [ ( { <unquoted_property_key> | <p
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.show-tblproperties.o025"
-kind = "negative_neighbour"
-required = true
-target = "<property_key_as_string_literal> in [ ( { <unquoted_property_key> | <property_key_as_string_literal> } ) ]"
-note = "an unquoted identifier in place of <property_key_as_string_literal>"
-
-[[obligation]]
 id = "db.utility.show-tblproperties.o014"
 kind = "negative_neighbour"
 required = true
@@ -6428,6 +6430,14 @@ kind = "option_absent"
 required = true
 target = "the property key inside ( )"
 note = "empty parentheses, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.show-tblproperties.o028"
+kind = "negative_neighbour"
+required = true
+target = "<property_key_as_string_literal> in [ ( { <unquoted_property_key> | <property_key_as_string_literal> } ) ]"
+anchor = "doc.sql-ref-syntax-aux-show-tblproperties / Syntax"
+note = "an unquoted identifier in place of <property_key_as_string_literal>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.show-users.o001"

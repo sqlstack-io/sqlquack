@@ -519,18 +519,6 @@ target = "<principal>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.security_admin.grant.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ALL after GRANT"
-
-[[obligation]]
-id = "db.security_admin.grant.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PRIVILEGES"
-
-[[obligation]]
 id = "db.security_admin.grant.o019"
 kind = "negative_neighbour"
 required = true
@@ -547,6 +535,22 @@ id = "db.security_admin.grant.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TO"
+
+[[obligation]]
+id = "db.security_admin.grant.o020"
+kind = "negative_neighbour"
+required = true
+target = "the form without its required ALL after GRANT"
+anchor = "doc.security-grant / Syntax"
+note = "the form without its required ALL after GRANT; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.grant.o021"
+kind = "negative_neighbour"
+required = true
+target = "the form without its required PRIVILEGES"
+anchor = "doc.security-grant / Syntax"
+note = "the form without its required PRIVILEGES; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.security_admin.grant-share.o001"
@@ -1812,18 +1816,6 @@ target = "<principal>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.security_admin.revoke.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ALL after REVOKE"
-
-[[obligation]]
-id = "db.security_admin.revoke.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PRIVILEGES"
-
-[[obligation]]
 id = "db.security_admin.revoke.o019"
 kind = "negative_neighbour"
 required = true
@@ -1840,6 +1832,22 @@ id = "db.security_admin.revoke.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FROM"
+
+[[obligation]]
+id = "db.security_admin.revoke.o020"
+kind = "negative_neighbour"
+required = true
+target = "the form without its required ALL after REVOKE"
+anchor = "doc.security-revoke / Syntax"
+note = "the form without its required ALL after REVOKE; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.security_admin.revoke.o021"
+kind = "negative_neighbour"
+required = true
+target = "the form without its required PRIVILEGES"
+anchor = "doc.security-revoke / Syntax"
+note = "the form without its required PRIVILEGES; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.security_admin.revoke-share.o001"

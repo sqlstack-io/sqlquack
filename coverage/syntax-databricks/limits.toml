@@ -2621,7 +2621,7 @@ reason = "the page brackets catalog_name ('If you provide no name the default is
 [[reading]]
 form = "db.ddl.create-sql-function"
 grammar_sha256 = "aa5a3494e70a3b857f8621a8c2af6a6f23839e6d60a2b2d46c22276ff793baef"
-grammar = ["CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) [ RETURNS <data_type> ] [ <characteristic> [ ... ] ] RETURN { <expression> | <query> }", "CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS TABLE [ ( <column_spec> [ , ... ] ) ] [ <characteristic> [ ... ] ] RETURN <query>", "CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS <data_type> LANGUAGE PYTHON [ <characteristic> [ ... ] ] { AS <dollar_quoted_string> | HANDLER <handler_name> AS <dollar_quoted_string> }", "CREATE { OR REPLACE FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS <data_type> LANGUAGE { SCALA | JAVA } [ <characteristic> [ ... ] ] <environment> HANDLER <handler_name>"]
+grammar = ["CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) [ RETURNS <data_type> ] [ <characteristic> [ ... ] ] RETURN { <expression> | <query> }", "CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS TABLE [ ( { <column_name> <data_type> [ COMMENT <column_comment> ] } [ , ... ] ) ] [ <characteristic> [ ... ] ] RETURN <query>", "CREATE { OR REPLACE [ TEMPORARY ] FUNCTION | TEMPORARY FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS <data_type> LANGUAGE PYTHON [ <characteristic> [ ... ] ] { AS <dollar_quoted_string> | HANDLER <handler_name> AS <dollar_quoted_string> }", "CREATE { OR REPLACE FUNCTION | FUNCTION [ IF NOT EXISTS ] } <function_name> ( [ <function_parameter> [ , ... ] ] ) RETURNS <data_type> LANGUAGE { SCALA | JAVA } [ <characteristic> [ ... ] ] <environment> HANDLER <handler_name>"]
 reason = "the page writes the SQL, Python and JVM functions on one line. OR REPLACE: 'You cannot specify this parameter with IF NOT EXISTS', so the two are alternatives. RETURN is 'the body of the function' of a SQL function, whose RETURNS 'is optional' for a SQL UDF and whose RETURNS TABLE is supported for LANGUAGE SQL; 'For a table function, it can only be a query', so the table function is its own line; AS dollar_quoted_definition is 'the Python function body', HANDLER names 'the Python function in the dollar-quoted definition' for a row-at-a-time LANGUAGE PYTHON function, and LANGUAGE SCALA or JAVA 'require ... a HANDLER clause that references compiled code supplied through the ENVIRONMENT clause'. Without a language the warehouse reads a SQL function and refuses a body other than RETURN ('Operation not allowed: SQL functions should have a function definition'), so each body goes with its language, and the JVM line, which 'require[s] Unity Catalog', takes no TEMPORARY and always writes the ENVIRONMENT that supplies its compiled code ('The compiled code must be provided as a JAR through the java_dependencies key of the ENVIRONMENT clause'). TEMPORARY with IF NOT EXISTS is refused by the warehouse's parser, so a temporary function takes no IF NOT EXISTS"
 
 [[reading]]
@@ -6838,3 +6838,513 @@ anchor = "doc.data-types.decfloat-type / Syntax"
 sql = "SELECT CAST ( NULL AS DECFLOAT ( 34 )"
 context = "raw"
 expect = "reject"
+
+[[suppress]]
+form = "db.ddl.alter-materialized-view.materialized-view-add-alter"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required COLUMN"
+reason = "COLUMN after ALTER is optional in the column action (Spark's ALTER ... ALTER COLUMN? column), so the text parses; the warehouse answers INVALID_TARGET_FOR_ALTER_COMMAND (42809) after parsing; it is kept as the observed [[limit]] \"ALTER MATERIALIZED VIEW v1 ALTER c1 COMMENT 'x'\", whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.ddl.alter-materialized-view.materialized-view-add-alter"
+kind = "negative_neighbour"
+target = "the form without its required COLUMN"
+note = "the form without its required COLUMN; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-alter-materialized-view / Syntax"
+sql = "ALTER MATERIALIZED VIEW v1 ALTER c1 COMMENT 'x'"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.alter-recipient"
+kind = "negative_neighbour"
+target = "<property_string>"
+note = "an unquoted identifier in place of <property_string>"
+reason = "a property key is a dotted identifier or a string (Spark's propertyKey: identifier ( . identifier )* | stringLit), so an unquoted name parses; the warehouse answers RECIPIENT_DOES_NOT_EXIST (42704) after parsing; it is kept as the observed [[limit]] \"ALTER RECIPIENT v1 SET PROPERTIES ( m1 'v' )\", whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.ddl.alter-recipient"
+kind = "negative_neighbour"
+target = "<property_string>"
+note = "an unquoted identifier in place of <property_string>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-alter-recipient / Syntax"
+sql = "ALTER RECIPIENT v1 SET PROPERTIES ( m1 'v' )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.alter-recipient"
+kind = "negative_neighbour"
+target = "<property_string> #2"
+note = "an unquoted identifier in place of <property_string>"
+reason = "a property key is a dotted identifier or a string (Spark's propertyKey: identifier ( . identifier )* | stringLit), so an unquoted name parses; the warehouse answers RECIPIENT_DOES_NOT_EXIST (42704) after parsing; it is kept as the observed [[limit]] 'ALTER RECIPIENT v1 UNSET PROPERTIES ( m1 )', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.ddl.alter-recipient"
+kind = "negative_neighbour"
+target = "<property_string> #2"
+note = "an unquoted identifier in place of <property_string>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-alter-recipient / Syntax"
+sql = "ALTER RECIPIENT v1 UNSET PROPERTIES ( m1 )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.alter-streaming-table.streaming-table-add-alter"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required COLUMN"
+reason = "COLUMN after ALTER is optional in the column action (Spark's ALTER ... ALTER COLUMN? column), so the text parses; the warehouse answers INVALID_TARGET_FOR_ALTER_COMMAND (42809) after parsing; it is kept as the observed [[limit]] \"ALTER STREAMING TABLE t1 ALTER c1 COMMENT 'x'\", whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.ddl.alter-streaming-table.streaming-table-add-alter"
+kind = "negative_neighbour"
+target = "the form without its required COLUMN"
+note = "the form without its required COLUMN; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-alter-streaming-table / Syntax"
+sql = "ALTER STREAMING TABLE t1 ALTER c1 COMMENT 'x'"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.column-mask"
+kind = "negative_neighbour"
+target = "<other_column_name> in [ USING COLUMNS ( { <other_column_name> | <constant_literal> } [ , ... ] ) ]"
+note = "a string literal in place of <other_column_name>"
+reason = "the same list's other alternative is <constant_literal>, and a string literal is a constant literal, so the text is valid by the documented grammar; the warehouse answers ROUTINE_NOT_FOUND (42883) after parsing; it is kept as the observed [[limit]] \"CREATE TABLE t3 ( c1 INT MASK v1 USING COLUMNS ( 'v1' ) )\", whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.ddl.column-mask"
+kind = "negative_neighbour"
+target = "<other_column_name> in [ USING COLUMNS ( { <other_column_name> | <constant_literal> } [ , ... ] ) ]"
+note = "a string literal in place of <other_column_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-column-mask / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT MASK v1 USING COLUMNS ( 'v1' ) )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.create-recipient"
+kind = "negative_neighbour"
+target = "<property_string> in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } [ = ]…"
+note = "an unquoted identifier in place of <property_string>"
+reason = "a property key is a dotted identifier or a string (Spark's propertyKey: identifier ( . identifier )* | stringLit), so an unquoted name parses; the warehouse answers PERMISSION_DENIED (42501) after parsing; it is kept as the observed [[limit]] \"CREATE RECIPIENT v1 PROPERTIES ( m1 'v' )\", whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.ddl.create-recipient"
+kind = "negative_neighbour"
+target = "<property_string> in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } [ = ]…"
+note = "an unquoted identifier in place of <property_string>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-create-recipient / Syntax"
+sql = "CREATE RECIPIENT v1 PROPERTIES ( m1 'v' )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.create-sql-function"
+kind = "negative_neighbour"
+target = "<query> #2"
+note = "a bare literal in place of <query>"
+reason = "RETURN takes an expression or a query while parsing, and that a table function's body must be a query is checked afterwards: the warehouse answers USER_DEFINED_FUNCTIONS.SQL_TABLE_UDF_BODY_MUST_BE_A_QUERY; it is kept as the observed [[limit]] 'CREATE OR REPLACE FUNCTION abs ( ) RETURNS TABLE RETURN 1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.ddl.create-sql-function"
+kind = "negative_neighbour"
+target = "<query> #2"
+note = "a bare literal in place of <query>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-create-sql-function / Syntax"
+sql = "CREATE OR REPLACE FUNCTION abs ( ) RETURNS TABLE RETURN 1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.create-streaming-table-auto-cdc"
+kind = "negative_neighbour"
+target = "<order_by_column> #2"
+note = "a string literal in place of <order_by_column>"
+reason = "SEQUENCE BY takes an expression while parsing, and a string literal is an expression; that it names a column is checked afterwards: the warehouse answers UNRESOLVED_COLUMN (42703); it is kept as the observed [[limit]] \"CREATE OR REFRESH STREAMING TABLE st1 FLOW AUTO CDC FROM v1 KEYS ( v1 ) SEQUENCE BY 'v1' COLUMNS TO UPDATE c1\", whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.ddl.create-streaming-table-auto-cdc"
+kind = "negative_neighbour"
+target = "<order_by_column> #2"
+note = "a string literal in place of <order_by_column>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
+sql = "CREATE OR REFRESH STREAMING TABLE st1 FLOW AUTO CDC FROM v1 KEYS ( v1 ) SEQUENCE BY 'v1' COLUMNS TO UPDATE c1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.create-streaming-table-auto-cdc"
+kind = "negative_neighbour"
+target = "<order_by_column> #3"
+note = "a string literal in place of <order_by_column>"
+reason = "SEQUENCE BY takes an expression while parsing, and a string literal is an expression; that it names a column is checked afterwards: the warehouse answers UNRESOLVED_COLUMN (42703); it is kept as the observed [[limit]] \"CREATE OR REFRESH STREAMING TABLE st1 FLOW AUTO CDC FROM v1 KEYS ( v1 ) SEQUENCE BY 'v1' SYSTEM SEQUENCE BY v1 STORED AS BITEMPORAL\", whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.ddl.create-streaming-table-auto-cdc"
+kind = "negative_neighbour"
+target = "<order_by_column> #3"
+note = "a string literal in place of <order_by_column>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
+sql = "CREATE OR REFRESH STREAMING TABLE st1 FLOW AUTO CDC FROM v1 KEYS ( v1 ) SEQUENCE BY 'v1' SYSTEM SEQUENCE BY v1 STORED AS BITEMPORAL"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.ddl.create-streaming-table-auto-cdc"
+kind = "negative_neighbour"
+target = "<system_order_by_column>"
+note = "a string literal in place of <system_order_by_column>"
+reason = "SYSTEM SEQUENCE BY takes an expression while parsing, and a string literal is an expression; that it names a column is checked afterwards: the warehouse answers UNRESOLVED_COLUMN (42703); it is kept as the observed [[limit]] \"CREATE OR REFRESH STREAMING TABLE st1 FLOW AUTO CDC FROM v1 KEYS ( v1 ) SEQUENCE BY v1 SYSTEM SEQUENCE BY 'v1' STORED AS BITEMPORAL\", whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.ddl.create-streaming-table-auto-cdc"
+kind = "negative_neighbour"
+target = "<system_order_by_column>"
+note = "a string literal in place of <system_order_by_column>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-ddl-create-streaming-table-auto-cdc / Syntax"
+sql = "CREATE OR REFRESH STREAMING TABLE st1 FLOW AUTO CDC FROM v1 KEYS ( v1 ) SEQUENCE BY v1 SYSTEM SEQUENCE BY 'v1' STORED AS BITEMPORAL"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.expressions.names.identifier-2"
+kind = "required_operand_missing"
+target = "<view_identifier>"
+note = "omit <view_identifier>"
+reason = "FROM is not reserved, so a trailing FROM parses as the alias of the select list: the warehouse answers INVALID_USAGE_OF_STAR_OR_REGEX for '*' in expression `alias`; it is kept as the observed [[limit]] 'SELECT * FROM', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.expressions.names.identifier-2"
+kind = "required_operand_missing"
+target = "<view_identifier>"
+note = "omit <view_identifier>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-names / Syntax"
+sql = "SELECT * FROM"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.expressions.names.identifier.syntax"
+kind = "required_operand_missing"
+target = "<table_identifier>"
+note = "omit <table_identifier>"
+reason = "FROM is not reserved, so a trailing FROM parses as the alias of the select list: the warehouse answers INVALID_USAGE_OF_STAR_OR_REGEX for '*' in expression `alias`; it is kept as the observed [[limit]] 'SELECT * FROM', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.expressions.names.identifier.syntax"
+kind = "required_operand_missing"
+target = "<table_identifier>"
+note = "omit <table_identifier>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-names / Syntax"
+sql = "SELECT * FROM"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.query.select-hints.join-hint-alias"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "a hint is written inside a /*+ */ comment, and the warehouse drops a hint it cannot read rather than refusing the statement: it accepts the text; it is kept as the observed [[limit]] 'SELECT /*+ BROADCASTJOIN t1 */ c1 FROM t1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.query.select-hints.join-hint-alias"
+kind = "negative_neighbour"
+target = "the form without its required ("
+note = "the form without its required (; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-qry-select-hints / Syntax"
+sql = "SELECT /*+ BROADCASTJOIN t1 */ c1 FROM t1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.scripting.execute-immediate"
+kind = "negative_neighbour"
+target = "<sql_string>"
+note = "an unquoted identifier in place of <sql_string>"
+reason = "the statement text may be a string or a variable that holds it, so an unquoted name parses and is resolved afterwards: the warehouse answers UNRESOLVED_COLUMN (42703); it is kept as the observed [[limit]] 'EXECUTE IMMEDIATE m1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.scripting.execute-immediate"
+kind = "negative_neighbour"
+target = "<sql_string>"
+note = "an unquoted identifier in place of <sql_string>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-aux-execute-immediate / Syntax"
+sql = "EXECUTE IMMEDIATE m1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.scripting.signal-stmt"
+kind = "negative_neighbour"
+target = "<message_str> in [ SET { MESSAGE_ARGUMENTS = <argument_map> | MESSAGE_TEXT = <message_str> } ]"
+note = "an unquoted identifier in place of <message_str>"
+reason = "the message may be a string or a variable that holds it, so an unquoted name parses and is resolved afterwards: the warehouse answers CONDITION_NOT_FOUND (42K0Q) for the condition first; it is kept as the observed [[limit]] 'BEGIN SIGNAL v1 SET MESSAGE_TEXT = m1 ; END', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.scripting.signal-stmt"
+kind = "negative_neighbour"
+target = "<message_str> in [ SET { MESSAGE_ARGUMENTS = <argument_map> | MESSAGE_TEXT = <message_str> } ]"
+note = "an unquoted identifier in place of <message_str>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.control-flow.signal-stmt / Syntax"
+sql = "BEGIN SIGNAL v1 SET MESSAGE_TEXT = m1 ; END"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.scripting.signal-stmt"
+kind = "negative_neighbour"
+target = "<message_str> in [ SET MESSAGE_TEXT = <message_str> ]"
+note = "an unquoted identifier in place of <message_str>"
+reason = "the message may be a string or a variable that holds it, so an unquoted name parses and is resolved afterwards: the warehouse answers UNRESOLVED_COLUMN (42703); it is kept as the observed [[limit]] \"BEGIN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = m1 ; END\", whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.scripting.signal-stmt"
+kind = "negative_neighbour"
+target = "<message_str> in [ SET MESSAGE_TEXT = <message_str> ]"
+note = "an unquoted identifier in place of <message_str>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.control-flow.signal-stmt / Syntax"
+sql = "BEGIN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = m1 ; END"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.security_admin.grant"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ALL after GRANT"
+reason = "privileges are parsed as names, so PRIVILEGES alone parses as a privilege; the warehouse answers PRINCIPAL_DOES_NOT_EXIST (42704) after parsing; it is kept as the observed [[limit]] 'GRANT PRIVILEGES ON TABLE t1 TO v1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.security_admin.grant"
+kind = "negative_neighbour"
+target = "the form without its required ALL after GRANT"
+note = "the form without its required ALL after GRANT; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.security-grant / Syntax"
+sql = "GRANT PRIVILEGES ON TABLE t1 TO v1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.security_admin.grant"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required PRIVILEGES"
+reason = "ALL without PRIVILEGES parses as the same privilege set; the warehouse answers PRINCIPAL_DOES_NOT_EXIST (42704) after parsing; it is kept as the observed [[limit]] 'GRANT ALL ON TABLE t1 TO v1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.security_admin.grant"
+kind = "negative_neighbour"
+target = "the form without its required PRIVILEGES"
+note = "the form without its required PRIVILEGES; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.security-grant / Syntax"
+sql = "GRANT ALL ON TABLE t1 TO v1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.security_admin.revoke"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ALL after REVOKE"
+reason = "privileges are parsed as names, so PRIVILEGES alone parses as a privilege; the warehouse answers PRINCIPAL_DOES_NOT_EXIST (42704) after parsing; it is kept as the observed [[limit]] 'REVOKE PRIVILEGES ON TABLE t1 FROM v1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.security_admin.revoke"
+kind = "negative_neighbour"
+target = "the form without its required ALL after REVOKE"
+note = "the form without its required ALL after REVOKE; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.security-revoke / Syntax"
+sql = "REVOKE PRIVILEGES ON TABLE t1 FROM v1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.security_admin.revoke"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required PRIVILEGES"
+reason = "ALL without PRIVILEGES parses as the same privilege set; the warehouse answers PRINCIPAL_DOES_NOT_EXIST (42704) after parsing; it is kept as the observed [[limit]] 'REVOKE ALL ON TABLE t1 FROM v1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.security_admin.revoke"
+kind = "negative_neighbour"
+target = "the form without its required PRIVILEGES"
+note = "the form without its required PRIVILEGES; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.security-revoke / Syntax"
+sql = "REVOKE ALL ON TABLE t1 FROM v1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.utility.cache-refresh"
+kind = "negative_neighbour"
+target = "<resource_path>"
+note = "an unquoted identifier in place of <resource_path>"
+reason = "REFRESH followed by any text parses as the resource refresh (Spark's #refreshResource: REFRESH ( stringLit | .*? )); the warehouse answers UC_COMMAND_NOT_SUPPORTED (0AKUC) after parsing; it is kept as the observed [[limit]] 'REFRESH m1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.utility.cache-refresh"
+kind = "negative_neighbour"
+target = "<resource_path>"
+note = "an unquoted identifier in place of <resource_path>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-aux-cache-refresh / Syntax"
+sql = "REFRESH m1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.utility.resource-mgmt-add-archive"
+kind = "required_operand_missing"
+target = "<file_name>"
+note = "omit <file_name>"
+reason = "ADD and LIST of a resource take any text after the resource word, none included (Spark's #manageResource: ( ADD | LIST ) identifier .*?); the warehouse answers NOT_SUPPORTED_WITH_DB_SQL (0A000) after parsing; it is kept as the observed [[limit]] 'ADD ARCHIVE', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.utility.resource-mgmt-add-archive"
+kind = "required_operand_missing"
+target = "<file_name>"
+note = "omit <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-archive / Syntax"
+sql = "ADD ARCHIVE"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.utility.resource-mgmt-add-archive"
+kind = "negative_neighbour"
+target = "<file_name>"
+note = "an unquoted identifier in place of <file_name>"
+reason = "ADD and LIST of a resource take any text after the resource word (Spark's #manageResource: ( ADD | LIST ) identifier .*?); the warehouse answers NOT_SUPPORTED_WITH_DB_SQL (0A000) after parsing; it is kept as the observed [[limit]] 'ADD ARCHIVE m1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.utility.resource-mgmt-add-archive"
+kind = "negative_neighbour"
+target = "<file_name>"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-archive / Syntax"
+sql = "ADD ARCHIVE m1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.utility.resource-mgmt-add-file"
+kind = "required_operand_missing"
+target = "<resource_name>"
+note = "omit <resource_name>"
+reason = "ADD and LIST of a resource take any text after the resource word, none included (Spark's #manageResource: ( ADD | LIST ) identifier .*?); the warehouse answers NOT_SUPPORTED_WITH_DB_SQL (0A000) after parsing; it is kept as the observed [[limit]] 'ADD FILE', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.utility.resource-mgmt-add-file"
+kind = "required_operand_missing"
+target = "<resource_name>"
+note = "omit <resource_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-file / Syntax"
+sql = "ADD FILE"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.utility.resource-mgmt-add-jar"
+kind = "required_operand_missing"
+target = "<file_name>"
+note = "omit <file_name>"
+reason = "ADD and LIST of a resource take any text after the resource word, none included (Spark's #manageResource: ( ADD | LIST ) identifier .*?); the warehouse answers NOT_SUPPORTED_WITH_DB_SQL (0A000) after parsing; it is kept as the observed [[limit]] 'ADD JAR', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.utility.resource-mgmt-add-jar"
+kind = "required_operand_missing"
+target = "<file_name>"
+note = "omit <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-jar / Syntax"
+sql = "ADD JAR"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.utility.resource-mgmt-add-jar"
+kind = "negative_neighbour"
+target = "<file_name>"
+note = "an unquoted identifier in place of <file_name>"
+reason = "ADD and LIST of a resource take any text after the resource word (Spark's #manageResource: ( ADD | LIST ) identifier .*?); the warehouse answers NOT_SUPPORTED_WITH_DB_SQL (0A000) after parsing; it is kept as the observed [[limit]] 'ADD JAR m1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.utility.resource-mgmt-add-jar"
+kind = "negative_neighbour"
+target = "<file_name>"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-jar / Syntax"
+sql = "ADD JAR m1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.utility.resource-mgmt-list-archive"
+kind = "negative_neighbour"
+target = "<file_name> in [ <file_name> [ ... ] ]"
+note = "an unquoted identifier in place of <file_name>"
+reason = "ADD and LIST of a resource take any text after the resource word (Spark's #manageResource: ( ADD | LIST ) identifier .*?); the warehouse answers UC_COMMAND_NOT_SUPPORTED (0AKUC) after parsing; it is kept as the observed [[limit]] 'LIST ARCHIVE m1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.utility.resource-mgmt-list-archive"
+kind = "negative_neighbour"
+target = "<file_name> in [ <file_name> [ ... ] ]"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-list-archive / Syntax"
+sql = "LIST ARCHIVE m1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.utility.resource-mgmt-list-jar"
+kind = "negative_neighbour"
+target = "<file_name> in [ <file_name> [ ... ] ]"
+note = "an unquoted identifier in place of <file_name>"
+reason = "ADD and LIST of a resource take any text after the resource word (Spark's #manageResource: ( ADD | LIST ) identifier .*?); the warehouse answers NOT_SUPPORTED_WITH_DB_SQL (0A000) after parsing; it is kept as the observed [[limit]] 'LIST JAR m1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.utility.resource-mgmt-list-jar"
+kind = "negative_neighbour"
+target = "<file_name> in [ <file_name> [ ... ] ]"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-list-jar / Syntax"
+sql = "LIST JAR m1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.utility.show-functions"
+kind = "negative_neighbour"
+target = "<regex_pattern> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
+note = "an unquoted identifier in place of <regex_pattern>"
+reason = "SHOW FUNCTIONS takes a function name as well as a pattern (Spark's SHOW FUNCTIONS ... LIKE? ( multipartIdentifier | stringLit )), so an unquoted name parses; the warehouse accepts the text; it is kept as the observed [[limit]] 'SHOW FUNCTIONS m1', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.utility.show-functions"
+kind = "negative_neighbour"
+target = "<regex_pattern> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
+note = "an unquoted identifier in place of <regex_pattern>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-aux-show-functions / Syntax"
+sql = "SHOW FUNCTIONS m1"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.utility.show-tblproperties"
+kind = "negative_neighbour"
+target = "<property_key_as_string_literal> in [ ( { <unquoted_property_key> | <property_key_as_string_literal> } ) ]"
+note = "an unquoted identifier in place of <property_key_as_string_literal>"
+reason = "the key is a property key, a dotted identifier or a string (Spark's propertyKey: identifier ( . identifier )* | stringLit), so an unquoted name parses; the warehouse accepts the text; it is kept as the observed [[limit]] 'SHOW TBLPROPERTIES t1 ( m1 )', whose 2026.45 receipt settles it"
+
+[[limit]]
+form = "db.utility.show-tblproperties"
+kind = "negative_neighbour"
+target = "<property_key_as_string_literal> in [ ( { <unquoted_property_key> | <property_key_as_string_literal> } ) ]"
+note = "an unquoted identifier in place of <property_key_as_string_literal>; the warehouse parses the text, so its answer is recorded rather than expected"
+anchor = "doc.sql-ref-syntax-aux-show-tblproperties / Syntax"
+sql = "SHOW TBLPROPERTIES t1 ( m1 )"
+context = "raw"
+expect = "observe"

@@ -1531,12 +1531,6 @@ required = true
 note = "the form without its required { BROADCASTJOIN | MAPJOIN | SHUFFLE_MERGE | MERGEJOIN }"
 
 [[obligation]]
-id = "db.query.select-hints.join-hint-alias.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.query.select-hints.join-hint-alias.o010"
 kind = "negative_neighbour"
 required = true
@@ -1557,6 +1551,14 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.query.select-hints.join-hint-alias.o013"
+kind = "negative_neighbour"
+required = true
+target = "the form without its required ("
+anchor = "doc.sql-ref-syntax-qry-select-hints / Syntax"
+note = "the form without its required (; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.query.select-join.o001"

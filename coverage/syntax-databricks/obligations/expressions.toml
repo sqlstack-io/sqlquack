@@ -2294,13 +2294,6 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "db.expressions.names.identifier-2.o023"
-kind = "required_operand_missing"
-required = true
-target = "<view_identifier>"
-note = "omit <view_identifier>"
-
-[[obligation]]
 id = "db.expressions.names.identifier-2.o009"
 kind = "operand_type_class"
 required = true
@@ -2358,6 +2351,14 @@ required = true
 target = "<view_identifier>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.expressions.names.identifier-2.o028"
+kind = "required_operand_missing"
+required = true
+target = "<view_identifier>"
+anchor = "doc.sql-ref-names / Syntax"
+note = "omit <view_identifier>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.expressions.names.identifier-3.o001"
@@ -2995,13 +2996,6 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "db.expressions.names.identifier.syntax.o042"
-kind = "required_operand_missing"
-required = true
-target = "<table_identifier>"
-note = "omit <table_identifier>"
-
-[[obligation]]
 id = "db.expressions.names.identifier.syntax.o010"
 kind = "operand_type_class"
 required = true
@@ -3139,6 +3133,14 @@ required = true
 target = "` <file_format> ` . ` <path_to_table> `"
 anchor = "doc.sql-ref-names / Table name"
 note = "a back-quoted file format before a back-quoted path, as the page's example `csv`.`spreadsheets/data.csv` writes it"
+
+[[obligation]]
+id = "db.expressions.names.identifier.syntax.o049"
+kind = "required_operand_missing"
+required = true
+target = "<table_identifier>"
+anchor = "doc.sql-ref-names / Syntax"
+note = "omit <table_identifier>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.expressions.names.subscript.o001"
