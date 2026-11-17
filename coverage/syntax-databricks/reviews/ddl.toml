@@ -939,3 +939,88 @@ note = "(d) o001/o003 'UNDROP VOLUME WITH ID '00000000-0000-0000-0000-0000000000
 
 [review.definitions]
 "db.ddl.undrop-volume" = "472c73d80e757b2ad71f2f43b1d4cccddb95e3c8c8fd9166865063145d651971"
+
+[[review]]
+id = "db-ddl-050"
+family = "ddl"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-location",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint c05814ef54a70725d2349ae233fe87881579cb419feb23151ff30834acd705ac -> ed674cd0528c7a9341923fd37e5b2336cd62f421dc8a49eae1f6adf09d2b8365: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.ddl.alter-location" = "ed674cd0528c7a9341923fd37e5b2336cd62f421dc8a49eae1f6adf09d2b8365"
+
+[review.definitions]
+"db.ddl.alter-location" = "e549954a084fd8073271c13eca1da3c2efa046fd1b603cbdfe23cd78334dae58"
+
+[[review]]
+id = "db-ddl-051"
+family = "ddl"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-share",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 1ec09566bd2c551df9d6b2f8f3b7c9dbe574b13b511e726b25a43fb5a8ea03de -> 8e390a6544199f925ce18c988579d340b5dba74447ff4b4d559d85f3fb7456ee: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.ddl.alter-share" = "8e390a6544199f925ce18c988579d340b5dba74447ff4b4d559d85f3fb7456ee"
+
+[review.definitions]
+"db.ddl.alter-share" = "c5a95d893e5edcede178871c68a3f874e7464d7f3fe20aa74c274cac9731b0c6"
+
+[[review]]
+id = "db-ddl-052"
+family = "ddl"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table-manage-column.drop",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 23c8155b8546ff097747c20c401aaca48dba6651a77091f88758b8c00c4f8e19 -> f209b28b26a45ec2f3eae1b6395a1bfa1317df005b08d77ca16db7170b18a5fc: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.drop" = "f209b28b26a45ec2f3eae1b6395a1bfa1317df005b08d77ca16db7170b18a5fc"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.drop" = "b5c71c3d6eef6fddb2a808e461f0015f6858267d54b9c0679d319fceaff31135"
+
+[[review]]
+id = "db-ddl-053"
+family = "ddl"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table-manage-column.rename-column-to-to",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 2984924f88bf13c10e87d69217ea79442d1f3cf068a0bb7e30725b2a71113cbb -> 46fc80543981de14ad15fe7235ecd488c5be755147c79ad5ae0af3688de8813d: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.rename-column-to-to" = "46fc80543981de14ad15fe7235ecd488c5be755147c79ad5ae0af3688de8813d"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.rename-column-to-to" = "e823a7d4e94c04d20197a93a5cf0581a34be8c995d45ecbeebd820fb76927888"
+
+[[review]]
+id = "db-ddl-054"
+family = "ddl"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.ddl.set-tag",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 2e507637218aa34bbe970e792ff72d40f750308146d2d8d8567fe0e3cae31509 -> 021a72a77daa304a8af471779fac99eeae367602545ac1830d94228993914227: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.ddl.set-tag" = "021a72a77daa304a8af471779fac99eeae367602545ac1830d94228993914227"
+
+[review.definitions]
+"db.ddl.set-tag" = "e09b2fc6a9a6abda889b99697a500d16cbb71ce87a0ebefb1e62489a7770c758"

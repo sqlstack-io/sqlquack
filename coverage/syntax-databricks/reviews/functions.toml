@@ -3530,3 +3530,479 @@ note = "(a) page Syntax is vector_search( index, { query_text | query_vector }, 
 
 [review.definitions]
 "db.functions.vector-search.query-text-query-vector" = "491b1b9d54a764fc64a0aae922577be2297d5329ca66db635e050d1c25ccb223"
+
+[[review]]
+id = "db-functions-027"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.ai-detect-anomalies",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint dcede168d1f89b77d3b852b14a42d414c5e5d3e4d36ba16213a132d7a6a77e87 -> 7317b1fc4f1e8d8623c1a9542480551e1959b52477c93f72998aa58a52068879: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.ai-detect-anomalies" = "7317b1fc4f1e8d8623c1a9542480551e1959b52477c93f72998aa58a52068879"
+
+[review.definitions]
+"db.functions.ai-detect-anomalies" = "7858648030bdec5e87bca05109d252a74320eb36fa879d7f1c97e3d0b8b5e862"
+
+[[review]]
+id = "db-functions-028"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.ai-forecast",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 2fa7e5382cc1fdfd304ff27010bdf429198dd3d65547abb4fc6976590b730424 -> 46ac60019b67494f6b43028c050d44bf9090c1ce2a721ba75f2bfcb1a99cbfd9: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.ai-forecast" = "46ac60019b67494f6b43028c050d44bf9090c1ce2a721ba75f2bfcb1a99cbfd9"
+
+[review.definitions]
+"db.functions.ai-forecast" = "a10430f628824f164ec1cf68d670f3a343fc25e20cfbf702cb4e2ec9fbb44216"
+
+[[review]]
+id = "db-functions-029"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.ai-top-drivers",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 36af7a2d5382f2902baca9c8fb3a49a2015ecb3236f83c76e595755fd630ed3c -> cb4911d3d62ccd4df947560a4371dd04d6429f61cbef27fd581498bd313e71f5: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.ai-top-drivers" = "cb4911d3d62ccd4df947560a4371dd04d6429f61cbef27fd581498bd313e71f5"
+
+[review.definitions]
+"db.functions.ai-top-drivers" = "92fbdc82b93b0010600e35107412b129e540f309153878816aded1f9477a24dd"
+
+[[review]]
+id = "db-functions-030"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.date-part",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint a0e2169f6a4bbad070cf206171047594c3855ce2eedd55d1c2d2ca6548f18bc8 -> 17320996e84c143a005bfe1a9c1cfae9b2ef24fecfde51984110cfe7dbe934ee: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.date-part" = "17320996e84c143a005bfe1a9c1cfae9b2ef24fecfde51984110cfe7dbe934ee"
+
+[review.definitions]
+"db.functions.date-part" = "89b971aaf95e8363ea134f0517c169ccf28f5ad4113aa8e2668173667343a7c1"
+
+[[review]]
+id = "db-functions-031"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.date-trunc",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint baf0b5c0c76b7ab6606f3f74e537424b97cafa5d580963e6a4f9c6a3ef8c79b4 -> 6206cd2aa50aa6d6791851320944b52810ee66ea094b3be28a64cd77c514d0ba: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.date-trunc" = "6206cd2aa50aa6d6791851320944b52810ee66ea094b3be28a64cd77c514d0ba"
+
+[review.definitions]
+"db.functions.date-trunc" = "aec151d1179fe9d887a06740754e69fab852ff750f5dc605c156e4107d41de91"
+
+[[review]]
+id = "db-functions-032"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.exists",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 38613a2acd4fad7026a501456fc57a34d40f98937d6642f949f12059317a9c75 -> 074217480e461ef933aea0887f53f3de7c2d8134613a92148ca02584d9dfbf2b: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.exists" = "074217480e461ef933aea0887f53f3de7c2d8134613a92148ca02584d9dfbf2b"
+
+[review.definitions]
+"db.functions.exists" = "bb29af76a30527bad555f9d7c0fa94b714e4b7c7cf118558bc60ecb3181bcf5c"
+
+[[review]]
+id = "db-functions-033"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.ilike.ilike",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 624723838a1eb4a6421085ffa1a13d51fc4ea422e6bed2d257b1ef23eed1297e -> 6a75d84650ad84d8db5f38a6a8785e04873dd262eeb2b1a7c04a91208bb2bb33: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.ilike.ilike" = "6a75d84650ad84d8db5f38a6a8785e04873dd262eeb2b1a7c04a91208bb2bb33"
+
+[review.definitions]
+"db.functions.ilike.ilike" = "ea3eb970b517d7f4292c2732046f1fa30cb7701ceb7a5e61e48932feda71e685"
+
+[[review]]
+id = "db-functions-034"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.like.like",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 48a73251fa38e45e680a0e6c76700981002687820fb89d6005896905961e7607 -> 68df7c13ba1e48e62ef7a2b48dae4619a8f94143c5bf55749e2bd509acfb72c0: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.like.like" = "68df7c13ba1e48e62ef7a2b48dae4619a8f94143c5bf55749e2bd509acfb72c0"
+
+[review.definitions]
+"db.functions.like.like" = "7ed8b3ea17df1e9551f59f3dcf62deba309341042902c24774c72f56aad10f1b"
+
+[[review]]
+id = "db-functions-035"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.listagg",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 29c90af241378bd2da90acc24f597027200ab717744da40c2709992139cc21f0 -> dfbfa45f7f89609e6fe7b55232057a2485f8530ae77048bdf6725b5d9016c97d: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.listagg" = "dfbfa45f7f89609e6fe7b55232057a2485f8530ae77048bdf6725b5d9016c97d"
+
+[review.definitions]
+"db.functions.listagg" = "72502b4386c025516bdbbb1c97d01f97509e856b716e4721da7ad22e54934562"
+
+[[review]]
+id = "db-functions-036"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.map-filter",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 8e7a16a004743ca9f669c5ce5b86d0ecfd0cd3f0d4f1dea860dbcac6558efc5e -> b6d20143358416746b2eb9e046d5b8e347a0b52f4f92b111414e32c529496aa2: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.map-filter" = "b6d20143358416746b2eb9e046d5b8e347a0b52f4f92b111414e32c529496aa2"
+
+[review.definitions]
+"db.functions.map-filter" = "75a0eac35c0479a2b81c6c14f03d3d4dd71d4c1fc76757fc442cdca7420178e1"
+
+[[review]]
+id = "db-functions-037"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.mask",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 0114f0370c4423901cf1a16d0cb84029d980081d15f26424569c2088c5873429 -> 8744dc2a6550d95feb874321039c5ae42493e5f7060262a6be980b10277f2adc: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.mask" = "8744dc2a6550d95feb874321039c5ae42493e5f7060262a6be980b10277f2adc"
+
+[review.definitions]
+"db.functions.mask" = "5ec63987513d90ec11b5a37aa0f33cab405baf82fc063ae4f57df7c93a1240bf"
+
+[[review]]
+id = "db-functions-038"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.match-recognize-first",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 103950799010045f1994c8a8e23a41dba28b1286387d1b5339d51730d6cb1b1a -> 313761ad9bd6cff1b5965ebb5b7e17f28b445bc5d839b740899c77cbac0f243a: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.match-recognize-first" = "313761ad9bd6cff1b5965ebb5b7e17f28b445bc5d839b740899c77cbac0f243a"
+
+[review.definitions]
+"db.functions.match-recognize-first" = "2d10a178aa5bdaf25c0a4318057316f35e82d0ee176d42355b896b65bba55566"
+
+[[review]]
+id = "db-functions-039"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.match-recognize-last",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint d6127d59adcbdf245f0c62c8e982326ff646abda31d5d7be8eba5db4a0841ce6 -> 6ef6e28d5186f5107435344eace318ecdde90ecb67322c4fc14de7c276ddd9ad: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.match-recognize-last" = "6ef6e28d5186f5107435344eace318ecdde90ecb67322c4fc14de7c276ddd9ad"
+
+[review.definitions]
+"db.functions.match-recognize-last" = "938f722538c837322f55a6a4d27ba4c2adb094553cc49c5b6c2abd6dd2301a28"
+
+[[review]]
+id = "db-functions-040"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.match-recognize-next",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint c16c7812a815625a8713ca1582b8c0b68501fa674683bd65a6be750367cd18bb -> 7211fad120a06b0c9cdecc2c49eee3e532f37347a6e721f889e659dc0437a4f8: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.match-recognize-next" = "7211fad120a06b0c9cdecc2c49eee3e532f37347a6e721f889e659dc0437a4f8"
+
+[review.definitions]
+"db.functions.match-recognize-next" = "3e9f17304a28e3cd45b090ad72f3ac82d022a28dc7341b5dadbea8b01ec387e0"
+
+[[review]]
+id = "db-functions-041"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.match-recognize-prev",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 3b408b7d14fb8721e6b2641f4673d99edd79c7a203481cc43b39d5ba82de7090 -> 539b5c639ae9f67912d50284d850b2df7cffebba74ba48c62f3e8c40ce52d576: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.match-recognize-prev" = "539b5c639ae9f67912d50284d850b2df7cffebba74ba48c62f3e8c40ce52d576"
+
+[review.definitions]
+"db.functions.match-recognize-prev" = "34d3c2a1a4a0fa9f0557e3055d3f8ff9ce44df59d96722f14d704d4f79ccebb3"
+
+[[review]]
+id = "db-functions-042"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.reduce",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 4c7919396b7fba2cd1ea0d14ce5bebbc72cd14d8e46e90753c90819a4595dea2 -> 762ecaf45ac7fbb020f21febfccab2b364f991e83e87d41a94fc00d52d20d0db: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.reduce" = "762ecaf45ac7fbb020f21febfccab2b364f991e83e87d41a94fc00d52d20d0db"
+
+[review.definitions]
+"db.functions.reduce" = "de342772c71f0fbc0a06cbfa51bd05d813e1afb10fbc9c058b7f1c990047c11d"
+
+[[review]]
+id = "db-functions-043"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.str-to-map",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 7f248b1a6ad9c12fc121d642ff7c39de9622bf2e6de025053d61f65d6f4f973e -> b2bae3b4d979180bec4cf7464f65c5970b7dc92688f44b01296240f9159e28d6: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.str-to-map" = "b2bae3b4d979180bec4cf7464f65c5970b7dc92688f44b01296240f9159e28d6"
+
+[review.definitions]
+"db.functions.str-to-map" = "1182132f34d195c18cc00dc351ae704a74534ba625c270193de4a8677e3b2331"
+
+[[review]]
+id = "db-functions-044"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.string-agg",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 1118bee0f4cf87c309badc7b4f1b3c316ad9c1dd85c7f9c756e27de3f150d26c -> a81ed4ec9bf8d85e5b08adb4ccfbd58b8bb5b2812efe9a88d0e9fadaecc92829: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.string-agg" = "a81ed4ec9bf8d85e5b08adb4ccfbd58b8bb5b2812efe9a88d0e9fadaecc92829"
+
+[review.definitions]
+"db.functions.string-agg" = "325f5a2927c14140e4cd69dd39fc28cc9c54e74f0106198451044b4cc5c80155"
+
+[[review]]
+id = "db-functions-045"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.theta-union-agg",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 9117d96bea66e109a0b313f9f93ccf5a0e25bb616eb85ecbd50da4a2c08e1a94 -> 2950c137e62473cfb00158718de8cd8caa08a53d86fd185ee5bb13148ebd8fa0: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.theta-union-agg" = "2950c137e62473cfb00158718de8cd8caa08a53d86fd185ee5bb13148ebd8fa0"
+
+[review.definitions]
+"db.functions.theta-union-agg" = "a8082edfa976aea553ef834fc073e486338d9670023aa2fe116c0b437aa000f3"
+
+[[review]]
+id = "db-functions-046"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.to-char",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 86ea51560fb893bcd32d8cc15b50a84861da8df66e2e2ea46580bff479cd047e -> a9c3948c5425db77a2fb2e9ad1047010d674c482562ee167b54433cae225dfdb: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.to-char" = "a9c3948c5425db77a2fb2e9ad1047010d674c482562ee167b54433cae225dfdb"
+
+[review.definitions]
+"db.functions.to-char" = "e7929e5ab8537c2f862c874f8bf8e5d925a5f88a571938ce071c8a7e034e6c09"
+
+[[review]]
+id = "db-functions-047"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.to-csv",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint b9f0d2b757d0ca18e622a93a432069b315fdf624ce1013ecd3856e52555cbc1c -> 96fe3eb3fe79818171c7868a201824d95176a7d3013a6941c3a2d83edcda15d1: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.to-csv" = "96fe3eb3fe79818171c7868a201824d95176a7d3013a6941c3a2d83edcda15d1"
+
+[review.definitions]
+"db.functions.to-csv" = "d08b6b5d818490b55994a1a9e8bbc9d2ab0b2cfd2da6b7bbcf28aa1d1bd80937"
+
+[[review]]
+id = "db-functions-048"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.to-json",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint ccdfe95e7a43cb6e0c437097225a72f0a01020911c8bcbb7bf7c0709f1564689 -> 362070d70a88dcbe41e10016776143c0cf5c8b17a841b50298c293c2a42186de: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.to-json" = "362070d70a88dcbe41e10016776143c0cf5c8b17a841b50298c293c2a42186de"
+
+[review.definitions]
+"db.functions.to-json" = "9fa646ab8146e36e478aa9d7fff553f8b8ad61f665ed5d7655eff13f6607547a"
+
+[[review]]
+id = "db-functions-049"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.to-varchar",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint d132b7245e12ea44de1e05546c11b8df23777bae7c6021a4ca06191df8238106 -> b8ea60a72f1de7d193894dea4f16f1982b19e2086686eeb1dbfe31b45c2b1161: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.to-varchar" = "b8ea60a72f1de7d193894dea4f16f1982b19e2086686eeb1dbfe31b45c2b1161"
+
+[review.definitions]
+"db.functions.to-varchar" = "1987866e01f610e914c690b88be7d1d3d9ccff148173ba0376274d9ebc8a4fe0"
+
+[[review]]
+id = "db-functions-050"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.tuple-union-agg-double",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 5c5fa0273d49fb5c120c6b0e2ad4b7c4c1413f3fff53d11342de504deafefe33 -> 869b6d46a7905e9763d75bf5e50592ec27db91d23a5ca2979c47337248c63bcb: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.tuple-union-agg-double" = "869b6d46a7905e9763d75bf5e50592ec27db91d23a5ca2979c47337248c63bcb"
+
+[review.definitions]
+"db.functions.tuple-union-agg-double" = "8748b6f95dd0f246e6c30773e3691916b2081f19fd89a2f36738743342020d31"
+
+[[review]]
+id = "db-functions-051"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.tuple-union-agg-integer",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 0a0eec4b7124ac682b0289004fe8965f73662ba1209f48feea07fa199845b02f -> 0eb208dfeaa9823d09c0bb4ff5e50648f81a28c125c79681a029854608ec8002: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.tuple-union-agg-integer" = "0eb208dfeaa9823d09c0bb4ff5e50648f81a28c125c79681a029854608ec8002"
+
+[review.definitions]
+"db.functions.tuple-union-agg-integer" = "827c7ef760580952a0aa1815821ca62c8bd82c556028b3748ba88d335da858d8"
+
+[[review]]
+id = "db-functions-052"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.variant-get",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 806e253476ce0a18f8d26aae2e84762f2cb8f7d3b7f85e4e3a9eb6d03c24bd13 -> ec3e1a6a5a3add2c4e36d3b61e0dc10aef9a1723c879d8704ca4c952a6e49714: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.variant-get" = "ec3e1a6a5a3add2c4e36d3b61e0dc10aef9a1723c879d8704ca4c952a6e49714"
+
+[review.definitions]
+"db.functions.variant-get" = "3dc0bf682fc70f0bd70845f5f8ca401fe9cb2a71efd514592d45aeb087fc455c"
+
+[[review]]
+id = "db-functions-053"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.window",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 0fe2c6a73e398a3d1e519c800338a4c06bbd131de21be98d55645cd32aab7f20 -> cd3dd8ca598cb8196b95245334013fbb9cd87e5294b6599b69e58dd8c021fbd8: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.window" = "cd3dd8ca598cb8196b95245334013fbb9cd87e5294b6599b69e58dd8c021fbd8"
+
+[review.definitions]
+"db.functions.window" = "bdbe813c4fad4403d376199f801aa60ff68ad82cccc46a4ab50f40e9a8971a16"
+
+[[review]]
+id = "db-functions-054"
+family = "functions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.zip-with",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 21f11c37d3829796c5cb5344483fd173bb094ce7f11527a920fd349d60f9cb90 -> 82cd46d63543e1d7b500e1e817715195ce401cae0bf9972b8522159c2343838c: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.functions.zip-with" = "82cd46d63543e1d7b500e1e817715195ce401cae0bf9972b8522159c2343838c"
+
+[review.definitions]
+"db.functions.zip-with" = "4f20280818a3c3cceb5e47a88afbbcc1851ea4a63d339a5760239a2f7cb0db37"

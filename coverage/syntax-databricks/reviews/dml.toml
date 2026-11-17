@@ -214,3 +214,20 @@ note = "(d) o002/o005/o010/o025/o031/o033/o039 'WITH w1 AS ( SELECT 1 ) MERGE WI
 
 [review.definitions]
 "db.dml.merge-into" = "3d7cc611d0b78bf231a134cc5b49ab32eee7548cdcb3a876471585ae0452da54"
+
+[[review]]
+id = "db-dml-013"
+family = "dml"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.dml.update",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 5d2dd72a93765071b028cf7a58ea82646b320e7cfed80a5b308f3c3c53489b48 -> c5c357b29c468c9b2b0bf7e2b05b6c09a35998cd67e6f4bda355bdb3c67612ca: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.dml.update" = "c5c357b29c468c9b2b0bf7e2b05b6c09a35998cd67e6f4bda355bdb3c67612ca"
+
+[review.definitions]
+"db.dml.update" = "d38c51f6c28d4ef4166a3468df152a07ce5ab5fba56af530c8071696a085839e"

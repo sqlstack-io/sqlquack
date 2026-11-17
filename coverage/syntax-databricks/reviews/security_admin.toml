@@ -130,3 +130,37 @@ note = "(d) o001/o002 GRANT SELECT ON ANY FILE TO `u1` -> \"kind\":\"ANY FILE\",
 
 [review.definitions]
 "db.security_admin.privileges-hms" = "c5f210a7c5cdd328c813342a90191475289328160c66d8cb3e5b157c8beadbd9"
+
+[[review]]
+id = "db-security_admin-007"
+family = "security_admin"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.create-group",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint a7b4b3779cad9684786b070a46f96e4542cfaf5ffbc724fcabc354df943fec91 -> abbb017b9502e7b6ec64c32f14e39c455bda46c1e9e7f970cf5970dfc0cedf46: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.security_admin.create-group" = "abbb017b9502e7b6ec64c32f14e39c455bda46c1e9e7f970cf5970dfc0cedf46"
+
+[review.definitions]
+"db.security_admin.create-group" = "bf7efb687b6f75920e7235df0091d85a822a8e3597f67084ba76b096f87fccce"
+
+[[review]]
+id = "db-security_admin-008"
+family = "security_admin"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.principal",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 60c278cb596d3e78ef8007b9229772e3684c094f36c96ce60dd7682c6d040085 -> 1c66fcce30325b24fa8f32047f339057865d9b8dd0172bcce5afe78d6c739f45: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.security_admin.principal" = "1c66fcce30325b24fa8f32047f339057865d9b8dd0172bcce5afe78d6c739f45"
+
+[review.definitions]
+"db.security_admin.principal" = "79088c253c35e2140686d01bff6a00571f6d89dca689e78ecf83fbdbd2b60ef5"

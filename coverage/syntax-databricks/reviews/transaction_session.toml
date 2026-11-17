@@ -223,3 +223,37 @@ note = "(b) stricter reading: o001/o003 'a valid operand' uses SET TIMEZONE = v1
 
 [review.definitions]
 "db.transaction_session.timezone" = "d8b08eb678665ca8473def72ab1f8d5ebbd052b206cfb00352b376338740beb7"
+
+[[review]]
+id = "db-transaction_session-010"
+family = "transaction_session"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.collation",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 9e6c79c35e60ff9e1b4e70e37431cebe93096b60d8fb486a4fbd6ad2266eed40 -> a7fbd3a98eaf5dbf72e4b3f5c6602c3dcf74a70c6c04cf48cb2ab9148af34a60: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.transaction_session.collation" = "a7fbd3a98eaf5dbf72e4b3f5c6602c3dcf74a70c6c04cf48cb2ab9148af34a60"
+
+[review.definitions]
+"db.transaction_session.collation" = "967c4ad4134ed3104ed2674f65ba5be3ffa3c4ee293fc0c85ebd842873dc774e"
+
+[[review]]
+id = "db-transaction_session-011"
+family = "transaction_session"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.conf-mgmt-set-collation",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 9e6c79c35e60ff9e1b4e70e37431cebe93096b60d8fb486a4fbd6ad2266eed40 -> a7fbd3a98eaf5dbf72e4b3f5c6602c3dcf74a70c6c04cf48cb2ab9148af34a60: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.transaction_session.conf-mgmt-set-collation" = "a7fbd3a98eaf5dbf72e4b3f5c6602c3dcf74a70c6c04cf48cb2ab9148af34a60"
+
+[review.definitions]
+"db.transaction_session.conf-mgmt-set-collation" = "9592c66d48f2f0436971ffcf547f72d5acfaa9fd2a5fbf422a9bfb35a8d7608e"

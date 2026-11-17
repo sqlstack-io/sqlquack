@@ -253,3 +253,20 @@ note = "(d) every WATERMARK case is an opaque command tree, e.g. o014 SELECT * F
 
 [review.definitions]
 "db.query.select-watermark" = "f7848a7ca823a2825c8b15df53dc7eed9d8906e0047df793440ce859e57939a6"
+
+[[review]]
+id = "db-query-010"
+family = "query"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.query.select-match-recognize-define",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 01f7bed5206e7d82cd0b0c0d7f44039b1d4ee609fc4534031629a6d436a54e6e -> 2ea3281ccd806ccb2b9c168ad73ff56b363a364de330d954add7948bb1e65479: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.query.select-match-recognize-define" = "2ea3281ccd806ccb2b9c168ad73ff56b363a364de330d954add7948bb1e65479"
+
+[review.definitions]
+"db.query.select-match-recognize-define" = "286148bb6ea73adb7fa607d51d8ffe5c15a2c89e2357521cc21ff776e3e60be9"

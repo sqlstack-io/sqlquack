@@ -537,3 +537,139 @@ note = "(d) synonym spelling lost: CAST(NULL AS TIMESTAMP_LTZ) and ... TIMESTAMP
 
 [review.definitions]
 "db.expressions.timestamp-type.timestamp-ltz" = "eb75a41f925abdc2952cd1aec6fca3f1772de8afb6fab78f4c2c8d16ee6385b9"
+
+[[review]]
+id = "db-expressions-026"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.collation.order-by-collate-utf8-lcase",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint b18e9bc2da2bd317989f46d05e2154cf8600855f8704c1254f3de5aba193340f -> cd3b1b09c8b4a1f9ceab5d4c3a9e7c45a7480806f88cf358e92dbac8dc87bcc1: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.collation.order-by-collate-utf8-lcase" = "cd3b1b09c8b4a1f9ceab5d4c3a9e7c45a7480806f88cf358e92dbac8dc87bcc1"
+
+[review.definitions]
+"db.expressions.collation.order-by-collate-utf8-lcase" = "c5b904885d664b09fefaf33e2bbd55d5af664c2d8d918830b05d47c3118d9adf"
+
+[[review]]
+id = "db-expressions-027"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.collation.order-by-lower-collate",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 8ef8ec4a5bb303540995a9afbf64a289e3b477bf0765ae37f93190d6e52abe3f -> 2790a770da2e94eaefc7da3a680354fbdf5af61ce2fd1408762933b3c2502ffd: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.collation.order-by-lower-collate" = "2790a770da2e94eaefc7da3a680354fbdf5af61ce2fd1408762933b3c2502ffd"
+
+[review.definitions]
+"db.expressions.collation.order-by-lower-collate" = "8956818fd573a9f97c4996b14f25db35a0d40363e79063a68c7ee202bedabbad"
+
+[[review]]
+id = "db-expressions-028"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.collation.utf8-binary-utf8-lcase-unicode",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint ffbdd9e8c26a6bc11a7d2389a7c19b2d5fa540a41fd433dbf1cd11f300885a9f -> c04b203ba37c2e1e982b5d21c099f028b8878b6d1b4cbedc9fc7d2024899fa12: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.collation.utf8-binary-utf8-lcase-unicode" = "c04b203ba37c2e1e982b5d21c099f028b8878b6d1b4cbedc9fc7d2024899fa12"
+
+[review.definitions]
+"db.expressions.collation.utf8-binary-utf8-lcase-unicode" = "11bc183fb7a7f308f26eeaaeefd3db323681ed5f7d49c1c808976dbfe2b5dcec"
+
+[[review]]
+id = "db-expressions-029"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.lambda-functions",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 9a6ecf4238ad2dff998dbae197bba7ef2f25e221762a25c8578a94ad13ca3e84 -> 60a55e0dc8e78378b7a351a1a6a34146189c1ee662ae7f6496b240b19dbd8a25: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.lambda-functions" = "60a55e0dc8e78378b7a351a1a6a34146189c1ee662ae7f6496b240b19dbd8a25"
+
+[review.definitions]
+"db.expressions.lambda-functions" = "466443706dd1ec9e68e333c35e8c23571904b02c2022c8df9677d00a54aa474e"
+
+[[review]]
+id = "db-expressions-030"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names-identifier-clause.identifier",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 5df171534e068f1d195288f96723c783e5b096109651277985724dd63e9c1e1e -> 08e79766e51460439d8bd425a1499aa881d842e3a151c5dc02d7028032972f41: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.names-identifier-clause.identifier" = "08e79766e51460439d8bd425a1499aa881d842e3a151c5dc02d7028032972f41"
+
+[review.definitions]
+"db.expressions.names-identifier-clause.identifier" = "6bba9b4221a917c47dce92cae6829c71354a4b3afb57542489740b47fc356581"
+
+[[review]]
+id = "db-expressions-031"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names-identifier-clause.identifier.syntax",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 5df171534e068f1d195288f96723c783e5b096109651277985724dd63e9c1e1e -> 08e79766e51460439d8bd425a1499aa881d842e3a151c5dc02d7028032972f41: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.names-identifier-clause.identifier.syntax" = "08e79766e51460439d8bd425a1499aa881d842e3a151c5dc02d7028032972f41"
+
+[review.definitions]
+"db.expressions.names-identifier-clause.identifier.syntax" = "8b268db1410594e8121ee3f17f6a66a5ffbc8b53871a9a26fb39336533e210cd"
+
+[[review]]
+id = "db-expressions-032"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names.subscript-dot-2",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 3844bc830bb389876ceada43abdc79d6af4afadc17bddc9a5ad918b19c12aa44 -> 72c45c01ced45ad19fc0974223bf69131c7f5b70436781fbee0265481c8be998: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.names.subscript-dot-2" = "72c45c01ced45ad19fc0974223bf69131c7f5b70436781fbee0265481c8be998"
+
+[review.definitions]
+"db.expressions.names.subscript-dot-2" = "f0e992879e5a2496f26383c74e1383c2301f48d402800c14771700c85104a913"
+
+[[review]]
+id = "db-expressions-033"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.window-functions",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint e613bd09bdb06df41dfbf8fe012ac2e5a505d71bcd0654eecc4081a6538c33e8 -> 50632f7602349ad1d283290764b26802ae25ffaf9525c463c715bddd8e451ef5: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.window-functions" = "50632f7602349ad1d283290764b26802ae25ffaf9525c463c715bddd8e451ef5"
+
+[review.definitions]
+"db.expressions.window-functions" = "8d8b5f177789ba363b04161b506230cb79610400a28fa923e130299ea0793ad7"

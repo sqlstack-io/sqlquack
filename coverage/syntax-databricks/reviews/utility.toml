@@ -460,3 +460,105 @@ note = "(d) o021/o023 unquoted key SHOW TBLPROPERTIES t1 ( v1 ) gives scope {\"l
 
 [review.definitions]
 "db.utility.show-tblproperties" = "eb425b0a0c99772296c41777d618721c0f9dd07c7f6a84c4988471c2443a5646"
+
+[[review]]
+id = "db-utility-022"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.analyze-compute-statistics.table-compute-statistics",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint e398a6be904a400a58681db0f045f3058f928972bfa585ded951261688e044cb -> a035a09dc751e30bbb7cfd81ac59ccc8297651f6fa661f918fe2012cae7fb05a: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.analyze-compute-statistics.table-compute-statistics" = "a035a09dc751e30bbb7cfd81ac59ccc8297651f6fa661f918fe2012cae7fb05a"
+
+[review.definitions]
+"db.utility.analyze-compute-statistics.table-compute-statistics" = "e469206e4f0a5c67f5077d18178d64a84a8884171e157d55dad2e273e92ac009"
+
+[[review]]
+id = "db-utility-023"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.connector-remove",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 6a76c82baf097004e1bf178fbd0d2a9788aa608d1857cd9a0cfe79097da5059f -> 4a575d46742554c719393e95f598647e4ca97a77a8d95256ba71ec4aeb094c72: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.connector-remove" = "4a575d46742554c719393e95f598647e4ca97a77a8d95256ba71ec4aeb094c72"
+
+[review.definitions]
+"db.utility.connector-remove" = "644d893ee3b6747215e6b9f11894f39b75c9ff866aebf816f2651231f42ef9d7"
+
+[[review]]
+id = "db-utility-024"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.generate",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 79849676f9e9e3b6bebf91c1a9e5f8f1e40eddb847396e3ff635a2f0f78d9137 -> 1f62f675b107fffda4b8a1dd8c364dc63596c3e2dddb050f16d62b858fd9300c: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.generate" = "1f62f675b107fffda4b8a1dd8c364dc63596c3e2dddb050f16d62b858fd9300c"
+
+[review.definitions]
+"db.utility.generate" = "abf0e919d271698177c3e43aa051d3ddc7529d71cd6466714b78110d431e693a"
+
+[[review]]
+id = "db-utility-025"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.list",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 69ff95a3b9ab10e31dde78ff25e0f09591c30779b3b592f29315813ebdf9b797 -> 31941312588c52b93db323ce0670e60ecd483d74ef0ea9191818da3710b9dd55: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.list" = "31941312588c52b93db323ce0670e60ecd483d74ef0ea9191818da3710b9dd55"
+
+[review.definitions]
+"db.utility.list" = "de24f97c2d8f29f7839f1afe3dc5e1bae03d102387c7c3b7679efb95de0ffd71"
+
+[[review]]
+id = "db-utility-026"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.show-volumes-dropped",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 718a8d6c4e240cf2df3d8e98de7c6161a4aa443a790d85862145b22b63ca9804 -> 848165e4e75b229f336b374fcd34f9c8428b04678a2243276a2688ecdcc68c04: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.show-volumes-dropped" = "848165e4e75b229f336b374fcd34f9c8428b04678a2243276a2688ecdcc68c04"
+
+[review.definitions]
+"db.utility.show-volumes-dropped" = "79e26ba23d38114de5395aecbc5a1dba93e78a8b4957a7ae4a7c8265a79d9def"
+
+[[review]]
+id = "db-utility-027"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.sync",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 55439cef0395cdd156d6fa4c7967b40c21ede1851b6fe8ccea9cb64a98e78073 -> b38199de743bc5ac20247b1c21bd379a5117ac90d987ceb2e23dfd104cc18d54: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.sync" = "b38199de743bc5ac20247b1c21bd379a5117ac90d987ceb2e23dfd104cc18d54"
+
+[review.definitions]
+"db.utility.sync" = "cf829b3471d749a82265a1697b0181cfd81b9226f0fcd48714ee68d73799661b"
