@@ -6156,3 +6156,207 @@ note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds acce
 
 [review.definitions]
 "db.functions.extract" = "71d25575030065e09305b099545ac41f8380400ef0f7949117c1d6828e6b320a"
+
+[[review]]
+id = "db-functions-072"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.bangsign",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. bangsign: no earlier finding. New, from the synonym swap: SELECT ( ! 1 ) gives the same tree as SELECT ( NOT 1 ), a not node either way. Both spellings are documented (the bangsign and not pages), so they are one grammar alternative, but the tree cannot show which was written and this form's evidence cannot be told from the not form's. Remedy in the next parser batch: keep the spelling on the not node, as TEMP and TEMPORARY now are."
+
+[review.fingerprints]
+"db.functions.bangsign" = "46ee28a26ab3d5e6b3d371ec2cad4b75bd10e53060e1c1671704dfa4ee2b4926"
+
+[review.definitions]
+"db.functions.bangsign" = "b8b4e54a67f0ba26fb5a8c8b1484b4c8e6ca29043fc26788810c6d8364396f73"
+
+[[review]]
+id = "db-functions-073"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.between",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. between: no earlier finding. New, from the synonym swap: SELECT ( 1 ! BETWEEN 1 AND 1 ) gives the same tree as SELECT ( 1 NOT BETWEEN 1 AND 1 ). The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.functions.between" = "568d3e37b005cb76841eecaacf38895f9d3b0485acaa91b6aa4ffc456536778d"
+
+[review.definitions]
+"db.functions.between" = "c944fb75fb49fb47f377d10b918fbc59cc48a9ed63074c9e5bf63971b7ff2da3"
+
+[[review]]
+id = "db-functions-074"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.ilike.ilike",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. ilike.ilike: no earlier finding. New, from the synonym swap: SELECT ( v1 ! ILIKE ( 'm' ) ESCAPE '!' ) gives the same tree as SELECT ( v1 NOT ILIKE ( 'm' ) ESCAPE '!' ). The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.functions.ilike.ilike" = "6a75d84650ad84d8db5f38a6a8785e04873dd262eeb2b1a7c04a91208bb2bb33"
+
+[review.definitions]
+"db.functions.ilike.ilike" = "ea3eb970b517d7f4292c2732046f1fa30cb7701ceb7a5e61e48932feda71e685"
+
+[[review]]
+id = "db-functions-075"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.ilike.ilike-any-some-all",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. ilike.ilike-any-some-all: no earlier finding. New, from the synonym swap: SELECT ( v1 ! ILIKE ANY ( 'm' , 'm' ) ) gives the same tree as SELECT ( v1 NOT ILIKE ANY ( 'm' , 'm' ) ). The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.functions.ilike.ilike-any-some-all" = "ee3b08c6bc7888685c3c1a8568b874e5e7e2c9ade5306075c62594dc108cb640"
+
+[review.definitions]
+"db.functions.ilike.ilike-any-some-all" = "4d595882ff79bee80c644ef0f125b3211da363d8499779577ca0a1f0ce031d2f"
+
+[[review]]
+id = "db-functions-076"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.isdistinct",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. isdistinct: no earlier finding. New, from the synonym swap: SELECT ( 1 IS ! DISTINCT FROM 1 ) gives the same tree as SELECT ( 1 IS NOT DISTINCT FROM 1 ). The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.functions.isdistinct" = "0218c817b7b007a5f8b5e78e4059d0c36cb1958d27bf799ef3b11ea63c5410c5"
+
+[review.definitions]
+"db.functions.isdistinct" = "ec94b8c0450554b801f519d95379c2662f5442fdd6e382fc0652b65a8388e839"
+
+[[review]]
+id = "db-functions-077"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.isfalse",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. isfalse: no earlier finding. New, from the synonym swap: SELECT ( 1 IS ! FALSE ) gives the same tree as SELECT ( 1 IS NOT FALSE ). The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.functions.isfalse" = "f8fe39396fcff15de445396349a56deed718f9d7260b79778557472f4221b744"
+
+[review.definitions]
+"db.functions.isfalse" = "98747e3f196bc753c454ac005dc5ef6e0c1a26259c86d7a0650a65b028cd238e"
+
+[[review]]
+id = "db-functions-078"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.isnullop",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. isnullop: no earlier finding. New, from the synonym swap: SELECT ( 1 IS ! NULL ) gives the same tree as SELECT ( 1 IS NOT NULL ). The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.functions.isnullop" = "fb276e251cb0b94f1b6936d0998e67b8c1dfc7715b95a3183ac3664932c58809"
+
+[review.definitions]
+"db.functions.isnullop" = "1f350535102847d7aa6178c83f1a233de946cf211b556a412c9c378f3b51ec8a"
+
+[[review]]
+id = "db-functions-079"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.istrue",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. istrue: no earlier finding. New, from the synonym swap: SELECT ( 1 IS ! TRUE ) gives the same tree as SELECT ( 1 IS NOT TRUE ). The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.functions.istrue" = "17a1d4aed70a4ec413b0d40481f6eae2ea3e0216156230ca869d4aa3051c64e6"
+
+[review.definitions]
+"db.functions.istrue" = "7fc3d792603940869d07a26b51f8c9f2f9fcf531d9e5018c740e609efd7e5ceb"
+
+[[review]]
+id = "db-functions-080"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.like.like",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. like.like: no earlier finding. New, from the synonym swap: SELECT ( v1 ! LIKE ( 'm' ) ESCAPE '!' ) gives the same tree as SELECT ( v1 NOT LIKE ( 'm' ) ESCAPE '!' ). The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.functions.like.like" = "68df7c13ba1e48e62ef7a2b48dae4619a8f94143c5bf55749e2bd509acfb72c0"
+
+[review.definitions]
+"db.functions.like.like" = "7ed8b3ea17df1e9551f59f3dcf62deba309341042902c24774c72f56aad10f1b"
+
+[[review]]
+id = "db-functions-081"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.like.like-any-some-all",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. like.like-any-some-all: no earlier finding. New, from the synonym swap: SELECT ( v1 ! LIKE ANY ( 'm' , 'm' ) ) gives the same tree as SELECT ( v1 NOT LIKE ANY ( 'm' , 'm' ) ). The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.functions.like.like-any-some-all" = "14173e0ed9bab8fd4feed810287d1e8cb1d14bf54d3cac00283ceb0fc9d640ea"
+
+[review.definitions]
+"db.functions.like.like-any-some-all" = "960ea4ce8201c8f1b06a32d40b58b175ab8920689ac30d3afc7dd09a27dfe504"
+
+[[review]]
+id = "db-functions-082"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.regexp",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. regexp: no earlier finding. New, from the synonym swap: SELECT ( v1 ! REGEXP v1 ) gives the same tree as SELECT ( v1 NOT REGEXP v1 ). The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.functions.regexp" = "750d52b21c23a711331c2c213dabcf4a1bbc5b314147e14f4f4e752869efee04"
+
+[review.definitions]
+"db.functions.regexp" = "abefde1e26eb0c20386d5b2d4abe733a50e803af5ca6a68ca72b33c905b8c59f"
+
+[[review]]
+id = "db-functions-083"
+family = "functions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.rlike",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. rlike: no earlier finding. New, from the synonym swap: SELECT ( v1 ! RLIKE v1 ) gives the same tree as SELECT ( v1 NOT RLIKE v1 ). The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.functions.rlike" = "2ee83b7e9726beeeb53a070ff53f7e79a05e497a8a3a976bd1733ef9e764d16e"
+
+[review.definitions]
+"db.functions.rlike" = "65479a6f443ab764cf2f282fb502742e54645e7107160ce3fca365485af94e13"

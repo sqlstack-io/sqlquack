@@ -340,3 +340,20 @@ note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds acce
 
 [review.definitions]
 "db.dml.insert-overwrite-directory-hive" = "a78eadd0568c02a06eb41ddb7021072d5e9c8875b0cb2a2f9e9c1614ab2139cb"
+
+[[review]]
+id = "db-dml-019"
+family = "dml"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.merge-into",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. merge-into: db-dml-012 is resolved: MERGE WITH SCHEMA EVOLUTION with a CTE, aliases and WHEN MATCHED AND ... THEN DELETE gives a merge node with its target, source, ON condition and WHEN clauses, no command node. New, from the synonym swap: 4 accepted cases; WHEN ! MATCHED gives the same tree as WHEN NOT MATCHED. The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.dml.merge-into" = "c2fe251570918a62953c023648702ad105bd2764020e8cee5dfd2ac9e1c303e5"
+
+[review.definitions]
+"db.dml.merge-into" = "3d7cc611d0b78bf231a134cc5b49ab32eee7548cdcb3a876471585ae0452da54"

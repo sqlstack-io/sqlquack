@@ -1572,3 +1572,71 @@ note = "Re-read after the parser batch at 99821e58b (parser tree 6546c748), from
 
 [review.definitions]
 "db.ddl.alter-connection" = "fe2e1f4ef5f428e259a59f4c6b721e68bf34be8f88ce03d0ad4317804db2273c"
+
+[[review]]
+id = "db-ddl-077"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-database",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. create-database: the earlier findings are resolved in the current tree: CREATE DATABASE keeps keyword DATABASE (db-ddl-026, db-ddl-062), and RETAIN DROPPED FOR 1 HOUR gives an interval with number 1 and unit Hour (db-ddl-062). New, from the synonym swap: 5 accepted cases (for example CREATE DATABASE s1 WITH DBPROPERTIES ( `v1 Q` = 'v' )). WITH PROPERTIES ( ... ) is accepted with the same tree as WITH DBPROPERTIES ( ... ); the pinned page prints only DBPROPERTIES and no receipt covers PROPERTIES, so the tree cannot show which keyword was written. Remedy: keep the keyword in the tree (as DATABASE now is), or refuse PROPERTIES if a receipt shows the warehouse refuses it; a receipt is added to the pending bundle."
+
+[review.fingerprints]
+"db.ddl.create-database" = "906049676a33d114d24ec9957ebc7b27f01ae2b7bf1bd81c507eea410b659222"
+
+[review.definitions]
+"db.ddl.create-database" = "26f34aeba313ad48ff98fc9a1ef1fcabe7c49126f456d2ccb91a5624018005f1"
+
+[[review]]
+id = "db-ddl-078"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-schema",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. create-schema: db-ddl-032 is resolved: RETAIN DROPPED FOR 1 HOUR gives an interval with number 1 and unit Hour. New, from the synonym swap: 5 accepted cases (for example CREATE SCHEMA s1 WITH DBPROPERTIES ( `SELECT` = 'v' )). WITH PROPERTIES ( ... ) is accepted with the same tree as WITH DBPROPERTIES ( ... ); the pinned page prints only DBPROPERTIES and no receipt covers PROPERTIES, so the tree cannot show which keyword was written. Remedy: keep the keyword in the tree (as DATABASE now is), or refuse PROPERTIES if a receipt shows the warehouse refuses it; a receipt is added to the pending bundle."
+
+[review.fingerprints]
+"db.ddl.create-schema" = "c0df196844ef6f2584b2cd90a16959317458165ba8920749f4d286590284fefe"
+
+[review.definitions]
+"db.ddl.create-schema" = "82f3b1ae9d14f3a03ba974c1ccc77685354e395844f7701cfc9f410419b9438f"
+
+[[review]]
+id = "db-ddl-079"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.create-table-constraint.enable-novalidate",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. enable-novalidate: db-ddl-036 is resolved: PRIMARY KEY ( c1 ) ENABLE NOVALIDATE gives a PrimaryKey constraint with its columns and modifiers enabled = true, validated = false, no command node. New, from the synonym swap: all 40 accepted cases write a column NOT NULL, and c1 INT ! NULL gives the same tree as c1 INT NOT NULL. The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.ddl.create-table-constraint.enable-novalidate" = "a4c9676f3f49f09effb3d930870e8ead8eee3156cc284bf2ce8cca4af74cae76"
+
+[review.definitions]
+"db.ddl.create-table-constraint.enable-novalidate" = "37fcc7fd37e5a289a01554b2178afcc17535d250119d0c95ffb4a1cd84d475d7"
+
+[[review]]
+id = "db-ddl-080"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:04:15Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-column.alter-change-comment-first",
+]
+note = "Flagged by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier records are unchanged. alter-change-comment-first: an (e2) approval draft, held and now pulled. db-ddl-011 (opaque raw trees) is answered: ALTER c1 FIRST, CHANGE c1.c1 AFTER c1 and SYNC IDENTITY give alter_table SetProperty nodes with the column and the position. New, from the synonym swap: 2 accepted cases; ALTER TABLE t1 CHANGE c1.c1 DROP ! NULL gives the same tree as ALTER TABLE t1 CHANGE c1.c1 DROP NOT NULL. The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.alter-change-comment-first" = "70ceb26c04cbccf6e88140e75c2bafcf8a2475ca263e1e3c612d6fc0fa598053"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.alter-change-comment-first" = "3709e5844dbea3eaccaa0bb47488dc103019ff9da9af82d88ba55bc5bec75d7d"

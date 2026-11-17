@@ -578,3 +578,54 @@ note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds acce
 "db.query.select-column-list" = "e4f949af985da9abcd0595503f4d46814cfe5912a85a7d7dc5a55a7d5a811ba0"
 "db.query.select-hints" = "f1bd064ee44c2eed8827c43932ed8a81545f5ab19e60213f3e4516cddcd75860"
 "db.query.select-hints.join-hint-alias" = "4aa02c2a49b11e126ba14477f62aa8856796fe6143adee3dc7d7fdc5add9918b"
+
+[[review]]
+id = "db-query-024"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-table-reference",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. select-table-reference: db-query-008 is resolved: JOIN t2 APPROX NEAREST 1 BY DISTANCE ... gives a join with a nearest_by node, LATERAL ( SELECT 1 ) TABLESAMPLE ( 50 PERCENT ) a1 gives a lateral subquery with its sample and alias, and STREAM ( t1 ) a1 puts the alias outside the stream node. New, from the insert-AS mutation (k141bfeb112cb): The alias's AS is not kept on this path: FROM LATERAL range ( 1 ) a1 and FROM LATERAL range ( 1 ) AS a1 give the same tree, although FROM t1 a1 and FROM t1 AS a1 already differ. Remedy in the next parser batch: mark AS on this alias path as on table aliases."
+
+[review.fingerprints]
+"db.query.select-table-reference" = "58fa0ec4261bf24b8e87fe2d50d302cd59e668f3dd63ed3a09c7f084610223f3"
+
+[review.definitions]
+"db.query.select-table-reference" = "d2a4dacf989a91964280f05d75f94ba34e1754f4e40e1dece0654bf0bef28c07"
+
+[[review]]
+id = "db-query-025"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-values.values",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. select-values.values: no earlier finding. New, from the insert-AS mutation (k3f377a26fdbf, k5b9ae3db4ac2, k1c24e73a315d, kcf06de128892): The alias's AS is not kept on this path: VALUES 1 , 2 a1 and VALUES 1 , 2 AS a1 (also with ( 1 , 2 ) rows and backquoted aliases) give the same tree, although FROM t1 a1 and FROM t1 AS a1 already differ. Remedy in the next parser batch: mark AS on this alias path as on table aliases."
+
+[review.fingerprints]
+"db.query.select-values.values" = "747d1d4b00b3cc00da44d5da74f105652039db660679c0a857ed68b9753302b0"
+
+[review.definitions]
+"db.query.select-values.values" = "900853f1f1a0a1c114635211640df146f9df2ff21e217a5e83db4f94cfbd010f"
+
+[[review]]
+id = "db-query-026"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-watermark",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. select-watermark: db-query-009 is resolved: TABLESAMPLE ( 50 PERCENT ) WATERMARK c1 DELAY OF INTERVAL 1 MINUTE a1 gives a table with its sample, a watermark node with column and interval delay, and its alias, no command node. New, from the insert-AS mutation on the shared case k141bfeb112cb: The alias's AS is not kept on this path: FROM LATERAL range ( 1 ) a1 and FROM LATERAL range ( 1 ) AS a1 give the same tree, although FROM t1 a1 and FROM t1 AS a1 already differ. Remedy in the next parser batch: mark AS on this alias path as on table aliases."
+
+[review.fingerprints]
+"db.query.select-watermark" = "8644e1026473b4be6c9843ad09086b0ac8d1ca2a6ecc91e0c9440b3fcfe76dfd"
+
+[review.definitions]
+"db.query.select-watermark" = "f7848a7ca823a2825c8b15df53dc7eed9d8906e0047df793440ce859e57939a6"
