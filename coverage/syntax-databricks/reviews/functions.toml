@@ -4456,3 +4456,317 @@ note = "Re-read on 17 Nov 2026, (c) batch 2: a form whose earlier approval went 
 "db.functions.cosh" = "0c3f1430b81f0e1b47544ca95d333ae9f79556e7161f7d92450e7dc93ca8dcf8"
 "db.functions.cot" = "c4759f5a5aa51df7ed94f813e15ecafda7646a20d8198b2e3e5a8e4d2bb2770f"
 "db.functions.crc32" = "3270ef1559db31fb5888447da7476070c4c35ed4d9914b94f0b51281d6b9db0a"
+
+[[review]]
+id = "db-functions-058"
+family = "functions"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:23:21Z"
+verdict = "approved"
+forms = [
+  "db.functions.create-file",
+  "db.functions.csc",
+  "db.functions.cube",
+  "db.functions.current-recipient",
+  "db.functions.date",
+  "db.functions.date-add",
+  "db.functions.date-format",
+  "db.functions.date-from-unix-date",
+  "db.functions.date-sub",
+  "db.functions.dateadd2",
+  "db.functions.datediff",
+  "db.functions.day",
+  "db.functions.dayname",
+  "db.functions.dayofmonth",
+  "db.functions.dayofweek",
+  "db.functions.dayofyear",
+  "db.functions.decimal",
+  "db.functions.decode-cs",
+  "db.functions.degrees",
+  "db.functions.double",
+  "db.functions.element-at",
+  "db.functions.elt",
+  "db.functions.encode",
+  "db.functions.endswith",
+  "db.functions.equal-null",
+  "db.functions.every",
+  "db.functions.exp",
+  "db.functions.explode",
+  "db.functions.explode-outer",
+  "db.functions.expm1",
+  "db.functions.factorial",
+  "db.functions.filter",
+  "db.functions.find-in-set",
+  "db.functions.flatten",
+  "db.functions.float",
+  "db.functions.floor",
+  "db.functions.forall",
+  "db.functions.format-number",
+  "db.functions.format-string",
+  "db.functions.from-avro",
+  "db.functions.from-csv",
+  "db.functions.from-json",
+  "db.functions.from-protobuf",
+  "db.functions.from-unixtime",
+  "db.functions.from-utc-timestamp",
+  "db.functions.from-xml",
+  "db.functions.get",
+  "db.functions.get-json-object",
+  "db.functions.getbit",
+  "db.functions.greatest",
+  "db.functions.grouping",
+  "db.functions.h3-boundaryasgeojson",
+  "db.functions.h3-boundaryaswkb",
+  "db.functions.h3-boundaryaswkt",
+  "db.functions.h3-centerasgeojson",
+  "db.functions.h3-centeraswkb",
+  "db.functions.h3-centeraswkt",
+  "db.functions.h3-compact",
+  "db.functions.h3-coverash3",
+  "db.functions.h3-coverash3string",
+  "db.functions.h3-distance",
+  "db.functions.h3-h3tostring",
+  "db.functions.h3-hexring",
+  "db.functions.h3-ischildof",
+  "db.functions.h3-ispentagon",
+  "db.functions.h3-isvalid",
+  "db.functions.h3-kring",
+  "db.functions.h3-kringdistances",
+  "db.functions.h3-longlatash3",
+  "db.functions.h3-longlatash3string",
+  "db.functions.h3-maxchild",
+  "db.functions.h3-minchild",
+  "db.functions.h3-pointash3",
+  "db.functions.h3-pointash3string",
+  "db.functions.h3-polyfillash3",
+  "db.functions.h3-polyfillash3string",
+  "db.functions.h3-resolution",
+  "db.functions.h3-stringtoh3",
+  "db.functions.h3-tessellateaswkb",
+  "db.functions.h3-tochildren",
+  "db.functions.h3-toparent",
+  "db.functions.h3-try-coverash3",
+  "db.functions.h3-try-coverash3string",
+  "db.functions.h3-try-distance",
+  "db.functions.h3-try-polyfillash3",
+  "db.functions.h3-try-polyfillash3string",
+  "db.functions.h3-try-tessellateaswkb",
+  "db.functions.h3-try-validate",
+  "db.functions.h3-uncompact",
+  "db.functions.h3-validate",
+  "db.functions.hash",
+  "db.functions.hex",
+  "db.functions.hll-sketch-agg",
+  "db.functions.hll-sketch-estimate",
+  "db.functions.hll-union",
+  "db.functions.hll-union-agg",
+  "db.functions.hmac",
+  "db.functions.hour",
+  "db.functions.hypot",
+  "db.functions.ifnull",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 3: a form whose earlier approval went stale and that gained cases after it, nearly all missing-parenthesis negatives. Read on acb284063 against the 2026.45 receipts. Every new case was read. Each new reject fails where its receipt does, at the token where the parenthesis or bracket belongs; the position differences were read on purpose: the warehouse reads FILTER or content as an alias before failing. The mechanical repair of each differing reject (adding the parenthesis) is accepted locally and matches a recorded positive. Every accepted case of the form passed the check that its SQL's names and literals all appear in its tree. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.functions.create-file" = "e2ac5a9b273232eae6f6cb2bf72e16e66a30bcb3894b1d3503363d4ca75eb775"
+"db.functions.csc" = "8fbdec34408cb153de74d7a71194a334c428a87091bec655ba926dd2d0545d9c"
+"db.functions.cube" = "7a82272411cfa379cf54ac7aecf3b47b29d957594d1017c4bdd07f926c8f5629"
+"db.functions.current-recipient" = "c69bb92438ca5ab6a1f1a3f5527a6d55ea779d984ad008d0d5cd8fdd6dd58aec"
+"db.functions.date" = "df2673760188e84a741c1e12052e04c5154ddb1084f320b14efe560d8a96660b"
+"db.functions.date-add" = "c80d043aa6693dfaa853a1007ba326221ddb4c72b2516124399a9b6f6676290c"
+"db.functions.date-format" = "67681eb05518c487a6cc6e1be733002ae2d9f9c8dd430d63b276acbf6b0ad411"
+"db.functions.date-from-unix-date" = "9d3543b5c6712fc60214fc8e58af2df3f9b23dd3e3a9ba25bca123bf235a2c73"
+"db.functions.date-sub" = "ceb2ad12210b0fcbb55f37879c901e27d7569dc377f33e777085661445f2d794"
+"db.functions.dateadd2" = "2202ffd1bf18d0c603c1fd811859d0a172b3fd7fc62a9d270b94d8bee4ff904f"
+"db.functions.datediff" = "b42a96b10986bdf17fdfdac77d8298eb772f304aa19c08010b621b1e41d0fe50"
+"db.functions.day" = "e7853166b1d21a4d4cc6e3671a49853684becaa4d17a5ecdb3aa3aba6d48bca0"
+"db.functions.dayname" = "3712a09a9077c8e92463b5884ccfde03130f07f9660a314f09325c904ea7d9a2"
+"db.functions.dayofmonth" = "425d114a934deb432b94fec9fdfe82179f6f06a029b11d3e275a4c048df55d4c"
+"db.functions.dayofweek" = "b029ec06ce37fdc27fb7f32956c811beac416744ab8a5b409ac19f06e27cad64"
+"db.functions.dayofyear" = "ce02aa70530191daa9bdf6e09d70d33ffa21025f9f77b8265f162f4a994fe61f"
+"db.functions.decimal" = "faae47f6ec22f75d4ec277416917c238d7ecb87bef7ecc62697a830804f635ad"
+"db.functions.decode-cs" = "5b6775c4c2003878829e755f6b6cdfa02ef10e38a58ba6956f4265e265571270"
+"db.functions.degrees" = "1c5739826b9be2837cce0ea1991d8e27e9b6f76b070a6d8b38ca63f26ab0251a"
+"db.functions.double" = "b6dec15fa4f02e18a0ff04848d530477d963d48c4425cac56422cdd35c82ab00"
+"db.functions.element-at" = "74f7d7301a0ac88c3e82b296f39f95759bd5bc6d382e71e4be1fb5f231296269"
+"db.functions.elt" = "081b24ba6c136be3704996b508ed27165b058bf35cca7754bfdcf8515c60f02b"
+"db.functions.encode" = "ef627e3029e2a5c49d88a4ae0d50d6f0de917dbdd520f8a9df7bd04d0f36dfe5"
+"db.functions.endswith" = "1c2df3985331a6f6c4003db2023e0fec1be58675f28c7a5ee8dfa8b222ef5149"
+"db.functions.equal-null" = "7281781de450bb86e11426caf0bfc2cda78762b039b3df8ee259675757ee5389"
+"db.functions.every" = "f75f4d0ce9bf959177186ac69240fc3d8c8b9c51862411c01c5a02d2db101dd6"
+"db.functions.exp" = "efa926ff162a1815c697272e7e69f33a589667fd05873557ff230fa02b3618b3"
+"db.functions.explode" = "7da32010d195efd34921ca4bfaf5fd20c3fea12e6582049a86a56c95fe0ae563"
+"db.functions.explode-outer" = "256313d1ff05eb74d7f735cb70cc1df7c1520af563828a7b82657e72bc8ffc09"
+"db.functions.expm1" = "98f1ef653a82a6af438824d8c98da3adb86627ca41a167329696ef48dfbd029e"
+"db.functions.factorial" = "09d9896792bec5d45fe3ad948ceeb364f5461348a8dbf76496441bb53e85b9b6"
+"db.functions.filter" = "f22627737de3370f7e4704537464ce380c0a0a33e0710d21cab10a403d2f602a"
+"db.functions.find-in-set" = "57ca2fe710315cf3ea0c9d959104c887680cb16756ae711135689266e4fea8c6"
+"db.functions.flatten" = "3540152fc315f80a89fa3e8032d249b635b8d270a8543a219bfd4d65de1af114"
+"db.functions.float" = "692ca55f6ef7afc8c50b942c4d12c526d9e4eb9f959850e3b2a467797f94befb"
+"db.functions.floor" = "9b482b8c77dcdd09287f0a230d7b9b16f564a077931e6e18c8df0d9be68a6318"
+"db.functions.forall" = "29b34b9385317d1cb24b9ea0422605d09cb8fc885c871417bd2482505c982426"
+"db.functions.format-number" = "b35aaf64f5f943de7439bf1c3ebad1e55bc38a47b242b9e0e0ccd7c89aca240c"
+"db.functions.format-string" = "a25b2f25aaa3575c6993b73e3db323f1c04df40376cecc8d02a77101ebc996ce"
+"db.functions.from-avro" = "b8b07047252ba644e5a2e569eedf251c4417995a8ec075b88679eacf7d91d838"
+"db.functions.from-csv" = "71c3cb0f8090d2ebcbda8c09514771536700b2e680f3f654db991487ef6413d2"
+"db.functions.from-json" = "b9deb0a35d53e10ea98e9508a0f2ecd5ef94fdb1ce92a082a055fb5e4672d757"
+"db.functions.from-protobuf" = "f78e64e80c877b75c3ee44367092d64a750880303b1cba1205a37f5569c8530a"
+"db.functions.from-unixtime" = "2f346bfe7375af8809446c703294f3c6e8105f529526fe36198c31fe1d614aa1"
+"db.functions.from-utc-timestamp" = "5258e3ec5def37ef1be2b27528aa74b24a386e05cbaf82835065826e795844a1"
+"db.functions.from-xml" = "d4c24a7470599cb7324db8bffb55c88b1e17d679cbdc75241dfe252edcd76aca"
+"db.functions.get" = "c09fd2eb633c7823a8bfef1a199554b6af2a58d5f20e133551cad093e8669745"
+"db.functions.get-json-object" = "eb97d57945e91ba3bd8b49caecaae324f4cc8b918221d26520a1bb67c4c84cf9"
+"db.functions.getbit" = "95437d6f2bc1cf85fa15725d96cd9a81a87403482983c2e067a13dfac8ca9614"
+"db.functions.greatest" = "28082bde69a1f38ee69a66306d4d7c23eae8c449d2ae6984276f843a514a3cd7"
+"db.functions.grouping" = "007f0f71a2744d82e29d3b474329638b592f76b6bc026edd3575f9d22d67223e"
+"db.functions.h3-boundaryasgeojson" = "022bf0f6b1c3771040a9e99d2fef02fae4050b43280aaaa9bd03521ae6fb07f7"
+"db.functions.h3-boundaryaswkb" = "97de547f2ffb9b7b64503989fb6abe6d30ac4b80a00b4feb232fdef23c9e9ec7"
+"db.functions.h3-boundaryaswkt" = "df1e6aaf220bfd41bb528d80d799784152386267b41d17ec65adfe000dc95a61"
+"db.functions.h3-centerasgeojson" = "ca8d85fe2c66a41d883979d515d7dd3e8c9eff4d9a62d7aa483ac6a027879926"
+"db.functions.h3-centeraswkb" = "ad9676dd5ce8193c3f6dd4de39cca7576e011b1a66dc1c225b3d4f38931340f7"
+"db.functions.h3-centeraswkt" = "81bdc5466f09a14345994cc191ab1fa9608d44ed3b2ff538375af84fc8b7d5b9"
+"db.functions.h3-compact" = "e0f9f668575fe571314f83fc32c838eac097976787e7eb0de3d972a433af4ee8"
+"db.functions.h3-coverash3" = "53edb47c2a4a5c62b807d05df8cb079242f6a43fdcd5b0dcff21535698a20fe1"
+"db.functions.h3-coverash3string" = "e2ada873e4932141c34d837306e096c8d61b6979daa051d4738105ba5fe975ac"
+"db.functions.h3-distance" = "0a47d96ae647ccf38af66998295f7b5da2cd003fe7d2ca0606fcdce9b4835d81"
+"db.functions.h3-h3tostring" = "19956be9587ad90389703a55b02cb113f2a52bacfdfde835400927555d9b958d"
+"db.functions.h3-hexring" = "67a1640922260780aadd6c65ca6b5bd4d64530a4e4f18b77678499155de2d6ef"
+"db.functions.h3-ischildof" = "83e046fde8f418ef29fa349d098ce5282e5ce7cd725bfeadb86306e07a78bd3f"
+"db.functions.h3-ispentagon" = "3184ced655fd6c3732d04846c2a5cec505f45c36070f3d8c5038718d6e3275c0"
+"db.functions.h3-isvalid" = "2a79570af6cbc1029bd3cfdce858b41f83da1087fdf40f0eed8d531cdc551818"
+"db.functions.h3-kring" = "ef2d020ef810fe6de120f83c50d053343e7d34c174dd32b72f4fa8cc71c9616f"
+"db.functions.h3-kringdistances" = "fe107a865a43ea2341cebef620a92c61de25e01e969f0ec798cec6b85d3adc79"
+"db.functions.h3-longlatash3" = "d0585aba27ca4a97d15d6b9e8de9e73847204c3b0238e5c61d207b7940541953"
+"db.functions.h3-longlatash3string" = "869038288d6a7426c07a7d3b6d217c1c2543ae3c8cd01cc91a46457ff9dd5afa"
+"db.functions.h3-maxchild" = "ac4f96da25c390fd0b38399be7ac0536236d9c6177a02142aefe6663c6f6c945"
+"db.functions.h3-minchild" = "7dbfa4b4864c656ce0d225fadbbcbcd8700350e77b2ab7a86db8196d10f06ae4"
+"db.functions.h3-pointash3" = "b33d88be90c8174dd02c8dcecf7373a37f72d33c88833eca770757e027c595bf"
+"db.functions.h3-pointash3string" = "2c1a3064658bb2f80d96a4236e314ac45d41ef160b5ab421376059d56de9931a"
+"db.functions.h3-polyfillash3" = "1c4a62a6a8e96b15bd08ed6bd0040ef324d4df1c1516a785e493cbe04cb9e851"
+"db.functions.h3-polyfillash3string" = "3f4b1d1be04da10eee5b17710a7fa6ce957de7669f0b5e1120fb2d6a374f247e"
+"db.functions.h3-resolution" = "6bc098cedf6142603d5c07adf0f94f99db09d033224cdb1a7e9fe9dfe11b26c3"
+"db.functions.h3-stringtoh3" = "d16906831cc5756d3eae40a8df3e5c7e2f19949f27cec212396914f335963ae1"
+"db.functions.h3-tessellateaswkb" = "c8831c1f10538937510cc13cf7279a5115e1931bec4062c63891a1f71bce9033"
+"db.functions.h3-tochildren" = "029ace927722094f5a1f5d28eeed98c8fe993f24c2e95c353a614ae481bbcedf"
+"db.functions.h3-toparent" = "4bf221207760f43a0c6271ba80c8c9a9f7cc210a503ccae4472806a2d4a23dfd"
+"db.functions.h3-try-coverash3" = "3d3ac4e51a8feb1257bfbb2a21a37d4ffa32fb45b134baeb92d76c82d8982925"
+"db.functions.h3-try-coverash3string" = "34f5955ec7099c88c27d8713667b474c2bc7d316c1d3d0ef0ee6bcaf6cbd1b4e"
+"db.functions.h3-try-distance" = "418ace9875910860c7826b544df753e379b239bbd478ff06494179fb6bfebcdd"
+"db.functions.h3-try-polyfillash3" = "9f0fa5245eae331a2367e3834d031d56dcf34e982b3d2626dfdc0591523de2d4"
+"db.functions.h3-try-polyfillash3string" = "666e75f4112dac3080b962a55abe33bbd8a693effc8a20597a67951652530de0"
+"db.functions.h3-try-tessellateaswkb" = "981f6837259241a33951a0f0e8668bc6ae02daa0d726d805cc8f726b18990840"
+"db.functions.h3-try-validate" = "e1b844e94add09d7ef0aa86f6b7fe9efadc2e94bb9d18d23a12d39b27df8e88b"
+"db.functions.h3-uncompact" = "296975bb2fa7231df5f2a1fd2c604b2ef9181e520b2c9de8c7cee7b2201783b6"
+"db.functions.h3-validate" = "b7a727cbf7a134e0fe4ab4342b9f7fadc14daa6f4d61b7b525ddae41fbb81323"
+"db.functions.hash" = "77141dfb3bbca283b421a487458c969470e772150575f332c8a578dcff3b52c1"
+"db.functions.hex" = "a3e7d09eba7449673228de8ac34250906f86b2d63fcc848914aa5d7bcd4d4cfe"
+"db.functions.hll-sketch-agg" = "299c3adba814b49afcb14702d2b95658d2e292a0ec0110d02fd535b4d3d27a09"
+"db.functions.hll-sketch-estimate" = "23a8264c473233cae2259b9bc1e66af004593670d4da387997db2cd8ec0e29fe"
+"db.functions.hll-union" = "3928235b0e6046bbaef905a8f9896af590ac6cee326a1d01fafc9259e01ccbb4"
+"db.functions.hll-union-agg" = "4359d01bd614dc6bb81c6a4dd2ce21f04e605d125d0ee24a5b315bd5db6818d5"
+"db.functions.hmac" = "2e510c24183c7360eab84bbb7b2ea094afd750a7d619d3c7843b75c25856b864"
+"db.functions.hour" = "5ac93316948562ce1a65586535605e99f34dbd0aeb69f5724223aec37974c79a"
+"db.functions.hypot" = "5e7ac725c0dd16c85b6730b745ca9c6f5358e857eb5916e66e6ddb240adfa6fa"
+"db.functions.ifnull" = "1c4caec344093465bfa95b8ac805df110ba50966e72ef3e6745f4318ae798d9e"
+
+[review.definitions]
+"db.functions.create-file" = "dabee9e777868304fff9176ce3353e321fe1bb4e0882a475f524df56485aea37"
+"db.functions.csc" = "78924fa489978be312c77a62212425952148a00cc78c808097a627af6e53f222"
+"db.functions.cube" = "9a75386131e8d53bfd2ca2818c1d58cfe4150447aa3d47f75f83c663ec96d5aa"
+"db.functions.current-recipient" = "2458f1d234db7d4c79cceeedf8334f03c61a6938d2d675e364b1ac47f686a56c"
+"db.functions.date" = "f9a7176d7c13b9092e92a6f7d41becabfb70c71958074bbf6236f40fd8523727"
+"db.functions.date-add" = "272b114c353b02b25847c98e27e54c6aff1103edb540098f4ee0d4e8282bef3b"
+"db.functions.date-format" = "1691281aa69078efa4826f6cbe8931b7aaeecb25402246338248ee3634e44188"
+"db.functions.date-from-unix-date" = "cd17c1cb4b8a0d01893e84c5c8113fb000f08c8169226f657ce676e63299607b"
+"db.functions.date-sub" = "65d5dad981281afe633f5a1b21b6d0770bcdfb25cf8f11ecbc17422f01543da9"
+"db.functions.dateadd2" = "1d20dbce0e9befa8ffc41ffd1eccb85a97ad1c02e29b99ad737eac64b16340d9"
+"db.functions.datediff" = "532307f947b79909bfae5ce1af6ed0566ad4a8517c6c83d411d4e589b71b2387"
+"db.functions.day" = "4a73fedc5299aafe7ba38c34187562fd385aef21364aa876514ff103d648f101"
+"db.functions.dayname" = "4fac9f870adab0803d2e3f05e041f0e51e02c01c8b04f81dafa6dd3a5a0bb7bf"
+"db.functions.dayofmonth" = "3d971b2f2a34b89c04282b424b0a05e3cef44fb28898ea3c57d6e3a917af94b6"
+"db.functions.dayofweek" = "6b27a1bf148de827cd032c86fc1c997ebfaf20135636c37e713eb4146c7f2ac1"
+"db.functions.dayofyear" = "e827d64b9ef7b7b1b37bd5afa5aa51a74187b58bf37eaad045b14296fc17471d"
+"db.functions.decimal" = "7549ae454890b086d81783876b2531eef3f2f8c1612aff4fa278f2041a8650e4"
+"db.functions.decode-cs" = "415efa586293f4fff741a091cc79cad88984cc999a481e0f2205e73b2efbe2ef"
+"db.functions.degrees" = "a8accda54ff6076c22ca924042cf216892f562ded41dfc79c45e105964b67b1c"
+"db.functions.double" = "dd738280efd26b4362cf43863936dbf78601099aad6a2616afa65db1971954c1"
+"db.functions.element-at" = "2d36ff6db300cabadb9874f932508180a4c24ae3e6cf6eb77a229a51668857f1"
+"db.functions.elt" = "cbd68c63b06eebadc72e84710621f38088463ec9d3d5634c463ff069f2124c12"
+"db.functions.encode" = "40518319512f47183eaf3dc8b2bf1be670d865d6bee41011d23199288cd9f2e4"
+"db.functions.endswith" = "0b82098f1381cc32764509562f0e06f3a152642f26e27efe115e019ea921b0e3"
+"db.functions.equal-null" = "0dd5d5bbcac7313babe01b3b393cab055677db022fbb4bbd48c6fa686adef377"
+"db.functions.every" = "9925ecc4b25727df4213a693b7112e14bede7e0c41afeca1249c85faffcb0e00"
+"db.functions.exp" = "a5db618b99464d637d3069eed82eb8a027a5be77a877075244c1bf320ea76cd9"
+"db.functions.explode" = "d5b564d9bac0e8fae025879353ac41786bcc009c7dd0bfbbd377716135ed37af"
+"db.functions.explode-outer" = "d0cf85b5afb45dd2bf31ede45e161bda537afb4d51df18da6ebbe889aecbf29f"
+"db.functions.expm1" = "88ee96798d5f3e24aeb4b11ddfc1c1403ff781e05e78fae045efcd69f8787611"
+"db.functions.factorial" = "f9cd80bd7653e473cdda6b163cdd5d379a30a19ffe3511317e5cc475f1aecf69"
+"db.functions.filter" = "e1f77633414026ee64af273be7049835be5dd3ca0a351e5ce415fad00a5a6865"
+"db.functions.find-in-set" = "1054637916ae61478b0914746383b9d266fe829ce8aa4dbddcd214b7db8dcce8"
+"db.functions.flatten" = "929d4ea695e67d4d1a99c7798e18036715bee78fb29e4159d0c855ba2e909245"
+"db.functions.float" = "053a4b10bcb37a4bf28e805239542a2c56a1f58b540b41007c6b76d2e152775a"
+"db.functions.floor" = "beb6369b38f9dcf7297a77f007776c31b0d7c01d34390a22a9a738ed3ef8fb46"
+"db.functions.forall" = "cb1f00d87fa420378e3866b522beeab490bfda7b2c41b832cac56f9b5443e661"
+"db.functions.format-number" = "7bdf2acff606d9d9c2de41ae6ed2c1fb84ea6a3397a41e0ffb5baa95a8602ed2"
+"db.functions.format-string" = "f58ae815cd67c537d01c7859ee4b7b5fe595d63bc04badc72e9e47709d9e6812"
+"db.functions.from-avro" = "81afc9e0cd2f60deba797382cfe49c6c79e1511fe67de1cc508c2a2f2175fde5"
+"db.functions.from-csv" = "6b6d215370e022a5a9b899fb6baf9a697db422874ed82b6e39b91805335a50e2"
+"db.functions.from-json" = "6365997453ec4bc0cd5e2b1985036a51baf1d923b6ece31b917555cf3eff59c7"
+"db.functions.from-protobuf" = "091a4c762ee13762ff5766cd6dca35bc4f25b03b9562dbcd37e671d2fa0d0939"
+"db.functions.from-unixtime" = "4bf7858ed8ba40847317a6746feb7230172a1b008d4b22f2c54fd86e8ad91b4d"
+"db.functions.from-utc-timestamp" = "25bc047b56c8e8fd13061f03ea2e616ec82b9890bc074fe8349061d7d68cafe8"
+"db.functions.from-xml" = "ea54f827f2d397cdf5f235cd57007de8bfe502fef72a48b0ddf024f84a54b54e"
+"db.functions.get" = "90acbfbeca2e0dc3e7ffe461b485c9c34e6cc163a862fead26bf43979cd11e29"
+"db.functions.get-json-object" = "4426600d407f2cb15881a0466792cb86d591929681f9ad4db749ee9a8a69e213"
+"db.functions.getbit" = "e9de2a8844eb38ad356ea64b930e577349be9fe45ec0fd58c3786c25d756df1d"
+"db.functions.greatest" = "4a3f5c72638af88c36ac9620060787d3227e3d4fe7f3177467bcac2e03484bb1"
+"db.functions.grouping" = "7bb0e96d31855c159d00fe6891946db83435ac9ac406dedce7d1336d6c3ad3f9"
+"db.functions.h3-boundaryasgeojson" = "eac6942d1c889ec043c859449e1dd2b3e43a843c022a45ff550d4f8db21d1ca0"
+"db.functions.h3-boundaryaswkb" = "b893ebb436e8ab09f2c4d65249d2e60989cb4fde2cabd0d1cafc7f729fc73a7c"
+"db.functions.h3-boundaryaswkt" = "26e09a18d56bb08f2cb286e6276314396f8839d7caf51b3de91a0211e198eddf"
+"db.functions.h3-centerasgeojson" = "356fb7d7191fc27d1dee29559c11a2e5ba7bafcdbc111669c0acdcce7bfbdfc0"
+"db.functions.h3-centeraswkb" = "39872497478322db76026d10725f29001bfe4ef33968ff9c2519f3afcd29ee63"
+"db.functions.h3-centeraswkt" = "b3828631a0a3633332db3462352c32155fa0ccda87ea13534895e8d91f9d5bcd"
+"db.functions.h3-compact" = "acca5f4a248acc71c4b670d050b6bec940a05e479b9f4d6fea24b63bff9704cf"
+"db.functions.h3-coverash3" = "1add1324b3013c928978dc26370ea188e0d55f460a2566b9c77a805f3392d66a"
+"db.functions.h3-coverash3string" = "7632dbfa6db5fe70a09f7aa690a71cda91d7aba0ffde036ea92a21f94a54f2bc"
+"db.functions.h3-distance" = "16d7129b43064a27334c9ba3f7b1e1eb93c67c198518ab8ca92aacf23052e2fc"
+"db.functions.h3-h3tostring" = "1cf3d89f7dc648853f49884f72b2acd4c00b75d0454a36134057dffe5835cdda"
+"db.functions.h3-hexring" = "2a89822e9466fc20a2a9cdfb4a7c88c2b9a6f89168f3d00983f87e18ef11b14f"
+"db.functions.h3-ischildof" = "b7f48e3340350b5e4352bc6aff1368b2a9f5b6766d2db311eebbe3b506baf12e"
+"db.functions.h3-ispentagon" = "466f1781568600d4dd4571101b49c725dd3cd103bb518455a9458ee0172a06b2"
+"db.functions.h3-isvalid" = "025882a44566f681162516fb3d10273ecb568598af3788a1eae7adb87afe1a71"
+"db.functions.h3-kring" = "f555700065fa1f63c87542e3329d36b82d3308392468dd98f56d4fe5246ea0cf"
+"db.functions.h3-kringdistances" = "bcc6fb54f9149dc57af3e1a8d9001d08c2655c8f8cf1ac93d978e11425f9d437"
+"db.functions.h3-longlatash3" = "75cdbc4e29fe3edbc203bb9ec757128c05495b483bfdc94b5de10c92ea4b6696"
+"db.functions.h3-longlatash3string" = "5ef0f9d055f1683477728462000dfdd9849aa662625e1d9fcbef9d9eff1a8d9c"
+"db.functions.h3-maxchild" = "12d0040304876332d8d9122c8f9fa81e568f17d399147d7db0634f7dbb072f68"
+"db.functions.h3-minchild" = "5221cab41c1181794d03c840bf079e65cc727df23a696566cbda5440e2f76e56"
+"db.functions.h3-pointash3" = "639855ea66302349a26eaa8541c1f7dd330b03dbe326739ee5952657b55db2fe"
+"db.functions.h3-pointash3string" = "add53a8db21e66687ae820d49240c0b7017cb5b4ab154d042ab96c3f7b87a88b"
+"db.functions.h3-polyfillash3" = "c8021562dc5a8028ecd177040bb9c40081561414306363969b0e166290d5c334"
+"db.functions.h3-polyfillash3string" = "7b10d4c58220f615e59f6a31849b67ff02e437418190543e897b413a2061e0ab"
+"db.functions.h3-resolution" = "7f9977cfe27cd19180ebd887df3a57a07d0d25f3ed4bfe7e1855ae1273824af2"
+"db.functions.h3-stringtoh3" = "76301ccec0e877a8cab2d7a7b91fee2f9b4d5666e1ac9e8da755196913a63494"
+"db.functions.h3-tessellateaswkb" = "b1c031acbe0f78e666d85227e8c9d1e6ed8627096fc74fa959fb3c5622fc97ab"
+"db.functions.h3-tochildren" = "31443152d1af5461ca5ae232113b69eea6eee2c25d39bec9f2b51ae809023533"
+"db.functions.h3-toparent" = "a65917618ae1ebbfe10ea0f71d146e9220df5dafca6ad10d8608518cf12087f6"
+"db.functions.h3-try-coverash3" = "167601a4fa895504a5dc3725b58e2f6046a329a9ec19fe7bdb86f712f4374605"
+"db.functions.h3-try-coverash3string" = "9fa1a34e4329f94aa2794cb33d83ac3949e3cdfb238a5db0cd12d4276af2bdb2"
+"db.functions.h3-try-distance" = "30ef6b530b833f7d1db8b49bd6f6f1919456d8dd574c237de4e7b05246d7bde4"
+"db.functions.h3-try-polyfillash3" = "b53e67ec11ced3b8a6932be48df08e28f3806312278a382338f3b1782be4985a"
+"db.functions.h3-try-polyfillash3string" = "69ff6a9ccbbbd85b5630b288f46ca681a3ef5190c794e05106143d68276103af"
+"db.functions.h3-try-tessellateaswkb" = "01c24f99ea0e71eb608358623a14bd6e4e7c71349013106e3e55f076e46ffaff"
+"db.functions.h3-try-validate" = "cd259bdf0ad5b9bc1b25b161d8bfe18412370373950fc7605373e3f5b3ebf21d"
+"db.functions.h3-uncompact" = "0bfc3a462e417f97effb230d3f97678307ceb3d75cb908e3c2a34c479e177fa3"
+"db.functions.h3-validate" = "6e52080417b00d3ed5816c5c0385dda0e527d98dd57caafd2442e27e8c75bf82"
+"db.functions.hash" = "5bc073880a7c476bd26597cd6490a2a2b3f2581b5b9c4dc2bc6358afde926f70"
+"db.functions.hex" = "8d6e8d35f80ee3b408034dec1f323774265fd371d657f3888d53f992c30d445d"
+"db.functions.hll-sketch-agg" = "6d60c23ad792367a7dd3fc74b90687ccfb724469c9d823d522cf0faf95e60c93"
+"db.functions.hll-sketch-estimate" = "9971d41e85d56c6d5588d54a375536c75794304f187e93487b534e8055c6c916"
+"db.functions.hll-union" = "6ccf0f21f89067096c56efd967bbdfc707c7077135d9bfec9e8de036da972e5d"
+"db.functions.hll-union-agg" = "55e0740098a08411a3eac37ae74853c5432aeeb4f39579aedcee7986de5de551"
+"db.functions.hmac" = "e36fd43d7f00a245085a84c1e5171fa98cd6b8063b027e1ed39338fba0e50861"
+"db.functions.hour" = "140c189821c148a6e7a886231a98eb106f9acb7112e541c95bec89d6b893ac98"
+"db.functions.hypot" = "ea8461703ead5f1fe50cdd872ae7a918cccb5c9cc407c6fe6ed8f5d1b32a9131"
+"db.functions.ifnull" = "d21b1030c5646c5d7ab23e7fbceff2f1c6338ae68dd34b13169e3c5bc9236589"
