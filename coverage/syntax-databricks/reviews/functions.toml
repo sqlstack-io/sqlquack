@@ -5084,3 +5084,317 @@ note = "Re-read on 17 Nov 2026, (c) batch 4: a form whose earlier approval went 
 "db.functions.pmod" = "ad8a6b790438e61f0dab995137c9df8194e4651cc677b0f74e39b8491f5b1840"
 "db.functions.position.position-in" = "6b5a31f35c20397680642dd44cee62994cd0f83ec36bdc0e742c53bf96f3f534"
 "db.functions.positive" = "8d096f8580d62e770bfba4cc3f1df17839ca40f86e4752c3fc45a1c63312f3c0"
+
+[[review]]
+id = "db-functions-060"
+family = "functions"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:27:38Z"
+verdict = "approved"
+forms = [
+  "db.functions.pow",
+  "db.functions.power",
+  "db.functions.printf",
+  "db.functions.quarter",
+  "db.functions.radians",
+  "db.functions.raise-error",
+  "db.functions.randstr",
+  "db.functions.range",
+  "db.functions.read-files",
+  "db.functions.read-kinesis",
+  "db.functions.read-pubsub",
+  "db.functions.read-pulsar",
+  "db.functions.read-state-metadata",
+  "db.functions.read-statestore",
+  "db.functions.repeat",
+  "db.functions.reverse",
+  "db.functions.rint",
+  "db.functions.round",
+  "db.functions.rpad",
+  "db.functions.rtrim",
+  "db.functions.schema-of-avro",
+  "db.functions.schema-of-csv",
+  "db.functions.schema-of-json",
+  "db.functions.schema-of-json-agg",
+  "db.functions.schema-of-variant",
+  "db.functions.schema-of-variant-agg",
+  "db.functions.schema-of-xml",
+  "db.functions.sec",
+  "db.functions.second",
+  "db.functions.sentences",
+  "db.functions.sequence",
+  "db.functions.session-window",
+  "db.functions.sha",
+  "db.functions.sha1",
+  "db.functions.sha2",
+  "db.functions.shiftleft",
+  "db.functions.shiftright",
+  "db.functions.shiftrightunsigned",
+  "db.functions.shuffle",
+  "db.functions.sign",
+  "db.functions.signum",
+  "db.functions.sin",
+  "db.functions.sinh",
+  "db.functions.size",
+  "db.functions.slice",
+  "db.functions.smallint",
+  "db.functions.some",
+  "db.functions.sort-array",
+  "db.functions.soundex",
+  "db.functions.space",
+  "db.functions.sqrt",
+  "db.functions.st-addpoint",
+  "db.functions.st-area",
+  "db.functions.st-asbinary",
+  "db.functions.st-asewkb",
+  "db.functions.st-asewkt",
+  "db.functions.st-asgeojson",
+  "db.functions.st-astext",
+  "db.functions.st-aswkb",
+  "db.functions.st-aswkt",
+  "db.functions.st-azimuth",
+  "db.functions.st-boundary",
+  "db.functions.st-buffer",
+  "db.functions.st-centroid",
+  "db.functions.st-closestpoint",
+  "db.functions.st-collect",
+  "db.functions.st-concavehull",
+  "db.functions.st-contains",
+  "db.functions.st-convexhull",
+  "db.functions.st-covers",
+  "db.functions.st-difference",
+  "db.functions.st-dimension",
+  "db.functions.st-disjoint",
+  "db.functions.st-distance",
+  "db.functions.st-distancesphere",
+  "db.functions.st-distancespheroid",
+  "db.functions.st-dump",
+  "db.functions.st-dwithin",
+  "db.functions.st-endpoint",
+  "db.functions.st-envelope",
+  "db.functions.st-envelope-agg",
+  "db.functions.st-equals",
+  "db.functions.st-estimatesrid",
+  "db.functions.st-exteriorring",
+  "db.functions.st-flipcoordinates",
+  "db.functions.st-force2d",
+  "db.functions.st-geogfromewkt",
+  "db.functions.st-geogfromgeojson",
+  "db.functions.st-geogfromtext",
+  "db.functions.st-geogfromwkb",
+  "db.functions.st-geogfromwkt",
+  "db.functions.st-geohash",
+  "db.functions.st-geometryn",
+  "db.functions.st-geometrytype",
+  "db.functions.st-geomfromewkb",
+  "db.functions.st-geomfromewkt",
+  "db.functions.st-geomfromgeohash",
+  "db.functions.st-geomfromgeojson",
+  "db.functions.st-geomfromtext",
+  "db.functions.st-geomfromwkb",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 5: a form whose earlier approval went stale and that gained cases after it, nearly all missing-parenthesis negatives. Read on 3d41fec63 against the 2026.45 receipts. Every new case was read. Each new reject fails where its receipt does, at the token where the parenthesis or bracket belongs; the position differences were read on purpose: the warehouse reads FILTER as an alias before failing. The mechanical repair of each differing reject (adding the parenthesis) is accepted locally and matches a recorded positive. Every accepted case of the form passed the check that its SQL's names and literals all appear in its tree. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.functions.pow" = "e138be184ff398b14a43578ccdc203f57cb6a3f719e8324fe4c4a25b16db93fa"
+"db.functions.power" = "f9fe26d8346a4a1639b36c91597b567b1b073727ee761deb5959bf928d33e7b6"
+"db.functions.printf" = "abf6d5f98a3717bb69b549c36baab5df13ce7c2adeb3667299bc6fe73862ecea"
+"db.functions.quarter" = "e578ad5111bc7f854b7302aa95a2525bd9e8af689e399d6ca8d80e2c94f821bd"
+"db.functions.radians" = "7656a058a9133f519715b4f9beb607f73b8592f3172aae07391ea5c5cf1267a1"
+"db.functions.raise-error" = "c4847c0d87bf5f3447d9d473ef9aab551720e6d1e2444c0a7bf1a6c7c9572415"
+"db.functions.randstr" = "88cc659ef3de960c94d002a27cb8a412d7112f31840792403cdf129e038dd6c7"
+"db.functions.range" = "8968cb4006619d0a29e52e13d991218a021c1eb339a6e34701f3dbe0f863e073"
+"db.functions.read-files" = "5a5ab69df579d7c5425774e81ea65377c5f60d730b6b88952555dd1095a13342"
+"db.functions.read-kinesis" = "dd3f4838ac179c475d089e1018502936500645c1af460c3942cad0cdd22bb526"
+"db.functions.read-pubsub" = "68bc5c955fc412bb1709f0994cacd686a5d91be247c3ca4ac0b15b573a46d828"
+"db.functions.read-pulsar" = "18c058aab48ee4a7223cc703304e8da2d549030a6ffe5eb3c940d8c4b2da84e7"
+"db.functions.read-state-metadata" = "0d495bc1057970ea7d03b80ffa5178a0ce54c5ce8b0b673bc0af4b7634f6027d"
+"db.functions.read-statestore" = "286d08b165219c7e6a6f10872da0dba421480e51d2b5c93b9305df5f2747d72c"
+"db.functions.repeat" = "67e9d80103cec9ac81863257d586e1776eb51af7e79bbffe24f9203a21fefa7b"
+"db.functions.reverse" = "8daba0d2bd287b85f5c40aa284dd70fb28067d7261a7bd4cdc5ce307f863e5f6"
+"db.functions.rint" = "310b6fb25cbc7a2cbafeca58a0b04ebb7f5c1d41cd54b52a7536e12c2528af16"
+"db.functions.round" = "1d483289230fd72ecc9e3955a8efe019b90def81c75c2ee95cc72e458554d4e3"
+"db.functions.rpad" = "6c5c52086502d68efbe53f57f9452f3717f40cfe9e56f7115376304b85a56f70"
+"db.functions.rtrim" = "318f1291ab6501d55800eb9355411ed73954a709ba6471b555480a4551eb81d6"
+"db.functions.schema-of-avro" = "703f5fcdf297ac35dca555dd76c8d14a2dc0d68819808ed4a2d697855ea0586f"
+"db.functions.schema-of-csv" = "a15784072a0317fd4bbfbfed9e4d207c24efe49cb96d918e24df62844c9ce148"
+"db.functions.schema-of-json" = "5614dae21aa045301d6a9485f6da93c62573d0fa8f6dc13bc48bc183b5738057"
+"db.functions.schema-of-json-agg" = "50a74f39dfde569804f19d0e1bdce3f83a3377a7c7cbf0272c4bd4a001c320c0"
+"db.functions.schema-of-variant" = "3e0ae7ba7cab32bc08722d96618757841cafe0661d1536fd1c1871b68107baf4"
+"db.functions.schema-of-variant-agg" = "a6c826586bef875ac057d469c3a3add0d8e24a92e4154189b083af0419ad017d"
+"db.functions.schema-of-xml" = "03f1823444263244c8ad4b95f8dcd7fe58f595dee916b94677b779202a5d8ed0"
+"db.functions.sec" = "29fb63b1aae6c72ab88afce0a0971f855a2e4cd7bd3d5828d2c6e9aa5dbe49d2"
+"db.functions.second" = "cb700d1ec8dfe39ee8935553b2a0729d1af0eb166b654f7088bc976d22c20ca5"
+"db.functions.sentences" = "6902c4278c4b19763f2623c82398831c32559119f4589fcc0fd9f255e0f398fd"
+"db.functions.sequence" = "270ade106cc86ad114094ccdc75f6049e895bf3878235f0b7ae8332280bc0b74"
+"db.functions.session-window" = "0d950d702f63e1ffadc377d65c12314927d2b423067244c9c0b0c9209490cb09"
+"db.functions.sha" = "7bb512a2cc855a625e2373b6e90070d28a04f0337b9a4c9dea36eb500d5abcdd"
+"db.functions.sha1" = "1f26bb1e1f5d102855fe60cb0bd519d45a4d133c2edc1212691a91a18245081f"
+"db.functions.sha2" = "48d395b7a572da0819929ab94876738963b0c3d0d65bd82b17a18e13fe0a36f6"
+"db.functions.shiftleft" = "b3fa772060326bc6ee0120dc0f5079161a8fb29954281988a196fdd85590b4ae"
+"db.functions.shiftright" = "f95d7d375bbdb47873fd8f4d83bd0f0e865e5fe246f2e1ad4bb2e68aab1267bf"
+"db.functions.shiftrightunsigned" = "e3138c2119512cbcbd8fe8e402ac7b4b1ec164b22b6df0b48615b22b54be1184"
+"db.functions.shuffle" = "2da8198bdcbe3a17d04073abf659440fe63d2d70c1434830680cee150f4b1d49"
+"db.functions.sign" = "cef4302310c83325568fcf5f8a0138a48ff44a4ee7b812f8e9dda9a300a48973"
+"db.functions.signum" = "ef9ef62f45095e4b7991d40ecf6fa2af005fd7c7c2dfd3f2515fc8dc09ee9263"
+"db.functions.sin" = "8f413197751b0518de77e3fbe90a9a192db44110fc1adec91650375dc3c79937"
+"db.functions.sinh" = "4ad08c5010c6ea31671fe109b7d2d4d4a9ce0737beca3a643fe9d66ed23cef69"
+"db.functions.size" = "5f48579143aaeb633ddfe62803f9fd301d51295c68c9b59147ef51006650a11a"
+"db.functions.slice" = "de47e27c996bdd3818ade3cce157541c6c0b941ed8bcc615a180aa17ad74af1f"
+"db.functions.smallint" = "89c1e0b5b710441f75b0fbafdcc452936279632de7bceac88a2aa4af0ebfa176"
+"db.functions.some" = "f78e8ca73b88db97e7a66b101bf697b41d4446a5fa3c009bd0907533708c443b"
+"db.functions.sort-array" = "1ade98340ef894a54836bb0d0e172f24be4ccda7cdcf5f73dedd167edd2d5e04"
+"db.functions.soundex" = "b3d57301a1c556121992c1377ce3006cc902f694050416169cd6f1444bf9a0de"
+"db.functions.space" = "e876139f193009ba4aa6852e31c414fe5a5f1e602d8fb4d8442bbfd420cf670b"
+"db.functions.sqrt" = "2e9dfb521080c312e9b4bbe0a9d61560b4d745298b0b55bcae8bce5d48785dac"
+"db.functions.st-addpoint" = "31e5058ddbf80bbf61c73bac926cde98afe4dbfa71ea27b947f24c8e106507d6"
+"db.functions.st-area" = "b5d973812251a22b315bd45767bc15e6a105f3d037dd8caab70ecb7bd0f9e83c"
+"db.functions.st-asbinary" = "228d4bc1ac3af68b129107ad0cc100357ecabaa6c629d0a81ad3b40d9f2e1ff5"
+"db.functions.st-asewkb" = "82ab16df9882e4a3f9c4627be690ae3fa4ede510b5a5741724c90ef7f32b4fe6"
+"db.functions.st-asewkt" = "5a65bae78fcd77480a5c2aa6630074e2993a917e41f3000fdc3a1187b6e4bebb"
+"db.functions.st-asgeojson" = "f4fbbc11beada18ef0e5fa5179982c9136c0814b444f1b1e03cf653bfcd93b2c"
+"db.functions.st-astext" = "628b27467a43cb8464766907b267f8790cc224dcd9e884eeac614c2914342b9f"
+"db.functions.st-aswkb" = "07130dc14e9976de11849dc2460cb3b5bedc7b55581c450b11701d5d157d00b1"
+"db.functions.st-aswkt" = "967433ceeddf4d8698b9907eeb47146c8fd69bf0b645b0c58a1c2b6405cbc2c9"
+"db.functions.st-azimuth" = "e8eb75c9ee72a1ba395d96beab228c4955d65be91c2528b38b2a46141442c1a0"
+"db.functions.st-boundary" = "f9598a6670f0518de13ae297ba6943de5de0642da057d6ccd3b79930a513801e"
+"db.functions.st-buffer" = "4c7f33699ff9f9143700d2158960ceddf68c925483b19f6e1eed1864067c870a"
+"db.functions.st-centroid" = "7f136f9b597f6ea0c7d9adef22f30fc4fd88e5c5411bb4cac4d8d9f3e28c9c2d"
+"db.functions.st-closestpoint" = "0ea7d4d07021cce3ff9914059e17d7b9e097e99e045c3662820607f9a7333d7a"
+"db.functions.st-collect" = "25a5a5f62ff1f25390d7693ff391c1edd26a3b597bbc360ff6914741b3e6e736"
+"db.functions.st-concavehull" = "0ce3e55382a85c05b9ebd0251888498fe83dbc394e43e5324054ef2ea90ba1f7"
+"db.functions.st-contains" = "09b8674db0594e7ed180fdb1d5c1eb69943adeabd8ae4239079d90c87a92ee60"
+"db.functions.st-convexhull" = "24baa4f248bbf059c0706480054eca9b85246ff2a847bdcbb00361cbf213506d"
+"db.functions.st-covers" = "10a5e8c5ee70967ea655e74ecaa26e1c8713ec8ee60137d44835ffbe602d0bfb"
+"db.functions.st-difference" = "5c2df6fd8d6938da9eb51d35126f3b3c1c3af6995f916acfcab6fd9fc7675043"
+"db.functions.st-dimension" = "60875931eb11b05d0964dc925dd2962f20c1722366f51e32f38a8b57dae79983"
+"db.functions.st-disjoint" = "3918bb85386dd9486e4348e3804035748f62cf09a41cb4b9f34eed4b5342ddf4"
+"db.functions.st-distance" = "823102e865462c212a5eb48361190fe4e77247796cfd9720868e1ca95a0b3b32"
+"db.functions.st-distancesphere" = "604a6c88bb1467805a9634179aa49e88a0bf0330b579be22dab1dc4b0379fa41"
+"db.functions.st-distancespheroid" = "c9a2ef19a5e95bb599d5eaa17486971345be9502e2d768701f4fe4f0b59b9ca1"
+"db.functions.st-dump" = "40b56c9968c9634352f157c2acee8db8013431889473dbdde2907d43db388257"
+"db.functions.st-dwithin" = "5ace92349107ad59700c31f1554a2ba64d35c7c289efea3677143e6acbb33a87"
+"db.functions.st-endpoint" = "3f059a7a5fa6ac0d83e250b0d4f0502c5075f650c842e2ab947e09e6cf11e5d8"
+"db.functions.st-envelope" = "68d9d6204aab88f20c06fa378c440359ab99f58dd44a97de5434c87edb5a1ea1"
+"db.functions.st-envelope-agg" = "40372aefac53c4a614060f6185d9f7ae99d76d2d5e94e4f1b8cf5ef509cd66b6"
+"db.functions.st-equals" = "96ec9caf7c9d248a5cd28f6f8fc3dc78d88c8dcef4d29b9359ede2c6d01db5ac"
+"db.functions.st-estimatesrid" = "2addcd3f5b18f88d68197d1b0be7d73521eb7f8fd5559353ff4ee0c2cd2cd883"
+"db.functions.st-exteriorring" = "51745b09355ab01cd7a076f9d738b4a88c9c2ae4c9ceff8a9f40afb68fbe7dfb"
+"db.functions.st-flipcoordinates" = "74e53a6a583f0be0937e3d6c461c619cadfae32dd6321044e884eb7593c39f59"
+"db.functions.st-force2d" = "1a117edd703e9bdbeb813dc7aceaf1a50c3fa139e574e868160cc5bb9ad36b51"
+"db.functions.st-geogfromewkt" = "cb6459c37246870f97f62512edd32474ee80e6490d4404080008a4a752a4ec5c"
+"db.functions.st-geogfromgeojson" = "72931e65b40c0dcbfbf524c627921fea6c50d3b99a391112d56100eb49724809"
+"db.functions.st-geogfromtext" = "dc3f9a5c57d9f231bd7528716792e020fc41afb8862dc8048541d90b2addd884"
+"db.functions.st-geogfromwkb" = "dad8e3c28d6766e172498c0765d6586a0e451a00a2924ef8717609b51bbd4d4c"
+"db.functions.st-geogfromwkt" = "60ae4c4d45d3c59565e8191359ba38c9513b68e51de06610d45830da57adb7d3"
+"db.functions.st-geohash" = "e3518cb2344aaabf4b03c741c24e9e6513abff7b4775120638d39043c13caf54"
+"db.functions.st-geometryn" = "5f62b203dfbc40858086c96e31431c957e6b9eee8f8a09e3d7b9ef63ff4ef290"
+"db.functions.st-geometrytype" = "17642b7363f6173874489a7271f61a2b8211029a0b31e07e5bd6ce09154a6265"
+"db.functions.st-geomfromewkb" = "e736dbb0e2a05f3b6cc524865325fe93bcbd1df5746a8d37afc989db3f04e787"
+"db.functions.st-geomfromewkt" = "f6f59aefe6075a2c3218bb9e1473311de9fe95ab2d829984d187a8c1cadb62c4"
+"db.functions.st-geomfromgeohash" = "b8f5426b6ef27074468bf62f74b3523d8c28de252401c3055dc6ee9021578ed7"
+"db.functions.st-geomfromgeojson" = "dcaa2d0cfceea64cbea7ea1a1ac0bf007a2ea11c336e217b15f91149fb8d8212"
+"db.functions.st-geomfromtext" = "4dc83eb8449eec4e45e0d74ccc862d986943204fed88e93be1d646a79fc4ea60"
+"db.functions.st-geomfromwkb" = "9dbc1e7886a1b6d21ad004fd6ba6f308217e4980fb0d576c14c7c84b1fbd21d0"
+
+[review.definitions]
+"db.functions.pow" = "514559f140d14287e1ce3d556afb414f8eedc9215de28511cb57018df865c101"
+"db.functions.power" = "0d8050d5fb490b798511720b17342c9d7e0881f74ea016c65329d860d6fc44f2"
+"db.functions.printf" = "6150411bec8b85dbe4b7bad1a377b3a6655b24ab0f89d8f3ecb05c3f2f4c15fd"
+"db.functions.quarter" = "33d9ada5656bd4d16c74fadcbf8d8fb950db562b5f18415467a66d38f18ee1c4"
+"db.functions.radians" = "9c36015ea75d75ae0dfe1266f84beda7626058af40e86b81a376691f9e8895f0"
+"db.functions.raise-error" = "1a7de7a92fb96ec83018c97558a4e28131ea179a1b17f90541afe1646d2055e2"
+"db.functions.randstr" = "adac56de8463de2d1a12e4263d6a12acd26c02ca8e7241b81435c8460ce89caf"
+"db.functions.range" = "67d4a580514df1d5206c5c5a30fe015bc2a1b23e08e848f249d8f88495355748"
+"db.functions.read-files" = "70e9225dca0eff083bfa14a11e4d31beb2e91b94a7bff12741aa41e72933efaa"
+"db.functions.read-kinesis" = "a57c44d17bf44814f1c629785ee070798a5d3eb1f24a601168374417d640c856"
+"db.functions.read-pubsub" = "73e33705a1f928ba353101a4eced7d2f60778748e7f5ffe45d04afaab9a957a8"
+"db.functions.read-pulsar" = "f5b6785ee5f9a902a2dd744bdce85df0778f6434000a9c1c45c393ec15c2c20e"
+"db.functions.read-state-metadata" = "836b8443d6aaf19749dd7a8460e0540db30e55abf17eb84e3348aecad8695f2e"
+"db.functions.read-statestore" = "575745ff9c908352d828d006f1461336afc57f3a986d075f2bc3478c988e98de"
+"db.functions.repeat" = "e90e29e05f172d433b10cc5557bfcdca907ec97318ee3f4b7c4d2b3bfcba6205"
+"db.functions.reverse" = "193ac07ad873c9eaf533b536a1cc1140c0c34d26643839f071d4f18a26a417ad"
+"db.functions.rint" = "d84b8c79016d02fc99bcb33d2342e9dbe7dba844c6686bb9d3c081540a860c80"
+"db.functions.round" = "ca57769b748503dca5a72fe3a11ae7d8d77606fbbeb170459cc1454ab74e69c5"
+"db.functions.rpad" = "37aa706e03740781f9af45895cdbdb5742045f3f953d941a355232d296d8e3e4"
+"db.functions.rtrim" = "0d64c7b8645ad229dd470031e860ef5cb0bfce00a0261bc40b217052a8a34226"
+"db.functions.schema-of-avro" = "b281388dfad7f55f62b7afdcc61d565a10cdadab1bdd24b3b77ff2f89a89e902"
+"db.functions.schema-of-csv" = "d34fa6fb4142b3bf6b5f634d32f1527222b30d6ec3c46cfe865a9bee74d605eb"
+"db.functions.schema-of-json" = "0bdff51fa89be65ac315ae3ff0b5ee90a138fa304b725b39d015b1cf5c7e55f3"
+"db.functions.schema-of-json-agg" = "ae0352f2d0d723cb034e9519644fd5b494ecdde57d9931e3a847630a83569e9d"
+"db.functions.schema-of-variant" = "b765c5d55d0ad749ab8729729f55c901455b35c85fe3d35a86739d188d14d93c"
+"db.functions.schema-of-variant-agg" = "266b457c60ec436f98b3dfe3ec88d7f257f0fab14579c397719e54f289849d1b"
+"db.functions.schema-of-xml" = "7c33134fad9e63571da582abd52e142a29fcda84f7efc7a043807a6452babe79"
+"db.functions.sec" = "f8972fac54a5bc8c95ec3c7500e297cc5518eddf4f7db9c1acdba55a3f5f6ff2"
+"db.functions.second" = "0f08858009f5cd26b6fbe58386d6ca1b977d018dc867540773257ddf4f7cb137"
+"db.functions.sentences" = "21562c08a22ea1c1c9256dc9cd7a6295e494caa735ef0e710adfd16fd0f8026b"
+"db.functions.sequence" = "f8f067a94b3ba870a3ed52cd43f262f387a7b09f2759e1480d3e81eaec992328"
+"db.functions.session-window" = "27c774dadee59734ef5e636a3d31a70f21404a8dbc560332837e15a43df8a781"
+"db.functions.sha" = "60fe5a4b4ad5a9037e2489b7aa4d9fa2c00c2a312189abc395de0b88e218859d"
+"db.functions.sha1" = "640ffff47c0a07baf5da2d5483281dc5284e9d16b61b4c5efa4d15b27f1dc5c7"
+"db.functions.sha2" = "e95a2a15a55ad7e3df51389c7c68757750390a6f5593608b384a269ab271422f"
+"db.functions.shiftleft" = "2486eef7f4bb7027e1d0f38080522376f9685cc9cc47c14b3f788edd19aab337"
+"db.functions.shiftright" = "815df9418676361d1af0c26ffbcb35ea6ada034777c323036f4c32e09f1f7264"
+"db.functions.shiftrightunsigned" = "7ac99f0f3a762dfc70db39d32d9783235eccad3884d465120068a6ca4fd1ef38"
+"db.functions.shuffle" = "28873ae0ce2e06b77bdb318a2c8cfdb428d862966fbb2ccb61079c22e46a2679"
+"db.functions.sign" = "a0aecdcd3cb0d6f3fde55f1d936353b82b7efdd18f65ae4ce4fe8b837fe0920a"
+"db.functions.signum" = "2d94f11ee838e7a379ef90ff131dc065c17a4307ff550820afb9a40292feb3d0"
+"db.functions.sin" = "17566ec4e75c60f2ad90921ebebc118b4134078ccaba45635b47e493bb23faff"
+"db.functions.sinh" = "792d5ae83cd384fad8adfd69b530fb8650bff9078893a5f63d4bb383098bef46"
+"db.functions.size" = "2f9810a94d90c6d4001693b3e9aa946a2b4905c6e0d4f4b00914d5c74762bbba"
+"db.functions.slice" = "32a6edfd55cec91af5e907c6cecfb967cf2411c96bc07302905cbcdc552036a4"
+"db.functions.smallint" = "f83b0f8f015c1a02a059d503b87f09fd044a2cb5c5f90441027c4eb0ca775615"
+"db.functions.some" = "cb64a405344fb9ad71a247e8945ddc823162dbe6254ffa63c7a056a76dfb4f7c"
+"db.functions.sort-array" = "3557fb19b498b31b1d047aa655d9e7b34cd3535cd896d22ce5eebe1f433ffc9a"
+"db.functions.soundex" = "4de5d674147c26f9eb3437096c38d08e9c5591e7fa4ab08163d31f5f038b5442"
+"db.functions.space" = "8417dc6eaef88e130b7dd91779c11e92526c50692c42b040ae7f44e85d18ea12"
+"db.functions.sqrt" = "3bc18ea98d84b831263b80b2bb8a26892ecde7f19c2f3e85f31faa1e30ae19e2"
+"db.functions.st-addpoint" = "68ffd4652b75383cbb3ec25a673e7624c9d286beaa9a17b16934f5029171d378"
+"db.functions.st-area" = "dfd3cf7ebaacef9f217e732368022ac7af4c157a1992168a0b7cf4a8871c0f32"
+"db.functions.st-asbinary" = "eb080f061e6c5557630dd0374e244f1313ce7863a62cc1f3ed422a688cf4f54b"
+"db.functions.st-asewkb" = "2e12175b559ec9bcc37c217791921aa82b9efa2db105e618a610bd3dfa0b5494"
+"db.functions.st-asewkt" = "c5878b4f9a8e3703d3839ec31dc75c82c757e3eacd71c033ef328720e61e5486"
+"db.functions.st-asgeojson" = "b870a7d5d27f95d1b851c379f9bdf2fb8110b3a654961816beb0d274983d1707"
+"db.functions.st-astext" = "16eacc29cba2f6c348cbeb65aae92bd16f8b062fcd28123fe960409df047fae1"
+"db.functions.st-aswkb" = "11cd2defc7f6848f948a8af244f1d5420b9a7db097d8beefd8b7724bfe8d6e5e"
+"db.functions.st-aswkt" = "22543b2c0b5009abdf7ec4c3cb8588a97131d2dcd70322db499eddb659b75def"
+"db.functions.st-azimuth" = "b135465bbc50fc36dc530e15c1e28bc10e27c985e1533bd39ec2d543973b040e"
+"db.functions.st-boundary" = "22d0b6fd73e7f60336bb33403844a088a75ef2106e87f7ecae7ec1941edea97b"
+"db.functions.st-buffer" = "111579857cdf4420b0a6211a6c004da4af869f3e0d263566c957600b973b27b7"
+"db.functions.st-centroid" = "5059c0357e59e433680f26b32e8f87dde5e6df317785bbfab4156b2822c5675c"
+"db.functions.st-closestpoint" = "919397fce185940a21f77c23360fdb4ed2b38a4aa45684ca163806ebc85f85ec"
+"db.functions.st-collect" = "e500c79a0d404b9226bab905d40a59f1b676e4c256295033b2027127f3b55913"
+"db.functions.st-concavehull" = "8d4426b7994c8636a3158e270d11c10cc7ca6d35e280fb70ded0272bd26cb890"
+"db.functions.st-contains" = "957442dff9d4454d916fde1379a6c55e7daaf3ef98c0fe72a7d7d069ec3c3e7d"
+"db.functions.st-convexhull" = "45be65bb227c986a5243efba1bbd51e54badf527c3639e838fc94fa3323ab41d"
+"db.functions.st-covers" = "f933707bfdc772e004f84df094d08079e3e1eb820b0cc8694eb72b7cf51e3a96"
+"db.functions.st-difference" = "1ea14c0652a4a638c746531e50c0b278112bbf2c12978fe47d85d1ce9936f1ad"
+"db.functions.st-dimension" = "15a5a7a6999c6b02d88e1a55c80f8eaa6bb66ba64e96d168e9a8acfec2e166a7"
+"db.functions.st-disjoint" = "e18457423d1fddfd8ebf2dbe91b4b8c7b37ead89d77d99c9a618544be6457ca2"
+"db.functions.st-distance" = "b4662a16ead23069aba98ff255c4ca3241a3d716acdc3b97dd595460e99b59f4"
+"db.functions.st-distancesphere" = "57e5d9b5b5dc2dfa9039017eee77cece346fee62d21a502021573530bb7a78e0"
+"db.functions.st-distancespheroid" = "b443907bcf30f70701c00c7b2f44d87cae46338ad9dd3e22b4cf562d2733446d"
+"db.functions.st-dump" = "8a37329e12e89b28f4db71900e3c392bf0e0aa99537603ded43478bf7ce432a3"
+"db.functions.st-dwithin" = "5eb87904ce3143951d83c4e0efe1a3bf80eeb105d51310a4d1b26bc5334fa971"
+"db.functions.st-endpoint" = "9f683d4c04b2117fe3ed2e6aeee353132f20d640dc7439d8602f3037b1491d25"
+"db.functions.st-envelope" = "6f02c012b08867bb766d3008d143c4d0a17fbca2d5fd2c44a57a02b39c392eb9"
+"db.functions.st-envelope-agg" = "880fb7fb2f649dcf6b462a16f89da7ae1199b1a967d80d5a7c273526e7af0c10"
+"db.functions.st-equals" = "e561002aedbc17db8a2e6f9052c279eaa5984b9731645fbb3f0db3431c0dd0c3"
+"db.functions.st-estimatesrid" = "a40d308312e9004fbb1bc59dcccd8b24db31c7b026090558a4f28555a53d9573"
+"db.functions.st-exteriorring" = "486a40034f41a5af4fb49feab794ec63ae119071b4d9592d513db87d745bf446"
+"db.functions.st-flipcoordinates" = "88db9c52036c9cdca6089d0a04f785cad1ceced1fe80484a9bc31ff4701cde8c"
+"db.functions.st-force2d" = "21cb799d56ce2492e185e14f06f458468b0a409267d553bd4052cabe972cab2c"
+"db.functions.st-geogfromewkt" = "1ca384f000a94ad8b0e8322361d820c2e7cc0788fd62af53447640c624147072"
+"db.functions.st-geogfromgeojson" = "6fe912f79d7d1b8a9d69eab66486586c3b8d03e72493e3947b4dc197ae46a3b0"
+"db.functions.st-geogfromtext" = "ac923b14243552de4c8219c94696149432691ff1757b3f4f86a38c338efe09dd"
+"db.functions.st-geogfromwkb" = "103d6ce3afaa8c721117409530c88726066e8b6c5d63674389bf7e4c8a8ca1e9"
+"db.functions.st-geogfromwkt" = "e308816f9ed528502b5029e2b5dbedec391f0ebc391697bfbd9ca8ddea15fc6a"
+"db.functions.st-geohash" = "c2f3165ee854c2bb007726ab38affcc2ab40db74d3243f4d2bc2c6665705ea46"
+"db.functions.st-geometryn" = "fa2e605a6cdc36a552ff104c092df9b2b0424a0227a2806b81e79b17c71039bf"
+"db.functions.st-geometrytype" = "c1e7d23a4fb72622794e21137af2326fbe188f412e5dd1c0e50af80dc174372f"
+"db.functions.st-geomfromewkb" = "33f6cd2246564beee7413018ace96efa54e72a7d5e77210414bd157ad503075a"
+"db.functions.st-geomfromewkt" = "230d8e0b2bfd1478d9ab9e2855e9fb10f43ac0ab4585afceacaa48fee2c15fca"
+"db.functions.st-geomfromgeohash" = "c633dc2e5a25ce3b3fda8346ae828b6555d4eb194f78de18169470709a85ae58"
+"db.functions.st-geomfromgeojson" = "8cfe17d6b7b0fd41e15c854241b8496ba3dcb888e3d226b22b9e1d6e5c158a7b"
+"db.functions.st-geomfromtext" = "960529dd67e1729ce77c31dd740af9b2cb4a579a801c9f9ca83edc71e192f723"
+"db.functions.st-geomfromwkb" = "70f2e8d2f321e664d4f78441c2ae4907c2a37b66baeed4cbf0bcfe47f676f5ea"
