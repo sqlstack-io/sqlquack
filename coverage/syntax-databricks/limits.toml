@@ -115,6 +115,12 @@ grammar = ["CREATE [ OR REPLACE ] TEMPORARY VIEW <view_name> [ <column_list> ] U
 reason = "the warehouse refuses IF NOT EXISTS in a data-source temporary view (PARSE_SYNTAX_ERROR at USING; SqlBaseParser #createTempViewUsing has no IF NOT EXISTS), so the documented IF NOT EXISTS is kept as an observed [[limit]] row. GLOBAL TEMPORARY carries the banner 'Applies to: Databricks Runtime' (the page's GLOBAL TEMPORARY parameter), and the pinned engine is a Databricks SQL warehouse, so GLOBAL leaves the derivation and the documented global temporary views are observed [[limit]] rows. <column_list> is a list of typed columns, ( c1 INT ), as SqlBaseParser #createTempViewUsing reads it (tableIdentifier (LEFT_PAREN colTypeList RIGHT_PAREN)? tableProvider), unlike a query view's list of names"
 
 [[reading]]
+form = "db.functions.remote-query"
+grammar_sha256 = "797d1f3dc9d31bb2b2711d33a086691b6fa9978569c31ff11ff463115bd42c1b"
+grammar = ["REMOTE_QUERY ( <connection_name> [ , <connector_option_key> => <connector_option_value> ] [ ... ] )"]
+reason = "connectorOptionKey is an argument, not a keyword (the page's Arguments: 'connectorOptionKey A connector option key which is a case-sensitive identifier'): read as the placeholder <connector_option_key>, filled with the page's own name for it"
+
+[[reading]]
 form = "db.ddl.create-table-hiveformat"
 grammar_sha256 = "d1379144d49ba5cb74288772d4b20346d3c1752da635bcb06e116dcc491b55dd"
 grammar = ["CREATE [ EXTERNAL ] TABLE [ IF NOT EXISTS ] <table_identifier> [ ( <col_name1> <col_type1> [ COMMENT <col_comment1> ] , ... ) ] [ COMMENT <table_comment> ] [ PARTITIONED BY { ( <col_name2> <col_type2> [ COMMENT <col_comment2> ] , ... ) | ( <col_name1> , <col_name2> , ... ) } ] { ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ] | STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } } [ LOCATION <path> ] [ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ]", "CREATE [ EXTERNAL ] TABLE [ IF NOT EXISTS ] <table_identifier> [ COMMENT <table_comment> ] [ PARTITIONED BY ( <col_name1> , <col_name2> , ... ) ] { ROW FORMAT <row_format> [ STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } ] | STORED AS { <file_format> | INPUTFORMAT <input_format> OUTPUTFORMAT <output_format> } } [ LOCATION <path> ] [ TBLPROPERTIES ( <key1> = <val1> , <key2> = <val2> , ... ) ] AS <select_statement>"]

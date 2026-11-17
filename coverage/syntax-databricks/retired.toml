@@ -2755,3 +2755,14 @@ ids = [
   "db.functions.localtimestamp.o008",
   "db.functions.localtimestamp.o009",
 ]
+
+[[retired]]
+retired_in = "7058798904fd13aac164833c0f327bda70b4a691"
+reason = "REMOTE_QUERY's connectorOptionKey read as the placeholder <connector_option_key> rather than a keyword: the optional pair's obligations are derived again under the placeholder's targets with the same SQL"
+ids = [
+  "db.functions.remote-query.o003",
+  "db.functions.remote-query.o004",
+  "db.functions.remote-query.o005",
+  "db.functions.remote-query.o006",
+  "db.functions.remote-query.o008",
+]

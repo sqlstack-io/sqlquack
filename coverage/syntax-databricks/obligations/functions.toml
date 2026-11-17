@@ -27428,29 +27428,43 @@ target = "<connection_name>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.functions.remote-query.o003"
+id = "db.functions.remote-query.o016"
 kind = "option_present"
 required = true
-target = "[ , connectorOptionKey => <connector_option_value> ]"
+target = "[ , <connector_option_key> => <connector_option_value> ]"
 
 [[obligation]]
-id = "db.functions.remote-query.o004"
+id = "db.functions.remote-query.o017"
 kind = "option_absent"
 required = true
-target = "[ , connectorOptionKey => <connector_option_value> ]"
+target = "[ , <connector_option_key> => <connector_option_value> ]"
 
 [[obligation]]
-id = "db.functions.remote-query.o005"
+id = "db.functions.remote-query.o018"
 kind = "required_operand_missing"
 required = true
-target = "<connector_option_value> in [ , connectorOptionKey => <connector_option_value> ]"
+target = "<connector_option_key> in [ , <connector_option_key> => <connector_option_value> ]"
+note = "omit <connector_option_key>"
+
+[[obligation]]
+id = "db.functions.remote-query.o019"
+kind = "operand_type_class"
+required = true
+target = "<connector_option_key> in [ , <connector_option_key> => <connector_option_value> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.remote-query.o020"
+kind = "required_operand_missing"
+required = true
+target = "<connector_option_value> in [ , <connector_option_key> => <connector_option_value> ]"
 note = "omit <connector_option_value>"
 
 [[obligation]]
-id = "db.functions.remote-query.o006"
+id = "db.functions.remote-query.o021"
 kind = "operand_type_class"
 required = true
-target = "<connector_option_value> in [ , connectorOptionKey => <connector_option_value> ]"
+target = "<connector_option_value> in [ , <connector_option_key> => <connector_option_value> ]"
 note = "a valid expression"
 
 [[obligation]]
@@ -27458,12 +27472,6 @@ id = "db.functions.remote-query.o007"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
-
-[[obligation]]
-id = "db.functions.remote-query.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required connectorOptionKey in [ , connectorOptionKey => <connector_option_value> ]"
 
 [[obligation]]
 id = "db.functions.remote-query.o009"
