@@ -596,3 +596,20 @@ note = "Withdraws this form from the 17 Nov approval db-utility-028. o019 (the i
 
 [review.definitions]
 "db.utility.analyze-compute-storage-metrics" = "40345f68df0482cadc53f9b24485832263ce96b892b381760ba35ba8ad88684f"
+
+[[review]]
+id = "db-utility-030"
+family = "utility"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:10:57Z"
+verdict = "approved"
+forms = [
+  "db.utility.analyze-compute-storage-metrics",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in e54adcf23: ANALYZE ... USING INVENTORY LOCATION joins adjacent strings and requires CONF, and ALTER CATALOG with SET or UNSET TAGS takes only a name as the catalog. Every changed case was read against its 2026.45 receipt and its local parse tree, and every negative's local error position against the receipt's. analyze o019 now fails at end of input (pos 74) like the warehouse, and its CONF is required. The new o028 (one string, no CONF) and alter-catalog o113 ('v1' before SET TAGS) agree in phase and position with their recorded receipts. create-connection and create-server positives now name distinct OPTIONS keys (v1, v2), and their recorded receipts are semantic_error after parsing. Position differences read on purpose: alter-catalog o103 and o057 fail one token later in the warehouse, which also refuses both texts as syntax errors. alter-catalog o039 and the connection and server o012 are value checks with no warehouse position; their mechanical repair (giving the key a value) is accepted on both sides. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.utility.analyze-compute-storage-metrics" = "1c84cb0a313247321c0f7764d6b3bb433399124dcf583e600bad96406479c71c"
+
+[review.definitions]
+"db.utility.analyze-compute-storage-metrics" = "711af68f72d07e9a4f85eaa1a6aafa9e055085b32da421c75226471157af8b8e"

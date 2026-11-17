@@ -1059,3 +1059,26 @@ note = "Re-read on 17 Nov 2026. The 16 Nov full reading approved each of these f
 "db.ddl.create-governed-tag" = "20e868a69fba7f35fdb1f6dd5b87b233d1356b3a37378542d57a89469f41575c"
 "db.ddl.create-server" = "3659c6fb8959bcf4a5824c6291cd741e31ad563f6136a46830c505ceb7cad962"
 "db.ddl.partition.partition-spec" = "70992caa13ab1bc06d8340b6c791cb57381ff91af6b2e3187208115e3a6ea128"
+
+[[review]]
+id = "db-ddl-056"
+family = "ddl"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:10:57Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-catalog",
+  "db.ddl.create-connection",
+  "db.ddl.create-server",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in e54adcf23: ANALYZE ... USING INVENTORY LOCATION joins adjacent strings and requires CONF, and ALTER CATALOG with SET or UNSET TAGS takes only a name as the catalog. Every changed case was read against its 2026.45 receipt and its local parse tree, and every negative's local error position against the receipt's. analyze o019 now fails at end of input (pos 74) like the warehouse, and its CONF is required. The new o028 (one string, no CONF) and alter-catalog o113 ('v1' before SET TAGS) agree in phase and position with their recorded receipts. create-connection and create-server positives now name distinct OPTIONS keys (v1, v2), and their recorded receipts are semantic_error after parsing. Position differences read on purpose: alter-catalog o103 and o057 fail one token later in the warehouse, which also refuses both texts as syntax errors. alter-catalog o039 and the connection and server o012 are value checks with no warehouse position; their mechanical repair (giving the key a value) is accepted on both sides. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.ddl.alter-catalog" = "368116c64926c29e871a2c0e3d4b9fc6e7813bdf002418c1f589e353b9b20a40"
+"db.ddl.create-connection" = "ef4f13b0d48c56f77de295facc65dae1759e5d7a4273ce2a89d5e47fb0380362"
+"db.ddl.create-server" = "aabf4d3752e1342955b8de0511f2fb9d736c573949b04a34d1fa8e48ecad237d"
+
+[review.definitions]
+"db.ddl.alter-catalog" = "881f3d690fe4da1a908d4caf1a3f54bfa48252c163748673cbd58ce4cfd6ae4b"
+"db.ddl.create-connection" = "f8f9fdecc5f2ca1c9a0869526d414e62c0a2981037c5cf6f25266212a44cf64b"
+"db.ddl.create-server" = "3659c6fb8959bcf4a5824c6291cd741e31ad563f6136a46830c505ceb7cad962"
