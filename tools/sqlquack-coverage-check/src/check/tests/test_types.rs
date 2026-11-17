@@ -47,3 +47,12 @@ pub(crate) struct EngineReleaseTestCase {
     pub(crate) expected_phase: Option<&'static str>,
     pub(crate) expected_reason: Option<Reason>,
 }
+
+/// An approval's `resolves`, and the problem `validate` must then report.
+pub(crate) struct ValidateTestCase {
+    pub(crate) description: &'static str,
+    /// The review the approval names as resolved.
+    pub(crate) resolved: &'static str,
+    /// A fragment of the problem; none when there must be no problem.
+    pub(crate) expected_problem: Option<&'static str>,
+}

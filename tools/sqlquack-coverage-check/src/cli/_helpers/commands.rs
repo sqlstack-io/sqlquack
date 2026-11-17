@@ -11,6 +11,7 @@ use clap::ValueEnum;
 use serde_json::{Value, json};
 
 use crate::check::main::check_coverage::check_coverage;
+use crate::check::main::validation_problems::validation_problems;
 use crate::check::models::{
     CheckResult, FormResult, LocalFailure, LocalVerdict, ObligationResult, Reason,
 };
@@ -165,6 +166,14 @@ fn unsatisfied(form: &FormResult) -> impl Iterator<Item = &ObligationResult> {
 
 pub(crate) fn validate(common: &Common) -> Result<ExitCode, ExitCode> {
     let coverage: SyntaxCoverage = load(common)?;
+    let problems: Vec<String> = validation_problems(&coverage);
+    if !problems.is_empty() {
+        for problem in &problems {
+            say(problem);
+        }
+        say(&format!("FAILED, {} problems", problems.len()));
+        return Err(ExitCode::FAILURE);
+    }
     let forms: usize = coverage.catalogue.values().map(Vec::len).sum();
     let retired: usize = coverage.retired_receipts.len();
     let counts: Value = json!({

@@ -133,7 +133,7 @@ pub(crate) fn reference_problems(
 }
 
 /// Every `resolves` entry naming no changes_requested review of the approval's forms and binding.
-fn resolve_problems(reviews: &[Review]) -> Vec<String> {
+pub(crate) fn resolve_problems(reviews: &[Review]) -> Vec<String> {
     let by_id: BTreeMap<&str, &Review> = reviews
         .iter()
         .map(|review| (review.id.as_str(), review))

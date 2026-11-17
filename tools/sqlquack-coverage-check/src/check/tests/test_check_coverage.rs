@@ -1,4 +1,5 @@
 use crate::check::main::check_coverage::check_coverage;
+use crate::check::main::validation_problems::validation_problems;
 use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
     OLD_FINGERPRINT, OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, crashing,
@@ -9,7 +10,7 @@ use crate::check::tests::helpers::{
     unobservable, verified_tree, with_fields, write,
 };
 use crate::check::tests::test_types::{
-    AccountStateTestCase, CheckTestCase, Parameters, ReceiptCheckTestCase,
+    AccountStateTestCase, CheckTestCase, Parameters, ReceiptCheckTestCase, ValidateTestCase,
 };
 use crate::formats::main::load_coverage::load_coverage;
 
@@ -1370,6 +1371,36 @@ fn given_an_approval_resolving_reviews_when_checking_then_only_the_named_reviews
                 "review query-4: resolves query-2, which covers none of its forms",
             ),
         },
+        CheckTestCase {
+            description: "a changes_requested review naming reviews it resolves",
+            mutate: |root| {
+                pin_definitions(root);
+                review_of(
+                    root,
+                    "query-2",
+                    "changes_requested",
+                    &["sf.query.select", "sf.query.select.top"],
+                );
+                review_of(
+                    root,
+                    "query-3",
+                    "changes_requested",
+                    &["sf.query.select", "sf.query.select.top"],
+                );
+                let named: String = read(root, "reviews/query-2.toml").replacen(
+                    "verdict = \"changes_requested\"\n",
+                    "verdict = \"changes_requested\"\nresolves = [\"query-3\"]\n",
+                    1,
+                );
+                write(root, "reviews/query-2.toml", &named);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::ChangesRequested),
+            expected_problem: Some("review query-2: only an approved review resolves others"),
+        },
     ];
     for test_case in test_cases {
         let directory = tempfile::tempdir().expect("temporary directory");
@@ -1407,6 +1438,47 @@ fn given_an_approval_resolving_reviews_when_checking_then_only_the_named_reviews
             problem_found,
             "{}: {:?}",
             test_case.description, check.problems
+        );
+    }
+}
+
+#[test]
+fn given_an_approval_resolving_reviews_when_validating_then_only_a_bad_resolve_is_a_problem() {
+    let test_cases = [
+        ValidateTestCase {
+            description: "a known changes_requested review at its binding",
+            resolved: "query-2",
+            expected_problem: None,
+        },
+        ValidateTestCase {
+            description: "an unknown review",
+            resolved: "query-9",
+            expected_problem: Some("review query-1: resolves unknown review query-9"),
+        },
+    ];
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        verified_tree(directory.path());
+        pin_definitions(directory.path());
+        review_of(
+            directory.path(),
+            "query-2",
+            "changes_requested",
+            &["sf.query.select", "sf.query.select.top"],
+        );
+        resolve(directory.path(), "query", &[test_case.resolved]);
+        let coverage = load_coverage(directory.path(), None)
+            .unwrap_or_else(|problems| panic!("{}: {problems:#?}", test_case.description));
+        let problems: Vec<String> = validation_problems(&coverage);
+        let problem_found: bool = test_case
+            .expected_problem
+            .map_or(problems.is_empty(), |problem| {
+                problems.iter().any(|found| found.contains(problem))
+            });
+        assert!(
+            problem_found,
+            "{}: expected {:?}, found {problems:?}",
+            test_case.description, test_case.expected_problem
         );
     }
 }
