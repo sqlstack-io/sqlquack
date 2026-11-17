@@ -231,3 +231,20 @@ note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Finge
 
 [review.definitions]
 "db.dml.update" = "d38c51f6c28d4ef4166a3468df152a07ce5ab5fba56af530c8071696a085839e"
+
+[[review]]
+id = "db-dml-014"
+family = "dml"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.dml.delete-from",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.dml.delete-from" = "af5750211e22c7de1d23d3aef2305a677921df9e9a53b5721df26c3235aca8c2"
+
+[review.definitions]
+"db.dml.delete-from" = "f992cfb93fee5d6d0e818d2f23445fd436498696d18dc31653080aa64f9279e5"

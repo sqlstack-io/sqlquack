@@ -270,3 +270,56 @@ note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Finge
 
 [review.definitions]
 "db.query.select-match-recognize-define" = "286148bb6ea73adb7fa607d51d8ffe5c15a2c89e2357521cc21ff776e3e60be9"
+
+[[review]]
+id = "db-query-011"
+family = "query"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.query.pipeline.table",
+  "db.query.pipeline.table.syntax",
+  "db.query.select-clusterby",
+  "db.query.select-cte",
+  "db.query.select-distributeby",
+  "db.query.select-groupby.group-by",
+  "db.query.select-groupby.group-by-all",
+  "db.query.select-having",
+  "db.query.select-match-recognize-measures",
+  "db.query.select-named-window",
+  "db.query.select-setops",
+  "db.query.select-values.select",
+  "db.query.star",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. select-pipeop is left out: its pipe operations are still desugared, as its changes_requested review says. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "25d027bd61a99d3d57a9da253dcfe75ca901e5f0bbf25dae97ff5a475cec8224"
+"db.query.pipeline.table.syntax" = "eabd828c1325b2dd7c1fa81fdae6c1fab816a0f9fe728443ed286354663d61a1"
+"db.query.select-clusterby" = "a1088dd15b83e7d613023f03e23f9d0182a9c5916e1116dec0333c0d0919521e"
+"db.query.select-cte" = "9b8d023197a6fac8450482de57a5fc525b507000f7a479b28ec3ffe3867763e3"
+"db.query.select-distributeby" = "44ad96d51b1305ac280948802017c8de4f80e76359cd7e2b1f595486b4742105"
+"db.query.select-groupby.group-by" = "fbff42c0d570951d9cee0074fea6fe67f42a8651e8b2ca1bc8f41a1eb91d1cab"
+"db.query.select-groupby.group-by-all" = "fa2805d24cb225a8f7eb442ec3de681cec7b2633ac57d51be5a0890a6a22e2f4"
+"db.query.select-having" = "8ee4a722a65a0a6b46899c6f27c90abc855b72cb1b21f64c4ae5f9ca8e1aa25b"
+"db.query.select-match-recognize-measures" = "e3c843c151c5d56b6836fd501d3c86a2775fe0496954a4129d6047fc6bede6c1"
+"db.query.select-named-window" = "33a149b002fa1b100c3ed9410ecb0f43deb725bdb6918bf7c82a7189b8ce6d11"
+"db.query.select-setops" = "ac3174fe7ce3b0c33428a459ae65278ed81f8ad7c4436c2938569c568390eae2"
+"db.query.select-values.select" = "9858f4c0b636b74864c192405bb384e53bda1747d5238bfafb18f35994af68f1"
+"db.query.star" = "ff6b5e7c8eeefde4efef4fbf47cf39028e9dafcfc1b97cbdd5db37c2d0d88c6d"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+"db.query.select-clusterby" = "38fe8efe128232ce2782263687cd4dfb92089b732949e7c16c775ac0ecb64cc9"
+"db.query.select-cte" = "215961353463e448a0a2f0d114a1b8e05f01e0dbbaedc47892809e699d4d724e"
+"db.query.select-distributeby" = "64638d47badc45e7856b65200d10962f063836f74b7dfc5140b754a9140f7f85"
+"db.query.select-groupby.group-by" = "466e6081b946b74b6accb69b8307427b364773a8b63e68176861331c001adaee"
+"db.query.select-groupby.group-by-all" = "fd02a9e674ca8c80d6fcd5c5cbcc833b0708bbb955f0066d71a50a2d2e0dc52b"
+"db.query.select-having" = "e317eca079db2b0c88124bebc89dde607cd15e7569cd884bc65eba18747170f1"
+"db.query.select-match-recognize-measures" = "5108ed9bf7cc6a9a9e6e128dae8976b711fb1809b5ebe8bd0bf42059ac90f801"
+"db.query.select-named-window" = "2bad67d99f5d696b1627c74c3f10eef466c261bf28787c3d89023f95e1598dd6"
+"db.query.select-setops" = "ef6bddadec818c3e805bb7b8084e5c214234d71fa19f170a6d66bfb17909853f"
+"db.query.select-values.select" = "90f5d9b4130452acf461fedaecc1a1d8501063737cb2e57921f2cfa66dd27456"
+"db.query.star" = "164b0d09702bed1e4f3243bf557f5ea71a523e969996d731243fb5ef7519b02a"

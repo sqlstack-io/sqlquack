@@ -613,3 +613,62 @@ note = "Re-read on 17 Nov 2026 after the parser fix in e54adcf23: ANALYZE ... US
 
 [review.definitions]
 "db.utility.analyze-compute-storage-metrics" = "711af68f72d07e9a4f85eaa1a6aafa9e055085b32da421c75226471157af8b8e"
+
+[[review]]
+id = "db-utility-031"
+family = "utility"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.utility.cache-uncache-table",
+  "db.utility.describe-connection",
+  "db.utility.describe-database",
+  "db.utility.describe-procedure",
+  "db.utility.describe-query",
+  "db.utility.describe-schema",
+  "db.utility.describe-volume",
+  "db.utility.show-catalogs",
+  "db.utility.show-columns",
+  "db.utility.show-create-table",
+  "db.utility.show-databases",
+  "db.utility.show-procedures",
+  "db.utility.show-schemas",
+  "db.utility.show-tables",
+  "db.utility.show-views",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.utility.cache-uncache-table" = "88a0c1b5533f797411286a9387f8d610d38fdaebe389cace1934a1780916646d"
+"db.utility.describe-connection" = "50bf12153fbc4ba558fd3e774d5eee43761ccf98072ef7fdff03d7a0190e7c31"
+"db.utility.describe-database" = "5054d6716ba40c730c0664d0dd2106b56ce580dd4e9daa3e3792a47690fe713b"
+"db.utility.describe-procedure" = "760c466ee158d49af0a8d5243be93a11d0d48ff3fa671c4f9b295b11e67db74c"
+"db.utility.describe-query" = "2afd5ac9da8f285929370ec9bbdeb2f0e3abea2bc00748eaaab960e67dab9d44"
+"db.utility.describe-schema" = "6f3ed5bccf349fa574041e8d856efdf58ccbc966e455755fa4f423e144c1ca76"
+"db.utility.describe-volume" = "b1337dfbbce2d9b3c8ee6377b5ab02e08449c79315e07cc5eff041dfac23dae3"
+"db.utility.show-catalogs" = "cb16b3dd18cc87c275a0426b95e9eb90aa0956e0a8bc390fbbdd27cef570282c"
+"db.utility.show-columns" = "c4f244276f338bbeee4447c1ed2c932d6cd47559646fb7bfd5270602c2343e87"
+"db.utility.show-create-table" = "f908729ec7cff749b11dc19d375ddbf6640bc78498c7d9a18094bb417db3e0a0"
+"db.utility.show-databases" = "84599152c003bbca9bff6fd14db46a0a0afa6a757667842c8ed29e16eaf418da"
+"db.utility.show-procedures" = "58bd69a4daf616a308247e78bc473fd21889a33d739f8a3e076630d108157ba4"
+"db.utility.show-schemas" = "a9a0c74a184504b187faab232a7eba3fa4c5e0d03d8e1dd1177c10f955ad3d33"
+"db.utility.show-tables" = "17b6c8bd6aa176ba0bd35e5abe124d27941b7e003c9a6dcc5e0f2141d87c5f00"
+"db.utility.show-views" = "b634c46cf4ea59ce437decd5443c9653612dbbc3c2913cddd0389fe0be54c8f1"
+
+[review.definitions]
+"db.utility.cache-uncache-table" = "486c4175a695df99d234399bb4107edbffe5fe8628401aa2040aeb919be45e45"
+"db.utility.describe-connection" = "066c883120be749be16e2470b16caf8758b7201d02e9126a1a0506f52b32de37"
+"db.utility.describe-database" = "fd182abe6a869e98b92afd128bb690ff576476d1104c6e0ce2cc2a5ca3e42be7"
+"db.utility.describe-procedure" = "1c2c7094802a4667989df0b2d973f61b30bb392ffef6480fb98f77abdf59a8d5"
+"db.utility.describe-query" = "92927a88821163b0ccb26ca45c92ffeeef453a823c17d36c55ec709a2b1d928a"
+"db.utility.describe-schema" = "b04979c9f05d8a939465f44122e0d51bd383fa3363ba7effc9a6e080c5756cc0"
+"db.utility.describe-volume" = "e9207808ac0f6bc65c946af9900d8b4c2613ac569731872f8fe35137c6bdd1eb"
+"db.utility.show-catalogs" = "7d1c3d2a8ee25a05be89ea93c7808a0c8a2be56482cbd952b12d6e8abb812f9e"
+"db.utility.show-columns" = "893cd342313e71595b51d616220e39b065023974a4bd6fd601a480e51c68c9ce"
+"db.utility.show-create-table" = "78aa4d9469e5f02f0491b534508b252769db8188912b555729f2383e76b939f2"
+"db.utility.show-databases" = "f3eaf1dae1ef6041898db81b02fda6203c8d87f8971e5b43f4b6ad6b806b6f8b"
+"db.utility.show-procedures" = "310ff72e73b04acbdffab2150ef14941847152485277d953405febd26a2652d4"
+"db.utility.show-schemas" = "30f1397eb99ed92b97e1978e16b583edcd6e0464af22c840773ea787ddff465c"
+"db.utility.show-tables" = "412afaf90b9a51f559675abaac631e1b28f8abbf1e9c99a10b0d80020119a130"
+"db.utility.show-views" = "b7d5b4940d075dd22c6ecb5c8bb403d2a9d5cab23859255a04f2f10280e84293"

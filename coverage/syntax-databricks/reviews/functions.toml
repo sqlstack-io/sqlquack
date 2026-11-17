@@ -4026,3 +4026,140 @@ note = "Re-read on 17 Nov 2026. The 16 Nov full reading approved each of these f
 [review.definitions]
 "db.functions.decode" = "3a18855f0983d57cf450e8e2afb2909ceec18e902d8c37a653dced69cfb4fc14"
 "db.functions.now" = "04ee6451a32691a4c5224e0b8a5285e7861be8bbd038f933745f38828b9166d0"
+
+[[review]]
+id = "db-functions-056"
+family = "functions"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.functions.ampersandsign",
+  "db.functions.and",
+  "db.functions.asterisksign",
+  "db.functions.bangeqsign",
+  "db.functions.bangsign",
+  "db.functions.between",
+  "db.functions.bracketsign",
+  "db.functions.caretsign",
+  "db.functions.case.end",
+  "db.functions.case.end.syntax",
+  "db.functions.coloncolonsign",
+  "db.functions.div",
+  "db.functions.dotsign.dot",
+  "db.functions.dotsign.dot.syntax",
+  "db.functions.eqeqsign",
+  "db.functions.eqsign",
+  "db.functions.gteqsign",
+  "db.functions.gtgtgtsign",
+  "db.functions.gtgtsign",
+  "db.functions.gtsign",
+  "db.functions.isdistinct",
+  "db.functions.isfalse",
+  "db.functions.isnullop",
+  "db.functions.istrue",
+  "db.functions.lteqgtsign",
+  "db.functions.lteqsign",
+  "db.functions.ltgtsign",
+  "db.functions.ltltsign",
+  "db.functions.ltsign",
+  "db.functions.minussign",
+  "db.functions.minussignunary",
+  "db.functions.or",
+  "db.functions.percentsign",
+  "db.functions.pipepipesign",
+  "db.functions.plussign",
+  "db.functions.plussignunary",
+  "db.functions.questiondoublecolonsign",
+  "db.functions.regexp",
+  "db.functions.rlike",
+  "db.functions.slashsign",
+  "db.functions.tildesign",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.functions.ampersandsign" = "7c90252bc959ce55d84c962a4291dbc14be4d64c79962bda587266fb365c92e9"
+"db.functions.and" = "56a61aaa75055bd5a1f95e77f30563144b4578bf533eef5d3c84de418a974bc6"
+"db.functions.asterisksign" = "81af6908fc0528e724951883654e8da6dfe9b12bc355a24c4b81728e9a4fc945"
+"db.functions.bangeqsign" = "c1063be5c129376de8f531554a7b9fa033f75338ba12c1546a1de9e4ab9cc3e2"
+"db.functions.bangsign" = "46ee28a26ab3d5e6b3d371ec2cad4b75bd10e53060e1c1671704dfa4ee2b4926"
+"db.functions.between" = "568d3e37b005cb76841eecaacf38895f9d3b0485acaa91b6aa4ffc456536778d"
+"db.functions.bracketsign" = "3f4fd09df15644b753763e241efdc9fb354cd11687b7b344559dd68de2dffc58"
+"db.functions.caretsign" = "07cae5f53e6ccd6484d4033c5334b15ba9b133cdb1ee07c68982a1f4ef2561a5"
+"db.functions.case.end" = "ce4b3aaf4b20b418728d7fa7d6683047211ae83d96162f3646150d1f4ae1e5b2"
+"db.functions.case.end.syntax" = "c4ee596352bd2bf16182f4d6407f5e70e4059b1b68780cf97bc8e32da391e641"
+"db.functions.coloncolonsign" = "dd93b87f097e5742262b61c830f9050e582db09b0aaf7ae084437682c12d3e3a"
+"db.functions.div" = "685b7c4fdb9d33630c528f4fe45771ffb1c627877d2022c0a58d18af454533a8"
+"db.functions.dotsign.dot" = "296b644c878a3c1a48f110548a4e04bdb82b28be9c9eca23e5ab48ec48abf35e"
+"db.functions.dotsign.dot.syntax" = "296b644c878a3c1a48f110548a4e04bdb82b28be9c9eca23e5ab48ec48abf35e"
+"db.functions.eqeqsign" = "de55565b11c83605751b32a5970ff1130170cbd68d9420d5ca92d5bd4eb17bcd"
+"db.functions.eqsign" = "f2ce48684088bbc2a2cafd6df0482a7d6e4075cea8e972dc5a4cb7e437d1dce6"
+"db.functions.gteqsign" = "bfe3a0c0834256a9fedccff92b6638f68e57606322a837e51c38afaaccba2480"
+"db.functions.gtgtgtsign" = "06ea7db21269f312a8863ba97f0710a33231022968c140277127dcea652dced7"
+"db.functions.gtgtsign" = "ec151fc77a5bdb4bb6b3f6e85195cbe295c2e503a152cc6e20a753232fa78028"
+"db.functions.gtsign" = "6309795e1a7108009433fa3a9d4f7a00472e2bd69da30eddfe5b01c8a9cdb9f2"
+"db.functions.isdistinct" = "0218c817b7b007a5f8b5e78e4059d0c36cb1958d27bf799ef3b11ea63c5410c5"
+"db.functions.isfalse" = "f8fe39396fcff15de445396349a56deed718f9d7260b79778557472f4221b744"
+"db.functions.isnullop" = "fb276e251cb0b94f1b6936d0998e67b8c1dfc7715b95a3183ac3664932c58809"
+"db.functions.istrue" = "17a1d4aed70a4ec413b0d40481f6eae2ea3e0216156230ca869d4aa3051c64e6"
+"db.functions.lteqgtsign" = "285bb4221c76697bd0869e0c267dd577dcb587193dd38187b6aa0138e6cf5afe"
+"db.functions.lteqsign" = "5c0afb51735388c7d6488a79c5c00e536236fe6c3afa076e08c82261a4139349"
+"db.functions.ltgtsign" = "13936327857a5a3ddd1de5bac751fce61d36cdbba3821c7d39079f2a5ba9791b"
+"db.functions.ltltsign" = "5e03af55b99716760f3a46e0ce1b710f4c16a668b0c91234647d28a156775667"
+"db.functions.ltsign" = "4c6b6d15315a4a4efd20531736053ffdfdd71562ba2f04d707c8dc5dfcf85c05"
+"db.functions.minussign" = "37386904ac91f3f4c2c253e9dd49c9f2f0647794226970d58e83b5bc7b1b4772"
+"db.functions.minussignunary" = "e63440e008e9af5d7b0c3e6d723e4c9c8612c3fb3edd9f5a0f3fc2c12c3a37f4"
+"db.functions.or" = "e76d6e9ca8acaa484357a5063ca4e4ceb43a27e41f1698653e301a496c559b91"
+"db.functions.percentsign" = "b55159cd9e629b073269732a8e906d7e7712893309fcfa738bca6a3e5006b006"
+"db.functions.pipepipesign" = "403b41caaded787a68ef3607f3dab2c22e5d275d55c8d739aa624eaa39f79c2b"
+"db.functions.plussign" = "f7807a78ccc385ae3d723e670e0aff96b114846b81228fb392f7341265533ad4"
+"db.functions.plussignunary" = "7c41463a8d55a45dc46a6ddfe0a5221339747beed3567b7403ab6a528bd181e2"
+"db.functions.questiondoublecolonsign" = "975afc37b36d485651b694eb32f873e0a49d5a7796207744016c3e1033df9636"
+"db.functions.regexp" = "750d52b21c23a711331c2c213dabcf4a1bbc5b314147e14f4f4e752869efee04"
+"db.functions.rlike" = "2ee83b7e9726beeeb53a070ff53f7e79a05e497a8a3a976bd1733ef9e764d16e"
+"db.functions.slashsign" = "cbda3eba095dc7ac40cdd02aace366369527875c522cc24e567828eb92f04e84"
+"db.functions.tildesign" = "05488766573ae481b64eb716243fc046401e810d04d20ab4bb22c98676758511"
+
+[review.definitions]
+"db.functions.ampersandsign" = "e955c33cdedd095ff0f5ddee607e2dc56541ee2cbc091536827b18729226dddd"
+"db.functions.and" = "fe68c1a89c70ec943ad49d1efbb024212cf161f1e48a13b6157ddda53aabfa5a"
+"db.functions.asterisksign" = "a88ac21392cb1514411c1d917ed697705b2b85ee86a8fb9f30505808e89d2719"
+"db.functions.bangeqsign" = "21ffae832ccc6e5ad40dfff9f36afdcd534b2f608df20fa682a1f41b00b4ef53"
+"db.functions.bangsign" = "b8b4e54a67f0ba26fb5a8c8b1484b4c8e6ca29043fc26788810c6d8364396f73"
+"db.functions.between" = "c944fb75fb49fb47f377d10b918fbc59cc48a9ed63074c9e5bf63971b7ff2da3"
+"db.functions.bracketsign" = "510b3f1e73ba52b9b996511af2e8a1364f9a1e9d26b4754aa76dd95177fc59bf"
+"db.functions.caretsign" = "9a57ab63af846095b79f22138328348d07895e5e85c304cb146a5007be7ab905"
+"db.functions.case.end" = "2c289eaddf433d2ea8f0aa7fa51efd215546390bb7ea2a94af731de98267fdf1"
+"db.functions.case.end.syntax" = "d454387d2e3974cdb66905aad4443f9eb58c6ccf3003a5535333c72274d438c3"
+"db.functions.coloncolonsign" = "9290e5d9efbfded64530091b52a23a66fb4987dec8719c356386c38bc69e18d1"
+"db.functions.div" = "41d62eb22d19f59ccd90f2adc23f5be0ff3949555641c8c52100a8b407503749"
+"db.functions.dotsign.dot" = "5fb94e9facfd237d2330dfd9221afc4ef9934d0e677e5284964147a2de0f872d"
+"db.functions.dotsign.dot.syntax" = "ecfad06ced4c52ea7a4d9ecf28d7920f7440755c4ebffa97e185f4bd8eec9a64"
+"db.functions.eqeqsign" = "c3e03ef987a840035864ffa7aafe04b5572dc8e2bde507f82d7753441cca8e99"
+"db.functions.eqsign" = "e3243c0ba74805c332064c80442c217e6963055fb00af77fdff5880a1f773711"
+"db.functions.gteqsign" = "9175cbac6c90b8c41043ea799bcc3dd69f627a1ca496c101577ed4f8bfb987d2"
+"db.functions.gtgtgtsign" = "84738efd9c1880908fbe7f40b7ac85c5878d8ba12f16813c3386ae89c44dfefb"
+"db.functions.gtgtsign" = "df6ff6591d283defd54feb30e17010e3288a363689e7b65d69cd2c9741bd76b5"
+"db.functions.gtsign" = "071623109e08b8330cca4c33614623416553c9d6fa000669756e2dd622a9b0a1"
+"db.functions.isdistinct" = "ec94b8c0450554b801f519d95379c2662f5442fdd6e382fc0652b65a8388e839"
+"db.functions.isfalse" = "98747e3f196bc753c454ac005dc5ef6e0c1a26259c86d7a0650a65b028cd238e"
+"db.functions.isnullop" = "1f350535102847d7aa6178c83f1a233de946cf211b556a412c9c378f3b51ec8a"
+"db.functions.istrue" = "7fc3d792603940869d07a26b51f8c9f2f9fcf531d9e5018c740e609efd7e5ceb"
+"db.functions.lteqgtsign" = "751a24ba41b80cd48957e8b039c8a18a5fb93809b496ae599a08a56311623747"
+"db.functions.lteqsign" = "b8fe243435379299d31bbe50896d8199844d23e4adb524779910003d171fda1a"
+"db.functions.ltgtsign" = "f0034fd96ed36c550de5641e80323116ad6a8034a526037647571efadc28353d"
+"db.functions.ltltsign" = "b8c85f4abb34b076898b979ea42464eb6ed0b76ef26c2772a6910c8b1508f685"
+"db.functions.ltsign" = "d87544903b9083069e7e108d27c7e4b6384e43e9685a8f4a8b0dc6359f6055f6"
+"db.functions.minussign" = "1f2e32fe963a01db7e796c0e7d6f7befd7b730258bfdf916da185e9af55a0541"
+"db.functions.minussignunary" = "4a9cdd34423b73c912999fc4b2a0367c5461ca05322c5ea35068603a6a686b78"
+"db.functions.or" = "f47e68155b87908d7c5d07b233b39c929d439dc5d9062662fa21d9376046e0a3"
+"db.functions.percentsign" = "75e064b5cb127ede5b31fb09b09c83ff4de6456ffa4befb42231ba5a71601c83"
+"db.functions.pipepipesign" = "dec80515f4d40bec87a629d8e07e660a3f8b369ba938476b7334f945a01b5fa2"
+"db.functions.plussign" = "bc3b6e14fcbea205d0b534594723e0a324b02dda3eb57a78ae40777f29602280"
+"db.functions.plussignunary" = "06d8738ebdf56e0e6c3e5fc59a4508808a6d352a25114222550f71f86d7339b0"
+"db.functions.questiondoublecolonsign" = "cb4e3413aed1c243ce274e9bca278a611da7b37427721a093ec7f1bc4b2aa7e4"
+"db.functions.regexp" = "abefde1e26eb0c20386d5b2d4abe733a50e803af5ca6a68ca72b33c905b8c59f"
+"db.functions.rlike" = "65479a6f443ab764cf2f282fb502742e54645e7107160ce3fca365485af94e13"
+"db.functions.slashsign" = "5339b9e50bd858d6aa815fb65d100766ab16366851f21c209b87261cfc723396"
+"db.functions.tildesign" = "bacf920737918b109b3e43714d137c64a0010c39bf5b1e94e92990a693efc7fb"

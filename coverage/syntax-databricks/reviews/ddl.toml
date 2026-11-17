@@ -1082,3 +1082,35 @@ note = "Re-read on 17 Nov 2026 after the parser fix in e54adcf23: ANALYZE ... US
 "db.ddl.alter-catalog" = "881f3d690fe4da1a908d4caf1a3f54bfa48252c163748673cbd58ce4cfd6ae4b"
 "db.ddl.create-connection" = "f8f9fdecc5f2ca1c9a0869526d414e62c0a2981037c5cf6f25266212a44cf64b"
 "db.ddl.create-server" = "3659c6fb8959bcf4a5824c6291cd741e31ad563f6136a46830c505ceb7cad962"
+
+[[review]]
+id = "db-ddl-057"
+family = "ddl"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table-manage-column.alter-table-add-column",
+  "db.ddl.alter-table-manage-partition.add-partition",
+  "db.ddl.alter-table-manage-partition.partition-set-location",
+  "db.ddl.clone.create-table-clone",
+  "db.ddl.drop-database",
+  "db.ddl.drop-schema",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.alter-table-add-column" = "9b260dd9bf2269e001ce78d775905c0c2445ad3947fe45d5e8118ed287f0dcb7"
+"db.ddl.alter-table-manage-partition.add-partition" = "844f88b43dbda3a4453c6ccd8c471027fc68bfd9e7ea74275fdb4179081fca56"
+"db.ddl.alter-table-manage-partition.partition-set-location" = "53dc6c008fc0605c786b5587931119707242bd387a49e1ce29307192829b1ee0"
+"db.ddl.clone.create-table-clone" = "4bf806a846f17663fb054f52253c14dc386943292092b4f55cc81042d835058d"
+"db.ddl.drop-database" = "1e6b387307116c4e8070ac65b7d24f0440dfa9728030be1e82ba46d589296b5b"
+"db.ddl.drop-schema" = "b6f0206c35f451b24db84c798c634df90118c34234a46d8256647d4a0b23c7b4"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.alter-table-add-column" = "0184efac6e56c8cf99c4f42ce8815745cc6bab2f0c4ce680979ccd750fec97a3"
+"db.ddl.alter-table-manage-partition.add-partition" = "551a3c9e341c83a5fcfae206b11145de008481d5b67fc12732ca7e632c9f421f"
+"db.ddl.alter-table-manage-partition.partition-set-location" = "b4afaa1ad1822488a678431f74b47d775c15957edb2da65b3639361f55536d99"
+"db.ddl.clone.create-table-clone" = "1ff56520187cd2c3ed80434aaf873573d8340a90fd94b346762bc8e1be8e03a0"
+"db.ddl.drop-database" = "767fb8a9b00e1535edd084b8adfdd0da511e3e6de92b1c431051f5a841d19b5b"
+"db.ddl.drop-schema" = "1652e9e051a38ca429672dea8a0f2bde6e739c5ef5553e759b7e3ca7e4daf549"

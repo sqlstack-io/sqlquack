@@ -728,3 +728,20 @@ note = "Exclusion only, naming no other form: the OBJECT type is output-only, so
 [[review.exclusion]]
 form = "db.expressions.object-type"
 reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
+
+[[review]]
+id = "db-expressions-036"
+family = "expressions"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.expressions.boolean-type.true-false",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.expressions.boolean-type.true-false" = "8810c383e4f45ae6a7bcfaa4fe60d8a17b28c88168e6c8662cfca1a165e4f509"
+
+[review.definitions]
+"db.expressions.boolean-type.true-false" = "1be06e91956dd38f17e4268ac1969521fff2705194fe660f029d7f742b1d9615"

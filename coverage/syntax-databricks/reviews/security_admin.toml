@@ -164,3 +164,26 @@ note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Finge
 
 [review.definitions]
 "db.security_admin.principal" = "79088c253c35e2140686d01bff6a00571f6d89dca689e78ecf83fbdbd2b60ef5"
+
+[[review]]
+id = "db-security_admin-009"
+family = "security_admin"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.show-grant",
+  "db.security_admin.show-grant-on-share",
+  "db.security_admin.show-grant-to-recipient",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.security_admin.show-grant" = "6e59ac8cdb0581bf00a3fb6b30a6df4b5d67ec5a763968caf65dd1ed075fc8f7"
+"db.security_admin.show-grant-on-share" = "c8cb4c330926e58b761099f23342f786fb96ceea4dbef55ef913c4a4284371e1"
+"db.security_admin.show-grant-to-recipient" = "5c8a094444f19f61f1c10361b08fb8803f6e31eb5041e4707c5936cc8a5e931a"
+
+[review.definitions]
+"db.security_admin.show-grant" = "e632ff336f2ee478df322687496af8b62729166c95f1413dac2010858d9f8af9"
+"db.security_admin.show-grant-on-share" = "36715f789f5d82931fd9372236e945d7aca1b617bfc3325c5df462506a1619c9"
+"db.security_admin.show-grant-to-recipient" = "a77b29d603336821ef27495e98f9ac58637fdc3cd225416cb485187629227632"

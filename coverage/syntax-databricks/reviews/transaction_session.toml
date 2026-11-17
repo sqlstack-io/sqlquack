@@ -257,3 +257,41 @@ note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Finge
 
 [review.definitions]
 "db.transaction_session.conf-mgmt-set-collation" = "9592c66d48f2f0436971ffcf547f72d5acfaa9fd2a5fbf422a9bfb35a8d7608e"
+
+[[review]]
+id = "db-transaction_session-012"
+family = "transaction_session"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.ansi-mode",
+  "db.transaction_session.conf-mgmt-reset",
+  "db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax",
+  "db.transaction_session.conf-mgmt-set.set",
+  "db.transaction_session.conf-mgmt-set.set-2",
+  "db.transaction_session.legacy-time-parser-policy",
+  "db.transaction_session.use-schema",
+  "db.transaction_session.usedb",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.transaction_session.ansi-mode" = "e1f0231e8da0193549ac91a551e190a5b2a98c326fc2b91f661f81bcb201cb77"
+"db.transaction_session.conf-mgmt-reset" = "0a213ccd9dadbf2563b60bce4b7230b3544d2929fe6ff9340cf8c29b56c1e488"
+"db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax" = "4259e1e53a17a40fbdf7412bd51b428e5c653f5296f2d5da51495ee3c8337b60"
+"db.transaction_session.conf-mgmt-set.set" = "46f8ad58faaeae2c905417eb0eb6e614d3a97533da8370e91331aae40f1fe32a"
+"db.transaction_session.conf-mgmt-set.set-2" = "6de82eaca2721ace5f86f181a43f625dff714e9b048a7028c2632ba1b6d51108"
+"db.transaction_session.legacy-time-parser-policy" = "330529d01f685bf9beabb9fde4e9144e1082dfafcb3f7a1535b3243fe11e02f1"
+"db.transaction_session.use-schema" = "299715d610ec6fc66c0cd0a6ae0193a7362975fffc94306f6ad8d24afb3b1f29"
+"db.transaction_session.usedb" = "2451a2cdc84757724c76d2d12d9a883206742f9caa5de8c24f3696998817205d"
+
+[review.definitions]
+"db.transaction_session.ansi-mode" = "d2421ff73deae00091b5c805421e0e888b4b75edd028387b53826978da8f643d"
+"db.transaction_session.conf-mgmt-reset" = "a5e5632145a0eb6543944ede1c35339abd0468c2f4c39279cb87b57beb104eae"
+"db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax" = "c54b4349327942ef2c1dc4ff7c06fe2a3c14bf75351e8db1a412696181fad878"
+"db.transaction_session.conf-mgmt-set.set" = "ede080cc7559ca5799032c37e042bfb64ef37c85b720aee52b2ecd58b022c5fd"
+"db.transaction_session.conf-mgmt-set.set-2" = "283bccbe4bcc5f216c1cee23b20db4ea09b9fb12d829cc321e547eabd43ba287"
+"db.transaction_session.legacy-time-parser-policy" = "a6c9a16624f1ba6d89ddabc2a07e4c64515a10499f3775a30d3e3959baa739d0"
+"db.transaction_session.use-schema" = "9086fedaf7a4a5a1b1bc7d4e1451d249467bf85f86d0e0abaf5d67a27f066bf4"
+"db.transaction_session.usedb" = "0a00ed90a5bb723e022aaecd1129291dc97e89e2e23e623abd4bfe0c4d191cf0"
