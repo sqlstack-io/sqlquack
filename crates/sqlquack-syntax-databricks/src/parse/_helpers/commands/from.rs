@@ -263,21 +263,13 @@ impl Parser<'_> {
             if self.eat_char('(') {
                 let inner: Expression = self.stream_source()?;
                 self.expect_char(')')?;
-                let inner: Expression = match inner {
-                    Expression::Table(mut relation) => {
-                        relation.watermark = self.watermark()?.map(Box::new);
-                        Expression::Table(relation)
-                    }
-                    call => {
-                        self.watermark_gap()?;
-                        call
-                    }
-                };
+                let watermark: Option<Box<Watermark>> = self.watermark()?.map(Box::new);
                 let alias: Option<TableAlias> = self.table_alias()?;
                 let stream: Expression = Expression::Stream(Box::new(Stream {
                     this: paren(inner),
                     on: None,
                     show_initial_rows: None,
+                    watermark,
                 }));
                 return Ok(aliased(stream, alias));
             }
@@ -286,6 +278,7 @@ impl Parser<'_> {
                 this: inner,
                 on: None,
                 show_initial_rows: None,
+                watermark: None,
             })));
         }
         if self.is_char('(') && self.kw_in(1, &["DESC", "DESCRIBE"]) {

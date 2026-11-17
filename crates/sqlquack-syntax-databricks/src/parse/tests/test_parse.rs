@@ -45,6 +45,11 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "a WATERMARK after a table function call in STREAM's parentheses is part of the tree",
+            sql: "SELECT * FROM STREAM ( range ( 1 ) ) WATERMARK c1 DELAY OF INTERVAL 1 SECOND",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "ANTI is strict non-reserved, so it cannot be a bare table alias",
             sql: "SELECT * FROM t anti",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -1328,6 +1333,18 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             sql: "SELECT * FROM LATERAL ( SELECT 1 ) TABLESAMPLE ( 50 PERCENT ) WATERMARK c1 DELAY OF INTERVAL 1 MINUTE a1",
             pointer: "/0/select/from/expressions/0/subquery/watermark/delay/interval/unit/unit",
             expected_json: "\"Minute\"",
+        },
+        ValueTestCase {
+            description: "a WATERMARK after STREAM's parentheses belongs to the stream, not the table inside",
+            sql: "SELECT * FROM STREAM ( t1 ) WATERMARK c1 DELAY OF INTERVAL 1 SECOND a1",
+            pointer: "/0/select/from/expressions/0/alias/this/stream/watermark/this/column/name/name",
+            expected_json: "\"c1\"",
+        },
+        ValueTestCase {
+            description: "a WATERMARK after a function call in STREAM's parentheses belongs to the stream",
+            sql: "SELECT * FROM STREAM ( range ( 1 ) ) WATERMARK c1 AS w1 DELAY OF INTERVAL 1 SECOND",
+            pointer: "/0/select/from/expressions/0/stream/watermark/aliases/0/name",
+            expected_json: "\"w1\"",
         },
         ValueTestCase {
             description: "a parenthesized STREAM's alias names the stream, outside the parentheses",
