@@ -339,6 +339,12 @@ A `[[review]]` has these fields:
   `catalogue_sha256`, `obligations_sha256` or exclusions. An edit to another form in the same
   catalogue or obligations file, or to another form's reading, leaves it current; any change to
   the form's own catalogue entry, obligations, reading or fingerprint makes it stale for that form.
+- `resolves` (optional, on an approved review with `definitions` only): ids of changes_requested
+  reviews whose concerns the note answers, one by one with its evidence. Each must be a
+  changes_requested review listing at least one of the approval's forms, at the approval's
+  fingerprint and definition of every form both list; anything else is an error. While the
+  approval is current, a review it resolves no longer blocks those forms. An unnamed
+  changes_requested review still does.
 - `[[review.exclusion]]`: exactly one of `form` (a form id of the review's family) or `source` (a
   page id, used for out-of-scope and syntax-less pages), plus a `reason`. A page review excludes
   pages only, and a family review excludes forms only.
@@ -398,7 +404,7 @@ Anything missing, ambiguous, stale, mismatched or opaque fails closed with a nam
 `awaiting_observation`, `stale_receipt`, `ambiguous_receipts`, `release_disagreement`, `unexpected_outcome`,
 `local_parse_failure`, `disagreement`, `opaque_fallback`, `unreviewed`, `stale_review` or
 `changes_requested`, which a changes_requested review bound to the form's current fingerprint and definition
-gives even beside a current approval. A reference that does not
+gives even beside a current approval, unless a current approval of the form resolves it. A reference that does not
 resolve fails every check command. Examples are an obligation of an uncatalogued form, a case
 citing an undeclared obligation, an alias whose source is not absent or whose target is unknown,
 and an exclusion naming an unknown form or page.

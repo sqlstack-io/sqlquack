@@ -70,8 +70,21 @@ pub(crate) fn review_reason(
         .iter()
         .filter(|review| names(review, form))
         .collect();
+    let resolved: BTreeSet<&str> = named
+        .iter()
+        .filter(|review| {
+            current(
+                review,
+                hashes,
+                parser_tree,
+                Some((form, fingerprint, definition)),
+            )
+        })
+        .flat_map(|review| review.resolves.iter().map(String::as_str))
+        .collect();
     let requests_changes = |review: &&Review| {
         review.verdict == ReviewVerdict::ChangesRequested
+            && !resolved.contains(review.id.as_str())
             && review.definitions.get(form).map(String::as_str) == Some(definition)
             && review.fingerprints.get(form).map(String::as_str) == Some(fingerprint)
     };

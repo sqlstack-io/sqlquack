@@ -496,6 +496,9 @@ pub struct Review {
     /// Each listed form's definition hash when reviewed; binds the form, not the files.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub definitions: BTreeMap<String, String>,
+    /// changes_requested reviews of its forms and binding whose concerns its note answers.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub resolves: Vec<String>,
     #[serde(default)]
     pub note: Option<String>,
 }

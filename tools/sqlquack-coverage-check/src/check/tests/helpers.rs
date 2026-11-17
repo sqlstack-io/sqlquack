@@ -148,6 +148,55 @@ pub(crate) fn request_changes(root: &Path, fingerprint: Option<&str>) {
     write(root, "reviews/requested.toml", &requested);
 }
 
+/// Writes review `id` of query `forms` with `verdict`, at their current binding, to its own file.
+pub(crate) fn review_of(root: &Path, id: &str, verdict: &str, forms: &[&str]) {
+    let coverage = crate::formats::main::load_coverage::load_coverage(root, None).expect("load");
+    let check =
+        crate::check::main::check_coverage::check_coverage(&coverage, Some(TREE), &structural);
+    let named: Vec<&crate::check::models::FormResult> = check
+        .forms
+        .iter()
+        .filter(|form| forms.contains(&form.id.as_str()))
+        .collect();
+    let pins = |value: fn(&crate::check::models::FormResult) -> &str| -> String {
+        named
+            .iter()
+            .map(|form| format!("\"{}\" = \"{}\"", form.id, value(form)))
+            .collect::<Vec<String>>()
+            .join(", ")
+    };
+    let listed: String = forms
+        .iter()
+        .map(|form| format!("\"{form}\""))
+        .collect::<Vec<String>>()
+        .join(", ");
+    let review: String = format!(
+        "[[review]]\nid = \"{id}\"\nfamily = \"query\"\n\
+         parser_tree = \"{TREE}\"\nreviewed_utc = \"2026-11-04T09:00:00Z\"\n\
+         verdict = \"{verdict}\"\nforms = [{listed}]\n\
+         fingerprints = {{ {} }}\ndefinitions = {{ {} }}\n",
+        pins(|form| &form.fingerprint),
+        pins(|form| &form.definition_sha256),
+    );
+    write(root, &format!("reviews/{id}.toml"), &review);
+}
+
+/// Has the approved review in `reviews/<file>.toml` resolve the reviews `ids`.
+pub(crate) fn resolve(root: &Path, file: &str, ids: &[&str]) {
+    let listed: String = ids
+        .iter()
+        .map(|id| format!("\"{id}\""))
+        .collect::<Vec<String>>()
+        .join(", ");
+    let path: String = format!("reviews/{file}.toml");
+    let review: String = read(root, &path).replacen(
+        "verdict = \"approved\"\n",
+        &format!("verdict = \"approved\"\nresolves = [{listed}]\n"),
+        1,
+    );
+    write(root, &path, &review);
+}
+
 /// A local parse that crashes on everything.
 pub(crate) fn crashing(_sql: &str) -> LocalVerdict {
     LocalVerdict::Failed {
