@@ -9029,6 +9029,22 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.ddl.alter-view.o046"
+kind = "option_present"
+required = true
+target = "SET TBLPROPERTIES <set_tblproperties_clause>"
+anchor = "doc.sql-ref-syntax-ddl-alter-view / Syntax"
+note = "a view property with an unquoted key and an integer value"
+
+[[obligation]]
+id = "db.ddl.alter-view.o047"
+kind = "option_absent"
+required = true
+target = "SET TBLPROPERTIES <set_tblproperties_clause>"
+anchor = "doc.sql-ref-syntax-ddl-alter-view / Syntax"
+note = "a view property without = between its key and value"
+
+[[obligation]]
 id = "db.ddl.alter-view-set-managed.o001"
 kind = "positive"
 required = true
@@ -25869,6 +25885,14 @@ required = true
 target = "IF EXISTS"
 anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
 note = "UNSET TBLPROPERTIES IF EXISTS on a view"
+
+[[obligation]]
+id = "db.ddl.tblproperties.unset-tblproperties.o015"
+kind = "option_present"
+required = true
+target = "<property_key>"
+anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
+note = "a dotted unquoted property key on a table"
 
 [[obligation]]
 id = "db.ddl.truncate-table.o001"

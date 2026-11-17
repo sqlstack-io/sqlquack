@@ -7668,3 +7668,43 @@ anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
 sql = "ALTER VIEW v1 UNSET TBLPROPERTIES IF EXISTS ( 'k' )"
 context = "raw"
 expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-view"
+kind = "option_present"
+target = "SET TBLPROPERTIES <set_tblproperties_clause>"
+note = "a view property with an unquoted key and an integer value"
+anchor = "doc.sql-ref-syntax-ddl-alter-view / Syntax"
+sql = "ALTER VIEW v1 SET TBLPROPERTIES ( k = 1 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-view"
+kind = "option_absent"
+target = "SET TBLPROPERTIES <set_tblproperties_clause>"
+note = "a view property without = between its key and value"
+anchor = "doc.sql-ref-syntax-ddl-alter-view / Syntax"
+sql = "ALTER VIEW v1 SET TBLPROPERTIES ( 'k' 'v' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.scripting.execute-immediate"
+kind = "negative_neighbour"
+target = "USING { <arg_expr> [ AS ] [ <alias> ] }"
+note = "AS with no alias after a USING argument"
+anchor = "doc.sql-ref-syntax-aux-execute-immediate / Syntax"
+sql = "EXECUTE IMMEDIATE 'SELECT 1' USING 1 AS"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.tblproperties.unset-tblproperties"
+kind = "option_present"
+target = "<property_key>"
+note = "a dotted unquoted property key on a table"
+anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
+sql = "ALTER TABLE t1 UNSET TBLPROPERTIES ( a.b )"
+context = "raw"
+expect = "observe"

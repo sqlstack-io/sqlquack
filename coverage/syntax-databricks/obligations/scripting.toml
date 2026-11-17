@@ -728,6 +728,14 @@ anchor = "doc.sql-ref-syntax-aux-execute-immediate / Syntax"
 note = "AS written as a list item inside a parenthesised USING list, which the local parser reads as a column named AS"
 
 [[obligation]]
+id = "db.scripting.execute-immediate.o036"
+kind = "negative_neighbour"
+required = true
+target = "USING { <arg_expr> [ AS ] [ <alias> ] }"
+anchor = "doc.sql-ref-syntax-aux-execute-immediate / Syntax"
+note = "AS with no alias after a USING argument"
+
+[[obligation]]
 id = "db.scripting.fetch-stmt.o001"
 kind = "positive"
 required = true
