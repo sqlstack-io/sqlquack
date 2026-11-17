@@ -664,7 +664,7 @@ const FORMS: &[Form] = &[
     Form {
         construct: "alter_group",
         leads: &[&["ALTER", "GROUP"]],
-        patterns: &["ALTER GROUP id { { ADD | DROP } { GROUP id ,... | USER id ,... } } ..."],
+        patterns: &["ALTER GROUP id { ADD | DROP } { GROUP id ,... | USER id ,... }"],
     },
     Form {
         construct: "drop_group",

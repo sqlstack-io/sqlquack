@@ -192,6 +192,11 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "a group's ADD names several members",
+            sql: "ALTER GROUP v1 ADD GROUP v1 , v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "a catalog given an owner is named, not quoted",
             sql: "ALTER CATALOG 'v1' OWNER TO v1",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },

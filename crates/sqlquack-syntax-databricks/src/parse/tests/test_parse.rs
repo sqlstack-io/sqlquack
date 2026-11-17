@@ -782,9 +782,9 @@ fn given_documented_statements_when_parsing_then_the_verdict_is_the_warehouse_re
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "members are added to and dropped from a group",
-            sql: "ALTER GROUP v1 ADD USER v1 , v2 DROP GROUP v3",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+            description: "a group takes one ADD or DROP, not both",
+            sql: "ALTER GROUP v1 ADD USER v1 DROP GROUP v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
             description: "a group is dropped by name",

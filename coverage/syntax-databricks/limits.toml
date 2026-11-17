@@ -7368,3 +7368,13 @@ anchor = "doc.sql-ref-syntax-ddl-alter-catalog / Syntax"
 sql = "ALTER CATALOG 'v1' SET TAGS ( 'k' = 'v' )"
 context = "raw"
 expect = "reject"
+
+[[limit]]
+form = "db.security_admin.alter-group"
+kind = "negative_neighbour"
+target = "{ ADD | DROP } repeated"
+note = "an ADD followed by a DROP in one statement: the page's trailing [ ... ] reads as a repeat, but the warehouse refuses the second clause (PARSE_SYNTAX_ERROR at DROP)"
+anchor = "doc.security-alter-group / Syntax"
+sql = "ALTER GROUP v1 ADD USER v1 DROP GROUP v1"
+context = "raw"
+expect = "reject"
