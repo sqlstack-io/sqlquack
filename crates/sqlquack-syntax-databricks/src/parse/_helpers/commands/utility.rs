@@ -502,11 +502,7 @@ impl Parser<'_> {
                         _ => {
                             let parts: Vec<Identifier> = parser.multipart_identifier()?;
                             let count: usize = parts.len();
-                            let element: Expression = match count < MIN_PATH_PARTS {
-                                true => Expression::Identifier(joined(parts)),
-                                false => Expression::Table(Box::new(table(parts))),
-                            };
-                            Ok((element, count))
+                            Ok((Expression::Identifier(joined(parts)), count))
                         }
                     })?;
                 match parser.ends_at(0) {

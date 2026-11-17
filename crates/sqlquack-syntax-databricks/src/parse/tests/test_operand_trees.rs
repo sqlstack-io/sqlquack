@@ -1,4 +1,4 @@
-//! Operands kept in shared nodes: a retention period, a path's schemas and a datetime unit.
+//! Operands kept in shared nodes: a retention period and a datetime unit.
 
 use serde_json::Value;
 use sqlquack_syntax::Parsed;
@@ -26,12 +26,6 @@ fn given_an_operand_with_a_shared_node_when_parsing_then_its_tree_uses_that_node
             sql: "ALTER SCHEMA s1 SET RETAIN DROPPED TO 1 HOUR",
             pointer: "/0/alter_object/operands/0/interval/this/literal/value",
             expected_json: "\"1\"",
-        },
-        ValueTestCase {
-            description: "a path's schema keeps its catalog apart",
-            sql: "SET PATH = system.builtin , workspace.s1",
-            pointer: "/0/set_statement/items/0/value/tuple/expressions/1/table/schema/name",
-            expected_json: "\"workspace\"",
         },
         ValueTestCase {
             description: "a datetime unit is a keyword, not a string",
