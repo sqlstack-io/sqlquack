@@ -171,6 +171,13 @@ fn given_a_ddl_clause_with_no_shared_field_when_parsing_then_its_tree_keeps_it()
             pointer: "/0/utility_statement/operands/4/property/this/var/this",
             expected_json: "\"FOR TABLES\"",
         },
+        ValueTestCase {
+            description: "STORED AS BITEMPORAL ends before an optional TRACK HISTORY ON",
+            sql: "CREATE OR REFRESH STREAMING TABLE st1 FLOW AUTO CDC FROM v1 KEYS ( c1 ) \
+                  SEQUENCE BY c2 SYSTEM SEQUENCE BY c9 STORED AS BITEMPORAL TRACK HISTORY ON c3",
+            pointer: "/0/utility_statement/operands/5/property/this/var/this",
+            expected_json: "\"STORED AS BITEMPORAL\"",
+        },
     ];
     for test_case in test_cases {
         let parsed: Parsed = parse_strict(test_case.sql).expect(test_case.description);

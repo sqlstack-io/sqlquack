@@ -182,7 +182,9 @@ These parse without a gap, but the shared tree keeps less than the source said:
   optional part never hides a later one. When no pattern reads a statement, the furthest failure
   is reported. A matched statement's tree is its keyword clauses in order, each a property of its
   keywords and values. `IF [NOT] EXISTS`, `IGNORE NULL UPDATES`, `ON METASTORE` and `FOR TABLES`
-  are clauses of their own, and `* EXCEPT (columns)` is a star with those columns excepted.
+  end their clause unless an optional part opened right after them goes on with it, as
+  `IGNORE NULL UPDATES ON columns` and `FOR TABLES WHEN expr` do. `* EXCEPT (columns)` is a star
+  with those columns excepted.
 - The scanner has no `>>` or `>>>` operator: `>` is always one token, as Spark's lexer makes it
   inside `ARRAY<…>`, `MAP<…>` and `STRUCT<…>`, and the grammar joins adjacent `>`s into a shift.
   `REGEXP` is the same token as `RLIKE`. A doubled quote stands for one quote; where backslash

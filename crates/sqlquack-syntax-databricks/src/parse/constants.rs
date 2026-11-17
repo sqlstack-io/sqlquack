@@ -2,7 +2,7 @@
 
 use sqlquack_syntax::expressions::types::models::IntervalUnit;
 
-/// Pattern keywords that are a clause of their own, never introducing the value or the clause after them.
+/// Pattern keywords that end their clause, unless an optional part or choice opened after them goes on.
 pub(crate) const FLAG_PHRASES: &[&str] = &[
     "IF EXISTS",
     "IF NOT EXISTS",
