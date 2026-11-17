@@ -289,3 +289,20 @@ note = "Re-read on 17 Nov 2026 at 79bd022b7 against the 2026.45 receipts in evid
 "db.dml.insert-overwrite-directory" = "cf7d61dcfc0a14da22b6006a83f9aecb963171ba49e82213b349b89a6cd6069c"
 "db.dml.insert-overwrite-directory-hive" = "a78eadd0568c02a06eb41ddb7021072d5e9c8875b0cb2a2f9e9c1614ab2139cb"
 "db.dml.merge-into" = "3d7cc611d0b78bf231a134cc5b49ab32eee7548cdcb3a876471585ae0452da54"
+
+[[review]]
+id = "db-dml-016"
+family = "dml"
+parser_tree = "8ecd64b31886e72fb403a850c8c9aef24419ac40"
+reviewed_utc = "2026-11-17T14:32:48Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.into-replace-on",
+]
+note = "Withdraws this form's approval in db-dml-015, which stays as written. The parser refuses two of the three REPLACE ON examples on the form's own page: INSERT INTO TABLE students AS t REPLACE ON t.name <=> s.name ( SELECT * FROM people ) AS s is refused at people (pos 77), because the condition's last name followed by ( is read as a function call; INSERT INTO TABLE students ( row_origin , name ) AS t REPLACE ON t.name <=> s.name ( SELECT * FROM people ) AS s is refused at AS (pos 49), because a column list followed by AS alias is refused, though ( c1 ) a1 and AS a1 alone parse. INSERT INTO t1 REPLACE ON c1 = c2 ( SELECT 1 ) is refused the same way (pos 43). Every recorded case writes REPLACE ON 1 = 1, so no receipt exercises either shape. Needs: a parenthesised query (SELECT, WITH, VALUES, FROM or TABLE after the opening parenthesis) read as the query after the condition, AS alias accepted after the column list, and receipts for both page texts before re-approval."
+
+[review.fingerprints]
+"db.dml.insert-into.into-replace-on" = "4fb9a27722e79d0ab38dbc2c4c2ededb9f85c75fd32b2f588fc0d00a8b985336"
+
+[review.definitions]
+"db.dml.insert-into.into-replace-on" = "9322af7c96037cd88169632fcf591ddfc0346888f18d5149a5810914156a4334"
