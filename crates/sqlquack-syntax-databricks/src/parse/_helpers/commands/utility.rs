@@ -415,13 +415,13 @@ impl Parser<'_> {
         let mut node: Show = Show::new("TBLPROPERTIES");
         node.target = Some(Expression::Table(Box::new(self.table_reference()?)));
         if self.eat_char('(') {
-            let key: String = match self.string_at(0) {
-                true => self.string_lit()?,
-                false => joined(self.multipart_identifier()?).name,
+            let key: Expression = match self.string_at(0) {
+                true => string(&self.string_lit()?),
+                false => Expression::Identifier(joined(self.multipart_identifier()?)),
             };
             self.expect_char(')')?;
             node.scope_kind = Some("PROPERTY".to_owned());
-            node.scope = Some(string(&key));
+            node.scope = Some(key);
         }
         Ok(node)
     }

@@ -97,7 +97,7 @@ as they refuse any gap.
 
 | Form | Construct | Tree |
 | --- | --- | --- |
-| `add`, `list` | `ADD` and `LIST` of a file, jar or archive (another resource type is refused) | a `UtilityStatement` of the keywords and each resource, split where a space falls, as Spark splits them |
+| `add`, `list` | `ADD` and `LIST` of a file, jar or archive (another resource type is refused) | a `UtilityStatement` of the keywords and each resource, split where a space falls, as Spark splits them: a quoted resource as a string, any other as its text as written |
 | `restore`, `deny`, `refresh` | `RESTORE … {TIMESTAMP \| VERSION} AS OF`, `DENY privileges ON securable TO principal` (read as `GRANT`), `REFRESH path` (checked as Spark checks the resource path) | a `UtilityStatement` of the keywords and parts; `REFRESH` keeps a quoted path as a string and an unquoted one as its text as written |
 | `cache_select` | `CACHE SELECT expr, … FROM name [WHERE expr]`, as documented | a `UtilityStatement` of its clauses; any other text the service accepts stays the gap, unchecked but for a string after `FROM` |
 | `describe_column`, `show_partition` | `DESCRIBE t column`, `PARTITION (…)` on `SHOW PARTITIONS` and `SHOW TABLE EXTENDED` | the `Describe` or `Show` holding the column or partition |
@@ -164,8 +164,9 @@ These parse without a gap, but the shared tree keeps less than the source said:
 - A function's `RETURNS TABLE (columns)` keeps the column list as `returns_table_body` text; its
   `COMMENT`, `SPECIFIC` and `DEFAULT COLLATION` become `options` properties, and parameter
   comments and `NOT NULL` are dropped.
-- `SHOW TBLPROPERTIES t (key)` holds the key as a string `scope` of `scope_kind` `PROPERTY`: the
-  shared `Show` has no field for a property key.
+- `SHOW TBLPROPERTIES t (key)` holds the key as the `scope` of `scope_kind` `PROPERTY`, a quoted
+  key as a string and an unquoted one as its dotted identifier: the shared `Show` has no field for
+  a property key.
 - `GRANT`, `REVOKE`, `CACHE` and `UNCACHE` keep their object's name as one dotted identifier.
 - A `SET` configuration value, and a time zone that is neither a string nor `LOCAL`, become `Var`
   text.

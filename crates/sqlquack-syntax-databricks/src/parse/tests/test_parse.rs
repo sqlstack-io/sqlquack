@@ -1585,7 +1585,7 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
         ValueTestCase {
             description: "ADD splits its resources where a space falls, as Spark does",
             sql: "ADD FILE '/tmp/a.txt' /tmp/b.txt",
-            pointer: "/0/utility_statement/operands/1/literal/value",
+            pointer: "/0/utility_statement/operands/1/var/this",
             expected_json: "\"/tmp/b.txt\"",
         },
         ValueTestCase {

@@ -8,7 +8,7 @@ use crate::parse::_helpers::commands::alters::partition;
 use crate::parse::_helpers::commands::documented::rule;
 use crate::parse::_helpers::tree::clauses::{Group, Part, documented_tree};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_word};
-use crate::parse::_helpers::tree::nodes::{literal, string, table, too_deep_to_keep};
+use crate::parse::_helpers::tree::nodes::{literal, string, table, too_deep_to_keep, var};
 use crate::parse::constants::COMMA_SEPARATED_REPEAT;
 use crate::parse::errors::ParseError;
 use crate::scan::models::{NumberKind, Token, TokenKind};
@@ -352,7 +352,7 @@ impl Parser<'_> {
         })))
     }
 
-    /// `resource`: tokens with no space between them, as Spark splits resources, or a string.
+    /// `resource`: tokens with no space between them as written, as Spark splits resources, or a string.
     fn resource(&mut self) -> Parsing<Expression> {
         if self.ends_at(0) {
             return Err(self.error());
@@ -365,7 +365,7 @@ impl Parser<'_> {
             self.at += 1;
         }
         self.at += 1;
-        Ok(string(
+        Ok(var(
             &self.sql[self.tokens[first].start..self.tokens[self.at - 1].end],
         ))
     }
