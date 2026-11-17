@@ -409,3 +409,37 @@ note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds acce
 
 [review.definitions]
 "db.transaction_session.declare-variable" = "6ba55f226593ba2ead11a8ffdd0bf65e0900f5c01b15e234b2f15d38771454ea"
+
+[[review]]
+id = "db-transaction_session-019"
+family = "transaction_session"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.conf-mgmt-set-path",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 6 of 6 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. conf-mgmt-set-path: db-transaction_session-003 and db-transaction_session-017 are answered: SET PATH = workspace.s1 gives dot(workspace, s1), a qualified name kept as parts."
+
+[review.fingerprints]
+"db.transaction_session.conf-mgmt-set-path" = "7ae66a4a0b305dd0879552ebcb45fa91a8f31557df23deeea75b9568e5ddc589"
+
+[review.definitions]
+"db.transaction_session.conf-mgmt-set-path" = "cfddfe09d7dd6decbe3184ea9611b10e293b6a3de4b8e38e6b73b92906cc238b"
+
+[[review]]
+id = "db-transaction_session-020"
+family = "transaction_session"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.set-variable.set",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 18 of 18 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. set-variable.set: no open finding. The trees are unchanged since db-transaction_session-002."
+
+[review.fingerprints]
+"db.transaction_session.set-variable.set" = "25770f32f6d419f02b3ecf2b8eef391e9a76f25e4fa8090e44b62e8ee3f78b84"
+
+[review.definitions]
+"db.transaction_session.set-variable.set" = "aea8a0b7314908580e435c077163ec27e1ba524a62929af31535f4cf80c3c667"

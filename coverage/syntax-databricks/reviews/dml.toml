@@ -357,3 +357,20 @@ note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synony
 
 [review.definitions]
 "db.dml.merge-into" = "3d7cc611d0b78bf231a134cc5b49ab32eee7548cdcb3a876471585ae0452da54"
+
+[[review]]
+id = "db-dml-020"
+family = "dml"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.dml.copy-into.target-credential",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 19 of 19 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. copy-into.target-credential: db-dml-004 was answered at db-dml-015. CREDENTIAL now also keeps its backquotes (name_quoted). The temporary-credential = and backquoted-key follow-up concerns the source clause's ( <temporary_credential_options> ), which this form's grammar (WITH ( CREDENTIAL <name> )) does not contain."
+
+[review.fingerprints]
+"db.dml.copy-into.target-credential" = "242fe6e2c75e2c5c1838c40031c7eabbcf23b505f2f9830b070c9c60618b7ca6"
+
+[review.definitions]
+"db.dml.copy-into.target-credential" = "8b65a4fed862127c0d65aa67af816373d8c5a0ef83e840fffbcaa3567ef9180e"

@@ -629,3 +629,37 @@ note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synony
 
 [review.definitions]
 "db.query.select-watermark" = "f7848a7ca823a2825c8b15df53dc7eed9d8906e0047df793440ce859e57939a6"
+
+[[review]]
+id = "db-query-027"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.query.select",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 25 of 25 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. select: no open finding. One tree changed in the batch, where a qualified name is now kept as parts."
+
+[review.fingerprints]
+"db.query.select" = "046d7c0f6e436d5d9ad10e8e50452153b2db42a9082d605eaf1de82cbca12b01"
+
+[review.definitions]
+"db.query.select" = "fcd9b40d1fc28db0f7e428cb6540faa5805aee233e8526a0011dd44ecc1489a3"
+
+[[review]]
+id = "db-query-028"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.query.select-lateral-view",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 25 of 25 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. select-lateral-view: db-query-022 is answered: the AS before the column aliases is kept (column_aliases_explicit_as), so k3b265a6e0be7 and kcb8385e888a5 now differ."
+
+[review.fingerprints]
+"db.query.select-lateral-view" = "38e7ae2bb54a3228726451898da527c2acf05555d34eca7e317e957d4cd56c89"
+
+[review.definitions]
+"db.query.select-lateral-view" = "69f85a97bb1c2ee38d1bfcce70c281aaf6185ec8b2851d427a912643ad19563e"

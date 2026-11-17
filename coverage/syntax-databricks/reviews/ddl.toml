@@ -1640,3 +1640,326 @@ note = "Flagged by the stronger tree screen (insert AS, insert =, every synonym 
 
 [review.definitions]
 "db.ddl.alter-table-manage-column.alter-change-comment-first" = "3709e5844dbea3eaccaa0bb47488dc103019ff9da9af82d88ba55bc5bec75d7d"
+
+[[review]]
+id = "db-ddl-081"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-catalog",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 94 of 94 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. alter-catalog: no earlier finding. The batch's only change marks a property written without = as omitted; the verdicts are unchanged."
+
+[review.fingerprints]
+"db.ddl.alter-catalog" = "6443275a3cb173dc82474151b6e7012dba7e43a6cf760c9bfdc64c641026557c"
+
+[review.definitions]
+"db.ddl.alter-catalog" = "2aa01db6302fb45617391089b6ac19848cde12bdde7948401d72a22b9891dcff"
+
+[[review]]
+id = "db-ddl-082"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-recipient",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 60 of 60 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. alter-recipient: db-ddl-005 and db-ddl-071 (a written and an omitted = gave the same eq node) are answered: SET PROPERTIES ( v1 'v' ) now carries written_as omitted, and dotted property keys are dot nodes."
+
+[review.fingerprints]
+"db.ddl.alter-recipient" = "e6b0f0ab3c1925bf8f771e7f63fc1c6bee619bf622b2f9fa1d9adcfa59f45294"
+
+[review.definitions]
+"db.ddl.alter-recipient" = "5ee0078712bd30844a58d578c337613cbc92dd08b65fdd024f79645f9214ae81"
+
+[[review]]
+id = "db-ddl-083"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table-manage-column.add",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 55 of 55 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. alter-table-manage-column.add: db-ddl-010 (opaque ADD COLUMN) is answered: AddColumn keeps the default, comment, collation, the MASK option and position FIRST per column."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.add" = "670f2c9e13d85de7515e0e08c9bdd0f526a96656f62377127f20582f2e3da47a"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.add" = "ee5b4f4d0ef8af066f5d041e68832cd3ee0089840e26af20512be74cf3b88ee1"
+
+[[review]]
+id = "db-ddl-084"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table.alter-table-set-external",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 2 of 5 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. alter-table.alter-table-set-external: db-ddl-018 is answered: SET EXTERNAL DRY RUN gives SetProperty (SET EXTERNAL, DRY RUN), and without DRY RUN the value is empty. The form stays unverified until its observed cases are recorded."
+
+[review.fingerprints]
+"db.ddl.alter-table.alter-table-set-external" = "c8701499fc3803d95f18808e81cbebcfb7e6ca4dad857e614b6a07ff67072552"
+
+[review.definitions]
+"db.ddl.alter-table.alter-table-set-external" = "8ee92f8a6d1a63c726c866bef575af111bad63a106d7757a7319a8ec2cc2bcfa"
+
+[[review]]
+id = "db-ddl-085"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table.alter-table-set-managed",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 7 of 14 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. alter-table.alter-table-set-managed: db-ddl-019 is answered: SET MANAGED MOVE and COPY give SetProperty (SET MANAGED, MOVE or COPY). The form stays unverified until its observed cases are recorded."
+
+[review.fingerprints]
+"db.ddl.alter-table.alter-table-set-managed" = "ac6b881e76306dc8e2a579f4b2b4e36a1d5b302ce4cec2113277dc875d4fae1c"
+
+[review.definitions]
+"db.ddl.alter-table.alter-table-set-managed" = "28167077a390781949efc2ddfb4e7c13cb5cddfb5a577e7aee7ab4d14c4ffaaa"
+
+[[review]]
+id = "db-ddl-086"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table.alter-table-set-serde",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 8 of 17 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. alter-table.alter-table-set-serde: db-ddl-020 is answered: SET SERDE keeps the serde string and its SERDEPROPERTIES as eq nodes. The form stays unverified until its observed cases are recorded."
+
+[review.fingerprints]
+"db.ddl.alter-table.alter-table-set-serde" = "17d3831efd212ea894ce424446542376910b274127efe1a7d425312f8959955e"
+
+[review.definitions]
+"db.ddl.alter-table.alter-table-set-serde" = "760d321cbea7a668ebf0b1fbded61083e61bb3460d3dc5e6251eabefc63a4c21"
+
+[[review]]
+id = "db-ddl-087"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-view-set-managed",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 5 of 9 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. alter-view-set-managed: db-ddl-022 is answered: ALTER VIEW `v1 Q` SET MANAGED is an alter_object of kind VIEW with the quoted name and the action. The form stays unverified until its observed cases are recorded."
+
+[review.fingerprints]
+"db.ddl.alter-view-set-managed" = "485583208693f7f83e14b3e38ff6484ae624a0f8be7226851f14429a56c7a93e"
+
+[review.definitions]
+"db.ddl.alter-view-set-managed" = "8ffecef0b440777e3b34fdf68ad573ad31c70df44f323d8a2b3fa9c455d5a562"
+
+[[review]]
+id = "db-ddl-088"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.create-connection",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 30 of 30 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. create-connection: no earlier finding. An option written without = is now marked omitted; the verdicts are unchanged."
+
+[review.fingerprints]
+"db.ddl.create-connection" = "2e7e108576f96ba0ab7af6240caee9353dced92eb91b56855b456f1747296371"
+
+[review.definitions]
+"db.ddl.create-connection" = "f8f9fdecc5f2ca1c9a0869526d414e62c0a2981037c5cf6f25266212a44cf64b"
+
+[[review]]
+id = "db-ddl-089"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.create-server",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 30 of 30 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. create-server: no earlier finding. An option written without = is now marked omitted; the verdicts are unchanged."
+
+[review.fingerprints]
+"db.ddl.create-server" = "ec10a89f042c1046e69b1a35916bbbb371cf8e71a303bb9affff5635e496c5ed"
+
+[review.definitions]
+"db.ddl.create-server" = "3659c6fb8959bcf4a5824c6291cd741e31ad563f6136a46830c505ceb7cad962"
+
+[[review]]
+id = "db-ddl-090"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.create-streaming-table-auto-cdc",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 226 of 226 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. create-streaming-table-auto-cdc: db-ddl-034 (* lost in * EXCEPT, IGNORE NULL UPDATES fused) is answered: COLUMNS gives star{except} and IGNORE NULL UPDATES is its own property. db-ddl-073 (o179 met by accident) is answered: o179 is suppressed with the bitemporal grammar line's reason (SYSTEM is non-reserved, so no text omits the operand) and tombstoned, and nothing replaces it; the observed limit o278 that re-claimed it is retired, and k8cab64a557ea no longer cites the form."
+
+[review.fingerprints]
+"db.ddl.create-streaming-table-auto-cdc" = "51944f2b0dab9e1679a98759aef23aafdf2980c8ae406eba33adae49e868e5f9"
+
+[review.definitions]
+"db.ddl.create-streaming-table-auto-cdc" = "8cd996addc188b17dbf1a580db0514177bcb262a8d552bb5621a6314628f048a"
+
+[[review]]
+id = "db-ddl-091"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.create-streaming-table-auto-cdc.create-streaming-table-auto-cdc-from-snapshot",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 54 of 54 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. create-streaming-table-auto-cdc.create-streaming-table-auto-cdc-from-snapshot: db-ddl-035 (* lost) is answered: TRACK HISTORY ON * EXCEPT ( v1 ) gives star{except}."
+
+[review.fingerprints]
+"db.ddl.create-streaming-table-auto-cdc.create-streaming-table-auto-cdc-from-snapshot" = "f25f50df5648b59e13857f30da9e34f4e3be102283f5d25b7cb50d53a4377499"
+
+[review.definitions]
+"db.ddl.create-streaming-table-auto-cdc.create-streaming-table-auto-cdc-from-snapshot" = "294d241309311c16371231370bd8cc5bf377481f1ec897fe8a7e3474f94d8780"
+
+[[review]]
+id = "db-ddl-092"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.create-table-like",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 22 of 24 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. create-table-like: db-ddl-039 is answered: LIKE t1 STORED AS INPUTFORMAT ... OUTPUTFORMAT ... gives a Like constraint and an input_output_format property. The form stays unverified until its observed cases are recorded."
+
+[review.fingerprints]
+"db.ddl.create-table-like" = "8479904318abe330344ebd189e3c1d4f8185557358aa4a9eae1de4e28f339a0c"
+
+[review.definitions]
+"db.ddl.create-table-like" = "53781d308bf71782cdf55b0ee4826fa5f4874a39ae955832d4993aa9594357fa"
+
+[[review]]
+id = "db-ddl-093"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.create-table-using",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 108 of 108 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. create-table-using: db-ddl-073 is answered: OPTIONS and TBLPROPERTIES mark = omitted, and OPTIONS keys keep string-versus-name spelling (string_keys). db-ddl-040's reading finding was answered at db-ddl-070 and is unchanged."
+
+[review.fingerprints]
+"db.ddl.create-table-using" = "3d0e00f2328727f505e165a3dfeb021ba4d6d60aa95adfbafa3fc52e403196ba"
+
+[review.definitions]
+"db.ddl.create-table-using" = "e1dd34b4831737cb839c53ce56fdc73fe0a89b019a56f360bdb02905caa36e71"
+
+[[review]]
+id = "db-ddl-094"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.create-view.view-as",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 138 of 141 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. create-view.view-as: db-ddl-042 is answered: the form has no opaque fallback left; WITH SCHEMA BINDING and the other clauses are structured. The form stays unverified until its observed cases are recorded."
+
+[review.fingerprints]
+"db.ddl.create-view.view-as" = "48395df9112b3bd18d05b693257126bd5524d0f56f5e2b08f2e0834aa525f74f"
+
+[review.definitions]
+"db.ddl.create-view.view-as" = "f975a200c6819ae6098d32432440345ca219615fe6dae929cd3ebde6361587f3"
+
+[[review]]
+id = "db-ddl-095"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.row-filter",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 21 of 21 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. row-filter: db-ddl-046 is answered: WITH ROW FILTER is a property node with the function as a table and its argument tuple, and the constant-literal cases now write literals (ON ( 1 ))."
+
+[review.fingerprints]
+"db.ddl.row-filter" = "40d08f645cc5ed60f7d717ec3ae2022ec869f27e59ca1fd8f4e2d4dae1355f0a"
+
+[review.definitions]
+"db.ddl.row-filter" = "21b321a14715c2a108bedb0dbb674336191150befd38464e688aaac9af3b38d5"
+
+[[review]]
+id = "db-ddl-096"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.tblproperties.options",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 13 of 13 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. tblproperties.options: db-ddl-072 and db-ddl-058 (a missing = collapsed the tree) are answered: = omitted is marked by position on the OPTIONS property node, so the option_present and option_absent [ = ] obligations' trees show which spelling was written. db-ddl-067's 'as written' sentence is superseded by this."
+
+[review.fingerprints]
+"db.ddl.tblproperties.options" = "a9ccc241457d69f5c23eeb7a0f43e867f716f6abab4c6393bb562476f430e25e"
+
+[review.definitions]
+"db.ddl.tblproperties.options" = "4118a50f166bea208d0f88d2e4365b2c5515d48e90031baba4b4aa61b3f123d0"
+
+[[review]]
+id = "db-ddl-097"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.tblproperties.set-tblproperties",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 14 of 14 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. tblproperties.set-tblproperties: db-ddl-072 and db-ddl-058 (a missing = collapsed the tree) are answered: = omitted is marked by position on the SET TBLPROPERTIES property node, so the option_present and option_absent [ = ] obligations' trees show which spelling was written. db-ddl-067's 'as written' sentence is superseded by this."
+
+[review.fingerprints]
+"db.ddl.tblproperties.set-tblproperties" = "542595db7fb9fa30a0c7c29a90efbdc5ded38988f9ea13579fb623b04c3a4bb4"
+
+[review.definitions]
+"db.ddl.tblproperties.set-tblproperties" = "c302c44e30e8f9469b1e406faf5e494658bfd3d53210cce0fab299b826f7e271"
+
+[[review]]
+id = "db-ddl-098"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.tblproperties.tblproperties",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 13 of 13 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. tblproperties.tblproperties: db-ddl-072 and db-ddl-058 (a missing = collapsed the tree) are answered: = omitted is marked with the omitted spelling on the TBLPROPERTIES property node, so the option_present and option_absent [ = ] obligations' trees show which spelling was written. db-ddl-067's 'as written' sentence is superseded by this."
+
+[review.fingerprints]
+"db.ddl.tblproperties.tblproperties" = "d8857b407ac274f9e38c060eac62548a0b12c476a5d529ff329d033dc4ae9a6d"
+
+[review.definitions]
+"db.ddl.tblproperties.tblproperties" = "33a663860db33db453a93672d44de95038003a966864e197d834f62809324eee"
+
+[[review]]
+id = "db-ddl-099"
+family = "ddl"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.ddl.undrop-volume",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 6 of 6 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. undrop-volume: db-ddl-049 (raw string) is answered: a utility statement with the ID as a string operand."
+
+[review.fingerprints]
+"db.ddl.undrop-volume" = "994068832ce55ca106ddc7df17195333278b379623be49b07e544333c47b8fdd"
+
+[review.definitions]
+"db.ddl.undrop-volume" = "472c73d80e757b2ad71f2f43b1d4cccddb95e3c8c8fd9166865063145d651971"

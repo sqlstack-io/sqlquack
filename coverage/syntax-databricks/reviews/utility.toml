@@ -779,3 +779,88 @@ note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) again
 
 [review.definitions]
 "db.utility.describe-table" = "8f56d4b7ca15ab0078e8416067fd0d0ba7ae21bb1d588c7e663c8ad29f6cfdbf"
+
+[[review]]
+id = "db-utility-036"
+family = "utility"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.utility.connector-get",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 8 of 8 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. connector-get: db-utility-007 (opaque) is answered: the utility statement keeps the paths as operands, with TO as a property."
+
+[review.fingerprints]
+"db.utility.connector-get" = "6e5771ba5297404b92df47e3f5dd5288006828c855e6776cbce39483f57fa773"
+
+[review.definitions]
+"db.utility.connector-get" = "70b7f9f9c85aadb8fb2741008aba03d1e1e938b877dfc3201a11c726b0de5729"
+
+[[review]]
+id = "db-utility-037"
+family = "utility"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.utility.connector-put-into",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 10 of 10 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. connector-put-into: db-utility-008 (opaque) is answered: the utility statement keeps the paths as operands, with INTO and OVERWRITE as properties."
+
+[review.fingerprints]
+"db.utility.connector-put-into" = "08fbb82e275e2f9cecd0be86c3434a6222f096183046f2fd0052ff4336d57318"
+
+[review.definitions]
+"db.utility.connector-put-into" = "26be0ca4dbed251827862b12953a34e65c90363a5f1ab0b7ddbd5205949bad85"
+
+[[review]]
+id = "db-utility-038"
+family = "utility"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.utility.describe-volume",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 5 of 5 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. describe-volume: no open finding. The volume name is now a table node with its schema as its own part."
+
+[review.fingerprints]
+"db.utility.describe-volume" = "ea0d81ae5cc10bbb8ff2638e8f81f1b74f4d5ed301e9dbd354a0669c87c58060"
+
+[review.definitions]
+"db.utility.describe-volume" = "e9207808ac0f6bc65c946af9900d8b4c2613ac569731872f8fe35137c6bdd1eb"
+
+[[review]]
+id = "db-utility-039"
+family = "utility"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.utility.fsck",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 15 of 15 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. fsck: db-utility-010 is answered: FSCK REPAIR TABLE t1 METADATA ONLY DRY RUN is accepted, with both as properties."
+
+[review.fingerprints]
+"db.utility.fsck" = "ca84e566372ec3db4bece8effd0c5c5290a54566c3f4cccbe3ba798b4d7c6dd2"
+
+[review.definitions]
+"db.utility.fsck" = "8566df9a2c199ebb728e6b46c722e0b4011905a4f218cfe195b18970f57bac58"
+
+[[review]]
+id = "db-utility-040"
+family = "utility"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.utility.show-tables-dropped",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 16 of 16 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. show-tables-dropped: db-utility-020 is answered: LIMIT 1 is accepted and kept as limit."
+
+[review.fingerprints]
+"db.utility.show-tables-dropped" = "befa4ff1bd9b5ba5a6b0a34782a26827dde24184e976d7ba6c3662dfe9a27abb"
+
+[review.definitions]
+"db.utility.show-tables-dropped" = "a36796c12055102cee64d24446e30f3f4d212161365e72f3954bfeb94a75f0e5"

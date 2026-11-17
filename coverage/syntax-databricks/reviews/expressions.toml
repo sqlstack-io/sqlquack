@@ -918,3 +918,88 @@ note = "Re-binds db-expressions-035, not a re-read: that exclusion was bound to 
 [[review.exclusion]]
 form = "db.expressions.object-type"
 reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
+
+[[review]]
+id = "db-expressions-044"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.expressions.function-invocation",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 43 of 43 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. function-invocation: db-expressions-006 is answered: 5 of the 29 cases write TABLE ( t1 ), which parses as table_argument."
+
+[review.fingerprints]
+"db.expressions.function-invocation" = "6760f03c5e798e989773f35f469309d8af9eb52b741fed6dbc5db46d7000c954"
+
+[review.definitions]
+"db.expressions.function-invocation" = "c13eb68dbe3c2ae0b5ce7aa6d28a875ea5d44ff33bc04d72f1d892204524a5ef"
+
+[[review]]
+id = "db-expressions-045"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.expressions.json-path-expression",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 26 of 26 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. json-path-expression: db-expressions-010 is answered: each [ 'a1' ] is its own json path subscript node."
+
+[review.fingerprints]
+"db.expressions.json-path-expression" = "64aa8d456753486fd7f042af0c05b7976cb573f10e2eba92a3f8935b9d1edaf4"
+
+[review.definitions]
+"db.expressions.json-path-expression" = "8156623bce0775c8e8469b7382bbc6e3da84f094e8e2f939f7c3a461fffd1376"
+
+[[review]]
+id = "db-expressions-046"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names.identifier",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 17 of 17 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. names.identifier: db-expressions-011 is answered (SHOW TABLES IN names a schema), and so is db-expressions-041: SHOW TABLES IN `SELECT` . v1 gives dot(identifier SELECT, quoted, v1), a qualified name kept as parts."
+
+[review.fingerprints]
+"db.expressions.names.identifier" = "3b7a1ecf70f6757a4d593aae4d11569a70b1f8fa53a00fb3cc619d6cad17f68d"
+
+[review.definitions]
+"db.expressions.names.identifier" = "121f195fca0604ea4265a47b6fa366ce4157970edaa0be1600f5652ee72917b9"
+
+[[review]]
+id = "db-expressions-047"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names.subscript-dot-4",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 11 of 11 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. names.subscript-dot-4: db-expressions-018 was answered by volume-position cases. db-expressions-040 is answered: DESCRIBE VOLUME `SELECT` . v1 gives table v1 with schema SELECT, quoted."
+
+[review.fingerprints]
+"db.expressions.names.subscript-dot-4" = "051299c2389b3d3ba9a9048bc04767bc8507c2cf6cce135a6dfa2e1105056580"
+
+[review.definitions]
+"db.expressions.names.subscript-dot-4" = "fa451d49a6b82678c24014646569df70b3f38cb5ce8fe939bdc888fd4d733a40"
+
+[[review]]
+id = "db-expressions-048"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names.subscript-dot.syntax",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 11 of 11 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. names.subscript-dot.syntax: db-expressions-019 was answered by the OPEN cases. db-expressions-041 is answered: OPEN v1 . v1 keeps cursor_qualifier [v1], not one flattened string."
+
+[review.fingerprints]
+"db.expressions.names.subscript-dot.syntax" = "cc88498b336460e4bcec6a700d909abd8e51c0603a210324ec743e2980c7c94c"
+
+[review.definitions]
+"db.expressions.names.subscript-dot.syntax" = "d9228a23fd108d427cc2ace0e91fc1b679f83dcc031932f32570b077251ce0b1"
