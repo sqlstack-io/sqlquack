@@ -586,6 +586,9 @@ others:
 - an `INSERT OVERWRITE DIRECTORY` option's value written without `=`, in the directory's
   `options_without_equals`, and a path written after `DIRECTORY` against one given only as the
   `'path'` option;
+- a join's `NEAREST BY`: `APPROX` against `EXACT`, `DISTANCE` against `SIMILARITY`, and the number
+  of results written or not; a `WATERMARK` expression bare, with an alias, with `AS` and with
+  `AS ( aliases )`;
 - each pipe operator with the pipe written before it (`|>` or `|`), in the `pipe_operators` of
   the select it amounts to, so `FROM t1 |> AGGREGATE sum ( c1 )` keeps `|> AGGREGATE` apart from
   `SELECT sum ( c1 ) FROM t1` and from `FROM t1 | AGGREGATE sum ( c1 )`; a trailing `|>` with

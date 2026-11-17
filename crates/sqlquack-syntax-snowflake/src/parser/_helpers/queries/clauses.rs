@@ -700,6 +700,8 @@ impl Parser {
                     trailing_comments: Vec::new(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 },
             };
             subquery
@@ -753,6 +755,8 @@ impl Parser {
                     trailing_comments: Vec::new(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 })))
             } else {
                 Ok(Expression::Subquery(Box::new(Subquery {
@@ -772,6 +776,8 @@ impl Parser {
                     trailing_comments: Vec::new(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 })))
             }
         } else {

@@ -4,7 +4,8 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{
-    From, Join, JoinKind, LateralView, Pivot, Sample, SampleMethod, Select, Stream, Unpivot,
+    From, Join, JoinKind, LateralView, NearestBy, Pivot, Sample, SampleMethod, Select, Stream,
+    Unpivot, Watermark,
 };
 use sqlquack_syntax::expressions::statements::models::Version;
 
@@ -173,25 +174,41 @@ impl Parser<'_> {
         } else if self.eat_kw("USING") {
             JoinConstraint::Using(self.identifier_list()?)
         } else if self.kw_in(0, &["APPROX", "EXACT"]) && self.kw_at(1, "NEAREST") {
-            let start: usize = self.offset();
-            self.at += 2;
-            if self
-                .peek()
-                .is_some_and(|token| token.kind == TokenKind::Number(NumberKind::Integer))
-            {
-                self.at += 1;
-            }
-            self.expect_kw("BY")?;
-            if !(self.eat_kw("DISTANCE") || self.eat_kw("SIMILARITY")) {
-                return Err(self.error());
-            }
-            self.expression()?;
-            self.gap("nearest_by", start);
-            JoinConstraint::None
+            let nearest: NearestBy = self.nearest_by()?;
+            let mut node: Join = join(right, kind, JoinConstraint::None, (inner, outer));
+            node.nearest_by = Some(Box::new(nearest));
+            return Ok(node);
         } else {
             JoinConstraint::None
         };
         Ok(join(right, kind, constraint, (inner, outer)))
+    }
+
+    /// `{APPROX | EXACT} NEAREST [num_results] BY {DISTANCE | SIMILARITY} expression`.
+    fn nearest_by(&mut self) -> Parsing<NearestBy> {
+        let exact: bool = self.kw("EXACT");
+        self.at += 2;
+        let results: Option<Expression> = match self
+            .peek()
+            .is_some_and(|token| token.kind == TokenKind::Number(NumberKind::Integer))
+        {
+            true => Some(self.primary_expression()?),
+            false => None,
+        };
+        self.expect_kw("BY")?;
+        let similarity: bool = if self.eat_kw("DISTANCE") {
+            false
+        } else if self.eat_kw("SIMILARITY") {
+            true
+        } else {
+            return Err(self.error());
+        };
+        Ok(NearestBy {
+            exact,
+            results,
+            similarity,
+            by: self.expression()?,
+        })
     }
 
     /// `tableAlias`: `[AS] strictIdentifier [(columns)]`, when present.
@@ -228,13 +245,21 @@ impl Parser<'_> {
                     && !self.kw_at(1, "AS")))
         {
             self.at += 1;
-            let parenthesized: bool = self.is_char('(');
+            if self.eat_char('(') {
+                let mut relation: TableRef = table(self.multipart_identifier()?);
+                self.expect_char(')')?;
+                relation.watermark = self.watermark()?.map(Box::new);
+                let alias: Option<TableAlias> = self.table_alias()?;
+                let stream: Expression = Expression::Stream(Box::new(Stream {
+                    this: paren(Expression::Table(Box::new(relation))),
+                    on: None,
+                    show_initial_rows: None,
+                }));
+                return Ok(aliased(stream, alias));
+            }
             let inner: Expression = self.deeper(|parser| parser.relation_primary_inner(false))?;
             return Ok(Expression::Stream(Box::new(Stream {
-                this: match parenthesized {
-                    true => paren(inner),
-                    false => inner,
-                },
+                this: inner,
                 on: None,
                 show_initial_rows: None,
             })));
@@ -283,7 +308,7 @@ impl Parser<'_> {
                 self.ident()?;
                 self.gap("identified_by", clause);
             }
-            self.watermark()?;
+            self.watermark_gap()?;
             let alias: Option<TableAlias> = self.table_alias()?;
             return Ok(match is_lateral {
                 true => lateral(call, alias),
@@ -303,9 +328,18 @@ impl Parser<'_> {
                 Ok(query)
             });
             if let Ok(query) = attempt {
-                self.trailing_relation_clauses(start, "subquery_sample")?;
+                let table_sample: Option<Sample> = match self.kw("TABLESAMPLE") {
+                    true => Some(self.sample()?),
+                    false => None,
+                };
+                let watermark: Option<Watermark> = self.watermark()?;
                 let alias: Option<TableAlias> = self.table_alias()?;
-                return Ok(subquery(query, alias, is_lateral));
+                let mut node: Expression = subquery(query, alias, is_lateral);
+                if let Expression::Subquery(ref mut derived) = node {
+                    derived.table_sample = table_sample.map(Box::new);
+                    derived.watermark = watermark.map(Box::new);
+                }
+                return Ok(node);
             }
         }
         self.at += 1;
@@ -341,7 +375,7 @@ impl Parser<'_> {
         if self.kw("TABLESAMPLE") {
             relation.table_sample = Some(Box::new(self.sample()?));
         }
-        self.watermark()?;
+        relation.watermark = self.watermark()?.map(Box::new);
         if let Some(alias) = self.table_alias()? {
             relation.alias = Some(alias.name);
             relation.alias_explicit_as = alias.explicit;
@@ -356,37 +390,48 @@ impl Parser<'_> {
             self.sample()?;
             self.gap(construct, start);
         }
-        self.watermark()
+        self.watermark_gap()
     }
 
-    /// `watermarkClause`: `WATERMARK namedExpression DELAY OF interval`, as a gap.
-    fn watermark(&mut self) -> Parsing<()> {
-        if !self.kw("WATERMARK") || self.terminal_at(1) {
-            return Ok(());
-        }
+    /// A `watermarkClause` where the tree has no place for one, as a gap.
+    fn watermark_gap(&mut self) -> Parsing<()> {
         let start: usize = self.offset();
-        self.at += 1;
-        self.expression()?;
-        if self.eat_kw("AS") {
-            match self.is_char('(') {
-                true => {
-                    self.identifier_list()?;
-                }
-                false => {
-                    self.ident()?;
-                }
-            }
-        } else if self.is(is_identifier) && !(self.kw("DELAY") && self.kw_at(1, "OF")) {
-            self.ident()?;
+        if self.watermark()?.is_some() {
+            self.gap("watermark", start);
         }
+        Ok(())
+    }
+
+    /// `watermarkClause`: `WATERMARK namedExpression DELAY OF interval`, when written.
+    fn watermark(&mut self) -> Parsing<Option<Watermark>> {
+        if !self.kw("WATERMARK") || self.terminal_at(1) {
+            return Ok(None);
+        }
+        self.at += 1;
+        let this: Expression = self.expression()?;
+        let alias_explicit_as: bool = self.eat_kw("AS");
+        let aliases_parenthesized: bool = alias_explicit_as && self.is_char('(');
+        let aliases: Vec<Identifier> = if aliases_parenthesized {
+            self.identifier_list()?
+        } else if alias_explicit_as
+            || (self.is(is_identifier) && !(self.kw("DELAY") && self.kw_at(1, "OF")))
+        {
+            vec![self.ident()?]
+        } else {
+            Vec::new()
+        };
         self.expect_kw("DELAY")?;
         self.expect_kw("OF")?;
         if !self.kw("INTERVAL") {
             return Err(self.error());
         }
-        self.primary_expression()?;
-        self.gap("watermark", start);
-        Ok(())
+        Ok(Some(Watermark {
+            this,
+            aliases,
+            alias_explicit_as,
+            aliases_parenthesized,
+            delay: self.primary_expression()?,
+        }))
     }
 
     /// The rest of a `changesClause` after `CHANGES FROM`.

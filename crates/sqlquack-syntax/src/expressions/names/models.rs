@@ -7,6 +7,7 @@ use std::fmt;
 use crate::expressions::operators::models::Alias;
 use crate::expressions::operators::models::Changes;
 use crate::expressions::queries::models::Sample;
+use crate::expressions::queries::models::Watermark;
 use crate::expressions::statements::models::HistoricalData;
 use crate::expressions::statements::models::Version;
 use crate::expressions::tree::models::Expression;
@@ -297,6 +298,9 @@ pub struct TableRef {
     /// TABLESAMPLE clause attached to this table reference (DuckDB, BigQuery)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub table_sample: Option<Box<Sample>>,
+    /// Databricks: `WATERMARK ... DELAY OF ...` after the table
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub watermark: Option<Box<Watermark>>,
     /// TSQL table hints: WITH (TABLOCK, INDEX(myindex), ...)
     #[serde(default)]
     pub hints: Vec<Expression>,
@@ -355,6 +359,7 @@ impl TableRef {
             whole_quoted: false,
             catalog_parts: Vec::new(),
             schema_omitted: false,
+            watermark: None,
         }
     }
 
@@ -403,6 +408,7 @@ impl TableRef {
             whole_quoted: false,
             catalog_parts: Vec::new(),
             schema_omitted: false,
+            watermark: None,
         }
     }
 

@@ -297,6 +297,8 @@ impl Parser {
                             trailing_comments: values.trailing_comments,
                             inferred_type: None,
                             span: values.span,
+                            table_sample: None,
+                            watermark: None,
                         },
                         _ => return Err(self.parse_error("Expected a query in DELETE USING ( )")),
                     };

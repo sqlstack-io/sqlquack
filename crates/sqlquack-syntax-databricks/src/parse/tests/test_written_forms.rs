@@ -419,6 +419,26 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 3,
         },
         DistinctTreesTestCase {
+            description: "NEAREST BY: APPROX or EXACT, with or without a count, DISTANCE or SIMILARITY",
+            written: &[
+                "SELECT * FROM t1 JOIN t2 APPROX NEAREST BY DISTANCE f1 ( 1 )",
+                "SELECT * FROM t1 JOIN t2 EXACT NEAREST BY DISTANCE f1 ( 1 )",
+                "SELECT * FROM t1 JOIN t2 APPROX NEAREST 1 BY DISTANCE f1 ( 1 )",
+                "SELECT * FROM t1 JOIN t2 APPROX NEAREST BY SIMILARITY f1 ( 1 )",
+            ],
+            expected_distinct_trees: 4,
+        },
+        DistinctTreesTestCase {
+            description: "a WATERMARK expression bare, aliased, aliased with AS, and with AS ( aliases )",
+            written: &[
+                "SELECT * FROM t1 WATERMARK c1 DELAY OF INTERVAL 1 MINUTE",
+                "SELECT * FROM t1 WATERMARK c1 a2 DELAY OF INTERVAL 1 MINUTE",
+                "SELECT * FROM t1 WATERMARK c1 AS a2 DELAY OF INTERVAL 1 MINUTE",
+                "SELECT * FROM t1 WATERMARK c1 AS ( a2 ) DELAY OF INTERVAL 1 MINUTE",
+            ],
+            expected_distinct_trees: 4,
+        },
+        DistinctTreesTestCase {
             description: "<=> and IS NOT DISTINCT FROM",
             written: &["SELECT 1 <=> 2", "SELECT 1 IS NOT DISTINCT FROM 2"],
             expected_distinct_trees: 2,

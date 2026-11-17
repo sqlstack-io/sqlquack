@@ -522,6 +522,12 @@ pub struct Subquery {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// Databricks: `TABLESAMPLE` after the parenthesized query
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub table_sample: Option<Box<Sample>>,
+    /// Databricks: `WATERMARK ... DELAY OF ...` after the parenthesized query
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub watermark: Option<Box<Watermark>>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -713,6 +719,9 @@ pub struct Join {
     /// Snowflake: the alias in `FIRST ( alias )` or `LAST ( alias )`; absent when none
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub first_last_alias: Option<Identifier>,
+    /// Databricks: `{APPROX | EXACT} NEAREST [n] BY {DISTANCE | SIMILARITY} expression`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub nearest_by: Option<Box<NearestBy>>,
     /// PostgreSQL `USING (…) AS alias`: the alias of the join's USING columns
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub using_alias: Option<Identifier>,
@@ -720,6 +729,44 @@ pub struct Join {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+}
+
+/// Databricks: a join's `{APPROX | EXACT} NEAREST [n] BY {DISTANCE | SIMILARITY} expression`.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct NearestBy {
+    /// Whether EXACT was written rather than APPROX
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub exact: bool,
+    /// The number of nearest rows, when written
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub results: Option<Expression>,
+    /// Whether SIMILARITY was written rather than DISTANCE
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub similarity: bool,
+    /// The expression the rows are ranked by
+    pub by: Expression,
+}
+
+/// Databricks: a relation's `WATERMARK expression [[AS] alias | AS ( aliases )] DELAY OF interval`.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Watermark {
+    /// The event-time expression
+    pub this: Expression,
+    /// The expression's alias or aliases, when written
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub aliases: Vec<Identifier>,
+    /// Whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub alias_explicit_as: bool,
+    /// Whether the aliases were written in parentheses
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub aliases_parenthesized: bool,
+    /// The delay after `DELAY OF`
+    pub delay: Expression,
 }
 
 /// Every join type, standard and dialect-specific (SEMI/ANTI, APPLY, ASOF, ARRAY, ...).

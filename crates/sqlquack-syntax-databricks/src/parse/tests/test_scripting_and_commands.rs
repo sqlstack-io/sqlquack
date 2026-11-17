@@ -421,6 +421,26 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
             sql: "INSERT OVERWRITE DIRECTORY USING PARQUET OPTIONS ( 'path' '/tmp/x' ) SELECT 1",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
+        VerdictTestCase {
+            description: "APPROX NEAREST BY DISTANCE parses (DATATYPE_MISMATCH, a semantic error)",
+            sql: "SELECT * FROM t1 JOIN t2 APPROX NEAREST BY DISTANCE vector_l2_distance ( 1 , 1 )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a sampled LATERAL subquery parses (accepted)",
+            sql: "SELECT * FROM LATERAL ( SELECT 1 ) TABLESAMPLE ( 50 PERCENT ) a1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a sampled table with a WATERMARK parses (accepted)",
+            sql: "SELECT * FROM t1 TABLESAMPLE ( 50 PERCENT ) WATERMARK c1 DELAY OF INTERVAL 1 MINUTE a1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "an aliased parenthesized STREAM parses (streaming relations unsupported here)",
+            sql: "SELECT * FROM STREAM ( t1 ) a1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

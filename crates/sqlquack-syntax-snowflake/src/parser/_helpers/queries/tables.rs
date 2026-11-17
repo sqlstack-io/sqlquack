@@ -1561,6 +1561,7 @@ impl Parser {
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
                 schema_omitted: false,
+                watermark: None,
             });
         }
 
@@ -1595,6 +1596,7 @@ impl Parser {
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
                     schema_omitted: true,
+                    watermark: None,
                 })
             } else {
                 let table = self.parse_bigquery_table_part()?;
@@ -1625,6 +1627,7 @@ impl Parser {
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
                         schema_omitted: false,
+                        watermark: None,
                     })
                 } else {
                     let trailing_comments = self.previous_trailing_comments().to_vec();
@@ -1652,6 +1655,7 @@ impl Parser {
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
                         schema_omitted: false,
+                        watermark: None,
                     })
                 }
             }
@@ -1681,6 +1685,7 @@ impl Parser {
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
                 schema_omitted: false,
+                watermark: None,
             })
         }
     }

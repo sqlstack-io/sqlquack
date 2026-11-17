@@ -227,6 +227,7 @@ fn join_constructs(join: &Join) -> Vec<Construct> {
         first_last_alias: _,
         using_alias,
         span: _,
+        nearest_by: _,
     } = join;
     let mut constructs = vec![Construct::new(
         ConstructFamily::Join,

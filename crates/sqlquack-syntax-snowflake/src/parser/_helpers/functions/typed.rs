@@ -682,6 +682,8 @@ impl Parser {
                     cluster_by: None,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 }));
 
                 return Ok(Expression::Function(Box::new(Function {

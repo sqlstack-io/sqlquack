@@ -690,6 +690,8 @@ impl Parser {
             trailing_comments: self.previous_trailing_comments().to_vec(),
             inferred_type: None,
             span: SourceSpan::default(),
+            table_sample: None,
+            watermark: None,
         })))
     }
 
@@ -742,6 +744,8 @@ impl Parser {
                 trailing_comments: self.previous_trailing_comments().to_vec(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                table_sample: None,
+                watermark: None,
             }))
         } else {
             Expression::Subquery(Box::new(Subquery {
@@ -761,6 +765,8 @@ impl Parser {
                 trailing_comments: self.previous_trailing_comments().to_vec(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                table_sample: None,
+                watermark: None,
             }))
         };
 
@@ -818,6 +824,8 @@ impl Parser {
                     cluster_by: None,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 }))
             } else {
                 set_result
@@ -896,6 +904,8 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        table_sample: None,
+                        watermark: None,
                     })))
                 }
                 _ => None,
@@ -945,6 +955,8 @@ impl Parser {
                     cluster_by: None,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 })));
             }
         }

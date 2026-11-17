@@ -125,6 +125,7 @@ impl Parser {
             whole_quoted: false,
             catalog_parts: Vec::new(),
             schema_omitted: false,
+            watermark: None,
         })))
     }
 

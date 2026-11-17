@@ -20,6 +20,11 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "STREAM's parentheses hold only a table name (STREAM ( multipartIdentifier ))",
+            sql: "SELECT * FROM STREAM ( t1 a1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
             description: "ANTI is strict non-reserved, so it cannot be a bare table alias",
             sql: "SELECT * FROM t anti",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -387,14 +392,14 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "WATERMARK after TABLESAMPLE, before an alias, is a gap",
+            description: "WATERMARK after TABLESAMPLE, before an alias, is part of the table's tree",
             sql: "SELECT * FROM t TABLESAMPLE ( 50 PERCENT ) WATERMARK c DELAY OF INTERVAL 1 MINUTE a",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "WATERMARK on a LATERAL subquery is a gap",
+            description: "WATERMARK on a LATERAL subquery is part of the subquery's tree",
             sql: "SELECT * FROM LATERAL ( SELECT 1 ) WATERMARK c DELAY OF INTERVAL 1 MINUTE a",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "WATERMARK needs an interval after DELAY OF",
@@ -1231,6 +1236,54 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' SELECT 1",
             pointer: "/0/insert/directory/row_format/fields_terminated_by",
             expected_json: "\",\"",
+        },
+        ValueTestCase {
+            description: "EXACT NEAREST is kept on the join",
+            sql: "SELECT * FROM t1 JOIN t2 EXACT NEAREST BY SIMILARITY vector_l2_distance ( 1 , 1 )",
+            pointer: "/0/select/joins/0/nearest_by/exact",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "BY SIMILARITY is kept on the join",
+            sql: "SELECT * FROM t1 JOIN t2 EXACT NEAREST BY SIMILARITY vector_l2_distance ( 1 , 1 )",
+            pointer: "/0/select/joins/0/nearest_by/similarity",
+            expected_json: "true",
+        },
+        ValueTestCase {
+            description: "NEAREST keeps its number of results",
+            sql: "SELECT * FROM t1 JOIN t2 APPROX NEAREST 1 BY DISTANCE vector_l2_distance ( 1 , 1 )",
+            pointer: "/0/select/joins/0/nearest_by/results/literal/value",
+            expected_json: "\"1\"",
+        },
+        ValueTestCase {
+            description: "NEAREST keeps the expression the rows are ranked by",
+            sql: "SELECT * FROM t1 JOIN t2 APPROX NEAREST BY DISTANCE vector_l2_distance ( 1 , 1 )",
+            pointer: "/0/select/joins/0/nearest_by/by/function/name",
+            expected_json: "\"vector_l2_distance\"",
+        },
+        ValueTestCase {
+            description: "a sampled subquery keeps its TABLESAMPLE",
+            sql: "SELECT * FROM LATERAL ( SELECT 1 ) TABLESAMPLE ( 50 PERCENT ) a1",
+            pointer: "/0/select/from/expressions/0/subquery/table_sample/size/literal/value",
+            expected_json: "\"50\"",
+        },
+        ValueTestCase {
+            description: "a table keeps its WATERMARK's event-time column",
+            sql: "SELECT * FROM t1 TABLESAMPLE ( 50 PERCENT ) WATERMARK c1 DELAY OF INTERVAL 1 MINUTE a1",
+            pointer: "/0/select/from/expressions/0/table/watermark/this/column/name/name",
+            expected_json: "\"c1\"",
+        },
+        ValueTestCase {
+            description: "a subquery keeps its WATERMARK's delay",
+            sql: "SELECT * FROM LATERAL ( SELECT 1 ) TABLESAMPLE ( 50 PERCENT ) WATERMARK c1 DELAY OF INTERVAL 1 MINUTE a1",
+            pointer: "/0/select/from/expressions/0/subquery/watermark/delay/interval/unit/unit",
+            expected_json: "\"Minute\"",
+        },
+        ValueTestCase {
+            description: "a parenthesized STREAM's alias names the stream, outside the parentheses",
+            sql: "SELECT * FROM STREAM ( t1 ) a1",
+            pointer: "/0/select/from/expressions/0/alias/alias/name",
+            expected_json: "\"a1\"",
         },
         ValueTestCase {
             description: "an explicit ALL is recorded, not folded into none",

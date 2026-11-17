@@ -1318,6 +1318,8 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                table_sample: None,
+                watermark: None,
             }))
         } else {
             inner

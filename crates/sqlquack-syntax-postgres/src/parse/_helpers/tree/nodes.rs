@@ -359,6 +359,8 @@ pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: boo
         trailing_comments: Vec::new(),
         inferred_type: None,
         span: SourceSpan(None),
+        table_sample: None,
+        watermark: None,
     }))
 }
 
@@ -411,6 +413,7 @@ pub(crate) fn join(
         first_last: None,
         first_last_alias: None,
         span: SourceSpan(None),
+        nearest_by: None,
     }
 }
 

@@ -683,6 +683,8 @@ impl Parser {
                 trailing_comments: trailing,
                 inferred_type: None,
                 span: SourceSpan::default(),
+                table_sample: None,
+                watermark: None,
             };
             let explicit_as = self.match_token(TokenType::As);
             if explicit_as || self.is_identifier_token() || self.is_safe_keyword_as_identifier() {

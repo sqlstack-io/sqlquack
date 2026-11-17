@@ -628,6 +628,8 @@ impl Parser {
                 trailing_comments: self.previous_trailing_comments().to_vec(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                table_sample: None,
+                watermark: None,
             }))
         } else {
             self.parse_table_expression_primary()?
@@ -742,6 +744,7 @@ impl Parser {
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
                     schema_omitted: false,
+                    watermark: None,
                 })
             }
         })
@@ -832,6 +835,7 @@ impl Parser {
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
                     schema_omitted: true,
+                    watermark: None,
                 }));
             }
 
@@ -871,6 +875,7 @@ impl Parser {
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
                         schema_omitted: false,
+                        watermark: None,
                     })
                 } else {
                     if self.match_token(TokenType::LParen) {
@@ -927,6 +932,7 @@ impl Parser {
                             whole_quoted: false,
                             catalog_parts: Vec::new(),
                             schema_omitted: false,
+                            watermark: None,
                         })
                     }
                 }
@@ -985,6 +991,7 @@ impl Parser {
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
                         schema_omitted: false,
+                        watermark: None,
                     })
                 }
             }
@@ -1213,6 +1220,7 @@ impl Parser {
                                             whole_quoted: false,
                                             catalog_parts: Vec::new(),
                                             schema_omitted: false,
+                                            watermark: None,
                                         })
                                     } else {
                                         let tc = self.previous_trailing_comments().to_vec();
@@ -1240,6 +1248,7 @@ impl Parser {
                                             whole_quoted: false,
                                             catalog_parts: Vec::new(),
                                             schema_omitted: false,
+                                            watermark: None,
                                         })
                                     }
                                 } else {
@@ -1268,6 +1277,7 @@ impl Parser {
                                         whole_quoted: false,
                                         catalog_parts: Vec::new(),
                                         schema_omitted: false,
+                                        watermark: None,
                                     })
                                 }
                             } else {
@@ -1307,6 +1317,8 @@ impl Parser {
                         cluster_by: None,
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        table_sample: None,
+                        watermark: None,
                     }))
                 } else {
                     let table_expr = self.parse_table_expression()?;
@@ -1328,6 +1340,8 @@ impl Parser {
                         cluster_by: None,
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        table_sample: None,
+                        watermark: None,
                     }))
                 }
             } else {
@@ -1499,6 +1513,8 @@ impl Parser {
                     trailing_comments: self.previous_trailing_comments().to_vec(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 }))
             } else if self.check(TokenType::Select)
                 || self.check(TokenType::With)
@@ -1535,6 +1551,8 @@ impl Parser {
                         cluster_by: None,
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        table_sample: None,
+                        watermark: None,
                     }));
                     self.parse_set_operation(left)?
                 } else {
@@ -1557,6 +1575,8 @@ impl Parser {
                     trailing_comments: trailing,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 }))
             } else if self.check(TokenType::LParen) {
                 let inner = self.parse_table_expression()?;
@@ -1651,6 +1671,8 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        table_sample: None,
+                        watermark: None,
                     }))
                 } else if self.check(TokenType::Limit) || self.check(TokenType::Offset) {
                     let limit = if self.match_token(TokenType::Limit) {
@@ -1687,6 +1709,8 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        table_sample: None,
+                        watermark: None,
                     }))
                 } else {
                     result
@@ -1745,6 +1769,8 @@ impl Parser {
                     trailing_comments: self.previous_trailing_comments().to_vec(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 }))
             }
         })
@@ -1845,6 +1871,7 @@ impl Parser {
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
                 schema_omitted: false,
+                watermark: None,
             })
         })
     }

@@ -847,6 +847,8 @@ impl Parser {
                     cluster_by: None,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 })))
             } else if self.check(TokenType::LParen) {
                 let inner = self.parse_select_or_paren_select()?;
@@ -874,6 +876,8 @@ impl Parser {
                     cluster_by: None,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 })))
             } else {
                 Err(self.parse_error("Expected SELECT, VALUES, or ( after ("))
@@ -1049,6 +1053,7 @@ impl Parser {
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
                 schema_omitted: false,
+                watermark: None,
             }
         } else {
             TableRef::new(table_name.name)
@@ -1275,6 +1280,7 @@ impl Parser {
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
                     schema_omitted: false,
+                    watermark: None,
                 }
             } else {
                 TableRef {
@@ -1301,6 +1307,7 @@ impl Parser {
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
                     schema_omitted: false,
+                    watermark: None,
                 }
             }
         } else {
@@ -1340,6 +1347,7 @@ impl Parser {
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
                         schema_omitted: false,
+                        watermark: None,
                     }
                 } else {
                     TableRef {
@@ -1366,6 +1374,7 @@ impl Parser {
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
                         schema_omitted: false,
+                        watermark: None,
                     }
                 }
             } else {
@@ -1422,6 +1431,7 @@ impl Parser {
                 first_last: None,
                 first_last_alias: None,
                 span: SourceSpan::default(),
+                nearest_by: None,
             });
         }
         Ok(table_joins)
