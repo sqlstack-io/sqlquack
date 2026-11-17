@@ -2,12 +2,11 @@
 
 use std::collections::BTreeSet;
 
-use serde_json::Value;
-
 use crate::screen::_helpers::mutations::mutations;
 use crate::screen::models::{
     AllowedSameTree, SameTree, ScreenAllowlist, ScreenReport, ScreenedCase,
 };
+use crate::screen::types::{TokensOf, TreeOf};
 
 fn allows(entry: &AllowedSameTree, found: &SameTree) -> bool {
     entry.form == found.form
@@ -19,10 +18,10 @@ fn allows(entry: &AllowedSameTree, found: &SameTree) -> bool {
         && (!entry.last_token || found.mutation.last)
 }
 
-/// Parses each case and its variants with `tree`, which gives none for a refused text.
+/// Every accepted case's same-tree variants, by `tree` (none when refused) and the lexer's `lexed` ranges.
 pub fn screen_cases(
     cases: &[ScreenedCase],
-    tree: &dyn Fn(&str) -> Option<Value>,
+    (tree, lexed): (&TreeOf, &TokensOf),
     allowlist: &ScreenAllowlist,
 ) -> ScreenReport {
     let mut report: ScreenReport = ScreenReport::default();
@@ -33,7 +32,7 @@ pub fn screen_cases(
             continue;
         };
         report.cases += 1;
-        for mutation in mutations(&case.sql) {
+        for mutation in mutations(&case.sql, &lexed(&case.sql)) {
             report.variants += 1;
             if tree(&mutation.sql).as_ref() != Some(&original) {
                 continue;

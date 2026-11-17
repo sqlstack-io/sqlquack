@@ -2,7 +2,7 @@ use serde_json::{Value, json};
 
 use crate::screen::main::screen_cases::screen_cases;
 use crate::screen::models::{AllowedSameTree, MutationKind, ScreenAllowlist, ScreenReport};
-use crate::screen::tests::helpers::{FORM, case, databricks_tree, entry};
+use crate::screen::tests::helpers::{FORM, case, databricks_tokens, databricks_tree, entry};
 use crate::screen::tests::test_types::{AllowlistTestCase, KnownCollapseTestCase};
 
 #[test]
@@ -120,7 +120,7 @@ fn given_a_spelling_the_grammar_keeps_when_screening_then_its_variant_has_its_ow
         );
         let report: ScreenReport = screen_cases(
             &[case(test_case.sql)],
-            &databricks_tree,
+            (&databricks_tree, &databricks_tokens),
             &ScreenAllowlist::default(),
         );
         let flagged: bool = report
@@ -190,7 +190,7 @@ fn given_an_allowlist_when_screening_then_only_unlisted_same_trees_fail_and_unus
     for test_case in test_cases {
         let report: ScreenReport = screen_cases(
             &[case("m1 m2")],
-            &constant,
+            (&constant, &|_: &str| Vec::new()),
             &ScreenAllowlist {
                 allowed: test_case.entries,
             },

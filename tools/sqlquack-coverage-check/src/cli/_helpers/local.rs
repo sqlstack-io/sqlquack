@@ -161,6 +161,28 @@ pub(crate) fn local_statements(parser: LocalParser) -> Option<Statements> {
     }
 }
 
+/// A text's token byte ranges as a dialect's lexer reads them.
+pub(crate) type TokenRanges = fn(&str) -> Vec<(usize, usize)>;
+
+/// Each dialect's lexer token ranges, or none when the screen splits that dialect's text on spaces alone.
+pub(crate) fn local_tokens(parser: LocalParser) -> Option<TokenRanges> {
+    match parser {
+        LocalParser::Databricks => Some(|sql| {
+            sqlquack_syntax_databricks::scan::main::scan::scan(sql)
+                .into_iter()
+                .filter(|token| {
+                    !matches!(
+                        token.kind,
+                        sqlquack_syntax_databricks::scan::models::TokenKind::Fault(_)
+                    )
+                })
+                .map(|token| (token.start, token.end))
+                .collect()
+        }),
+        _ => None,
+    }
+}
+
 /// Runs git; its exit code, and its trimmed stdout, or why it could not run.
 pub(crate) fn git(arguments: &[&str]) -> Result<(i32, String), String> {
     match Command::new("git").args(arguments).output() {

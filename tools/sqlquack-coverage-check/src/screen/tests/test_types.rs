@@ -7,6 +7,15 @@ pub(crate) struct MutationsTestCase {
     pub(crate) expected_mutations: Vec<(MutationKind, &'static str, &'static str)>,
 }
 
+/// A text, a variant of it, the lexer ranges used, and whether the variant is written.
+pub(crate) struct GluedTokenTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) variant: &'static str,
+    pub(crate) lexed: fn(&str) -> Vec<(usize, usize)>,
+    pub(crate) expected_written: bool,
+}
+
 /// A Databricks text, a one-token variant of it, and whether the two must parse to the same tree.
 pub(crate) struct KnownCollapseTestCase {
     pub(crate) description: &'static str,

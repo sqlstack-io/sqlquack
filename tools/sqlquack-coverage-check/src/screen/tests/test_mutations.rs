@@ -1,7 +1,8 @@
 use crate::screen::_helpers::mutations::mutations;
 use crate::screen::models::MutationKind;
 use crate::screen::models::MutationKind::{Backquote, Drop, String, Swap, Unquote};
-use crate::screen::tests::test_types::MutationsTestCase;
+use crate::screen::tests::helpers::{databricks_tokens, no_tokens};
+use crate::screen::tests::test_types::{GluedTokenTestCase, MutationsTestCase};
 
 #[test]
 fn given_a_text_when_listing_its_mutations_then_each_token_is_dropped_and_respelled_once() {
@@ -48,7 +49,7 @@ fn given_a_text_when_listing_its_mutations_then_each_token_is_dropped_and_respel
         },
     ];
     for test_case in test_cases {
-        let written = mutations(test_case.sql);
+        let written = mutations(test_case.sql, &[]);
         let found: Vec<(MutationKind, &str, &str)> = written
             .iter()
             .map(|mutation| {
@@ -61,6 +62,51 @@ fn given_a_text_when_listing_its_mutations_then_each_token_is_dropped_and_respel
             .collect();
         assert_eq!(
             found, test_case.expected_mutations,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_glued_token_when_listing_its_mutations_then_the_lexer_changes_it_alone() {
+    let test_cases = [
+        GluedTokenTestCase {
+            description: "a STRUCT field's colon glued to its type is dropped alone",
+            sql: "SELECT CAST ( NULL AS STRUCT < c1 :STRING > )",
+            variant: "SELECT CAST ( NULL AS STRUCT < c1 STRING > )",
+            lexed: databricks_tokens,
+            expected_written: true,
+        },
+        GluedTokenTestCase {
+            description: "the space splitter alone never drops the glued colon",
+            sql: "SELECT CAST ( NULL AS STRUCT < c1 :STRING > )",
+            variant: "SELECT CAST ( NULL AS STRUCT < c1 STRING > )",
+            lexed: no_tokens,
+            expected_written: false,
+        },
+        GluedTokenTestCase {
+            description: "a token glued on both sides is dropped with its neighbours kept apart",
+            sql: "SELECT a1:b1",
+            variant: "SELECT a1 b1",
+            lexed: databricks_tokens,
+            expected_written: true,
+        },
+        GluedTokenTestCase {
+            description: "text inside a comment is still changed by the space splitter",
+            sql: "SELECT /* m */ 1",
+            variant: "SELECT /* */ 1",
+            lexed: databricks_tokens,
+            expected_written: true,
+        },
+    ];
+    for test_case in test_cases {
+        let lexed: Vec<(usize, usize)> = (test_case.lexed)(test_case.sql);
+        let written: bool = mutations(test_case.sql, &lexed)
+            .iter()
+            .any(|mutation| mutation.sql == test_case.variant);
+        assert_eq!(
+            written, test_case.expected_written,
             "{}",
             test_case.description
         );

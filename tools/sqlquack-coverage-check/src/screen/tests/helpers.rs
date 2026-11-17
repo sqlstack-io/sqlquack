@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::cli::_helpers::local::local_statements;
+use crate::cli::_helpers::local::{local_statements, local_tokens};
 use crate::formats::models::LocalParser;
 use crate::screen::main::written_tree::written_tree;
 use crate::screen::models::{AllowedSameTree, MutationKind, ScreenedCase};
@@ -14,6 +14,16 @@ pub(crate) fn databricks_tree(sql: &str) -> Option<Value> {
         .and_then(|parse| parse(sql))
         .as_deref()
         .map(written_tree)
+}
+
+/// The Databricks lexer's token byte ranges of `sql`.
+pub(crate) fn databricks_tokens(sql: &str) -> Vec<(usize, usize)> {
+    local_tokens(LocalParser::Databricks).map_or_else(Vec::new, |ranges| ranges(sql))
+}
+
+/// No lexer ranges: the space splitter alone.
+pub(crate) fn no_tokens(_sql: &str) -> Vec<(usize, usize)> {
+    Vec::new()
 }
 
 pub(crate) fn case(sql: &str) -> ScreenedCase {

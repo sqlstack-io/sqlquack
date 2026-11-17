@@ -7,7 +7,7 @@ use std::process::ExitCode;
 use serde_json::Value;
 
 use crate::cli::_helpers::commands::load;
-use crate::cli::_helpers::local::local_statements;
+use crate::cli::_helpers::local::{local_statements, local_tokens};
 use crate::cli::_helpers::output::{print, say};
 use crate::cli::models::Common;
 use crate::formats::main::current_dialect::current_dialect;
@@ -119,8 +119,12 @@ pub(crate) fn screen(
     };
     let cases: Vec<ScreenedCase> = screened_cases(&coverage, forms, family);
     say(&format!("screening {} cases", cases.len()));
-    let tree = |sql: &str| -> Option<Value> { parse(sql).as_deref().map(written_tree) };
-    let report: ScreenReport = screen_cases(&cases, &tree, &allowlist);
+    let tree = move |sql: &str| -> Option<Value> { parse(sql).as_deref().map(written_tree) };
+    let tokens = local_tokens(current_dialect().local_parser);
+    let lexed = move |sql: &str| -> Vec<(usize, usize)> {
+        tokens.map_or_else(Vec::new, |ranges| ranges(sql))
+    };
+    let report: ScreenReport = screen_cases(&cases, (&tree, &lexed), &allowlist);
     print(common.json, &report, &text(&report));
     Ok(match report.flagged.is_empty() && report.stale.is_empty() {
         true => ExitCode::SUCCESS,
