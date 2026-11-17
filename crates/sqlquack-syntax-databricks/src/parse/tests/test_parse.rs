@@ -45,6 +45,11 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "a WATERMARK after a table function call in STREAM's parentheses is part of the tree",
+            sql: "SELECT * FROM STREAM ( range ( 1 ) ) WATERMARK c1 DELAY OF INTERVAL 1 SECOND",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "ANTI is strict non-reserved, so it cannot be a bare table alias",
             sql: "SELECT * FROM t anti",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
@@ -1330,6 +1335,18 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "\"Minute\"",
         },
         ValueTestCase {
+            description: "a WATERMARK after STREAM's parentheses belongs to the stream, not the table inside",
+            sql: "SELECT * FROM STREAM ( t1 ) WATERMARK c1 DELAY OF INTERVAL 1 SECOND a1",
+            pointer: "/0/select/from/expressions/0/alias/this/stream/watermark/this/column/name/name",
+            expected_json: "\"c1\"",
+        },
+        ValueTestCase {
+            description: "a WATERMARK after a function call in STREAM's parentheses belongs to the stream",
+            sql: "SELECT * FROM STREAM ( range ( 1 ) ) WATERMARK c1 AS w1 DELAY OF INTERVAL 1 SECOND",
+            pointer: "/0/select/from/expressions/0/stream/watermark/aliases/0/name",
+            expected_json: "\"w1\"",
+        },
+        ValueTestCase {
             description: "a parenthesized STREAM's alias names the stream, outside the parentheses",
             sql: "SELECT * FROM STREAM ( t1 ) a1",
             pointer: "/0/select/from/expressions/0/alias/alias/name",
@@ -1753,9 +1770,39 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
         },
         ValueTestCase {
             description: "each repeated item keeps its own keyword clause",
+            sql: "CREATE POLICY v1 ON METASTORE COLUMN MASK f1 TO `u1` FOR TABLES MATCH COLUMNS c1 AS a1 , c2 AS a2 ON COLUMN a1",
+            pointer: "/0/utility_statement/operands/5/property/value/tuple/expressions/1/tuple/expressions/1/property/value/identifier/name",
+            expected_json: "\"a2\"",
+        },
+        ValueTestCase {
+            description: "a USING argument's alias names that argument",
             sql: "EXECUTE IMMEDIATE 'SELECT ?' USING 1 AS v1 , 2 AS v2",
-            pointer: "/0/utility_statement/operands/1/property/value/tuple/expressions/1/tuple/expressions/1/property/value/identifier/name",
+            pointer: "/0/utility_statement/operands/1/property/value/tuple/expressions/1/alias/alias/name",
             expected_json: "\"v2\"",
+        },
+        ValueTestCase {
+            description: "a USING argument keeps whether AS was written",
+            sql: "EXECUTE IMMEDIATE 'SELECT ?' USING 1 AS v1 , 2 v2",
+            pointer: "/0/utility_statement/operands/1/property/value/tuple/expressions/1/alias/alias_explicit_as",
+            expected_json: "false",
+        },
+        ValueTestCase {
+            description: "an alias after one USING argument is not a second argument (recorded accept execute-immediate.k49edafa1aac3)",
+            sql: "EXECUTE IMMEDIATE 'SELECT ?' USING 1 `v1 Q`",
+            pointer: "/0/utility_statement/operands/1/property/value/alias/alias/name",
+            expected_json: "\"v1 Q\"",
+        },
+        ValueTestCase {
+            description: "a keyword after one USING argument is its alias (recorded accept execute-immediate.k393fb1cc3084)",
+            sql: "EXECUTE IMMEDIATE 'SELECT ?' USING 1 SELECT",
+            pointer: "/0/utility_statement/operands/1/property/value/alias/alias/name",
+            expected_json: "\"SELECT\"",
+        },
+        ValueTestCase {
+            description: "two USING arguments stay two arguments",
+            sql: "EXECUTE IMMEDIATE 'SELECT ?' USING 1 , v1",
+            pointer: "/0/utility_statement/operands/1/property/value/tuple/expressions/1/column/name/name",
+            expected_json: "\"v1\"",
         },
         ValueTestCase {
             description: "an optional flag ends its clause before the next optional part",

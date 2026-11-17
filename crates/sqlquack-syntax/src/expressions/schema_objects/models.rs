@@ -248,6 +248,14 @@ pub enum AlterViewAction {
     SetTblproperties(Vec<(String, String)>),
     /// Hive: UNSET TBLPROPERTIES ('key1', 'key2', ...)
     UnsetTblproperties(Vec<String>),
+    /// Databricks: SET TBLPROPERTIES ( k = v , ... ), each key and value as written.
+    SetTableProperties(Vec<(Expression, Expression)>),
+    /// Databricks: UNSET TBLPROPERTIES [ IF EXISTS ] ( k , ... ), each key as written.
+    UnsetTableProperties {
+        properties: Vec<Expression>,
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        if_exists: bool,
+    },
 }
 
 impl AlterView {

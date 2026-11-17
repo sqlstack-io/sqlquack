@@ -183,7 +183,7 @@ impl Parser<'_> {
     }
 
     /// `propertyList` of keys only, refused as Spark refuses one with a value.
-    pub(crate) fn key_property_list(&mut self) -> Parsing<Vec<String>> {
+    pub(crate) fn key_property_list(&mut self) -> Parsing<Vec<Expression>> {
         let at: usize = self.offset();
         let properties: Vec<Expression> = self.property_list()?;
         if properties
@@ -196,7 +196,7 @@ impl Parser<'_> {
                 true,
             ));
         }
-        Ok(properties.iter().map(property_text).collect())
+        Ok(properties)
     }
 
     /// A principal: a user, group or service principal name.
@@ -873,7 +873,7 @@ impl Parser<'_> {
         self.expect_kw("UNSET")?;
         if self.eat_kw("TBLPROPERTIES") {
             let if_exists: bool = self.eat_kws(&["IF", "EXISTS"]);
-            return Ok(Some(AlterTableAction::UnsetProperty {
+            return Ok(Some(AlterTableAction::UnsetTableProperties {
                 properties: self.key_property_list()?,
                 if_exists,
             }));
@@ -909,22 +909,17 @@ impl Parser<'_> {
             }
             Some("SET") if self.kw_at(1, "TBLPROPERTIES") => {
                 self.at += 2;
-                let properties: Vec<(String, String)> = self
-                    .valued_property_list()?
-                    .iter()
-                    .map(|(key, value)| (property_text(key), property_text(value)))
-                    .collect();
-                Some(AlterViewAction::SetTblproperties(properties))
+                Some(AlterViewAction::SetTableProperties(
+                    self.valued_property_list()?,
+                ))
             }
             Some("UNSET") if self.kw_at(1, "TBLPROPERTIES") => {
                 self.at += 2;
-                let if_exists: usize = self.offset();
-                if self.eat_kws(&["IF", "EXISTS"]) {
-                    self.gap("unset_if_exists", if_exists);
-                }
-                Some(AlterViewAction::UnsetTblproperties(
-                    self.key_property_list()?,
-                ))
+                let if_exists: bool = self.eat_kws(&["IF", "EXISTS"]);
+                Some(AlterViewAction::UnsetTableProperties {
+                    properties: self.key_property_list()?,
+                    if_exists,
+                })
             }
             Some("OWNER") => {
                 self.at += 1;
