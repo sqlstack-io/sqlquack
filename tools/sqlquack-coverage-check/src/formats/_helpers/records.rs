@@ -523,8 +523,17 @@ fn no_effect_problems(receipt: &Receipt) -> Vec<String> {
     }
 }
 
-/// The problem, if any, when `locations_redacted` does not count the placeholders in the message.
+/// The problem, if any, when `locations_redacted` miscounts the DCM import's placeholders.
 fn redaction_problem(receipt: &Receipt) -> Option<String> {
+    if receipt.capture_method != CaptureMethod::DcmDefinitionFile {
+        return receipt.locations_redacted.map(|_| {
+            format!(
+                "receipt {}: locations_redacted on a capture other than definition_plan, whose \
+                 import alone redacts",
+                receipt.case_id
+            )
+        });
+    }
     let written: usize = receipt
         .message
         .as_deref()

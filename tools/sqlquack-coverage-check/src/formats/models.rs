@@ -409,7 +409,7 @@ pub struct Receipt {
     /// Account parameters the capture ran under, by name; provenance, never phase.
     #[serde(default)]
     pub account_state: Option<BTreeMap<String, AccountSetting>>,
-    /// How many echoed URLs or stage locations the message holds as `REDACTED_LOCATION`, if any.
+    /// `definition_plan` only: how many echoed locations the message holds as `REDACTED_LOCATION`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub locations_redacted: Option<u32>,
 }
