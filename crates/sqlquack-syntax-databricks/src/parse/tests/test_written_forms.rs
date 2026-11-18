@@ -29,6 +29,26 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 3,
         },
         DistinctTreesTestCase {
+            description: "a resource written as a raw string and as a string",
+            written: &[
+                "ADD FILE r'v1'",
+                "ADD FILE 'v1'",
+                "ADD JAR r'v1'",
+                "ADD JAR 'v1'",
+                "LIST FILE r'v1'",
+                "LIST FILE 'v1'",
+            ],
+            expected_distinct_trees: 6,
+        },
+        DistinctTreesTestCase {
+            description: "a path key written as a raw string and as a string",
+            written: &[
+                "SELECT c1 : [ r'k' ] FROM t1",
+                "SELECT c1 : [ 'k' ] FROM t1",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
             description: "a listed resource written backquoted and as a string holding the backquotes",
             written: &["LIST FILE `v1 Q`", "LIST FILE '`v1 Q`'"],
             expected_distinct_trees: 2,
