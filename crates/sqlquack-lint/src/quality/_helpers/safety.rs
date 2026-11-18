@@ -8,6 +8,7 @@ use std::collections::HashSet;
 
 use crate::tree::main::is_aggregate::is_aggregate;
 use crate::tree::main::is_foreign_aggregate::is_foreign_aggregate;
+use crate::tree::main::nested_chains::nested_chains;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::queries::models::Join;
 use sqlquack_syntax::expressions::queries::models::With;
@@ -484,11 +485,14 @@ fn update_is_limited(update: &Update) -> bool {
         .as_ref()
         .is_some_and(|clause| reads_rows(&clause.this))
         || update.limit.is_some()
-        || update
-            .table_joins
-            .iter()
-            .chain(&update.from_joins)
-            .any(join_is_limiting)
+        || joins_limit(&update.table_joins, &[])
+        || joins_limit(
+            &update.from_joins,
+            update
+                .from_clause
+                .as_ref()
+                .map_or(&[], |from| from.expressions.as_slice()),
+        )
 }
 
 fn delete_is_limited(delete: &Delete) -> bool {
@@ -497,7 +501,23 @@ fn delete_is_limited(delete: &Delete) -> bool {
         .as_ref()
         .is_some_and(|clause| reads_rows(&clause.this))
         || delete.limit.is_some()
-        || delete.joins.iter().any(join_is_limiting)
+        || joins_limit(&delete.joins, &[])
+        || joins_limit(&delete.using_joins, &delete.using_items)
+}
+
+/// Whether a join in `joins`, or one written inside a FROM or USING item, limits the rows.
+fn joins_limit(joins: &[Join], items: &[Expression]) -> bool {
+    if joins.iter().any(join_is_limiting) {
+        return true;
+    }
+    for item in items {
+        for (_, chain) in nested_chains(item) {
+            if chain.iter().any(join_is_limiting) {
+                return true;
+            }
+        }
+    }
+    false
 }
 
 /// Whether a predicate depends on the rows: it reads a column or a subquery, unlike `WHERE TRUE`.

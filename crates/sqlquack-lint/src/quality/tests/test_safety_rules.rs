@@ -165,6 +165,15 @@ fn given_safety_rule_inputs_when_linting_then_exactly_the_mistakes_are_reported(
             expected_anchors: &["UPDATE", "DELETE"],
         },
         SafetyRuleTestCase {
+            description: "a join inside a FROM or USING item limits an UPDATE or DELETE, after a comma too",
+            dialect: "postgres",
+            sql: "UPDATE orders SET status = 'closed' FROM customers c JOIN refunds r ON r.id = orders.id, stores s; \
+                  UPDATE orders SET status = 'closed' FROM stores s, customers c JOIN refunds r ON r.id = c.id; \
+                  DELETE FROM orders USING customers c JOIN refunds r ON r.id = orders.id",
+            rule: "SQLCLEAN049",
+            expected_anchors: &[],
+        },
+        SafetyRuleTestCase {
             description: "DEFAULT VALUES needs no column list",
             dialect: "postgres",
             sql: "INSERT INTO orders DEFAULT VALUES",
