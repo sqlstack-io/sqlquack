@@ -28,11 +28,13 @@ pub fn summarize(check: &CheckResult) -> Summary {
         .into_iter()
         .map(|(family, tally)| {
             let scope_percent: f64 = percent(tally.forms, total.forms);
+            let suppressed_obligations: usize = check.suppressed.get(&family).copied().unwrap_or(0);
             (
                 family,
                 FamilySummary {
                     tally,
                     scope_percent,
+                    suppressed_obligations,
                 },
             )
         })
@@ -50,6 +52,7 @@ pub fn summarize(check: &CheckResult) -> Summary {
         semantic_only_obligations,
         unexcluded_pages: check.unexcluded_pages.len(),
         problems: check.problems.len(),
+        suppressed_obligations: check.suppressed.values().sum(),
         families,
     }
 }

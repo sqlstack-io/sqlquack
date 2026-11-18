@@ -59,29 +59,48 @@ fn names(review: &Review, form: &str) -> bool {
             .is_none_or(|forms| forms.iter().any(|listed| listed == form))
 }
 
-/// Why `form`, with its fingerprint and definition hash, lacks a current review, if it does.
+/// Why `form` lacks a current approval, if it does; a changes_requested review bound to it blocks it.
 pub(crate) fn review_reason(
     form: &str,
     (fingerprint, definition): (&str, &str),
     context: &FamilyContext,
 ) -> Option<Reason> {
     let (reviews, hashes, parser_tree) = (context.reviews, context.hashes, context.parser_tree);
-    let mut named = reviews
+    let named: Vec<&Review> = reviews
         .iter()
         .filter(|review| names(review, form))
-        .peekable();
-    if named.peek().is_none() {
-        return Some(Reason::Unreviewed);
+        .collect();
+    let resolved: BTreeSet<&str> = named
+        .iter()
+        .filter(|review| {
+            current(
+                review,
+                hashes,
+                parser_tree,
+                Some((form, fingerprint, definition)),
+            )
+        })
+        .flat_map(|review| review.resolves.iter().map(String::as_str))
+        .collect();
+    let requests_changes = |review: &&Review| {
+        review.verdict == ReviewVerdict::ChangesRequested
+            && !resolved.contains(review.id.as_str())
+            && review.definitions.get(form).map(String::as_str) == Some(definition)
+            && review.fingerprints.get(form).map(String::as_str) == Some(fingerprint)
+    };
+    match () {
+        () if named.is_empty() => Some(Reason::Unreviewed),
+        () if named.iter().any(requests_changes) => Some(Reason::ChangesRequested),
+        () => (!named.iter().any(|review| {
+            current(
+                review,
+                hashes,
+                parser_tree,
+                Some((form, fingerprint, definition)),
+            )
+        }))
+        .then_some(Reason::StaleReview),
     }
-    (!named.any(|review| {
-        current(
-            review,
-            hashes,
-            parser_tree,
-            Some((form, fingerprint, definition)),
-        )
-    }))
-    .then_some(Reason::StaleReview)
 }
 
 /// The form and source ids that current approved reviews exclude.

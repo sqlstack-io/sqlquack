@@ -58,7 +58,7 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
         cases: 1,
         receipts,
         retired_receipts: 0,
-        reviews: 2,
+        reviews: 3,
         file_hashes: 2 * FAMILIES.len() + 2,
     };
     let test_cases = [
@@ -68,19 +68,13 @@ fn given_a_valid_tree_when_loading_then_every_record_is_kept() {
             expected_counts: counts(1),
         },
         LoadTestCase {
-            description: "a receipt whose message had its echoed location redacted loads",
+            description: "a DCM receipt whose message had its echoed location redacted loads",
             tree: |root| {
                 valid_tree(root);
-                let redacted = receipt_line()
-                    .replace("\"outcome\":\"accepted\"", "\"outcome\":\"error\"")
-                    .replace(
-                        "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
-                        "\"errno\":1688,\"sqlstate\":\"42704\",\"phase\":\"semantic_error\"",
-                    )
-                    .replace(
-                        "\"packet_sha256\"",
-                        "\"message\":\"Asset reference '<location>' is not declared.\",\"locations_redacted\":1,\"packet_sha256\"",
-                    );
+                let redacted = dcm_line(
+                    "Asset reference '<location>' is not declared.",
+                    ",\"locations_redacted\":1",
+                );
                 write(root, "receipts/redacted.jsonl", &format!("{redacted}\n"));
             },
             expected_counts: counts(2),
@@ -658,7 +652,7 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                     "source = \"doc.billing\"",
                 )
             },
-            expected_problem: "review query-1: an exclusion needs exactly one target",
+            expected_problem: "review query-2: an exclusion needs exactly one target",
         },
         FormatFaultTestCase {
             description: "an interaction without the anchor of its usage note",
@@ -1233,41 +1227,46 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
             expected_problem: "unknown field `scope`",
         },
         FormatFaultTestCase {
-            description: "a redacted location the receipt does not count",
+            description: "a DCM receipt with a redacted location it does not count",
             mutate: |root| {
                 write(
                     root,
                     "receipts/first.jsonl",
-                    &receipt_line()
-                    .replace("\"outcome\":\"accepted\"", "\"outcome\":\"error\"")
-                    .replace(
-                        "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
-                        "\"errno\":1688,\"sqlstate\":\"42704\",\"phase\":\"semantic_error\"",
-                    )
-                    .replace(
-                        "\"packet_sha256\"",
-                        "\"message\":\"Asset reference '<location>' is not declared.\",\"locations_redacted\":1,\"packet_sha256\"",
-                    ).replace(",\"locations_redacted\":1", ""),
+                    &dcm_line("Asset reference '<location>' is not declared.", ""),
                 )
             },
             expected_problem: "receipt query.select-17: locations_redacted must count",
         },
         FormatFaultTestCase {
-            description: "a redaction count with no placeholder in the message",
+            description: "a Snowflake execute receipt carrying a redaction count, which only the DCM import makes",
             mutate: |root| {
                 write(
                     root,
                     "receipts/first.jsonl",
                     &receipt_line()
-                    .replace("\"outcome\":\"accepted\"", "\"outcome\":\"error\"")
-                    .replace(
-                        "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
-                        "\"errno\":1688,\"sqlstate\":\"42704\",\"phase\":\"semantic_error\"",
-                    )
-                    .replace(
-                        "\"packet_sha256\"",
-                        "\"message\":\"Asset reference '<location>' is not declared.\",\"locations_redacted\":1,\"packet_sha256\"",
-                    ).replace("'<location>'", "'a1'"),
+                        .replace("\"outcome\":\"accepted\"", "\"outcome\":\"error\"")
+                        .replace(
+                            "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
+                            "\"errno\":1688,\"sqlstate\":\"42704\",\"phase\":\"semantic_error\"",
+                        )
+                        .replace(
+                            "\"packet_sha256\"",
+                            "\"message\":\"Asset reference '<location>' is not declared.\",\"locations_redacted\":1,\"packet_sha256\"",
+                        ),
+                )
+            },
+            expected_problem: "receipt query.select-17: locations_redacted on a capture other than definition_plan",
+        },
+        FormatFaultTestCase {
+            description: "a DCM redaction count with no placeholder in the message",
+            mutate: |root| {
+                write(
+                    root,
+                    "receipts/first.jsonl",
+                    &dcm_line(
+                        "Asset reference 'a1' is not declared.",
+                        ",\"locations_redacted\":1",
+                    ),
                 )
             },
             expected_problem: "receipt query.select-17: locations_redacted must count",
@@ -1278,16 +1277,10 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 write(
                     root,
                     "receipts/first.jsonl",
-                    &receipt_line()
-                    .replace("\"outcome\":\"accepted\"", "\"outcome\":\"error\"")
-                    .replace(
-                        "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
-                        "\"errno\":1688,\"sqlstate\":\"42704\",\"phase\":\"semantic_error\"",
-                    )
-                    .replace(
-                        "\"packet_sha256\"",
-                        "\"message\":\"Asset reference '<location>' is not declared.\",\"locations_redacted\":1,\"packet_sha256\"",
-                    ).replace("'<location>'", "'asset://a1/'"),
+                    &dcm_line(
+                        "Asset reference 'asset://a1/' is not declared.",
+                        ",\"locations_redacted\":1",
+                    ),
                 )
             },
             expected_problem: "receipt query.select-17: holds an account, host, URL or address",
@@ -1426,11 +1419,35 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                 replace(
                     root,
                     "reviews/query.toml",
-                    "sf.query.select.define-view",
-                    "sf.dml.insert",
+                    "form = \"sf.query.select.define-view\"",
+                    "form = \"sf.dml.insert\"",
                 )
             },
             expected_problem: "an exclusion needs exactly one target: a form id of its family",
+        },
+        FormatFaultTestCase {
+            description: "a family review excluding a form without listing it, which would approve the whole family",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "forms = [\"sf.query.select.define-view\"]\n",
+                    "",
+                )
+            },
+            expected_problem: "review query-2: a family review that excludes forms lists exactly those forms",
+        },
+        FormatFaultTestCase {
+            description: "a family review excluding a form and listing another",
+            mutate: |root| {
+                replace(
+                    root,
+                    "reviews/query.toml",
+                    "forms = [\"sf.query.select.define-view\"]",
+                    "forms = [\"sf.query.select.define-view\", \"sf.query.select\"]",
+                )
+            },
+            expected_problem: "review query-2: a family review that excludes forms lists exactly those forms",
         },
         FormatFaultTestCase {
             description: "a review accepting an exclusion without a reason",
@@ -1442,7 +1459,7 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                     " ",
                 )
             },
-            expected_problem: "review query-1: an exclusion needs a reason",
+            expected_problem: "review query-2: an exclusion needs a reason",
         },
         FormatFaultTestCase {
             description: "an alias renaming a form to itself",
@@ -1476,7 +1493,7 @@ fn given_a_format_fault_when_loading_then_the_problem_is_named() {
                     "form = \"sf.query.select.define-view\"\nsource = \"doc.select\"",
                 )
             },
-            expected_problem: "review query-1: an exclusion needs exactly one",
+            expected_problem: "review query-2: an exclusion needs exactly one",
         },
         FormatFaultTestCase {
             description: "a page review excluding a form",

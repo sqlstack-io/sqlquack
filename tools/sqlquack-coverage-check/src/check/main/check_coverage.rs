@@ -41,5 +41,6 @@ pub fn check_coverage(
         problems: reference_problems(coverage, &joined.forms),
         receipt_contradictions: contradicted,
         unjudged_receipts: unjudged,
+        suppressed: coverage.suppressed.clone(),
     }
 }

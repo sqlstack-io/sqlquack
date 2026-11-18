@@ -31,6 +31,8 @@ pub struct Summary {
     pub semantic_only_obligations: usize,
     pub unexcluded_pages: usize,
     pub problems: usize,
+    /// Derived obligations `limits.toml` suppresses: set aside, so in no obligation count.
+    pub suppressed_obligations: usize,
     pub families: BTreeMap<String, FamilySummary>,
 }
 
@@ -39,6 +41,8 @@ pub struct FamilySummary {
     pub tally: Tally,
     /// Family forms / catalogued forms, in percent.
     pub scope_percent: f64,
+    /// The family's suppressed derived obligations.
+    pub suppressed_obligations: usize,
 }
 
 /// What `baseline.json` records: the frozen catalogue and every claim the checker made on it.

@@ -1,15 +1,19 @@
 use crate::check::main::check_coverage::check_coverage;
+use crate::check::main::validation_problems::validation_problems;
 use crate::check::models::{FormState, Reason};
 use crate::check::tests::helpers::{
-    OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, crashing,
+    OLD_FINGERPRINT, OTHER_TREE, SETUP, TREE, append_receipt, case_in_zone, case_line, crashing,
     crashing_on_select_from, drop_lines, exclusion_review, form, hanging, move_form, not_submitted,
     note_obligation, obligation, opaque, pin_definitions, pin_fingerprints, read, receipt_line,
-    rejecting, replace, report_input, reshaped, retired_receipt, rewrite_select_17, select_17,
-    select_17_setup_sha256, sha256, structural, unobservable, verified_tree, with_fields, write,
+    rejecting, replace, report_input, request_changes, reshaped, resolve, retired_receipt,
+    review_of, rewrite_select_17, select_17, select_17_setup_sha256, sha256, structural,
+    unobservable, verified_tree, with_fields, write,
 };
 use crate::check::tests::test_types::{
-    AccountStateTestCase, CheckTestCase, Parameters, ReceiptCheckTestCase,
+    AccountStateTestCase, CheckTestCase, Parameters, ReceiptCheckTestCase, ValidateTestCase,
 };
+use crate::cli::_helpers::commands::validate;
+use crate::cli::models::Common;
 use crate::formats::main::load_coverage::load_coverage;
 
 #[test]
@@ -547,6 +551,24 @@ fn given_a_changed_tree_when_checking_then_the_form_fails_closed_with_its_reason
             expected_problem: Some("review query-1: form sf.query.nowhere is not catalogued"),
         },
         CheckTestCase {
+            description: "a retired form brought back or reused is still named by its tombstone",
+            mutate: |root| {
+                write(
+                    root,
+                    "aliases.toml",
+                    "[[alias]]\nfrom = \"sf.query.select.top\"\nto = [\"sf.query.select\"]\nreason = \"read again\"\n",
+                );
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: Some(
+                "alias sf.query.select.top: not catalogued as absent_from_source",
+            ),
+        },
+        CheckTestCase {
             description: "an unobservable obligation whose case otherwise agrees",
             mutate: |root| unobservable(root, "sf.query.select.o001", "select-17", "SELECT 17"),
             parse: structural,
@@ -1064,6 +1086,32 @@ fn given_a_review_binding_each_form_when_its_family_files_change_then_only_that_
             expected_problem: None,
         },
         CheckTestCase {
+            description: "an approval and a changes_requested review at the same binding",
+            mutate: |root| {
+                pin_definitions(root);
+                request_changes(root, None);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::ChangesRequested),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "a changes_requested review at an older fingerprint beside a current approval",
+            mutate: |root| {
+                pin_definitions(root);
+                request_changes(root, Some(OLD_FINGERPRINT));
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
             description: "another form's obligation edited in the same obligations file",
             mutate: |root| {
                 pin_definitions(root);
@@ -1213,6 +1261,255 @@ fn given_a_review_binding_each_form_when_its_family_files_change_then_only_that_
             "{}: {:?}",
             test_case.description,
             check.problems
+        );
+    }
+}
+
+#[test]
+fn given_an_approval_resolving_reviews_when_checking_then_only_the_named_reviews_at_its_binding_clear()
+ {
+    let test_cases = [
+        CheckTestCase {
+            description: "an approval resolving the changes_requested review at its binding",
+            mutate: |root| {
+                pin_definitions(root);
+                review_of(
+                    root,
+                    "query-2",
+                    "changes_requested",
+                    &["sf.query.select", "sf.query.select.top"],
+                );
+                resolve(root, "query", &["query-2"]);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an approval resolving one of two changes_requested reviews at its binding",
+            mutate: |root| {
+                pin_definitions(root);
+                review_of(
+                    root,
+                    "query-2",
+                    "changes_requested",
+                    &["sf.query.select", "sf.query.select.top"],
+                );
+                review_of(
+                    root,
+                    "query-3",
+                    "changes_requested",
+                    &["sf.query.select", "sf.query.select.top"],
+                );
+                resolve(root, "query", &["query-2"]);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::ChangesRequested),
+            expected_problem: None,
+        },
+        CheckTestCase {
+            description: "an approval resolving an unknown review",
+            mutate: |root| {
+                pin_definitions(root);
+                review_of(
+                    root,
+                    "query-2",
+                    "changes_requested",
+                    &["sf.query.select", "sf.query.select.top"],
+                );
+                resolve(root, "query", &["query-9"]);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::ChangesRequested),
+            expected_problem: Some("review query-1: resolves unknown review query-9"),
+        },
+        CheckTestCase {
+            description: "an approval resolving a review that is not changes_requested",
+            mutate: |root| {
+                pin_definitions(root);
+                review_of(
+                    root,
+                    "query-2",
+                    "approved",
+                    &["sf.query.select", "sf.query.select.top"],
+                );
+                resolve(root, "query", &["query-2"]);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: Some(
+                "review query-1: resolves query-2, which is not changes_requested",
+            ),
+        },
+        CheckTestCase {
+            description: "an approval resolving a changes_requested review at another fingerprint",
+            mutate: |root| {
+                pin_definitions(root);
+                request_changes(root, Some(OLD_FINGERPRINT));
+                resolve(root, "query", &["query-2"]);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: Some(
+                "review query-1: resolves query-2 at another fingerprint or definition of \
+                 sf.query.select",
+            ),
+        },
+        CheckTestCase {
+            description: "an approval resolving a changes_requested review of none of its forms",
+            mutate: |root| {
+                review_of(root, "query-4", "approved", &["sf.query.select"]);
+                review_of(
+                    root,
+                    "query-2",
+                    "changes_requested",
+                    &["sf.query.select.top"],
+                );
+                resolve(root, "query-4", &["query-2"]);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Verified,
+            expected_reason: None,
+            expected_problem: Some(
+                "review query-4: resolves query-2, which covers none of its forms",
+            ),
+        },
+        CheckTestCase {
+            description: "a changes_requested review naming reviews it resolves",
+            mutate: |root| {
+                pin_definitions(root);
+                review_of(
+                    root,
+                    "query-2",
+                    "changes_requested",
+                    &["sf.query.select", "sf.query.select.top"],
+                );
+                review_of(
+                    root,
+                    "query-3",
+                    "changes_requested",
+                    &["sf.query.select", "sf.query.select.top"],
+                );
+                let named: String = read(root, "reviews/query-2.toml").replacen(
+                    "verdict = \"changes_requested\"\n",
+                    "verdict = \"changes_requested\"\nresolves = [\"query-3\"]\n",
+                    1,
+                );
+                write(root, "reviews/query-2.toml", &named);
+            },
+            parse: structural,
+            parser_tree: Some(TREE),
+            form: "sf.query.select",
+            expected_state: FormState::Unverified,
+            expected_reason: Some(Reason::ChangesRequested),
+            expected_problem: Some("review query-2: only an approved review resolves others"),
+        },
+    ];
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        verified_tree(directory.path());
+        (test_case.mutate)(directory.path());
+        let coverage = load_coverage(directory.path(), None)
+            .unwrap_or_else(|problems| panic!("{}: {problems:#?}", test_case.description));
+        let check = check_coverage(&coverage, test_case.parser_tree, &test_case.parse);
+        let form = check
+            .forms
+            .iter()
+            .find(|form| form.id == test_case.form)
+            .unwrap_or_else(|| panic!("{}: no form {}", test_case.description, test_case.form));
+        assert_eq!(
+            form.state, test_case.expected_state,
+            "{}: {form:#?}",
+            test_case.description
+        );
+        let reason_found: bool = test_case
+            .expected_reason
+            .map_or(form.reasons.is_empty(), |reason| {
+                form.reasons.contains(&reason)
+            });
+        assert!(
+            reason_found,
+            "{}: {:?}",
+            test_case.description, form.reasons
+        );
+        let problem_found: bool = test_case
+            .expected_problem
+            .map_or(check.problems.is_empty(), |problem| {
+                check.problems.iter().any(|found| found.contains(problem))
+            });
+        assert!(
+            problem_found,
+            "{}: {:?}",
+            test_case.description, check.problems
+        );
+    }
+}
+
+#[test]
+fn given_an_approval_resolving_reviews_when_validating_then_only_a_bad_resolve_is_a_problem() {
+    let test_cases = [
+        ValidateTestCase {
+            description: "a known changes_requested review at its binding",
+            resolved: "query-2",
+            expected_problem: None,
+        },
+        ValidateTestCase {
+            description: "an unknown review",
+            resolved: "query-9",
+            expected_problem: Some("review query-1: resolves unknown review query-9"),
+        },
+    ];
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        verified_tree(directory.path());
+        pin_definitions(directory.path());
+        review_of(
+            directory.path(),
+            "query-2",
+            "changes_requested",
+            &["sf.query.select", "sf.query.select.top"],
+        );
+        resolve(directory.path(), "query", &[test_case.resolved]);
+        let coverage = load_coverage(directory.path(), None)
+            .unwrap_or_else(|problems| panic!("{}: {problems:#?}", test_case.description));
+        let problems: Vec<String> = validation_problems(&coverage);
+        let command = validate(&Common {
+            root: directory.path().to_path_buf(),
+            evidence: None,
+            json: true,
+        });
+        assert_eq!(
+            command.is_err(),
+            test_case.expected_problem.is_some(),
+            "{}: the validate command's exit",
+            test_case.description
+        );
+        let problem_found: bool = test_case
+            .expected_problem
+            .map_or(problems.is_empty(), |problem| {
+                problems.iter().any(|found| found.contains(problem))
+            });
+        assert!(
+            problem_found,
+            "{}: expected {:?}, found {problems:?}",
+            test_case.description, test_case.expected_problem
         );
     }
 }

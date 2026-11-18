@@ -38,3 +38,21 @@ pub(crate) struct ReceiptCheckTestCase {
     pub(crate) expected_contradictions: Vec<&'static str>,
     pub(crate) expected_unjudged: Vec<&'static str>,
 }
+
+/// Receipts of one case as (phase, engine release) at a 2026.45 pin, and what its result must then be.
+pub(crate) struct EngineReleaseTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) receipts: &'static [(&'static str, &'static str)],
+    /// The phase as its Debug name; none when no phase counts.
+    pub(crate) expected_phase: Option<&'static str>,
+    pub(crate) expected_reason: Option<Reason>,
+}
+
+/// An approval's `resolves`, and the problem `validate` must then report.
+pub(crate) struct ValidateTestCase {
+    pub(crate) description: &'static str,
+    /// The review the approval names as resolved.
+    pub(crate) resolved: &'static str,
+    /// A fragment of the problem; none when there must be no problem.
+    pub(crate) expected_problem: Option<&'static str>,
+}

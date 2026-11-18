@@ -523,8 +523,17 @@ fn no_effect_problems(receipt: &Receipt) -> Vec<String> {
     }
 }
 
-/// The problem, if any, when `locations_redacted` does not count the placeholders in the message.
+/// The problem, if any, when `locations_redacted` miscounts the DCM import's placeholders.
 fn redaction_problem(receipt: &Receipt) -> Option<String> {
+    if receipt.capture_method != CaptureMethod::DcmDefinitionFile {
+        return receipt.locations_redacted.map(|_| {
+            format!(
+                "receipt {}: locations_redacted on a capture other than definition_plan, whose \
+                 import alone redacts",
+                receipt.case_id
+            )
+        });
+    }
     let written: usize = receipt
         .message
         .as_deref()
@@ -714,6 +723,22 @@ pub(crate) fn check_review(review: &Review) -> Vec<String> {
         problems.push(format!(
             "review {id}: definitions, when present, give one and a fingerprint for every form it \
              lists, and the review excludes nothing"
+        ));
+    }
+    let excluded: BTreeSet<&str> = review
+        .exclusions
+        .iter()
+        .filter_map(|exclusion| exclusion.form.as_deref())
+        .collect();
+    if !review.family.is_empty()
+        && !review.exclusions.is_empty()
+        && review.forms.as_ref().is_none_or(|forms| {
+            forms.iter().map(String::as_str).collect::<BTreeSet<&str>>() != excluded
+        })
+    {
+        problems.push(format!(
+            "review {id}: a family review that excludes forms lists exactly those forms, so it \
+             approves no other"
         ));
     }
     if !is_utc(&review.reviewed_utc) {

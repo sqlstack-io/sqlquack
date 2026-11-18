@@ -29,3 +29,11 @@ pub(crate) struct AllowlistTestCase {
     pub(crate) expected_stale: Vec<&'static str>,
     pub(crate) expected_problems: Vec<&'static str>,
 }
+
+/// An analysis probe, its SQL, and the verdict it must give.
+pub(crate) struct AnalysisTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) analysis: fn(&str) -> LocalVerdict,
+    pub(crate) sql: fn() -> String,
+    pub(crate) expected_verdict: LocalVerdict,
+}

@@ -11,6 +11,7 @@ use crate::cli::_helpers::commands::{
 use crate::cli::_helpers::depth_command::depth_probe;
 use crate::cli::_helpers::instructions_command::{instruction_counts, instruction_workload};
 use crate::cli::_helpers::results_command::results;
+use crate::cli::_helpers::screen_command::screen;
 use crate::cli::_helpers::verdicts_command::corpus_verdicts;
 use crate::cli::models::{Arguments, Command};
 
@@ -27,6 +28,11 @@ pub fn run_cli() -> ExitCode {
         Command::Stale { family, common } => stale(family.as_deref(), &common),
         Command::Pages { family, common } => pages(family.as_deref(), &common),
         Command::Boundaries { form, common } => boundaries(&form, &common),
+        Command::Screen {
+            form,
+            family,
+            common,
+        } => screen(&form, family.as_deref(), &common),
         Command::Snapshot {
             catalogue_commit,
             common,

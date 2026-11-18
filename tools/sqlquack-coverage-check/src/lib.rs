@@ -9,5 +9,6 @@ pub mod formats;
 pub mod instructions;
 pub mod report;
 pub mod results;
+pub mod screen;
 pub mod translation;
 pub mod verdicts;
