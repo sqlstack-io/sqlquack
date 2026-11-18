@@ -1,5 +1,6 @@
 //! Data models of expressions types.
 
+use crate::expressions::names::models::Literal;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -17,6 +18,9 @@ pub struct StructField {
     pub options: Vec<Expression>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub comment: Option<String>,
+    /// Databricks: the comment as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment_written: Option<Literal>,
     /// Databricks: the COLLATE written after a string field's type
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub collation: Option<Box<Identifier>>,
@@ -29,6 +33,7 @@ impl StructField {
     /// Create a new struct field without options
     pub fn new(name: String, data_type: DataType) -> Self {
         Self {
+            comment_written: None,
             name,
             data_type,
             options: Vec::new(),
@@ -41,6 +46,7 @@ impl StructField {
     /// Create a new struct field with options
     pub fn with_options(name: String, data_type: DataType, options: Vec<Expression>) -> Self {
         Self {
+            comment_written: None,
             name,
             data_type,
             options,
@@ -58,6 +64,7 @@ impl StructField {
         comment: Option<String>,
     ) -> Self {
         Self {
+            comment_written: None,
             name,
             data_type,
             options,

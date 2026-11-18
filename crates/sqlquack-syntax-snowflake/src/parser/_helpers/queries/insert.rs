@@ -357,6 +357,9 @@ impl Parser {
             overwrite,
             partition: Vec::new(),
             directory: Some(DirectoryInsert {
+                input_format_written: None,
+                output_format_written: None,
+                path_written: None,
                 local: local_directory,
                 path,
                 row_format,

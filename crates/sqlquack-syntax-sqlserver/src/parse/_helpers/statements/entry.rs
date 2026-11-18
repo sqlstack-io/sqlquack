@@ -205,6 +205,7 @@ impl<'sql> Parser<'sql> {
                     .expect_token(is_any_name)
                     .map(|token| identifier(&token))?;
                 Ok(Expression::Use(Box::new(Use {
+                    name_written: None,
                     kind: None,
                     this: name,
                     roles: Vec::new(),

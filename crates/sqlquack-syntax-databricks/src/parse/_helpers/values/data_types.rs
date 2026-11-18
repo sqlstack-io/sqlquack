@@ -281,9 +281,12 @@ impl Parser<'_> {
             self.at += 2;
             options.push(var("NOT NULL"));
         }
-        let comment: Option<String> = match self.eat_kw("COMMENT") {
-            true => Some(self.string_lit()?),
-            false => None,
+        let (comment, comment_written) = match self.eat_kw("COMMENT") {
+            true => {
+                let (comment, written) = self.written_string()?;
+                (Some(comment), written)
+            }
+            false => (None, None),
         };
         let name: String = match name.quoted {
             true => format!("`{}`", name.name.replace('`', "``")),
@@ -293,6 +296,7 @@ impl Parser<'_> {
             StructField::with_options_and_comment(name, data_type, options, comment);
         field.collation = collation.map(Box::new);
         field.colon = colon;
+        field.comment_written = comment_written;
         Ok(field)
     }
 }
