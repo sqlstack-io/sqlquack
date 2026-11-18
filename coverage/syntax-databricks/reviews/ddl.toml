@@ -1963,3 +1963,54 @@ note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, 
 
 [review.definitions]
 "db.ddl.undrop-volume" = "472c73d80e757b2ad71f2f43b1d4cccddb95e3c8c8fd9166865063145d651971"
+
+[[review]]
+id = "db-ddl-100"
+family = "ddl"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-column.add",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 19 accepted cases give one tree with and without the parentheses, e.g. k087421543598: ALTER TABLE t1 ADD COLUMN ( c1.`c1 Q` STRING )  ==  ALTER TABLE t1 ADD COLUMN c1.`c1 Q` STRING. The pinned grammar prints only the parenthesised list (ADD [ COLUMN | COLUMNS ] ( ... )), but the page's own example writes the bare spelling (ADD COLUMN email STRING COMMENT 'student email'), so both spellings are documented and refusing the bare one would refuse a documented example. Remedy in the next parser batch: keep a parenthesised flag in the tree; the bare spelling is added to the pending bundle. Earlier findings (db-ddl-010) were answered in approval db-ddl-083; this record does not reopen them."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.add" = "670f2c9e13d85de7515e0e08c9bdd0f526a96656f62377127f20582f2e3da47a"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.add" = "ee5b4f4d0ef8af066f5d041e68832cd3ee0089840e26af20512be74cf3b88ee1"
+
+[[review]]
+id = "db-ddl-101"
+family = "ddl"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-column.alter-table-add-column",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 1 accepted cases give one tree with and without the parentheses, e.g. k52ae8c911c4f: ALTER TABLE t1 DROP COLUMN c2  ==  ALTER TABLE t1 DROP COLUMN ( c2 ). The pinned grammar prints only the parenthesised list (DROP COLUMN <drop_column_clause>, whose clause is DROP [ COLUMN | COLUMNS ] [ IF EXISTS ] ( ... )), but the page's own example writes the bare spelling (DROP COLUMN email), so both spellings are documented and refusing the bare one would refuse a documented example. Remedy in the next parser batch: keep a parenthesised flag in the tree; the bare spelling is added to the pending bundle. No earlier finding; approved in db-ddl-057."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.alter-table-add-column" = "9b260dd9bf2269e001ce78d775905c0c2445ad3947fe45d5e8118ed287f0dcb7"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.alter-table-add-column" = "0184efac6e56c8cf99c4f42ce8815745cc6bab2f0c4ce680979ccd750fec97a3"
+
+[[review]]
+id = "db-ddl-102"
+family = "ddl"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-column.drop",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 10 accepted cases give one tree with and without the parentheses, e.g. k117307ab0c32: ALTER TABLE t1 DROP COLUMN ( c1 )  ==  ALTER TABLE t1 DROP COLUMN c1. The pinned grammar prints only the parenthesised list (DROP [ COLUMN | COLUMNS ] [ IF EXISTS ] ( ... )), but the page's own example writes the bare spelling (DROP COLUMN email), so both spellings are documented and refusing the bare one would refuse a documented example. Remedy in the next parser batch: keep a parenthesised flag in the tree; the bare spelling is added to the pending bundle. No earlier finding; approved in db-ddl-052."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.drop" = "f209b28b26a45ec2f3eae1b6395a1bfa1317df005b08d77ca16db7170b18a5fc"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.drop" = "b5c71c3d6eef6fddb2a808e461f0015f6858267d54b9c0679d319fceaff31135"

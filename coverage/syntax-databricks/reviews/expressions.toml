@@ -1003,3 +1003,122 @@ note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, 
 
 [review.definitions]
 "db.expressions.names.subscript-dot.syntax" = "d9228a23fd108d427cc2ace0e91fc1b679f83dcc031932f32570b077251ce0b1"
+
+[[review]]
+id = "db-expressions-049"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.collation.order-by-collate-utf8-lcase",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k3ac144d50c81: SELECT c1 FROM t1 ORDER BY `v1 Q` COLLATE UTF8_LCASE  ==  SELECT c1 FROM ( t1 ) ORDER BY `v1 Q` COLLATE UTF8_LCASE. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-expressions-026."
+
+[review.fingerprints]
+"db.expressions.collation.order-by-collate-utf8-lcase" = "cd3b1b09c8b4a1f9ceab5d4c3a9e7c45a7480806f88cf358e92dbac8dc87bcc1"
+
+[review.definitions]
+"db.expressions.collation.order-by-collate-utf8-lcase" = "c5b904885d664b09fefaf33e2bbd55d5af664c2d8d918830b05d47c3118d9adf"
+
+[[review]]
+id = "db-expressions-050"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.collation.order-by-lower-collate",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k7c2b8802be85: SELECT c1 FROM t1 ORDER BY LOWER ( `v1 Q` ) COLLATE UTF8_BINARY  ==  SELECT c1 FROM ( t1 ) ORDER BY LOWER ( `v1 Q` ) COLLATE UTF8_BINARY. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-expressions-027."
+
+[review.fingerprints]
+"db.expressions.collation.order-by-lower-collate" = "2790a770da2e94eaefc7da3a680354fbdf5af61ce2fd1408762933b3c2502ffd"
+
+[review.definitions]
+"db.expressions.collation.order-by-lower-collate" = "8956818fd573a9f97c4996b14f25db35a0d40363e79063a68c7ee202bedabbad"
+
+[[review]]
+id = "db-expressions-051"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.function-invocation",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 7 accepted cases give one tree with and without the parentheses, e.g. k1d64e00db520: SELECT * FROM abs ( TABLE ( t1 ) , v1 => 1 )  ==  SELECT * FROM abs ( TABLE t1 , v1 => 1 ). The pinned grammar prints only TABLE ( ... ) for <table_argument>; the page's example is cloud_files_state(TABLE(mytable)). With PARTITION BY the two spellings already differ, no example on the page writes the bare spelling, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it. Remedy in the next parser batch: keep a parenthesised flag in the tree, or refuse the bare spelling if its receipt shows the warehouse refuses it; the bare spelling is added to the pending bundle. Earlier findings (db-expressions-006) were answered in approval db-expressions-044; this record does not reopen them."
+
+[review.fingerprints]
+"db.expressions.function-invocation" = "6760f03c5e798e989773f35f469309d8af9eb52b741fed6dbc5db46d7000c954"
+
+[review.definitions]
+"db.expressions.function-invocation" = "c13eb68dbe3c2ae0b5ce7aa6d28a875ea5d44ff33bc04d72f1d892204524a5ef"
+
+[[review]]
+id = "db-expressions-052"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.identifier-2",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k3001a15d24b6: SELECT * FROM SELECT  ==  SELECT * FROM ( SELECT ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. Earlier findings (db-expressions-012) were answered in approval db-expressions-039; this record does not reopen them."
+
+[review.fingerprints]
+"db.expressions.names.identifier-2" = "28ac6725404f471c537687829c9800d6fe99a69ded606c3a893584b359527d14"
+
+[review.definitions]
+"db.expressions.names.identifier-2" = "ddec66de9ded585f47ccf7e934add2c314746c0173bdd07eefb8a67a3b64ecad"
+
+[[review]]
+id = "db-expressions-053"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.syntax",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 6 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k3001a15d24b6: SELECT * FROM SELECT  ==  SELECT * FROM ( SELECT ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. Earlier findings (db-expressions-020) were answered in approval db-expressions-039; this record does not reopen them."
+
+[review.fingerprints]
+"db.expressions.names.syntax" = "57c4e9e2f95e068046d5c9ed028d93c4001800fe040b40fee2f901011852cd5e"
+
+[review.definitions]
+"db.expressions.names.syntax" = "7bf76f01ab15f18677c226018804c6f70d9c1bc6e2e768236d64bbf6a2c717e6"
+
+[[review]]
+id = "db-expressions-054"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.window-functions",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 6 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k002443af478b: SELECT ( sum ( c1 ) OVER `SELECT` ) FROM t1 WINDOW w1 AS ( )  ==  SELECT ( sum ( c1 ) OVER `SELECT` ) FROM ( t1 ) WINDOW w1 AS ( ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-expressions-033."
+
+[review.fingerprints]
+"db.expressions.window-functions" = "50632f7602349ad1d283290764b26802ae25ffaf9525c463c715bddd8e451ef5"
+
+[review.definitions]
+"db.expressions.window-functions" = "8d8b5f177789ba363b04161b506230cb79610400a28fa923e130299ea0793ad7"
+
+[[review]]
+id = "db-expressions-055"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.window-functions-frame",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 2 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k085f1bf7048e: SELECT sum ( c1 ) OVER ( ORDER BY c1 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) FROM t1  ==  SELECT sum ( c1 ) OVER ( ORDER BY c1 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) FROM ( t1 ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-expressions-002."
+
+[review.fingerprints]
+"db.expressions.window-functions-frame" = "c33cee068dd9cd682f4c1e8c62670edea59ec1986fa37a15214c4a964cb322a9"
+
+[review.definitions]
+"db.expressions.window-functions-frame" = "5b6c018d85db0f3efa9750186323ca6f89130488198b57537d14d7e4b8e8bae5"

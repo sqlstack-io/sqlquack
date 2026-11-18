@@ -374,3 +374,20 @@ note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, 
 
 [review.definitions]
 "db.dml.copy-into.target-credential" = "8b65a4fed862127c0d65aa67af816373d8c5a0ef83e840fffbcaa3567ef9180e"
+
+[[review]]
+id = "db-dml-021"
+family = "dml"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-overwrite-directory",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give one tree with and without the parentheses, e.g. k64d39e81193b: INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET VALUES ( 1 )  ==  INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET VALUES 1. The pinned grammar prints only VALUES ( { <value> | NULL } [ , ... ] ) [ , ( ... ) ], no example on the page writes the bare spelling, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it. Remedy in the next parser batch: keep a parenthesised flag in the tree, or refuse the bare spelling if its receipt shows the warehouse refuses it; the bare spelling is added to the pending bundle. Earlier findings (db-dml-010) were answered in approval db-dml-015; this record does not reopen them."
+
+[review.fingerprints]
+"db.dml.insert-overwrite-directory" = "af6fb502f93f0d589e7010b7077b0fc0e24409a00ae7e78f239ca65bf68c5bde"
+
+[review.definitions]
+"db.dml.insert-overwrite-directory" = "cf7d61dcfc0a14da22b6006a83f9aecb963171ba49e82213b349b89a6cd6069c"

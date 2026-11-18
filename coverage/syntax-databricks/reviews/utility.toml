@@ -864,3 +864,20 @@ note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, 
 
 [review.definitions]
 "db.utility.show-tables-dropped" = "a36796c12055102cee64d24446e30f3f4d212161365e72f3954bfeb94a75f0e5"
+
+[[review]]
+id = "db-utility-041"
+family = "utility"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.optimize",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 1 accepted cases give one tree with and without the parentheses, e.g. k8b814db72656: OPTIMIZE t1 FULL WHERE c1 = 1 ZORDER BY ( c1 , c1 )  ==  OPTIMIZE t1 FULL WHERE c1 = 1 ZORDER BY c1 , c1. The pinned grammar prints only ZORDER BY ( <col_name1> [ , ... ] ), no example on the page writes the bare spelling, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it. Remedy in the next parser batch: keep a parenthesised flag in the tree, or refuse the bare spelling if its receipt shows the warehouse refuses it; the bare spelling is added to the pending bundle. No earlier finding; approved in db-utility-034."
+
+[review.fingerprints]
+"db.utility.optimize" = "f9f2a9c7900cc3d0183d02340c25e33115e9ddb66a95cf84d61799bfae4f8acf"
+
+[review.definitions]
+"db.utility.optimize" = "eedc05c6514793ae2c8230ab6705e6daf66be667d140e5ca9f0a7848023f91e9"

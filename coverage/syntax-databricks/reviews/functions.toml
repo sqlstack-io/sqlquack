@@ -6360,3 +6360,88 @@ note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synony
 
 [review.definitions]
 "db.functions.rlike" = "65479a6f443ab764cf2f282fb502742e54645e7107160ce3fca365485af94e13"
+
+[[review]]
+id = "db-functions-084"
+family = "functions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.ai-predict-class",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 8 accepted cases give one tree with and without the parentheses, e.g. k1b651a33ed0f: SELECT * FROM AI_PREDICT_CLASS ( input => TABLE ( v1 ) , target_col => v1 , feature_cols => `SELECT` )  ==  SELECT * FROM AI_PREDICT_CLASS ( input => TABLE v1 , target_col => v1 , feature_cols => `SELECT` ). The pinned grammar prints only input => TABLE ( <input> ), no example on the page writes the bare spelling, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it. Remedy in the next parser batch: keep a parenthesised flag in the tree, or refuse the bare spelling if its receipt shows the warehouse refuses it; the bare spelling is added to the pending bundle. No earlier finding; approved in db-functions-064."
+
+[review.fingerprints]
+"db.functions.ai-predict-class" = "4c4a233efea57b2789ff1d0f66d17d156616b50db0bbae43a107abd81827ed9d"
+
+[review.definitions]
+"db.functions.ai-predict-class" = "f6b6f3c8a8b05865b58111b69b2517011e4406e0c16fa588e8dcb70bbde256a2"
+
+[[review]]
+id = "db-functions-085"
+family = "functions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.ai-predict-value",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 8 accepted cases give one tree with and without the parentheses, e.g. k06a451f08eee: SELECT * FROM AI_PREDICT_VALUE ( input => TABLE ( v1 ) , target_col => `v1 Q` , feature_cols => v1 )  ==  SELECT * FROM AI_PREDICT_VALUE ( input => TABLE v1 , target_col => `v1 Q` , feature_cols => v1 ). The pinned grammar prints only input => TABLE ( <input> ), no example on the page writes the bare spelling, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it. Remedy in the next parser batch: keep a parenthesised flag in the tree, or refuse the bare spelling if its receipt shows the warehouse refuses it; the bare spelling is added to the pending bundle. No earlier finding; approved in db-functions-064."
+
+[review.fingerprints]
+"db.functions.ai-predict-value" = "404de61482d36e34b87a7f12113bc4323d38736f51d11fef8dcdfe1e996c58de"
+
+[review.definitions]
+"db.functions.ai-predict-value" = "59e12b1845a55fc213378662f7a33b95aaa614d1eeef88353cc1b65a0c3e8e06"
+
+[[review]]
+id = "db-functions-086"
+family = "functions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.cloud-files-state",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give one tree with and without the parentheses, e.g. k01ece83655e5: SELECT * FROM CLOUD_FILES_STATE ( TABLE ( t1 ) )  ==  SELECT * FROM CLOUD_FILES_STATE ( TABLE t1 ). The pinned grammar prints only { TABLE ( <table_name> ) | <checkpoint> }, no example on the page writes the bare spelling, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it. Remedy in the next parser batch: keep a parenthesised flag in the tree, or refuse the bare spelling if its receipt shows the warehouse refuses it; the bare spelling is added to the pending bundle. No earlier finding; approved in db-functions-069."
+
+[review.fingerprints]
+"db.functions.cloud-files-state" = "172e8a0de1ec3012599c6a759e2d60895a9443b82c36df3ddceba93f4bbb50a5"
+
+[review.definitions]
+"db.functions.cloud-files-state" = "82517a5b7f0518cd5bd75342790491b5dce5c11bc8a4d04952d011148e876470"
+
+[[review]]
+id = "db-functions-087"
+family = "functions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.data-skipping-summary",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give one tree with and without the parentheses, e.g. k6f84e878d849: SELECT * FROM DATA_SKIPPING_SUMMARY ( TABLE ( `t1 Q` ) )  ==  SELECT * FROM DATA_SKIPPING_SUMMARY ( TABLE `t1 Q` ). The pinned grammar prints only TABLE ( <table_name> ), no example on the page writes the bare spelling, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it. Remedy in the next parser batch: keep a parenthesised flag in the tree, or refuse the bare spelling if its receipt shows the warehouse refuses it; the bare spelling is added to the pending bundle. No earlier finding; approved in db-functions-069."
+
+[review.fingerprints]
+"db.functions.data-skipping-summary" = "5fb77f57bfae2d9ce9f101ef769602ecd72a912f148ce12f68281497d6d4a378"
+
+[review.definitions]
+"db.functions.data-skipping-summary" = "aa325efa950be0c51ebe74f0fc3d1f46efaf68bab07d7bc73b5ebea7f3e6abf1"
+
+[[review]]
+id = "db-functions-088"
+family = "functions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.event-log",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give one tree with and without the parentheses, e.g. k056ee314a3e8: SELECT * FROM EVENT_LOG ( TABLE ( `t1 Q` ) )  ==  SELECT * FROM EVENT_LOG ( TABLE `t1 Q` ). The pinned grammar prints only { TABLE ( <table_name> ) | <pipeline_id> }, no example on the page writes the bare spelling, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it. Remedy in the next parser batch: keep a parenthesised flag in the tree, or refuse the bare spelling if its receipt shows the warehouse refuses it; the bare spelling is added to the pending bundle. No earlier finding; approved in db-functions-069."
+
+[review.fingerprints]
+"db.functions.event-log" = "d1c2bbbba1fcf2b1c5e77e216aed300ecb8ae3b756285de144f467fd189ef9d3"
+
+[review.definitions]
+"db.functions.event-log" = "b97849444997b460ce0f088f02a46d1b96b2175bc7120d75ea3896cd52fc24b4"
