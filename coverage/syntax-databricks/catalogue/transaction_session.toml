@@ -46,9 +46,9 @@ source = "doc.parameters.collation"
 anchor = "Setting"
 kind = "statement"
 grammar = [
-  "SET COLLATION = <collation_name>",
+  "SET COLLATION <collation_name>",
 ]
-grammar_sha256 = "7ce6093358e7db619f3239cc555e7afda04d879c1a34dea76fec24eefab22b3b"
+grammar_sha256 = "67e8796199f93a9318fc75edae28aaa48158edd91f2a2738d1c70668eb22ae7d"
 uses = []
 status = "catalogued"
 
@@ -334,9 +334,9 @@ source = "doc.sql-ref-syntax-ddl-use-catalog"
 anchor = "Syntax"
 kind = "statement"
 grammar = [
-  "{ USE | SET } CATALOG [ <catalog_name> | ' catalog_name ' ]",
+  "{ USE | SET } CATALOG { <catalog_name> | ' catalog_name ' }",
 ]
-grammar_sha256 = "4ea3441f47f0f032b43a5a462581831340e30e82f93a2d756cafe467d4fee2cf"
+grammar_sha256 = "edcc74ba9ace1b4ec1ed9714c06de2b7e8991420095e22bfc0b689b3fa1612cf"
 uses = []
 status = "catalogued"
 

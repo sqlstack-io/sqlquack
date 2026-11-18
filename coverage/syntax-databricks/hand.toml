@@ -102,7 +102,7 @@ anchor = "Setting"
 kind = "statement"
 label = "collation"
 grammar = [
-  "SET COLLATION = <collation_name>",
+  "SET COLLATION <collation_name>",
 ]
 basis = "prose"
 article_sha256 = "27c64af1e54826eec1fd2a7a45e4dd4cdbd4eb5e3094faed93e79f14bde6851b"
@@ -1002,6 +1002,14 @@ read = [
 reason = "braces for brackets: the block makes TEMP or TEMPORARY required after REPLACE, while the page's parameters describe CREATE OR REPLACE TABLE for tables that are not temporary (IF NOT EXISTS cannot coexist with REPLACE); read with TEMP optional"
 
 [[reading]]
+page = "data-types/null-type"
+written = "{ NULL | VOID }"
+read = [
+  "VOID",
+]
+reason = "the page names the type NULL or VOID, but only VOID is a type spelling: in type position the warehouse accepts CAST ( NULL AS VOID ) and refuses CAST ( NULL AS NULL ) while parsing (both recorded), and a bare NULL or VOID in an expression is the null literal or a column; read as the VOID type, checked in type position, with the NULL spelling kept as an observed limit"
+
+[[reading]]
 page = "data-types/interval-type"
 written = "<year> - <month> <interval> INTERVAL [ + | - ] <year_month_interval_string> <year_month_interval_qualifier>"
 read = [
@@ -1064,17 +1072,17 @@ reason = "the page's Syntax names st_asbinary, another function, and the build r
 page = "functions/vector_search"
 written = "SELECT * FROM <vector_search> ( <index> , { <query_text> | <query_vector> } , [ <num_results> ] )"
 read = [
-  "SELECT * FROM VECTOR_SEARCH ( <index> , { <query_text> | <query_vector> } , [ <num_results> ] )",
+  "SELECT * FROM VECTOR_SEARCH ( index => <index> , { query_text => <query_text> | query_vector => <query_vector> } [ , num_results => <num_results> ] )",
 ]
-reason = "the lower-case function name vector_search was read as a placeholder; read as the function the page defines"
+reason = "the lower-case function name vector_search was read as a placeholder; read as the function the page defines. The page's Arguments say all arguments must be passed by name (vector_search(index => indexName, query_text => queryText)), so each is written named, and the comma printed before the optional num_results is part of it"
 
 [[reading]]
 page = "functions/vector_search"
 written = "SELECT * FROM <vector_search> ( <index> , <query> , <num_results> )"
 read = [
-  "SELECT * FROM VECTOR_SEARCH ( <index> , <query_str> , <num_results> )",
+  "SELECT * FROM VECTOR_SEARCH ( index => <index> , query => <query_str> , num_results => <num_results> )",
 ]
-reason = "the lower-case function name vector_search was read as a placeholder; read as the function the page defines. The argument named query is a STRING expression (the page's Arguments), not a query, though the build classes a placeholder named query as one; read with a name it classes as an expression"
+reason = "the lower-case function name vector_search was read as a placeholder; read as the function the page defines. The page's Arguments say all arguments must be passed by name, so each is written named. The argument named query is a STRING expression (the page's Arguments), not a query, though the build classes a placeholder named query as one; read with a name it classes as an expression"
 
 [[reading]]
 page = "functions/ai_parse_document"
@@ -1331,7 +1339,7 @@ grammar = [
   "FLOW AUTO CDC [ ONCE ] FROM SNAPSHOT ( <snapshot_query> ) [ WITH VERSION ( <version_query> ) ] KEYS ( <key> [ , ... ] ) [ STORED AS { SCD TYPE 1 | SCD TYPE 2 } ] [ TRACK HISTORY ON { <column_list> | * EXCEPT ( <except_column_list> ) } ]",
 ]
 basis = "section"
-article_sha256 = "56336639a20c68194ed0771b5a5368ee5943814ce2999d94380805d230eedb20"
+article_sha256 = "fbd75eb9f445838a860926792b493ba6c41a2a7d40df3b7c4eb17afb3063c123"
 
 [[reading]]
 page = "sql-ref-syntax-aux-describe-provider"
@@ -1429,3 +1437,83 @@ read = [
   "<str> [ NOT ] LIKE { ANY | SOME | ALL } ( <pattern> [ , ... ] )",
 ]
 reason = "the page's line wraps the pattern list in an optional bracket, so ( ) with no pattern would be a form, but the warehouse refuses it while parsing (EMPTY_QUANTIFIED_PATTERN, the == SQL == excerpt); read with the list required, so the empty list is a negative case"
+
+[[reading]]
+page = "functions/current_date"
+written = "CURRENT_DATE ( )"
+read = [
+  "CURRENT_DATE [ ( ) ]",
+]
+reason = "the page says the braces are optional; read with the parentheses optional"
+
+[[reading]]
+page = "functions/current_path"
+written = "CURRENT_PATH ( )"
+read = [
+  "CURRENT_PATH [ ( ) ]",
+]
+reason = "the page says the parentheses are optional; read with them optional"
+
+[[reading]]
+page = "functions/current_user"
+written = "CURRENT_USER ( )"
+read = [
+  "CURRENT_USER [ ( ) ]",
+]
+reason = "the page says the braces are optional; read with the parentheses optional"
+
+[[reading]]
+page = "functions/session_user"
+written = "SESSION_USER ( )"
+read = [
+  "SESSION_USER [ ( ) ]",
+]
+reason = "the page says the braces are optional; read with the parentheses optional"
+
+[[reading]]
+page = "functions/user"
+written = "USER ( )"
+read = [
+  "USER [ ( ) ]",
+]
+reason = "the page says the braces are optional; read with the parentheses optional"
+
+[[reading]]
+page = "functions/current_time"
+written = "CURRENT_TIME ( [ <precision> ] )"
+read = [
+  "CURRENT_TIME [ ( [ <precision> ] ) ]",
+]
+reason = "the page says the parentheses are optional when no precision is given; read with them optional"
+
+[[reading]]
+page = "functions/current_timestamp"
+written = "CURRENT_TIMESTAMP ( [ <precision> ] )"
+read = [
+  "CURRENT_TIMESTAMP [ ( [ <precision> ] ) ]",
+]
+reason = "the page says the parentheses are optional when no precision is given; read with them optional"
+
+[[reading]]
+page = "functions/localtime"
+written = "LOCALTIME ( [ <precision> ] )"
+read = [
+  "LOCALTIME [ ( [ <precision> ] ) ]",
+]
+reason = "the page says the parentheses are optional when precision is omitted; read with them optional"
+
+[[reading]]
+page = "security-show-grant-on-share"
+written = "SHOW GRANTS ON SHARE"
+read = [
+  "SHOW GRANTS ON SHARE <share_name>",
+]
+reason = "the page's Syntax line omits the share name that its Parameters list (share_name) and its example (SHOW GRANTS ON SHARE shared_date) write; the warehouse reads SHOW GRANTS ON SHARE alone as grants on a table named share (TABLE_DOES_NOT_EXIST, recorded); read with the name"
+
+[[reading]]
+page = "sql-ref-syntax-ddl-use-catalog"
+written = "{ USE | SET } CATALOG [ <catalog_name> | ' catalog_name ' ]"
+read = [
+  "{ USE | SET } CATALOG { <catalog_name> | ' catalog_name ' }",
+]
+reason = "the brackets choose between the name and its string; the page's Parameters give catalog_name as the catalog to use and every example writes one, and the warehouse reads USE CATALOG alone as USE of a schema named catalog (SCHEMA_NOT_FOUND workspace.catalog) and SET CATALOG alone as a configuration key (CONFIG_NOT_AVAILABLE CATALOG), both recorded; read with the name required"

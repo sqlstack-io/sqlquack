@@ -1,6 +1,6 @@
 # Databricks SQL syntax catalogue
 
-The documented SQL syntax of Databricks SQL 2026.44 as stable form IDs `db.<family>.<slug>`,
+The documented SQL syntax of Databricks SQL 2026.45 as stable form IDs `db.<family>.<slug>`,
 with the same layout and checker as the Snowflake root in `coverage/syntax`, the PostgreSQL
 root in `coverage/syntax-postgres` and the DuckDB root in `coverage/syntax-duckdb`.
 `dialect.toml` names the dialect for `syntax-coverage`.
@@ -8,7 +8,7 @@ root in `coverage/syntax-postgres` and the DuckDB root in `coverage/syntax-duckd
 ## Sources
 
 - Documentation: the Databricks SQL language reference
-  (`https://docs.databricks.com/aws/en/sql/language-manual/`), retrieved 2026-11-06. The page
+  (`https://docs.databricks.com/aws/en/sql/language-manual/`), retrieved 2026-11-16. The page
   set is every page of the docs sitemap under the language manual, plus three function pages
   that the function indexes link but the sitemap leaves out (`index_linked` in
   `scripts/syntax_catalogue_databricks`): 1,191 pages. `sources.toml` lists each page with the
@@ -21,7 +21,7 @@ root in `coverage/syntax-postgres` and the DuckDB root in `coverage/syntax-duckd
   Databricks SQL's parser is not published; the Spark grammar it extends is the independent
   check the omission audit reads.
 - Engine: a Databricks SQL serverless warehouse whose `current_version()` reports
-  `dbsql_version` 2026.44. Every receipt records that value.
+  `dbsql_version` 2026.45. Every receipt records that value.
 
 ## Regenerating
 
@@ -113,7 +113,7 @@ listed, and when the lexer has a token that is neither compared nor listed, so a
 or new token is caught. `tests/unit/scripts/syntax_catalogue_databricks/test_review.py` checks
 this guard.
 
-At the pin: 279 rules (3 unwalked), 10,135 keyword sequences, 3,259 gaps under 146 reviewed
+At the pin: 279 rules (3 unwalked), 10,135 keyword sequences, 3,258 gaps under 145 reviewed
 `[[gap]]` rows, 21 reviewed `[[unseen]]` tokens, 427 keywords (47 not catalogued) and 51
 helper option words (6 not catalogued), 0 problems.
 
@@ -222,12 +222,18 @@ class rules. The reasons for each choice follow.
     in an expression is refused (`UNSUPPORTED_GENERATOR.NESTED_IN_EXPRESSIONS`).
   - The vector-search page's Syntax is a whole query, so it has no context.
   - A clause page's form runs in a statement that the page names as its host.
+  - A column alias list labels the columns of a table-valued generator in the select list
+    (sql-ref-names, Column alias), so it follows one.
   - LIKE in a partition spec is allowed only in ALTER SHARE ADD TABLE (sql-ref-partition).
   - A securable object and a principal are the operands of GRANT (sql-ref-privileges,
     sql-ref-principal).
   - A control statement runs in a compound statement (control-flow pages): a cursor statement
     after the cursor's declaration, FETCH and CLOSE after OPEN, LEAVE and ITERATE inside the loop
     they name, and GET DIAGNOSTICS and RESIGNAL inside a condition handler.
+- Form qualifiers (`FORM_QUALIFY`): a nested field is a path below its column (the manage-column
+  page: "The fully qualified name of the field"; the update page: "A reference to field within a
+  column of type STRUCT"), so `field_name` is written behind `c1.`, and a quoted field is quoted
+  after the column.
 - Family contexts (`FAMILY_CONTEXTS`): a function or expression is written as a call in
   parentheses, so that a word left at the end of a negative is not read as a column alias.
 - Class rules (`DB_CLASS_RULES`): a clause, a column list or ALTER VIEW's rename is an operand
@@ -539,9 +545,62 @@ obligations 11666/14572. The 11 forms without obligations are not counted.
   deadline, both answered after about 610 s with an internal engine error (`Cannot invoke
   "java.lang.CharSequence.length()" because "sequence" is null`, SQLSTATE 42000, with no parser
   excerpt). That error proves no phase, so no reviewed row maps it, and the form stays
-  unverified.
+  unverified. The referee leaves a case that answers exactly this message undecided as "no phase
+  proven", like a deadline cancel, so the rest of its run keeps its receipts; any other unmapped
+  error still refuses the run.
   Another is `db.scripting.iterate-stmt` (o001, o003): its case `k1d3a5a4a6874`, a LOOP ITERATE
   with no LEAVE, runs to the 300 s deadline, so no phase can be observed, and it is left out of
   its run.
 
 A form counts once even when several reasons apply, so the reasons overlap.
+
+### Trees of written forms
+
+Where a page's Syntax block offers different spellings of one construct, each spelling parses to
+its own tree, so a review of the tree can see which one the SQL wrote. The parser keeps, among
+others:
+
+- `DESC` against `DESCRIBE`, `DATABASE`, `SCHEMA` and `NAMESPACE` as written (in `DESCRIBE`,
+  `CREATE`, `ALTER`, `DROP` and `USE`), `FROM` against `IN`, and whether `LIKE` was written before
+  a pattern;
+- `SET CATALOG` against `USE CATALOG`, which both choose the catalog (the use node's `keyword`);
+- `MINUS` against `EXCEPT`, `TEMP` against `TEMPORARY`, and the type synonyms `BYTE`, `SHORT`,
+  `LONG`, `DEC`, `NUMERIC` and `TIMESTAMP_LTZ`;
+- `ADD COLUMN` against `ADD COLUMNS` and `DROP COLUMN` against `DROP COLUMNS`, because the ALTER
+  TABLE page writes `{ COLUMN | COLUMNS }` as alternatives of one clause;
+- the sign written before an interval value, including `+`;
+- the operator written for a construct another documented form shares: `==` against `=`, `!=`
+  against `<>`, `IS [NOT] DISTINCT FROM` against `<=>`, `REGEXP` and `RLIKE` against the `rlike` call, and `>>>`
+  against the `shiftrightunsigned` call, in a `written_as` field that analysis ignores;
+- the parentheses of a `VALUES` row and of a `STREAM` source, which the Syntax blocks write as
+  alternatives (`expression | ( expression [, ...] )` and `STREAM ( name ) | STREAM name`).
+- a trailing `WITH ROLLUP` or `WITH CUBE` against `ROLLUP ( ... )` and `CUBE ( ... )`, and the
+  Hive `GROUP BY c1 GROUPING SETS ( ... )` against a comma before the sets, in the `GROUP BY`
+  clause's `with_modifier`;
+- `FROM` against a comma after the first argument of `SUBSTR` and `SUBSTRING`, in the call's
+  `from_separator`, as `TRIM` keeps its SQL-standard spelling;
+- a `CACHE TABLE` option's value written without `=`, which the page marks optional, in the cache
+  node's `options_without_equals`;
+- `INSERT INTO TABLE` against `INSERT INTO` (the insert's `table_keyword`), and a `REPLACE ON`
+  query in parentheses against one without, as the page writes `( query ) [ alias ] | query`;
+- an `INSERT OVERWRITE DIRECTORY` option's value written without `=`, in the directory's
+  `options_without_equals`, and a path written after `DIRECTORY` against one given only as the
+  `'path'` option;
+- `DROP CONSTRAINT` with neither, `RESTRICT` or `CASCADE`; `DROP PARTITION` with or without
+  `PURGE`; `UNSET TBLPROPERTIES` with or without `IF EXISTS`; a view's relationship constraint
+  named or not, by cardinality, with `ON` or `USING` and with or without an alias; and `CACHE
+  SELECT`'s `FROM` as a clause, as an alias and as a column;
+- a join's `NEAREST BY`: `APPROX` against `EXACT`, `DISTANCE` against `SIMILARITY`, and the number
+  of results written or not; a `WATERMARK` expression bare, with an alias, with `AS` and with
+  `AS ( aliases )`;
+- each pipe operator with the pipe written before it (`|>` or `|`), in the `pipe_operators` of
+  the select it amounts to, so `FROM t1 |> AGGREGATE sum ( c1 )` keeps `|> AGGREGATE` apart from
+  `SELECT sum ( c1 ) FROM t1` and from `FROM t1 | AGGREGATE sum ( c1 )`; a trailing `|>` with
+  no operation after it is kept as the token alone.
+
+`MATCH_RECOGNIZE`'s `PATTERN` parses into the shared row-pattern tree (symbols, sequences,
+alternations, groups, `PERMUTE` and quantifiers) beside the pattern's text, because the page's
+Syntax block defines the pattern as a grammar of its own rather than as a string.
+
+Spellings the language treats as one token stay one tree: the letter case of keywords and of a
+raw-string prefix, the quote character around a string or binary literal, and comments.

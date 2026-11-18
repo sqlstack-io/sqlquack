@@ -98,12 +98,6 @@ target = "<statement2>"
 note = "a bare literal in place of <statement2>"
 
 [[obligation]]
-id = "db.transaction_session.begin-atomic.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ATOMIC"
-
-[[obligation]]
 id = "db.transaction_session.begin-atomic.o009"
 kind = "negative_neighbour"
 required = true
@@ -138,12 +132,6 @@ kind = "negative_neighbour"
 required = true
 target = "<collation_name>"
 note = "a string literal in place of <collation_name>"
-
-[[obligation]]
-id = "db.transaction_session.collation.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required COLLATION"
 
 [[obligation]]
 id = "db.transaction_session.collation.o006"
@@ -266,17 +254,17 @@ target = "<path_element>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.transaction_session.conf-mgmt-set-path.o004"
+id = "db.transaction_session.conf-mgmt-set-path.o007"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
+target = "[ , <path_element> ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "db.transaction_session.conf-mgmt-set-path.o005"
+id = "db.transaction_session.conf-mgmt-set-path.o008"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <path_element> ... ]"
 
 [[obligation]]
 id = "db.transaction_session.conf-mgmt-set-path.o006"
@@ -285,28 +273,31 @@ required = true
 note = "the form without its required PATH"
 
 [[obligation]]
+id = "db.transaction_session.conf-mgmt-set-path.o009"
+kind = "alternative"
+required = true
+target = "<path_element>"
+anchor = "doc.sql-ref-syntax-aux-conf-mgmt-set-path / Syntax"
+note = "the DEFAULT_PATH element"
+
+[[obligation]]
 id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o002"
-kind = "option_present"
+id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o011"
+kind = "required_operand_missing"
 required = true
-target = "[ <tag_key> ]"
+target = "<tag_key>"
+note = "omit <tag_key>"
 
 [[obligation]]
-id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o003"
-kind = "option_absent"
-required = true
-target = "[ <tag_key> ]"
-
-[[obligation]]
-id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o004"
+id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o012"
 kind = "operand_type_class"
 required = true
-target = "<tag_key> in [ <tag_key> ]"
+target = "<tag_key>"
 note = "a valid operand"
 
 [[obligation]]
@@ -317,17 +308,37 @@ target = "<tag_value>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o007"
+id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o013"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
-note = "the list continued at least once"
+target = "[ , QUERY_TAGS [ <tag_key> ] = <tag_value> ... ]"
 
 [[obligation]]
-id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o008"
+id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o014"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , QUERY_TAGS [ <tag_key> ] = <tag_value> ... ]"
+
+[[obligation]]
+id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o015"
+kind = "required_operand_missing"
+required = true
+target = "<tag_key> in [ , QUERY_TAGS [ <tag_key> ] = <tag_value> ... ]"
+note = "omit <tag_key>"
+
+[[obligation]]
+id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o016"
+kind = "operand_type_class"
+required = true
+target = "<tag_key> in [ , QUERY_TAGS [ <tag_key> ] = <tag_value> ... ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o017"
+kind = "operand_type_class"
+required = true
+target = "<tag_value> in [ , QUERY_TAGS [ <tag_key> ] = <tag_value> ... ]"
+note = "a valid expression"
 
 [[obligation]]
 id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o009"
@@ -336,10 +347,18 @@ required = true
 note = "the form without its required QUERY_TAGS"
 
 [[obligation]]
-id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o010"
-kind = "interaction_all_options"
+id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o018"
+kind = "negative_neighbour"
 required = true
-note = "every independent option of one production together"
+note = "the form without its required QUERY_TAGS in [ , QUERY_TAGS [ <tag_key> ] = <tag_value> ... ]"
+
+[[obligation]]
+id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.o019"
+kind = "alternative"
+required = true
+target = "<tag_value>"
+anchor = "doc.sql-ref-syntax-aux-conf-mgmt-set-query-tags / Syntax"
+note = "UNSET as the tag value, which the Parameters section names"
 
 [[obligation]]
 id = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax.o001"
@@ -442,36 +461,12 @@ target = "<parameter_value> in [ = <parameter_value> ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.transaction_session.conf-mgmt-set.set.syntax.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.transaction_session.conf-mgmt-set.set.syntax.o002"
+id = "db.transaction_session.conf-mgmt-set.set.syntax.o006"
 kind = "option_present"
 required = true
-target = "[ - <v> ]"
-
-[[obligation]]
-id = "db.transaction_session.conf-mgmt-set.set.syntax.o003"
-kind = "option_absent"
-required = true
-target = "[ - <v> ]"
-
-[[obligation]]
-id = "db.transaction_session.conf-mgmt-set.set.syntax.o004"
-kind = "required_operand_missing"
-required = true
-target = "<v> in [ - <v> ]"
-note = "omit <v>"
-
-[[obligation]]
-id = "db.transaction_session.conf-mgmt-set.set.syntax.o005"
-kind = "operand_type_class"
-required = true
-target = "<v> in [ - <v> ]"
-note = "a valid operand"
+target = "[ -v ]"
+anchor = "doc.sql-ref-syntax-aux-conf-mgmt-set / Syntax"
+note = "the -v option as the page writes it, with no blank between - and v"
 
 [[obligation]]
 id = "db.transaction_session.declare-variable.o001"
@@ -538,29 +533,29 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "db.transaction_session.declare-variable.o011"
-kind = "option_present"
+id = "db.transaction_session.declare-variable.o026"
+kind = "alternative"
 required = true
-target = "[ <data_type> ]"
+target = "{ <data_type> [ { DEFAULT | = } <default_expression> ] | {… → <data_type> [ { DEFAULT | = } <default_expression> ]"
 
 [[obligation]]
-id = "db.transaction_session.declare-variable.o012"
-kind = "option_absent"
+id = "db.transaction_session.declare-variable.o027"
+kind = "alternative"
 required = true
-target = "[ <data_type> ]"
+target = "{ <data_type> [ { DEFAULT | = } <default_expression> ] | { DEFAULT | = }… → { DEFAULT | = } <default_expression>"
 
 [[obligation]]
-id = "db.transaction_session.declare-variable.o013"
+id = "db.transaction_session.declare-variable.o028"
 kind = "operand_type_class"
 required = true
-target = "<data_type> in [ <data_type> ]"
+target = "<data_type>"
 note = "a valid data_type"
 
 [[obligation]]
-id = "db.transaction_session.declare-variable.o014"
+id = "db.transaction_session.declare-variable.o029"
 kind = "negative_neighbour"
 required = true
-target = "<data_type> in [ <data_type> ]"
+target = "<data_type>"
 note = "a string literal in place of <data_type>"
 
 [[obligation]]
@@ -602,6 +597,32 @@ target = "<default_expression> in [ { DEFAULT | = } <default_expression> ]"
 note = "a valid expression"
 
 [[obligation]]
+id = "db.transaction_session.declare-variable.o030"
+kind = "alternative"
+required = true
+target = "{ DEFAULT | = } → DEFAULT #2"
+
+[[obligation]]
+id = "db.transaction_session.declare-variable.o031"
+kind = "alternative"
+required = true
+target = "{ DEFAULT | = } → = #2"
+
+[[obligation]]
+id = "db.transaction_session.declare-variable.o032"
+kind = "required_operand_missing"
+required = true
+target = "<default_expression>"
+note = "omit <default_expression>"
+
+[[obligation]]
+id = "db.transaction_session.declare-variable.o033"
+kind = "operand_type_class"
+required = true
+target = "<default_expression>"
+note = "a valid expression"
+
+[[obligation]]
 id = "db.transaction_session.declare-variable.o021"
 kind = "negative_neighbour"
 required = true
@@ -628,6 +649,22 @@ required = true
 target = "<variable_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.transaction_session.declare-variable.o034"
+kind = "option_absent"
+required = true
+target = "[ <data_type> ] [ { DEFAULT | = } <default_expression> ]"
+anchor = "doc.sql-ref-syntax-ddl-declare-variable / Syntax"
+note = "a variable with neither a type nor a default, as the page's line allows, which the warehouse's parser refuses (INVALID_SQL_SYNTAX.VARIABLE_TYPE_OR_DEFAULT_REQUIRED), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.transaction_session.declare-variable.o035"
+kind = "option_present"
+required = true
+target = "VARIABLE"
+anchor = "doc.sql-ref-syntax-ddl-declare-variable / Syntax"
+note = "the optional VARIABLE alone, beside the form without it"
 
 [[obligation]]
 id = "db.transaction_session.drop-variable.o001"
@@ -824,28 +861,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.transaction_session.set-variable.set.o002"
-kind = "option_present"
-required = true
-target = "[ VAR | VARIABLE ]"
-
-[[obligation]]
-id = "db.transaction_session.set-variable.set.o003"
-kind = "option_absent"
-required = true
-target = "[ VAR | VARIABLE ]"
-
-[[obligation]]
-id = "db.transaction_session.set-variable.set.o004"
+id = "db.transaction_session.set-variable.set.o023"
 kind = "alternative"
 required = true
-target = "[ VAR | VARIABLE ] → VAR"
+target = "{ VAR | VARIABLE } → VAR"
 
 [[obligation]]
-id = "db.transaction_session.set-variable.set.o005"
+id = "db.transaction_session.set-variable.set.o024"
 kind = "alternative"
 required = true
-target = "[ VAR | VARIABLE ] → VARIABLE"
+target = "{ VAR | VARIABLE } → VARIABLE"
 
 [[obligation]]
 id = "db.transaction_session.set-variable.set.o006"
@@ -903,10 +928,10 @@ target = "<query>"
 note = "a bare literal in place of <query>"
 
 [[obligation]]
-id = "db.transaction_session.set-variable.set.o014"
+id = "db.transaction_session.set-variable.set.o025"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ("
+note = "the form without its required { VAR | VARIABLE }"
 
 [[obligation]]
 id = "db.transaction_session.set-variable.set.o015"
@@ -925,12 +950,6 @@ id = "db.transaction_session.set-variable.set.o017"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) #2"
-
-[[obligation]]
-id = "db.transaction_session.set-variable.set.o018"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "db.transaction_session.set-variable.set.o019"
@@ -965,41 +984,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.transaction_session.set-variable.set-default.o002"
-kind = "option_present"
-required = true
-target = "[ VAR | VARIABLE ]"
-
-[[obligation]]
-id = "db.transaction_session.set-variable.set-default.o003"
-kind = "option_absent"
-required = true
-target = "[ VAR | VARIABLE ]"
-
-[[obligation]]
-id = "db.transaction_session.set-variable.set-default.o004"
+id = "db.transaction_session.set-variable.set-default.o020"
 kind = "alternative"
 required = true
-target = "[ VAR | VARIABLE ] → VAR"
+target = "{ VAR | VARIABLE } → VAR"
 
 [[obligation]]
-id = "db.transaction_session.set-variable.set-default.o005"
+id = "db.transaction_session.set-variable.set-default.o021"
 kind = "alternative"
 required = true
-target = "[ VAR | VARIABLE ] → VARIABLE"
+target = "{ VAR | VARIABLE } → VARIABLE"
 
 [[obligation]]
 id = "db.transaction_session.set-variable.set-default.o006"
 kind = "alternative"
 required = true
 target = "{ <variable_name> = { <expression> | DEFAULT } } → <variable_name> = { <expression> | DEFAULT }"
-
-[[obligation]]
-id = "db.transaction_session.set-variable.set-default.o007"
-kind = "required_operand_missing"
-required = true
-target = "<variable_name>"
-note = "omit <variable_name>"
 
 [[obligation]]
 id = "db.transaction_session.set-variable.set-default.o008"
@@ -1046,12 +1046,6 @@ id = "db.transaction_session.set-variable.set-default.o014"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
-
-[[obligation]]
-id = "db.transaction_session.set-variable.set-default.o016"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "db.transaction_session.set-variable.set-default.o017"
@@ -1108,6 +1102,22 @@ required = true
 note = "the form without its required TIMEZONE"
 
 [[obligation]]
+id = "db.transaction_session.timezone.o005"
+kind = "alternative"
+required = true
+target = "<zone_id>"
+anchor = "doc.parameters.timezone / Syntax"
+note = "a zone offset, as the page's examples write it"
+
+[[obligation]]
+id = "db.transaction_session.timezone.o006"
+kind = "alternative"
+required = true
+target = "<zone_id>"
+anchor = "doc.parameters.timezone / Syntax"
+note = "the UTC zone"
+
+[[obligation]]
 id = "db.transaction_session.use-cached-result.o001"
 kind = "positive"
 required = true
@@ -1150,48 +1160,23 @@ required = true
 target = "{ USE | SET } → SET"
 
 [[obligation]]
-id = "db.transaction_session.use-catalog.o004"
-kind = "option_present"
-required = true
-target = "[ <catalog_name> | ' catalog_name ' ]"
-
-[[obligation]]
-id = "db.transaction_session.use-catalog.o005"
-kind = "option_absent"
-required = true
-target = "[ <catalog_name> | ' catalog_name ' ]"
-
-[[obligation]]
-id = "db.transaction_session.use-catalog.o006"
+id = "db.transaction_session.use-catalog.o015"
 kind = "alternative"
 required = true
-target = "[ <catalog_name> | ' catalog_name ' ] → <catalog_name>"
+target = "{ <catalog_name> | ' catalog_name ' } → <catalog_name>"
 
 [[obligation]]
-id = "db.transaction_session.use-catalog.o007"
+id = "db.transaction_session.use-catalog.o016"
 kind = "alternative"
 required = true
-target = "[ <catalog_name> | ' catalog_name ' ] → ' catalog_name '"
+target = "{ <catalog_name> | ' catalog_name ' } → ' catalog_name '"
 
 [[obligation]]
-id = "db.transaction_session.use-catalog.o008"
+id = "db.transaction_session.use-catalog.o017"
 kind = "operand_type_class"
 required = true
-target = "<catalog_name> in [ <catalog_name> | ' catalog_name ' ]"
+target = "<catalog_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "db.transaction_session.use-catalog.o009"
-kind = "negative_neighbour"
-required = true
-target = "<catalog_name> in [ <catalog_name> | ' catalog_name ' ]"
-note = "a string literal in place of <catalog_name>"
-
-[[obligation]]
-id = "db.transaction_session.use-catalog.o010"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CATALOG"
 
 [[obligation]]
 id = "db.transaction_session.use-catalog.o011"
@@ -1208,6 +1193,37 @@ required = true
 target = "<catalog_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.transaction_session.use-catalog.o014"
+kind = "negative_neighbour"
+required = true
+target = "<catalog_name> in [ <catalog_name> | ' catalog_name ' ]"
+note = "a string literal in place of <catalog_name>; the warehouse (DBSQL 2026.44) answers semantic_error (NO_SUCH_CATALOG_EXCEPTION), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.transaction_session.use-catalog.o018"
+kind = "alternative"
+required = true
+target = "{ USE | SET } → SET with <catalog_name>"
+anchor = "doc.sql-ref-syntax-ddl-use-catalog / Syntax"
+note = "SET CATALOG with a catalog name: the derived SET case writes the string spelling, and the warehouse reads SET CATALOG alone as a configuration key (CONFIG_NOT_AVAILABLE CATALOG, recorded), so SET with a name is observed on its own"
+
+[[obligation]]
+id = "db.transaction_session.use-catalog.o019"
+kind = "negative_neighbour"
+required = true
+target = "USE without CATALOG"
+anchor = "doc.sql-ref-syntax-ddl-use-catalog / Syntax"
+note = "the form without CATALOG, which reads as USE of a schema; the warehouse answers SCHEMA_NOT_FOUND, so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.transaction_session.use-catalog.o020"
+kind = "negative_neighbour"
+required = true
+target = "USE CATALOG without a name"
+anchor = "doc.sql-ref-syntax-ddl-use-catalog / Syntax"
+note = "the form without its catalog name, which reads as USE of a schema named catalog; the warehouse answers SCHEMA_NOT_FOUND, so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.transaction_session.use-schema.o001"
