@@ -314,3 +314,52 @@ fn given_a_bigquery_query_when_checking_it_then_findings_follow_googlesql() {
         );
     }
 }
+
+#[test]
+fn given_one_string_spelled_two_ways_when_grouping_then_the_expressions_match() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "adjacent strings in the select, one string in GROUP BY",
+            sql: "SELECT COALESCE(status, 'a' 'b') AS x FROM orders GROUP BY COALESCE(status, 'ab')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "one string in the select, adjacent strings in GROUP BY",
+            sql: "SELECT COALESCE(status, 'ab') AS x FROM orders GROUP BY COALESCE(status, 'a' 'b')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "adjacent strings in a concatenation",
+            sql: "SELECT status || 'a' 'b' AS x FROM orders GROUP BY status || 'ab'",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a raw string in the select, a plain one in GROUP BY",
+            sql: "SELECT COALESCE(status, r'ab') AS x FROM orders GROUP BY COALESCE(status, 'ab')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a plain string in the select, a raw one in GROUP BY",
+            sql: "SELECT COALESCE(status, 'ab') AS x FROM orders GROUP BY COALESCE(status, r'ab')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "adjacent strings of another value are still a different expression",
+            sql: "SELECT COALESCE(status, 'a' 'c') AS x FROM orders GROUP BY COALESCE(status, 'ab')",
+            expected_findings: &[(
+                "E230",
+                "Column must be grouped or used in an aggregate function",
+                16,
+            )],
+        },
+    ];
+    let schema = typed_bigquery_shop_schema();
+    for test_case in test_cases {
+        assert_eq!(
+            bigquery_findings(test_case.sql, &schema),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}

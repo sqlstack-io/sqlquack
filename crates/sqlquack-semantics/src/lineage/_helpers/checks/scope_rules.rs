@@ -15,8 +15,8 @@ use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::sources::{every_join, from_parts};
 use crate::lineage::constants::{
-    NAME_FIELD, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SPAN_FIELD,
-    WINDOW_ONLY_FUNCTIONS,
+    LITERAL_TYPE_FIELD, LITERAL_VALUE_FIELD, NAME_FIELD, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX,
+    SHAPE_COSMETIC_FIELDS, SPAN_FIELD, WINDOW_ONLY_FUNCTIONS,
 };
 use crate::lineage::models::Engine;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
@@ -804,8 +804,9 @@ fn same_group(group: &Expression, current: &Expression, level: RuleLevel<'_, '_>
     if group == current {
         return true;
     }
-    if Engine::of(level.context) != Engine::BigQuery
-        || std::mem::discriminant(group) != std::mem::discriminant(current)
+    let bigquery: bool = Engine::of(level.context) == Engine::BigQuery;
+    if std::mem::discriminant(group) != std::mem::discriminant(current)
+        || !(bigquery || spelled_strings(group) || spelled_strings(current))
     {
         return false;
     }
@@ -814,6 +815,10 @@ fn same_group(group: &Expression, current: &Expression, level: RuleLevel<'_, '_>
     else {
         return false;
     };
+    let (group_shape, current_shape) = (plain_strings(group_shape), plain_strings(current_shape));
+    if !bigquery {
+        return group_shape == current_shape;
+    }
     let (group_columns, current_columns) = (columns_in(group), columns_in(current));
     without_columns(group_shape) == without_columns(current_shape)
         && group_columns.len() == current_columns.len()
@@ -821,6 +826,50 @@ fn same_group(group: &Expression, current: &Expression, level: RuleLevel<'_, '_>
             .iter()
             .zip(&current_columns)
             .all(|(left, right)| column_key(left, level) == column_key(right, level))
+}
+
+/// Whether `expression` holds a string literal written raw or as adjacent pieces.
+fn spelled_strings(expression: &Expression) -> bool {
+    expression.contains(|node| {
+        matches!(
+            node,
+            Expression::Literal(literal)
+                if matches!(literal.as_ref(), Literal::RawString(_) | Literal::JoinedString(..))
+        )
+    })
+}
+
+/// A serialized expression without source ranges, each raw or adjacent string a plain string.
+fn plain_strings(value: Value) -> Value {
+    match value {
+        Value::Object(mut map) => {
+            let spelled = matches!(
+                map.get(LITERAL_TYPE_FIELD).and_then(Value::as_str),
+                Some("raw_string" | "joined_string")
+            );
+            if spelled {
+                let text: Option<Value> = match map.remove(LITERAL_VALUE_FIELD) {
+                    Some(Value::Array(mut parts)) if !parts.is_empty() => {
+                        Some(parts.swap_remove(0))
+                    }
+                    other => other,
+                };
+                map.insert(
+                    LITERAL_TYPE_FIELD.to_owned(),
+                    Value::String("string".to_owned()),
+                );
+                map.insert(LITERAL_VALUE_FIELD.to_owned(), text.unwrap_or(Value::Null));
+            }
+            Value::Object(
+                map.into_iter()
+                    .filter(|(key, _)| key != SPAN_FIELD)
+                    .map(|(key, item)| (key, plain_strings(item)))
+                    .collect(),
+            )
+        }
+        Value::Array(items) => Value::Array(items.into_iter().map(plain_strings).collect()),
+        other => other,
+    }
 }
 
 /// The column references of `expression`, in tree order.
