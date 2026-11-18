@@ -684,6 +684,11 @@ fn given_named_windows_when_resolving_names_then_only_the_windows_an_over_reads_
             expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 65)],
         },
         QueryFindingsTestCase {
+            description: "a window named in another case, which DuckDB resolves to it",
+            sql: "SELECT sum(amount) OVER W AS x FROM orders WINDOW w AS (PARTITION BY nope)",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 69)],
+        },
+        QueryFindingsTestCase {
             description: "a window that the used window extends",
             sql: "SELECT sum(amount) OVER w2 AS x FROM orders WINDOW w AS (PARTITION BY nope), w2 AS (w ORDER BY id)",
             expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 70)],
