@@ -1241,3 +1241,37 @@ note = "Re-binds db-expressions-061, not a re-read: that exclusion was bound to 
 [[review.exclusion]]
 form = "db.expressions.object-type"
 reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
+
+[[review]]
+id = "db-expressions-063"
+family = "expressions"
+catalogue_sha256 = "ffc590e2daad0e5c31541285aca1a5a7d1ce7e7bedb0c1ccdc4c1cfcdd32473c"
+obligations_sha256 = "697332d6178cfd5465cf1ebae8c6d98f956a76ed507c8807032c76c97f48bc11"
+parser_tree = "e41321e692d3aa300122b5affc29d38a151bed13"
+reviewed_utc = "2026-11-18T10:11:35Z"
+verdict = "approved"
+forms = [
+  "db.expressions.object-type",
+]
+note = "Re-binds db-expressions-062, not a re-read: that exclusion was bound to parser tree dafbc1c0 and went stale when the parser kept raw and adjacent string spellings, the parentheses of an INSERT query and a WINDOW written after a parenthesized query (parser tree e41321e6), so object-type again left the excluded count. The catalogue and obligation files are byte-identical to the ones it bound (catalogue ffc590e2, obligations 697332d6), and the local parser still refuses OBJECT as input in all three cases, with the same error as before (unsupported data type OBJECT, position 22). The exclusion and its reason are repeated unchanged."
+
+[[review.exclusion]]
+form = "db.expressions.object-type"
+reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
+
+[[review]]
+id = "db-expressions-064"
+family = "expressions"
+parser_tree = "e41321e692d3aa300122b5affc29d38a151bed13"
+reviewed_utc = "2026-11-18T10:11:35Z"
+verdict = "approved"
+forms = [
+  "db.expressions.string-type.subscript-dot",
+]
+note = "Re-read on 18 Nov 2026 after the adjacent-strings fix, at parser tree e41321e6, from the existing 2026.45 receipts; 4 of 4 required obligations are met, and the warehouse accepts all four cases. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case in 128 variants; the 3 requote variants it allows rewrite one string literal in the other quote style, which the lexer reads as the same token. string-type.subscript-dot: db-expressions-022's (d) finding, held again in db-expressions-040, is answered: SELECT ( 'c' 'c' ) (kcba339110891, o010) is now a joined_string literal that keeps the value cc and both pieces, so it no longer shares the tree of SELECT ( 'cc' ), and a dropped piece gives a plain string. db-expressions-022's (a) finding stays answered by the [[reading]] row. r'c' and R'c' (o008, o009) are raw_string literals apart from 'c' (o007); the two prefixes give one tree, as a keyword's letter case does, because the lexer reads the prefix case-insensitively."
+
+[review.fingerprints]
+"db.expressions.string-type.subscript-dot" = "8e1d8018e9410c999219c14a399ccf33865df765423a52e95a27b90d1da18a23"
+
+[review.definitions]
+"db.expressions.string-type.subscript-dot" = "6e0e70498e32940a8ecb5d77d0d34cfc3c73896223f0d392bac3582b9b4442b9"
