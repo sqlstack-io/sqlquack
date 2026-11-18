@@ -37,3 +37,41 @@ class ReservedWordTestCase:
     description: str
     runtime_only: bool
     expected_keyword_expect: str
+
+
+@dataclass(frozen=True)
+class BareFormTestCase:
+    description: str
+    form: str
+    expected_sql: str
+
+
+@dataclass(frozen=True)
+class MissingOpenTestCase:
+    description: str
+    expected_unbalanced: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class PreviewSettlementTestCase:
+    description: str
+    case_id: str
+    expected_settlement: tuple[str, str] | None
+
+
+@dataclass(frozen=True)
+class SettlementBuildTestCase:
+    description: str
+    family: str
+    phase: str
+    expected_derived_expect: str
+    expected_written: tuple[str, str]
+
+
+@dataclass(frozen=True)
+class KindSettlementTestCase:
+    description: str
+    kinds: set[str]
+    expect: str
+    settlement: tuple[str, str]
+    expected_settlement: tuple[str, str] | None

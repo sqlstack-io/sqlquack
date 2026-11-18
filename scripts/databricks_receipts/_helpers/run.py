@@ -28,6 +28,8 @@ from scripts.databricks_receipts.constants import (
     CAPTURE,
     CATALOG,
     COMPARED_KEYS,
+    NO_PHASE_PROVEN,
+    NO_PHASE_PROVEN_SQLSTATE,
     PHASE_ONLY_CASES,
     REFEREE_CLASS,
     REPLY_LOST,
@@ -35,7 +37,9 @@ from scripts.databricks_receipts.constants import (
     SCHEMA_PREFIX,
     SETUP_COMPOUND_FROM,
     SETUP_ERROR_CLASS,
+    UNCLASSED,
     UNDECIDED_DEADLINE,
+    UNDECIDED_NO_PHASE,
     UNDECIDED_REPLY_LOST,
     UNDECIDED_SETUP,
     WORKERS,
@@ -172,6 +176,12 @@ def record(*, cases: list[Row], out: Path, private: Path, seed: int | None) -> R
 
 def undecided_reason(*, case: Row, failure: Failure) -> str | None:
     """Why the case was left undecided with no phase observed, or None when it was not."""
+    if (
+        failure.error_class == UNCLASSED
+        and failure.sqlstate == NO_PHASE_PROVEN_SQLSTATE
+        and NO_PHASE_PROVEN.fullmatch(failure.message.strip())
+    ):
+        return UNDECIDED_NO_PHASE
     if failure.error_class != REFEREE_CLASS:
         return None
     message: str = failure.message
@@ -276,8 +286,11 @@ def finish(*, client: Client, versions: Versions, judged: list[Judged], run: Run
 
 
 def by_case(path: Path) -> dict[str, Row]:
-    """A receipt file's receipts by case id."""
-    rows: list[Row] = [json.loads(line) for line in path.read_text().splitlines()]
+    """The receipts of a receipt file, or of every run's `.jsonl` in a run directory, by case id."""
+    files: list[Path] = sorted(path.glob("*.jsonl")) if path.is_dir() else [path]
+    rows: list[Row] = []
+    for file in files:
+        rows.extend(json.loads(line) for line in file.read_text().splitlines())
     return {str(row["case_id"]): row for row in rows}
 
 

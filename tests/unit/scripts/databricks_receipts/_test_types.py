@@ -96,6 +96,23 @@ class StopTestCase:
 
 
 @dataclass(frozen=True)
+class CatalogStopTestCase:
+    description: str
+    fields: Row
+    diff: str
+    expected_error: str
+
+
+@dataclass(frozen=True)
+class PlatformChangeTestCase:
+    description: str
+    catalog: int
+    field: str
+    value: object
+    expected_receipts: int
+
+
+@dataclass(frozen=True)
 class ErrorTestCase:
     description: str
     expected_error: str
@@ -162,6 +179,39 @@ class UndecidedTestCase:
 
 
 @dataclass(frozen=True)
+class StallTestCase:
+    description: str
+    deadline: float
+    expected_error: str
+    expected_seconds: float
+    expected_after: Row
+
+
+@dataclass(frozen=True)
+class VersionLostTestCase:
+    description: str
+    lost: int
+    expected_sends: int
+    expected_receipts: int
+
+
+@dataclass(frozen=True)
+class NotResentTestCase:
+    description: str
+    sql: str
+    expected_sent: list[str]
+    expected_error: str
+
+
+@dataclass(frozen=True)
+class NoPhaseTestCase:
+    description: str
+    message: str
+    sqlstate: str
+    expected_error: str
+
+
+@dataclass(frozen=True)
 class CheckTestCase:
     description: str
     failing_checks: frozenset[int]
@@ -212,3 +262,11 @@ class DeadlineTestCase:
     seconds: str
     expected_error: str
     expected_calls: list[str]
+
+
+@dataclass(frozen=True)
+class CompareTestCase:
+    description: str
+    second_phase: str
+    expected_exit: int
+    expected_line: str

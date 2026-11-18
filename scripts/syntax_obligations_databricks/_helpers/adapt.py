@@ -6,39 +6,50 @@ import dataclasses
 import json
 import re
 import tomllib
+from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
 
 from scripts.grammar_obligations import constants as shared
 from scripts.grammar_obligations._helpers import derive, grammar, ids, obligations
-from scripts.grammar_obligations.classes import renderer
+from scripts.grammar_obligations.classes import renderer, walk
 from scripts.grammar_obligations.classes.renderer import Renderer
 from scripts.grammar_obligations.classes.walk import Walk
 from scripts.grammar_obligations.constants import (
+    ACTION_DROP_NODE,
     ACTION_HAND,
     ACTION_RESERVED_WORD,
+    CLOSE_PAREN,
     EXPECT_ACCEPT,
     HAND_CASE_KEYS,
     IDENTIFIER_RESERVED,
+    KIND_NEGATIVE,
+    NODE_OPTIONAL,
+    OPEN_PAREN,
     PAIR_SIZE,
     RESERVED_WORD,
+    TOKEN_KEYWORD,
 )
 from scripts.grammar_obligations.exceptions import ObligationError
-from scripts.grammar_obligations.models import Draft, FormStyle, Node, Rendered, Spec
+from scripts.grammar_obligations.models import Choices, Draft, FormStyle, Node, Rendered, Spec
 from scripts.grammar_obligations.types import Key, Row
 from scripts.syntax_obligations_databricks.constants import (
     ALIAS_RESERVED_NOTE,
     ALIAS_RESERVED_WORD,
+    BARE_NAME_PREFIXES,
+    BARE_OPERAND_FILL,
     DB_CLASS_RULES,
     DB_REPEAT_FILLS,
     DB_TOKEN,
     FAMILIES,
     FAMILY_CONTEXTS,
     FILLS,
+    FORM_CLASSES,
     FORM_CONTEXTS,
     FORM_ELISIONS,
     FORM_FILLS,
     FORM_PREFIX,
+    FORM_QUALIFY,
     IDENTIFIER_QUOTE,
     KEYWORD_NOTE,
     RETIRED_FILE,
@@ -50,8 +61,13 @@ _shared_existing_ids: Callable[[Path], dict[Key, str]] = ids.existing_ids
 _shared_token: Callable[..., str] = Renderer._token  # noqa: SLF001
 _shared_submissions: Callable[..., list[Rendered]] = Renderer.submissions
 _shared_spec: Callable[..., Spec] = Walk.spec
+_shared_walk_token: Callable[..., None] = Walk.token
 _shared_class_note: Callable[..., str] = derive._class_note  # noqa: SLF001
 _shared_class_rules: tuple[tuple[re.Pattern[str], str], ...] = grammar.CLASS_RULES
+_shared_choices: Callable[..., Choices] = Renderer._choices  # noqa: SLF001
+_shared_derive_trees: Callable[..., tuple[list[Draft], list[tuple[Node, ...]], Counter[str]]] = (
+    derive.derive_trees
+)
 
 
 def _longest(*, form: str, keys: set[str]) -> str:
@@ -74,6 +90,7 @@ def style(*, form: str, family: str) -> FormStyle:
         fills={**FILLS, **FORM_FILLS.get(fills_key, {})},
         elisions=FORM_ELISIONS.get(form, {}),
         terminate=False,
+        qualify=FORM_QUALIFY.get(_longest(form=form, keys=set(FORM_QUALIFY)), {}),
     )
 
 
@@ -132,9 +149,10 @@ def db_existing_ids(path: Path) -> dict[Key, str]:
 
 
 def backticked(text: str) -> str:
-    """A double-quoted identifier as Databricks quotes identifiers, in backticks."""
-    if len(text) > 1 and text.startswith('"') and text.endswith('"'):
-        return f"{IDENTIFIER_QUOTE}{text[1:-1]}{IDENTIFIER_QUOTE}"
+    """A double-quoted identifier, after any qualifier, as Databricks quotes it: in backticks."""
+    start: int = text.find('"')
+    if 0 <= start < len(text) - 1 and text.endswith('"'):
+        return f"{text[:start]}{IDENTIFIER_QUOTE}{text[start + 1 : -1]}{IDENTIFIER_QUOTE}"
     return text
 
 
@@ -152,6 +170,19 @@ def db_spec(self: object, *, action: str, node: Node | None = None, payload: str
     if action == ACTION_RESERVED_WORD and node is not None and not payload:
         payload = node.text
     return _shared_spec(self, action=action, node=node, payload=payload)
+
+
+def db_walk_token(self: Walk, *, node: Node, where: str, omission_is_absence: bool) -> None:
+    """The shared operand drafts, with the classes the form's page gives its operands."""
+    overrides: dict[str, str] = FORM_CLASSES.get(
+        _longest(form=self.form, keys=set(FORM_CLASSES)), {}
+    )
+    shared: Callable[[str], str] = walk.operand_class
+    setattr(walk, "operand_class", lambda name: overrides.get(name) or shared(name))  # noqa: B010
+    try:
+        _shared_walk_token(self, node=node, where=where, omission_is_absence=omission_is_absence)
+    finally:
+        setattr(walk, "operand_class", shared)  # noqa: B010
 
 
 def db_class_note(*, label: str, description: str, placeholder: str) -> str:
@@ -183,6 +214,84 @@ def db_submissions(self: object, *, spec: Spec, depths: tuple[int, ...] = ()) ->
     ]
 
 
+def _siblings(*, nodes: tuple[Node, ...], key: int) -> tuple[tuple[Node, ...], int] | None:
+    """The sequence holding the node whose `id()` is `key`, and its position there."""
+    for position, node in enumerate(nodes):
+        if id(node) == key:
+            return nodes, position
+        for branch in node.branches:
+            if (found := _siblings(nodes=branch, key=key)) is not None:
+                return found
+    return None
+
+
+def _call_parts(*, trees: list[tuple[Node, ...]], spec: Spec) -> tuple[Node, ...] | None:
+    """The nodes between a dropped `(` and its matching `)`, then that `)`; None for other drops."""
+    if spec.action != ACTION_DROP_NODE or spec.production >= len(trees):
+        return None
+    found: tuple[tuple[Node, ...], int] | None = _siblings(
+        nodes=trees[spec.production], key=spec.node
+    )
+    if found is None or found[0][found[1]].text != OPEN_PAREN:
+        return None
+    nodes, start = found
+    depth: int = 0
+    for position in range(start, len(nodes)):
+        depth += {OPEN_PAREN: 1, CLOSE_PAREN: -1}.get(nodes[position].text, 0)
+        if depth == 0:
+            return nodes[start + 1 : position + 1]
+    return None
+
+
+def db_choices(self: Renderer, spec: Spec) -> Choices:
+    """The shared choices; a dropped `(` drops its `)`, and a marked call's operand is a number."""
+    choices: Choices = _shared_choices(self, spec)
+    parts: tuple[Node, ...] | None = _call_parts(trees=self.trees, spec=spec)
+    if not parts:
+        return choices
+    choices = dataclasses.replace(choices, drop=choices.drop | {id(parts[-1])})
+    if spec.payload != BARE_OPERAND_FILL:
+        return choices
+    if (operand := _first_operand(nodes=parts[:-1], choices=choices)) is not None:
+        choices.replace[id(operand)] = BARE_OPERAND_FILL
+    return choices
+
+
+def _first_operand(*, nodes: tuple[Node, ...], choices: Choices) -> Node | None:
+    """The first operand the case writes; a required choice's lone keyword (a unit) counts too."""
+    for node in nodes:
+        if node.kind == NODE_OPTIONAL and id(node) not in choices.path and not choices.full:
+            continue
+        if node.branches:
+            branch: tuple[Node, ...] = node.branches[choices.branch.get(id(node), 0)]
+            if node.kind != NODE_OPTIONAL and len(branch) == 1:
+                if branch[0].token_kind == TOKEN_KEYWORD and not branch[0].branches:
+                    return branch[0]
+            return _first_operand(nodes=branch, choices=choices)
+        return node if grammar.placeholder_name(node) else None
+    return None
+
+
+def db_derive_trees(
+    *, form: str, grammar: list[str], unpacked: bool = False
+) -> tuple[list[Draft], list[tuple[Node, ...]], Counter[str]]:
+    """Shared drafts less a missing `(` around no required part where a bare name is valid."""
+    drafts, trees, classes = _shared_derive_trees(form=form, grammar=grammar, unpacked=unpacked)
+    kept: list[Draft] = []
+    for draft in drafts:
+        parts: tuple[Node, ...] | None = (
+            _call_parts(trees=trees, spec=draft.spec)
+            if draft.kind == KIND_NEGATIVE and draft.spec is not None
+            else None
+        )
+        if parts is None or not form.startswith(BARE_NAME_PREFIXES) or draft.spec is None:
+            kept.append(draft)
+        elif any(node.kind != NODE_OPTIONAL for node in parts[:-1]):
+            spec: Spec = dataclasses.replace(draft.spec, payload=BARE_OPERAND_FILL)
+            kept.append(dataclasses.replace(draft, spec=spec))
+    return kept, trees, classes
+
+
 def install() -> None:
     """Register the Databricks styles, tokens, operand classes and limit reader."""
     grammar.CLASS_RULES = (*DB_CLASS_RULES, *_shared_class_rules)
@@ -194,7 +303,7 @@ def install() -> None:
         styles.update(
             {
                 form: style(form=form, family=family)
-                for form in {*FORM_CONTEXTS, *FORM_FILLS, *FORM_ELISIONS}
+                for form in {*FORM_CONTEXTS, *FORM_FILLS, *FORM_ELISIONS, *FORM_QUALIFY}
                 if form.startswith(f"{FORM_PREFIX}.{family}.")
             }
         )
@@ -203,4 +312,7 @@ def install() -> None:
     setattr(Renderer, "_token", db_token)  # noqa: B010
     setattr(Renderer, "submissions", db_submissions)  # noqa: B010
     setattr(Walk, "spec", db_spec)  # noqa: B010
+    setattr(Walk, "token", db_walk_token)  # noqa: B010
     setattr(derive, "_class_note", db_class_note)  # noqa: B010
+    setattr(Renderer, "_choices", db_choices)  # noqa: B010
+    setattr(obligations, "derive_trees", db_derive_trees)  # noqa: B010

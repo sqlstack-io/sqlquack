@@ -64,3 +64,17 @@ class RenderedCaseTestCase:
     sql: str
     expected_expect: str
     expected_note: str
+
+
+@dataclass(frozen=True)
+class InteractionPairTestCase:
+    description: str
+    pair: tuple[str, str]
+    expected_pair: list[str]
+
+
+@dataclass(frozen=True)
+class RefusedPairTestCase:
+    description: str
+    pair: tuple[str, str]
+    expected_message: str

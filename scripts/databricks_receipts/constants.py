@@ -7,12 +7,12 @@ import re
 from scripts.databricks_receipts.models import SnapshotKind
 
 ENGINE: str = "databricks"
-ENGINE_VERSION: str = "2026.44"
+ENGINE_VERSION: str = "2026.45"
 RECEIPT_FORMAT: str = "sqlquack-syntax-receipt/2"
 RUN_AUDIT_FORMAT: str = "sqlquack-databricks-run-audit/1"
 CAPTURE: str = "execute_autocommit_in_throwaway_database"
 PARSER_CHECK: str = "whole_text"
-RUN_PREFIX: str = "databricks-2026.44-"
+RUN_PREFIX: str = "databricks-2026.45-"
 CATALOG: str = "workspace"
 SCHEMA_PREFIX: str = "sqlquack_referee_"
 
@@ -45,6 +45,8 @@ STATES_PENDING: frozenset[str] = frozenset({"PENDING", "RUNNING"})
 STATES_STOPPED: frozenset[str] = frozenset({"CANCELED", "CLOSED"})
 VERSION_QUERY: str = "SELECT current_version()"
 VERSION_SECONDS: float = 60.0
+RESENT_WHEN_LOST: frozenset[str] = frozenset({VERSION_QUERY})
+RESEND_ATTEMPTS: int = 3
 DROP_ATTEMPTS: int = 3
 
 ACCEPTED: str = "accepted"
@@ -105,12 +107,17 @@ PARSER_CLASSES: frozenset[str] = frozenset(
         "UNSUPPORTED_FEATURE.DESC_TABLE_COLUMN_JSON",
         "AUTO_CDC_BITEMPORAL_REQUIRES_SYSTEM_SEQUENCE_BY",
         "AUTO_CDC_SYSTEM_SEQUENCE_BY_REQUIRES_BITEMPORAL",
+        "COLUMN_MASKS_MULTI_PART_TARGET_COLUMN_NAME",
+        "INVALID_PARAMETER_VALUE.DATETIME_UNIT",
+        "DUPLICATE_CLAUSES",
         "INVALID_SET_SYNTAX",
         "INVALID_SQL_SYNTAX.ANALYZE_TABLE_DELTA_STATS_UNEXPECTED_TOKEN",
         "INVALID_SQL_SYNTAX.EMPTY_IN_PREDICATE",
         "INVALID_SQL_SYNTAX.EMPTY_QUANTIFIED_PATTERN",
         "INVALID_SQL_SYNTAX.EMPTY_REFRESH_RESOURCE_PATH",
         "INVALID_SQL_SYNTAX.INVALID_REFRESH_RESOURCE_PATH",
+        "INVALID_SQL_SYNTAX.CREATE_TEMP_FUNC_WITH_IF_NOT_EXISTS",
+        "INVALID_SQL_SYNTAX.SHOW_FUNCTIONS_INVALID_PATTERN",
         "INVALID_SQL_SYNTAX.SHOW_FUNCTIONS_INVALID_SCOPE",
         "INVALID_SQL_SYNTAX.VARIABLE_TYPE_OR_DEFAULT_REQUIRED",
         "INVALID_STAGING_PATH_IN_STAGING_ACCESS_QUERY",
@@ -198,7 +205,32 @@ LATER_PHASES: dict[str, str] = {
     "INVALID_PARAMETER_VALUE.TIMESERIES_COLUMN_INVALID_TYPE": SEMANTIC_ERROR,
     "DELTA_FEATURE_DROP_WAIT_FOR_RETENTION_PERIOD": RUNTIME_ERROR,
     "UNSUPPORTED_DATA_SOURCE_WRITE": UNSUPPORTED_FEATURE,
+    "ASSIGNMENT_ARITY_MISMATCH": SEMANTIC_ERROR,
+    "INVALID_SOURCE_CATALOG": SEMANTIC_ERROR,
+    "DELTA_V2_CHECKPOINTS_REQUIRED_FOR_OPERATION": UNSUPPORTED_FEATURE,
+    "ALTER_SCHEDULE_INVALID_ENTITY": UNSUPPORTED_FEATURE,
+    "APPLY_CHANGES_BITEMPORAL_IGNORE_NULL_NOT_SUPPORTED": UNSUPPORTED_FEATURE,
+    "APPLY_CHANGES_BITEMPORAL_TRACK_HISTORY_NOT_SUPPORTED": UNSUPPORTED_FEATURE,
+    "DROPPED_VOLUME_NOT_FOUND": SEMANTIC_ERROR,
+    "INVALID_PARAMETER_VALUE.INVALID_NAME_FORMAT": SEMANTIC_ERROR,
+    "USER_DEFINED_FUNCTIONS.SQL_TABLE_UDF_BODY_MUST_BE_A_QUERY": SEMANTIC_ERROR,
+    "MISSING_WINDOW_SPECIFICATION": SEMANTIC_ERROR,
+    "FAILED_TO_CREATE_PLAN_FOR_DIRECT_QUERY": SEMANTIC_ERROR,
+    "FILE_TYPE_MISSING_FILESPACE.TABLE_PROPERTY_NOT_SET": UNSUPPORTED_FEATURE,
     "UNSUPPORTED_STREAMING_TABLE_VALUED_FUNCTION": UNSUPPORTED_FEATURE,
+    "INVALID_PARAMETER_VALUE.INVALID_SECURABLE_NAME": SEMANTIC_ERROR,
+    "INVALID_PARAMETER_VALUE.INVALID_SECURABLE_TYPE": UNSUPPORTED_FEATURE,
+    "MATERIALIZED_VIEW_NOT_INCREMENTALIZABLE": SEMANTIC_ERROR,
+    "UC_SCHEMA_REQUIRES_MANAGED_LOCATION": UNSUPPORTED_FEATURE,
+    "PIPELINE_DOES_NOT_EXIST": SEMANTIC_ERROR,
+    "REMOTE_FUNCTION_HTTP_FAILED_ERROR": RUNTIME_ERROR,
+    "UDTF_ALIAS_NUMBER_MISMATCH": SEMANTIC_ERROR,
+    "INVALID_FIELD_NAME": SEMANTIC_ERROR,
+    "UNEXPECTED_INPUT_TYPE": SEMANTIC_ERROR,
+    "DELTA_TIMESTAMP_EARLIER_THAN_COMMIT_RETENTION": SEMANTIC_ERROR,
+    "ROUTINE_ALREADY_EXISTS": SEMANTIC_ERROR,
+    "PARTITIONS_NOT_FOUND": SEMANTIC_ERROR,
+    "ISOLATION_ENVIRONMENT_USER_ERROR.UC_VOLUME_NO_MATCHING_DISTRIBUTION": RUNTIME_ERROR,
     "DELTA_OPERATION_NOT_ALLOWED_DETAIL": UNSUPPORTED_FEATURE,
     "DELTA_TRUNCATE_TABLE_PARTITION_NOT_SUPPORTED": UNSUPPORTED_FEATURE,
     "DELTA_CLUSTER_BY_EXPRESSIONS_NOT_SUPPORTED": UNSUPPORTED_FEATURE,
@@ -256,6 +288,7 @@ LATER_PHASES: dict[str, str] = {
     "INVALID_PARAMETER_VALUE.UC_TAG_POLICY_VALUE_NOT_ALLOWED": SEMANTIC_ERROR,
     "INVALID_PARAMETER_VALUE.UNSUPPORTED_LOCATION_SCHEME": SEMANTIC_ERROR,
     "INVALID_PARAMETER_VALUE.INVALID_LOCATION": SEMANTIC_ERROR,
+    "INVALID_PARAMETER_VALUE.MISSING_CONNECTION_OPTION": SEMANTIC_ERROR,
     "NOT_FOUND.RESOURCE_DOES_NOT_EXIST": SEMANTIC_ERROR,
     "NO_SUCH_PROVIDER_EXCEPTION": SEMANTIC_ERROR,
     "NO_SUCH_RECIPIENT_EXCEPTION": SEMANTIC_ERROR,
@@ -300,6 +333,8 @@ LATER_PHASES: dict[str, str] = {
 LATER_WITHOUT_SQLSTATE: frozenset[str] = frozenset(
     {
         "CATALOG_NOT_EMPTY",
+        "APPLY_CHANGES_BITEMPORAL_IGNORE_NULL_NOT_SUPPORTED",
+        "APPLY_CHANGES_BITEMPORAL_TRACK_HISTORY_NOT_SUPPORTED",
         "NO_SUCH_EXTERNAL_LOCATION_EXCEPTION",
         "NO_SUCH_PROVIDER_EXCEPTION",
         "NO_SUCH_RECIPIENT_EXCEPTION",
@@ -317,6 +352,9 @@ UNCLASSED_PARSER: tuple[re.Pattern[str], ...] = (
     re.compile(r"^Invalid time zone displacement value\.$", re.M),
     re.compile(r"^Expected keyword 'FOREIGN'\.$", re.M),
 )
+UNCLASSED_PARSER_UNSUPPORTED: tuple[re.Pattern[str], ...] = (
+    re.compile(r"^[A-Z][A-Z ]+ command is not enabled here\.+$", re.M),
+)
 UNCLASSED_LATER: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"^org\.example\.(?:In|Out)$"), RUNTIME_ERROR),
     (
@@ -325,6 +363,18 @@ UNCLASSED_LATER: tuple[tuple[re.Pattern[str], str], ...] = (
     ),
     (re.compile(r"^Cannot access non /Workspace local filesystem path: "), RUNTIME_ERROR),
     (re.compile(r"^QUALIFY must be used with at least one window function"), SEMANTIC_ERROR),
+    (
+        re.compile(r"^The number of columns produced by the RETURN clause \(num: `\d+`\) "),
+        SEMANTIC_ERROR,
+    ),
+    (
+        re.compile(r"^APPLY CHANGES query only support TRACK HISTORY for SCD TYPE 2\.$"),
+        SEMANTIC_ERROR,
+    ),
+    (
+        re.compile(r"^Cannot replace the non-SQL function \S+ with a SQL function\.$"),
+        SEMANTIC_ERROR,
+    ),
     (
         re.compile(r"^Streaming relations are only supported within CREATE STREAMING TABLE "),
         UNSUPPORTED_FEATURE,
@@ -405,6 +455,7 @@ UNCLASSED_LATER: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"^None\.get$"), RUNTIME_ERROR),
     (re.compile(r"^Filtering (?:user|group) membership is not supported\.$"), UNSUPPORTED_FEATURE),
     (re.compile(r"^NOT_FOUND: Tag policy with name \S+ not found in account "), SEMANTIC_ERROR),
+    (re.compile(r"^NOT_FOUND: Schema '[^']*' does not exist\.$"), SEMANTIC_ERROR),
     (
         re.compile(
             r"^INVALID_PARAMETER_VALUE: credential name can not be provided with a volume path$"
@@ -430,6 +481,17 @@ REPLY_LOST: str = "the reply to a statement was lost, so it may have run and is 
 UNDECIDED_DEADLINE: str = "cancelled at the deadline"
 UNDECIDED_REPLY_LOST: str = "reply lost"
 UNDECIDED_SETUP: str = "setup failed"
+NO_PHASE_PROVEN: re.Pattern[str] = re.compile(
+    r"Error running query: shaded\.v245\.com\.fasterxml\.jackson\.databind\."
+    r'JsonMappingException: Cannot invoke "java\.lang\.CharSequence\.length\(\)" '
+    r'because "sequence" is null'
+)
+NO_PHASE_PROVEN_SQLSTATE: str = "42000"
+UNDECIDED_NO_PHASE: str = (
+    "no phase proven: an internal engine JsonMappingException, observed after about 610 s"
+    " (an observation, not its cause); see coverage/syntax-databricks/README.md on"
+    " db.ddl.create-recipient"
+)
 SETUP_ERROR_CLASS: re.Pattern[str] = re.compile(r"\[([A-Z][A-Z0-9_]*(?:\.[A-Z0-9_]+)*)\]")
 
 ACCOUNT_KINDS: str = (
@@ -568,6 +630,7 @@ SNAPSHOT_KINDS: dict[str, SnapshotKind] = {
         name="name",
         fields=UNITY_CATALOG_FIELDS,
         paging=PAGING_TOKEN,
+        skip=("catalog_type", "SYSTEM_CATALOG"),
     ),
     KIND_SCHEMA: SnapshotKind(
         path=f"{UNITY_CATALOG_PATH}/schemas?catalog_name={CATALOG}&max_results=0",
