@@ -1478,6 +1478,36 @@ fn given_unpivot_labels_and_ddl_options_when_parsing_then_they_are_kept() {
             expected_same: false,
         },
         TreePairTestCase {
+            description: "a table column's OPTIONS values are kept",
+            sql: "CREATE TABLE d.t (a INT64 OPTIONS(description='ab'))",
+            other_sql: "CREATE TABLE d.t (a INT64 OPTIONS(description='cd'))",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "a table column's OPTIONS are kept",
+            sql: "CREATE TABLE d.t (a INT64 NOT NULL OPTIONS(description='ab'))",
+            other_sql: "CREATE TABLE d.t (a INT64 NOT NULL)",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "an added column's OPTIONS are kept",
+            sql: "ALTER TABLE d.t ADD COLUMN a INT64 OPTIONS(description='ab')",
+            other_sql: "ALTER TABLE d.t ADD COLUMN a INT64 OPTIONS(description='cd')",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "a struct field's OPTIONS are kept",
+            sql: "CREATE TABLE d.t (a STRUCT<x INT64 OPTIONS(description='ab')>)",
+            other_sql: "CREATE TABLE d.t (a STRUCT<x INT64 OPTIONS(description='cd')>)",
+            expected_same: false,
+        },
+        TreePairTestCase {
+            description: "a struct field's NOT NULL stays apart from its OPTIONS",
+            sql: "CREATE TABLE d.t (a STRUCT<x INT64 NOT NULL OPTIONS(description='ab')>)",
+            other_sql: "CREATE TABLE d.t (a STRUCT<x INT64 OPTIONS(description='ab')>)",
+            expected_same: false,
+        },
+        TreePairTestCase {
             description: "OPTIONS += is not =",
             sql: "CREATE VIEW d.v OPTIONS(labels += [('a', 'b')]) AS SELECT 1 x",
             other_sql: "CREATE VIEW d.v OPTIONS(labels = [('a', 'b')]) AS SELECT 1 x",

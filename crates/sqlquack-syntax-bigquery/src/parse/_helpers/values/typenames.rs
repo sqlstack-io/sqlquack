@@ -258,7 +258,7 @@ impl Parser<'_> {
         }
         if self.kw("OPTIONS") && self.char_at(1, '(') {
             self.at += 1;
-            self.options_list()?;
+            options.extend(self.options_list()?);
         }
         Ok(StructField::with_options_and_comment(
             name, data_type, options, None,
