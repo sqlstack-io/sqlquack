@@ -733,8 +733,7 @@ fn given_a_comma_after_a_joined_item_when_resolving_names_then_the_join_reads_on
 }
 
 #[test]
-fn given_a_comma_after_a_joined_item_when_expanding_a_star_then_the_columns_follow_the_written_order()
- {
+fn given_joined_and_comma_items_when_expanding_a_star_then_the_columns_follow_the_written_order() {
     let test_cases = [
         StarOrderTestCase {
             description: "the joined item's columns come before the comma item's",
@@ -750,6 +749,41 @@ fn given_a_comma_after_a_joined_item_when_expanding_a_star_then_the_columns_foll
                 "country",
                 "listingId",
                 "listing_status",
+            ],
+        },
+        StarOrderTestCase {
+            description: "a nested USING key once, though the inner join merges it again",
+            sql: "SELECT * FROM customers a JOIN (customers b JOIN customers c USING (id)) USING (id)",
+            expected_names: &[
+                "id", "name", "country", "name", "country", "name", "country",
+            ],
+        },
+        StarOrderTestCase {
+            description: "a nested USING key once under a RIGHT JOIN",
+            sql: "SELECT * FROM customers a RIGHT JOIN (customers b JOIN customers c USING (id)) USING (id)",
+            expected_names: &[
+                "id", "name", "country", "name", "country", "name", "country",
+            ],
+        },
+        StarOrderTestCase {
+            description: "a nested NATURAL key once",
+            sql: "SELECT * FROM orders a NATURAL JOIN (customers b NATURAL JOIN customers c)",
+            expected_names: &[
+                "id",
+                "customer_id",
+                "amount",
+                "items",
+                "status",
+                "name",
+                "country",
+            ],
+        },
+        StarOrderTestCase {
+            description: "the same USING key in two comma groups, once in each",
+            sql: "SELECT * FROM customers a JOIN customers b USING (id), customers c JOIN customers d USING (id)",
+            expected_names: &[
+                "id", "name", "country", "name", "country", "id", "name", "country", "name",
+                "country",
             ],
         },
         StarOrderTestCase {
