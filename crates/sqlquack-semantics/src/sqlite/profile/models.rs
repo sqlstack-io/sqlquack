@@ -62,6 +62,10 @@ impl DialectRules for SqliteRules {
         false
     }
 
+    fn select_list_reads_outputs(&self) -> bool {
+        false
+    }
+
     fn checks_call_signatures(&self) -> bool {
         false
     }

@@ -337,6 +337,11 @@ fn select_findings(
         let own_name: Option<String> =
             anywhere.then(|| output_key(unannotated(projection), context));
         let projected = match &own_name {
+            Some(_) if !rules.select_list_reads_outputs() => Level {
+                own: &[],
+                windows_read_outputs: true,
+                ..level
+            },
             Some(own_name) => Level {
                 hidden: Some(own_name),
                 windows_read_outputs: rules.window_keys_read_outputs(),
