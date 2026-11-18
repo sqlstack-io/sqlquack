@@ -416,6 +416,8 @@ impl Parser<'_> {
             .parameters
             .iter()
             .map(|parameter| FunctionParameter {
+                comment: None,
+                comment_written: None,
                 name: Some(parameter.clone()),
                 data_type: DataType::Unknown,
                 mode: None,

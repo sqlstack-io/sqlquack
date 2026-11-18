@@ -157,6 +157,8 @@ impl Parser<'_> {
             false => None,
         };
         Ok(FunctionParameter {
+            comment: None,
+            comment_written: None,
             name: Some(name),
             data_type,
             mode: None,

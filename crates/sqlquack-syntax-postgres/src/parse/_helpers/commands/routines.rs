@@ -289,6 +289,8 @@ impl Parser<'_> {
             false => None,
         };
         Ok(FunctionParameter {
+            comment: None,
+            comment_written: None,
             name,
             data_type,
             mode: mode.as_deref().map(|mode| match mode {

@@ -279,6 +279,8 @@ impl Parser {
                 false => Some(first),
             };
             signature.push(FunctionParameter {
+                comment: None,
+                comment_written: None,
                 name,
                 data_type: self.parse_data_type()?,
                 mode: None,
