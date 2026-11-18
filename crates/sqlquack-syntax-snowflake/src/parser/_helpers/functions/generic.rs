@@ -1255,7 +1255,7 @@ impl Parser {
     /// Parse OVER clause; inside a semantic view, which has no named windows, a window never starts with a name.
     pub(crate) fn parse_over_clause(&mut self) -> Result<Over> {
         if !self.check(TokenType::LParen) {
-            let window_name = self.parse_unquoted_identifier(Self::expect_identifier_or_keyword)?;
+            let window_name = self.parse_quoting_identifier(Self::expect_identifier_or_keyword)?;
             return Ok(Over {
                 window_name: Some(window_name),
                 partition_by: Vec::new(),
@@ -1270,6 +1270,7 @@ impl Parser {
         let window_name = if !self.config.in_semantic_view
             && (self.check(TokenType::Identifier)
                 || self.check(TokenType::Var)
+                || self.check(TokenType::QuotedIdentifier)
                 || self.check_keyword())
             && !self.check(TokenType::Partition)
             && !self.check(TokenType::Order)
@@ -1280,7 +1281,8 @@ impl Parser {
             && !self.check(TokenType::Sort)
         {
             let pos = self.current;
-            let name = identifier_from_token(self.advance()?, false);
+            let quoted = self.check(TokenType::QuotedIdentifier);
+            let name = identifier_from_token(self.advance()?, quoted);
             if self.check(TokenType::Order)
                 || self.check(TokenType::Partition)
                 || self.check(TokenType::Rows)

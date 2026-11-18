@@ -289,6 +289,21 @@ fn given_a_named_window_when_resolving_names_then_its_keys_read_the_input_column
             sql: "SELECT amount AS q, sum(amount) OVER w AS x FROM orders WINDOW w AS (ORDER BY q)",
             expected_findings: &[("E201", "Unknown column 'q' in table 'orders'", 78)],
         },
+        QueryFindingsTestCase {
+            description: "a quoted window name keeps its case, so W is not w (18.6: 42704)",
+            sql: "SELECT sum(amount) OVER \"W\" AS x FROM orders WINDOW w AS (ORDER BY id)",
+            expected_findings: &[("E232", "Unknown named window 'W'", 11)],
+        },
+        QueryFindingsTestCase {
+            description: "a quoted window name read by the same quoted name",
+            sql: "SELECT sum(amount) OVER \"W\" AS x FROM orders WINDOW \"W\" AS (ORDER BY id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unquoted name folds to the quoted lower-case window",
+            sql: "SELECT sum(amount) OVER (W ORDER BY id) AS x FROM orders WINDOW \"w\" AS (PARTITION BY nope)",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 85)],
+        },
     ];
     let schema = duckdb_shop_schema();
     for test_case in test_cases {
