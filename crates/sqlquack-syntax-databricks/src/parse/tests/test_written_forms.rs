@@ -29,6 +29,16 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 3,
         },
         DistinctTreesTestCase {
+            description: "a returned table's columns with different spacing and comments",
+            written: &[
+                "CREATE FUNCTION f1 ( ) RETURNS TABLE ( c1 INT , c2 STRING ) RETURN SELECT 1 , 'a'",
+                "CREATE FUNCTION f1 ( ) RETURNS TABLE(c1 INT, c2 STRING) RETURN SELECT 1 , 'a'",
+                "CREATE FUNCTION f1 ( ) RETURNS TABLE (\n  c1 INT, -- x\n  c2 STRING\n) RETURN SELECT 1 , 'a'",
+                "CREATE FUNCTION f1 ( ) RETURNS TABLE ( c1 BIGINT , c2 STRING ) RETURN SELECT 1 , 'a'",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
             description: "a resource written as a raw string and as a string",
             written: &[
                 "ADD FILE r'v1'",
