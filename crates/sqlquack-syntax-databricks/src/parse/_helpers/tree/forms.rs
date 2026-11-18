@@ -409,12 +409,16 @@ impl Parser<'_> {
         })))
     }
 
-    /// `resource`: tokens with no space between them as written, as Spark splits resources, or a string.
+    /// `resource`: unspaced tokens as written, as Spark splits resources, or a string; `r'x'` stays written.
     fn resource(&mut self) -> Parsing<Expression> {
         if self.ends_at(0) {
             return Err(self.error());
         }
-        if self.string_at(0) && !self.adjacent(0) {
+        let quoted: bool = matches!(
+            self.peek().map(|token| token.kind),
+            Some(TokenKind::String { raw: false })
+        );
+        if quoted && !self.adjacent(0) {
             return Ok(string(&self.advance()?.value));
         }
         let first: usize = self.at;

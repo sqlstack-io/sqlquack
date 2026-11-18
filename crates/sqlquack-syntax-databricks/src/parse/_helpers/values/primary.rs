@@ -895,7 +895,7 @@ impl Parser<'_> {
     fn path_bracket(&mut self, names: bool) -> Parsing<Expression> {
         self.expect_char('[')?;
         let index: Expression = match self.peek().map(|token| token.kind) {
-            Some(TokenKind::String { .. }) => string(&self.advance()?.value),
+            Some(TokenKind::String { .. }) => literal(self.one_string()?),
             Some(TokenKind::Number(NumberKind::Integer)) => {
                 literal(Literal::Number(self.advance()?.value))
             }
