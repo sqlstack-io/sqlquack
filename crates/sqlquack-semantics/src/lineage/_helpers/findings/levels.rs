@@ -337,6 +337,11 @@ fn select_findings(
         let own_name: Option<String> =
             anywhere.then(|| output_key(unannotated(projection), context));
         let projected = match &own_name {
+            Some(_) if !rules.select_list_reads_outputs() => Level {
+                own: &[],
+                windows_read_outputs: true,
+                ..level
+            },
             Some(own_name) => Level {
                 hidden: Some(own_name),
                 windows_read_outputs: rules.window_keys_read_outputs(),
@@ -433,7 +438,12 @@ fn window_findings(
         own: &[],
         ..level
     };
-    let projected_reads: bool = dialect_rules(context.profile).window_keys_read_outputs();
+    let rules: &dyn DialectRules = dialect_rules(context.profile);
+    let projected_reads: bool = rules.window_keys_read_outputs();
+    let unprojected = match rules.select_list_reads_outputs() {
+        true => unnamed,
+        false => Level { own: &[], ..level },
+    };
     let mut readers: Vec<(Level<'_, '_>, Vec<&NamedWindow>)> = match anywhere {
         true => select
             .expressions
@@ -446,7 +456,7 @@ fn window_findings(
                         hidden: Some(name.as_str()),
                         ..level
                     },
-                    false => unnamed,
+                    false => unprojected,
                 };
                 (reader, reached)
             })
