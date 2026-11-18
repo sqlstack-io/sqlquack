@@ -164,9 +164,9 @@ These parse without a gap, but the shared tree keeps less than the source said:
 - `TIMESTAMP_LTZ` and `TIMESTAMP_NTZ` literals become a `Cast` to a custom type; collations on
   string types are dropped.
 - `COPY *` on a view becomes `copy_grants`.
-- A function's `RETURNS TABLE (columns)` keeps the column list as `returns_table_body` text; its
-  `COMMENT`, `SPECIFIC` and `DEFAULT COLLATION` become `options` properties, and parameter
-  comments and `NOT NULL` are dropped.
+- A function's `RETURNS TABLE (columns)` keeps the column list as `returns_table_body`, its
+  tokens separated by single spaces; its `COMMENT`, `SPECIFIC` and `DEFAULT COLLATION` become
+  `options` properties, and parameter comments and `NOT NULL` are dropped.
 - `SHOW TBLPROPERTIES t (key)` holds the key as the `scope` of `scope_kind` `PROPERTY`, a key
   written as a string literal as a string and any other as its dotted identifier: the shared `Show` has no field for
   a property key.
