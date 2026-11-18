@@ -16,6 +16,8 @@ pub(crate) enum Part {
     Word(&'static str),
     /// Punctuation of the pattern, such as `(`, `,` or `=`.
     Punct(&'static str),
+    /// A `(` the pattern lets the text leave out, as in `{ ( name ,... ) | name ,... }`.
+    OptionalOpen,
     /// A slot's value.
     Value(Expression),
     /// A slot whose value holds a construct the shared tree lacks.
@@ -206,14 +208,13 @@ fn clauses(parts: &[Part], mut at: usize) -> (Vec<Expression>, usize) {
                 clause.depth = opened.len();
             }
             Part::Value(value) => out.extend(clause.push(value.clone())),
-            Part::Punct("(") => {
+            Part::Punct("(") | Part::OptionalOpen => {
                 let (inner, end): (Vec<Expression>, usize) = clauses(parts, at);
                 at = end;
-                let several: bool = inner.len() > 1;
                 let group: Expression = Expression::Tuple(Box::new(Tuple { expressions: inner }));
-                out.extend(clause.push(match several {
-                    true => paren(group),
-                    false => group,
+                out.extend(clause.push(match part {
+                    Part::OptionalOpen => paren(group),
+                    _ => group,
                 }));
             }
             Part::Punct(")") => break,

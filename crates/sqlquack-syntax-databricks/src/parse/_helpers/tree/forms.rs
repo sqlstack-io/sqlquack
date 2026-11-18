@@ -16,7 +16,8 @@ use crate::scan::models::{NumberKind, Token, TokenKind};
 /// A pattern, parsed.
 enum Node {
     Word(&'static str),
-    Punct(&'static str),
+    /// Punctuation, and whether it is a `(` the grammar lets the text leave out.
+    Punct(&'static str, bool),
     Slot(&'static str),
     Seq(Vec<Node>),
     Alt(Vec<Node>),
@@ -47,11 +48,30 @@ fn alternatives(words: &[&'static str], at: usize) -> (Node, usize) {
         choices.push(choice);
         at = end;
     }
+    let opens: Vec<bool> = choices
+        .iter_mut()
+        .map(|choice| leading_open(choice).is_some())
+        .collect();
+    if opens.contains(&true) && opens.contains(&false) {
+        choices
+            .iter_mut()
+            .filter_map(leading_open)
+            .for_each(|optional| *optional = true);
+    }
     let node: Node = match choices.len() {
         1 => choices.remove(0),
         _ => Node::Alt(choices),
     };
     (node, at)
+}
+
+/// The optional flag of the `(` a choice starts with, if it starts with one.
+fn leading_open(node: &mut Node) -> Option<&mut bool> {
+    match node {
+        Node::Punct("(", optional) => Some(optional),
+        Node::Seq(items) => items.first_mut().and_then(leading_open),
+        _ => None,
+    }
 }
 
 /// Parses a sequence from `words[at]` to a `|`, a closing bracket or the end, and where it ends.
@@ -77,7 +97,7 @@ fn sequence(words: &[&'static str], mut at: usize) -> (Node, usize) {
             }
             _ if word.starts_with(|c: char| c.is_ascii_uppercase()) => Node::Word(word),
             _ if word.starts_with(|c: char| c.is_ascii_lowercase()) => Node::Slot(word),
-            _ => Node::Punct(word),
+            _ => Node::Punct(word, false),
         };
         at += 1;
         items.push(item);
@@ -233,7 +253,7 @@ impl Parser<'_> {
                 }
                 to
             }
-            Node::Punct(text) => {
+            Node::Punct(text, optional) => {
                 let mut to: Vec<Path> = Vec::new();
                 for (at, mut parts) in from {
                     let found: bool = self.tokens.get(at).is_some_and(|token| match token.kind {
@@ -245,7 +265,10 @@ impl Parser<'_> {
                     });
                     match found {
                         true => {
-                            parts.push(Part::Punct(text));
+                            parts.push(match optional {
+                                true => Part::OptionalOpen,
+                                false => Part::Punct(text),
+                            });
                             to.push((at + 1, parts));
                         }
                         false => self.miss(at, furthest),

@@ -220,6 +220,18 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "true",
         },
         ValueTestCase {
+            description: "a list whose parentheses the grammar requires stays a tuple for several values",
+            sql: "CREATE GOVERNED TAG v1 DESCRIPTION 'x' VALUES ( 'm' , 'm2' )",
+            pointer: "/0/utility_statement/operands/2/property/value/tuple/expressions/1/literal/value",
+            expected_json: "\"m2\"",
+        },
+        ValueTestCase {
+            description: "ZORDER BY's optional parentheses are a paren node around one column too",
+            sql: "OPTIMIZE t1 ZORDER BY ( c1 )",
+            pointer: "/0/utility_statement/operands/1/property/value/paren/this/tuple/expressions/0/table/name/name",
+            expected_json: "\"c1\"",
+        },
+        ValueTestCase {
             description: "a CACHE TABLE option written without = keeps its position",
             sql: "CACHE TABLE t1 OPTIONS ( 'storageLevel' 'DISK_ONLY' )",
             pointer: "/0/cache/options_without_equals",
