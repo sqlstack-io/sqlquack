@@ -6,7 +6,7 @@ use sqlquack_syntax::expressions::columns::models::{
     AlterColumnAction, AlterTable, AlterTableAction, ColumnDef, ColumnPosition,
     MaskingPolicyColumnConstraint,
 };
-use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
+use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{
     AlterObject, AlterView, AlterViewAction,
 };
@@ -42,19 +42,31 @@ pub(crate) fn property_text(expression: &Expression) -> String {
     }
 }
 
-/// The positions of the property `keys` written in backquotes, and of those written as strings.
-pub(crate) fn key_spellings<'a>(
-    keys: impl IntoIterator<Item = &'a Expression>,
-) -> (Vec<usize>, Vec<usize>) {
-    let (mut quoted, mut strings) = (Vec::new(), Vec::new());
+/// How the property `keys` were written: the positions of those in backquotes and of those written as
+/// strings, and each one written as a raw string or adjacent strings, as written.
+pub(crate) fn key_spellings<'a>(keys: impl IntoIterator<Item = &'a Expression>) -> KeySpellings {
+    let mut spellings: KeySpellings = KeySpellings::default();
     for (position, key) in keys.into_iter().enumerate() {
         match key {
-            Expression::Literal(_) => strings.push(position),
-            Expression::Identifier(name) if name.quoted => quoted.push(position),
+            Expression::Literal(literal) => {
+                spellings.strings.push(position);
+                if !matches!(literal.as_ref(), Literal::String(_)) {
+                    spellings.written.push((position, literal.as_ref().clone()));
+                }
+            }
+            Expression::Identifier(name) if name.quoted => spellings.quoted.push(position),
             _ => {}
         }
     }
-    (quoted, strings)
+    spellings
+}
+
+/// How property keys were written, by position.
+#[derive(Default)]
+pub(crate) struct KeySpellings {
+    pub(crate) quoted: Vec<usize>,
+    pub(crate) strings: Vec<usize>,
+    pub(crate) written: Vec<(usize, Literal)>,
 }
 
 /// A property as its key and value; a key without a value has a null value.
@@ -871,15 +883,16 @@ impl Parser<'_> {
                     .into_iter()
                     .map(property_pair)
                     .collect();
-                let (quoted_keys, string_keys) = key_spellings(pairs.iter().map(|(key, _)| key));
+                let spellings: KeySpellings = key_spellings(pairs.iter().map(|(key, _)| key));
                 let expressions: Vec<(String, Expression)> = pairs
                     .into_iter()
                     .map(|(key, value)| (property_text(&key), value))
                     .collect();
                 Ok(Some(AlterTableAction::SetTag {
                     expressions,
-                    quoted_keys,
-                    string_keys,
+                    quoted_keys: spellings.quoted,
+                    string_keys: spellings.strings,
+                    written_keys: spellings.written,
                 }))
             }
             "OWNER" => {
@@ -940,11 +953,12 @@ impl Parser<'_> {
         }
         if self.eat_kw("TAGS") {
             let keys: Vec<Expression> = self.property_list()?;
-            let (quoted_keys, string_keys) = key_spellings(&keys);
+            let spellings: KeySpellings = key_spellings(&keys);
             return Ok(Some(AlterTableAction::UnsetTag {
                 names: keys.iter().map(property_text).collect(),
-                quoted_keys,
-                string_keys,
+                quoted_keys: spellings.quoted,
+                string_keys: spellings.strings,
+                written_keys: spellings.written,
             }));
         }
         self.expect_kw("MANAGED")?;

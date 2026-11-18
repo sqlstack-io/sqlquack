@@ -532,3 +532,27 @@ fn given_a_parenthesized_query_with_clauses_after_it_when_analysed_then_they_rea
         );
     }
 }
+
+#[test]
+fn given_adjacent_strings_when_analysed_then_they_read_as_the_string_they_join_to() {
+    let test_cases = [
+        SameReadingTestCase {
+            description: "an output's type",
+            sql: "SELECT 'a' 'b' AS x",
+            expected_same_as: "SELECT 'ab' AS x",
+        },
+        SameReadingTestCase {
+            description: "a number column compared with a string that is not a number",
+            sql: "SELECT id FROM orders WHERE quantity = 'x' 'y'",
+            expected_same_as: "SELECT id FROM orders WHERE quantity = 'xy'",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            reading(test_case.sql),
+            reading(test_case.expected_same_as),
+            "{}",
+            test_case.description
+        );
+    }
+}

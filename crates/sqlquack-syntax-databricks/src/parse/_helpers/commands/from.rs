@@ -854,8 +854,7 @@ impl Parser<'_> {
         }
         let key: Expression = match self.string_at(0) {
             true if !self.char_at(strings, '=') => {
-                let token = self.advance()?;
-                crate::parse::_helpers::tree::nodes::string(&token.value)
+                Expression::Literal(Box::new(self.one_string()?))
             }
             true => self.string_literal()?,
             false => crate::parse::_helpers::tree::nodes::qualified(self.multipart_identifier()?),

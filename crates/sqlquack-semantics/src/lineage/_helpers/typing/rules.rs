@@ -29,7 +29,7 @@ fn generic_literal_type(expression: &Expression) -> ValueType {
         Expression::Literal(literal) => match literal.as_ref() {
             Literal::Number(text) if text.contains(['.', 'e', 'E']) => Some(DECIMAL_LITERAL_TYPE),
             Literal::Number(_) => Some(INTEGER_LITERAL_TYPE),
-            Literal::String(_) => Some(TEXT_TYPE),
+            Literal::String(_) | Literal::JoinedString(..) => Some(TEXT_TYPE),
             _ => None,
         },
         Expression::Boolean(_) => Some(BOOLEAN_TYPE),

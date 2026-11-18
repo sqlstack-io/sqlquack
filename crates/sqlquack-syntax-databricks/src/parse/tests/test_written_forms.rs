@@ -818,16 +818,31 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 6,
         },
         DistinctTreesTestCase {
-            description: "a tag key written as a name, backquoted and as a string",
+            description: "a tag key written as a name, backquoted, as a string and as a raw string",
             written: &[
                 "ALTER TABLE t1 UNSET TAGS ( k )",
                 "ALTER TABLE t1 UNSET TAGS ( `k` )",
                 "ALTER TABLE t1 UNSET TAGS ( 'k' )",
+                "ALTER TABLE t1 UNSET TAGS ( r'k' )",
                 "ALTER TABLE t1 SET TAGS ( k = 'v' )",
                 "ALTER TABLE t1 SET TAGS ( `k` = 'v' )",
                 "ALTER TABLE t1 SET TAGS ( 'k' = 'v' )",
+                "ALTER TABLE t1 SET TAGS ( r'k' = 'v' )",
             ],
-            expected_distinct_trees: 6,
+            expected_distinct_trees: 8,
+        },
+        DistinctTreesTestCase {
+            description: "adjacent strings apart from the one string they join to",
+            written: &[
+                "SELECT 'a' 'b'",
+                "SELECT 'ab'",
+                "SELECT r'a' 'b'",
+                "SELECT 'a' 'b' 'c'",
+                "SELECT 'ab' 'c'",
+                "ALTER TABLE t1 SET TAGS ( 'a' 'b' = 'v' )",
+                "ALTER TABLE t1 SET TAGS ( 'ab' = 'v' )",
+            ],
+            expected_distinct_trees: 7,
         },
     ];
     for test_case in test_cases {

@@ -4,6 +4,7 @@ use serde::Deserialize;
 use serde::Serialize;
 
 use crate::expressions::names::models::Identifier;
+use crate::expressions::names::models::Literal;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::tables::models::ConstraintType;
 use crate::expressions::tables::models::IndexKeyPart;
@@ -806,6 +807,9 @@ pub enum AlterTableAction {
         /// Databricks: the positions of the keys written as strings
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         string_keys: Vec<usize>,
+        /// Databricks: the keys written as a raw string or as adjacent strings, by position, as written
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        written_keys: Vec<(usize, Literal)>,
     },
     /// UNSET TAG action (Snowflake): ALTER TABLE t UNSET TAG key1, key2
     UnsetTag {
@@ -816,6 +820,9 @@ pub enum AlterTableAction {
         /// Databricks: the positions of the names written as strings
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         string_keys: Vec<usize>,
+        /// Databricks: the keys written as a raw string or as adjacent strings, by position, as written
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        written_keys: Vec<(usize, Literal)>,
     },
     /// SET with parenthesized options (TSQL): ALTER TABLE t SET (SYSTEM_VERSIONING=ON, ...)
     SetOptions {
@@ -934,6 +941,7 @@ impl AlterTableAction {
             expressions,
             quoted_keys: Vec::new(),
             string_keys: Vec::new(),
+            written_keys: Vec::new(),
         }
     }
 
@@ -943,6 +951,7 @@ impl AlterTableAction {
             names,
             quoted_keys: Vec::new(),
             string_keys: Vec::new(),
+            written_keys: Vec::new(),
         }
     }
 }
