@@ -2,7 +2,7 @@
 
 use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 use sqlquack_syntax::expressions::schema_objects::models::{
     CreateFunction, CreateSchema, DropFunction, DropSchema, FunctionBody, FunctionParameter,
     FunctionSecurity, FunctionUsingResource, SqlDataAccess,
@@ -112,13 +112,14 @@ impl Parser<'_> {
         let name: Identifier = self.ident()?;
         let data_type: DataType = self.data_type()?;
         let mut default: Option<Expression> = None;
+        let mut comment: Option<(String, Option<Literal>)> = None;
         loop {
             if (self.kw("NOT") || self.is_char('!')) && self.kw_at(1, "NULL") {
                 self.at += 2;
             } else if self.eat_kw("DEFAULT") {
                 default = Some(self.expression()?);
             } else if self.eat_kw("COMMENT") {
-                self.string_spelling()?;
+                comment = Some(self.written_string()?);
             } else {
                 break;
             }
@@ -129,6 +130,8 @@ impl Parser<'_> {
             mode: None,
             default,
             mode_text: None,
+            comment_written: comment.as_ref().and_then(|(_, written)| written.clone()),
+            comment: comment.map(|(text, _)| text),
             span: SourceSpan::default(),
         })
     }

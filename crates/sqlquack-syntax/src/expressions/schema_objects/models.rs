@@ -703,6 +703,12 @@ pub struct FunctionParameter {
     /// Original text of the mode keyword for case-preserving output (e.g., "inout", "VARIADIC")
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mode_text: Option<String>,
+    /// Databricks: the parameter's COMMENT
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment: Option<String>,
+    /// Databricks: the comment as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment_written: Option<Literal>,
     /// SQLQuack: the node's source range, recorded by a parser that sets it.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
