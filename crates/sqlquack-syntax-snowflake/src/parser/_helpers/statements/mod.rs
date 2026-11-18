@@ -7,4 +7,5 @@ pub(crate) mod procedures;
 pub(crate) mod scripting;
 pub(crate) mod sessions;
 pub(crate) mod snowflake_context;
+pub(crate) mod use_statement;
 pub(crate) mod with_statement;
