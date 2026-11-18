@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.18.1](https://github.com/sqlstack-io/sqlquack/compare/v0.18.0...v0.18.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* **databricks:** keep backquoted names, tag key spellings and credential value types in trees ([3d42bc3](https://github.com/sqlstack-io/sqlquack/commit/3d42bc38bfd6be89564ef3982c44c27888a39463))
+* **databricks:** keep every pair of parentheses around a relation or a query ([95cfa5c](https://github.com/sqlstack-io/sqlquack/commit/95cfa5cd3923a614bfeb8e062947ab771a4e1978))
+* **lint:** check CTEs of a parenthesized query or CTE body ([dc288d1](https://github.com/sqlstack-io/sqlquack/commit/dc288d1f5fc286d8ff9ddf200818dfa383f7f821))
+* **semantics:** resolve clauses after a parenthesized query in its scope ([2744091](https://github.com/sqlstack-io/sqlquack/commit/27440910036908d93e3f7ea585cf3aca4804869b))
+
 ## [0.18.0](https://github.com/sqlstack-io/sqlquack/compare/v0.17.0...v0.18.0) (2026-11-18)
 
 
