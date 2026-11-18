@@ -605,4 +605,7 @@ alternations, groups, `PERMUTE` and quantifiers) beside the pattern's text, beca
 Syntax block defines the pattern as a grammar of its own rather than as a string.
 
 Spellings the language treats as one token stay one tree: the letter case of keywords and of a
-raw-string prefix, the quote character around a string or binary literal, and comments.
+raw-string prefix, the quote character around a string or binary literal, and comments. An
+unquoted function name keeps the case it is written in, so `count` and `COUNT` give two trees, but
+its case carries no meaning: the formatter writes built-in names in upper case, and its round trip
+compares unquoted function names without their case. A backquoted name keeps its case.
