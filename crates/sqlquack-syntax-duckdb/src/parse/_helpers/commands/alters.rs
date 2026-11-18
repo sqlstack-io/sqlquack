@@ -153,6 +153,7 @@ impl Parser<'_> {
             let action: AlterColumnAction = self.alter_column_entry(start)?;
             return Ok(match nested(path) {
                 Ok(name) => TableAction::Tree(Box::new(AlterTableAction::AlterColumn {
+                    comment_written: None,
                     name,
                     action,
                     use_modify_keyword: false,

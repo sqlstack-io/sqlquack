@@ -269,12 +269,16 @@ impl Parser<'_> {
         let clause: (&'static str, Option<Expression>) = match word.as_str() {
             "OPTIONS" if self.char_at(1, '(') => {
                 self.at += 1;
-                let spelled: Vec<(OptionEntry, bool, bool)> =
+                let spelled: Vec<(OptionEntry, bool, bool, Option<Literal>)> =
                     self.parenthesized(|parser| parser.table_option())?;
                 let mut entries: Vec<OptionEntry> = Vec::new();
                 let mut string_keys: Vec<usize> = Vec::new();
                 let mut without_equals: Vec<usize> = Vec::new();
-                for (at, (entry, string_key, without)) in spelled.into_iter().enumerate() {
+                let mut written_keys: Vec<(usize, Literal)> = Vec::new();
+                for (at, (entry, string_key, without, written)) in spelled.into_iter().enumerate() {
+                    if let Some(written) = written {
+                        written_keys.push((at, written));
+                    }
                     if string_key {
                         string_keys.push(at);
                     }
@@ -284,6 +288,7 @@ impl Parser<'_> {
                     entries.push(entry);
                 }
                 let options = Expression::OptionsProperty(Box::new(OptionsProperty {
+                    written_keys,
                     entries,
                     string_keys,
                     without_equals,
@@ -380,16 +385,26 @@ impl Parser<'_> {
     }
 
     /// One `OPTIONS` entry, whether its key is a string and whether its value lacks `=`.
-    fn table_option(&mut self) -> Parsing<(OptionEntry, bool, bool)> {
+    fn table_option(&mut self) -> Parsing<(OptionEntry, bool, bool, Option<Literal>)> {
         let mut strings: usize = 0;
         while self.string_at(strings) {
             strings += 1;
         }
         let string_key: bool = self.string_at(0);
-        let key: Identifier = match string_key {
-            true if !self.char_at(strings, '=') => Identifier::new(self.advance()?.value),
-            true => Identifier::new(self.string_lit()?),
-            false => joined(self.multipart_identifier()?),
+        let (key, written): (Identifier, Option<Literal>) = match string_key {
+            true if !self.char_at(strings, '=') => {
+                let piece: Literal = self.one_string()?;
+                let text: String = piece.value_str().to_string();
+                (
+                    Identifier::new(text),
+                    (!matches!(piece, Literal::String(_))).then_some(piece),
+                )
+            }
+            true => {
+                let (text, written) = self.written_string()?;
+                (Identifier::new(text), written)
+            }
+            false => (joined(self.multipart_identifier()?), None),
         };
         let equals: bool = self.eat_char('=');
         if !equals && self.terminal_at(0) {
@@ -403,7 +418,7 @@ impl Parser<'_> {
             ));
         }
         let value: Expression = self.expression()?;
-        Ok((OptionEntry { key, value }, string_key, !equals))
+        Ok((OptionEntry { key, value }, string_key, !equals, written))
     }
 
     /// `bucketSpec`: `CLUSTERED BY (columns) [SORTED BY (columns)] INTO n BUCKETS`.
@@ -640,7 +655,9 @@ impl Parser<'_> {
             column.nullable = Some(false);
         }
         if self.eat_kw("COMMENT") {
-            column.comment = Some(self.string_lit()?);
+            let (comment, written) = self.written_string()?;
+            column.comment = Some(comment);
+            column.comment_written = written;
         }
         Ok(Expression::ColumnDef(Box::new(column)))
     }
@@ -659,7 +676,9 @@ impl Parser<'_> {
             } else if self.eat_kw("DEFAULT") {
                 column.default = Some(self.expression()?);
             } else if self.eat_kw("COMMENT") {
-                column.comment = Some(self.string_lit()?);
+                let (comment, written) = self.written_string()?;
+                column.comment = Some(comment);
+                column.comment_written = written;
             } else if self.eat_kw("GENERATED") {
                 column.constraints.push(self.generation_expression()?);
             } else if self.kw("MASK") {
@@ -1017,12 +1036,15 @@ impl Parser<'_> {
                 let mut column: ViewColumn = ViewColumn::new(String::new());
                 column.name = parser.ident()?;
                 if parser.eat_kw("COMMENT") {
-                    column.comment = Some(parser.string_lit()?);
+                    let (comment, written) = parser.written_string()?;
+                    column.comment = Some(comment);
+                    column.comment_written = written;
                 }
                 Ok(column)
             })?;
         }
         let mut comment: Option<String> = None;
+        let mut comment_written: Option<Literal> = None;
         let mut table_properties: Vec<Expression> = Vec::new();
         let mut copy_grants: bool = false;
         let mut options: Vec<Expression> = Vec::new();
@@ -1036,7 +1058,9 @@ impl Parser<'_> {
                 if comment.is_some() {
                     return Err(self.error_with("Found duplicate clauses: COMMENT", start, true));
                 }
-                comment = Some(self.string_lit()?);
+                let (text, written) = self.written_string()?;
+                comment = Some(text);
+                comment_written = written;
             } else if self.eat_kw("TBLPROPERTIES") {
                 let properties: Expression = self.properties_node(false)?;
                 table_properties.push(properties);
@@ -1053,6 +1077,7 @@ impl Parser<'_> {
                 node.temporary = head.temporary;
                 node.temporary_spelling = head.temporary_spelling;
                 node.comment = comment;
+                node.comment_written = comment_written;
                 node.table_properties = table_properties;
                 node.copy_grants = copy_grants;
                 node.options = options;
@@ -1088,6 +1113,7 @@ impl Parser<'_> {
         node.temporary = head.temporary;
         node.temporary_spelling = head.temporary_spelling;
         node.comment = comment;
+        node.comment_written = comment_written;
         node.table_properties = table_properties;
         node.query_parenthesized = parenthesized;
         node.copy_grants = copy_grants;
@@ -1146,7 +1172,9 @@ impl Parser<'_> {
                 node.options
                     .push(property("LANGUAGE", var(&language.value)));
             } else if self.eat_kw("COMMENT") {
-                node.comment = Some(self.string_lit()?);
+                let (comment, written) = self.written_string()?;
+                node.comment = Some(comment);
+                node.comment_written = written;
             } else if self.eat_kw("TBLPROPERTIES") {
                 let properties: Expression = self.properties_node(false)?;
                 node.table_properties.push(properties);
@@ -1188,7 +1216,7 @@ impl Parser<'_> {
                     parser.at += 2;
                 }
                 if parser.eat_kw("COMMENT") {
-                    parser.string_lit()?;
+                    parser.string_spelling()?;
                 }
                 Ok(())
             })?;

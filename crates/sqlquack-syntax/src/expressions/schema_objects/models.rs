@@ -1,5 +1,6 @@
 //! Data models of expressions schema objects.
 
+use crate::expressions::names::models::Literal;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -24,6 +25,9 @@ use crate::tokens::models::SourceSpan;
 pub struct ViewColumn {
     pub name: Identifier,
     pub comment: Option<String>,
+    /// Databricks: the comment as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment_written: Option<Literal>,
     /// BigQuery: OPTIONS (key=value, ...) on column
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub options: Vec<Expression>,
@@ -32,6 +36,7 @@ pub struct ViewColumn {
 impl ViewColumn {
     pub fn new(name: impl Into<String>) -> Self {
         Self {
+            comment_written: None,
             name: Identifier::new(name),
             comment: None,
             options: Vec::new(),
@@ -40,6 +45,7 @@ impl ViewColumn {
 
     pub fn with_comment(name: impl Into<String>, comment: impl Into<String>) -> Self {
         Self {
+            comment_written: None,
             name: Identifier::new(name),
             comment: Some(comment.into()),
             options: Vec::new(),
@@ -93,6 +99,9 @@ pub struct CreateView {
     /// Snowflake: COMMENT = 'text'
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub comment: Option<String>,
+    /// Databricks: the comment as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment_written: Option<Literal>,
     /// Snowflake: WITH ROW ACCESS POLICY ... clause
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub row_access_policy: Option<String>,
@@ -146,6 +155,7 @@ pub struct CreateView {
 impl CreateView {
     pub fn new(name: impl Into<String>, query: Expression) -> Self {
         Self {
+            comment_written: None,
             name: TableRef::new(name),
             columns: Vec::new(),
             query,
@@ -512,6 +522,9 @@ pub struct CreateFunction {
     pub parameters: Vec<FunctionParameter>,
     pub return_type: Option<DataType>,
     pub body: Option<FunctionBody>,
+    /// Databricks: the string body as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub body_written: Option<Literal>,
     pub or_replace: bool,
     /// TSQL: CREATE OR ALTER
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
@@ -567,6 +580,9 @@ pub struct CreateFunction {
     /// HANDLER 'handler_function' clause (Databricks)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub handler: Option<String>,
+    /// Databricks: the handler as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub handler_written: Option<Literal>,
     /// True when the HANDLER clause used Snowflake-style `HANDLER = 'fn'`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub handler_uses_eq: bool,
@@ -669,6 +685,9 @@ pub enum FunctionPropertyKind {
 pub struct FunctionUsingResource {
     pub kind: String,
     pub uri: String,
+    /// Databricks: the resource URI as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub uri_written: Option<Literal>,
     /// Databricks: the resource kind was written in backquotes, as in ``USING `JAR` 'uri'``
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub kind_quoted: bool,
@@ -735,6 +754,8 @@ pub enum FunctionSecurity {
 impl CreateFunction {
     pub fn new(name: impl Into<String>) -> Self {
         Self {
+            body_written: None,
+            handler_written: None,
             name: TableRef::new(name),
             parameters: Vec::new(),
             return_type: None,

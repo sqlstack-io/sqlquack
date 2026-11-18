@@ -297,10 +297,12 @@ impl Parser<'_> {
             )?);
         } else if self.kw("SET") && self.kw_at(1, "LOCATION") {
             self.at += 2;
-            let location: String = self.string_lit()?;
+            let (location, location_written) = self.written_string()?;
             node.partition = Some(partition_pairs(spec));
-            node.actions
-                .push(AlterTableAction::SetLocation { location });
+            node.actions.push(AlterTableAction::SetLocation {
+                location_written,
+                location,
+            });
         } else if self.kw("SET") && self.kw_in(1, &["SERDE", "SERDEPROPERTIES"]) {
             let (key, values) = self.serde_clause()?;
             if deep {
@@ -513,7 +515,9 @@ impl Parser<'_> {
             } else if self.eat_kw("DEFAULT") {
                 column.default = Some(self.expression()?);
             } else if self.eat_kw("COMMENT") {
-                column.comment = Some(self.string_lit()?);
+                let (comment, written) = self.written_string()?;
+                column.comment = Some(comment);
+                column.comment_written = written;
             } else if self.kw_in(0, &["FIRST", "AFTER"]) {
                 position = Some(self.column_position()?);
             } else if self.eat_kw("MASK") {
@@ -749,14 +753,17 @@ impl Parser<'_> {
                 altered.push(keyed);
             } else {
                 match self.column_action()? {
-                    Some(action) => altered.push(AlterTableAction::AlterColumn {
-                        name,
-                        action,
-                        use_modify_keyword: false,
-                        column_keyword,
-                        action_words: None,
-                        keyword: change.then(|| "CHANGE".to_owned()),
-                    }),
+                    Some((action, comment_written)) => {
+                        altered.push(AlterTableAction::AlterColumn {
+                            comment_written,
+                            name,
+                            action,
+                            use_modify_keyword: false,
+                            column_keyword,
+                            action_words: None,
+                            keyword: change.then(|| "CHANGE".to_owned()),
+                        })
+                    }
                     None if self.opaque => {}
                     None if self.read_gap() => self.gap("alter_column_without_action", spec_start),
                     None => {
@@ -803,15 +810,19 @@ impl Parser<'_> {
             self.at += 2;
             self.gap("change_column_not_null", start);
         }
-        let comment: Option<String> = match self.eat_kw("COMMENT") {
-            true => Some(self.string_lit()?),
-            false => None,
+        let (comment, comment_written) = match self.eat_kw("COMMENT") {
+            true => {
+                let (comment, written) = self.written_string()?;
+                (Some(comment), written)
+            }
+            false => (None, None),
         };
         if self.kw_in(0, &["FIRST", "AFTER"]) {
             self.column_position()?;
             self.gap("change_column_position", start);
         }
         Ok(AlterTableAction::ChangeColumn {
+            comment_written,
             old_name,
             new_name,
             data_type: Some(data_type),
@@ -821,35 +832,43 @@ impl Parser<'_> {
     }
 
     /// `alterColumnAction`, with Databricks' masks and identity sync; none if absent or a gap.
-    fn column_action(&mut self) -> Parsing<Option<AlterColumnAction>> {
+    fn column_action(&mut self) -> Parsing<Option<(AlterColumnAction, Option<Literal>)>> {
         if self.eat_kw("TYPE") {
             let data_type: DataType = self.data_type()?;
-            return Ok(Some(AlterColumnAction::SetDataType {
-                data_type,
-                using: None,
-                collate: None,
-                rename: None,
-            }));
+            return Ok(Some((
+                AlterColumnAction::SetDataType {
+                    data_type,
+                    using: None,
+                    collate: None,
+                    rename: None,
+                },
+                None,
+            )));
         }
         if self.eat_kw("COMMENT") {
-            return Ok(Some(AlterColumnAction::Comment(self.string_lit()?)));
+            let (comment, written) = self.written_string()?;
+            return Ok(Some((AlterColumnAction::Comment(comment), written)));
         }
         if self.kw_in(0, &["SET", "DROP"]) && (self.kw_at(1, "NOT") || self.char_at(1, '!')) {
             let set: bool = self.kw("SET");
             self.at += 2;
             self.expect_kw("NULL")?;
-            return Ok(Some(match set {
+            let action: AlterColumnAction = match set {
                 true => AlterColumnAction::SetNotNull,
                 false => AlterColumnAction::DropNotNull,
-            }));
+            };
+            return Ok(Some((action, None)));
         }
         if self.kw("SET") && self.kw_at(1, "DEFAULT") {
             self.at += 2;
-            return Ok(Some(AlterColumnAction::SetDefault(self.expression()?)));
+            return Ok(Some((
+                AlterColumnAction::SetDefault(self.expression()?),
+                None,
+            )));
         }
         if self.kw("DROP") && self.kw_at(1, "DEFAULT") {
             self.at += 2;
-            return Ok(Some(AlterColumnAction::DropDefault));
+            return Ok(Some((AlterColumnAction::DropDefault, None)));
         }
         Ok(None)
     }
@@ -873,9 +892,13 @@ impl Parser<'_> {
                     without_equals,
                 }))
             }
-            "LOCATION" => Ok(Some(AlterTableAction::SetLocation {
-                location: self.string_lit()?,
-            })),
+            "LOCATION" => {
+                let (location, location_written) = self.written_string()?;
+                Ok(Some(AlterTableAction::SetLocation {
+                    location_written,
+                    location,
+                }))
+            }
             "TAGS" => {
                 let pairs: Vec<(Expression, Expression)> = self
                     .property_list()?
@@ -1074,7 +1097,7 @@ impl Parser<'_> {
                 loop {
                     self.partition_spec()?;
                     if self.eat_kw("LOCATION") {
-                        self.string_lit()?;
+                        self.string_spelling()?;
                     }
                     if !self.kw("PARTITION") {
                         break;
