@@ -529,6 +529,9 @@ pub struct Subquery {
     /// Databricks: the query's `WITH` was written before these parentheses, not inside them
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub ctes_outside: bool,
+    /// Databricks: a WINDOW clause written after these parentheses that the query inside could not take
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub windows: Option<Vec<NamedWindow>>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]

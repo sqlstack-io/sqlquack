@@ -839,6 +839,7 @@ impl Parser {
                 table_sample: None,
                 watermark: None,
                 ctes_outside: false,
+                windows: None,
             }));
             let result = self.parse_set_operation(subquery)?;
             self.parse_query_modifiers(result)
@@ -867,6 +868,7 @@ impl Parser {
                 table_sample: None,
                 watermark: None,
                 ctes_outside: false,
+                windows: None,
             }));
             let result = self.parse_set_operation(subquery)?;
             let pre_alias_comments = self.previous_trailing_comments().to_vec();
@@ -1110,6 +1112,7 @@ impl Parser {
                 table_sample: None,
                 watermark: None,
                 ctes_outside: false,
+                windows: None,
             }));
             let result = self.parse_set_operation(subquery)?;
             self.parse_query_modifiers(result)
@@ -1138,6 +1141,7 @@ impl Parser {
                 table_sample: None,
                 watermark: None,
                 ctes_outside: false,
+                windows: None,
             }));
             let result = self.parse_set_operation(subquery)?;
             let pre_alias_comments = self.previous_trailing_comments().to_vec();
@@ -1412,6 +1416,7 @@ impl Parser {
                             table_sample: None,
                             watermark: None,
                             ctes_outside: false,
+                            windows: None,
                         }))
                     } else {
                         self.parse_expression()?
@@ -1466,6 +1471,7 @@ impl Parser {
                             table_sample: None,
                             watermark: None,
                             ctes_outside: false,
+                            windows: None,
                         }))
                     } else {
                         self.parse_expression()?

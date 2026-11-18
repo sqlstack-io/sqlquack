@@ -300,6 +300,7 @@ impl Parser {
                             table_sample: None,
                             watermark: None,
                             ctes_outside: false,
+                            windows: None,
                         },
                         _ => return Err(self.parse_error("Expected a query in DELETE USING ( )")),
                     };

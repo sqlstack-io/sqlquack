@@ -693,6 +693,7 @@ impl Parser {
             table_sample: None,
             watermark: None,
             ctes_outside: false,
+            windows: None,
         })))
     }
 
@@ -748,6 +749,7 @@ impl Parser {
                 table_sample: None,
                 watermark: None,
                 ctes_outside: false,
+                windows: None,
             }))
         } else {
             Expression::Subquery(Box::new(Subquery {
@@ -770,6 +772,7 @@ impl Parser {
                 table_sample: None,
                 watermark: None,
                 ctes_outside: false,
+                windows: None,
             }))
         };
 
@@ -830,6 +833,7 @@ impl Parser {
                     table_sample: None,
                     watermark: None,
                     ctes_outside: false,
+                    windows: None,
                 }))
             } else {
                 set_result
@@ -911,6 +915,7 @@ impl Parser {
                         table_sample: None,
                         watermark: None,
                         ctes_outside: false,
+                        windows: None,
                     })))
                 }
                 _ => None,
@@ -963,6 +968,7 @@ impl Parser {
                     table_sample: None,
                     watermark: None,
                     ctes_outside: false,
+                    windows: None,
                 })));
             }
         }

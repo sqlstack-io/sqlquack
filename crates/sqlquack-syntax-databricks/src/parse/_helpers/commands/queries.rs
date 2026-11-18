@@ -154,6 +154,7 @@ fn organized_parenthesized(this: Expression, organization: Organization) -> Expr
         subquery.sort_by = organization.sort.map(|expressions| SortBy { expressions });
         subquery.limit = organization.limit.map(limit);
         subquery.offset = organization.offset.map(|this| Offset { this, rows: None });
+        subquery.windows = organization.windows;
     }
     node
 }
@@ -183,12 +184,12 @@ fn organized(body: Expression, organization: Organization) -> Expression {
         return body;
     }
     let body: Expression = match body {
-        Expression::Paren(paren) if organization.windows.is_none() => {
-            return organized_parenthesized(paren.this, organization);
-        }
-        Expression::Paren(paren) if takes_within(&paren.this, &organization) => {
+        Expression::Paren(paren)
+            if organization.windows.is_some() && takes_within(&paren.this, &organization) =>
+        {
             return subquery(organized_within(paren.this, organization), None, false);
         }
+        Expression::Paren(paren) => return organized_parenthesized(paren.this, organization),
         other => other,
     };
     let mut body: Expression = match takes(&body, &organization) {
