@@ -102,6 +102,8 @@ impl Parser {
                 None
             };
             parameters.push(FunctionParameter {
+                comment: None,
+                comment_written: None,
                 name: Some(name),
                 data_type,
                 mode: None,
