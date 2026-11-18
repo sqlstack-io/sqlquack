@@ -293,7 +293,7 @@ impl Parser<'_> {
         if self.kw("WITH") && self.kw_at(1, "ID") {
             let lead: usize = self.at - first;
             self.at += 2;
-            self.string_lit()?;
+            self.string_spelling()?;
             if let Some(tree) = self.tree_within(first, self.at, lead, UNDROP_WITH_ID) {
                 self.treed("undrop_with_id", start);
                 return Ok(tree);
@@ -316,7 +316,7 @@ impl Parser<'_> {
         self.expect_kw("DATA")?;
         let local: bool = self.eat_kw("LOCAL");
         self.expect_kw("INPATH")?;
-        let inpath: String = self.string_lit()?;
+        let (inpath, inpath_written) = self.written_string()?;
         let overwrite: bool = self.eat_kw("OVERWRITE");
         self.expect_kw("INTO")?;
         self.expect_kw("TABLE")?;
@@ -330,6 +330,7 @@ impl Parser<'_> {
             false => Vec::new(),
         };
         Ok(Expression::LoadData(Box::new(LoadData {
+            inpath_written,
             local,
             inpath,
             overwrite,

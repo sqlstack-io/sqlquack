@@ -144,6 +144,7 @@ impl Parser<'_> {
             self.at += 1;
             let entries: Vec<OptionEntry> = option_entries(self.options_list()?);
             properties.push(Expression::OptionsProperty(Box::new(OptionsProperty {
+                written_keys: Vec::new(),
                 entries,
                 string_keys: Vec::new(),
                 without_equals: Vec::new(),

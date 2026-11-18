@@ -47,6 +47,9 @@ pub struct ColumnDef {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub auto_random: Option<TiDBAutoRandom>,
     pub comment: Option<String>,
+    /// Databricks: the comment as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment_written: Option<Literal>,
     pub constraints: Vec<ColumnConstraint>,
     /// Track original order of constraints for accurate regeneration
     #[serde(default)]
@@ -143,6 +146,7 @@ pub struct ColumnDef {
 impl ColumnDef {
     pub fn new(name: impl Into<String>, data_type: DataType) -> Self {
         Self {
+            comment_written: None,
             name: Identifier::new(name),
             data_type,
             nullable: None,
@@ -726,6 +730,9 @@ pub enum AlterTableAction {
     AlterColumn {
         name: Identifier,
         action: AlterColumnAction,
+        /// Databricks: the comment a `COMMENT` action sets as written when it was a raw string or adjacent strings
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        comment_written: Option<Literal>,
         /// Whether this was parsed from MODIFY COLUMN syntax (MySQL)
         #[serde(default)]
         use_modify_keyword: bool,
@@ -861,6 +868,9 @@ pub enum AlterTableAction {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         data_type: Option<DataType>,
         comment: Option<String>,
+        /// Databricks: the comment as written when it was a raw string or adjacent strings
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        comment_written: Option<Literal>,
         #[serde(default)]
         cascade: bool,
     },
@@ -896,6 +906,9 @@ pub enum AlterTableAction {
     /// Redshift: ALTER TABLE t SET LOCATION 's3://bucket/folder/'
     SetLocation {
         location: String,
+        /// Databricks: the location as written when it was a raw string or adjacent strings
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        location_written: Option<Literal>,
     },
     /// Redshift: ALTER TABLE t SET FILE FORMAT AVRO
     SetFileFormat {

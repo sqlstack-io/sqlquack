@@ -1,5 +1,6 @@
 //! Data models of Snowflake Scripting and Databricks SQL scripting blocks.
 
+use crate::expressions::names::models::Literal;
 use crate::tokens::models::SourceSpan;
 use serde::Deserialize;
 use serde::Serialize;
@@ -473,6 +474,9 @@ pub struct ScriptingCondition {
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ScriptingSqlstate {
     pub state: String,
+    /// Databricks: the state as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub state_written: Option<Literal>,
     /// VALUE written before the state.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub value_keyword: bool,

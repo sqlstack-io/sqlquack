@@ -910,6 +910,7 @@ impl Parser {
         let has_as = self.match_view_as()?;
         if !has_as && !self.check(TokenType::Select) && !self.check(TokenType::With) {
             return Ok(Expression::CreateView(Box::new(CreateView {
+                comment_written: None,
                 name,
                 columns,
                 query: Expression::Null(Null),
@@ -975,6 +976,7 @@ impl Parser {
         let no_schema_binding = self.match_text_seq(&["WITH", "NO", "SCHEMA", "BINDING"]);
 
         Ok(Expression::CreateView(Box::new(CreateView {
+            comment_written: None,
             name,
             columns,
             query,
@@ -1151,6 +1153,7 @@ impl Parser {
                 None
             };
             cols.push(ViewColumn {
+                comment_written: None,
                 name: Identifier::new(col_name),
                 comment,
                 options,

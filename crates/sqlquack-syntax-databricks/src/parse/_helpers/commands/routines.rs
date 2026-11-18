@@ -118,7 +118,7 @@ impl Parser<'_> {
             } else if self.eat_kw("DEFAULT") {
                 default = Some(self.expression()?);
             } else if self.eat_kw("COMMENT") {
-                self.string_lit()?;
+                self.string_spelling()?;
             } else {
                 break;
             }
@@ -151,14 +151,18 @@ impl Parser<'_> {
         node.name = table(self.multipart_identifier()?);
         if self.eat_kw("AS") {
             node.has_parens = false;
-            node.body = Some(FunctionBody::StringLiteral(self.string_lit()?));
+            let (body, written) = self.written_string()?;
+            node.body = Some(FunctionBody::StringLiteral(body));
+            node.body_written = written;
             if self.eat_kw("USING") {
                 node.using_resources = self.comma_list(|parser| {
                     let kind: Identifier = parser.ident()?;
+                    let (uri, uri_written) = parser.written_string()?;
                     Ok(FunctionUsingResource {
+                        uri_written,
                         kind: kind.name.to_ascii_uppercase(),
                         kind_quoted: kind.quoted,
-                        uri: parser.string_lit()?,
+                        uri,
                     })
                 })?;
             }
@@ -198,7 +202,9 @@ impl Parser<'_> {
             if foreign && self.kw("HANDLER") {
                 let handler: usize = self.offset();
                 self.at += 1;
-                node.handler = Some(self.string_lit()?);
+                let (handler_text, written) = self.written_string()?;
+                node.handler = Some(handler_text);
+                node.handler_written = written;
                 let scala: bool = node
                     .language
                     .as_deref()
