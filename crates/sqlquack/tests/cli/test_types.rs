@@ -396,3 +396,10 @@ pub(crate) struct ReplayCacheTestCase {
     pub(crate) between_runs: fn(&std::path::Path),
     pub(crate) expected_outcome: ReplayCacheOutcome,
 }
+
+pub(crate) struct SetQuantifierTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_same_as: &'static str,
+    pub(crate) expected_unlike: &'static str,
+}

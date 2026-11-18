@@ -32,8 +32,8 @@ use crate::snowflake::conversion::_helpers::support::collecting::{
 use crate::snowflake::conversion::_helpers::support::scope::{Context, Scope};
 use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
 use crate::snowflake::conversion::_helpers::support::tree::{
-    Payload, field, function_construct, identifier_name, integer_literal, is_inert, list,
-    node_construct, node_kind, payload_object, require_understood,
+    Payload, SET_QUANTIFIER, field, function_construct, identifier_name, integer_literal,
+    is_distinct, is_inert, list, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::snowflake::conversion::constants::{
     ASOF_JOIN, ASOF_KIND, CORRELATED_DERIVED, FROM_RELATION, FROM_SUBQUERY, GENERATOR_MAX_ROWS,
@@ -1080,6 +1080,7 @@ fn counts_rows(payload: &Value) -> bool {
                 .as_array()
                 .is_some_and(|items| items.len() == 1 && star(&items[0])),
             "name" => true,
+            SET_QUANTIFIER => !is_distinct(fields),
             _ => is_inert(value),
         })
 }
