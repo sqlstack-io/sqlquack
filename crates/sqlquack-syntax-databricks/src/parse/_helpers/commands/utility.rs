@@ -1,7 +1,7 @@
 //! The auxiliary statements (SqlBaseParser.g4), such as `DESCRIBE`, `SHOW` and `SET`.
 
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{
     Grant, GrantPrincipal, Privilege, Revoke,
 };
@@ -12,13 +12,20 @@ use sqlquack_syntax::expressions::statements::models::{
 use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::commands::alters::partition;
-use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
-use crate::parse::_helpers::tree::nodes::{column_from, joined, null, string, table, tuple, var};
-use crate::parse::constants::{
-    ADD_RESOURCE, CATALOG, COMMENT_KINDS, DESCRIBE_KINDS, EXPLAIN_MODES, FUNCTIONS,
-    MIN_BACKQUOTED_LENGTH, MIN_PATH_PARTS, PATH_ELEMENTS, SECURABLE_KINDS, SET_VERBOSE,
+use crate::parse::_helpers::commands::queries::limit;
+use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_identifier};
+use crate::parse::_helpers::tree::nodes::{
+    alias, call, column, column_from, dot, joined, null, property, qualified, string, table,
+    too_deep_to_keep, tuple, utility, var,
 };
-use crate::scan::models::TokenKind;
+use crate::parse::constants::{
+    ADD_RESOURCE, ADD_RESOURCES, CACHE_SELECT, CATALOG, COMMENT_KINDS, DESCRIBE_KINDS,
+    EXPLAIN_MODES, FUNCTIONS, IDENTIFIER_CLAUSE, LIST_RESOURCES, MIN_BACKQUOTED_LENGTH,
+    MIN_PATH_PARTS, NAMELESS_SECURABLES, NAMESPACE, PATH_ELEMENTS, SCHEMA_SCOPE, SECURABLE_KINDS,
+    SET_VERBOSE, VOLUME,
+};
+use crate::parse::errors::ParseError;
+use crate::scan::models::{Token, TokenKind};
 
 /// `configKeyDef`: the characters a configuration key written without quotes may hold.
 fn is_config_key(text: &str) -> bool {
@@ -45,6 +52,39 @@ fn set_statement(items: Vec<SetItem>) -> Expression {
     Expression::SetStatement(Box::new(SetStatement { items }))
 }
 
+/// `SHOW` of `node` for one partition, which `Show` cannot hold: its parts, then the partition.
+fn shown_partition(node: Show, spec: Expression) -> Expression {
+    let mut operands: Vec<Expression> = node.target.into_iter().collect();
+    if let (Some(keyword), Some(scope)) = (node.scope_keyword, node.scope) {
+        operands.push(property(&keyword, Some(scope)));
+    }
+    if let Some(pattern) = node.like {
+        operands.push(property("LIKE", Some(pattern)));
+    }
+    operands.push(spec);
+    utility(format!("SHOW {}", node.this), operands)
+}
+
+/// `DESCRIBE` of one column, which `Describe` cannot hold: the table, any partition, the column.
+fn described_column(node: Describe, column: Expression) -> Expression {
+    let mut words: Vec<&str> = vec![match node.short_form {
+        true => "DESC",
+        false => "DESCRIBE",
+    }];
+    words.extend(node.kind.as_deref());
+    words.extend(node.extended.then_some("EXTENDED"));
+    words.extend(node.formatted.then_some("FORMATTED"));
+    let mut operands: Vec<Expression> = vec![node.target];
+    operands.extend(node.partition.map(|partition| *partition));
+    operands.push(column);
+    utility(words.join(" "), operands)
+}
+
+/// Whether `token` is a word or a name: any keyword included, as the service reads a loose `CACHE SELECT`.
+fn is_word_token(token: &Token) -> bool {
+    token.kind == TokenKind::Word || is_identifier(token)
+}
+
 impl Parser<'_> {
     /// The source text from the current token to the end of the statement, consumed.
     fn statement_text(&mut self) -> Parsing<String> {
@@ -64,9 +104,11 @@ impl Parser<'_> {
     /// `DESC` or `DESCRIBE` of a relation, query, function, procedure, schema or other object.
     pub(crate) fn describe_statement(&mut self) -> Parsing<Expression> {
         let start_at: usize = self.at;
+        let short_form: bool = self.kw("DESC");
         self.at += 1;
         let word: Option<String> = self.word_at(0);
         let mut node: Describe = Describe::new(null());
+        node.short_form = short_form;
         match word.as_deref() {
             Some("QUERY") => {
                 self.at += 1;
@@ -75,11 +117,9 @@ impl Parser<'_> {
             }
             Some("SELECT" | "WITH" | "VALUES" | "FROM") if !self.ends_at(1) => {
                 node.target = self.query()?;
-                node.kind = Some("QUERY".to_owned());
             }
             None if self.is_char('(') => {
                 node.target = self.query()?;
-                node.kind = Some("QUERY".to_owned());
             }
             Some("FUNCTION") if self.kind_at(0) || self.kw_at(1, "EXTENDED") => {
                 self.at += 1;
@@ -96,13 +136,13 @@ impl Parser<'_> {
                 node.target = table_expression(self.multipart_identifier()?);
                 node.kind = Some("PROCEDURE".to_owned());
             }
-            Some("SCHEMA" | "DATABASE" | "NAMESPACE")
+            Some(kind @ ("SCHEMA" | "DATABASE" | "NAMESPACE"))
                 if self.kind_at(0) || self.kw_at(1, "EXTENDED") =>
             {
+                node.kind = Some(kind.to_owned());
                 self.at += 1;
                 node.extended = self.eat_kw("EXTENDED");
-                node.target = Expression::Identifier(joined(self.multipart_identifier()?));
-                node.kind = Some("SCHEMA".to_owned());
+                node.target = qualified(self.multipart_identifier()?);
             }
             Some(style @ ("HISTORY" | "DETAIL")) if self.kind_at(0) => {
                 node.style = Some(style.to_owned());
@@ -118,7 +158,8 @@ impl Parser<'_> {
                 node.extended = self.eat_kw("EXTENDED");
                 node.target = match kind == CATALOG && self.string_at(0) {
                     true => self.string_literal()?,
-                    false => Expression::Identifier(joined(self.multipart_identifier()?)),
+                    false if kind == VOLUME => table_expression(self.multipart_identifier()?),
+                    false => qualified(self.multipart_identifier()?),
                 };
             }
             Some("EXTERNAL" | "STORAGE" | "GOVERNED" | "POLICY" | "MATERIALIZED")
@@ -130,6 +171,7 @@ impl Parser<'_> {
             _ => {
                 if self.kw("TABLE") && !self.char_at(1, '.') && !self.ends_at(1) {
                     self.at += 1;
+                    node.kind = Some("TABLE".to_owned());
                 }
                 if self.kw("EXTENDED") && !self.ends_at(1) && !self.char_at(1, '.') {
                     self.at += 1;
@@ -142,9 +184,11 @@ impl Parser<'_> {
                 if self.kw("PARTITION") && self.char_at(1, '(') {
                     node.partition = Some(Box::new(partition(self.partition_spec()?)));
                 }
-                let column: usize = self.offset();
                 if self.is(is_identifier) && !(self.kw("AS") && self.kw_at(1, "JSON")) {
-                    self.multipart_identifier()?;
+                    let column_start: usize = self.offset();
+                    let mut names = self.multipart_identifier()?.into_iter();
+                    let first: Identifier = names.next().unwrap_or_else(Identifier::empty);
+                    let column: Expression = names.fold(column(None, first), dot);
                     if self.kw("AS") && self.kw_at(1, "JSON") {
                         return Err(self.error_with(
                             "[UNSUPPORTED_FEATURE.DESC_TABLE_COLUMN_JSON] The feature is not \
@@ -153,7 +197,13 @@ impl Parser<'_> {
                             true,
                         ));
                     }
-                    self.gap("describe_column", column);
+                    let described: Expression = described_column(node.clone(), column);
+                    if too_deep_to_keep(&described) {
+                        self.gap("describe_column", column_start);
+                        return Ok(Expression::Describe(Box::new(node)));
+                    }
+                    self.treed("describe_column", column_start);
+                    return Ok(described);
                 }
                 if self.kw("AS") && self.kw_at(1, "JSON") {
                     self.at += 2;
@@ -164,21 +214,44 @@ impl Parser<'_> {
         Ok(Expression::Describe(Box::new(node)))
     }
 
-    /// `[FROM | IN] name`, when written.
-    fn show_scope(&mut self) -> Parsing<Option<Vec<Identifier>>> {
-        match self.eat_kw("FROM") || self.eat_kw("IN") {
-            true => Ok(Some(self.multipart_identifier()?)),
-            false => Ok(None),
-        }
+    /// `FROM` or `IN`, when written.
+    fn eat_from_or_in(&mut self) -> Option<String> {
+        ["FROM", "IN"]
+            .into_iter()
+            .find(|word| self.eat_kw(word))
+            .map(str::to_owned)
     }
 
-    /// `[LIKE] 'pattern'`, when written.
-    fn show_pattern(&mut self) -> Parsing<Option<Expression>> {
-        let like: bool = self.eat_kw("LIKE");
-        match like || self.string_at(0) {
-            true => Ok(Some(self.string_literal()?)),
-            false => Ok(None),
+    /// `node` with `[FROM | IN] name` as its scope, when written; a schema may be an `IDENTIFIER (...)`.
+    fn show_scope(&mut self, mut node: Show, scope_kind: &str) -> Parsing<Show> {
+        if let Some(keyword) = self.eat_from_or_in() {
+            node.scope_keyword = Some(keyword);
+            node.scope_kind = Some(scope_kind.to_owned());
+            node.scope = Some(
+                match scope_kind == SCHEMA_SCOPE
+                    && self.kw(IDENTIFIER_CLAUSE)
+                    && self.char_at(1, '(')
+                {
+                    true => {
+                        self.at += 2;
+                        let name: Expression = self.expression()?;
+                        self.expect_char(')')?;
+                        call(IDENTIFIER_CLAUSE, vec![name])
+                    }
+                    false => qualified(self.multipart_identifier()?),
+                },
+            );
         }
+        Ok(node)
+    }
+
+    /// `node` with `[LIKE] 'pattern'`, when written.
+    fn show_pattern(&mut self, mut node: Show) -> Parsing<Show> {
+        node.like_keyword = self.eat_kw("LIKE");
+        if node.like_keyword || self.string_at(0) {
+            node.like = Some(self.string_literal()?);
+        }
+        Ok(node)
     }
 
     /// `SHOW` of the objects the shared `Show` holds; Spark refuses any other `SHOW`.
@@ -187,37 +260,34 @@ impl Parser<'_> {
         self.at += 1;
         let word: String = self.word_at(0).unwrap_or_default();
         let scoped = |parser: &mut Self, this: &str, scope_kind: &str| -> Parsing<Show> {
-            let mut node: Show = Show::new(this);
-            if let Some(scope) = parser.show_scope()? {
-                node.scope_kind = Some(scope_kind.to_owned());
-                node.scope = Some(Expression::Identifier(joined(scope)));
-            }
-            node.like = parser.show_pattern()?;
-            Ok(node)
+            let node: Show = parser.show_scope(Show::new(this), scope_kind)?;
+            parser.show_pattern(node)
         };
         let node: Show = match word.as_str() {
             "TABLES" if self.kw_at(1, "DROPPED") => {
                 self.at += 2;
-                scoped(self, "TABLES DROPPED", "SCHEMA")?
+                let mut node: Show = self.show_scope(Show::new("TABLES DROPPED"), "SCHEMA")?;
+                if self.eat_kw("LIMIT") {
+                    node.limit = Some(Box::new(limit(self.slot_value("int")?)));
+                }
+                node
             }
             "TABLES" => {
                 self.at += 1;
                 scoped(self, "TABLES", "SCHEMA")?
             }
-            "TABLE" if self.kw_at(1, "EXTENDED") => self.show_table_extended()?,
+            "TABLE" if self.kw_at(1, "EXTENDED") => return self.show_table_extended(),
             "VIEWS" => {
                 self.at += 1;
                 scoped(self, "VIEWS", "SCHEMA")?
             }
             "SCHEMAS" | "DATABASES" | "NAMESPACES" => {
                 self.at += 1;
-                scoped(self, "SCHEMAS", "CATALOG")?
+                scoped(self, word.as_str(), "CATALOG")?
             }
             "CATALOGS" | "COLLATIONS" => {
                 self.at += 1;
-                let mut node: Show = Show::new(word.as_str());
-                node.like = self.show_pattern()?;
-                node
+                self.show_pattern(Show::new(word.as_str()))?
             }
             "FUNCTIONS" | "USER" | "SYSTEM" | "ALL"
                 if word == FUNCTIONS || self.kw_at(1, FUNCTIONS) =>
@@ -226,22 +296,16 @@ impl Parser<'_> {
             }
             "PROCEDURES" => {
                 self.at += 1;
-                let mut node: Show = Show::new("PROCEDURES");
-                if let Some(scope) = self.show_scope()? {
-                    node.scope_kind = Some("SCHEMA".to_owned());
-                    node.scope = Some(Expression::Identifier(joined(scope)));
-                }
-                node
+                self.show_scope(Show::new("PROCEDURES"), "SCHEMA")?
             }
             "COLUMNS" => {
                 self.at += 1;
-                if !self.eat_kw("FROM") {
-                    self.expect_kw("IN")?;
-                }
                 let mut node: Show = Show::new("COLUMNS");
+                node.target_keyword = Some(self.eat_from_or_in().ok_or_else(|| self.error())?);
                 node.target = Some(Expression::Table(Box::new(self.table_reference()?)));
-                if let Some(schema) = self.show_scope()? {
-                    node.db = Some(Expression::Identifier(joined(schema)));
+                if let Some(keyword) = self.eat_from_or_in() {
+                    node.scope_keyword = Some(keyword);
+                    node.db = Some(qualified(self.multipart_identifier()?));
                 }
                 node
             }
@@ -251,10 +315,16 @@ impl Parser<'_> {
                 self.at += 1;
                 let mut node: Show = Show::new("PARTITIONS");
                 node.target = Some(Expression::Table(Box::new(self.table_reference()?)));
-                let at: usize = self.offset();
                 if self.kw("PARTITION") {
-                    self.partition_spec()?;
-                    self.gap("show_partition", at);
+                    let at: usize = self.offset();
+                    let spec: Expression = partition(self.partition_spec()?);
+                    let shown: Expression = shown_partition(node, spec);
+                    if too_deep_to_keep(&shown) {
+                        self.gap("show_partition", at);
+                        return Ok(null());
+                    }
+                    self.treed("show_partition", at);
+                    return Ok(shown);
                 }
                 node
             }
@@ -286,21 +356,24 @@ impl Parser<'_> {
     }
 
     /// `SHOW TABLE EXTENDED [scope] LIKE pattern [PARTITION (...)]`.
-    fn show_table_extended(&mut self) -> Parsing<Show> {
+    fn show_table_extended(&mut self) -> Parsing<Expression> {
         self.at += 2;
-        let mut node: Show = Show::new("TABLE EXTENDED");
-        if let Some(scope) = self.show_scope()? {
-            node.scope_kind = Some("SCHEMA".to_owned());
-            node.scope = Some(Expression::Identifier(joined(scope)));
-        }
+        let mut node: Show = self.show_scope(Show::new("TABLE EXTENDED"), "SCHEMA")?;
         self.expect_kw("LIKE")?;
+        node.like_keyword = true;
         node.like = Some(self.string_literal()?);
-        let at: usize = self.offset();
         if self.kw("PARTITION") {
-            self.partition_spec()?;
-            self.gap("show_partition", at);
+            let at: usize = self.offset();
+            let spec: Expression = partition(self.partition_spec()?);
+            let shown: Expression = shown_partition(node, spec);
+            if too_deep_to_keep(&shown) {
+                self.gap("show_partition", at);
+                return Ok(null());
+            }
+            self.treed("show_partition", at);
+            return Ok(shown);
         }
-        Ok(node)
+        Ok(Expression::Show(Box::new(node)))
     }
 
     /// `SHOW [USER | SYSTEM | ALL] FUNCTIONS [scope] [[LIKE] pattern]`, from `word`.
@@ -310,16 +383,12 @@ impl Parser<'_> {
             scope => format!("{scope} FUNCTIONS"),
         };
         self.at += 1 + usize::from(word != FUNCTIONS);
-        let mut node: Show = Show::new(this);
-        if let Some(scope) = self.show_scope()? {
-            node.scope_kind = Some("SCHEMA".to_owned());
-            node.scope = Some(Expression::Identifier(joined(scope)));
-        }
-        let like: bool = self.eat_kw("LIKE");
+        let mut node: Show = self.show_scope(Show::new(this), "SCHEMA")?;
+        node.like_keyword = self.eat_kw("LIKE");
         if self.string_at(0) {
             node.like = Some(self.string_literal()?);
-        } else if like || self.is(is_identifier) {
-            node.like = Some(string(&joined(self.multipart_identifier()?).name));
+        } else if node.like_keyword || self.is(is_identifier) {
+            node.like = Some(qualified(self.multipart_identifier()?));
         }
         Ok(node)
     }
@@ -341,7 +410,7 @@ impl Parser<'_> {
                 Some(kind) => format!("ON {kind}"),
                 None => "ON".to_owned(),
             });
-            if !name.name.is_empty() {
+            if let Some(name) = name {
                 node.scope = Some(Expression::Identifier(name));
             }
         }
@@ -354,13 +423,13 @@ impl Parser<'_> {
         let mut node: Show = Show::new("TBLPROPERTIES");
         node.target = Some(Expression::Table(Box::new(self.table_reference()?)));
         if self.eat_char('(') {
-            let key: String = match self.string_at(0) {
-                true => self.string_lit()?,
-                false => joined(self.multipart_identifier()?).name,
+            let key: Expression = match self.string_at(0) {
+                true => string(&self.string_lit()?),
+                false => qualified(self.multipart_identifier()?),
             };
             self.expect_char(')')?;
             node.scope_kind = Some("PROPERTY".to_owned());
-            node.scope = Some(string(&key));
+            node.scope = Some(key);
         }
         Ok(node)
     }
@@ -390,40 +459,9 @@ impl Parser<'_> {
         if self.kw_in(0, &["VAR", "VARIABLE"])
             && (self.is_at(1, is_identifier) || self.char_at(1, '('))
         {
+            let keyword: String = self.word_at(0).unwrap_or_default();
             self.at += 1;
-            if self.is_char('(') {
-                let names: Vec<Expression> =
-                    self.parenthesized(|parser| parser.multipart_identifier().map(column_from))?;
-                self.expect_char('=')?;
-                self.expect_char('(')?;
-                let query: Expression = self.query()?;
-                self.expect_char(')')?;
-                let item: SetItem = SetItem {
-                    name: tuple(names),
-                    value: query,
-                    kind: Some("VARIABLE".to_owned()),
-                    no_equals: false,
-                };
-                return Ok(set_statement(vec![item]));
-            }
-            let items: Vec<SetItem> = self.comma_list(|parser| {
-                let name: Expression = column_from(parser.multipart_identifier()?);
-                parser.expect_char('=')?;
-                let value: Expression = match parser.kw("DEFAULT") && parser.terminal_at(1) {
-                    true => {
-                        parser.at += 1;
-                        var("DEFAULT")
-                    }
-                    false => parser.expression()?,
-                };
-                Ok(SetItem {
-                    name,
-                    value,
-                    kind: Some("VARIABLE".to_owned()),
-                    no_equals: false,
-                })
-            })?;
-            return Ok(set_statement(items));
+            return self.variable_assignments(Some(keyword));
         }
         if self.kw("PATH") && self.char_at(1, '=') {
             let path = self.attempt(|parser| {
@@ -440,7 +478,7 @@ impl Parser<'_> {
                         _ => {
                             let parts: Vec<Identifier> = parser.multipart_identifier()?;
                             let count: usize = parts.len();
-                            Ok((Expression::Identifier(joined(parts)), count))
+                            Ok((qualified(parts), count))
                         }
                     })?;
                 match parser.ends_at(0) {
@@ -478,18 +516,88 @@ impl Parser<'_> {
             ));
         }
         if self.kw("QUERY_TAGS") && self.char_at(1, '[') {
-            self.at -= 1;
-            return self.opaque_statement();
+            let start: usize = self.tokens[self.at - 1].start;
+            self.comma_list(|parser| parser.query_tag(set_at))?;
+            self.gap("set", start);
+            return Ok(null());
         }
         if self.kw("CATALOG") && !self.ends_at(1) && !self.char_at(1, '=') {
             self.at += 1;
-            let value: Expression = match self.is(is_identifier) && self.ends_at(1) {
-                true => Expression::Identifier(self.ident()?),
-                false => self.expression()?,
+            let string_name: bool = self.string_at(0) && self.ends_at(1);
+            if !string_name && !(self.is(is_identifier) && self.ends_at(1)) {
+                let value: Expression = self.expression()?;
+                return Ok(set_statement(vec![set_item("CATALOG", value, None)]));
+            }
+            let parts: Vec<Identifier> = match string_name {
+                true => vec![Identifier::new(self.string_lit()?)],
+                false => vec![self.ident()?],
             };
-            return Ok(set_statement(vec![set_item("CATALOG", value, None)]));
+            return Ok(Expression::Use(Box::new(Use {
+                kind: Some(UseKind::Catalog),
+                this: joined(parts.clone()),
+                roles: Vec::new(),
+                parts,
+                string_name,
+                keyword: Some("SET".to_owned()),
+            })));
         }
         self.configuration(set_at)
+    }
+
+    /// `name = value [, ...]` or `( names ) = ( query )` after `SET`; `keyword` is the VAR or VARIABLE written.
+    pub(crate) fn variable_assignments(&mut self, keyword: Option<String>) -> Parsing<Expression> {
+        if self.is_char('(') {
+            let names: Vec<Expression> =
+                self.parenthesized(|parser| parser.multipart_identifier().map(column_from))?;
+            self.expect_char('=')?;
+            self.expect_char('(')?;
+            let query: Expression = self.query()?;
+            self.expect_char(')')?;
+            let item: SetItem = SetItem {
+                name: tuple(names),
+                value: query,
+                kind: keyword,
+                no_equals: false,
+            };
+            return Ok(set_statement(vec![item]));
+        }
+        let items: Vec<SetItem> = self.comma_list(|parser| {
+            let name: Expression = column_from(parser.multipart_identifier()?);
+            parser.expect_char('=')?;
+            let value: Expression = match parser.kw("DEFAULT") && parser.terminal_at(1) {
+                true => {
+                    parser.at += 1;
+                    var("DEFAULT")
+                }
+                false => parser.expression()?,
+            };
+            Ok(SetItem {
+                name,
+                value,
+                kind: keyword.clone(),
+                no_equals: false,
+            })
+        })?;
+        Ok(set_statement(items))
+    }
+
+    /// `QUERY_TAGS [ 'key' ] = { 'value' | NULL | UNSET }`; any other spelling is Databricks' own error.
+    fn query_tag(&mut self, set_at: usize) -> Parsing<()> {
+        let keyed: bool = self.eat_kw("QUERY_TAGS") && self.eat_char('[') && self.string_at(0);
+        self.at += usize::from(keyed);
+        let valued: bool = keyed
+            && self.eat_char(']')
+            && self.eat_char('=')
+            && (self.string_at(0) || self.kw_in(0, &["NULL", "UNSET"]));
+        if !valued {
+            return Err(self.error_with(
+                "[SET_QUERY_TAGS_SYNTAX_INVALID] Invalid QUERY_TAGS syntax.",
+                set_at,
+                true,
+            ));
+        }
+        self.at += 1;
+        Ok(())
     }
 
     /// `SET key [= value]`, `SET -v` or `SET`, as Spark matches the text after `SET`.
@@ -504,7 +612,9 @@ impl Parser<'_> {
                 true => var(self.statement_text()?.trim()),
                 false => null(),
             };
-            return Ok(set_statement(vec![set_item(&key, value, None)]));
+            let mut item: SetItem = set_item(&key, value, None);
+            item.name = Expression::Identifier(Identifier::quoted(key));
+            return Ok(set_statement(vec![item]));
         }
         let first: usize = self.at;
         let text: String = self.statement_text()?;
@@ -537,8 +647,8 @@ impl Parser<'_> {
             && self.is_at(1, is_identifier);
         self.at = end;
         if named {
-            self.gap("set", set_at);
-            return Ok(null());
+            self.at = first - 1;
+            return self.checked_form("set", set_at, 2, &["SET { RECIPIENT | COLLATION } id"]);
         }
         Err(self.error_with(
             "[INVALID_SET_SYNTAX] Expected format is 'SET', 'SET key', or 'SET key=value'.",
@@ -556,7 +666,7 @@ impl Parser<'_> {
             .is_some_and(|token| token.kind == TokenKind::Quoted)
             && self.ends_at(1);
         let name: Option<Expression> = if quoted {
-            Some(Expression::Identifier(Identifier::new(
+            Some(Expression::Identifier(Identifier::quoted(
                 self.advance()?.value,
             )))
         } else {
@@ -590,8 +700,13 @@ impl Parser<'_> {
             Some("DATABASE" | "NAMESPACE") if self.kind_at(0) => Some(UseKind::Database),
             _ => None,
         };
+        let keyword: Option<String> = (kind == Some(UseKind::Database))
+            .then(|| self.word_at(0))
+            .flatten()
+            .filter(|word| word == NAMESPACE);
         self.at += usize::from(kind.is_some());
-        let parts: Vec<Identifier> = match kind == Some(UseKind::Catalog) && self.string_at(0) {
+        let string_name: bool = kind == Some(UseKind::Catalog) && self.string_at(0);
+        let parts: Vec<Identifier> = match string_name {
             true => vec![Identifier::new(self.string_lit()?)],
             false => self.multipart_identifier()?,
         };
@@ -600,6 +715,8 @@ impl Parser<'_> {
             this: joined(parts.clone()),
             roles: Vec::new(),
             parts,
+            string_name,
+            keyword,
         })))
     }
 
@@ -609,16 +726,21 @@ impl Parser<'_> {
         self.expect_kw("ON")?;
         let word: String = self.word_at(0).unwrap_or_default();
         let kind: &str = match word.as_str() {
-            "DATABASE" | "NAMESPACE" => "SCHEMA",
+            kind @ ("DATABASE" | "NAMESPACE") => kind,
             kind if COMMENT_KINDS.contains(&kind) => kind,
             _ => return Err(self.error()),
         };
         self.at += 1;
-        let parts: Vec<Identifier> = self.multipart_identifier()?;
         let this: Expression = match kind {
-            "TABLE" | "VIEW" | "VOLUME" => table_expression(parts),
-            "COLUMN" => column_from(parts),
-            _ => Expression::Identifier(joined(parts)),
+            CATALOG if self.string_at(0) => self.string_literal()?,
+            _ => {
+                let parts: Vec<Identifier> = self.multipart_identifier()?;
+                match kind {
+                    "TABLE" | "VIEW" | "VOLUME" => table_expression(parts),
+                    "COLUMN" => column_from(parts),
+                    _ => qualified(parts),
+                }
+            }
         };
         self.expect_kw("IS")?;
         let expression: Expression = match self.eat_kw("NULL") {
@@ -659,6 +781,8 @@ impl Parser<'_> {
             false => self.statement()?,
         };
         let mut node: Describe = Describe::new(statement);
+        node.extended = mode.as_deref() == Some("EXTENDED");
+        node.formatted = mode.as_deref() == Some("FORMATTED");
         node.style = Some(match mode {
             Some(mode) => format!("EXPLAIN {mode}"),
             None => "EXPLAIN".to_owned(),
@@ -686,8 +810,8 @@ impl Parser<'_> {
         })
     }
 
-    /// `ON securable`: its kind, when written, and its name; a catalog may go unnamed.
-    fn securable(&mut self) -> Parsing<(Option<String>, Identifier)> {
+    /// `ON securable`: kind and name; a kind alone before `TO` is a name unless it may be unnamed.
+    fn securable(&mut self) -> Parsing<(Option<String>, Option<Identifier>)> {
         self.expect_kw("ON")?;
         let mut kind: Option<String> = None;
         for (words, name_optional) in SECURABLE_KINDS.iter() {
@@ -695,25 +819,31 @@ impl Parser<'_> {
                 .iter()
                 .enumerate()
                 .all(|(offset, word)| self.kw_at(offset, word));
-            let named_by_kind: bool = self.kw_in(words.len(), &["TO", "FROM"])
+            let before_principal: bool = words.len() == 1
+                && self.kw_in(words.len(), &["TO", "FROM"])
                 && !self.kw_in(words.len() + 1, &["TO", "FROM"])
                 && !self.ends_at(words.len() + 1);
+            let named_by_kind: bool = before_principal && !*name_optional;
             if matched && !named_by_kind && (*name_optional || self.kind_at(words.len() - 1)) {
                 self.at += words.len();
-                kind = Some(words.join(" "));
-                if *name_optional && !self.is(is_identifier) {
-                    return Ok((kind, Identifier::new(String::new())));
+                let joined_kind: String = words.join(" ");
+                let nameless: bool = NAMELESS_SECURABLES.contains(&joined_kind.as_str());
+                kind = Some(joined_kind);
+                if nameless || (*name_optional && (before_principal || !self.is(is_identifier))) {
+                    return Ok((kind, None));
                 }
                 break;
             }
         }
-        Ok((kind, joined(self.multipart_identifier()?)))
+        Ok((kind, Some(joined(self.multipart_identifier()?))))
     }
 
-    /// The principals after `TO` or `FROM`; a share's recipient is marked so.
-    fn principals(&mut self) -> Parsing<Vec<GrantPrincipal>> {
-        let recipient: bool = self.kw("RECIPIENT") && self.kind_at(0);
-        self.at += usize::from(recipient);
+    /// The principals after `TO` or `FROM`; a share is granted only to a `RECIPIENT`.
+    fn principals(&mut self, kind: Option<&str>) -> Parsing<Vec<GrantPrincipal>> {
+        let recipient: bool = kind == Some("SHARE");
+        if recipient {
+            self.expect_kw("RECIPIENT")?;
+        }
         self.comma_list(|parser| {
             Ok(GrantPrincipal {
                 name: parser.ident()?,
@@ -738,7 +868,7 @@ impl Parser<'_> {
         let privileges: Vec<Privilege> = self.privileges()?;
         let (kind, securable) = self.securable()?;
         self.expect_kw("TO")?;
-        let principals: Vec<GrantPrincipal> = self.principals()?;
+        let principals: Vec<GrantPrincipal> = self.principals(kind.as_deref())?;
         Ok(Expression::Grant(Box::new(Grant {
             caller: None,
             bulk: None,
@@ -748,7 +878,7 @@ impl Parser<'_> {
             options: Vec::new(),
             privileges,
             kind,
-            securable: Some(securable),
+            securable,
             function_params: Vec::new(),
             principals,
             grant_option: false,
@@ -759,19 +889,41 @@ impl Parser<'_> {
         })))
     }
 
-    /// `DENY privileges ON securable TO principal`, read as `GRANT` is; no shared node holds it.
+    /// `DENY privileges ON securable TO principal`, read as `GRANT` is, as privileges and clauses.
     pub(crate) fn deny_statement(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
         self.expect_kw("DENY")?;
-        self.privileges()?;
-        self.securable()?;
+        let mut operands: Vec<Expression> = self
+            .privileges()?
+            .into_iter()
+            .map(|privilege| var(&privilege.name))
+            .collect();
+        let (kind, securable) = self.securable()?;
+        let on: String = match &kind {
+            Some(kind) => format!("ON {kind}"),
+            None => "ON".to_owned(),
+        };
+        operands.push(property(&on, securable.map(Expression::Identifier)));
         self.expect_kw("TO")?;
-        self.principals()?;
-        self.gap("deny", start);
-        Ok(null())
+        let mut principals: Vec<Expression> = self
+            .principals(kind.as_deref())?
+            .into_iter()
+            .map(|principal| Expression::Identifier(principal.name))
+            .collect();
+        let to: &str = match kind.as_deref() {
+            Some("SHARE") => "TO RECIPIENT",
+            _ => "TO",
+        };
+        let principals: Expression = match principals.len() {
+            1 => principals.remove(0),
+            _ => tuple(principals),
+        };
+        operands.push(property(to, Some(principals)));
+        self.treed("deny", start);
+        Ok(utility("DENY".to_owned(), operands))
     }
 
-    /// Spark's `(ADD | LIST) resourceType .*?`: the type must be a file, jar or archive.
+    /// Spark's `(ADD | LIST) resourceType .*?`: a file, jar or archive type, then string resources.
     pub(crate) fn manage_resource(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
         let op: String = self.advance()?.value.to_ascii_uppercase();
@@ -796,9 +948,22 @@ impl Parser<'_> {
                 true,
             ));
         }
+        let from: usize = self.at - 1;
         self.skip_statement_rest()?;
-        self.gap(if op == ADD_RESOURCE { "add" } else { "list" }, start);
-        Ok(null())
+        let (construct, pattern): (&str, &str) = match op == ADD_RESOURCE {
+            true => ("add", ADD_RESOURCES),
+            false => ("list", LIST_RESOURCES),
+        };
+        match self.tree_within(from, self.at, 2, pattern) {
+            Some(tree) => {
+                self.treed(construct, start);
+                Ok(tree)
+            }
+            None => {
+                self.gap(construct, start);
+                Ok(null())
+            }
+        }
     }
 
     /// `REVOKE privileges ON securable FROM principal`.
@@ -814,7 +979,7 @@ impl Parser<'_> {
         let privileges: Vec<Privilege> = self.privileges()?;
         let (kind, securable) = self.securable()?;
         self.expect_kw("FROM")?;
-        let principals: Vec<GrantPrincipal> = self.principals()?;
+        let principals: Vec<GrantPrincipal> = self.principals(kind.as_deref())?;
         Ok(Expression::Revoke(Box::new(Revoke {
             caller: None,
             bulk: None,
@@ -824,7 +989,7 @@ impl Parser<'_> {
             options: Vec::new(),
             privileges,
             kind,
-            securable: Some(securable),
+            securable,
             function_params: Vec::new(),
             principals,
             grant_option: false,
@@ -856,14 +1021,17 @@ impl Parser<'_> {
             self.gap("declare_cursor", start);
             return Ok(null());
         }
-        if self.kw_in(0, &["VAR", "VARIABLE"]) && self.is_at(1, is_identifier) {
-            self.at += 1;
-        }
-        let mut names: Vec<Expression> = self.comma_list(|parser| {
-            Ok(Expression::Identifier(joined(
-                parser.multipart_identifier()?,
-            )))
-        })?;
+        let keyword: Option<String> =
+            match self.kw_in(0, &["VAR", "VARIABLE"]) && self.is_at(1, is_identifier) {
+                true => {
+                    let word: Option<String> = self.word_at(0);
+                    self.at += 1;
+                    word
+                }
+                false => None,
+            };
+        let mut names: Vec<Expression> =
+            self.comma_list(|parser| Ok(qualified(parser.multipart_identifier()?)))?;
         let type_first: usize = self.at;
         let kind: Option<String> = match self.kw("DEFAULT") || self.is_char('=') || self.ends_at(0)
         {
@@ -874,6 +1042,7 @@ impl Parser<'_> {
                 Some(self.sql[from..self.tokens[self.at - 1].end].to_owned())
             }
         };
+        let equals: bool = self.is_char('=');
         let default: Option<Box<Expression>> = match self.eat_kw("DEFAULT") || self.eat_char('=') {
             true => Some(Box::new(self.expression()?)),
             false => None,
@@ -894,14 +1063,16 @@ impl Parser<'_> {
             has_as: false,
             additional_names: names,
             span: SourceSpan::default(),
+            equals,
         };
         Ok(Expression::Declare(Box::new(Declare {
             expressions: vec![Expression::DeclareItem(Box::new(item))],
             replace,
+            keyword,
         })))
     }
 
-    /// `CACHE [LAZY] TABLE name [OPTIONS (...)] [[AS] query]`.
+    /// `CACHE [LAZY] TABLE name ...`, or `CACHE SELECT` as documented, else a gap of its text.
     pub(crate) fn cache_statement(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
         self.expect_kw("CACHE")?;
@@ -918,16 +1089,29 @@ impl Parser<'_> {
                 self.at = at + 1;
                 return Err(self.error());
             }
+            if let Some(tree) = self.tree_within(first - 1, self.at, 2, CACHE_SELECT) {
+                self.treed("cache_select", start);
+                return Ok(tree);
+            }
+            if let Some(tree) = self.loose_cache_select(first) {
+                self.treed("cache_select", start);
+                return Ok(tree);
+            }
             self.gap("cache_select", start);
             return Ok(null());
         }
         let lazy: bool = self.eat_kw("LAZY");
         self.expect_kw("TABLE")?;
         let table: Identifier = joined(self.multipart_identifier()?);
-        let options: Vec<(Expression, Expression)> = match self.eat_kw("OPTIONS") {
-            true => self.valued_property_list()?,
+        let spelled: Vec<((Expression, Expression), bool)> = match self.eat_kw("OPTIONS") {
+            true => self.spelled_valued_property_list()?,
             false => Vec::new(),
         };
+        let options_without_equals: Vec<usize> = (0..spelled.len())
+            .filter(|position| spelled[*position].1)
+            .collect();
+        let options: Vec<(Expression, Expression)> =
+            spelled.into_iter().map(|(pair, _)| pair).collect();
         let as_query: bool = self.eat_kw("AS");
         let query: Option<Expression> = match as_query || self.starts_query_at(0) {
             true => Some(self.query()?),
@@ -937,8 +1121,67 @@ impl Parser<'_> {
             table,
             lazy,
             options,
+            options_without_equals,
             query,
+            query_as: as_query,
         })))
+    }
+
+    /// `CACHE SELECT` read loosely: `FROM` or `WHERE` as a name when no clause follows it.
+    fn loose_cache_select(&mut self, first: usize) -> Option<Expression> {
+        let end: usize = self.at;
+        let rest: Vec<Token> = self.tokens.split_off(end);
+        let too_deep: Option<ParseError> = self.too_deep.take();
+        self.at = first + 1;
+        let read = self.attempt(|parser| {
+            let operands: Vec<Expression> = parser.loose_cache_body()?;
+            match parser.at == end {
+                true => Ok(operands),
+                false => Err(parser.error()),
+            }
+        });
+        self.tokens.extend(rest);
+        self.at = end;
+        self.too_deep = too_deep;
+        match read {
+            Ok(operands) => Some(utility("CACHE SELECT".to_owned(), operands))
+                .filter(|tree| !too_deep_to_keep(tree)),
+            Err(_) => None,
+        }
+    }
+
+    /// The items, then `FROM name [alias]` and `WHERE expr` when they start their clauses.
+    fn loose_cache_body(&mut self) -> Parsing<Vec<Expression>> {
+        let mut operands: Vec<Expression> = self.comma_list(|parser| parser.loose_cache_item())?;
+        if self.kw("FROM") && self.is_at(1, is_identifier) {
+            self.at += 1;
+            let mut relation: TableRef = table(self.multipart_identifier()?);
+            let where_clause: bool = self.kw("WHERE") && !self.ends_at(1);
+            if self.is_at(0, is_word_token) && !where_clause {
+                relation.alias = Some(identifier(&self.advance()?));
+            }
+            operands.push(property(
+                "FROM",
+                Some(Expression::Table(Box::new(relation))),
+            ));
+            if self.eat_kw("WHERE") {
+                operands.push(property("WHERE", Some(self.expression()?)));
+            }
+        }
+        Ok(operands)
+    }
+
+    /// An item, `FROM` or `WHERE` as a column, then any word as its alias but `FROM` before a name.
+    fn loose_cache_item(&mut self) -> Parsing<Expression> {
+        let this: Expression = match self.kw_in(0, &["FROM", "WHERE"]) {
+            true => column_from(vec![identifier(&self.advance()?)]),
+            false => self.expression()?,
+        };
+        let clause: bool = self.kw("FROM") && self.is_at(1, is_identifier);
+        match !clause && self.is_at(0, is_word_token) {
+            true => Ok(alias(this, identifier(&self.advance()?), false)),
+            false => Ok(this),
+        }
     }
 
     /// `UNCACHE TABLE [IF EXISTS] name`.

@@ -343,6 +343,7 @@ impl Parser {
                 use_modify_keyword: false,
                 column_keyword: column_keyword && self.is_snowflake(),
                 action_words,
+                keyword: None,
             })
         }
     }
@@ -392,7 +393,10 @@ impl Parser {
                     break;
                 }
             }
-            Ok(AlterTableAction::UnsetProperty { properties })
+            Ok(AlterTableAction::UnsetProperty {
+                properties,
+                if_exists: false,
+            })
         }
     }
 
@@ -602,7 +606,10 @@ impl Parser {
             }
         }
         self.expect_token(TokenType::RParen)?;
-        Ok(AlterTableAction::SetTableProperties { properties })
+        Ok(AlterTableAction::SetTableProperties {
+            properties,
+            without_equals: Vec::new(),
+        })
     }
 
     fn parse_alter_set_raw(&mut self) -> Result<AlterTableAction> {
@@ -738,10 +745,16 @@ impl Parser {
                 if_exists,
                 cascade,
                 column_keyword: true,
+                keyword: None,
             })
         } else if self.match_token(TokenType::Constraint) {
             let name = self.expect_identifier_with_quoted()?;
-            Ok(AlterTableAction::DropConstraint { name, if_exists })
+            Ok(AlterTableAction::DropConstraint {
+                name,
+                if_exists,
+                restrict: false,
+                cascade: false,
+            })
         } else if self.match_keywords(&[TokenType::ForeignKey, TokenType::Key]) {
             let name = self.expect_identifier_with_quoted()?;
             Ok(AlterTableAction::DropForeignKey { name })
@@ -767,6 +780,7 @@ impl Parser {
                 if_exists,
                 cascade,
                 column_keyword: false,
+                keyword: None,
             })
         }
     }
@@ -816,6 +830,7 @@ impl Parser {
         Ok(AlterTableAction::DropPartition {
             partitions,
             if_exists,
+            purge: false,
         })
     }
 
@@ -991,6 +1006,7 @@ impl Parser {
                 if_not_exists: true,
                 position: None,
                 column_keyword: false,
+                keyword: None,
             })
         }
     }
@@ -1073,6 +1089,7 @@ impl Parser {
                 if_not_exists,
                 position,
                 column_keyword: has_column_keyword,
+                keyword: None,
             })
         }
     }
@@ -1211,6 +1228,7 @@ impl Parser {
                 use_modify_keyword: true,
                 column_keyword,
                 action_words,
+                keyword: None,
             })
         });
         let ends =
@@ -1248,6 +1266,7 @@ impl Parser {
                 use_modify_keyword: modify,
                 column_keyword,
                 action_words,
+                keyword: None,
             });
             if !self.match_token(TokenType::Comma) {
                 break;
@@ -1553,11 +1572,12 @@ impl Parser {
         } else {
             (None, Vec::new())
         };
-
         let values_expr = Expression::Values(Box::new(Values {
+            alias_explicit_as: false,
             expressions,
             alias,
             column_aliases,
+            bare_rows: Vec::new(),
         }));
 
         if parse_set_operations {
@@ -1637,6 +1657,8 @@ impl Parser {
                     this,
                     roles,
                     parts: Vec::new(),
+                    string_name: false,
+                    keyword: None,
                 })));
             }
         }
@@ -1684,6 +1706,8 @@ impl Parser {
             this: ident,
             roles: Vec::new(),
             parts,
+            string_name: false,
+            keyword: None,
         })))
     }
 
@@ -1773,10 +1797,8 @@ impl Parser {
             Vec::new()
         };
 
-        let query = if self.match_token(TokenType::As)
-            || self.check(TokenType::Select)
-            || self.check(TokenType::With)
-        {
+        let query_as: bool = self.match_token(TokenType::As);
+        let query = if query_as || self.check(TokenType::Select) || self.check(TokenType::With) {
             Some(self.parse_statement()?)
         } else {
             None
@@ -1786,7 +1808,9 @@ impl Parser {
             table,
             lazy,
             options,
+            options_without_equals: Vec::new(),
             query,
+            query_as,
         })))
     }
 

@@ -15,6 +15,7 @@ use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
     aggregate, function, joined, ordered, over, subquery, table, window_function,
 };
+use crate::parse::errors::ParseError;
 
 impl Parser<'_> {
     /// A call of `name`: `( [DISTINCT|ALL] args )` and its trailing clauses.
@@ -79,13 +80,13 @@ impl Parser<'_> {
     /// `functionTableArgument`: a `TABLE` argument, a named argument or an expression.
     pub(crate) fn function_argument(&mut self) -> Parsing<Expression> {
         if self.kw("TABLE") && (self.char_at(1, '(') || self.is_at(1, is_identifier)) {
-            return self.table_argument();
+            return self.table_argument_or_call();
         }
         if self.is(is_identifier) && self.op_at(1, "=>") {
             let name: Identifier = self.name(is_identifier)?;
             self.at += 1;
             let value: Expression = match self.kw("TABLE") {
-                true => self.table_argument()?,
+                true => self.table_argument_or_call()?,
                 false => self.expression()?,
             };
             return Ok(Expression::NamedArgument(Box::new(NamedArgument {
@@ -97,10 +98,31 @@ impl Parser<'_> {
         self.expression()
     }
 
+    /// A `TABLE` argument, else the call of a function named TABLE, keeping the further error.
+    fn table_argument_or_call(&mut self) -> Parsing<Expression> {
+        let (argument_error, _) = match self.attempt(|parser| parser.table_argument()) {
+            Ok(argument) => return Ok(argument),
+            Err(failure) => failure,
+        };
+        let call: Parsing<Expression> = self.expression();
+        let call_stop: ParseError = match &call {
+            Ok(_) if self.is_char(',') || self.is_char(')') => return call,
+            Ok(_) => self.error(),
+            Err(call_error) => call_error.clone(),
+        };
+        match !call_stop.guard
+            && (argument_error.guard || argument_error.position > call_stop.position)
+        {
+            true => Err(argument_error),
+            false => call,
+        }
+    }
+
     /// `functionTableSubqueryArgument`, partitioning and ordering parsed and not kept.
     fn table_argument(&mut self) -> Parsing<Expression> {
         self.expect_kw("TABLE")?;
-        let this: Expression = match self.is_char('(') {
+        let parenthesized: bool = self.is_char('(');
+        let this: Expression = match parenthesized {
             true => {
                 self.at += 1;
                 let inner: Expression = match self.starts_query_at(0) && !self.char_at(1, ')') {
@@ -128,6 +150,7 @@ impl Parser<'_> {
             self.gap("table_argument_partitioning", start);
         }
         Ok(Expression::TableArgument(Box::new(TableArgument {
+            parenthesized,
             prefix: "TABLE".to_owned(),
             this,
         })))

@@ -518,6 +518,9 @@ pub struct ForeignKeyRef {
     /// Snowflake: FOREIGN KEY REFERENCES (includes FOREIGN KEY keywords before REFERENCES)
     #[serde(default)]
     pub has_foreign_key_keywords: bool,
+    /// Databricks: the options in written order, when one repeats or MATCH sits between the actions
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub written_order: Vec<String>,
 }
 
 /// Referential action for foreign keys
@@ -556,6 +559,9 @@ pub struct AlterTable {
     /// Snowflake: ALTER ICEBERG TABLE
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub table_modifier: Option<String>,
+    /// Databricks: the ADD or DROP COLUMN list was written in parentheses
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub columns_parenthesized: bool,
 }
 
 impl AlterTable {
@@ -570,6 +576,7 @@ impl AlterTable {
             partition: None,
             on_cluster: None,
             table_modifier: None,
+            columns_parenthesized: false,
         }
     }
 }
@@ -695,6 +702,9 @@ pub enum AlterTableAction {
         /// Whether the optional COLUMN keyword was written, as in Snowflake's `ADD COLUMN`
         #[serde(default, skip_serializing_if = "std::ops::Not::not")]
         column_keyword: bool,
+        /// The keyword as written when it is a synonym, such as COLUMNS for COLUMN or CHANGE for ALTER
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        keyword: Option<String>,
     },
     DropColumn {
         name: Identifier,
@@ -703,6 +713,9 @@ pub enum AlterTableAction {
         /// Whether the optional COLUMN keyword was written, as in Snowflake's `DROP COLUMN`
         #[serde(default, skip_serializing_if = "std::ops::Not::not")]
         column_keyword: bool,
+        /// The keyword as written when it is a synonym, such as COLUMNS for COLUMN or CHANGE for ALTER
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        keyword: Option<String>,
     },
     RenameColumn {
         old_name: Identifier,
@@ -721,6 +734,9 @@ pub enum AlterTableAction {
         /// Snowflake: the optional SET, DATA and TYPE words written before the action, e.g. `SET DATA TYPE`
         #[serde(default, skip_serializing_if = "Option::is_none")]
         action_words: Option<String>,
+        /// The keyword as written when it is a synonym, such as COLUMNS for COLUMN or CHANGE for ALTER
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        keyword: Option<String>,
     },
     /// MySQL/TiDB `MODIFY [COLUMN]` with a complete replacement column definition.
     ModifyColumn {
@@ -733,6 +749,12 @@ pub enum AlterTableAction {
     DropConstraint {
         name: Identifier,
         if_exists: bool,
+        /// Databricks: whether RESTRICT, the default behaviour, was written
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        restrict: bool,
+        /// Databricks: whether CASCADE was written
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        cascade: bool,
     },
     /// DROP FOREIGN KEY action (Oracle/MySQL): ALTER TABLE t DROP FOREIGN KEY fk_name
     DropForeignKey {
@@ -743,6 +765,9 @@ pub enum AlterTableAction {
         /// List of partitions to drop (each partition is a list of key=value pairs)
         partitions: Vec<Vec<(Identifier, Expression)>>,
         if_exists: bool,
+        /// Databricks: whether PURGE was written
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        purge: bool,
     },
     /// ADD PARTITION action (Hive/Spark)
     AddPartition {
@@ -764,6 +789,9 @@ pub enum AlterTableAction {
     /// UNSET property action (Snowflake): ALTER TABLE t UNSET property
     UnsetProperty {
         properties: Vec<String>,
+        /// Databricks: whether IF EXISTS was written
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        if_exists: bool,
     },
     /// CLUSTER BY action (Snowflake): ALTER TABLE t CLUSTER BY (col1, col2)
     ClusterBy {
@@ -836,6 +864,15 @@ pub enum AlterTableAction {
     /// Redshift: ALTER TABLE t SET TABLE PROPERTIES ('a' = '5', 'b' = 'c')
     SetTableProperties {
         properties: Vec<(Expression, Expression)>,
+        /// Databricks: the positions in `properties` of values written without the optional `=`
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        without_equals: Vec<usize>,
+    },
+    /// Databricks: ALTER TABLE t UNSET TBLPROPERTIES [ IF EXISTS ] ( k1 , 'k2' ), each key as written.
+    UnsetTableProperties {
+        properties: Vec<Expression>,
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        if_exists: bool,
     },
     /// Redshift: ALTER TABLE t SET LOCATION 's3://bucket/folder/'
     SetLocation {

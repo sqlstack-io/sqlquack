@@ -51,7 +51,10 @@ impl Parser {
                 } else {
                     None
                 };
-                DataType::BigInt { length }
+                DataType::BigInt {
+                    length,
+                    spelling: None,
+                }
             }
             "SMALLINT" => {
                 let length = if self.match_token(TokenType::LParen) {
@@ -61,7 +64,10 @@ impl Parser {
                 } else {
                     None
                 };
-                DataType::SmallInt { length }
+                DataType::SmallInt {
+                    length,
+                    spelling: None,
+                }
             }
             "TINYINT" => {
                 let length = if self.match_token(TokenType::LParen) {
@@ -71,7 +77,10 @@ impl Parser {
                 } else {
                     None
                 };
-                DataType::TinyInt { length }
+                DataType::TinyInt {
+                    length,
+                    spelling: None,
+                }
             }
             "FLOAT" | "REAL" | "BINARY_FLOAT" => self.parse_cast_float_type(name)?,
             "BINARY_DOUBLE" => DataType::Double {
@@ -281,6 +290,7 @@ impl Parser {
                 false
             };
             DataType::Time {
+                spelling: None,
                 precision,
                 timezone,
             }
@@ -297,6 +307,7 @@ impl Parser {
                 None
             };
             DataType::Time {
+                spelling: None,
                 precision,
                 timezone: true,
             }
@@ -346,6 +357,7 @@ impl Parser {
                     DataType::Timestamp {
                         precision,
                         timezone: true,
+                        spelling: None,
                     }
                 }
             } else if self.match_keyword("WITHOUT") {
@@ -355,6 +367,7 @@ impl Parser {
                 DataType::Timestamp {
                     precision,
                     timezone: false,
+                    spelling: None,
                 }
             }
         })
@@ -367,6 +380,7 @@ impl Parser {
             false => DataType::Timestamp {
                 precision,
                 timezone: false,
+                spelling: None,
             },
         }
     }
@@ -383,6 +397,7 @@ impl Parser {
             DataType::Timestamp {
                 precision,
                 timezone: true,
+                spelling: None,
             }
         })
     }
@@ -513,11 +528,16 @@ impl Parser {
                     None
                 };
                 self.expect_token(TokenType::RParen)?;
-                DataType::Decimal { precision, scale }
+                DataType::Decimal {
+                    precision,
+                    scale,
+                    spelling: None,
+                }
             } else {
                 DataType::Decimal {
                     precision: None,
                     scale: None,
+                    spelling: None,
                 }
             }
         })
@@ -553,13 +573,22 @@ impl Parser {
                     let element_type = if self.match_token(TokenType::Comma) {
                         let type_alias = self.expect_identifier_or_keyword()?;
                         let mapped_type = match type_alias.to_ascii_uppercase().as_str() {
-                            "I8" => DataType::TinyInt { length: None },
-                            "I16" => DataType::SmallInt { length: None },
+                            "I8" => DataType::TinyInt {
+                                length: None,
+                                spelling: None,
+                            },
+                            "I16" => DataType::SmallInt {
+                                length: None,
+                                spelling: None,
+                            },
                             "I32" => DataType::Int {
                                 length: None,
                                 integer_spelling: false,
                             },
-                            "I64" => DataType::BigInt { length: None },
+                            "I64" => DataType::BigInt {
+                                length: None,
+                                spelling: None,
+                            },
                             "F32" => DataType::Float {
                                 precision: None,
                                 scale: None,

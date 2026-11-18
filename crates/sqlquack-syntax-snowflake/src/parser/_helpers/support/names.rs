@@ -163,6 +163,7 @@ impl Parser {
             let in_expr = self.parse_in_with_expr(this.clone())?;
             this = if negate {
                 Some(Expression::Not(Box::new(UnaryOp {
+                    written_as: None,
                     this: in_expr,
                     inferred_type: None,
                     span: SourceSpan::default(),
@@ -189,8 +190,10 @@ impl Parser {
                     trailing_comments: Vec::new(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    written_as: None,
                 }));
                 return Ok(Some(Expression::Not(Box::new(UnaryOp {
+                    written_as: None,
                     this: is_null,
                     inferred_type: None,
                     span: SourceSpan::default(),
@@ -335,9 +338,11 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                written_as: None,
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
+                    written_as: None,
                     this: is_null,
                     inferred_type: None,
                     span: SourceSpan::default(),
@@ -356,9 +361,11 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                written_as: None,
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
+                    written_as: None,
                     this: is_true,
                     inferred_type: None,
                     span: SourceSpan::default(),
@@ -377,9 +384,11 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                written_as: None,
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
+                    written_as: None,
                     this: is_false,
                     inferred_type: None,
                     span: SourceSpan::default(),
@@ -432,6 +441,7 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        written_as: None,
                     }))
                 } else {
                     Expression::NullSafeNeq(Box::new(BinaryOp {
@@ -442,6 +452,7 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        written_as: None,
                     }))
                 };
                 return Ok(expr);
@@ -1050,6 +1061,8 @@ impl Parser {
                     cluster_by: None,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 })))
             } else {
                 self.current -= 1;
@@ -1168,6 +1181,7 @@ impl Parser {
         })?;
 
         Ok(Some(Expression::Pivot(Box::new(Pivot {
+            alias_explicit_as: false,
             this: source,
             expressions,
             fields: Vec::new(),
@@ -1572,6 +1586,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         }));
 
         if self.match_token(TokenType::As) {

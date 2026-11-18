@@ -70,7 +70,11 @@ pub(crate) fn databricks_cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::BigInt { .. } => "BIGINT",
         DataType::Float { .. } => "FLOAT",
         DataType::Double { .. } => "DOUBLE",
-        DataType::Decimal { precision, scale } => {
+        DataType::Decimal {
+            precision,
+            scale,
+            spelling: _,
+        } => {
             let (precision, scale): (u32, u32) = match precision {
                 Some(precision) => (*precision, scale.unwrap_or(0)),
                 None => DATABRICKS_DEFAULT_DECIMAL,

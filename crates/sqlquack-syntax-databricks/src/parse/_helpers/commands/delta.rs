@@ -8,10 +8,12 @@ use sqlquack_syntax::expressions::statements::models::{
 };
 use sqlquack_syntax::expressions::tables::models::Undrop;
 
-use crate::parse::_helpers::commands::alters::{property_pair, property_text};
+use crate::parse::_helpers::commands::alters::property_text;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
-use crate::parse::_helpers::tree::nodes::{literal, null, subquery, var};
-use crate::parse::constants::MSCK;
+use crate::parse::_helpers::tree::nodes::{
+    literal, null, property, subquery, too_deep_to_keep, utility, var,
+};
+use crate::parse::constants::{MSCK, UNDROP_WITH_ID};
 use crate::scan::models::{NumberKind, TokenKind};
 
 fn parameter(
@@ -58,12 +60,28 @@ impl Parser<'_> {
             credentials: Vec::new(),
             encryption: None,
             storage: None,
+            name_quoted: false,
+            without_equals: Vec::new(),
+            quoted_keys: Vec::new(),
+            string_keys: Vec::new(),
         };
         if self.eat_kw("CREDENTIAL") {
             match self.is_char('(') {
                 true => {
-                    for option in self.option_list()? {
-                        let (key, value) = property_pair(option);
+                    let options = self.spelled_valued_property_list()?;
+                    for (position, ((key, value), without_equals)) in
+                        options.into_iter().enumerate()
+                    {
+                        if without_equals {
+                            credentials.without_equals.push(position);
+                        }
+                        match &key {
+                            Expression::Literal(_) => credentials.string_keys.push(position),
+                            Expression::Identifier(name) if name.quoted => {
+                                credentials.quoted_keys.push(position)
+                            }
+                            _ => {}
+                        }
                         credentials
                             .credentials
                             .push((property_text(&key), property_text(&value)));
@@ -71,6 +89,7 @@ impl Parser<'_> {
                 }
                 false => {
                     let name: Identifier = self.ident()?;
+                    credentials.name_quoted = name.quoted;
                     credentials
                         .credentials
                         .push(("CREDENTIAL".to_owned(), name.name));
@@ -95,18 +114,16 @@ impl Parser<'_> {
         self.expect_kw("COPY")?;
         self.expect_kw("INTO")?;
         let target: TableRef = self.table_reference()?;
-        let start: usize = self.offset();
-        if self.kw("WITH") && self.char_at(1, '(') {
-            self.copy_credentials()?;
-            self.gap("copy_target_credential", start);
-        }
-        let start: usize = self.offset();
-        if self.eat_kws(&["BY", "POSITION"]) {
-            self.gap("copy_by_position", start);
-        } else if self.is_char('(') {
-            self.identifier_list()?;
-            self.gap("copy_columns", start);
-        }
+        let target_credentials: Option<Box<Credentials>> =
+            match self.kw("WITH") && self.char_at(1, '(') {
+                true => Some(Box::new(self.copy_credentials()?)),
+                false => None,
+            };
+        let by_position: bool = self.eat_kws(&["BY", "POSITION"]);
+        let columns: Vec<Identifier> = match !by_position && self.is_char('(') {
+            true => self.identifier_list()?,
+            false => Vec::new(),
+        };
         self.expect_kw("FROM")?;
         let mut credentials: Option<Box<Credentials>> = None;
         let source: Expression = match self.eat_char('(') {
@@ -141,7 +158,10 @@ impl Parser<'_> {
         let format: Identifier = self.ident()?;
         params.push(parameter(
             "FILEFORMAT",
-            Some(var(&format.name)),
+            Some(match format.quoted {
+                true => Expression::Identifier(format),
+                false => var(&format.name),
+            }),
             Vec::new(),
             true,
         ));
@@ -182,6 +202,9 @@ impl Parser<'_> {
             credentials,
             is_into: true,
             with_wrapped: false,
+            by_position,
+            columns,
+            target_credentials,
         })))
     }
 
@@ -198,103 +221,39 @@ impl Parser<'_> {
         Ok(null())
     }
 
-    /// `OPTIMIZE table [FULL] [WHERE predicate] [ZORDER BY (columns)]`, kept as a gap.
-    pub(crate) fn optimize_statement(&mut self) -> Parsing<Expression> {
-        self.checked_gap("optimize", |parser| {
-            match parser.string_at(0) {
-                true => {
-                    parser.string_lit()?;
-                }
-                false => {
-                    parser.table_reference()?;
-                }
-            }
-            parser.eat_kw("FULL");
-            if parser.eat_kw("WHERE") {
-                parser.expression()?;
-            }
-            if parser.eat_kw("ZORDER") {
-                parser.expect_kw("BY")?;
-                match parser.is_char('(') {
-                    true => {
-                        parser.parenthesized(|parser| parser.multipart_identifier())?;
-                    }
-                    false => {
-                        parser.comma_list(|parser| parser.multipart_identifier())?;
-                    }
-                }
-            }
-            Ok(())
-        })
-    }
-
-    /// `VACUUM table [USING INVENTORY ...] [RETAIN n HOURS] [DRY RUN] [FULL | LITE]`, as a gap.
-    pub(crate) fn vacuum_statement(&mut self) -> Parsing<Expression> {
-        self.checked_gap("vacuum", |parser| {
-            match parser.string_at(0) {
-                true => {
-                    parser.string_lit()?;
-                }
-                false => {
-                    parser.table_reference()?;
-                }
-            }
-            if parser.eat_kws(&["USING", "INVENTORY"]) {
-                match parser.eat_char('(') {
-                    true => {
-                        parser.query()?;
-                        parser.expect_char(')')?;
-                    }
-                    false => {
-                        parser.multipart_identifier()?;
-                    }
-                }
-            }
-            loop {
-                if parser.eat_kw("RETAIN") {
-                    parser.expect_token(|token| {
-                        matches!(
-                            token.kind,
-                            TokenKind::Number(NumberKind::Integer | NumberKind::Decimal)
-                        )
-                    })?;
-                    parser.expect_kw("HOURS")?;
-                } else if parser.eat_kw("DRY") {
-                    parser.expect_kw("RUN")?;
-                } else if !(parser.eat_kw("FULL") || parser.eat_kw("LITE")) {
-                    return Ok(());
-                }
-            }
-        })
-    }
-
-    /// `RESTORE [TABLE] table [TO] {VERSION | TIMESTAMP} AS OF value`, kept as a gap.
+    /// `RESTORE [TABLE] table [TO] {VERSION | TIMESTAMP} AS OF value`: the table, then its version.
     pub(crate) fn restore_statement(&mut self) -> Parsing<Expression> {
-        self.checked_gap("restore", |parser| {
-            if parser.kw("TABLE") && !parser.kw_at(1, "TO") {
-                parser.at += 1;
-            }
-            parser.table_reference()?;
-            parser.eat_kw("TO");
-            let version: bool = parser.eat_kw("VERSION");
-            if !version {
-                parser.expect_kw("TIMESTAMP")?;
-            }
-            parser.expect_kw("AS")?;
-            parser.expect_kw("OF")?;
-            match version {
-                true => {
-                    parser.expect_token(is_integer)?;
-                }
-                false => {
-                    parser.expression()?;
-                }
-            }
-            Ok(())
-        })
+        let start: usize = self.offset();
+        self.expect_kw("RESTORE")?;
+        let mut kind: String = "RESTORE".to_owned();
+        if self.kw("TABLE") && !self.kw_at(1, "TO") {
+            self.at += 1;
+            kind.push_str(" TABLE");
+        }
+        let target: Expression = Expression::Table(Box::new(self.table_reference()?));
+        let mut words: Vec<&str> = self.eat_kw("TO").then_some("TO").into_iter().collect();
+        let version: bool = self.eat_kw("VERSION");
+        if !version {
+            self.expect_kw("TIMESTAMP")?;
+        }
+        self.expect_kw("AS")?;
+        self.expect_kw("OF")?;
+        words.extend([if version { "VERSION" } else { "TIMESTAMP" }, "AS", "OF"]);
+        let value: Expression = match version {
+            true => literal(Literal::Number(self.expect_token(is_integer)?.value)),
+            false => self.expression()?,
+        };
+        let restored: Expression =
+            utility(kind, vec![target, property(&words.join(" "), Some(value))]);
+        if too_deep_to_keep(&restored) {
+            self.gap("restore", start);
+            return Ok(null());
+        }
+        self.treed("restore", start);
+        Ok(restored)
     }
 
-    /// `[MSCK] REPAIR TABLE table [{ADD | DROP | SYNC} PARTITIONS | SYNC METADATA]`, as a gap.
+    /// `REPAIR PRIVILEGES ...`, kept as a gap; `[MSCK] REPAIR TABLE` is a documented form.
     pub(crate) fn repair_statement(&mut self) -> Parsing<Expression> {
         let construct: &'static str = match self.kw("MSCK") {
             true => MSCK,
@@ -303,25 +262,16 @@ impl Parser<'_> {
         self.checked_gap(construct, |parser| {
             if construct == MSCK {
                 parser.expect_kw("REPAIR")?;
-            } else if parser.eat_kw("PRIVILEGES") {
-                return parser.skip_statement_rest();
+                parser.expect_kw("TABLE")?;
             }
-            parser.expect_kw("TABLE")?;
-            parser.table_reference()?;
-            if parser.kw("SYNC") && parser.kw_at(1, "METADATA") {
-                parser.at += 2;
-            } else if construct == MSCK && parser.kw("PRIVILEGES") {
-                parser.at += 1;
-            } else if parser.kw_in(0, &["ADD", "DROP", "SYNC"]) {
-                parser.at += 1;
-                parser.expect_kw("PARTITIONS")?;
-            }
-            Ok(())
+            parser.expect_kw("PRIVILEGES")?;
+            parser.skip_statement_rest()
         })
     }
 
     /// `UNDROP {TABLE | MATERIALIZED VIEW | VOLUME} name`; `WITH ID 'id'` is a gap.
     pub(crate) fn undrop_statement(&mut self) -> Parsing<Expression> {
+        let first: usize = self.at;
         self.expect_kw("UNDROP")?;
         let kind: &str = match self.word_at(0).as_deref() {
             Some("TABLE") => "TABLE",
@@ -338,8 +288,13 @@ impl Parser<'_> {
         self.at += 1;
         let start: usize = self.offset();
         if self.kw("WITH") && self.kw_at(1, "ID") {
+            let lead: usize = self.at - first;
             self.at += 2;
             self.string_lit()?;
+            if let Some(tree) = self.tree_within(first, self.at, lead, UNDROP_WITH_ID) {
+                self.treed("undrop_with_id", start);
+                return Ok(tree);
+            }
             self.gap("undrop_with_id", start);
             return Ok(null());
         }

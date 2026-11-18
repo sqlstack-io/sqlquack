@@ -63,8 +63,6 @@ impl Parser<'_> {
                 "CACHE" => parser.cache_statement(),
                 "UNCACHE" => parser.uncache_statement(),
                 "COPY" => parser.copy_statement(),
-                "OPTIMIZE" => parser.optimize_statement(),
-                "VACUUM" => parser.vacuum_statement(),
                 "RESTORE" => parser.restore_statement(),
                 "MSCK" | "REPAIR" => parser.repair_statement(),
                 "UNDROP" => parser.undrop_statement(),

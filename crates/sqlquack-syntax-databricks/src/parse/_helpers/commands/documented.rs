@@ -3,9 +3,11 @@
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
 
+use crate::parse::_helpers::tree::clauses::Part;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_word};
-use crate::parse::constants::{CREATE_STREAMING_TABLE, SYNC};
-use crate::scan::models::Token;
+use crate::parse::_helpers::tree::nodes::{utility, var};
+use crate::parse::constants::{CREATE_STREAMING_TABLE, SYNC, TAG_FORMS, TAG_KINDS};
+use crate::scan::models::{Token, TokenKind};
 
 /// Named parts the patterns share; a lower-case word in a pattern names one of these or a slot.
 pub(crate) const RULES: &[(&str, &str)] = &[
@@ -13,8 +15,8 @@ pub(crate) const RULES: &[(&str, &str)] = &[
     ("rename", "RENAME TO name"),
     ("tags", "SET TAGS props | UNSET TAGS keys"),
     (
-        "name_tags",
-        "SET TAGS ( { name = literal } ,... ) | UNSET TAGS ( name ,... )",
+        "string_tags",
+        "SET TAGS ( { str = literal } ,... ) | UNSET TAGS ( str ,... )",
     ),
     ("if_exists", "IF EXISTS"),
     ("if_not_exists", "IF NOT EXISTS"),
@@ -26,6 +28,7 @@ pub(crate) const RULES: &[(&str, &str)] = &[
     ("comment", "COMMENT str"),
     ("collation", "DEFAULT COLLATION id"),
     ("text", "str | id"),
+    ("catalog", "str | name"),
     ("argument", "literal | name"),
     ("principals", "id ,..."),
     (
@@ -80,7 +83,7 @@ pub(crate) const RULES: &[(&str, &str)] = &[
     ),
     (
         "share_partition",
-        "PARTITION ( { id [ = literal | LIKE str ] } ,... )",
+        "PARTITION ( { id { = literal | LIKE str } } ,... )",
     ),
     ("cluster_spec", "( name ,... ) | AUTO | NONE"),
     (
@@ -94,7 +97,7 @@ pub(crate) const RULES: &[(&str, &str)] = &[
     (
         "pipeline_clause",
         "USING id | PARTITIONED BY ( { id [ type ] } ,... ) | CLUSTER BY cluster_spec | comment \
-         | DEFAULT COLLATION id | TBLPROPERTIES props | REFRESH POLICY id [ STRICT ] | schedule \
+         | DEFAULT COLLATION id | TBLPROPERTIES props | REFRESH POLICY { AUTO | INCREMENTAL [ STRICT ] | FULL } | schedule \
          | WITH row_filter",
     ),
     ("cdc_columns", "* EXCEPT columns | name ,..."),
@@ -137,16 +140,21 @@ const FORMS: &[Form] = &[
         construct: "alter_catalog",
         leads: &[&["ALTER", "CATALOG"]],
         patterns: &[
-            "ALTER CATALOG [ name ] { collation | owner | name_tags | predictive \
-             | OPTIONS props | SET MANAGED LOCATION str \
+            "ALTER CATALOG [ name ] owner",
+            "ALTER CATALOG [ name ] string_tags",
+            "ALTER CATALOG [ name ] predictive",
+            "ALTER CATALOG catalog { collation | OPTIONS props | SET MANAGED LOCATION str \
              | [ SET ] RETAIN DROPPED TO int time_unit }",
-            "ALTER CATALOG name DROP CONNECTION { RESTRICT | FORCE }",
+            "ALTER CATALOG catalog DROP CONNECTION [ RESTRICT | FORCE ]",
         ],
     },
     Form {
         construct: "alter_connection",
         leads: &[&["ALTER", "CONNECTION"]],
-        patterns: &["ALTER CONNECTION name { owner | rename | OPTIONS props }"],
+        patterns: &[
+            "ALTER CONNECTION [ name ] owner",
+            "ALTER CONNECTION name { rename | OPTIONS props }",
+        ],
     },
     Form {
         construct: "alter_credential",
@@ -160,7 +168,7 @@ const FORMS: &[Form] = &[
     Form {
         construct: "alter_governed_tag",
         leads: &[&["ALTER", "GOVERNED"]],
-        patterns: &["ALTER GOVERNED TAG id { SET DESCRIPTION text | SET VALUES ( id ,... ) }"],
+        patterns: &["ALTER GOVERNED TAG id { SET DESCRIPTION text | SET VALUES ( [ str ,... ] ) }"],
     },
     Form {
         construct: "alter_external_location",
@@ -189,7 +197,7 @@ const FORMS: &[Form] = &[
         construct: "alter_recipient",
         leads: &[&["ALTER", "RECIPIENT"]],
         patterns: &[
-            "ALTER RECIPIENT name { rename | owner | SET PROPERTIES props \
+            "ALTER RECIPIENT name { rename | owner | SET PROPERTIES { props | keys } \
              | UNSET PROPERTIES keys }",
         ],
     },
@@ -197,7 +205,8 @@ const FORMS: &[Form] = &[
         construct: "alter_share",
         leads: &[&["ALTER", "SHARE"]],
         patterns: &["ALTER SHARE name { { ALTER | ADD } share_object \
-             | REMOVE { MATERIALIZED VIEW | TABLE | SCHEMA | VIEW | MODEL } name | rename | owner }"],
+             | REMOVE { MATERIALIZED VIEW name | { TABLE | SCHEMA | VIEW | MODEL } name | name } \
+             | rename | owner }"],
     },
     Form {
         construct: "alter_volume",
@@ -208,9 +217,8 @@ const FORMS: &[Form] = &[
         construct: "create_catalog",
         leads: &[&["CREATE", "CATALOG"]],
         patterns: &[
-            "CREATE CATALOG [ if_not_exists ] name [ { USING SHARE id . id \
-             | MANAGED LOCATION str | RETAIN DROPPED FOR int time_unit | comment | collation \
-             | OPTIONS props } ... ]",
+            "CREATE CATALOG [ if_not_exists ] catalog [ { USING SHARE id . id \
+             | MANAGED LOCATION str | RETAIN DROPPED FOR int time_unit | comment | collation } ... ]",
         ],
     },
     Form {
@@ -234,13 +242,13 @@ const FORMS: &[Form] = &[
     Form {
         construct: "create_governed_tag",
         leads: &[&["CREATE", "GOVERNED"]],
-        patterns: &["CREATE GOVERNED TAG id [ DESCRIPTION text ] [ VALUES ( id ,... ) ]"],
+        patterns: &["CREATE GOVERNED TAG id [ DESCRIPTION text ] [ VALUES ( [ str ,... ] ) ]"],
     },
     Form {
         construct: "create_external_location",
         leads: &[&["CREATE", "EXTERNAL", "LOCATION"]],
         patterns: &["CREATE EXTERNAL LOCATION [ if_not_exists ] name URL text \
-             WITH ( STORAGE CREDENTIAL name ) [ comment ]"],
+             WITH ( [ STORAGE ] CREDENTIAL name ) [ comment ]"],
     },
     Form {
         construct: "create_materialized_view",
@@ -274,7 +282,7 @@ const FORMS: &[Form] = &[
             &["CREATE", "POLICY"],
             &["CREATE", "OR", "REPLACE", "POLICY"],
         ],
-        patterns: &["CREATE [ OR REPLACE ] POLICY id ON policy_target [ comment ] policy_body"],
+        patterns: &["CREATE [ OR REPLACE ] POLICY id ON policy_on [ comment ] policy_body"],
     },
     Form {
         construct: "create_procedure",
@@ -283,13 +291,13 @@ const FORMS: &[Form] = &[
             &["CREATE", "OR", "REPLACE", "PROCEDURE"],
         ],
         patterns: &["CREATE [ OR REPLACE ] PROCEDURE [ if_not_exists ] name \
-             ( [ procedure_parameter ,... ] ) [ procedure_characteristic ... ] AS statement"],
+             ( [ procedure_parameter ,... ] ) [ procedure_characteristic ... ] { AS statement | compound }"],
     },
     Form {
         construct: "create_recipient",
         leads: &[&["CREATE", "RECIPIENT"]],
         patterns: &[
-            "CREATE RECIPIENT [ if_not_exists ] name [ USING ID id ] [ comment ] \
+            "CREATE RECIPIENT [ if_not_exists ] name [ USING ID str ] [ comment ] \
              [ PROPERTIES props ]",
         ],
     },
@@ -314,7 +322,7 @@ const FORMS: &[Form] = &[
     Form {
         construct: "drop_catalog",
         leads: &[&["DROP", "CATALOG"]],
-        patterns: &["DROP CATALOG [ if_exists ] name [ RESTRICT | CASCADE ]"],
+        patterns: &["DROP CATALOG [ if_exists ] catalog [ RESTRICT | CASCADE ]"],
     },
     Form {
         construct: "drop_connection",
@@ -348,7 +356,7 @@ const FORMS: &[Form] = &[
     Form {
         construct: "drop_policy",
         leads: &[&["DROP", "POLICY"]],
-        patterns: &["DROP POLICY [ if_exists ] id ON policy_target"],
+        patterns: &["DROP POLICY [ if_exists ] id ON policy_on"],
     },
     Form {
         construct: "drop_procedure",
@@ -405,7 +413,10 @@ const FORMS: &[Form] = &[
     Form {
         construct: "set_tag",
         leads: &[&["SET", "TAG"]],
-        patterns: &["SET TAG ON tag_target id [ = tag_value ]"],
+        patterns: &[
+            "SET TAG ON tag_target id [ = tag_value ]",
+            "SET TAG ON name id [ = tag_value ]",
+        ],
     },
     Form {
         construct: "signal",
@@ -438,15 +449,25 @@ const FORMS: &[Form] = &[
         patterns: &[
             "ANALYZE TABLE name [ partition ] COMPUTE { STATISTICS [ NOSCAN | columns_for ] \
              | DELTA STATISTICS }",
-            "ANALYZE TABLE name COMPUTE STORAGE METRICS [ USING INVENTORY LOCATION str [ CONF str ] ]",
+            "ANALYZE TABLE name COMPUTE STORAGE METRICS [ USING INVENTORY LOCATION str CONF str ]",
             "ANALYZE TABLE name DROP [ ALL | AUTO | MANUAL ] STATISTICS",
             "ANALYZE TABLES [ { FROM | IN } name ] COMPUTE STATISTICS [ NOSCAN ]",
         ],
     },
     Form {
+        construct: "get",
+        leads: &[&["GET"]],
+        patterns: &["GET str TO str"],
+    },
+    Form {
+        construct: "put",
+        leads: &[&["PUT"]],
+        patterns: &["PUT str INTO str [ OVERWRITE ]"],
+    },
+    Form {
         construct: "fsck",
         leads: &[&["FSCK"]],
-        patterns: &["FSCK REPAIR TABLE name [ DRY RUN ] [ METADATA ONLY ]"],
+        patterns: &["FSCK REPAIR TABLE name [ METADATA ONLY ] [ DRY RUN ]"],
     },
     Form {
         construct: "generate",
@@ -465,12 +486,13 @@ const FORMS: &[Form] = &[
         construct: "reorg",
         leads: &[&["REORG"]],
         patterns: &["REORG [ TABLE ] name [ WHERE expr ] APPLY ( { PURGE \
-             | UPGRADE UNIFORM ( ICEBERG_COMPAT_VERSION = int ) } )"],
+             | UPGRADE UNIFORM ( ICEBERG_COMPAT_VERSION = int ) | CHECKPOINT \
+             | SET PARQUET ( FORMAT_VERSION = str ) } )"],
     },
     Form {
         construct: "call",
         leads: &[&["CALL"]],
-        patterns: &["CALL name ( [ { id => expr | expr } ,... ] )"],
+        patterns: &["CALL table ( [ { id => expr | expr } ,... ] )"],
     },
     Form {
         construct: "clear_cache",
@@ -486,8 +508,7 @@ const FORMS: &[Form] = &[
         construct: "execute_immediate",
         leads: &[&["EXECUTE"]],
         patterns: &[
-            "EXECUTE IMMEDIATE expr [ INTO name ,... ] [ USING { ( { expr [ [ AS ] id ] } ,... ) \
-             | { expr [ [ AS ] id ] } ,... } ]",
+            "EXECUTE IMMEDIATE expr [ INTO name ,... ] [ USING { ( using_arg ,... ) | using_arg ,... } ]",
         ],
     },
     Form {
@@ -592,7 +613,68 @@ const FORMS: &[Form] = &[
     Form {
         construct: "unset_tag",
         leads: &[&["UNSET"]],
-        patterns: &["UNSET TAG ON tag_target id"],
+        patterns: &["UNSET TAG ON tag_target id", "UNSET TAG ON name id"],
+    },
+    Form {
+        construct: "optimize",
+        leads: &[&["OPTIMIZE"]],
+        patterns: &["OPTIMIZE { str | table } [ FULL ] [ WHERE expr ] \
+             [ ZORDER BY { ( name ,... ) | name ,... } ]"],
+    },
+    Form {
+        construct: "vacuum",
+        leads: &[&["VACUUM"]],
+        patterns: &[
+            "VACUUM { str | table } [ USING INVENTORY { ( query ) | name } ] \
+             [ { RETAIN num HOURS | DRY RUN | FULL | LITE } ... ]",
+        ],
+    },
+    Form {
+        construct: "repair",
+        leads: &[&["REPAIR", "TABLE"]],
+        patterns: &["REPAIR TABLE table [ { ADD | DROP | SYNC } PARTITIONS | SYNC METADATA ]"],
+    },
+    Form {
+        construct: "msck",
+        leads: &[&["MSCK", "REPAIR", "TABLE"]],
+        patterns: &[
+            "MSCK REPAIR TABLE table [ { ADD | DROP | SYNC } PARTITIONS | SYNC METADATA | PRIVILEGES ]",
+        ],
+    },
+    Form {
+        construct: "commit",
+        leads: &[&["COMMIT"]],
+        patterns: &["COMMIT [ TRANSACTION | WORK ]"],
+    },
+    Form {
+        construct: "rollback",
+        leads: &[&["ROLLBACK"]],
+        patterns: &["ROLLBACK [ TRANSACTION | WORK ]"],
+    },
+    Form {
+        construct: "begin",
+        leads: &[&["BEGIN", "TRANSACTION"], &["BEGIN", "WORK"]],
+        patterns: &["BEGIN { TRANSACTION | WORK }"],
+    },
+    Form {
+        construct: "create_group",
+        leads: &[&["CREATE", "GROUP"]],
+        patterns: &["CREATE GROUP id [ WITH { USER id ,... [ GROUP id ,... ] | GROUP id ,... } ]"],
+    },
+    Form {
+        construct: "alter_group",
+        leads: &[&["ALTER", "GROUP"]],
+        patterns: &["ALTER GROUP id { ADD | DROP } { GROUP id ,... | USER id ,... }"],
+    },
+    Form {
+        construct: "drop_group",
+        leads: &[&["DROP", "GROUP"]],
+        patterns: &["DROP GROUP id"],
+    },
+    Form {
+        construct: "remove",
+        leads: &[&["REMOVE"]],
+        patterns: &["REMOVE str"],
     },
 ];
 
@@ -619,19 +701,28 @@ fn phrase_starts(tokens: &[Token], at: usize, names: &[&str]) -> bool {
 }
 
 impl Parser<'_> {
-    /// The documented statement starting here, checked and kept as its gap, if one begins here.
+    /// The documented statement starting here, checked against its patterns, if one begins here.
     pub(crate) fn documented_statement(&mut self) -> Option<Parsing<Expression>> {
         let form: &Form = FORMS.iter().find(|form| self.begins_form(form))?;
+        let lead: usize = form
+            .leads
+            .iter()
+            .find(|lead| self.words_follow(lead))
+            .map_or(0, |lead| lead.len());
         let start: usize = self.offset();
         let first: usize = self.at;
-        let statement: Expression = match self.checked_form(form.construct, start, form.patterns) {
-            Ok(statement) => statement,
-            Err(error) => return Some(Err(error)),
-        };
+        let statement: Expression =
+            match self.checked_form(form.construct, start, lead, form.patterns) {
+                Ok(statement) => statement,
+                Err(error) => return Some(Err(error)),
+            };
         let check: Parsing<()> = match form.construct {
             CREATE_STREAMING_TABLE => self.auto_cdc_check(first),
             SYNC => self.sync_check(first),
-            _ => Ok(()),
+            construct => match TAG_FORMS.iter().find(|(name, _)| *name == construct) {
+                Some((_, pattern)) => self.tag_check(first, pattern),
+                None => Ok(()),
+            },
         };
         Some(check.map(|()| statement))
     }
@@ -646,6 +737,26 @@ impl Parser<'_> {
         lead.iter()
             .enumerate()
             .all(|(offset, word)| self.kw_at(offset, word))
+    }
+
+    /// Refuses a tag statement that read a kind word after `ON`, not before `.`, as the name.
+    fn tag_check(&mut self, first: usize, pattern: &'static str) -> Parsing<()> {
+        let end: usize = self.at;
+        let kind_word: bool = TAG_KINDS.iter().any(|word| {
+            self.tokens
+                .get(first + 3)
+                .is_some_and(|token| is_word(token, word))
+        }) && !self
+            .tokens
+            .get(first + 4)
+            .is_some_and(|token| token.kind == TokenKind::Char('.'));
+        if !kind_word {
+            return Ok(());
+        }
+        self.at = first;
+        let read: Parsing<Vec<Part>> = self.form(pattern);
+        self.at = end;
+        read.map(|_| ())
     }
 
     /// Refuses `SYNC TABLE target FROM source` whose source is named other than its target.
@@ -705,39 +816,39 @@ impl Parser<'_> {
         }
     }
 
-    /// Spark's `REFRESH (stringLit | .*?)`: a resource path, quoted or as written.
+    /// Spark's `REFRESH (stringLit | .*?)`: a resource path, quoted or as written, its one operand.
     pub(crate) fn refresh_resource(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
         self.expect_kw("REFRESH")?;
         if self.string_at(0) && self.ends_at(1) {
-            self.string_lit()?;
-        } else {
-            let first: usize = self.at;
-            self.skip_statement_rest()?;
-            let path: &str = match self.at > first {
-                true => &self.sql[self.tokens[first].start..self.tokens[self.at - 1].end],
-                false => "",
-            };
-            if path.is_empty() {
-                return Err(self.error_with(
-                    "[INVALID_SQL_SYNTAX.EMPTY_RESOURCE_PATH] Resource paths cannot be empty in \
-                     REFRESH statements.",
-                    start,
-                    true,
-                ));
-            }
-            if path.contains([' ', '\n', '\r', '\t']) {
-                return Err(self.error_with(
-                    "[INVALID_SQL_SYNTAX.INVALID_REFRESH_RESOURCE_PATH] REFRESH statements cannot \
-                     contain ' ', '\\n', '\\r', '\\t' inside unquoted resource paths.",
-                    start,
-                    true,
-                ));
-            }
+            let path: Expression = self.string_literal()?;
+            self.treed("refresh", start);
+            return Ok(utility("REFRESH".to_owned(), vec![path]));
         }
-        self.gap("refresh", start);
-        Ok(Expression::Null(
-            sqlquack_syntax::expressions::names::models::Null,
-        ))
+        let first: usize = self.at;
+        self.skip_statement_rest()?;
+        let path: &str = match self.at > first {
+            true => &self.sql[self.tokens[first].start..self.tokens[self.at - 1].end],
+            false => "",
+        };
+        if path.is_empty() {
+            return Err(self.error_with(
+                "[INVALID_SQL_SYNTAX.EMPTY_RESOURCE_PATH] Resource paths cannot be empty in \
+                 REFRESH statements.",
+                start,
+                true,
+            ));
+        }
+        if path.contains([' ', '\n', '\r', '\t']) {
+            return Err(self.error_with(
+                "[INVALID_SQL_SYNTAX.INVALID_REFRESH_RESOURCE_PATH] REFRESH statements cannot \
+                 contain ' ', '\\n', '\\r', '\\t' inside unquoted resource paths.",
+                start,
+                true,
+            ));
+        }
+        let path: Expression = var(path);
+        self.treed("refresh", start);
+        Ok(utility("REFRESH".to_owned(), vec![path]))
     }
 }

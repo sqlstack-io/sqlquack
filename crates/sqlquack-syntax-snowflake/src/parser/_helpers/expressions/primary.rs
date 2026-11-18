@@ -489,6 +489,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }));
 
             if self.match_token(TokenType::Within) {
@@ -735,6 +736,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         })))
     }
 
@@ -798,6 +800,7 @@ impl Parser {
                 to: DataType::Timestamp {
                     precision,
                     timezone: true,
+                    spelling: None,
                 },
                 trailing_comments: Vec::new(),
                 double_colon_syntax: false,
@@ -836,6 +839,7 @@ impl Parser {
                     to: DataType::Timestamp {
                         precision: None,
                         timezone: false,
+                        spelling: None,
                     },
                     trailing_comments: Vec::new(),
                     double_colon_syntax: false,
@@ -881,19 +885,18 @@ impl Parser {
                         DataType::Timestamp {
                             precision,
                             timezone: true,
+                            spelling: None,
                         }
                     }
-                } else if self.match_keyword("WITHOUT") {
-                    self.match_keyword("TIME");
-                    self.match_keyword("ZONE");
-                    DataType::Timestamp {
-                        precision,
-                        timezone: false,
-                    }
                 } else {
+                    if self.match_keyword("WITHOUT") {
+                        self.match_keyword("TIME");
+                        self.match_keyword("ZONE");
+                    }
                     DataType::Timestamp {
                         precision,
                         timezone: false,
+                        spelling: None,
                     }
                 };
 
@@ -936,6 +939,7 @@ impl Parser {
                     DataType::Timestamp {
                         precision: None,
                         timezone: true,
+                        spelling: None,
                     }
                 }
             } else if self.match_keyword("WITHOUT") {
@@ -944,11 +948,13 @@ impl Parser {
                 DataType::Timestamp {
                     precision: None,
                     timezone: false,
+                    spelling: None,
                 }
             } else {
                 DataType::Timestamp {
                     precision: None,
                     timezone: false,
+                    spelling: None,
                 }
             };
 
@@ -1036,6 +1042,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         }));
         self.maybe_parse_over(func_expr)
     }
@@ -1048,15 +1055,18 @@ impl Parser {
             let type_name = &token.text[sep_pos + 2..];
             let num_expr = Expression::Literal(Box::new(Literal::Number(num_part.to_string())));
             let data_type = match type_name {
-                "BIGINT" => {
-                    sqlquack_syntax::expressions::types::models::DataType::BigInt { length: None }
-                }
-                "SMALLINT" => {
-                    sqlquack_syntax::expressions::types::models::DataType::SmallInt { length: None }
-                }
-                "TINYINT" => {
-                    sqlquack_syntax::expressions::types::models::DataType::TinyInt { length: None }
-                }
+                "BIGINT" => sqlquack_syntax::expressions::types::models::DataType::BigInt {
+                    length: None,
+                    spelling: None,
+                },
+                "SMALLINT" => sqlquack_syntax::expressions::types::models::DataType::SmallInt {
+                    length: None,
+                    spelling: None,
+                },
+                "TINYINT" => sqlquack_syntax::expressions::types::models::DataType::TinyInt {
+                    length: None,
+                    spelling: None,
+                },
                 "DOUBLE" => sqlquack_syntax::expressions::types::models::DataType::Double {
                     precision: None,
                     scale: None,
@@ -1069,6 +1079,7 @@ impl Parser {
                 "DECIMAL" => sqlquack_syntax::expressions::types::models::DataType::Decimal {
                     precision: None,
                     scale: None,
+                    spelling: None,
                 },
                 _ => sqlquack_syntax::expressions::types::models::DataType::Custom {
                     name: type_name.to_string(),
@@ -1404,6 +1415,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         }));
         self.maybe_parse_over(func)
     }
@@ -1433,6 +1445,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         }));
         self.maybe_parse_over(func)
     }
@@ -1484,6 +1497,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }));
             self.maybe_parse_subscript(func)
         } else {
@@ -1504,6 +1518,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }));
             self.maybe_parse_subscript(func)
         }
@@ -1522,6 +1537,7 @@ impl Parser {
                     sqlquack_syntax::expressions::types::models::DataType::Decimal {
                         precision: None,
                         scale: None,
+                        spelling: None,
                     }
                 }
                 _ => {
@@ -1946,6 +1962,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         })))
     }
 

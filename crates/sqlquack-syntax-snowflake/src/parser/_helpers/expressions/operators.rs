@@ -1658,6 +1658,7 @@ impl Parser {
             sql_security,
             with_option,
             columns,
+            as_omitted: false,
         })))
     }
 
@@ -1834,6 +1835,7 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                written_as: None,
             }));
         }
 
@@ -1908,6 +1910,7 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                written_as: None,
             }));
         }
 

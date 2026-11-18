@@ -1453,6 +1453,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 })));
             } else {
                 let saved_pos = self.current;

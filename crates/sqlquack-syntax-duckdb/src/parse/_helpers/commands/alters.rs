@@ -137,6 +137,7 @@ impl Parser<'_> {
                     if_exists,
                     cascade,
                     column_keyword: false,
+                    keyword: None,
                 },
                 _ => AlterTableAction::DropField {
                     names: path,
@@ -157,6 +158,7 @@ impl Parser<'_> {
                     use_modify_keyword: false,
                     column_keyword: false,
                     action_words: None,
+                    keyword: None,
                 })),
                 Err(()) => TableAction::Gap("nested_field"),
             });
@@ -212,6 +214,7 @@ impl Parser<'_> {
         let action: AlterTableAction = match reset {
             true => AlterTableAction::UnsetProperty {
                 properties: options.into_iter().map(|option| option.name).collect(),
+                if_exists: false,
             },
             false => AlterTableAction::SetProperty {
                 properties: options
@@ -294,6 +297,7 @@ impl Parser<'_> {
             if_not_exists,
             position: None,
             column_keyword: false,
+            keyword: None,
         })))
     }
 

@@ -555,6 +555,7 @@ impl Parser {
                     None
                 };
                 Ok(DataType::Time {
+                    spelling: None,
                     precision,
                     timezone: true,
                 })
@@ -571,6 +572,7 @@ impl Parser {
                 Ok(DataType::Timestamp {
                     precision,
                     timezone: true,
+                    spelling: None,
                 })
             }
             "TIMESTAMPLTZ" | "TIMESTAMP_LTZ" | "TIMESTAMPNTZ" | "TIMESTAMP_NTZ" => {
@@ -715,7 +717,10 @@ impl Parser {
         } else {
             None
         };
-        Ok(DataType::BigInt { length })
+        Ok(DataType::BigInt {
+            length,
+            spelling: None,
+        })
     }
 
     fn parse_smallint_data_type(&mut self) -> Result<DataType> {
@@ -731,7 +736,10 @@ impl Parser {
         } else {
             None
         };
-        Ok(DataType::SmallInt { length })
+        Ok(DataType::SmallInt {
+            length,
+            spelling: None,
+        })
     }
 
     fn parse_tinyint_data_type(&mut self) -> Result<DataType> {
@@ -747,7 +755,10 @@ impl Parser {
         } else {
             None
         };
-        Ok(DataType::TinyInt { length })
+        Ok(DataType::TinyInt {
+            length,
+            spelling: None,
+        })
     }
 
     fn parse_float_data_type(&mut self, name: String) -> Result<DataType> {
@@ -801,7 +812,11 @@ impl Parser {
         } else {
             (None, None)
         };
-        Ok(DataType::Decimal { precision, scale })
+        Ok(DataType::Decimal {
+            precision,
+            scale,
+            spelling: None,
+        })
     }
 
     fn parse_char_data_type(&mut self, name: String) -> Result<DataType> {
@@ -934,6 +949,7 @@ impl Parser {
             false
         };
         Ok(DataType::Time {
+            spelling: None,
             precision,
             timezone,
         })
@@ -961,6 +977,7 @@ impl Parser {
                 Ok(DataType::Timestamp {
                     precision,
                     timezone: true,
+                    spelling: None,
                 })
             }
         } else if self.match_keyword("WITHOUT") {
@@ -970,6 +987,7 @@ impl Parser {
             Ok(DataType::Timestamp {
                 precision,
                 timezone: false,
+                spelling: None,
             })
         }
     }
@@ -1082,13 +1100,22 @@ impl Parser {
                 let element_type = if self.match_token(TokenType::Comma) {
                     let type_alias = self.expect_identifier_or_keyword()?;
                     let mapped_type = match type_alias.to_ascii_uppercase().as_str() {
-                        "I8" => DataType::TinyInt { length: None },
-                        "I16" => DataType::SmallInt { length: None },
+                        "I8" => DataType::TinyInt {
+                            length: None,
+                            spelling: None,
+                        },
+                        "I16" => DataType::SmallInt {
+                            length: None,
+                            spelling: None,
+                        },
                         "I32" => DataType::Int {
                             length: None,
                             integer_spelling: false,
                         },
-                        "I64" => DataType::BigInt { length: None },
+                        "I64" => DataType::BigInt {
+                            length: None,
+                            spelling: None,
+                        },
                         "F32" => DataType::Float {
                             precision: None,
                             scale: None,

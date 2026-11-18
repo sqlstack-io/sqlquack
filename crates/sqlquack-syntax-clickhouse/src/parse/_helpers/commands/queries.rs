@@ -179,6 +179,7 @@ impl Parser<'_> {
                 all: None,
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             };
             if self.kw_in(0, &["ROLLUP", "CUBE"]) || self.kws(&["GROUPING", "SETS"]) {
                 self.skip_grouping_modifier()?;

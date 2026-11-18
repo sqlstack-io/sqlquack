@@ -663,6 +663,7 @@ pub(crate) fn postgres_cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::Decimal {
             precision: Some(precision),
             scale,
+            spelling: _,
         } => {
             format!("{NUMERIC}({precision},{})", scale.unwrap_or(0))
         }
@@ -672,6 +673,7 @@ pub(crate) fn postgres_cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::Timestamp {
             precision,
             timezone,
+            ..
         } => length(
             ["TIMESTAMP", "TIMESTAMPTZ"][usize::from(*timezone)],
             precision,
@@ -679,6 +681,7 @@ pub(crate) fn postgres_cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::Time {
             precision,
             timezone,
+            ..
         } => length(["TIME", "TIMETZ"][usize::from(*timezone)], precision),
         DataType::Interval {
             unit: None,

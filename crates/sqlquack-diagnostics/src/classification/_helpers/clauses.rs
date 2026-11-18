@@ -85,6 +85,8 @@ fn select_clauses(select: &Select) -> Vec<String> {
         total_rowcount,
         source_dialect: _,
         span: _,
+        table_statement: _,
+        pipe_operators: _,
     } = select;
     present(&[
         (with.is_some(), "with"),
@@ -166,6 +168,7 @@ macro_rules! set_operation_clauses {
                 on_columns,
                 locks,
                 with_ties,
+                keyword: _,
                 span: _,
             } = operation;
             present(&[
@@ -224,6 +227,7 @@ fn join_constructs(join: &Join) -> Vec<Construct> {
         first_last_alias: _,
         using_alias,
         span: _,
+        nearest_by: _,
     } = join;
     let mut constructs = vec![Construct::new(
         ConstructFamily::Join,

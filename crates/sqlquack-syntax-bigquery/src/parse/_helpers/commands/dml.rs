@@ -247,6 +247,7 @@ impl Parser<'_> {
             },
             with_: with.map(|with| Box::new(Expression::With(Box::new(with)))),
             returning: None,
+            schema_evolution: false,
         })))
     }
 

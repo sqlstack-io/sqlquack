@@ -370,6 +370,7 @@ impl Parser<'_> {
                 message: AGGREGATE_OUTPUT.to_owned(),
                 position: start,
                 syntax: false,
+                guard: false,
             }),
             false => {
                 let key: Option<String> = match matches!(argument, Expression::Variadic(_)) {
@@ -474,6 +475,7 @@ impl Parser<'_> {
                     message: ORDERED_SET_VARIADIC.to_owned(),
                     position: sorted_start,
                     syntax: false,
+                    guard: false,
                 });
             }
         }

@@ -19,10 +19,12 @@ pub(crate) fn rendered_type(data_type: &DataType) -> Option<String> {
         DataType::Decimal {
             precision: Some(precision),
             scale: None,
+            spelling: _,
         } => format!("DECIMAL({precision})"),
         DataType::Decimal {
             precision: Some(precision),
             scale: Some(scale),
+            spelling: _,
         } => format!("DECIMAL({precision},{scale})"),
         DataType::String { .. } => "STRING".to_owned(),
         DataType::Text => TEXT_TYPE.to_owned(),

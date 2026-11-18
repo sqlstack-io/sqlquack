@@ -74,6 +74,7 @@ impl Parser {
                 all,
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             });
         }
 
@@ -110,6 +111,7 @@ impl Parser {
                 all,
                 totals,
                 comments: Vec::new(),
+                with_modifier: false,
             });
         }
 
@@ -144,6 +146,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))
                 } else if self.match_token(TokenType::Cube) {
                     self.expect_token(TokenType::LParen)?;
@@ -165,6 +168,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))
                 } else if self.match_token(TokenType::Rollup) {
                     self.expect_token(TokenType::LParen)?;
@@ -186,6 +190,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))
                 } else {
                     self.parse_expression()?
@@ -242,6 +247,7 @@ impl Parser {
             all,
             totals,
             comments: Vec::new(),
+            with_modifier: false,
         })
     }
 
@@ -285,6 +291,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))
                 } else if self.match_token(TokenType::Cube) {
                     self.expect_token(TokenType::LParen)?;
@@ -306,6 +313,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))
                 } else if self.match_token(TokenType::Rollup) {
                     self.expect_token(TokenType::LParen)?;
@@ -327,6 +335,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))
                 } else if self.check(TokenType::LParen) {
                     self.skip();
@@ -691,6 +700,8 @@ impl Parser {
                     trailing_comments: Vec::new(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 },
             };
             subquery
@@ -744,6 +755,8 @@ impl Parser {
                     trailing_comments: Vec::new(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 })))
             } else {
                 Ok(Expression::Subquery(Box::new(Subquery {
@@ -763,6 +776,8 @@ impl Parser {
                     trailing_comments: Vec::new(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 })))
             }
         } else {
@@ -1780,6 +1795,7 @@ impl Parser {
                 this,
                 table_alias,
                 column_aliases,
+                column_aliases_explicit_as: false,
                 outer,
             });
         }
@@ -1867,6 +1883,8 @@ impl Parser {
         Ok(Hint {
             source_dialect: None,
             expressions,
+            quoted_names: Vec::new(),
+            without_commas: Vec::new(),
         })
     }
 }

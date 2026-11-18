@@ -5,7 +5,7 @@ use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::keywords::main::is_strict_non_reserved::is_strict_non_reserved;
 use crate::parse::constants::{
-    CLAUSE_WORDS, FOR, MATCH_RECOGNIZE, PAIRED_CLAUSE_WORDS, QUERY_STARTS,
+    CLAUSE_WORDS, FOR, MATCH_RECOGNIZE, PAIRED_CLAUSE_WORDS, QUERY_STARTS, TREED_FORMS,
 };
 use crate::parse::errors::ParseError;
 use crate::scan::models::{Token, TokenKind};
@@ -31,10 +31,16 @@ pub(crate) struct Parser<'sql> {
     pub(crate) at: usize,
     depth: usize,
     pub(crate) gaps: Vec<Gap>,
+    /// Forms of `TREED_FORMS` read as trees whose layout has not been reviewed.
+    pub(crate) treed: Vec<Gap>,
+    /// How many of `treed` came before the statement being parsed.
+    pub(crate) statement_treed: usize,
     /// Whether the statement being parsed holds a gap, so it becomes a `Command`.
     pub(crate) opaque: bool,
     /// The depth limit's error once any reading passed it; every later reading fails with it.
     pub(crate) too_deep: Option<ParseError>,
+    /// Whether a `FOR` statement's query is being read, so `DO` ends it rather than naming an alias.
+    pub(crate) for_query: bool,
 }
 
 /// `identifier`: an unquoted word (every keyword is non-reserved by default) or a quoted name.
@@ -73,8 +79,11 @@ impl<'sql> Parser<'sql> {
             at: 0,
             depth: 0,
             gaps: Vec::new(),
+            treed: Vec::new(),
+            statement_treed: 0,
             opaque: false,
             too_deep: None,
+            for_query: false,
         }
     }
 
@@ -222,12 +231,14 @@ impl<'sql> Parser<'sql> {
                 message: "Syntax error at or near end of input".to_owned(),
                 position: self.sql.len(),
                 syntax: true,
+                guard: false,
             },
             Some(token) => match token.kind {
                 TokenKind::Fault(syntax) => ParseError {
                     message: token.value.clone(),
                     position: token.start,
                     syntax,
+                    guard: false,
                 },
                 _ => ParseError {
                     message: format!(
@@ -236,6 +247,7 @@ impl<'sql> Parser<'sql> {
                     ),
                     position: token.start,
                     syntax: true,
+                    guard: false,
                 },
             },
         }
@@ -247,6 +259,7 @@ impl<'sql> Parser<'sql> {
             message: message.to_owned(),
             position,
             syntax,
+            guard: false,
         }
     }
 
@@ -258,16 +271,38 @@ impl<'sql> Parser<'sql> {
     /// Records a construct the shared tree cannot hold, from `start` to here.
     pub(crate) fn gap(&mut self, construct: &'static str, start: usize) {
         self.opaque = true;
+        let gap: Gap = self.span(construct, start);
+        self.gaps.push(gap);
+    }
+
+    /// Records the form `construct` of `TREED_FORMS`, from `start` to here, read as a tree.
+    pub(crate) fn treed(&mut self, construct: &'static str, start: usize) {
+        match TREED_FORMS.contains(&construct) {
+            true => {
+                let form: Gap = self.span(construct, start);
+                self.treed.push(form);
+            }
+            false => self.gap(construct, start),
+        }
+    }
+
+    /// Whether the statement so far holds a gap or a form of `TREED_FORMS`, each once a gap.
+    pub(crate) fn read_gap(&self) -> bool {
+        self.opaque || self.treed.len() > self.statement_treed
+    }
+
+    /// The range from `start` to the end of the last token read, named `construct`.
+    fn span(&self, construct: &'static str, start: usize) -> Gap {
         let end: usize = self
             .at
             .checked_sub(1)
             .and_then(|last| self.tokens.get(last))
             .map_or(start, |token| token.end);
-        self.gaps.push(Gap {
+        Gap {
             construct,
             start,
             end: end.max(start),
-        });
+        }
     }
 
     /// Runs `parse` one level deeper, failing past the depth limit.
@@ -280,6 +315,7 @@ impl<'sql> Parser<'sql> {
                 message: "the statement nests too deeply".to_owned(),
                 position: self.offset(),
                 syntax: false,
+                guard: true,
             };
             return Err(self.too_deep.get_or_insert(error).clone());
         }
@@ -295,10 +331,12 @@ impl<'sql> Parser<'sql> {
         parse: impl FnOnce(&mut Self) -> Parsing<T>,
     ) -> Result<T, (ParseError, usize)> {
         let (at, gaps, opaque, depth) = (self.at, self.gaps.len(), self.opaque, self.depth);
+        let treed: usize = self.treed.len();
         parse(self).map_err(|error| {
             let reached: usize = self.at;
             self.at = at;
             self.gaps.truncate(gaps);
+            self.treed.truncate(treed);
             self.opaque = opaque;
             self.depth = depth;
             (error, reached)
@@ -415,7 +453,9 @@ impl<'sql> Parser<'sql> {
             true => is_strict_identifier,
             false => is_identifier,
         };
-        self.is_at(offset, test) && !self.starts_clause(offset)
+        self.is_at(offset, test)
+            && !self.starts_clause(offset)
+            && !(self.for_query && self.kw_at(offset, "DO") && !self.terminal_at(offset + 1))
     }
 
     /// `multipartIdentifier`: `identifier ( . identifier )*`.

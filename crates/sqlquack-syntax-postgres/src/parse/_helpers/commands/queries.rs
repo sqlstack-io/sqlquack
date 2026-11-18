@@ -192,6 +192,7 @@ impl Parser<'_> {
                 all: distinct.then_some(false),
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             });
         }
         if self.eat_kw("having") {

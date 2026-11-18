@@ -93,6 +93,13 @@ pub struct Select {
     /// BigQuery SELECT AS STRUCT / SELECT AS VALUE kind
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub kind: Option<String>,
+    /// Databricks: a TABLE statement, which reads every column of its table
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub table_statement: bool,
+    /// Databricks: the pipe operators as written (`|> WHERE`, `| WHERE`, `|>`), already applied above
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub pipe_operators: Vec<String>,
     /// MySQL operation modifiers (HIGH_PRIORITY, STRAIGHT_JOIN, SQL_CALC_FOUND_ROWS, etc.)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub operation_modifiers: Vec<String>,
@@ -155,6 +162,8 @@ impl Select {
             leading_comments: Vec::new(),
             post_select_comments: Vec::new(),
             kind: None,
+            table_statement: false,
+            pipe_operators: Vec::new(),
             operation_modifiers: Vec::new(),
             qualify_after_window: false,
             option: None,
@@ -285,6 +294,9 @@ pub struct Union {
     /// PostgreSQL `FETCH … WITH TIES`: the limit keeps rows that tie with the last one
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub with_ties: bool,
+    /// The operator keyword as written when it is a synonym of the node's, such as MINUS for EXCEPT
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub keyword: Option<String>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -355,6 +367,9 @@ pub struct Intersect {
     /// PostgreSQL `FETCH … WITH TIES`: the limit keeps rows that tie with the last one
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub with_ties: bool,
+    /// The operator keyword as written when it is a synonym of the node's, such as MINUS for EXCEPT
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub keyword: Option<String>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -424,6 +439,9 @@ pub struct Except {
     /// PostgreSQL `FETCH … WITH TIES`: the limit keeps rows that tie with the last one
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub with_ties: bool,
+    /// The operator keyword as written when it is a synonym of the node's, such as MINUS for EXCEPT
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub keyword: Option<String>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -502,6 +520,12 @@ pub struct Subquery {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// Databricks: `TABLESAMPLE` after the parenthesized query
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub table_sample: Option<Box<Sample>>,
+    /// Databricks: `WATERMARK ... DELAY OF ...` after the parenthesized query
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub watermark: Option<Box<Watermark>>,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
@@ -524,8 +548,16 @@ pub struct Values {
     pub expressions: Vec<Tuple>,
     /// Optional alias for the table
     pub alias: Option<Identifier>,
+    /// Databricks: whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub alias_explicit_as: bool,
     /// Optional column aliases: AS t(c1, c2)
     pub column_aliases: Vec<Identifier>,
+    /// Databricks: the positions of rows written as a bare expression, without parentheses
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub bare_rows: Vec<usize>,
 }
 
 /// PIVOT/UNPIVOT, in the standard FROM-clause form or DuckDB's statement form.
@@ -554,6 +586,10 @@ pub struct Pivot {
     /// Optional alias
     #[serde(default)]
     pub alias: Option<Identifier>,
+    /// Databricks: whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub alias_explicit_as: bool,
     /// Optional output column aliases from `PIVOT(...) AS alias(col1, col2, ...)`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub alias_columns: Vec<Identifier>,
@@ -576,6 +612,10 @@ pub struct Unpivot {
     pub name_column: Identifier,
     pub columns: Vec<Expression>,
     pub alias: Option<Identifier>,
+    /// Databricks: whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub alias_explicit_as: bool,
     /// Optional output column aliases from `UNPIVOT(...) AS alias(col1, col2, ...)`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub alias_columns: Vec<Identifier>,
@@ -614,6 +654,9 @@ pub struct Stream {
     pub on: Option<Expression>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub show_initial_rows: Option<bool>,
+    /// Databricks: `WATERMARK ... DELAY OF ...` after `STREAM ( ... )`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub watermark: Option<Box<Watermark>>,
 }
 
 /// USING DATA clause for data import statements
@@ -689,6 +732,9 @@ pub struct Join {
     /// Snowflake: the alias in `FIRST ( alias )` or `LAST ( alias )`; absent when none
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub first_last_alias: Option<Identifier>,
+    /// Databricks: `{APPROX | EXACT} NEAREST [n] BY {DISTANCE | SIMILARITY} expression`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub nearest_by: Option<Box<NearestBy>>,
     /// PostgreSQL `USING (…) AS alias`: the alias of the join's USING columns
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub using_alias: Option<Identifier>,
@@ -696,6 +742,44 @@ pub struct Join {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+}
+
+/// Databricks: a join's `{APPROX | EXACT} NEAREST [n] BY {DISTANCE | SIMILARITY} expression`.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct NearestBy {
+    /// Whether EXACT was written rather than APPROX
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub exact: bool,
+    /// The number of nearest rows, when written
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub results: Option<Expression>,
+    /// Whether SIMILARITY was written rather than DISTANCE
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub similarity: bool,
+    /// The expression the rows are ranked by
+    pub by: Expression,
+}
+
+/// Databricks: a relation's `WATERMARK expression [[AS] alias | AS ( aliases )] DELAY OF interval`.
+#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Watermark {
+    /// The event-time expression
+    pub this: Expression,
+    /// The expression's alias or aliases, when written
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub aliases: Vec<Identifier>,
+    /// Whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub alias_explicit_as: bool,
+    /// Whether the aliases were written in parentheses
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub aliases_parenthesized: bool,
+    /// The delay after `DELAY OF`
+    pub delay: Expression,
 }
 
 /// Every join type, standard and dialect-specific (SEMI/ANTI, APPLY, ASOF, ARRAY, ...).
@@ -771,6 +855,10 @@ pub struct GroupBy {
     /// ClickHouse: WITH TOTALS modifier
     #[serde(default)]
     pub totals: bool,
+    /// Hive and Databricks: the items end with a trailing `WITH ROLLUP`, `WITH CUBE` or `GROUPING SETS`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub with_modifier: bool,
     /// Leading comments that appeared before the GROUP BY keyword
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub comments: Vec<String>,
@@ -885,6 +973,9 @@ pub struct LateralView {
     pub table_alias: Option<Identifier>,
     /// Column aliases for the generated columns
     pub column_aliases: Vec<Identifier>,
+    /// Databricks: whether AS was written before the column aliases
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub column_aliases_explicit_as: bool,
     /// OUTER keyword - preserve nulls when input is empty/null
     pub outer: bool,
 }
@@ -896,6 +987,14 @@ pub struct Hint {
     #[ast(skip)]
     pub source_dialect: Option<crate::tokens::models::DialectType>,
     pub expressions: Vec<HintExpression>,
+    /// Databricks: the positions in `expressions` of hints whose name was written in backquotes
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub quoted_names: Vec<usize>,
+    /// Databricks: the positions in `expressions` of hints written without the optional comma before
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub without_commas: Vec<usize>,
 }
 
 /// Individual hint expression
@@ -1308,6 +1407,9 @@ pub struct Cte {
     /// DuckDB `USING KEY` entries as expressions, when any is more than a bare column.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub key_items: Vec<Expression>,
+    /// Databricks: the optional `AS` before the body was not written
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub as_omitted: bool,
 }
 
 /// Window specification

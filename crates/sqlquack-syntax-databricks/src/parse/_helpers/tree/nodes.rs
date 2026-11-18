@@ -1,26 +1,29 @@
 //! Shared-tree nodes with every field set, so the grammar code names only what it parsed.
 
+use crate::parse::constants::{KEPT_VALUE_WRAPPERS, MAX_TREE_DEPTH, MINUS};
 use sqlquack_syntax::DataType;
-use sqlquack_syntax::Expression;
+use sqlquack_syntax::expressions::columns::models::{ColumnConstraint, ColumnDef};
 use sqlquack_syntax::expressions::functions::models::{
     AggregateFunction, Function, WindowFunction,
 };
 use sqlquack_syntax::expressions::names::models::{
-    BooleanLiteral, Column, Identifier, Literal, Null, Star, TableRef,
+    BooleanLiteral, Column, DefaultKeyword, Identifier, Literal, Null, Star, TableRef,
 };
 use sqlquack_syntax::expressions::operators::models::{
     Alias, Between, BinaryOp, Case, Cast, DotAccess, Exists, In, IsNull, LambdaExpr, Lateral,
-    Parameter, ParameterStyle,
+    OperatorSpelling, Parameter, ParameterStyle,
 };
 use sqlquack_syntax::expressions::queries::models::{
     Cte, Except, Intersect, Join, JoinKind, JoinedTable, Ordered, Over, Subquery, Union, Values,
     WindowFrame,
 };
 use sqlquack_syntax::expressions::statements::models::{
-    Command, Delete, Insert, Paren, Update, Var,
+    Command, Delete, Insert, Paren, Update, UtilityStatement, Var,
 };
+use sqlquack_syntax::expressions::tables::models::{ConstraintType, Property};
 use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::SourceSpan;
+use sqlquack_syntax::{Expression, ExpressionWalk};
 
 pub(crate) fn column(table: Option<Identifier>, name: Identifier) -> Expression {
     let span = name.span;
@@ -44,6 +47,19 @@ pub(crate) fn column_from(parts: Vec<Identifier>) -> Expression {
     parts.fold(column(Some(first), second), dot)
 }
 
+/// A qualified name with each part kept: the name itself, or its later parts as dot access.
+pub(crate) fn qualified(parts: Vec<Identifier>) -> Expression {
+    let mut parts = parts.into_iter();
+    let first: Identifier = parts.next().unwrap_or_else(Identifier::empty);
+    parts.fold(Expression::Identifier(first), dot)
+}
+
+/// A qualified name's leading parts and its last part.
+pub(crate) fn qualifier_and_name(mut parts: Vec<Identifier>) -> (Vec<Identifier>, Identifier) {
+    let name: Identifier = parts.pop().unwrap_or_else(Identifier::empty);
+    (parts, name)
+}
+
 pub(crate) fn dot(this: Expression, field: Identifier) -> Expression {
     Expression::Dot(Box::new(DotAccess {
         this,
@@ -65,15 +81,18 @@ pub(crate) fn star(table: Option<Identifier>, except: Option<Vec<Identifier>>) -
     }
 }
 
-/// A multi-part name as one identifier: the part itself, or the parts joined by `.`.
+/// A multi-part name as one identifier: the part itself, or the parts joined by `.`, each quoted part in backticks.
 pub(crate) fn joined(mut parts: Vec<Identifier>) -> Identifier {
     match parts.len() {
         1 => parts.remove(0),
         _ => Identifier::new(
             parts
                 .iter()
-                .map(|part| part.name.as_str())
-                .collect::<Vec<&str>>()
+                .map(|part| match part.quoted {
+                    true => format!("`{}`", part.name.replace('`', "``")),
+                    false => part.name.clone(),
+                })
+                .collect::<Vec<String>>()
                 .join("."),
         ),
     }
@@ -106,10 +125,46 @@ pub(crate) fn lambda(parameters: Vec<Identifier>, body: Expression) -> Expressio
     }))
 }
 
+/// An assigned value that is the bare word DEFAULT, as the column's default value.
+pub(crate) fn default_value(value: Expression) -> Expression {
+    match &value {
+        Expression::Column(column)
+            if column.table.is_none()
+                && !column.name.quoted
+                && column.name.name.eq_ignore_ascii_case("DEFAULT") =>
+        {
+            Expression::DefaultKeyword(DefaultKeyword)
+        }
+        _ => value,
+    }
+}
+
+/// The positions of the items whose flag is set, such as values written without `=`.
+pub(crate) fn flagged<T>(items: &[(T, bool)]) -> Vec<usize> {
+    (0..items.len()).filter(|at| items[*at].1).collect()
+}
+
 /// A keyword written as a word in a keyword tuple, such as `DELETE` or `UPDATE`.
 pub(crate) fn var(text: &str) -> Expression {
     Expression::Var(Box::new(Var {
         this: text.to_owned(),
+    }))
+}
+
+/// A keyword clause: its words, and its value when one is written.
+pub(crate) fn property(words: &str, value: Option<Expression>) -> Expression {
+    Expression::Property(Box::new(Property {
+        this: Box::new(var(words)),
+        value: value.map(Box::new),
+    }))
+}
+
+/// A statement the shared tree has no node for: its keywords, then its parts in order.
+pub(crate) fn utility(kind: String, operands: Vec<Expression>) -> Expression {
+    Expression::UtilityStatement(Box::new(UtilityStatement {
+        kind,
+        options: Vec::new(),
+        operands,
     }))
 }
 
@@ -135,6 +190,31 @@ pub(crate) fn binary(
     right: Expression,
 ) -> Expression {
     kind(Box::new(BinaryOp::new(left, right)))
+}
+
+/// A property's `key = value`, marked when its value followed the key without `=`.
+pub(crate) fn property_node(
+    key: Expression,
+    value: Expression,
+    without_equals: bool,
+) -> Expression {
+    let node: Expression = binary(Expression::Eq, key, value);
+    match without_equals {
+        true => written_as(node, OperatorSpelling::Omitted),
+        false => node,
+    }
+}
+
+/// `node` marked with the operator spelling written for it, when another spelling shares it.
+pub(crate) fn written_as(mut node: Expression, spelling: OperatorSpelling) -> Expression {
+    match &mut node {
+        Expression::Eq(op) | Expression::Neq(op) | Expression::NullSafeEq(op) => {
+            op.written_as = Some(spelling)
+        }
+        Expression::Function(call) => call.written_as = Some(spelling),
+        _ => {}
+    }
+    node
 }
 
 pub(crate) fn cast(this: Expression, to: DataType, double_colon_syntax: bool) -> Cast {
@@ -280,6 +360,8 @@ pub(crate) fn aggregate(
         set_quantifier: function.set_quantifier,
         filter,
         ignore_nulls,
+        qualified_name: function.qualified_name,
+        quoted: function.quoted,
         ..AggregateFunction::default()
     }))
 }
@@ -385,15 +467,18 @@ pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: boo
         trailing_comments: Vec::new(),
         inferred_type: None,
         span: SourceSpan(None),
+        table_sample: None,
+        watermark: None,
     }))
 }
 
 pub(crate) fn lateral(this: Expression, alias: Option<TableAlias>) -> Expression {
-    let (alias, columns) = match alias {
-        Some(alias) => (Some(alias.name), alias.columns),
-        None => (None, Vec::new()),
+    let (alias, columns, alias_explicit_as) = match alias {
+        Some(alias) => (Some(alias.name), alias.columns, alias.explicit),
+        None => (None, Vec::new(), false),
     };
     Expression::Lateral(Box::new(Lateral {
+        alias_explicit_as,
         this: Box::new(this),
         view: None,
         outer: None,
@@ -437,6 +522,7 @@ pub(crate) fn join(
         first_last: None,
         first_last_alias: None,
         span: SourceSpan(None),
+        nearest_by: None,
     }
 }
 
@@ -461,6 +547,7 @@ pub(crate) fn set_operation(
     quantifier: (bool, bool),
 ) -> Expression {
     let (all, distinct) = quantifier;
+    let keyword: Option<String> = (operator == MINUS).then(|| operator.to_owned());
     macro_rules! node {
         ($variant:ident, $node:ident) => {
             Expression::$variant(Box::new($node {
@@ -483,6 +570,7 @@ pub(crate) fn set_operation(
                 on_columns: Vec::new(),
                 locks: Vec::new(),
                 with_ties: false,
+                keyword,
                 span: SourceSpan(None),
             }))
         };
@@ -494,18 +582,25 @@ pub(crate) fn set_operation(
     }
 }
 
-pub(crate) fn values(rows: Vec<Vec<Expression>>, alias: Option<TableAlias>) -> Expression {
-    let (alias, column_aliases) = match alias {
-        Some(alias) => (Some(alias.name), alias.columns),
-        None => (None, Vec::new()),
+/// VALUES of `rows`, those at `bare_rows` written without parentheses, and its alias.
+pub(crate) fn values(
+    rows: Vec<Vec<Expression>>,
+    bare_rows: Vec<usize>,
+    alias: Option<TableAlias>,
+) -> Expression {
+    let (alias, column_aliases, alias_explicit_as) = match alias {
+        Some(alias) => (Some(alias.name), alias.columns, alias.explicit),
+        None => (None, Vec::new(), false),
     };
     Expression::Values(Box::new(Values {
+        alias_explicit_as,
         expressions: rows
             .into_iter()
             .map(|expressions| Tuple { expressions })
             .collect(),
         alias,
         column_aliases,
+        bare_rows,
     }))
 }
 
@@ -521,6 +616,7 @@ pub(crate) fn cte(alias: Identifier, columns: Vec<Identifier>, this: Expression)
         search_cycle: Vec::new(),
         span: SourceSpan(None),
         key_items: Vec::new(),
+        as_omitted: false,
     }
 }
 
@@ -562,6 +658,10 @@ pub(crate) fn insert(table: TableRef) -> Insert {
         function_target: None,
         partition_by: None,
         settings: Vec::new(),
+        schema_evolution: false,
+        replace_on: None,
+        replace_using: Vec::new(),
+        table_keyword: false,
     }
 }
 
@@ -614,4 +714,20 @@ pub(crate) fn delete(table: TableRef) -> Delete {
         no_from: false,
         settings: Vec::new(),
     }
+}
+
+/// `column` with `collation`, when written, as its COLLATE constraint.
+pub(crate) fn collate(mut column: ColumnDef, collation: Option<Identifier>) -> ColumnDef {
+    if let Some(collation) = collation {
+        column
+            .constraints
+            .push(ColumnConstraint::Collate(collation));
+        column.constraint_order.push(ConstraintType::Collate);
+    }
+    column
+}
+
+/// Whether `value` nests too deeply to keep where a gap used to drop it, so keeping it could refuse the statement.
+pub(crate) fn too_deep_to_keep(value: &Expression) -> bool {
+    value.tree_depth() + KEPT_VALUE_WRAPPERS > MAX_TREE_DEPTH
 }

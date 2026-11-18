@@ -283,6 +283,7 @@ impl Parser<'_> {
             DataType::Timestamp {
                 timezone: false,
                 precision: None,
+                ..
             } => literal(Literal::Timestamp(value)),
             other => Expression::Cast(Box::new(cast(string(&value), other, false))),
         }))

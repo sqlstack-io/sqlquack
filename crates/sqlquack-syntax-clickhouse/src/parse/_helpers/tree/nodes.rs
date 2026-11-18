@@ -384,6 +384,8 @@ pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: boo
         trailing_comments: Vec::new(),
         inferred_type: None,
         span: SourceSpan(None),
+        table_sample: None,
+        watermark: None,
     }))
 }
 
@@ -417,6 +419,7 @@ pub(crate) fn join(
         first_last_alias: None,
         using_alias: None,
         span: SourceSpan(None),
+        nearest_by: None,
     }
 }
 
@@ -450,6 +453,7 @@ pub(crate) fn set_operation(
                 on_columns: Vec::new(),
                 locks: Vec::new(),
                 with_ties: false,
+                keyword: None,
                 span: SourceSpan(None),
             }))
         };
@@ -473,6 +477,7 @@ pub(crate) fn cte(alias: Identifier, columns: Vec<Identifier>, this: Expression)
         search_cycle: Vec::new(),
         span: SourceSpan(None),
         key_items: Vec::new(),
+        as_omitted: false,
     }
 }
 
@@ -514,6 +519,10 @@ pub(crate) fn insert(table: TableRef) -> Insert {
         returning_aliases: Vec::new(),
         column_targets: Vec::new(),
         settings: Vec::new(),
+        schema_evolution: false,
+        replace_on: None,
+        replace_using: Vec::new(),
+        table_keyword: false,
     }
 }
 

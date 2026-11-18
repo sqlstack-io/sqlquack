@@ -102,6 +102,7 @@ impl Parser {
         });
 
         Ok(Some(Expression::boxed_table(TableRef {
+            parenthesized: false,
             sample_call: None,
             name: name_ident,
             schema: schema_ident,
@@ -125,6 +126,7 @@ impl Parser {
             whole_quoted: false,
             catalog_parts: Vec::new(),
             schema_omitted: false,
+            watermark: None,
         })))
     }
 

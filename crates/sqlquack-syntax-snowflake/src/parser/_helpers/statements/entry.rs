@@ -836,6 +836,8 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                table_sample: None,
+                watermark: None,
             }));
             let result = self.parse_set_operation(subquery)?;
             self.parse_query_modifiers(result)
@@ -861,6 +863,8 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                table_sample: None,
+                watermark: None,
             }));
             let result = self.parse_set_operation(subquery)?;
             let pre_alias_comments = self.previous_trailing_comments().to_vec();
@@ -1101,6 +1105,8 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                table_sample: None,
+                watermark: None,
             }));
             let result = self.parse_set_operation(subquery)?;
             self.parse_query_modifiers(result)
@@ -1126,6 +1132,8 @@ impl Parser {
                 trailing_comments: Vec::new(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                table_sample: None,
+                watermark: None,
             }));
             let result = self.parse_set_operation(subquery)?;
             let pre_alias_comments = self.previous_trailing_comments().to_vec();
@@ -1397,6 +1405,8 @@ impl Parser {
                             trailing_comments: Vec::new(),
                             inferred_type: None,
                             span: SourceSpan::default(),
+                            table_sample: None,
+                            watermark: None,
                         }))
                     } else {
                         self.parse_expression()?
@@ -1448,6 +1458,8 @@ impl Parser {
                             trailing_comments: Vec::new(),
                             inferred_type: None,
                             span: SourceSpan::default(),
+                            table_sample: None,
+                            watermark: None,
                         }))
                     } else {
                         self.parse_expression()?
@@ -1641,6 +1653,8 @@ impl Parser {
             option,
             exclude,
             span: SourceSpan::default(),
+            table_statement: false,
+            pipe_operators: Vec::new(),
         };
 
         Ok(Expression::Select(Box::new(select)))

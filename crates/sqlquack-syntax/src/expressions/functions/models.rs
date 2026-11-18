@@ -6,15 +6,14 @@ use serde::Serialize;
 
 use crate::expressions::names::models::Identifier;
 use crate::expressions::operators::models::JsonOptions;
+use crate::expressions::operators::models::OperatorSpelling;
 use crate::expressions::operators::models::SqlBehavior;
 use crate::expressions::queries::models::Ordered;
 use crate::expressions::queries::models::Over;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
 
-/// The set quantifier written at the start of a call's arguments.
-///
-/// `ALL` means the same as writing nothing; it is kept so the tree records what was written.
+/// A call's written set quantifier; `ALL` means no quantifier but is kept as written.
 #[derive(
     sqlquack_derive::AstNode,
     Debug,
@@ -100,6 +99,10 @@ pub struct Function {
     /// FROM, not a comma, separates the first two arguments, as in Snowflake's `DATE_PART(YEAR FROM d)`.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub from_separator: bool,
+    /// Databricks: the operator written for this call, such as `>>>` for `shiftrightunsigned`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub written_as: Option<OperatorSpelling>,
 }
 
 impl Function {
@@ -132,6 +135,7 @@ impl Function {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         }
     }
 }

@@ -1314,6 +1314,7 @@ impl Parser {
         }
 
         Ok(Expression::CreateSchema(Box::new(CreateSchema {
+            properties_keyword: None,
             name,
             or_replace,
             if_not_exists,
@@ -1325,6 +1326,7 @@ impl Parser {
             or_alter: false,
             define: false,
             modifier: None,
+            keyword: None,
         })))
     }
 
@@ -1343,6 +1345,7 @@ impl Parser {
             if_exists,
             cascade,
             restrict,
+            keyword: None,
         })))
     }
 

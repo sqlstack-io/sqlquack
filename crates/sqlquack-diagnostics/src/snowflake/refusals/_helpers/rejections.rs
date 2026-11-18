@@ -128,10 +128,12 @@ fn parameterized_date_time(data_type: &DataType) -> Option<(String, &'static str
         DataType::Timestamp {
             precision: Some(precision),
             timezone: true,
+            ..
         } => Some((format!("TIMESTAMP_TZ({precision})"), "TO_TIMESTAMP_TZ")),
         DataType::Timestamp {
             precision: Some(precision),
             timezone: false,
+            ..
         } => Some((format!("TIMESTAMP({precision})"), "TO_TIMESTAMP")),
         DataType::Time {
             precision: Some(precision),

@@ -413,6 +413,7 @@ impl Parser {
                 all: None,
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             })
         } else {
             None
@@ -507,6 +508,8 @@ impl Parser {
             option: None,
             exclude: None,
             span: SourceSpan::default(),
+            table_statement: false,
+            pipe_operators: Vec::new(),
         };
 
         let result = Expression::Select(Box::new(select));
@@ -625,6 +628,8 @@ impl Parser {
                 trailing_comments: self.previous_trailing_comments().to_vec(),
                 inferred_type: None,
                 span: SourceSpan::default(),
+                table_sample: None,
+                watermark: None,
             }))
         } else {
             self.parse_table_expression_primary()?
@@ -716,6 +721,7 @@ impl Parser {
 
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 Expression::boxed_table(TableRef {
+                    parenthesized: false,
                     sample_call: None,
                     catalog: None,
                     schema: None,
@@ -739,6 +745,7 @@ impl Parser {
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
                     schema_omitted: false,
+                    watermark: None,
                 })
             }
         })
@@ -806,6 +813,7 @@ impl Parser {
                 let table_ident = self.parse_bigquery_table_part()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 return Ok(Expression::boxed_table(TableRef {
+                    parenthesized: false,
                     sample_call: None,
                     catalog: Some(first_ident),
                     schema: None,
@@ -829,6 +837,7 @@ impl Parser {
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
                     schema_omitted: true,
+                    watermark: None,
                 }));
             }
 
@@ -845,6 +854,7 @@ impl Parser {
 
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Expression::boxed_table(TableRef {
+                        parenthesized: false,
                         sample_call: None,
                         catalog: Some(Identifier::new(format!("{}.{}", first_name, second_name))),
                         schema: Some(third_ident),
@@ -868,6 +878,7 @@ impl Parser {
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
                         schema_omitted: false,
+                        watermark: None,
                     })
                 } else {
                     if self.match_token(TokenType::LParen) {
@@ -894,12 +905,14 @@ impl Parser {
                             inferred_type: None,
                             export_state: false,
                             from_separator: false,
+                            written_as: None,
                         }))
                     } else {
                         let table_name = third_ident;
 
                         let trailing_comments = self.previous_trailing_comments().to_vec();
                         Expression::boxed_table(TableRef {
+                            parenthesized: false,
                             sample_call: None,
                             catalog: Some(first_ident),
                             schema: Some(second_ident),
@@ -923,6 +936,7 @@ impl Parser {
                             whole_quoted: false,
                             catalog_parts: Vec::new(),
                             schema_omitted: false,
+                            watermark: None,
                         })
                     }
                 }
@@ -951,12 +965,14 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))
                 } else {
                     let table_name = second_ident;
 
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Expression::boxed_table(TableRef {
+                        parenthesized: false,
                         sample_call: None,
                         catalog: None,
                         schema: Some(first_ident),
@@ -980,6 +996,7 @@ impl Parser {
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
                         schema_omitted: false,
+                        watermark: None,
                     })
                 }
             }
@@ -1112,6 +1129,7 @@ impl Parser {
                             inferred_type: None,
                             export_state: false,
                             from_separator: false,
+                            written_as: None,
                         }))
                     } else {
                         let args = if self.check(TokenType::RParen) {
@@ -1171,6 +1189,7 @@ impl Parser {
                                 inferred_type: None,
                                 export_state: false,
                                 from_separator: false,
+                                written_as: None,
                             };
                             let func_expr = Expression::Function(Box::new(func));
 
@@ -1183,6 +1202,7 @@ impl Parser {
                                         let part3 = self.parse_bigquery_table_part()?;
                                         let tc = self.previous_trailing_comments().to_vec();
                                         Expression::boxed_table(TableRef {
+                                            parenthesized: false,
                                             sample_call: None,
                                             catalog: Some(part1),
                                             schema: Some(part2),
@@ -1206,10 +1226,12 @@ impl Parser {
                                             whole_quoted: false,
                                             catalog_parts: Vec::new(),
                                             schema_omitted: false,
+                                            watermark: None,
                                         })
                                     } else {
                                         let tc = self.previous_trailing_comments().to_vec();
                                         Expression::boxed_table(TableRef {
+                                            parenthesized: false,
                                             sample_call: None,
                                             catalog: None,
                                             schema: Some(part1),
@@ -1233,11 +1255,13 @@ impl Parser {
                                             whole_quoted: false,
                                             catalog_parts: Vec::new(),
                                             schema_omitted: false,
+                                            watermark: None,
                                         })
                                     }
                                 } else {
                                     let tc = self.previous_trailing_comments().to_vec();
                                     Expression::boxed_table(TableRef {
+                                        parenthesized: false,
                                         sample_call: None,
                                         catalog: None,
                                         schema: None,
@@ -1261,6 +1285,7 @@ impl Parser {
                                         whole_quoted: false,
                                         catalog_parts: Vec::new(),
                                         schema_omitted: false,
+                                        watermark: None,
                                     })
                                 }
                             } else {
@@ -1300,6 +1325,8 @@ impl Parser {
                         cluster_by: None,
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        table_sample: None,
+                        watermark: None,
                     }))
                 } else {
                     let table_expr = self.parse_table_expression()?;
@@ -1321,6 +1348,8 @@ impl Parser {
                         cluster_by: None,
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        table_sample: None,
+                        watermark: None,
                     }))
                 }
             } else {
@@ -1368,6 +1397,7 @@ impl Parser {
                         inferred_type: None,
                         export_state: false,
                         from_separator: false,
+                        written_as: None,
                     }))
                 };
 
@@ -1447,6 +1477,7 @@ impl Parser {
                 }
 
                 Expression::Lateral(Box::new(Lateral {
+                    alias_explicit_as: false,
                     this: Box::new(func_expr),
                     view: None,
                     outer: None,
@@ -1491,6 +1522,8 @@ impl Parser {
                     trailing_comments: self.previous_trailing_comments().to_vec(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 }))
             } else if self.check(TokenType::Select)
                 || self.check(TokenType::With)
@@ -1527,6 +1560,8 @@ impl Parser {
                         cluster_by: None,
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        table_sample: None,
+                        watermark: None,
                     }));
                     self.parse_set_operation(left)?
                 } else {
@@ -1549,6 +1584,8 @@ impl Parser {
                     trailing_comments: trailing,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 }))
             } else if self.check(TokenType::LParen) {
                 let inner = self.parse_table_expression()?;
@@ -1643,6 +1680,8 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        table_sample: None,
+                        watermark: None,
                     }))
                 } else if self.check(TokenType::Limit) || self.check(TokenType::Offset) {
                     let limit = if self.match_token(TokenType::Limit) {
@@ -1679,6 +1718,8 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        table_sample: None,
+                        watermark: None,
                     }))
                 } else {
                     result
@@ -1737,6 +1778,8 @@ impl Parser {
                     trailing_comments: self.previous_trailing_comments().to_vec(),
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    table_sample: None,
+                    watermark: None,
                 }))
             }
         })
@@ -1814,6 +1857,7 @@ impl Parser {
             };
             let trailing_comments = self.previous_trailing_comments().to_vec();
             Expression::boxed_table(TableRef {
+                parenthesized: false,
                 sample_call: None,
                 catalog: None,
                 schema: None,
@@ -1837,6 +1881,7 @@ impl Parser {
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
                 schema_omitted: false,
+                watermark: None,
             })
         })
     }

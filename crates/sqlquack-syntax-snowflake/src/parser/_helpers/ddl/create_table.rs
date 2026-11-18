@@ -476,6 +476,8 @@ impl Parser {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
+            as_select_without_as: false,
         })))
     }
 

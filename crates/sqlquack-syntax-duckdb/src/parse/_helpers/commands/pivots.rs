@@ -30,6 +30,7 @@ impl Parser<'_> {
             self.refuse_later(PIVOT_WITHOUT_CLAUSES, start);
         }
         Ok(Expression::Pivot(Box::new(Pivot {
+            alias_explicit_as: false,
             this,
             expressions,
             fields: Vec::new(),
@@ -56,6 +57,7 @@ impl Parser<'_> {
             false => None,
         };
         Ok(Expression::Pivot(Box::new(Pivot {
+            alias_explicit_as: false,
             this,
             expressions,
             fields: Vec::new(),

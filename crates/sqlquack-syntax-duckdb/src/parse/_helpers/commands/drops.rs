@@ -97,6 +97,7 @@ impl Parser<'_> {
                 if_exists,
                 cascade: behavior.cascade,
                 restrict: behavior.restrict,
+                keyword: None,
             })),
             ("INDEX", _) => Expression::DropObject(Box::new(DropObject {
                 kind: kind.clone(),

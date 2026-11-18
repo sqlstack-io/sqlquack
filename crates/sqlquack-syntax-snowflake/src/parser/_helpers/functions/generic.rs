@@ -291,6 +291,7 @@ impl Parser {
             {
                 if let Some(table_expr) = self.parse_table_parts()? {
                     Expression::TableArgument(Box::new(TableArgument {
+                        parenthesized: false,
                         prefix,
                         this: table_expr,
                     }))
@@ -695,6 +696,7 @@ impl Parser {
             if self.check(TokenType::Number) {
                 let token = self.advance()?;
                 return Ok(Expression::Neg(Box::new(UnaryOp {
+                    written_as: None,
                     this: Expression::Literal(Box::new(Literal::Number(token.text))),
                     inferred_type: None,
                     span: SourceSpan::default(),
@@ -712,12 +714,15 @@ impl Parser {
                 let data_type = match type_name {
                     "BIGINT" => sqlquack_syntax::expressions::types::models::DataType::BigInt {
                         length: None,
+                        spelling: None,
                     },
                     "SMALLINT" => sqlquack_syntax::expressions::types::models::DataType::SmallInt {
                         length: None,
+                        spelling: None,
                     },
                     "TINYINT" => sqlquack_syntax::expressions::types::models::DataType::TinyInt {
                         length: None,
+                        spelling: None,
                     },
                     "DOUBLE" => sqlquack_syntax::expressions::types::models::DataType::Double {
                         precision: None,
@@ -731,6 +736,7 @@ impl Parser {
                     "DECIMAL" => sqlquack_syntax::expressions::types::models::DataType::Decimal {
                         precision: None,
                         scale: None,
+                        spelling: None,
                     },
                     _ => sqlquack_syntax::expressions::types::models::DataType::Custom {
                         name: type_name.to_string(),

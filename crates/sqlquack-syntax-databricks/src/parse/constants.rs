@@ -2,8 +2,26 @@
 
 use sqlquack_syntax::expressions::types::models::IntervalUnit;
 
+/// Pattern keywords that end their clause, unless an optional part or choice opened after them goes on.
+pub(crate) const FLAG_PHRASES: &[&str] = &[
+    "IF EXISTS",
+    "IF NOT EXISTS",
+    "IGNORE NULL UPDATES",
+    "ON METASTORE",
+    "FOR TABLES",
+];
+
+/// The words written for SCHEMA that the tree keeps as written.
+pub(crate) const SCHEMA_SYNONYMS: &[&str] = &["DATABASE", "NAMESPACE"];
+
+/// The word `USE NAMESPACE` writes for `USE DATABASE`.
+pub(crate) const NAMESPACE: &str = "NAMESPACE";
+
 /// A statement whose shared tree nests deeper than this is refused after it parses.
 pub(crate) const MAX_TREE_DEPTH: usize = 8000;
+
+/// Levels a statement may wrap around a value kept where a gap used to drop it; a deeper value stays a gap.
+pub(crate) const KEPT_VALUE_WRAPPERS: usize = 64;
 
 /// `comparisonOperator`.
 pub(crate) const COMPARE: u8 = 1;
@@ -148,8 +166,8 @@ pub(crate) const DATETIME_UNITS: [&str; 11] = [
     "MICROSECOND",
 ];
 
-/// The `currentLike` words, valid without parentheses.
-pub(crate) const CURRENT_LIKE: [&str; 7] = [
+/// The `currentLike` words and `LOCALTIME`, which the warehouse also reads bare as the call.
+pub(crate) const CURRENT_LIKE: [&str; 8] = [
     "CURRENT_DATE",
     "CURRENT_TIMESTAMP",
     "CURRENT_USER",
@@ -157,6 +175,7 @@ pub(crate) const CURRENT_LIKE: [&str; 7] = [
     "SESSION_USER",
     "CURRENT_TIME",
     "CURRENT_PATH",
+    "LOCALTIME",
 ];
 
 /// `literalType` keywords before a string: a typed literal.
@@ -198,6 +217,8 @@ pub(crate) const INTERVAL_UNITS: [(&str, IntervalUnit); 20] = [
     ("YEARS", IntervalUnit::Year),
 ];
 
+/// The units a `RETAIN DROPPED` period may be written in.
+pub(crate) const RETENTION_UNITS: [&str; 6] = ["HOUR", "HOURS", "DAY", "DAYS", "WEEK", "WEEKS"];
 /// `unitInUnitToUnit`: the units an `INTERVAL ... TO ...` range may name.
 pub(crate) const UNIT_TO_UNITS: [&str; 6] = ["SECOND", "MINUTE", "HOUR", "DAY", "MONTH", "YEAR"];
 
@@ -206,11 +227,17 @@ pub(crate) const ROLLUP: &str = "ROLLUP";
 pub(crate) const CUBE: &str = "CUBE";
 pub(crate) const GROUPING_SETS: &str = "GROUPING SETS";
 
+/// The scope kind of a `SHOW` that lists a schema's objects, which an `IDENTIFIER (...)` may name.
+pub(crate) const SCHEMA_SCOPE: &str = "SCHEMA";
+
+/// The digits of an `@yyyyMMddHHmmssSSS` timestamp after a Delta table name.
+pub(crate) const AT_TIMESTAMP_DIGITS: usize = 17;
+
 /// The function name an `IDENTIFIER (expr)` clause becomes, as lineage reads it.
 pub(crate) const IDENTIFIER_CLAUSE: &str = "IDENTIFIER";
 
 /// The object words a `CREATE` the shared tree has no node for may name; any other word is refused.
-pub(crate) const CREATE_KINDS: [&str; 29] = [
+pub(crate) const CREATE_KINDS: [&str; 28] = [
     "BLOOMFILTER",
     "CATALOG",
     "CLEAN",
@@ -219,7 +246,6 @@ pub(crate) const CREATE_KINDS: [&str; 29] = [
     "DATABASE",
     "EXTERNAL",
     "FLOW",
-    "FOREIGN",
     "FUNCTION",
     "GOVERNED",
     "GROUP",
@@ -342,14 +368,16 @@ pub(crate) const PATH_ELEMENTS: [&str; 5] = [
 ];
 
 /// The securable kinds `GRANT` and `REVOKE` name, longest first, and whether a name is optional.
-pub(crate) const SECURABLE_KINDS: [(&[&str], bool); 18] = [
+pub(crate) const SECURABLE_KINDS: [(&[&str], bool); 20] = [
     (&["MATERIALIZED", "VIEW"], false),
     (&["EXTERNAL", "LOCATION"], false),
+    (&["EXTERNAL", "METADATA"], false),
     (&["STORAGE", "CREDENTIAL"], false),
     (&["SERVICE", "CREDENTIAL"], false),
     (&["ANONYMOUS", "FUNCTION"], true),
     (&["ANY", "FILE"], true),
     (&["CATALOG"], true),
+    (&["METASTORE"], true),
     (&["SCHEMA"], false),
     (&["DATABASE"], false),
     (&["TABLE"], false),
@@ -363,6 +391,12 @@ pub(crate) const SECURABLE_KINDS: [(&[&str], bool); 18] = [
     (&["MODEL"], false),
 ];
 
+/// The securable kinds that never take a name.
+pub(crate) const NAMELESS_SECURABLES: [&str; 3] = ["ANY FILE", "ANONYMOUS FUNCTION", "METASTORE"];
+
+/// The language whose handler needs an `ENVIRONMENT` naming its dependencies.
+pub(crate) const SCALA_LANGUAGE: &str = "SCALA";
+
 /// Interval fields a year-month interval type may start with.
 pub(crate) const YEAR_MONTH: [&str; 2] = ["YEAR", "MONTH"];
 /// Interval fields a day-time interval type may start with.
@@ -371,8 +405,12 @@ pub(crate) const DAY_TIME: [&str; 4] = ["DAY", "HOUR", "MINUTE", "SECOND"];
 pub(crate) const MONTH: &str = "MONTH";
 /// The `INT` spelling the tree marks.
 pub(crate) const INTEGER_SPELLING: &str = "INTEGER";
+/// The set operator Databricks reads as `EXCEPT`, kept as written.
+pub(crate) const MINUS: &str = "MINUS";
 /// The `FLOAT` spelling the tree marks.
 pub(crate) const REAL_SPELLING: &str = "REAL";
+/// The timestamp type spelling with the local time zone.
+pub(crate) const LOCAL_TIMESTAMP: &str = "TIMESTAMP_LTZ";
 /// The true boolean literal.
 pub(crate) const TRUE: &str = "TRUE";
 /// The cast call that yields null instead of failing.
@@ -401,10 +439,31 @@ pub(crate) const MSCK: &str = "msck";
 pub(crate) const CREATE_STREAMING_TABLE: &str = "create_streaming_table";
 /// The documented form whose source and target names are checked further.
 pub(crate) const SYNC: &str = "sync";
+/// `SET TAG` and `UNSET TAG`, with the patterns that read their securable by its kind.
+pub(crate) const TAG_FORMS: [(&str, &str); 2] = [
+    ("set_tag", "SET TAG ON tag_target id [ = tag_value ]"),
+    ("unset_tag", "UNSET TAG ON tag_target id"),
+];
+/// The words that open a tag's securable kind; written before a name, they are that kind.
+pub(crate) const TAG_KINDS: [&str; 11] = [
+    "CATALOG",
+    "COLUMN",
+    "DATABASE",
+    "EXTERNAL",
+    "FUNCTION",
+    "PROCEDURE",
+    "SCHEMA",
+    "SECRET",
+    "TABLE",
+    "VIEW",
+    "VOLUME",
+];
 /// The routine language that takes no handler.
 pub(crate) const SQL_LANGUAGE: &str = "SQL";
 /// The described object a string may name.
 pub(crate) const CATALOG: &str = "CATALOG";
+/// The object kind whose DESCRIBE target is a table-like name with parts.
+pub(crate) const VOLUME: &str = "VOLUME";
 /// The `SHOW` word naming functions.
 pub(crate) const FUNCTIONS: &str = "FUNCTIONS";
 /// The fewest parts a `SET PATH` schema reference names.
@@ -415,3 +474,148 @@ pub(crate) const MIN_BACKQUOTED_LENGTH: usize = 2;
 pub(crate) const SET_VERBOSE: &str = "-v";
 /// The resource statement that adds a resource, rather than listing them.
 pub(crate) const ADD_RESOURCE: &str = "ADD";
+/// `CACHE SELECT` as its page writes it.
+pub(crate) const CACHE_SELECT: &str = "CACHE SELECT expr ,... FROM name [ WHERE expr ]";
+/// `ADD` of resources: the kind, then any resources.
+pub(crate) const ADD_RESOURCES: &str =
+    "ADD { FILE | FILES | JAR | JARS | ARCHIVE | ARCHIVES } [ resource ... ]";
+/// `LIST` of resources: the kind, then any resources.
+pub(crate) const LIST_RESOURCES: &str =
+    "LIST { FILE | FILES | JAR | JARS | ARCHIVE | ARCHIVES } [ resource ... ]";
+
+/// `createTempViewUsing` as its page writes it.
+pub(crate) const TEMPORARY_VIEW_USING: &str = "CREATE [ OR REPLACE ] [ GLOBAL ] { TEMPORARY | TEMP } \
+     VIEW name [ ( column ,... ) ] USING name [ OPTIONS props ]";
+/// `DROP TEMPORARY TABLE`.
+pub(crate) const DROP_TEMPORARY_TABLE: &str =
+    "DROP { TEMPORARY | TEMP } TABLE [ IF EXISTS ] table [ PURGE ]";
+/// `DROP TABLE ... FORCE`.
+pub(crate) const DROP_TABLE_FORCE: &str = "DROP TABLE [ IF EXISTS ] table [ PURGE ] FORCE";
+/// `DROP TEMPORARY FUNCTION`.
+pub(crate) const DROP_TEMPORARY_FUNCTION: &str =
+    "DROP { TEMPORARY | TEMP } FUNCTION [ IF EXISTS ] table";
+/// `UNDROP ... WITH ID`.
+pub(crate) const UNDROP_WITH_ID: &str = "UNDROP { TABLE | VOLUME | MATERIALIZED VIEW } WITH ID str";
+
+/// Forms read as trees that the formatter and lint still refuse as gaps until their layout is reviewed; any future Databricks translator or renderer must handle each of these, and every key of `KEYED_ACTIONS`, or refuse it.
+pub(crate) const TREED_FORMS: [&str; 38] = [
+    "add",
+    "list",
+    "restore",
+    "deny",
+    "cache_select",
+    "refresh",
+    "describe_column",
+    "show_partition",
+    "row_format",
+    "stored_as",
+    "constraint_validation",
+    "column_mask",
+    "row_filter",
+    "owner",
+    "managed",
+    "serde",
+    "table_collation",
+    "recover_partitions",
+    "replace_partitioning",
+    "predictive_optimization",
+    "rename_partition",
+    "drop_primary_key",
+    "drop_foreign_key",
+    "drop_feature",
+    "alter_column_position",
+    "identity_sync",
+    "column_tags",
+    "schema_binding",
+    "view_collation",
+    "view_partitioned_on",
+    "view_nocopy",
+    "temporary_view_using",
+    "drop_temporary_table",
+    "drop_table_force",
+    "drop_temporary_function",
+    "undrop_with_id",
+    "compound",
+    "compound_cursor",
+];
+
+/// `ALTER TABLE ... OWNER TO`.
+pub(crate) const OWNER_TO: &str = "OWNER TO";
+/// The scripting statement that re-raises a condition, which may then be left out.
+pub(crate) const RESIGNAL: &str = "RESIGNAL";
+/// `ALTER TABLE ... SET OWNER TO`.
+pub(crate) const SET_OWNER_TO: &str = "SET OWNER TO";
+/// `ALTER TABLE ... SET ROW FILTER`.
+pub(crate) const SET_ROW_FILTER: &str = "SET ROW FILTER";
+/// `ALTER TABLE ... DROP ROW FILTER`.
+pub(crate) const DROP_ROW_FILTER: &str = "DROP ROW FILTER";
+/// `ALTER TABLE ... SET MANAGED`.
+pub(crate) const SET_MANAGED: &str = "SET MANAGED";
+/// `ALTER TABLE ... SET EXTERNAL`.
+pub(crate) const SET_EXTERNAL: &str = "SET EXTERNAL";
+/// `ALTER TABLE ... UNSET MANAGED`.
+pub(crate) const UNSET_MANAGED: &str = "UNSET MANAGED";
+/// `ALTER TABLE ... SET SERDE`.
+pub(crate) const SET_SERDE: &str = "SET SERDE";
+/// `ALTER TABLE ... SET SERDEPROPERTIES`.
+pub(crate) const SET_SERDEPROPERTIES: &str = "SET SERDEPROPERTIES";
+/// `ALTER TABLE ... DEFAULT COLLATION`.
+pub(crate) const DEFAULT_COLLATION: &str = "DEFAULT COLLATION";
+/// `ALTER TABLE ... RECOVER PARTITIONS`.
+pub(crate) const RECOVER_PARTITIONS: &str = "RECOVER PARTITIONS";
+/// `ALTER TABLE ... REPLACE PARTITIONED BY WITH CLUSTER BY`.
+pub(crate) const REPLACE_PARTITIONING: &str = "REPLACE PARTITIONED BY WITH CLUSTER BY";
+/// `ALTER TABLE ... { ENABLE | DISABLE | INHERIT } PREDICTIVE OPTIMIZATION`.
+pub(crate) const PREDICTIVE_OPTIMIZATION: &str = "PREDICTIVE OPTIMIZATION";
+/// `ALTER TABLE ... PARTITION (...) RENAME TO PARTITION (...)`.
+pub(crate) const RENAME_PARTITION: &str = "RENAME TO PARTITION";
+/// `ALTER TABLE ... DROP PRIMARY KEY`.
+pub(crate) const DROP_PRIMARY_KEY: &str = "DROP PRIMARY KEY";
+/// `ALTER TABLE ... DROP FOREIGN KEY`.
+pub(crate) const DROP_FOREIGN_KEY: &str = "DROP FOREIGN KEY";
+/// `ALTER TABLE ... DROP FEATURE`.
+pub(crate) const DROP_FEATURE: &str = "DROP FEATURE";
+/// `ALTER TABLE ... ALTER COLUMN c { FIRST | AFTER c2 }`.
+pub(crate) const COLUMN_POSITION: &str = "COLUMN POSITION";
+/// `ALTER TABLE ... ALTER COLUMN c SET MASK`.
+pub(crate) const COLUMN_SET_MASK: &str = "COLUMN SET MASK";
+/// `ALTER TABLE ... ALTER COLUMN c DROP MASK`.
+pub(crate) const COLUMN_DROP_MASK: &str = "COLUMN DROP MASK";
+/// `ALTER TABLE ... ALTER COLUMN c SYNC IDENTITY`.
+pub(crate) const COLUMN_SYNC_IDENTITY: &str = "COLUMN SYNC IDENTITY";
+/// `ALTER TABLE ... ALTER COLUMN c SET TAGS`.
+pub(crate) const COLUMN_SET_TAGS: &str = "COLUMN SET TAGS";
+/// `ALTER TABLE ... ALTER COLUMN c UNSET TAGS`.
+pub(crate) const COLUMN_UNSET_TAGS: &str = "COLUMN UNSET TAGS";
+/// The words `SET MANAGED` and `UNSET MANAGED` take to truncate Uniform history.
+pub(crate) const TRUNCATE_UNIFORM_HISTORY: &str = "TRUNCATE UNIFORM HISTORY";
+
+/// Keys of the `ALTER TABLE` actions with no shared variant, each a `SetProperty` entry; any future Databricks translator or renderer must handle every key or refuse it.
+pub(crate) const KEYED_ACTIONS: [&str; 23] = [
+    OWNER_TO,
+    SET_OWNER_TO,
+    SET_ROW_FILTER,
+    DROP_ROW_FILTER,
+    SET_MANAGED,
+    SET_EXTERNAL,
+    UNSET_MANAGED,
+    SET_SERDE,
+    SET_SERDEPROPERTIES,
+    DEFAULT_COLLATION,
+    RECOVER_PARTITIONS,
+    REPLACE_PARTITIONING,
+    PREDICTIVE_OPTIMIZATION,
+    RENAME_PARTITION,
+    DROP_PRIMARY_KEY,
+    DROP_FOREIGN_KEY,
+    DROP_FEATURE,
+    COLUMN_POSITION,
+    COLUMN_SET_MASK,
+    COLUMN_DROP_MASK,
+    COLUMN_SYNC_IDENTITY,
+    COLUMN_SET_TAGS,
+    COLUMN_UNSET_TAGS,
+];
+
+/// Words that take a parenthesised query in an expression, so `REPLACE ON` does not end before it.
+pub(crate) const REPLACE_ON_QUERY_TAKERS: [&str; 5] = ["EXISTS", "IN", "ANY", "SOME", "ALL"];

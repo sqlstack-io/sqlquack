@@ -1,11 +1,13 @@
 //! `booleanExpression`, `predicate` and `valueExpression` (SqlBaseParser.g4).
 
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::operators::models::{IsTrueFalse, LikeOp, UnaryOp};
+use sqlquack_syntax::expressions::operators::models::{
+    IsTrueFalse, LikeOp, OperatorSpelling, UnaryOp,
+};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{
-    between, binary, call, exists, in_list, null_test, subquery, tuple,
+    between, binary, call, exists, in_list, null_test, subquery, tuple, written_as,
 };
 use crate::parse::constants::{
     ADD, BIT_AND, BIT_OR, BIT_XOR, COMPARE, CONCAT_OPERATOR, ILIKE, MULTIPLY, PIPE_STARTS, SHIFT,
@@ -45,9 +47,12 @@ impl Parser<'_> {
 
     /// `(NOT | !) booleanExpression`, `EXISTS (query)` and `valueExpression predicate?`.
     fn not_expression(&mut self) -> Parsing<Expression> {
+        let bang: bool = self.is_char('!');
         if self.eat_kw("NOT") || self.eat_char('!') {
             let this: Expression = self.deeper(|parser| parser.not_expression())?;
-            return Ok(unary(Expression::Not, this));
+            let mut node: UnaryOp = UnaryOp::new(this);
+            node.written_as = bang.then_some(OperatorSpelling::Bang);
+            return Ok(Expression::Not(Box::new(node)));
         }
         if self.kw("EXISTS") && self.char_at(1, '(') && self.starts_query_at(1) {
             self.at += 2;
@@ -87,10 +92,16 @@ impl Parser<'_> {
                     self.expect_kw("FROM")?;
                     let right: Expression = self.value_expression(0)?;
                     Ok(match not {
-                        true => binary(Expression::NullSafeEq, value, right),
+                        true => written_as(
+                            binary(Expression::NullSafeEq, value, right),
+                            OperatorSpelling::IsNotDistinctFrom,
+                        ),
                         false => unary(
                             Expression::Not,
-                            binary(Expression::NullSafeEq, value, right),
+                            written_as(
+                                binary(Expression::NullSafeEq, value, right),
+                                OperatorSpelling::IsDistinctFrom,
+                            ),
                         ),
                     })
                 }
@@ -127,10 +138,17 @@ impl Parser<'_> {
                 self.expect_char(')')?;
                 Ok(in_list(value, items, None, not))
             }
-            Some("RLIKE" | "REGEXP") => {
+            Some(word @ ("RLIKE" | "REGEXP")) => {
+                let spelling: OperatorSpelling = match word {
+                    "RLIKE" => OperatorSpelling::Rlike,
+                    _ => OperatorSpelling::Regexp,
+                };
                 self.at += 1;
                 let pattern: Expression = self.value_expression(0)?;
-                Ok(negate(call("rlike", vec![value, pattern])))
+                Ok(negate(written_as(
+                    call("rlike", vec![value, pattern]),
+                    spelling,
+                )))
             }
             Some(word @ ("LIKE" | "ILIKE")) => {
                 let ilike: bool = word == ILIKE;
@@ -197,7 +215,12 @@ impl Parser<'_> {
             }
             TokenKind::Char('>') if self.char_at(1, '>') && self.adjacent(0) => {
                 match self.char_at(2, '>') && self.adjacent(1) {
-                    true => (SHIFT, 3, |l, r| call("shiftrightunsigned", vec![l, r])),
+                    true => (SHIFT, 3, |l, r| {
+                        written_as(
+                            call("shiftrightunsigned", vec![l, r]),
+                            OperatorSpelling::ShiftRightUnsigned,
+                        )
+                    }),
                     false => (SHIFT, 2, |l, r| binary(Expression::BitwiseRightShift, l, r)),
                 }
             }
@@ -210,8 +233,13 @@ impl Parser<'_> {
             TokenKind::Char('<') => (COMPARE, 1, |l, r| binary(Expression::Lt, l, r)),
             TokenKind::Char('>') => (COMPARE, 1, |l, r| binary(Expression::Gt, l, r)),
             TokenKind::Op => match text {
-                "==" => (COMPARE, 1, |l, r| binary(Expression::Eq, l, r)),
-                "<>" | "!=" => (COMPARE, 1, |l, r| binary(Expression::Neq, l, r)),
+                "==" => (COMPARE, 1, |l, r| {
+                    written_as(binary(Expression::Eq, l, r), OperatorSpelling::DoubleEquals)
+                }),
+                "<>" => (COMPARE, 1, |l, r| binary(Expression::Neq, l, r)),
+                "!=" => (COMPARE, 1, |l, r| {
+                    written_as(binary(Expression::Neq, l, r), OperatorSpelling::BangEquals)
+                }),
                 "<=" | "!>" => (COMPARE, 1, |l, r| binary(Expression::Lte, l, r)),
                 ">=" | "!<" => (COMPARE, 1, |l, r| binary(Expression::Gte, l, r)),
                 "<=>" => (COMPARE, 1, |l, r| binary(Expression::NullSafeEq, l, r)),

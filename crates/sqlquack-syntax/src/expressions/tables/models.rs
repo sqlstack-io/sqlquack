@@ -98,6 +98,9 @@ pub struct CreateTable {
     /// Whether the AS SELECT was wrapped in parentheses
     #[serde(default)]
     pub as_select_parenthesized: bool,
+    /// Databricks: whether the query followed without the optional AS
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub as_select_without_as: bool,
     /// ON COMMIT behavior for temporary tables
     #[serde(default)]
     pub on_commit: Option<OnCommit>,
@@ -179,6 +182,9 @@ pub struct CreateTable {
     /// Snowflake: the words that made the table temporary when they were not TEMPORARY, e.g. `TEMP`, `VOLATILE` or `LOCAL TEMP`
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub temporary_spelling: Option<String>,
+    /// Databricks: REPLACE TABLE without CREATE OR, which replaces only a table that exists
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub replace_only: bool,
 }
 
 /// Teradata index specification for CREATE TABLE
@@ -250,6 +256,8 @@ impl CreateTable {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
+            as_select_without_as: false,
         }
     }
 }
@@ -1376,6 +1384,14 @@ pub struct OptionEntry {
 pub struct OptionsProperty {
     #[serde(default)]
     pub entries: Vec<OptionEntry>,
+    /// Databricks: the positions in `entries` of keys written as string literals
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub string_keys: Vec<usize>,
+    /// Databricks: the positions in `entries` of values written without the optional `=`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub without_equals: Vec<usize>,
 }
 
 /// InputOutputFormat

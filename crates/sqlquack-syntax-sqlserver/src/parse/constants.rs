@@ -421,8 +421,10 @@ pub(crate) const NULLIF_ARGUMENTS: usize = 2;
 /// The call whose first argument is its target type.
 pub(crate) const TRY_CONVERT_FUNCTION: &str = "TRY_CONVERT";
 
-/// Nesting deeper than this, in parsing or in the finished tree, is the gap `nesting_depth`.
+/// Nesting deeper than this, in parsing or in the finished tree, is the gap `NESTING_DEPTH_GAP`.
 pub(crate) const MAX_DEPTH: usize = 512;
+/// The gap past `MAX_DEPTH`: the depth guard's refusal, never a syntax verdict.
+pub const NESTING_DEPTH_GAP: &str = "nesting_depth";
 /// The engine's error 10704 for a THROW without arguments outside a CATCH block.
 pub(crate) const THROW_OUTSIDE_CATCH: &str =
     "To rethrow an error, a THROW statement must be used inside a CATCH block.";

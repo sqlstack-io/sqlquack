@@ -722,6 +722,7 @@ impl Parser {
         };
 
         Ok(ForeignKeyRef {
+            written_order: Vec::new(),
             table,
             columns,
             on_delete,

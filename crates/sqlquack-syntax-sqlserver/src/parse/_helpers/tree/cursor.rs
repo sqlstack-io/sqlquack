@@ -4,7 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
 
 use crate::keywords::main::is_reserved::is_reserved;
-use crate::parse::constants::MAX_DEPTH;
+use crate::parse::constants::{MAX_DEPTH, NESTING_DEPTH_GAP};
 use crate::parse::errors::ParseError;
 use crate::parse::models::{Gap, StatementRange};
 use crate::scan::models::{Token, TokenKind};
@@ -256,7 +256,7 @@ impl<'sql> Parser<'sql> {
     pub(crate) fn deeper<T>(&mut self, parse: impl FnOnce(&mut Self) -> Parsing<T>) -> Parsing<T> {
         if self.depth >= MAX_DEPTH {
             let start: usize = self.offset();
-            return Err(self.gap("nesting_depth", start));
+            return Err(self.gap(NESTING_DEPTH_GAP, start));
         }
         self.depth += 1;
         let red_zone: usize = match cfg!(debug_assertions) {
@@ -272,7 +272,7 @@ impl<'sql> Parser<'sql> {
     pub(crate) fn link(&mut self) -> Parsing<()> {
         if self.depth >= MAX_DEPTH {
             let start: usize = self.offset();
-            return Err(self.gap("nesting_depth", start));
+            return Err(self.gap(NESTING_DEPTH_GAP, start));
         }
         self.depth += 1;
         Ok(())

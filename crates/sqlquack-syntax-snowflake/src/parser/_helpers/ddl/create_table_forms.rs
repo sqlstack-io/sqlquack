@@ -152,6 +152,8 @@ impl Parser {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
+            as_select_without_as: false,
         })))
     }
 
@@ -272,6 +274,7 @@ impl Parser {
                 this: Box::new(Expression::Identifier(Identifier::new(&version_kind))),
                 kind: "AS OF".to_string(),
                 expression: Some(Box::new(value)),
+                for_keyword: false,
             })))
         } else {
             None
@@ -320,6 +323,8 @@ impl Parser {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
+            as_select_without_as: false,
         })))
     }
 
@@ -387,6 +392,8 @@ impl Parser {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
+            as_select_without_as: false,
         })))
     }
 
@@ -493,6 +500,8 @@ impl Parser {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
+            as_select_without_as: false,
         })))
     }
 
@@ -589,6 +598,8 @@ impl Parser {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
+            as_select_without_as: false,
         })))
     }
 
@@ -660,6 +671,8 @@ impl Parser {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
+            as_select_without_as: false,
         })))
     }
 
@@ -727,6 +740,8 @@ impl Parser {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
+            as_select_without_as: false,
         })))
     }
 
@@ -801,6 +816,8 @@ impl Parser {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
+            as_select_without_as: false,
         })))
     }
 
@@ -878,6 +895,8 @@ impl Parser {
             with_partition_columns: Vec::new(),
             with_connection: None,
             temporary_spelling: None,
+            replace_only: false,
+            as_select_without_as: false,
         })))
     }
 }

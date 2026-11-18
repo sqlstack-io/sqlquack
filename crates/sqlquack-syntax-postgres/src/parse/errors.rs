@@ -8,6 +8,8 @@ pub struct ParseError {
     pub position: usize,
     /// Whether PostgreSQL reports it with SQLSTATE 42601, unlike, say, 22025 or 54001.
     pub syntax: bool,
+    /// Whether a resource guard refused it (nesting depth, recursion or an input-size limit): never a syntax verdict.
+    pub guard: bool,
 }
 
 /// Why strict parsing refused the input.

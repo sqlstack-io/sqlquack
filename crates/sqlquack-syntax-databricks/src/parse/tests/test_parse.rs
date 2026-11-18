@@ -1,14 +1,13 @@
 //! Verdicts and trees of the Databricks SQL parser, following Spark 4.2.0's SqlBaseParser.g4.
 
-use serde_json::Value;
 use sqlquack_syntax::{Gap, Parsed};
 
 use crate::parse::errors::StrictFailure;
 use crate::parse::main::parse::parse;
 use crate::parse::main::parse_strict::parse_strict;
 use crate::parse::tests::test_types::{
-    ChainTestCase, ExpectedVerdict, GapTestCase, NestingTestCase, StrictFailureTestCase,
-    StrictTestCase, ValueTestCase, VerdictTestCase,
+    ExpectedVerdict, GapTestCase, RefusalTestCase, StrictFailureTestCase, StrictTestCase,
+    VerdictTestCase,
 };
 
 #[test]
@@ -18,6 +17,36 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             description: "an empty input is refused, as PARSE_EMPTY_STATEMENT",
             sql: "",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "STREAM's parentheses hold a table name or a table function call, with no alias",
+            sql: "SELECT * FROM STREAM ( t1 a1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "STREAM's parentheses hold no query",
+            sql: "SELECT * FROM STREAM ( SELECT 1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "STREAM's parentheses may hold a table function call (STREAM ( tableFunctionCall ))",
+            sql: "SELECT * FROM STREAM ( range ( 1 ) )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a table function call in STREAM's parentheses takes the alias after them",
+            sql: "SELECT * FROM STREAM ( read_files ( '/x' ) ) a1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "STREAM's parentheses may hold an IDENTIFIER clause",
+            sql: "SELECT * FROM STREAM ( IDENTIFIER ( 't1' ) )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a WATERMARK after a table function call in STREAM's parentheses is part of the tree",
+            sql: "SELECT * FROM STREAM ( range ( 1 ) ) WATERMARK c1 DELAY OF INTERVAL 1 SECOND",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ANTI is strict non-reserved, so it cannot be a bare table alias",
@@ -33,6 +62,11 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             description: "LEFT ANTI JOIN and LEFT SEMI JOIN are joins",
             sql: "SELECT * FROM a LEFT ANTI JOIN b ON a.x = b.x LEFT SEMI JOIN c ON a.x = c.x",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a pattern quantifier needs a minimum or a maximum",
+            sql: "SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( a { , } ) DEFINE a AS TRUE )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
             description: "MINUS is EXCEPT",
@@ -143,13 +177,13 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         },
         VerdictTestCase {
             description: "a statement the shared tree has no node for is kept as a gap",
-            sql: "OPTIMIZE t ZORDER BY (a)",
+            sql: "REPAIR PRIVILEGES t1",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
-            description: "CREATE of a kind the shared tree has no node for is kept as a gap",
+            description: "a documented CREATE with no node of its own is a tree of its clauses",
             sql: "CREATE CATALOG IF NOT EXISTS c",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a dollar-placeholder is not Databricks SQL",
@@ -177,9 +211,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "NOCOPY * parses, kept as a gap",
+            description: "NOCOPY * parses and is kept",
             sql: "CREATE OR REPLACE VIEW v NOCOPY * AS SELECT 1",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a metric view refuses COPY *",
@@ -207,9 +241,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "ALTER TABLE DROP FEATURE is a gap",
+            description: "ALTER TABLE DROP FEATURE keeps its feature and TRUNCATE HISTORY",
             sql: "ALTER TABLE t DROP FEATURE deletionVectors TRUNCATE HISTORY",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "DROP FEATURE TRUNCATE needs HISTORY",
@@ -252,11 +286,6 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "SET of a form Spark's patterns do not read, such as SET RECIPIENT, is a gap",
-            sql: "SET RECIPIENT r",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
-        },
-        VerdictTestCase {
             description: "USE CATALOG and COMMENT ON parse",
             sql: "USE CATALOG main; COMMENT ON TABLE t IS 'x'",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
@@ -282,9 +311,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "OPTIMIZE is checked, then kept as a gap",
+            description: "OPTIMIZE is a documented form",
             sql: "OPTIMIZE t WHERE d > 1 ZORDER BY (a)",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "VACUUM DRY needs RUN",
@@ -387,14 +416,14 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "WATERMARK after TABLESAMPLE, before an alias, is a gap",
+            description: "WATERMARK after TABLESAMPLE, before an alias, is part of the table's tree",
             sql: "SELECT * FROM t TABLESAMPLE ( 50 PERCENT ) WATERMARK c DELAY OF INTERVAL 1 MINUTE a",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "WATERMARK on a LATERAL subquery is a gap",
+            description: "WATERMARK on a LATERAL subquery is part of the subquery's tree",
             sql: "SELECT * FROM LATERAL ( SELECT 1 ) WATERMARK c DELAY OF INTERVAL 1 MINUTE a",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "WATERMARK needs an interval after DELAY OF",
@@ -427,23 +456,23 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "an account statement is checked against its documented syntax and kept as a gap",
+            description: "an account statement is checked against its documented syntax and kept as a tree",
             sql: "UNSET TAG ON COLUMN t1 . c1 k",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "UNSET TAG needs an object kind before its name",
-            sql: "UNSET TAG ON t1 k",
+            description: "UNSET TAG needs the tag key after the securable",
+            sql: "UNSET TAG ON v1",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
             description: "SET TAG ON a schema takes an optional value",
             sql: "SET TAG ON SCHEMA s1 k = 'v'",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "a schema's tag names are identifiers, not strings",
-            sql: "ALTER SCHEMA s1 SET TAGS ( 'k' = 1 )",
+            description: "a schema's tag names are strings, not identifiers",
+            sql: "ALTER SCHEMA s1 SET TAGS ( m1 = 'v' )",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
@@ -467,14 +496,14 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "a column mask and a row filter on CREATE TABLE are gaps",
+            description: "a column mask and a row filter on CREATE TABLE are kept",
             sql: "CREATE TABLE t ( c INT MASK f USING COLUMNS ( 1 ) ) WITH ROW FILTER g ON ( c )",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ENABLE NOVALIDATE follows a primary key in CREATE TABLE",
             sql: "CREATE TABLE t ( c INT NOT NULL , PRIMARY KEY ( c ) ENABLE NOVALIDATE )",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ENABLE NOVALIDATE may not follow a UNIQUE constraint",
@@ -494,7 +523,7 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         VerdictTestCase {
             description: "streaming table AUTO CDC flows are checked",
             sql: "CREATE OR REFRESH STREAMING TABLE st FLOW AUTO CDC FROM s KEYS ( k ) SEQUENCE BY v STORED AS SCD TYPE 2",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "SYSTEM SEQUENCE BY needs STORED AS BITEMPORAL",
@@ -509,7 +538,7 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
         VerdictTestCase {
             description: "a materialized view's AS is optional",
             sql: "CREATE MATERIALIZED VIEW mv SELECT 1",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "ALTER STREAMING TABLE needs an action",
@@ -527,9 +556,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "an unquoted REFRESH resource path without blanks is a gap",
+            description: "an unquoted REFRESH resource path without blanks is its operand",
             sql: "REFRESH /data/x",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "REFRESH MATERIALIZED VIEW takes no WHERE",
@@ -577,9 +606,9 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "SET RECIPIENT name is a gap",
+            description: "SET RECIPIENT name is a documented form",
             sql: "SET RECIPIENT r",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "SET PATH needs a schema of two parts",
@@ -612,19 +641,19 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "DROP TEMPORARY VARIABLE is a gap",
+            description: "DROP TEMPORARY VARIABLE is a tree of its clauses",
             sql: "DROP TEMPORARY VARIABLE IF EXISTS v1",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "a compound block is checked and kept as a gap",
+            description: "a compound block with a cursor is read as a tree",
             sql: "BEGIN DECLARE c1 CURSOR FOR SELECT 1 ; OPEN c1 ; CLOSE c1 ; END",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a labelled loop may LEAVE its label",
             sql: "BEGIN l1 : LOOP LEAVE l1 ; END LOOP l1 ; END",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a compound body holds statements, not names",
@@ -684,422 +713,263 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
 }
 
 #[test]
-fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
+fn given_documented_statements_when_parsing_then_the_verdict_is_the_warehouse_receipt() {
     let test_cases = [
-        ValueTestCase {
-            description: "a column keeps its qualifier",
-            sql: "SELECT t.a FROM s.t AS t",
-            pointer: "/0/select/expressions/0/column/table/name",
-            expected_json: "\"t\"",
-        },
-        ValueTestCase {
-            description: "a call without a quantifier records none",
-            sql: "SELECT sum(a) FROM t",
-            pointer: "/0/select/expressions/0/function/set_quantifier",
-            expected_json: "\"none\"",
-        },
-        ValueTestCase {
-            description: "an explicit ALL is recorded, not folded into none",
-            sql: "SELECT sum(ALL a) FROM t",
-            pointer: "/0/select/expressions/0/function/set_quantifier",
-            expected_json: "\"all\"",
-        },
-        ValueTestCase {
-            description: "ALL survives on an aggregate with FILTER",
-            sql: "SELECT sum(ALL a) FILTER (WHERE a > 0) FROM t",
-            pointer: "/0/select/expressions/0/aggregate_function/set_quantifier",
-            expected_json: "\"all\"",
-        },
-        ValueTestCase {
-            description: "DISTINCT is recorded on the aggregate",
-            sql: "SELECT sum(DISTINCT a) FROM t",
-            pointer: "/0/select/expressions/0/aggregate_function/set_quantifier",
-            expected_json: "\"distinct\"",
-        },
-        ValueTestCase {
-            description: "a table keeps its schema",
-            sql: "SELECT t.a FROM s.t AS t",
-            pointer: "/0/select/from/expressions/0/table/schema/name",
-            expected_json: "\"s\"",
-        },
-        ValueTestCase {
-            description: "a table keeps its alias",
-            sql: "SELECT t.a FROM s.t AS t",
-            pointer: "/0/select/from/expressions/0/table/alias/name",
-            expected_json: "\"t\"",
-        },
-        ValueTestCase {
-            description: "LATERAL VIEW is a lateral view on the select, with its generator",
-            sql: "SELECT x FROM t LATERAL VIEW OUTER explode(arr) e AS x",
-            pointer: "/0/select/lateral_views/0/this/function/name",
-            expected_json: "\"explode\"",
-        },
-        ValueTestCase {
-            description: "LATERAL VIEW keeps its output column names",
-            sql: "SELECT x FROM t LATERAL VIEW OUTER explode(arr) e AS x",
-            pointer: "/0/select/lateral_views/0/column_aliases/0/name",
-            expected_json: "\"x\"",
-        },
-        ValueTestCase {
-            description: "LATERAL VIEW keeps its table alias and OUTER",
-            sql: "SELECT x FROM t LATERAL VIEW OUTER explode(arr) e AS x",
-            pointer: "/0/select/lateral_views/0/outer",
-            expected_json: "true",
-        },
-        ValueTestCase {
-            description: "a qualified star keeps its table and EXCEPT list",
-            sql: "SELECT t.* EXCEPT (b) FROM t",
-            pointer: "/0/select/expressions/0/star/except/0/name",
-            expected_json: "\"b\"",
-        },
-        ValueTestCase {
-            description: "a qualified star keeps its table",
-            sql: "SELECT t.* EXCEPT (b) FROM t",
-            pointer: "/0/select/expressions/0/star/table/name",
-            expected_json: "\"t\"",
-        },
-        ValueTestCase {
-            description: "an inline table keeps its column aliases",
-            sql: "SELECT * FROM VALUES (1, 2) AS v(a, b)",
-            pointer: "/0/select/from/expressions/0/values/column_aliases/1/name",
-            expected_json: "\"b\"",
-        },
-        ValueTestCase {
-            description: "a derived table keeps its alias",
-            sql: "SELECT q.a FROM (SELECT a FROM t) q(a)",
-            pointer: "/0/select/from/expressions/0/subquery/alias/name",
-            expected_json: "\"q\"",
-        },
-        ValueTestCase {
-            description: "a derived table keeps its column aliases",
-            sql: "SELECT q.a FROM (SELECT a FROM t) q(a)",
-            pointer: "/0/select/from/expressions/0/subquery/column_aliases/0/name",
-            expected_json: "\"a\"",
-        },
-        ValueTestCase {
-            description: "a CTE is on the select's WITH",
-            sql: "WITH c AS (SELECT 1 AS a) SELECT a FROM c",
-            pointer: "/0/select/with/ctes/0/alias/name",
-            expected_json: "\"c\"",
-        },
-        ValueTestCase {
-            description: "LEFT ANTI JOIN is the LeftAnti join kind",
-            sql: "SELECT * FROM a LEFT ANTI JOIN b ON a.x = b.x",
-            pointer: "/0/select/joins/0/kind",
-            expected_json: "\"LeftAnti\"",
-        },
-        ValueTestCase {
-            description: "a lambda keeps its parameter",
-            sql: "SELECT transform(arr, x -> x + 1)",
-            pointer: "/0/select/expressions/0/function/args/1/lambda/parameters/0/name",
-            expected_json: "\"x\"",
-        },
-        ValueTestCase {
-            description: "MERGE keeps its target",
-            sql: "MERGE INTO t USING s ON t.id = s.id WHEN MATCHED THEN UPDATE SET * \
-                  WHEN NOT MATCHED BY SOURCE THEN DELETE",
-            pointer: "/0/merge/this/table/name/name",
-            expected_json: "\"t\"",
-        },
-        ValueTestCase {
-            description: "MERGE's NOT MATCHED BY SOURCE is a when clause on the source",
-            sql: "MERGE INTO t USING s ON t.id = s.id WHEN MATCHED THEN UPDATE SET * \
-                  WHEN NOT MATCHED BY SOURCE THEN DELETE",
-            pointer: "/0/merge/whens/whens/expressions/1/when/source/boolean/value",
-            expected_json: "true",
-        },
-        ValueTestCase {
-            description: "CREATE TABLE USING is a file format property",
-            sql: "CREATE TABLE t (a INT) USING DELTA PARTITIONED BY (a)",
-            pointer: "/0/create_table/properties/0/file_format_property/this/identifier/name",
-            expected_json: "\"DELTA\"",
-        },
-        ValueTestCase {
-            description: "CREATE TABLE PARTITIONED BY keeps its columns",
-            sql: "CREATE TABLE t (a INT) USING DELTA PARTITIONED BY (a)",
-            pointer: "/0/create_table/properties/1/partitioned_by_property/this/tuple/expressions/0/column/name/name",
-            expected_json: "\"a\"",
-        },
-        ValueTestCase {
-            description: "CREATE TABLE keeps its column names",
-            sql: "CREATE TABLE t (a INT) USING DELTA PARTITIONED BY (a)",
-            pointer: "/0/create_table/columns/0/name/name",
-            expected_json: "\"a\"",
-        },
-        ValueTestCase {
-            description: "COPY * keeps the replaced view's grants",
-            sql: "CREATE OR REPLACE VIEW v COPY * AS SELECT 1",
-            pointer: "/0/create_view/copy_grants",
-            expected_json: "true",
-        },
-        ValueTestCase {
-            description: "ALTER TABLE ADD COLUMNS adds each column",
-            sql: "ALTER TABLE t ADD COLUMNS (a INT, b STRING)",
-            pointer: "/0/alter_table/actions/1/AddColumn/column/name/name",
-            expected_json: "\"b\"",
-        },
-        ValueTestCase {
-            description: "ALTER TABLE RENAME COLUMN keeps both names",
-            sql: "ALTER TABLE t RENAME COLUMN a TO b",
-            pointer: "/0/alter_table/actions/0/RenameColumn/new_name/name",
-            expected_json: "\"b\"",
-        },
-        ValueTestCase {
-            description: "ALTER COLUMN TYPE sets the type",
-            sql: "ALTER TABLE t ALTER COLUMN a TYPE BIGINT",
-            pointer: "/0/alter_table/actions/0/AlterColumn/name/name",
-            expected_json: "\"a\"",
-        },
-        ValueTestCase {
-            description: "ALTER TABLE ADD CONSTRAINT keeps the check",
-            sql: "ALTER TABLE t ADD CONSTRAINT k CHECK (a > 0)",
-            pointer: "/0/alter_table/actions/0/AddConstraint/Check/name/name",
-            expected_json: "\"k\"",
-        },
-        ValueTestCase {
-            description: "ALTER VIEW RENAME keeps the new name",
-            sql: "ALTER VIEW v RENAME TO w",
-            pointer: "/0/alter_view/actions/0/Rename/name/name",
-            expected_json: "\"w\"",
-        },
-        ValueTestCase {
-            description: "DESCRIBE keeps its table and EXTENDED",
-            sql: "DESCRIBE TABLE EXTENDED s.t",
-            pointer: "/0/describe/extended",
-            expected_json: "true",
-        },
-        ValueTestCase {
-            description: "DESCRIBE HISTORY is a describe of style HISTORY",
-            sql: "DESCRIBE HISTORY s.t",
-            pointer: "/0/describe/style",
-            expected_json: "\"HISTORY\"",
-        },
-        ValueTestCase {
-            description: "SHOW TABLES keeps its scope",
-            sql: "SHOW TABLES IN s",
-            pointer: "/0/show/scope/identifier/name",
-            expected_json: "\"s\"",
-        },
-        ValueTestCase {
-            description: "SET keeps the configuration key",
-            sql: "SET a.b = 64",
-            pointer: "/0/set_statement/items/0/name/identifier/name",
-            expected_json: "\"a.b\"",
-        },
-        ValueTestCase {
-            description: "USE SCHEMA keeps the schema",
-            sql: "USE SCHEMA s",
-            pointer: "/0/use/this/name",
-            expected_json: "\"s\"",
-        },
-        ValueTestCase {
-            description: "COMMENT ON TABLE keeps the table",
-            sql: "COMMENT ON TABLE s.t IS 'x'",
-            pointer: "/0/comment/this/table/name/name",
-            expected_json: "\"t\"",
-        },
-        ValueTestCase {
-            description: "TRUNCATE keeps the table",
-            sql: "TRUNCATE TABLE s.t",
-            pointer: "/0/truncate/table/name/name",
-            expected_json: "\"t\"",
-        },
-        ValueTestCase {
-            description: "COPY INTO keeps its target",
-            sql: "COPY INTO s.t FROM '/x' FILEFORMAT = JSON",
-            pointer: "/0/copy/this/table/name/name",
-            expected_json: "\"t\"",
-        },
-        ValueTestCase {
-            description: "COPY INTO keeps its file format",
-            sql: "COPY INTO s.t FROM '/x' FILEFORMAT = JSON",
-            pointer: "/0/copy/params/0/value/var/this",
-            expected_json: "\"JSON\"",
-        },
-        ValueTestCase {
-            description: "EXPLAIN wraps the query",
-            sql: "EXPLAIN SELECT a FROM t",
-            pointer: "/0/describe/target/select/from/expressions/0/table/name/name",
-            expected_json: "\"t\"",
-        },
-        ValueTestCase {
-            description: "GRANT keeps the privilege",
-            sql: "GRANT SELECT ON TABLE t TO `a`",
-            pointer: "/0/grant/privileges/0/name",
-            expected_json: "\"SELECT\"",
-        },
-        ValueTestCase {
-            description: "DECLARE keeps the variable",
-            sql: "DECLARE OR REPLACE VARIABLE v DATE DEFAULT current_date()",
-            pointer: "/0/declare/expressions/0/declare_item/this/identifier/name",
-            expected_json: "\"v\"",
-        },
-        ValueTestCase {
-            description: "CACHE TABLE keeps its query",
-            sql: "CACHE TABLE c AS SELECT a FROM t",
-            pointer: "/0/cache/query/select/from/expressions/0/table/name/name",
-            expected_json: "\"t\"",
-        },
-        ValueTestCase {
-            description: "CREATE TABLE LIKE keeps its source",
-            sql: "CREATE TABLE a LIKE b",
-            pointer: "/0/create_table/constraints/0/Like/source/name/name",
-            expected_json: "\"b\"",
-        },
-        ValueTestCase {
-            description: "CREATE TABLE CLONE keeps its source",
-            sql: "CREATE TABLE a SHALLOW CLONE s.b",
-            pointer: "/0/create_table/clone_source/name/name",
-            expected_json: "\"b\"",
-        },
-        ValueTestCase {
-            description: "CREATE SCHEMA keeps its name",
-            sql: "CREATE SCHEMA c.s",
-            pointer: "/0/create_schema/name/1/name",
-            expected_json: "\"s\"",
-        },
-        ValueTestCase {
-            description: "a SQL function keeps its RETURN query",
-            sql: "CREATE FUNCTION f(p INT) RETURNS TABLE (x INT) RETURN SELECT x FROM t",
-            pointer: "/0/create_function/body/Return/select/from/expressions/0/table/name/name",
-            expected_json: "\"t\"",
-        },
-        ValueTestCase {
-            description: "MATCH_RECOGNIZE keeps its input table",
-            sql: "SELECT * FROM t MATCH_RECOGNIZE ( PATTERN ( a+ ) DEFINE a AS TRUE ) AS r",
-            pointer: "/0/select/from/expressions/0/match_recognize/this/table/name/name",
-            expected_json: "\"t\"",
-        },
-        ValueTestCase {
-            description: "MATCH_RECOGNIZE keeps its pattern as written",
-            sql: "SELECT * FROM t MATCH_RECOGNIZE ( PATTERN ( a+ ) DEFINE a AS TRUE ) AS r",
-            pointer: "/0/select/from/expressions/0/match_recognize/pattern",
-            expected_json: "\"a+\"",
-        },
-        ValueTestCase {
-            description: "MATCH_RECOGNIZE keeps its alias",
-            sql: "SELECT * FROM t MATCH_RECOGNIZE ( PATTERN ( a+ ) DEFINE a AS TRUE ) AS r",
-            pointer: "/0/select/from/expressions/0/match_recognize/alias/name",
-            expected_json: "\"r\"",
-        },
-        ValueTestCase {
-            description: "MATCH_RECOGNIZE keeps its measure names",
-            sql: "SELECT * FROM t MATCH_RECOGNIZE ( MEASURES count(*) AS n PATTERN ( a ) DEFINE a AS TRUE )",
-            pointer: "/0/select/from/expressions/0/match_recognize/measures/0/this/alias/alias/name",
-            expected_json: "\"n\"",
-        },
-        ValueTestCase {
-            description: "a macro call is a method call on the column @name",
-            sql: "SELECT id, @py.analysis_region() AS region FROM t",
-            pointer: "/0/select/expressions/1/alias/this/method_call/this/column/name/name",
-            expected_json: "\"@py\"",
-        },
-        ValueTestCase {
-            description: "a macro call keeps its method name",
-            sql: "SELECT @py.analysis_region() FROM t",
-            pointer: "/0/select/expressions/0/method_call/method/name",
-            expected_json: "\"analysis_region\"",
-        },
-        ValueTestCase {
-            description: "a macro call's double-quoted arguments are strings",
-            sql: "SELECT @py.line_total_cents(\"w.price_cents\", \"o.quantity\") FROM t",
-            pointer: "/0/select/expressions/0/method_call/args/1/literal/value",
-            expected_json: "\"o.quantity\"",
-        },
-        ValueTestCase {
-            description: "a dotted macro name is a qualified column before the call",
-            sql: "SELECT @py.a.b(1)",
-            pointer: "/0/select/expressions/0/method_call/this/column/table/name",
-            expected_json: "\"@py\"",
-        },
-        ValueTestCase {
-            description: "a parenthesized DESCRIBE HISTORY is a subquery relation",
-            sql: "SELECT max(timestamp) FROM (DESCRIBE HISTORY `main`.`analytics`.`orders`)",
-            pointer: "/0/select/from/expressions/0/subquery/this/describe/style",
-            expected_json: "\"HISTORY\"",
-        },
-        ValueTestCase {
-            description: "a DESCRIBE subquery keeps its alias",
-            sql: "SELECT * FROM (DESCRIBE HISTORY t) h",
-            pointer: "/0/select/from/expressions/0/subquery/alias/name",
-            expected_json: "\"h\"",
-        },
-        ValueTestCase {
-            description: "a path wildcard stays in the path text",
-            sql: "SELECT c1:item[*].price FROM VALUES ('x') AS T(c1)",
-            pointer: "/0/select/expressions/0/j_s_o_n_extract/expression/literal/value",
-            expected_json: "\"item[*].price\"",
-        },
-        ValueTestCase {
-            description: "SHOW GRANTS ON keeps the securable kind",
-            sql: "SHOW GRANTS ON TABLE x",
-            pointer: "/0/show/scope_kind",
-            expected_json: "\"ON TABLE\"",
-        },
-        ValueTestCase {
-            description: "SHOW GRANTS keeps its principal",
-            sql: "SHOW GRANTS `a@b.c` ON VIEW v",
-            pointer: "/0/show/for_target/identifier/name",
-            expected_json: "\"a@b.c\"",
-        },
-        ValueTestCase {
-            description: "a streaming read keeps the relation it reads",
-            sql: "SELECT * FROM STREAM t a",
-            pointer: "/0/select/from/expressions/0/stream/this/table/alias/name",
-            expected_json: "\"a\"",
-        },
-        ValueTestCase {
-            description: "RESET of a key is a ResetStatement naming the key",
-            sql: "RESET STATEMENT_TIMEOUT",
-            pointer: "/0/reset_statement/name/identifier/name",
-            expected_json: "\"STATEMENT_TIMEOUT\"",
-        },
-        ValueTestCase {
-            description: "RESET keeps a dotted key whole",
-            sql: "RESET spark.sql.ansi.enabled",
-            pointer: "/0/reset_statement/name/identifier/name",
-            expected_json: "\"spark.sql.ansi.enabled\"",
-        },
-        ValueTestCase {
-            description: "a bare RESET names no key, scope or ALL",
-            sql: "RESET",
-            pointer: "/0/reset_statement",
-            expected_json: "{}",
-        },
-        ValueTestCase {
-            description: "EXPLAIN RESET holds the RESET",
-            sql: "EXPLAIN RESET STATEMENT_TIMEOUT",
-            pointer: "/0/describe/target/reset_statement/name/identifier/name",
-            expected_json: "\"STATEMENT_TIMEOUT\"",
-        },
-        ValueTestCase {
-            description: "TABLE (word) names a table, even when the word starts a query",
-            sql: "SELECT * FROM EVENT_LOG ( TABLE ( SELECT ) )",
-            pointer: "/0/select/from/expressions/0/function/args/0/table_argument/this/table/name/name",
-            expected_json: "\"SELECT\"",
-        },
-        ValueTestCase {
-            description: "SHOW TBLPROPERTIES keeps the key it shows",
-            sql: "SHOW TBLPROPERTIES t ('delta.columnMapping.mode')",
-            pointer: "/0/show/scope/literal/value",
-            expected_json: "\"delta.columnMapping.mode\"",
-        },
-        ValueTestCase {
-            description: "an UNPIVOT keeps ANTI as its alias",
-            sql: "SELECT * FROM t UNPIVOT ( v FOR k IN ( a , b ) ) ANTI",
-            pointer: "/0/select/from/expressions/0/unpivot/alias/name",
-            expected_json: "\"ANTI\"",
+        VerdictTestCase {
+            description: "a catalog name may be a string literal",
+            sql: "ALTER CATALOG 'v1' DEFAULT COLLATION UTF8_BINARY",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DROP CONNECTION takes no RESTRICT or FORCE",
+            sql: "ALTER CATALOG v1 DROP CONNECTION",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a catalog name may be a string literal when created",
+            sql: "CREATE CATALOG 'v1'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a catalog name may be a string literal when dropped",
+            sql: "DROP CATALOG 'v1'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a catalog name may be a string literal in COMMENT ON",
+            sql: "COMMENT ON CATALOG 'v1' IS 'x'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "an owner change may leave out the connection name",
+            sql: "ALTER CONNECTION OWNER TO v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a governed tag's value list may be empty",
+            sql: "CREATE GOVERNED TAG v1 VALUES ( )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a governed tag's values may be set to an empty list",
+            sql: "ALTER GOVERNED TAG v1 SET VALUES ( )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "recipient properties may be keys without values",
+            sql: "ALTER RECIPIENT v1 SET PROPERTIES ( 'v' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a shared object removed without its kind is a name, even a kind's word",
+            sql: "ALTER SHARE v1 REMOVE MODEL",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a policy's securable may be a bare name",
+            sql: "DROP POLICY v1 ON t1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a policy's securable kind alone is a name",
+            sql: "DROP POLICY v1 ON CATALOG",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a tag's securable may be a bare relation and column",
+            sql: "SET TAG ON t1 . c1 v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "an unset tag's securable may be a bare name",
+            sql: "UNSET TAG ON v1 v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a column's bare relation name may be the word COLUMN",
+            sql: "SET TAG ON COLUMN . c1 v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "EXTERNAL METADATA is a securable",
+            sql: "GRANT SELECT ON EXTERNAL METADATA v1 TO `u1`",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ANY FILE is a securable with no name",
+            sql: "GRANT SELECT ON ANY FILE TO `u1`",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a share is granted to a recipient",
+            sql: "GRANT SELECT ON SHARE v1 TO RECIPIENT v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a group is created with users and subgroups",
+            sql: "CREATE GROUP v1 WITH USER v1 , v2 GROUP v3",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a group takes one ADD or DROP, not both",
+            sql: "ALTER GROUP v1 ADD USER v1 DROP GROUP v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a group is dropped by name",
+            sql: "DROP GROUP v1",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "REMOVE takes a volume path",
+            sql: "REMOVE '/Volumes/workspace/s1/v1/f1.csv'",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "VACUUM keeps its options in its tree",
+            sql: "VACUUM t1 RETAIN 168 HOURS DRY RUN",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "OPTIMIZE keeps its predicate and Z-order columns",
+            sql: "OPTIMIZE t1 WHERE c1 = 1 ZORDER BY ( c1 , c2 )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "MSCK REPAIR TABLE keeps its partition action",
+            sql: "MSCK REPAIR TABLE t1 ADD PARTITIONS",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "REPAIR TABLE keeps SYNC METADATA",
+            sql: "REPAIR TABLE t1 SYNC METADATA",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a transaction is begun, committed and rolled back",
+            sql: "BEGIN TRANSACTION; COMMIT WORK; ROLLBACK",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "SET COLLATION names its collation",
+            sql: "SET COLLATION UTF8_BINARY",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "DEFAULT COLLATION needs the catalog name",
+            sql: "ALTER CATALOG DEFAULT COLLATION UTF8_BINARY",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "SET MANAGED LOCATION needs the catalog name",
+            sql: "ALTER CATALOG SET MANAGED LOCATION 'm'",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "CREATE CATALOG takes no OPTIONS",
+            sql: "CREATE CATALOG v1 OPTIONS ( v1 = 'v' )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a foreign catalog needs CATALOG",
+            sql: "CREATE FOREIGN v1 USING CONNECTION v1 OPTIONS ( v1 = 'v' )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a shared partition column needs a value or a pattern",
+            sql: "ALTER SHARE sh1 ADD TABLE t1 PARTITION ( v1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "ADD needs USER or GROUP and a member",
+            sql: "ALTER GROUP v1 ADD",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a group change needs ADD or DROP",
+            sql: "ALTER GROUP v1 GROUP v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "WITH needs USER or GROUP",
+            sql: "CREATE GROUP v1 WITH",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "DROP GROUP needs the group",
+            sql: "DROP GROUP",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a share is granted only to a RECIPIENT",
+            sql: "GRANT SELECT ON SHARE v1 TO v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "TO RECIPIENT needs a share",
+            sql: "GRANT SELECT ON v1 TO RECIPIENT v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "FROM RECIPIENT needs the recipient",
+            sql: "REVOKE SELECT ON SHARE v1 FROM RECIPIENT",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "REMOVE takes a path string, not a name",
+            sql: "REMOVE m1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "REMOVE needs a path",
+            sql: "REMOVE",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a securable kind's word before a name opens that kind, so the tag key is missing",
+            sql: "SET TAG ON TABLE v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "the same holds when a tag is unset",
+            sql: "UNSET TAG ON VOLUME v1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
     ];
     for test_case in test_cases {
-        let parsed: Parsed = parse_strict(test_case.sql).expect(test_case.description);
-        assert!(parsed.gaps.is_empty(), "{}", test_case.description);
-        let tree: Value = serde_json::to_value(&parsed.statements).expect(test_case.description);
+        let verdict: ExpectedVerdict = parse(test_case.sql)
+            .map(|parsed| ExpectedVerdict::Accepted {
+                opaque: !parsed.gaps.is_empty(),
+            })
+            .unwrap_or_else(|error| ExpectedVerdict::Rejected {
+                syntax: error.syntax,
+            });
         assert_eq!(
-            tree.pointer(test_case.pointer)
-                .map(Value::to_string)
-                .as_deref(),
-            Some(test_case.expected_json),
+            verdict, test_case.expected_verdict,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_table_argument_and_a_call_both_failing_when_parsing_then_the_further_error_is_kept() {
+    let test_cases = [
+        RefusalTestCase {
+            description: "a TABLE argument's PARTITION BY with no expression fails at its )",
+            sql: "SELECT * FROM f1 ( TABLE ( v1 ) PARTITION BY )",
+            expected_position: 45,
+        },
+        RefusalTestCase {
+            description: "a TABLE call missing its ) fails at the end of input",
+            sql: "SELECT * FROM AI_PREDICT_VALUE ( input => TABLE ( v1 , target_col => v1 , feature_cols => v1 )",
+            expected_position: 94,
+        },
+    ];
+    for test_case in test_cases {
+        let error = parse(test_case.sql).expect_err(test_case.description);
+        assert_eq!(
+            error.position, test_case.expected_position,
             "{}",
             test_case.description
         );
@@ -1116,7 +986,7 @@ fn given_sql_when_parsing_strictly_then_any_error_refuses_it() {
         },
         StrictTestCase {
             description: "a gap is kept, not refused",
-            sql: "VACUUM t",
+            sql: "REPAIR PRIVILEGES t1",
             expected_outcome: Ok((1, 1)),
         },
         StrictTestCase {
@@ -1144,15 +1014,26 @@ fn given_sql_when_parsing_strictly_then_any_error_refuses_it() {
 
 #[test]
 fn given_a_gap_when_parsing_then_it_names_the_construct_and_its_range() {
-    let test_cases = [GapTestCase {
-        description: "a statement with no shared node is a gap from its first word to its end",
-        sql: "SELECT 1; VACUUM t",
-        expected_gaps: vec![Gap {
-            construct: "vacuum",
-            start: 10,
-            end: 18,
-        }],
-    }];
+    let test_cases = [
+        GapTestCase {
+            description: "a statement with no shared node is a gap from its first word to its end",
+            sql: "SELECT 1; REPAIR PRIVILEGES t1",
+            expected_gaps: vec![Gap {
+                construct: "repair",
+                start: 10,
+                end: 30,
+            }],
+        },
+        GapTestCase {
+            description: "a directory's SERDE row format, which the tree cannot hold, is a gap",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' ROW FORMAT SERDE 'a.S' SELECT 1",
+            expected_gaps: vec![Gap {
+                construct: "directory_row_format",
+                start: 36,
+                end: 58,
+            }],
+        },
+    ];
     for test_case in test_cases {
         let parsed: Parsed = parse(test_case.sql)
             .unwrap_or_else(|error| panic!("{}: {error:?}", test_case.description));
@@ -1185,227 +1066,5 @@ fn given_strict_failures_when_matched_then_only_parse_errors_carry_one() {
             "{}",
             test_case.description
         );
-    }
-}
-
-#[test]
-fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_is_refused_not_aborted() {
-    let too_deep: Option<&str> = Some("the statement nests too deeply");
-    let test_cases = [
-        NestingTestCase {
-            description: "1,500 parentheses around a table in FROM",
-            sql: || format!("SELECT * FROM {}t{}", "(".repeat(1500), ")".repeat(1500)),
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "3,000 parenthesised joins in FROM",
-            sql: || {
-                let open: String = "(".repeat(3000);
-                format!("SELECT * FROM {open}t{}", " JOIN u ON TRUE)".repeat(3000))
-            },
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "3,000 STREAM reads of one table",
-            sql: || format!("SELECT * FROM {}t", "STREAM ".repeat(3000)),
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "1,500 subqueries nested in FROM",
-            sql: || {
-                let open: String = "(SELECT * FROM ".repeat(1500);
-                format!("SELECT * FROM {open}t{}", ")".repeat(1500))
-            },
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "1,500 scalar subqueries",
-            sql: || format!("SELECT {}1{}", "(SELECT ".repeat(1500), ")".repeat(1500)),
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "1,500 EXISTS subqueries",
-            sql: || {
-                let open: String = "EXISTS (SELECT * FROM t WHERE ".repeat(1500);
-                format!("SELECT * FROM t WHERE {open}TRUE{}", ")".repeat(1500))
-            },
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "1,500 IN subqueries",
-            sql: || {
-                format!(
-                    "SELECT 1 IN {}(1){}",
-                    "(SELECT 1 IN ".repeat(1500),
-                    ")".repeat(1500)
-                )
-            },
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "1,500 parentheses around a query",
-            sql: || format!("{}SELECT 1{}", "(".repeat(1500), ")".repeat(1500)),
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "1,500 parentheses around a set operation operand",
-            sql: || {
-                format!(
-                    "{}SELECT 1{} UNION SELECT 2",
-                    "(".repeat(1500),
-                    ")".repeat(1500)
-                )
-            },
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "1,500 parentheses around an expression",
-            sql: || format!("SELECT {}1{}", "(".repeat(1500), ")".repeat(1500)),
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "1,500 nested calls",
-            sql: || format!("SELECT {}1{}", "abs(".repeat(1500), ")".repeat(1500)),
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "6,000 nested subscripts",
-            sql: || format!("SELECT {}0{}", "a[".repeat(6000), "]".repeat(6000)),
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "1,500 nested ARRAY types",
-            sql: || {
-                format!(
-                    "SELECT CAST(NULL AS {}INT{})",
-                    "ARRAY<".repeat(1500),
-                    ">".repeat(1500)
-                )
-            },
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "1,500 nested STRUCT types",
-            sql: || {
-                format!(
-                    "SELECT CAST(NULL AS {}INT{})",
-                    "STRUCT<a: ".repeat(1500),
-                    ">".repeat(1500)
-                )
-            },
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "past the limit, every other reading fails at once instead of retrying",
-            sql: || {
-                format!(
-                    "SELECT 1 IN {}(1){}",
-                    "(SELECT 1 IN ".repeat(150),
-                    ")".repeat(150)
-                )
-            },
-            expected_refusal: too_deep,
-        },
-        NestingTestCase {
-            description: "40 parentheses around a table in FROM parse",
-            sql: || format!("SELECT * FROM {}t{}", "(".repeat(40), ")".repeat(40)),
-            expected_refusal: None,
-        },
-        NestingTestCase {
-            description: "40 nested subqueries in FROM parse",
-            sql: || {
-                let open: String = "(SELECT * FROM ".repeat(40);
-                format!("SELECT * FROM {open}t{}", ")".repeat(40))
-            },
-            expected_refusal: None,
-        },
-        NestingTestCase {
-            description: "40 nested subscripts parse",
-            sql: || format!("SELECT {}0{}", "a[".repeat(40), "]".repeat(40)),
-            expected_refusal: None,
-        },
-    ];
-    for test_case in test_cases {
-        let sql: String = (test_case.sql)();
-        let refusal: Option<String> = std::thread::Builder::new()
-            .stack_size(2 << 20)
-            .spawn(move || parse(&sql).err().map(|error| error.message))
-            .expect("the parse thread starts")
-            .join()
-            .expect("the parse thread finishes");
-        assert_eq!(
-            refusal.as_deref(),
-            test_case.expected_refusal,
-            "{}",
-            test_case.description
-        );
-    }
-}
-
-#[test]
-fn given_nested_chains_when_parsing_on_a_small_stack_then_trees_past_the_limit_are_refused() {
-    let too_deep: Option<&str> = Some("the statement nests too deeply");
-    let test_cases = [
-        ChainTestCase {
-            description: "10 parenthesised levels of 60 links",
-            levels: 10,
-            length: 60,
-            expected_refusal: None,
-        },
-        ChainTestCase {
-            description: "60 parenthesised levels of 60 links",
-            levels: 60,
-            length: 60,
-            expected_refusal: None,
-        },
-        ChainTestCase {
-            description: "130 parenthesised levels of 60 links, just inside the tree limit",
-            levels: 130,
-            length: 60,
-            expected_refusal: None,
-        },
-        ChainTestCase {
-            description: "60 parenthesised levels of 200 links",
-            levels: 60,
-            length: 200,
-            expected_refusal: too_deep,
-        },
-        ChainTestCase {
-            description: "150 parenthesised levels of 60 links",
-            levels: 150,
-            length: 60,
-            expected_refusal: too_deep,
-        },
-    ];
-    let links: [(&str, &str, &str); 7] = [
-        ("SELECT ", "x", "::INT"),
-        ("SELECT ", "x", " + 1"),
-        ("SELECT ", "x", " || 'a'"),
-        ("SELECT ", "x", " AND TRUE"),
-        ("SELECT ", "x", " OR TRUE"),
-        ("SELECT ", "x", "[1]"),
-        ("", "SELECT 1", " UNION ALL SELECT 1"),
-    ];
-    for test_case in test_cases {
-        for (prefix, base, link) in links {
-            let level: String = format!("{})", link.repeat(test_case.length));
-            let sql: String = format!(
-                "{prefix}{}{base}{}",
-                "(".repeat(test_case.levels),
-                level.repeat(test_case.levels)
-            );
-            let refusal: Option<String> = std::thread::Builder::new()
-                .stack_size(2 << 20)
-                .spawn(move || parse(&sql).err().map(|error| error.message))
-                .expect("the parse thread starts")
-                .join()
-                .expect("the parse thread finishes");
-            assert_eq!(
-                refusal.as_deref(),
-                test_case.expected_refusal,
-                "{} of `{link}`",
-                test_case.description
-            );
-        }
     }
 }

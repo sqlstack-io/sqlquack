@@ -235,6 +235,7 @@ impl Parser<'_> {
             message: "UNIQUE predicate is not yet implemented".to_owned(),
             position: start,
             syntax: false,
+            guard: false,
         })
     }
 
@@ -658,11 +659,13 @@ impl Parser<'_> {
                 ),
                 position,
                 syntax: true,
+                guard: false,
             },
             None => crate::parse::errors::ParseError {
                 message: "syntax error at end of input".to_owned(),
                 position,
                 syntax: true,
+                guard: false,
             },
         }
     }

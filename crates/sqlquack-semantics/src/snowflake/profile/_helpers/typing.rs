@@ -263,6 +263,7 @@ pub(crate) fn snowflake_cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::Time {
             precision: Some(precision),
             timezone: false,
+            ..
         } => Some(format!("TIME({precision})")),
         other => rendered_type(other),
     }
