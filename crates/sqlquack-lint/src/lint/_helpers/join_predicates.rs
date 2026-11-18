@@ -11,6 +11,7 @@ use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::TableRef;
+use sqlquack_syntax::expressions::queries::models::Join;
 use sqlquack_syntax::expressions::queries::models::JoinKind;
 use sqlquack_syntax::expressions::queries::models::Select;
 use sqlquack_syntax::expressions::queries::models::Subquery;
@@ -24,6 +25,7 @@ use crate::lint::constants::{
     CROSS_JOIN_REASON_PLACEHOLDER, CROSS_JOIN_SUFFIX, CROSS_JOIN_UNNAMED_MESSAGE,
 };
 use crate::lint::models::{CrossJoinRequest, LintDiagnostic, LintRuleMetadata};
+use crate::tree::main::join_chains::join_chains;
 
 const CROSS_JOIN_FIX_REASON: &str = "a keyed relationship requires user intent";
 
@@ -453,17 +455,18 @@ impl Analysis<'_> {
     }
 
     fn record_joins(&mut self, select: &Select, cte: Option<&str>) {
-        let single_from: Option<&Expression> = select
-            .from
-            .as_ref()
-            .filter(|from| from.expressions.len() == 1)
-            .and_then(|from| from.expressions.first());
-        for (index, join) in select.joins.iter().enumerate() {
+        for (start, joins) in join_chains(select) {
+            self.record_chain((start, joins), cte);
+        }
+    }
+
+    fn record_chain(&mut self, (start, joins): (Option<&Expression>, &[Join]), cte: Option<&str>) {
+        for (index, join) in joins.iter().enumerate() {
             if join.kind != JoinKind::Cross {
                 continue;
             }
             let left_one_row: bool =
-                index == 0 && single_from.is_some_and(|from| self.relation_one_row(from));
+                index == 0 && start.is_some_and(|from| self.relation_one_row(from));
             let multiplies: bool = !(left_one_row || self.relation_one_row(&join.this));
             self.targets.push(CrossJoinTarget {
                 anchors: relation_anchors(&join.this),

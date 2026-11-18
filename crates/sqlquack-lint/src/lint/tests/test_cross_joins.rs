@@ -124,6 +124,27 @@ fn given_cross_joins_when_one_side_is_provably_one_row_then_only_multiplying_joi
             expected_messages: &["CROSS JOIN with `newest` creates an explicit cartesian product"],
         },
         CrossJoinTestCase {
+            description: "a cross join after a comma item, in DuckDB",
+            sql: "SELECT o.order_id FROM orders AS o, customers AS c CROSS JOIN regions AS r",
+            dialect: "duckdb",
+            one_row_relations: &[],
+            expected_messages: &["CROSS JOIN with `regions` creates an explicit cartesian product"],
+        },
+        CrossJoinTestCase {
+            description: "a cross join after a comma item, in PostgreSQL",
+            sql: "SELECT o.order_id FROM orders AS o, customers AS c CROSS JOIN regions AS r",
+            dialect: "postgres",
+            one_row_relations: &[],
+            expected_messages: &["CROSS JOIN with `regions` creates an explicit cartesian product"],
+        },
+        CrossJoinTestCase {
+            description: "a cross join of a one-row seed after a comma item",
+            sql: "SELECT o.order_id FROM orders AS o, __sqlclean_interpolation_7__ AS p CROSS JOIN customers AS c",
+            dialect: "postgres",
+            one_row_relations: &[POLICY_SENTINEL],
+            expected_messages: &[],
+        },
+        CrossJoinTestCase {
             description: "a join inside the carrying CTE stops the proof",
             sql: "WITH totals AS (SELECT COUNT(*) AS n FROM orders), \
                   joined AS (SELECT t.n FROM totals AS t INNER JOIN customers AS c ON c.n = t.n) \

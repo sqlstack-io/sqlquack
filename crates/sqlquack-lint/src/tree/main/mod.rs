@@ -5,4 +5,5 @@ pub(crate) mod contains_aggregate;
 pub(crate) mod is_aggregate;
 pub(crate) mod is_foreign_aggregate;
 pub(crate) mod is_row_number;
+pub(crate) mod join_chains;
 pub(crate) mod walk_in_scope;
