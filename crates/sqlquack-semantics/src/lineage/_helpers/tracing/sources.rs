@@ -861,8 +861,8 @@ fn pivoted_name(value: &Expression, aggregates: usize, context: LineageContext<'
     }
     match value {
         Expression::Literal(literal) => match literal.as_ref() {
-            Literal::String(text) if bare => text.clone(),
-            Literal::String(text) => format!("'{text}'"),
+            Literal::String(text) | Literal::JoinedString(text, _) if bare => text.clone(),
+            Literal::String(text) | Literal::JoinedString(text, _) => format!("'{text}'"),
             Literal::Number(text) => text.clone(),
             _ => String::new(),
         },

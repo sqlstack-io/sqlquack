@@ -240,9 +240,31 @@ impl Parser<'_> {
         Ok(text)
     }
 
-    /// `stringLit` as a string literal.
+    /// `stringLit` as a string literal: a single raw string stays raw, adjacent strings keep their pieces.
     pub(crate) fn string_literal(&mut self) -> Parsing<Expression> {
-        Ok(string(&self.string_lit()?))
+        if !self.string_at(0) {
+            return Err(self.error());
+        }
+        let mut pieces: Vec<Literal> = Vec::new();
+        while self.string_at(0) {
+            pieces.push(self.one_string()?);
+        }
+        Ok(match pieces.len() {
+            1 => literal(pieces.remove(0)),
+            _ => {
+                let joined: String = pieces.iter().map(Literal::value_str).collect();
+                literal(Literal::JoinedString(joined, pieces))
+            }
+        })
+    }
+
+    /// One string token as a literal; a raw string stays raw.
+    pub(crate) fn one_string(&mut self) -> Parsing<Literal> {
+        let token: Token = self.advance()?;
+        Ok(match token.kind {
+            TokenKind::String { raw: true } => Literal::RawString(token.value),
+            _ => Literal::String(token.value),
+        })
     }
 
     fn primary_base(&mut self) -> Parsing<Expression> {
@@ -253,10 +275,6 @@ impl Parser<'_> {
             TokenKind::Number(kind) => {
                 self.at += 1;
                 Ok(number_literal(&token, kind))
-            }
-            TokenKind::String { raw: true } if !self.string_at(1) => {
-                self.at += 1;
-                Ok(literal(Literal::RawString(token.value)))
             }
             TokenKind::String { .. } => self.string_literal(),
             TokenKind::Char('(') => self.parenthesized_primary(),

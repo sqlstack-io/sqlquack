@@ -102,7 +102,7 @@ pub(crate) fn predicate(engine: Engine, family: Family) -> bool {
 fn string_literal_text(expression: &Expression) -> Option<&str> {
     match expression {
         Expression::Literal(literal) => match literal.as_ref() {
-            Literal::String(value) => Some(value),
+            Literal::String(value) | Literal::JoinedString(value, _) => Some(value),
             _ => None,
         },
         Expression::Alias(alias) => string_literal_text(&alias.this),
@@ -372,10 +372,12 @@ pub(crate) fn invalid_literal_for(engine: Engine, expression: &Expression, targe
         Expression::Alias(alias) => invalid_literal_for(engine, &alias.this, target),
         Expression::Paren(paren) => invalid_literal_for(engine, &paren.this, target),
         Expression::Literal(literal) => match literal.as_ref() {
-            Literal::String(value) if engine == Engine::Postgres => {
+            Literal::String(value) | Literal::JoinedString(value, _)
+                if engine == Engine::Postgres =>
+            {
                 invalid_postgres_literal(value, target)
             }
-            Literal::String(value) => match target {
+            Literal::String(value) | Literal::JoinedString(value, _) => match target {
                 Family::Integer | Family::Numeric => value.trim().parse::<f64>().is_err(),
                 Family::Date | Family::Timestamp => invalid_temporal_literal(value),
                 Family::Boolean => !matches!(

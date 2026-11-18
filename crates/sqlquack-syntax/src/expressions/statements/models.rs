@@ -5,6 +5,7 @@ use serde::Deserialize;
 use serde::Serialize;
 
 use crate::expressions::names::models::Identifier;
+use crate::expressions::names::models::Literal;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::queries::models::From;
 use crate::expressions::queries::models::Hint;
@@ -360,6 +361,9 @@ pub struct Credentials {
     /// Databricks: the positions of the credential options whose value was not a string, as in `k = 1`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub bare_values: Vec<usize>,
+    /// Databricks: the credential keys written as a raw string or as adjacent strings, by position, as written
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub written_keys: Vec<(usize, Literal)>,
 }
 
 /// Historical data / Time travel (Snowflake) - BEFORE (STATEMENT => ...) or AT (TIMESTAMP => ...)
