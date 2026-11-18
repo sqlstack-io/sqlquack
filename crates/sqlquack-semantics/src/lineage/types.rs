@@ -75,6 +75,9 @@ pub(crate) trait DialectRules: Sync {
     /// Where outputs are read anywhere, whether the keys of a window the select list reads may read them.
     fn window_keys_read_outputs(&self) -> bool;
 
+    /// Where outputs are read anywhere, whether the select list may read them too.
+    fn select_list_reads_outputs(&self) -> bool;
+
     /// Whether calls are checked against the signatures of the functions they name.
     fn checks_call_signatures(&self) -> bool;
 
