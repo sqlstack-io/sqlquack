@@ -2,12 +2,61 @@
 
 use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::expressions::names::models::Star;
-use sqlquack_syntax::expressions::queries::models::Select;
+use sqlquack_syntax::expressions::queries::models::{Select, Subquery};
 use sqlquack_syntax::tokens::models::{Token, TokenType};
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
 use crate::quality::constants::MIN_REMOVABLE_OUTPUTS;
 use rustc_hash::FxHashMap;
+
+/// The query within `expression`'s parentheses and unaliased subquery nodes.
+pub(super) fn query_within(expression: &Expression) -> &Expression {
+    match expression {
+        Expression::Paren(paren) => query_within(&paren.this),
+        Expression::Subquery(subquery) if around(subquery) => query_within(&subquery.this),
+        other => other,
+    }
+}
+
+/// The clause expressions of the unaliased subquery nodes around `expression`'s query.
+pub(super) fn clauses_around(expression: &Expression) -> Vec<&Expression> {
+    let mut clauses: Vec<&Expression> = Vec::new();
+    let mut node: &Expression = expression;
+    loop {
+        node = match node {
+            Expression::Paren(paren) => &paren.this,
+            Expression::Subquery(subquery) if around(subquery) => {
+                let ordered = subquery
+                    .order_by
+                    .iter()
+                    .flat_map(|order| &order.expressions)
+                    .chain(subquery.sort_by.iter().flat_map(|sort| &sort.expressions))
+                    .chain(
+                        subquery
+                            .cluster_by
+                            .iter()
+                            .flat_map(|cluster| &cluster.expressions),
+                    );
+                clauses.extend(ordered.map(|ordered| &ordered.this));
+                clauses.extend(
+                    subquery
+                        .distribute_by
+                        .iter()
+                        .flat_map(|distribute| &distribute.expressions),
+                );
+                clauses.extend(subquery.limit.iter().map(|limit| &limit.this));
+                clauses.extend(subquery.offset.iter().map(|offset| &offset.this));
+                &subquery.this
+            }
+            _ => return clauses,
+        };
+    }
+}
+
+/// Whether `subquery` only wraps a query: unaliased, without a sample or watermark.
+fn around(subquery: &Subquery) -> bool {
+    subquery.alias.is_none() && subquery.table_sample.is_none() && subquery.watermark.is_none()
+}
 
 /// One projection of a select list.
 pub(super) enum Projection<'a> {
@@ -83,23 +132,30 @@ pub(super) fn sources(select: &Select) -> Vec<(String, Option<String>, &Expressi
     found
 }
 
-/// Token index of the SELECT opening each `name AS (SELECT` CTE body, by lower-cased name.
+/// Token index of the SELECT opening each `name AS ( [( ...] SELECT` CTE body, by lower-cased name.
 pub(super) fn cte_select_tokens(tokens: &[Token]) -> FxHashMap<String, usize> {
     let significant: Vec<usize> = (0..tokens.len())
         .filter(|&index| !is_trivia(&tokens[index]))
         .collect();
     let mut found: FxHashMap<String, usize> = FxHashMap::default();
-    for window in significant.windows(4) {
-        let [name_index, as_index, paren_index, select_index] = window else {
+    for (position, window) in significant.windows(3).enumerate() {
+        let [name_index, as_index, paren_index] = window else {
             continue;
         };
-        if tokens[*as_index].token_type == TokenType::As
-            && tokens[*paren_index].token_type == TokenType::LParen
-            && tokens[*select_index].token_type == TokenType::Select
+        if tokens[*as_index].token_type != TokenType::As
+            || tokens[*paren_index].token_type != TokenType::LParen
+        {
+            continue;
+        }
+        let select_index: Option<&usize> = significant[position + 3..]
+            .iter()
+            .find(|&&index| tokens[index].token_type != TokenType::LParen);
+        if let Some(&select_index) = select_index
+            && tokens[select_index].token_type == TokenType::Select
         {
             found
                 .entry(lower(&tokens[*name_index].text))
-                .or_insert(*select_index);
+                .or_insert(select_index);
         }
     }
     found

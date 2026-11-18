@@ -9,7 +9,9 @@ use sqlquack_syntax::expressions::queries::models::Select;
 
 use crate::quality::constants::FIRST_ROW;
 use crate::quality::models::QualityRequest;
-use crate::quality::syntax::{Projection, columns, lower, projections, qualifier, sources};
+use crate::quality::syntax::{
+    Projection, columns, lower, projections, qualifier, query_within, sources,
+};
 use crate::quality::types::{InputKey, Keys};
 use crate::tree::main::is_row_number::is_row_number;
 
@@ -362,13 +364,13 @@ pub(crate) fn key_environment(request: &QualityRequest<'_>) -> KeyEnvironment {
         row_numbers: HashMap::new(),
     };
     for statement in request.statements {
-        let Expression::Select(select) = statement else {
+        let Expression::Select(select) = query_within(statement) else {
             continue;
         };
         for cte in select.with.iter().flat_map(|with| with.ctes.iter()) {
             let keys = environment.query_keys(&cte.this);
             environment.ctes.insert(lower(&cte.alias.name), keys);
-            if let Expression::Select(body) = &cte.this {
+            if let Expression::Select(body) = query_within(&cte.this) {
                 environment
                     .row_numbers
                     .insert(lower(&cte.alias.name), row_number_outputs(body));
