@@ -361,6 +361,7 @@ impl Parser {
                 path,
                 row_format,
                 stored_as,
+                stored_as_quoted: false,
                 input_format: None,
                 output_format: None,
                 using: None,

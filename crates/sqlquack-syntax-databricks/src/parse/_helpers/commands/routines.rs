@@ -157,6 +157,7 @@ impl Parser<'_> {
                     let kind: Identifier = parser.ident()?;
                     Ok(FunctionUsingResource {
                         kind: kind.name.to_ascii_uppercase(),
+                        kind_quoted: kind.quoted,
                         uri: parser.string_lit()?,
                     })
                 })?;

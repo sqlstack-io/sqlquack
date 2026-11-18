@@ -144,11 +144,15 @@ impl Parser<'_> {
             "TIMESTAMP" => {
                 let precision: Option<u32> = self.optional_length()?;
                 let without: bool = !self.kw("WITH") && self.eat_kws(&["WITHOUT", "TIME", "ZONE"]);
-                let timezone: bool = self.eat_kws(&["WITH", "LOCAL", "TIME", "ZONE"]) || !without;
+                let local: bool = self.eat_kws(&["WITH", "LOCAL", "TIME", "ZONE"]);
                 DataType::Timestamp {
                     precision,
-                    timezone,
-                    spelling: without.then_some(TypeSpelling::WithoutTimeZone),
+                    timezone: local || !without,
+                    spelling: match (without, local) {
+                        (true, _) => Some(TypeSpelling::WithoutTimeZone),
+                        (false, true) => Some(TypeSpelling::WithLocalTimeZone),
+                        (false, false) => None,
+                    },
                 }
             }
             "TIME" => {

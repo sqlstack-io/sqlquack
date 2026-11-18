@@ -669,6 +669,9 @@ pub enum FunctionPropertyKind {
 pub struct FunctionUsingResource {
     pub kind: String,
     pub uri: String,
+    /// Databricks: the resource kind was written in backquotes, as in ``USING `JAR` 'uri'``
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub kind_quoted: bool,
 }
 
 /// Function parameter

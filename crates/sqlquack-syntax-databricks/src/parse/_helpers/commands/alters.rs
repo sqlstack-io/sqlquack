@@ -42,6 +42,21 @@ pub(crate) fn property_text(expression: &Expression) -> String {
     }
 }
 
+/// The positions of the property `keys` written in backquotes, and of those written as strings.
+pub(crate) fn key_spellings<'a>(
+    keys: impl IntoIterator<Item = &'a Expression>,
+) -> (Vec<usize>, Vec<usize>) {
+    let (mut quoted, mut strings) = (Vec::new(), Vec::new());
+    for (position, key) in keys.into_iter().enumerate() {
+        match key {
+            Expression::Literal(_) => strings.push(position),
+            Expression::Identifier(name) if name.quoted => quoted.push(position),
+            _ => {}
+        }
+    }
+    (quoted, strings)
+}
+
 /// A property as its key and value; a key without a value has a null value.
 pub(crate) fn property_pair(property: Expression) -> (Expression, Expression) {
     match property {
@@ -851,13 +866,21 @@ impl Parser<'_> {
                 location: self.string_lit()?,
             })),
             "TAGS" => {
-                let expressions: Vec<(String, Expression)> = self
+                let pairs: Vec<(Expression, Expression)> = self
                     .property_list()?
                     .into_iter()
                     .map(property_pair)
+                    .collect();
+                let (quoted_keys, string_keys) = key_spellings(pairs.iter().map(|(key, _)| key));
+                let expressions: Vec<(String, Expression)> = pairs
+                    .into_iter()
                     .map(|(key, value)| (property_text(&key), value))
                     .collect();
-                Ok(Some(AlterTableAction::SetTag { expressions }))
+                Ok(Some(AlterTableAction::SetTag {
+                    expressions,
+                    quoted_keys,
+                    string_keys,
+                }))
             }
             "OWNER" => {
                 self.expect_kw("TO")?;
@@ -916,8 +939,13 @@ impl Parser<'_> {
             }));
         }
         if self.eat_kw("TAGS") {
-            let names: Vec<String> = self.property_list()?.iter().map(property_text).collect();
-            return Ok(Some(AlterTableAction::UnsetTag { names }));
+            let keys: Vec<Expression> = self.property_list()?;
+            let (quoted_keys, string_keys) = key_spellings(&keys);
+            return Ok(Some(AlterTableAction::UnsetTag {
+                names: keys.iter().map(property_text).collect(),
+                quoted_keys,
+                string_keys,
+            }));
         }
         self.expect_kw("MANAGED")?;
         let truncate: bool = self.eat_kw("TRUNCATE");

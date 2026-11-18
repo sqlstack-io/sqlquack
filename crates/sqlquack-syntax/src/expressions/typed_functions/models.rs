@@ -294,6 +294,10 @@ pub struct DateTruncFunc {
 pub struct ExtractFunc {
     pub this: Expression,
     pub field: DateTimeField,
+    /// Databricks: the field was written in backquotes, as in ``EXTRACT ( `YEAR` FROM d )``
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub field_quoted: bool,
 }
 
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

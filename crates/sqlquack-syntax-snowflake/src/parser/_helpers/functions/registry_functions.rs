@@ -814,6 +814,7 @@ impl Parser {
         Ok(Some(Expression::Extract(Box::new(ExtractFunc {
             this,
             field,
+            field_quoted: false,
         }))))
     }
 

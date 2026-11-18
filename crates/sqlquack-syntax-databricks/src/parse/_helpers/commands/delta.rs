@@ -8,7 +8,7 @@ use sqlquack_syntax::expressions::statements::models::{
 };
 use sqlquack_syntax::expressions::tables::models::Undrop;
 
-use crate::parse::_helpers::commands::alters::property_text;
+use crate::parse::_helpers::commands::alters::{key_spellings, property_text};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{
     literal, null, property, subquery, too_deep_to_keep, utility, var,
@@ -64,23 +64,22 @@ impl Parser<'_> {
             without_equals: Vec::new(),
             quoted_keys: Vec::new(),
             string_keys: Vec::new(),
+            bare_values: Vec::new(),
         };
         if self.eat_kw("CREDENTIAL") {
             match self.is_char('(') {
                 true => {
                     let options = self.spelled_valued_property_list()?;
+                    (credentials.quoted_keys, credentials.string_keys) =
+                        key_spellings(options.iter().map(|((key, _), _)| key));
                     for (position, ((key, value), without_equals)) in
                         options.into_iter().enumerate()
                     {
                         if without_equals {
                             credentials.without_equals.push(position);
                         }
-                        match &key {
-                            Expression::Literal(_) => credentials.string_keys.push(position),
-                            Expression::Identifier(name) if name.quoted => {
-                                credentials.quoted_keys.push(position)
-                            }
-                            _ => {}
+                        if !matches!(&value, Expression::Literal(literal) if literal.is_string()) {
+                            credentials.bare_values.push(position);
                         }
                         credentials
                             .credentials
