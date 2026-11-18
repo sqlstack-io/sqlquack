@@ -52,6 +52,25 @@ fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_fou
             expected_findings: &[("E201", "Unknown column 'q' in table 'orders'", 82)],
         },
         QueryFindingsTestCase {
+            description: "a projection reading an earlier output's alias (3.40: no such column)",
+            sql: "SELECT quantity AS q, q + 1 AS r FROM orders",
+            expected_findings: &[("E201", "Unknown column 'q' in table 'orders'", 22)],
+        },
+        QueryFindingsTestCase {
+            description: "a projection reading a later output's alias (3.40: no such column)",
+            sql: "SELECT q + 1 AS r, quantity AS q FROM orders",
+            expected_findings: &[("E201", "Unknown column 'q' in table 'orders'", 7)],
+        },
+        QueryFindingsTestCase {
+            description: "a subquery in the select list reading an output alias (3.40: no such column)",
+            sql: "SELECT quantity AS q, (SELECT q) AS r FROM orders",
+            expected_findings: &[(
+                "E201",
+                "Unknown column 'q' (not found in any referenced table)",
+                30,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "a ranking function without OVER",
             sql: "SELECT ROW_NUMBER() AS r FROM orders",
             expected_findings: &[("E232", "Window function requires an OVER clause", 0)],
@@ -94,6 +113,26 @@ fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_fou
 #[test]
 fn given_a_sqlite_query_sqlite_accepts_when_checking_then_nothing_is_found() {
     let test_cases = [
+        QueryFindingsTestCase {
+            description: "a nested select list's named window reading the enclosing query's alias (3.40: accepted)",
+            sql: "SELECT quantity AS q FROM orders WHERE EXISTS (SELECT sum(1) OVER w FROM customers WINDOW w AS (ORDER BY q))",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an output alias read in WHERE, GROUP BY and HAVING (3.40: accepted)",
+            sql: "SELECT quantity AS q, count(*) AS n FROM orders WHERE q > 0 GROUP BY q HAVING q > 0",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a subquery in WHERE reading an output alias (3.40: accepted)",
+            sql: "SELECT quantity AS q FROM orders WHERE (SELECT q) > 0",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a subquery's select list reading the enclosing query's alias (3.40: accepted)",
+            sql: "SELECT quantity AS q FROM orders WHERE EXISTS (SELECT q)",
+            expected_findings: &[],
+        },
         QueryFindingsTestCase {
             description: "a window in ORDER BY reading an output alias (3.40: accepted)",
             sql: "SELECT quantity AS q FROM orders ORDER BY sum(quantity) OVER (ORDER BY q)",

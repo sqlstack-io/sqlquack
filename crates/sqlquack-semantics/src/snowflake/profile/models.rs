@@ -107,6 +107,10 @@ impl DialectRules for SnowflakeRules {
         true
     }
 
+    fn select_list_reads_outputs(&self) -> bool {
+        true
+    }
+
     fn checks_call_signatures(&self) -> bool {
         true
     }
