@@ -24,3 +24,370 @@ note = "Read against the pinned Databricks documentation pages and the Spark 4.2
 "db.dml.delete-from" = "f992cfb93fee5d6d0e818d2f23445fd436498696d18dc31653080aa64f9279e5"
 "db.dml.insert-into.values-default" = "31253ad16e121434be8b85477a9bf639b31c85946c5c3b7afeebbbd82aee1e5f"
 "db.dml.update" = "d38c51f6c28d4ef4166a3468df152a07ce5ab5fba56af530c8071696a085839e"
+
+[[review]]
+id = "db-dml-002"
+family = "dml"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T05:37:21Z"
+verdict = "approved"
+forms = [
+  "db.dml.load",
+  "db.dml.update",
+]
+note = "Re-read in full on 16 Nov 2026 against the documentation page, the form's obligations, its cases with their Databricks receipts and the local parse trees. Bound on 251cfd3dc only where the form's fingerprint and definition hash still equal those of the dossier that was read; forms that changed since are left for a new reading."
+
+[review.fingerprints]
+"db.dml.load" = "d9ddcd2da657065443c35a2e6859296929821cbbf12ea959023dc334c746cc06"
+"db.dml.update" = "5d2dd72a93765071b028cf7a58ea82646b320e7cfed80a5b308f3c3c53489b48"
+
+[review.definitions]
+"db.dml.load" = "7258b7c3d4a2485b016858a9416d7e3bae3ccc543e30501f1635da6a8089b9f9"
+"db.dml.update" = "d38c51f6c28d4ef4166a3468df152a07ce5ab5fba56af530c8071696a085839e"
+
+[[review]]
+id = "db-dml-003"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.copy-into",
+]
+note = "(d) 25 accepted cases opaque: o006 'COPY INTO t1 BY POSITION FROM '/tmp/x' FILEFORMAT = PARQUET', o007/o012 '( c1 )' column list -> {command:{this:...}}; BY POSITION and the column list never structured."
+
+[review.fingerprints]
+"db.dml.copy-into" = "9d569809bf0ce118887aafb047829a8ff86a486ea18b554cb341cc11ee3a353e"
+
+[review.definitions]
+"db.dml.copy-into" = "039164a1c4735379b9bfb586fabdd14c8622163415771c5406cf218f92a53d2d"
+
+[[review]]
+id = "db-dml-004"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.copy-into.target-credential",
+]
+note = "(d) every accepted case opaque: o001 'COPY INTO t1 WITH ( CREDENTIAL v1 ) FROM '/tmp/x' FILEFORMAT = PARQUET' -> {command:{this:...}}; CREDENTIAL never structured."
+
+[review.fingerprints]
+"db.dml.copy-into.target-credential" = "6d7d75db3e3442b8b269314dd2624d0d4565d5aab4f714268e82b5948d90057d"
+
+[review.definitions]
+"db.dml.copy-into.target-credential" = "8b65a4fed862127c0d65aa67af816373d8c5a0ef83e840fffbcaa3567ef9180e"
+
+[[review]]
+id = "db-dml-005"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.into",
+]
+note = "(d) o002/o005/o007/o012/o021 'WITH w1 AS ( SELECT 1 ) INSERT WITH SCHEMA EVOLUTION INTO TABLE t1 ( c1 , c2 ) REPLACE WHERE c1 = 1 SELECT 1' -> {command:{this:...}}; CTE, WITH SCHEMA EVOLUTION, TABLE, REPLACE WHERE never structured."
+
+[review.fingerprints]
+"db.dml.insert-into.into" = "2bca04e69434c8ca399c4acf69f852c6e80db1208f8d3e7653de007a6e16d7a5"
+
+[review.definitions]
+"db.dml.insert-into.into" = "bbeed8067b71875040cb15b95f10fc3faa9a7c2f09fcbcfd5364d774334a9429"
+
+[[review]]
+id = "db-dml-006"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.into-replace-on",
+]
+note = "(d) every accepted case opaque: o001 'INSERT INTO t1 REPLACE ON 1 = 1 ( SELECT 1 )', o015 BY NAME, o021/o032 aliases -> {command:{this:...}}; REPLACE ON never structured."
+
+[review.fingerprints]
+"db.dml.insert-into.into-replace-on" = "283ce368a284a883be26d50c8a37d9fe3405f70953256ef6ef71d65816a337fa"
+
+[review.definitions]
+"db.dml.insert-into.into-replace-on" = "9322af7c96037cd88169632fcf591ddfc0346888f18d5149a5810914156a4334"
+
+[[review]]
+id = "db-dml-007"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.into.syntax",
+]
+note = "(d) o002/o012/o014/o020 'INSERT INTO t1 REPLACE USING ( c1 ) SELECT 1' and the all-options case -> {command:{this:...}}; REPLACE USING, CTE, WITH SCHEMA EVOLUTION, TABLE never structured."
+
+[review.fingerprints]
+"db.dml.insert-into.into.syntax" = "57eafbdb6131ae64afbbdfee2dbc67611d83707737a741f393107489f3ad4b82"
+
+[review.definitions]
+"db.dml.insert-into.into.syntax" = "d988f85f607c63e19381b4e6c16912a0e887353c3a65d8ece2fafff3bcc1226f"
+
+[[review]]
+id = "db-dml-008"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.overwrite-into",
+]
+note = "(d) o002/o005/o009/o014/o018 'WITH w1 AS ( SELECT 1 ) INSERT WITH SCHEMA EVOLUTION OVERWRITE TABLE t1 PARTITION ( c1 = 1 ) ( c1 , c2 ) SELECT 1' -> {command:{this:...}}; PARTITION, TABLE, CTE never structured."
+
+[review.fingerprints]
+"db.dml.insert-into.overwrite-into" = "8d399d52d83dcccb583b20e967adb9bd1d255f8e871600fd3846ffa28c3d1509"
+
+[review.definitions]
+"db.dml.insert-into.overwrite-into" = "cb93fb3cf88b9836ea9a654fcd04efec50d8e1dd4c34d302ee85b1318a2391b6"
+
+[[review]]
+id = "db-dml-009"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.values-default",
+]
+note = "(d) stricter reading: o017/o020 'INSERT INTO t1 SELECT DEFAULT , DEFAULT' gives {\"column\":{\"name\":\"DEFAULT\"}}, so the DEFAULT alternative becomes a column reference, while VALUES gives {\"default_keyword\":null}. (a)(b)(c) pass; the suppress row holds."
+
+[review.fingerprints]
+"db.dml.insert-into.values-default" = "10ebe3c489fe77f511373c048ee53d48abad672816b6cd90dd74b38b590592d8"
+
+[review.definitions]
+"db.dml.insert-into.values-default" = "fb2757f09df0062491d404e4338c05ece4c7d1c1dde54735a98731710f41a9b2"
+
+[[review]]
+id = "db-dml-010"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-overwrite-directory",
+]
+note = "(d) every accepted case opaque: o001 'INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET VALUES ( 1 )', o046 OPTIONS ( 'path' ... ) -> {command:{this:...}}; directory, USING, OPTIONS, VALUES never structured."
+
+[review.fingerprints]
+"db.dml.insert-overwrite-directory" = "b5895ab884c115bda5fdb820725a88aebba7b5b288ab139f7b9eda736ad44f4a"
+
+[review.definitions]
+"db.dml.insert-overwrite-directory" = "cf7d61dcfc0a14da22b6006a83f9aecb963171ba49e82213b349b89a6cd6069c"
+
+[[review]]
+id = "db-dml-011"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-overwrite-directory-hive",
+]
+note = "(d) every positive case opaque: o001 'INSERT OVERWRITE DIRECTORY '/tmp/x' VALUES ( 1 )', o007 ROW FORMAT DELIMITED STORED AS TEXTFILE -> {command:{this:...}} (receipts still pending)."
+
+[review.fingerprints]
+"db.dml.insert-overwrite-directory-hive" = "c02ed6bb632415c124640c3ab6c8df98355f77aceb8edb523cc08a4b21864f10"
+
+[review.definitions]
+"db.dml.insert-overwrite-directory-hive" = "a78eadd0568c02a06eb41ddb7021072d5e9c8875b0cb2a2f9e9c1614ab2139cb"
+
+[[review]]
+id = "db-dml-012"
+family = "dml"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.merge-into",
+]
+note = "(d) o002/o005/o010/o025/o031/o033/o039 'WITH w1 AS ( SELECT 1 ) MERGE WITH SCHEMA EVOLUTION INTO t1 a1 USING t2 a2 ... WHEN MATCHED AND a1.c2 = 2 THEN DELETE' -> {command:{this:...}}; CTE, SCHEMA EVOLUTION, AND conditions, BY TARGET never structured."
+
+[review.fingerprints]
+"db.dml.merge-into" = "994864028e67b71a4ce0442c4cccf31179c3a177216bedd807aafb301c8924b5"
+
+[review.definitions]
+"db.dml.merge-into" = "3d7cc611d0b78bf231a134cc5b49ab32eee7548cdcb3a876471585ae0452da54"
+
+[[review]]
+id = "db-dml-013"
+family = "dml"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.dml.update",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 5d2dd72a93765071b028cf7a58ea82646b320e7cfed80a5b308f3c3c53489b48 -> c5c357b29c468c9b2b0bf7e2b05b6c09a35998cd67e6f4bda355bdb3c67612ca: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.dml.update" = "c5c357b29c468c9b2b0bf7e2b05b6c09a35998cd67e6f4bda355bdb3c67612ca"
+
+[review.definitions]
+"db.dml.update" = "d38c51f6c28d4ef4166a3468df152a07ce5ab5fba56af530c8071696a085839e"
+
+[[review]]
+id = "db-dml-014"
+family = "dml"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.dml.delete-from",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.dml.delete-from" = "af5750211e22c7de1d23d3aef2305a677921df9e9a53b5721df26c3235aca8c2"
+
+[review.definitions]
+"db.dml.delete-from" = "f992cfb93fee5d6d0e818d2f23445fd436498696d18dc31653080aa64f9279e5"
+
+[[review]]
+id = "db-dml-015"
+family = "dml"
+parser_tree = "8ecd64b31886e72fb403a850c8c9aef24419ac40"
+reviewed_utc = "2026-11-17T14:12:44Z"
+verdict = "approved"
+forms = [
+  "db.dml.copy-into",
+  "db.dml.copy-into.target-credential",
+  "db.dml.insert-into.into",
+  "db.dml.insert-into.into-replace-on",
+  "db.dml.insert-into.into.syntax",
+  "db.dml.insert-into.overwrite-into",
+  "db.dml.insert-overwrite-directory",
+  "db.dml.insert-overwrite-directory-hive",
+  "db.dml.merge-into",
+]
+note = "Re-read on 17 Nov 2026 at 79bd022b7 against the 2026.45 receipts in evidence set evK-17nov, after the DML parser fix. It answers db-dml-003 to db-dml-008 and db-dml-010 to db-dml-012, whose bindings went stale with this tree; each asked for clauses that were opaque, and no accepted case of these forms is opaque now. copy-into: BY POSITION (DBFS_DISABLED, parsed) is by_position and the target's column list is columns; VALIDATE, FILES, PATTERN, FORMAT_OPTIONS and COPY_OPTIONS stay params. copy-into.target-credential: WITH ( CREDENTIAL v1 ) on the target (WITH_CREDENTIAL for a table identifier, parsed) is target_credentials. insert-into.into, into.syntax and overwrite-into: the CTE is with, WITH SCHEMA EVOLUTION is schema_evolution, INTO TABLE or OVERWRITE TABLE is table_keyword, REPLACE WHERE is replace_where, REPLACE USING ( c1 , c2 ) is replace_using, PARTITION ( c1 = 1 ) is partition, and BY NAME is by_name; the all-options cases (INSERT_COLUMN_ARITY_MISMATCH, parsed) keep every one. into-replace-on: REPLACE ON 1 = 1 is replace_on, a parenthesised query is a subquery that keeps its alias, and an unparenthesised one is the query itself, so the two spellings the page writes differ. insert-overwrite-directory: an insert with a directory holding its path, LOCAL, USING format and OPTIONS; a value written without = is marked in options_without_equals, and a path given only as the 'path' option leaves path empty (DBFS_DISABLED, parsed, both spellings). insert-overwrite-directory-hive: ROW FORMAT DELIMITED is the row format, STORED AS a name is stored_as, and STORED AS INPUTFORMAT ... OUTPUTFORMAT ... are input_format and output_format (UNSUPPORTED_DATA_SOURCE_WRITE, parsed); its positives stay observed because the form is Runtime-only, so it remains awaiting observation. merge-into: the CTE is with_, WITH SCHEMA EVOLUTION is schema_evolution, AND conditions are each clause's condition, and NOT MATCHED BY SOURCE and BY TARGET set source true and false, apart from a bare NOT MATCHED, which has none. The mechanical check finds every name and literal in all 108 accepted trees. Of 171 local rejects, 139 are at the warehouse's position, 4 have no warehouse position (Values must be specified for key(s) twice, a directory with no path at all, and MERGE_WITHOUT_WHEN, each refused locally with the warehouse's own message), and 28 are elsewhere, all syntax errors on both sides and unchanged from the previous tree: the warehouse reports at the token after an unfinished clause (missing 'SCHEMA', 'EVOLUTION', 'NAME', '(' or ')') where the parser reports at the clause's start, or reads REPLACE after the target as an alias and fails at ON or USING with missing 'REPLACE' where the parser fails later at the clause's operand. The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.dml.copy-into" = "d39a5cc2b35d3081b48b05f7e2185bb22be807637d6a21c491d3a41a70ed1c60"
+"db.dml.copy-into.target-credential" = "79da2ec87d12f4d181e424befaf9af596bf4fef0eb779e7f69a0659c205c4c2d"
+"db.dml.insert-into.into" = "eb6877cfb64dbd4eb33210e5b5d326e559461bf0cd070441ff809bdb88e8ddc2"
+"db.dml.insert-into.into-replace-on" = "4fb9a27722e79d0ab38dbc2c4c2ededb9f85c75fd32b2f588fc0d00a8b985336"
+"db.dml.insert-into.into.syntax" = "4a0f7ab09203e4b5e70cdbbbd4c6b81ec0d4c5bb0dd541f7adfc6bd9ff9a9bfe"
+"db.dml.insert-into.overwrite-into" = "b55538c3b1103a71a16fe77f56d0d4bc61441f3c3eb7c2f89be7aa8f2c0bc695"
+"db.dml.insert-overwrite-directory" = "af6fb502f93f0d589e7010b7077b0fc0e24409a00ae7e78f239ca65bf68c5bde"
+"db.dml.insert-overwrite-directory-hive" = "58f5d7f57852a1134509e133977e0ea4f02286176c3d8ce6c2c527a591e1d936"
+"db.dml.merge-into" = "c2fe251570918a62953c023648702ad105bd2764020e8cee5dfd2ac9e1c303e5"
+
+[review.definitions]
+"db.dml.copy-into" = "039164a1c4735379b9bfb586fabdd14c8622163415771c5406cf218f92a53d2d"
+"db.dml.copy-into.target-credential" = "8b65a4fed862127c0d65aa67af816373d8c5a0ef83e840fffbcaa3567ef9180e"
+"db.dml.insert-into.into" = "bbeed8067b71875040cb15b95f10fc3faa9a7c2f09fcbcfd5364d774334a9429"
+"db.dml.insert-into.into-replace-on" = "9322af7c96037cd88169632fcf591ddfc0346888f18d5149a5810914156a4334"
+"db.dml.insert-into.into.syntax" = "d988f85f607c63e19381b4e6c16912a0e887353c3a65d8ece2fafff3bcc1226f"
+"db.dml.insert-into.overwrite-into" = "cb93fb3cf88b9836ea9a654fcd04efec50d8e1dd4c34d302ee85b1318a2391b6"
+"db.dml.insert-overwrite-directory" = "cf7d61dcfc0a14da22b6006a83f9aecb963171ba49e82213b349b89a6cd6069c"
+"db.dml.insert-overwrite-directory-hive" = "a78eadd0568c02a06eb41ddb7021072d5e9c8875b0cb2a2f9e9c1614ab2139cb"
+"db.dml.merge-into" = "3d7cc611d0b78bf231a134cc5b49ab32eee7548cdcb3a876471585ae0452da54"
+
+[[review]]
+id = "db-dml-016"
+family = "dml"
+parser_tree = "8ecd64b31886e72fb403a850c8c9aef24419ac40"
+reviewed_utc = "2026-11-17T14:32:48Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-into.into-replace-on",
+]
+note = "Withdraws this form's approval in db-dml-015, which stays as written. The parser refuses two of the three REPLACE ON examples on the form's own page: INSERT INTO TABLE students AS t REPLACE ON t.name <=> s.name ( SELECT * FROM people ) AS s is refused at people (pos 77), because the condition's last name followed by ( is read as a function call; INSERT INTO TABLE students ( row_origin , name ) AS t REPLACE ON t.name <=> s.name ( SELECT * FROM people ) AS s is refused at AS (pos 49), because a column list followed by AS alias is refused, though ( c1 ) a1 and AS a1 alone parse. INSERT INTO t1 REPLACE ON c1 = c2 ( SELECT 1 ) is refused the same way (pos 43). Every recorded case writes REPLACE ON 1 = 1, so no receipt exercises either shape. Needs: a parenthesised query (SELECT, WITH, VALUES, FROM or TABLE after the opening parenthesis) read as the query after the condition, AS alias accepted after the column list, and receipts for both page texts before re-approval."
+
+[review.fingerprints]
+"db.dml.insert-into.into-replace-on" = "4fb9a27722e79d0ab38dbc2c4c2ededb9f85c75fd32b2f588fc0d00a8b985336"
+
+[review.definitions]
+"db.dml.insert-into.into-replace-on" = "9322af7c96037cd88169632fcf591ddfc0346888f18d5149a5810914156a4334"
+
+[[review]]
+id = "db-dml-017"
+family = "dml"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.dml.insert-into.values-default",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.dml.insert-into.values-default" = "a1c961f1cf20d78751471a0217ee6c9b1bfdeca450f885c68ea354f511d99c63"
+
+[review.definitions]
+"db.dml.insert-into.values-default" = "29a397b1c61663fe6a7ca68f133dd4f9bd2ef8f88aaa46549cba9a9c1b0ba68c"
+
+[[review]]
+id = "db-dml-018"
+family = "dml"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T21:58:43Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-overwrite-directory-hive",
+]
+note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds accepted one-token variants that parse to the same tree as the case they change; each is reproduced locally at parser tree 6546c748; earlier records are unchanged. Form by form: insert-overwrite-directory-hive: STORED AS TEXTFILE and STORED AS `TEXTFILE` parse to the same tree (k8053d9bcbcb1, k88b94e8170e3): the file format is a name the grammar parses, and the tree does not keep the backquotes. Next parser batch."
+
+[review.fingerprints]
+"db.dml.insert-overwrite-directory-hive" = "58f5d7f57852a1134509e133977e0ea4f02286176c3d8ce6c2c527a591e1d936"
+
+[review.definitions]
+"db.dml.insert-overwrite-directory-hive" = "a78eadd0568c02a06eb41ddb7021072d5e9c8875b0cb2a2f9e9c1614ab2139cb"
+
+[[review]]
+id = "db-dml-019"
+family = "dml"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.merge-into",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. merge-into: db-dml-012 is resolved: MERGE WITH SCHEMA EVOLUTION with a CTE, aliases and WHEN MATCHED AND ... THEN DELETE gives a merge node with its target, source, ON condition and WHEN clauses, no command node. New, from the synonym swap: 4 accepted cases; WHEN ! MATCHED gives the same tree as WHEN NOT MATCHED. The pinned bangsign page documents ! only as a prefix operator (!expr); no page shows it in another position and no receipt covers it, so the local parser accepts an undocumented spelling and gives it NOT's tree. Remedy in the next parser batch: refuse ! outside the prefix position, or keep its spelling in the tree once a receipt shows the warehouse accepts it; a receipt for the ! spelling is added to the pending bundle."
+
+[review.fingerprints]
+"db.dml.merge-into" = "c2fe251570918a62953c023648702ad105bd2764020e8cee5dfd2ac9e1c303e5"
+
+[review.definitions]
+"db.dml.merge-into" = "3d7cc611d0b78bf231a134cc5b49ab32eee7548cdcb3a876471585ae0452da54"
+
+[[review]]
+id = "db-dml-020"
+family = "dml"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.dml.copy-into.target-credential",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 19 of 19 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. copy-into.target-credential: db-dml-004 was answered at db-dml-015. CREDENTIAL now also keeps its backquotes (name_quoted). The temporary-credential = and backquoted-key follow-up concerns the source clause's ( <temporary_credential_options> ), which this form's grammar (WITH ( CREDENTIAL <name> )) does not contain."
+
+[review.fingerprints]
+"db.dml.copy-into.target-credential" = "242fe6e2c75e2c5c1838c40031c7eabbcf23b505f2f9830b070c9c60618b7ca6"
+
+[review.definitions]
+"db.dml.copy-into.target-credential" = "8b65a4fed862127c0d65aa67af816373d8c5a0ef83e840fffbcaa3567ef9180e"
+
+[[review]]
+id = "db-dml-021"
+family = "dml"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.dml.insert-overwrite-directory",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give one tree with and without the parentheses, e.g. k64d39e81193b: INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET VALUES ( 1 )  ==  INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET VALUES 1. The pinned grammar prints only VALUES ( { <value> | NULL } [ , ... ] ) [ , ( ... ) ], no example on the page writes the bare spelling, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it. Remedy in the next parser batch: keep a parenthesised flag in the tree, or refuse the bare spelling if its receipt shows the warehouse refuses it; the bare spelling is added to the pending bundle. Earlier findings (db-dml-010) were answered in approval db-dml-015; this record does not reopen them."
+
+[review.fingerprints]
+"db.dml.insert-overwrite-directory" = "af6fb502f93f0d589e7010b7077b0fc0e24409a00ae7e78f239ca65bf68c5bde"
+
+[review.definitions]
+"db.dml.insert-overwrite-directory" = "cf7d61dcfc0a14da22b6006a83f9aecb963171ba49e82213b349b89a6cd6069c"

@@ -66,3 +66,835 @@ note = "Read against the pinned Databricks documentation pages and the Spark 4.2
 "db.utility.show-schemas" = "30f1397eb99ed92b97e1978e16b583edcd6e0464af22c840773ea787ddff465c"
 "db.utility.show-tables" = "412afaf90b9a51f559675abaac631e1b28f8abbf1e9c99a10b0d80020119a130"
 "db.utility.show-views" = "b7d5b4940d075dd22c6ecb5c8bb403d2a9d5cab23859255a04f2f10280e84293"
+
+[[review]]
+id = "db-utility-002"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T05:37:21Z"
+verdict = "approved"
+forms = [
+  "db.utility.analyze-compute-statistics.table-compute-statistics",
+  "db.utility.connector-remove",
+  "db.utility.describe-catalog",
+  "db.utility.describe-history",
+  "db.utility.describe-policy",
+  "db.utility.describe-provider",
+  "db.utility.describe-recipient",
+  "db.utility.describe-share",
+  "db.utility.describe-table.describe-detail",
+  "db.utility.explain",
+  "db.utility.explain-materialized-view",
+  "db.utility.generate",
+  "db.utility.list",
+  "db.utility.show-policies",
+  "db.utility.show-statistics",
+  "db.utility.show-volumes-dropped",
+  "db.utility.sync",
+  "db.utility.vacuum.vacuum",
+  "db.utility.vacuum.vacuum-full-lite-dry",
+]
+note = "Re-read in full on 16 Nov 2026 against the documentation page, the form's obligations, its cases with their Databricks receipts and the local parse trees. Bound on 251cfd3dc only where the form's fingerprint and definition hash still equal those of the dossier that was read; forms that changed since are left for a new reading."
+
+[review.fingerprints]
+"db.utility.analyze-compute-statistics.table-compute-statistics" = "e398a6be904a400a58681db0f045f3058f928972bfa585ded951261688e044cb"
+"db.utility.connector-remove" = "6a76c82baf097004e1bf178fbd0d2a9788aa608d1857cd9a0cfe79097da5059f"
+"db.utility.describe-catalog" = "bd6d0a4f507eb5390be1d091ec287610ee2a9839a033f7da4d897671d0ca2b02"
+"db.utility.describe-history" = "d7fc427896bc2fe5a8236ac433e99457ff071d9a27371800526eccb02c246d34"
+"db.utility.describe-policy" = "0d90d641b514c19eae9861a1728da4bf5c2b1dcea57e8e40543c66a10e68d5e4"
+"db.utility.describe-provider" = "5bcd6851d73bff46e97c1ec81b0f44cff019d9b4dcb03d797d4c0e82580a7d02"
+"db.utility.describe-recipient" = "1bfc321cf53ca115b6e267e5c9e6106bd7674da57346ada9d054902984d97efb"
+"db.utility.describe-share" = "d1ec8b353964b5606bfca68c3e95b62b5930691a03549bc6e1c7fdbdcbe3ba2b"
+"db.utility.describe-table.describe-detail" = "ee50441fa5ca2d68fd6ad090517112b52da21d38042b220d7671d3a0f7247e07"
+"db.utility.explain" = "edfc31c7aced0c0bed1625a1540562f763dc6f8341ba6769a367cebb6980507f"
+"db.utility.explain-materialized-view" = "dcb34fc1f7946b0f76033051ca4b4b02287cc2127732c45945c61069e03bd58d"
+"db.utility.generate" = "79849676f9e9e3b6bebf91c1a9e5f8f1e40eddb847396e3ff635a2f0f78d9137"
+"db.utility.list" = "69ff95a3b9ab10e31dde78ff25e0f09591c30779b3b592f29315813ebdf9b797"
+"db.utility.show-policies" = "283733259bd87eac55497b2499eaae4cc79630e1332fd251c0eb191b4be5897f"
+"db.utility.show-statistics" = "a6abfc76c4dc96bb3861103d2ba09a09776fddaa850f54803931defc79fd89d7"
+"db.utility.show-volumes-dropped" = "718a8d6c4e240cf2df3d8e98de7c6161a4aa443a790d85862145b22b63ca9804"
+"db.utility.sync" = "55439cef0395cdd156d6fa4c7967b40c21ede1851b6fe8ccea9cb64a98e78073"
+"db.utility.vacuum.vacuum" = "8c8a45cc64997177552df6eb18a8d4fb6645cbcd050d38eb32465eab1d94c1b0"
+"db.utility.vacuum.vacuum-full-lite-dry" = "543ec9b21452cd0f38343645c35d2fced7e32229969fe7b180a66e4d8de1cbec"
+
+[review.definitions]
+"db.utility.analyze-compute-statistics.table-compute-statistics" = "e469206e4f0a5c67f5077d18178d64a84a8884171e157d55dad2e273e92ac009"
+"db.utility.connector-remove" = "644d893ee3b6747215e6b9f11894f39b75c9ff866aebf816f2651231f42ef9d7"
+"db.utility.describe-catalog" = "fe06ccbb33e0e2445d1c238c393557e5e05bf952adcc546f85634b12fa9c5fba"
+"db.utility.describe-history" = "c5ee1f32450652cb2734ae4d7419680790fe589c3a67b5b9e29e20848077ab15"
+"db.utility.describe-policy" = "2a7fafcf650149fe21696c6b414353597d5ced6fb28c1653553e3d0ac87ffe91"
+"db.utility.describe-provider" = "8dd21283bcd7cda4b8fbbfb971d1e30d3c7b1e8cb6b5ac17cb86723002872014"
+"db.utility.describe-recipient" = "621685968980cd9668aa1cbd0bbdc706e911f9fef4aeb17e2626ef7ec90f51c0"
+"db.utility.describe-share" = "900606c45273409c2126a2ef041c2fc320da2e3afca686db7daf3c56a48765ee"
+"db.utility.describe-table.describe-detail" = "0ab3a528848e79ffaf3c35c6dd6eb5d291f4faeb8053bf57d44ca411fc2f65fb"
+"db.utility.explain" = "fe7e2f48d7ec9875b37fac8767214a6d84fba7d10592148e0f0b55149eb31e28"
+"db.utility.explain-materialized-view" = "477415c0d6cca614b790e935565bd3755428b4b9b27c4a3744246d3e0308928b"
+"db.utility.generate" = "abf0e919d271698177c3e43aa051d3ddc7529d71cd6466714b78110d431e693a"
+"db.utility.list" = "de24f97c2d8f29f7839f1afe3dc5e1bae03d102387c7c3b7679efb95de0ffd71"
+"db.utility.show-policies" = "cb21e4780169fb5168919974a56e41a5667f12d049e86702d07dd0855a41de1a"
+"db.utility.show-statistics" = "cf93c80d8150ff6791004b9ab6d97634a5d24a658e7fc6cea3645e4b9b25f21f"
+"db.utility.show-volumes-dropped" = "79e26ba23d38114de5395aecbc5a1dba93e78a8b4957a7ae4a7c8265a79d9def"
+"db.utility.sync" = "cf829b3471d749a82265a1697b0181cfd81b9226f0fcd48714ee68d73799661b"
+"db.utility.vacuum.vacuum" = "6bbbeea5fd22e256a3126d297ecdba3187f81f70aafed48f0dd9fd4a462dd116"
+"db.utility.vacuum.vacuum-full-lite-dry" = "2cf502a6fb37b409e4acd15bbe5d82910176b6c795b37d62cdd864d83af5bb79"
+
+[[review]]
+id = "db-utility-003"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.cache",
+]
+note = "(d) every accepted case is opaque, e.g. o001 CACHE SELECT c1 FROM t1 -> {\"command\":{\"this\":\"CACHE SELECT c1 FROM t1\"}}; columns, table and WHERE are not fields. (a)-(c) pass with the suppress/limit rows."
+
+[review.fingerprints]
+"db.utility.cache" = "1e4d4d094ec21df420ba24208bb21fd92a55f8d785942b5b35cc6efd0b2fbed1"
+
+[review.definitions]
+"db.utility.cache" = "cfa1fbbb651cfaf8c6c790e13806317fe60b7e48369eb917dfb22e25def07f61"
+
+[[review]]
+id = "db-utility-004"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.cache-cache-table",
+]
+note = "(d) stricter reading: optional = in OPTIONS leaves no mark: o009 OPTIONS ( 'storageLevel' = 'DISK_ONLY' ) and o010 OPTIONS ( 'storageLevel' 'DISK_ONLY' ) both give options [[storageLevel, DISK_ONLY]]. (a)(b)(c) hold; LAZY and AS are marked. Parser fix; no recording needed."
+
+[review.fingerprints]
+"db.utility.cache-cache-table" = "4e16d0a004f8c4734891f438c7b1ad2b880b63c8e3357976a77db70dd2428aca"
+
+[review.definitions]
+"db.utility.cache-cache-table" = "6a0d27100c17b7c0b2f8104da08e2814b325e8e4872c1080ecf466d59f700cbb"
+
+[[review]]
+id = "db-utility-005"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.cache-refresh",
+]
+note = "(d) o001/o003 REFRESH 'm' and o004 REFRESH m1 are opaque {\"command\":{\"this\":\"REFRESH 'm'\"}}; resource path is not an operand. (a)-(c) pass."
+
+[review.fingerprints]
+"db.utility.cache-refresh" = "7c9e7c0d49474390fcfec50be9fda91203e2cd0f6913f524b842d3b5e4cbd0a1"
+
+[review.definitions]
+"db.utility.cache-refresh" = "f1f23ac41c6b2993cd8efb184ea1ad2e1d1997cf0329824e705be564e75fecd3"
+
+[[review]]
+id = "db-utility-006"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.cache-refresh-table",
+]
+note = "(d) the TABLE-less spelling is opaque: o001/o003/o005 REFRESH t1 -> {\"command\":{\"this\":\"REFRESH t1\"}}, o009 REFRESH SELECT and REFRESH `SELECT` likewise; only o002 REFRESH TABLE t1 is structured. (a)-(c) pass with the suppress/limit rows."
+
+[review.fingerprints]
+"db.utility.cache-refresh-table" = "b8a87fea9a8ffc2add40941494964944cf76a99bf52abea71fe73241c4f91167"
+
+[review.definitions]
+"db.utility.cache-refresh-table" = "f410891c9c6172efa5d87257317ba307e64d26f611fa23aec46ccfc8ede5a5cd"
+
+[[review]]
+id = "db-utility-007"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.connector-get",
+]
+note = "(d) every accepted case is opaque, e.g. o001 GET '/Volumes/...' TO '/tmp/f1.csv' -> {\"command\":{...}}; paths not operands. (a)-(c) pass."
+
+[review.fingerprints]
+"db.utility.connector-get" = "d9823bfb64a548604226cf16915c92d243c5b92c643edc2e00ce9e1f6d373181"
+
+[review.definitions]
+"db.utility.connector-get" = "70b7f9f9c85aadb8fb2741008aba03d1e1e938b877dfc3201a11c726b0de5729"
+
+[[review]]
+id = "db-utility-008"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.connector-put-into",
+]
+note = "(d) every case is an opaque tree, e.g. o001 PUT '/tmp/f1.csv' INTO '/Volumes/workspace/s1/v1/f1.csv' -> {\"command\":{\"this\":...}}; INTO path and OVERWRITE (o008) land in no field. (a)-(c) hold."
+
+[review.fingerprints]
+"db.utility.connector-put-into" = "4cffc2c864506e6eb0e4a836a11c6fdae05766b1e1732a3eff0ff8f0c5225fae"
+
+[review.definitions]
+"db.utility.connector-put-into" = "26be0ca4dbed251827862b12953a34e65c90363a5f1ab0b7ddbd5205949bad85"
+
+[[review]]
+id = "db-utility-009"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.describe-table",
+]
+note = "(b) o011 alternative -> PARTITION branch uses 'DESC t1' and o012 -> <column_name> branch uses 'DESCRIBE t1': neither takes its branch. (d) column cases are opaque: o027 DESC t1 `c1 Q`, o030, o031 DESC t1 c1 -> {\"command\":...}."
+
+[review.fingerprints]
+"db.utility.describe-table" = "6bd8c7320cf700378b5b2d4d90fe089aabbbfd728bb8441c102718cf473f7794"
+
+[review.definitions]
+"db.utility.describe-table" = "09a995d7029b9593278a076681a74dab5b5b48ca390a0d175d1462701a81e013"
+
+[[review]]
+id = "db-utility-010"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.fsck",
+]
+note = "(d) stricter reading: the only case with <fsck_mode> and DRY RUN (o005/o007/o008/o013 FSCK REPAIR TABLE t1 METADATA ONLY DRY RUN) is REJECTED at 'DRY', so neither option has a tree. (a)-(c) hold; parser fix, no recording."
+
+[review.fingerprints]
+"db.utility.fsck" = "d3649cddab2e21d03835855b96226c67bb36235b4b93b23679f3d6bd1d677789"
+
+[review.definitions]
+"db.utility.fsck" = "8566df9a2c199ebb728e6b46c722e0b4011905a4f218cfe195b18970f57bac58"
+
+[[review]]
+id = "db-utility-011"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.resource-mgmt-add-archive",
+]
+note = "(d) every accepted case is opaque: o001 ADD ARCHIVE 'f1.parquet', o010 ADD ARCHIVES ... -> {\"command\":{\"this\":...}}; ARCHIVE vs ARCHIVES and the file operand land in no field. (a) via [[reading]] holds."
+
+[review.fingerprints]
+"db.utility.resource-mgmt-add-archive" = "4f91ae1882e9fb7218642b57ccdab92acf48f4f335501480ddeee0ef32463c01"
+
+[review.definitions]
+"db.utility.resource-mgmt-add-archive" = "79034f9d0e8b389739256b22b768eafd49a134cf58b3948c58fd7cf1c6517bbe"
+
+[[review]]
+id = "db-utility-012"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.resource-mgmt-add-file",
+]
+note = "(d) every accepted case is opaque: o001 ADD FILE v1, o013 ADD FILES v1, o009 ADD FILE `v1 Q` -> {\"command\":...}; FILE/FILES and quoting not in fields. (a) via [[reading]] holds; string-literal suppression holds."
+
+[review.fingerprints]
+"db.utility.resource-mgmt-add-file" = "f0457238da12829fb5f0e689be9bf90e9d26ce4513d3b0fa1a66a675b485632f"
+
+[review.definitions]
+"db.utility.resource-mgmt-add-file" = "e39379b6af0efe65215a27e106b21d22d1a1b3ba713b4fe08524477ba9a8dce2"
+
+[[review]]
+id = "db-utility-013"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.resource-mgmt-add-jar",
+]
+note = "(d) every accepted case is opaque: o001 ADD JAR 'f1.parquet', o010 ADD JARS ... -> {\"command\":{\"this\":...}}; JAR vs JARS and the file operand land in no field. (a) via [[reading]] holds."
+
+[review.fingerprints]
+"db.utility.resource-mgmt-add-jar" = "07e46ca3b7c94b570d35d36fb298fc857a9774a9ed15c75df80dc5df2d7865d6"
+
+[review.definitions]
+"db.utility.resource-mgmt-add-jar" = "d2b7131354ec8376e4285dc92ae7b00203ad480d22e09f8b944fcf5a4261fb3b"
+
+[[review]]
+id = "db-utility-014"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.resource-mgmt-list-archive",
+]
+note = "(d) every accepted case is opaque: o001 LIST ARCHIVE, o012 LIST ARCHIVES, o006 LIST ARCHIVE 'f1.parquet' -> {\"command\":...}. (a) via [[reading]] holds."
+
+[review.fingerprints]
+"db.utility.resource-mgmt-list-archive" = "a39e601f3564027af311cf8745b356904f1090aadbfec3be36b0985206a412fd"
+
+[review.definitions]
+"db.utility.resource-mgmt-list-archive" = "5f37f4acb1acf35d11ea063689f58808c9d613995809648b1f9f3e11152a04b0"
+
+[[review]]
+id = "db-utility-015"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.resource-mgmt-list-file",
+]
+note = "(d) every accepted case is opaque: o001 LIST FILE, o015 LIST FILES, o011 LIST FILE `v1 Q` -> {\"command\":...}. (a) via [[reading]] holds; string-literal suppression holds."
+
+[review.fingerprints]
+"db.utility.resource-mgmt-list-file" = "6a32a15c4e2489280008dc103b777c29664bbed2fb6fe901cf0352bb581eb1ed"
+
+[review.definitions]
+"db.utility.resource-mgmt-list-file" = "1ff09263d0a0fe1ed4222eb2e7eac3618785f19c4869295ccef53d8fd3a989e4"
+
+[[review]]
+id = "db-utility-016"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.resource-mgmt-list-jar",
+]
+note = "(d) every accepted case is opaque: o001 LIST JAR, o012 LIST JARS, o006 LIST JAR 'f1.parquet' -> {\"command\":...}. (a) via [[reading]] holds."
+
+[review.fingerprints]
+"db.utility.resource-mgmt-list-jar" = "40ff50cb88d249a6d368762358bb538d63c939bcbd2a16fdc356512842c57b92"
+
+[review.definitions]
+"db.utility.resource-mgmt-list-jar" = "4c48e61f82288274941a80267e3b629b92100930817a3dd01990f5b6d539c433"
+
+[[review]]
+id = "db-utility-017"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.restore",
+]
+note = "(d) every accepted case is opaque: o002 RESTORE TABLE t1 TO VERSION AS OF 0, o001 RESTORE t1 VERSION AS OF 0 -> {\"command\":...}; TABLE, TO and the version land in no field. (a)-(c) hold."
+
+[review.fingerprints]
+"db.utility.restore" = "8db28ce5326eb7bf139874dd9f5389cba3e2842e6dd727c23d66ae1529740afa"
+
+[review.definitions]
+"db.utility.restore" = "0285301c3db41f5695c90e25ba961875964c4d395204f74a2a5965e055f458eb"
+
+[[review]]
+id = "db-utility-018"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.show-partitions",
+]
+note = "(d) PARTITION cases are opaque: o005/o008 SHOW PARTITIONS t1 PARTITION ( c1 = 1 ) -> {\"command\":{\"this\":...}}; the partition spec lands in no field. (a)-(c) hold."
+
+[review.fingerprints]
+"db.utility.show-partitions" = "27e5289e072faf3f13f64245e55aef51964961817ddbeac6fa24d424fcf0b202"
+
+[review.definitions]
+"db.utility.show-partitions" = "fc2e736c4f492592e6f8c2e8f044fd9e7abcb909ca82869830b42c29f772ccf7"
+
+[[review]]
+id = "db-utility-019"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.show-table",
+]
+note = "(d) PARTITION cases are opaque: o002/o007/o012/o015/o019 SHOW TABLE EXTENDED IN s1 LIKE 'm' PARTITION ( c1 = 1 ) -> {\"command\":...}; schema, pattern and partition land in no field. (a)-(c) hold."
+
+[review.fingerprints]
+"db.utility.show-table" = "792912b833da9e92acc277fd12d94a1d54b7a550af5b7959857917cf4d66dfce"
+
+[review.definitions]
+"db.utility.show-table" = "96a080e384bbd0f5df4c68c660c1ad5dd2168163be29885638368aaef82412bc"
+
+[[review]]
+id = "db-utility-020"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.show-tables-dropped",
+]
+note = "(d) stricter reading: every LIMIT case (o002/o007/o009/o012/o014 SHOW TABLES DROPPED FROM s1 LIMIT 1) is REJECTED at 'LIMIT', so LIMIT never gets a tree. (a)-(c) hold; parser fix, no recording."
+
+[review.fingerprints]
+"db.utility.show-tables-dropped" = "07b1a28d36f7b00a40920e751a931f61c3e2702360f1dea955c6d0ccbb205b0a"
+
+[review.definitions]
+"db.utility.show-tables-dropped" = "a36796c12055102cee64d24446e30f3f4d212161365e72f3954bfeb94a75f0e5"
+
+[[review]]
+id = "db-utility-021"
+family = "utility"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.show-tblproperties",
+]
+note = "(d) o021/o023 unquoted key SHOW TBLPROPERTIES t1 ( v1 ) gives scope {\"literal\":{\"literal_type\":\"string\",\"value\":\"v1\"}}, the same shape as ( 'm' ), so ( v1 ) and ( 'v1' ) cannot be told apart. Stricter reading. (a) via [[reading]] holds."
+
+[review.fingerprints]
+"db.utility.show-tblproperties" = "e1e285e47fbe405f53e4f33b492fcaf9bfd5794ae3cffa4c70560ee3a0e9f2ef"
+
+[review.definitions]
+"db.utility.show-tblproperties" = "eb425b0a0c99772296c41777d618721c0f9dd07c7f6a84c4988471c2443a5646"
+
+[[review]]
+id = "db-utility-022"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.analyze-compute-statistics.table-compute-statistics",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint e398a6be904a400a58681db0f045f3058f928972bfa585ded951261688e044cb -> a035a09dc751e30bbb7cfd81ac59ccc8297651f6fa661f918fe2012cae7fb05a: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.analyze-compute-statistics.table-compute-statistics" = "a035a09dc751e30bbb7cfd81ac59ccc8297651f6fa661f918fe2012cae7fb05a"
+
+[review.definitions]
+"db.utility.analyze-compute-statistics.table-compute-statistics" = "e469206e4f0a5c67f5077d18178d64a84a8884171e157d55dad2e273e92ac009"
+
+[[review]]
+id = "db-utility-023"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.connector-remove",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 6a76c82baf097004e1bf178fbd0d2a9788aa608d1857cd9a0cfe79097da5059f -> 4a575d46742554c719393e95f598647e4ca97a77a8d95256ba71ec4aeb094c72: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.connector-remove" = "4a575d46742554c719393e95f598647e4ca97a77a8d95256ba71ec4aeb094c72"
+
+[review.definitions]
+"db.utility.connector-remove" = "644d893ee3b6747215e6b9f11894f39b75c9ff866aebf816f2651231f42ef9d7"
+
+[[review]]
+id = "db-utility-024"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.generate",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 79849676f9e9e3b6bebf91c1a9e5f8f1e40eddb847396e3ff635a2f0f78d9137 -> 1f62f675b107fffda4b8a1dd8c364dc63596c3e2dddb050f16d62b858fd9300c: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.generate" = "1f62f675b107fffda4b8a1dd8c364dc63596c3e2dddb050f16d62b858fd9300c"
+
+[review.definitions]
+"db.utility.generate" = "abf0e919d271698177c3e43aa051d3ddc7529d71cd6466714b78110d431e693a"
+
+[[review]]
+id = "db-utility-025"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.list",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 69ff95a3b9ab10e31dde78ff25e0f09591c30779b3b592f29315813ebdf9b797 -> 31941312588c52b93db323ce0670e60ecd483d74ef0ea9191818da3710b9dd55: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.list" = "31941312588c52b93db323ce0670e60ecd483d74ef0ea9191818da3710b9dd55"
+
+[review.definitions]
+"db.utility.list" = "de24f97c2d8f29f7839f1afe3dc5e1bae03d102387c7c3b7679efb95de0ffd71"
+
+[[review]]
+id = "db-utility-026"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.show-volumes-dropped",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 718a8d6c4e240cf2df3d8e98de7c6161a4aa443a790d85862145b22b63ca9804 -> 848165e4e75b229f336b374fcd34f9c8428b04678a2243276a2688ecdcc68c04: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.show-volumes-dropped" = "848165e4e75b229f336b374fcd34f9c8428b04678a2243276a2688ecdcc68c04"
+
+[review.definitions]
+"db.utility.show-volumes-dropped" = "79e26ba23d38114de5395aecbc5a1dba93e78a8b4957a7ae4a7c8265a79d9def"
+
+[[review]]
+id = "db-utility-027"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.sync",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 55439cef0395cdd156d6fa4c7967b40c21ede1851b6fe8ccea9cb64a98e78073 -> b38199de743bc5ac20247b1c21bd379a5117ac90d987ceb2e23dfd104cc18d54: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.utility.sync" = "b38199de743bc5ac20247b1c21bd379a5117ac90d987ceb2e23dfd104cc18d54"
+
+[review.definitions]
+"db.utility.sync" = "cf829b3471d749a82265a1697b0181cfd81b9226f0fcd48714ee68d73799661b"
+
+[[review]]
+id = "db-utility-028"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:47:23Z"
+verdict = "approved"
+forms = [
+  "db.utility.reorg-table",
+]
+note = "Re-read on 17 Nov 2026. The 16 Nov full reading approved each of these forms at an earlier fingerprint with the same definition hash; every case that changed since (receipts now attached, local verdicts that now agree with them, replaced or whitespace-normalised texts) was read against its receipt and its local parse tree on 6e28c6100, and each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.utility.reorg-table" = "e82860c096b07d6836f511f4ebbd991de8f980aff79c204b30d7e28afe641aec"
+
+[review.definitions]
+"db.utility.reorg-table" = "dd4de5c4937bc97fe339fb7146fb35642df25f5bdf6dfa14273c18f8f38527b2"
+
+[[review]]
+id = "db-utility-029"
+family = "utility"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T07:20:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.analyze-compute-storage-metrics",
+]
+note = "Withdraws this form from the 17 Nov approval db-utility-028. o019 (the inventory path followed by a second string, CONF left out) is met by accident: the warehouse joins 'm' 'v1' into one path and refuses at the end of input because CONF is missing, but the local parser refuses at 'v1', and with one path string and no CONF (USING INVENTORY LOCATION 'm') it accepts. The parser must require CONF; a case with CONF left out and one path string needs a receipt."
+
+[review.fingerprints]
+"db.utility.analyze-compute-storage-metrics" = "42a62252e9488df1fe181b303303148ad790b12e2c099945fb322d9f49a9390e"
+
+[review.definitions]
+"db.utility.analyze-compute-storage-metrics" = "40345f68df0482cadc53f9b24485832263ce96b892b381760ba35ba8ad88684f"
+
+[[review]]
+id = "db-utility-030"
+family = "utility"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:10:57Z"
+verdict = "approved"
+forms = [
+  "db.utility.analyze-compute-storage-metrics",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in e54adcf23: ANALYZE ... USING INVENTORY LOCATION joins adjacent strings and requires CONF, and ALTER CATALOG with SET or UNSET TAGS takes only a name as the catalog. Every changed case was read against its 2026.45 receipt and its local parse tree, and every negative's local error position against the receipt's. analyze o019 now fails at end of input (pos 74) like the warehouse, and its CONF is required. The new o028 (one string, no CONF) and alter-catalog o113 ('v1' before SET TAGS) agree in phase and position with their recorded receipts. create-connection and create-server positives now name distinct OPTIONS keys (v1, v2), and their recorded receipts are semantic_error after parsing. Position differences read on purpose: alter-catalog o103 and o057 fail one token later in the warehouse, which also refuses both texts as syntax errors. alter-catalog o039 and the connection and server o012 are value checks with no warehouse position; their mechanical repair (giving the key a value) is accepted on both sides. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.utility.analyze-compute-storage-metrics" = "1c84cb0a313247321c0f7764d6b3bb433399124dcf583e600bad96406479c71c"
+
+[review.definitions]
+"db.utility.analyze-compute-storage-metrics" = "711af68f72d07e9a4f85eaa1a6aafa9e055085b32da421c75226471157af8b8e"
+
+[[review]]
+id = "db-utility-031"
+family = "utility"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.utility.cache-uncache-table",
+  "db.utility.describe-connection",
+  "db.utility.describe-database",
+  "db.utility.describe-procedure",
+  "db.utility.describe-query",
+  "db.utility.describe-schema",
+  "db.utility.describe-volume",
+  "db.utility.show-catalogs",
+  "db.utility.show-columns",
+  "db.utility.show-create-table",
+  "db.utility.show-databases",
+  "db.utility.show-procedures",
+  "db.utility.show-schemas",
+  "db.utility.show-tables",
+  "db.utility.show-views",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.utility.cache-uncache-table" = "88a0c1b5533f797411286a9387f8d610d38fdaebe389cace1934a1780916646d"
+"db.utility.describe-connection" = "50bf12153fbc4ba558fd3e774d5eee43761ccf98072ef7fdff03d7a0190e7c31"
+"db.utility.describe-database" = "5054d6716ba40c730c0664d0dd2106b56ce580dd4e9daa3e3792a47690fe713b"
+"db.utility.describe-procedure" = "760c466ee158d49af0a8d5243be93a11d0d48ff3fa671c4f9b295b11e67db74c"
+"db.utility.describe-query" = "2afd5ac9da8f285929370ec9bbdeb2f0e3abea2bc00748eaaab960e67dab9d44"
+"db.utility.describe-schema" = "6f3ed5bccf349fa574041e8d856efdf58ccbc966e455755fa4f423e144c1ca76"
+"db.utility.describe-volume" = "b1337dfbbce2d9b3c8ee6377b5ab02e08449c79315e07cc5eff041dfac23dae3"
+"db.utility.show-catalogs" = "cb16b3dd18cc87c275a0426b95e9eb90aa0956e0a8bc390fbbdd27cef570282c"
+"db.utility.show-columns" = "c4f244276f338bbeee4447c1ed2c932d6cd47559646fb7bfd5270602c2343e87"
+"db.utility.show-create-table" = "f908729ec7cff749b11dc19d375ddbf6640bc78498c7d9a18094bb417db3e0a0"
+"db.utility.show-databases" = "84599152c003bbca9bff6fd14db46a0a0afa6a757667842c8ed29e16eaf418da"
+"db.utility.show-procedures" = "58bd69a4daf616a308247e78bc473fd21889a33d739f8a3e076630d108157ba4"
+"db.utility.show-schemas" = "a9a0c74a184504b187faab232a7eba3fa4c5e0d03d8e1dd1177c10f955ad3d33"
+"db.utility.show-tables" = "17b6c8bd6aa176ba0bd35e5abe124d27941b7e003c9a6dcc5e0f2141d87c5f00"
+"db.utility.show-views" = "b634c46cf4ea59ce437decd5443c9653612dbbc3c2913cddd0389fe0be54c8f1"
+
+[review.definitions]
+"db.utility.cache-uncache-table" = "486c4175a695df99d234399bb4107edbffe5fe8628401aa2040aeb919be45e45"
+"db.utility.describe-connection" = "066c883120be749be16e2470b16caf8758b7201d02e9126a1a0506f52b32de37"
+"db.utility.describe-database" = "fd182abe6a869e98b92afd128bb690ff576476d1104c6e0ce2cc2a5ca3e42be7"
+"db.utility.describe-procedure" = "1c2c7094802a4667989df0b2d973f61b30bb392ffef6480fb98f77abdf59a8d5"
+"db.utility.describe-query" = "92927a88821163b0ccb26ca45c92ffeeef453a823c17d36c55ec709a2b1d928a"
+"db.utility.describe-schema" = "b04979c9f05d8a939465f44122e0d51bd383fa3363ba7effc9a6e080c5756cc0"
+"db.utility.describe-volume" = "e9207808ac0f6bc65c946af9900d8b4c2613ac569731872f8fe35137c6bdd1eb"
+"db.utility.show-catalogs" = "7d1c3d2a8ee25a05be89ea93c7808a0c8a2be56482cbd952b12d6e8abb812f9e"
+"db.utility.show-columns" = "893cd342313e71595b51d616220e39b065023974a4bd6fd601a480e51c68c9ce"
+"db.utility.show-create-table" = "78aa4d9469e5f02f0491b534508b252769db8188912b555729f2383e76b939f2"
+"db.utility.show-databases" = "f3eaf1dae1ef6041898db81b02fda6203c8d87f8971e5b43f4b6ad6b806b6f8b"
+"db.utility.show-procedures" = "310ff72e73b04acbdffab2150ef14941847152485277d953405febd26a2652d4"
+"db.utility.show-schemas" = "30f1397eb99ed92b97e1978e16b583edcd6e0464af22c840773ea787ddff465c"
+"db.utility.show-tables" = "412afaf90b9a51f559675abaac631e1b28f8abbf1e9c99a10b0d80020119a130"
+"db.utility.show-views" = "b7d5b4940d075dd22c6ecb5c8bb403d2a9d5cab23859255a04f2f10280e84293"
+
+[[review]]
+id = "db-utility-032"
+family = "utility"
+parser_tree = "fe929d66181dd6dace2630744e5bd823f3cee506"
+reviewed_utc = "2026-11-17T13:08:12Z"
+verdict = "approved"
+forms = [
+  "db.utility.cache-cache-table",
+]
+note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evidence set evK-17nov, after the CACHE TABLE OPTIONS parser fix. It answers db-utility-004, whose binding went stale with this tree: OPTIONS ( 'storageLevel' 'DISK_ONLY' ) (NOT_SUPPORTED_WITH_DB_SQL, parsed) now records position 0 in options_without_equals, and OPTIONS ( 'storageLevel' = 'DISK_ONLY' ) (accepted, with LAZY and AS) leaves it empty, so the page's optional = has a mark. LAZY and AS stay marked. Rejects: OPTIONS ( 'storageLevel' ) is refused with the warehouse's message, Values must be specified for key(s), whose receipt gives no position; the others are at the warehouse's position. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.utility.cache-cache-table" = "b3dcaeb036729023c39b17aa6aa1e6cd723028a92dd90dc25d4a83bfa668bd0d"
+
+[review.definitions]
+"db.utility.cache-cache-table" = "6a0d27100c17b7c0b2f8104da08e2814b325e8e4872c1080ecf466d59f700cbb"
+
+[[review]]
+id = "db-utility-033"
+family = "utility"
+parser_tree = "35d5c2c80f5764cfedd60956a5eb6572a578a3b7"
+reviewed_utc = "2026-11-17T16:22:17Z"
+verdict = "approved"
+forms = [
+  "db.utility.cache",
+  "db.utility.cache-refresh",
+  "db.utility.cache-refresh-table",
+  "db.utility.resource-mgmt-add-archive",
+  "db.utility.resource-mgmt-add-file",
+  "db.utility.resource-mgmt-add-jar",
+  "db.utility.resource-mgmt-list-archive",
+  "db.utility.resource-mgmt-list-file",
+  "db.utility.resource-mgmt-list-jar",
+  "db.utility.restore",
+  "db.utility.show-partitions",
+  "db.utility.show-table",
+  "db.utility.show-tblproperties",
+]
+note = "Re-read on 17 Nov 2026 at 67a98c60d against the 2026.45 receipts in evidence set evL, after the parser-fixes merge and the utility gap fixes. It answers the (d) findings of db-utility-003, -005, -006, -011 to -019 and -021, whose bindings went stale with these trees: every accepted case parses to a tree. CACHE SELECT's columns, FROM table and WHERE condition are operands; where the warehouse reads FROM or WHERE as a name, so does the tree, as the receipts show: UNRESOLVED_COLUMN `FROM` at position 13 for CACHE SELECT FROM t1, `c1` for CACHE SELECT c1 FROM, and accepted for CACHE SELECT c1 FROM t1 WHERE. REFRESH and ADD or LIST FILE, JAR and ARCHIVE keep the resource path as written, quotes included, as the warehouse does (REFRESH `t1 Q` fails on its space), and the singular and plural keywords stay apart. RESTORE records TABLE and TO; SHOW PARTITIONS and SHOW TABLE EXTENDED keep the partition spec; SHOW TBLPROPERTIES t1 ( v1 ) gives an identifier and ( 'm' ) a string, answering db-utility-021. Rejects: those off the warehouse's position are syntax errors on both sides, refused at the misspelt or missing keyword up to 9 characters earlier; REFRESH alone, REFRESH `t1 Q` and ADD v1 are refused with the warehouse's reason, whose receipts give no position (the empty REFRESH's local error class name differs from the warehouse's, a fix-list item). The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.utility.cache" = "16a07f390fa360c62ef7107dafa3c3f276ff021fa510ecdfc4eb7a7d2499c76b"
+"db.utility.cache-refresh" = "b43b4f210f0735f9be28deed7618045664b4f9dee2a37fbd10828e4174fb8b1d"
+"db.utility.cache-refresh-table" = "6cb2b4d18a080af8f55f49c18846258d1bb455a4f92fc780e09db326a0620e0e"
+"db.utility.resource-mgmt-add-archive" = "b00b3459637eb91bce824af26d2d2088aaaf6c9e6b3db181b0fdfc268fed3115"
+"db.utility.resource-mgmt-add-file" = "016c7039cdf8f7ab979b5661173b1c58b09a7e713a66c418ca6319d9fbb14f6a"
+"db.utility.resource-mgmt-add-jar" = "4b30106753bcd1c7184e1228f210a605d46c1fadb90f74b0aa79777f131fb6b3"
+"db.utility.resource-mgmt-list-archive" = "636d1e5b3b50fc6194871d84d195f9de27f60018a5c0c500fd3b706fc021c275"
+"db.utility.resource-mgmt-list-file" = "af5ac95d4ceda61d17e7bdfad4a1134b01ce92ac74b0d1f8f388af41be30852b"
+"db.utility.resource-mgmt-list-jar" = "fadc5b013a00cc20641a32cc905dd9d059361d28131acc2e5bcf43a04dc89a61"
+"db.utility.restore" = "82315cb33fc780089742dda6f385af614647137b2bc771a3bceeba3a5d018ae4"
+"db.utility.show-partitions" = "66f6663d5764f63b7f6433b633191c7ef7cbace3085ee5c7c769d02cc59f722c"
+"db.utility.show-table" = "45fc59c572f03b324926a5bf8deca829a7595d069bc25ec45d08038e53889c36"
+"db.utility.show-tblproperties" = "a4f101ef7e6f337709dbd423f9d605dba95a14d46a3501fd85622675f137b3d9"
+
+[review.definitions]
+"db.utility.cache" = "cfa1fbbb651cfaf8c6c790e13806317fe60b7e48369eb917dfb22e25def07f61"
+"db.utility.cache-refresh" = "281794a48e0817cdd63862ef9049c39401084068a8beb3e2dad8e20d226a300a"
+"db.utility.cache-refresh-table" = "015c23487378d10999628e63a7f4eebc5c37295630ce2d19c32119d3f638c141"
+"db.utility.resource-mgmt-add-archive" = "c01cd1da624b7e043937280b500231981b050e004ead853ffaeeb85c0c0539a5"
+"db.utility.resource-mgmt-add-file" = "ae60aaa793e0243ec41d2a4c034e404a58dace75e15914b73d96af3c4ac98e12"
+"db.utility.resource-mgmt-add-jar" = "246f89f4803f8e695f62d93be17e9ef3a20cd4fb97befccf68e89188f5827e6d"
+"db.utility.resource-mgmt-list-archive" = "b68e0e6f4ebb40d9782fc6337a520c8c19193bdc5bc434ef0959e6271b18404d"
+"db.utility.resource-mgmt-list-file" = "1ff09263d0a0fe1ed4222eb2e7eac3618785f19c4869295ccef53d8fd3a989e4"
+"db.utility.resource-mgmt-list-jar" = "318408d6fc9bf1d93bca3107cb7d736e88c471b8f5480c3c1920f29872bc2634"
+"db.utility.restore" = "0285301c3db41f5695c90e25ba961875964c4d395204f74a2a5965e055f458eb"
+"db.utility.show-partitions" = "fc2e736c4f492592e6f8c2e8f044fd9e7abcb909ca82869830b42c29f772ccf7"
+"db.utility.show-table" = "96a080e384bbd0f5df4c68c660c1ad5dd2168163be29885638368aaef82412bc"
+"db.utility.show-tblproperties" = "b360463e3bd3b897e6f4c117ce4914ab6cbbf8aed5c57c813cd3c50652a7a51b"
+
+[[review]]
+id = "db-utility-034"
+family = "utility"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.utility.optimize",
+  "db.utility.show-functions",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.utility.optimize" = "f9f2a9c7900cc3d0183d02340c25e33115e9ddb66a95cf84d61799bfae4f8acf"
+"db.utility.show-functions" = "adcd1cfe9274c1eab63e23e15bd4720cd848dce1fb7e13e9ce17fa20ecf396e7"
+
+[review.definitions]
+"db.utility.optimize" = "eedc05c6514793ae2c8230ab6705e6daf66be667d140e5ca9f0a7848023f91e9"
+"db.utility.show-functions" = "1f8af9bd7f6b34619f75c2ba80e3c6aba6c77a4c5b0fc5fd2ba99ab96e046bbf"
+
+[[review]]
+id = "db-utility-035"
+family = "utility"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.describe-table",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: describe-table: db-utility-009's (b) finding still holds: o011 (PARTITION branch) and o012 (<column_name> branch) are still credited to DESC t1 and DESCRIBE t1, which take neither branch. Its (d) finding is answered (column cases are trees). Obligation fix; the cases exist with receipts."
+
+[review.fingerprints]
+"db.utility.describe-table" = "d03c9d3e4da265dc7b1e0d74ccdbf0576af2b0a546f3046a1ccea756177638de"
+
+[review.definitions]
+"db.utility.describe-table" = "8f56d4b7ca15ab0078e8416067fd0d0ba7ae21bb1d588c7e663c8ad29f6cfdbf"
+
+[[review]]
+id = "db-utility-036"
+family = "utility"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.utility.connector-get",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 8 of 8 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. connector-get: db-utility-007 (opaque) is answered: the utility statement keeps the paths as operands, with TO as a property."
+
+[review.fingerprints]
+"db.utility.connector-get" = "6e5771ba5297404b92df47e3f5dd5288006828c855e6776cbce39483f57fa773"
+
+[review.definitions]
+"db.utility.connector-get" = "70b7f9f9c85aadb8fb2741008aba03d1e1e938b877dfc3201a11c726b0de5729"
+
+[[review]]
+id = "db-utility-037"
+family = "utility"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.utility.connector-put-into",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 10 of 10 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. connector-put-into: db-utility-008 (opaque) is answered: the utility statement keeps the paths as operands, with INTO and OVERWRITE as properties."
+
+[review.fingerprints]
+"db.utility.connector-put-into" = "08fbb82e275e2f9cecd0be86c3434a6222f096183046f2fd0052ff4336d57318"
+
+[review.definitions]
+"db.utility.connector-put-into" = "26be0ca4dbed251827862b12953a34e65c90363a5f1ab0b7ddbd5205949bad85"
+
+[[review]]
+id = "db-utility-038"
+family = "utility"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.utility.describe-volume",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 5 of 5 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. describe-volume: no open finding. The volume name is now a table node with its schema as its own part."
+
+[review.fingerprints]
+"db.utility.describe-volume" = "ea0d81ae5cc10bbb8ff2638e8f81f1b74f4d5ed301e9dbd354a0669c87c58060"
+
+[review.definitions]
+"db.utility.describe-volume" = "e9207808ac0f6bc65c946af9900d8b4c2613ac569731872f8fe35137c6bdd1eb"
+
+[[review]]
+id = "db-utility-039"
+family = "utility"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.utility.fsck",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 15 of 15 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. fsck: db-utility-010 is answered: FSCK REPAIR TABLE t1 METADATA ONLY DRY RUN is accepted, with both as properties."
+
+[review.fingerprints]
+"db.utility.fsck" = "ca84e566372ec3db4bece8effd0c5c5290a54566c3f4cccbe3ba798b4d7c6dd2"
+
+[review.definitions]
+"db.utility.fsck" = "8566df9a2c199ebb728e6b46c722e0b4011905a4f218cfe195b18970f57bac58"
+
+[[review]]
+id = "db-utility-040"
+family = "utility"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.utility.show-tables-dropped",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 16 of 16 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. show-tables-dropped: db-utility-020 is answered: LIMIT 1 is accepted and kept as limit."
+
+[review.fingerprints]
+"db.utility.show-tables-dropped" = "befa4ff1bd9b5ba5a6b0a34782a26827dde24184e976d7ba6c3662dfe9a27abb"
+
+[review.definitions]
+"db.utility.show-tables-dropped" = "a36796c12055102cee64d24446e30f3f4d212161365e72f3954bfeb94a75f0e5"
+
+[[review]]
+id = "db-utility-041"
+family = "utility"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.utility.optimize",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 1 accepted cases give one tree with and without the parentheses, e.g. k8b814db72656: OPTIMIZE t1 FULL WHERE c1 = 1 ZORDER BY ( c1 , c1 )  ==  OPTIMIZE t1 FULL WHERE c1 = 1 ZORDER BY c1 , c1. The pinned grammar prints only ZORDER BY ( <col_name1> [ , ... ] ), no example on the page writes the bare spelling, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it. Remedy in the next parser batch: keep a parenthesised flag in the tree, or refuse the bare spelling if its receipt shows the warehouse refuses it; the bare spelling is added to the pending bundle. No earlier finding; approved in db-utility-034."
+
+[review.fingerprints]
+"db.utility.optimize" = "f9f2a9c7900cc3d0183d02340c25e33115e9ddb66a95cf84d61799bfae4f8acf"
+
+[review.definitions]
+"db.utility.optimize" = "eedc05c6514793ae2c8230ab6705e6daf66be667d140e5ca9f0a7848023f91e9"
+
+[[review]]
+id = "db-utility-042"
+family = "utility"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.optimize",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 24 of 24 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case; the 1 requote variant it allows rewrites one string literal in the other quote style, which the lexer reads as the same token. optimize: db-utility-041 is answered: ZORDER BY's optional parentheses are a paren node whatever the column count, so OPTIMIZE t1 FULL WHERE c1 = 1 ZORDER BY ( c1 , c1 ) and ZORDER BY c1 , c1 give two trees (k8b814db72656), as do ZORDER BY ( c1 ) and ZORDER BY c1."
+
+[review.fingerprints]
+"db.utility.optimize" = "061ba8d2d956351ea23e6f73fa56d1849d7e2f01ecff1f94f5f40c96abe1014a"
+
+[review.definitions]
+"db.utility.optimize" = "eedc05c6514793ae2c8230ab6705e6daf66be667d140e5ca9f0a7848023f91e9"
