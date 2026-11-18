@@ -63,18 +63,22 @@ impl Parser<'_> {
         Ok(self.spanned(first, node))
     }
 
-    /// `string_literal` or `bytes_literal`: its chunks of one kind joined, with whether bytes.
-    fn literal_chunks(&mut self) -> Parsing<(String, bool)> {
+    /// `string_literal` or `bytes_literal`: its chunks of one kind, each as written, with whether bytes.
+    fn literal_chunks(&mut self) -> Parsing<(Vec<Literal>, bool)> {
         let bytes: bool = match self.peek().map(|token| token.kind) {
             Some(TokenKind::String { bytes, .. }) => bytes,
             _ => return Err(self.error()),
         };
-        let mut text: String = String::new();
+        let mut chunks: Vec<Literal> = Vec::new();
         loop {
-            text.push_str(&self.advance()?.value);
+            let token: Token = self.advance()?;
+            chunks.push(match token.kind {
+                TokenKind::String { raw: true, .. } => Literal::RawString(token.value),
+                _ => Literal::String(token.value),
+            });
             let Some(TokenKind::String { bytes: next, .. }) = self.peek().map(|token| token.kind)
             else {
-                return Ok((text, bytes));
+                return Ok((chunks, bytes));
             };
             if next != bytes {
                 return Err(self.error_with(
@@ -98,30 +102,22 @@ impl Parser<'_> {
     pub(crate) fn string_lit(&mut self) -> Parsing<String> {
         let start: usize = self.offset();
         match self.literal_chunks()? {
-            (text, false) => Ok(text),
+            (chunks, false) => Ok(chunks.iter().map(Literal::value_str).collect()),
             (_, true) => {
                 Err(self.error_with("Syntax error: Unexpected bytes literal", start, true))
             }
         }
     }
 
-    /// A string or bytes literal; one raw string chunk stays raw.
+    /// A string or bytes literal; one string chunk stays as written, several keep their chunks.
     pub(crate) fn string_literal(&mut self) -> Parsing<Expression> {
-        if let Some(token) = self.peek().cloned()
-            && token.kind
-                == (TokenKind::String {
-                    raw: true,
-                    bytes: false,
-                })
-            && !self.string_at(1)
-        {
-            self.at += 1;
-            return Ok(literal(Literal::RawString(token.value)));
-        }
-        Ok(match self.literal_chunks()? {
-            (text, false) => string(&text),
-            (text, true) => literal(Literal::ByteString(text)),
-        })
+        let (mut chunks, bytes) = self.literal_chunks()?;
+        let text: String = chunks.iter().map(Literal::value_str).collect();
+        Ok(literal(match (bytes, chunks.len()) {
+            (true, _) => Literal::ByteString(text),
+            (false, 1) => chunks.remove(0),
+            (false, _) => Literal::JoinedString(text, chunks),
+        }))
     }
 
     fn primary_base(&mut self) -> Parsing<Expression> {
