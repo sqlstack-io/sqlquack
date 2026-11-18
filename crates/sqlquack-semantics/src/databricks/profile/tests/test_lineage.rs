@@ -670,6 +670,30 @@ fn given_one_string_spelled_two_ways_when_grouping_then_the_expressions_match() 
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "a raw DATE literal in the select, a plain one in GROUP BY",
+            sql: "SELECT datediff(ordered_at, DATE r'2020-01-01') AS x FROM orders GROUP BY datediff(ordered_at, DATE '2020-01-01')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a plain TIMESTAMP literal in the select, a raw one in GROUP BY",
+            sql: "SELECT COALESCE(ordered_at, TIMESTAMP '2020-01-01 00:00:00') AS x FROM orders GROUP BY COALESCE(ordered_at, TIMESTAMP r'2020-01-01 00:00:00')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a raw X literal in the select, a plain one in GROUP BY",
+            sql: "SELECT COALESCE(CAST(status AS BINARY), X r'AB') AS x FROM orders GROUP BY COALESCE(CAST(status AS BINARY), X'AB')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a raw DATE literal of another value is still a different expression",
+            sql: "SELECT datediff(ordered_at, DATE r'2020-01-02') AS x FROM orders GROUP BY datediff(ordered_at, DATE '2020-01-01')",
+            expected_findings: &[(
+                "E230",
+                "Column must be grouped or used in an aggregate function",
+                16,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "adjacent strings of another value are still a different expression",
             sql: "SELECT COALESCE(status, 'a' 'c') AS x FROM orders GROUP BY COALESCE(status, 'ab')",
             expected_findings: &[(

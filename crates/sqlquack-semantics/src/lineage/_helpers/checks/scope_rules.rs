@@ -2,7 +2,7 @@
 
 use std::collections::{HashMap, HashSet};
 
-use serde_json::Value;
+use serde_json::{Map, Value};
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Column, Identifier, Literal};
@@ -15,7 +15,8 @@ use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::sources::{every_join, from_parts};
 use crate::lineage::constants::{
-    LITERAL_TYPE_FIELD, LITERAL_VALUE_FIELD, NAME_FIELD, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX,
+    CAST_FIELDS, CUSTOM_TYPE_FIELDS, LITERAL_FIELD, LITERAL_TYPE_FIELD, LITERAL_VALUE_FIELD,
+    NAME_FIELD, RAW_STRING_KIND, RAW_TYPED_LITERALS, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX,
     SHAPE_COSMETIC_FIELDS, SPAN_FIELD, WINDOW_ONLY_FUNCTIONS,
 };
 use crate::lineage::models::Engine;
@@ -839,10 +840,13 @@ fn spelled_strings(expression: &Expression) -> bool {
     })
 }
 
-/// A serialized expression without source ranges, each raw or adjacent string a plain string.
+/// A serialized expression without source ranges, raw, adjacent and raw typed strings as plain.
 fn plain_strings(value: Value) -> Value {
     match value {
         Value::Object(mut map) => {
+            if let Some(literal) = raw_typed_literal(&map) {
+                return literal;
+            }
             let spelled = matches!(
                 map.get(LITERAL_TYPE_FIELD).and_then(Value::as_str),
                 Some("raw_string" | "joined_string")
@@ -870,6 +874,35 @@ fn plain_strings(value: Value) -> Value {
         Value::Array(items) => Value::Array(items.into_iter().map(plain_strings).collect()),
         other => other,
     }
+}
+
+/// The typed literal a serialized cast of a raw string to `DATE`, `TIME`, `TIMESTAMP` or `X` reads as.
+fn raw_typed_literal(map: &Map<String, Value>) -> Option<Value> {
+    let [cast_field, this_field, to_field] = CAST_FIELDS;
+    let [type_field, custom] = CUSTOM_TYPE_FIELDS;
+    let cast: &Map<String, Value> = map.get(cast_field)?.as_object()?;
+    let text: &Value = cast.get(this_field)?.get(LITERAL_FIELD)?;
+    let to: &Value = cast.get(to_field)?;
+    if map.len() != 1
+        || text.get(LITERAL_TYPE_FIELD)?.as_str()? != RAW_STRING_KIND
+        || to.get(type_field)?.as_str()? != custom
+    {
+        return None;
+    }
+    let word: &str = to.get(NAME_FIELD)?.as_str()?;
+    let (_, kind) = RAW_TYPED_LITERALS.iter().find(|(name, _)| *name == word)?;
+    let mut literal: Map<String, Value> = Map::new();
+    literal.insert(
+        LITERAL_TYPE_FIELD.to_owned(),
+        Value::String((*kind).to_owned()),
+    );
+    literal.insert(
+        LITERAL_VALUE_FIELD.to_owned(),
+        text.get(LITERAL_VALUE_FIELD)?.clone(),
+    );
+    let mut node: Map<String, Value> = Map::new();
+    node.insert(LITERAL_FIELD.to_owned(), Value::Object(literal));
+    Some(Value::Object(node))
 }
 
 /// The column references of `expression`, in tree order.
