@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.18.0](https://github.com/sqlstack-io/sqlquack/compare/v0.17.0...v0.18.0) (2026-11-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **syntax:** serialised call trees carry set_quantifier in place of distinct.
+
+### Features
+
+* **coverage:** add the Databricks receipt referee and obligation tooling ([d664bd7](https://github.com/sqlstack-io/sqlquack/commit/d664bd7aee12e7aa8a45ad3bcce6ab052d6ec540))
+* **coverage:** catalogue Databricks SQL 2026.45 forms, obligations and cases ([afab7da](https://github.com/sqlstack-io/sqlquack/commit/afab7da213633ffe71b8b3252b3085555293eb71))
+* **coverage:** screen approved forms for collapsed spellings and gate on it ([d3edd9d](https://github.com/sqlstack-io/sqlquack/commit/d3edd9da090ebeb811bdbd4bbb2db71a9e0bb517))
+* **databricks:** parse documented Databricks SQL into trees that keep what was written ([80e56ab](https://github.com/sqlstack-io/sqlquack/commit/80e56ab50a373f4ecd83d3a109b173414435e380))
+* **syntax:** record a call's set quantifier, keeping an explicit ALL ([9863126](https://github.com/sqlstack-io/sqlquack/commit/9863126fbe2c5952970729a489931ee343d7f3a8))
+
+
+### Bug Fixes
+
+* **convert:** count rows for COUNT(*) under any quantifier but DISTINCT ([5377ca7](https://github.com/sqlstack-io/sqlquack/commit/5377ca74c7ddf7116a0934d972d42e158b428624))
+* **databricks:** keep the formatter and lint refusing forms whose trees are not reviewed ([fb82b0a](https://github.com/sqlstack-io/sqlquack/commit/fb82b0a4402255a6e35b1607de9081e05c61089c))
+* **website:** show the current Snowflake syntax figure and fail CI when it drifts ([28dab7b](https://github.com/sqlstack-io/sqlquack/commit/28dab7bd05df7b2bb08c6c01ba672f5e8be87742))
+
 ## [0.17.0](https://github.com/sqlstack-io/sqlquack/compare/v0.16.1...v0.17.0) (2026-11-16)
 
 
