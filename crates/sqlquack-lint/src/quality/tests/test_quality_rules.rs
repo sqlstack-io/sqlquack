@@ -516,6 +516,26 @@ fn given_a_query_or_cte_body_in_parentheses_when_linting_then_its_ctes_are_check
             ),
         },
         QualityRuleTestCase {
+            description: "an unused CTE output, WITH before a parenthesized query with LIMIT inside and ORDER BY after",
+            sql: "WITH orders AS (SELECT o.order_id, o.status, o.note FROM raw_orders AS o), final AS (SELECT r.order_id, r.status FROM orders AS r) (SELECT f.order_id, f.status FROM final AS f LIMIT 5) ORDER BY 1",
+            rule: "SQLCLEAN042",
+            relation_keys: "{}",
+            expected_anchors: &["o.note"],
+            expected_fixed_sql: Some(
+                "WITH orders AS (SELECT o.order_id, o.status FROM raw_orders AS o), final AS (SELECT r.order_id, r.status FROM orders AS r) (SELECT f.order_id, f.status FROM final AS f LIMIT 5) ORDER BY 1",
+            ),
+        },
+        QualityRuleTestCase {
+            description: "a CTE column read only by an ORDER BY after the parentheses stays",
+            sql: "WITH orders AS (SELECT o.order_id, o.status, o.note FROM raw_orders AS o), other AS (SELECT 1 AS one) (SELECT r.order_id FROM orders AS r LIMIT 5) ORDER BY r.note",
+            rule: "SQLCLEAN042",
+            relation_keys: "{}",
+            expected_anchors: &["o.status"],
+            expected_fixed_sql: Some(
+                "WITH orders AS (SELECT o.order_id, o.note FROM raw_orders AS o), other AS (SELECT 1 AS one) (SELECT r.order_id FROM orders AS r LIMIT 5) ORDER BY r.note",
+            ),
+        },
+        QualityRuleTestCase {
             description: "GROUP BY grain is a key, the query bare",
             sql: "WITH totals AS (SELECT o.customer_id, SUM(o.amount) AS amount FROM orders AS o GROUP BY o.customer_id), final AS (SELECT t.customer_id, ROW_NUMBER() OVER (ORDER BY t.amount, t.customer_id) AS rn FROM totals AS t) SELECT f.customer_id, f.rn FROM final AS f",
             rule: "SQLCLEAN018",

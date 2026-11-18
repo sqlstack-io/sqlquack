@@ -2,32 +2,60 @@
 
 use sqlquack_syntax::expressions::names::models::Column;
 use sqlquack_syntax::expressions::names::models::Star;
-use sqlquack_syntax::expressions::queries::models::Select;
+use sqlquack_syntax::expressions::queries::models::{Select, Subquery};
 use sqlquack_syntax::tokens::models::{Token, TokenType};
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
 use crate::quality::constants::MIN_REMOVABLE_OUTPUTS;
 use rustc_hash::FxHashMap;
 
-/// The query within `expression`'s parentheses and clause-free unaliased subquery nodes.
+/// The query within `expression`'s parentheses and unaliased subquery nodes.
 pub(super) fn query_within(expression: &Expression) -> &Expression {
     match expression {
         Expression::Paren(paren) => query_within(&paren.this),
-        Expression::Subquery(subquery)
-            if subquery.alias.is_none()
-                && subquery.order_by.is_none()
-                && subquery.limit.is_none()
-                && subquery.offset.is_none()
-                && subquery.distribute_by.is_none()
-                && subquery.sort_by.is_none()
-                && subquery.cluster_by.is_none()
-                && subquery.table_sample.is_none()
-                && subquery.watermark.is_none() =>
-        {
-            query_within(&subquery.this)
-        }
+        Expression::Subquery(subquery) if around(subquery) => query_within(&subquery.this),
         other => other,
     }
+}
+
+/// The clause expressions of the unaliased subquery nodes around `expression`'s query.
+pub(super) fn clauses_around(expression: &Expression) -> Vec<&Expression> {
+    let mut clauses: Vec<&Expression> = Vec::new();
+    let mut node: &Expression = expression;
+    loop {
+        node = match node {
+            Expression::Paren(paren) => &paren.this,
+            Expression::Subquery(subquery) if around(subquery) => {
+                let ordered = subquery
+                    .order_by
+                    .iter()
+                    .flat_map(|order| &order.expressions)
+                    .chain(subquery.sort_by.iter().flat_map(|sort| &sort.expressions))
+                    .chain(
+                        subquery
+                            .cluster_by
+                            .iter()
+                            .flat_map(|cluster| &cluster.expressions),
+                    );
+                clauses.extend(ordered.map(|ordered| &ordered.this));
+                clauses.extend(
+                    subquery
+                        .distribute_by
+                        .iter()
+                        .flat_map(|distribute| &distribute.expressions),
+                );
+                clauses.extend(subquery.limit.iter().map(|limit| &limit.this));
+                clauses.extend(subquery.offset.iter().map(|offset| &offset.this));
+                &subquery.this
+            }
+            _ => return clauses,
+        };
+    }
+}
+
+/// Whether `subquery` only wraps a query: unaliased, without a sample or watermark.
+fn around(subquery: &Subquery) -> bool {
+    subquery.alias.is_none() && subquery.table_sample.is_none() && subquery.watermark.is_none()
 }
 
 /// One projection of a select list.
