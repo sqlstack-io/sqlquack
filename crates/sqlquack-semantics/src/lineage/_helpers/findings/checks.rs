@@ -11,7 +11,7 @@ use crate::lineage::_helpers::checks::scope_rules::output_width;
 use crate::lineage::_helpers::tracing::queries::empty_scope;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::holds_unpivot;
-use crate::lineage::_helpers::tracing::sources::{from_parts, item_sources};
+use crate::lineage::_helpers::tracing::sources::{from_parts, item_sources, sided_parts};
 use crate::lineage::constants::{
     ALIAS_COUNT_CODE, AMBIGUOUS_COLUMN_CODE, COLUMNS_NO_MATCH, CONNECT_BY_LEVEL, NAME_PHASE,
     UNKNOWN_COLUMN_CODE, UNKNOWN_QUALIFIER_CODE,
@@ -400,12 +400,19 @@ pub(crate) fn using_findings(
 ) -> Vec<NameFinding> {
     let at = select.expressions.first().and_then(Expression::source_span);
     let mut findings: Vec<NameFinding> = Vec::new();
-    for (before, (_, join)) in from_parts(select).into_iter().enumerate() {
-        let Some(join) = join else {
+    let sources = |parts: std::ops::Range<usize>| {
+        let at = |part: usize| {
+            scope.starts.get(part).map_or(scope.sources.len(), |start| {
+                *start.min(&scope.sources.len())
+            })
+        };
+        &scope.sources[at(parts.start)..at(parts.end)]
+    };
+    for part in sided_parts(select) {
+        let Some(join) = part.join else {
             continue;
         };
-        let (left, right) = scope.sources.split_at(before.min(scope.sources.len()));
-        let right: &[ScopeSource] = &right[..right.len().min(1)];
+        let (left, right) = (sources(part.left), sources(part.right));
         for name in &join.using {
             let wanted: String = key(name, context);
             if lacks(left, &wanted, context) || lacks(right, &wanted, context) {

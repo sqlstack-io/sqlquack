@@ -215,6 +215,20 @@ fn given_a_join_in_parentheses_when_resolving_names_then_its_conditions_and_item
                 39,
             )],
         },
+        QueryFindingsTestCase {
+            description: "USING inside the parentheses, its left side only the tables there",
+            sql: "SELECT y.id FROM orders JOIN (customers JOIN orders y USING (customer_id)) ON true",
+            expected_findings: &[(
+                "E201",
+                "JOIN USING column 'customer_id' must exist on both sides",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "USING after the parentheses, its right side every table there",
+            sql: "SELECT y.id FROM orders JOIN (customers JOIN orders y ON true) USING (customer_id)",
+            expected_findings: &[],
+        },
     ];
     let schema = duckdb_shop_schema();
     for test_case in test_cases {
