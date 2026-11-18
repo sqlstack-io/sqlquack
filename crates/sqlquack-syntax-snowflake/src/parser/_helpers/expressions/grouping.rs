@@ -686,6 +686,7 @@ impl Parser {
                 table_sample: None,
                 watermark: None,
                 ctes_outside: false,
+                windows: None,
             };
             let explicit_as = self.match_token(TokenType::As);
             if explicit_as || self.is_identifier_token() || self.is_safe_keyword_as_identifier() {

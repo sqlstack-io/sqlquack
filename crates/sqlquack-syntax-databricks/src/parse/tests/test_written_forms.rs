@@ -832,6 +832,17 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 8,
         },
         DistinctTreesTestCase {
+            description: "WINDOW after a parenthesized query apart from WINDOW over a star of it",
+            written: &[
+                "( SELECT 1 LIMIT 1 ) WINDOW w AS ( )",
+                "SELECT * FROM ( ( SELECT 1 LIMIT 1 ) ) WINDOW w AS ( )",
+                "( SELECT 1 ) WINDOW w AS ( )",
+                "SELECT * FROM ( ( SELECT 1 ) ) WINDOW w AS ( )",
+                "( SELECT 1 WINDOW w AS ( ) )",
+            ],
+            expected_distinct_trees: 5,
+        },
+        DistinctTreesTestCase {
             description: "adjacent strings apart from the one string they join to",
             written: &[
                 "SELECT 'a' 'b'",

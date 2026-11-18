@@ -1323,6 +1323,7 @@ impl Parser {
                 table_sample: None,
                 watermark: None,
                 ctes_outside: false,
+                windows: None,
             }))
         } else {
             inner
