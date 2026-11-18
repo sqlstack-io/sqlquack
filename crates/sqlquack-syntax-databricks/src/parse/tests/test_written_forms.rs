@@ -683,6 +683,40 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 12,
         },
         DistinctTreesTestCase {
+            description: "a parenthesized query with a clause after it and a star over it",
+            written: &[
+                "( SELECT 1 ) ORDER BY 1",
+                "SELECT * FROM ( ( SELECT 1 ) ) ORDER BY 1",
+                "SELECT 1 ORDER BY 1",
+                "( SELECT 1 ) LIMIT 1",
+                "SELECT * FROM ( ( SELECT 1 ) ) LIMIT 1",
+                "( ( SELECT 1 ) ) LIMIT 1",
+                "( SELECT 1 LIMIT 1 )",
+            ],
+            expected_distinct_trees: 7,
+        },
+        DistinctTreesTestCase {
+            description: "CREATE TABLE AS a parenthesized query with LIMIT, and a star over it",
+            written: &[
+                "CREATE TABLE t1 AS ( SELECT 1 ) LIMIT 1",
+                "CREATE TABLE t1 AS SELECT * FROM ( ( SELECT 1 ) ) LIMIT 1",
+                "CREATE TABLE t1 AS SELECT 1 LIMIT 1",
+                "CREATE TABLE t1 AS ( SELECT 1 LIMIT 1 )",
+            ],
+            expected_distinct_trees: 4,
+        },
+        DistinctTreesTestCase {
+            description: "WITH before a parenthesized query, inside it, and over a star",
+            written: &[
+                "WITH c AS ( SELECT 1 ) ( SELECT * FROM c )",
+                "WITH c AS ( SELECT 1 ) SELECT * FROM ( ( SELECT * FROM c ) )",
+                "WITH c AS ( SELECT 1 ) SELECT * FROM c",
+                "( WITH c AS ( SELECT 1 ) SELECT * FROM c )",
+                "WITH c AS ( SELECT 1 ) ( ( SELECT * FROM c ) )",
+            ],
+            expected_distinct_trees: 5,
+        },
+        DistinctTreesTestCase {
             description: "TIMESTAMP bare, WITH LOCAL TIME ZONE and WITHOUT TIME ZONE",
             written: &[
                 "SELECT CAST ( v1 AS TIMESTAMP )",

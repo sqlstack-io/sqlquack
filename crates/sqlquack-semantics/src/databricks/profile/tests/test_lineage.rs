@@ -386,3 +386,67 @@ fn given_a_relation_or_query_in_extra_parentheses_when_analysed_then_it_reads_as
         );
     }
 }
+
+#[test]
+fn given_a_parenthesized_query_with_clauses_after_it_when_analysed_then_they_read_its_sources() {
+    let test_cases = [
+        SameReadingTestCase {
+            description: "ORDER BY a column the query does not output",
+            sql: "( SELECT id FROM orders ) ORDER BY quantity",
+            expected_same_as: "SELECT id FROM orders ORDER BY quantity",
+        },
+        SameReadingTestCase {
+            description: "ORDER BY through the query's table alias",
+            sql: "( SELECT id FROM orders o ) ORDER BY o.quantity",
+            expected_same_as: "SELECT id FROM orders o ORDER BY o.quantity",
+        },
+        SameReadingTestCase {
+            description: "ORDER BY through the table name, then LIMIT",
+            sql: "( SELECT id FROM orders ) ORDER BY orders.quantity LIMIT 1",
+            expected_same_as: "SELECT id FROM orders ORDER BY orders.quantity LIMIT 1",
+        },
+        SameReadingTestCase {
+            description: "an unknown ORDER BY column is still found",
+            sql: "( SELECT id FROM orders ) ORDER BY nope",
+            expected_same_as: "SELECT id FROM orders ORDER BY nope",
+        },
+        SameReadingTestCase {
+            description: "two pairs of parentheses",
+            sql: "( ( SELECT id FROM orders ) ) ORDER BY nope, quantity",
+            expected_same_as: "SELECT id FROM orders ORDER BY nope, quantity",
+        },
+        SameReadingTestCase {
+            description: "inside an IN subquery",
+            sql: "SELECT id FROM orders WHERE id IN ( ( SELECT id FROM customers ) ORDER BY name )",
+            expected_same_as: "SELECT id FROM orders WHERE id IN ( SELECT id FROM customers ORDER BY name )",
+        },
+        SameReadingTestCase {
+            description: "inside a derived table",
+            sql: "SELECT x FROM ( ( SELECT id AS x FROM orders ) ORDER BY quantity ) d",
+            expected_same_as: "SELECT x FROM ( SELECT id AS x FROM orders ORDER BY quantity ) d",
+        },
+        SameReadingTestCase {
+            description: "a pipe ORDER BY after the parentheses",
+            sql: "( SELECT id FROM orders ) |> ORDER BY id",
+            expected_same_as: "SELECT id FROM orders |> ORDER BY id",
+        },
+        SameReadingTestCase {
+            description: "common table expressions before the parentheses",
+            sql: "WITH c AS ( SELECT id FROM orders ) ( SELECT id, nope FROM c )",
+            expected_same_as: "WITH c AS ( SELECT id FROM orders ) SELECT id, nope FROM c",
+        },
+        SameReadingTestCase {
+            description: "common table expressions before the parentheses and a clause after",
+            sql: "WITH c AS ( SELECT id, quantity FROM orders ) ( SELECT id FROM c ) ORDER BY quantity",
+            expected_same_as: "WITH c AS ( SELECT id, quantity FROM orders ) SELECT id FROM c ORDER BY quantity",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            reading(test_case.sql),
+            reading(test_case.expected_same_as),
+            "{}",
+            test_case.description
+        );
+    }
+}
