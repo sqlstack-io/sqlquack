@@ -2065,3 +2065,20 @@ note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tre
 
 [review.definitions]
 "db.ddl.create-recipient" = "4b313315e6c043fc5164e925ceb412cf511fd3172d08797d36374e16bd47622b"
+
+[[review]]
+id = "db-ddl-106"
+family = "ddl"
+parser_tree = "dafbc1c0aa3e303fd9bbf21b7a8f4d1842d3661e"
+reviewed_utc = "2026-11-18T05:46:48Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table",
+]
+note = "Re-read on 18 Nov 2026 at parser tree dafbc1c0 from the existing 2026.45 receipts, because the parser change that keeps tag key spellings changed two of this form's trees: kb4fe2aa33752 ALTER TABLE t1 UNSET TAGS ( 'k' ) and kcba4490330d8 ALTER TABLE t1 SET TAGS ( 'k' = 'v' ) now record that the key was written as a string (string_keys); nothing else in them changed, and no other case's tree or verdict changed. Of db-ddl-073's findings on this form, SET TBLPROPERTIES without = and REFERENCES ... ON DELETE or ON UPDATE NO ACTION now give trees of their own, and a tag key written as a name, backquoted or as a string now gives three trees. One finding still holds: SET TAGS ( 'k' 'v' ) without = gives the same tree as kcba4490330d8 although the grammar requires =, and no receipt shows what the warehouse does. Held until one exists; the text is in the pending recording bundle, and the parser is not changed on a guess."
+
+[review.fingerprints]
+"db.ddl.alter-table" = "93fd4219816042c99f96fb384a36b9f46b302cf7437e5cef6d3fe18623dfc7ce"
+
+[review.definitions]
+"db.ddl.alter-table" = "45f8d3c275e44a178729e82ee86a7ddf4b83d6b1a93ca41cd0a895c42ad47906"
