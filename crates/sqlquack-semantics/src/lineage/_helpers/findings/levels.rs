@@ -363,12 +363,17 @@ fn select_findings(
         own.extend(found);
         nested.extend(inner);
     }
-    let windows = std::iter::once(&select.windows)
+    let windows: Vec<&NamedWindow> = std::iter::once(&select.windows)
         .chain(after.iter().map(|node| &node.windows))
         .flatten()
-        .flatten();
+        .flatten()
+        .collect();
+    let reads: Vec<&Expression> = std::iter::once(node)
+        .chain(orders.iter().flat_map(|order| order_keys(order)))
+        .collect();
     let windowed = if anywhere { level } else { unnamed };
-    for key in windows.flat_map(window_keys) {
+    let used: Vec<&NamedWindow> = used_windows(windows, &reads, context);
+    for key in used.into_iter().flat_map(window_keys) {
         let (found, inner) = clause_findings(key, &windowed, context);
         own.extend(found);
         nested.extend(inner);
@@ -410,6 +415,51 @@ fn ordered_name_place(select: &Select, after: &[&OrderBy], clause: &Expression) 
             .chain(after.iter().copied())
             .flat_map(|order| &order.expressions)
             .any(|ordered| std::ptr::eq(&ordered.this, clause))
+}
+
+/// The windows of `windows` an OVER in `reads` names, directly or through a window extending it.
+fn used_windows<'w>(
+    windows: Vec<&'w NamedWindow>,
+    reads: &[&Expression],
+    context: LineageContext<'_>,
+) -> Vec<&'w NamedWindow> {
+    if windows.is_empty() {
+        return windows;
+    }
+    let mut wanted: Vec<String> = reads
+        .iter()
+        .flat_map(|read| in_scope(read))
+        .filter_map(|node| match node {
+            Expression::WindowFunction(window) => window.over.window_name.as_ref(),
+            _ => None,
+        })
+        .map(|name| key(name, context))
+        .collect();
+    let mut used: Vec<bool> = vec![false; windows.len()];
+    while let Some(name) = wanted.pop() {
+        for (index, window) in windows.iter().enumerate() {
+            if used[index]
+                || !context
+                    .profile
+                    .same_identifier(&key(&window.name, context), &name)
+            {
+                continue;
+            }
+            used[index] = true;
+            wanted.extend(
+                window
+                    .spec
+                    .window_name
+                    .iter()
+                    .map(|base| key(base, context)),
+            );
+        }
+    }
+    windows
+        .into_iter()
+        .zip(used)
+        .filter_map(|(window, used)| used.then_some(window))
+        .collect()
 }
 
 /// The partition and order keys of `window`.
