@@ -182,9 +182,11 @@ impl Parser<'_> {
                 let first: usize = self.at;
                 if self.is_char('(') {
                     self.parenthesized(|parser| parser.function_parameter())?;
-                    let from: usize = self.tokens[first].start;
-                    node.returns_table_body =
-                        Some(self.sql[from..self.tokens[self.at - 1].end].to_owned());
+                    let written: Vec<&str> = self.tokens[first..self.at]
+                        .iter()
+                        .map(|token| &self.sql[token.start..token.end])
+                        .collect();
+                    node.returns_table_body = Some(written.join(" "));
                 }
             } else {
                 node.return_type = Some(self.data_type()?);
