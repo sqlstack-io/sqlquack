@@ -570,6 +570,10 @@ impl Parser<'_> {
                 literal(Literal::Number(format!("-{}", token.value)))
             }
             TokenKind::Number(_) => literal(Literal::Number(token.value)),
+            TokenKind::String { raw: true } if negative => Expression::Neg(Box::new(UnaryOp::new(
+                literal(Literal::RawString(token.value)),
+            ))),
+            TokenKind::String { raw: true } => literal(Literal::RawString(token.value)),
             _ if negative => Expression::Neg(Box::new(UnaryOp::new(string(&token.value)))),
             _ => string(&token.value),
         };
@@ -655,21 +659,21 @@ impl Parser<'_> {
         }
     }
 
-    /// `literalType singleStringLitWithoutMarker`: `DATE '...'`, `TIMESTAMP '...'`, `X'...'`.
+    /// `literalType singleStringLitWithoutMarker`, as `DATE '...'`; a raw string is cast to the word.
     fn typed_literal(&mut self, word: &str) -> Parsing<Expression> {
         let at: usize = self.offset();
         self.at += 1;
-        let value: String = self.advance()?.value;
-        if !is_typed_text(word, &value) {
-            return Err(self.invalid_typed_literal(word, &value, at));
+        let text: Literal = self.one_string()?;
+        if !is_typed_text(word, text.value_str()) {
+            return Err(self.invalid_typed_literal(word, text.value_str(), at));
         }
-        Ok(match word {
-            "DATE" => literal(Literal::Date(value)),
-            "TIME" => literal(Literal::Time(value)),
-            "TIMESTAMP" => literal(Literal::Timestamp(value)),
-            "X" => literal(Literal::HexString(value)),
-            _ => Expression::Cast(Box::new(cast(
-                string(&value),
+        Ok(match (word, text) {
+            ("DATE", Literal::String(value)) => literal(Literal::Date(value)),
+            ("TIME", Literal::String(value)) => literal(Literal::Time(value)),
+            ("TIMESTAMP", Literal::String(value)) => literal(Literal::Timestamp(value)),
+            ("X", Literal::String(value)) => literal(Literal::HexString(value)),
+            (_, text) => Expression::Cast(Box::new(cast(
+                literal(text),
                 DataType::Custom {
                     name: word.to_owned(),
                 },

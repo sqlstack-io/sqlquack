@@ -66,6 +66,7 @@ impl Parser<'_> {
             string_keys: Vec::new(),
             bare_values: Vec::new(),
             written_keys: Vec::new(),
+            written_values: Vec::new(),
         };
         if self.eat_kw("CREDENTIAL") {
             match self.is_char('(') {
@@ -76,6 +77,8 @@ impl Parser<'_> {
                     credentials.quoted_keys = spellings.quoted;
                     credentials.string_keys = spellings.strings;
                     credentials.written_keys = spellings.written;
+                    credentials.written_values =
+                        key_spellings(options.iter().map(|((_, value), _)| value)).written;
                     for (position, ((key, value), without_equals)) in
                         options.into_iter().enumerate()
                     {

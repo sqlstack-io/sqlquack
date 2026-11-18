@@ -856,6 +856,38 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 6,
         },
         DistinctTreesTestCase {
+            description: "a credential value as a string, a raw string and adjacent strings",
+            written: &[
+                "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( k = '1x' ) ) FILEFORMAT = CSV",
+                "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( k = r'1x' ) ) FILEFORMAT = CSV",
+                "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( k = '1' 'x' ) ) FILEFORMAT = CSV",
+            ],
+            expected_distinct_trees: 3,
+        },
+        DistinctTreesTestCase {
+            description: "a typed literal of a raw string apart from a plain one and from a cast",
+            written: &[
+                "SELECT DATE '2020-01-01'",
+                "SELECT DATE r'2020-01-01'",
+                "SELECT CAST ( r'2020-01-01' AS DATE )",
+                "SELECT TIME '10:00:00'",
+                "SELECT TIME r'10:00:00'",
+                "SELECT TIMESTAMP '2020-01-01'",
+                "SELECT TIMESTAMP r'2020-01-01'",
+                "SELECT TIMESTAMP_NTZ '2020-01-01'",
+                "SELECT TIMESTAMP_NTZ r'2020-01-01'",
+                "SELECT X'AB'",
+                "SELECT X r'AB'",
+                "SELECT INTERVAL '1' DAY",
+                "SELECT INTERVAL r'1' DAY",
+                "SELECT INTERVAL - '1' DAY",
+                "SELECT INTERVAL - r'1' DAY",
+                "SELECT INTERVAL '1 day'",
+                "SELECT INTERVAL r'1 day'",
+            ],
+            expected_distinct_trees: 17,
+        },
+        DistinctTreesTestCase {
             description: "adjacent strings apart from the one string they join to",
             written: &[
                 "SELECT 'a' 'b'",
