@@ -648,3 +648,52 @@ fn given_duckdbs_parser_reads_window_calls_when_checking_arity_then_every_count_
         );
     }
 }
+
+#[test]
+fn given_named_windows_when_resolving_names_then_only_the_windows_an_over_reads_are_checked() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a window key reads an output alias, as DuckDB's windows do",
+            sql: "SELECT amount AS q, sum(amount) OVER w AS x FROM orders WINDOW w AS (ORDER BY q)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unused window with an unknown order key",
+            sql: "SELECT amount FROM orders WINDOW w AS (ORDER BY nope)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unused window beside a used one",
+            sql: "SELECT sum(amount) OVER w AS x FROM orders WINDOW w AS (ORDER BY id), w2 AS (ORDER BY nope)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unused window with an unknown qualifier",
+            sql: "SELECT amount FROM orders WINDOW w AS (PARTITION BY zz.amount)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unused window whose key is a subquery reading an unknown column",
+            sql: "SELECT amount FROM orders WINDOW w AS (ORDER BY (SELECT max(nope_in) FROM customers))",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a used window with an unknown order key",
+            sql: "SELECT sum(amount) OVER w AS x FROM orders WINDOW w AS (ORDER BY nope)",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 65)],
+        },
+        QueryFindingsTestCase {
+            description: "a window that the used window extends",
+            sql: "SELECT sum(amount) OVER w2 AS x FROM orders WINDOW w AS (PARTITION BY nope), w2 AS (w ORDER BY id)",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 70)],
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            duckdb_parser_findings(test_case.sql),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
