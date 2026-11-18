@@ -1,5 +1,7 @@
 #[path = "tests/helpers.rs"]
 pub(crate) mod helpers;
+#[path = "tests/test_analysis.rs"]
+mod test_analysis;
 #[path = "tests/test_compare_allowlist.rs"]
 mod test_compare_allowlist;
 #[path = "tests/test_probe_construct.rs"]

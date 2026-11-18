@@ -11,11 +11,13 @@ use clap::ValueEnum;
 use serde_json::{Value, json};
 
 use crate::check::main::check_coverage::check_coverage;
+use crate::check::main::validation_problems::validation_problems;
 use crate::check::models::{
-    CheckResult, FormResult, LocalFailure, LocalVerdict, ObligationResult, Reason,
+    CheckResult, FormResult, FormState, LocalFailure, LocalVerdict, ObligationResult, Reason,
 };
-use crate::cli::_helpers::local::{frozen_catalogue, local_verdict, parser_tree};
+use crate::cli::_helpers::local::{frozen_catalogue, local_tokens, local_verdict, parser_tree};
 use crate::cli::_helpers::output::{print, say};
+use crate::cli::_helpers::screen_command::{passes, screen_report, text as screen_text};
 use crate::cli::_helpers::worker::Worker;
 use crate::cli::models::{Common, TranslationArguments};
 use crate::depth::main::analysis_verdict::analysis_verdict;
@@ -36,6 +38,7 @@ use crate::report::main::tally_by::tally_by;
 use crate::report::models::{
     FocusReport, FocusedSummary, ReceiptDisagreements, Snapshot, SnapshotDiff, Summary,
 };
+use crate::screen::models::ScreenReport;
 use crate::translation::constants::TRANSLATION_DIR;
 use crate::translation::main::load_translation_files::load_translation_files;
 use crate::translation::main::measure_translation::measure_translation;
@@ -81,7 +84,7 @@ pub(crate) fn worker_command(
     })
 }
 
-fn load(common: &Common) -> Result<SyntaxCoverage, ExitCode> {
+pub(crate) fn load(common: &Common) -> Result<SyntaxCoverage, ExitCode> {
     say(&format!("loading {}", common.root.display()));
     load_coverage(&common.root, common.evidence.as_deref()).map_err(|problems| {
         for problem in &problems {
@@ -163,8 +166,66 @@ fn unsatisfied(form: &FormResult) -> impl Iterator<Item = &ObligationResult> {
         .filter(|obligation| obligation.required && obligation.reason.is_some())
 }
 
+/// Whether a current review approves the form: it is counted, and no reason names its review.
+fn is_approved(form: &FormResult) -> bool {
+    let unapproved = |reason: &Reason| {
+        matches!(
+            reason,
+            Reason::Unreviewed | Reason::StaleReview | Reason::ChangesRequested
+        )
+    };
+    !matches!(form.state, FormState::Absent | FormState::Excluded)
+        && !form.reasons.iter().any(unapproved)
+}
+
+/// Fails when the tree screen flags an approved form's case; only dialects with a screen lexer.
+fn screen_gate(coverage: &SyntaxCoverage, root: &Path) -> Result<(), ExitCode> {
+    if local_tokens(current_dialect().local_parser).is_none() {
+        return Ok(());
+    }
+    let check: CheckResult = checked(coverage)?;
+    if !check.problems.is_empty() {
+        for problem in &check.problems {
+            say(problem);
+        }
+        say(&format!(
+            "FAILED, {} problems: the screen cannot tell which forms are approved",
+            check.problems.len()
+        ));
+        return Err(ExitCode::FAILURE);
+    }
+    let approved: Vec<String> = check
+        .forms
+        .iter()
+        .filter(|form| is_approved(form))
+        .map(|form| form.id.clone())
+        .collect();
+    say(&format!("screening the {} approved forms", approved.len()));
+    if approved.is_empty() {
+        return Ok(());
+    }
+    let report: ScreenReport = screen_report(coverage, root, Some(&approved), None)?;
+    if passes(&report) {
+        return Ok(());
+    }
+    for line in screen_text(&report) {
+        say(&line);
+    }
+    say("FAILED, the tree screen flags an approved form");
+    Err(ExitCode::FAILURE)
+}
+
 pub(crate) fn validate(common: &Common) -> Result<ExitCode, ExitCode> {
     let coverage: SyntaxCoverage = load(common)?;
+    let problems: Vec<String> = validation_problems(&coverage);
+    if !problems.is_empty() {
+        for problem in &problems {
+            say(problem);
+        }
+        say(&format!("FAILED, {} problems", problems.len()));
+        return Err(ExitCode::FAILURE);
+    }
+    screen_gate(&coverage, &common.root)?;
     let forms: usize = coverage.catalogue.values().map(Vec::len).sum();
     let retired: usize = coverage.retired_receipts.len();
     let counts: Value = json!({
@@ -196,14 +257,16 @@ pub(crate) fn summary(focus: Option<&Path>, common: &Common) -> Result<ExitCode,
     let summary: Summary = summarize(&check);
     let total = &summary.total;
     let mut text: Vec<String> = vec![format!(
-        "{} of {} forms verified ({}%), {} excluded; obligations {}/{}",
+        "{} of {} forms verified ({}%), {} excluded, {} retired (absent from the pinned pages); obligations {}/{}",
         total.verified,
         total.forms,
         summary.verified_percent,
         total.excluded,
+        summary.absent_forms,
         total.satisfied_obligations,
         total.required_obligations
     )];
+    text.push(suppressed_line(&summary));
     text.extend(
         summary
             .forms_by_reason
@@ -700,4 +763,19 @@ pub(crate) fn translation(
     }
     print(common.json, &report, &text);
     Ok(ExitCode::SUCCESS)
+}
+
+/// How many derived negatives the summary's obligation counts leave out, in total and by family.
+fn suppressed_line(summary: &Summary) -> String {
+    let families: Vec<String> = summary
+        .families
+        .iter()
+        .filter(|(_, family)| family.suppressed_obligations > 0)
+        .map(|(name, family)| format!("{name} {}", family.suppressed_obligations))
+        .collect();
+    format!(
+        "  suppressed obligations, in no count above: {} ({})",
+        summary.suppressed_obligations,
+        families.join(", ")
+    )
 }

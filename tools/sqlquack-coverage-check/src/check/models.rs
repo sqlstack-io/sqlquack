@@ -42,6 +42,18 @@ pub enum LocalFailure {
     NoParser,
 }
 
+impl LocalVerdict {
+    /// A parser's refusal: a resource guard's fails as never a syntax verdict, any other rejects.
+    pub(crate) fn refused(guard: bool) -> Self {
+        match guard {
+            true => Self::Failed {
+                failure: LocalFailure::Guard,
+            },
+            false => Self::Rejected,
+        }
+    }
+}
+
 /// Why an obligation or a form is not satisfied; every failure names one.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -62,6 +74,8 @@ pub enum Reason {
     StaleReceipt,
     /// A citing case has admissible receipts of different phases.
     AmbiguousReceipts,
+    /// Two engine releases of the pinned year record different phases for a citing case, so it needs review.
+    ReleaseDisagreement,
     /// Snowflake's recorded phase contradicts what the case expects, so it is no evidence.
     UnexpectedOutcome,
     /// The local parse panicked, crashed, hit a guard or ran past its time or memory bound.
@@ -74,6 +88,8 @@ pub enum Reason {
     Unreviewed,
     /// No approved review matches the files and the form's fingerprint, or else the parser tree.
     StaleReview,
+    /// A review bound to the form's current fingerprint and definition requests changes; no approval overrides it.
+    ChangesRequested,
     /// Reserved for a capture hold; no current form is held.
     BlockedByHold,
 }
@@ -174,6 +190,8 @@ pub struct CheckResult {
     pub receipt_contradictions: BTreeSet<String>,
     /// Receipt case ids whose SQL no case or run report gives, so no verdict can be compared.
     pub unjudged_receipts: BTreeSet<String>,
+    /// Derived obligations `limits.toml` suppresses, by family; reported, never counted.
+    pub suppressed: BTreeMap<String, usize>,
 }
 
 /// The files joined for checking, with every case already judged.

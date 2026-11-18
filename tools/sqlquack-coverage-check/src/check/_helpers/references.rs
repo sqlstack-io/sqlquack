@@ -3,7 +3,9 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::formats::main::obligation_form::obligation_form;
-use crate::formats::models::{Case, Form, FormStatus, SyntaxCoverage, UnobservableCause};
+use crate::formats::models::{
+    Case, Form, FormStatus, Review, ReviewVerdict, SyntaxCoverage, UnobservableCause,
+};
 
 /// Every unresolved reference between the catalogue, obligations, cases, aliases and reviews.
 pub(crate) fn reference_problems(
@@ -123,6 +125,63 @@ pub(crate) fn reference_problems(
                     "review {}: excludes an unknown form or page",
                     review.id
                 ));
+            }
+        }
+    }
+    problems.extend(resolve_problems(&coverage.reviews));
+    problems
+}
+
+/// Every `resolves` entry naming no changes_requested review of the approval's forms and binding.
+pub(crate) fn resolve_problems(reviews: &[Review]) -> Vec<String> {
+    let by_id: BTreeMap<&str, &Review> = reviews
+        .iter()
+        .map(|review| (review.id.as_str(), review))
+        .collect();
+    let mut problems: Vec<String> = Vec::new();
+    for review in reviews.iter().filter(|review| !review.resolves.is_empty()) {
+        let id: &str = &review.id;
+        if review.verdict != ReviewVerdict::Approved {
+            problems.push(format!(
+                "review {id}: only an approved review resolves others"
+            ));
+        }
+        for named in &review.resolves {
+            let Some(other) = by_id.get(named.as_str()) else {
+                problems.push(format!("review {id}: resolves unknown review {named}"));
+                continue;
+            };
+            if other.verdict != ReviewVerdict::ChangesRequested {
+                problems.push(format!(
+                    "review {id}: resolves {named}, which is not changes_requested"
+                ));
+                continue;
+            }
+            let theirs: BTreeSet<&String> = other.forms.iter().flatten().collect();
+            let shared: Vec<&String> = review
+                .forms
+                .iter()
+                .flatten()
+                .filter(|form| theirs.contains(form))
+                .collect();
+            if shared.is_empty() {
+                problems.push(format!(
+                    "review {id}: resolves {named}, which covers none of its forms"
+                ));
+            }
+            for form in shared {
+                let fingerprint: Option<&String> = review.fingerprints.get(form.as_str());
+                let definition: Option<&String> = review.definitions.get(form.as_str());
+                if fingerprint.is_none()
+                    || definition.is_none()
+                    || other.fingerprints.get(form.as_str()) != fingerprint
+                    || other.definitions.get(form.as_str()) != definition
+                {
+                    problems.push(format!(
+                        "review {id}: resolves {named} at another fingerprint or definition of \
+                         {form}"
+                    ));
+                }
             }
         }
     }

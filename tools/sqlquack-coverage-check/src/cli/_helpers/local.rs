@@ -2,6 +2,7 @@
 
 use std::process::Command;
 
+use sqlquack_syntax::guard::main::is_guard_error::is_guard_error;
 use sqlquack_syntax::{CallMode, Dialect, Expression, ExpressionWalk, ParseOptions, Parsed};
 
 use crate::check::models::{LocalFailure, LocalVerdict};
@@ -9,9 +10,6 @@ use crate::formats::constants::SNOWFLAKE_DIALECT;
 use crate::formats::main::content_sha256::content_sha256;
 use crate::formats::main::current_dialect::current_dialect;
 use crate::formats::models::LocalParser;
-
-/// The code prefix of every complexity-guard error, which is never a syntax verdict.
-const GUARD_PREFIX: &str = "E_GUARD_";
 
 /// An accepted parse; opaque when `gapped` or a Command or Raw node appears anywhere.
 fn accepted(statements: &[Expression], gapped: bool) -> LocalVerdict {
@@ -37,46 +35,63 @@ fn snowflake_verdict(sql: &str) -> LocalVerdict {
         CallMode::Faithful,
     ) {
         Ok(statements) => accepted(&statements, false),
-        Err(sqlquack_syntax::Error::Parse { message, .. }) if message.starts_with(GUARD_PREFIX) => {
-            LocalVerdict::Failed {
-                failure: LocalFailure::Guard,
-            }
-        }
-        Err(_) => LocalVerdict::Rejected,
+        Err(error) => LocalVerdict::refused(is_guard_error(&error)),
     }
 }
 
-/// A native dialect parser's strict verdict: a gap makes it opaque, and any refusal rejects it.
-fn native_verdict<E>(parsed: Result<Parsed, E>) -> LocalVerdict {
+/// A native parser's strict verdict: a gap makes it opaque, a `guard` refusal fails, any other rejects.
+fn native_verdict(parsed: Result<Parsed, bool>) -> LocalVerdict {
     match parsed {
         Ok(parsed) => accepted(&parsed.statements, !parsed.gaps.is_empty()),
-        Err(_) => LocalVerdict::Rejected,
+        Err(guard) => LocalVerdict::refused(guard),
     }
 }
 
 /// SQLQuack's strict PostgreSQL verdict.
 pub(crate) fn postgres_verdict(sql: &str) -> LocalVerdict {
-    native_verdict(sqlquack_syntax_postgres::parse_strict(sql))
+    native_verdict(
+        sqlquack_syntax_postgres::parse_strict(sql)
+            .map_err(|failure| failure.parse_error().is_some_and(|error| error.guard)),
+    )
 }
 
 /// SQLQuack's strict BigQuery GoogleSQL verdict.
 fn bigquery_verdict(sql: &str) -> LocalVerdict {
-    native_verdict(sqlquack_syntax_bigquery::parse_strict(sql))
+    native_verdict(
+        sqlquack_syntax_bigquery::parse_strict(sql)
+            .map_err(|failure| failure.parse_error().is_some_and(|error| error.guard)),
+    )
 }
 
 /// SQLQuack's strict DuckDB verdict.
 fn duckdb_verdict(sql: &str) -> LocalVerdict {
-    native_verdict(sqlquack_syntax_duckdb::parse_strict(sql))
+    native_verdict(
+        sqlquack_syntax_duckdb::parse_strict(sql)
+            .map_err(|failure| failure.parse_error().is_some_and(|error| error.guard)),
+    )
 }
 
 /// SQLQuack's strict Databricks SQL verdict.
 fn databricks_verdict(sql: &str) -> LocalVerdict {
-    native_verdict(sqlquack_syntax_databricks::parse_strict(sql))
+    native_verdict(
+        sqlquack_syntax_databricks::parse_strict(sql)
+            .map_err(|failure| failure.parse_error().is_some_and(|error| error.guard)),
+    )
 }
 
-/// SQLQuack's strict SQL Server T-SQL verdict: a gap, such as `nesting_depth`, makes it opaque.
+/// SQLQuack's strict SQL Server T-SQL verdict: its depth guard's gap fails it, and any other gap makes it opaque.
 fn sqlserver_verdict(sql: &str) -> LocalVerdict {
     match sqlquack_syntax_sqlserver::parse_strict(sql) {
+        Ok(parsed)
+            if parsed
+                .gaps
+                .iter()
+                .any(|gap| gap.construct == sqlquack_syntax_sqlserver::NESTING_DEPTH_GAP) =>
+        {
+            LocalVerdict::Failed {
+                failure: LocalFailure::Guard,
+            }
+        }
         Ok(parsed) => accepted(&parsed.statements, !parsed.gaps.is_empty()),
         Err(_) => LocalVerdict::Rejected,
     }
@@ -84,7 +99,10 @@ fn sqlserver_verdict(sql: &str) -> LocalVerdict {
 
 /// SQLQuack's strict SQLite verdict.
 fn sqlite_verdict(sql: &str) -> LocalVerdict {
-    native_verdict(sqlquack_syntax_sqlite::parse_strict(sql))
+    native_verdict(
+        sqlquack_syntax_sqlite::parse_strict(sql)
+            .map_err(|failure| failure.parse_error().is_some_and(|error| error.guard)),
+    )
 }
 
 /// The verdict of each dialect's local parser, or none when the dialect has no parser yet.
@@ -98,6 +116,70 @@ pub(crate) fn local_verdict(parser: LocalParser) -> Option<fn(&str) -> LocalVerd
         LocalParser::SqlServer => Some(sqlserver_verdict),
         LocalParser::Sqlite => Some(sqlite_verdict),
         LocalParser::None => None,
+    }
+}
+
+/// A native parser's statements when it accepts the text with no gap.
+fn gap_free<E>(parsed: Result<Parsed, E>) -> Option<Vec<Expression>> {
+    match parsed {
+        Ok(parsed) if parsed.gaps.is_empty() => Some(parsed.statements),
+        Ok(_) | Err(_) => None,
+    }
+}
+
+/// A text's statements when the parser accepts it, or none.
+pub(crate) type Statements = fn(&str) -> Option<Vec<Expression>>;
+
+/// Each dialect's local parser as the statements it accepts, or none when the dialect has none.
+pub(crate) fn local_statements(parser: LocalParser) -> Option<Statements> {
+    match parser {
+        LocalParser::Snowflake => {
+            Some(|sql| {
+                match sqlquack_syntax_snowflake::parse_statements_with(
+                    sql,
+                    Dialect::Snowflake,
+                    &ParseOptions::default(),
+                    CallMode::Faithful,
+                ) {
+                    Ok(statements) if !statements.is_empty() => Some(statements),
+                    Ok(_) | Err(_) => None,
+                }
+            })
+        }
+        LocalParser::Postgres => Some(|sql| gap_free(sqlquack_syntax_postgres::parse_strict(sql))),
+        LocalParser::BigQuery => Some(|sql| gap_free(sqlquack_syntax_bigquery::parse_strict(sql))),
+        LocalParser::DuckDb => Some(|sql| gap_free(sqlquack_syntax_duckdb::parse_strict(sql))),
+        LocalParser::Databricks => {
+            Some(|sql| gap_free(sqlquack_syntax_databricks::parse_strict(sql)))
+        }
+        LocalParser::SqlServer => Some(|sql| match sqlquack_syntax_sqlserver::parse_strict(sql) {
+            Ok(parsed) if parsed.gaps.is_empty() => Some(parsed.statements),
+            Ok(_) | Err(_) => None,
+        }),
+        LocalParser::Sqlite => Some(|sql| gap_free(sqlquack_syntax_sqlite::parse_strict(sql))),
+        LocalParser::None => None,
+    }
+}
+
+/// A text's token byte ranges as a dialect's lexer reads them.
+pub(crate) type TokenRanges = fn(&str) -> Vec<(usize, usize)>;
+
+/// Each dialect's lexer token ranges, or none when the screen splits that dialect's text on spaces alone.
+pub(crate) fn local_tokens(parser: LocalParser) -> Option<TokenRanges> {
+    match parser {
+        LocalParser::Databricks => Some(|sql| {
+            sqlquack_syntax_databricks::scan::main::scan::scan(sql)
+                .into_iter()
+                .filter(|token| {
+                    !matches!(
+                        token.kind,
+                        sqlquack_syntax_databricks::scan::models::TokenKind::Fault(_)
+                    )
+                })
+                .map(|token| (token.start, token.end))
+                .collect()
+        }),
+        _ => None,
     }
 }
 

@@ -54,3 +54,11 @@ pub(crate) struct SummarizeTestCase {
     pub(crate) expected_verified: usize,
     pub(crate) expected_absent_forms: usize,
 }
+
+/// Suppress rows appended to `limits.toml`, and how many the summary reports.
+pub(crate) struct SuppressionTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) suppressions: &'static str,
+    pub(crate) expected_suppressed: usize,
+    pub(crate) expected_query_suppressed: usize,
+}

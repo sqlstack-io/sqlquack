@@ -409,7 +409,7 @@ pub struct Receipt {
     /// Account parameters the capture ran under, by name; provenance, never phase.
     #[serde(default)]
     pub account_state: Option<BTreeMap<String, AccountSetting>>,
-    /// How many echoed URLs or stage locations the message holds as `REDACTED_LOCATION`, if any.
+    /// `definition_plan` only: how many echoed locations the message holds as `REDACTED_LOCATION`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub locations_redacted: Option<u32>,
 }
@@ -496,6 +496,9 @@ pub struct Review {
     /// Each listed form's definition hash when reviewed; binds the form, not the files.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub definitions: BTreeMap<String, String>,
+    /// changes_requested reviews of its forms and binding whose concerns its note answers.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub resolves: Vec<String>,
     #[serde(default)]
     pub note: Option<String>,
 }
@@ -637,6 +640,8 @@ pub struct SyntaxCoverage {
     pub diagnostics: Vec<Diagnostic>,
     /// Each form's reading from `limits.toml`, hashed into its definition.
     pub readings: Vec<Reading>,
+    /// Derived obligations `limits.toml` suppresses, by family: never issued, so never counted.
+    pub suppressed: BTreeMap<String, usize>,
     /// SHA-256 of the sources, aliases, catalogue and obligation files, by relative path.
     pub file_hashes: BTreeMap<String, String>,
     /// Cases marked documented, whose acceptance against a syntax error is intended.
@@ -664,6 +669,9 @@ pub struct Dialect {
     /// Engine codes that are syntax errors, for `/2` receipts.
     #[serde(default)]
     pub syntax_codes: Vec<String>,
+    /// The engine release the referee pins, `YEAR.N`; a `/2` receipt counts only from a release of that year.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub engine_pin: Option<String>,
 }
 
 /// The parser the checker compares receipts with; `local_verdict` maps each to its verdict.

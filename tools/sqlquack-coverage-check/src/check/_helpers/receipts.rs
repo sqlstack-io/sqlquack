@@ -5,6 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use crate::check::models::{CaseResult, LocalVerdict, Reason, SnowflakeSyntax};
 use crate::formats::constants::SYNTAX_ERRNO;
 use crate::formats::main::current_dialect::current_dialect;
+use crate::formats::main::engine_release::engine_release;
 use crate::formats::models::{AccountSetting, Case, Expect, NoEffect, Phase, Receipt};
 
 /// A receipt bound to this case's SQL, setup, session and capture; a probe-role receipt binds any setup.
@@ -29,15 +30,53 @@ fn receipt_phase(case: &Case, receipts: &[&Receipt]) -> Result<Phase, Reason> {
     if receipts.is_empty() {
         return Err(Reason::MissingReceipt);
     }
-    let phases: BTreeSet<String> = receipts
+    let admitted: Vec<&Receipt> = receipts
         .iter()
+        .copied()
         .filter(|receipt| admissible(case, receipt))
+        .collect();
+    let admitted: Vec<&Receipt> = match current_dialect().engine_pin.as_deref() {
+        Some(pin) => newest_release(pin, admitted)?,
+        None => admitted,
+    };
+    let phases: BTreeSet<String> = admitted
+        .iter()
         .map(|receipt| format!("{:?}", receipt.phase))
         .collect();
-    match receipts.iter().find(|receipt| admissible(case, receipt)) {
+    match admitted.first() {
         None => Err(Reason::StaleReceipt),
         Some(_) if phases.len() > 1 => Err(Reason::AmbiguousReceipts),
         Some(receipt) => Ok(receipt.phase),
+    }
+}
+
+/// The receipts of the newest release in the pin's year; a phase another release of that year disagrees with fails.
+fn newest_release<'a>(pin: &str, admitted: Vec<&'a Receipt>) -> Result<Vec<&'a Receipt>, Reason> {
+    let year: Option<u32> = engine_release(pin).map(|(year, _)| year);
+    let dated: Vec<(u32, &'a Receipt)> = admitted
+        .into_iter()
+        .filter_map(|receipt| {
+            let (receipt_year, release) = engine_release(receipt.engine_version.as_deref()?)?;
+            (Some(receipt_year) == year).then_some((release, receipt))
+        })
+        .collect();
+    let mut phases: BTreeMap<u32, BTreeSet<String>> = BTreeMap::new();
+    for (release, receipt) in &dated {
+        phases
+            .entry(*release)
+            .or_default()
+            .insert(format!("{:?}", receipt.phase));
+    }
+    let Some((newest, newest_phases)) = phases.last_key_value() else {
+        return Ok(Vec::new());
+    };
+    match phases.values().all(|other| other == newest_phases) {
+        true => Ok(dated
+            .into_iter()
+            .filter(|(release, _)| release == newest)
+            .map(|(_, receipt)| receipt)
+            .collect()),
+        false => Err(Reason::ReleaseDisagreement),
     }
 }
 

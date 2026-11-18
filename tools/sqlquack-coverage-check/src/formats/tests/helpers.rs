@@ -209,6 +209,11 @@ pub(crate) fn valid_tree(root: &Path) {
              catalogue_sha256 = \"{SHA_A}\"\nobligations_sha256 = \"{SHA_B}\"\n\
              parser_tree = \"0123456789abcdef0123456789abcdef01234567\"\n\
              reviewed_utc = \"2026-11-03T23:00:00Z\"\nverdict = \"approved\"\n\
+             [[review]]\nid = \"query-2\"\nfamily = \"query\"\n\
+             catalogue_sha256 = \"{SHA_A}\"\nobligations_sha256 = \"{SHA_B}\"\n\
+             parser_tree = \"0123456789abcdef0123456789abcdef01234567\"\n\
+             reviewed_utc = \"2026-11-03T23:00:00Z\"\nverdict = \"approved\"\n\
+             forms = [\"sf.query.select.define-view\"]\n\
              [[review.exclusion]]\nform = \"sf.query.select.define-view\"\n\
              reason = \"valid only inside project files\"\n"
         ),

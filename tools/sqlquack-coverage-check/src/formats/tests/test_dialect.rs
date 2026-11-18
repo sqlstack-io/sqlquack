@@ -10,6 +10,10 @@ use crate::formats::tests::test_types::{
     DialectLoadTestCase, FocusFaultTestCase, FocusTestCase, FormatFaultTestCase,
 };
 
+/// BigQuery's own message on bq.security_admin.create-assignment.ka05d06fd10a8, which no import redacted.
+const ASSIGNMENT_FORMAT: &str = "invalidQuery: Assignment name must be in the format: \
+     [<project_id>.]region-<location>.<reservation_id>.<assignment_id>";
+
 const POSTGRES_FAMILIES: [&str; 8] = [
     "ddl",
     "dml",
@@ -54,6 +58,27 @@ fn given_a_dialect_file_when_loading_then_the_root_loads_as_that_dialect() {
                     "\"run-1\"",
                     "\"operator does not exist: @-@ box; a @> b; a <@ b; @@ q\"",
                 );
+            },
+            expected_dialect: "postgres",
+            expected_families: &POSTGRES_FAMILIES,
+            expected_first_query_form: "pg.query.select",
+            expected_engine_versions: &[Some("18.6")],
+        },
+        DialectLoadTestCase {
+            description: "an engine receipt whose own message writes <location> loads uncounted, as bq.security_admin.create-assignment.ka05d06fd10a8 does",
+            tree: |root| {
+                postgres_tree(root);
+                let line = engine_receipt_line()
+                    .replace("\"outcome\":\"accepted\"", "\"outcome\":\"error\"")
+                    .replace(
+                        "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
+                        "\"errno\":null,\"sqlstate\":\"42704\",\"phase\":\"semantic_error\"",
+                    )
+                    .replace(
+                        "\"packet_sha256\"",
+                        &format!("\"message\":\"{ASSIGNMENT_FORMAT}\",\"packet_sha256\""),
+                    );
+                write(root, "receipts/first.jsonl", &format!("{line}\n"));
             },
             expected_dialect: "postgres",
             expected_families: &POSTGRES_FAMILIES,
@@ -179,6 +204,25 @@ fn given_a_dialect_fault_when_loading_then_the_problem_is_named() {
                 )
             },
             expected_problem: "format sqlquack-syntax-receipt/1 is not sqlquack-syntax-receipt/2",
+        },
+        FormatFaultTestCase {
+            description: "an engine receipt carrying a redaction count, which only the DCM import makes",
+            mutate: |root| {
+                let line = engine_receipt_line()
+                    .replace("\"outcome\":\"accepted\"", "\"outcome\":\"error\"")
+                    .replace(
+                        "\"errno\":null,\"sqlstate\":null,\"phase\":\"accepted\"",
+                        "\"errno\":null,\"sqlstate\":\"42704\",\"phase\":\"semantic_error\"",
+                    )
+                    .replace(
+                        "\"packet_sha256\"",
+                        &format!(
+                            "\"message\":\"{ASSIGNMENT_FORMAT}\",\"locations_redacted\":1,\"packet_sha256\""
+                        ),
+                    );
+                write(root, "receipts/first.jsonl", &format!("{line}\n"));
+            },
+            expected_problem: "receipt query.select-17: locations_redacted on a capture other than definition_plan",
         },
         FormatFaultTestCase {
             description: "a /2 receipt without its parser check",

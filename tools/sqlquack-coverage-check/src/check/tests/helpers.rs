@@ -6,11 +6,15 @@ use sha2::{Digest, Sha256};
 
 use crate::check::models::{LocalFailure, LocalVerdict};
 use crate::formats::constants::FAMILIES;
+use crate::formats::models::Receipt;
 
 /// The parser tree every family review in the fixture binds.
 pub(crate) const TREE: &str = "0123456789abcdef0123456789abcdef01234567";
 /// Another committed parser tree.
 pub(crate) const OTHER_TREE: &str = "89abcdef0123456789abcdef0123456789abcdef";
+/// A form fingerprint no current form has, as an earlier reading would record.
+pub(crate) const OLD_FINGERPRINT: &str =
+    "1111111111111111111111111111111111111111111111111111111111111111";
 const SHA_A: &str = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
 pub(crate) fn sha256(text: &str) -> String {
@@ -125,6 +129,73 @@ pub(crate) fn pin_definitions(root: &Path) {
         pins(|form| &form.definition_sha256),
     );
     write(root, "reviews/query.toml", &review);
+}
+
+/// Adds a changes_requested copy of the `pin_definitions` review, with `sf.query.select` at `fingerprint`.
+pub(crate) fn request_changes(root: &Path, fingerprint: Option<&str>) {
+    let coverage = crate::formats::main::load_coverage::load_coverage(root, None).expect("load");
+    let check =
+        crate::check::main::check_coverage::check_coverage(&coverage, Some(TREE), &structural);
+    let current: &str = &check
+        .forms
+        .iter()
+        .find(|form| form.id == "sf.query.select")
+        .expect("sf.query.select")
+        .fingerprint;
+    let requested: String = read(root, "reviews/query.toml")
+        .replace("id = \"query-1\"", "id = \"query-2\"")
+        .replace("verdict = \"approved\"", "verdict = \"changes_requested\"")
+        .replacen(current, fingerprint.unwrap_or(current), 1);
+    write(root, "reviews/requested.toml", &requested);
+}
+
+/// Writes review `id` of query `forms` with `verdict`, at their current binding, to its own file.
+pub(crate) fn review_of(root: &Path, id: &str, verdict: &str, forms: &[&str]) {
+    let coverage = crate::formats::main::load_coverage::load_coverage(root, None).expect("load");
+    let check =
+        crate::check::main::check_coverage::check_coverage(&coverage, Some(TREE), &structural);
+    let named: Vec<&crate::check::models::FormResult> = check
+        .forms
+        .iter()
+        .filter(|form| forms.contains(&form.id.as_str()))
+        .collect();
+    let pins = |value: fn(&crate::check::models::FormResult) -> &str| -> String {
+        named
+            .iter()
+            .map(|form| format!("\"{}\" = \"{}\"", form.id, value(form)))
+            .collect::<Vec<String>>()
+            .join(", ")
+    };
+    let listed: String = forms
+        .iter()
+        .map(|form| format!("\"{form}\""))
+        .collect::<Vec<String>>()
+        .join(", ");
+    let review: String = format!(
+        "[[review]]\nid = \"{id}\"\nfamily = \"query\"\n\
+         parser_tree = \"{TREE}\"\nreviewed_utc = \"2026-11-04T09:00:00Z\"\n\
+         verdict = \"{verdict}\"\nforms = [{listed}]\n\
+         fingerprints = {{ {} }}\ndefinitions = {{ {} }}\n",
+        pins(|form| &form.fingerprint),
+        pins(|form| &form.definition_sha256),
+    );
+    write(root, &format!("reviews/{id}.toml"), &review);
+}
+
+/// Has the approved review in `reviews/<file>.toml` resolve the reviews `ids`.
+pub(crate) fn resolve(root: &Path, file: &str, ids: &[&str]) {
+    let listed: String = ids
+        .iter()
+        .map(|id| format!("\"{id}\""))
+        .collect::<Vec<String>>()
+        .join(", ");
+    let path: String = format!("reviews/{file}.toml");
+    let review: String = read(root, &path).replacen(
+        "verdict = \"approved\"\n",
+        &format!("verdict = \"approved\"\nresolves = [{listed}]\n"),
+        1,
+    );
+    write(root, &path, &review);
 }
 
 /// A local parse that crashes on everything.
@@ -354,7 +425,7 @@ pub(crate) fn exclusion_review(root: &Path, verdict: &str, tree: &str) {
         .replace("id = \"query-1\"", "id = \"query-2\"")
         .replace(
             "verdict = \"approved\"",
-            &format!("verdict = \"{verdict}\""),
+            &format!("verdict = \"{verdict}\"\nforms = [\"sf.query.select.top\"]"),
         )
         .replace(TREE, tree);
     write(
@@ -446,4 +517,13 @@ pub(crate) fn report_input(root: &Path, sql: &str) {
         "inputs": [{"sql": sql, "sql_sha256": sha256(sql)}],
     });
     write(root, "receipts/run-1.report.json", &report.to_string());
+}
+
+/// A receipt of `case` recording `phase` at engine release `version`.
+pub(crate) fn release_receipt(case: &str, phase: &str, version: &str) -> Receipt {
+    let line: String = with_fields(
+        &receipt_line(case, phase),
+        serde_json::json!({"engine_version": version}),
+    );
+    serde_json::from_str(&line).expect("receipt")
 }
