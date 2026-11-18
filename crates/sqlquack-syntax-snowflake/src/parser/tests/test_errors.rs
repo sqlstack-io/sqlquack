@@ -112,6 +112,30 @@ fn given_incomplete_sql_when_parsing_then_parsing_fails() {
             expected_error: "error",
         },
         ParseErrorTestCase {
+            description: "a bare ALTER is rejected, not read past the end of its tokens",
+            dialect: Some(DialectType::Snowflake),
+            sql: "ALTER",
+            expected_error: "Expected an object kind and a name",
+        },
+        ParseErrorTestCase {
+            description: "a bare ALTER ICEBERG is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "ALTER ICEBERG",
+            expected_error: "Expected an object kind and a name",
+        },
+        ParseErrorTestCase {
+            description: "an ALTER ended by a semicolon is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "ALTER;",
+            expected_error: "error",
+        },
+        ParseErrorTestCase {
+            description: "an ALTER ended by a semicolon before a statement is rejected",
+            dialect: Some(DialectType::Snowflake),
+            sql: "ALTER;TABLE t1 ADD COLUMN c1 INT",
+            expected_error: "error",
+        },
+        ParseErrorTestCase {
             description: "RESAMPLE's USING takes a column, not a string",
             dialect: Some(DialectType::Snowflake),
             sql: "SELECT * FROM t1 RESAMPLE ( USING 'v1' INCREMENT BY INTERVAL '1 hour' )",
