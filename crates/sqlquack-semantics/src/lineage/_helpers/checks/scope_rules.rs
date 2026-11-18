@@ -278,6 +278,40 @@ fn output_aliases<'s>(
     aliases
 }
 
+/// An unknown base of a window an OVER in `read` reaches, as `w2 AS (zz ORDER BY b)`.
+fn unknown_bases<'s>(
+    (node, select): (&Expression, &'s Select),
+    mut read: Vec<&'s Identifier>,
+    level: RuleLevel<'_, '_>,
+    known: &dyn Fn(&Identifier) -> bool,
+) -> Vec<NameFinding> {
+    let mut findings: Vec<NameFinding> = Vec::new();
+    let mut seen: HashSet<String> = HashSet::new();
+    while let Some(name) = read.pop() {
+        if !seen.insert(level.key(name)) {
+            continue;
+        }
+        let definitions = select.windows.iter().flatten().filter(|window| {
+            level
+                .context
+                .profile
+                .same_identifier(&level.key(&window.name), &level.key(name))
+        });
+        for base in definitions.filter_map(|window| window.spec.window_name.as_ref()) {
+            match known(base) {
+                true => read.push(base),
+                false => findings.push(issue(
+                    ("E232", SCOPE_PHASE),
+                    format!("Unknown named window '{}'", base.name),
+                    base.span,
+                    node,
+                )),
+            }
+        }
+    }
+    findings
+}
+
 /// Duplicate names, unknown named windows, QUALIFY without a window, and bad LIMIT or OFFSET.
 fn structure_rules(
     (node, select): (&Expression, &Select),
@@ -339,27 +373,32 @@ fn structure_rules(
         .iter()
         .map(|(name, _)| name.as_str())
         .collect();
+    let known = |name: &Identifier| {
+        windows.iter().any(|known| {
+            level
+                .context
+                .profile
+                .same_identifier(known, &level.key(name))
+        })
+    };
     let mut has_window: bool = false;
+    let mut read: Vec<&Identifier> = Vec::new();
     for expression in in_scope(node) {
         if let Expression::WindowFunction(window) = expression {
             has_window = true;
-            if let Some(name) = &window.over.window_name
-                && !windows.iter().any(|known| {
-                    level
-                        .context
-                        .profile
-                        .same_identifier(known, &level.key(name))
-                })
-            {
-                findings.push(rule(
+            match &window.over.window_name {
+                Some(name) if !known(name) => findings.push(rule(
                     "E232",
                     format!("Unknown named window '{}'", name.name),
                     expression,
                     node,
-                ));
+                )),
+                Some(name) => read.push(name),
+                None => {}
             }
         }
     }
+    findings.extend(unknown_bases((node, select), read, level, &known));
     match engine {
         Engine::Postgres | Engine::Sqlite | Engine::Snowflake | Engine::DuckDB => {
             let rules = dialect_rules(level.context.profile);
