@@ -11,7 +11,7 @@ use crate::lineage::_helpers::checks::scope_rules::output_width;
 use crate::lineage::_helpers::tracing::queries::empty_scope;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::holds_unpivot;
-use crate::lineage::_helpers::tracing::sources::item_sources;
+use crate::lineage::_helpers::tracing::sources::{from_parts, item_sources};
 use crate::lineage::constants::{
     ALIAS_COUNT_CODE, AMBIGUOUS_COLUMN_CODE, COLUMNS_NO_MATCH, CONNECT_BY_LEVEL, NAME_PHASE,
     UNKNOWN_COLUMN_CODE, UNKNOWN_QUALIFIER_CODE,
@@ -400,9 +400,10 @@ pub(crate) fn using_findings(
 ) -> Vec<NameFinding> {
     let at = select.expressions.first().and_then(Expression::source_span);
     let mut findings: Vec<NameFinding> = Vec::new();
-    let leading: usize = select.from.iter().map(|from| from.expressions.len()).sum();
-    for (position, join) in select.joins.iter().enumerate() {
-        let before: usize = leading + position;
+    for (before, (_, join)) in from_parts(select).into_iter().enumerate() {
+        let Some(join) = join else {
+            continue;
+        };
         let (left, right) = scope.sources.split_at(before.min(scope.sources.len()));
         let right: &[ScopeSource] = &right[..right.len().min(1)];
         for name in &join.using {
@@ -536,13 +537,8 @@ pub(crate) fn alias_count_findings(
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
 ) -> Vec<NameFinding> {
-    let items = select
-        .from
-        .iter()
-        .flat_map(|from| from.expressions.iter())
-        .chain(select.joins.iter().map(|join| &join.this));
     let mut findings: Vec<NameFinding> = Vec::new();
-    for item in items {
+    for (item, _) in from_parts(select) {
         let (relation, aliases, width) = match item {
             Expression::Subquery(subquery) => (
                 "Derived-table",

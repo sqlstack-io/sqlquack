@@ -186,7 +186,7 @@ pub(crate) struct LineageScope<'a> {
     pub(crate) traced: RefCell<FxHashMap<usize, (Lineage, bool)>>,
     /// Lineages that read no SELECT alias, shared by every scope of this level analysed alike.
     pub(crate) shared: Option<Rc<RefCell<FxHashMap<usize, Lineage>>>>,
-    /// How many of `sources` the items before each FROM item give, in FROM order.
+    /// How many of `sources` the items before each FROM part give, in `from_parts` order.
     pub(crate) starts: Vec<usize>,
 }
 
@@ -223,7 +223,7 @@ pub(crate) struct FromItems {
     pub(crate) sources: Vec<ScopeSource>,
     pub(crate) merged: Vec<ScopedColumn>,
     pub(crate) rows: RowReads,
-    /// How many sources the items before each FROM item give, in FROM order.
+    /// How many sources the items before each FROM part give, in `from_parts` order.
     pub(crate) starts: Vec<usize>,
 }
 

@@ -24,6 +24,7 @@ use crate::lineage::_helpers::tracing::queries::{
 };
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::{Reach, Reuse, reusing};
+use crate::lineage::_helpers::tracing::sources::{every_join, from_parts};
 use crate::lineage::constants::{COLUMNS_FUNCTION, OUTER_RIGHT_JOINS};
 use crate::lineage::models::Engine;
 use crate::lineage::models::NameFinding;
@@ -185,7 +186,7 @@ fn unread_ctes(owner: &Expression, with: &With, context: LineageContext<'_>) -> 
         .collect()
 }
 
-/// The items before the `index`th FROM item, then `outer`; none when no item comes before it.
+/// The parts before the `index`th FROM part, then `outer`; none when no part comes before it.
 fn left_scope<'a>(
     scope: &LineageScope<'_>,
     index: usize,
@@ -270,17 +271,10 @@ fn select_findings(
     let rules: &dyn DialectRules = dialect_rules(context.profile);
     let anywhere: bool = rules.outputs_read_anywhere();
     let left_reading: bool = rules.derived_tables_read_left_items();
-    let listed: usize = select
-        .from
-        .as_ref()
-        .map_or(0, |from| from.expressions.len());
-    for (index, item) in from_items(select).into_iter().enumerate() {
+    for (index, (item, join)) in from_parts(select).into_iter().enumerate() {
         let implicit: bool = left_reading
             && derived_key(unannotated(item), context).is_some()
-            && index
-                .checked_sub(listed)
-                .and_then(|join| select.joins.get(join))
-                .is_none_or(|join| !OUTER_RIGHT_JOINS.contains(&join.kind));
+            && join.is_none_or(|join| !OUTER_RIGHT_JOINS.contains(&join.kind));
         let left: Option<LineageScope<'_>> = (lateral(item) || implicit)
             .then(|| left_scope(&scope, index, (&ctes, outer)))
             .flatten();
@@ -308,7 +302,7 @@ fn select_findings(
         own: &own_outputs,
         hidden: None,
         connect: select.connect.is_some(),
-        filtering_join: select.joins.iter().any(|join| {
+        filtering_join: every_join(select).into_iter().any(|join| {
             matches!(
                 join.kind,
                 JoinKind::Semi
@@ -359,16 +353,6 @@ fn select_findings(
     own.sort_by_key(|finding| finding.span.map(|span| span.start));
     own.extend(nested);
     own
-}
-
-/// The FROM items and joined items of `select`, in order.
-fn from_items(select: &Select) -> Vec<&Expression> {
-    let mut items: Vec<&Expression> = Vec::new();
-    if let Some(from) = &select.from {
-        items.extend(from.expressions.iter());
-    }
-    items.extend(select.joins.iter().map(|join| &join.this));
-    items
 }
 
 /// The names of `select`'s aliased outputs, which later clauses may read.
@@ -423,7 +407,7 @@ fn lateral(item: &Expression) -> bool {
 /// Every expression of `select` after its projections: filters, keys and orders.
 fn clauses(select: &Select) -> Vec<&Expression> {
     let mut read: Vec<&Expression> = Vec::new();
-    for join in &select.joins {
+    for join in every_join(select) {
         read.extend(join.on.iter());
         read.extend(join.match_condition.iter());
     }

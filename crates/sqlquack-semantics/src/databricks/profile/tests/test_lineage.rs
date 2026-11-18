@@ -388,6 +388,56 @@ fn given_a_relation_or_query_in_extra_parentheses_when_analysed_then_it_reads_as
             sql: "( SELECT id FROM orders ) UNION ( SELECT id FROM customers )",
             expected_same_as: "SELECT id FROM orders UNION SELECT id FROM customers",
         },
+        SameReadingTestCase {
+            description: "an insert's query in parentheses",
+            sql: "INSERT INTO orders ( SELECT id, nope FROM customers )",
+            expected_same_as: "INSERT INTO orders SELECT id, nope FROM customers",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            reading(test_case.sql),
+            reading(test_case.expected_same_as),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_join_in_parentheses_when_analysed_then_its_conditions_and_items_are_checked_as_without()
+{
+    let test_cases = [
+        SameReadingTestCase {
+            description: "an unknown column in a parenthesised join's ON",
+            sql: "SELECT o.id FROM ( orders o JOIN customers c ON o.nope = c.id )",
+            expected_same_as: "SELECT o.id FROM orders o JOIN customers c ON o.nope = c.id",
+        },
+        SameReadingTestCase {
+            description: "the same join in a second pair of parentheses",
+            sql: "SELECT o.id FROM ( ( orders o JOIN customers c ON o.nope = c.id ) )",
+            expected_same_as: "SELECT o.id FROM orders o JOIN customers c ON o.nope = c.id",
+        },
+        SameReadingTestCase {
+            description: "a USING key one side lacks",
+            sql: "SELECT o.id FROM ( orders o JOIN customers c USING ( nope ) )",
+            expected_same_as: "SELECT o.id FROM orders o JOIN customers c USING ( nope )",
+        },
+        SameReadingTestCase {
+            description: "a derived table inside the parenthesised join",
+            sql: "SELECT o.id FROM ( orders o JOIN ( SELECT nope FROM customers ) d ON o.id = d.nope )",
+            expected_same_as: "SELECT o.id FROM orders o JOIN ( SELECT nope FROM customers ) d ON o.id = d.nope",
+        },
+        SameReadingTestCase {
+            description: "a parenthesised join joined to an earlier table",
+            sql: "SELECT o.id FROM customers c2 JOIN ( orders o JOIN customers c ON o.nope = c.id ) ON c2.id = o.id",
+            expected_same_as: "SELECT o.id FROM customers c2 JOIN orders o ON c2.id = o.id JOIN customers c ON o.nope = c.id",
+        },
+        SameReadingTestCase {
+            description: "a LATERAL item reading the table before it inside the parentheses",
+            sql: "SELECT l.n FROM ( orders o JOIN LATERAL ( SELECT o.id AS n ) l ON true )",
+            expected_same_as: "SELECT l.n FROM orders o JOIN LATERAL ( SELECT o.id AS n ) l ON true",
+        },
     ];
     for test_case in test_cases {
         assert_eq!(

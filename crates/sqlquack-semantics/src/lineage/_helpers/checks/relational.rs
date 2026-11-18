@@ -9,6 +9,7 @@ use crate::lineage::_helpers::checks::coercion::{
 use crate::lineage::_helpers::checks::families::expression_family;
 use crate::lineage::_helpers::checks::issues::issue;
 use crate::lineage::_helpers::checks::sets::{Branches, families, width};
+use crate::lineage::_helpers::tracing::sources::from_parts;
 use crate::lineage::constants::TYPE_PHASE;
 use crate::lineage::main::type_family::type_family;
 use crate::lineage::models::Engine;
@@ -126,17 +127,13 @@ pub(crate) fn using_findings(
     select: &Select,
     (scope, context): (&LineageScope<'_>, LineageContext<'_>),
 ) -> Vec<NameFinding> {
-    let single_from: bool = select
-        .from
-        .as_ref()
-        .is_some_and(|from| from.expressions.len() == 1);
-    let [join] = select.joins.as_slice() else {
+    let [(_, None), (_, Some(join))] = from_parts(select)[..] else {
         return Vec::new();
     };
     let [left_source, right_source] = scope.sources.as_slice() else {
         return Vec::new();
     };
-    if !single_from || join.using.is_empty() {
+    if join.using.is_empty() {
         return Vec::new();
     }
     let engine: Engine = Engine::of(context);
