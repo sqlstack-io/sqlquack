@@ -86,11 +86,23 @@ fn is_plain_star(select: &Select) -> bool {
         && select.sample.is_none()
 }
 
+/// Whether `select` is a written `SELECT * FROM ( query )`, the shape a pipe step wraps.
+fn written_wrapper(select: &Select) -> bool {
+    select.pipe_operators.is_empty()
+        && select.joins.is_empty()
+        && matches!(
+            select.from.as_ref().map(|from| from.expressions.as_slice()),
+            Some([Expression::Subquery(subquery)]) if subquery.alias.is_none()
+        )
+}
+
 /// The select a pipe operator extends: `left` itself, or else `SELECT * FROM (left)`.
 fn pipe_input(left: Expression, bare: bool) -> Select {
     match left {
         Expression::Select(select)
-            if is_plain_star(&select) && !(bare && select.where_clause.is_some()) =>
+            if is_plain_star(&select)
+                && !(bare && select.where_clause.is_some())
+                && !written_wrapper(&select) =>
         {
             *select
         }
