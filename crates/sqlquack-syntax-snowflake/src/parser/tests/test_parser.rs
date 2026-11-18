@@ -1131,3 +1131,53 @@ fn given_a_snowflake_cte_whose_body_is_a_bare_values_list_when_parsing_then_pars
         );
     }
 }
+
+#[test]
+fn given_quoted_window_names_when_parsing_then_each_keeps_its_quotes() {
+    let test_cases = [
+        ParseValueTestCase {
+            description: "an OVER name keeps its quotes",
+            dialect: Some(DialectType::PostgreSQL),
+            sql: "SELECT sum(x) OVER \"W\" AS a, sum(x) OVER (\"V\" ORDER BY y) AS b FROM t WINDOW \"W\" AS (ORDER BY y), \"V\" AS (\"W\")",
+            pointer: "/0/select/expressions/0/alias/this/window_function/over/window_name/quoted",
+            expected_value: Ok(json!(true)),
+        },
+        ParseValueTestCase {
+            description: "a base named inside OVER keeps its quotes",
+            dialect: Some(DialectType::PostgreSQL),
+            sql: "SELECT sum(x) OVER \"W\" AS a, sum(x) OVER (\"V\" ORDER BY y) AS b FROM t WINDOW \"W\" AS (ORDER BY y), \"V\" AS (\"W\")",
+            pointer: "/0/select/expressions/1/alias/this/window_function/over/window_name/quoted",
+            expected_value: Ok(json!(true)),
+        },
+        ParseValueTestCase {
+            description: "a WINDOW clause name keeps its quotes",
+            dialect: Some(DialectType::PostgreSQL),
+            sql: "SELECT sum(x) OVER \"W\" AS a, sum(x) OVER (\"V\" ORDER BY y) AS b FROM t WINDOW \"W\" AS (ORDER BY y), \"V\" AS (\"W\")",
+            pointer: "/0/select/windows/0/name/quoted",
+            expected_value: Ok(json!(true)),
+        },
+        ParseValueTestCase {
+            description: "a base named in a WINDOW definition keeps its quotes",
+            dialect: Some(DialectType::PostgreSQL),
+            sql: "SELECT sum(x) OVER \"W\" AS a, sum(x) OVER (\"V\" ORDER BY y) AS b FROM t WINDOW \"W\" AS (ORDER BY y), \"V\" AS (\"W\")",
+            pointer: "/0/select/windows/1/spec/window_name/quoted",
+            expected_value: Ok(json!(true)),
+        },
+        ParseValueTestCase {
+            description: "an unquoted WINDOW clause name is not quoted",
+            dialect: Some(DialectType::PostgreSQL),
+            sql: "SELECT sum(x) OVER w AS a FROM t WINDOW w AS (ORDER BY y)",
+            pointer: "/0/select/windows/0/name/quoted",
+            expected_value: Ok(json!(false)),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            value_at(test_case.dialect, test_case.sql, test_case.pointer),
+            test_case.expected_value,
+            "{}",
+            test_case.description
+        );
+    }
+}
