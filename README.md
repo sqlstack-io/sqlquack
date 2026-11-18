@@ -110,4 +110,6 @@ SQLQuack goes a different way from both on translation. It doesn't rewrite the t
 
 Built in Rust. Free and open source. [Apache 2.0](https://github.com/sqlstack-io/sqlquack/blob/main/LICENSE).
 
+Questions and feedback are welcome on [Discord](https://discord.com/invite/gATNYuBK6).
+
 Part of [SQLStack](https://sqlstack.io/).
