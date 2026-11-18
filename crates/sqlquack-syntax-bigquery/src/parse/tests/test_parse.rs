@@ -767,6 +767,24 @@ fn given_sql_when_parsing_then_the_verdict_is_googlesql() {
 fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
     let test_cases = [
         ValueTestCase {
+            description: "adjacent strings keep their pieces",
+            sql: "SELECT 'a' 'b'",
+            pointer: "/0/select/expressions/0/literal",
+            expected_json: r#"{"literal_type":"joined_string","value":["ab",[{"literal_type":"string","value":"a"},{"literal_type":"string","value":"b"}]]}"#,
+        },
+        ValueTestCase {
+            description: "a raw piece of adjacent strings stays raw",
+            sql: "SELECT r'a' \"b\"",
+            pointer: "/0/select/expressions/0/literal/value/1/0/literal_type",
+            expected_json: "\"raw_string\"",
+        },
+        ValueTestCase {
+            description: "one string is a plain string",
+            sql: "SELECT 'ab'",
+            pointer: "/0/select/expressions/0/literal",
+            expected_json: r#"{"literal_type":"string","value":"ab"}"#,
+        },
+        ValueTestCase {
             description: "a backquoted project.dataset.table path splits into its parts",
             sql: "SELECT o.id FROM `p.d.orders` AS o",
             pointer: "/0/select/from/expressions/0/table/catalog/name",
