@@ -4,12 +4,14 @@ use std::collections::HashMap;
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
-use sqlquack_syntax::expressions::queries::models::{JoinKind, Select, With};
+use sqlquack_syntax::expressions::queries::models::{JoinKind, OrderBy, Select, With};
 
 use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::checks::issues::in_scope;
 use crate::lineage::_helpers::checks::node_checks::{NodeLevel, node_findings};
-use crate::lineage::_helpers::checks::scope_rules::{RuleLevel, select_rules, set_order};
+use crate::lineage::_helpers::checks::scope_rules::{
+    RuleLevel, select_rules, set_order, set_order_by,
+};
 use crate::lineage::_helpers::checks::sets::{Branches, set_findings};
 use crate::lineage::_helpers::findings::checks::{
     Level, alias_count_findings, column_finding, columns_pattern_finding, level_outputs,
@@ -17,7 +19,8 @@ use crate::lineage::_helpers::findings::checks::{
 };
 use crate::lineage::_helpers::tracing::expressions::date_part_argument;
 use crate::lineage::_helpers::tracing::queries::{
-    empty_scope, level_scope, output_key, unannotated, with_ctes_visiting,
+    clauses_within, empty_scope, level_scope, output_key, takes_clauses, unannotated,
+    with_ctes_visiting,
 };
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::{Reach, Reuse, reusing};
@@ -61,7 +64,29 @@ fn query_findings_level(
     };
     match query {
         Expression::Select(select) => {
-            select_findings((query, select), (ctes, outer, aliases), context)
+            select_findings((query, select, &[]), (ctes, outer, aliases), context)
+        }
+        Expression::Subquery(subquery) if takes_clauses(subquery) => {
+            let (inner, after) = clauses_within(query);
+            let orders: Vec<&OrderBy> = after
+                .iter()
+                .filter_map(|node| node.order_by.as_ref())
+                .collect();
+            match inner {
+                Expression::Select(select) => {
+                    select_findings((inner, select, &orders), (ctes, outer, aliases), context)
+                }
+                _ => {
+                    let mut found: Vec<NameFinding> =
+                        query_findings(inner, (ctes, outer, aliases), context);
+                    if typed_rules(context) {
+                        for order in orders {
+                            found.extend(set_order_by(inner, Some(order), context));
+                        }
+                    }
+                    found
+                }
+            }
         }
         Expression::Union(union) => branches(union.with.as_ref(), &union.left, &union.right),
         Expression::Intersect(intersect) => {
@@ -208,7 +233,7 @@ fn faulted_cte(name: &str, reach: &[NamedQuery], context: LineageContext<'_>) ->
 }
 
 fn select_findings(
-    (node, select): (&Expression, &Select),
+    (node, select, after): (&Expression, &Select, &[&OrderBy]),
     (ctes, outer, aliases): (&[NamedQuery], Option<&LineageScope<'_>>, &[String]),
     context: LineageContext<'_>,
 ) -> Vec<NameFinding> {
@@ -231,7 +256,11 @@ fn select_findings(
                 context,
             },
         ));
-        for checked in in_scope(node) {
+        let after_keys = after.iter().flat_map(|order| order_keys(order));
+        for checked in in_scope(node)
+            .into_iter()
+            .chain(after_keys.flat_map(in_scope))
+        {
             nested.extend(node_findings(checked, level));
         }
     }
@@ -310,8 +339,10 @@ fn select_findings(
         own.extend(found);
         nested.extend(inner);
     }
-    for clause in clauses(select) {
-        let named_place: bool = ordered_name_place(select, clause)
+    let mut read: Vec<&Expression> = clauses(select);
+    read.extend(after.iter().flat_map(|order| order_keys(order)));
+    for clause in read {
+        let named_place: bool = ordered_name_place(select, after, clause)
             || (rules.group_keys_read_outputs() && group_key_place(select, clause));
         let read = match (anywhere, named_place) {
             (true, _) => level,
@@ -359,8 +390,8 @@ fn group_key_place(select: &Select, clause: &Expression) -> bool {
         .any(|candidate| std::ptr::eq(candidate, clause))
 }
 
-/// Whether `clause` is an ORDER BY key of `select` that is a bare name.
-fn ordered_name_place(select: &Select, clause: &Expression) -> bool {
+/// Whether `clause` is a bare-name ORDER BY key of `select` or of the clauses `after` it.
+fn ordered_name_place(select: &Select, after: &[&OrderBy], clause: &Expression) -> bool {
     let mut bare: &Expression = unannotated(clause);
     while let Expression::Paren(paren) = bare {
         bare = unannotated(&paren.this);
@@ -369,8 +400,14 @@ fn ordered_name_place(select: &Select, clause: &Expression) -> bool {
         && select
             .order_by
             .iter()
+            .chain(after.iter().copied())
             .flat_map(|order| &order.expressions)
             .any(|ordered| std::ptr::eq(&ordered.this, clause))
+}
+
+/// The keys of `order`.
+fn order_keys(order: &OrderBy) -> impl Iterator<Item = &Expression> {
+    order.expressions.iter().map(|ordered| &ordered.this)
 }
 
 /// Whether a FROM item is LATERAL, reading the items before it.
@@ -414,6 +451,15 @@ fn clause_findings(
     let mut bound: Vec<String> = Vec::new();
     while let Some(node) = pending.pop() {
         match node {
+            Expression::Subquery(subquery) if takes_clauses(subquery) => {
+                let aliases: Vec<String> =
+                    level_outputs(*level, context).map(str::to_owned).collect();
+                nested.extend(query_findings(
+                    node,
+                    (level.scope.ctes, Some(level.scope), &aliases),
+                    context,
+                ));
+            }
             Expression::Select(_)
             | Expression::Union(_)
             | Expression::Intersect(_)

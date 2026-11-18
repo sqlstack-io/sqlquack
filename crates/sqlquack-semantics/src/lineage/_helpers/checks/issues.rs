@@ -4,6 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::tokens::models::Span;
 
+use crate::lineage::_helpers::tracing::queries::takes_clauses;
 use crate::lineage::models::NameFinding;
 
 /// A finding about `node`, at `span`.
@@ -72,7 +73,7 @@ pub(crate) fn query_boundary(node: &Expression) -> bool {
         | Expression::Intersect(_)
         | Expression::Except(_)
         | Expression::Cte(_) => true,
-        Expression::Subquery(subquery) => subquery.alias.is_some(),
+        Expression::Subquery(subquery) => subquery.alias.is_some() || takes_clauses(subquery),
         _ => false,
     }
 }

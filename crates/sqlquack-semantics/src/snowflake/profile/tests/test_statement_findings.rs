@@ -22,6 +22,16 @@ fn given_a_query_when_resolving_its_names_then_unknown_ambiguous_and_unqualifiab
             expected_findings: &[("E201", "Unknown column 'qty' in table 'orders'", 7)],
         },
         QueryFindingsTestCase {
+            description: "an ORDER BY column after a parenthesized query that its relation lacks",
+            sql: "(SELECT id FROM orders) ORDER BY nope",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 33)],
+        },
+        QueryFindingsTestCase {
+            description: "an ORDER BY column after a parenthesized query with LIMIT that its relation lacks",
+            sql: "(SELECT id FROM orders LIMIT 1) ORDER BY nope",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 41)],
+        },
+        QueryFindingsTestCase {
             description: "an unqualified column no relation has",
             sql: "SELECT qty FROM orders, customers",
             expected_findings: &[(
