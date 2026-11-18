@@ -641,6 +641,48 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 3,
         },
         DistinctTreesTestCase {
+            description: "a table in one, two and three pairs of parentheses",
+            written: &[
+                "SELECT * FROM t1",
+                "SELECT * FROM ( t1 )",
+                "SELECT * FROM ( ( t1 ) )",
+                "SELECT * FROM ( ( ( t1 ) ) )",
+            ],
+            expected_distinct_trees: 4,
+        },
+        DistinctTreesTestCase {
+            description: "a table function, a join and an inline table, bare and in parentheses",
+            written: &[
+                "SELECT * FROM range ( 1 ) a1",
+                "SELECT * FROM ( range ( 1 ) a1 )",
+                "SELECT * FROM ( range ( 1 ) ) a1",
+                "SELECT * FROM ( t1 JOIN t2 )",
+                "SELECT * FROM ( ( t1 JOIN t2 ) )",
+                "SELECT * FROM VALUES ( 1 ) a1",
+                "SELECT * FROM ( VALUES ( 1 ) ) a1",
+                "SELECT * FROM ( ( VALUES ( 1 ) ) ) a1",
+            ],
+            expected_distinct_trees: 8,
+        },
+        DistinctTreesTestCase {
+            description: "a query in one and two pairs of parentheses",
+            written: &[
+                "SELECT * FROM ( SELECT 1 )",
+                "SELECT * FROM ( ( SELECT 1 ) )",
+                "SELECT * FROM abs ( TABLE ( SELECT 1 ) )",
+                "SELECT * FROM abs ( TABLE ( ( SELECT 1 ) ) )",
+                "VACUUM t1 USING INVENTORY ( SELECT 1 )",
+                "VACUUM t1 USING INVENTORY ( ( SELECT 1 ) )",
+                "SELECT 1 UNION SELECT 2",
+                "( SELECT 1 ) UNION SELECT 2",
+                "CREATE TABLE t1 AS ( SELECT 1 )",
+                "CREATE TABLE t1 AS ( ( SELECT 1 ) )",
+                "CREATE VIEW v1 AS ( SELECT 1 )",
+                "CREATE VIEW v1 AS ( ( SELECT 1 ) )",
+            ],
+            expected_distinct_trees: 12,
+        },
+        DistinctTreesTestCase {
             description: "TIMESTAMP bare, WITH LOCAL TIME ZONE and WITHOUT TIME ZONE",
             written: &[
                 "SELECT CAST ( v1 AS TIMESTAMP )",

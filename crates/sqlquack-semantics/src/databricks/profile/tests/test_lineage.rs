@@ -1,5 +1,6 @@
 use crate::databricks::profile::tests::helpers::databricks_findings;
 use crate::databricks::profile::tests::helpers::databricks_outputs;
+use crate::databricks::profile::tests::helpers::reading;
 use crate::databricks::profile::tests::test_types::DatabricksOutputsTestCase;
 use crate::databricks::profile::tests::test_types::SameReadingTestCase;
 use crate::dialects::constants::DATABRICKS;
@@ -322,17 +323,64 @@ fn given_synonymous_operator_spellings_when_analysed_then_each_reads_alike() {
             expected_same_as: "SELECT shiftrightunsigned(quantity, 1) AS a FROM orders WHERE shiftrightunsigned(quantity, 1)",
         },
     ];
-    let read = |sql: &str| {
-        let findings: Vec<(&str, String)> = databricks_findings(sql)
-            .into_iter()
-            .map(|(code, message, _)| (code, message))
-            .collect();
-        (databricks_outputs(sql), findings)
-    };
     for test_case in test_cases {
         assert_eq!(
-            read(test_case.sql),
-            read(test_case.expected_same_as),
+            reading(test_case.sql),
+            reading(test_case.expected_same_as),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_relation_or_query_in_extra_parentheses_when_analysed_then_it_reads_as_without() {
+    let test_cases = [
+        SameReadingTestCase {
+            description: "a table in two pairs of parentheses",
+            sql: "SELECT id, nope FROM ( ( orders ) )",
+            expected_same_as: "SELECT id, nope FROM orders",
+        },
+        SameReadingTestCase {
+            description: "an aliased table in two pairs of parentheses",
+            sql: "SELECT o.id, o.nope FROM ( ( orders ) ) o",
+            expected_same_as: "SELECT o.id, o.nope FROM orders o",
+        },
+        SameReadingTestCase {
+            description: "a table function in parentheses",
+            sql: "SELECT r.id FROM ( range ( 3 ) ) r",
+            expected_same_as: "SELECT r.id FROM range ( 3 ) r",
+        },
+        SameReadingTestCase {
+            description: "a join in a second pair of parentheses",
+            sql: "SELECT o.id, c.name FROM ( ( orders o JOIN customers c ON o.id = c.id ) )",
+            expected_same_as: "SELECT o.id, c.name FROM ( orders o JOIN customers c ON o.id = c.id )",
+        },
+        SameReadingTestCase {
+            description: "a derived table's query in a second pair of parentheses",
+            sql: "SELECT x FROM ( ( SELECT id AS x FROM orders ) ) d",
+            expected_same_as: "SELECT x FROM ( SELECT id AS x FROM orders ) d",
+        },
+        SameReadingTestCase {
+            description: "IN and EXISTS subqueries in a second pair of parentheses",
+            sql: "SELECT id FROM orders WHERE id IN ( ( SELECT nope FROM customers ) ) AND EXISTS ( ( SELECT nope FROM customers ) )",
+            expected_same_as: "SELECT id FROM orders WHERE id IN ( SELECT nope FROM customers ) AND EXISTS ( SELECT nope FROM customers )",
+        },
+        SameReadingTestCase {
+            description: "a whole query in parentheses",
+            sql: "( SELECT id, nope FROM orders )",
+            expected_same_as: "SELECT id, nope FROM orders",
+        },
+        SameReadingTestCase {
+            description: "a set operation's operands in parentheses",
+            sql: "( SELECT id FROM orders ) UNION ( SELECT id FROM customers )",
+            expected_same_as: "SELECT id FROM orders UNION SELECT id FROM customers",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            reading(test_case.sql),
+            reading(test_case.expected_same_as),
             "{}",
             test_case.description
         );

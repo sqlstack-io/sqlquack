@@ -69,3 +69,12 @@ pub(crate) fn databricks_shop_schema() -> TypedShopSchema {
         ..TypedShopSchema::default()
     }
 }
+
+/// The outputs and the findings without their positions, which differ between spellings.
+pub(crate) fn reading(sql: &str) -> (Vec<(String, Option<String>)>, Vec<(&'static str, String)>) {
+    let findings: Vec<(&str, String)> = databricks_findings(sql)
+        .into_iter()
+        .map(|(code, message, _)| (code, message))
+        .collect();
+    (databricks_outputs(sql), findings)
+}

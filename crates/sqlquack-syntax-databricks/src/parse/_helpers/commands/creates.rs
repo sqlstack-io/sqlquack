@@ -229,8 +229,8 @@ impl Parser<'_> {
             ));
         }
         if as_query || self.starts_query_at(0) {
-            let parenthesized: bool = self.is_char('(');
-            node.as_select = Some(self.query()?);
+            let (query, parenthesized) = self.flagged_query()?;
+            node.as_select = Some(query);
             node.as_select_parenthesized = parenthesized;
             node.as_select_without_as = !as_query;
         }
@@ -1079,8 +1079,7 @@ impl Parser<'_> {
                 "Operation not allowed: TBLPROPERTIES can't coexist with CREATE TEMPORARY VIEW";
             return Err(self.error_with(message, start_offset, true));
         }
-        let parenthesized: bool = self.is_char('(');
-        let query: Expression = self.query()?;
+        let (query, parenthesized) = self.flagged_query()?;
         let mut node: CreateView = CreateView::new(String::new(), query);
         node.name = name;
         node.columns = columns;

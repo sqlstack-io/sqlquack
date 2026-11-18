@@ -10,7 +10,7 @@ use sqlquack_syntax::expressions::queries::models::{
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    TableAlias, binary, call, cte, null, set_operation, star, subquery, tuple, var,
+    TableAlias, binary, call, cte, null, paren, set_operation, star, subquery, tuple, var,
 };
 use crate::parse::constants::{CUBE, GROUPING_SETS, ROLLUP};
 use crate::scan::models::TokenKind;
@@ -226,6 +226,15 @@ impl Parser<'_> {
         })
     }
 
+    /// A query, and whether it is one parenthesized query term, whose outer pair the flag then records.
+    pub(crate) fn flagged_query(&mut self) -> Parsing<(Expression, bool)> {
+        let first: usize = self.at;
+        Ok(match self.query()? {
+            Expression::Paren(node) => (self.respanned(first, node.this), true),
+            query => (query, false),
+        })
+    }
+
     /// A query after its common table expressions.
     pub(crate) fn query_rest(&mut self, with: Option<With>) -> Parsing<Expression> {
         let body: Expression = self.query_term(0)?;
@@ -319,13 +328,14 @@ impl Parser<'_> {
         }
     }
 
-    /// `queryPrimary`: a `SELECT`, `FROM ...`, `TABLE t`, `VALUES ...` or `( query )`.
+    /// `queryPrimary`: a `SELECT`, `FROM ...`, `TABLE t`, `VALUES ...` or `( query )` as a paren node.
     pub(crate) fn query_primary(&mut self) -> Parsing<Expression> {
         if self.is_char('(') {
+            let first: usize = self.at;
             self.at += 1;
             let query: Expression = self.query()?;
             self.expect_char(')')?;
-            return Ok(query);
+            return Ok(self.spanned(first, paren(query)));
         }
         match self.word_at(0).as_deref() {
             Some("SELECT") => self.query_specification(),
