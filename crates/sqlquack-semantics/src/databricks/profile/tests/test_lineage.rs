@@ -438,6 +438,16 @@ fn given_a_join_in_parentheses_when_analysed_then_its_conditions_and_items_are_c
             sql: "SELECT l.n FROM ( orders o JOIN LATERAL ( SELECT o.id AS n ) l ON true )",
             expected_same_as: "SELECT l.n FROM orders o JOIN LATERAL ( SELECT o.id AS n ) l ON true",
         },
+        SameReadingTestCase {
+            description: "USING inside the parentheses, its left side only the tables there",
+            sql: "SELECT 1 FROM orders JOIN ( customers JOIN orders y USING ( quantity ) ) ON true",
+            expected_same_as: "SELECT 1 FROM customers JOIN orders y USING ( quantity )",
+        },
+        SameReadingTestCase {
+            description: "USING after the parentheses, its right side every table there",
+            sql: "SELECT 1 FROM orders JOIN ( customers JOIN orders y ON true ) USING ( quantity )",
+            expected_same_as: "SELECT 1 FROM orders JOIN orders y USING ( quantity )",
+        },
     ];
     for test_case in test_cases {
         assert_eq!(
