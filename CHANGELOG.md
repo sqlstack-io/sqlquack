@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.2](https://github.com/sqlstack-io/sqlquack/compare/v0.18.1...v0.18.2) (2026-11-18)
+
+
+### Bug Fixes
+
+* **snowflake:** refuse a bare ALTER instead of panicking ([57e8722](https://github.com/sqlstack-io/sqlquack/commit/57e8722ab0466062c317d8405e9430e3c4fe25fd))
+
 ## [0.18.1](https://github.com/sqlstack-io/sqlquack/compare/v0.18.0...v0.18.1) (2026-11-18)
 
 
