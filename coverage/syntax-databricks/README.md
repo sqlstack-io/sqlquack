@@ -569,6 +569,8 @@ others:
 - `ADD COLUMN` against `ADD COLUMNS` and `DROP COLUMN` against `DROP COLUMNS`, because the ALTER
   TABLE page writes `{ COLUMN | COLUMNS }` as alternatives of one clause;
 - the sign written before an interval value, including `+`;
+- a raw string (`r'c'` or `R'c'`) against a plain one, and adjacent strings (`'c' 'c'`) against
+  the one string they join to, in a `joined_string` literal that keeps each piece;
 - the operator written for a construct another documented form shares: `==` against `=`, `!=`
   against `<>`, `IS [NOT] DISTINCT FROM` against `<=>`, `REGEXP` and `RLIKE` against the `rlike` call, and `>>>`
   against the `shiftrightunsigned` call, in a `written_as` field that analysis ignores;
