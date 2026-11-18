@@ -10,8 +10,11 @@
 #
 # Letter case is allowed without an entry, because the screen makes no case variants: the lexer
 # reads a keyword and the r or R prefix of a raw string case-insensitively, so SELECT and select,
-# and r'x' and R'x', are one token each and give one tree. A receipt that shows Databricks reading
-# two such spellings differently makes it a finding.
+# and r'x' and R'x', are one token each and give one tree. The letter case of an unquoted function
+# name is allowed too: the tree keeps it as written, so count and COUNT give two trees, but Databricks
+# reads unquoted function names case-insensitively, and the formatter writes built-in names in upper
+# case, so its round trip compares them without case. A backquoted name keeps its case. A receipt
+# that shows Databricks reading two such spellings differently makes it a finding.
 #
 # [[lexical]]
 # mutation = "requote"
