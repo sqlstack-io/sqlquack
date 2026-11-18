@@ -8,6 +8,7 @@ use crate::lineage::tests::helpers::duckdb_shop_schema;
 use crate::lineage::tests::helpers::output_ranges;
 use crate::lineage::tests::helpers::owned_findings;
 use crate::lineage::tests::test_types::QueryFindingsTestCase;
+use crate::lineage::tests::test_types::StarOrderTestCase;
 use crate::lineage::tests::test_types::StrictRangeTestCase;
 
 #[test]
@@ -748,5 +749,21 @@ fn given_a_comma_after_a_joined_relation_when_checked_then_the_join_reads_only_i
             "{}",
             test_case.description
         );
+    }
+}
+
+#[test]
+fn given_a_using_join_after_a_comma_when_expanding_a_star_then_its_key_leads_its_own_group() {
+    let test_cases = [StarOrderTestCase {
+        description: "the USING key comes first in its group, after the earlier comma relation",
+        sql: "SELECT * FROM customers a, customers b JOIN customers c USING (name)",
+        expected_names: &["id", "name", "name", "id", "id"],
+    }];
+    for test_case in test_cases {
+        let names: Vec<String> = databricks_outputs(test_case.sql)
+            .into_iter()
+            .map(|(name, _)| name)
+            .collect();
+        assert_eq!(names, test_case.expected_names, "{}", test_case.description);
     }
 }

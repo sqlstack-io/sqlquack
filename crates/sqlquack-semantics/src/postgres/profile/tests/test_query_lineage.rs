@@ -3,13 +3,17 @@ use std::collections::HashMap;
 use sqlquack_syntax::Dialect;
 
 use crate::dialects::constants::POSTGRES;
-use crate::lineage::models::TransformKind;
+use crate::lineage::main::statement_lineage::statement_lineage;
+use crate::lineage::models::{LineageContext, Nullability, SchemaColumn, TransformKind};
 use crate::lineage::tests::helpers::output_ranges;
 use crate::lineage::tests::helpers::{duckdb_shop_schema, typed_column, typed_duckdb_shop_schema};
+use crate::lineage::tests::test_types::DialectTypeTestCase;
 use crate::lineage::tests::test_types::QueryLineageTestCase;
+use crate::lineage::tests::test_types::StarOrderTestCase;
 use crate::lineage::tests::test_types::StrictRangeTestCase;
 use crate::lineage::tests::test_types::TypedShopSchema;
 use crate::postgres::profile::tests::helpers::lineage_outputs;
+use crate::postgres::profile::tests::helpers::native_postgres_statement;
 
 #[test]
 fn given_unaliased_postgres_outputs_when_tracing_lineage_then_each_takes_figurecolnames_name() {
@@ -271,6 +275,89 @@ fn given_a_strict_parse_when_tracing_lineage_then_each_output_has_its_items_byte
                 .cloned()
                 .map(Some)
                 .collect::<Vec<_>>(),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_joined_and_comma_items_when_expanding_a_star_then_each_group_places_its_own_keys() {
+    let test_cases = [
+        StarOrderTestCase {
+            description: "a USING key first in its own comma group, after the earlier item",
+            sql: "SELECT * FROM customers a, customers b JOIN customers c USING (name)",
+            expected_names: &[
+                "id", "name", "country", "name", "id", "country", "id", "country",
+            ],
+        },
+        StarOrderTestCase {
+            description: "a nested USING key once, first",
+            sql: "SELECT * FROM customers a JOIN customers b JOIN customers c USING (name) USING (name)",
+            expected_names: &["name", "id", "country", "id", "country", "id", "country"],
+        },
+    ];
+    let schema = duckdb_shop_schema();
+    for test_case in test_cases {
+        let context = LineageContext {
+            profile: &POSTGRES,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let names: Vec<String> =
+            statement_lineage(&native_postgres_statement(test_case.sql), context)
+                .outputs
+                .into_iter()
+                .map(|output| output.name)
+                .collect();
+        assert_eq!(names, test_case.expected_names, "{}", test_case.description);
+    }
+}
+
+#[test]
+fn given_an_outer_join_after_a_comma_when_tracing_nullability_then_only_its_group_is_nulled() {
+    let test_cases = [DialectTypeTestCase {
+        description: "a RIGHT JOIN nulls only its own group's left side",
+        sql: "SELECT a.name, b.status, c.name FROM customers a, orders b RIGHT JOIN customers c ON b.id = c.id",
+        dialect: Dialect::PostgreSQL,
+        profile: &POSTGRES,
+        expected_outputs: &[
+            ("name", Some("TEXT"), Nullability::NonNull),
+            ("status", Some("TEXT"), Nullability::Nullable),
+            ("name", Some("TEXT"), Nullability::NonNull),
+        ],
+    }];
+    let column = |name: &str| SchemaColumn {
+        nullability: Nullability::NonNull,
+        ..typed_column(name, "TEXT")
+    };
+    let schema = TypedShopSchema {
+        closed: HashMap::from([
+            ("orders".to_owned(), vec![column("id"), column("status")]),
+            ("customers".to_owned(), vec![column("id"), column("name")]),
+        ]),
+        ..TypedShopSchema::default()
+    };
+    for test_case in test_cases {
+        let context = LineageContext {
+            profile: test_case.profile,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let lineage = statement_lineage(&native_postgres_statement(test_case.sql), context);
+        let outputs: Vec<(&str, Option<&str>, Nullability)> = lineage
+            .outputs
+            .iter()
+            .map(|output| {
+                (
+                    output.name.as_str(),
+                    output.data_type.as_deref(),
+                    output.nullability,
+                )
+            })
+            .collect();
+        assert_eq!(
+            outputs, test_case.expected_outputs,
             "{}",
             test_case.description
         );
