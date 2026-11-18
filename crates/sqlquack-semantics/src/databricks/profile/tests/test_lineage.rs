@@ -550,7 +550,7 @@ fn given_a_parenthesized_query_with_clauses_after_it_when_analysed_then_they_rea
 }
 
 #[test]
-fn given_a_window_named_after_parentheses_when_checked_then_only_an_undefined_name_is_found() {
+fn given_a_named_window_when_checked_then_an_undefined_name_or_unknown_key_is_found() {
     let test_cases = [
         QueryFindingsTestCase {
             description: "the window function inside reads the window named after the parentheses",
@@ -561,6 +561,16 @@ fn given_a_window_named_after_parentheses_when_checked_then_only_an_undefined_na
             description: "a window no WINDOW clause names is still unknown",
             sql: "( SELECT sum ( quantity ) OVER w2 AS x FROM orders LIMIT 1 ) WINDOW w AS ( ORDER BY quantity )",
             expected_findings: &[("E232", "Unknown named window 'w2'", 15)],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown partition key in the window named after the parentheses",
+            sql: "( SELECT sum ( quantity ) OVER w AS x FROM orders LIMIT 1 ) WINDOW w AS ( PARTITION BY nope )",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 87)],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown order key in a WINDOW clause without parentheses",
+            sql: "SELECT sum ( quantity ) OVER w AS x FROM orders WINDOW w AS ( ORDER BY nope )",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 71)],
         },
     ];
     for test_case in test_cases {

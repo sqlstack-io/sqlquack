@@ -363,6 +363,16 @@ fn select_findings(
         own.extend(found);
         nested.extend(inner);
     }
+    let windows = std::iter::once(&select.windows)
+        .chain(after.iter().map(|node| &node.windows))
+        .flatten()
+        .flatten();
+    let windowed = if anywhere { level } else { unnamed };
+    for key in windows.flat_map(window_keys) {
+        let (found, inner) = clause_findings(key, &windowed, context);
+        own.extend(found);
+        nested.extend(inner);
+    }
     own.sort_by_key(|finding| finding.span.map(|span| span.start));
     own.extend(nested);
     own
