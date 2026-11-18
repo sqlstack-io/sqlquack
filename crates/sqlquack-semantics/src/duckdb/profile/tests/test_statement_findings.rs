@@ -704,6 +704,25 @@ fn given_named_windows_when_resolving_names_then_only_the_windows_an_over_reads_
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "an unknown column in a used window's frame offset",
+            sql: "SELECT sum(amount) OVER w AS x FROM orders WINDOW w AS (ORDER BY id ROWS BETWEEN nope PRECEDING AND CURRENT ROW)",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 81)],
+        },
+        QueryFindingsTestCase {
+            description: "the same offset written inline",
+            sql: "SELECT sum(amount) OVER (ORDER BY id ROWS BETWEEN nope PRECEDING AND CURRENT ROW) AS x FROM orders",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 50)],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown qualifier in a used window's end offset",
+            sql: "SELECT sum(amount) OVER w AS x FROM orders WINDOW w AS (ORDER BY id ROWS BETWEEN 1 PRECEDING AND zz.id FOLLOWING)",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'zz' referenced by column 'id'",
+                97,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "a window that the used window extends",
             sql: "SELECT sum(amount) OVER w2 AS x FROM orders WINDOW w AS (PARTITION BY nope), w2 AS (w ORDER BY id)",
             expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 70)],

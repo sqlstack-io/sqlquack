@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::queries::models::{
-    JoinKind, NamedWindow, OrderBy, Select, Subquery, With,
+    JoinKind, NamedWindow, OrderBy, Select, Subquery, WindowFrameBound, With,
 };
 
 use crate::dialects::main::dialect_rules::dialect_rules;
@@ -462,10 +462,18 @@ fn used_windows<'w>(
         .collect()
 }
 
-/// The partition and order keys of `window`.
+/// The partition and order keys of `window`, and its frame's offsets.
 fn window_keys(window: &NamedWindow) -> impl Iterator<Item = &Expression> {
     let orders = window.spec.order_by.iter().map(|ordered| &ordered.this);
-    window.spec.partition_by.iter().chain(orders)
+    let frame = window.spec.frame.iter();
+    let bounds = frame.flat_map(|frame| std::iter::once(&frame.start).chain(&frame.end));
+    let offsets = bounds.filter_map(|bound| match bound {
+        WindowFrameBound::Preceding(offset)
+        | WindowFrameBound::Following(offset)
+        | WindowFrameBound::Value(offset) => Some(offset.as_ref()),
+        _ => None,
+    });
+    window.spec.partition_by.iter().chain(orders).chain(offsets)
 }
 
 /// The keys of `order`.
