@@ -136,7 +136,7 @@ fn given_a_databricks_query_when_naming_and_typing_outputs_then_they_are_the_war
         DatabricksOutputsTestCase {
             description: "literals typed as typeof reports them",
             sql: "SELECT 1 AS a, 2147483648 AS b, 9223372036854775808 AS c, 1.50 AS d, \
-                  0.05 AS e, 1e5 AS f, 'x' AS g, -2147483648 AS h",
+                  0.05 AS e, 1e5 AS f, 'x' AS g, -2147483648 AS h, r'x' AS i",
             expected_outputs: &[
                 ("a", Some("INT")),
                 ("b", Some("BIGINT")),
@@ -146,6 +146,7 @@ fn given_a_databricks_query_when_naming_and_typing_outputs_then_they_are_the_war
                 ("f", Some("DOUBLE")),
                 ("g", Some("STRING")),
                 ("h", Some("INT")),
+                ("i", Some("STRING")),
             ],
         },
         DatabricksOutputsTestCase {
