@@ -78,6 +78,9 @@ pub(crate) trait DialectRules: Sync {
     /// Where outputs are read anywhere, whether the select list may read them too.
     fn select_list_reads_outputs(&self) -> bool;
 
+    /// Whether an unqualified USING or NATURAL key reads its merged column though an item outside its join offers the name.
+    fn merged_keys_hide_other_items(&self) -> bool;
+
     /// Whether calls are checked against the signatures of the functions they name.
     fn checks_call_signatures(&self) -> bool;
 
