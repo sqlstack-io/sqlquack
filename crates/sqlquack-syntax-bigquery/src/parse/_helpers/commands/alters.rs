@@ -502,7 +502,7 @@ impl Parser<'_> {
             }
         }
         if self.eat_kw("OPTIONS") {
-            self.options_list()?;
+            column.options = self.options_list()?;
         }
         Ok(column)
     }
