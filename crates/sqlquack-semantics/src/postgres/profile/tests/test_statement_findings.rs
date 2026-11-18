@@ -265,3 +265,63 @@ fn given_a_join_in_parentheses_when_resolving_names_then_its_conditions_and_item
         );
     }
 }
+
+#[test]
+fn given_a_named_window_when_resolving_names_then_its_keys_read_the_input_columns() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "known partition and order keys",
+            sql: "SELECT sum(amount) OVER w AS x FROM orders WINDOW w AS (PARTITION BY customer_id ORDER BY id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown order key",
+            sql: "SELECT sum(amount) OVER w AS x FROM orders WINDOW w AS (ORDER BY nope)",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 65)],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown partition key",
+            sql: "SELECT sum(amount) OVER w AS x FROM orders WINDOW w AS (PARTITION BY nope)",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 69)],
+        },
+        QueryFindingsTestCase {
+            description: "an output alias, which a window definition does not read",
+            sql: "SELECT amount AS q, sum(amount) OVER w AS x FROM orders WINDOW w AS (ORDER BY q)",
+            expected_findings: &[("E201", "Unknown column 'q' in table 'orders'", 78)],
+        },
+    ];
+    let schema = duckdb_shop_schema();
+    for test_case in test_cases {
+        let statement = sqlquack_syntax_postgres::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        let context = LineageContext {
+            profile: &POSTGRES,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let native: Vec<(&'static str, String, usize)> = statement_findings(&statement, context)
+            .into_iter()
+            .map(|finding| {
+                (
+                    finding.code,
+                    finding.message,
+                    finding.span.map_or(0, |span| span.start),
+                )
+            })
+            .collect();
+        assert_eq!(
+            found_findings(test_case.sql, (Dialect::PostgreSQL, &POSTGRES, &schema)),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+        assert_eq!(
+            native,
+            owned_findings(test_case.expected_findings),
+            "{}, PostgreSQL's parser",
+            test_case.description
+        );
+    }
+}
