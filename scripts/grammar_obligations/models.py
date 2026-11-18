@@ -31,7 +31,7 @@ class Spec:
 
 @dataclass(frozen=True)
 class Draft:
-    """An obligation before its id is assigned; pair holds the targets of two option drafts."""
+    """An obligation before its id is assigned; pair holds two option or alternative targets."""
 
     form: str
     kind: str

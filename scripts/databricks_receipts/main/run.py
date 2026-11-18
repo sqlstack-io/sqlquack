@@ -1,4 +1,4 @@
-"""Record Databricks SQL 2026.44 receipts for case files, or compare two runs."""
+"""Record Databricks SQL 2026.45 receipts for case files, or compare two runs."""
 
 from __future__ import annotations
 

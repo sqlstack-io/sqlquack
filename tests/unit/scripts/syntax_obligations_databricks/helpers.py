@@ -39,18 +39,22 @@ EMPTY_CATALOGUE: str = "# no forms\n"
 IDENTIFIER_CLASS_KIND: str = "identifier_class"
 CLASS_NOTE_PREFIXES: tuple[str, ...] = ("reserved:", "keyword:")
 NO_NOTE: tuple[str, str] = ("", "")
+MISSING_OPEN: str = "the form without its required ("
+NEGATIVE_KINDS: frozenset[str] = frozenset({"negative_neighbour", "required_operand_missing"})
+QUOTED: re.Pattern[str] = re.compile(r"'(?:[^']|'')*'|`[^`]*`")
 
 
-def small_root(*, directory: Path, limits: str, retired: str) -> Path:
+def small_root(*, directory: Path, limits: str, retired: str, family: str = FAMILY) -> Path:
     """One committed family, its obligations and limits.toml, plus extra limits and retired ids."""
     root: Path = directory / "root"
     (root / "catalogue").mkdir(parents=True)
     (root / "obligations").mkdir()
-    for family in FAMILIES:
-        (root / "catalogue" / f"{family}.toml").write_text(EMPTY_CATALOGUE)
+    for other in FAMILIES:
+        (root / "catalogue" / f"{other}.toml").write_text(EMPTY_CATALOGUE)
     for part in ("catalogue", "obligations"):
-        shutil.copy(ROOT / part / f"{FAMILY}.toml", root / part / f"{FAMILY}.toml")
+        shutil.copy(ROOT / part / f"{family}.toml", root / part / f"{family}.toml")
     (root / "limits.toml").write_text((ROOT / "limits.toml").read_text() + "\n" + limits)
+    shutil.copy(ROOT / "sources.toml", root / "sources.toml")
     (root / "retired.toml").write_text(retired)
     return root
 
@@ -127,3 +131,93 @@ def refused_cases(found: list[tuple[str, str, str, str]]) -> list[tuple[str, str
 def keyword_expects(found: list[tuple[str, str, str, str]]) -> list[str]:
     """The expectation of each keyword class case."""
     return [expect for _, _, expect, _ in filter(lambda row: row[0] == "keyword", found)]
+
+
+def _built_cases() -> list[Row]:
+    """Every built case of every family."""
+    found: list[Row] = []
+    for path in (EVIDENCE / CASES_DIR).glob("*.jsonl"):
+        found += [json.loads(line) for line in path.read_text().splitlines()]
+    return found
+
+
+def _missing_open_ids() -> set[str]:
+    """Every obligation for a form without one of its required `(`."""
+    found: set[str] = set()
+    for path in (ROOT / OBLIGATIONS_DIR).glob("*.toml"):
+        rows: list[Row] = tomllib.loads(path.read_text()).get("obligation", [])
+        found |= {
+            str(row["id"]) for row in filter(lambda row: row.get("note") == MISSING_OPEN, rows)
+        }
+    return found
+
+
+def missing_open_cases() -> list[Row]:
+    """Every case citing a missing-`(` obligation."""
+    wanted: set[str] = _missing_open_ids()
+    return list(
+        filter(lambda case: not wanted.isdisjoint(_texts(case["obligations"])), _built_cases())
+    )
+
+
+def missing_open_sql(form: str) -> set[str]:
+    """The SQL of every missing-`(` case of `form`."""
+    return {
+        str(case["sql"])
+        for case in filter(
+            lambda case: str(case["case_id"]).rsplit(".k", 1)[0] == form, missing_open_cases()
+        )
+    }
+
+
+def unbalanced(cases: list[Row]) -> list[str]:
+    """The ids of `cases` whose SQL, quoted text aside, has unmatched parentheses."""
+    bare: list[tuple[str, str]] = [
+        (str(case["case_id"]), QUOTED.sub("''", str(case["sql"]))) for case in cases
+    ]
+    return [
+        case_id
+        for case_id, sql in filter(lambda pair: pair[1].count("(") != pair[1].count(")"), bare)
+    ]
+
+
+def accepted_sql(form: str) -> set[str]:
+    """The SQL of every case of `form` expected to be accepted."""
+    return {
+        str(case["sql"])
+        for case in filter(
+            lambda case: (
+                case["expect"] == "accept" and str(case["case_id"]).rsplit(".k", 1)[0] == form
+            ),
+            _built_cases(),
+        )
+    }
+
+
+def family_cases(root: Path, family: str) -> dict[str, Row]:
+    """The built cases of one family, by case id."""
+    path: Path = root / "cases" / f"{family}.jsonl"
+    return {str(row["case_id"]): row for row in map(json.loads, path.read_text().splitlines())}
+
+
+def observed_negatives(root: Path, cases: dict[str, Row], family: str) -> tuple[str, str]:
+    """An observed case only derived negatives cite, and one a hand [[limit]] negative renders."""
+    rows: list[Row] = tomllib.loads((root / "obligations" / f"{family}.toml").read_text())[
+        "obligation"
+    ]
+    kinds: dict[str, str] = {str(row["id"]): str(row["kind"]) for row in rows}
+    limits: list[Row] = tomllib.loads((root / "limits.toml").read_text())["limit"]
+    hand: set[str] = {
+        " ".join(str(row["sql"]).split()) for row in filter(lambda row: "sql" in row, limits)
+    }
+    negatives: list[str] = sorted(
+        filter(lambda case_id: _only_negatives_cite(cases[case_id], kinds), cases)
+    )
+    derived: list[str] = list(filter(lambda case_id: cases[case_id]["sql"] not in hand, negatives))
+    written: list[str] = list(filter(lambda case_id: cases[case_id]["sql"] in hand, negatives))
+    return derived[0], written[0]
+
+
+def _only_negatives_cite(case: Row, kinds: dict[str, str]) -> bool:
+    cited: set[str] = set(map(lambda identifier: kinds[str(identifier)], case["obligations"]))
+    return case["expect"] == "observe" and cited <= NEGATIVE_KINDS

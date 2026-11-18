@@ -5,7 +5,7 @@ from __future__ import annotations
 import itertools
 import re
 
-DBSQL_VERSION: str = "2026.44"
+DBSQL_VERSION: str = "2026.45"
 ENGINE_LABEL: str = f"Databricks SQL {DBSQL_VERSION} (serverless SQL warehouse, Current channel)"
 SPARK_TAG: str = "v4.2.0"
 SPARK_COMMIT: str = "32f7299601108917fb01920a54e084595b7b3bf8"

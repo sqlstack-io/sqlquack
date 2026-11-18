@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import json
+import threading
+import time
 import urllib.request
+from collections.abc import Callable
 from pathlib import Path
 from typing import cast
 
@@ -18,18 +21,27 @@ from scripts.databricks_receipts._helpers.sequential import (
 )
 from scripts.databricks_receipts.classes import client as client_module
 from scripts.databricks_receipts.classes.client import Client
-from scripts.databricks_receipts.constants import REFEREE_CLASS, REPLY_LOST
+from scripts.databricks_receipts.constants import (
+    REFEREE_CLASS,
+    REPLY_LOST,
+    UNDECIDED_NO_PHASE,
+    VERSION_QUERY,
+)
 from scripts.databricks_receipts.exceptions import RefereeError, ReplyLost, TokenRejected
 from scripts.databricks_receipts.main.run import run_referee
 from scripts.databricks_receipts.models import Failure
 from scripts.databricks_receipts.types import Row
 from tests.unit.scripts.databricks_receipts._test_types import (
+    CatalogStopTestCase,
     CheckTestCase,
     CleanupTestCase,
     DeadlineTestCase,
     ErrorTestCase,
     HistoryTestCase,
     LegacySetupTestCase,
+    NoPhaseTestCase,
+    NotResentTestCase,
+    PlatformChangeTestCase,
     PolicyAnswerTestCase,
     PolicyRefusalTestCase,
     PolicySweepTestCase,
@@ -39,9 +51,11 @@ from tests.unit.scripts.databricks_receipts._test_types import (
     ResumeRefusalTestCase,
     ResumeTestCase,
     SequentialHeldTestCase,
+    StallTestCase,
     StopTestCase,
     TokenTestCase,
     UndecidedTestCase,
+    VersionLostTestCase,
 )
 from tests.unit.scripts.databricks_receipts.helpers import (
     GROUPS,
@@ -49,6 +63,7 @@ from tests.unit.scripts.databricks_receipts.helpers import (
     SWEEP,
     UC,
     USERS_MISSING,
+    Effect,
     FakeClient,
     Frozen,
     adds,
@@ -57,6 +72,7 @@ from tests.unit.scripts.databricks_receipts.helpers import (
     failed,
     frozen_run,
     receipts_in,
+    refused,
     removes,
     stop_report,
     succeeded,
@@ -69,6 +85,10 @@ UNSUPPORTED_ON_METASTORE: str = (
     " policies. Please verify both the securable type and name for correctness and try again."
 )
 UNDECIDED: str = "statement s9 was still running after 300 s; cancelled, so its case is undecided"
+ENGINE_NO_PHASE: str = (
+    "Error running query: shaded.v245.com.fasterxml.jackson.databind.JsonMappingException: "
+    'Cannot invoke "java.lang.CharSequence.length()" because "sequence" is null'
+)
 LEGACY_SETUP: list[str] = ["CREATE TABLE t1 ( c1 INT )", "CREATE TABLE t2 ( c1 INT )"]
 
 
@@ -184,6 +204,112 @@ def test_given_a_case_that_changes_a_pre_existing_object_when_run_sequentially_t
     )
     assert changed[0]["name"] == "workspace"
     assert report["dropped"] == []
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        CatalogStopTestCase(
+            description="a managed catalog changed by a case",
+            fields={"catalog_type": "MANAGED_CATALOG"},
+            diff="changed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+        CatalogStopTestCase(
+            description="a managed catalog removed by a case",
+            fields={"catalog_type": "MANAGED_CATALOG"},
+            diff="removed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+        CatalogStopTestCase(
+            description="a foreign catalog changed by a case",
+            fields={"catalog_type": "FOREIGN_CATALOG"},
+            diff="changed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+        CatalogStopTestCase(
+            description="a Delta Sharing catalog removed by a case",
+            fields={"catalog_type": "DELTASHARING_CATALOG"},
+            diff="removed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+        CatalogStopTestCase(
+            description="an internal catalog changed by a case",
+            fields={"catalog_type": "INTERNAL_CATALOG"},
+            diff="changed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+        CatalogStopTestCase(
+            description="a catalog without a type removed by a case",
+            fields={},
+            diff="removed",
+            expected_error="removed or changed an object that existed before it",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_non_system_catalog_changed_or_removed_when_run_sequentially_then_the_run_stops(
+    test_case: CatalogStopTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    effects: dict[str, Effect] = {
+        "changed": lambda f: f.objects(f"{UC}/catalogs")[2].update(comment="x"),
+        "removed": removes(f"{UC}/catalogs", "workspace"),
+    }
+    fake: FakeClient = use(monkeypatch, FakeClient({"SELECT 1": effects[test_case.diff]}))
+    workspace: Row = fake.objects(f"{UC}/catalogs")[2]
+    del workspace["catalog_type"]
+    workspace.update(test_case.fields)
+
+    with pytest.raises(RefereeError, match=test_case.expected_error):
+        record_sequential(
+            cases=[case("SELECT 1")],
+            out=tmp_path / "out",
+            private=tmp_path / "private",
+            seed=None,
+        )
+
+    diff: Row = cast(Row, stop_report(tmp_path / "private")["diff"])
+    assert [r["name"] for r in cast(list[Row], diff[test_case.diff])] == ["workspace"]
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        PlatformChangeTestCase(
+            description="the platform updating the system catalog",
+            catalog=1,
+            field="updated_at",
+            value=2,
+            expected_receipts=1,
+        ),
+        PlatformChangeTestCase(
+            description="the platform updating the samples catalog",
+            catalog=0,
+            field="updated_at",
+            value=2,
+            expected_receipts=1,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_system_catalog_changing_during_a_case_when_run_sequentially_then_it_is_receipted(
+    test_case: PlatformChangeTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def touch(fake: FakeClient) -> None:
+        fake.objects(f"{UC}/catalogs")[test_case.catalog][test_case.field] = test_case.value
+
+    use(monkeypatch, FakeClient({"CREATE SERVER TYPE MYSQL OPTIONS ( v1 1 )": touch}))
+    out: Path = tmp_path / "out"
+
+    summary: Row = record_sequential(
+        cases=[case("CREATE SERVER TYPE MYSQL OPTIONS ( v1 1 )")],
+        out=out,
+        private=tmp_path / "private",
+        seed=None,
+    )
+
+    assert summary["receipts"] == test_case.expected_receipts
+    assert not list((tmp_path / "private").glob("*.sequential-stop.json"))
 
 
 @pytest.mark.parametrize(
@@ -821,6 +947,397 @@ def test_given_a_reply_that_never_arrives_when_calling_then_only_a_statement_is_
     sent.clear()
     client.check()
     assert sent == test_case.expected_check
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        StallTestCase(
+            description="a statement reply whose read never returns",
+            deadline=0.2,
+            expected_error=f"^{REPLY_LOST}: no complete reply within 0.2 s",
+            expected_seconds=5.0,
+            expected_after={"state": "RUNNING"},
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_stalled_read_when_calling_then_the_reply_is_lost_at_the_deadline(
+    test_case: StallTestCase, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("DATABRICKS_HOST", "https://example.com")
+    monkeypatch.setenv("DATABRICKS_WAREHOUSE_ID", "w1")
+    monkeypatch.setattr(client_module, "HTTP_SECONDS", test_case.deadline)
+    client: Client = Client()
+    monkeypatch.setattr(client, "token", lambda: "t1")
+    stalled: threading.Event = threading.Event()
+    waits: dict[str, Callable[..., bool]] = {"POST": stalled.wait, "GET": lambda **_: True}
+
+    def urlopen(request: urllib.request.Request, timeout: float) -> Reply:
+        waits[request.get_method()](timeout=30)
+        return Reply(b'{"state": "RUNNING"}')
+
+    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+    started: float = time.monotonic()
+
+    with pytest.raises(ReplyLost, match=test_case.expected_error):
+        client._call(method="POST", path="/x", once=True)
+    elapsed: float = time.monotonic() - started
+    stalled.set()
+
+    assert elapsed < test_case.expected_seconds
+    assert client._call(method="GET", path="/x") == test_case.expected_after
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        VersionLostTestCase(
+            description="three lost replies to the version check, then an answer",
+            lost=3,
+            expected_sends=4,
+            expected_receipts=1,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_lost_version_check_replies_when_run_then_it_is_sent_again_and_the_run_finishes(
+    test_case: VersionLostTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fake: FakeClient = use(monkeypatch, FakeClient({}))
+    monkeypatch.setattr(client_module.time, "sleep", lambda _: None)
+    answer: Callable[..., Row] = fake._version
+    sends: list[str] = []
+
+    def version(*, sql: str) -> Row:
+        sends.append(sql)
+        fail_on(
+            turn=len(sends),
+            turns=set(range(1, test_case.lost + 1)),
+            failure=ReplyLost(f"{REPLY_LOST}: The read operation timed out"),
+        )
+        return answer(sql=sql)
+
+    monkeypatch.setattr(fake, "_version", version)
+
+    summary: Row = record_sequential(
+        cases=[case("SELECT 1", "db.q.k1")],
+        out=tmp_path / "out",
+        private=tmp_path / "private",
+        seed=None,
+    )
+
+    assert sends[: test_case.expected_sends] == [VERSION_QUERY] * test_case.expected_sends
+    assert summary["receipts"] == test_case.expected_receipts
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        VersionLostTestCase(
+            description="every reply to the version check lost",
+            lost=4,
+            expected_sends=4,
+            expected_receipts=0,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_version_check_that_is_never_answered_when_run_then_the_run_stops(
+    test_case: VersionLostTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fake: FakeClient = use(monkeypatch, FakeClient({}))
+    monkeypatch.setattr(client_module.time, "sleep", lambda _: None)
+    sends: list[str] = []
+
+    def version(*, sql: str) -> Row:
+        sends.append(sql)
+        raise ReplyLost(f"{REPLY_LOST}: The read operation timed out")
+
+    monkeypatch.setattr(fake, "_version", version)
+
+    with pytest.raises(ReplyLost, match=f"^{REPLY_LOST}"):
+        record_sequential(
+            cases=[case("SELECT 1", "db.q.k1")],
+            out=tmp_path / "out",
+            private=tmp_path / "private",
+            seed=None,
+        )
+
+    assert len(sends) == test_case.expected_sends
+    assert not (tmp_path / "out").exists()
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        StopTestCase(
+            description="a lost version-check reply, then another release",
+            sql="2026.46",
+            expected_error="not Databricks SQL 2026.45",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_another_release_after_a_lost_version_check_reply_when_run_then_the_run_stops(
+    test_case: StopTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fake: FakeClient = use(monkeypatch, FakeClient({}))
+    monkeypatch.setattr(client_module.time, "sleep", lambda _: None)
+    sends: list[str] = []
+
+    def version(*, sql: str) -> Row:
+        sends.append(sql)
+        fail_on(
+            turn=len(sends),
+            turns={1},
+            failure=ReplyLost(f"{REPLY_LOST}: The read operation timed out"),
+        )
+        return succeeded([[json.dumps({"dbsql_version": test_case.sql})]])
+
+    monkeypatch.setattr(fake, "_version", version)
+
+    with pytest.raises(RefereeError, match=test_case.expected_error):
+        record_sequential(
+            cases=[case("SELECT 1", "db.q.k1")],
+            out=tmp_path / "out",
+            private=tmp_path / "private",
+            seed=None,
+        )
+
+    assert sends == [VERSION_QUERY, VERSION_QUERY]
+    assert not (tmp_path / "out").exists()
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        NotResentTestCase(
+            description="a case statement with the version check's own text",
+            sql=VERSION_QUERY,
+            expected_sent=["POST"],
+            expected_error=f"^{REPLY_LOST}",
+        ),
+        NotResentTestCase(
+            description="a case statement",
+            sql="CREATE TABLE t1 ( c1 INT )",
+            expected_sent=["POST"],
+            expected_error=f"^{REPLY_LOST}",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_lost_case_statement_reply_when_executed_then_it_is_not_sent_again(
+    test_case: NotResentTestCase, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("DATABRICKS_HOST", "https://example.com")
+    monkeypatch.setenv("DATABRICKS_WAREHOUSE_ID", "w1")
+    client: Client = Client()
+    monkeypatch.setattr(client, "token", lambda: "t1")
+    monkeypatch.setattr(client_module.time, "sleep", lambda _: None)
+    sent: list[str] = []
+
+    def urlopen(request: urllib.request.Request, timeout: float) -> Reply:
+        sent.append(str(request.get_method()))
+        raise TimeoutError("The read operation timed out")
+
+    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+
+    with pytest.raises(ReplyLost, match=test_case.expected_error):
+        client.execute(sql=test_case.sql, schema="s1")
+    assert sent == test_case.expected_sent
+
+    sent.clear()
+    with pytest.raises(ReplyLost, match=test_case.expected_error):
+        client.require(sql=test_case.sql, schema="s1")
+    assert sent == test_case.expected_sent
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        NotResentTestCase(
+            description="a read-only statement that is not the version check",
+            sql="SELECT 1",
+            expected_sent=[],
+            expected_error="not on the allow-list of statements sent again",
+        ),
+        NotResentTestCase(
+            description="the version check with other spacing",
+            sql="SELECT  current_version()",
+            expected_sent=[],
+            expected_error="not on the allow-list of statements sent again",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_statement_off_the_allow_list_when_required_again_then_nothing_is_sent(
+    test_case: NotResentTestCase, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("DATABRICKS_HOST", "https://example.com")
+    monkeypatch.setenv("DATABRICKS_WAREHOUSE_ID", "w1")
+    client: Client = Client()
+    monkeypatch.setattr(client, "token", lambda: "t1")
+    sent: list[str] = []
+
+    def urlopen(request: urllib.request.Request, timeout: float) -> Reply:
+        sent.append(str(request.get_method()))
+        raise TimeoutError("The read operation timed out")
+
+    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+
+    with pytest.raises(RefereeError, match=test_case.expected_error):
+        client.require_again(sql=test_case.sql)
+    assert sent == test_case.expected_sent
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        UndecidedTestCase(
+            description="a case whose statement reply stalls mid-read",
+            expected_receipts=2,
+            expected_undecided=["db.q.k2"],
+            expected_reasons={"db.q.k2": "reply lost"},
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_case_whose_reply_stalls_when_run_sequentially_then_it_alone_is_undecided(
+    test_case: UndecidedTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(client_module, "HTTP_SECONDS", 0.2)
+    stalled: threading.Event = threading.Event()
+
+    def urlopen(request: urllib.request.Request, timeout: float) -> Reply:
+        stalled.wait(timeout=30)
+        return Reply(b"{}")
+
+    def stall(fake: FakeClient) -> Row:
+        return fake._send(request=urllib.request.Request("https://example.com/x"), once=True)
+
+    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+    fake: FakeClient = use(monkeypatch, FakeClient({"SELECT 2": stall}))
+    cases: list[Row] = [
+        case("SELECT 1", "db.q.k1"),
+        case("SELECT 2", "db.q.k2"),
+        case("SELECT 3", "db.q.k3"),
+    ]
+
+    summary: Row = record_sequential(
+        cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
+    )
+    stalled.set()
+
+    assert (summary["receipts"], summary["undecided"]) == (
+        test_case.expected_receipts,
+        test_case.expected_undecided,
+    )
+    assert summary["undecided_reasons"] == test_case.expected_reasons
+    assert "SELECT 3" in fake.statements
+    assert not list((tmp_path / "private").glob("*.sequential-stop.json"))
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        UndecidedTestCase(
+            description="the engine error the README records as proving no phase",
+            expected_receipts=2,
+            expected_undecided=["db.q.k2"],
+            expected_reasons={"db.q.k2": UNDECIDED_NO_PHASE},
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_the_engine_error_that_proves_no_phase_when_run_then_its_case_alone_is_undecided(
+    test_case: UndecidedTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def no_phase(_: FakeClient) -> Row:
+        return refused(message=ENGINE_NO_PHASE, sqlstate="42000")
+
+    use(monkeypatch, FakeClient({"SELECT 2": no_phase}))
+    cases: list[Row] = [
+        case("SELECT 1", "db.q.k1"),
+        case("SELECT 2", "db.q.k2"),
+        case("SELECT 3", "db.q.k3"),
+    ]
+
+    summary: Row = record_sequential(
+        cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
+    )
+
+    assert (summary["receipts"], summary["undecided"]) == (
+        test_case.expected_receipts,
+        test_case.expected_undecided,
+    )
+    assert summary["undecided_reasons"] == test_case.expected_reasons
+    assert sorted(str(r["case_id"]) for r in receipts_in(tmp_path / "out")) == [
+        "db.q.k1",
+        "db.q.k3",
+    ]
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        NoPhaseTestCase(
+            description="another unclassed engine error",
+            message="Error running query: shaded.v245.com.fasterxml.jackson.databind."
+            "JsonMappingException: Unexpected end-of-input",
+            sqlstate="42000",
+            expected_error="no reviewed row maps",
+        ),
+        NoPhaseTestCase(
+            description="an unreviewed subclass of a reviewed service error class",
+            message="[RequestId=640b7fb2-c8b4-4b6a-814f-740bf6d47b3c ErrorClass=INVALID_PARAMETER_"
+            "VALUE.MISSING_CONNECTION_OPTIONS] CONNECTION/CONNECTION_MYSQL must include the "
+            "following option(s): host.",
+            sqlstate="",
+            expected_error="no reviewed row maps",
+        ),
+        NoPhaseTestCase(
+            description="the same error from another shaded library version",
+            message=ENGINE_NO_PHASE.replace("shaded.v245.", "shaded.v246."),
+            sqlstate="42000",
+            expected_error="no reviewed row maps",
+        ),
+        NoPhaseTestCase(
+            description="the same text with another SQLSTATE",
+            message=ENGINE_NO_PHASE,
+            sqlstate="XX000",
+            expected_error="no reviewed row maps",
+        ),
+        NoPhaseTestCase(
+            description="the same text with more after it",
+            message=ENGINE_NO_PHASE + " (through reference chain: x)",
+            sqlstate="42000",
+            expected_error="no reviewed row maps",
+        ),
+        NoPhaseTestCase(
+            description="the same text raised by the parser",
+            message=ENGINE_NO_PHASE + "\n== SQL (line 1, position 1) ==\nSELECT 2\n^^^\n",
+            sqlstate="42000",
+            expected_error="no reviewed row maps",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_another_unmapped_error_when_run_then_no_receipt_is_written(
+    test_case: NoPhaseTestCase, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def other(_: FakeClient) -> Row:
+        return refused(message=test_case.message, sqlstate=test_case.sqlstate)
+
+    use(monkeypatch, FakeClient({"SELECT 2": other}))
+    cases: list[Row] = [case("SELECT 1", "db.q.k1"), case("SELECT 2", "db.q.k2")]
+
+    with pytest.raises(RefereeError, match=test_case.expected_error):
+        record_sequential(
+            cases=cases, out=tmp_path / "out", private=tmp_path / "private", seed=None
+        )
+
+    assert not (tmp_path / "out").exists()
 
 
 @pytest.mark.parametrize(

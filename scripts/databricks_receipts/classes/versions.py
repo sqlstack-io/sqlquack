@@ -23,7 +23,7 @@ class Versions:
 
     def ask(self) -> Row:
         """The release now answering, as current_version() reports it."""
-        version: Row = version_of(self.client.require(sql=VERSION_QUERY, schema=None))
+        version: Row = version_of(self.client.require_again(sql=VERSION_QUERY))
         self.seen.add(canonical(version))
         return version
 

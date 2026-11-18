@@ -82,6 +82,13 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             expected_parse_only=None,
         ),
         PhaseTestCase(
+            description="a volume command that parsed reaches the lookup of its schema",
+            message="NOT_FOUND: Schema 'workspace.s1' does not exist.",
+            sqlstate="42000",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
             description="a reviewed parser message without an error class, after a blank line",
             message="\n50 is not a valid byte length literal, expected syntax: DIGIT+ ('B' | 'K' | "
             "'M' | 'G').\n== SQL (line 1, position 18) ==\nSELECT * FROM t1 TABLESAMPLE ( 50 )\n",
@@ -217,6 +224,133 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             "not supported in ABAC policies.",
             sqlstate="42000",
             expected_phase=None,
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="the parser refuses a command the workspace has not enabled",
+            message="\nALTER CATALOG SET MANAGED LOCATION command is not enabled here..\n"
+            "== SQL (line 1, position 1) ==\nALTER CATALOG v1 SET MANAGED LOCATION 'm'\n^^^\n",
+            sqlstate="",
+            expected_phase="unsupported_feature",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a policy on a securable type the workspace does not support",
+            message="[RequestId=3945e440-8f50 ErrorClass=INVALID_PARAMETER_VALUE.INVALID_SECURABLE_TYPE] "
+            "on_securable_type must be a securable type that supports policies.",
+            sqlstate="",
+            expected_phase="unsupported_feature",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a pipeline event log for a pipeline that does not exist",
+            message="[PIPELINE_DOES_NOT_EXIST] Pipeline '00000000-0000-0000-0000-000000000000' "
+            "does not exist SQLSTATE: 42K03",
+            sqlstate="42K03",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a remote function whose HTTP call the service refused",
+            message="[REMOTE_FUNCTION_HTTP_FAILED_ERROR] The remote HTTP request failed with code 400. "
+            "SQLSTATE: 57012",
+            sqlstate="57012",
+            expected_phase="runtime_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a generator's column aliases that do not match its output columns",
+            message="[UDTF_ALIAS_NUMBER_MISMATCH] The number of aliases supplied in the AS clause "
+            "does not match the number of columns output by the UDTF. SQLSTATE: 42802",
+            sqlstate="42802",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="the parser refuses a column mask on a multi-part column name",
+            message="[COLUMN_MASKS_MULTI_PART_TARGET_COLUMN_NAME] This statement attempted to assign "
+            "a column mask policy to a column c1.c2 with multiple name parts, which is invalid. "
+            "SQLSTATE: 42K05\n== SQL (line 1, position 1) ==\nALTER TABLE t1 ALTER c1.c2 SET MASK f1\n",
+            sqlstate="42K05",
+            expected_phase="syntax_error",
+            expected_parse_only="42K05",
+        ),
+        PhaseTestCase(
+            description="a nested field added under a column that is not a struct",
+            message="[INVALID_FIELD_NAME] Field name `c1`.`c2` is invalid: `c1` is not a struct. "
+            "SQLSTATE: 42000; line 1 pos 28",
+            sqlstate="42000",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="the parser refuses a datetime unit written as a string literal",
+            message="[INVALID_PARAMETER_VALUE.DATETIME_UNIT] The value of parameter(s) `unit` in "
+            "`DATE_ADD` is invalid: expects one of the units without quotes YEAR, MICROSECOND, but "
+            "got the string literal 'YEAR'. SQLSTATE: 22023\n== SQL (line 1, position 8) ==\n"
+            "SELECT DATE_ADD('YEAR', 1, 1)\n",
+            sqlstate="22023",
+            expected_phase="syntax_error",
+            expected_parse_only="22023",
+        ),
+        PhaseTestCase(
+            description="a function argument of a type the function does not take",
+            message="[UNEXPECTED_INPUT_TYPE] Parameter first of function `current_timestamp` requires "
+            'the "INT" type, however "x" has the type "STRING". SQLSTATE: 42K09; line 1 pos 9',
+            sqlstate="42K09",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a time-travel timestamp before the table's earliest version",
+            message="[DELTA_TIMESTAMP_EARLIER_THAN_COMMIT_RETENTION] The provided timestamp "
+            "(2026-11-01 00:00:00.0) is before the earliest version available to this table "
+            "(2026-11-16 18:51:03.147). SQLSTATE: 42816",
+            sqlstate="42816",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a partition the table does not have",
+            message="[PARTITIONS_NOT_FOUND] The partition(s) `c1` cannot be found in table "
+            "`workspace`.`s1`.`t1`. Verify the partition specification and table name. "
+            "SQLSTATE: 428FT",
+            sqlstate="428FT",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a temporary function named like an existing routine",
+            message="[ROUTINE_ALREADY_EXISTS] Cannot create the routine `abs` because a routine of "
+            "that name already exists. SQLSTATE: 42723",
+            sqlstate="42723",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a function dependency that cannot be installed",
+            message="[ISOLATION_ENVIRONMENT_USER_ERROR.UC_VOLUME_NO_MATCHING_DISTRIBUTION] Failed to "
+            "install environment dependencies for f1. Could not find a library file at "
+            "'/Volumes/c1/s1/v1/u1.jar'. SQLSTATE: 39000",
+            sqlstate="39000",
+            expected_phase="runtime_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a table function whose body returns fewer columns than it declares",
+            message="The number of columns produced by the RETURN clause (num: `1`) does not match "
+            "the number of column names specified by the RETURNS clause (num: `2`) of f1.",
+            sqlstate="",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a connection created without the options its type requires",
+            message="[RequestId=640b7fb2-c8b4-4b6a-814f-740bf6d47b3c ErrorClass=INVALID_PARAMETER_"
+            "VALUE.MISSING_CONNECTION_OPTION] CONNECTION/CONNECTION_MYSQL must include the "
+            "following option(s): host,user,password.",
+            sqlstate="",
+            expected_phase="semantic_error",
             expected_parse_only=None,
         ),
         PhaseTestCase(

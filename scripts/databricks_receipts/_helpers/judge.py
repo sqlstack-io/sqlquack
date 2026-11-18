@@ -36,6 +36,7 @@ from scripts.databricks_receipts.constants import (
     UNCLASSED,
     UNCLASSED_LATER,
     UNCLASSED_PARSER,
+    UNCLASSED_PARSER_UNSUPPORTED,
     UNSUPPORTED_FEATURE,
     URL,
     URL_MASK,
@@ -71,8 +72,10 @@ def phase_of(failure: Failure) -> str | None:
     if failure.error_class == UNCLASSED:
         message: str = failure.message.lstrip()
         if failure.parser:
-            matched: bool = any(pattern.match(message) for pattern in UNCLASSED_PARSER)
-            return SYNTAX_ERROR if matched else None
+            if any(pattern.match(message) for pattern in UNCLASSED_PARSER):
+                return SYNTAX_ERROR
+            gated: bool = any(pattern.match(message) for pattern in UNCLASSED_PARSER_UNSUPPORTED)
+            return UNSUPPORTED_FEATURE if gated else None
         for pattern, phase in UNCLASSED_LATER:
             if pattern.match(message):
                 return phase
