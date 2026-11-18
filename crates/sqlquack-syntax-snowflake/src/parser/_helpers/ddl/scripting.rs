@@ -919,6 +919,9 @@ impl Parser {
                                 storage: None,
                                 encryption: None,
                                 name_quoted: false,
+                                without_equals: Vec::new(),
+                                quoted_keys: Vec::new(),
+                                string_keys: Vec::new(),
                             };
                             credentials = Some(Box::new(creds));
                         }
@@ -952,6 +955,9 @@ impl Parser {
                             storage: None,
                             encryption: None,
                             name_quoted: false,
+                            without_equals: Vec::new(),
+                            quoted_keys: Vec::new(),
+                            string_keys: Vec::new(),
                         };
                         credentials = Some(Box::new(creds));
                     }

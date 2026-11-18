@@ -20,6 +20,9 @@ pub struct StructField {
     /// Databricks: the COLLATE written after a string field's type
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub collation: Option<Box<Identifier>>,
+    /// Databricks: whether the optional `:` was written between the field's name and type
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub colon: bool,
 }
 
 impl StructField {
@@ -31,6 +34,7 @@ impl StructField {
             options: Vec::new(),
             comment: None,
             collation: None,
+            colon: false,
         }
     }
 
@@ -42,6 +46,7 @@ impl StructField {
             options,
             comment: None,
             collation: None,
+            colon: false,
         }
     }
 
@@ -58,6 +63,7 @@ impl StructField {
             options,
             comment,
             collation: None,
+            colon: false,
         }
     }
 }
@@ -152,6 +158,9 @@ pub enum TypeSpelling {
     /// `TIMESTAMP_LTZ` for `TIMESTAMP`.
     #[serde(rename = "TIMESTAMP_LTZ")]
     TimestampLtz,
+    /// Databricks: `WITHOUT TIME ZONE` written after `TIMESTAMP` or `TIME`.
+    #[serde(rename = "WITHOUT TIME ZONE")]
+    WithoutTimeZone,
 }
 
 /// Every data type the parser recognizes, standard and dialect-specific.
@@ -277,6 +286,10 @@ pub enum DataType {
         precision: Option<u32>,
         #[serde(default)]
         timezone: bool,
+        /// Databricks: the WITHOUT TIME ZONE written after the type's name
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[ast(skip)]
+        spelling: Option<TypeSpelling>,
     },
     Timestamp {
         precision: Option<u32>,

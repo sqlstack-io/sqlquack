@@ -124,7 +124,8 @@ impl Parser<'_> {
     /// `functionTableSubqueryArgument`, partitioning and ordering parsed and not kept.
     fn table_argument(&mut self) -> Parsing<Expression> {
         self.expect_kw("TABLE")?;
-        let this: Expression = match self.is_char('(') {
+        let parenthesized: bool = self.is_char('(');
+        let this: Expression = match parenthesized {
             true => {
                 self.at += 1;
                 let inner: Expression = match self.starts_query_at(0) && !self.char_at(1, ')') {
@@ -152,6 +153,7 @@ impl Parser<'_> {
             self.gap("table_argument_partitioning", start);
         }
         Ok(Expression::TableArgument(Box::new(TableArgument {
+            parenthesized,
             prefix: "TABLE".to_owned(),
             this,
         })))

@@ -59,6 +59,7 @@ fn built_in(name: &str, modifiers: &[Modifier], text: &str) -> DataType {
         },
         ("DATE", _) => DataType::Date,
         ("TIME", _) => DataType::Time {
+            spelling: None,
             precision: first,
             timezone: false,
         },

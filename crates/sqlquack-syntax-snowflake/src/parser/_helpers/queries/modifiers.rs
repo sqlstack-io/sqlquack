@@ -1030,6 +1030,7 @@ impl Parser {
         let table = if self.match_token(TokenType::Dot) {
             let second_name = self.expect_identifier_or_safe_keyword_with_quoted()?;
             TableRef {
+                parenthesized: false,
                 sample_call: None,
                 name: second_name,
                 schema: Some(table_name),
@@ -1257,6 +1258,7 @@ impl Parser {
             if self.match_token(TokenType::Dot) {
                 let table_name = self.expect_identifier_with_quoted()?;
                 TableRef {
+                    parenthesized: false,
                     sample_call: None,
                     name: table_name,
                     schema: Some(second_name),
@@ -1284,6 +1286,7 @@ impl Parser {
                 }
             } else {
                 TableRef {
+                    parenthesized: false,
                     sample_call: None,
                     name: second_name,
                     schema: Some(first_name),
@@ -1324,6 +1327,7 @@ impl Parser {
                 if self.match_token(TokenType::Dot) {
                     let table_name = self.expect_identifier_with_quoted()?;
                     TableRef {
+                        parenthesized: false,
                         sample_call: None,
                         name: table_name,
                         schema: Some(second_name),
@@ -1351,6 +1355,7 @@ impl Parser {
                     }
                 } else {
                     TableRef {
+                        parenthesized: false,
                         sample_call: None,
                         name: second_name,
                         schema: Some(first_name),

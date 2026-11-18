@@ -196,6 +196,90 @@ fn given_a_spelling_the_grammar_keeps_when_screening_then_its_variant_has_its_ow
             variant: "SELECT * FROM t1 LATERAL VIEW explode ( array ( 1 ) ) a3 x1",
             expected_same_tree: false,
         },
+        KnownCollapseTestCase {
+            description: "ADD COLUMN's column list written in parentheses",
+            sql: "ALTER TABLE t1 ADD COLUMN c1 INT",
+            variant: "ALTER TABLE t1 ADD COLUMN ( c1 INT )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "DROP COLUMN's column list written in parentheses",
+            sql: "ALTER TABLE t1 DROP COLUMN c1",
+            variant: "ALTER TABLE t1 DROP COLUMN ( c1 )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a TABLE argument's name written in parentheses",
+            sql: "SELECT * FROM abs ( TABLE t1 )",
+            variant: "SELECT * FROM abs ( TABLE ( t1 ) )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "an inserted VALUES row written without parentheses",
+            sql: "INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET VALUES ( 1 )",
+            variant: "INSERT OVERWRITE DIRECTORY '/tmp/x' USING PARQUET VALUES 1",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "ZORDER BY's columns written in parentheses",
+            sql: "OPTIMIZE t1 ZORDER BY c1 , c2",
+            variant: "OPTIMIZE t1 ZORDER BY ( c1 , c2 )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a FROM relation written in parentheses",
+            sql: "SELECT * FROM t1",
+            variant: "SELECT * FROM ( t1 )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "DECLARE written with VARIABLE",
+            sql: "DECLARE v1 INT",
+            variant: "DECLARE VARIABLE v1 INT",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a struct field written with a colon",
+            sql: "SELECT CAST ( NULL AS STRUCT < c1 STRING > )",
+            variant: "SELECT CAST ( NULL AS STRUCT < c1 : STRING > )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "TIMESTAMP WITHOUT TIME ZONE written for TIMESTAMP_NTZ",
+            sql: "SELECT CAST ( NULL AS TIMESTAMP_NTZ )",
+            variant: "SELECT CAST ( NULL AS TIMESTAMP WITHOUT TIME ZONE )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a COPY credential option written without =",
+            sql: "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( k1 = 'a' ) ) FILEFORMAT = CSV",
+            variant: "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( k1 'a' ) ) FILEFORMAT = CSV",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a COPY credential key written in backquotes",
+            sql: "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( k1 = 'a' ) ) FILEFORMAT = CSV",
+            variant: "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( `k1` = 'a' ) ) FILEFORMAT = CSV",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "MATCH FULL written between the two referential actions",
+            sql: "CREATE TABLE t1 ( c1 INT , FOREIGN KEY ( c1 ) REFERENCES t2 ( c1 ) ON DELETE NO ACTION ON UPDATE NO ACTION MATCH FULL )",
+            variant: "CREATE TABLE t1 ( c1 INT , FOREIGN KEY ( c1 ) REFERENCES t2 ( c1 ) ON DELETE NO ACTION MATCH FULL ON UPDATE NO ACTION )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "a referential action written twice",
+            sql: "CREATE TABLE t1 ( c1 INT , FOREIGN KEY ( c1 ) REFERENCES t2 ( c1 ) ON DELETE NO ACTION )",
+            variant: "CREATE TABLE t1 ( c1 INT , FOREIGN KEY ( c1 ) REFERENCES t2 ( c1 ) ON DELETE NO ACTION ON DELETE NO ACTION )",
+            expected_same_tree: false,
+        },
+        KnownCollapseTestCase {
+            description: "RELY written before NOT ENFORCED",
+            sql: "CREATE TABLE t1 ( c1 INT , PRIMARY KEY ( c1 ) NOT ENFORCED RELY )",
+            variant: "CREATE TABLE t1 ( c1 INT , PRIMARY KEY ( c1 ) RELY NOT ENFORCED )",
+            expected_same_tree: false,
+        },
     ];
     for test_case in test_cases {
         let original: Option<Value> = databricks_tree(test_case.sql);

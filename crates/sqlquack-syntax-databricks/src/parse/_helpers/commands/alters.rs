@@ -239,6 +239,12 @@ impl Parser<'_> {
         let node: AlterTable = match self.kw("PARTITION") {
             true => self.partition_alter(node, start)?,
             false => {
+                node.columns_parenthesized = self.kw_in(0, &["ADD", "DROP"])
+                    && self.kw_in(1, &["COLUMN", "COLUMNS"])
+                    && match self.kw_at(2, "IF") {
+                        true => self.char_at(4, '('),
+                        false => self.char_at(2, '('),
+                    };
                 node.actions.extend(self.alter_table_action(start)?);
                 node
             }

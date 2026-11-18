@@ -1164,6 +1164,7 @@ impl Parser {
                         equals: false,
                     })));
                     return Ok(Some(Expression::Declare(Box::new(Declare {
+                        keyword: None,
                         expressions,
                         replace,
                     }))));
@@ -1186,6 +1187,7 @@ impl Parser {
 
         if !expressions.is_empty() {
             return Ok(Some(Expression::Declare(Box::new(Declare {
+                keyword: None,
                 expressions,
                 replace,
             }))));
@@ -1715,6 +1717,7 @@ impl Parser {
                 {
                     if let Some(table_expr) = self.parse_table_parts()? {
                         Some(Expression::TableArgument(Box::new(TableArgument {
+                            parenthesized: false,
                             prefix,
                             this: table_expr,
                         })))

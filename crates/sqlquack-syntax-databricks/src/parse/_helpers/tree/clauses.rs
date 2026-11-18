@@ -5,7 +5,7 @@ use sqlquack_syntax::expressions::operators::models::{NamedArgSeparator, NamedAr
 use sqlquack_syntax::expressions::types::models::Tuple;
 
 use crate::parse::_helpers::tree::nodes::{
-    binary, column_from, property, star, table, utility, var,
+    binary, column_from, paren, property, star, table, utility, var,
 };
 use crate::parse::constants::FLAG_PHRASES;
 
@@ -209,7 +209,12 @@ fn clauses(parts: &[Part], mut at: usize) -> (Vec<Expression>, usize) {
             Part::Punct("(") => {
                 let (inner, end): (Vec<Expression>, usize) = clauses(parts, at);
                 at = end;
-                out.extend(clause.push(Expression::Tuple(Box::new(Tuple { expressions: inner }))));
+                let several: bool = inner.len() > 1;
+                let group: Expression = Expression::Tuple(Box::new(Tuple { expressions: inner }));
+                out.extend(clause.push(match several {
+                    true => paren(group),
+                    false => group,
+                }));
             }
             Part::Punct(")") => break,
             Part::Punct("*") => {

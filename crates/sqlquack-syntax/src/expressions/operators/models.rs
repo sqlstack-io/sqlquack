@@ -671,6 +671,10 @@ pub struct TableArgument {
     pub prefix: String,
     /// The table/model reference expression
     pub this: Expression,
+    /// Databricks: whether the table name was written in parentheses, as in `TABLE ( t )`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub parenthesized: bool,
 }
 
 /// SQL Comment preservation

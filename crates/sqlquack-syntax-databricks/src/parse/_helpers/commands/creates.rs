@@ -74,6 +74,16 @@ fn modifiers_of(constraint: &mut TableConstraint) -> Option<&mut ConstraintModif
     }
 }
 
+/// Whether the written foreign key options repeat one or put MATCH between the two actions.
+fn order_unsaid(written: &[String]) -> bool {
+    let distinct: std::collections::BTreeSet<&String> = written.iter().collect();
+    let between: bool = written
+        .iter()
+        .position(|option| option.starts_with("MATCH"))
+        .is_some_and(|at| at > 0 && at + 1 < written.len());
+    distinct.len() < written.len() || between
+}
+
 impl Parser<'_> {
     /// `CREATE ...` or `REPLACE TABLE ...`; any other `CREATE` is an opaque gap.
     pub(crate) fn create_statement(&mut self) -> Parsing<Expression> {
@@ -801,10 +811,12 @@ impl Parser<'_> {
         let mut on_update: Option<ReferentialAction> = None;
         let mut on_update_first: bool = false;
         let mut match_after_actions: bool = false;
+        let mut written: Vec<String> = Vec::new();
         loop {
             if self.eat_kws(&["MATCH", "FULL"]) {
                 match_full = true;
                 match_after_actions = on_delete.is_some() || on_update.is_some();
+                written.push("MATCH FULL".to_owned());
             } else if self.kw("ON")
                 && self.kw_in(1, &["DELETE", "UPDATE"])
                 && self.kw_at(2, "NO")
@@ -814,8 +826,12 @@ impl Parser<'_> {
                     true => {
                         on_update_first = on_delete.is_none();
                         on_update = Some(ReferentialAction::NoAction);
+                        written.push("ON UPDATE NO ACTION".to_owned());
                     }
-                    false => on_delete = Some(ReferentialAction::NoAction),
+                    false => {
+                        on_delete = Some(ReferentialAction::NoAction);
+                        written.push("ON DELETE NO ACTION".to_owned());
+                    }
                 }
                 self.at += 4;
             } else {
@@ -834,23 +850,35 @@ impl Parser<'_> {
             constraint_name: None,
             deferrable: None,
             has_foreign_key_keywords: false,
+            written_order: match order_unsaid(&written) {
+                true => written,
+                false => Vec::new(),
+            },
         })
     }
 
     /// `constraintCharacteristic*`: `[NOT] ENFORCED`, `RELY` and `NORELY`.
     fn constraint_characteristics(&mut self) -> Parsing<ConstraintModifiers> {
         let mut modifiers: ConstraintModifiers = ConstraintModifiers::default();
+        let mut written: Vec<String> = Vec::new();
         loop {
             if self.eat_kw("ENFORCED") {
                 modifiers.enforced = Some(true);
+                written.push("ENFORCED".to_owned());
             } else if self.kw("NOT") && self.kw_at(1, "ENFORCED") {
                 self.at += 2;
                 modifiers.enforced = Some(false);
+                written.push("NOT ENFORCED".to_owned());
             } else if self.eat_kw("RELY") {
                 modifiers.rely = true;
+                written.push("RELY".to_owned());
             } else if self.eat_kw("NORELY") {
                 modifiers.norely = true;
+                written.push("NORELY".to_owned());
             } else {
+                if written.len() > 1 {
+                    modifiers.properties = written;
+                }
                 return Ok(modifiers);
             }
         }

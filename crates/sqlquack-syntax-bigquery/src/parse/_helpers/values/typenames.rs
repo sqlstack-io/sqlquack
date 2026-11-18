@@ -198,6 +198,7 @@ impl Parser<'_> {
                 spelling: None,
             },
             "TIME" => DataType::Time {
+                spelling: None,
                 precision: None,
                 timezone: false,
             },

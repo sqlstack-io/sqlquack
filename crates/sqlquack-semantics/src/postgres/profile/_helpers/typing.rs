@@ -681,6 +681,7 @@ pub(crate) fn postgres_cast_spelling(data_type: &DataType) -> Option<String> {
         DataType::Time {
             precision,
             timezone,
+            ..
         } => length(["TIME", "TIMETZ"][usize::from(*timezone)], precision),
         DataType::Interval {
             unit: None,

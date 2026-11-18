@@ -344,6 +344,15 @@ pub struct Credentials {
     /// Databricks: the `CREDENTIAL name` was written in backquotes
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub name_quoted: bool,
+    /// Databricks: the positions of the credential options written without `=`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub without_equals: Vec<usize>,
+    /// Databricks: the positions of the credential options whose key was written in backquotes
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub quoted_keys: Vec<usize>,
+    /// Databricks: the positions of the credential options whose key was written as a string
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub string_keys: Vec<usize>,
 }
 
 /// Historical data / Time travel (Snowflake) - BEFORE (STATEMENT => ...) or AT (TIMESTAMP => ...)
@@ -1027,6 +1036,10 @@ pub struct Declare {
     pub expressions: Vec<Expression>,
     #[serde(default)]
     pub replace: bool,
+    /// Databricks: VAR or VARIABLE as written after DECLARE [OR REPLACE]; none when omitted
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub keyword: Option<String>,
 }
 
 /// DeclareItem

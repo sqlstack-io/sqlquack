@@ -1021,9 +1021,15 @@ impl Parser<'_> {
             self.gap("declare_cursor", start);
             return Ok(null());
         }
-        if self.kw_in(0, &["VAR", "VARIABLE"]) && self.is_at(1, is_identifier) {
-            self.at += 1;
-        }
+        let keyword: Option<String> =
+            match self.kw_in(0, &["VAR", "VARIABLE"]) && self.is_at(1, is_identifier) {
+                true => {
+                    let word: Option<String> = self.word_at(0);
+                    self.at += 1;
+                    word
+                }
+                false => None,
+            };
         let mut names: Vec<Expression> =
             self.comma_list(|parser| Ok(qualified(parser.multipart_identifier()?)))?;
         let type_first: usize = self.at;
@@ -1062,6 +1068,7 @@ impl Parser<'_> {
         Ok(Expression::Declare(Box::new(Declare {
             expressions: vec![Expression::DeclareItem(Box::new(item))],
             replace,
+            keyword,
         })))
     }
 

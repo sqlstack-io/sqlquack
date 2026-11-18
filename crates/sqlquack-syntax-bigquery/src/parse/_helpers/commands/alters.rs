@@ -620,6 +620,7 @@ impl Parser<'_> {
             return Err(self.error());
         }
         let mut reference: ForeignKeyRef = ForeignKeyRef {
+            written_order: Vec::new(),
             table: target,
             columns,
             on_delete: None,

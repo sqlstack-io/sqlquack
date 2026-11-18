@@ -47,6 +47,7 @@ impl Parser {
         let (algorithm, lock) = self.parse_alter_table_algorithm_and_lock()?;
 
         Ok(Expression::AlterTable(Box::new(AlterTable {
+            columns_parenthesized: false,
             name,
             actions,
             if_exists,

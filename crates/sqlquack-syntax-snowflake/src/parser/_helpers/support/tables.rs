@@ -102,6 +102,7 @@ impl Parser {
         });
 
         Ok(Some(Expression::boxed_table(TableRef {
+            parenthesized: false,
             sample_call: None,
             name: name_ident,
             schema: schema_ident,

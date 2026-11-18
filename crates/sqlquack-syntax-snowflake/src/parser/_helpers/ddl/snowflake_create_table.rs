@@ -907,6 +907,7 @@ fn add_inline_constraint(mut column: ColumnDef, constraint: Constraint) -> Resul
             };
             let (mut reference, rest) = set_reference_words(
                 ForeignKeyRef {
+                    written_order: Vec::new(),
                     table: *table,
                     columns: tuple_names(columns),
                     on_delete: None,
@@ -1146,6 +1147,7 @@ pub(super) fn table_constraint(constraint: Constraint) -> Result<TableConstraint
         };
         let (reference, properties) = set_reference_words(
             ForeignKeyRef {
+                written_order: Vec::new(),
                 table: *table,
                 columns: tuple_names(columns),
                 on_delete: None,

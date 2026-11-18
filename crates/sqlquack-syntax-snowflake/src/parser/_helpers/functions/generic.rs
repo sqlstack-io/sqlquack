@@ -291,6 +291,7 @@ impl Parser {
             {
                 if let Some(table_expr) = self.parse_table_parts()? {
                     Expression::TableArgument(Box::new(TableArgument {
+                        parenthesized: false,
                         prefix,
                         this: table_expr,
                     }))

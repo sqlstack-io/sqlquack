@@ -492,6 +492,7 @@ impl Parser<'_> {
             self.refuse_later(FK_ACTIONS, start);
         }
         Ok(ForeignKeyRef {
+            written_order: Vec::new(),
             table,
             columns,
             on_delete: None,

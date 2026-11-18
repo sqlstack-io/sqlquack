@@ -444,6 +444,7 @@ impl Parser {
             };
             let trailing_comments = self.previous_trailing_comments().to_vec();
             TableRef {
+                parenthesized: false,
                 sample_call: None,
                 name,
                 schema: Some(schema),
@@ -472,6 +473,7 @@ impl Parser {
         } else {
             let trailing_comments = self.previous_trailing_comments().to_vec();
             TableRef {
+                parenthesized: false,
                 sample_call: None,
                 name: table_name,
                 schema: None,
@@ -599,6 +601,7 @@ impl Parser {
                 let name = self.expect_identifier_with_quoted()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 TableRef {
+                    parenthesized: false,
                     sample_call: None,
                     name,
                     schema: Some(schema),
@@ -627,6 +630,7 @@ impl Parser {
             } else {
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 TableRef {
+                    parenthesized: false,
                     sample_call: None,
                     name: source_name,
                     schema: None,

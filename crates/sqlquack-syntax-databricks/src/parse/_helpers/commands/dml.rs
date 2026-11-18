@@ -29,7 +29,7 @@ enum MergeStage {
 /// The insert's source: a bare `VALUES` list as its rows, any other query as its query.
 fn with_source(mut node: Insert, query: Expression) -> Insert {
     match query {
-        Expression::Values(rows) if rows.alias.is_none() => {
+        Expression::Values(rows) if rows.alias.is_none() && rows.bare_rows.is_empty() => {
             node.values = rows
                 .expressions
                 .into_iter()

@@ -1541,6 +1541,7 @@ impl Parser {
                 },
             ));
             return Ok(TableRef {
+                parenthesized: false,
                 sample_call: None,
                 catalog: None,
                 schema: None,
@@ -1576,6 +1577,7 @@ impl Parser {
                 let table = self.parse_bigquery_table_part()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 Ok(TableRef {
+                    parenthesized: false,
                     sample_call: None,
                     catalog: Some(first),
                     schema: None,
@@ -1607,6 +1609,7 @@ impl Parser {
                     let actual_table = self.parse_bigquery_table_part()?;
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Ok(TableRef {
+                        parenthesized: false,
                         sample_call: None,
                         catalog: Some(first),
                         schema: Some(table),
@@ -1635,6 +1638,7 @@ impl Parser {
                 } else {
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Ok(TableRef {
+                        parenthesized: false,
                         sample_call: None,
                         catalog: None,
                         schema: Some(first),
@@ -1665,6 +1669,7 @@ impl Parser {
         } else {
             let trailing_comments = self.previous_trailing_comments().to_vec();
             Ok(TableRef {
+                parenthesized: false,
                 sample_call: None,
                 catalog: None,
                 schema: None,

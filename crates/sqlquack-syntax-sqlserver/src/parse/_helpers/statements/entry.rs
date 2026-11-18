@@ -515,6 +515,7 @@ impl<'sql> Parser<'sql> {
             })))
         })?;
         Ok(Expression::Declare(Box::new(Declare {
+            keyword: None,
             expressions,
             replace: false,
         })))

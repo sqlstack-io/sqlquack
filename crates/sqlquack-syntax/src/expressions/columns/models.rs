@@ -518,6 +518,9 @@ pub struct ForeignKeyRef {
     /// Snowflake: FOREIGN KEY REFERENCES (includes FOREIGN KEY keywords before REFERENCES)
     #[serde(default)]
     pub has_foreign_key_keywords: bool,
+    /// Databricks: the options in written order, when one repeats or MATCH sits between the actions
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub written_order: Vec<String>,
 }
 
 /// Referential action for foreign keys
@@ -556,6 +559,9 @@ pub struct AlterTable {
     /// Snowflake: ALTER ICEBERG TABLE
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub table_modifier: Option<String>,
+    /// Databricks: the ADD or DROP COLUMN list was written in parentheses
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub columns_parenthesized: bool,
 }
 
 impl AlterTable {
@@ -570,6 +576,7 @@ impl AlterTable {
             partition: None,
             on_cluster: None,
             table_modifier: None,
+            columns_parenthesized: false,
         }
     }
 }

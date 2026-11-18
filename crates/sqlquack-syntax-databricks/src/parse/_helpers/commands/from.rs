@@ -25,6 +25,17 @@ fn collapse(item: Expression, joins: Vec<Join>) -> Expression {
     }
 }
 
+/// A relation written alone in parentheses, a table marked so that `( t )` and `t` differ.
+fn parenthesized(item: Expression) -> Expression {
+    match item {
+        Expression::Table(mut relation) => {
+            relation.parenthesized = true;
+            Expression::Table(relation)
+        }
+        other => other,
+    }
+}
+
 /// `item` under `alias`: its column names rename it, as lineage reads an aliased FROM item.
 fn aliased(item: Expression, alias: Option<TableAlias>) -> Expression {
     let Some(alias) = alias else {
@@ -368,7 +379,8 @@ impl Parser<'_> {
             (false, Some(alias)) if alias.columns.is_empty() => {
                 joined_table(item, joins, Some(alias.name))
             }
-            (_, alias) => aliased(collapse(item, joins), alias),
+            (true, alias) => aliased(parenthesized(item), alias),
+            (false, alias) => aliased(collapse(item, joins), alias),
         })
     }
 

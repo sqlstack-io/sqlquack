@@ -331,6 +331,9 @@ pub struct TableRef {
     /// Snowflake `<catalog>..<name>`: the schema between the dots was left out, so `schema` is null.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub schema_omitted: bool,
+    /// Databricks: the relation was written in parentheses, as in `FROM ( t )`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub parenthesized: bool,
 }
 
 impl TableRef {
@@ -359,6 +362,7 @@ impl TableRef {
             whole_quoted: false,
             catalog_parts: Vec::new(),
             schema_omitted: false,
+            parenthesized: false,
             watermark: None,
         }
     }
@@ -385,6 +389,7 @@ impl TableRef {
     /// Create from an Identifier, preserving the quoted flag
     pub fn from_identifier(name: Identifier) -> Self {
         Self {
+            parenthesized: false,
             sample_call: None,
             name,
             schema: None,

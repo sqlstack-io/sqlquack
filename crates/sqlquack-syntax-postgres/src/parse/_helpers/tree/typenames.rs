@@ -81,10 +81,12 @@ fn builtin(name: &str, modifiers: &[u32]) -> Option<DataType> {
             spelling: None,
         },
         ("time", precision) => DataType::Time {
+            spelling: None,
             precision,
             timezone: false,
         },
         ("timetz", precision) => DataType::Time {
+            spelling: None,
             precision,
             timezone: true,
         },
@@ -322,6 +324,7 @@ impl Parser<'_> {
                 let timezone: bool = self.timezone()?;
                 Ok(match keyword {
                     Some("time") => DataType::Time {
+                        spelling: None,
                         precision,
                         timezone,
                     },
