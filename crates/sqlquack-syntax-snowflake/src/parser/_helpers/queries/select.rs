@@ -631,6 +631,7 @@ impl Parser {
                 table_sample: None,
                 watermark: None,
                 ctes_outside: false,
+                windows: None,
             }))
         } else {
             self.parse_table_expression_primary()?
@@ -1329,6 +1330,7 @@ impl Parser {
                         table_sample: None,
                         watermark: None,
                         ctes_outside: false,
+                        windows: None,
                     }))
                 } else {
                     let table_expr = self.parse_table_expression()?;
@@ -1353,6 +1355,7 @@ impl Parser {
                         table_sample: None,
                         watermark: None,
                         ctes_outside: false,
+                        windows: None,
                     }))
                 }
             } else {
@@ -1528,6 +1531,7 @@ impl Parser {
                     table_sample: None,
                     watermark: None,
                     ctes_outside: false,
+                    windows: None,
                 }))
             } else if self.check(TokenType::Select)
                 || self.check(TokenType::With)
@@ -1567,6 +1571,7 @@ impl Parser {
                         table_sample: None,
                         watermark: None,
                         ctes_outside: false,
+                        windows: None,
                     }));
                     self.parse_set_operation(left)?
                 } else {
@@ -1592,6 +1597,7 @@ impl Parser {
                     table_sample: None,
                     watermark: None,
                     ctes_outside: false,
+                    windows: None,
                 }))
             } else if self.check(TokenType::LParen) {
                 let inner = self.parse_table_expression()?;
@@ -1689,6 +1695,7 @@ impl Parser {
                         table_sample: None,
                         watermark: None,
                         ctes_outside: false,
+                        windows: None,
                     }))
                 } else if self.check(TokenType::Limit) || self.check(TokenType::Offset) {
                     let limit = if self.match_token(TokenType::Limit) {
@@ -1728,6 +1735,7 @@ impl Parser {
                         table_sample: None,
                         watermark: None,
                         ctes_outside: false,
+                        windows: None,
                     }))
                 } else {
                     result
@@ -1789,6 +1797,7 @@ impl Parser {
                     table_sample: None,
                     watermark: None,
                     ctes_outside: false,
+                    windows: None,
                 }))
             }
         })

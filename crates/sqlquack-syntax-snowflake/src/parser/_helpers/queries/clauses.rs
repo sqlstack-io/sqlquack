@@ -703,6 +703,7 @@ impl Parser {
                     table_sample: None,
                     watermark: None,
                     ctes_outside: false,
+                    windows: None,
                 },
             };
             subquery
@@ -759,6 +760,7 @@ impl Parser {
                     table_sample: None,
                     watermark: None,
                     ctes_outside: false,
+                    windows: None,
                 })))
             } else {
                 Ok(Expression::Subquery(Box::new(Subquery {
@@ -781,6 +783,7 @@ impl Parser {
                     table_sample: None,
                     watermark: None,
                     ctes_outside: false,
+                    windows: None,
                 })))
             }
         } else {

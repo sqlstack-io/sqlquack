@@ -300,6 +300,7 @@ pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: boo
         table_sample: None,
         watermark: None,
         ctes_outside: false,
+        windows: None,
     }))
 }
 

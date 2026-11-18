@@ -850,6 +850,7 @@ impl Parser {
                     table_sample: None,
                     watermark: None,
                     ctes_outside: false,
+                    windows: None,
                 })))
             } else if self.check(TokenType::LParen) {
                 let inner = self.parse_select_or_paren_select()?;
@@ -880,6 +881,7 @@ impl Parser {
                     table_sample: None,
                     watermark: None,
                     ctes_outside: false,
+                    windows: None,
                 })))
             } else {
                 Err(self.parse_error("Expected SELECT, VALUES, or ( after ("))
