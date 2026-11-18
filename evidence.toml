@@ -1,4 +1,4 @@
 # The evidence SQLQuack's checks read: one commit of the evidence repository, and the SHA-256 of its files.
 repository = "https://github.com/sqlstack-io/sqlquack-evidence.git"
-commit = "8efc61eea9ecffb171a0bfd59ff5434c7fd60bab"
-content_sha256 = "a07e3b8c7b4c647011a81efb1e37d685c4b233c5465007f20cdd043557bf59a5"
+commit = "7f23f38a75b75d66791fb34b54a32d3977ae0c2b"
+content_sha256 = "f2b633f7bd535d4e58e0894a4b9e3a24a644e371b7f74eaef5eae273e2500b61"
