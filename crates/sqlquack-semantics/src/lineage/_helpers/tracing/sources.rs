@@ -299,7 +299,8 @@ fn joined(
     (merged_keys, rows)
 }
 
-fn natural(kind: JoinKind) -> bool {
+/// Whether a join is NATURAL, joining on the column names both sides offer.
+pub(crate) fn natural(kind: JoinKind) -> bool {
     matches!(
         kind,
         JoinKind::Natural | JoinKind::NaturalLeft | JoinKind::NaturalRight | JoinKind::NaturalFull
