@@ -574,6 +574,50 @@ fn given_a_window_named_after_parentheses_when_checked_then_only_an_undefined_na
 }
 
 #[test]
+fn given_a_typed_literal_of_a_raw_string_when_analysed_then_it_reads_as_the_plain_one() {
+    let test_cases = [
+        SameReadingTestCase {
+            description: "DATE",
+            sql: "SELECT DATE r'2020-01-01' AS d",
+            expected_same_as: "SELECT DATE '2020-01-01' AS d",
+        },
+        SameReadingTestCase {
+            description: "TIMESTAMP",
+            sql: "SELECT TIMESTAMP r'2020-01-01 10:00:00' AS d",
+            expected_same_as: "SELECT TIMESTAMP '2020-01-01 10:00:00' AS d",
+        },
+        SameReadingTestCase {
+            description: "TIMESTAMP_NTZ",
+            sql: "SELECT TIMESTAMP_NTZ r'2020-01-01 10:00:00' AS d",
+            expected_same_as: "SELECT TIMESTAMP_NTZ '2020-01-01 10:00:00' AS d",
+        },
+        SameReadingTestCase {
+            description: "a hexadecimal binary",
+            sql: "SELECT X r'AB' AS d",
+            expected_same_as: "SELECT X'AB' AS d",
+        },
+        SameReadingTestCase {
+            description: "an INTERVAL with a unit",
+            sql: "SELECT INTERVAL r'1' DAY AS d",
+            expected_same_as: "SELECT INTERVAL '1' DAY AS d",
+        },
+        SameReadingTestCase {
+            description: "an INTERVAL string alone",
+            sql: "SELECT INTERVAL r'1 day' AS d",
+            expected_same_as: "SELECT INTERVAL '1 day' AS d",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            reading(test_case.sql),
+            reading(test_case.expected_same_as),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_adjacent_strings_when_analysed_then_they_read_as_the_string_they_join_to() {
     let test_cases = [
         SameReadingTestCase {

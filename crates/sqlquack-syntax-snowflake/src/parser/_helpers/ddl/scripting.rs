@@ -924,6 +924,7 @@ impl Parser {
                                 string_keys: Vec::new(),
                                 bare_values: Vec::new(),
                                 written_keys: Vec::new(),
+                                written_values: Vec::new(),
                             };
                             credentials = Some(Box::new(creds));
                         }
@@ -962,6 +963,7 @@ impl Parser {
                             string_keys: Vec::new(),
                             bare_values: Vec::new(),
                             written_keys: Vec::new(),
+                            written_values: Vec::new(),
                         };
                         credentials = Some(Box::new(creds));
                     }
