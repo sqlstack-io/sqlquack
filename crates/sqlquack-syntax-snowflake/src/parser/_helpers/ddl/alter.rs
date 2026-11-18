@@ -195,6 +195,7 @@ impl Parser {
             self.match_text_seq(&["RESTRICT"]);
         }
         Ok(AlterTableAction::ChangeColumn {
+            comment_written: None,
             old_name,
             new_name,
             data_type,
@@ -338,6 +339,7 @@ impl Parser {
             let action_words = self.written_alter_column_words();
             let action = self.parse_alter_column_action()?;
             Ok(AlterTableAction::AlterColumn {
+                comment_written: None,
                 name,
                 action,
                 use_modify_keyword: false,
@@ -510,7 +512,10 @@ impl Parser {
             self.parse_alter_set_table_properties()
         } else if self.match_text_seq(&["LOCATION"]) {
             let location = self.expect_string()?;
-            Ok(AlterTableAction::SetLocation { location })
+            Ok(AlterTableAction::SetLocation {
+                location_written: None,
+                location,
+            })
         } else if self.match_text_seq(&["FILE", "FORMAT"]) {
             let format = self.expect_identifier_or_keyword()?;
             Ok(AlterTableAction::SetFileFormat { format })
@@ -1223,6 +1228,7 @@ impl Parser {
         let typed = self.parse_simple_name().and_then(|name| {
             let action_words = self.written_alter_column_words();
             Ok(AlterTableAction::AlterColumn {
+                comment_written: None,
                 name,
                 action: self.parse_alter_column_action()?,
                 use_modify_keyword: true,
@@ -1261,6 +1267,7 @@ impl Parser {
             let action_words = self.written_alter_column_words();
             let action = self.parse_alter_column_action()?;
             actions.push(AlterTableAction::AlterColumn {
+                comment_written: None,
                 name,
                 action,
                 use_modify_keyword: modify,
@@ -1653,6 +1660,7 @@ impl Parser {
                     }
                 };
                 return Ok(Expression::Use(Box::new(Use {
+                    name_written: None,
                     kind: Some(kind),
                     this,
                     roles,
@@ -1702,6 +1710,7 @@ impl Parser {
         }
 
         Ok(Expression::Use(Box::new(Use {
+            name_written: None,
             kind,
             this: ident,
             roles: Vec::new(),
@@ -1890,6 +1899,7 @@ impl Parser {
         };
 
         Ok(Expression::LoadData(Box::new(LoadData {
+            inpath_written: None,
             local,
             inpath,
             overwrite,

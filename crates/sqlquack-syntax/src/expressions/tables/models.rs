@@ -1,5 +1,6 @@
 //! Data models of expressions tables.
 
+use crate::expressions::names::models::Literal;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -1388,6 +1389,9 @@ pub struct OptionsProperty {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     #[ast(skip)]
     pub string_keys: Vec<usize>,
+    /// Databricks: the keys written as a raw string or as adjacent strings, by position, as written
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub written_keys: Vec<(usize, Literal)>,
     /// Databricks: the positions in `entries` of values written without the optional `=`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     #[ast(skip)]

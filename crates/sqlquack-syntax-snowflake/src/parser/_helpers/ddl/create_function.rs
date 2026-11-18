@@ -62,6 +62,8 @@ impl Parser {
         let return_nullability = self.match_snowflake_return_nullability();
 
         let mut function = CreateFunction {
+            body_written: None,
+            handler_written: None,
             name,
             parameters,
             return_type,
@@ -398,6 +400,7 @@ impl Parser {
             let kind = self.previous_text().to_ascii_uppercase();
             let uri = self.expect_string()?;
             function.using_resources.push(FunctionUsingResource {
+                uri_written: None,
                 kind,
                 uri,
                 kind_quoted: false,

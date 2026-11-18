@@ -1578,6 +1578,7 @@ impl Parser {
                         None
                     };
                     cols.push(ViewColumn {
+                        comment_written: None,
                         name: Identifier::new(col_name),
                         comment,
                         options: Vec::new(),

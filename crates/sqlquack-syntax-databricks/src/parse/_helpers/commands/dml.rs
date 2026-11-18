@@ -126,12 +126,16 @@ impl Parser<'_> {
         let local: bool = self.eat_kw("LOCAL");
         self.expect_kw("DIRECTORY")?;
         let path: bool = self.string_at(0);
+        let (path_text, path_written) = match path {
+            true => self.written_string()?,
+            false => (String::new(), None),
+        };
         let mut node: DirectoryInsert = DirectoryInsert {
+            input_format_written: None,
+            output_format_written: None,
+            path_written,
             local,
-            path: match path {
-                true => self.string_lit()?,
-                false => String::new(),
-            },
+            path: path_text,
             row_format: None,
             stored_as: None,
             stored_as_quoted: false,
@@ -191,9 +195,13 @@ impl Parser<'_> {
         }
         self.at += 2;
         if self.eat_kw("INPUTFORMAT") {
-            node.input_format = Some(self.string_lit()?);
+            let (class, written) = self.written_string()?;
+            node.input_format = Some(class);
+            node.input_format_written = written;
             self.expect_kw("OUTPUTFORMAT")?;
-            node.output_format = Some(self.string_lit()?);
+            let (class, written) = self.written_string()?;
+            node.output_format = Some(class);
+            node.output_format_written = written;
         } else {
             let format: Identifier = self.ident()?;
             node.stored_as_quoted = format.quoted;

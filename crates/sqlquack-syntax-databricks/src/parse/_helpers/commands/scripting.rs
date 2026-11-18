@@ -404,8 +404,10 @@ impl Parser<'_> {
             true => {
                 self.expect_kw("SQLSTATE")?;
                 let value_keyword: bool = self.eat_kw("VALUE");
+                let (state, state_written) = self.written_string()?;
                 Some(ScriptingSqlstate {
-                    state: self.string_lit()?,
+                    state_written,
+                    state,
                     value_keyword,
                 })
             }
@@ -629,8 +631,10 @@ impl Parser<'_> {
     fn sqlstate(&mut self) -> Parsing<ScriptingSqlstate> {
         self.at += 1;
         let value_keyword: bool = self.eat_kw("VALUE");
+        let (state, state_written) = self.written_string()?;
         Ok(ScriptingSqlstate {
-            state: self.string_lit()?,
+            state_written,
+            state,
             value_keyword,
         })
     }

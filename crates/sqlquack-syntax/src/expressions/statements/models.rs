@@ -31,6 +31,9 @@ pub struct DirectoryInsert {
     /// The directory; empty when only Databricks' `OPTIONS ( 'path' ... )` names it
     #[serde(default, skip_serializing_if = "String::is_empty")]
     pub path: String,
+    /// Databricks: the path as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub path_written: Option<Literal>,
     pub row_format: Option<RowFormat>,
     /// STORED AS clause (e.g., TEXTFILE, ORC, PARQUET)
     #[serde(default)]
@@ -43,10 +46,16 @@ pub struct DirectoryInsert {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub input_format: Option<String>,
+    /// Databricks: the `INPUTFORMAT` class as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub input_format_written: Option<Literal>,
     /// Hive: `STORED AS ... OUTPUTFORMAT` class
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub output_format: Option<String>,
+    /// Databricks: the `OUTPUTFORMAT` class as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub output_format_written: Option<Literal>,
     /// Databricks: `USING format`
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
@@ -606,6 +615,9 @@ pub struct Use {
     /// Databricks: whether the name was written as a string literal
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub string_name: bool,
+    /// Databricks: the string name as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name_written: Option<Literal>,
     /// Databricks: NAMESPACE written for DATABASE, or SET for `SET CATALOG` instead of `USE CATALOG`
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
@@ -709,6 +721,9 @@ pub struct LoadData {
     pub local: bool,
     /// The path to load data from (INPATH value)
     pub inpath: String,
+    /// Databricks: the path as written when it was a raw string or adjacent strings
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub inpath_written: Option<Literal>,
     /// Whether to overwrite existing data
     pub overwrite: bool,
     /// The target table
