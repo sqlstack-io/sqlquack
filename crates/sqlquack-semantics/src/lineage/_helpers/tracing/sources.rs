@@ -1,5 +1,6 @@
 //! The FROM items of a query level, in order, each with the columns it offers.
 
+use std::ops::Range;
 use std::rc::Rc;
 
 use sqlquack_syntax::Expression;
@@ -24,11 +25,11 @@ use crate::lineage::constants::{
     STRUCT_FUNCTION, TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER, UNNEST_FUNCTION,
 };
 use crate::lineage::models::{
-    FromItems, FromPart, Lineage, LineageContext, LineageScope, NamedQuery, Nullability,
+    FromItems, FromPart, Lineage, LineageContext, LineageScope, MergedKey, NamedQuery, Nullability,
     ResolvedQuery, RowReads, SchemaColumn, ScopeSource, ScopedColumn, TransformKind,
 };
 
-/// The FROM items of `select` and its joins; a later item may read earlier ones (LATERAL).
+/// The FROM items of `select` and its joins; a join's keys and outer sides reach its own group.
 pub(crate) fn from_sources(
     select: &Select,
     ctes: &[NamedQuery],
@@ -36,11 +37,17 @@ pub(crate) fn from_sources(
     context: LineageContext<'_>,
 ) -> FromItems {
     let mut from = FromItems::default();
-    for (item, join) in from_parts(select) {
+    for part in sided_parts(select) {
         from.starts.push(from.sources.len());
-        if join.is_some_and(|join| OUTER_RIGHT_JOINS.contains(&join.kind)) {
+        let left: Range<usize> = from.starts[part.left.start]..from.sources.len();
+        if part
+            .join
+            .is_some_and(|join| OUTER_RIGHT_JOINS.contains(&join.kind))
+        {
             for key in &mut from.merged {
-                key.lineage.nullability = Nullability::Nullable;
+                if overlaps(&key.sources, &left) {
+                    key.column.lineage.nullability = Nullability::Nullable;
+                }
             }
         }
         let mut scope = LineageScope {
@@ -48,9 +55,9 @@ pub(crate) fn from_sources(
             merged: std::mem::take(&mut from.merged),
             ..empty_scope(ctes, outer)
         };
-        let mut added: Vec<ScopeSource> = item_sources(item, &scope, context);
+        let mut added: Vec<ScopeSource> = item_sources(part.item, &scope, context);
         let earlier: usize = scope.sources.len();
-        let Some(join) = join else {
+        let Some(join) = part.join else {
             from.sources = scope.sources;
             from.merged = scope.merged;
             from.sources.extend(added);
@@ -58,13 +65,21 @@ pub(crate) fn from_sources(
         };
         scope.sources.append(&mut added);
         scope.traced.get_mut().clear();
-        let (merged, rows) = joined(join, (&scope, earlier), context);
+        let (merged, rows) = joined(join, (&scope, left.clone()), context);
         added = scope.sources.split_off(earlier);
         from.sources = scope.sources;
         from.merged = merged;
         from.rows.absorb(&rows);
         if OUTER_RIGHT_JOINS.contains(&join.kind) {
-            from.sources = from.sources.into_iter().map(outer_nullable).collect();
+            from.sources = from
+                .sources
+                .into_iter()
+                .enumerate()
+                .map(|(index, source)| match left.contains(&index) {
+                    true => outer_nullable(source),
+                    false => source,
+                })
+                .collect();
         }
         if OUTER_LEFT_JOINS.contains(&join.kind) || outer_as_of(join.kind, context) {
             added = added.into_iter().map(outer_nullable).collect();
@@ -211,25 +226,38 @@ fn holds_join(item: &Expression) -> bool {
     }
 }
 
-/// The merged keys after a join, and the columns its conditions and keys decide rows by.
+/// Whether two ranges of sources share one.
+pub(crate) fn overlaps(first: &Range<usize>, second: &Range<usize>) -> bool {
+    first.start < second.end && second.start < first.end
+}
+
+/// The merged keys after a join with `left` its left sources, and the columns it decides rows by.
 fn joined(
     join: &Join,
-    (both, earlier): (&LineageScope<'_>, usize),
+    (both, left): (&LineageScope<'_>, Range<usize>),
     context: LineageContext<'_>,
-) -> (Vec<ScopedColumn>, RowReads) {
-    let (left, right): (&[ScopeSource], &[ScopeSource]) = both.sources.split_at(earlier);
-    let mut merged_keys: Vec<ScopedColumn> = both.merged.clone();
+) -> (Vec<MergedKey>, RowReads) {
+    let right: &[ScopeSource] = &both.sources[left.end..];
+    let reach: Range<usize> = left.start..both.sources.len();
+    let left_keys: Vec<ScopedColumn> = both
+        .merged
+        .iter()
+        .filter(|merged| overlaps(&merged.sources, &left))
+        .map(|merged| merged.column.clone())
+        .collect();
+    let left: &[ScopeSource] = &both.sources[left];
+    let mut merged_keys: Vec<MergedKey> = both.merged.clone();
     let mut rows: RowReads = RowReads::default();
     for condition in join.on.iter().chain(join.match_condition.iter()) {
         let read: Lineage = expression_lineage(condition, both, context);
         rows.read(&read);
     }
     let names: Vec<String> = match natural(join.kind) {
-        true => common_names((&both.merged, left), right, context),
+        true => common_names((&left_keys, left), right, context),
         false => join.using.iter().map(|name| key(name, context)).collect(),
     };
     for name in names {
-        let left_side: Lineage = side_column(&both.merged, left, &name, context);
+        let left_side: Lineage = side_column(&left_keys, left, &name, context);
         let right_side: Lineage = side_column(&[], right, &name, context);
         rows.read(&left_side);
         rows.read(&right_side);
@@ -249,16 +277,21 @@ fn joined(
             }
             _ => left_side,
         };
-        let column = ScopedColumn {
-            name: name.clone(),
-            key: name,
-            lineage,
-            expression: None,
+        let column = MergedKey {
+            column: ScopedColumn {
+                name: name.clone(),
+                key: name,
+                lineage,
+                expression: None,
+            },
+            sources: reach.clone(),
         };
-        match merged_keys
-            .iter_mut()
-            .find(|merged| context.profile.same_identifier(&merged.key, &column.key))
-        {
+        match merged_keys.iter_mut().find(|merged| {
+            overlaps(&merged.sources, &reach)
+                && context
+                    .profile
+                    .same_identifier(&merged.column.key, &column.column.key)
+        }) {
             Some(merged) => *merged = column,
             None => merged_keys.push(column),
         }
