@@ -6,8 +6,8 @@ use std::collections::{HashMap, HashSet};
 use crate::tree::main::call_name::call_name;
 use crate::tree::main::walk_in_scope::walk_in_scope;
 use sqlquack_syntax::expressions::functions::models::WindowFunction;
-use sqlquack_syntax::expressions::queries::models::Over;
 use sqlquack_syntax::expressions::queries::models::Select;
+use sqlquack_syntax::expressions::queries::models::{NamedWindow, Over};
 use sqlquack_syntax::tokens::models::Token;
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
@@ -31,6 +31,8 @@ struct RankingWindow<'a> {
     function: &'static str,
     window: &'a WindowFunction,
     select: &'a Select,
+    /// The WINDOW clauses its OVER can name: the SELECT's own, then those after enclosing parentheses.
+    windows: Vec<&'a NamedWindow>,
 }
 
 pub(crate) fn diagnostics(
@@ -55,7 +57,7 @@ pub(crate) fn diagnostics(
     }
     let mut found: Vec<LintDiagnostic> = Vec::new();
     for ranking in ranking_windows(request.statements) {
-        let over: Option<&Over> = effective_over(&ranking.window.over, ranking.select);
+        let over: Option<&Over> = effective_over(&ranking.window.over, &ranking.windows);
         let order: Vec<&Expression> = over.map_or_else(Vec::new, |over| {
             over.order_by.iter().map(|ordered| &ordered.this).collect()
         });
@@ -140,10 +142,15 @@ fn proven(
 fn ranking_windows(statements: &[Expression]) -> Vec<RankingWindow<'_>> {
     let mut found: Vec<RankingWindow<'_>> = Vec::new();
     for statement in statements {
+        let outer: HashMap<*const Select, Vec<&NamedWindow>> = enclosing_windows(statement);
         for node in statement.dfs() {
             let Expression::Select(select) = node else {
                 continue;
             };
+            let mut windows: Vec<&NamedWindow> = select.windows.iter().flatten().collect();
+            if let Some(enclosing) = outer.get(&std::ptr::from_ref(select.as_ref())) {
+                windows.extend(enclosing.iter().rev());
+            }
             for local in walk_in_scope(node) {
                 let Expression::WindowFunction(window) = local else {
                     continue;
@@ -167,6 +174,7 @@ fn ranking_windows(statements: &[Expression]) -> Vec<RankingWindow<'_>> {
                     function,
                     window,
                     select,
+                    windows: windows.clone(),
                 });
             }
         }
@@ -174,7 +182,35 @@ fn ranking_windows(statements: &[Expression]) -> Vec<RankingWindow<'_>> {
     found
 }
 
-fn effective_over<'a>(over: &'a Over, select: &'a Select) -> Option<&'a Over> {
+/// Each SELECT's enclosing WINDOW clauses, from parentheses and outer SELECTs, outermost first.
+fn enclosing_windows(statement: &Expression) -> HashMap<*const Select, Vec<&NamedWindow>> {
+    let mut found: HashMap<*const Select, Vec<&NamedWindow>> = HashMap::new();
+    for node in statement.dfs() {
+        let (windows, inside): (&[NamedWindow], Box<dyn Iterator<Item = &Expression>>) = match node
+        {
+            Expression::Subquery(subquery) => match &subquery.windows {
+                Some(windows) => (windows, Box::new(subquery.this.dfs())),
+                None => continue,
+            },
+            Expression::Select(select) => match &select.windows {
+                Some(windows) => (windows, Box::new(node.dfs().skip(1))),
+                None => continue,
+            },
+            _ => continue,
+        };
+        for inner in inside {
+            if let Expression::Select(select) = inner {
+                found
+                    .entry(std::ptr::from_ref(select.as_ref()))
+                    .or_default()
+                    .extend(windows);
+            }
+        }
+    }
+    found
+}
+
+fn effective_over<'a>(over: &'a Over, windows: &[&'a NamedWindow]) -> Option<&'a Over> {
     let mut current: &Over = over;
     let mut seen: HashSet<String> = HashSet::new();
     loop {
@@ -185,10 +221,8 @@ fn effective_over<'a>(over: &'a Over, select: &'a Select) -> Option<&'a Over> {
         if !seen.insert(name.clone()) {
             return None;
         }
-        current = &select
-            .windows
+        current = &windows
             .iter()
-            .flatten()
             .find(|window| lower(&window.name.name) == name)?
             .spec;
     }

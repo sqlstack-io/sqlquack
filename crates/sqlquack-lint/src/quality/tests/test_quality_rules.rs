@@ -567,6 +567,46 @@ fn given_a_query_or_cte_body_in_parentheses_when_linting_then_its_ctes_are_check
             expected_anchors: &[],
             expected_fixed_sql: None,
         },
+        QualityRuleTestCase {
+            description: "a ranking sort above the cap in a WINDOW after the parentheses",
+            sql: "(SELECT o.order_id, ROW_NUMBER() OVER w AS rn FROM orders AS o) WINDOW w AS (ORDER BY o.a, o.b, o.c)",
+            rule: "SQLCLEAN043",
+            relation_keys: r#"{}"#,
+            expected_anchors: &["ROW_NUMBER"],
+            expected_fixed_sql: None,
+        },
+        QualityRuleTestCase {
+            description: "a ranking sort above the cap in a WINDOW after parentheses with a WITH before them",
+            sql: "WITH c AS (SELECT 1 AS x) (SELECT o.order_id, ROW_NUMBER() OVER w AS rn FROM orders AS o) WINDOW w AS (ORDER BY o.a, o.b, o.c)",
+            rule: "SQLCLEAN043",
+            relation_keys: r#"{}"#,
+            expected_anchors: &["ROW_NUMBER"],
+            expected_fixed_sql: None,
+        },
+        QualityRuleTestCase {
+            description: "an ordering without a key in a WINDOW after the parentheses is unproven",
+            sql: "(SELECT o.order_id, ROW_NUMBER() OVER w AS rn FROM orders AS o) WINDOW w AS (ORDER BY o.ordered_at)",
+            rule: "SQLCLEAN018",
+            relation_keys: r#"{"orders": [["order_id"]]}"#,
+            expected_anchors: &["ROW_NUMBER"],
+            expected_fixed_sql: None,
+        },
+        QualityRuleTestCase {
+            description: "a nested SELECT's window resolves to the nearer WINDOW, not the one after the parentheses",
+            sql: "(SELECT s.rn FROM (SELECT o.order_id, ROW_NUMBER() OVER w AS rn FROM orders AS o) AS s WINDOW w AS (ORDER BY o.a, o.b, o.c)) WINDOW w AS (ORDER BY o.order_id)",
+            rule: "SQLCLEAN043",
+            relation_keys: r#"{}"#,
+            expected_anchors: &["ROW_NUMBER"],
+            expected_fixed_sql: None,
+        },
+        QualityRuleTestCase {
+            description: "an ordering by the key in a WINDOW after the parentheses is proven",
+            sql: "(SELECT o.order_id, ROW_NUMBER() OVER w AS rn FROM orders AS o) WINDOW w AS (ORDER BY o.order_id)",
+            rule: "SQLCLEAN018",
+            relation_keys: r#"{"orders": [["order_id"]]}"#,
+            expected_anchors: &[],
+            expected_fixed_sql: None,
+        },
     ];
     for test_case in &test_cases {
         let diagnostics: Vec<Value> =
