@@ -74,6 +74,11 @@ fn modifiers_of(constraint: &mut TableConstraint) -> Option<&mut ConstraintModif
     }
 }
 
+/// A comment that was given, with its written spelling, as the optional pair a node stores.
+fn given((text, written): (String, Option<Literal>)) -> (Option<String>, Option<Literal>) {
+    (Some(text), written)
+}
+
 /// Whether the written foreign key options repeat one or put MATCH between the two actions.
 fn order_unsaid(written: &[String]) -> bool {
     let distinct: std::collections::BTreeSet<&String> = written.iter().collect();
@@ -269,20 +274,20 @@ impl Parser<'_> {
         let clause: (&'static str, Option<Expression>) = match word.as_str() {
             "OPTIONS" if self.char_at(1, '(') => {
                 self.at += 1;
-                let spelled: Vec<(OptionEntry, bool, bool, Option<Literal>)> =
+                let spelled: Vec<(OptionEntry, OptionSpelling)> =
                     self.parenthesized(|parser| parser.table_option())?;
                 let mut entries: Vec<OptionEntry> = Vec::new();
                 let mut string_keys: Vec<usize> = Vec::new();
                 let mut without_equals: Vec<usize> = Vec::new();
                 let mut written_keys: Vec<(usize, Literal)> = Vec::new();
-                for (at, (entry, string_key, without, written)) in spelled.into_iter().enumerate() {
-                    if let Some(written) = written {
+                for (at, (entry, spelling)) in spelled.into_iter().enumerate() {
+                    if let Some(written) = spelling.written {
                         written_keys.push((at, written));
                     }
-                    if string_key {
+                    if spelling.string_key {
                         string_keys.push(at);
                     }
-                    if without {
+                    if spelling.without_equals {
                         without_equals.push(at);
                     }
                     entries.push(entry);
@@ -384,8 +389,8 @@ impl Parser<'_> {
         Ok(Some(clause))
     }
 
-    /// One `OPTIONS` entry, whether its key is a string and whether its value lacks `=`.
-    fn table_option(&mut self) -> Parsing<(OptionEntry, bool, bool, Option<Literal>)> {
+    /// One `OPTIONS` entry and how it was written.
+    fn table_option(&mut self) -> Parsing<(OptionEntry, OptionSpelling)> {
         let mut strings: usize = 0;
         while self.string_at(strings) {
             strings += 1;
@@ -418,7 +423,12 @@ impl Parser<'_> {
             ));
         }
         let value: Expression = self.expression()?;
-        Ok((OptionEntry { key, value }, string_key, !equals, written))
+        let spelling: OptionSpelling = OptionSpelling {
+            string_key,
+            without_equals: !equals,
+            written,
+        };
+        Ok((OptionEntry { key, value }, spelling))
     }
 
     /// `bucketSpec`: `CLUSTERED BY (columns) [SORTED BY (columns)] INTO n BUCKETS`.
@@ -1036,15 +1046,12 @@ impl Parser<'_> {
                 let mut column: ViewColumn = ViewColumn::new(String::new());
                 column.name = parser.ident()?;
                 if parser.eat_kw("COMMENT") {
-                    let (comment, written) = parser.written_string()?;
-                    column.comment = Some(comment);
-                    column.comment_written = written;
+                    (column.comment, column.comment_written) = given(parser.written_string()?);
                 }
                 Ok(column)
             })?;
         }
-        let mut comment: Option<String> = None;
-        let mut comment_written: Option<Literal> = None;
+        let mut comment: Option<(String, Option<Literal>)> = None;
         let mut table_properties: Vec<Expression> = Vec::new();
         let mut copy_grants: bool = false;
         let mut options: Vec<Expression> = Vec::new();
@@ -1058,9 +1065,7 @@ impl Parser<'_> {
                 if comment.is_some() {
                     return Err(self.error_with("Found duplicate clauses: COMMENT", start, true));
                 }
-                let (text, written) = self.written_string()?;
-                comment = Some(text);
-                comment_written = written;
+                comment = Some(self.written_string()?);
             } else if self.eat_kw("TBLPROPERTIES") {
                 let properties: Expression = self.properties_node(false)?;
                 table_properties.push(properties);
@@ -1076,8 +1081,7 @@ impl Parser<'_> {
                 node.if_not_exists = if_not_exists;
                 node.temporary = head.temporary;
                 node.temporary_spelling = head.temporary_spelling;
-                node.comment = comment;
-                node.comment_written = comment_written;
+                (node.comment, node.comment_written) = comment.map_or((None, None), given);
                 node.table_properties = table_properties;
                 node.copy_grants = copy_grants;
                 node.options = options;
@@ -1112,8 +1116,7 @@ impl Parser<'_> {
         node.if_not_exists = if_not_exists;
         node.temporary = head.temporary;
         node.temporary_spelling = head.temporary_spelling;
-        node.comment = comment;
-        node.comment_written = comment_written;
+        (node.comment, node.comment_written) = comment.map_or((None, None), given);
         node.table_properties = table_properties;
         node.query_parenthesized = parenthesized;
         node.copy_grants = copy_grants;
@@ -1319,4 +1322,11 @@ impl Parser<'_> {
             _ => Err(self.error()),
         }
     }
+}
+
+/// How one `OPTIONS` entry was written: a string key, no `=`, and a raw or adjacent-string key.
+pub(crate) struct OptionSpelling {
+    string_key: bool,
+    without_equals: bool,
+    written: Option<Literal>,
 }
