@@ -242,6 +242,21 @@ pub(crate) const NAME_FIELD: &str = "name";
 pub(crate) const LITERAL_TYPE_FIELD: &str = "literal_type";
 /// The field a serialized literal records its value in.
 pub(crate) const LITERAL_VALUE_FIELD: &str = "value";
+/// The fields a serialized cast records its operand and its type in.
+pub(crate) const CAST_FIELDS: [&str; 3] = ["cast", "this", "to"];
+/// The field a serialized literal expression records its literal in.
+pub(crate) const LITERAL_FIELD: &str = "literal";
+/// The field a serialized data type records its kind in, and the kind of a type named by a word.
+pub(crate) const CUSTOM_TYPE_FIELDS: [&str; 2] = ["data_type", "custom"];
+/// The kind of a serialized raw string literal.
+pub(crate) const RAW_STRING_KIND: &str = "raw_string";
+/// Typed literal words whose plain string makes a literal of the kind given, a raw one a cast.
+pub(crate) const RAW_TYPED_LITERALS: [(&str, &str); 4] = [
+    ("DATE", "date"),
+    ("TIME", "time"),
+    ("TIMESTAMP", "timestamp"),
+    ("X", "hex_string"),
+];
 /// Snowflake's VARIANT type.
 pub(crate) const SNOWFLAKE_VARIANT_TYPE: &str = "VARIANT";
 /// The aggregates of a PIVOT whose columns DuckDB names by value alone.
