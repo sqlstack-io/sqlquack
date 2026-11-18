@@ -838,6 +838,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 table_sample: None,
                 watermark: None,
+                ctes_outside: false,
             }));
             let result = self.parse_set_operation(subquery)?;
             self.parse_query_modifiers(result)
@@ -865,6 +866,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 table_sample: None,
                 watermark: None,
+                ctes_outside: false,
             }));
             let result = self.parse_set_operation(subquery)?;
             let pre_alias_comments = self.previous_trailing_comments().to_vec();
@@ -1107,6 +1109,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 table_sample: None,
                 watermark: None,
+                ctes_outside: false,
             }));
             let result = self.parse_set_operation(subquery)?;
             self.parse_query_modifiers(result)
@@ -1134,6 +1137,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 table_sample: None,
                 watermark: None,
+                ctes_outside: false,
             }));
             let result = self.parse_set_operation(subquery)?;
             let pre_alias_comments = self.previous_trailing_comments().to_vec();
@@ -1407,6 +1411,7 @@ impl Parser {
                             span: SourceSpan::default(),
                             table_sample: None,
                             watermark: None,
+                            ctes_outside: false,
                         }))
                     } else {
                         self.parse_expression()?
@@ -1460,6 +1465,7 @@ impl Parser {
                             span: SourceSpan::default(),
                             table_sample: None,
                             watermark: None,
+                            ctes_outside: false,
                         }))
                     } else {
                         self.parse_expression()?

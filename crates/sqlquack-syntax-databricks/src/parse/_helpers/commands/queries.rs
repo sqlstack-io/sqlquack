@@ -5,12 +5,12 @@ use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::{Alias, GroupingSets};
 use sqlquack_syntax::expressions::queries::models::{
     ClusterBy, Cte, DistributeBy, From, GroupBy, Having, Hint, HintExpression, Limit, NamedWindow,
-    OrderBy, Ordered, Qualify, Select, SortBy, Where, With,
+    Offset, OrderBy, Ordered, Qualify, Select, SortBy, Where, With,
 };
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    TableAlias, binary, call, cte, null, set_operation, star, subquery, tuple, var,
+    TableAlias, binary, call, cte, null, paren, set_operation, star, subquery, tuple, var,
 };
 use crate::parse::constants::{CUBE, GROUPING_SETS, ROLLUP};
 use crate::scan::models::TokenKind;
@@ -128,11 +128,57 @@ fn takes(body: &Expression, organization: &Organization) -> bool {
     }
 }
 
+/// A parenthesized query with `organization` after it, as an unaliased subquery node holding both.
+fn organized_parenthesized(this: Expression, organization: Organization) -> Expression {
+    let mut node: Expression = subquery(this, None, false);
+    if let Expression::Subquery(subquery) = &mut node {
+        subquery.order_by = organization.order.map(order_by);
+        subquery.cluster_by = organization.cluster.map(|expressions| ClusterBy {
+            expressions: expressions.into_iter().map(Ordered::asc).collect(),
+        });
+        subquery.distribute_by = organization
+            .distribute
+            .map(|expressions| DistributeBy { expressions });
+        subquery.sort_by = organization.sort.map(|expressions| SortBy { expressions });
+        subquery.limit = organization.limit.map(limit);
+        subquery.offset = organization.offset.map(|this| Offset { this, rows: None });
+    }
+    node
+}
+
+/// Whether the query within any parentheses of `body` can take every clause of `organization`.
+fn takes_within(body: &Expression, organization: &Organization) -> bool {
+    match body {
+        Expression::Paren(paren) => takes_within(&paren.this, organization),
+        other => takes(other, organization),
+    }
+}
+
+/// `body` with `organization` applied to the query within its parentheses, which stay.
+fn organized_within(body: Expression, organization: Organization) -> Expression {
+    match body {
+        Expression::Paren(mut paren) => {
+            paren.this = organized_within(paren.this, organization);
+            Expression::Paren(paren)
+        }
+        other => organized(other, organization),
+    }
+}
+
 /// `body` with `organization` applied, wrapped first when it cannot take it as it is.
 fn organized(body: Expression, organization: Organization) -> Expression {
     if organization.is_empty() {
         return body;
     }
+    let body: Expression = match body {
+        Expression::Paren(paren) if organization.windows.is_none() => {
+            return organized_parenthesized(paren.this, organization);
+        }
+        Expression::Paren(paren) if takes_within(&paren.this, &organization) => {
+            return subquery(organized_within(paren.this, organization), None, false);
+        }
+        other => other,
+    };
     let mut body: Expression = match takes(&body, &organization) {
         true => body,
         false => Expression::Select(Box::new(wrapped(body))),
@@ -173,13 +219,7 @@ fn organized(body: Expression, organization: Organization) -> Expression {
             select.sort_by = sort.or(select.sort_by.take());
             select.windows = windows.or(select.windows.take());
             select.limit = count.map(limit);
-            select.offset =
-                offset.map(
-                    |this| sqlquack_syntax::expressions::queries::models::Offset {
-                        this,
-                        rows: None,
-                    },
-                );
+            select.offset = offset.map(|this| Offset { this, rows: None });
         }
         Expression::Union(node) => set_operation_organized!(node),
         Expression::Intersect(node) => set_operation_organized!(node),
@@ -189,8 +229,49 @@ fn organized(body: Expression, organization: Organization) -> Expression {
     body
 }
 
-/// `body` with `with` as its common table expressions, wrapped when it has its own already.
+/// Whether the select within any parentheses of `query` took the pipe `marked`, which it then records.
+fn marked_within(query: &mut Expression, marked: String) -> bool {
+    match query {
+        Expression::Paren(paren) => marked_within(&mut paren.this, marked),
+        Expression::Select(select) => {
+            select.pipe_operators.push(marked);
+            true
+        }
+        _ => false,
+    }
+}
+
+/// `body` with `with` as its CTEs; a parenthesized query takes them inside, flagged as written outside.
 pub(crate) fn with_ctes(body: Expression, with: With) -> Expression {
+    let mut node: Expression = match body {
+        Expression::Paren(paren) => subquery(paren.this, None, false),
+        Expression::Subquery(node) if node.alias.is_none() => Expression::Subquery(node),
+        other => return with_query(other, with),
+    };
+    if let Expression::Subquery(subquery) = &mut node {
+        subquery.this = with_inside(std::mem::replace(&mut subquery.this, null()), with);
+        subquery.ctes_outside = true;
+    }
+    node
+}
+
+/// `body` with `with` on the query within any parentheses and unaliased subquery nodes.
+fn with_inside(body: Expression, with: With) -> Expression {
+    match body {
+        Expression::Paren(mut paren) => {
+            paren.this = with_inside(paren.this, with);
+            Expression::Paren(paren)
+        }
+        Expression::Subquery(mut node) if node.alias.is_none() => {
+            node.this = with_inside(node.this, with);
+            Expression::Subquery(node)
+        }
+        other => with_query(other, with),
+    }
+}
+
+/// A query with `with` as its CTEs, wrapped first when it already has some.
+fn with_query(body: Expression, with: With) -> Expression {
     let has_with: bool = match &body {
         Expression::Select(select) => select.with.is_some(),
         Expression::Union(node) => node.with.is_some(),
@@ -223,6 +304,15 @@ impl Parser<'_> {
             };
             let query: Expression = parser.query_rest(with)?;
             Ok(parser.respanned(first, query))
+        })
+    }
+
+    /// A query, and whether it is one parenthesized query term, whose outer pair the flag then records.
+    pub(crate) fn flagged_query(&mut self) -> Parsing<(Expression, bool)> {
+        let first: usize = self.at;
+        Ok(match self.query()? {
+            Expression::Paren(node) => (self.respanned(first, node.this), true),
+            query => (query, false),
         })
     }
 
@@ -319,13 +409,14 @@ impl Parser<'_> {
         }
     }
 
-    /// `queryPrimary`: a `SELECT`, `FROM ...`, `TABLE t`, `VALUES ...` or `( query )`.
+    /// `queryPrimary`: a `SELECT`, `FROM ...`, `TABLE t`, `VALUES ...` or `( query )` as a paren node.
     pub(crate) fn query_primary(&mut self) -> Parsing<Expression> {
         if self.is_char('(') {
+            let first: usize = self.at;
             self.at += 1;
             let query: Expression = self.query()?;
             self.expect_char(')')?;
-            return Ok(query);
+            return Ok(self.spanned(first, paren(query)));
         }
         match self.word_at(0).as_deref() {
             Some("SELECT") => self.query_specification(),
@@ -659,6 +750,12 @@ impl Parser<'_> {
                 }
                 match organized(left, organization) {
                     Expression::Select(select) => *select,
+                    Expression::Subquery(mut node) => {
+                        if marked_within(&mut node.this, mark(&word)) {
+                            return Ok(Expression::Subquery(node));
+                        }
+                        wrapped(Expression::Subquery(node))
+                    }
                     other => wrapped(other),
                 }
             }

@@ -1,5 +1,6 @@
 use crate::databricks::profile::tests::helpers::databricks_findings;
 use crate::databricks::profile::tests::helpers::databricks_outputs;
+use crate::databricks::profile::tests::helpers::reading;
 use crate::databricks::profile::tests::test_types::DatabricksOutputsTestCase;
 use crate::databricks::profile::tests::test_types::SameReadingTestCase;
 use crate::dialects::constants::DATABRICKS;
@@ -199,21 +200,33 @@ fn given_a_databricks_query_when_naming_and_typing_outputs_then_they_are_the_war
 
 #[test]
 fn given_a_strict_parse_when_tracing_lineage_then_each_output_has_its_items_byte_range() {
-    let test_cases = [StrictRangeTestCase {
-        description: "a literal aliased after a two-byte character, a qualified column, a labelled call, a bare column and a qualified star",
-        sql: "SELECT 'é' AS e, w.status, UPPER(w.status) loud, id, w.* FROM orders AS w",
-        expected_ranges: &[
-            7..16,
-            18..26,
-            28..48,
-            50..52,
-            54..57,
-            54..57,
-            54..57,
-            54..57,
-            54..57,
-        ],
-    }];
+    let test_cases = [
+        StrictRangeTestCase {
+            description: "a literal aliased after a two-byte character, a qualified column, a labelled call, a bare column and a qualified star",
+            sql: "SELECT 'é' AS e, w.status, UPPER(w.status) loud, id, w.* FROM orders AS w",
+            expected_ranges: &[
+                7..16,
+                18..26,
+                28..48,
+                50..52,
+                54..57,
+                54..57,
+                54..57,
+                54..57,
+                54..57,
+            ],
+        },
+        StrictRangeTestCase {
+            description: "a pipe ORDER BY after a parenthesized query",
+            sql: "( SELECT id, quantity FROM orders ) |> ORDER BY status",
+            expected_ranges: &[9..11, 13..21],
+        },
+        StrictRangeTestCase {
+            description: "a pipe LIMIT after a parenthesized query",
+            sql: "( SELECT id, quantity FROM orders ) |> LIMIT 1",
+            expected_ranges: &[9..11, 13..21],
+        },
+    ];
     for test_case in test_cases {
         let statement = sqlquack_syntax_databricks::parse_strict(test_case.sql)
             .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
@@ -322,17 +335,148 @@ fn given_synonymous_operator_spellings_when_analysed_then_each_reads_alike() {
             expected_same_as: "SELECT shiftrightunsigned(quantity, 1) AS a FROM orders WHERE shiftrightunsigned(quantity, 1)",
         },
     ];
-    let read = |sql: &str| {
-        let findings: Vec<(&str, String)> = databricks_findings(sql)
-            .into_iter()
-            .map(|(code, message, _)| (code, message))
-            .collect();
-        (databricks_outputs(sql), findings)
-    };
     for test_case in test_cases {
         assert_eq!(
-            read(test_case.sql),
-            read(test_case.expected_same_as),
+            reading(test_case.sql),
+            reading(test_case.expected_same_as),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_relation_or_query_in_extra_parentheses_when_analysed_then_it_reads_as_without() {
+    let test_cases = [
+        SameReadingTestCase {
+            description: "a table in two pairs of parentheses",
+            sql: "SELECT id, nope FROM ( ( orders ) )",
+            expected_same_as: "SELECT id, nope FROM orders",
+        },
+        SameReadingTestCase {
+            description: "an aliased table in two pairs of parentheses",
+            sql: "SELECT o.id, o.nope FROM ( ( orders ) ) o",
+            expected_same_as: "SELECT o.id, o.nope FROM orders o",
+        },
+        SameReadingTestCase {
+            description: "a table function in parentheses",
+            sql: "SELECT r.id FROM ( range ( 3 ) ) r",
+            expected_same_as: "SELECT r.id FROM range ( 3 ) r",
+        },
+        SameReadingTestCase {
+            description: "a join in a second pair of parentheses",
+            sql: "SELECT o.id, c.name FROM ( ( orders o JOIN customers c ON o.id = c.id ) )",
+            expected_same_as: "SELECT o.id, c.name FROM ( orders o JOIN customers c ON o.id = c.id )",
+        },
+        SameReadingTestCase {
+            description: "a derived table's query in a second pair of parentheses",
+            sql: "SELECT x FROM ( ( SELECT id AS x FROM orders ) ) d",
+            expected_same_as: "SELECT x FROM ( SELECT id AS x FROM orders ) d",
+        },
+        SameReadingTestCase {
+            description: "IN and EXISTS subqueries in a second pair of parentheses",
+            sql: "SELECT id FROM orders WHERE id IN ( ( SELECT nope FROM customers ) ) AND EXISTS ( ( SELECT nope FROM customers ) )",
+            expected_same_as: "SELECT id FROM orders WHERE id IN ( SELECT nope FROM customers ) AND EXISTS ( SELECT nope FROM customers )",
+        },
+        SameReadingTestCase {
+            description: "a whole query in parentheses",
+            sql: "( SELECT id, nope FROM orders )",
+            expected_same_as: "SELECT id, nope FROM orders",
+        },
+        SameReadingTestCase {
+            description: "a set operation's operands in parentheses",
+            sql: "( SELECT id FROM orders ) UNION ( SELECT id FROM customers )",
+            expected_same_as: "SELECT id FROM orders UNION SELECT id FROM customers",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            reading(test_case.sql),
+            reading(test_case.expected_same_as),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_parenthesized_query_with_clauses_after_it_when_analysed_then_they_read_its_sources() {
+    let test_cases = [
+        SameReadingTestCase {
+            description: "ORDER BY a column the query does not output",
+            sql: "( SELECT id FROM orders ) ORDER BY quantity",
+            expected_same_as: "SELECT id FROM orders ORDER BY quantity",
+        },
+        SameReadingTestCase {
+            description: "ORDER BY through the query's table alias",
+            sql: "( SELECT id FROM orders o ) ORDER BY o.quantity",
+            expected_same_as: "SELECT id FROM orders o ORDER BY o.quantity",
+        },
+        SameReadingTestCase {
+            description: "ORDER BY through the table name, then LIMIT",
+            sql: "( SELECT id FROM orders ) ORDER BY orders.quantity LIMIT 1",
+            expected_same_as: "SELECT id FROM orders ORDER BY orders.quantity LIMIT 1",
+        },
+        SameReadingTestCase {
+            description: "an unknown ORDER BY column is still found",
+            sql: "( SELECT id FROM orders ) ORDER BY nope",
+            expected_same_as: "SELECT id FROM orders ORDER BY nope",
+        },
+        SameReadingTestCase {
+            description: "two pairs of parentheses",
+            sql: "( ( SELECT id FROM orders ) ) ORDER BY nope, quantity",
+            expected_same_as: "SELECT id FROM orders ORDER BY nope, quantity",
+        },
+        SameReadingTestCase {
+            description: "inside an IN subquery",
+            sql: "SELECT id FROM orders WHERE id IN ( ( SELECT id FROM customers ) ORDER BY name )",
+            expected_same_as: "SELECT id FROM orders WHERE id IN ( SELECT id FROM customers ORDER BY name )",
+        },
+        SameReadingTestCase {
+            description: "inside a derived table",
+            sql: "SELECT x FROM ( ( SELECT id AS x FROM orders ) ORDER BY quantity ) d",
+            expected_same_as: "SELECT x FROM ( SELECT id AS x FROM orders ORDER BY quantity ) d",
+        },
+        SameReadingTestCase {
+            description: "a pipe ORDER BY after the parentheses",
+            sql: "( SELECT id FROM orders ) |> ORDER BY id",
+            expected_same_as: "SELECT id FROM orders |> ORDER BY id",
+        },
+        SameReadingTestCase {
+            description: "common table expressions before the parentheses",
+            sql: "WITH c AS ( SELECT id FROM orders ) ( SELECT id, nope FROM c )",
+            expected_same_as: "WITH c AS ( SELECT id FROM orders ) SELECT id, nope FROM c",
+        },
+        SameReadingTestCase {
+            description: "common table expressions before the parentheses and a clause after",
+            sql: "WITH c AS ( SELECT id, quantity FROM orders ) ( SELECT id FROM c ) ORDER BY quantity",
+            expected_same_as: "WITH c AS ( SELECT id, quantity FROM orders ) SELECT id FROM c ORDER BY quantity",
+        },
+        SameReadingTestCase {
+            description: "common table expressions before the parentheses, a LIMIT inside and a clause after",
+            sql: "WITH c AS ( SELECT id, quantity FROM orders ) ( SELECT id, nope FROM c LIMIT 1 ) ORDER BY id",
+            expected_same_as: "( WITH c AS ( SELECT id, quantity FROM orders ) SELECT id, nope FROM c LIMIT 1 ) ORDER BY id",
+        },
+        SameReadingTestCase {
+            description: "a LIMIT inside and an unknown ORDER BY column after",
+            sql: "( SELECT id FROM orders LIMIT 1 ) ORDER BY nope",
+            expected_same_as: "SELECT id FROM orders ORDER BY nope LIMIT 1",
+        },
+        SameReadingTestCase {
+            description: "common table expressions before the parentheses, a LIMIT inside and an unknown column after",
+            sql: "WITH c AS ( SELECT id FROM orders ) ( SELECT id FROM c LIMIT 1 ) ORDER BY nope",
+            expected_same_as: "WITH c AS ( SELECT id FROM orders ) SELECT id FROM c ORDER BY nope LIMIT 1",
+        },
+        SameReadingTestCase {
+            description: "common table expressions inside the parentheses, a LIMIT inside and an unknown column after",
+            sql: "( WITH c AS ( SELECT id FROM orders ) SELECT id FROM c LIMIT 1 ) ORDER BY nope",
+            expected_same_as: "WITH c AS ( SELECT id FROM orders ) SELECT id FROM c ORDER BY nope LIMIT 1",
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            reading(test_case.sql),
+            reading(test_case.expected_same_as),
             "{}",
             test_case.description
         );

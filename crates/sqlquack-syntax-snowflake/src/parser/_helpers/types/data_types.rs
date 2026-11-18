@@ -1322,6 +1322,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 table_sample: None,
                 watermark: None,
+                ctes_outside: false,
             }))
         } else {
             inner

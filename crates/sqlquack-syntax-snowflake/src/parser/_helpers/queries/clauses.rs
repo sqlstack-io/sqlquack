@@ -702,6 +702,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     table_sample: None,
                     watermark: None,
+                    ctes_outside: false,
                 },
             };
             subquery
@@ -757,6 +758,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     table_sample: None,
                     watermark: None,
+                    ctes_outside: false,
                 })))
             } else {
                 Ok(Expression::Subquery(Box::new(Subquery {
@@ -778,6 +780,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     table_sample: None,
                     watermark: None,
+                    ctes_outside: false,
                 })))
             }
         } else {
