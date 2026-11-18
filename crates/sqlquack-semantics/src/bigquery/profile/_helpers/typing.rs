@@ -91,9 +91,10 @@ pub(crate) fn bigquery_literal_type(expression: &Expression) -> Option<&'static 
         Expression::Literal(literal) => match literal.as_ref() {
             Literal::Number(text) if text.contains(['.', 'e', 'E']) => Kind::Float64,
             Literal::Number(_) | Literal::HexNumber(_) => Kind::Int64,
-            Literal::String(_) | Literal::TripleQuotedString(..) | Literal::RawString(_) => {
-                Kind::String
-            }
+            Literal::String(_)
+            | Literal::TripleQuotedString(..)
+            | Literal::RawString(_)
+            | Literal::JoinedString(..) => Kind::String,
             Literal::ByteString(_) => Kind::Bytes,
             Literal::Date(_) => Kind::Date,
             Literal::Datetime(_) => Kind::Datetime,

@@ -111,6 +111,11 @@ fn given_bigquery_queries_when_typing_outputs_then_each_has_the_analyzer_type() 
             expected_type: Some("STRING"),
         },
         BigqueryTypeTestCase {
+            description: "adjacent strings are STRING",
+            sql: "SELECT 'a' 'b' AS v",
+            expected_type: Some("STRING"),
+        },
+        BigqueryTypeTestCase {
             description: "COUNT(*) is INT64",
             sql: "SELECT COUNT(*) AS v FROM orders",
             expected_type: Some("INT64"),
