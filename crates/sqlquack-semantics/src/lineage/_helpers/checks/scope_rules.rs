@@ -13,6 +13,7 @@ use crate::lineage::_helpers::checks::issues::{in_scope, issue, rule_location};
 use crate::lineage::_helpers::findings::checks::keyword_function;
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
+use crate::lineage::_helpers::tracing::sources::{every_join, from_parts};
 use crate::lineage::constants::{
     NAME_FIELD, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SPAN_FIELD,
     WINDOW_ONLY_FUNCTIONS,
@@ -161,9 +162,8 @@ pub(crate) fn select_rules(
                 .map(|clause| (&clause.this, (false, false), usable)),
         );
         clauses.extend(
-            select
-                .joins
-                .iter()
+            every_join(select)
+                .into_iter()
                 .filter_map(|join| join.on.as_ref())
                 .map(|on| (on, (false, false), &empty)),
         );
@@ -318,7 +318,7 @@ fn structure_rules(
         }
     }
     let mut names: HashSet<String> = HashSet::new();
-    for item in from_items(select)
+    for (item, _) in from_parts(select)
         .into_iter()
         .filter(|_| !matches!(engine, Engine::Sqlite | Engine::Databricks))
     {
@@ -392,15 +392,6 @@ fn structure_rules(
         }
     }
     findings
-}
-
-fn from_items(select: &Select) -> Vec<&Expression> {
-    let mut items: Vec<&Expression> = Vec::new();
-    if let Some(from) = &select.from {
-        items.extend(from.expressions.iter());
-    }
-    items.extend(select.joins.iter().map(|join| &join.this));
-    items
 }
 
 /// The name a FROM item is known by: its alias, else its table's name.

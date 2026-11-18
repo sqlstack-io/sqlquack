@@ -22,6 +22,7 @@ use crate::lineage::_helpers::checks::signatures::{
     argument_finding, check_call, dispatch_name, has_signature, located, unify,
 };
 use crate::lineage::_helpers::tracing::expressions::expression_lineage;
+use crate::lineage::_helpers::tracing::sources::every_join;
 use crate::lineage::constants::{
     DUCKDB_KEYWORD_ONLY_FUNCTIONS, NAME_PHASE, RUNTIME_WARNING, TYPE_PHASE,
 };
@@ -214,7 +215,7 @@ fn clause_predicates(
             .iter()
             .map(|clause| ("QUALIFY", &clause.this)),
     );
-    for join in &select.joins {
+    for join in every_join(select) {
         clauses.extend(join.on.iter().map(|on| ("JOIN ON", on)));
         clauses.extend(
             join.match_condition
@@ -653,7 +654,11 @@ fn scalar_subqueries(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
             children.extend(select.where_clause.iter().map(|clause| &clause.this));
             children.extend(select.having.iter().map(|clause| &clause.this));
             children.extend(select.qualify.iter().map(|clause| &clause.this));
-            children.extend(select.joins.iter().filter_map(|join| join.on.as_ref()));
+            children.extend(
+                every_join(select)
+                    .into_iter()
+                    .filter_map(|join| join.on.as_ref()),
+            );
             children
         }
         Expression::Eq(_)
