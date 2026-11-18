@@ -689,6 +689,21 @@ fn given_named_windows_when_resolving_names_then_only_the_windows_an_over_reads_
             expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 69)],
         },
         QueryFindingsTestCase {
+            description: "a used window extending an unknown window",
+            sql: "SELECT sum(amount) OVER w2 AS x FROM orders WINDOW w AS (ORDER BY id), w2 AS (zz ORDER BY id)",
+            expected_findings: &[("E232", "Unknown named window 'zz'", 78)],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown window two steps along the used window's chain",
+            sql: "SELECT sum(amount) OVER w3 AS x FROM orders WINDOW w2 AS (zz ORDER BY id), w3 AS (w2)",
+            expected_findings: &[("E232", "Unknown named window 'zz'", 58)],
+        },
+        QueryFindingsTestCase {
+            description: "an unused window extending an unknown window",
+            sql: "SELECT amount FROM orders WINDOW w2 AS (zz ORDER BY id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
             description: "a window that the used window extends",
             sql: "SELECT sum(amount) OVER w2 AS x FROM orders WINDOW w AS (PARTITION BY nope), w2 AS (w ORDER BY id)",
             expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 70)],
