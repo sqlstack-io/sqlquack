@@ -1,0 +1,80 @@
+# Same-tree variants the tree screen (syntax-coverage screen) accepts, each with why the two texts
+# are no collapse. `syntax-coverage validate` runs the screen over every approved form and fails on
+# any same-tree variant no entry allows, so check-ci holds approvals to it.
+#
+# An entry is pinned: to one token (`token`), or to text no lexer token covers (`untokenized`),
+# such as a comment's. It covers only text the grammar reads as carrying no syntax. A token that is
+# optional, present or absent, must be marked in the tree, never allowed here. A `lexical` entry
+# covers one token written in another spelling that the lexer reads as the same token, in every
+# form; only `requote` ('x' and "x", one string literal) qualifies.
+#
+# [[lexical]]
+# mutation = "requote"
+# reason = "<why the lexer reads both spellings as one token>"
+#
+# [[allowed]]
+# form = "<form id>"
+# mutation = "drop | swap | backquote | string | double_quote | unquote | insert_as | insert_equals"
+# token = "<the token as the case writes it>"   # or untokenized = true
+# last_token = true                              # optional: only when it is the text's last token
+# reason = "<why the grammar treats the two texts the same>"
+
+[[lexical]]
+mutation = "requote"
+reason = "the Databricks lexer reads '...' and \"...\" alike as one string literal with the same decoded text (TokenKind::String), so the two spellings are one token, not two forms of the grammar"
+
+[[allowed]]
+form = "db.expressions.comment"
+mutation = "drop"
+untokenized = true
+reason = "the change is inside a /* ... */ comment, text no lexer token covers and the grammar never reads; the tree keeps no comment text"
+
+[[allowed]]
+form = "db.expressions.comment"
+mutation = "backquote"
+untokenized = true
+reason = "the change is inside a /* ... */ comment, text no lexer token covers and the grammar never reads; the tree keeps no comment text"
+
+[[allowed]]
+form = "db.expressions.comment"
+mutation = "string"
+untokenized = true
+reason = "the change is inside a /* ... */ comment, text no lexer token covers and the grammar never reads; the tree keeps no comment text"
+
+[[allowed]]
+form = "db.expressions.comment"
+mutation = "double_quote"
+untokenized = true
+reason = "the change is inside a /* ... */ comment, text no lexer token covers and the grammar never reads; the tree keeps no comment text"
+
+[[allowed]]
+form = "db.expressions.comment"
+mutation = "insert_as"
+untokenized = true
+reason = "the change is inside a /* ... */ comment, text no lexer token covers and the grammar never reads; the tree keeps no comment text"
+
+[[allowed]]
+form = "db.expressions.comment"
+mutation = "insert_equals"
+untokenized = true
+reason = "the change is inside a /* ... */ comment, text no lexer token covers and the grammar never reads; the tree keeps no comment text"
+
+[[allowed]]
+form = "db.expressions.comment"
+mutation = "insert_comma"
+untokenized = true
+reason = "the change is inside a /* ... */ comment, text no lexer token covers and the grammar never reads; the tree keeps no comment text"
+
+[[allowed]]
+form = "db.transaction_session.begin-atomic"
+mutation = "drop"
+token = ";"
+last_token = true
+reason = "the ; after the closing END ends the whole statement and is no part of it; a ; inside the body is required (compoundBody: (compoundStatement SEMICOLON)*) and is not covered"
+
+[[allowed]]
+form = "db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax"
+mutation = "drop"
+token = ";"
+last_token = true
+reason = "a trailing ; ends the statement and is no part of it; the text with and without it is the same statement"

@@ -759,124 +759,159 @@ target = "<value_col>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.ai-detect-anomalies.o007"
+id = "db.functions.ai-detect-anomalies.o038"
 kind = "option_present"
 required = true
-target = "[ , <group_col> ]"
+target = "[ , group_col => <group_col> ]"
 
 [[obligation]]
-id = "db.functions.ai-detect-anomalies.o008"
+id = "db.functions.ai-detect-anomalies.o039"
 kind = "option_absent"
 required = true
-target = "[ , <group_col> ]"
+target = "[ , group_col => <group_col> ]"
 
 [[obligation]]
-id = "db.functions.ai-detect-anomalies.o009"
-kind = "operand_type_class"
-required = true
-target = "<group_col> in [ , <group_col> ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o010"
-kind = "option_present"
-required = true
-target = "[ , <anomaly_threshold> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o011"
-kind = "option_absent"
-required = true
-target = "[ , <anomaly_threshold> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o012"
-kind = "operand_type_class"
-required = true
-target = "<anomaly_threshold> in [ , <anomaly_threshold> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o013"
-kind = "option_present"
-required = true
-target = "[ , <covariate_col> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o014"
-kind = "option_absent"
-required = true
-target = "[ , <covariate_col> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o015"
-kind = "operand_type_class"
-required = true
-target = "<covariate_col> in [ , <covariate_col> ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o016"
-kind = "option_present"
-required = true
-target = "[ , <holiday_region> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o017"
-kind = "option_absent"
-required = true
-target = "[ , <holiday_region> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o018"
-kind = "operand_type_class"
-required = true
-target = "<holiday_region> in [ , <holiday_region> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o019"
-kind = "option_present"
-required = true
-target = "[ , <only_last_n> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o020"
-kind = "option_absent"
-required = true
-target = "[ , <only_last_n> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o021"
-kind = "operand_type_class"
-required = true
-target = "<only_last_n> in [ , <only_last_n> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o022"
-kind = "option_present"
-required = true
-target = "[ , <smoothing> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o023"
-kind = "option_absent"
-required = true
-target = "[ , <smoothing> ]"
-
-[[obligation]]
-id = "db.functions.ai-detect-anomalies.o024"
+id = "db.functions.ai-detect-anomalies.o040"
 kind = "required_operand_missing"
 required = true
-target = "<smoothing> in [ , <smoothing> ]"
+target = "<group_col> in [ , group_col => <group_col> ]"
+note = "omit <group_col>"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o041"
+kind = "operand_type_class"
+required = true
+target = "<group_col> in [ , group_col => <group_col> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o042"
+kind = "option_present"
+required = true
+target = "[ , anomaly_threshold => <anomaly_threshold> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o043"
+kind = "option_absent"
+required = true
+target = "[ , anomaly_threshold => <anomaly_threshold> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o044"
+kind = "required_operand_missing"
+required = true
+target = "<anomaly_threshold> in [ , anomaly_threshold => <anomaly_threshold> ]"
+note = "omit <anomaly_threshold>"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o045"
+kind = "operand_type_class"
+required = true
+target = "<anomaly_threshold> in [ , anomaly_threshold => <anomaly_threshold> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o046"
+kind = "option_present"
+required = true
+target = "[ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o047"
+kind = "option_absent"
+required = true
+target = "[ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o048"
+kind = "required_operand_missing"
+required = true
+target = "<covariate_col> in [ , covariate_col => <covariate_col> ]"
+note = "omit <covariate_col>"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o049"
+kind = "operand_type_class"
+required = true
+target = "<covariate_col> in [ , covariate_col => <covariate_col> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o050"
+kind = "option_present"
+required = true
+target = "[ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o051"
+kind = "option_absent"
+required = true
+target = "[ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o052"
+kind = "required_operand_missing"
+required = true
+target = "<holiday_region> in [ , holiday_region => <holiday_region> ]"
+note = "omit <holiday_region>"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o053"
+kind = "operand_type_class"
+required = true
+target = "<holiday_region> in [ , holiday_region => <holiday_region> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o054"
+kind = "option_present"
+required = true
+target = "[ , only_last_n => <only_last_n> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o055"
+kind = "option_absent"
+required = true
+target = "[ , only_last_n => <only_last_n> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o056"
+kind = "required_operand_missing"
+required = true
+target = "<only_last_n> in [ , only_last_n => <only_last_n> ]"
+note = "omit <only_last_n>"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o057"
+kind = "operand_type_class"
+required = true
+target = "<only_last_n> in [ , only_last_n => <only_last_n> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o058"
+kind = "option_present"
+required = true
+target = "[ , smoothing => <smoothing> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o059"
+kind = "option_absent"
+required = true
+target = "[ , smoothing => <smoothing> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o060"
+kind = "required_operand_missing"
+required = true
+target = "<smoothing> in [ , smoothing => <smoothing> ]"
 note = "omit <smoothing>"
 
 [[obligation]]
-id = "db.functions.ai-detect-anomalies.o025"
+id = "db.functions.ai-detect-anomalies.o061"
 kind = "operand_type_class"
 required = true
-target = "<smoothing> in [ , <smoothing> ]"
+target = "<smoothing> in [ , smoothing => <smoothing> ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -884,6 +919,42 @@ id = "db.functions.ai-detect-anomalies.o026"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o062"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required group_col in [ , group_col => <group_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o063"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required anomaly_threshold in [ , anomaly_threshold => <anomaly_threshold> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o064"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required covariate_col in [ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o065"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required holiday_region in [ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o066"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required only_last_n in [ , only_last_n => <only_last_n> ]"
+
+[[obligation]]
+id = "db.functions.ai-detect-anomalies.o067"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required smoothing in [ , smoothing => <smoothing> ]"
 
 [[obligation]]
 id = "db.functions.ai-detect-anomalies.o027"
@@ -1244,143 +1315,185 @@ target = "<value_col>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o009"
+id = "db.functions.ai-forecast.o069"
 kind = "option_present"
 required = true
-target = "[ , <group_col> ]"
+target = "[ , group_col => <group_col> ]"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o010"
+id = "db.functions.ai-forecast.o070"
 kind = "option_absent"
 required = true
-target = "[ , <group_col> ]"
+target = "[ , group_col => <group_col> ]"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o011"
-kind = "operand_type_class"
-required = true
-target = "<group_col> in [ , <group_col> ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o012"
-kind = "option_present"
-required = true
-target = "[ , <covariate_col> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o013"
-kind = "option_absent"
-required = true
-target = "[ , <covariate_col> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o014"
-kind = "operand_type_class"
-required = true
-target = "<covariate_col> in [ , <covariate_col> ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o015"
-kind = "option_present"
-required = true
-target = "[ , <prediction_interval_width> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o016"
-kind = "option_absent"
-required = true
-target = "[ , <prediction_interval_width> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o017"
-kind = "operand_type_class"
-required = true
-target = "<prediction_interval_width> in [ , <prediction_interval_width> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o018"
-kind = "option_present"
-required = true
-target = "[ , <frequency> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o019"
-kind = "option_absent"
-required = true
-target = "[ , <frequency> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o020"
-kind = "operand_type_class"
-required = true
-target = "<frequency> in [ , <frequency> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o021"
-kind = "option_present"
-required = true
-target = "[ , <holiday_region> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o022"
-kind = "option_absent"
-required = true
-target = "[ , <holiday_region> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o023"
-kind = "operand_type_class"
-required = true
-target = "<holiday_region> in [ , <holiday_region> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o024"
-kind = "option_present"
-required = true
-target = "[ , <positive_only> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o025"
-kind = "option_absent"
-required = true
-target = "[ , <positive_only> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o026"
-kind = "operand_type_class"
-required = true
-target = "<positive_only> in [ , <positive_only> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o027"
-kind = "option_present"
-required = true
-target = "[ , <version> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o028"
-kind = "option_absent"
-required = true
-target = "[ , <version> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o029"
+id = "db.functions.ai-forecast.o071"
 kind = "required_operand_missing"
 required = true
-target = "<version> in [ , <version> ]"
+target = "<group_col> in [ , group_col => <group_col> ]"
+note = "omit <group_col>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o072"
+kind = "operand_type_class"
+required = true
+target = "<group_col> in [ , group_col => <group_col> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o073"
+kind = "option_present"
+required = true
+target = "[ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o074"
+kind = "option_absent"
+required = true
+target = "[ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o075"
+kind = "required_operand_missing"
+required = true
+target = "<covariate_col> in [ , covariate_col => <covariate_col> ]"
+note = "omit <covariate_col>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o076"
+kind = "operand_type_class"
+required = true
+target = "<covariate_col> in [ , covariate_col => <covariate_col> ]"
+note = "a valid identifier"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o077"
+kind = "option_present"
+required = true
+target = "[ , prediction_interval_width => <prediction_interval_width> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o078"
+kind = "option_absent"
+required = true
+target = "[ , prediction_interval_width => <prediction_interval_width> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o079"
+kind = "required_operand_missing"
+required = true
+target = "<prediction_interval_width> in [ , prediction_interval_width => <prediction_interval_width> ]"
+note = "omit <prediction_interval_width>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o080"
+kind = "operand_type_class"
+required = true
+target = "<prediction_interval_width> in [ , prediction_interval_width => <prediction_interval_width> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o081"
+kind = "option_present"
+required = true
+target = "[ , frequency => <frequency> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o082"
+kind = "option_absent"
+required = true
+target = "[ , frequency => <frequency> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o083"
+kind = "required_operand_missing"
+required = true
+target = "<frequency> in [ , frequency => <frequency> ]"
+note = "omit <frequency>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o084"
+kind = "operand_type_class"
+required = true
+target = "<frequency> in [ , frequency => <frequency> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o085"
+kind = "option_present"
+required = true
+target = "[ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o086"
+kind = "option_absent"
+required = true
+target = "[ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o087"
+kind = "required_operand_missing"
+required = true
+target = "<holiday_region> in [ , holiday_region => <holiday_region> ]"
+note = "omit <holiday_region>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o088"
+kind = "operand_type_class"
+required = true
+target = "<holiday_region> in [ , holiday_region => <holiday_region> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o089"
+kind = "option_present"
+required = true
+target = "[ , positive_only => <positive_only> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o090"
+kind = "option_absent"
+required = true
+target = "[ , positive_only => <positive_only> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o091"
+kind = "required_operand_missing"
+required = true
+target = "<positive_only> in [ , positive_only => <positive_only> ]"
+note = "omit <positive_only>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o092"
+kind = "operand_type_class"
+required = true
+target = "<positive_only> in [ , positive_only => <positive_only> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o093"
+kind = "option_present"
+required = true
+target = "[ , version => <version> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o094"
+kind = "option_absent"
+required = true
+target = "[ , version => <version> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o095"
+kind = "required_operand_missing"
+required = true
+target = "<version> in [ , version => <version> ]"
 note = "omit <version>"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o030"
+id = "db.functions.ai-forecast.o096"
 kind = "operand_type_class"
 required = true
-target = "<version> in [ , <version> ]"
+target = "<version> in [ , version => <version> ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -1433,124 +1546,159 @@ target = "<value_col> #2"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o038"
+id = "db.functions.ai-forecast.o097"
 kind = "option_present"
 required = true
-target = "[ , <group_col> ] #2"
+target = "[ , group_col => <group_col> ] #2"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o039"
+id = "db.functions.ai-forecast.o098"
 kind = "option_absent"
 required = true
-target = "[ , <group_col> ] #2"
+target = "[ , group_col => <group_col> ] #2"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o040"
+id = "db.functions.ai-forecast.o099"
+kind = "required_operand_missing"
+required = true
+target = "<group_col> in [ , group_col => <group_col> ] #2"
+note = "omit <group_col>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o100"
 kind = "operand_type_class"
 required = true
-target = "<group_col> in [ , <group_col> ] #2"
+target = "<group_col> in [ , group_col => <group_col> ] #2"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o041"
+id = "db.functions.ai-forecast.o101"
 kind = "option_present"
 required = true
-target = "[ , <prediction_interval_width> ] #2"
+target = "[ , prediction_interval_width => <prediction_interval_width> ] #2"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o042"
+id = "db.functions.ai-forecast.o102"
 kind = "option_absent"
 required = true
-target = "[ , <prediction_interval_width> ] #2"
+target = "[ , prediction_interval_width => <prediction_interval_width> ] #2"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o043"
-kind = "operand_type_class"
-required = true
-target = "<prediction_interval_width> in [ , <prediction_interval_width> ] #2"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o044"
-kind = "option_present"
-required = true
-target = "[ , <frequency> ] #2"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o045"
-kind = "option_absent"
-required = true
-target = "[ , <frequency> ] #2"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o046"
-kind = "operand_type_class"
-required = true
-target = "<frequency> in [ , <frequency> ] #2"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o047"
-kind = "option_present"
-required = true
-target = "[ , <seed> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o048"
-kind = "option_absent"
-required = true
-target = "[ , <seed> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o049"
-kind = "operand_type_class"
-required = true
-target = "<seed> in [ , <seed> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o050"
-kind = "option_present"
-required = true
-target = "[ , <parameters> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o051"
-kind = "option_absent"
-required = true
-target = "[ , <parameters> ]"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o052"
-kind = "operand_type_class"
-required = true
-target = "<parameters> in [ , <parameters> ]"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o053"
-kind = "option_present"
-required = true
-target = "[ , <version> ] #2"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o054"
-kind = "option_absent"
-required = true
-target = "[ , <version> ] #2"
-
-[[obligation]]
-id = "db.functions.ai-forecast.o055"
+id = "db.functions.ai-forecast.o103"
 kind = "required_operand_missing"
 required = true
-target = "<version> in [ , <version> ] #2"
+target = "<prediction_interval_width> in [ , prediction_interval_width => <prediction_interval_width> ] #2"
+note = "omit <prediction_interval_width>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o104"
+kind = "operand_type_class"
+required = true
+target = "<prediction_interval_width> in [ , prediction_interval_width => <prediction_interval_width> ] #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o105"
+kind = "option_present"
+required = true
+target = "[ , frequency => <frequency> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o106"
+kind = "option_absent"
+required = true
+target = "[ , frequency => <frequency> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o107"
+kind = "required_operand_missing"
+required = true
+target = "<frequency> in [ , frequency => <frequency> ] #2"
+note = "omit <frequency>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o108"
+kind = "operand_type_class"
+required = true
+target = "<frequency> in [ , frequency => <frequency> ] #2"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o109"
+kind = "option_present"
+required = true
+target = "[ , seed => <seed> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o110"
+kind = "option_absent"
+required = true
+target = "[ , seed => <seed> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o111"
+kind = "required_operand_missing"
+required = true
+target = "<seed> in [ , seed => <seed> ]"
+note = "omit <seed>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o112"
+kind = "operand_type_class"
+required = true
+target = "<seed> in [ , seed => <seed> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o113"
+kind = "option_present"
+required = true
+target = "[ , parameters => <parameters> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o114"
+kind = "option_absent"
+required = true
+target = "[ , parameters => <parameters> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o115"
+kind = "required_operand_missing"
+required = true
+target = "<parameters> in [ , parameters => <parameters> ]"
+note = "omit <parameters>"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o116"
+kind = "operand_type_class"
+required = true
+target = "<parameters> in [ , parameters => <parameters> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o117"
+kind = "option_present"
+required = true
+target = "[ , version => <version> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o118"
+kind = "option_absent"
+required = true
+target = "[ , version => <version> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o119"
+kind = "required_operand_missing"
+required = true
+target = "<version> in [ , version => <version> ] #2"
 note = "omit <version>"
 
 [[obligation]]
-id = "db.functions.ai-forecast.o056"
+id = "db.functions.ai-forecast.o120"
 kind = "operand_type_class"
 required = true
-target = "<version> in [ , <version> ] #2"
+target = "<version> in [ , version => <version> ] #2"
 note = "a valid operand"
 
 [[obligation]]
@@ -1560,10 +1708,88 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "db.functions.ai-forecast.o121"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required group_col in [ , group_col => <group_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o122"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required covariate_col in [ , covariate_col => <covariate_col> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o123"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required prediction_interval_width in [ , prediction_interval_width => <prediction_interval_width> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o124"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required frequency in [ , frequency => <frequency> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o125"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required holiday_region in [ , holiday_region => <holiday_region> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o126"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required positive_only in [ , positive_only => <positive_only> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o127"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required version in [ , version => <version> ]"
+
+[[obligation]]
 id = "db.functions.ai-forecast.o058"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o128"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required group_col in [ , group_col => <group_col> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o129"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required prediction_interval_width in [ , prediction_interval_width => <prediction_interval_width> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o130"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required frequency in [ , frequency => <frequency> ] #2"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o131"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required seed in [ , seed => <seed> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o132"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required parameters in [ , parameters => <parameters> ]"
+
+[[obligation]]
+id = "db.functions.ai-forecast.o133"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required version in [ , version => <version> ] #2"
 
 [[obligation]]
 id = "db.functions.ai-forecast.o059"
@@ -1993,6 +2219,14 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.functions.ai-predict-class.o027"
+kind = "negative_neighbour"
+required = true
+target = "TABLE ( <table_name> ) with its ) restored after the named arguments"
+anchor = "doc.functions.ai_predict_class / Syntax"
+note = "the o016 negative (the form without its required )) with the ) put back at the end instead: the warehouse reads TABLE ( v1 , target_col => v1 , feature_cols => v1 ) as a call of a function named TABLE (semantic_error UNRESOLVED_ROUTINE TABLE), so it parses; this shows the o016 refusal is the missing ), at end of input. Observed, so its receipt settles it"
+
+[[obligation]]
 id = "db.functions.ai-predict-value.o001"
 kind = "positive"
 required = true
@@ -2138,6 +2372,14 @@ required = true
 target = "<feature_cols>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.functions.ai-predict-value.o027"
+kind = "negative_neighbour"
+required = true
+target = "TABLE ( <table_name> ) with its ) restored after the named arguments"
+anchor = "doc.functions.ai_predict_value / Syntax"
+note = "the o016 negative (the form without its required )) with the ) put back at the end instead: the warehouse reads TABLE ( v1 , target_col => v1 , feature_cols => v1 ) as a call of a function named TABLE (semantic_error UNRESOLVED_ROUTINE TABLE), so it parses; this shows the o016 refusal is the missing ), at end of input. Observed, so its receipt settles it"
 
 [[obligation]]
 id = "db.functions.ai-prep-search.o001"
@@ -2528,22 +2770,75 @@ target = "<is_test>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.ai-top-drivers.o008"
+id = "db.functions.ai-top-drivers.o016"
 kind = "option_present"
 required = true
-target = "[ , <optional_param> ]"
+target = "[ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
 
 [[obligation]]
-id = "db.functions.ai-top-drivers.o009"
+id = "db.functions.ai-top-drivers.o017"
 kind = "option_absent"
 required = true
-target = "[ , <optional_param> ]"
+target = "[ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
 
 [[obligation]]
-id = "db.functions.ai-top-drivers.o010"
+id = "db.functions.ai-top-drivers.o018"
+kind = "alternative"
+required = true
+target = "{ dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support>… → dimensions => <dimensions>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o019"
+kind = "alternative"
+required = true
+target = "{ dimensions => <dimensions> | aggregation => <aggregation> | min_support =>… → aggregation => <aggregation>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o020"
+kind = "alternative"
+required = true
+target = "{ dimensions => <dimensions> | aggregation => <aggregation> | min_support =>… → min_support => <min_support>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o021"
+kind = "required_operand_missing"
+required = true
+target = "<dimensions> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+note = "omit <dimensions>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o022"
 kind = "operand_type_class"
 required = true
-target = "<optional_param> in [ , <optional_param> ]"
+target = "<dimensions> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o023"
+kind = "required_operand_missing"
+required = true
+target = "<aggregation> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+note = "omit <aggregation>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o024"
+kind = "operand_type_class"
+required = true
+target = "<aggregation> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o025"
+kind = "required_operand_missing"
+required = true
+target = "<min_support> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+note = "omit <min_support>"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o026"
+kind = "operand_type_class"
+required = true
+target = "<min_support> in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
 note = "a valid operand"
 
 [[obligation]]
@@ -2569,6 +2864,24 @@ id = "db.functions.ai-top-drivers.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required is_test"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required dimensions after , in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o028"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required aggregation after , in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
+
+[[obligation]]
+id = "db.functions.ai-top-drivers.o029"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required min_support after , in [ , { dimensions => <dimensions> | aggregation => <aggregation> | min_support => <min_support> } ]"
 
 [[obligation]]
 id = "db.functions.ai-top-drivers.o015"
@@ -6495,12 +6808,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.classifier.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.classifier.o003"
 kind = "negative_neighbour"
 required = true
@@ -6537,12 +6844,6 @@ kind = "operand_type_class"
 required = true
 target = "<checkpoint>"
 note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.cloud-files-state.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.cloud-files-state.o009"
@@ -6697,12 +6998,6 @@ id = "db.functions.collations.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.collations.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.collations.o003"
@@ -6940,18 +7235,11 @@ target = "<json_path>"
 note = "omit <json_path>"
 
 [[obligation]]
-id = "db.functions.colonsign.o005"
+id = "db.functions.colonsign.o007"
 kind = "operand_type_class"
 required = true
 target = "<json_path>"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "db.functions.colonsign.o006"
-kind = "negative_neighbour"
-required = true
-target = "<json_path>"
-note = "an unquoted identifier in place of <json_path>"
+note = "a valid operand"
 
 [[obligation]]
 id = "db.functions.concat.o001"
@@ -8535,12 +8823,6 @@ target = "<over_clause>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.cume-dist.o004"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.cume-dist.o005"
 kind = "negative_neighbour"
 required = true
@@ -8551,12 +8833,6 @@ id = "db.functions.curdate.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.curdate.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.curdate.o003"
@@ -8571,12 +8847,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-catalog.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.current-catalog.o003"
 kind = "negative_neighbour"
 required = true
@@ -8587,12 +8857,6 @@ id = "db.functions.current-database.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.current-database.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.current-database.o003"
@@ -8607,28 +8871,28 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-date.o002"
-kind = "negative_neighbour"
+id = "db.functions.current-date.o004"
+kind = "option_present"
 required = true
-note = "the form without its required ("
+target = "[ ( ) ]"
 
 [[obligation]]
-id = "db.functions.current-date.o003"
+id = "db.functions.current-date.o005"
+kind = "option_absent"
+required = true
+target = "[ ( ) ]"
+
+[[obligation]]
+id = "db.functions.current-date.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( ) ]"
 
 [[obligation]]
 id = "db.functions.current-metastore.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.current-metastore.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.current-metastore.o003"
@@ -8643,12 +8907,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-oauth-custom-identity-claim.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.current-oauth-custom-identity-claim.o003"
 kind = "negative_neighbour"
 required = true
@@ -8661,16 +8919,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-path.o002"
-kind = "negative_neighbour"
+id = "db.functions.current-path.o004"
+kind = "option_present"
 required = true
-note = "the form without its required ("
+target = "[ ( ) ]"
 
 [[obligation]]
-id = "db.functions.current-path.o003"
+id = "db.functions.current-path.o005"
+kind = "option_absent"
+required = true
+target = "[ ( ) ]"
+
+[[obligation]]
+id = "db.functions.current-path.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( ) ]"
 
 [[obligation]]
 id = "db.functions.current-recipient.o001"
@@ -8704,12 +8968,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-schema.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.current-schema.o003"
 kind = "negative_neighbour"
 required = true
@@ -8722,12 +8980,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-snapshot-version.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.current-snapshot-version.o003"
 kind = "negative_neighbour"
 required = true
@@ -8738,6 +8990,18 @@ id = "db.functions.current-time.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "db.functions.current-time.o007"
+kind = "option_present"
+required = true
+target = "[ ( [ <precision> ] ) ]"
+
+[[obligation]]
+id = "db.functions.current-time.o008"
+kind = "option_absent"
+required = true
+target = "[ ( [ <precision> ] ) ]"
 
 [[obligation]]
 id = "db.functions.current-time.o002"
@@ -8759,22 +9023,28 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.current-time.o005"
+id = "db.functions.current-time.o009"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ("
-
-[[obligation]]
-id = "db.functions.current-time.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( [ <precision> ] ) ]"
 
 [[obligation]]
 id = "db.functions.current-timestamp.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "db.functions.current-timestamp.o007"
+kind = "option_present"
+required = true
+target = "[ ( [ <precision> ] ) ]"
+
+[[obligation]]
+id = "db.functions.current-timestamp.o008"
+kind = "option_absent"
+required = true
+target = "[ ( [ <precision> ] ) ]"
 
 [[obligation]]
 id = "db.functions.current-timestamp.o002"
@@ -8796,28 +9066,24 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.current-timestamp.o005"
+id = "db.functions.current-timestamp.o009"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ("
+note = "the form without its required ) in [ ( [ <precision> ] ) ]"
 
 [[obligation]]
-id = "db.functions.current-timestamp.o006"
-kind = "negative_neighbour"
+id = "db.functions.current-timestamp.o010"
+kind = "operand_type_class"
 required = true
-note = "the form without its required )"
+target = "<precision>"
+anchor = "doc.functions.current_timestamp / Syntax"
+note = "a string where the page documents an INTEGER literal precision"
 
 [[obligation]]
 id = "db.functions.current-timezone.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.current-timezone.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.current-timezone.o003"
@@ -8832,28 +9098,28 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.current-user.o002"
-kind = "negative_neighbour"
+id = "db.functions.current-user.o004"
+kind = "option_present"
 required = true
-note = "the form without its required ("
+target = "[ ( ) ]"
 
 [[obligation]]
-id = "db.functions.current-user.o003"
+id = "db.functions.current-user.o005"
+kind = "option_absent"
+required = true
+target = "[ ( ) ]"
+
+[[obligation]]
+id = "db.functions.current-user.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( ) ]"
 
 [[obligation]]
 id = "db.functions.current-version.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.current-version.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.current-version.o003"
@@ -8873,12 +9139,6 @@ kind = "operand_type_class"
 required = true
 target = "<table_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "db.functions.data-skipping-summary.o004"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.data-skipping-summary.o006"
@@ -8992,18 +9252,70 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.date-add3.o002"
-kind = "required_operand_missing"
+id = "db.functions.date-add3.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.date-add3.o003"
-kind = "operand_type_class"
+id = "db.functions.date-add3.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.date-add3.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.date-add3.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.date-add3.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.date-add3.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.date-add3.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAYOFYEAR"
+
+[[obligation]]
+id = "db.functions.date-add3.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.date-add3.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.date-add3.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.date-add3.o020"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.date-add3.o004"
@@ -9040,10 +9352,24 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "db.functions.date-add3.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR }"
+
+[[obligation]]
 id = "db.functions.date-add3.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.date-add3.o022"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.date_add3 / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
 
 [[obligation]]
 id = "db.functions.date-diff.o001"
@@ -9080,18 +9406,64 @@ target = "<start_date>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.date-diff.o006"
-kind = "required_operand_missing"
+id = "db.functions.date-diff.o014"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.date-diff.o007"
-kind = "operand_type_class"
+id = "db.functions.date-diff.o015"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.date-diff.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.date-diff.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.date-diff.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.date-diff.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.date-diff.o020"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.date-diff.o021"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.date-diff.o022"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.date-diff.o023"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.date-diff.o008"
@@ -9132,6 +9504,20 @@ id = "db.functions.date-diff.o013"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.date-diff.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }"
+
+[[obligation]]
+id = "db.functions.date-diff.o025"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.date_diff / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
 
 [[obligation]]
 id = "db.functions.date-format.o001"
@@ -9349,18 +9735,70 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.dateadd.o002"
-kind = "required_operand_missing"
+id = "db.functions.dateadd.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.dateadd.o003"
-kind = "operand_type_class"
+id = "db.functions.dateadd.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.dateadd.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.dateadd.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.dateadd.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.dateadd.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.dateadd.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAYOFYEAR"
+
+[[obligation]]
+id = "db.functions.dateadd.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.dateadd.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.dateadd.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.dateadd.o020"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.dateadd.o004"
@@ -9397,10 +9835,24 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "db.functions.dateadd.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR }"
+
+[[obligation]]
 id = "db.functions.dateadd.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.dateadd.o022"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.dateadd / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
 
 [[obligation]]
 id = "db.functions.dateadd2.o001"
@@ -9501,18 +9953,64 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.datediff3.o002"
-kind = "required_operand_missing"
+id = "db.functions.datediff3.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.datediff3.o003"
-kind = "operand_type_class"
+id = "db.functions.datediff3.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.datediff3.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.datediff3.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.datediff3.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.datediff3.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.datediff3.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.datediff3.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.datediff3.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.datediff3.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.datediff3.o004"
@@ -9549,10 +10047,24 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "db.functions.datediff3.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }"
+
+[[obligation]]
 id = "db.functions.datediff3.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.datediff3.o021"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.datediff3 / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
 
 [[obligation]]
 id = "db.functions.day.o001"
@@ -9725,12 +10237,6 @@ target = "<expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.decode.o004"
-kind = "alternative"
-required = true
-target = "{ <key1> , <value1> } → <key1> , <value1>"
-
-[[obligation]]
 id = "db.functions.decode.o005"
 kind = "required_operand_missing"
 required = true
@@ -9752,17 +10258,17 @@ target = "<value1>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.decode.o008"
+id = "db.functions.decode.o017"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
+target = "[ , <key1> , <value1> ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "db.functions.decode.o009"
+id = "db.functions.decode.o018"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <key1> , <value1> ... ]"
 
 [[obligation]]
 id = "db.functions.decode.o010"
@@ -9884,12 +10390,6 @@ id = "db.functions.dense-rank.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.dense-rank.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.dense-rank.o003"
@@ -10081,12 +10581,6 @@ id = "db.functions.e.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.e.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.e.o003"
@@ -10459,12 +10953,6 @@ target = "<pipeline_id>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.event-log.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.event-log.o009"
 kind = "negative_neighbour"
 required = true
@@ -10801,6 +11289,14 @@ id = "db.functions.extract.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.extract.o009"
+kind = "negative_neighbour"
+required = true
+target = "("
+anchor = "doc.functions.extract / Syntax"
+note = "the call without its required ( keeping its documented keyword operand, beside the case that writes 1 there"
 
 [[obligation]]
 id = "db.functions.factorial.o001"
@@ -12143,12 +12639,6 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.getdate.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.getdate.o006"
 kind = "negative_neighbour"
 required = true
@@ -12284,12 +12774,6 @@ id = "db.functions.grouping-id.o006"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
-
-[[obligation]]
-id = "db.functions.grouping-id.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.grouping-id.o008"
@@ -14472,11 +14956,11 @@ target = "<connection_name>"
 note = "omit <connection_name>"
 
 [[obligation]]
-id = "db.functions.http-request.o009"
+id = "db.functions.http-request.o035"
 kind = "operand_type_class"
 required = true
 target = "<connection_name>"
-note = "a valid identifier"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.http-request.o010"
@@ -14610,20 +15094,12 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "db.functions.http-request.o030"
-kind = "identifier_class"
+id = "db.functions.http-request.o036"
+kind = "option_present"
 required = true
-target = "<connection_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.functions.http-request.o032"
-kind = "identifier_class"
-required = true
-target = "<connection_name>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+target = "[ , ... ]"
+anchor = "doc.functions.http_request / Syntax"
+note = "two different named parameters; the page says a parameter given more than once is an error"
 
 [[obligation]]
 id = "db.functions.hypot.o001"
@@ -14896,12 +15372,6 @@ target = "<escape> in [ ESCAPE <escape> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.ilike.ilike.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.ilike.ilike.o013"
 kind = "negative_neighbour"
 required = true
@@ -14912,6 +15382,14 @@ id = "db.functions.ilike.ilike.o014"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "db.functions.ilike.ilike.o015"
+kind = "option_present"
+required = true
+target = "[ ESCAPE <escape> ] inside the parentheses"
+anchor = "doc.functions.ilike / Syntax"
+note = "ESCAPE inside the parentheses, as the page's Syntax line writes it, which the warehouse refuses"
 
 [[obligation]]
 id = "db.functions.ilike.ilike-any-some-all.o001"
@@ -15262,12 +15740,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.input-file-block-length.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.input-file-block-length.o003"
 kind = "negative_neighbour"
 required = true
@@ -15280,12 +15752,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.input-file-block-start.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.input-file-block-start.o003"
 kind = "negative_neighbour"
 required = true
@@ -15296,12 +15762,6 @@ id = "db.functions.input-file-name.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.input-file-name.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.input-file-name.o003"
@@ -17608,12 +18068,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.last-snapshot-version.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.last-snapshot-version.o003"
 kind = "negative_neighbour"
 required = true
@@ -18192,12 +18646,6 @@ target = "<escape> in [ ESCAPE <escape> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.like.like.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.like.like.o013"
 kind = "negative_neighbour"
 required = true
@@ -18208,6 +18656,14 @@ id = "db.functions.like.like.o014"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "db.functions.like.like.o015"
+kind = "option_present"
+required = true
+target = "[ ESCAPE <escape> ] inside the parentheses"
+anchor = "doc.functions.like / Syntax"
+note = "ESCAPE inside the parentheses, as the page's Syntax line writes it, which the warehouse refuses"
 
 [[obligation]]
 id = "db.functions.like.like-any-some-all.o001"
@@ -18431,12 +18887,6 @@ target = "<scope_str> in [ <scope_str> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.list-secrets.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.list-secrets.o006"
 kind = "negative_neighbour"
 required = true
@@ -18506,74 +18956,84 @@ target = "<delimiter> in [ , <delimiter> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.listagg.o011"
+id = "db.functions.listagg.o040"
 kind = "option_present"
 required = true
-target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o012"
+id = "db.functions.listagg.o041"
 kind = "option_absent"
 required = true
-target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o013"
+id = "db.functions.listagg.o042"
 kind = "alternative"
 required = true
-target = "{ <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } → <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ]"
+target = "{ <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } → <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.listagg.o014"
+id = "db.functions.listagg.o043"
 kind = "required_operand_missing"
 required = true
-target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 note = "omit <sort_key>"
 
 [[obligation]]
-id = "db.functions.listagg.o015"
+id = "db.functions.listagg.o044"
 kind = "operand_type_class"
 required = true
-target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.listagg.o016"
+id = "db.functions.listagg.o045"
 kind = "option_present"
 required = true
-target = "[ <sort_direction> ]"
+target = "[ ASC | DESC ]"
 
 [[obligation]]
-id = "db.functions.listagg.o017"
+id = "db.functions.listagg.o046"
 kind = "option_absent"
 required = true
-target = "[ <sort_direction> ]"
+target = "[ ASC | DESC ]"
 
 [[obligation]]
-id = "db.functions.listagg.o018"
-kind = "operand_type_class"
+id = "db.functions.listagg.o047"
+kind = "alternative"
 required = true
-target = "<sort_direction> in [ <sort_direction> ]"
-note = "a valid operand"
+target = "[ ASC | DESC ] → ASC"
 
 [[obligation]]
-id = "db.functions.listagg.o019"
+id = "db.functions.listagg.o048"
+kind = "alternative"
+required = true
+target = "[ ASC | DESC ] → DESC"
+
+[[obligation]]
+id = "db.functions.listagg.o049"
 kind = "option_present"
 required = true
-target = "[ <nulls_sort_order> ]"
+target = "[ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.listagg.o020"
+id = "db.functions.listagg.o050"
 kind = "option_absent"
 required = true
-target = "[ <nulls_sort_order> ]"
+target = "[ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.listagg.o021"
-kind = "operand_type_class"
+id = "db.functions.listagg.o051"
+kind = "alternative"
 required = true
-target = "<nulls_sort_order> in [ <nulls_sort_order> ]"
-note = "a valid operand"
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS FIRST"
+
+[[obligation]]
+id = "db.functions.listagg.o052"
+kind = "alternative"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS LAST"
 
 [[obligation]]
 id = "db.functions.listagg.o022"
@@ -18627,40 +19087,52 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "db.functions.listagg.o030"
+id = "db.functions.listagg.o053"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required GROUP in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required GROUP in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o031"
+id = "db.functions.listagg.o054"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required ( in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o032"
+id = "db.functions.listagg.o055"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ORDER in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required ORDER in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o033"
+id = "db.functions.listagg.o056"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BY in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required BY in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.listagg.o034"
+id = "db.functions.listagg.o057"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required FIRST in [ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.listagg.o035"
+id = "db.functions.listagg.o058"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required LAST in [ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.functions.listagg.o059"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
+
+[[obligation]]
+id = "db.functions.listagg.o060"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
 id = "db.functions.listagg.o036"
@@ -18718,6 +19190,18 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
+id = "db.functions.localtime.o007"
+kind = "option_present"
+required = true
+target = "[ ( [ <precision> ] ) ]"
+
+[[obligation]]
+id = "db.functions.localtime.o008"
+kind = "option_absent"
+required = true
+target = "[ ( [ <precision> ] ) ]"
+
+[[obligation]]
 id = "db.functions.localtime.o002"
 kind = "option_present"
 required = true
@@ -18737,16 +19221,10 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.localtime.o005"
+id = "db.functions.localtime.o009"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ("
-
-[[obligation]]
-id = "db.functions.localtime.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( [ <precision> ] ) ]"
 
 [[obligation]]
 id = "db.functions.localtimestamp.o001"
@@ -18774,16 +19252,18 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.localtimestamp.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
-id = "db.functions.localtimestamp.o006"
+id = "db.functions.localtimestamp.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.localtimestamp.o011"
+kind = "option_absent"
+required = true
+target = "the parentheses"
+anchor = "doc.functions.localtimestamp / Syntax"
+note = "LOCALTIMESTAMP without parentheses, which the page says is allowed when precision is omitted: the warehouse parses it but resolves it as a column (UNRESOLVED_COLUMN), not as the function, so the form keeps its written parentheses and the bare word is observed"
 
 [[obligation]]
 id = "db.functions.locate.o001"
@@ -19294,11 +19774,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.luhn-check.o002"
+id = "db.functions.luhn-check.o005"
 kind = "operand_type_class"
 required = true
 target = "<num_str>"
-note = "a valid integer_literal"
+note = "a valid expression"
 
 [[obligation]]
 id = "db.functions.luhn-check.o003"
@@ -19474,12 +19954,6 @@ kind = "operand_type_class"
 required = true
 target = "<secs> in [ , <secs> ]"
 note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.make-dt-interval.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.make-dt-interval.o018"
@@ -19667,12 +20141,6 @@ kind = "operand_type_class"
 required = true
 target = "<secs> in [ , <secs> ]"
 note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.make-interval.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.make-interval.o030"
@@ -20295,12 +20763,6 @@ target = "<months> in [ , <months> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.make-ym-interval.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.make-ym-interval.o010"
 kind = "negative_neighbour"
 required = true
@@ -20313,68 +20775,63 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.map.o002"
+id = "db.functions.map.o012"
 kind = "option_present"
 required = true
-target = "[ <key1> , <value1> ]"
+target = "[ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
 
 [[obligation]]
-id = "db.functions.map.o003"
+id = "db.functions.map.o013"
 kind = "option_absent"
 required = true
-target = "[ <key1> , <value1> ]"
+target = "[ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
 
 [[obligation]]
-id = "db.functions.map.o004"
+id = "db.functions.map.o014"
 kind = "required_operand_missing"
 required = true
-target = "<key1> in [ <key1> , <value1> ]"
+target = "<key1> in [ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
 note = "omit <key1>"
 
 [[obligation]]
-id = "db.functions.map.o005"
+id = "db.functions.map.o015"
 kind = "operand_type_class"
 required = true
-target = "<key1> in [ <key1> , <value1> ]"
+target = "<key1> in [ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.map.o006"
+id = "db.functions.map.o016"
+kind = "required_operand_missing"
+required = true
+target = "<value1> in [ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
+note = "omit <value1>"
+
+[[obligation]]
+id = "db.functions.map.o017"
 kind = "operand_type_class"
 required = true
-target = "<value1> in [ <key1> , <value1> ]"
+target = "<value1> in [ <key1> , <value1> [ , <key1> , <value1> ... ] ]"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.map.o007"
+id = "db.functions.map.o018"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
+target = "[ , <key1> , <value1> ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "db.functions.map.o008"
+id = "db.functions.map.o019"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
-
-[[obligation]]
-id = "db.functions.map.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
+target = "[ , <key1> , <value1> ... ]"
 
 [[obligation]]
 id = "db.functions.map.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "db.functions.map.o011"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
 
 [[obligation]]
 id = "db.functions.map-concat.o001"
@@ -20413,12 +20870,6 @@ id = "db.functions.map-concat.o006"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
-
-[[obligation]]
-id = "db.functions.map-concat.o007"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.map-concat.o008"
@@ -20860,12 +21311,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.match-number.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.match-number.o003"
 kind = "negative_neighbour"
 required = true
@@ -20904,11 +21349,11 @@ target = "<row_pattern_var>"
 note = "omit <row_pattern_var>"
 
 [[obligation]]
-id = "db.functions.match-recognize-first.o006"
+id = "db.functions.match-recognize-first.o019"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern_var>"
-note = "a valid string_literal"
+note = "a valid identifier"
 
 [[obligation]]
 id = "db.functions.match-recognize-first.o007"
@@ -20986,6 +21431,22 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.functions.match-recognize-first.o020"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "db.functions.match-recognize-first.o021"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
 id = "db.functions.match-recognize-last.o001"
 kind = "positive"
 required = true
@@ -21018,11 +21479,11 @@ target = "<row_pattern_var>"
 note = "omit <row_pattern_var>"
 
 [[obligation]]
-id = "db.functions.match-recognize-last.o006"
+id = "db.functions.match-recognize-last.o019"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern_var>"
-note = "a valid string_literal"
+note = "a valid identifier"
 
 [[obligation]]
 id = "db.functions.match-recognize-last.o007"
@@ -21100,6 +21561,22 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.functions.match-recognize-last.o020"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "db.functions.match-recognize-last.o021"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
 id = "db.functions.match-recognize-next.o001"
 kind = "positive"
 required = true
@@ -21132,11 +21609,11 @@ target = "<row_pattern_var>"
 note = "omit <row_pattern_var>"
 
 [[obligation]]
-id = "db.functions.match-recognize-next.o006"
+id = "db.functions.match-recognize-next.o019"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern_var>"
-note = "a valid string_literal"
+note = "a valid identifier"
 
 [[obligation]]
 id = "db.functions.match-recognize-next.o007"
@@ -21214,6 +21691,22 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.functions.match-recognize-next.o020"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "db.functions.match-recognize-next.o021"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
 id = "db.functions.match-recognize-prev.o001"
 kind = "positive"
 required = true
@@ -21246,11 +21739,11 @@ target = "<row_pattern_var>"
 note = "omit <row_pattern_var>"
 
 [[obligation]]
-id = "db.functions.match-recognize-prev.o006"
+id = "db.functions.match-recognize-prev.o019"
 kind = "operand_type_class"
 required = true
 target = "<row_pattern_var>"
-note = "a valid string_literal"
+note = "a valid identifier"
 
 [[obligation]]
 id = "db.functions.match-recognize-prev.o007"
@@ -21324,6 +21817,22 @@ id = "db.functions.match-recognize-prev.o018"
 kind = "identifier_class"
 required = true
 target = "<col_name>"
+anchor = "doc.identifiers-syntax"
+note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.functions.match-recognize-prev.o020"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
+anchor = "doc.identifiers-syntax"
+note = "quoted: a double-quoted identifier with blanks and mixed case"
+
+[[obligation]]
+id = "db.functions.match-recognize-prev.o021"
+kind = "identifier_class"
+required = true
+target = "<row_pattern_var>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
@@ -22387,12 +22896,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.monotonically-increasing-id.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.monotonically-increasing-id.o003"
 kind = "negative_neighbour"
 required = true
@@ -22520,12 +23023,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.named-struct.o002"
-kind = "alternative"
-required = true
-target = "{ <name1> , <val1> } → <name1> , <val1>"
-
-[[obligation]]
 id = "db.functions.named-struct.o003"
 kind = "required_operand_missing"
 required = true
@@ -22533,11 +23030,11 @@ target = "<name1>"
 note = "omit <name1>"
 
 [[obligation]]
-id = "db.functions.named-struct.o004"
+id = "db.functions.named-struct.o013"
 kind = "operand_type_class"
 required = true
 target = "<name1>"
-note = "a valid identifier"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.named-struct.o005"
@@ -22547,17 +23044,17 @@ target = "<val1>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.named-struct.o006"
+id = "db.functions.named-struct.o014"
 kind = "option_present"
 required = true
-target = "[ , ... ]"
+target = "[ , <name1> , <val1> ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "db.functions.named-struct.o007"
+id = "db.functions.named-struct.o015"
 kind = "option_absent"
 required = true
-target = "[ , ... ]"
+target = "[ , <name1> , <val1> ... ]"
 
 [[obligation]]
 id = "db.functions.named-struct.o008"
@@ -22570,22 +23067,6 @@ id = "db.functions.named-struct.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
-
-[[obligation]]
-id = "db.functions.named-struct.o010"
-kind = "identifier_class"
-required = true
-target = "<name1>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.functions.named-struct.o012"
-kind = "identifier_class"
-required = true
-target = "<name1>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
 id = "db.functions.nanvl.o001"
@@ -22743,12 +23224,6 @@ target = "<precision> in [ <precision> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.now.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.now.o006"
 kind = "negative_neighbour"
 required = true
@@ -22880,12 +23355,6 @@ kind = "operand_type_class"
 required = true
 target = "<n> in [ <n> ]"
 note = "a valid integer_literal"
-
-[[obligation]]
-id = "db.functions.ntile.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.ntile.o006"
@@ -23465,12 +23934,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.percent-rank.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.percent-rank.o003"
 kind = "negative_neighbour"
 required = true
@@ -23979,12 +24442,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.pi.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.pi.o003"
 kind = "negative_neighbour"
 required = true
@@ -24045,10 +24502,38 @@ target = "<expr1>"
 note = "a valid expression"
 
 [[obligation]]
+id = "db.functions.pipesign.syntax.o004"
+kind = "required_operand_missing"
+required = true
+target = "<expr2>"
+note = "omit <expr2>"
+
+[[obligation]]
+id = "db.functions.pipesign.syntax.o005"
+kind = "operand_type_class"
+required = true
+target = "<expr2>"
+note = "a valid expression"
+
+[[obligation]]
 id = "db.functions.pipesign.syntax.syntax.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "db.functions.pipesign.syntax.syntax.o004"
+kind = "required_operand_missing"
+required = true
+target = "<expr1>"
+note = "omit <expr1>"
+
+[[obligation]]
+id = "db.functions.pipesign.syntax.syntax.o005"
+kind = "operand_type_class"
+required = true
+target = "<expr1>"
+note = "a valid expression"
 
 [[obligation]]
 id = "db.functions.pipesign.syntax.syntax.o002"
@@ -24646,12 +25131,6 @@ target = "<seed> in [ <seed> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.rand.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.rand.o006"
 kind = "negative_neighbour"
 required = true
@@ -24683,12 +25162,6 @@ target = "<seed> in [ <seed> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.randn.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.randn.o006"
 kind = "negative_neighbour"
 required = true
@@ -24718,12 +25191,6 @@ kind = "operand_type_class"
 required = true
 target = "<seed> in [ <seed> ]"
 note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.random.o005"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.random.o006"
@@ -24887,12 +25354,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.rank.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.rank.o003"
 kind = "negative_neighbour"
 required = true
@@ -25023,12 +25484,6 @@ required = true
 target = "[ , ... ]"
 
 [[obligation]]
-id = "db.functions.read-kafka.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.read-kafka.o009"
 kind = "negative_neighbour"
 required = true
@@ -25039,6 +25494,30 @@ id = "db.functions.read-kafka.o010"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "db.functions.read-kafka.o017"
+kind = "option_absent"
+required = true
+target = "[ , ... ]"
+anchor = "doc.functions.read_kafka / Syntax"
+note = "one option pair with the list not continued"
+
+[[obligation]]
+id = "db.functions.read-kafka.o018"
+kind = "identifier_class"
+required = true
+target = "<option_key>"
+anchor = "doc.functions.read_kafka / Syntax"
+note = "an option key containing dots as a backtick-quoted identifier, as the page requires"
+
+[[obligation]]
+id = "db.functions.read-kafka.o019"
+kind = "operand_type_class"
+required = true
+target = "<option_key>"
+anchor = "doc.functions.read_kafka / Syntax"
+note = "a string literal written where the option key goes"
 
 [[obligation]]
 id = "db.functions.read-kinesis.o001"
@@ -25643,6 +26122,14 @@ id = "db.functions.regexp-extract.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.regexp-extract.o011"
+kind = "required_operand_missing"
+required = true
+target = "<regexp>"
+anchor = "doc.functions.regexp_extract / Syntax"
+note = "the call with its required regexp left out entirely"
 
 [[obligation]]
 id = "db.functions.regexp-extract-all.o001"
@@ -26950,36 +27437,50 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.remote-query.o002"
+id = "db.functions.remote-query.o013"
 kind = "operand_type_class"
 required = true
 target = "<connection_name>"
-note = "a valid identifier"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "db.functions.remote-query.o003"
+id = "db.functions.remote-query.o016"
 kind = "option_present"
 required = true
-target = "[ , connectorOptionKey => <connector_option_value> ]"
+target = "[ , <connector_option_key> => <connector_option_value> ]"
 
 [[obligation]]
-id = "db.functions.remote-query.o004"
+id = "db.functions.remote-query.o017"
 kind = "option_absent"
 required = true
-target = "[ , connectorOptionKey => <connector_option_value> ]"
+target = "[ , <connector_option_key> => <connector_option_value> ]"
 
 [[obligation]]
-id = "db.functions.remote-query.o005"
+id = "db.functions.remote-query.o018"
 kind = "required_operand_missing"
 required = true
-target = "<connector_option_value> in [ , connectorOptionKey => <connector_option_value> ]"
+target = "<connector_option_key> in [ , <connector_option_key> => <connector_option_value> ]"
+note = "omit <connector_option_key>"
+
+[[obligation]]
+id = "db.functions.remote-query.o019"
+kind = "operand_type_class"
+required = true
+target = "<connector_option_key> in [ , <connector_option_key> => <connector_option_value> ]"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.remote-query.o020"
+kind = "required_operand_missing"
+required = true
+target = "<connector_option_value> in [ , <connector_option_key> => <connector_option_value> ]"
 note = "omit <connector_option_value>"
 
 [[obligation]]
-id = "db.functions.remote-query.o006"
+id = "db.functions.remote-query.o021"
 kind = "operand_type_class"
 required = true
-target = "<connector_option_value> in [ , connectorOptionKey => <connector_option_value> ]"
+target = "<connector_option_value> in [ , <connector_option_key> => <connector_option_value> ]"
 note = "a valid expression"
 
 [[obligation]]
@@ -26989,32 +27490,26 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "db.functions.remote-query.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required connectorOptionKey in [ , connectorOptionKey => <connector_option_value> ]"
-
-[[obligation]]
 id = "db.functions.remote-query.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "db.functions.remote-query.o010"
-kind = "identifier_class"
+id = "db.functions.remote-query.o022"
+kind = "operand_type_class"
 required = true
-target = "<connection_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
+target = "<connector_option_key>"
+anchor = "doc.functions.remote_query / Syntax"
+note = "a string literal written where the option key goes"
 
 [[obligation]]
-id = "db.functions.remote-query.o012"
+id = "db.functions.remote-query.o023"
 kind = "identifier_class"
 required = true
-target = "<connection_name>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+target = "<connector_option_key>"
+anchor = "doc.functions.remote_query / Syntax"
+note = "the option key as a backtick-quoted identifier"
 
 [[obligation]]
 id = "db.functions.repeat.o001"
@@ -27331,12 +27826,6 @@ id = "db.functions.row-number.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.row-number.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.row-number.o003"
@@ -28175,16 +28664,22 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.session-user.o002"
-kind = "negative_neighbour"
+id = "db.functions.session-user.o004"
+kind = "option_present"
 required = true
-note = "the form without its required ("
+target = "[ ( ) ]"
 
 [[obligation]]
-id = "db.functions.session-user.o003"
+id = "db.functions.session-user.o005"
+kind = "option_absent"
+required = true
+target = "[ ( ) ]"
+
+[[obligation]]
+id = "db.functions.session-user.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( ) ]"
 
 [[obligation]]
 id = "db.functions.session-window.o001"
@@ -29011,12 +29506,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.spark-partition.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.spark-partition.o003"
 kind = "negative_neighbour"
 required = true
@@ -29088,6 +29577,14 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
+id = "db.functions.split.o011"
+kind = "required_operand_missing"
+required = true
+target = "<regex>"
+anchor = "doc.functions.split / Syntax"
+note = "the call without its required regex"
+
+[[obligation]]
 id = "db.functions.split-part.o001"
 kind = "positive"
 required = true
@@ -29152,12 +29649,6 @@ id = "db.functions.sql-keywords.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.sql-keywords.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.sql-keywords.o003"
@@ -33432,74 +33923,84 @@ target = "<delimiter> in [ , <delimiter> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.string-agg.o011"
+id = "db.functions.string-agg.o040"
 kind = "option_present"
 required = true
-target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o012"
+id = "db.functions.string-agg.o041"
 kind = "option_absent"
 required = true
-target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "[ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o013"
+id = "db.functions.string-agg.o042"
 kind = "alternative"
 required = true
-target = "{ <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } → <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ]"
+target = "{ <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } → <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o014"
+id = "db.functions.string-agg.o043"
 kind = "required_operand_missing"
 required = true
-target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 note = "omit <sort_key>"
 
 [[obligation]]
-id = "db.functions.string-agg.o015"
+id = "db.functions.string-agg.o044"
 kind = "operand_type_class"
 required = true
-target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+target = "<sort_key> in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.string-agg.o016"
+id = "db.functions.string-agg.o045"
 kind = "option_present"
 required = true
-target = "[ <sort_direction> ]"
+target = "[ ASC | DESC ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o017"
+id = "db.functions.string-agg.o046"
 kind = "option_absent"
 required = true
-target = "[ <sort_direction> ]"
+target = "[ ASC | DESC ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o018"
-kind = "operand_type_class"
+id = "db.functions.string-agg.o047"
+kind = "alternative"
 required = true
-target = "<sort_direction> in [ <sort_direction> ]"
-note = "a valid operand"
+target = "[ ASC | DESC ] → ASC"
 
 [[obligation]]
-id = "db.functions.string-agg.o019"
+id = "db.functions.string-agg.o048"
+kind = "alternative"
+required = true
+target = "[ ASC | DESC ] → DESC"
+
+[[obligation]]
+id = "db.functions.string-agg.o049"
 kind = "option_present"
 required = true
-target = "[ <nulls_sort_order> ]"
+target = "[ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o020"
+id = "db.functions.string-agg.o050"
 kind = "option_absent"
 required = true
-target = "[ <nulls_sort_order> ]"
+target = "[ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o021"
-kind = "operand_type_class"
+id = "db.functions.string-agg.o051"
+kind = "alternative"
 required = true
-target = "<nulls_sort_order> in [ <nulls_sort_order> ]"
-note = "a valid operand"
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS FIRST"
+
+[[obligation]]
+id = "db.functions.string-agg.o052"
+kind = "alternative"
+required = true
+target = "[ NULLS FIRST | NULLS LAST ] → NULLS LAST"
 
 [[obligation]]
 id = "db.functions.string-agg.o022"
@@ -33553,40 +34054,52 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "db.functions.string-agg.o030"
+id = "db.functions.string-agg.o053"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required GROUP in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required GROUP in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o031"
+id = "db.functions.string-agg.o054"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ( in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required ( in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o032"
+id = "db.functions.string-agg.o055"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ORDER in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required ORDER in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o033"
+id = "db.functions.string-agg.o056"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required BY in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required BY in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o034"
+id = "db.functions.string-agg.o057"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required FIRST in [ NULLS FIRST | NULLS LAST ]"
 
 [[obligation]]
-id = "db.functions.string-agg.o035"
+id = "db.functions.string-agg.o058"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ WITHIN GROUP ( ORDER BY { <sort_key> [ <sort_direction> ] [ <nulls_sort_order> ] } [ , ... ] ) ]"
+note = "the form without its required LAST in [ NULLS FIRST | NULLS LAST ]"
+
+[[obligation]]
+id = "db.functions.string-agg.o059"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
+
+[[obligation]]
+id = "db.functions.string-agg.o060"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ) in [ WITHIN GROUP ( ORDER BY { <sort_key> [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] } [ , ... ] ) ]"
 
 [[obligation]]
 id = "db.functions.string-agg.o036"
@@ -34156,6 +34669,14 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
+id = "db.functions.sum.o017"
+kind = "required_operand_missing"
+required = true
+target = "<expr>"
+anchor = "doc.functions.sum / Syntax"
+note = "the call with its only argument left out"
+
+[[obligation]]
 id = "db.functions.table-changes.o001"
 kind = "positive"
 required = true
@@ -34696,18 +35217,34 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.time-diff.o002"
-kind = "required_operand_missing"
+id = "db.functions.time-diff.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.time-diff.o003"
-kind = "operand_type_class"
+id = "db.functions.time-diff.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.time-diff.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR } → SECOND"
+
+[[obligation]]
+id = "db.functions.time-diff.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.time-diff.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR } → HOUR"
 
 [[obligation]]
 id = "db.functions.time-diff.o004"
@@ -34744,10 +35281,32 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "db.functions.time-diff.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR }"
+
+[[obligation]]
 id = "db.functions.time-diff.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.time-diff.o016"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.time_diff / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
+id = "db.functions.time-diff.o017"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.time_diff / Syntax"
+note = "a unit keyword the page does not list for this function"
 
 [[obligation]]
 id = "db.functions.time-from-micros.o001"
@@ -34952,18 +35511,64 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.timediff.o002"
-kind = "required_operand_missing"
+id = "db.functions.timediff.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.timediff.o003"
-kind = "operand_type_class"
+id = "db.functions.timediff.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.timediff.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.timediff.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.timediff.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.timediff.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.timediff.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.timediff.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.timediff.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.timediff.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.timediff.o004"
@@ -35000,10 +35605,24 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "db.functions.timediff.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }"
+
+[[obligation]]
 id = "db.functions.timediff.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.timediff.o021"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.timediff / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
 
 [[obligation]]
 id = "db.functions.timestamp.o001"
@@ -35137,18 +35756,70 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.timestampadd.o002"
-kind = "required_operand_missing"
+id = "db.functions.timestampadd.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.timestampadd.o003"
-kind = "operand_type_class"
+id = "db.functions.timestampadd.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.timestampadd.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.timestampadd.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.timestampadd.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.timestampadd.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.timestampadd.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → DAYOFYEAR"
+
+[[obligation]]
+id = "db.functions.timestampadd.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.timestampadd.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.timestampadd.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.timestampadd.o020"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.timestampadd.o004"
@@ -35185,10 +35856,24 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "db.functions.timestampadd.o021"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | DAYOFYEAR | WEEK | MONTH | QUARTER | YEAR }"
+
+[[obligation]]
 id = "db.functions.timestampadd.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.timestampadd.o022"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.timestampadd / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
 
 [[obligation]]
 id = "db.functions.timestampdiff.o001"
@@ -35197,18 +35882,64 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.timestampdiff.o002"
-kind = "required_operand_missing"
+id = "db.functions.timestampdiff.o010"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "omit <unit>"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MICROSECOND"
 
 [[obligation]]
-id = "db.functions.timestampdiff.o003"
-kind = "operand_type_class"
+id = "db.functions.timestampdiff.o011"
+kind = "alternative"
 required = true
-target = "<unit>"
-note = "a valid operand"
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MILLISECOND"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o012"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → SECOND"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o013"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MINUTE"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o014"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → HOUR"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o015"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → DAY"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o016"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → WEEK"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o017"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → MONTH"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o018"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → QUARTER"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o019"
+kind = "alternative"
+required = true
+target = "{ MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR } → YEAR"
 
 [[obligation]]
 id = "db.functions.timestampdiff.o004"
@@ -35245,10 +35976,24 @@ required = true
 note = "the form without its required ("
 
 [[obligation]]
+id = "db.functions.timestampdiff.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { MICROSECOND | MILLISECOND | SECOND | MINUTE | HOUR | DAY | WEEK | MONTH | QUARTER | YEAR }"
+
+[[obligation]]
 id = "db.functions.timestampdiff.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o021"
+kind = "operand_type_class"
+required = true
+target = "<unit>"
+anchor = "doc.functions.timestampdiff / Syntax"
+note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
 
 [[obligation]]
 id = "db.functions.tinyint.o001"
@@ -35416,18 +36161,18 @@ required = true
 target = "{ <numeric_format> | <datetime_format> | <string_format> } → <string_format>"
 
 [[obligation]]
-id = "db.functions.to-char.o007"
+id = "db.functions.to-char.o013"
 kind = "operand_type_class"
 required = true
 target = "<numeric_format>"
-note = "a valid integer_literal"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "db.functions.to-char.o008"
+id = "db.functions.to-char.o014"
 kind = "operand_type_class"
 required = true
 target = "<datetime_format>"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.to-char.o009"
@@ -36217,18 +36962,18 @@ required = true
 target = "{ <numeric_format> | <datetime_format> | <string_format> } → <string_format>"
 
 [[obligation]]
-id = "db.functions.to-varchar.o007"
+id = "db.functions.to-varchar.o013"
 kind = "operand_type_class"
 required = true
 target = "<numeric_format>"
-note = "a valid integer_literal"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "db.functions.to-varchar.o008"
+id = "db.functions.to-varchar.o014"
 kind = "operand_type_class"
 required = true
 target = "<datetime_format>"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.to-varchar.o009"
@@ -39067,11 +39812,11 @@ target = "<type>"
 note = "omit <type>"
 
 [[obligation]]
-id = "db.functions.try-variant-get.o007"
+id = "db.functions.try-variant-get.o010"
 kind = "operand_type_class"
 required = true
 target = "<type>"
-note = "a valid data_type"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.try-variant-get.o008"
@@ -40900,12 +41645,6 @@ target = "<fmt> in [ , <fmt> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.unix-timestamp.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.unix-timestamp.o010"
 kind = "negative_neighbour"
 required = true
@@ -40993,28 +41732,28 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.user.o002"
-kind = "negative_neighbour"
+id = "db.functions.user.o004"
+kind = "option_present"
 required = true
-note = "the form without its required ("
+target = "[ ( ) ]"
 
 [[obligation]]
-id = "db.functions.user.o003"
+id = "db.functions.user.o005"
+kind = "option_absent"
+required = true
+target = "[ ( ) ]"
+
+[[obligation]]
+id = "db.functions.user.o006"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required )"
+note = "the form without its required ) in [ ( ) ]"
 
 [[obligation]]
 id = "db.functions.uuid.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.uuid.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.uuid.o003"
@@ -41436,11 +42175,11 @@ target = "<type>"
 note = "omit <type>"
 
 [[obligation]]
-id = "db.functions.variant-get.o007"
+id = "db.functions.variant-get.o010"
 kind = "operand_type_class"
 required = true
 target = "<type>"
-note = "a valid data_type"
+note = "a valid string_literal"
 
 [[obligation]]
 id = "db.functions.variant-get.o008"
@@ -41764,168 +42503,225 @@ required = true
 note = "the form without its required )"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search.o001"
+id = "db.functions.vector-search.query-num-results.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search.o002"
+id = "db.functions.vector-search.query-num-results.o002"
 kind = "required_operand_missing"
 required = true
 target = "<index>"
 note = "omit <index>"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search.o003"
+id = "db.functions.vector-search.query-num-results.o003"
 kind = "operand_type_class"
 required = true
 target = "<index>"
-note = "a valid operand"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search.o004"
-kind = "alternative"
-required = true
-target = "{ <query_text> | <query_vector> } → <query_text>"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o005"
-kind = "alternative"
-required = true
-target = "{ <query_text> | <query_vector> } → <query_vector>"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o006"
-kind = "operand_type_class"
-required = true
-target = "<query_text>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o007"
-kind = "operand_type_class"
-required = true
-target = "<query_vector>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o008"
-kind = "option_present"
-required = true
-target = "[ <num_results> ]"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o009"
-kind = "option_absent"
-required = true
-target = "[ <num_results> ]"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o010"
-kind = "operand_type_class"
-required = true
-target = "<num_results> in [ <num_results> ]"
-note = "a valid integer_literal"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o011"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FROM"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o012"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required VECTOR_SEARCH"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o013"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o014"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { <query_text> | <query_vector> }"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required )"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search-2.o001"
-kind = "positive"
-required = true
-note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search-2.o002"
-kind = "required_operand_missing"
-required = true
-target = "<index>"
-note = "omit <index>"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search-2.o003"
-kind = "operand_type_class"
-required = true
-target = "<index>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.functions.vector-search.vector-search-2.o004"
+id = "db.functions.vector-search.query-num-results.o004"
 kind = "required_operand_missing"
 required = true
 target = "<query_str>"
 note = "omit <query_str>"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o005"
+id = "db.functions.vector-search.query-num-results.o005"
 kind = "operand_type_class"
 required = true
 target = "<query_str>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o006"
+id = "db.functions.vector-search.query-num-results.o006"
 kind = "required_operand_missing"
 required = true
 target = "<num_results>"
 note = "omit <num_results>"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o007"
+id = "db.functions.vector-search.query-num-results.o007"
 kind = "operand_type_class"
 required = true
 target = "<num_results>"
 note = "a valid integer_literal"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o008"
+id = "db.functions.vector-search.query-num-results.o008"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required FROM"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o009"
+id = "db.functions.vector-search.query-num-results.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required VECTOR_SEARCH"
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o010"
+id = "db.functions.vector-search.query-num-results.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ("
 
 [[obligation]]
-id = "db.functions.vector-search.vector-search-2.o011"
+id = "db.functions.vector-search.query-num-results.o011"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required index"
+
+[[obligation]]
+id = "db.functions.vector-search.query-num-results.o012"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required query"
+
+[[obligation]]
+id = "db.functions.vector-search.query-num-results.o013"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required num_results"
+
+[[obligation]]
+id = "db.functions.vector-search.query-num-results.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o001"
+kind = "positive"
+required = true
+note = "the documented form with every required part and no optional part"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o002"
+kind = "required_operand_missing"
+required = true
+target = "<index>"
+note = "omit <index>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o003"
+kind = "operand_type_class"
+required = true
+target = "<index>"
+note = "a valid string_literal"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o004"
+kind = "alternative"
+required = true
+target = "{ query_text => <query_text> | query_vector => <query_vector> } → query_text => <query_text>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o005"
+kind = "alternative"
+required = true
+target = "{ query_text => <query_text> | query_vector => <query_vector> } → query_vector => <query_vector>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o006"
+kind = "required_operand_missing"
+required = true
+target = "<query_text>"
+note = "omit <query_text>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o007"
+kind = "operand_type_class"
+required = true
+target = "<query_text>"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o008"
+kind = "required_operand_missing"
+required = true
+target = "<query_vector>"
+note = "omit <query_vector>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o009"
+kind = "operand_type_class"
+required = true
+target = "<query_vector>"
+note = "a valid operand"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o010"
+kind = "option_present"
+required = true
+target = "[ , num_results => <num_results> ]"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o011"
+kind = "option_absent"
+required = true
+target = "[ , num_results => <num_results> ]"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o012"
+kind = "required_operand_missing"
+required = true
+target = "<num_results> in [ , num_results => <num_results> ]"
+note = "omit <num_results>"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o013"
+kind = "operand_type_class"
+required = true
+target = "<num_results> in [ , num_results => <num_results> ]"
+note = "a valid integer_literal"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o014"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o015"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required VECTOR_SEARCH"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required ("
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o017"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required index"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o018"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required query_text after ,"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o019"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required query_vector after ,"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o020"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required num_results in [ , num_results => <num_results> ]"
+
+[[obligation]]
+id = "db.functions.vector-search.query-text-query-vector.o021"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
@@ -42004,12 +42800,6 @@ id = "db.functions.version.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.functions.version.o002"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.functions.version.o003"

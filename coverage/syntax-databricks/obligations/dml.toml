@@ -2092,12 +2092,6 @@ required = true
 note = "the form without its required VALUES"
 
 [[obligation]]
-id = "db.dml.insert-into.values-default.o024"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.dml.insert-into.values-default.o025"
 kind = "negative_neighbour"
 required = true
@@ -2154,6 +2148,14 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.dml.insert-into.values-default.o034"
+kind = "identifier_class"
+required = true
+target = "DEFAULT"
+anchor = "doc.sql-ref-syntax-dml-insert-into / Syntax"
+note = "DEFAULT backtick-quoted in the query, a column name rather than the keyword"
 
 [[obligation]]
 id = "db.dml.insert-overwrite-directory.o001"
@@ -2751,12 +2753,6 @@ id = "db.dml.insert-overwrite-directory-hive.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required VALUES after <directory_path>"
-
-[[obligation]]
-id = "db.dml.insert-overwrite-directory-hive.o031"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
 
 [[obligation]]
 id = "db.dml.insert-overwrite-directory-hive.o032"

@@ -29,6 +29,18 @@ target = "<table_name>"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
+id = "db.utility.analyze-compute-statistics.table-compute-statistics.o034"
+kind = "alternative"
+required = true
+target = "{ [ PARTITION <partition_clause> ] COMPUTE STATISTICS [… → [ PARTITION <partition_clause> ] COMPUTE STATISTICS [ NOSCAN | FOR COLUMNS <col1> [ , ... ] | FOR ALL COLUMNS ]"
+
+[[obligation]]
+id = "db.utility.analyze-compute-statistics.table-compute-statistics.o035"
+kind = "alternative"
+required = true
+target = "{ [ PARTITION <partition_clause> ] COMPUTE STATISTICS [ NOSCAN | FOR COLUMNS <col1> [ , ...… → COMPUTE DELTA STATISTICS"
+
+[[obligation]]
 id = "db.utility.analyze-compute-statistics.table-compute-statistics.o005"
 kind = "option_present"
 required = true
@@ -53,18 +65,6 @@ kind = "operand_type_class"
 required = true
 target = "<partition_clause> in [ PARTITION <partition_clause> ]"
 note = "a valid operand"
-
-[[obligation]]
-id = "db.utility.analyze-compute-statistics.table-compute-statistics.o009"
-kind = "option_present"
-required = true
-target = "[ DELTA ]"
-
-[[obligation]]
-id = "db.utility.analyze-compute-statistics.table-compute-statistics.o010"
-kind = "option_absent"
-required = true
-target = "[ DELTA ]"
 
 [[obligation]]
 id = "db.utility.analyze-compute-statistics.table-compute-statistics.o011"
@@ -167,6 +167,24 @@ required = true
 note = "the form without its required COLUMNS after ALL in [ NOSCAN | FOR COLUMNS <col1> [ , ... ] | FOR ALL COLUMNS ]"
 
 [[obligation]]
+id = "db.utility.analyze-compute-statistics.table-compute-statistics.o036"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required COMPUTE after <table_name>"
+
+[[obligation]]
+id = "db.utility.analyze-compute-statistics.table-compute-statistics.o037"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required STATISTICS after DELTA"
+
+[[obligation]]
+id = "db.utility.analyze-compute-statistics.table-compute-statistics.o038"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required { [ PARTITION <partition_clause> ] COMPUTE STATISTICS [ NOSCAN | FOR COLUMNS <col1> [ , ... ] | FOR ALL COLUMNS ] | COMPUTE DELTA STATISTICS }"
+
+[[obligation]]
 id = "db.utility.analyze-compute-statistics.table-compute-statistics.o027"
 kind = "interaction_all_options"
 required = true
@@ -203,6 +221,22 @@ required = true
 target = "<col1>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.analyze-compute-statistics.table-compute-statistics.o039"
+kind = "option_present"
+required = true
+target = "[ DELTA ] with [ PARTITION <partition_clause> ] and NOSCAN"
+anchor = "doc.sql-ref-syntax-aux-analyze-compute-statistics / Syntax"
+note = "DELTA with a PARTITION clause and NOSCAN, as the page's line allows, which the warehouse's parser refuses (INVALID_SQL_SYNTAX.ANALYZE_TABLE_DELTA_STATS_UNEXPECTED_TOKEN), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.analyze-compute-statistics.table-compute-statistics.o040"
+kind = "option_present"
+required = true
+target = "[ DELTA ] with [ PARTITION <partition_clause> ] and FOR COLUMNS"
+anchor = "doc.sql-ref-syntax-aux-analyze-compute-statistics / Syntax"
+note = "DELTA with a PARTITION clause and FOR COLUMNS, as the page's line allows, which the warehouse's parser refuses (INVALID_SQL_SYNTAX.ANALYZE_TABLE_DELTA_STATS_UNEXPECTED_TOKEN), so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.analyze-compute-statistics.tables-compute-statistics.o001"
@@ -375,18 +409,18 @@ target = "<conf_name> in [ USING INVENTORY LOCATION <inventory_path> CONF <conf_
 note = "omit <conf_name>"
 
 [[obligation]]
-id = "db.utility.analyze-compute-storage-metrics.o011"
+id = "db.utility.analyze-compute-storage-metrics.o026"
 kind = "operand_type_class"
 required = true
 target = "<conf_name> in [ USING INVENTORY LOCATION <inventory_path> CONF <conf_name> ]"
-note = "a valid identifier"
+note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.analyze-compute-storage-metrics.o012"
+id = "db.utility.analyze-compute-storage-metrics.o027"
 kind = "negative_neighbour"
 required = true
 target = "<conf_name> in [ USING INVENTORY LOCATION <inventory_path> CONF <conf_name> ]"
-note = "a string literal in place of <conf_name>"
+note = "an unquoted identifier in place of <conf_name>"
 
 [[obligation]]
 id = "db.utility.analyze-compute-storage-metrics.o013"
@@ -447,20 +481,12 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
-id = "db.utility.analyze-compute-storage-metrics.o022"
-kind = "identifier_class"
+id = "db.utility.analyze-compute-storage-metrics.o028"
+kind = "negative_neighbour"
 required = true
-target = "<conf_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
-id = "db.utility.analyze-compute-storage-metrics.o025"
-kind = "identifier_class"
-required = true
-target = "<conf_name>"
-anchor = "doc.identifiers-syntax"
-note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+target = "CONF <conf_name> in [ USING INVENTORY LOCATION <inventory_path> CONF <conf_name> ]"
+anchor = "doc.sql-ref-syntax-aux-analyze-compute-storage-metrics / Syntax"
+note = "an inventory location of one string with no CONF: the derived negative drops only CONF, and the warehouse joins its two adjacent strings into one path, so this text shows CONF is required without relying on that join"
 
 [[obligation]]
 id = "db.utility.analyze-drop-statistics.o001"
@@ -560,25 +586,11 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.utility.cache.o002"
-kind = "required_operand_missing"
-required = true
-target = "<column_name>"
-note = "omit <column_name>"
-
-[[obligation]]
 id = "db.utility.cache.o003"
 kind = "operand_type_class"
 required = true
 target = "<column_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "db.utility.cache.o004"
-kind = "negative_neighbour"
-required = true
-target = "<column_name>"
-note = "a string literal in place of <column_name>"
 
 [[obligation]]
 id = "db.utility.cache.o005"
@@ -592,13 +604,6 @@ id = "db.utility.cache.o006"
 kind = "option_absent"
 required = true
 target = "[ , ... ]"
-
-[[obligation]]
-id = "db.utility.cache.o007"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "db.utility.cache.o008"
@@ -627,13 +632,6 @@ required = true
 target = "[ WHERE <boolean_expression> ]"
 
 [[obligation]]
-id = "db.utility.cache.o012"
-kind = "required_operand_missing"
-required = true
-target = "<boolean_expression> in [ WHERE <boolean_expression> ]"
-note = "omit <boolean_expression>"
-
-[[obligation]]
 id = "db.utility.cache.o013"
 kind = "operand_type_class"
 required = true
@@ -645,12 +643,6 @@ id = "db.utility.cache.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required SELECT"
-
-[[obligation]]
-id = "db.utility.cache.o015"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FROM"
 
 [[obligation]]
 id = "db.utility.cache.o016"
@@ -689,6 +681,40 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.cache.o023"
+kind = "required_operand_missing"
+required = true
+target = "<column_name>"
+note = "omit <column_name>; the warehouse (DBSQL 2026.44) answers semantic_error (UNRESOLVED_COLUMN.WITHOUT_SUGGESTION), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.cache.o024"
+kind = "negative_neighbour"
+required = true
+target = "<column_name>"
+note = "a string literal in place of <column_name>; the warehouse (DBSQL 2026.44) answers accepted, so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.cache.o025"
+kind = "required_operand_missing"
+required = true
+target = "<table_name>"
+note = "omit <table_name>; the warehouse (DBSQL 2026.44) answers semantic_error (UNRESOLVED_COLUMN.WITHOUT_SUGGESTION), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.cache.o026"
+kind = "required_operand_missing"
+required = true
+target = "<boolean_expression> in [ WHERE <boolean_expression> ]"
+note = "omit <boolean_expression>; the warehouse (DBSQL 2026.44) answers accepted, so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.cache.o027"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required FROM; the warehouse (DBSQL 2026.44) answers semantic_error (UNRESOLVED_COLUMN.WITHOUT_SUGGESTION), so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.cache-cache-table.o001"
@@ -888,11 +914,12 @@ target = "<resource_path>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.cache-refresh.o004"
+id = "db.utility.cache-refresh.o005"
 kind = "negative_neighbour"
 required = true
 target = "<resource_path>"
-note = "an unquoted identifier in place of <resource_path>"
+anchor = "doc.sql-ref-syntax-aux-cache-refresh / Syntax"
+note = "an unquoted identifier in place of <resource_path>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.cache-refresh-function.o001"
@@ -963,20 +990,27 @@ target = "<table_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.utility.cache-refresh-table.o007"
-kind = "identifier_class"
-required = true
-target = "<table_name>"
-anchor = "doc.identifiers-syntax"
-note = "quoted: a double-quoted identifier with blanks and mixed case"
-
-[[obligation]]
 id = "db.utility.cache-refresh-table.o009"
 kind = "identifier_class"
 required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.cache-refresh-table.o010"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+note = "quoted: a backquoted name with blanks and mixed case after REFRESH without TABLE, which the warehouse's parser refuses (INVALID_SQL_SYNTAX.INVALID_REFRESH_RESOURCE_PATH), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.cache-refresh-table.o011"
+kind = "identifier_class"
+required = true
+target = "<table_name>"
+anchor = "doc.sql-ref-syntax-aux-cache-refresh-table / Syntax"
+note = "a backtick-quoted name after the TABLE spelling"
 
 [[obligation]]
 id = "db.utility.cache-uncache-table.o001"
@@ -1481,13 +1515,6 @@ target = "<catalog_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.utility.describe-catalog.o008"
-kind = "negative_neighbour"
-required = true
-target = "<catalog_name>"
-note = "a string literal in place of <catalog_name>"
-
-[[obligation]]
 id = "db.utility.describe-catalog.o010"
 kind = "identifier_class"
 required = true
@@ -1502,6 +1529,13 @@ required = true
 target = "<catalog_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.describe-catalog.o013"
+kind = "negative_neighbour"
+required = true
+target = "<catalog_name>"
+note = "a string literal in place of <catalog_name>; the warehouse (DBSQL 2026.44) answers semantic_error (NO_SUCH_CATALOG_EXCEPTION), so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.describe-connection.o001"
@@ -1781,13 +1815,6 @@ target = "<table_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.utility.describe-history.o004"
-kind = "negative_neighbour"
-required = true
-target = "<table_name>"
-note = "a string literal in place of <table_name>"
-
-[[obligation]]
 id = "db.utility.describe-history.o005"
 kind = "identifier_class"
 required = true
@@ -1802,6 +1829,13 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.describe-history.o008"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+note = "a string literal in place of <table_name>; the warehouse (DBSQL 2026.44) answers runtime_error, so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.describe-location.o001"
@@ -1909,13 +1943,6 @@ required = true
 target = "{ METASTORE | CATALOG <catalog_name> | SCHEMA <schema_name>… → { MODEL SERVICE | MODEL PROVIDER SERVICE | MCP SERVICE | AGENT SERVICE | SKILL } <securable_name>"
 
 [[obligation]]
-id = "db.utility.describe-policy.o012"
-kind = "required_operand_missing"
-required = true
-target = "<catalog_name>"
-note = "omit <catalog_name>"
-
-[[obligation]]
 id = "db.utility.describe-policy.o013"
 kind = "operand_type_class"
 required = true
@@ -1930,13 +1957,6 @@ target = "<catalog_name>"
 note = "a string literal in place of <catalog_name>"
 
 [[obligation]]
-id = "db.utility.describe-policy.o015"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name>"
-note = "omit <schema_name>"
-
-[[obligation]]
 id = "db.utility.describe-policy.o016"
 kind = "operand_type_class"
 required = true
@@ -1949,13 +1969,6 @@ kind = "negative_neighbour"
 required = true
 target = "<schema_name>"
 note = "a string literal in place of <schema_name>"
-
-[[obligation]]
-id = "db.utility.describe-policy.o018"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "db.utility.describe-policy.o019"
@@ -2033,24 +2046,6 @@ id = "db.utility.describe-policy.o030"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
-
-[[obligation]]
-id = "db.utility.describe-policy.o031"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CATALOG after ON"
-
-[[obligation]]
-id = "db.utility.describe-policy.o032"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after ON"
-
-[[obligation]]
-id = "db.utility.describe-policy.o033"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TABLE after ON"
 
 [[obligation]]
 id = "db.utility.describe-policy.o034"
@@ -2187,6 +2182,45 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.utility.describe-policy.o058"
+kind = "required_operand_missing"
+required = true
+target = "<catalog_name>"
+note = "omit <catalog_name>; the warehouse (DBSQL 2026.44) answers semantic_error (UC_CATALOG_NAME_NOT_PROVIDED), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.describe-policy.o059"
+kind = "required_operand_missing"
+required = true
+target = "<schema_name>"
+note = "omit <schema_name>; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_DOES_NOT_EXIST.RESOURCE_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.describe-policy.o060"
+kind = "required_operand_missing"
+required = true
+target = "<table_name>"
+note = "omit <table_name>; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_DOES_NOT_EXIST.RESOURCE_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.describe-policy.o061"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CATALOG after ON; the warehouse (DBSQL 2026.44) answers semantic_error (POLICY_NOT_FOUND), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.describe-policy.o062"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SCHEMA after ON; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_DOES_NOT_EXIST.RESOURCE_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.describe-policy.o063"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE after ON; the warehouse (DBSQL 2026.44) answers semantic_error (POLICY_NOT_FOUND), so the answer is recorded rather than expected"
+
+[[obligation]]
 id = "db.utility.describe-procedure.o001"
 kind = "positive"
 required = true
@@ -2265,13 +2299,6 @@ required = true
 target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
-id = "db.utility.describe-provider.o006"
-kind = "required_operand_missing"
-required = true
-target = "<provider_name>"
-note = "omit <provider_name>"
-
-[[obligation]]
 id = "db.utility.describe-provider.o007"
 kind = "operand_type_class"
 required = true
@@ -2284,12 +2311,6 @@ kind = "negative_neighbour"
 required = true
 target = "<provider_name>"
 note = "a string literal in place of <provider_name>"
-
-[[obligation]]
-id = "db.utility.describe-provider.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PROVIDER"
 
 [[obligation]]
 id = "db.utility.describe-provider.o010"
@@ -2306,6 +2327,19 @@ required = true
 target = "<provider_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.describe-provider.o015"
+kind = "required_operand_missing"
+required = true
+target = "<provider_name>"
+note = "omit <provider_name>; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.describe-provider.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required PROVIDER; the warehouse (DBSQL 2026.44) answers accepted, so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.describe-query.o001"
@@ -2387,13 +2421,6 @@ required = true
 target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
-id = "db.utility.describe-recipient.o006"
-kind = "required_operand_missing"
-required = true
-target = "<recipient_name>"
-note = "omit <recipient_name>"
-
-[[obligation]]
 id = "db.utility.describe-recipient.o007"
 kind = "operand_type_class"
 required = true
@@ -2406,12 +2433,6 @@ kind = "negative_neighbour"
 required = true
 target = "<recipient_name>"
 note = "a string literal in place of <recipient_name>"
-
-[[obligation]]
-id = "db.utility.describe-recipient.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required RECIPIENT"
 
 [[obligation]]
 id = "db.utility.describe-recipient.o010"
@@ -2428,6 +2449,19 @@ required = true
 target = "<recipient_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.describe-recipient.o015"
+kind = "required_operand_missing"
+required = true
+target = "<recipient_name>"
+note = "omit <recipient_name>; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.describe-recipient.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required RECIPIENT; the warehouse (DBSQL 2026.44) answers accepted, so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.describe-schema.o001"
@@ -2508,13 +2542,6 @@ required = true
 target = "{ DESC | DESCRIBE } → DESCRIBE"
 
 [[obligation]]
-id = "db.utility.describe-share.o006"
-kind = "required_operand_missing"
-required = true
-target = "<share_name>"
-note = "omit <share_name>"
-
-[[obligation]]
 id = "db.utility.describe-share.o007"
 kind = "operand_type_class"
 required = true
@@ -2527,12 +2554,6 @@ kind = "negative_neighbour"
 required = true
 target = "<share_name>"
 note = "a string literal in place of <share_name>"
-
-[[obligation]]
-id = "db.utility.describe-share.o009"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SHARE"
 
 [[obligation]]
 id = "db.utility.describe-share.o010"
@@ -2549,6 +2570,19 @@ required = true
 target = "<share_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.describe-share.o015"
+kind = "required_operand_missing"
+required = true
+target = "<share_name>"
+note = "omit <share_name>; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.describe-share.o016"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SHARE; the warehouse (DBSQL 2026.44) answers accepted, so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.describe-table.o001"
@@ -2645,23 +2679,10 @@ target = "<partition_clause> in [ PARTITION <partition_clause> ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.utility.describe-table.o017"
-kind = "option_present"
-required = true
-target = "[ <column_name> ]"
-
-[[obligation]]
 id = "db.utility.describe-table.o018"
 kind = "option_absent"
 required = true
 target = "[ <column_name> ]"
-
-[[obligation]]
-id = "db.utility.describe-table.o019"
-kind = "operand_type_class"
-required = true
-target = "<column_name> in [ <column_name> ]"
-note = "a valid identifier"
 
 [[obligation]]
 id = "db.utility.describe-table.o020"
@@ -2721,6 +2742,38 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.utility.describe-table.o031"
+kind = "option_present"
+required = true
+target = "[ <column_name> ] without [ AS JSON ]"
+anchor = "doc.sql-ref-syntax-aux-describe-table / Syntax"
+note = "a column name, without AS JSON, which the warehouse refuses after a column"
+
+[[obligation]]
+id = "db.utility.describe-table.o032"
+kind = "option_present"
+required = true
+target = "[ <column_name> ] with [ AS JSON ]"
+anchor = "doc.sql-ref-syntax-aux-describe-table / Syntax"
+note = "a column name with AS JSON, as the page's line allows, which the warehouse's parser refuses (UNSUPPORTED_FEATURE.DESC_TABLE_COLUMN_JSON), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.describe-table.o033"
+kind = "alternative"
+required = true
+target = "[ PARTITION <partition_clause> ]"
+anchor = "doc.sql-ref-syntax-aux-describe-table / Syntax"
+note = "the PARTITION clause alone"
+
+[[obligation]]
+id = "db.utility.describe-table.o034"
+kind = "alternative"
+required = true
+target = "FORMATTED"
+anchor = "doc.sql-ref-syntax-aux-describe-table / Syntax"
+note = "FORMATTED, which the page names a synonym of EXTENDED"
+
+[[obligation]]
 id = "db.utility.describe-table.describe-detail.o001"
 kind = "positive"
 required = true
@@ -2739,13 +2792,6 @@ required = true
 target = "[ <schema_name> . ]"
 
 [[obligation]]
-id = "db.utility.describe-table.describe-detail.o004"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name> in [ <schema_name> . ]"
-note = "omit <schema_name>"
-
-[[obligation]]
 id = "db.utility.describe-table.describe-detail.o005"
 kind = "operand_type_class"
 required = true
@@ -2760,25 +2806,11 @@ target = "<schema_name> in [ <schema_name> . ]"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "db.utility.describe-table.describe-detail.o007"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
-
-[[obligation]]
 id = "db.utility.describe-table.describe-detail.o008"
 kind = "operand_type_class"
 required = true
 target = "<table_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "db.utility.describe-table.describe-detail.o009"
-kind = "negative_neighbour"
-required = true
-target = "<table_name>"
-note = "a string literal in place of <table_name>"
 
 [[obligation]]
 id = "db.utility.describe-table.describe-detail.o010"
@@ -2811,6 +2843,27 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.describe-table.describe-detail.o014"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+note = "a string literal in place of <table_name>; the warehouse (DBSQL 2026.44) answers runtime_error, so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.describe-table.describe-detail.o015"
+kind = "required_operand_missing"
+required = true
+target = "<schema_name> in [ <schema_name> . ]"
+note = "omit <schema_name>; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.describe-table.describe-detail.o016"
+kind = "required_operand_missing"
+required = true
+target = "<table_name>"
+note = "omit <table_name>; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.describe-volume.o001"
@@ -2928,13 +2981,6 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.utility.explain-materialized-view.o010"
-kind = "required_operand_missing"
-required = true
-target = "<view_name>"
-note = "omit <view_name>"
-
-[[obligation]]
 id = "db.utility.explain-materialized-view.o011"
 kind = "operand_type_class"
 required = true
@@ -2976,22 +3022,10 @@ required = true
 note = "the form without its required CREATE"
 
 [[obligation]]
-id = "db.utility.explain-materialized-view.o017"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required MATERIALIZED"
-
-[[obligation]]
 id = "db.utility.explain-materialized-view.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required VIEW"
-
-[[obligation]]
-id = "db.utility.explain-materialized-view.o019"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required AS"
 
 [[obligation]]
 id = "db.utility.explain-materialized-view.o020"
@@ -3018,6 +3052,25 @@ depths = [
   8,
 ]
 note = "query operands nested; no documented bound"
+
+[[obligation]]
+id = "db.utility.explain-materialized-view.o022"
+kind = "required_operand_missing"
+required = true
+target = "<view_name>"
+note = "omit <view_name>; the warehouse (DBSQL 2026.44) answers accepted, so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.explain-materialized-view.o023"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required MATERIALIZED; the warehouse (DBSQL 2026.44) answers accepted, so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.explain-materialized-view.o024"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required AS; the warehouse (DBSQL 2026.44) answers accepted, so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.fsck.o001"
@@ -3319,13 +3372,6 @@ target = "<table_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.utility.optimize.o004"
-kind = "negative_neighbour"
-required = true
-target = "<table_name>"
-note = "a string literal in place of <table_name>"
-
-[[obligation]]
 id = "db.utility.optimize.o005"
 kind = "option_present"
 required = true
@@ -3416,12 +3462,6 @@ required = true
 note = "the form without its required BY in [ ZORDER BY ( <col_name1> [ , ... ] ) ]"
 
 [[obligation]]
-id = "db.utility.optimize.o019"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ( in [ ZORDER BY ( <col_name1> [ , ... ] ) ]"
-
-[[obligation]]
 id = "db.utility.optimize.o020"
 kind = "negative_neighbour"
 required = true
@@ -3464,6 +3504,13 @@ required = true
 target = "<col_name1>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.optimize.o028"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+note = "a string literal in place of <table_name>; the warehouse (DBSQL 2026.44) answers runtime_error, so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.reorg-table.o001"
@@ -3511,22 +3558,10 @@ required = true
 target = "{ [ WHERE <predicate> ] APPLY ( PURGE ) | APPLY ( UPGRADE UNIFORM (… → [ WHERE <predicate> ] APPLY ( PURGE )"
 
 [[obligation]]
-id = "db.utility.reorg-table.o008"
+id = "db.utility.reorg-table.o036"
 kind = "alternative"
 required = true
-target = "{ [ WHERE <predicate> ] APPLY ( PURGE ) | APPLY ( UPGRADE… → APPLY ( UPGRADE UNIFORM ( ICEBERG_COMPAT_VERSION = <version> )"
-
-[[obligation]]
-id = "db.utility.reorg-table.o009"
-kind = "alternative"
-required = true
-target = "{ [ WHERE <predicate> ] APPLY ( PURGE ) | APPLY ( UPGRADE UNIFORM ( ICEBERG_COMPAT_VERSION = <version> ) |… → CHECKPOINT"
-
-[[obligation]]
-id = "db.utility.reorg-table.o010"
-kind = "alternative"
-required = true
-target = "{ [ WHERE <predicate> ] APPLY ( PURGE ) | APPLY ( UPGRADE UNIFORM (… → SET PARQUET ( FORMAT_VERSION = <version> ) )"
+target = "{ [ WHERE <predicate> ] APPLY ( PURGE ) | APPLY ( UPGRADE… → APPLY ( UPGRADE UNIFORM ( ICEBERG_COMPAT_VERSION = <version> ) )"
 
 [[obligation]]
 id = "db.utility.reorg-table.o011"
@@ -3566,20 +3601,6 @@ id = "db.utility.reorg-table.o016"
 kind = "operand_type_class"
 required = true
 target = "<version>"
-note = "a valid operand"
-
-[[obligation]]
-id = "db.utility.reorg-table.o017"
-kind = "required_operand_missing"
-required = true
-target = "<version> #2"
-note = "omit <version>"
-
-[[obligation]]
-id = "db.utility.reorg-table.o018"
-kind = "operand_type_class"
-required = true
-target = "<version> #2"
 note = "a valid operand"
 
 [[obligation]]
@@ -3637,34 +3658,16 @@ required = true
 note = "the form without its required ICEBERG_COMPAT_VERSION"
 
 [[obligation]]
-id = "db.utility.reorg-table.o028"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SET after <table_name>"
-
-[[obligation]]
-id = "db.utility.reorg-table.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required PARQUET"
-
-[[obligation]]
-id = "db.utility.reorg-table.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required FORMAT_VERSION"
-
-[[obligation]]
 id = "db.utility.reorg-table.o031"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ) #2"
 
 [[obligation]]
-id = "db.utility.reorg-table.o032"
+id = "db.utility.reorg-table.o037"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required { [ WHERE <predicate> ] APPLY ( PURGE ) | APPLY ( UPGRADE UNIFORM ( ICEBERG_COMPAT_VERSION = <version> ) | CHECKPOINT | SET PARQUET ( FORMAT_VERSION = <version> ) ) }"
+note = "the form without its required { [ WHERE <predicate> ] APPLY ( PURGE ) | APPLY ( UPGRADE UNIFORM ( ICEBERG_COMPAT_VERSION = <version> ) ) }"
 
 [[obligation]]
 id = "db.utility.reorg-table.o033"
@@ -3683,41 +3686,38 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.utility.reorg-table.o038"
+kind = "alternative"
+required = true
+target = "APPLY ( CHECKPOINT )"
+anchor = "doc.delta-reorg-table / Parameters"
+note = "APPLY (CHECKPOINT), whose Parameters banner reads 'Applies to: Databricks Runtime 16.3 and above', so the warehouse's answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.reorg-table.o039"
+kind = "alternative"
+required = true
+target = "APPLY ( SET PARQUET ( FORMAT_VERSION = <version> ) )"
+anchor = "doc.delta-reorg-table / Parameters"
+note = "APPLY (SET PARQUET ( FORMAT_VERSION = version )) with the page's version '2.12.0', whose Parameters banner reads 'Applies to: Databricks Runtime 18.2 and above', so the warehouse's answer is recorded rather than expected"
+
+[[obligation]]
 id = "db.utility.resource-mgmt-add-archive.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-archive.o002"
-kind = "option_present"
-required = true
-target = "[ ARCHIVE | ARCHIVES ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-add-archive.o003"
-kind = "option_absent"
-required = true
-target = "[ ARCHIVE | ARCHIVES ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-add-archive.o004"
+id = "db.utility.resource-mgmt-add-archive.o009"
 kind = "alternative"
 required = true
-target = "[ ARCHIVE | ARCHIVES ] → ARCHIVE"
+target = "{ ARCHIVE | ARCHIVES } → ARCHIVE"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-archive.o005"
+id = "db.utility.resource-mgmt-add-archive.o010"
 kind = "alternative"
 required = true
-target = "[ ARCHIVE | ARCHIVES ] → ARCHIVES"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-add-archive.o006"
-kind = "required_operand_missing"
-required = true
-target = "<file_name>"
-note = "omit <file_name>"
+target = "{ ARCHIVE | ARCHIVES } → ARCHIVES"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-add-archive.o007"
@@ -3727,11 +3727,27 @@ target = "<file_name>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-archive.o008"
+id = "db.utility.resource-mgmt-add-archive.o011"
+kind = "option_absent"
+required = true
+target = "the resource type after ADD"
+note = "ADD without its resource type, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-add-archive.o012"
+kind = "required_operand_missing"
+required = true
+target = "<file_name>"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-archive / Syntax"
+note = "omit <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-add-archive.o013"
 kind = "negative_neighbour"
 required = true
 target = "<file_name>"
-note = "an unquoted identifier in place of <file_name>"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-archive / Syntax"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-add-file.o001"
@@ -3740,35 +3756,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-file.o002"
-kind = "option_present"
-required = true
-target = "[ FILE | FILES ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-add-file.o003"
-kind = "option_absent"
-required = true
-target = "[ FILE | FILES ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-add-file.o004"
+id = "db.utility.resource-mgmt-add-file.o012"
 kind = "alternative"
 required = true
-target = "[ FILE | FILES ] → FILE"
+target = "{ FILE | FILES } → FILE"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-file.o005"
+id = "db.utility.resource-mgmt-add-file.o013"
 kind = "alternative"
 required = true
-target = "[ FILE | FILES ] → FILES"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-add-file.o006"
-kind = "required_operand_missing"
-required = true
-target = "<resource_name>"
-note = "omit <resource_name>"
+target = "{ FILE | FILES } → FILES"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-add-file.o007"
@@ -3776,13 +3773,6 @@ kind = "operand_type_class"
 required = true
 target = "<resource_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-add-file.o008"
-kind = "negative_neighbour"
-required = true
-target = "<resource_name>"
-note = "a string literal in place of <resource_name>"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-add-file.o009"
@@ -3801,41 +3791,37 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.utility.resource-mgmt-add-file.o014"
+kind = "option_absent"
+required = true
+target = "[ FILE | FILES ]"
+note = "ADD without FILE or FILES, as the page's line allows, which the warehouse refuses ('Operation not allowed: ADD with resource type'), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-add-file.o015"
+kind = "required_operand_missing"
+required = true
+target = "<resource_name>"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-file / Syntax"
+note = "omit <resource_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
 id = "db.utility.resource-mgmt-add-jar.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-jar.o002"
-kind = "option_present"
-required = true
-target = "[ JAR | JARS ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-add-jar.o003"
-kind = "option_absent"
-required = true
-target = "[ JAR | JARS ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-add-jar.o004"
+id = "db.utility.resource-mgmt-add-jar.o009"
 kind = "alternative"
 required = true
-target = "[ JAR | JARS ] → JAR"
+target = "{ JAR | JARS } → JAR"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-jar.o005"
+id = "db.utility.resource-mgmt-add-jar.o010"
 kind = "alternative"
 required = true
-target = "[ JAR | JARS ] → JARS"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-add-jar.o006"
-kind = "required_operand_missing"
-required = true
-target = "<file_name>"
-note = "omit <file_name>"
+target = "{ JAR | JARS } → JARS"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-add-jar.o007"
@@ -3845,11 +3831,27 @@ target = "<file_name>"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-add-jar.o008"
+id = "db.utility.resource-mgmt-add-jar.o011"
+kind = "option_absent"
+required = true
+target = "the resource type after ADD"
+note = "ADD without its resource type, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-add-jar.o012"
+kind = "required_operand_missing"
+required = true
+target = "<file_name>"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-jar / Syntax"
+note = "omit <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-add-jar.o013"
 kind = "negative_neighbour"
 required = true
 target = "<file_name>"
-note = "an unquoted identifier in place of <file_name>"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-add-jar / Syntax"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-list-archive.o001"
@@ -3858,28 +3860,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-list-archive.o002"
-kind = "option_present"
-required = true
-target = "[ ARCHIVE | ARCHIVES ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-list-archive.o003"
-kind = "option_absent"
-required = true
-target = "[ ARCHIVE | ARCHIVES ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-list-archive.o004"
+id = "db.utility.resource-mgmt-list-archive.o011"
 kind = "alternative"
 required = true
-target = "[ ARCHIVE | ARCHIVES ] → ARCHIVE"
+target = "{ ARCHIVE | ARCHIVES } → ARCHIVE"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-list-archive.o005"
+id = "db.utility.resource-mgmt-list-archive.o012"
 kind = "alternative"
 required = true
-target = "[ ARCHIVE | ARCHIVES ] → ARCHIVES"
+target = "{ ARCHIVE | ARCHIVES } → ARCHIVES"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-list-archive.o006"
@@ -3901,17 +3891,19 @@ target = "<file_name> in [ <file_name> [ ... ] ]"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-list-archive.o009"
+id = "db.utility.resource-mgmt-list-archive.o013"
+kind = "option_absent"
+required = true
+target = "the resource type after LIST"
+note = "LIST without its resource type, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-list-archive.o014"
 kind = "negative_neighbour"
 required = true
 target = "<file_name> in [ <file_name> [ ... ] ]"
-note = "an unquoted identifier in place of <file_name>"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-list-archive.o010"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-list-archive / Syntax"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-list-file.o001"
@@ -3920,28 +3912,16 @@ required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-list-file.o002"
-kind = "option_present"
-required = true
-target = "[ FILE | FILES ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-list-file.o003"
-kind = "option_absent"
-required = true
-target = "[ FILE | FILES ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-list-file.o004"
+id = "db.utility.resource-mgmt-list-file.o014"
 kind = "alternative"
 required = true
-target = "[ FILE | FILES ] → FILE"
+target = "{ FILE | FILES } → FILE"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-list-file.o005"
+id = "db.utility.resource-mgmt-list-file.o015"
 kind = "alternative"
 required = true
-target = "[ FILE | FILES ] → FILES"
+target = "{ FILE | FILES } → FILES"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-list-file.o006"
@@ -3963,19 +3943,6 @@ target = "<resource_name> in [ <resource_name> [ ... ] ]"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-list-file.o009"
-kind = "negative_neighbour"
-required = true
-target = "<resource_name> in [ <resource_name> [ ... ] ]"
-note = "a string literal in place of <resource_name>"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-list-file.o010"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
-
-[[obligation]]
 id = "db.utility.resource-mgmt-list-file.o011"
 kind = "identifier_class"
 required = true
@@ -3992,34 +3959,29 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.utility.resource-mgmt-list-file.o016"
+kind = "option_absent"
+required = true
+target = "the resource type after LIST"
+note = "LIST without its resource type, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
 id = "db.utility.resource-mgmt-list-jar.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-list-jar.o002"
-kind = "option_present"
-required = true
-target = "[ JAR | JARS ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-list-jar.o003"
-kind = "option_absent"
-required = true
-target = "[ JAR | JARS ]"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-list-jar.o004"
+id = "db.utility.resource-mgmt-list-jar.o011"
 kind = "alternative"
 required = true
-target = "[ JAR | JARS ] → JAR"
+target = "{ JAR | JARS } → JAR"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-list-jar.o005"
+id = "db.utility.resource-mgmt-list-jar.o012"
 kind = "alternative"
 required = true
-target = "[ JAR | JARS ] → JARS"
+target = "{ JAR | JARS } → JARS"
 
 [[obligation]]
 id = "db.utility.resource-mgmt-list-jar.o006"
@@ -4041,17 +4003,19 @@ target = "<file_name> in [ <file_name> [ ... ] ]"
 note = "a valid string_literal"
 
 [[obligation]]
-id = "db.utility.resource-mgmt-list-jar.o009"
+id = "db.utility.resource-mgmt-list-jar.o013"
+kind = "option_absent"
+required = true
+target = "the resource type after LIST"
+note = "LIST without its resource type, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.resource-mgmt-list-jar.o014"
 kind = "negative_neighbour"
 required = true
 target = "<file_name> in [ <file_name> [ ... ] ]"
-note = "an unquoted identifier in place of <file_name>"
-
-[[obligation]]
-id = "db.utility.resource-mgmt-list-jar.o010"
-kind = "interaction_all_options"
-required = true
-note = "every independent option of one production together"
+anchor = "doc.sql-ref-syntax-aux-resource-mgmt-list-jar / Syntax"
+note = "an unquoted identifier in place of <file_name>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.restore.o001"
@@ -4704,16 +4668,16 @@ target = "<schema_name> in [ { FROM | IN } <schema_name> ]"
 note = "a string literal in place of <schema_name>"
 
 [[obligation]]
-id = "db.utility.show-functions.o012"
+id = "db.utility.show-functions.o032"
 kind = "option_present"
 required = true
-target = "[ [ LIKE ] { <function_name> | <regex_pattern> } ]"
+target = "[ [ LIKE ] { <regex_pattern> | <function_name> } ]"
 
 [[obligation]]
-id = "db.utility.show-functions.o013"
+id = "db.utility.show-functions.o033"
 kind = "option_absent"
 required = true
-target = "[ [ LIKE ] { <function_name> | <regex_pattern> } ]"
+target = "[ [ LIKE ] { <regex_pattern> | <function_name> } ]"
 
 [[obligation]]
 id = "db.utility.show-functions.o014"
@@ -4728,37 +4692,23 @@ required = true
 target = "[ LIKE ]"
 
 [[obligation]]
-id = "db.utility.show-functions.o016"
+id = "db.utility.show-functions.o034"
 kind = "alternative"
 required = true
-target = "{ <function_name> | <regex_pattern> } → <function_name>"
+target = "{ <regex_pattern> | <function_name> } → <regex_pattern>"
 
 [[obligation]]
-id = "db.utility.show-functions.o017"
+id = "db.utility.show-functions.o035"
 kind = "alternative"
 required = true
-target = "{ <function_name> | <regex_pattern> } → <regex_pattern>"
+target = "{ <regex_pattern> | <function_name> } → <function_name>"
 
 [[obligation]]
-id = "db.utility.show-functions.o018"
+id = "db.utility.show-functions.o036"
 kind = "operand_type_class"
 required = true
-target = "<function_name> in [ [ LIKE ] { <function_name> | <regex_pattern> } ]"
-note = "a valid identifier"
-
-[[obligation]]
-id = "db.utility.show-functions.o020"
-kind = "operand_type_class"
-required = true
-target = "<regex_pattern> in [ [ LIKE ] { <function_name> | <regex_pattern> } ]"
+target = "<regex_pattern> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "db.utility.show-functions.o021"
-kind = "negative_neighbour"
-required = true
-target = "<regex_pattern> in [ [ LIKE ] { <function_name> | <regex_pattern> } ]"
-note = "an unquoted identifier in place of <regex_pattern>"
 
 [[obligation]]
 id = "db.utility.show-functions.o022"
@@ -4803,6 +4753,30 @@ required = true
 target = "<function_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.show-functions.o030"
+kind = "option_present"
+required = true
+target = "LIKE"
+anchor = "doc.sql-ref-syntax-aux-show-functions / Syntax"
+note = "LIKE before an unquoted function name"
+
+[[obligation]]
+id = "db.utility.show-functions.o031"
+kind = "option_present"
+required = true
+target = "LIKE"
+anchor = "doc.sql-ref-syntax-aux-show-functions / Syntax"
+note = "LIKE before a quoted pattern"
+
+[[obligation]]
+id = "db.utility.show-functions.o038"
+kind = "negative_neighbour"
+required = true
+target = "<regex_pattern> in [ [ LIKE ] { <regex_pattern> | <function_name> } ]"
+anchor = "doc.sql-ref-syntax-aux-show-functions / Syntax"
+note = "an unquoted identifier in place of <regex_pattern>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.show-governed-tags.o001"
@@ -5122,13 +5096,6 @@ required = true
 target = "{ METASTORE | CATALOG <catalog_name> | SCHEMA <schema_name>… → { MODEL SERVICE | MODEL PROVIDER SERVICE | MCP SERVICE | AGENT SERVICE | SKILL } <securable_name>"
 
 [[obligation]]
-id = "db.utility.show-policies.o009"
-kind = "required_operand_missing"
-required = true
-target = "<catalog_name>"
-note = "omit <catalog_name>"
-
-[[obligation]]
 id = "db.utility.show-policies.o010"
 kind = "operand_type_class"
 required = true
@@ -5143,13 +5110,6 @@ target = "<catalog_name>"
 note = "a string literal in place of <catalog_name>"
 
 [[obligation]]
-id = "db.utility.show-policies.o012"
-kind = "required_operand_missing"
-required = true
-target = "<schema_name>"
-note = "omit <schema_name>"
-
-[[obligation]]
 id = "db.utility.show-policies.o013"
 kind = "operand_type_class"
 required = true
@@ -5162,13 +5122,6 @@ kind = "negative_neighbour"
 required = true
 target = "<schema_name>"
 note = "a string literal in place of <schema_name>"
-
-[[obligation]]
-id = "db.utility.show-policies.o015"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "db.utility.show-policies.o016"
@@ -5246,24 +5199,6 @@ id = "db.utility.show-policies.o027"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ON"
-
-[[obligation]]
-id = "db.utility.show-policies.o028"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required CATALOG after ON"
-
-[[obligation]]
-id = "db.utility.show-policies.o029"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required SCHEMA after ON"
-
-[[obligation]]
-id = "db.utility.show-policies.o030"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required TABLE after ON"
 
 [[obligation]]
 id = "db.utility.show-policies.o031"
@@ -5382,6 +5317,45 @@ required = true
 target = "<securable_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.show-policies.o052"
+kind = "required_operand_missing"
+required = true
+target = "<catalog_name>"
+note = "omit <catalog_name>; the warehouse (DBSQL 2026.44) answers semantic_error (UC_CATALOG_NAME_NOT_PROVIDED), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.show-policies.o053"
+kind = "required_operand_missing"
+required = true
+target = "<schema_name>"
+note = "omit <schema_name>; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_DOES_NOT_EXIST.RESOURCE_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.show-policies.o054"
+kind = "required_operand_missing"
+required = true
+target = "<table_name>"
+note = "omit <table_name>; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_DOES_NOT_EXIST.RESOURCE_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.show-policies.o055"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required CATALOG after ON; the warehouse (DBSQL 2026.44) answers accepted, so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.show-policies.o056"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required SCHEMA after ON; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_DOES_NOT_EXIST.RESOURCE_DOES_NOT_EXIST), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.show-policies.o057"
+kind = "negative_neighbour"
+required = true
+note = "the form without its required TABLE after ON; the warehouse (DBSQL 2026.44) answers accepted, so the answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.show-procedures.o001"
@@ -6393,61 +6367,42 @@ target = "<table_name>"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
-id = "db.utility.show-tblproperties.o005"
+id = "db.utility.show-tblproperties.o019"
 kind = "option_present"
 required = true
-target = "[ ( [ <unquoted_property_key> | <property_key_as_string_literal> ] ) ]"
+target = "[ ( { <unquoted_property_key> | <property_key_as_string_literal> } ) ]"
 
 [[obligation]]
-id = "db.utility.show-tblproperties.o006"
+id = "db.utility.show-tblproperties.o020"
 kind = "option_absent"
 required = true
-target = "[ ( [ <unquoted_property_key> | <property_key_as_string_literal> ] ) ]"
+target = "[ ( { <unquoted_property_key> | <property_key_as_string_literal> } ) ]"
 
 [[obligation]]
-id = "db.utility.show-tblproperties.o007"
-kind = "option_present"
-required = true
-target = "[ <unquoted_property_key> | <property_key_as_string_literal> ]"
-
-[[obligation]]
-id = "db.utility.show-tblproperties.o008"
-kind = "option_absent"
-required = true
-target = "[ <unquoted_property_key> | <property_key_as_string_literal> ]"
-
-[[obligation]]
-id = "db.utility.show-tblproperties.o009"
+id = "db.utility.show-tblproperties.o021"
 kind = "alternative"
 required = true
-target = "[ <unquoted_property_key> | <property_key_as_string_literal> ] → <unquoted_property_key>"
+target = "{ <unquoted_property_key> | <property_key_as_string_literal> } → <unquoted_property_key>"
 
 [[obligation]]
-id = "db.utility.show-tblproperties.o010"
+id = "db.utility.show-tblproperties.o022"
 kind = "alternative"
 required = true
-target = "[ <unquoted_property_key> | <property_key_as_string_literal> ] → <property_key_as_string_literal>"
+target = "{ <unquoted_property_key> | <property_key_as_string_literal> } → <property_key_as_string_literal>"
 
 [[obligation]]
-id = "db.utility.show-tblproperties.o011"
+id = "db.utility.show-tblproperties.o023"
 kind = "operand_type_class"
 required = true
-target = "<unquoted_property_key> in [ <unquoted_property_key> | <property_key_as_string_literal> ]"
+target = "<unquoted_property_key> in [ ( { <unquoted_property_key> | <property_key_as_string_literal> } ) ]"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.utility.show-tblproperties.o012"
+id = "db.utility.show-tblproperties.o024"
 kind = "operand_type_class"
 required = true
-target = "<property_key_as_string_literal> in [ <unquoted_property_key> | <property_key_as_string_literal> ]"
+target = "<property_key_as_string_literal> in [ ( { <unquoted_property_key> | <property_key_as_string_literal> } ) ]"
 note = "a valid string_literal"
-
-[[obligation]]
-id = "db.utility.show-tblproperties.o013"
-kind = "negative_neighbour"
-required = true
-target = "<property_key_as_string_literal> in [ <unquoted_property_key> | <property_key_as_string_literal> ]"
-note = "an unquoted identifier in place of <property_key_as_string_literal>"
 
 [[obligation]]
 id = "db.utility.show-tblproperties.o014"
@@ -6456,10 +6411,10 @@ required = true
 note = "the form without its required TBLPROPERTIES"
 
 [[obligation]]
-id = "db.utility.show-tblproperties.o015"
+id = "db.utility.show-tblproperties.o026"
 kind = "negative_neighbour"
 required = true
-note = "the form without its required ) in [ ( [ <unquoted_property_key> | <property_key_as_string_literal> ] ) ]"
+note = "the form without its required ) in [ ( { <unquoted_property_key> | <property_key_as_string_literal> } ) ]"
 
 [[obligation]]
 id = "db.utility.show-tblproperties.o016"
@@ -6476,6 +6431,21 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.show-tblproperties.o027"
+kind = "option_absent"
+required = true
+target = "the property key inside ( )"
+note = "empty parentheses, as the page's line allows, which the warehouse's parser refuses (PARSE_SYNTAX_ERROR), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.show-tblproperties.o028"
+kind = "negative_neighbour"
+required = true
+target = "<property_key_as_string_literal> in [ ( { <unquoted_property_key> | <property_key_as_string_literal> } ) ]"
+anchor = "doc.sql-ref-syntax-aux-show-tblproperties / Syntax"
+note = "an unquoted identifier in place of <property_key_as_string_literal>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
 id = "db.utility.show-users.o001"
@@ -7083,13 +7053,6 @@ target = "<table_name>"
 note = "a valid identifier"
 
 [[obligation]]
-id = "db.utility.vacuum.vacuum.o004"
-kind = "negative_neighbour"
-required = true
-target = "<table_name>"
-note = "a string literal in place of <table_name>"
-
-[[obligation]]
 id = "db.utility.vacuum.vacuum.o005"
 kind = "identifier_class"
 required = true
@@ -7106,17 +7069,17 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.utility.vacuum.vacuum.o008"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+note = "a string literal in place of <table_name>; the warehouse (DBSQL 2026.44) answers runtime_error, so the answer is recorded rather than expected"
+
+[[obligation]]
 id = "db.utility.vacuum.vacuum-full-lite-dry.o001"
 kind = "positive"
 required = true
 note = "the documented form with every required part and no optional part"
-
-[[obligation]]
-id = "db.utility.vacuum.vacuum-full-lite-dry.o002"
-kind = "required_operand_missing"
-required = true
-target = "<table_name>"
-note = "omit <table_name>"
 
 [[obligation]]
 id = "db.utility.vacuum.vacuum-full-lite-dry.o003"
@@ -7124,13 +7087,6 @@ kind = "operand_type_class"
 required = true
 target = "<table_name>"
 note = "a valid identifier"
-
-[[obligation]]
-id = "db.utility.vacuum.vacuum-full-lite-dry.o004"
-kind = "negative_neighbour"
-required = true
-target = "<table_name>"
-note = "a string literal in place of <table_name>"
 
 [[obligation]]
 id = "db.utility.vacuum.vacuum-full-lite-dry.o005"
@@ -7183,3 +7139,17 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.utility.vacuum.vacuum-full-lite-dry.o014"
+kind = "negative_neighbour"
+required = true
+target = "<table_name>"
+note = "a string literal in place of <table_name>; the warehouse (DBSQL 2026.44) answers runtime_error, so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.utility.vacuum.vacuum-full-lite-dry.o015"
+kind = "required_operand_missing"
+required = true
+target = "<table_name>"
+note = "omit <table_name>; the warehouse (DBSQL 2026.44) answers semantic_error (TABLE_OR_VIEW_NOT_FOUND), so the answer is recorded rather than expected"

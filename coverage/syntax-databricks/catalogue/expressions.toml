@@ -773,9 +773,9 @@ source = "doc.data-types.null-type"
 anchor = "Syntax"
 kind = "special"
 grammar = [
-  "{ NULL | VOID }",
+  "VOID",
 ]
-grammar_sha256 = "050ca33f86bbbc40749712bd7d3d91cf8e878b3841fb9ac7c08763166d56f51a"
+grammar_sha256 = "90251d5ff4018bf08f45ca85f613ed0b18d830f5f84b424197ea13620e87fa11"
 uses = []
 status = "catalogued"
 
