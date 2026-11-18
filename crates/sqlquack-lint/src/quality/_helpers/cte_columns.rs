@@ -19,7 +19,7 @@ use crate::quality::projection_spans::projection_spans;
 use crate::quality::removal_safety::{expression_refusal, reads_whole_rows, select_refusal};
 use crate::quality::syntax::{
     Projection, columns, cte_select_tokens, lower, projection_removal, projections, qualifier,
-    sources,
+    query_within, sources,
 };
 use rustc_hash::{FxHashMap, FxHashSet};
 
@@ -59,6 +59,7 @@ pub(crate) fn diagnostics(request: &QualityRequest<'_>) -> Vec<LintDiagnostic> {
     }
     let mut found: Vec<LintDiagnostic> = Vec::new();
     for statement in request.statements {
+        let statement: &Expression = query_within(statement);
         let Expression::Select(root) = statement else {
             continue;
         };
@@ -152,7 +153,7 @@ fn reads<'a>(
 
 /// The output names of a CTE, or None when a star or unnamed projection hides them.
 fn output_names(cte: &Cte) -> Option<FxHashSet<String>> {
-    let Expression::Select(select) = &cte.this else {
+    let Expression::Select(select) = query_within(&cte.this) else {
         return None;
     };
     projections(select)
@@ -384,7 +385,7 @@ fn unused_outputs(
     outputs: CteOutputs<'_>,
 ) -> Vec<LintDiagnostic> {
     let CteOutputs { cte, name, usage } = outputs;
-    let Expression::Select(select) = &cte.this else {
+    let Expression::Select(select) = query_within(&cte.this) else {
         return Vec::new();
     };
     let Some(usage) = usage.filter(|usage| !usage.everything && usage.read) else {

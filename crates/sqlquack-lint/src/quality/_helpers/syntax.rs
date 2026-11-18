@@ -9,6 +9,27 @@ use sqlquack_syntax::{Expression, ExpressionWalk};
 use crate::quality::constants::MIN_REMOVABLE_OUTPUTS;
 use rustc_hash::FxHashMap;
 
+/// The query within `expression`'s parentheses and clause-free unaliased subquery nodes.
+pub(super) fn query_within(expression: &Expression) -> &Expression {
+    match expression {
+        Expression::Paren(paren) => query_within(&paren.this),
+        Expression::Subquery(subquery)
+            if subquery.alias.is_none()
+                && subquery.order_by.is_none()
+                && subquery.limit.is_none()
+                && subquery.offset.is_none()
+                && subquery.distribute_by.is_none()
+                && subquery.sort_by.is_none()
+                && subquery.cluster_by.is_none()
+                && subquery.table_sample.is_none()
+                && subquery.watermark.is_none() =>
+        {
+            query_within(&subquery.this)
+        }
+        other => other,
+    }
+}
+
 /// One projection of a select list.
 pub(super) enum Projection<'a> {
     Named {
@@ -83,23 +104,30 @@ pub(super) fn sources(select: &Select) -> Vec<(String, Option<String>, &Expressi
     found
 }
 
-/// Token index of the SELECT opening each `name AS (SELECT` CTE body, by lower-cased name.
+/// Token index of the SELECT opening each `name AS ( [( ...] SELECT` CTE body, by lower-cased name.
 pub(super) fn cte_select_tokens(tokens: &[Token]) -> FxHashMap<String, usize> {
     let significant: Vec<usize> = (0..tokens.len())
         .filter(|&index| !is_trivia(&tokens[index]))
         .collect();
     let mut found: FxHashMap<String, usize> = FxHashMap::default();
-    for window in significant.windows(4) {
-        let [name_index, as_index, paren_index, select_index] = window else {
+    for (position, window) in significant.windows(3).enumerate() {
+        let [name_index, as_index, paren_index] = window else {
             continue;
         };
-        if tokens[*as_index].token_type == TokenType::As
-            && tokens[*paren_index].token_type == TokenType::LParen
-            && tokens[*select_index].token_type == TokenType::Select
+        if tokens[*as_index].token_type != TokenType::As
+            || tokens[*paren_index].token_type != TokenType::LParen
+        {
+            continue;
+        }
+        let select_index: Option<&usize> = significant[position + 3..]
+            .iter()
+            .find(|&&index| tokens[index].token_type != TokenType::LParen);
+        if let Some(&select_index) = select_index
+            && tokens[select_index].token_type == TokenType::Select
         {
             found
                 .entry(lower(&tokens[*name_index].text))
-                .or_insert(*select_index);
+                .or_insert(select_index);
         }
     }
     found

@@ -470,3 +470,99 @@ fn given_threshold_findings_when_linting_then_remediation_shows_the_exact_settin
     }
     Ok(())
 }
+
+#[test]
+fn given_a_query_or_cte_body_in_parentheses_when_linting_then_its_ctes_are_checked_as_without()
+-> Result<(), String> {
+    let test_cases = [
+        QualityRuleTestCase {
+            description: "an unused CTE output, the query bare",
+            sql: "WITH orders AS (SELECT o.order_id, o.status, o.note FROM raw_orders AS o), final AS (SELECT r.order_id, r.status FROM orders AS r) SELECT f.order_id, f.status FROM final AS f",
+            rule: "SQLCLEAN042",
+            relation_keys: "{}",
+            expected_anchors: &["o.note"],
+            expected_fixed_sql: Some(
+                "WITH orders AS (SELECT o.order_id, o.status FROM raw_orders AS o), final AS (SELECT r.order_id, r.status FROM orders AS r) SELECT f.order_id, f.status FROM final AS f",
+            ),
+        },
+        QualityRuleTestCase {
+            description: "an unused CTE output, the whole query in parentheses",
+            sql: "(WITH orders AS (SELECT o.order_id, o.status, o.note FROM raw_orders AS o), final AS (SELECT r.order_id, r.status FROM orders AS r) SELECT f.order_id, f.status FROM final AS f)",
+            rule: "SQLCLEAN042",
+            relation_keys: "{}",
+            expected_anchors: &["o.note"],
+            expected_fixed_sql: Some(
+                "(WITH orders AS (SELECT o.order_id, o.status FROM raw_orders AS o), final AS (SELECT r.order_id, r.status FROM orders AS r) SELECT f.order_id, f.status FROM final AS f)",
+            ),
+        },
+        QualityRuleTestCase {
+            description: "an unused CTE output, its CTE body in a second pair",
+            sql: "WITH orders AS ((SELECT o.order_id, o.status, o.note FROM raw_orders AS o)), final AS (SELECT r.order_id, r.status FROM orders AS r) SELECT f.order_id, f.status FROM final AS f",
+            rule: "SQLCLEAN042",
+            relation_keys: "{}",
+            expected_anchors: &["o.note"],
+            expected_fixed_sql: Some(
+                "WITH orders AS ((SELECT o.order_id, o.status FROM raw_orders AS o)), final AS (SELECT r.order_id, r.status FROM orders AS r) SELECT f.order_id, f.status FROM final AS f",
+            ),
+        },
+        QualityRuleTestCase {
+            description: "an unused CTE output, WITH before a parenthesized query",
+            sql: "WITH orders AS (SELECT o.order_id, o.status, o.note FROM raw_orders AS o), final AS (SELECT r.order_id, r.status FROM orders AS r) (SELECT f.order_id, f.status FROM final AS f)",
+            rule: "SQLCLEAN042",
+            relation_keys: "{}",
+            expected_anchors: &["o.note"],
+            expected_fixed_sql: Some(
+                "WITH orders AS (SELECT o.order_id, o.status FROM raw_orders AS o), final AS (SELECT r.order_id, r.status FROM orders AS r) (SELECT f.order_id, f.status FROM final AS f)",
+            ),
+        },
+        QualityRuleTestCase {
+            description: "GROUP BY grain is a key, the query bare",
+            sql: "WITH totals AS (SELECT o.customer_id, SUM(o.amount) AS amount FROM orders AS o GROUP BY o.customer_id), final AS (SELECT t.customer_id, ROW_NUMBER() OVER (ORDER BY t.amount, t.customer_id) AS rn FROM totals AS t) SELECT f.customer_id, f.rn FROM final AS f",
+            rule: "SQLCLEAN018",
+            relation_keys: r#"{}"#,
+            expected_anchors: &[],
+            expected_fixed_sql: None,
+        },
+        QualityRuleTestCase {
+            description: "GROUP BY grain is a key, the whole query in parentheses",
+            sql: "(WITH totals AS (SELECT o.customer_id, SUM(o.amount) AS amount FROM orders AS o GROUP BY o.customer_id), final AS (SELECT t.customer_id, ROW_NUMBER() OVER (ORDER BY t.amount, t.customer_id) AS rn FROM totals AS t) SELECT f.customer_id, f.rn FROM final AS f)",
+            rule: "SQLCLEAN018",
+            relation_keys: r#"{}"#,
+            expected_anchors: &[],
+            expected_fixed_sql: None,
+        },
+        QualityRuleTestCase {
+            description: "a later rn = 1 filter makes the partition a key, the query bare",
+            sql: "WITH ranked AS (SELECT o.order_id, o.customer_id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.order_id) AS rn FROM orders AS o), latest AS (SELECT r.customer_id, r.order_id FROM ranked AS r WHERE r.rn = 1), final AS (SELECT l.customer_id, ROW_NUMBER() OVER (ORDER BY l.customer_id) AS position FROM latest AS l) SELECT f.customer_id, f.position FROM final AS f",
+            rule: "SQLCLEAN018",
+            relation_keys: r#"{"orders": [["order_id"]]}"#,
+            expected_anchors: &[],
+            expected_fixed_sql: None,
+        },
+        QualityRuleTestCase {
+            description: "a later rn = 1 filter makes the partition a key, the ranking CTE body in a second pair",
+            sql: "WITH ranked AS ((SELECT o.order_id, o.customer_id, ROW_NUMBER() OVER (PARTITION BY o.customer_id ORDER BY o.order_id) AS rn FROM orders AS o)), latest AS (SELECT r.customer_id, r.order_id FROM ranked AS r WHERE r.rn = 1), final AS (SELECT l.customer_id, ROW_NUMBER() OVER (ORDER BY l.customer_id) AS position FROM latest AS l) SELECT f.customer_id, f.position FROM final AS f",
+            rule: "SQLCLEAN018",
+            relation_keys: r#"{"orders": [["order_id"]]}"#,
+            expected_anchors: &[],
+            expected_fixed_sql: None,
+        },
+    ];
+    for test_case in &test_cases {
+        let diagnostics: Vec<Value> =
+            lint_with_host_fields(test_case, r#"{"dialect": "databricks"}"#)?;
+        assert_eq!(
+            anchors(test_case.sql, &diagnostics),
+            test_case.expected_anchors,
+            "{}",
+            test_case.description
+        );
+        assert_eq!(
+            fixed(test_case.sql, &diagnostics).as_deref(),
+            test_case.expected_fixed_sql,
+            "{}",
+            test_case.description
+        );
+    }
+    Ok(())
+}
