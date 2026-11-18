@@ -469,11 +469,6 @@ fn given_a_parenthesized_query_with_clauses_after_it_when_analysed_then_they_rea
             expected_same_as: "SELECT sum ( quantity ) OVER w AS x FROM orders WINDOW w AS ( ORDER BY quantity ) LIMIT 1",
         },
         SameReadingTestCase {
-            description: "an unknown column in a named window written after the parentheses",
-            sql: "( SELECT sum ( quantity ) OVER w AS x FROM orders LIMIT 1 ) WINDOW w AS ( ORDER BY nope )",
-            expected_same_as: "SELECT sum ( quantity ) OVER w AS x FROM orders WINDOW w AS ( ORDER BY nope ) LIMIT 1",
-        },
-        SameReadingTestCase {
             description: "ORDER BY a column the query does not output",
             sql: "( SELECT id FROM orders ) ORDER BY quantity",
             expected_same_as: "SELECT id FROM orders ORDER BY quantity",
@@ -548,6 +543,30 @@ fn given_a_parenthesized_query_with_clauses_after_it_when_analysed_then_they_rea
         assert_eq!(
             reading(test_case.sql),
             reading(test_case.expected_same_as),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_window_named_after_parentheses_when_checked_then_only_an_undefined_name_is_found() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "the window function inside reads the window named after the parentheses",
+            sql: "( SELECT sum ( quantity ) OVER w AS x FROM orders LIMIT 1 ) WINDOW w AS ( ORDER BY quantity )",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a window no WINDOW clause names is still unknown",
+            sql: "( SELECT sum ( quantity ) OVER w2 AS x FROM orders LIMIT 1 ) WINDOW w AS ( ORDER BY quantity )",
+            expected_findings: &[("E232", "Unknown named window 'w2'", 15)],
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            databricks_findings(test_case.sql),
+            owned_findings(test_case.expected_findings),
             "{}",
             test_case.description
         );
