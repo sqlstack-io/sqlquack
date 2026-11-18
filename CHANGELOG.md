@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.19.0](https://github.com/sqlstack-io/sqlquack/compare/v0.18.2...v0.19.0) (2026-11-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **databricks:** sqlquack-syntax adds the Literal::JoinedString variant; code that matches Literal exhaustively must handle it.
+
+### Bug Fixes
+
+* **databricks:** keep a written SELECT * FROM ( query ) apart from a pipe step's input ([343c48a](https://github.com/sqlstack-io/sqlquack/commit/343c48aba8856511a0e7d43aeb7ea6be790dedff))
+* **databricks:** keep an insert's parenthesised query apart from a bare one ([ca4766f](https://github.com/sqlstack-io/sqlquack/commit/ca4766f645a903b2abf754fe931c00dd11d24f99))
+* **databricks:** keep raw and adjacent string spellings in trees ([75f899a](https://github.com/sqlstack-io/sqlquack/commit/75f899a236fc392a8704f662907f9b511fd9a30a))
+* **databricks:** keep WINDOW after a parenthesized query apart from WINDOW inside it ([be79864](https://github.com/sqlstack-io/sqlquack/commit/be79864e9d7662cf3e1f93ce41eb935816d4d795))
+* **databricks:** keep WINDOW after a parenthesized query apart from WINDOW over a star of it ([b5a5cbe](https://github.com/sqlstack-io/sqlquack/commit/b5a5cbe7287b546554ffbd91d741536320a04ef5))
+* **databricks:** refuse a TIMESTAMP with both WITHOUT and WITH LOCAL TIME ZONE ([933d416](https://github.com/sqlstack-io/sqlquack/commit/933d416d38ea82297103b9b430f5c558a8b9a4d6))
+* **databricks:** type a raw string literal as STRING ([b860d19](https://github.com/sqlstack-io/sqlquack/commit/b860d19a68ca181d45427ed56e1a9d95c9c4044a))
+* **semantics:** check a join written in parentheses as a bare join ([c07b62c](https://github.com/sqlstack-io/sqlquack/commit/c07b62c39c4ccd957f5f694cb74c569a0cd28c60))
+* **semantics:** check USING beside a parenthesised join against its own sides ([6225fbe](https://github.com/sqlstack-io/sqlquack/commit/6225fbe3cb7acaf90fa457e6b46573da57333f97))
+
 ## [0.18.2](https://github.com/sqlstack-io/sqlquack/compare/v0.18.1...v0.18.2) (2026-11-18)
 
 
