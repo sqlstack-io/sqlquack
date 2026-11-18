@@ -65,6 +65,9 @@ impl KeyEnvironment {
             return Vec::new();
         }
         let found: Vec<(String, Option<String>, &Expression)> = sources(select);
+        if found.len() != select.joins.len() + 1 {
+            return Vec::new();
+        }
         let Some((first_alias, _, first)) = found.first() else {
             return Vec::new();
         };

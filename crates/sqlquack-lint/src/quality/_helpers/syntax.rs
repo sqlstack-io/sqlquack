@@ -109,7 +109,10 @@ pub(super) fn qualifier(column: &Column) -> Option<String> {
 pub(super) fn sources(select: &Select) -> Vec<(String, Option<String>, &Expression)> {
     let mut found: Vec<(String, Option<String>, &Expression)> = Vec::new();
     let from = select.from.iter().flat_map(|from| from.expressions.iter());
-    for expression in from.chain(select.joins.iter().map(|join| &join.this)) {
+    for expression in from
+        .chain(select.joins.iter().map(|join| &join.this))
+        .flat_map(joined_relations)
+    {
         match expression {
             Expression::Table(table) => {
                 let name: String = lower(&table.name.name);
@@ -130,6 +133,23 @@ pub(super) fn sources(select: &Select) -> Vec<(String, Option<String>, &Expressi
         }
     }
     found
+}
+
+/// The relations of an unaliased joined table, in parentheses or not, in order; else `item`.
+fn joined_relations(item: &Expression) -> Vec<&Expression> {
+    match item {
+        Expression::JoinedTable(joined) if joined.alias.is_none() => {
+            let mut relations: Vec<&Expression> = joined_relations(&joined.left);
+            for join in &joined.joins {
+                relations.extend(joined_relations(&join.this));
+            }
+            relations
+        }
+        Expression::Paren(paren) if matches!(paren.this, Expression::JoinedTable(_)) => {
+            joined_relations(&paren.this)
+        }
+        _ => vec![item],
+    }
 }
 
 /// Token index of the SELECT opening each `name AS ( [( ...] SELECT` CTE body, by lower-cased name.

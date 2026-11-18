@@ -2,8 +2,10 @@
 
 use std::borrow::Cow;
 
+use crate::tree::main::join_chains::join_chains;
 use crate::tree::main::walk_in_scope::walk_in_scope;
 use sqlquack_syntax::expressions::queries::models::Cte;
+use sqlquack_syntax::expressions::queries::models::Join;
 use sqlquack_syntax::expressions::queries::models::JoinKind;
 use sqlquack_syntax::expressions::queries::models::Select;
 use sqlquack_syntax::expressions::queries::models::With;
@@ -220,7 +222,11 @@ fn reader_usage(target: &Target<'_>, reader: Option<String>, body: &[&Expression
         if local.is_empty() {
             continue;
         }
-        if select.joins.iter().any(|join| {
+        let joins: Vec<&Join> = join_chains(select)
+            .into_iter()
+            .flat_map(|(_, joins)| joins)
+            .collect();
+        if joins.iter().any(|join| {
             matches!(
                 join.kind,
                 JoinKind::Natural
@@ -231,7 +237,7 @@ fn reader_usage(target: &Target<'_>, reader: Option<String>, body: &[&Expression
         }) {
             usage.everything = true;
         }
-        for join in &select.joins {
+        for join in joins {
             usage
                 .names
                 .extend(join.using.iter().map(|identifier| lower(&identifier.name)));
@@ -332,7 +338,12 @@ fn clause_roots(select: &Select) -> Vec<&Expression> {
     if let Some(order) = &select.order_by {
         roots.extend(order.expressions.iter().map(|ordered| &ordered.this));
     }
-    roots.extend(select.joins.iter().filter_map(|join| join.on.as_ref()));
+    roots.extend(
+        join_chains(select)
+            .into_iter()
+            .flat_map(|(_, joins)| joins)
+            .filter_map(|join| join.on.as_ref()),
+    );
     roots
 }
 
