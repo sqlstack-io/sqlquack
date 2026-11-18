@@ -292,7 +292,11 @@ fn joined(
                     .profile
                     .same_identifier(&merged.column.key, &column.column.key)
         }) {
-            Some(merged) => *merged = column,
+            Some(merged) => {
+                let sources: Range<usize> =
+                    merged.sources.start.min(reach.start)..merged.sources.end.max(reach.end);
+                *merged = MergedKey { sources, ..column };
+            }
             None => merged_keys.push(column),
         }
     }
