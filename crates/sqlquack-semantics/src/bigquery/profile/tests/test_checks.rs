@@ -344,6 +344,50 @@ fn given_one_string_spelled_two_ways_when_grouping_then_the_expressions_match() 
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "raw bytes in the select, plain ones in GROUP BY",
+            sql: "SELECT COALESCE(CAST(status AS BYTES), rb'ab') AS x FROM orders GROUP BY COALESCE(CAST(status AS BYTES), b'ab')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "adjacent bytes in the select, one piece in GROUP BY",
+            sql: "SELECT COALESCE(CAST(status AS BYTES), b'a' b'b') AS x FROM orders GROUP BY COALESCE(CAST(status AS BYTES), b'ab')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a raw DATE in the select, a plain one in GROUP BY",
+            sql: "SELECT COALESCE(CAST(status AS DATE), DATE r'2020-01-01') AS x FROM orders GROUP BY COALESCE(CAST(status AS DATE), DATE '2020-01-01')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an adjacent DATETIME in the select, a plain one in GROUP BY",
+            sql: "SELECT COALESCE(CAST(status AS DATETIME), DATETIME '2020-01-01' ' 00:00:00') AS x FROM orders GROUP BY COALESCE(CAST(status AS DATETIME), DATETIME '2020-01-01 00:00:00')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a raw TIMESTAMP in the select, a plain one in GROUP BY",
+            sql: "SELECT COALESCE(CAST(status AS TIMESTAMP), TIMESTAMP r'2020-01-01 00:00:00') AS x FROM orders GROUP BY COALESCE(CAST(status AS TIMESTAMP), TIMESTAMP '2020-01-01 00:00:00')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a raw NUMERIC in the select, a plain one in GROUP BY",
+            sql: "SELECT COALESCE(CAST(status AS NUMERIC), NUMERIC r'1') AS x FROM orders GROUP BY COALESCE(CAST(status AS NUMERIC), NUMERIC '1')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a raw bytes character in the select, its UTF-8 bytes escaped in GROUP BY",
+            sql: "SELECT COALESCE(CAST(status AS BYTES), rb'\u{ff}') AS x FROM orders GROUP BY COALESCE(CAST(status AS BYTES), b'\\xc3\\xbf')",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "raw bytes of another value are still a different expression",
+            sql: "SELECT COALESCE(CAST(status AS BYTES), rb'ac') AS x FROM orders GROUP BY COALESCE(CAST(status AS BYTES), b'ab')",
+            expected_findings: &[(
+                "E230",
+                "Column must be grouped or used in an aggregate function",
+                21,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "adjacent strings of another value are still a different expression",
             sql: "SELECT COALESCE(status, 'a' 'c') AS x FROM orders GROUP BY COALESCE(status, 'ab')",
             expected_findings: &[(

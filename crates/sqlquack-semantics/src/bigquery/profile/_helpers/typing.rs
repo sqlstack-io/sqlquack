@@ -95,7 +95,9 @@ pub(crate) fn bigquery_literal_type(expression: &Expression) -> Option<&'static 
             | Literal::TripleQuotedString(..)
             | Literal::RawString(_)
             | Literal::JoinedString(..) => Kind::String,
-            Literal::ByteString(_) => Kind::Bytes,
+            Literal::ByteString(_) | Literal::RawByteString(_) | Literal::JoinedBytes(..) => {
+                Kind::Bytes
+            }
             Literal::Date(_) => Kind::Date,
             Literal::Datetime(_) => Kind::Datetime,
             Literal::Time(_) => Kind::Time,

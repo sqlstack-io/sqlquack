@@ -50,6 +50,10 @@ pub enum Literal {
     RawString(String),
     /// Adjacent string literals read as one (`'a' 'b'`): the joined value and each piece as written.
     JoinedString(String, Vec<Literal>),
+    /// Raw bytes `rb'...'` (BigQuery): backslashes are literal, not escapes.
+    RawByteString(String),
+    /// Adjacent bytes literals read as one (`b'a' b'b'`): the joined value and each piece as written.
+    JoinedBytes(String, Vec<Literal>),
 }
 
 impl Literal {
@@ -69,8 +73,11 @@ impl Literal {
             | Literal::Datetime(s)
             | Literal::EscapeString(s)
             | Literal::DollarString(s)
-            | Literal::RawString(s) => s.as_str(),
-            Literal::TripleQuotedString(s, _) | Literal::JoinedString(s, _) => s.as_str(),
+            | Literal::RawString(s)
+            | Literal::RawByteString(s) => s.as_str(),
+            Literal::TripleQuotedString(s, _)
+            | Literal::JoinedString(s, _)
+            | Literal::JoinedBytes(s, _) => s.as_str(),
         }
     }
 
@@ -114,7 +121,8 @@ impl fmt::Display for Literal {
             Literal::EscapeString(s) => write!(f, "E'{}'", s),
             Literal::DollarString(s) => write!(f, "$${}$$", s),
             Literal::RawString(s) => write!(f, "r'{}'", s),
-            Literal::JoinedString(_, pieces) => {
+            Literal::RawByteString(b) => write!(f, "rb'{}'", b),
+            Literal::JoinedString(_, pieces) | Literal::JoinedBytes(_, pieces) => {
                 let written: Vec<String> = pieces.iter().map(Literal::to_string).collect();
                 write!(f, "{}", written.join(" "))
             }

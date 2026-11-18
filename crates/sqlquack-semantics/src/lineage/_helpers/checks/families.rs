@@ -242,7 +242,11 @@ fn literal_family(literal: &Literal) -> Family {
         Literal::Date(_) => Family::Date,
         Literal::Time(_) => Family::Time,
         Literal::Timestamp(_) | Literal::Datetime(_) => Family::Timestamp,
-        Literal::HexString(_) | Literal::BitString(_) | Literal::ByteString(_) => Family::Binary,
+        Literal::HexString(_)
+        | Literal::BitString(_)
+        | Literal::ByteString(_)
+        | Literal::RawByteString(_)
+        | Literal::JoinedBytes(..) => Family::Binary,
         _ => Family::String,
     }
 }

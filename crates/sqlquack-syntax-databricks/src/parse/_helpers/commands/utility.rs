@@ -859,6 +859,7 @@ impl Parser<'_> {
                 is_group: false,
                 is_share: false,
                 kind: recipient.then(|| "RECIPIENT".to_owned()),
+                written: None,
             })
         })
     }

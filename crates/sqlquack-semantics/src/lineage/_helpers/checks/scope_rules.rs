@@ -15,9 +15,9 @@ use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::sources::{every_join, from_parts};
 use crate::lineage::constants::{
-    CAST_FIELDS, CUSTOM_TYPE_FIELDS, LITERAL_FIELD, LITERAL_TYPE_FIELD, LITERAL_VALUE_FIELD,
-    NAME_FIELD, RAW_STRING_KIND, RAW_TYPED_LITERALS, SCOPE_PHASE, SHAPE_COMMENT_SUFFIX,
-    SHAPE_COSMETIC_FIELDS, SPAN_FIELD, WINDOW_ONLY_FUNCTIONS,
+    CAST_FIELDS, CUSTOM_TYPE_FIELDS, INFERRED_TYPE_FIELD, LITERAL_FIELD, LITERAL_TYPE_FIELD,
+    LITERAL_VALUE_FIELD, NAME_FIELD, RAW_STRING_KIND, RAW_TYPED_LITERALS, SCOPE_PHASE,
+    SHAPE_COMMENT_SUFFIX, SHAPE_COSMETIC_FIELDS, SPAN_FIELD, WINDOW_ONLY_FUNCTIONS,
 };
 use crate::lineage::models::Engine;
 use crate::lineage::models::{LineageContext, LineageScope, NameFinding, ScopeSource};
@@ -835,7 +835,13 @@ fn spelled_strings(expression: &Expression) -> bool {
         matches!(
             node,
             Expression::Literal(literal)
-                if matches!(literal.as_ref(), Literal::RawString(_) | Literal::JoinedString(..))
+                if matches!(
+                    literal.as_ref(),
+                    Literal::RawString(_)
+                        | Literal::JoinedString(..)
+                        | Literal::RawByteString(_)
+                        | Literal::JoinedBytes(..)
+                )
         )
     })
 }
@@ -847,11 +853,12 @@ fn plain_strings(value: Value) -> Value {
             if let Some(literal) = raw_typed_literal(&map) {
                 return literal;
             }
-            let spelled = matches!(
-                map.get(LITERAL_TYPE_FIELD).and_then(Value::as_str),
-                Some("raw_string" | "joined_string")
-            );
-            if spelled {
+            let plain: Option<&str> = match map.get(LITERAL_TYPE_FIELD).and_then(Value::as_str) {
+                Some("raw_string" | "joined_string") => Some("string"),
+                Some("raw_byte_string" | "joined_bytes") => Some("byte_string"),
+                _ => None,
+            };
+            if let Some(plain) = plain {
                 let text: Option<Value> = match map.remove(LITERAL_VALUE_FIELD) {
                     Some(Value::Array(mut parts)) if !parts.is_empty() => {
                         Some(parts.swap_remove(0))
@@ -860,7 +867,7 @@ fn plain_strings(value: Value) -> Value {
                 };
                 map.insert(
                     LITERAL_TYPE_FIELD.to_owned(),
-                    Value::String("string".to_owned()),
+                    Value::String(plain.to_owned()),
                 );
                 map.insert(LITERAL_VALUE_FIELD.to_owned(), text.unwrap_or(Value::Null));
             }
@@ -876,30 +883,39 @@ fn plain_strings(value: Value) -> Value {
     }
 }
 
-/// The typed literal a serialized cast of a raw string to `DATE`, `TIME`, `TIMESTAMP` or `X` reads as.
+/// The typed literal a Databricks or BigQuery typed literal of a raw or adjacent string reads as.
 fn raw_typed_literal(map: &Map<String, Value>) -> Option<Value> {
     let [cast_field, this_field, to_field] = CAST_FIELDS;
     let [type_field, custom] = CUSTOM_TYPE_FIELDS;
     let cast: &Map<String, Value> = map.get(cast_field)?.as_object()?;
     let text: &Value = cast.get(this_field)?.get(LITERAL_FIELD)?;
     let to: &Value = cast.get(to_field)?;
-    if map.len() != 1
-        || text.get(LITERAL_TYPE_FIELD)?.as_str()? != RAW_STRING_KIND
-        || to.get(type_field)?.as_str()? != custom
-    {
+    let spelled: &str = text.get(LITERAL_TYPE_FIELD)?.as_str()?;
+    if map.len() != 1 || !matches!(spelled, RAW_STRING_KIND | "joined_string") {
         return None;
     }
-    let word: &str = to.get(NAME_FIELD)?.as_str()?;
-    let (_, kind) = RAW_TYPED_LITERALS.iter().find(|(name, _)| *name == word)?;
+    let kind: &str = match to.get(type_field)?.as_str()? {
+        name if name == custom && spelled == RAW_STRING_KIND => {
+            let word: &str = to.get(NAME_FIELD)?.as_str()?;
+            RAW_TYPED_LITERALS.iter().find(|(name, _)| *name == word)?.1
+        }
+        _ if !cast.contains_key(INFERRED_TYPE_FIELD) => return None,
+        "date" => "date",
+        "time" => "time",
+        "timestamp" if to.get("timezone")?.as_bool()? => "timestamp",
+        "timestamp" => "datetime",
+        _ => return None,
+    };
+    let value: Value = match text.get(LITERAL_VALUE_FIELD)? {
+        Value::Array(parts) => parts.first()?.clone(),
+        value => value.clone(),
+    };
     let mut literal: Map<String, Value> = Map::new();
     literal.insert(
         LITERAL_TYPE_FIELD.to_owned(),
-        Value::String((*kind).to_owned()),
+        Value::String(kind.to_owned()),
     );
-    literal.insert(
-        LITERAL_VALUE_FIELD.to_owned(),
-        text.get(LITERAL_VALUE_FIELD)?.clone(),
-    );
+    literal.insert(LITERAL_VALUE_FIELD.to_owned(), value);
     let mut node: Map<String, Value> = Map::new();
     node.insert(LITERAL_FIELD.to_owned(), Value::Object(literal));
     Some(Value::Object(node))

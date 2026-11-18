@@ -338,6 +338,7 @@ impl Parser {
             is_group: false,
             is_share,
             kind: kind.filter(|_| !is_role && !is_share),
+            written: None,
         })
     }
 

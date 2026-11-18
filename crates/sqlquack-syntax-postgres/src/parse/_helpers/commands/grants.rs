@@ -435,6 +435,7 @@ impl Parser<'_> {
             is_group: false,
             is_share: false,
             kind: None,
+            written: None,
         })
     }
 
