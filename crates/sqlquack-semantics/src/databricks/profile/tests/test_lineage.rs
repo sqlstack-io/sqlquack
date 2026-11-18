@@ -200,21 +200,33 @@ fn given_a_databricks_query_when_naming_and_typing_outputs_then_they_are_the_war
 
 #[test]
 fn given_a_strict_parse_when_tracing_lineage_then_each_output_has_its_items_byte_range() {
-    let test_cases = [StrictRangeTestCase {
-        description: "a literal aliased after a two-byte character, a qualified column, a labelled call, a bare column and a qualified star",
-        sql: "SELECT 'é' AS e, w.status, UPPER(w.status) loud, id, w.* FROM orders AS w",
-        expected_ranges: &[
-            7..16,
-            18..26,
-            28..48,
-            50..52,
-            54..57,
-            54..57,
-            54..57,
-            54..57,
-            54..57,
-        ],
-    }];
+    let test_cases = [
+        StrictRangeTestCase {
+            description: "a literal aliased after a two-byte character, a qualified column, a labelled call, a bare column and a qualified star",
+            sql: "SELECT 'é' AS e, w.status, UPPER(w.status) loud, id, w.* FROM orders AS w",
+            expected_ranges: &[
+                7..16,
+                18..26,
+                28..48,
+                50..52,
+                54..57,
+                54..57,
+                54..57,
+                54..57,
+                54..57,
+            ],
+        },
+        StrictRangeTestCase {
+            description: "a pipe ORDER BY after a parenthesized query",
+            sql: "( SELECT id, quantity FROM orders ) |> ORDER BY status",
+            expected_ranges: &[9..11, 13..21],
+        },
+        StrictRangeTestCase {
+            description: "a pipe LIMIT after a parenthesized query",
+            sql: "( SELECT id, quantity FROM orders ) |> LIMIT 1",
+            expected_ranges: &[9..11, 13..21],
+        },
+    ];
     for test_case in test_cases {
         let statement = sqlquack_syntax_databricks::parse_strict(test_case.sql)
             .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
@@ -444,6 +456,21 @@ fn given_a_parenthesized_query_with_clauses_after_it_when_analysed_then_they_rea
             description: "common table expressions before the parentheses, a LIMIT inside and a clause after",
             sql: "WITH c AS ( SELECT id, quantity FROM orders ) ( SELECT id, nope FROM c LIMIT 1 ) ORDER BY id",
             expected_same_as: "( WITH c AS ( SELECT id, quantity FROM orders ) SELECT id, nope FROM c LIMIT 1 ) ORDER BY id",
+        },
+        SameReadingTestCase {
+            description: "a LIMIT inside and an unknown ORDER BY column after",
+            sql: "( SELECT id FROM orders LIMIT 1 ) ORDER BY nope",
+            expected_same_as: "SELECT id FROM orders ORDER BY nope LIMIT 1",
+        },
+        SameReadingTestCase {
+            description: "common table expressions before the parentheses, a LIMIT inside and an unknown column after",
+            sql: "WITH c AS ( SELECT id FROM orders ) ( SELECT id FROM c LIMIT 1 ) ORDER BY nope",
+            expected_same_as: "WITH c AS ( SELECT id FROM orders ) SELECT id FROM c ORDER BY nope LIMIT 1",
+        },
+        SameReadingTestCase {
+            description: "common table expressions inside the parentheses, a LIMIT inside and an unknown column after",
+            sql: "( WITH c AS ( SELECT id FROM orders ) SELECT id FROM c LIMIT 1 ) ORDER BY nope",
+            expected_same_as: "WITH c AS ( SELECT id FROM orders ) SELECT id FROM c ORDER BY nope LIMIT 1",
         },
     ];
     for test_case in test_cases {
