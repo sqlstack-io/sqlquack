@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.0](https://github.com/sqlstack-io/sqlquack/compare/v0.19.0...v0.20.0) (2026-11-18)
+
+
+### Features
+
+* set the function-call depth limit at every parse entry point, up to 512 ([bf55b2b](https://github.com/sqlstack-io/sqlquack/commit/bf55b2b5268e9a569d1f51f7ed8bfb5f1a10f346))
+
 ## [0.19.0](https://github.com/sqlstack-io/sqlquack/compare/v0.18.2...v0.19.0) (2026-11-18)
 
 
