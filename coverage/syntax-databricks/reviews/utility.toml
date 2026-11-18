@@ -881,3 +881,20 @@ note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, o
 
 [review.definitions]
 "db.utility.optimize" = "eedc05c6514793ae2c8230ab6705e6daf66be667d140e5ca9f0a7848023f91e9"
+
+[[review]]
+id = "db-utility-042"
+family = "utility"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.utility.optimize",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 24 of 24 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case; the 1 requote variant it allows rewrites one string literal in the other quote style, which the lexer reads as the same token. optimize: db-utility-041 is answered: ZORDER BY's optional parentheses are a paren node whatever the column count, so OPTIMIZE t1 FULL WHERE c1 = 1 ZORDER BY ( c1 , c1 ) and ZORDER BY c1 , c1 give two trees (k8b814db72656), as do ZORDER BY ( c1 ) and ZORDER BY c1."
+
+[review.fingerprints]
+"db.utility.optimize" = "061ba8d2d956351ea23e6f73fa56d1849d7e2f01ecff1f94f5f40c96abe1014a"
+
+[review.definitions]
+"db.utility.optimize" = "eedc05c6514793ae2c8230ab6705e6daf66be667d140e5ca9f0a7848023f91e9"

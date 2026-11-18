@@ -2014,3 +2014,54 @@ note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, o
 
 [review.definitions]
 "db.ddl.alter-table-manage-column.drop" = "b5c71c3d6eef6fddb2a808e461f0015f6858267d54b9c0679d319fceaff31135"
+
+[[review]]
+id = "db-ddl-103"
+family = "ddl"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table-manage-column.add",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 55 of 55 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case; the 8 requote variants it allows rewrite one string literal in the other quote style, which the lexer reads as the same token. alter-table-manage-column.add: db-ddl-100's finding is answered: a parenthesised column list sets columns_parenthesized on the ALTER TABLE, so ALTER TABLE t1 ADD COLUMN ( c1 INT ) and ADD COLUMN c1 INT give two trees (k087421543598 and its bare spelling differ), and both stay accepted because the page documents both. db-ddl-010's findings were answered in db-ddl-083."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.add" = "1ec7a576529826465003af1edb96f1fadeb29d1454a944e3431d959adb8768f0"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.add" = "ee5b4f4d0ef8af066f5d041e68832cd3ee0089840e26af20512be74cf3b88ee1"
+
+[[review]]
+id = "db-ddl-104"
+family = "ddl"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.ddl.alter-table-manage-column.drop",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 23 of 23 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. alter-table-manage-column.drop: db-ddl-102's finding is answered: ALTER TABLE t1 DROP COLUMN ( c1 ) sets columns_parenthesized, so it and DROP COLUMN c1 give two trees (k117307ab0c32 and its bare spelling differ); both stay accepted because the page documents both."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.drop" = "8877e5a42d5d0dc25a0516d699116c99e33aa42c2582dd1982d21a39fdbf5e35"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.drop" = "b5c71c3d6eef6fddb2a808e461f0015f6858267d54b9c0679d319fceaff31135"
+
+[[review]]
+id = "db-ddl-105"
+family = "ddl"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.ddl.create-recipient",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 42 of 45 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case; the 19 requote variants it allows rewrite one string literal in the other quote style, which the lexer reads as the same token. create-recipient: db-ddl-031's finding is answered: PROPERTIES ( v1 'v' ) records the omitted = and gives a different tree from PROPERTIES ( v1 = 'v' ); its (a)-(c) held then and hold now. The form stays unverified until its missing receipt is recorded."
+
+[review.fingerprints]
+"db.ddl.create-recipient" = "062c3ad6d32b855e3da876565265d9265a9b05f978a0a6022df82ce25273a230"
+
+[review.definitions]
+"db.ddl.create-recipient" = "4b313315e6c043fc5164e925ceb412cf511fd3172d08797d36374e16bd47622b"

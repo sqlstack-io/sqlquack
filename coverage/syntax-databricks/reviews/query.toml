@@ -1071,3 +1071,20 @@ note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, o
 
 [review.definitions]
 "db.query.star" = "164b0d09702bed1e4f3243bf557f5ea71a523e969996d731243fb5ef7519b02a"
+
+[[review]]
+id = "db-query-053"
+family = "query"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.query.select-hints.join-hint-alias",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 12 of 12 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. select-hints.join-hint-alias: db-query-023 is answered: a backquoted join hint name or hinted relation is kept as written (quoted_names), so /*+ BROADCASTJOIN ( t1 ) */, /*+ `BROADCASTJOIN` ( t1 ) */ and /*+ BROADCASTJOIN ( `t1` ) */ give three trees, and an omitted comma between hints is marked rather than allowlisted."
+
+[review.fingerprints]
+"db.query.select-hints.join-hint-alias" = "8bb21d2de4edec3c71558ddea04a15484aa5810ce8d7bd125d6672cb06807573"
+
+[review.definitions]
+"db.query.select-hints.join-hint-alias" = "4aa02c2a49b11e126ba14477f62aa8856796fe6143adee3dc7d7fdc5add9918b"

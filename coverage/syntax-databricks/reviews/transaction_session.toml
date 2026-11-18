@@ -443,3 +443,20 @@ note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, 
 
 [review.definitions]
 "db.transaction_session.set-variable.set" = "aea8a0b7314908580e435c077163ec27e1ba524a62929af31535f4cf80c3c667"
+
+[[review]]
+id = "db-transaction_session-021"
+family = "transaction_session"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.declare-variable",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 30 of 30 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. declare-variable: db-transaction_session-005, -017 and -018 are answered: the optional VARIABLE keyword is kept, so DECLARE VARIABLE v1 INT and DECLARE v1 INT give two trees (k8d32413a0428, kb1a3d4f53537), as do DECLARE OR REPLACE VARIABLE and DECLARE OR REPLACE."
+
+[review.fingerprints]
+"db.transaction_session.declare-variable" = "eb9a342d6f99eef4d912f29ba9273e14fa812d99205352820531223d4b39d90c"
+
+[review.definitions]
+"db.transaction_session.declare-variable" = "6ba55f226593ba2ead11a8ffdd0bf65e0900f5c01b15e234b2f15d38771454ea"

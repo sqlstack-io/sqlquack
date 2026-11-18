@@ -1156,3 +1156,54 @@ note = "Re-binds db-expressions-056, not a re-read: that exclusion was bound to 
 [[review.exclusion]]
 form = "db.expressions.object-type"
 reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
+
+[[review]]
+id = "db-expressions-058"
+family = "expressions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.function-invocation",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 43 of 43 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. function-invocation: db-expressions-044 and db-expressions-051 are answered: a table argument written TABLE ( t1 ) is marked parenthesized, so SELECT * FROM abs ( TABLE ( t1 ) , v1 => 1 ) and abs ( TABLE t1 , v1 => 1 ) give two trees (k1d64e00db520 and its bare spelling differ). The bare spelling stays accepted until a receipt shows the warehouse refuses it."
+
+[review.fingerprints]
+"db.expressions.function-invocation" = "38d29fb84a765084bae663905b38e09bda449e5419e3cd0dc9971729588345c6"
+
+[review.definitions]
+"db.expressions.function-invocation" = "c13eb68dbe3c2ae0b5ce7aa6d28a875ea5d44ff33bc04d72f1d892204524a5ef"
+
+[[review]]
+id = "db-expressions-059"
+family = "expressions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.struct-type",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 31 of 31 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case; the 1 requote variant it allows rewrites one string literal in the other quote style, which the lexer reads as the same token. struct-type: db-expressions-023 and db-expressions-042 are answered: a struct field's colon is kept, so STRUCT < c1 : STRING > and STRUCT < c1 STRING > give two trees, and the screen now splits c1 :STRING at the colon."
+
+[review.fingerprints]
+"db.expressions.struct-type" = "a26ac937d1b1a55e0930afbd7a1a31372e07fba30699a48b224625212f91d7fc"
+
+[review.definitions]
+"db.expressions.struct-type" = "4257549739c84540535a90be31319c108c3dfe850e500b391b5c443d32c21a7b"
+
+[[review]]
+id = "db-expressions-060"
+family = "expressions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.timestamp-ntz-type.timestamp-without-time-zone",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 2 of 2 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. timestamp-ntz-type.timestamp-without-time-zone: db-expressions-024 and db-expressions-042 are answered: CAST ( NULL AS TIMESTAMP WITHOUT TIME ZONE ) keeps its spelling and gives a different tree from CAST ( NULL AS TIMESTAMP_NTZ )."
+
+[review.fingerprints]
+"db.expressions.timestamp-ntz-type.timestamp-without-time-zone" = "3e28000e2898bac3f3a0257dffdb1b88252d0c57b218db88960d7246ca1bf775"
+
+[review.definitions]
+"db.expressions.timestamp-ntz-type.timestamp-without-time-zone" = "ef35019816ea431684c6c873ddefc6c159f22b64d2e14c39428c5d015413ffc8"

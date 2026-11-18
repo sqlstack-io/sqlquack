@@ -6445,3 +6445,105 @@ note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, o
 
 [review.definitions]
 "db.functions.event-log" = "b97849444997b460ce0f088f02a46d1b96b2175bc7120d75ea3896cd52fc24b4"
+
+[[review]]
+id = "db-functions-089"
+family = "functions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.ai-predict-class",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 23 of 23 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. ai-predict-class: db-functions-084 is answered: input => TABLE ( v1 ) is marked parenthesized, so it and input => TABLE v1 give two trees (k1b651a33ed0f and its bare spelling differ)."
+
+[review.fingerprints]
+"db.functions.ai-predict-class" = "de58097a0133eb82fd34b11f67a4bf4ff4bc2309a27364816c646d4fe76d3bdc"
+
+[review.definitions]
+"db.functions.ai-predict-class" = "f6b6f3c8a8b05865b58111b69b2517011e4406e0c16fa588e8dcb70bbde256a2"
+
+[[review]]
+id = "db-functions-090"
+family = "functions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.ai-predict-value",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 23 of 23 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. ai-predict-value: db-functions-085 is answered: input => TABLE ( v1 ) is marked parenthesized, so it and input => TABLE v1 give two trees."
+
+[review.fingerprints]
+"db.functions.ai-predict-value" = "7a807ed8a25e3274b36ff235862a169779e446d54d31d0d337ccf4f5baf39d98"
+
+[review.definitions]
+"db.functions.ai-predict-value" = "59e12b1845a55fc213378662f7a33b95aaa614d1eeef88353cc1b65a0c3e8e06"
+
+[[review]]
+id = "db-functions-091"
+family = "functions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.bangsign",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 3 of 3 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. bangsign: db-functions-072 is answered: the not node records a prefix ! as written, so SELECT ( ! 1 ) and SELECT ( NOT 1 ) give two trees. The infix ! spellings (IS ! NULL, ! BETWEEN and the like) are not this form's syntax and stay held for receipts on the forms that write them."
+
+[review.fingerprints]
+"db.functions.bangsign" = "9379e69b8fc096756b7b891f5a22ef11fe1abd8ff8a88a935b51178f36fdce81"
+
+[review.definitions]
+"db.functions.bangsign" = "b8b4e54a67f0ba26fb5a8c8b1484b4c8e6ca29043fc26788810c6d8364396f73"
+
+[[review]]
+id = "db-functions-092"
+family = "functions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.cloud-files-state",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 8 of 8 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. cloud-files-state: db-functions-086 is answered: TABLE ( t1 ) is marked parenthesized, so CLOUD_FILES_STATE ( TABLE ( t1 ) ) and CLOUD_FILES_STATE ( TABLE t1 ) give two trees (k01ece83655e5 and its bare spelling differ)."
+
+[review.fingerprints]
+"db.functions.cloud-files-state" = "3df3982c665c3aab83aea26f9658d6e47580c68243385cee451df7d1820ceedd"
+
+[review.definitions]
+"db.functions.cloud-files-state" = "82517a5b7f0518cd5bd75342790491b5dce5c11bc8a4d04952d011148e876470"
+
+[[review]]
+id = "db-functions-093"
+family = "functions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.data-skipping-summary",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 7 of 7 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. data-skipping-summary: db-functions-087 is answered: TABLE ( `t1 Q` ) is marked parenthesized, so it and TABLE `t1 Q` give two trees (k6f84e878d849 and its bare spelling differ)."
+
+[review.fingerprints]
+"db.functions.data-skipping-summary" = "8e0a2f092e6c71127fda87521af340778fdbe8489f07c2dcdf2b6d8d32839682"
+
+[review.definitions]
+"db.functions.data-skipping-summary" = "aa325efa950be0c51ebe74f0fc3d1f46efaf68bab07d7bc73b5ebea7f3e6abf1"
+
+[[review]]
+id = "db-functions-094"
+family = "functions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.functions.event-log",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 8 of 8 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case; the 1 requote variant it allows rewrites one string literal in the other quote style, which the lexer reads as the same token. event-log: db-functions-088 is answered: TABLE ( `t1 Q` ) is marked parenthesized, so EVENT_LOG ( TABLE ( `t1 Q` ) ) and EVENT_LOG ( TABLE `t1 Q` ) give two trees (k056ee314a3e8 and its bare spelling differ)."
+
+[review.fingerprints]
+"db.functions.event-log" = "d41237c036c34d1180d97bcea13eea07d08a2cdf4e36383c9bd596ead0f45852"
+
+[review.definitions]
+"db.functions.event-log" = "b97849444997b460ce0f088f02a46d1b96b2175bc7120d75ea3896cd52fc24b4"
