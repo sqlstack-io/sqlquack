@@ -72,6 +72,9 @@ pub(crate) trait DialectRules: Sync {
     /// Where outputs are not read anywhere, whether GROUP BY keys may read them as ORDER BY keys do.
     fn group_keys_read_outputs(&self) -> bool;
 
+    /// Where outputs are read anywhere, whether the keys of a window the select list reads may read them.
+    fn window_keys_read_outputs(&self) -> bool;
+
     /// Whether calls are checked against the signatures of the functions they name.
     fn checks_call_signatures(&self) -> bool;
 

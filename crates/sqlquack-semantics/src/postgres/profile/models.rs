@@ -65,6 +65,10 @@ impl DialectRules for PostgresRules {
         true
     }
 
+    fn window_keys_read_outputs(&self) -> bool {
+        false
+    }
+
     fn checks_call_signatures(&self) -> bool {
         true
     }
