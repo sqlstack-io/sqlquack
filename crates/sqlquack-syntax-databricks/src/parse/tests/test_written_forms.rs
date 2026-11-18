@@ -438,6 +438,19 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 3,
         },
         DistinctTreesTestCase {
+            description: "an insert's query in no, one and two pairs of parentheses",
+            written: &[
+                "INSERT INTO t1 SELECT 1",
+                "INSERT INTO t1 ( SELECT 1 )",
+                "INSERT INTO t1 ( ( SELECT 1 ) )",
+                "INSERT INTO t1 VALUES ( 1 )",
+                "INSERT INTO t1 ( VALUES ( 1 ) )",
+                "INSERT OVERWRITE t1 SELECT 1",
+                "INSERT OVERWRITE t1 ( SELECT 1 )",
+            ],
+            expected_distinct_trees: 7,
+        },
+        DistinctTreesTestCase {
             description: "REPLACE ON's query with and without parentheses",
             written: &[
                 "INSERT INTO t1 REPLACE ON 1 = 1 SELECT 1",

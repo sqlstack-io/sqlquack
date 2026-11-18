@@ -12,8 +12,8 @@ use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, is_identifier, is_strict_identifier, is_word,
 };
 use crate::parse::_helpers::tree::nodes::{
-    TableAlias, binary, boolean, call, column_from, default_value, delete, insert, joined, star,
-    subquery, table, tuple, update, var,
+    TableAlias, binary, boolean, call, column_from, default_value, delete, insert, joined, paren,
+    star, subquery, table, tuple, update, var,
 };
 use crate::parse::constants::{IDENTIFIER_CLAUSE, REPLACE_ON_QUERY_TAKERS};
 use crate::scan::models::{Token, TokenKind};
@@ -273,6 +273,7 @@ impl Parser<'_> {
         }
         let query: Expression = match self.is_char('(') && self.starts_query_at(1) {
             true => {
+                let first: usize = self.at;
                 self.at += 1;
                 let query: Expression = self.query()?;
                 self.expect_char(')')?;
@@ -280,7 +281,7 @@ impl Parser<'_> {
                 match alias {
                     Some(alias) => subquery(query, Some(alias), false),
                     None if node.replace_on.is_some() => subquery(query, None, false),
-                    None => query,
+                    None => self.spanned(first, paren(query)),
                 }
             }
             false => self.query()?,
