@@ -413,7 +413,7 @@ fn invalid_bound(value: &Expression) -> bool {
             Literal::Number(number) => number
                 .parse::<f64>()
                 .is_ok_and(|number| number < f64::default()),
-            Literal::String(text) => text
+            Literal::String(text) | Literal::JoinedString(text, _) => text
                 .parse::<f64>()
                 .map_or(true, |number| number < f64::default()),
             _ => false,

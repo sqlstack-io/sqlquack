@@ -48,6 +48,8 @@ pub enum Literal {
     DollarString(String),
     /// Raw string r"..." (BigQuery, Spark, Databricks): backslashes are literal, not escapes.
     RawString(String),
+    /// Adjacent string literals read as one (`'a' 'b'`): the joined value and each piece as written.
+    JoinedString(String, Vec<Literal>),
 }
 
 impl Literal {
@@ -68,7 +70,7 @@ impl Literal {
             | Literal::EscapeString(s)
             | Literal::DollarString(s)
             | Literal::RawString(s) => s.as_str(),
-            Literal::TripleQuotedString(s, _) => s.as_str(),
+            Literal::TripleQuotedString(s, _) | Literal::JoinedString(s, _) => s.as_str(),
         }
     }
 
@@ -82,6 +84,7 @@ impl Literal {
                 | Literal::DollarString(_)
                 | Literal::RawString(_)
                 | Literal::TripleQuotedString(_, _)
+                | Literal::JoinedString(_, _)
         )
     }
 
@@ -111,6 +114,10 @@ impl fmt::Display for Literal {
             Literal::EscapeString(s) => write!(f, "E'{}'", s),
             Literal::DollarString(s) => write!(f, "$${}$$", s),
             Literal::RawString(s) => write!(f, "r'{}'", s),
+            Literal::JoinedString(_, pieces) => {
+                let written: Vec<String> = pieces.iter().map(Literal::to_string).collect();
+                write!(f, "{}", written.join(" "))
+            }
         }
     }
 }

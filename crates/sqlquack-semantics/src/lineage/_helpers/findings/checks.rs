@@ -348,7 +348,7 @@ pub(crate) fn columns_pattern_finding(
     let Expression::Literal(literal) = pattern else {
         return None;
     };
-    let (Literal::String(pattern), true) = (
+    let (Literal::String(pattern) | Literal::JoinedString(pattern, _), true) = (
         literal.as_ref(),
         dialect_rules(context.profile).checks_columns_patterns(),
     ) else {

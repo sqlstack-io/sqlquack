@@ -339,7 +339,7 @@ fn expression_checks(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<NameFin
         }
         Expression::Interval(interval) => {
             if let Some(Expression::Literal(literal)) = &interval.this
-                && let Literal::String(value) = literal.as_ref()
+                && let Literal::String(value) | Literal::JoinedString(value, _) = literal.as_ref()
                 && !value.chars().any(|character| character.is_ascii_digit())
             {
                 let code: Option<&'static str> = match engine {
