@@ -155,6 +155,14 @@ pub(crate) struct ScopedColumn {
     pub(crate) expression: Option<Span>,
 }
 
+/// A key a USING or NATURAL join merged, and the sources that join reads.
+#[derive(Clone, Debug)]
+pub(crate) struct MergedKey {
+    pub(crate) column: ScopedColumn,
+    /// The sources of the join, whose columns of the key's name it stands in for.
+    pub(crate) sources: Range<usize>,
+}
+
 /// A FROM item: its key, its known columns, and whether it offers others of unknown name.
 #[derive(Clone, Debug)]
 pub(crate) struct ScopeSource {
@@ -179,7 +187,7 @@ pub(crate) struct LineageScope<'a> {
     pub(crate) aliases: Vec<ScopedColumn>,
     pub(crate) lambda_names: Vec<String>,
     /// The keys USING and NATURAL joins merged, read unqualified and once by a bare star.
-    pub(crate) merged: Vec<ScopedColumn>,
+    pub(crate) merged: Vec<MergedKey>,
     /// The named windows of the level, with what their partitions and orders read.
     pub(crate) windows: Vec<(String, Lineage)>,
     /// Columns the level's WHERE requires to be NOT NULL, never NULL where the level reads them.
@@ -223,7 +231,7 @@ pub(crate) struct ResolvedQuery {
 #[derive(Clone, Debug, Default)]
 pub(crate) struct FromItems {
     pub(crate) sources: Vec<ScopeSource>,
-    pub(crate) merged: Vec<ScopedColumn>,
+    pub(crate) merged: Vec<MergedKey>,
     pub(crate) rows: RowReads,
     /// How many sources come before each FROM part, in `from_parts` order, then the total.
     pub(crate) starts: Vec<usize>,

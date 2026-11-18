@@ -47,17 +47,28 @@ fn joined_alias(left: Expression, joins: Vec<Join>, alias: Option<TableAlias>) -
 }
 
 impl Parser<'_> {
-    /// `from_list`: the comma-separated items, and every join, in order.
+    /// `from_list`: the items, and a lone item's joins; several items each keep their own.
     pub(crate) fn parse_from_list(&mut self) -> Parsing<(Vec<Expression>, Vec<Join>)> {
-        let mut items: Vec<Expression> = Vec::new();
-        let mut joins: Vec<Join> = Vec::new();
+        let mut refs: Vec<(Expression, Vec<Join>)> = Vec::new();
         loop {
-            items.push(self.table_ref()?);
-            joins.extend(self.joins()?);
+            let item: Expression = self.table_ref()?;
+            refs.push((item, self.joins()?));
             if !self.eat_char(',') {
-                return Ok((items, joins));
+                break;
             }
         }
+        if refs.len() == 1 {
+            let (item, joins) = refs.remove(0);
+            return Ok((vec![item], joins));
+        }
+        let items: Vec<Expression> = refs
+            .into_iter()
+            .map(|(item, joins)| match joins.is_empty() {
+                true => item,
+                false => joined_table(item, joins, None),
+            })
+            .collect();
+        Ok((items, Vec::new()))
     }
 
     /// Whether a join begins at the cursor.

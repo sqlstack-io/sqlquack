@@ -137,3 +137,10 @@ pub(crate) struct QueryFindingsTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_findings: &'static [(&'static str, &'static str, usize)],
 }
+
+/// A query whose bare star's output names are known, in order.
+pub(crate) struct StarOrderTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_names: &'static [&'static str],
+}

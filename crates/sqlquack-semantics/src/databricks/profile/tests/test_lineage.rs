@@ -722,3 +722,31 @@ fn given_one_string_spelled_two_ways_when_grouping_then_the_expressions_match() 
         );
     }
 }
+
+#[test]
+fn given_a_comma_after_a_joined_relation_when_checked_then_the_join_reads_only_its_own_relations() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a USING key the left of its join lacks, a later comma relation offering it",
+            sql: "SELECT * FROM customers a JOIN orders b USING (status), orders c",
+            expected_findings: &[(
+                "E201",
+                "JOIN USING column 'status' must exist on both sides",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key both sides of its join offer, before a comma relation",
+            sql: "SELECT * FROM orders a JOIN orders b USING (status), customers c",
+            expected_findings: &[],
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            databricks_findings(test_case.sql),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
