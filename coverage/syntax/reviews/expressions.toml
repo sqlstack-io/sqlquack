@@ -636,3 +636,50 @@ note = "Read in full under review brief version 1 against the documentation page
 
 [review.definitions]
 "sf.expressions.data-types-datetime.interval" = "1744844543ad90c7d7fd770cd1c170e42660d7cdeb754aea79a4914e5f282860"
+
+[[review]]
+id = "expressions-026"
+family = "expressions"
+parser_tree = "e3a3c11b087d88ce3023dbb4d1c4152f5b57e1ad"
+reviewed_utc = "2026-11-16T09:56:03Z"
+verdict = "approved"
+forms = [
+  "sf.expressions.commands-model-function.model-default-version",
+  "sf.expressions.commands-model-function.model-version-or-alias",
+  "sf.expressions.data-types-datetime.interval.interval-constants",
+  "sf.expressions.data-types-period.typed-literal",
+  "sf.expressions.data-types-semistructured.array-index-access",
+  "sf.expressions.data-types-semistructured.object-key-access",
+  "sf.expressions.functions-table",
+  "sf.expressions.identifier-literal",
+  "sf.expressions.literals-table",
+  "sf.expressions.operators-expansion",
+  "sf.expressions.snowflake-db-classes",
+]
+note = "re-bound: set_quantifier rename, diff-checked. Not re-read: scripts/check_rebound_reviews.py found every parse tree of these forms' cases equal to the one the earlier approved review fingerprinted, but for each call's distinct flag read as set_quantifier (true as distinct, false as none, or all where the SQL writes ( ALL); no case, receipt, obligation or definition changed."
+
+[review.fingerprints]
+"sf.expressions.commands-model-function.model-default-version" = "d88d4afabd8439789bfa61a8c9f12baa8f907b0d721112591efc9cac5d1c752a"
+"sf.expressions.commands-model-function.model-version-or-alias" = "e9ec2b9ceeee036d2e5adb0f3d6db6299ebe7abc384ca1711e3946f3b59ab531"
+"sf.expressions.data-types-datetime.interval.interval-constants" = "9235646bd918192ef229399782398b2e0040b7ba7bd76a4577a3494300922f7a"
+"sf.expressions.data-types-period.typed-literal" = "d242ea93bf2457c082a8c256f3e1891742153f86f7e2b5d3312d2b2afdca829c"
+"sf.expressions.data-types-semistructured.array-index-access" = "f29bcf25c438b0196e30513fa2133c7c20a890789108bfeccf04501db68eccda"
+"sf.expressions.data-types-semistructured.object-key-access" = "49159fea195764ab6307d6782092bc0d81b540e355d1cf82af6ffc532ee70056"
+"sf.expressions.functions-table" = "77f54966d78ab431040da2c94da331adde80c707270f576040b58f442da5d3ee"
+"sf.expressions.identifier-literal" = "9bdce4e2412e401018e2a0fda87df482d221e6ac031bf17ed8d1a106544c7fec"
+"sf.expressions.literals-table" = "5f24510847888535014b8aaac8d0c83b56554df7e5a96a878e05e1fb451d61dd"
+"sf.expressions.operators-expansion" = "a7f0081944e335d50cd0be66d9eb549d9d1244ef9a019ed52f7de7251408b075"
+"sf.expressions.snowflake-db-classes" = "1eea5dad7d9dd098149f29e0dd555f0fde91ab1954f8d9e9efbcf3934f225fab"
+
+[review.definitions]
+"sf.expressions.commands-model-function.model-default-version" = "34ce3c94b354e54982cfe7b0cc3c87f56ea0dbf350e3b696dbb990cf27c678fc"
+"sf.expressions.commands-model-function.model-version-or-alias" = "d41d821a949118ef6f38898c63fed9023f562190c8e2c2485bb8c0024144ba5a"
+"sf.expressions.data-types-datetime.interval.interval-constants" = "8672ce1c682bf7074cc2469bf00b8a73dc5ce3906846fb73eefab62bcae2084f"
+"sf.expressions.data-types-period.typed-literal" = "0ad7e7d59cc30e23f6306eb38c758492d0d7c8abe8050e59f4e9bf0473f7e545"
+"sf.expressions.data-types-semistructured.array-index-access" = "0f3e8e9aaf2d323a168e481db66ece69982e5f3bd1242ab1713cd9cd4747ec39"
+"sf.expressions.data-types-semistructured.object-key-access" = "ccebffdf78f0c4a5bcb248d0879c58b9fb7642ed04ddeca7746edecef102e821"
+"sf.expressions.functions-table" = "112cff4b03112a75cf7b1f5a9694e7236b572040d8a3321e4c3b889ad28ab301"
+"sf.expressions.identifier-literal" = "6a6e2aa9d390636159e63ade723676774c8aa4776bf415e1a16fdff49e946740"
+"sf.expressions.literals-table" = "560abcfbf37f485469f1ccb69d117e21878d707bd1399369731e585e704947c7"
+"sf.expressions.operators-expansion" = "8e78f3c943a9bd4515338bd9fd27deac664c3b405f419b9b6e2141f73917afda"
+"sf.expressions.snowflake-db-classes" = "87670a3f8ff61add6c82545fb632cefce7a9358d620b1f2452e4d5ac13ef2268"

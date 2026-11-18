@@ -4840,3 +4840,92 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.ddl.create-view.create-view-as" = "019962ccc90d8c0c5baa16d03536cd188672100aec3b63452914ebb8cd1acd6c"
 "sf.ddl.drop-function-dmf" = "6823c38d29d0171b8aae897fe404231386f4ad070984acb2a48ad250c13f9a1a"
 "sf.ddl.show-channels" = "6a93a9146cbd0bf20b851eb57ab86c31581bf9949de6526b01bcd66d0dd3a01b"
+
+[[review]]
+id = "ddl-049"
+family = "ddl"
+parser_tree = "e3a3c11b087d88ce3023dbb4d1c4152f5b57e1ad"
+reviewed_utc = "2026-11-16T09:56:03Z"
+verdict = "approved"
+forms = [
+  "sf.ddl.alter-dynamic-table.searchoptimizationaction",
+  "sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by",
+  "sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by",
+  "sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with",
+  "sf.ddl.alter-iceberg-table.searchoptimizationaction",
+  "sf.ddl.alter-table.searchoptimizationaction",
+  "sf.ddl.create-clone.database-schema-clone",
+  "sf.ddl.create-clone.dynamic-table-clone",
+  "sf.ddl.create-clone.event-table-clone",
+  "sf.ddl.create-clone.iceberg-table-clone",
+  "sf.ddl.create-clone.table-clone",
+  "sf.ddl.create-dynamic-table.create-dynamic-table-target-lag",
+  "sf.ddl.create-dynamic-table.create-or-alter-dynamic",
+  "sf.ddl.create-dynamic-table.define-dynamic-table",
+  "sf.ddl.create-event-table.table-clone",
+  "sf.ddl.create-iceberg-table-snowflake.table-clone",
+  "sf.ddl.create-postgres-instance.fork",
+  "sf.ddl.create-schema.create-schema",
+  "sf.ddl.create-stream.create-stream-on-external",
+  "sf.ddl.create-stream.create-stream-on-table",
+  "sf.ddl.create-stream.create-stream-on-view",
+  "sf.ddl.create-table.create-table-clone",
+  "sf.ddl.undrop-database",
+  "sf.ddl.undrop-snapshot",
+  "sf.ddl.undrop-table",
+]
+note = "re-bound: set_quantifier rename, diff-checked. Not re-read: scripts/check_rebound_reviews.py found every parse tree of these forms' cases equal to the one the earlier approved review fingerprinted, but for each call's distinct flag read as set_quantifier (true as distinct, false as none, or all where the SQL writes ( ALL); no case, receipt, obligation or definition changed."
+
+[review.fingerprints]
+"sf.ddl.alter-dynamic-table.searchoptimizationaction" = "f56d0adb4ef95a7718421d56ae0c22c6dd48d0585b04c93eb4350b0b54155a81"
+"sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by" = "660efb3020f29ab41b7e73fb4bf3151ff4132fae0fcac9a83a8abe8c2210a6a8"
+"sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by" = "9e407c2d2223f4cabd34f51086dda949023a3af37d36a2abbeb02cd13afb3403"
+"sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with" = "b455b7b6657450943f2c3e8ef3812775064183006cf2683fb45f1806966c14c2"
+"sf.ddl.alter-iceberg-table.searchoptimizationaction" = "9de7b066195bf920fff91d30bca78ae34b27cce58dd2cbaf1693aa6c1bb3927c"
+"sf.ddl.alter-table.searchoptimizationaction" = "f05c4fb8a8d70edc3019b402dbca736cbdf32d28ae4755e1399835164374e2cf"
+"sf.ddl.create-clone.database-schema-clone" = "e9198041002919e104207fc424451b9af279c7ae3730d2c8626e2e53aaac1dbc"
+"sf.ddl.create-clone.dynamic-table-clone" = "0e600b75e0b902f056f63feb6c4f6c5cbadc292dc25b6d96a494590144839c09"
+"sf.ddl.create-clone.event-table-clone" = "be8c8fe92b0e1d07d74146e396124a972a8d23c6d0564034312ed313903c32fd"
+"sf.ddl.create-clone.iceberg-table-clone" = "3d5c66f7a606cf8c4ee46b6a748acc6aa078df3bc93e43d9c9b9219b65882acb"
+"sf.ddl.create-clone.table-clone" = "e7279259b0a494ebfcb403be11c65ddcb3e08fc4d4c406c5f16af64abb370e09"
+"sf.ddl.create-dynamic-table.create-dynamic-table-target-lag" = "32308efdc2e369c5b78bfc0fc37f7b4e4fab94f899796ef0681f160b0357ac68"
+"sf.ddl.create-dynamic-table.create-or-alter-dynamic" = "0c49d9bc474db223f807c26603877e78f5ef67ca0a5bd680e12b9994cf060879"
+"sf.ddl.create-dynamic-table.define-dynamic-table" = "be4fab330d0c7eb07daa4588928d6490ac62e637321edbdf926216fbfb96acbc"
+"sf.ddl.create-event-table.table-clone" = "db4bc2b3bd76dc05220584b9c608715fd48f74034591b4d5a02c37d8c07f10a0"
+"sf.ddl.create-iceberg-table-snowflake.table-clone" = "d7968d350db1d3ce41a43a2d1ddf8929e9457245172065b52d72d37ee2fc3d97"
+"sf.ddl.create-postgres-instance.fork" = "d309969d826a0cc281fde328ee5083527885ba819d837e37bcc5f2e26ad7cf43"
+"sf.ddl.create-schema.create-schema" = "d0647625f496ab0975050b7dbd8af53028e62d8c8b054a6def3ef2c805181c48"
+"sf.ddl.create-stream.create-stream-on-external" = "941a5859eefe3608eea6b88059ffa8ece6836d047b244bc94cda7234ca78be4d"
+"sf.ddl.create-stream.create-stream-on-table" = "5426bb59d8955edb3fe39ac1071b6bbd7d0cb1c9623838e66c673b8955d42ec2"
+"sf.ddl.create-stream.create-stream-on-view" = "efcf9333174ac1337232cb8ebedca66d8577bf662a2bc6d38bb5efcb76f7d9a4"
+"sf.ddl.create-table.create-table-clone" = "2145bd07c39e6c5524d55afb5930b5a696cdfc9bc9a234e07a8117f67a69b9d8"
+"sf.ddl.undrop-database" = "54155d2d66127011659199ec9ab45247b0d26f209f215f2d787a554c41e42e97"
+"sf.ddl.undrop-snapshot" = "f6ee334d2857709e2280ed785ab8be5658ec77803a1ec8ceee1698a9db8fc5c1"
+"sf.ddl.undrop-table" = "df67d507450fb27f10869e070487ba44ef93f6debd2d4dbba3e878a786b837c4"
+
+[review.definitions]
+"sf.ddl.alter-dynamic-table.searchoptimizationaction" = "365f495b09c0b0dc6acdbf3c8da3e0f4c1a51da21064c86af61088420b24ea3e"
+"sf.ddl.alter-iceberg-table-partition-evolution.add-partition-by" = "21315c2ae2ce9d0b562037d0175d5c58681ec32ec31089876537c5920279c9f2"
+"sf.ddl.alter-iceberg-table-partition-evolution.drop-partition-by" = "ce0270a4f21bb9c160d633782ac6f6407857ad3ffcbcbd6704a701a1df0057d2"
+"sf.ddl.alter-iceberg-table-partition-evolution.replace-partition-by-with" = "47022b853c2ed9b702d3327986e1005123a928c3db70268756f3a5c2366eb497"
+"sf.ddl.alter-iceberg-table.searchoptimizationaction" = "9ea473800c28d5d92bdf2ca2150a17eb8db5f1deed163f5262ce1c68d8749a89"
+"sf.ddl.alter-table.searchoptimizationaction" = "659ef6dee0347c232f186964b63d8bc5c88b9d02600fab7507ccc2ea662d5aa9"
+"sf.ddl.create-clone.database-schema-clone" = "955c6274fe782ee3869fdc3dfdf49be8a5e442aaf4dee33ab703603ce3766a21"
+"sf.ddl.create-clone.dynamic-table-clone" = "76eb2e086f33421f9ad9e772e88b3df73b1ade9af67c240f3430e7088b87670c"
+"sf.ddl.create-clone.event-table-clone" = "151d666ef4c6c296b4eb8951ef2ff9e34b9a7b6aa7a3aa4b73ab2f88c5614733"
+"sf.ddl.create-clone.iceberg-table-clone" = "be0217fdc12990e9767d5df1de86b7e720cc033f834f02490529edd108880168"
+"sf.ddl.create-clone.table-clone" = "3f8431beca6374e77ed1d0f3a47024507398f6151d6948ec5634806e72162f6a"
+"sf.ddl.create-dynamic-table.create-dynamic-table-target-lag" = "511a4a60a8bc60ae8ffcc37581e0500dfd1c4d1978341886b0933463bf88a0c1"
+"sf.ddl.create-dynamic-table.create-or-alter-dynamic" = "affa889628d66751ca70cd4c2f1f077ba6ca99e1b8e02eaedf20d50d509cd39f"
+"sf.ddl.create-dynamic-table.define-dynamic-table" = "b70959a6031ad8a75cc67b7fdfd78770058f777ac85995d2d3b74cad99a8a750"
+"sf.ddl.create-event-table.table-clone" = "d4bfff75b268e97a21f7b437baa12be2497892a1865767d7d922bc03ab140b5c"
+"sf.ddl.create-iceberg-table-snowflake.table-clone" = "2c2b6b1c957a83ed6800eeaf2ac0ca692e618604f665d087c20d21c9dd5a3133"
+"sf.ddl.create-postgres-instance.fork" = "aad910eb5fb5717d836668b35ec50422824f0a84f5f447c311074f410f773e7e"
+"sf.ddl.create-schema.create-schema" = "c50448719c582b3c69757e3a8fd0f5357107b1177b8a26e4908a4062f3e5b11e"
+"sf.ddl.create-stream.create-stream-on-external" = "9117dc64d36deb17bb230560f0b29929f0dab58fcc068ab5ebc6e14a44af3ca5"
+"sf.ddl.create-stream.create-stream-on-table" = "bf6c534efadaef32d337367d1514a0bb31a02b3b57426ef871816a628fcb502e"
+"sf.ddl.create-stream.create-stream-on-view" = "8685809b0e39b3b28a91ac2205f87c65a3f2b4fd3569657f79371149945e4d17"
+"sf.ddl.create-table.create-table-clone" = "fc141db0872a5504e4750af33aa4b51c07665287ed8fbf0aedac0ec66cd11a50"
+"sf.ddl.undrop-database" = "fbdee3caf91c0741e6642e2bd82c5a9a31c93c233fb91a861747344665c2b54a"
+"sf.ddl.undrop-snapshot" = "c8e249038f4e7dda5cc75ea06a21653c8853af2634817b9d865be47a33b7a764"
+"sf.ddl.undrop-table" = "dea4f6fab8e872a491bcab29e0164bdda9ce7a55dfe4bbf7e584a3dc4469f256"

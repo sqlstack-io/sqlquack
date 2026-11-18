@@ -275,3 +275,20 @@ note = "Read in full under review brief version 1 against the documentation page
 [review.definitions]
 "sf.transaction_session.set.set" = "a0d71b06dae5a41249517ec51ed85e2f64d6a9e9daa5553e0fea3b1ae13d2726"
 "sf.transaction_session.use-secondary-roles" = "3f667c86a6a1185d4b38794a73bcb2a34bb21804f31a7459e234098325c80bde"
+
+[[review]]
+id = "transaction-session-015"
+family = "transaction_session"
+parser_tree = "e3a3c11b087d88ce3023dbb4d1c4152f5b57e1ad"
+reviewed_utc = "2026-11-16T09:56:03Z"
+verdict = "approved"
+forms = [
+  "sf.transaction_session.desc-result",
+]
+note = "re-bound: set_quantifier rename, diff-checked. Not re-read: scripts/check_rebound_reviews.py found every parse tree of these forms' cases equal to the one the earlier approved review fingerprinted, but for each call's distinct flag read as set_quantifier (true as distinct, false as none, or all where the SQL writes ( ALL); no case, receipt, obligation or definition changed."
+
+[review.fingerprints]
+"sf.transaction_session.desc-result" = "9c3ed1fba3c9d2c6db80de6c3dcb81128965d196c35f969842e5e9441c2d3dc3"
+
+[review.definitions]
+"sf.transaction_session.desc-result" = "2128a9b1b7fab1f24e8eebb4c77e28baff1adf4ef6ac1d4699caf8577edf8c3c"
