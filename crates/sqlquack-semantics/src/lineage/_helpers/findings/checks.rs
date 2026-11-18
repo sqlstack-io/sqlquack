@@ -20,7 +20,7 @@ use crate::lineage::constants::{
     METADATA_PREFIX, POSITIONAL_PREFIX, SEQUENCE_COLUMNS, SINGLE_JOIN_SOURCES, SQL_STAR,
 };
 use crate::lineage::models::{Engine, NameFinding};
-use crate::lineage::models::{LineageContext, LineageScope, NamedQuery, ScopeSource};
+use crate::lineage::models::{LineageContext, LineageScope, MergedKey, NamedQuery, ScopeSource};
 
 /// The level a clause is read in: its scope, the aliases it may read, CONNECT BY and filter joins.
 #[derive(Clone, Copy)]
@@ -104,11 +104,7 @@ pub(crate) fn column_finding(
     }
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
     while let Some(current) = scope {
-        if current
-            .merged
-            .iter()
-            .any(|merged| context.profile.same_identifier(&merged.column.key, &wanted))
-        {
+        if merged_answers(current, &wanted, context) {
             return None;
         }
         let matches: usize = offering_count(current, &wanted, context);
@@ -508,6 +504,35 @@ fn offers(source: &ScopeSource, wanted: &str, context: LineageContext<'_>) -> bo
             && dialect_rules(context.profile)
                 .system_columns()
                 .contains(&wanted))
+}
+
+/// Whether a USING or NATURAL key named `wanted` answers it: where other items may share the name, alone.
+fn merged_answers(scope: &LineageScope<'_>, wanted: &str, context: LineageContext<'_>) -> bool {
+    let named = |merged: &&MergedKey| context.profile.same_identifier(&merged.column.key, wanted);
+    if !scope.merged.iter().any(|merged| named(&merged)) {
+        return false;
+    }
+    if dialect_rules(context.profile).merged_keys_hide_other_items() {
+        return true;
+    }
+    let keys: Vec<&std::ops::Range<usize>> = scope
+        .merged
+        .iter()
+        .filter(named)
+        .map(|merged| &merged.sources)
+        .collect();
+    let uncovered: usize = scope
+        .sources
+        .iter()
+        .enumerate()
+        .filter(|(index, source)| !covered(&keys, *index) && offers(source, wanted, context))
+        .count();
+    keys.len() + uncovered <= 1
+}
+
+/// Whether one of the merged keys' joins holds the `index`th source.
+fn covered(keys: &[&std::ops::Range<usize>], index: usize) -> bool {
+    keys.iter().any(|range| range.contains(&index))
 }
 
 /// How many FROM items offer `wanted`, two under one name counted once.

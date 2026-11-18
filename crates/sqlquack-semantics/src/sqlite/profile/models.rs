@@ -66,6 +66,10 @@ impl DialectRules for SqliteRules {
         false
     }
 
+    fn merged_keys_hide_other_items(&self) -> bool {
+        false
+    }
+
     fn checks_call_signatures(&self) -> bool {
         false
     }
