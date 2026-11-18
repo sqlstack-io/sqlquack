@@ -42,6 +42,16 @@ fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_fou
             )],
         },
         QueryFindingsTestCase {
+            description: "an inline window partitioned by another output's alias (3.40: no such column)",
+            sql: "SELECT quantity AS q, sum(quantity) OVER (PARTITION BY q) AS x FROM orders",
+            expected_findings: &[("E201", "Unknown column 'q' in table 'orders'", 55)],
+        },
+        QueryFindingsTestCase {
+            description: "a named window ordered by another output's alias (3.40: no such column)",
+            sql: "SELECT quantity AS q, sum(quantity) OVER w AS x FROM orders WINDOW w AS (ORDER BY q)",
+            expected_findings: &[("E201", "Unknown column 'q' in table 'orders'", 82)],
+        },
+        QueryFindingsTestCase {
             description: "a ranking function without OVER",
             sql: "SELECT ROW_NUMBER() AS r FROM orders",
             expected_findings: &[("E232", "Window function requires an OVER clause", 0)],
@@ -84,6 +94,16 @@ fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_fou
 #[test]
 fn given_a_sqlite_query_sqlite_accepts_when_checking_then_nothing_is_found() {
     let test_cases = [
+        QueryFindingsTestCase {
+            description: "a window in ORDER BY reading an output alias (3.40: accepted)",
+            sql: "SELECT quantity AS q FROM orders ORDER BY sum(quantity) OVER (ORDER BY q)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a named window only ORDER BY reads, ordered by an output alias (3.40: accepted)",
+            sql: "SELECT quantity AS q FROM orders WINDOW w AS (ORDER BY q) ORDER BY sum(quantity) OVER w",
+            expected_findings: &[],
+        },
         QueryFindingsTestCase {
             description: "a set operation's ORDER BY naming an output in upper case",
             sql: "SELECT id FROM orders UNION ALL SELECT id FROM customers ORDER BY ID",

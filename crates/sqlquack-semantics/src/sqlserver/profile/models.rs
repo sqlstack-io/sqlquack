@@ -65,6 +65,10 @@ impl DialectRules for SqlServerRules {
         false
     }
 
+    fn window_keys_read_outputs(&self) -> bool {
+        false
+    }
+
     fn checks_call_signatures(&self) -> bool {
         false
     }
