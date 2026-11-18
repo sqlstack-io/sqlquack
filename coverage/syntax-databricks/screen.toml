@@ -8,6 +8,11 @@
 # covers one token written in another spelling that the lexer reads as the same token, in every
 # form; only `requote` ('x' and "x", one string literal) qualifies.
 #
+# Letter case is allowed without an entry, because the screen makes no case variants: the lexer
+# reads a keyword and the r or R prefix of a raw string case-insensitively, so SELECT and select,
+# and r'x' and R'x', are one token each and give one tree. A receipt that shows Databricks reading
+# two such spellings differently makes it a finding.
+#
 # [[lexical]]
 # mutation = "requote"
 # reason = "<why the lexer reads both spellings as one token>"
