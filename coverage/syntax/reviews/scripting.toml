@@ -280,3 +280,29 @@ note = "Read in full under review brief version 1 against the documentation page
 "sf.scripting.let.let-default" = "fa624183cf73d33f609b8473f1fed802b2bde09180addabf4f6d645ad6223fce"
 "sf.scripting.let.let-default.variable-assignment-syntax" = "613907a139ae4de0c43d0a86f6459b102f55ddeab18bec46c7b8305f716f78e7"
 "sf.scripting.return" = "e37499675e520a680eb2b5a6547eb4989a94f9fd9f9391ded6b95e8da4948311"
+
+[[review]]
+id = "scripting-010"
+family = "scripting"
+parser_tree = "e3a3c11b087d88ce3023dbb4d1c4152f5b57e1ad"
+reviewed_utc = "2026-11-16T09:56:03Z"
+verdict = "approved"
+forms = [
+  "sf.scripting.begin",
+  "sf.scripting.let.let",
+  "sf.scripting.let.let-default.variable-assignment-syntax",
+  "sf.scripting.return",
+]
+note = "re-bound: set_quantifier rename, diff-checked. Not re-read: scripts/check_rebound_reviews.py found every parse tree of these forms' cases equal to the one the earlier approved review fingerprinted, but for each call's distinct flag read as set_quantifier (true as distinct, false as none, or all where the SQL writes ( ALL); no case, receipt, obligation or definition changed."
+
+[review.fingerprints]
+"sf.scripting.begin" = "bfae597a7c022a8e8df7809c3c9ebbbb2399744bff940577da2e8daece790a23"
+"sf.scripting.let.let" = "2796dea11a4dd585d491b3af2315269e15a05e768cba07687ebfeddf4ecfd4a0"
+"sf.scripting.let.let-default.variable-assignment-syntax" = "ca3100da41be92d85e3eecb35c4983c6a9b6b98931a3093366b30885fedffaee"
+"sf.scripting.return" = "a7f992b98fad935eb8cbc87d69de52cab086197e97c60495cf97aceb26cf26bd"
+
+[review.definitions]
+"sf.scripting.begin" = "811a9c92af3ab88ff10f9f64bc32e427e36042476a471d93c75358914deab6d6"
+"sf.scripting.let.let" = "20a52cc8089c3ebfd217683c12cf53a682176362a6945fb5c05742e59271ac27"
+"sf.scripting.let.let-default.variable-assignment-syntax" = "613907a139ae4de0c43d0a86f6459b102f55ddeab18bec46c7b8305f716f78e7"
+"sf.scripting.return" = "e37499675e520a680eb2b5a6547eb4989a94f9fd9f9391ded6b95e8da4948311"

@@ -1006,3 +1006,116 @@ note = "Approved at its last review with the same definition, obligations and ca
 "sf.classes.forecast.commands.create-forecast.forecast" = "895f57fd4f932a662f69597e3c000b1c7e356b7ddf6cc37b5a675760a47d5d8c"
 "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname" = "2c611ab8a09c541f88ab121af99a8d9c01425a2a12cef0c4b9955d7445e2a921"
 "sf.classes.top-insights.commands.create-top-insights" = "15c7463b346ad5219f1dd443576a97382345089434e0725d97198843f5c7e184"
+
+[[review]]
+id = "classes-016"
+family = "classes"
+parser_tree = "e3a3c11b087d88ce3023dbb4d1c4152f5b57e1ad"
+reviewed_utc = "2026-11-16T09:56:03Z"
+verdict = "approved"
+forms = [
+  "sf.classes.anomaly-detection.commands.create-anomaly-detection",
+  "sf.classes.anomaly-detection.methods.detect-anomalies",
+  "sf.classes.anomaly-detection.methods.show-evaluation-metrics.show-evaluation-metrics-input-data-timestamp-colname-target-colname",
+  "sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config",
+  "sf.classes.anomaly-insights.methods.create-monitor",
+  "sf.classes.anomaly-insights.methods.update-monitor-config",
+  "sf.classes.budget.methods.add-custom-action",
+  "sf.classes.budget.methods.add-resource",
+  "sf.classes.budget.methods.add-resource-tag",
+  "sf.classes.budget.methods.add-shared-resource",
+  "sf.classes.budget.methods.add-tag",
+  "sf.classes.budget.methods.remove-resource",
+  "sf.classes.budget.methods.remove-resource-tag",
+  "sf.classes.budget.methods.remove-shared-resource",
+  "sf.classes.budget.methods.remove-tag",
+  "sf.classes.budget.methods.set-cycle-start-action",
+  "sf.classes.budget.methods.set-resource-tags",
+  "sf.classes.budget.methods.set-user-tags",
+  "sf.classes.classification-profile.commands.create-classification-profile",
+  "sf.classes.classification-profile.methods.describe",
+  "sf.classes.classification-profile.methods.set-custom-classifiers",
+  "sf.classes.classification-profile.methods.set-snowflake-semantic-categories",
+  "sf.classes.classification-profile.methods.set-tag-map",
+  "sf.classes.classification.commands.create-classification",
+  "sf.classes.classification.methods.predict",
+  "sf.classes.custom-classifier.methods.list",
+  "sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname",
+  "sf.classes.forecast.methods.forecast.forecasting-periods",
+  "sf.classes.forecast.methods.forecast.input-data-timestamp-colname",
+  "sf.classes.forecast.methods.forecast.series-value-forecasting-periods",
+  "sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname",
+  "sf.classes.forecast.methods.show-evaluation-metrics.show-evaluation-metrics-input-data-timestamp-colname-target-colname",
+  "sf.classes.top-insights.methods.get-drivers",
+]
+note = "re-bound: set_quantifier rename, diff-checked. Not re-read: scripts/check_rebound_reviews.py found every parse tree of these forms' cases equal to the one the earlier approved review fingerprinted, but for each call's distinct flag read as set_quantifier (true as distinct, false as none, or all where the SQL writes ( ALL); no case, receipt, obligation or definition changed."
+
+[review.fingerprints]
+"sf.classes.anomaly-detection.commands.create-anomaly-detection" = "daffae032e7e26e305bc921e4d3dac814998bb162e28a56c23af61065929cc7b"
+"sf.classes.anomaly-detection.methods.detect-anomalies" = "1b63ac8a419c179243da80e1d489f67f6c7a042b7ce60475481bed2f6f6cac22"
+"sf.classes.anomaly-detection.methods.show-evaluation-metrics.show-evaluation-metrics-input-data-timestamp-colname-target-colname" = "675c676dc9560ef3eecc4ed9948b0d29d48e8f6a903b2f2a583c76e65be6e447"
+"sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config" = "836a1dd76119fcc104f3a64dcf3b8b6eb23043b6a0d065da266512e8fdd66947"
+"sf.classes.anomaly-insights.methods.create-monitor" = "21888a8e74a8beb3c8d048640d9e4dd8de80bfa7733181d61053db87ed154cec"
+"sf.classes.anomaly-insights.methods.update-monitor-config" = "83ad6ef0e2ea5d09700806c4357647d39c93ae45c0c4b7e2a817bd4bcabf3264"
+"sf.classes.budget.methods.add-custom-action" = "acda998ecf05f709c1bf17017e180d2328b5c5deb8f1f8e42e81ffb017b4330a"
+"sf.classes.budget.methods.add-resource" = "4a7304495fdfeb1942fe2743607fe2d1c82e804823d2b9b15ff242c4cddf40ff"
+"sf.classes.budget.methods.add-resource-tag" = "890a9d6e15e44e22e8cfc6ed4481cd98c28ca59dd567a0080544c1279b0d2530"
+"sf.classes.budget.methods.add-shared-resource" = "dcd29848fb2d59dfa3c40051c147667be4b64909eef63a7b56aa309dd770b67d"
+"sf.classes.budget.methods.add-tag" = "6eee013c8571a7ff950313c77f3fa12221d967de599404fabff1d52e702f91a9"
+"sf.classes.budget.methods.remove-resource" = "a29c39a084cadd353e676dc064e639d8117d70d454232116d607b71330db865e"
+"sf.classes.budget.methods.remove-resource-tag" = "ebaf849d07d1f8a76b6a4f95c9f4510392e3a1c25c50cac0cb6f260d610adedd"
+"sf.classes.budget.methods.remove-shared-resource" = "c16992fbb2aa173c7dad1b56c6b54cd7b1de2f57ec7153e0f57bead88cbae21f"
+"sf.classes.budget.methods.remove-tag" = "7acf3c03697ed24e4f25d724b0a910f76f77673e73225bf3026ab207980f5c54"
+"sf.classes.budget.methods.set-cycle-start-action" = "eb65518cc008c6003f5c2c704c3945c9419fec3fe455cef547380eec7b5d5b0b"
+"sf.classes.budget.methods.set-resource-tags" = "6e1bd37d7eba95088100dc32ea032b92901b7f9f1758a1dba4c41a2c636ce76a"
+"sf.classes.budget.methods.set-user-tags" = "b9a9f97ebda64fce95b4d34e259008990f14b8833eae772941f898e8db377d6f"
+"sf.classes.classification-profile.commands.create-classification-profile" = "f61fd06d06789cee4b8cac1000802ce7d79cd725382dff9d2d6ba42507774ab7"
+"sf.classes.classification-profile.methods.describe" = "9a70bb3ece2732f2e11135a7c632b642545520bce69d74282e96ea26671474c6"
+"sf.classes.classification-profile.methods.set-custom-classifiers" = "18befbe7f5f1153f2a687d4c127430e173acd889f7d8f24bd4f4d5cc7e2f2e98"
+"sf.classes.classification-profile.methods.set-snowflake-semantic-categories" = "649ac94a699fcf18e16e9614f13056cb7d1be97620cc2827c7afc033f96d1f70"
+"sf.classes.classification-profile.methods.set-tag-map" = "66cfc9fb52451c52aebde7f8f36bb11e0b70a8922cce4336a6e9d95c294ce15c"
+"sf.classes.classification.commands.create-classification" = "72d477e73e26b57a2bde65087c5ec3b5579185f3a26df876874dd7fc1e9492be"
+"sf.classes.classification.methods.predict" = "19c200f94fed65b2c56157fea095c59d46f9ea21e5f0d3a1edc6051459be8ead"
+"sf.classes.custom-classifier.methods.list" = "dcc8f3fb935e8d9b697b85492fae4014a903ab93eeb34230681519b3b1f8e35b"
+"sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname" = "00bd9e8a276c1af3c090ccb04597e2d4382b6d82c3c4f14bb6dc4d070bda874c"
+"sf.classes.forecast.methods.forecast.forecasting-periods" = "be804b3a7bb27a2a368ba6edf50c5260e130b8e2a99cda4389dda7142fac8900"
+"sf.classes.forecast.methods.forecast.input-data-timestamp-colname" = "47b5872ae2722afd2754b7096a64dde88b07b52cc2fa7576ea3f529112180ca8"
+"sf.classes.forecast.methods.forecast.series-value-forecasting-periods" = "91b054a53cf1f0ebc2bbea73f0f553dfb792dff2a642dc199db0432dfd6257df"
+"sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname" = "7feceb71ec5403c7746d92d54048eec01a47dc3f3726528532b940a792db7c4b"
+"sf.classes.forecast.methods.show-evaluation-metrics.show-evaluation-metrics-input-data-timestamp-colname-target-colname" = "de874317809ccd40ea9bc085ddc61f938757f416b75fec10792e64640f64d7b5"
+"sf.classes.top-insights.methods.get-drivers" = "fbcb06d9a95883031cc1e121eff73c25bbbab3d9402e8739c6dc429b086a63ec"
+
+[review.definitions]
+"sf.classes.anomaly-detection.commands.create-anomaly-detection" = "dc9faf3b8931b87a38098067a0e3de623561a95c78309cca9c702ed89eba5fb2"
+"sf.classes.anomaly-detection.methods.detect-anomalies" = "037e955e4bd739cf7a88ef8a38ba05aef6c971e3c21a42afecd86132a39f1210"
+"sf.classes.anomaly-detection.methods.show-evaluation-metrics.show-evaluation-metrics-input-data-timestamp-colname-target-colname" = "cca4a638fda2397b1984481d785b16119d68e67a5801c904f392627729047ab2"
+"sf.classes.anomaly-insights.methods.adhoc-calculate-anomalies-from-config" = "c7c95099c5d712ce1b9a8c9b273bbfd88609fb17593ac7daa03354db8306f087"
+"sf.classes.anomaly-insights.methods.create-monitor" = "1ab427bb6d39e31d1089386d086f06bbddf670efe9a35454d7baaac48111684a"
+"sf.classes.anomaly-insights.methods.update-monitor-config" = "4fef8511e7cf88ac1e755715052e8b70b6e5231cb68424e6f5a585123a29cb53"
+"sf.classes.budget.methods.add-custom-action" = "e6b6ac14a0e5a57531ac16d391aa1bfae4fff441f55a996a2fb4c468fa9d513e"
+"sf.classes.budget.methods.add-resource" = "7615355bc6a991378b46a9a7515e01c8a6c3f08cddefd20002e1248a128c2ba9"
+"sf.classes.budget.methods.add-resource-tag" = "95a12765dc936e40d4d14827cfdecc94e28c4e02679af3e71769eeedfbe22508"
+"sf.classes.budget.methods.add-shared-resource" = "da320c1e76d09298ae7428674aa8c9b36dd2b73a0132588d2008074f63391cf3"
+"sf.classes.budget.methods.add-tag" = "a9342f1db3f53916b0510b5a0fd36c0670cdf230c55516292c0706be4cf5ec66"
+"sf.classes.budget.methods.remove-resource" = "dbfa7ceb244fcdc3895e2e58365698941bc23bbf585c316fa8fe43be5025aade"
+"sf.classes.budget.methods.remove-resource-tag" = "59849c81638feca78a77cfdf188bcf1a12462579dd29f3450cc4a875614b55cf"
+"sf.classes.budget.methods.remove-shared-resource" = "328b45e2d94a2d161533aa664067968deeb298e8a41fdf453cc8d6dceb34325e"
+"sf.classes.budget.methods.remove-tag" = "df9a53f88eb621aae4d7d5673a401ad494aa07468915b672c9aff44576761e3b"
+"sf.classes.budget.methods.set-cycle-start-action" = "15b571ed664b617d430258522b0f00a3816e88c3b5872d586156edc08fc682cf"
+"sf.classes.budget.methods.set-resource-tags" = "8883017fe60b48e102f306c8853c333e6d7c3ce9972b1e0c6077421027bde429"
+"sf.classes.budget.methods.set-user-tags" = "cca5d585d21911ceb5c96149f88d35d11217a469f65f1ab13f520b04033ee70f"
+"sf.classes.classification-profile.commands.create-classification-profile" = "82d4ff445940075ac95557c7bb5f09d9079a24472c041c100d281e8621b5396b"
+"sf.classes.classification-profile.methods.describe" = "9d8adce5eed4e389ad88b2aa612ae20146eff23434ef822d2005e36bb7cf3b69"
+"sf.classes.classification-profile.methods.set-custom-classifiers" = "723b73c5c167ad38919d93eff02c68d2052aba499607b229e914add3d86f34aa"
+"sf.classes.classification-profile.methods.set-snowflake-semantic-categories" = "57846a25af4a39fb87bdb57bd4edc7b3d8b16acb4cc56cd27907f68b3091a6ba"
+"sf.classes.classification-profile.methods.set-tag-map" = "152ab6fb0c4fc4ac98b9e1b7216ab37757eeae9d56ce929cb9970f0191621311"
+"sf.classes.classification.commands.create-classification" = "02874422ef157b15a8e228eb27c142ee3374e0ed5c1c5f4280c7b11dbb019d5f"
+"sf.classes.classification.methods.predict" = "615ea22befe486f9c6186c9cac3e8ce99ed8c243efe61f4de5c1b215a6aff53a"
+"sf.classes.custom-classifier.methods.list" = "2184bf248f59c964251ce2c233cf4ab8f74bd8f03e0177c80f2e44f7e3d278c3"
+"sf.classes.forecast.commands.create-forecast.forecast-input-data-timestamp-colname-target-colname" = "2c611ab8a09c541f88ab121af99a8d9c01425a2a12cef0c4b9955d7445e2a921"
+"sf.classes.forecast.methods.forecast.forecasting-periods" = "d9f4f42436a2b2f8e49d2e4f0ca4a6fdcaabf8bd92328039e87c87a4099eff9a"
+"sf.classes.forecast.methods.forecast.input-data-timestamp-colname" = "b2b9c6cb25a0ba1deb8fb48260af4b87e2fb0d74d8378ae1a9b257abac27ebe6"
+"sf.classes.forecast.methods.forecast.series-value-forecasting-periods" = "bb22fe3686a9a45fc76ca477b601c05a2554ab155d6e8c7c7a726fc9655b84ab"
+"sf.classes.forecast.methods.forecast.series-value-series-colname-input-data-timestamp-colname" = "211d0dc32b60645aea7eb806ede7504603f9b570c69c01eabc5bf8244e72bd13"
+"sf.classes.forecast.methods.show-evaluation-metrics.show-evaluation-metrics-input-data-timestamp-colname-target-colname" = "381905ccdffdbc720ad6d6fb00fa500e87fb773211a16f17e86f41cdda541cd9"
+"sf.classes.top-insights.methods.get-drivers" = "3192c79042729c3e8aac333204e584252b837d5ba75f1322a3169f61d59dcf44"
