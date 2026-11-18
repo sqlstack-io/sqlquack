@@ -334,7 +334,7 @@ fn structure_rules(
             ));
         }
     }
-    let windows: HashSet<&str> = level
+    let windows: Vec<&str> = level
         .scope
         .windows
         .iter()
@@ -345,7 +345,12 @@ fn structure_rules(
         if let Expression::WindowFunction(window) = expression {
             has_window = true;
             if let Some(name) = &window.over.window_name
-                && !windows.contains(level.key(name).as_str())
+                && !windows.iter().any(|known| {
+                    level
+                        .context
+                        .profile
+                        .same_identifier(known, &level.key(name))
+                })
             {
                 findings.push(rule(
                     "E232",
