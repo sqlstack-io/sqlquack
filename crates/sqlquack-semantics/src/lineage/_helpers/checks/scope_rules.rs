@@ -333,18 +333,18 @@ fn structure_rules(
             ));
         }
     }
-    let windows: HashSet<String> = select
+    let windows: HashSet<&str> = level
+        .scope
         .windows
         .iter()
-        .flatten()
-        .map(|window| level.key(&window.name))
+        .map(|(name, _)| name.as_str())
         .collect();
     let mut has_window: bool = false;
     for expression in in_scope(node) {
         if let Expression::WindowFunction(window) = expression {
             has_window = true;
             if let Some(name) = &window.over.window_name
-                && !windows.contains(&level.key(name))
+                && !windows.contains(level.key(name).as_str())
             {
                 findings.push(rule(
                     "E232",

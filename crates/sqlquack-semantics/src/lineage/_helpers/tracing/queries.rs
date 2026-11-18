@@ -6,7 +6,9 @@ use std::rc::Rc;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, Star};
-use sqlquack_syntax::expressions::queries::models::{Cte, OrderBy, Select, Subquery, Union, With};
+use sqlquack_syntax::expressions::queries::models::{
+    Cte, NamedWindow, OrderBy, Select, Subquery, Union, With,
+};
 use sqlquack_syntax::tokens::models::Span;
 
 use crate::dialects::main::dialect_rules::dialect_rules;
@@ -561,7 +563,7 @@ fn level_scope_and_rows<'a>(
         starts,
         ..empty_scope(ctes, outer)
     };
-    scope.windows = named_windows(select, &scope, context);
+    scope.windows = named_windows(select.windows.iter().flatten(), &scope, context);
     scope.non_null = filtered_non_null(select);
     scope.traced.get_mut().clear();
     if outer.is_none() {
@@ -578,6 +580,8 @@ fn select_query(
 ) -> ResolvedQuery {
     let ctes = with_ctes(select.with.as_ref(), ctes, outer, context);
     let (mut scope, rows) = level_scope_and_rows(select, &ctes, outer, context);
+    let found: Vec<(String, Lineage)> = after_windows(after, &scope, context);
+    scope.windows.extend(found);
     let mut query = ResolvedQuery {
         rows,
         ..ResolvedQuery::default()
@@ -727,7 +731,8 @@ pub(crate) fn takes_clauses(node: &Subquery) -> bool {
             || node.offset.is_some()
             || node.sort_by.is_some()
             || node.cluster_by.is_some()
-            || node.distribute_by.is_some())
+            || node.distribute_by.is_some()
+            || node.windows.is_some())
 }
 
 /// The query within `query`'s parentheses and unaliased subquery nodes, and those nodes, innermost first.
@@ -823,13 +828,13 @@ fn row_filters(select: &Select) -> Vec<&Expression> {
 }
 
 /// What each named window's partitions and orders read.
-fn named_windows(
-    select: &Select,
+fn named_windows<'w>(
+    named: impl IntoIterator<Item = &'w NamedWindow>,
     scope: &LineageScope<'_>,
     context: LineageContext<'_>,
 ) -> Vec<(String, Lineage)> {
     let mut windows: Vec<(String, Lineage)> = Vec::new();
-    for window in select.windows.iter().flatten() {
+    for window in named {
         let mut read: Vec<Lineage> = Vec::new();
         for partition in &window.spec.partition_by {
             read.push(expression_lineage(partition, scope, context));
@@ -843,6 +848,16 @@ fn named_windows(
         ));
     }
     windows
+}
+
+/// What each named window written after a query's parentheses reads, in `scope`.
+pub(crate) fn after_windows(
+    after: &[&Subquery],
+    scope: &LineageScope<'_>,
+    context: LineageContext<'_>,
+) -> Vec<(String, Lineage)> {
+    let windows = after.iter().flat_map(|node| node.windows.iter().flatten());
+    named_windows(windows, scope, context)
 }
 
 /// The columns a star selects (a bare star's merged join keys once, first), EXCLUDE etc. applied.
