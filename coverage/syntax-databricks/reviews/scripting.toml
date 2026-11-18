@@ -1,0 +1,412 @@
+# Approved reviews. Each listed form was read in full against its documentation
+# page, its obligations, its cases with their Databricks receipts, and the local parse trees. An approval holds
+# while the form's definition hash and fingerprint are unchanged; any change makes it stale until re-read.
+
+
+[[review]]
+id = "db-scripting-001"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.case-stmt.case",
+]
+note = "(d) all accepted cases are opaque command trees, e.g. o001 BEGIN CASE 1 WHEN v1 THEN SELECT 1 ; END CASE ; END -> {\"command\":{\"this\":...}}; o009 ELSE likewise. (a) matches page line 1; (b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.case-stmt.case" = "0426ec441c8f98f97120e729a2c3e5c24eb54fe451cde5dd4a29aa1f084ccf88"
+
+[review.definitions]
+"db.scripting.case-stmt.case" = "be8e0bb032d62dd99567ed91e5797b089f9ef01d82ee65049b52718a009bae1f"
+
+[[review]]
+id = "db-scripting-002"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.case-stmt.case.syntax",
+]
+note = "(d) all accepted cases are opaque command trees, e.g. o001 BEGIN CASE WHEN v1 THEN SELECT 1 ; END CASE ; END -> {\"command\":...}; o008 ELSE likewise. (a) matches page line 2; (b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.case-stmt.case.syntax" = "d929c6d05dce6e80086d8abb13d4d61b181e6b63d169318b89b013935ebe7869"
+
+[review.definitions]
+"db.scripting.case-stmt.case.syntax" = "d22cff1b9138a0ecc15da74a1ae0a4212e58c6608e4290865f8eccb7dd7eb133"
+
+[[review]]
+id = "db-scripting-003"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.close-stmt",
+]
+note = "(d) all accepted cases opaque: o001/o003 ... CLOSE c1 ; END, o005 CLOSE `c1 Q`, o007 CLOSE SELECT / `SELECT` -> {\"command\":...}; cursor name and quoting not in fields. (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.close-stmt" = "c33dfff3b2700d4e8665581eda17ce63c949379fa2b2d390a3990ec2610e4bb9"
+
+[review.definitions]
+"db.scripting.close-stmt" = "f3fb9e8c5bda7a24477250d9ba2a41b86552aed0abea5d4d799d3c271c3402b1"
+
+[[review]]
+id = "db-scripting-004"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.compound-stmt",
+]
+note = "(d) every accepted case opaque (o001 BEGIN END, o009, o011, o012, o034, o041, o055, o056 -> {\"command\":...}); BEGIN ATOMIC cases o046/o047/o049/o050/o052 refused by SQLQuack, so no tree. (a) with label/ATOMIC reading, (b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.compound-stmt" = "f8fe87e245f2139b5706cb99e0eb9e8acb62a5f24e164978edbc275a74333cb0"
+
+[review.definitions]
+"db.scripting.compound-stmt" = "df95ebaa16306c1091afe6ac319bea43a6207cc0cb39dd3387693282b5da63a7"
+
+[[review]]
+id = "db-scripting-005"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.fetch-stmt",
+]
+note = "(d) all accepted cases opaque: o001 FETCH c1 INTO v1, o002/o004 FETCH NEXT FROM c1 INTO v1 , v1, o005 FETCH FROM, o016-o021 quoted/keyword names -> {\"command\":...}; NEXT/FROM not marked. (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.fetch-stmt" = "cb43cbb51c83ad252466ad274e255528cb691733d4de602e82eddf7ad3313e0e"
+
+[review.definitions]
+"db.scripting.fetch-stmt" = "16439d08ffefc121f1fd3f01ce994454ca80aeeb9da27dfcdc136edbf78518fc"
+
+[[review]]
+id = "db-scripting-006"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.for-stmt",
+]
+note = "(d) SQLQuack rejects every valid case, so no tree: o001 BEGIN FOR SELECT 1 DO SELECT 1 ; END FOR ; END -> REJECTED at 'SELECT'; same for o002-o035 labelled/AS/nesting cases. (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.for-stmt" = "b1c8d61509196befe53351457826d9c5051d4d24fc2854c5379b82d0da2abbe6"
+
+[review.definitions]
+"db.scripting.for-stmt" = "2280759505fc2d8e25c2511483de9a6ed15485c80826f78ab6f8850a902546b2"
+
+[[review]]
+id = "db-scripting-007"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.get-diagnostics-stmt.diagnostics",
+]
+note = "(d) SQLQuack rejects every valid case at 'GET', so no tree: o001 ... GET DIAGNOSTICS v1 = TRANSACTION_ACTIVE ..., o019 ROW_COUNT, o009 list. (a) with inlined statement_info_item reading, (b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.get-diagnostics-stmt.diagnostics" = "ba3c3fbf2d52f432da57e1de50d7df0faec8fe3eac20e344c544e81d195dd7f7"
+
+[review.definitions]
+"db.scripting.get-diagnostics-stmt.diagnostics" = "9070c707abb56c1907b2bd9709d194d1ea98c4113f88bc05918b83dc82e9b769"
+
+[[review]]
+id = "db-scripting-008"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.get-diagnostics-stmt.diagnostics-condition",
+]
+note = "(d) SQLQuack rejects every valid case at 'GET', so no tree: o001 GET DIAGNOSTICS CONDITION 1 v1 = MESSAGE_TEXT, o018-o022 each item, o008 list. (a) with inlined condition_info_item reading, (b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.get-diagnostics-stmt.diagnostics-condition" = "df8034c8c65544084dc3555c86ed17f4ec4b8504ea8d269e55812e04cb22099f"
+
+[review.definitions]
+"db.scripting.get-diagnostics-stmt.diagnostics-condition" = "5eb3a63000de7b127690078a15c7c7c0d2a5985fd6c5ba36a8803db9e7c77751"
+
+[[review]]
+id = "db-scripting-009"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.if-stmt",
+]
+note = "(d) all accepted cases opaque: o001 BEGIN IF c1 = 1 THEN SELECT 1 ; END IF ; END, o007 ELSEIF ... ELSE ..., o017 ELSE -> {\"command\":...}; branches not in fields. (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.if-stmt" = "8d0df2d4bcfe95476449a9495dedbf2e39c05245725a00a3f1d0e1198c6bf4eb"
+
+[review.definitions]
+"db.scripting.if-stmt" = "c1ec967c03caa1bf559ea7255057b3eb5a5edc136c57423b21b8a595302d8ab7"
+
+[[review]]
+id = "db-scripting-010"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.iterate-stmt",
+]
+note = "(d) accepted cases opaque: o005 ITERATE `l1Q`, o007 ITERATE SELECT / `SELECT` -> {\"command\":...} (o001/o003 None receipts, also opaque). (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.iterate-stmt" = "bc0d7971efe944245538028a27f0a195eef10e176a32bd4850f8ad469717ed4e"
+
+[review.definitions]
+"db.scripting.iterate-stmt" = "dba35937a0382929bad6b1eef3b8036ef1c58a1113cea643515ff1cbf66b24f4"
+
+[[review]]
+id = "db-scripting-011"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.leave-stmt",
+]
+note = "(d) all accepted cases opaque: o001/o003 BEGIN l1 : LOOP LEAVE l1 ; END LOOP l1 ; END, o005 LEAVE `l1Q`, o007 LEAVE SELECT -> {\"command\":...}. (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.leave-stmt" = "17a5c4a99132edbc4ec08eff4f81ab1ef5f71bdddfa2bbb69a9c21d34a0d35c0"
+
+[review.definitions]
+"db.scripting.leave-stmt" = "53c439390963ba72864e338fd163f50c389305cde72936c99a1ce6a10f180da4"
+
+[[review]]
+id = "db-scripting-012"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.loop-stmt",
+]
+note = "(d) all accepted cases opaque: o001 BEGIN LOOP LEAVE l1 ; END LOOP ; END, o002 l1 :LOOP ... END LOOP l1, o019/o021 labels -> {\"command\":...}; labels not in fields. (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.loop-stmt" = "cb4e02b027b9f7684f83e36160f454e13bd6acee613e98e0ff71ee9c02b439ff"
+
+[review.definitions]
+"db.scripting.loop-stmt" = "2782276c682c502f9e4a5bc304af6000bc09f67a87760aacd4094768cc280925"
+
+[[review]]
+id = "db-scripting-013"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.open-stmt",
+]
+note = "(d) all accepted cases opaque: o001 OPEN c1, o005 OPEN c1 USING 1 AS v1 , 1 AS v1, o007 USING 1 -> {\"command\":...}; USING/AS not in fields. (a)(b)(c) hold; AS-without-name suppress holds."
+
+[review.fingerprints]
+"db.scripting.open-stmt" = "e5331e0fbe23fdc28f53407a86330eb25bf2a9429085028d13b3bbc6815712f9"
+
+[review.definitions]
+"db.scripting.open-stmt" = "bfa9c7096d3d40c634309d34c024bddc933a3c03f42c3a3e3c80b6ca2f177c7e"
+
+[[review]]
+id = "db-scripting-014"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.repeat-stmt",
+]
+note = "(d) all accepted cases opaque: o001 BEGIN REPEAT SELECT 1 ; UNTIL v1 END REPEAT ; END, o002 l1 :REPEAT ... END REPEAT l1 -> {\"command\":...}. (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.repeat-stmt" = "a937152b62a38350347d23686bc147eb85f28136710f5def20850a4ff6b25a69"
+
+[review.definitions]
+"db.scripting.repeat-stmt" = "e62e22a690507f5c87e708b63569af8352be8de3fd804bf329fa88cb9b4592bb"
+
+[[review]]
+id = "db-scripting-015"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.resignal-stmt",
+]
+note = "(d) o001 BEGIN DECLARE v1 INT ; DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN RESIGNAL ; END ; SELECT 1 ; END -> opaque {\"command\":...}; RESIGNAL not represented. (a)(b) hold."
+
+[review.fingerprints]
+"db.scripting.resignal-stmt" = "ad099203f01a12963eed6ce44894680738d2d4636f7fcaeb7eb204abe60b9c80"
+
+[review.definitions]
+"db.scripting.resignal-stmt" = "463f33ba420af1bdca6c6ab1efc3085757225bf79543d8afe427d61480126c64"
+
+[[review]]
+id = "db-scripting-016"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.signal-stmt",
+]
+note = "(d) all accepted cases opaque: o001 SIGNAL v1, o003 SIGNAL SQLSTATE '45000', o007 SET MESSAGE_ARGUMENTS = v1, o016 SQLSTATE VALUE '45000' SET MESSAGE_TEXT = 'm' -> {\"command\":...}; VALUE not marked. (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.signal-stmt" = "564a88a4d62e9db01db1a6565aa417ab7130e24774f3dcac2a7de7773bcf2111"
+
+[review.definitions]
+"db.scripting.signal-stmt" = "11ab0f4be8da4bc4ae86d91442f7d8103c9df6efb4b8dbc586e96d155d18fc31"
+
+[[review]]
+id = "db-scripting-017"
+family = "scripting"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.while-stmt",
+]
+note = "(d) all accepted cases opaque: o001 BEGIN WHILE v1 DO SELECT 1 ; END WHILE ; END, o002 l1 :WHILE ... END WHILE l1 -> {\"command\":...}. (a)(b)(c) hold."
+
+[review.fingerprints]
+"db.scripting.while-stmt" = "f99ca12f5c5af5e734d0630b05d3f8bae1d9287e57ccdcf78d1b4f3eaf77dbd3"
+
+[review.definitions]
+"db.scripting.while-stmt" = "91c85b0c9ddcf3cf35e911e6a46d46128890a72960a5f440b6875413429e69ba"
+
+[[review]]
+id = "db-scripting-018"
+family = "scripting"
+parser_tree = "f08262db76019bd47d298a9aac4680f424c924e7"
+reviewed_utc = "2026-11-17T17:59:31Z"
+verdict = "approved"
+forms = [
+  "db.scripting.case-stmt.case",
+  "db.scripting.case-stmt.case.syntax",
+  "db.scripting.close-stmt",
+  "db.scripting.compound-stmt",
+  "db.scripting.execute-immediate",
+  "db.scripting.fetch-stmt",
+  "db.scripting.for-stmt",
+  "db.scripting.get-diagnostics-stmt.diagnostics",
+  "db.scripting.get-diagnostics-stmt.diagnostics-condition",
+  "db.scripting.if-stmt",
+  "db.scripting.iterate-stmt",
+  "db.scripting.leave-stmt",
+  "db.scripting.loop-stmt",
+  "db.scripting.open-stmt",
+  "db.scripting.repeat-stmt",
+  "db.scripting.resignal-stmt",
+  "db.scripting.signal-stmt",
+  "db.scripting.while-stmt",
+]
+note = "Re-read on 17 Nov 2026 at 1ac76dd68 against the 2026.45 receipts in evidence set evL, after the scripting parser commits. It answers the (d) findings of db-scripting-001 to -017, whose bindings went stale with these trees: no case is opaque any more. Of the 237 cases, 112 are accepted locally and every one is a scripting tree that keeps each word of its text (the screen flags none); the warehouse parses all 112, accepting 53 and failing 59 only after parsing (UNRESOLVED_COLUMN 25, INVALID_LABEL_USAGE 10, CURSOR_NOT_FOUND 9, CONDITION_NOT_FOUND 8, UNRESOLVED_VARIABLE 3, USER_RAISED_EXCEPTION 2, UNBOUND_SQL_PARAMETER 1, DUPLICATE_ASSIGNMENTS 1). The trees keep begin and end labels apart, ATOMIC, nested blocks, handlers with their action, conditions and body, declared conditions and cursors, IF and CASE branches, FOR's optional variable and query, LEAVE and ITERATE with their label, FETCH's NEXT FROM or FROM and its targets, GET DIAGNOSTICS' condition number and items, SIGNAL's SQLSTATE, VALUE and SET item, RESIGNAL, and quoted names as quoted. Where a reading could be doubted, the receipts settle it: OPEN c1 USING 1 AS is accepted by the warehouse, so AS is the alias name, as the tree reads it; SIGNAL SQLSTATE fails with \"Condition SQLSTATE not found\", so SQLSTATE is a condition name, as the tree reads it; and in ITERATE's positive (kb2c39e2ec633) SET c1 = c1 + 1 is a variable assignment, which the loop's ending proves. execute-immediate is reviewed for the first time: a utility statement keeping the statement text, the INTO targets and the USING arguments, with an AS alias and a bare one apart (its INTO targets are table nodes, a fix-list item). The 125 rejects are all PARSE_SYNTAX_ERROR at the warehouse and syntax errors locally; 103 are at the warehouse's position. The other 22 are refused at an empty body's END or at a missing or misplaced keyword, up to 6 characters before the word the warehouse names, except three FOR texts the warehouse reports at the query with \"missing 'DO'\", which are refused at the actual defect, 15 to 19 characters later. The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.scripting.case-stmt.case" = "028c0326c3289e076bc02b4d311b740eba9481a79b5721f3db364f261232b3be"
+"db.scripting.case-stmt.case.syntax" = "8248ddbeae8ad85218ba95d97643079cf38f981f7a525ec8639839dbf989a55d"
+"db.scripting.close-stmt" = "14c9996cdf36c61c562561fb6ad836d953514f91f56fc09172f7f808eba37fdf"
+"db.scripting.compound-stmt" = "b4e2c401ea6dcca234cae975ca569e0a2c03b7beca2f21cc82c310a3c4669438"
+"db.scripting.execute-immediate" = "0866fa2f6a14851d5105f3757b5d0ae2236b0433f8b66a9574341491f78e65a4"
+"db.scripting.fetch-stmt" = "21c5cff49200d8ab3b694681dad7ada0a945867f83bd3c3a6ad63ebce44d9cda"
+"db.scripting.for-stmt" = "1fc72a8fcc3e4fe851cb06703d8ad6c0f817241910ac85ebe373ac3a47516937"
+"db.scripting.get-diagnostics-stmt.diagnostics" = "161cdc864706731a6fb2bea5062f5c419b473790adc13a1539adf1003ff936de"
+"db.scripting.get-diagnostics-stmt.diagnostics-condition" = "35c034d5710314b0b8859a12f44fce1cd31f3b20890e6c3c56673cfaea11018d"
+"db.scripting.if-stmt" = "9a60419233891cb3f4e09c8db7691d24220ee22de64822884e31b3062e5d76fb"
+"db.scripting.iterate-stmt" = "ce863b79e6110b56e496d1b14da71dac18242e0dc53561640df8fd861dbd9e92"
+"db.scripting.leave-stmt" = "26fefc56f4ef45f85d5397ca4a0eb784b6dd12b3dc25f6bf1ac270df5a2bc011"
+"db.scripting.loop-stmt" = "c005aae0f9426448dd7a126db17230ff16a462b750d06be93008ecd7252ba70a"
+"db.scripting.open-stmt" = "989d6530e567950782a9145d474846706483e86286289b204924fda5355c10a6"
+"db.scripting.repeat-stmt" = "5a39105b06cc492466614b8b513b8f1d150572efac9078c501a957bf8489abd9"
+"db.scripting.resignal-stmt" = "189e57573dae074c7ace0d2477e155334ec8b617dfff30346cf838f97c79f80d"
+"db.scripting.signal-stmt" = "f3575411af77b55b894dc31143e2e6332ce9d1139848049f8daaa6d4d8a4d332"
+"db.scripting.while-stmt" = "da07f2c97c062097e4a215c179e4ed9e80425d809e9ed1e75ea8575073487902"
+
+[review.definitions]
+"db.scripting.case-stmt.case" = "be8e0bb032d62dd99567ed91e5797b089f9ef01d82ee65049b52718a009bae1f"
+"db.scripting.case-stmt.case.syntax" = "d22cff1b9138a0ecc15da74a1ae0a4212e58c6608e4290865f8eccb7dd7eb133"
+"db.scripting.close-stmt" = "f3fb9e8c5bda7a24477250d9ba2a41b86552aed0abea5d4d799d3c271c3402b1"
+"db.scripting.compound-stmt" = "df95ebaa16306c1091afe6ac319bea43a6207cc0cb39dd3387693282b5da63a7"
+"db.scripting.execute-immediate" = "68acd2680b5122a062cf7a293f02b39b2839d2eef3ec6e2516305a28a77d0806"
+"db.scripting.fetch-stmt" = "16439d08ffefc121f1fd3f01ce994454ca80aeeb9da27dfcdc136edbf78518fc"
+"db.scripting.for-stmt" = "2280759505fc2d8e25c2511483de9a6ed15485c80826f78ab6f8850a902546b2"
+"db.scripting.get-diagnostics-stmt.diagnostics" = "9070c707abb56c1907b2bd9709d194d1ea98c4113f88bc05918b83dc82e9b769"
+"db.scripting.get-diagnostics-stmt.diagnostics-condition" = "5eb3a63000de7b127690078a15c7c7c0d2a5985fd6c5ba36a8803db9e7c77751"
+"db.scripting.if-stmt" = "c1ec967c03caa1bf559ea7255057b3eb5a5edc136c57423b21b8a595302d8ab7"
+"db.scripting.iterate-stmt" = "b5adf592da5446a6ad329965ebb545df29417b4807f6e736cd6cebd3a556924f"
+"db.scripting.leave-stmt" = "53c439390963ba72864e338fd163f50c389305cde72936c99a1ce6a10f180da4"
+"db.scripting.loop-stmt" = "2782276c682c502f9e4a5bc304af6000bc09f67a87760aacd4094768cc280925"
+"db.scripting.open-stmt" = "bfa9c7096d3d40c634309d34c024bddc933a3c03f42c3a3e3c80b6ca2f177c7e"
+"db.scripting.repeat-stmt" = "e62e22a690507f5c87e708b63569af8352be8de3fd804bf329fa88cb9b4592bb"
+"db.scripting.resignal-stmt" = "463f33ba420af1bdca6c6ab1efc3085757225bf79543d8afe427d61480126c64"
+"db.scripting.signal-stmt" = "8d0778e8a905c36f5fb595413f8951d07d6d22bfab650308a24df9b5b109af13"
+"db.scripting.while-stmt" = "91c85b0c9ddcf3cf35e911e6a46d46128890a72960a5f440b6875413429e69ba"
+
+[[review]]
+id = "db-scripting-019"
+family = "scripting"
+parser_tree = "f08262db76019bd47d298a9aac4680f424c924e7"
+reviewed_utc = "2026-11-17T18:36:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.scripting.execute-immediate",
+]
+note = "Withdraws this form's approval in db-scripting-018, which stays as written. USING arguments do not keep their aliases: EXECUTE IMMEDIATE 'SELECT ?' USING 1 x gives the argument list [1, x], the shape of two arguments; USING 1 AS x gives a flat [1, AS x] pair as the list itself, while USING 1 AS x , 2 nests [1, AS x] as one item of the list. Recorded accepted cases k393fb1cc3084, k49edafa1aac3 and kc99e87121429 have the alias written without AS, so their trees cannot be told from two arguments. USING ( 1 , AS , x ) is also accepted locally, with AS read as a column. Needs: one argument node holding its expression and optional alias, keeping whether AS was written, and a receipt for the parenthesised AS text. The INTO targets being table nodes is a naming item on the fix list, not part of this finding."
+
+[review.fingerprints]
+"db.scripting.execute-immediate" = "0866fa2f6a14851d5105f3757b5d0ae2236b0433f8b66a9574341491f78e65a4"
+
+[review.definitions]
+"db.scripting.execute-immediate" = "68acd2680b5122a062cf7a293f02b39b2839d2eef3ec6e2516305a28a77d0806"
+
+[[review]]
+id = "db-scripting-020"
+family = "scripting"
+parser_tree = "f08262db76019bd47d298a9aac4680f424c924e7"
+reviewed_utc = "2026-11-17T18:36:33Z"
+verdict = "approved"
+forms = [
+  "db.scripting.iterate-stmt",
+]
+note = "Re-read on 17 Nov 2026 at a67bc51e4, after the change that reads SET inside a compound as a variable assignment. That change altered one of this form's trees: in the positive kb2c39e2ec633 (BEGIN DECLARE c1 INT DEFAULT 0 ; l1 : LOOP SET c1 = c1 + 1 ; IF c1 > 1 THEN LEAVE l1 ; END IF ; ITERATE l1 ; END LOOP l1 ; END), SET c1 = c1 + 1 is now a set_statement item naming c1 with the value c1 + 1 as an expression, where it was raw configuration text. The warehouse accepted that text and the loop ends, so the SET did assign c1, as the tree now reads it. The form's other trees are unchanged from db-scripting-018's reading. db-scripting-018 bound this form at the fingerprint of the tree before the change, because the checker that wrote it was built before that change; this review binds it at the current fingerprint and definition."
+
+[review.fingerprints]
+"db.scripting.iterate-stmt" = "d0bdf0f772a025905a792decc8248389ebf51164b31034608066c59a64502e5c"
+
+[review.definitions]
+"db.scripting.iterate-stmt" = "b5adf592da5446a6ad329965ebb545df29417b4807f6e736cd6cebd3a556924f"
+
+[[review]]
+id = "db-scripting-021"
+family = "scripting"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:41:26Z"
+verdict = "approved"
+forms = [
+  "db.scripting.execute-immediate",
+]
+note = "Re-read on 17 Nov 2026 at 0f34dd46f against the existing 2026.45 receipts, after the parser commit that keeps USING aliases and TBLPROPERTIES keys and values as written. It answers db-ddl-067 (alter-view) and db-scripting-019 (execute-immediate), and re-reads alter-table, whose binding went stale when its UNSET TBLPROPERTIES case k769d23311612 changed tree. Of these forms' 169 cases, 64 are accepted locally and each is a tree that keeps each word of its text (the screen flags none); 105 are rejected, 97 at the warehouse's position, 7 a few characters earlier (all PARSE_SYNTAX_ERROR on the warehouse side and syntax errors locally, the same cases as before), 1 whose receipt gives no position. alter-view: SET TBLPROPERTIES keeps each key and value as written (k83dd4f39ba83: string key, string value) and UNSET TBLPROPERTIES keeps each key as written (k897fc9e5f983: a string key), both accepted by the warehouse. execute-immediate: an alias after a USING argument is that argument's alias, with whether AS was written: k805f71ec931f gives two aliased arguments with AS, and k393fb1cc3084, k49edafa1aac3 and kc99e87121429 each give one argument aliased without AS (SELECT, `v1 Q`, `SELECT`); the warehouse accepts all three, which a second argument would not allow without a comma. alter-table: k769d23311612 keeps its string key. Not settled here: EXECUTE IMMEDIATE ... USING ( 1 , AS , x ) has no receipt yet (pending recording); INTO targets are table nodes, a naming item on the fix list."
+
+[review.fingerprints]
+"db.scripting.execute-immediate" = "651a57f982765fce783c5ba8dc4704d5d3efafc29db15239f4c8c66407d0455e"
+
+[review.definitions]
+"db.scripting.execute-immediate" = "68acd2680b5122a062cf7a293f02b39b2839d2eef3ec6e2516305a28a77d0806"

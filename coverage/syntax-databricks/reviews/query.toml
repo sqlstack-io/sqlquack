@@ -102,3 +102,1006 @@ note = "Read against the pinned Databricks documentation pages and the Spark 4.2
 "db.query.select-values.select" = "90f5d9b4130452acf461fedaecc1a1d8501063737cb2e57921f2cfa66dd27456"
 "db.query.select-values.values" = "a6db7aa8f5c62ba3c3a5baca1a5ed5b2a2543b3b997855eea36478ac5a8081a7"
 "db.query.star" = "164b0d09702bed1e4f3243bf557f5ea71a523e969996d731243fb5ef7519b02a"
+
+[[review]]
+id = "db-query-002"
+family = "query"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T05:37:21Z"
+verdict = "approved"
+forms = [
+  "db.query.select",
+  "db.query.select-limit",
+  "db.query.select-match-recognize-define",
+  "db.query.select-sampling",
+  "db.query.select-tvf",
+  "db.query.select-values.values",
+]
+note = "Re-read in full on 16 Nov 2026 against the documentation page, the form's obligations, its cases with their Databricks receipts and the local parse trees. Bound on 251cfd3dc only where the form's fingerprint and definition hash still equal those of the dossier that was read; forms that changed since are left for a new reading."
+
+[review.fingerprints]
+"db.query.select" = "017a1accce338de1ac7ed64681c65099887dc7fa60f07b59149dcf12d5375cde"
+"db.query.select-limit" = "ed39b1fffb5b68fb62819aaf7ea4b2fcc54036f03f1827e0fc1bf0b5e17d2833"
+"db.query.select-match-recognize-define" = "01f7bed5206e7d82cd0b0c0d7f44039b1d4ee609fc4534031629a6d436a54e6e"
+"db.query.select-sampling" = "4dfee87db56486b2b6038e6d406982534bade213fa2d952179d55bec7a5b07ba"
+"db.query.select-tvf" = "d49aff2865ed26e781eff61478ef0586e3e013c2713dc968cfc1157c1b03c69d"
+"db.query.select-values.values" = "747d1d4b00b3cc00da44d5da74f105652039db660679c0a857ed68b9753302b0"
+
+[review.definitions]
+"db.query.select" = "fcd9b40d1fc28db0f7e428cb6540faa5805aee233e8526a0011dd44ecc1489a3"
+"db.query.select-limit" = "c3a6537b389984ab892dc6c2d0ad4b6cb535b1d38b99e78742309981c3ae4e4f"
+"db.query.select-match-recognize-define" = "286148bb6ea73adb7fa607d51d8ffe5c15a2c89e2357521cc21ff776e3e60be9"
+"db.query.select-sampling" = "0224367882da90c10a5d28b0de27850cb7c7b4bbbbabc01644e17ea9293ccd18"
+"db.query.select-tvf" = "3be2ea2ae0d59522a44e854d58e4cf409433455c7a934cdf5ea5ba98ed0d9f85"
+"db.query.select-values.values" = "900853f1f1a0a1c114635211640df146f9df2ff21e217a5e83db4f94cfbd010f"
+
+[[review]]
+id = "db-query-003"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.query",
+]
+note = "(d) pipe desugared: o043 SELECT 1 |> WHERE 1 = 1 gives select * from subquery + where_clause, no |> mark; o055 SELECT c1 FROM t1 |> tree equals SELECT c1 FROM t1. (b) stricter: o014/o018 DISTRIBUTE/SORT branch case is bare SELECT 1, same as option_absent."
+
+[review.fingerprints]
+"db.query.query" = "387e1cf6ad1f636b02386350e2cf65c0fe3ee995956ceb1a00c0175f3b0940c5"
+
+[review.definitions]
+"db.query.query" = "6353907c6e1eb9910f8c7c00033ff01a987b5c149f55860a6e3afe2c45535b05"
+
+[[review]]
+id = "db-query-004"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-groupby.hive-grouping-sets",
+]
+note = "(d) strict call: o001 GROUP BY c1 GROUPING SETS ( c1 ) -> group_by.expressions [column c1, grouping_sets] with no Hive mark, the shape the comma (cross-product) form GROUP BY c1 , GROUPING SETS ( c1 ) takes; page says Hive form ignores the GROUP BY list."
+
+[review.fingerprints]
+"db.query.select-groupby.hive-grouping-sets" = "a9106995bf9a7fce5ceb1388b9032d0e6236f8060fa90de12bda60e542f99a7d"
+
+[review.definitions]
+"db.query.select-groupby.hive-grouping-sets" = "85bfba731332bf9f53018fc6044b84ed9b34be412986814337225d7a3bfe7943"
+
+[[review]]
+id = "db-query-005"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-match-recognize",
+]
+note = "(c) strict call: o029/o030 class <row_pattern_definition_list> as a string; page says it defines boolean variables (var AS cond). o030 DEFINE m1 fails for the missing AS <cond>, not wrong kind; fill the name: ... DEFINE 'v1' AS TRUE ). Grammar, trees, outcomes fine."
+
+[review.fingerprints]
+"db.query.select-match-recognize" = "743b791fd5aa12920b1ee628f310d0bbd25dd97c33d355c5490848cd3f82a7db"
+
+[review.definitions]
+"db.query.select-match-recognize" = "e5176762d86e68527e7b8ba4c350b512ade4abc0257531619c486ab57b0088a4"
+
+[[review]]
+id = "db-query-006"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-nearest-by",
+]
+note = "(d) every accepted case is an opaque command tree, e.g. o001 SELECT * FROM t1 JOIN t2 APPROX NEAREST BY DISTANCE vector_l2_distance ( 1 , 1 ) -> {\"command\":{\"this\":\"SELECT * ...\"}}; APPROX/EXACT, DISTANCE/SIMILARITY, num_results not in fields. (a) with join-type reading, (b)(c) hold."
+
+[review.fingerprints]
+"db.query.select-nearest-by" = "b6b0f5332c03bb4aec57d37ea0fbbe0a6e45cb5166abe5d1f4cd6801eb58d651"
+
+[review.definitions]
+"db.query.select-nearest-by" = "e4af8a94c4e1f52762ad8dd6d15ca7de9d30e79ef57b67af7eeaeb27fac9e399"
+
+[[review]]
+id = "db-query-007"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-pipeop",
+]
+note = "(d) pipe operations desugared, keywords lost: FROM t1 |> AGGREGATE sum ( c1 ) -> plain select sum(c1) from t1; |> SET c1 = 1 -> star replace; |> DROP c1 -> star except; |> EXTEND 1 -> select *, 1; no |> mark anywhere. (a)(b)(c) hold with readings. Parser fix."
+
+[review.fingerprints]
+"db.query.select-pipeop" = "61d350e40f53818b1703f43e64fb7023261198b9f56c755c249f5789af92e40b"
+
+[review.definitions]
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
+
+[[review]]
+id = "db-query-008"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-table-reference",
+]
+note = "(d) opaque command trees: o117/o052/o054 (... JOIN t2 APPROX NEAREST 1 BY ...) and o085/o090/o093/o094/o096 (LATERAL ( SELECT 1 ) TABLESAMPLE ( 50 PERCENT ) a1). Also o037 STREAM ( t1 ) a1 puts the alias inside paren. (a) with NEAREST BY reading, (b)(c) hold."
+
+[review.fingerprints]
+"db.query.select-table-reference" = "a1338eb28e74a8cea83faf68c5f30d5a903046079c28766714bfded1ed53fd13"
+
+[review.definitions]
+"db.query.select-table-reference" = "d2a4dacf989a91964280f05d75f94ba34e1754f4e40e1dece0654bf0bef28c07"
+
+[[review]]
+id = "db-query-009"
+family = "query"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-watermark",
+]
+note = "(d) every WATERMARK case is an opaque command tree, e.g. o014 SELECT * FROM t1 TABLESAMPLE ( 50 PERCENT ) WATERMARK c1 DELAY OF INTERVAL 1 MINUTE a1 -> {\"command\":...}; also o010-o019, o033-o047, o053. (a) with JOIN/VALUES reading, (b)(c) hold."
+
+[review.fingerprints]
+"db.query.select-watermark" = "eb226863d10fb5fd90121d0d20afc2acabadebea9aa213a4bb8b9f64c64011ac"
+
+[review.definitions]
+"db.query.select-watermark" = "f7848a7ca823a2825c8b15df53dc7eed9d8906e0047df793440ce859e57939a6"
+
+[[review]]
+id = "db-query-010"
+family = "query"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.query.select-match-recognize-define",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 01f7bed5206e7d82cd0b0c0d7f44039b1d4ee609fc4534031629a6d436a54e6e -> 2ea3281ccd806ccb2b9c168ad73ff56b363a364de330d954add7948bb1e65479: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.query.select-match-recognize-define" = "2ea3281ccd806ccb2b9c168ad73ff56b363a364de330d954add7948bb1e65479"
+
+[review.definitions]
+"db.query.select-match-recognize-define" = "286148bb6ea73adb7fa607d51d8ffe5c15a2c89e2357521cc21ff776e3e60be9"
+
+[[review]]
+id = "db-query-011"
+family = "query"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.query.pipeline.table",
+  "db.query.pipeline.table.syntax",
+  "db.query.select-clusterby",
+  "db.query.select-cte",
+  "db.query.select-distributeby",
+  "db.query.select-groupby.group-by",
+  "db.query.select-groupby.group-by-all",
+  "db.query.select-having",
+  "db.query.select-match-recognize-measures",
+  "db.query.select-named-window",
+  "db.query.select-setops",
+  "db.query.select-values.select",
+  "db.query.star",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. select-pipeop is left out: its pipe operations are still desugared, as its changes_requested review says. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "25d027bd61a99d3d57a9da253dcfe75ca901e5f0bbf25dae97ff5a475cec8224"
+"db.query.pipeline.table.syntax" = "eabd828c1325b2dd7c1fa81fdae6c1fab816a0f9fe728443ed286354663d61a1"
+"db.query.select-clusterby" = "a1088dd15b83e7d613023f03e23f9d0182a9c5916e1116dec0333c0d0919521e"
+"db.query.select-cte" = "9b8d023197a6fac8450482de57a5fc525b507000f7a479b28ec3ffe3867763e3"
+"db.query.select-distributeby" = "44ad96d51b1305ac280948802017c8de4f80e76359cd7e2b1f595486b4742105"
+"db.query.select-groupby.group-by" = "fbff42c0d570951d9cee0074fea6fe67f42a8651e8b2ca1bc8f41a1eb91d1cab"
+"db.query.select-groupby.group-by-all" = "fa2805d24cb225a8f7eb442ec3de681cec7b2633ac57d51be5a0890a6a22e2f4"
+"db.query.select-having" = "8ee4a722a65a0a6b46899c6f27c90abc855b72cb1b21f64c4ae5f9ca8e1aa25b"
+"db.query.select-match-recognize-measures" = "e3c843c151c5d56b6836fd501d3c86a2775fe0496954a4129d6047fc6bede6c1"
+"db.query.select-named-window" = "33a149b002fa1b100c3ed9410ecb0f43deb725bdb6918bf7c82a7189b8ce6d11"
+"db.query.select-setops" = "ac3174fe7ce3b0c33428a459ae65278ed81f8ad7c4436c2938569c568390eae2"
+"db.query.select-values.select" = "9858f4c0b636b74864c192405bb384e53bda1747d5238bfafb18f35994af68f1"
+"db.query.star" = "ff6b5e7c8eeefde4efef4fbf47cf39028e9dafcfc1b97cbdd5db37c2d0d88c6d"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+"db.query.select-clusterby" = "38fe8efe128232ce2782263687cd4dfb92089b732949e7c16c775ac0ecb64cc9"
+"db.query.select-cte" = "215961353463e448a0a2f0d114a1b8e05f01e0dbbaedc47892809e699d4d724e"
+"db.query.select-distributeby" = "64638d47badc45e7856b65200d10962f063836f74b7dfc5140b754a9140f7f85"
+"db.query.select-groupby.group-by" = "466e6081b946b74b6accb69b8307427b364773a8b63e68176861331c001adaee"
+"db.query.select-groupby.group-by-all" = "fd02a9e674ca8c80d6fcd5c5cbcc833b0708bbb955f0066d71a50a2d2e0dc52b"
+"db.query.select-having" = "e317eca079db2b0c88124bebc89dde607cd15e7569cd884bc65eba18747170f1"
+"db.query.select-match-recognize-measures" = "5108ed9bf7cc6a9a9e6e128dae8976b711fb1809b5ebe8bd0bf42059ac90f801"
+"db.query.select-named-window" = "2bad67d99f5d696b1627c74c3f10eef466c261bf28787c3d89023f95e1598dd6"
+"db.query.select-setops" = "ef6bddadec818c3e805bb7b8084e5c214234d71fa19f170a6d66bfb17909853f"
+"db.query.select-values.select" = "90f5d9b4130452acf461fedaecc1a1d8501063737cb2e57921f2cfa66dd27456"
+"db.query.star" = "164b0d09702bed1e4f3243bf557f5ea71a523e969996d731243fb5ef7519b02a"
+
+[[review]]
+id = "db-query-012"
+family = "query"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:28:47Z"
+verdict = "approved"
+forms = [
+  "db.query.select-groupby.group-by-rollup-cube",
+  "db.query.select-groupby.nested-grouping-sets",
+  "db.query.select-groupby.subscript-dot",
+  "db.query.select-hints.join-hint-alias",
+  "db.query.select-pivot",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 6: a form whose earlier approval went stale and that gained cases after it, nearly all missing-parenthesis negatives. Read on e8c8ae5f7 against the 2026.45 receipts. Every new case was read. Each new reject fails where its receipt does, at the token where the parenthesis belongs; the position differences were read on purpose: the warehouse reads FILTER or file as an alias before failing, reports SET with no key without a position, or fails at the missing operand where the parser reports the start of the failed alternative (SUBSTR ... FROM, GROUPING SETS). The mechanical repair of each differing reject (restoring the operand or the parentheses) is accepted locally and matches a recorded positive. The new accepts (a hint list without parentheses, two session settings) were read as trees. Every accepted case of the form passed the check that its SQL's names and literals all appear in its tree. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.select-groupby.group-by-rollup-cube" = "ee4538e7e24137701d09a62f3744f05c017da69a645d39c9fcf3d38bc2874e0d"
+"db.query.select-groupby.nested-grouping-sets" = "5aa7a243a56e827c572dd2503f33ce9ecad8fad1f68a68efd621b38e1170b7e5"
+"db.query.select-groupby.subscript-dot" = "13aed3cfc3a79926508279e702e8e3eaf453b297293bb32978d90fd1cd5cbde3"
+"db.query.select-hints.join-hint-alias" = "ac0e5fdeaef48f63ba3fbe8197d3c3efb8bc977d5eec88922f2f94da96ba408a"
+"db.query.select-pivot" = "af41e1f41a592426154b560797a17f03a0a049538a06e615f5669fc419034666"
+
+[review.definitions]
+"db.query.select-groupby.group-by-rollup-cube" = "082253722d146a7c94983c8f75d09a73c6fa0babb503871a4f451ac54ed0cce8"
+"db.query.select-groupby.nested-grouping-sets" = "bfcad8d728918fb014efe9913a078941efab771931173b89c9d6e85306590033"
+"db.query.select-groupby.subscript-dot" = "d48fa943701abfff4856461d7cd0dd852594ee4e236ab764f5464e5dd90d8f1f"
+"db.query.select-hints.join-hint-alias" = "4aa02c2a49b11e126ba14477f62aa8856796fe6143adee3dc7d7fdc5add9918b"
+"db.query.select-pivot" = "d3197b6aa0ebe2d38ba40b2e5936295f348d2fcb646ea41bd1925898a384792c"
+
+[[review]]
+id = "db-query-013"
+family = "query"
+parser_tree = "3c548df564a937f1ee8115bf76553e2f84fb9f13"
+reviewed_utc = "2026-11-17T09:50:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-groupby.group-by",
+]
+note = "Withdraws this form's approval. The tree-identity sweep over the accepted cases of every verified form found GROUP BY c1 WITH ROLLUP and GROUP BY c1 WITH CUBE parse to the same tree, apart from spans, as GROUP BY ROLLUP ( c1 ) and GROUP BY CUBE ( c1 ): the WITH spelling, which the page's Syntax block offers beside the function spelling, is lost. The tree must keep the WITH spelling before this form can be approved."
+
+[review.fingerprints]
+"db.query.select-groupby.group-by" = "fbff42c0d570951d9cee0074fea6fe67f42a8651e8b2ca1bc8f41a1eb91d1cab"
+
+[review.definitions]
+"db.query.select-groupby.group-by" = "466e6081b946b74b6accb69b8307427b364773a8b63e68176861331c001adaee"
+
+[[review]]
+id = "db-query-014"
+family = "query"
+parser_tree = "ac626497e83bc4a52c51aecec5a64b5b8dffc625"
+reviewed_utc = "2026-11-17T10:37:59Z"
+verdict = "approved"
+forms = [
+  "db.query.pipeline.table",
+  "db.query.pipeline.table.syntax",
+  "db.query.select-pipeop",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in 47360432d, which keeps each pipe operator and its pipe token in the select's pipe_operators. Read against the 2026.45 receipts in evidence set evJ. Every locally accepted case's parse tree was read. Each piped case now carries its marks (|> AGGREGATE, |> SET, |> DROP, |> EXTEND, |> UNION and so on, | WHERE for the bare pipe, and |> alone for a trailing pipe), beside the operands the select applies, so no pipe case shares a tree with its desugared plain query. The mechanical check finds every name and literal of each case in its tree. Of the locally rejected cases, five differ in position, all in select-pipeop, and were read on purpose. In four (|> OFFSET, |> ORDER BY, |> LIMIT, |> LIMIT 1 OFFSET) the operand is missing at the end: the warehouse backtracks to the clause keyword, and the local parser fails at end of input. The fifth (|> SELECT c1 GROUP BY c1 AS a1) is refused at AS locally and at a1 in the warehouse, which gives no position. Every mechanical repair (adding the operand, or dropping AS a1) parses locally, and the recorded receipts of the same texts parse. This supersedes the concern of db-query-007, whose binding is now stale. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "2858125f06064ea0fed04851b3277709e3f6c3e2eea3f58a3511f181b2f9f379"
+"db.query.pipeline.table.syntax" = "6c768709f68a7a1b99790cd91c8223af8506ba90e93939edbffbe84135551e3b"
+"db.query.select-pipeop" = "7a6e18f771214e6d696569a7336428f19994edf21eddd90d5a3a61dd42539da7"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
+
+[[review]]
+id = "db-query-015"
+family = "query"
+parser_tree = "ac626497e83bc4a52c51aecec5a64b5b8dffc625"
+reviewed_utc = "2026-11-17T10:38:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.query",
+]
+note = "Re-read on 17 Nov 2026 after the pipe-marks parser fix; carries forward db-query-003, whose binding went stale. The pipe concerns are resolved: o043 SELECT 1 |> WHERE 1 = 1 now keeps |> WHERE, and o055 SELECT c1 FROM t1 |> keeps the trailing |>. Still open: the o014 and o018 DISTRIBUTE BY and SORT BY branch cases are a bare SELECT 1, the same text as the option_absent case, so nothing shows those branches. The cases need regenerating before this form can be approved."
+
+[review.fingerprints]
+"db.query.query" = "0e7a3e724f5ee5f228fc0f5e063ebd4f871274edb4715e99221b46622291c565"
+
+[review.definitions]
+"db.query.query" = "05ca82c79f7715a6d9c31e02155c05714239afdd71189c9277d3d5db32a3765e"
+
+[[review]]
+id = "db-query-016"
+family = "query"
+parser_tree = "1c5f0bae2afa31f7a0706bb6d0906e5c53a44da4"
+reviewed_utc = "2026-11-17T11:13:51Z"
+verdict = "approved"
+forms = [
+  "db.query.select-groupby.group-by",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in 11c98eccb, which keeps a trailing WITH ROLLUP or WITH CUBE in the group_by node's with_modifier. Read against the 2026.45 receipts in evidence set evJ. All 3 locally accepted WITH cases carry with_modifier true over a ROLLUP or CUBE call of their items, so none shares a tree with GROUP BY ROLLUP ( ... ) or CUBE ( ... ), whose 7 cases in group-by-rollup-cube keep byte-identical trees; the 4th accepted case, GROUP BY c1, keeps its single item. The mechanical check finds every name and literal in each tree. Of the 3 locally rejected cases, 1 fails at the warehouse's position. GROUP BY with no item fails locally at end of input (pos 26) and at the warehouse at 'BY' (pos 24); its repair, GROUP BY c1, is accepted locally and by its receipt (k1595d0daadb9). GROUP BY c1 WITH has no warehouse position; its repair, GROUP BY c1 WITH ROLLUP, is accepted locally and by its receipt (k5fecd35059ee). This supersedes the concern of db-query-013. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.select-groupby.group-by" = "f769770e14d9143991846e9b823c031406cad33e43d7aba94ff5b85081384ff8"
+
+[review.definitions]
+"db.query.select-groupby.group-by" = "466e6081b946b74b6accb69b8307427b364773a8b63e68176861331c001adaee"
+
+[[review]]
+id = "db-query-017"
+family = "query"
+parser_tree = "51280e7e93e4d765dfda1383f4a2c26be5c5be04"
+reviewed_utc = "2026-11-17T11:24:23Z"
+verdict = "approved"
+forms = [
+  "db.query.pipeline.table",
+  "db.query.pipeline.table.syntax",
+  "db.query.select-pipeop",
+]
+note = "Re-read on 17 Nov 2026 after the parser fix in f43b15021, which marks an organizing pipe operator (ORDER BY, LIMIT, OFFSET, CLUSTER BY, DISTRIBUTE BY, SORT BY) written directly after an unpiped set operation. Read against the 2026.45 receipts in evidence set evJ. No recorded case of these forms has that shape, so every case's verdict, refusal position and tree are those db-query-014 read, and the mechanical check again finds every name and literal of each accepted case in its tree. Correction to db-query-014's note: its claim that no pipe case shares a tree with its desugared plain query held for the recorded cases, which all start FROM t1 |> or TABLE t1 |>, but not for every pipe shape. Before the fix, SELECT 1 UNION SELECT 2 |> LIMIT 1 shared a tree with SELECT 1 UNION SELECT 2 LIMIT 1, apart from spans, and likewise for ORDER BY, OFFSET, CLUSTER BY, DISTRIBUTE BY and SORT BY, with |> or a bare |. A generated sweep of 19 pipe operators over 6 inputs (FROM, TABLE, a select, a set operation, VALUES, a parenthesised query), each piped with |> and with | beside its desugared plain query, found those 12 pairs before the fix and 0 after it, and every piped text now carries a mark. |> SET has no plain spelling to compare, because the warehouse's SELECT takes no REPLACE. The 5 position differences of select-pipeop are those db-query-014 read, and their repairs still parse locally and in their receipts. This supersedes db-query-014's note; the forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "2858125f06064ea0fed04851b3277709e3f6c3e2eea3f58a3511f181b2f9f379"
+"db.query.pipeline.table.syntax" = "6c768709f68a7a1b99790cd91c8223af8506ba90e93939edbffbe84135551e3b"
+"db.query.select-pipeop" = "7a6e18f771214e6d696569a7336428f19994edf21eddd90d5a3a61dd42539da7"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
+
+[[review]]
+id = "db-query-018"
+family = "query"
+parser_tree = "fe929d66181dd6dace2630744e5bd823f3cee506"
+reviewed_utc = "2026-11-17T13:08:12Z"
+verdict = "approved"
+forms = [
+  "db.query.select-groupby.hive-grouping-sets",
+]
+note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evidence set evK-17nov, after the Hive GROUPING SETS parser fix. It answers db-query-004, whose binding went stale with this tree: GROUP BY c1 GROUPING SETS ( c1 ) and GROUP BY c1 , c1 GROUPING SETS ( c1 , c1 ) (both accepted) now set the GROUP BY clause's with_modifier, so they no longer share the tree of the comma form GROUP BY c1 , GROUPING SETS ( c1 ), which keeps it unset. Rejects: SETS ( c1 ) and GROUPING ( c1 ) after the list are refused at the misspelt keyword, 5 and 9 characters before the warehouse's (, the class the earlier reviews accepted; the others are at the warehouse's position. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.select-groupby.hive-grouping-sets" = "005802566a3db7cf9be09d6c49c09a5da04d7a12846fed1cc88a86170c11e6d4"
+
+[review.definitions]
+"db.query.select-groupby.hive-grouping-sets" = "85bfba731332bf9f53018fc6044b84ed9b34be412986814337225d7a3bfe7943"
+
+[[review]]
+id = "db-query-019"
+family = "query"
+parser_tree = "40b4300fd9806078edccc072481fc116d6c367c4"
+reviewed_utc = "2026-11-17T15:04:19Z"
+verdict = "approved"
+forms = [
+  "db.query.select-nearest-by",
+  "db.query.select-table-reference",
+  "db.query.select-watermark",
+]
+note = "Re-read on 17 Nov 2026 at 95dd2ae37 against the 2026.45 receipts in evidence set evL-17nov, after the NEAREST BY, WATERMARK and subquery TABLESAMPLE parser fix. It answers db-query-006, db-query-008 and db-query-009, whose bindings went stale with this tree. Each asked for trees that were opaque, and no accepted case of these forms is opaque now. select-nearest-by: the join keeps its kind and its INNER or OUTER keyword, and nearest_by holds EXACT as exact, SIMILARITY as similarity, the written count as results and the ranking expression as by; APPROX, DISTANCE and an omitted count leave those unset (parsed, all seven spellings). select-table-reference: APPROX NEAREST 1 BY DISTANCE is the same nearest_by; LATERAL ( SELECT 1 ) TABLESAMPLE ( 50 PERCENT ) a1 is a lateral subquery that keeps its sample and alias; STREAM ( t1 ) a1 is now an alias around a stream of the parenthesised table, so the alias is outside the parentheses as written, while STREAM t1 a1 keeps the alias on the table; VERSION, TIMESTAMP, FOR SYSTEM_TIME and FOR SYSTEM_VERSION AS OF stay version clauses with for_keyword marking FOR. select-watermark: WATERMARK c1 DELAY OF INTERVAL 1 MINUTE is a watermark with the column as this and the interval as delay, on the table and on the lateral subquery, after TABLESAMPLE and before the alias. The mechanical screen finds every name and literal in all 53 accepted case readings (40 distinct cases). Of 35 local rejects, 31 are at the warehouse's position and 4 are elsewhere, all syntax errors on both sides and unchanged from the previous tree: ANTI at the end (the warehouse reports at ANTI, locally the end of input), FOR SYSTEM_TIMESTAMP (the warehouse reports at SYSTEM_TIMESTAMP, locally at FOR), FROM SELECT 1 (the warehouse at SELECT, locally at 1, since SELECT is read as a table name) and an unclosed ( SELECT 1 (one position apart at the end of input). STREAM ( t1 a1 ), an alias inside the parentheses, is now refused locally; no receipt covers it."
+
+[review.fingerprints]
+"db.query.select-nearest-by" = "19d82814ca09eaf7937ca9850c6a917adf2744c25b538dbcc1611fe6d875be45"
+"db.query.select-table-reference" = "58fa0ec4261bf24b8e87fe2d50d302cd59e668f3dd63ed3a09c7f084610223f3"
+"db.query.select-watermark" = "8644e1026473b4be6c9843ad09086b0ac8d1ca2a6ecc91e0c9440b3fcfe76dfd"
+
+[review.definitions]
+"db.query.select-nearest-by" = "e4af8a94c4e1f52762ad8dd6d15ca7de9d30e79ef57b67af7eeaeb27fac9e399"
+"db.query.select-table-reference" = "d2a4dacf989a91964280f05d75f94ba34e1754f4e40e1dece0654bf0bef28c07"
+"db.query.select-watermark" = "f7848a7ca823a2825c8b15df53dc7eed9d8906e0047df793440ce859e57939a6"
+
+[[review]]
+id = "db-query-020"
+family = "query"
+parser_tree = "40b4300fd9806078edccc072481fc116d6c367c4"
+reviewed_utc = "2026-11-17T15:05:35Z"
+verdict = "approved"
+forms = [
+  "db.query.pipeline.table",
+  "db.query.pipeline.table.syntax",
+  "db.query.select-pipeop",
+]
+note = "Re-read on 17 Nov 2026 at 95dd2ae37 against the 2026.45 receipts in evidence set evL-17nov. This record supersedes db-query-014 and db-query-017 for these forms. db-query-014's statement that no pipe case shares a tree with its desugared plain query is withdrawn as written: it held for the recorded cases, which all start FROM t1 |> or TABLE t1 |>, but before f43b15021 an organizing pipe operator (ORDER BY, LIMIT, OFFSET, CLUSTER BY, DISTRIBUTE BY, SORT BY) written directly after an unpiped set operation, such as SELECT 1 UNION SELECT 2 |> LIMIT 1, shared the tree of the plain query apart from spans. The claim this record makes instead: at this parser tree, a generated sweep of pipe operators over FROM, TABLE, a select, a set operation, VALUES and a parenthesised query, each piped with |> and with | beside its desugared plain query, finds 0 of 342 texts where a piped text and its plain query share a tree, and 0 piped texts without a mark; 6 plain texts are refused locally and are not compared. |> SET has no plain spelling to compare. A FROM-first query with no pipe operator (FROM t1) still shares the tree of SELECT * FROM t1; that is not a pipe case and is on the fix list. Every case's verdict, refusal position and tree are those db-query-017 read: 83 cases, 41 accepted, every one with a pipe and carrying its marks, and the mechanical check finds every name and literal of each accepted case in its tree; of 42 local rejects, 37 are at the warehouse's position, and the other 5 are the select-pipeop differences db-query-014 read (four operands missing at the end of input, and GROUP BY c1 AS a1, whose receipt gives no position). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "2858125f06064ea0fed04851b3277709e3f6c3e2eea3f58a3511f181b2f9f379"
+"db.query.pipeline.table.syntax" = "6c768709f68a7a1b99790cd91c8223af8506ba90e93939edbffbe84135551e3b"
+"db.query.select-pipeop" = "7a6e18f771214e6d696569a7336428f19994edf21eddd90d5a3a61dd42539da7"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
+
+[[review]]
+id = "db-query-021"
+family = "query"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.query.select-match-recognize-pattern",
+  "db.query.select-orderby",
+  "db.query.select-sortby",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.query.select-match-recognize-pattern" = "69b93255b62ed9a3edf8e7bbbe34f3cf3c2e2ff5c2c8d9826f36ea2c1dcc398b"
+"db.query.select-orderby" = "9293920d52389e8e6ec74980cd179a76d7aeb9a6c34d80db315517b7dcd92429"
+"db.query.select-sortby" = "f11455f232465727b071e9a46ea46e01ca550f437a6e69d5925b018921c6318c"
+
+[review.definitions]
+"db.query.select-match-recognize-pattern" = "692a9e4d948c3e059a2f6a31e82a1e14b4e3e5a4a687c7091ad4f6a640065bc2"
+"db.query.select-orderby" = "374d9122ae8429cf93e52daae8d62c969899928ed17032f71295bfc1c9d38018"
+"db.query.select-sortby" = "293c1a2b4c2cdb5150ffe0d6069a8d726a89e6e3c896455b48af66895f9f9865"
+
+[[review]]
+id = "db-query-022"
+family = "query"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-lateral-view",
+  "db.query.select-match-recognize",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: select-lateral-view: New in this re-read: the optional AS before the column aliases leaves no mark. explode ( array ( 1 ) ) SELECT AS x1 (k3b265a6e0be7) and explode ( array ( 1 ) ) a3 x1 (kcb8385e888a5) give the same tree apart from the table alias name, with no explicit-AS flag on the column aliases, while table aliases elsewhere keep alias_explicit_as. Both receipts are accepted. Parser fix. select-match-recognize: db-query-005's finding still holds: o029/o030 still class <row_pattern_definition_list> as a string and o030 (DEFINE m1) fails for the missing AS <cond>, not for a wrong kind. Obligation and case fix; the new case needs a receipt."
+
+[review.fingerprints]
+"db.query.select-lateral-view" = "f37f3a0640ba3c02d0e21f0977ce00f49fe2c08d2c4f04397c804667cc0730f6"
+"db.query.select-match-recognize" = "74fe7e5013243ea86f948b97af9d3c08550727e4d7169016cb455c0768a014cf"
+
+[review.definitions]
+"db.query.select-lateral-view" = "69f85a97bb1c2ee38d1bfcce70c281aaf6185ec8b2851d427a912643ad19563e"
+"db.query.select-match-recognize" = "c88ee837b4a816ee79ecd3bab69cb432a7b57ce5aab184c49c7956b77d044ce0"
+
+[[review]]
+id = "db-query-023"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T21:58:43Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-column-list",
+  "db.query.select-hints",
+  "db.query.select-hints.join-hint-alias",
+]
+note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds accepted one-token variants that parse to the same tree as the case they change; each is reproduced locally at parser tree 6546c748; earlier records are unchanged. Form by form: select-column-list: a backquoted hint name, /*+ `REPARTITION` ( 1 ) */, parses to the same tree as the bare name (k034c4b99e2b7): Spark parses a hint name as an identifier, so the tree must keep how it was written. Next parser batch. select-hints: a backquoted hint name (BROADCAST, REPARTITION, SKEW) parses to the same tree as the bare name (k129e5618d2e2, k38b109fcdb15, k536a5110a7f5, k67eef125e017): Spark parses a hint name as an identifier, so the tree must keep how it was written. Next parser batch. The comma between hints is optional in the grammar and is allowlisted in screen.toml, not a finding. select-hints.join-hint-alias: a backquoted join hint name or hinted relation (BROADCASTJOIN, MAPJOIN, SHUFFLE_MERGE, MERGEJOIN, t1) parses to the same tree as the bare name (k27ed29c68c3d, k45db50fb4cc9, ka23057e61539, kb2b1eb58c168, kb6ccf3a1b206, kdb1d088d21fb, kefd7bbf64832, kf96763538a99): Spark parses both as identifiers. The screen allowlist no longer excuses them, because it covers only text the grammar reads as carrying no syntax. Next parser batch."
+
+[review.fingerprints]
+"db.query.select-column-list" = "2cd57bb65f3713b85a2612441403a8041c9ea030cb182b5d15c217f714400cc4"
+"db.query.select-hints" = "c85e42902fe8b8ea7ef4b0ed981fcc0f04539a060278e1dcf5482d684fba92ae"
+"db.query.select-hints.join-hint-alias" = "ac0e5fdeaef48f63ba3fbe8197d3c3efb8bc977d5eec88922f2f94da96ba408a"
+
+[review.definitions]
+"db.query.select-column-list" = "e4f949af985da9abcd0595503f4d46814cfe5912a85a7d7dc5a55a7d5a811ba0"
+"db.query.select-hints" = "f1bd064ee44c2eed8827c43932ed8a81545f5ab19e60213f3e4516cddcd75860"
+"db.query.select-hints.join-hint-alias" = "4aa02c2a49b11e126ba14477f62aa8856796fe6143adee3dc7d7fdc5add9918b"
+
+[[review]]
+id = "db-query-024"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-table-reference",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. select-table-reference: db-query-008 is resolved: JOIN t2 APPROX NEAREST 1 BY DISTANCE ... gives a join with a nearest_by node, LATERAL ( SELECT 1 ) TABLESAMPLE ( 50 PERCENT ) a1 gives a lateral subquery with its sample and alias, and STREAM ( t1 ) a1 puts the alias outside the stream node. New, from the insert-AS mutation (k141bfeb112cb): The alias's AS is not kept on this path: FROM LATERAL range ( 1 ) a1 and FROM LATERAL range ( 1 ) AS a1 give the same tree, although FROM t1 a1 and FROM t1 AS a1 already differ. Remedy in the next parser batch: mark AS on this alias path as on table aliases."
+
+[review.fingerprints]
+"db.query.select-table-reference" = "58fa0ec4261bf24b8e87fe2d50d302cd59e668f3dd63ed3a09c7f084610223f3"
+
+[review.definitions]
+"db.query.select-table-reference" = "d2a4dacf989a91964280f05d75f94ba34e1754f4e40e1dece0654bf0bef28c07"
+
+[[review]]
+id = "db-query-025"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-values.values",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. select-values.values: no earlier finding. New, from the insert-AS mutation (k3f377a26fdbf, k5b9ae3db4ac2, k1c24e73a315d, kcf06de128892): The alias's AS is not kept on this path: VALUES 1 , 2 a1 and VALUES 1 , 2 AS a1 (also with ( 1 , 2 ) rows and backquoted aliases) give the same tree, although FROM t1 a1 and FROM t1 AS a1 already differ. Remedy in the next parser batch: mark AS on this alias path as on table aliases."
+
+[review.fingerprints]
+"db.query.select-values.values" = "747d1d4b00b3cc00da44d5da74f105652039db660679c0a857ed68b9753302b0"
+
+[review.definitions]
+"db.query.select-values.values" = "900853f1f1a0a1c114635211640df146f9df2ff21e217a5e83db4f94cfbd010f"
+
+[[review]]
+id = "db-query-026"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:56:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-watermark",
+]
+note = "Withdrawn by the stronger tree screen (insert AS, insert =, every synonym swap, double quotes), run at parser tree 6546c748 from the existing 2026.45 receipts; the earlier approval is unchanged and this record blocks it. select-watermark: db-query-009 is resolved: TABLESAMPLE ( 50 PERCENT ) WATERMARK c1 DELAY OF INTERVAL 1 MINUTE a1 gives a table with its sample, a watermark node with column and interval delay, and its alias, no command node. New, from the insert-AS mutation on the shared case k141bfeb112cb: The alias's AS is not kept on this path: FROM LATERAL range ( 1 ) a1 and FROM LATERAL range ( 1 ) AS a1 give the same tree, although FROM t1 a1 and FROM t1 AS a1 already differ. Remedy in the next parser batch: mark AS on this alias path as on table aliases."
+
+[review.fingerprints]
+"db.query.select-watermark" = "8644e1026473b4be6c9843ad09086b0ac8d1ca2a6ecc91e0c9440b3fcfe76dfd"
+
+[review.definitions]
+"db.query.select-watermark" = "f7848a7ca823a2825c8b15df53dc7eed9d8906e0047df793440ce859e57939a6"
+
+[[review]]
+id = "db-query-027"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.query.select",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 25 of 25 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. select: no open finding. One tree changed in the batch, where a qualified name is now kept as parts."
+
+[review.fingerprints]
+"db.query.select" = "046d7c0f6e436d5d9ad10e8e50452153b2db42a9082d605eaf1de82cbca12b01"
+
+[review.definitions]
+"db.query.select" = "fcd9b40d1fc28db0f7e428cb6540faa5805aee233e8526a0011dd44ecc1489a3"
+
+[[review]]
+id = "db-query-028"
+family = "query"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.query.select-lateral-view",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 25 of 25 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. select-lateral-view: db-query-022 is answered: the AS before the column aliases is kept (column_aliases_explicit_as), so k3b265a6e0be7 and kcb8385e888a5 now differ."
+
+[review.fingerprints]
+"db.query.select-lateral-view" = "38e7ae2bb54a3228726451898da527c2acf05555d34eca7e317e957d4cd56c89"
+
+[review.definitions]
+"db.query.select-lateral-view" = "69f85a97bb1c2ee38d1bfcce70c281aaf6185ec8b2851d427a912643ad19563e"
+
+[[review]]
+id = "db-query-029"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.pipeline.table",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 5 accepted cases give the same tree with the relation written bare or in parentheses, e.g. kbc17412f90f0: FROM `SELECT` |> WHERE 1 = 1  ==  FROM ( `SELECT` ) |> WHERE 1 = 1. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-020."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "2858125f06064ea0fed04851b3277709e3f6c3e2eea3f58a3511f181b2f9f379"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+
+[[review]]
+id = "db-query-030"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.pipeline.table.syntax",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k4085ca465fd1: FROM `SELECT` | WHERE 1 = 1  ==  FROM ( `SELECT` ) | WHERE 1 = 1. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-020."
+
+[review.fingerprints]
+"db.query.pipeline.table.syntax" = "6c768709f68a7a1b99790cd91c8223af8506ba90e93939edbffbe84135551e3b"
+
+[review.definitions]
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+
+[[review]]
+id = "db-query-031"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 3 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k0616f301f4d5: SELECT 1 FROM t1 , t1 LATERAL VIEW explode ( array ( 1 ) ) a3 AS x1 WHERE 1 = 1 GROUP BY c1 HAVING 1 = 1 QUALIFY 1 = 1  ==  SELECT 1 FROM ( t1 ) , t1 LATERAL VIEW explode ( array ( 1 ) ) a3 AS x1 WHERE 1 = 1 GROUP BY c1 HAVING 1 = 1 QUALIFY 1 = 1. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-027."
+
+[review.fingerprints]
+"db.query.select" = "046d7c0f6e436d5d9ad10e8e50452153b2db42a9082d605eaf1de82cbca12b01"
+
+[review.definitions]
+"db.query.select" = "fcd9b40d1fc28db0f7e428cb6540faa5805aee233e8526a0011dd44ecc1489a3"
+
+[[review]]
+id = "db-query-032"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-clusterby",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 2 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k94835111f872: SELECT c1 FROM t1 CLUSTER BY 1  ==  SELECT c1 FROM ( t1 ) CLUSTER BY 1. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-011."
+
+[review.fingerprints]
+"db.query.select-clusterby" = "a1088dd15b83e7d613023f03e23f9d0182a9c5916e1116dec0333c0d0919521e"
+
+[review.definitions]
+"db.query.select-clusterby" = "38fe8efe128232ce2782263687cd4dfb92089b732949e7c16c775ac0ecb64cc9"
+
+[[review]]
+id = "db-query-033"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-distributeby",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 2 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k56b6cbf73197: SELECT c1 FROM t1 DISTRIBUTE BY 1 , 2  ==  SELECT c1 FROM ( t1 ) DISTRIBUTE BY 1 , 2. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-011."
+
+[review.fingerprints]
+"db.query.select-distributeby" = "44ad96d51b1305ac280948802017c8de4f80e76359cd7e2b1f595486b4742105"
+
+[review.definitions]
+"db.query.select-distributeby" = "64638d47badc45e7856b65200d10962f063836f74b7dfc5140b754a9140f7f85"
+
+[[review]]
+id = "db-query-034"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-groupby.group-by",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k001b88c6b2f6: SELECT c1 FROM t1 GROUP BY c1 WITH CUBE  ==  SELECT c1 FROM ( t1 ) GROUP BY c1 WITH CUBE. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. Earlier findings (db-query-013) were answered in approval db-query-016; this record does not reopen them."
+
+[review.fingerprints]
+"db.query.select-groupby.group-by" = "f769770e14d9143991846e9b823c031406cad33e43d7aba94ff5b85081384ff8"
+
+[review.definitions]
+"db.query.select-groupby.group-by" = "466e6081b946b74b6accb69b8307427b364773a8b63e68176861331c001adaee"
+
+[[review]]
+id = "db-query-035"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-groupby.group-by-all",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 1 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k610d3702de85: SELECT c1 FROM t1 GROUP BY ALL  ==  SELECT c1 FROM ( t1 ) GROUP BY ALL. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-011."
+
+[review.fingerprints]
+"db.query.select-groupby.group-by-all" = "fa2805d24cb225a8f7eb442ec3de681cec7b2633ac57d51be5a0890a6a22e2f4"
+
+[review.definitions]
+"db.query.select-groupby.group-by-all" = "fd02a9e674ca8c80d6fcd5c5cbcc833b0708bbb955f0066d71a50a2d2e0dc52b"
+
+[[review]]
+id = "db-query-036"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-groupby.group-by-rollup-cube",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 6 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k3c0fff9877ef: SELECT c1 FROM t1 GROUP BY c1 , c1  ==  SELECT c1 FROM ( t1 ) GROUP BY c1 , c1. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-012."
+
+[review.fingerprints]
+"db.query.select-groupby.group-by-rollup-cube" = "ee4538e7e24137701d09a62f3744f05c017da69a645d39c9fcf3d38bc2874e0d"
+
+[review.definitions]
+"db.query.select-groupby.group-by-rollup-cube" = "082253722d146a7c94983c8f75d09a73c6fa0babb503871a4f451ac54ed0cce8"
+
+[[review]]
+id = "db-query-037"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-groupby.hive-grouping-sets",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 2 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k35e229e4500a: SELECT c1 FROM t1 GROUP BY c1 GROUPING SETS ( c1 )  ==  SELECT c1 FROM ( t1 ) GROUP BY c1 GROUPING SETS ( c1 ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. Earlier findings (db-query-004) were answered in approval db-query-018; this record does not reopen them."
+
+[review.fingerprints]
+"db.query.select-groupby.hive-grouping-sets" = "005802566a3db7cf9be09d6c49c09a5da04d7a12846fed1cc88a86170c11e6d4"
+
+[review.definitions]
+"db.query.select-groupby.hive-grouping-sets" = "85bfba731332bf9f53018fc6044b84ed9b34be412986814337225d7a3bfe7943"
+
+[[review]]
+id = "db-query-038"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-groupby.nested-grouping-sets",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 6 accepted cases give the same tree with the relation written bare or in parentheses, e.g. kde9473ed43a3: SELECT c1 FROM t1 GROUP BY GROUPING SETS ( c1 )  ==  SELECT c1 FROM ( t1 ) GROUP BY GROUPING SETS ( c1 ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-012."
+
+[review.fingerprints]
+"db.query.select-groupby.nested-grouping-sets" = "5aa7a243a56e827c572dd2503f33ce9ecad8fad1f68a68efd621b38e1170b7e5"
+
+[review.definitions]
+"db.query.select-groupby.nested-grouping-sets" = "bfcad8d728918fb014efe9913a078941efab771931173b89c9d6e85306590033"
+
+[[review]]
+id = "db-query-039"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-groupby.subscript-dot",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 5 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k22e95a6003d3: SELECT `sum Q` ( 1 ) FROM t1  ==  SELECT `sum Q` ( 1 ) FROM ( t1 ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-012."
+
+[review.fingerprints]
+"db.query.select-groupby.subscript-dot" = "13aed3cfc3a79926508279e702e8e3eaf453b297293bb32978d90fd1cd5cbde3"
+
+[review.definitions]
+"db.query.select-groupby.subscript-dot" = "d48fa943701abfff4856461d7cd0dd852594ee4e236ab764f5464e5dd90d8f1f"
+
+[[review]]
+id = "db-query-040"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-having",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 1 accepted cases give the same tree with the relation written bare or in parentheses, e.g. kf2ae5a3dc84d: SELECT c1 FROM t1 GROUP BY c1 HAVING 1 = 1  ==  SELECT c1 FROM ( t1 ) GROUP BY c1 HAVING 1 = 1. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-011."
+
+[review.fingerprints]
+"db.query.select-having" = "8ee4a722a65a0a6b46899c6f27c90abc855b72cb1b21f64c4ae5f9ca8e1aa25b"
+
+[review.definitions]
+"db.query.select-having" = "e317eca079db2b0c88124bebc89dde607cd15e7569cd884bc65eba18747170f1"
+
+[[review]]
+id = "db-query-041"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-lateral-view",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 9 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k3b265a6e0be7: SELECT * FROM t1 LATERAL VIEW explode ( array ( 1 ) ) SELECT AS x1  ==  SELECT * FROM ( t1 ) LATERAL VIEW explode ( array ( 1 ) ) SELECT AS x1. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. Earlier findings (db-query-022) were answered in approval db-query-028; this record does not reopen them."
+
+[review.fingerprints]
+"db.query.select-lateral-view" = "38e7ae2bb54a3228726451898da527c2acf05555d34eca7e317e957d4cd56c89"
+
+[review.definitions]
+"db.query.select-lateral-view" = "69f85a97bb1c2ee38d1bfcce70c281aaf6185ec8b2851d427a912643ad19563e"
+
+[[review]]
+id = "db-query-042"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-limit",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 2 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k027186e1bdad: SELECT c1 FROM t1 LIMIT 1  ==  SELECT c1 FROM ( t1 ) LIMIT 1. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-002."
+
+[review.fingerprints]
+"db.query.select-limit" = "ed39b1fffb5b68fb62819aaf7ea4b2fcc54036f03f1827e0fc1bf0b5e17d2833"
+
+[review.definitions]
+"db.query.select-limit" = "c3a6537b389984ab892dc6c2d0ad4b6cb535b1d38b99e78742309981c3ae4e4f"
+
+[[review]]
+id = "db-query-043"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-match-recognize-define",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 5 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k6749b46eb5ca: SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( A ) DEFINE SELECT AS TRUE )  ==  SELECT * FROM ( t1 ) MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( A ) DEFINE SELECT AS TRUE ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-010."
+
+[review.fingerprints]
+"db.query.select-match-recognize-define" = "2ea3281ccd806ccb2b9c168ad73ff56b363a364de330d954add7948bb1e65479"
+
+[review.definitions]
+"db.query.select-match-recognize-define" = "286148bb6ea73adb7fa607d51d8ffe5c15a2c89e2357521cc21ff776e3e60be9"
+
+[[review]]
+id = "db-query-044"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-match-recognize-measures",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 2 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k0c4e262a0af4: SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 MEASURES 1 AS m1 , 1 AS m2 PATTERN ( A ) DEFINE A AS TRUE )  ==  SELECT * FROM ( t1 ) MATCH_RECOGNIZE ( ORDER BY c1 MEASURES 1 AS m1 , 1 AS m2 PATTERN ( A ) DEFINE A AS TRUE ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-011."
+
+[review.fingerprints]
+"db.query.select-match-recognize-measures" = "e3c843c151c5d56b6836fd501d3c86a2775fe0496954a4129d6047fc6bede6c1"
+
+[review.definitions]
+"db.query.select-match-recognize-measures" = "5108ed9bf7cc6a9a9e6e128dae8976b711fb1809b5ebe8bd0bf42059ac90f801"
+
+[[review]]
+id = "db-query-045"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-match-recognize-pattern",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 5 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k698ad09f0495: SELECT * FROM t1 MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( A ) DEFINE A AS TRUE )  ==  SELECT * FROM ( t1 ) MATCH_RECOGNIZE ( ORDER BY c1 PATTERN ( A ) DEFINE A AS TRUE ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-021."
+
+[review.fingerprints]
+"db.query.select-match-recognize-pattern" = "69b93255b62ed9a3edf8e7bbbe34f3cf3c2e2ff5c2c8d9826f36ea2c1dcc398b"
+
+[review.definitions]
+"db.query.select-match-recognize-pattern" = "692a9e4d948c3e059a2f6a31e82a1e14b4e3e5a4a687c7091ad4f6a640065bc2"
+
+[[review]]
+id = "db-query-046"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-named-window",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 5 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k2dd946524af2: SELECT c1 FROM t1 WINDOW w1 AS ( )  ==  SELECT c1 FROM ( t1 ) WINDOW w1 AS ( ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-011."
+
+[review.fingerprints]
+"db.query.select-named-window" = "33a149b002fa1b100c3ed9410ecb0f43deb725bdb6918bf7c82a7189b8ce6d11"
+
+[review.definitions]
+"db.query.select-named-window" = "2bad67d99f5d696b1627c74c3f10eef466c261bf28787c3d89023f95e1598dd6"
+
+[[review]]
+id = "db-query-047"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-nearest-by",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 14 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k18f524af47d4: SELECT * FROM t1 LEFT JOIN t2 EXACT NEAREST BY SIMILARITY vector_l2_distance ( 1 , 1 )  ==  SELECT * FROM ( t1 ) LEFT JOIN t2 EXACT NEAREST BY SIMILARITY vector_l2_distance ( 1 , 1 ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. Earlier findings (db-query-006) were answered in approval db-query-019; this record does not reopen them."
+
+[review.fingerprints]
+"db.query.select-nearest-by" = "19d82814ca09eaf7937ca9850c6a917adf2744c25b538dbcc1611fe6d875be45"
+
+[review.definitions]
+"db.query.select-nearest-by" = "e4af8a94c4e1f52762ad8dd6d15ca7de9d30e79ef57b67af7eeaeb27fac9e399"
+
+[[review]]
+id = "db-query-048"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-orderby",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 12 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k1da9966f6000: SELECT c1 FROM t1 ORDER BY 1 ASC NULLS FIRST , 2 ASC NULLS FIRST  ==  SELECT c1 FROM ( t1 ) ORDER BY 1 ASC NULLS FIRST , 2 ASC NULLS FIRST. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-021."
+
+[review.fingerprints]
+"db.query.select-orderby" = "9293920d52389e8e6ec74980cd179a76d7aeb9a6c34d80db315517b7dcd92429"
+
+[review.definitions]
+"db.query.select-orderby" = "374d9122ae8429cf93e52daae8d62c969899928ed17032f71295bfc1c9d38018"
+
+[[review]]
+id = "db-query-049"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-pipeop",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 32 accepted cases give the same tree with the relation written bare or in parentheses, e.g. kc17cd2d6166e: FROM t1 |> WHERE 1 = 1  ==  FROM ( t1 ) |> WHERE 1 = 1. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. Earlier findings (db-query-007) were answered in approval db-query-020; this record does not reopen them."
+
+[review.fingerprints]
+"db.query.select-pipeop" = "7a6e18f771214e6d696569a7336428f19994edf21eddd90d5a3a61dd42539da7"
+
+[review.definitions]
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
+
+[[review]]
+id = "db-query-050"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-pivot",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 6 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k2207594cbd0e: SELECT * FROM t1 PIVOT ( sum ( c1 ) `SELECT` FOR c1 IN ( 1 ) )  ==  SELECT * FROM ( t1 ) PIVOT ( sum ( c1 ) `SELECT` FOR c1 IN ( 1 ) ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-012."
+
+[review.fingerprints]
+"db.query.select-pivot" = "af41e1f41a592426154b560797a17f03a0a049538a06e615f5669fc419034666"
+
+[review.definitions]
+"db.query.select-pivot" = "d3197b6aa0ebe2d38ba40b2e5936295f348d2fcb646ea41bd1925898a384792c"
+
+[[review]]
+id = "db-query-051"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-sortby",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 6 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k3ed2ba657653: SELECT c1 FROM t1 SORT BY 1 NULLS LAST  ==  SELECT c1 FROM ( t1 ) SORT BY 1 NULLS LAST. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-021."
+
+[review.fingerprints]
+"db.query.select-sortby" = "f11455f232465727b071e9a46ea46e01ca550f437a6e69d5925b018921c6318c"
+
+[review.definitions]
+"db.query.select-sortby" = "293c1a2b4c2cdb5150ffe0d6069a8d726a89e6e3c896455b48af66895f9f9865"
+
+[[review]]
+id = "db-query-052"
+family = "query"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.star",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 5 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k60050f5b0dc4: SELECT * FROM t1  ==  SELECT * FROM ( t1 ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-query-011."
+
+[review.fingerprints]
+"db.query.star" = "ff6b5e7c8eeefde4efef4fbf47cf39028e9dafcfc1b97cbdd5db37c2d0d88c6d"
+
+[review.definitions]
+"db.query.star" = "164b0d09702bed1e4f3243bf557f5ea71a523e969996d731243fb5ef7519b02a"
+
+[[review]]
+id = "db-query-053"
+family = "query"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.query.select-hints.join-hint-alias",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 12 of 12 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. select-hints.join-hint-alias: db-query-023 is answered: a backquoted join hint name or hinted relation is kept as written (quoted_names), so /*+ BROADCASTJOIN ( t1 ) */, /*+ `BROADCASTJOIN` ( t1 ) */ and /*+ BROADCASTJOIN ( `t1` ) */ give three trees, and an omitted comma between hints is marked rather than allowlisted."
+
+[review.fingerprints]
+"db.query.select-hints.join-hint-alias" = "8bb21d2de4edec3c71558ddea04a15484aa5810ce8d7bd125d6672cb06807573"
+
+[review.definitions]
+"db.query.select-hints.join-hint-alias" = "4aa02c2a49b11e126ba14477f62aa8856796fe6143adee3dc7d7fdc5add9918b"
+
+[[review]]
+id = "db-query-054"
+family = "query"
+parser_tree = "a367f5c7ebb0e10e3f26cc3b5e2738a491cdcd03"
+reviewed_utc = "2026-11-18T03:43:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.select-hints.join-hint-alias",
+]
+note = "Withdrawn by the insert , screen kind (a comma written before each token, or after the last), run over every approved form at parser tree a367f5c7 from the existing 2026.45 receipts; db-query-053 is unchanged and this record blocks it. All 8 accepted cases give one tree with and without a trailing comma inside the hint, e.g. k27ed29c68c3d: SELECT /*+ BROADCASTJOIN t1 */ c1 FROM t1  ==  SELECT /*+ BROADCASTJOIN t1 , */ c1 FROM t1, and ka23057e61539: SELECT /*+ BROADCASTJOIN ( t1 ) */ c1 FROM t1  ==  SELECT /*+ BROADCASTJOIN ( t1 ) , */ c1 FROM t1. Neither the catalogue grammar nor Spark's hintStatement (COMMA? hintStatement)* allows a trailing comma, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it, as with infix !. The trailing-comma text is added to the pending bundle; whether the parser refuses it or records it waits on its receipt. select-hints and select-column-list have the same collapse and are already unverified."
+
+[review.fingerprints]
+"db.query.select-hints.join-hint-alias" = "8bb21d2de4edec3c71558ddea04a15484aa5810ce8d7bd125d6672cb06807573"
+
+[review.definitions]
+"db.query.select-hints.join-hint-alias" = "4aa02c2a49b11e126ba14477f62aa8856796fe6143adee3dc7d7fdc5add9918b"

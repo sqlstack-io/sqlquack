@@ -24,3 +24,1203 @@ note = "Read against the pinned Databricks documentation pages and the Spark 4.2
 "db.expressions.boolean-type.true-false" = "1be06e91956dd38f17e4268ac1969521fff2705194fe660f029d7f742b1d9615"
 "db.expressions.parameter-marker.colon" = "2440f0458000efe15ff564ab63d019dfa297a0961c8a27f37f33ce8c5c1db671"
 "db.expressions.parameter-marker.syntax" = "282c4a2c4e3a04f58c598970a5ea66ac0615ceb64d9f0061b6898af6b38453af"
+
+[[review]]
+id = "db-expressions-002"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T05:37:21Z"
+verdict = "approved"
+forms = [
+  "db.expressions.array-type",
+  "db.expressions.bigint-type",
+  "db.expressions.bigint-type.subscript-dot",
+  "db.expressions.binary-type",
+  "db.expressions.binary-type.x",
+  "db.expressions.boolean-type",
+  "db.expressions.collation.order-by-collate-utf8-lcase",
+  "db.expressions.collation.order-by-lower-collate",
+  "db.expressions.collation.utf8-binary-utf8-lcase-unicode",
+  "db.expressions.comment",
+  "db.expressions.date-type",
+  "db.expressions.date-type.date",
+  "db.expressions.double-type",
+  "db.expressions.double-type.d",
+  "db.expressions.double-type.d.literals",
+  "db.expressions.float-type",
+  "db.expressions.float-type.f",
+  "db.expressions.float-type.f.literals",
+  "db.expressions.int-type.subscript-dot",
+  "db.expressions.interval-type",
+  "db.expressions.lambda-functions",
+  "db.expressions.map-type",
+  "db.expressions.names-identifier-clause.identifier",
+  "db.expressions.names-identifier-clause.identifier.syntax",
+  "db.expressions.names.subscript",
+  "db.expressions.names.subscript-dot-2",
+  "db.expressions.object-type",
+  "db.expressions.smallint-type.s",
+  "db.expressions.time-type.time.literals",
+  "db.expressions.timestamp-ntz-type.timestamp-ntz.literals",
+  "db.expressions.timestamp-type.timestamp",
+  "db.expressions.timestamp-type.timestamp-ltz.literals",
+  "db.expressions.timestamp-type.timestamp.literals",
+  "db.expressions.tinyint-type.y",
+  "db.expressions.window-functions",
+  "db.expressions.window-functions-frame",
+]
+note = "Re-read in full on 16 Nov 2026 against the documentation page, the form's obligations, its cases with their Databricks receipts and the local parse trees. Bound on 251cfd3dc only where the form's fingerprint and definition hash still equal those of the dossier that was read; forms that changed since are left for a new reading."
+
+[review.fingerprints]
+"db.expressions.array-type" = "e1625d7c1e6737ec97d271829fda245b54224c698e53b2970d87c664fd5db9d1"
+"db.expressions.bigint-type" = "9a968a1bb45ca39f4601916a129346496e35c8c50b9799a52f329dceb6b23e4c"
+"db.expressions.bigint-type.subscript-dot" = "cef21d7227f7faa33ee0af71dc2be6c3e9c97924e93c3c55ea2c104dd6824b62"
+"db.expressions.binary-type" = "6ffb142e730f4d49cda8e8ddd6005f42b3e2ef3b26b09d3d2eaa98159e197290"
+"db.expressions.binary-type.x" = "36d9ab6a8b771d4aa3268ec8cac150990a22b67868b5612fe3c0583827c4b93e"
+"db.expressions.boolean-type" = "c5ce2c8a3d51a3a12c1ed68551a26f1d18be7a13ee1b02a8a3c9de898754ad16"
+"db.expressions.collation.order-by-collate-utf8-lcase" = "b18e9bc2da2bd317989f46d05e2154cf8600855f8704c1254f3de5aba193340f"
+"db.expressions.collation.order-by-lower-collate" = "8ef8ec4a5bb303540995a9afbf64a289e3b477bf0765ae37f93190d6e52abe3f"
+"db.expressions.collation.utf8-binary-utf8-lcase-unicode" = "ffbdd9e8c26a6bc11a7d2389a7c19b2d5fa540a41fd433dbf1cd11f300885a9f"
+"db.expressions.comment" = "9b9b68ce924a47cedd4baa2dcd9e3524699239cdb30c5d42b270990bab6ac1a4"
+"db.expressions.date-type" = "70e3711d10eaf72240f50da0a87c532ef626f0bc4a185c960343586aff753519"
+"db.expressions.date-type.date" = "695b69d9f793007d4668d4144a031c27cdf5fdbaf93dbd013a3433ad65d0df2d"
+"db.expressions.double-type" = "90ad846213ce6b36e7c2fce5e712ab820df6cf6e0226ff2d6436d4b193802b79"
+"db.expressions.double-type.d" = "952f0f6562336aa48ab44b7aa814ccf85ff6e2f54273b3a3b62095676b15fa1f"
+"db.expressions.double-type.d.literals" = "2759e3abd16a7683375e49468a055918038764fe5d2fe23b8bfdc1e66faaec73"
+"db.expressions.float-type" = "064a468e941567a00bfcfd374bcd0bb96fabe6d430d866758aa3698b201c1640"
+"db.expressions.float-type.f" = "acfb827d24a79d77ccac619cb0f255b7dee8f5e1efe88b9baf4a0c32363e86d0"
+"db.expressions.float-type.f.literals" = "33be7f00e660cc35927800bf6dc13580966af43c3d8c92eb8094f4cabe205606"
+"db.expressions.int-type.subscript-dot" = "115be595cbd8f6fb833f974990c680bb15970851df06c4b254e8a14b35b33360"
+"db.expressions.interval-type" = "364b8e3f779bbd6eb30076de67664af5cc24e7271a3b8f4cdad15d17c7c62531"
+"db.expressions.lambda-functions" = "9a6ecf4238ad2dff998dbae197bba7ef2f25e221762a25c8578a94ad13ca3e84"
+"db.expressions.map-type" = "f1c393e819319eef29c6ec5a6cfecd20aca5ba360984a9444ffd18e8549f20dd"
+"db.expressions.names-identifier-clause.identifier" = "5df171534e068f1d195288f96723c783e5b096109651277985724dd63e9c1e1e"
+"db.expressions.names-identifier-clause.identifier.syntax" = "5df171534e068f1d195288f96723c783e5b096109651277985724dd63e9c1e1e"
+"db.expressions.names.subscript" = "80579b2df3c065e0b091baa7074566b58d013cae049a6ce56095007fbb95bfce"
+"db.expressions.names.subscript-dot-2" = "3844bc830bb389876ceada43abdc79d6af4afadc17bddc9a5ad918b19c12aa44"
+"db.expressions.object-type" = "27374f683d21ffea359a174aa1d0379d2e2b456840fea2a97dc0484898ff8004"
+"db.expressions.smallint-type.s" = "8986aa60ca6f0e8d337648d5b8aad4e145b8a7a5718ac1ee94e90c41b300ed34"
+"db.expressions.time-type.time.literals" = "392a60bb6146580dbfaa7b2b632b09d49bb32271f59eef4992fde6b03163f17b"
+"db.expressions.timestamp-ntz-type.timestamp-ntz.literals" = "fd1b13bc4f53f0d78cedecc2fb3683cfe60a02357d9c89b4055a904f6fa9489a"
+"db.expressions.timestamp-type.timestamp" = "722e2fb7d821c16ad2bf805f9b25762327bdbe151d947f0154fea3f60e9d5d04"
+"db.expressions.timestamp-type.timestamp-ltz.literals" = "de2bfc790789e9308c5719b31eb61b89010e33c6331f3dc6be9658a696662da6"
+"db.expressions.timestamp-type.timestamp.literals" = "1b53232f0ca7bd06ff6b4edb9ac076f52b166d204a571f7322e18d0e783b3c60"
+"db.expressions.tinyint-type.y" = "c4ed3ee22b10f10fcee02fe34732bef4c42c2a06b372691fe9779f393ecccf8d"
+"db.expressions.window-functions" = "e613bd09bdb06df41dfbf8fe012ac2e5a505d71bcd0654eecc4081a6538c33e8"
+"db.expressions.window-functions-frame" = "c33cee068dd9cd682f4c1e8c62670edea59ec1986fa37a15214c4a964cb322a9"
+
+[review.definitions]
+"db.expressions.array-type" = "5b64fd7c27ead76756789be0d154138fb082e4a3e4f611e1950fd8fcae5da4b9"
+"db.expressions.bigint-type" = "c29cd40724b64947e62e998979184c7930527cb7054fc4b7c5652c8956ccca40"
+"db.expressions.bigint-type.subscript-dot" = "7447a9602919d69215749f4921942283e3af9f0a30685d2c78604a2ba25085b0"
+"db.expressions.binary-type" = "a1dc5ff2045bbc997830c26b6278b42957e3cfc0421ed29f5dd0b952c7296d77"
+"db.expressions.binary-type.x" = "9ee240882e46494955e5d6924678a30b3b4f3cae01007a6bfa0892803ae70998"
+"db.expressions.boolean-type" = "f9a7261b3c3fb189e327afa7c8492e48e46691c4467ac75e9d22848c0bc8bc13"
+"db.expressions.collation.order-by-collate-utf8-lcase" = "c5b904885d664b09fefaf33e2bbd55d5af664c2d8d918830b05d47c3118d9adf"
+"db.expressions.collation.order-by-lower-collate" = "8956818fd573a9f97c4996b14f25db35a0d40363e79063a68c7ee202bedabbad"
+"db.expressions.collation.utf8-binary-utf8-lcase-unicode" = "11bc183fb7a7f308f26eeaaeefd3db323681ed5f7d49c1c808976dbfe2b5dcec"
+"db.expressions.comment" = "4deb43c6ea09cde63ec7cc82c6a3960ab5ec5694a17edcf7b9402e50b82fb22f"
+"db.expressions.date-type" = "8f48c3cd306676b39934889464e3787eef7e78b0f798a841277a22b5e387b65d"
+"db.expressions.date-type.date" = "e053c971c6fa413dc8bdec865892221b24a92c60c3dc81b962aeded2148c51aa"
+"db.expressions.double-type" = "9209ae053d89854f233dee3ccf5b8d710309b9a2fcc86b6704921c1974e93ce6"
+"db.expressions.double-type.d" = "64d240ef646d50e78f0d86918c7f7aebd01cde426733856c872de1513e70d67e"
+"db.expressions.double-type.d.literals" = "73b72608a7d00789f5a65ebbbb0a0f8e22fc4760c8f23acd737ae6b5732e9fde"
+"db.expressions.float-type" = "0e479372e20d5556152fbdb0211769a82252fcd53710074381d2a20ffc5b863f"
+"db.expressions.float-type.f" = "7d7641c7b0a8b26a5669b33233bbd49e88a06d85cf89f9b36837aca85246ba2e"
+"db.expressions.float-type.f.literals" = "f4e6c310ac5cd9d3479157ad8edfc34a10c12c96e5e6ab54a13291e436f64ed0"
+"db.expressions.int-type.subscript-dot" = "d030d91cb39f36580ea3cfe56eb5499b1c8f39e18dbf49114fc666a836dc0a9d"
+"db.expressions.interval-type" = "38803aea7a1432e9cb644f6562c8c36327efa95ea1b0a2861e89893c538941af"
+"db.expressions.lambda-functions" = "466443706dd1ec9e68e333c35e8c23571904b02c2022c8df9677d00a54aa474e"
+"db.expressions.map-type" = "4d0c8ab087856aa478cb7b5afd3848811b317049f6d8acdfd747e1f7125af8fb"
+"db.expressions.names-identifier-clause.identifier" = "6bba9b4221a917c47dce92cae6829c71354a4b3afb57542489740b47fc356581"
+"db.expressions.names-identifier-clause.identifier.syntax" = "8b268db1410594e8121ee3f17f6a66a5ffbc8b53871a9a26fb39336533e210cd"
+"db.expressions.names.subscript" = "6bf63c50212f7a69cb1ddcb39adab76b23047c92817cffb548ebef46a9085276"
+"db.expressions.names.subscript-dot-2" = "f0e992879e5a2496f26383c74e1383c2301f48d402800c14771700c85104a913"
+"db.expressions.object-type" = "4b26b0b84831b45f53cde61f8c781d2fb2a0225462499751f15fd4ee63ea141b"
+"db.expressions.smallint-type.s" = "0f9ea310fb2b30c6035f98b391b99b74052f130f8959057c8a27dc03c07c4ab5"
+"db.expressions.time-type.time.literals" = "02853f6fa518c63acd9b68ac7b5838dc929e76210791ffa735991b23b3041637"
+"db.expressions.timestamp-ntz-type.timestamp-ntz.literals" = "f7b63fb1e282ea30dc8ff6a620dcb3c0b43ce184b5b33e803bb4f37c1b4eff3d"
+"db.expressions.timestamp-type.timestamp" = "bdcf3acd3725a776420a5dc8f8b6e2d54f08d1485caa33e9b66ae52e053e99e8"
+"db.expressions.timestamp-type.timestamp-ltz.literals" = "017fa11a6145fdba22253b651c8a83f4fe1b853f88d5ff752ba9b73d671dff6a"
+"db.expressions.timestamp-type.timestamp.literals" = "7a895bb6f930dadd3c77a54e08c901cf80794894dc1a2eb8aa736b9d55bcfe2e"
+"db.expressions.tinyint-type.y" = "4a282c1b94233251cd9528d88e0c34256a39307c9356f633e72d48a54f95280c"
+"db.expressions.window-functions" = "8d8b5f177789ba363b04161b506230cb79610400a28fa923e130299ea0793ad7"
+"db.expressions.window-functions-frame" = "5b6c018d85db0f3efa9750186323ca6f89130488198b57537d14d7e4b8e8bae5"
+
+[[review]]
+id = "db-expressions-003"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.decimal-type.bd",
+]
+note = "(d) stricter reading: o009 SELECT ( 12E-1BD ) -> cast{literal \"12E-1\", to {\"data_type\":\"decimal\"}} with no precision or scale, so it reads as CAST(12E-1 AS DECIMAL) = DECIMAL(10,0) = 1, not 1.2; the BD literal's own type is lost (o007 12BD likewise reads as DECIMAL(10,0))."
+
+[review.fingerprints]
+"db.expressions.decimal-type.bd" = "fa0a79f34bf25d61119ca1a0f63191d7914c6f60dc54fe19c5c7d3ea409a0671"
+
+[review.definitions]
+"db.expressions.decimal-type.bd" = "45f325e88a727aa900305955ec2faa026fdc8aaf5f16f7bf3467dc158da8ef86"
+
+[[review]]
+id = "db-expressions-004"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.decimal-type.subscript",
+]
+note = "(d) stricter reading: o011 SELECT ( 1.5BD ) -> cast{literal 1.5, to {\"data_type\":\"decimal\"}}, which reads as CAST(1.5 AS DECIMAL) = DECIMAL(10,0) = 2, not 1.5; o013 .5BD and o014 -1.5BD the same. The literal's precision and scale are lost. (a)-(c) hold."
+
+[review.fingerprints]
+"db.expressions.decimal-type.subscript" = "c73342b3951b0e1d102e6b9f36ca505a7eaef4845d3110e15761e0b11cc49d09"
+
+[review.definitions]
+"db.expressions.decimal-type.subscript" = "d0442ec9c717f778177e0089da13fcb6e6a6822587ec8c7e8dcfafb3ebf6ee56"
+
+[[review]]
+id = "db-expressions-005"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.expression",
+]
+note = "(b) alternatives don't take their branch: o014 <function_invocation> and o003 <named_parameter_marker>, o004 <unnamed_parameter_marker>, o006 <field_reference> are all SELECT ( v1 ) -> {\"column\":{\"name\":\"v1\"}}; o019/o021/o025/o043/o053/o060 the same."
+
+[review.fingerprints]
+"db.expressions.expression" = "e1ac28afef24e0a9d238a2f6a1647466faa26284aa75925ee01b696bdb247d5e"
+
+[review.definitions]
+"db.expressions.expression" = "2d4694824d729da928a67226a74b27eb141b4957c600fc48ed50ef629e50d2d8"
+
+[[review]]
+id = "db-expressions-006"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.function-invocation",
+]
+note = "(b) <table_argument> cases are plain columns: o039 SELECT ( abs ( v1 ) ) -> args [{\"column\":{\"name\":\"v1\"}}]; o042, o050, o053, o021, o059 likewise; none writes TABLE ( ... ). (a) readings supported; (d) quoted:true and named_argument kept."
+
+[review.fingerprints]
+"db.expressions.function-invocation" = "e658b3f2e879a86c3ad515be60d5576628f6de869ae35a0b02e50221bbe1635b"
+
+[review.definitions]
+"db.expressions.function-invocation" = "c13eb68dbe3c2ae0b5ce7aa6d28a875ea5d44ff33bc04d72f1d892204524a5ef"
+
+[[review]]
+id = "db-expressions-007"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.geography-type",
+]
+note = "(d) o003 SELECT CAST ( NULL AS GEOGRAPHY ( ANY ) ) gives {\"data_type\":\"geography\"}: the ANY keyword is lost and only the missing srid encodes it (o005 error at '4326' suggests bare GEOGRAPHY parses the same). Stricter reading. Parser fix; no recording needed."
+
+[review.fingerprints]
+"db.expressions.geography-type" = "ff91447d691e6469774d9dfe54cf9d4c73383e977117d109bf301287ec3b0896"
+
+[review.definitions]
+"db.expressions.geography-type" = "41f53ffacb2d584879837d3bf573c5aae27d2eeaa53354e69054854676c0c863"
+
+[[review]]
+id = "db-expressions-008"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.geometry-type",
+]
+note = "(d) o003 SELECT CAST ( NULL AS GEOMETRY ( ANY ) ) gives {\"data_type\":\"geometry\"}: the ANY keyword is lost and only the missing srid encodes it (o005 error at '4326' suggests bare GEOMETRY parses the same). Stricter reading. Parser fix; no recording needed."
+
+[review.fingerprints]
+"db.expressions.geometry-type" = "88eaab7ecc70668561b97f9e07848e9724a4457d99b9393f186c9a246cea8aa8"
+
+[review.definitions]
+"db.expressions.geometry-type" = "6effa9412bd3b7e67420caffa6e2c63186bc9d702becf1de47e8eff76d7537a9"
+
+[[review]]
+id = "db-expressions-009"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.identifiers.subscript-dot",
+]
+note = "(b) o004, the alternative '_', is SELECT ( '_' ) -> {\"literal\":{\"literal_type\":\"string\",\"value\":\"_\"}}: a string literal, not an identifier that contains an underscore. (a) matches the page; o002 and o003 use v1, which holds a letter and a digit."
+
+[review.fingerprints]
+"db.expressions.identifiers.subscript-dot" = "4686b95ec4f8c09c0a91909f4e6e1ccc3fbd0f9168079b8542af818b1cec92b9"
+
+[review.definitions]
+"db.expressions.identifiers.subscript-dot" = "bc8c16bc8f6b24d3b4c906a45915a44c735fa1dcd088ee78f4680a001e433d4f"
+
+[[review]]
+id = "db-expressions-010"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.json-path-expression",
+]
+note = "(d) stricter reading: the path's segments land in one raw string: o045 '{}' : [ 'a1' ] [ 'a1' ] -> expression {\"literal\":{\"literal_type\":\"string\",\"value\":\"['a1']['a1']\"}}; o042 \"c2.c2\", o047 \"[0][0]\". No . or bracket segment gets its own node (unlike the colonsign approval)."
+
+[review.fingerprints]
+"db.expressions.json-path-expression" = "8a9c785736c7ad85637321c818773cf32629d71f3c0df1f470f883e0813d5b23"
+
+[review.definitions]
+"db.expressions.json-path-expression" = "8156623bce0775c8e8469b7382bbc6e3da84f094e8e2f939f7c3a461fffd1376"
+
+[[review]]
+id = "db-expressions-011"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.identifier",
+]
+note = "(b) every case is written as an expression, so no case names a schema: o004 SELECT ( v1 . v1 ) -> {\"column\":{\"name\":\"v1\",\"table\":\"v1\"}} (column of table, not schema of catalog); o001/o009/o016/o021 are plain columns. Needs a schema position, e.g. SHOW TABLES IN."
+
+[review.fingerprints]
+"db.expressions.names.identifier" = "ac2b4b7196e708d509afc7c97a58dbacbed554fb3716b1eec40e14ef4c9de3ff"
+
+[review.definitions]
+"db.expressions.names.identifier" = "844588968de856c2a9c8f3ba0927837267922fefacb3a8a00b31798bf1bda98b"
+
+[[review]]
+id = "db-expressions-012"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.identifier-2",
+]
+note = "(b) view names are tested as expressions: o004 SELECT ( s1 . v1 ) -> {\"column\":{\"name\":\"v1\",\"table\":\"s1\"}}, a column, not a view; o001/o009/o014/o016 likewise. A view name belongs in a relation position (FROM)."
+
+[review.fingerprints]
+"db.expressions.names.identifier-2" = "77ef78a32ca48b3ea3478deca6d6616944f27687842af026d8987816a56f14fd"
+
+[review.definitions]
+"db.expressions.names.identifier-2" = "1dbed1e71e0e78e58cc713dccff2acf500f60ed807ea77a0c2c65b8452e4ea3f"
+
+[[review]]
+id = "db-expressions-013"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.identifier-6",
+]
+note = "(b) stricter: function names are tested as column refs: o001 SELECT ( v1 ) -> {\"column\":{\"name\":\"v1\"}}, o004 SELECT ( s1 . v1 ) -> column v1 of table s1; no case calls a function (SELECT s1 . v1 ( )). (a)(c)(d) hold. Re-record in call position."
+
+[review.fingerprints]
+"db.expressions.names.identifier-6" = "77ef78a32ca48b3ea3478deca6d6616944f27687842af026d8987816a56f14fd"
+
+[review.definitions]
+"db.expressions.names.identifier-6" = "cc453d736e2a80b7f084ac32381f8ff645f002408983262d14156328575ac272"
+
+[[review]]
+id = "db-expressions-014"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.identifier-7",
+]
+note = "(b) stricter: procedure names are tested as column refs: o001 SELECT ( v1 ) -> {\"column\":{\"name\":\"v1\"}}, o004 SELECT ( s1 . v1 ) -> column of table s1; a procedure name belongs after CALL (page: CALL myproc()). (a)(c)(d) hold. Re-record as CALL cases."
+
+[review.fingerprints]
+"db.expressions.names.identifier-7" = "77ef78a32ca48b3ea3478deca6d6616944f27687842af026d8987816a56f14fd"
+
+[review.definitions]
+"db.expressions.names.identifier-7" = "d20f3c6426158a3fefe4abd42f4b04ddcfdd4d6aa349675762d10d13f4487880"
+
+[[review]]
+id = "db-expressions-015"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.identifier-8",
+]
+note = "(b) stricter: label names are tested as column refs: o001/o002/o004 SELECT ( v1 ) -> {\"column\":{\"name\":\"v1\"}}; no case uses a label (page: BEGIN label: LOOP LEAVE label; END LOOP label; END). (a)(c)(d) hold. Re-record in a labelled loop."
+
+[review.fingerprints]
+"db.expressions.names.identifier-8" = "0e2964a47bb690f28dbdc14ac4096df2507fcd6137a6b484a8c8840ee8af3644"
+
+[review.definitions]
+"db.expressions.names.identifier-8" = "e54825b15d02feeb018285b8e4741999cd7eb1db7d45bc09716731581990bc38"
+
+[[review]]
+id = "db-expressions-016"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.identifier.syntax",
+]
+note = "(d) o005/o008/o022/o024/o025/o027/o028 SELECT * FROM s1 . t3 VERSION AS OF 1 WITH ( 'k' = 'v' ) -> {\"command\":{\"this\":...}}: schema, temporal_spec and options_spec never structured. (a)(b)(c) hold; reading rows supported by page examples. Parser fix."
+
+[review.fingerprints]
+"db.expressions.names.identifier.syntax" = "c6120385480551944877e40c324bebd36edf281a2c5b6b4e511098635c2e1844"
+
+[review.definitions]
+"db.expressions.names.identifier.syntax" = "cf6b45d85260582459d6020e30e532bb31dc932c456c0b567adedf9b43561548"
+
+[[review]]
+id = "db-expressions-017"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.subscript-dot-3",
+]
+note = "(d) every accepted tree, e.g. o001 SELECT explode ( map ( 1 , 2 ) ) ( c1 ), has \"alias\":\"\" next to column_aliases [\"c1\"]: an invented empty name where none was written. (a)(b)(c) hold; no-parens suppress is valid. Parser fix; no recording needed."
+
+[review.fingerprints]
+"db.expressions.names.subscript-dot-3" = "5769a9f9c0534d30cb10065b699eaefce96f696dd82ddd2b34ebc2ad6096ebed"
+
+[review.definitions]
+"db.expressions.names.subscript-dot-3" = "d6ad0859887458aa7a2ca606b1ef275aa6ab0f1094a5d12287f6c346fc740600"
+
+[[review]]
+id = "db-expressions-018"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.subscript-dot-4",
+]
+note = "(b) stricter: volume names are tested as column refs: o001 SELECT ( v1 ) -> {\"column\":{\"name\":\"v1\"}}, o002 SELECT ( s1 . v1 ) -> column of table s1; no case names a volume (e.g. DESCRIBE VOLUME s1 . v1). (a)(c)(d) hold. Re-record in a volume position."
+
+[review.fingerprints]
+"db.expressions.names.subscript-dot-4" = "754c06347cf0dd173277a991233d6da25153b2f6cdbae4f24c4004e62d7bdf4e"
+
+[review.definitions]
+"db.expressions.names.subscript-dot-4" = "b8ecccb4244d8047c90d912419ed46b41ba9abe6368bdd9fc400954d885517bb"
+
+[[review]]
+id = "db-expressions-019"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.subscript-dot.syntax",
+]
+note = "(b) stricter: cursor names are tested as column refs: o001 SELECT ( v1 ) -> {\"column\":{\"name\":\"v1\"}}, o004 SELECT ( v1 . v1 ) -> column of table v1; no case uses a cursor (page: OPEN my_cursor in a compound). (a)(c)(d) hold. Re-record in OPEN."
+
+[review.fingerprints]
+"db.expressions.names.subscript-dot.syntax" = "901b6ade7b24466ad2d3d152149087e8f2f7e758ce709889a882ceb7436b77ba"
+
+[review.definitions]
+"db.expressions.names.subscript-dot.syntax" = "a5e5247c8600014fc08d9f0dd8233e4588454d99ae166183ae088be70ae4e8ff"
+
+[[review]]
+id = "db-expressions-020"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.syntax",
+]
+note = "(b) stricter: relation names are tested as column refs: o002 SELECT ( t1 ) and o003 SELECT ( v1 ) -> {\"column\":{...}}; neither branch names a table or view (FROM t1). (a)(c)(d) hold. Re-record in FROM; then the 'v1' negatives are no longer suppressible."
+
+[review.fingerprints]
+"db.expressions.names.syntax" = "73678ffe12d6d01664f0e5307755327c5c806dd5fb5d6f0f8ce248c98e1c44ed"
+
+[review.definitions]
+"db.expressions.names.syntax" = "fbefc22a15e8e127a1fb6cb85d9aadadd1cb216dd7c866926e83775c5e22bd58"
+
+[[review]]
+id = "db-expressions-021"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.null-type",
+]
+note = "(b)(d) the form is a type, but cases are expressions: o003 SELECT ( VOID ) gives column{name:VOID} (receipt semantic_error, read as a column); o001/o002 SELECT ( NULL ) is the NULL literal. Cases should be CAST ( NULL AS VOID ) / CAST ( NULL AS NULL )."
+
+[review.fingerprints]
+"db.expressions.null-type" = "d33b8d5978a7ab7811855f111507ed71a380cce6835e985dd4374e22a804dabe"
+
+[review.definitions]
+"db.expressions.null-type" = "35f0c7e189d11b65a6766cf5832f1764e311609e2cbb1ba656d0f810025f08e2"
+
+[[review]]
+id = "db-expressions-022"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.string-type.subscript-dot",
+]
+note = "(a) stricter: page [r|R]'c [ ... ]' (r or R: 'Optional prefix denoting a raw-literal'); catalogue makes r a placeholder <r> and adds a blank inside the quote ('c [ ... ] '); no [[reading]] states either. (b) holds. Also (d) o010 'c' 'c' -> one literal \"cc\". Catalogue fix."
+
+[review.fingerprints]
+"db.expressions.string-type.subscript-dot" = "e7a8064e71abc07bc6820a24aaf3e7ad7b7f5d8f75070ed94489e2ae74357125"
+
+[review.definitions]
+"db.expressions.string-type.subscript-dot" = "5c6b82efe344fac126b68e978f693168a185c5e7eebf04e7c73912d2be07a124"
+
+[[review]]
+id = "db-expressions-023"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.struct-type",
+]
+note = "(d) stricter: the optional colon leaves no mark: o033 field c1 :STRING -> {\"name\":\"c1\",\"data_type\":{\"data_type\":\"string\"}}, the same field tree as o008 c1 STRING. (a) reading reorder supported by page prose; (b)(c) hold. Parser fix; no re-recording."
+
+[review.fingerprints]
+"db.expressions.struct-type" = "5d28d9049b5c18efa8caf1e19caac474b0c55b8d44b3d6605f62a4df41ae7a46"
+
+[review.definitions]
+"db.expressions.struct-type" = "4257549739c84540535a90be31319c108c3dfe850e500b391b5c443d32c21a7b"
+
+[[review]]
+id = "db-expressions-024"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.timestamp-ntz-type.timestamp-without-time-zone",
+]
+note = "(d) synonym spelling lost: o010 CAST(NULL AS TIMESTAMP WITHOUT TIME ZONE) -> {\"data_type\":\"timestamp\",\"timezone\":false}, the tree CAST(NULL AS TIMESTAMP_NTZ) gets (d/ dossier); o011 adds only precision. Strict type-synonym rule, as the LTZ rejection. Parser fix."
+
+[review.fingerprints]
+"db.expressions.timestamp-ntz-type.timestamp-without-time-zone" = "832b286be8622f3686618a0df2857e7d993524f0325fd2a8a6e77e3d9a98e0bd"
+
+[review.definitions]
+"db.expressions.timestamp-ntz-type.timestamp-without-time-zone" = "ef35019816ea431684c6c873ddefc6c159f22b64d2e14c39428c5d015413ffc8"
+
+[[review]]
+id = "db-expressions-025"
+family = "expressions"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.timestamp-type.timestamp-ltz",
+]
+note = "(d) synonym spelling lost: CAST(NULL AS TIMESTAMP_LTZ) and ... TIMESTAMP_LTZ ( 6 ) give {\"data_type\":\"timestamp\",\"timezone\":true[,\"precision\":6]}, the same tree as TIMESTAMP; no mark of TIMESTAMP_LTZ. Strict reading of the type-synonym rule. Parser fix; no re-recording."
+
+[review.fingerprints]
+"db.expressions.timestamp-type.timestamp-ltz" = "2a2f78185748b08532b1076f9eeee9ef8474a17bbb4fa170a984e0dc4b5cbe64"
+
+[review.definitions]
+"db.expressions.timestamp-type.timestamp-ltz" = "eb75a41f925abdc2952cd1aec6fca3f1772de8afb6fab78f4c2c8d16ee6385b9"
+
+[[review]]
+id = "db-expressions-026"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.collation.order-by-collate-utf8-lcase",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint b18e9bc2da2bd317989f46d05e2154cf8600855f8704c1254f3de5aba193340f -> cd3b1b09c8b4a1f9ceab5d4c3a9e7c45a7480806f88cf358e92dbac8dc87bcc1: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.collation.order-by-collate-utf8-lcase" = "cd3b1b09c8b4a1f9ceab5d4c3a9e7c45a7480806f88cf358e92dbac8dc87bcc1"
+
+[review.definitions]
+"db.expressions.collation.order-by-collate-utf8-lcase" = "c5b904885d664b09fefaf33e2bbd55d5af664c2d8d918830b05d47c3118d9adf"
+
+[[review]]
+id = "db-expressions-027"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.collation.order-by-lower-collate",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 8ef8ec4a5bb303540995a9afbf64a289e3b477bf0765ae37f93190d6e52abe3f -> 2790a770da2e94eaefc7da3a680354fbdf5af61ce2fd1408762933b3c2502ffd: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.collation.order-by-lower-collate" = "2790a770da2e94eaefc7da3a680354fbdf5af61ce2fd1408762933b3c2502ffd"
+
+[review.definitions]
+"db.expressions.collation.order-by-lower-collate" = "8956818fd573a9f97c4996b14f25db35a0d40363e79063a68c7ee202bedabbad"
+
+[[review]]
+id = "db-expressions-028"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.collation.utf8-binary-utf8-lcase-unicode",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint ffbdd9e8c26a6bc11a7d2389a7c19b2d5fa540a41fd433dbf1cd11f300885a9f -> c04b203ba37c2e1e982b5d21c099f028b8878b6d1b4cbedc9fc7d2024899fa12: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.collation.utf8-binary-utf8-lcase-unicode" = "c04b203ba37c2e1e982b5d21c099f028b8878b6d1b4cbedc9fc7d2024899fa12"
+
+[review.definitions]
+"db.expressions.collation.utf8-binary-utf8-lcase-unicode" = "11bc183fb7a7f308f26eeaaeefd3db323681ed5f7d49c1c808976dbfe2b5dcec"
+
+[[review]]
+id = "db-expressions-029"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.lambda-functions",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 9a6ecf4238ad2dff998dbae197bba7ef2f25e221762a25c8578a94ad13ca3e84 -> 60a55e0dc8e78378b7a351a1a6a34146189c1ee662ae7f6496b240b19dbd8a25: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.lambda-functions" = "60a55e0dc8e78378b7a351a1a6a34146189c1ee662ae7f6496b240b19dbd8a25"
+
+[review.definitions]
+"db.expressions.lambda-functions" = "466443706dd1ec9e68e333c35e8c23571904b02c2022c8df9677d00a54aa474e"
+
+[[review]]
+id = "db-expressions-030"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names-identifier-clause.identifier",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 5df171534e068f1d195288f96723c783e5b096109651277985724dd63e9c1e1e -> 08e79766e51460439d8bd425a1499aa881d842e3a151c5dc02d7028032972f41: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.names-identifier-clause.identifier" = "08e79766e51460439d8bd425a1499aa881d842e3a151c5dc02d7028032972f41"
+
+[review.definitions]
+"db.expressions.names-identifier-clause.identifier" = "6bba9b4221a917c47dce92cae6829c71354a4b3afb57542489740b47fc356581"
+
+[[review]]
+id = "db-expressions-031"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names-identifier-clause.identifier.syntax",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 5df171534e068f1d195288f96723c783e5b096109651277985724dd63e9c1e1e -> 08e79766e51460439d8bd425a1499aa881d842e3a151c5dc02d7028032972f41: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.names-identifier-clause.identifier.syntax" = "08e79766e51460439d8bd425a1499aa881d842e3a151c5dc02d7028032972f41"
+
+[review.definitions]
+"db.expressions.names-identifier-clause.identifier.syntax" = "8b268db1410594e8121ee3f17f6a66a5ffbc8b53871a9a26fb39336533e210cd"
+
+[[review]]
+id = "db-expressions-032"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names.subscript-dot-2",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 3844bc830bb389876ceada43abdc79d6af4afadc17bddc9a5ad918b19c12aa44 -> 72c45c01ced45ad19fc0974223bf69131c7f5b70436781fbee0265481c8be998: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.names.subscript-dot-2" = "72c45c01ced45ad19fc0974223bf69131c7f5b70436781fbee0265481c8be998"
+
+[review.definitions]
+"db.expressions.names.subscript-dot-2" = "f0e992879e5a2496f26383c74e1383c2301f48d402800c14771700c85104a913"
+
+[[review]]
+id = "db-expressions-033"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.window-functions",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint e613bd09bdb06df41dfbf8fe012ac2e5a505d71bcd0654eecc4081a6538c33e8 -> 50632f7602349ad1d283290764b26802ae25ffaf9525c463c715bddd8e451ef5: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.expressions.window-functions" = "50632f7602349ad1d283290764b26802ae25ffaf9525c463c715bddd8e451ef5"
+
+[review.definitions]
+"db.expressions.window-functions" = "8d8b5f177789ba363b04161b506230cb79610400a28fa923e130299ea0793ad7"
+
+[[review]]
+id = "db-expressions-034"
+family = "expressions"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:47:23Z"
+verdict = "approved"
+forms = [
+  "db.expressions.file-type",
+  "db.expressions.interval-type.interval",
+  "db.expressions.interval-type.interval.literals",
+  "db.expressions.names.identifier-3",
+  "db.expressions.names.identifier-4",
+  "db.expressions.names.identifier-5",
+  "db.expressions.names.subscript-dot",
+  "db.expressions.parameter-marker.colon",
+]
+note = "Re-read on 17 Nov 2026. The 16 Nov full reading approved each of these forms at an earlier fingerprint with the same definition hash; every case that changed since (receipts now attached, local verdicts that now agree with them, replaced or whitespace-normalised texts) was read against its receipt and its local parse tree on 6e28c6100, and each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.expressions.file-type" = "4a2f4efff7e35f19abbb0d3bfb36225dd90a3c80aeba34ea709369294b32b3fb"
+"db.expressions.interval-type.interval" = "3a32b1b0e1bf2ced6a721b7b5e25d3bfbac529a80de8e4dbd0dfb42340737e07"
+"db.expressions.interval-type.interval.literals" = "42c85d3264b6f582e6bb203eac5ab168f5f846174ba1d1e22d1b2bd2238101ed"
+"db.expressions.names.identifier-3" = "cc5f9d4abd1adda547168bc0a311d82c7dcee2102819517c27a6514127d8c6ff"
+"db.expressions.names.identifier-4" = "518b6bfaf7a910ef19b25013b5de712dcf7c187ed9ca26174fdb7f803911ce88"
+"db.expressions.names.identifier-5" = "e9cbc4a8cb00870ac2dbcc21e2669fb6c50a91c59b80481e1a538fc0bb14c546"
+"db.expressions.names.subscript-dot" = "c7e99cb199abc1b8fd56b80864bc782b342bc35624b62742f2b5dd0346ab75e3"
+"db.expressions.parameter-marker.colon" = "2cca4e877678d7588a3fc98978bc9ca66c7975846cd2b8d3a071190c37fcb254"
+
+[review.definitions]
+"db.expressions.file-type" = "24aa14dd27226d154eaca2c5ebac77cae36b8a5a544c4d2a6f8ff1655d1ffb53"
+"db.expressions.interval-type.interval" = "e73fc9e5f3f6bae1222aba950741d57b7d7427db8c00d39302b2a39a8d8991db"
+"db.expressions.interval-type.interval.literals" = "6fdacb610326eb34973913dff8dbaa68795881414478dfd15e7279a14746a770"
+"db.expressions.names.identifier-3" = "6a69e3cbf933a9790728e3e7fd4ea8a2cf40317022a651231b0afdd7f69386bf"
+"db.expressions.names.identifier-4" = "a1eb2e8149f6201ac784c0a86c4533ff0edcf302596a800f0e454f359ad038b0"
+"db.expressions.names.identifier-5" = "210c8eabaf67233603adac6380620c0af709e0a43e3b7efdd62358f75f46ee69"
+"db.expressions.names.subscript-dot" = "60073fcda5eb56033f6a66bffa54bd4598371331db747eb77c8fa5c131f155d1"
+"db.expressions.parameter-marker.colon" = "2440f0458000efe15ff564ab63d019dfa297a0961c8a27f37f33ce8c5c1db671"
+
+[[review]]
+id = "db-expressions-035"
+family = "expressions"
+catalogue_sha256 = "ffc590e2daad0e5c31541285aca1a5a7d1ce7e7bedb0c1ccdc4c1cfcdd32473c"
+obligations_sha256 = "697332d6178cfd5465cf1ebae8c6d98f956a76ed507c8807032c76c97f48bc11"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T06:50:48Z"
+verdict = "approved"
+forms = [
+  "db.expressions.object-type",
+]
+note = "Exclusion only, naming no other form: the OBJECT type is output-only, so no statement can write it as input."
+
+[[review.exclusion]]
+form = "db.expressions.object-type"
+reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
+
+[[review]]
+id = "db-expressions-036"
+family = "expressions"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.expressions.boolean-type.true-false",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.expressions.boolean-type.true-false" = "8810c383e4f45ae6a7bcfaa4fe60d8a17b28c88168e6c8662cfca1a165e4f509"
+
+[review.definitions]
+"db.expressions.boolean-type.true-false" = "1be06e91956dd38f17e4268ac1969521fff2705194fe660f029d7f742b1d9615"
+
+[[review]]
+id = "db-expressions-037"
+family = "expressions"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:21:47Z"
+verdict = "approved"
+forms = [
+  "db.expressions.parameter-marker.syntax",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 2: a form whose earlier approval went stale and that gained cases after it, nearly all missing-parenthesis negatives. Read on 683748ea8 against the 2026.45 receipts. Every new case was read. Each new reject fails where its receipt does, at the token where the parenthesis or bracket belongs; the position differences were read on purpose: the warehouse reads FILTER or file as an alias before failing, reports a value check (a key with no value) without a position, or looks for BY or ( one token later. The one new accept (SELECT ( ? )) is a positional parameter. The mechanical repair of each differing or syntax:false reject (adding the parenthesis, writing map(...) for the MAP typed literal) is accepted locally and matches a recorded positive. Every accepted case of the form passed the check that its SQL's names and literals all appear in its tree. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.expressions.parameter-marker.syntax" = "b2441698e744aaa86840341ebe042b8a87feacbe8c238f99da5ec439e31c2ad2"
+
+[review.definitions]
+"db.expressions.parameter-marker.syntax" = "282c4a2c4e3a04f58c598970a5ea66ac0615ceb64d9f0061b6898af6b38453af"
+
+[[review]]
+id = "db-expressions-038"
+family = "expressions"
+parser_tree = "fe929d66181dd6dace2630744e5bd823f3cee506"
+reviewed_utc = "2026-11-17T13:08:12Z"
+verdict = "approved"
+forms = [
+  "db.expressions.decimal-type.bd",
+  "db.expressions.decimal-type.subscript",
+  "db.expressions.timestamp-type.timestamp-ltz",
+]
+note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evidence set evK-17nov, after the BD and TIMESTAMP_LTZ parser fixes. It answers db-expressions-003 (decimal-type.bd), db-expressions-004 (decimal-type.subscript) and db-expressions-025 (timestamp-type.timestamp-ltz), whose bindings went stale with this tree. BD: the cast of a BD literal now carries the precision and scale Spark's BigDecimal gives the digits instead of a bare DECIMAL, so it no longer reads as DECIMAL(10,0): SELECT ( 12E-1BD ) is DECIMAL(2,1), ( 1.5BD ) DECIMAL(2,1), ( .5BD ) DECIMAL(1,1), ( 12BD ) DECIMAL(2,0), ( 12E1BD ) DECIMAL(3,0) and ( 1.5E1BD ) DECIMAL(2,0), all accepted; -1.5BD is the negation of 1.5BD. The mechanical check flags E1BD in 12E1BD and 1.5E1BD only because it splits the token there; the literal keeps 12E1 and 1.5E1. TIMESTAMP_LTZ: CAST ( NULL AS TIMESTAMP_LTZ ) and TIMESTAMP_LTZ ( 6 ) (accepted) keep spelling TIMESTAMP_LTZ, so they no longer share TIMESTAMP's tree; the refused TIMESTAMP_LTZ ( ) and the missing ) are refused at the warehouse's position. The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.expressions.decimal-type.bd" = "a25886e3ed7051e878fc46ee32c9dd587d57e24496a63a4bd08ab068c31ad1e1"
+"db.expressions.decimal-type.subscript" = "df7b2d49812915e220f58908414214f292ebbd405797f77673129a83bfe060fc"
+"db.expressions.timestamp-type.timestamp-ltz" = "e56247698ab1ebdd0b0306c321890cdd923ce487b1d59ec0d655837dc20d8008"
+
+[review.definitions]
+"db.expressions.decimal-type.bd" = "45f325e88a727aa900305955ec2faa026fdc8aaf5f16f7bf3467dc158da8ef86"
+"db.expressions.decimal-type.subscript" = "d0442ec9c717f778177e0089da13fcb6e6a6822587ec8c7e8dcfafb3ebf6ee56"
+"db.expressions.timestamp-type.timestamp-ltz" = "eb75a41f925abdc2952cd1aec6fca3f1772de8afb6fab78f4c2c8d16ee6385b9"
+
+[[review]]
+id = "db-expressions-039"
+family = "expressions"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.expressions.decimal-type",
+  "db.expressions.expression",
+  "db.expressions.names.identifier",
+  "db.expressions.names.identifier-2",
+  "db.expressions.names.identifier-7",
+  "db.expressions.names.subscript-dot.syntax",
+  "db.expressions.names.syntax",
+  "db.expressions.null-type",
+  "db.expressions.time-type.time.syntax",
+  "db.expressions.timestamp-ntz-type.timestamp-ntz",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.expressions.decimal-type" = "5245d68cf68d5ca2074d9f9b1528412a7e9c9daa6f69c30392b195394da24621"
+"db.expressions.expression" = "d0f48ce2240a47f0612ca121e1c9f6904a9323d4abf7e0d19fe9bbf1ad77b069"
+"db.expressions.names.identifier" = "ac7525859a87aad36feceae9685e098b921122e6cbc01baff535eb7ee14c1309"
+"db.expressions.names.identifier-2" = "28ac6725404f471c537687829c9800d6fe99a69ded606c3a893584b359527d14"
+"db.expressions.names.identifier-7" = "425a2e188af18f4a1b1c813ea5c53eb284807701827d3c323fcfc692d1684f16"
+"db.expressions.names.subscript-dot.syntax" = "1889b334147e0ee12606b04b4d5bd22bd04caddf79f1c6ead270dbf3ba361381"
+"db.expressions.names.syntax" = "57c4e9e2f95e068046d5c9ed028d93c4001800fe040b40fee2f901011852cd5e"
+"db.expressions.null-type" = "04cc77910cdd3ad2696dcdab72e301a070595a323be12f53f17cb32ec56d17ec"
+"db.expressions.time-type.time.syntax" = "70e072fd1ab2bc408791acdf0df870c244d35f7f85d27a3ed69402a493200fca"
+"db.expressions.timestamp-ntz-type.timestamp-ntz" = "30f01270f56d5e19c15b8482db94a3dc3cf00ad648a0f41e43d5db5cba0de3a8"
+
+[review.definitions]
+"db.expressions.decimal-type" = "3a3e4ead1b44bc5736883f65671ba4cf7e9a852bcb29a92c365dd8e59a5c8b1c"
+"db.expressions.expression" = "c071610c126a1a9d7528c7e1e96d400e05cd20ac72018089482abaab5bad4852"
+"db.expressions.names.identifier" = "121f195fca0604ea4265a47b6fa366ce4157970edaa0be1600f5652ee72917b9"
+"db.expressions.names.identifier-2" = "ddec66de9ded585f47ccf7e934add2c314746c0173bdd07eefb8a67a3b64ecad"
+"db.expressions.names.identifier-7" = "264c5f0c2ab748e5c9b7aaa40147b2d994c173cdeb46961b04be26fa6edb1446"
+"db.expressions.names.subscript-dot.syntax" = "d9228a23fd108d427cc2ace0e91fc1b679f83dcc031932f32570b077251ce0b1"
+"db.expressions.names.syntax" = "7bf76f01ab15f18677c226018804c6f70d9c1bc6e2e768236d64bbf6a2c717e6"
+"db.expressions.null-type" = "df2ea479f849a9f9be7c60c1f2a25b68ed7f04689e41e958a78d120c63c48205"
+"db.expressions.time-type.time.syntax" = "37c1c12ba7eec330dcfc1a2eb52401560879c1e2145441a6c5ba63df15c5e087"
+"db.expressions.timestamp-ntz-type.timestamp-ntz" = "15e05b5f20d436724a5d8560590c91a5c2306ac1321ef92a377eef5fd5ad0c5a"
+
+[[review]]
+id = "db-expressions-040"
+family = "expressions"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.geography-type",
+  "db.expressions.geometry-type",
+  "db.expressions.identifiers.subscript-dot",
+  "db.expressions.names.subscript-dot-4",
+  "db.expressions.string-type.subscript-dot",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: geography-type: db-expressions-007's finding still holds: CAST ( NULL AS GEOGRAPHY ( ANY ) ) gives {data_type: geography} with no mark for ANY; only the absent srid stands for it. No accepted text collides today (bare GEOGRAPHY is refused on both sides), but the written keyword is not kept. Parser fix. geometry-type: db-expressions-008's finding still holds: CAST ( NULL AS GEOMETRY ( ANY ) ) gives {data_type: geometry} with no mark for ANY. Parser fix, as for geography-type. identifiers.subscript-dot: db-expressions-009's finding still holds: o004, the alternative '_', is still SELECT ( '_' ), a string literal rather than an identifier containing an underscore (o007 now uses v_1, which is right). Obligation and case fix; the new case needs a receipt. names.subscript-dot-4: New in this re-read: the volume name in DESCRIBE VOLUME `SELECT` . v1 is one identifier whose name is the text `SELECT`.v1, backquotes included, so its parts and their quoting are not kept. db-expressions-018's case finding is answered (the cases now name volumes). Parser fix. string-type.subscript-dot: db-expressions-022's (d) finding still holds: 'c' 'c' gives one literal \"cc\", the same tree as 'cc'. Its (a) finding is answered by the [[reading]] row. Parser fix (keep adjacent string literals apart or mark the concatenation)."
+
+[review.fingerprints]
+"db.expressions.geography-type" = "6f09a793793d90e456b9c6fecf81d7776ffb37a2e84bdb53d672aa4049a43297"
+"db.expressions.geometry-type" = "164baf1d344c94a8eee60787ea8c5ecf960c8fb3785697a98861a4dc56a17100"
+"db.expressions.identifiers.subscript-dot" = "ecc9d4264c5114c7b4e76b06ac2f27916339aa3abaa586cf0f0c97ef0b667e6b"
+"db.expressions.names.subscript-dot-4" = "227e2cbee485c799755dac2dee441967770dee6f533d68e60dd36d4e52ffec65"
+"db.expressions.string-type.subscript-dot" = "f8bd468f1c524b7dbfd2e2be3846b040b88e688d5a855ce816dfcbdc013e04fe"
+
+[review.definitions]
+"db.expressions.geography-type" = "2c23e30498830495c2b78307067f752a2480c5b79ec25c87dae63e4f359f9c03"
+"db.expressions.geometry-type" = "f94e39103c70f6ef2c37a7d156a9ee2094ec892bcf09fff5896f278d04950784"
+"db.expressions.identifiers.subscript-dot" = "dc23d04ece0e0b486ae15f83f55ebe51dcf6d3ede358cac71986fc1910e85d3e"
+"db.expressions.names.subscript-dot-4" = "fa451d49a6b82678c24014646569df70b3f38cb5ce8fe939bdc888fd4d733a40"
+"db.expressions.string-type.subscript-dot" = "6e0e70498e32940a8ecb5d77d0d34cfc3c73896223f0d392bac3582b9b4442b9"
+
+[[review]]
+id = "db-expressions-041"
+family = "expressions"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T20:31:05Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.identifier",
+  "db.expressions.names.subscript-dot.syntax",
+]
+note = "Withdraws approvals after an independent review of 312903a4b..106d09af4 found trees that do not keep what the text wrote, each reproduced locally at parser tree 880c142a; earlier records are unchanged. Form by form: names.identifier: withdraws db-expressions-039. A qualified name is flattened into one identifier with the backquotes inside its name, so its parts are not kept: SHOW TABLES IN `SELECT` . v1 gives scope `SELECT`.v1 (k0e1636bef15c, k5db9d3bd4fad, k944ca008d0ce). This is the reason db-expressions-040 holds names.subscript-dot-4, applied consistently. Parser fix (qualified names as parts). names.subscript-dot.syntax: withdraws db-expressions-039. As names.identifier: OPEN v1 . v1 (k94bd15a99805) keeps the qualified name as one flattened identifier rather than its parts. Parser fix."
+
+[review.fingerprints]
+"db.expressions.names.identifier" = "ac7525859a87aad36feceae9685e098b921122e6cbc01baff535eb7ee14c1309"
+"db.expressions.names.subscript-dot.syntax" = "1889b334147e0ee12606b04b4d5bd22bd04caddf79f1c6ead270dbf3ba361381"
+
+[review.definitions]
+"db.expressions.names.identifier" = "121f195fca0604ea4265a47b6fa366ce4157970edaa0be1600f5652ee72917b9"
+"db.expressions.names.subscript-dot.syntax" = "d9228a23fd108d427cc2ace0e91fc1b679f83dcc031932f32570b077251ce0b1"
+
+[[review]]
+id = "db-expressions-042"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:10:44Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.subscript-dot-3",
+  "db.expressions.struct-type",
+  "db.expressions.timestamp-ntz-type.timestamp-without-time-zone",
+]
+note = "Re-read after the parser batch at b98f25d91 (parser tree 6546c748), from the existing 2026.45 receipts and the local trees; the earlier records are unchanged. Form by form: names.subscript-dot-3: db-expressions-017 still holds. SELECT explode ( map ( 1 , 2 ) ) ( c1 ) gives an alias whose name is empty next to column_aliases [c1], a name nothing wrote. Parser fix. struct-type: db-expressions-023 still holds. STRUCT < c1 : STRING > and STRUCT < c1 STRING > give the same field tree, so the optional colon leaves no mark. The tree screen did not catch it, because the case writes c1 :STRING as one token. Parser fix. timestamp-ntz-type.timestamp-without-time-zone: db-expressions-024 still holds. CAST ( NULL AS TIMESTAMP WITHOUT TIME ZONE ) and CAST ( NULL AS TIMESTAMP_NTZ ) give the same tree, so the synonym spelling is lost. Parser fix."
+
+[review.fingerprints]
+"db.expressions.names.subscript-dot-3" = "9cbe654d9f8acdd77427110b105bc632db840273a93e9990872cbc964f10f13b"
+"db.expressions.struct-type" = "21b4c4df14b5c3ab03e141d2e404bd0e21a7331fe60eab28423ed3cea94e8134"
+"db.expressions.timestamp-ntz-type.timestamp-without-time-zone" = "005e18c1fb0003f491f536f484068c93daa4f0f770f6ae8df7dbd71556b00748"
+
+[review.definitions]
+"db.expressions.names.subscript-dot-3" = "d6ad0859887458aa7a2ca606b1ef275aa6ab0f1094a5d12287f6c346fc740600"
+"db.expressions.struct-type" = "4257549739c84540535a90be31319c108c3dfe850e500b391b5c443d32c21a7b"
+"db.expressions.timestamp-ntz-type.timestamp-without-time-zone" = "ef35019816ea431684c6c873ddefc6c159f22b64d2e14c39428c5d015413ffc8"
+
+[[review]]
+id = "db-expressions-043"
+family = "expressions"
+catalogue_sha256 = "ffc590e2daad0e5c31541285aca1a5a7d1ce7e7bedb0c1ccdc4c1cfcdd32473c"
+obligations_sha256 = "697332d6178cfd5465cf1ebae8c6d98f956a76ed507c8807032c76c97f48bc11"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T22:57:49Z"
+verdict = "approved"
+forms = [
+  "db.expressions.object-type",
+]
+note = "Re-binds db-expressions-035, not a re-read: that exclusion was bound to parser tree 880c142a and went stale when the parser batch changed the tree, so object-type silently left the excluded count. The catalogue and obligation files are byte-identical to the ones it bound (catalogue ffc590e2, obligations 697332d6), the page is unchanged, and the local parser at 6546c748 still refuses OBJECT as input in all three cases (o018, o019, o020). Exclusion only, naming no other form: the OBJECT type is output-only, so no statement can write it as input."
+
+[[review.exclusion]]
+form = "db.expressions.object-type"
+reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
+
+[[review]]
+id = "db-expressions-044"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.expressions.function-invocation",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 43 of 43 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. function-invocation: db-expressions-006 is answered: 5 of the 29 cases write TABLE ( t1 ), which parses as table_argument."
+
+[review.fingerprints]
+"db.expressions.function-invocation" = "6760f03c5e798e989773f35f469309d8af9eb52b741fed6dbc5db46d7000c954"
+
+[review.definitions]
+"db.expressions.function-invocation" = "c13eb68dbe3c2ae0b5ce7aa6d28a875ea5d44ff33bc04d72f1d892204524a5ef"
+
+[[review]]
+id = "db-expressions-045"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.expressions.json-path-expression",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 26 of 26 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. json-path-expression: db-expressions-010 is answered: each [ 'a1' ] is its own json path subscript node."
+
+[review.fingerprints]
+"db.expressions.json-path-expression" = "64aa8d456753486fd7f042af0c05b7976cb573f10e2eba92a3f8935b9d1edaf4"
+
+[review.definitions]
+"db.expressions.json-path-expression" = "8156623bce0775c8e8469b7382bbc6e3da84f094e8e2f939f7c3a461fffd1376"
+
+[[review]]
+id = "db-expressions-046"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names.identifier",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 17 of 17 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. names.identifier: db-expressions-011 is answered (SHOW TABLES IN names a schema), and so is db-expressions-041: SHOW TABLES IN `SELECT` . v1 gives dot(identifier SELECT, quoted, v1), a qualified name kept as parts."
+
+[review.fingerprints]
+"db.expressions.names.identifier" = "3b7a1ecf70f6757a4d593aae4d11569a70b1f8fa53a00fb3cc619d6cad17f68d"
+
+[review.definitions]
+"db.expressions.names.identifier" = "121f195fca0604ea4265a47b6fa366ce4157970edaa0be1600f5652ee72917b9"
+
+[[review]]
+id = "db-expressions-047"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names.subscript-dot-4",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 11 of 11 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. names.subscript-dot-4: db-expressions-018 was answered by volume-position cases. db-expressions-040 is answered: DESCRIBE VOLUME `SELECT` . v1 gives table v1 with schema SELECT, quoted."
+
+[review.fingerprints]
+"db.expressions.names.subscript-dot-4" = "051299c2389b3d3ba9a9048bc04767bc8507c2cf6cce135a6dfa2e1105056580"
+
+[review.definitions]
+"db.expressions.names.subscript-dot-4" = "fa451d49a6b82678c24014646569df70b3f38cb5ce8fe939bdc888fd4d733a40"
+
+[[review]]
+id = "db-expressions-048"
+family = "expressions"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.expressions.names.subscript-dot.syntax",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 11 of 11 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. names.subscript-dot.syntax: db-expressions-019 was answered by the OPEN cases. db-expressions-041 is answered: OPEN v1 . v1 keeps cursor_qualifier [v1], not one flattened string."
+
+[review.fingerprints]
+"db.expressions.names.subscript-dot.syntax" = "cc88498b336460e4bcec6a700d909abd8e51c0603a210324ec743e2980c7c94c"
+
+[review.definitions]
+"db.expressions.names.subscript-dot.syntax" = "d9228a23fd108d427cc2ace0e91fc1b679f83dcc031932f32570b077251ce0b1"
+
+[[review]]
+id = "db-expressions-049"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.collation.order-by-collate-utf8-lcase",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k3ac144d50c81: SELECT c1 FROM t1 ORDER BY `v1 Q` COLLATE UTF8_LCASE  ==  SELECT c1 FROM ( t1 ) ORDER BY `v1 Q` COLLATE UTF8_LCASE. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-expressions-026."
+
+[review.fingerprints]
+"db.expressions.collation.order-by-collate-utf8-lcase" = "cd3b1b09c8b4a1f9ceab5d4c3a9e7c45a7480806f88cf358e92dbac8dc87bcc1"
+
+[review.definitions]
+"db.expressions.collation.order-by-collate-utf8-lcase" = "c5b904885d664b09fefaf33e2bbd55d5af664c2d8d918830b05d47c3118d9adf"
+
+[[review]]
+id = "db-expressions-050"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.collation.order-by-lower-collate",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k7c2b8802be85: SELECT c1 FROM t1 ORDER BY LOWER ( `v1 Q` ) COLLATE UTF8_BINARY  ==  SELECT c1 FROM ( t1 ) ORDER BY LOWER ( `v1 Q` ) COLLATE UTF8_BINARY. The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-expressions-027."
+
+[review.fingerprints]
+"db.expressions.collation.order-by-lower-collate" = "2790a770da2e94eaefc7da3a680354fbdf5af61ce2fd1408762933b3c2502ffd"
+
+[review.definitions]
+"db.expressions.collation.order-by-lower-collate" = "8956818fd573a9f97c4996b14f25db35a0d40363e79063a68c7ee202bedabbad"
+
+[[review]]
+id = "db-expressions-051"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.function-invocation",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 7 accepted cases give one tree with and without the parentheses, e.g. k1d64e00db520: SELECT * FROM abs ( TABLE ( t1 ) , v1 => 1 )  ==  SELECT * FROM abs ( TABLE t1 , v1 => 1 ). The pinned grammar prints only TABLE ( ... ) for <table_argument>; the page's example is cloud_files_state(TABLE(mytable)). With PARTITION BY the two spellings already differ, no example on the page writes the bare spelling, and no receipt covers it, so the parser accepts an undocumented spelling and collapses it. Remedy in the next parser batch: keep a parenthesised flag in the tree, or refuse the bare spelling if its receipt shows the warehouse refuses it; the bare spelling is added to the pending bundle. Earlier findings (db-expressions-006) were answered in approval db-expressions-044; this record does not reopen them."
+
+[review.fingerprints]
+"db.expressions.function-invocation" = "6760f03c5e798e989773f35f469309d8af9eb52b741fed6dbc5db46d7000c954"
+
+[review.definitions]
+"db.expressions.function-invocation" = "c13eb68dbe3c2ae0b5ce7aa6d28a875ea5d44ff33bc04d72f1d892204524a5ef"
+
+[[review]]
+id = "db-expressions-052"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.identifier-2",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 4 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k3001a15d24b6: SELECT * FROM SELECT  ==  SELECT * FROM ( SELECT ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. Earlier findings (db-expressions-012) were answered in approval db-expressions-039; this record does not reopen them."
+
+[review.fingerprints]
+"db.expressions.names.identifier-2" = "28ac6725404f471c537687829c9800d6fe99a69ded606c3a893584b359527d14"
+
+[review.definitions]
+"db.expressions.names.identifier-2" = "ddec66de9ded585f47ccf7e934add2c314746c0173bdd07eefb8a67a3b64ecad"
+
+[[review]]
+id = "db-expressions-053"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.names.syntax",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 6 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k3001a15d24b6: SELECT * FROM SELECT  ==  SELECT * FROM ( SELECT ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. Earlier findings (db-expressions-020) were answered in approval db-expressions-039; this record does not reopen them."
+
+[review.fingerprints]
+"db.expressions.names.syntax" = "57c4e9e2f95e068046d5c9ed028d93c4001800fe040b40fee2f901011852cd5e"
+
+[review.definitions]
+"db.expressions.names.syntax" = "7bf76f01ab15f18677c226018804c6f70d9c1bc6e2e768236d64bbf6a2c717e6"
+
+[[review]]
+id = "db-expressions-054"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.window-functions",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 6 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k002443af478b: SELECT ( sum ( c1 ) OVER `SELECT` ) FROM t1 WINDOW w1 AS ( )  ==  SELECT ( sum ( c1 ) OVER `SELECT` ) FROM ( t1 ) WINDOW w1 AS ( ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-expressions-033."
+
+[review.fingerprints]
+"db.expressions.window-functions" = "50632f7602349ad1d283290764b26802ae25ffaf9525c463c715bddd8e451ef5"
+
+[review.definitions]
+"db.expressions.window-functions" = "8d8b5f177789ba363b04161b506230cb79610400a28fa923e130299ea0793ad7"
+
+[[review]]
+id = "db-expressions-055"
+family = "expressions"
+parser_tree = "e91e53ba213ca51005c82408b7ed2d9dfaad632d"
+reviewed_utc = "2026-11-18T00:03:25Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.window-functions-frame",
+]
+note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, or wrap one token in a new pair), run over every approved form at parser tree e91e53ba from the existing 2026.45 receipts; the earlier records are unchanged. 2 accepted cases give the same tree with the relation written bare or in parentheses, e.g. k085f1bf7048e: SELECT sum ( c1 ) OVER ( ORDER BY c1 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) FROM t1  ==  SELECT sum ( c1 ) OVER ( ORDER BY c1 ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) FROM ( t1 ). The pinned table-reference page documents ( query ) and STREAM ( table_name ) but no parenthesised table or view name, and no receipt covers FROM ( t1 ), so the parser accepts an undocumented spelling and gives it the bare tree. The collapse is in the FROM relation these cases carry, not in this form's own clause, whose trees are unchanged. Remedy in the next parser batch: keep the parenthesised relation in the tree (Spark's ( relation ) alternative of relationPrimary); a receipt for FROM ( t1 ) is added to the pending bundle. No earlier finding; approved in db-expressions-002."
+
+[review.fingerprints]
+"db.expressions.window-functions-frame" = "c33cee068dd9cd682f4c1e8c62670edea59ec1986fa37a15214c4a964cb322a9"
+
+[review.definitions]
+"db.expressions.window-functions-frame" = "5b6c018d85db0f3efa9750186323ca6f89130488198b57537d14d7e4b8e8bae5"
+
+[[review]]
+id = "db-expressions-056"
+family = "expressions"
+catalogue_sha256 = "ffc590e2daad0e5c31541285aca1a5a7d1ce7e7bedb0c1ccdc4c1cfcdd32473c"
+obligations_sha256 = "697332d6178cfd5465cf1ebae8c6d98f956a76ed507c8807032c76c97f48bc11"
+parser_tree = "92efa0da9ae2a4f799ed9d660a09ca03f40a0e10"
+reviewed_utc = "2026-11-18T01:19:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.object-type",
+]
+note = "Re-binds db-expressions-043, not a re-read: that exclusion was bound to parser tree 6546c748 and went stale when the parser batches changed the tree (parser tree 92efa0da), so object-type again left the excluded count. The catalogue and obligation files are byte-identical to the ones it bound (catalogue ffc590e2, obligations 697332d6), and the local parser still refuses OBJECT as input in all three cases. The exclusion and its reason are repeated unchanged."
+
+[[review.exclusion]]
+form = "db.expressions.object-type"
+reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
+
+[[review]]
+id = "db-expressions-057"
+family = "expressions"
+catalogue_sha256 = "ffc590e2daad0e5c31541285aca1a5a7d1ce7e7bedb0c1ccdc4c1cfcdd32473c"
+obligations_sha256 = "697332d6178cfd5465cf1ebae8c6d98f956a76ed507c8807032c76c97f48bc11"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T02:59:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.object-type",
+]
+note = "Re-binds db-expressions-056, not a re-read: that exclusion was bound to parser tree 92efa0da and went stale when the optional-parentheses fix changed the tree (parser tree c440afd2), so object-type again left the excluded count. The catalogue and obligation files are byte-identical to the ones it bound (catalogue ffc590e2, obligations 697332d6), and the local parser still refuses OBJECT as input in all three cases. The exclusion and its reason are repeated unchanged."
+
+[[review.exclusion]]
+form = "db.expressions.object-type"
+reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
+
+[[review]]
+id = "db-expressions-058"
+family = "expressions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.function-invocation",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 43 of 43 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. function-invocation: db-expressions-044 and db-expressions-051 are answered: a table argument written TABLE ( t1 ) is marked parenthesized, so SELECT * FROM abs ( TABLE ( t1 ) , v1 => 1 ) and abs ( TABLE t1 , v1 => 1 ) give two trees (k1d64e00db520 and its bare spelling differ). The bare spelling stays accepted until a receipt shows the warehouse refuses it."
+
+[review.fingerprints]
+"db.expressions.function-invocation" = "38d29fb84a765084bae663905b38e09bda449e5419e3cd0dc9971729588345c6"
+
+[review.definitions]
+"db.expressions.function-invocation" = "c13eb68dbe3c2ae0b5ce7aa6d28a875ea5d44ff33bc04d72f1d892204524a5ef"
+
+[[review]]
+id = "db-expressions-059"
+family = "expressions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.struct-type",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 31 of 31 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case; the 1 requote variant it allows rewrites one string literal in the other quote style, which the lexer reads as the same token. struct-type: db-expressions-023 and db-expressions-042 are answered: a struct field's colon is kept, so STRUCT < c1 : STRING > and STRUCT < c1 STRING > give two trees, and the screen now splits c1 :STRING at the colon."
+
+[review.fingerprints]
+"db.expressions.struct-type" = "a26ac937d1b1a55e0930afbd7a1a31372e07fba30699a48b224625212f91d7fc"
+
+[review.definitions]
+"db.expressions.struct-type" = "4257549739c84540535a90be31319c108c3dfe850e500b391b5c443d32c21a7b"
+
+[[review]]
+id = "db-expressions-060"
+family = "expressions"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.timestamp-ntz-type.timestamp-without-time-zone",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 2 of 2 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. timestamp-ntz-type.timestamp-without-time-zone: db-expressions-024 and db-expressions-042 are answered: CAST ( NULL AS TIMESTAMP WITHOUT TIME ZONE ) keeps its spelling and gives a different tree from CAST ( NULL AS TIMESTAMP_NTZ )."
+
+[review.fingerprints]
+"db.expressions.timestamp-ntz-type.timestamp-without-time-zone" = "3e28000e2898bac3f3a0257dffdb1b88252d0c57b218db88960d7246ca1bf775"
+
+[review.definitions]
+"db.expressions.timestamp-ntz-type.timestamp-without-time-zone" = "ef35019816ea431684c6c873ddefc6c159f22b64d2e14c39428c5d015413ffc8"
+
+[[review]]
+id = "db-expressions-061"
+family = "expressions"
+catalogue_sha256 = "ffc590e2daad0e5c31541285aca1a5a7d1ce7e7bedb0c1ccdc4c1cfcdd32473c"
+obligations_sha256 = "697332d6178cfd5465cf1ebae8c6d98f956a76ed507c8807032c76c97f48bc11"
+parser_tree = "a367f5c7ebb0e10e3f26cc3b5e2738a491cdcd03"
+reviewed_utc = "2026-11-18T03:43:00Z"
+verdict = "approved"
+forms = [
+  "db.expressions.object-type",
+]
+note = "Re-binds db-expressions-057, not a re-read: that exclusion was bound to parser tree c440afd2 and went stale when the optional-parentheses rule was narrowed (parser tree a367f5c7), so object-type again left the excluded count. The catalogue and obligation files are byte-identical to the ones it bound (catalogue ffc590e2, obligations 697332d6), and the local parser still refuses OBJECT as input in all three cases. The exclusion and its reason are repeated unchanged."
+
+[[review.exclusion]]
+form = "db.expressions.object-type"
+reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."

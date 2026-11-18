@@ -24,3 +24,260 @@ note = "Read against the pinned Databricks documentation pages and the Spark 4.2
 "db.security_admin.show-grant" = "e632ff336f2ee478df322687496af8b62729166c95f1413dac2010858d9f8af9"
 "db.security_admin.show-grant-on-share" = "36715f789f5d82931fd9372236e945d7aca1b617bfc3325c5df462506a1619c9"
 "db.security_admin.show-grant-to-recipient" = "a77b29d603336821ef27495e98f9ac58637fdc3cd225416cb485187629227632"
+
+[[review]]
+id = "db-security_admin-002"
+family = "security_admin"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T05:37:21Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.create-group",
+  "db.security_admin.drop-group",
+  "db.security_admin.grant",
+  "db.security_admin.grant-share",
+  "db.security_admin.msck",
+  "db.security_admin.principal",
+  "db.security_admin.revoke",
+  "db.security_admin.revoke-share",
+]
+note = "Re-read in full on 16 Nov 2026 against the documentation page, the form's obligations, its cases with their Databricks receipts and the local parse trees. Bound on 251cfd3dc only where the form's fingerprint and definition hash still equal those of the dossier that was read; forms that changed since are left for a new reading."
+
+[review.fingerprints]
+"db.security_admin.create-group" = "a7b4b3779cad9684786b070a46f96e4542cfaf5ffbc724fcabc354df943fec91"
+"db.security_admin.drop-group" = "58f334c3e07fe5cc4f6e6f32fb5ab164b6c11512ba3ca64468ac58d16268a3df"
+"db.security_admin.grant" = "8e0b84a15598c45dd106c1801ea3c7656380bb1b29938ad35b4d0cfd7e3165e8"
+"db.security_admin.grant-share" = "93be245db9266b54c54d5d66338596bceb220f345b57227bf3ff21ca63b5f741"
+"db.security_admin.msck" = "d426c9addec8cf29f85d14539c0bd459fea07f3e4d0dca72861630f8cfca27dc"
+"db.security_admin.principal" = "60c278cb596d3e78ef8007b9229772e3684c094f36c96ce60dd7682c6d040085"
+"db.security_admin.revoke" = "eb23abe9b7686a88401bf4c47ed7a4aa3a53a824eaf828fca968bed66388b1c9"
+"db.security_admin.revoke-share" = "800d70379622ce5644d4795e8a9b369fb8a7025d8251a738aff3d48aca8237e1"
+
+[review.definitions]
+"db.security_admin.create-group" = "bf7efb687b6f75920e7235df0091d85a822a8e3597f67084ba76b096f87fccce"
+"db.security_admin.drop-group" = "e2ed335a5250565d61acc1bb147d79b3eb4170030bd031e3309a8b7669b25ac8"
+"db.security_admin.grant" = "5b4873b0386a8b8e153edb3dac997624ecca7658abbaf92ea66f8b8f8a5275e0"
+"db.security_admin.grant-share" = "a80a61d773945ac032d6b4ecfa0adb6706282bd1b385255f405f5939dbf3bd1d"
+"db.security_admin.msck" = "997c07125da8d7238b786f4850c6d52da1f5918c3d81221d8a261e0c0d69fd5e"
+"db.security_admin.principal" = "79088c253c35e2140686d01bff6a00571f6d89dca689e78ecf83fbdbd2b60ef5"
+"db.security_admin.revoke" = "4afab9c6caf93aa9395e13ec9d05673159bfafd04ad3dccef9093ed7dbd73121"
+"db.security_admin.revoke-share" = "fa307b733463d3a6d145d7f987c56672b9dee307575db94f78662d292d6c6757"
+
+[[review]]
+id = "db-security_admin-003"
+family = "security_admin"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.alter-group",
+]
+note = "(b) stricter call: o018/o019 are 'the form without its required GROUP/USER after DROP' but both use ALTER GROUP v1 ADD v1, so no case leaves the keyword out after DROP. (a) matches page; (c) holds; (d) ADD/DROP, GROUP/USER as properties, lists as tuples."
+
+[review.fingerprints]
+"db.security_admin.alter-group" = "af4fa22b1c5e1133f1c29cfea46eaabfa6937b22620fea15a99ecb0fc3bd9190"
+
+[review.definitions]
+"db.security_admin.alter-group" = "bbda8de10c5832f7bc70463133bca9a801e43b2b2053132a80448d2f7b48f83e"
+
+[[review]]
+id = "db-security_admin-004"
+family = "security_admin"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.deny",
+]
+note = "(d) every accepted case opaque: o001 DENY ALL PRIVILEGES ON TABLE t1 TO v1, o011 DENY SELECT ..., o015 DENY SELECT , MODIFY ... -> {\"command\":...}. Also o017 DENY PRIVILEGES / o018 DENY ALL expect reject but got unsupported_feature, with no suppress row. (a) with reading holds."
+
+[review.fingerprints]
+"db.security_admin.deny" = "da7fdfda16cf90ac93bcabca6ee43faf8d0bd529f3b39d69ab91e661a043c3de"
+
+[review.definitions]
+"db.security_admin.deny" = "a0e176f1515955c925371538995a4288dfdadfb36da837919eb0091e12eb26e3"
+
+[[review]]
+id = "db-security_admin-005"
+family = "security_admin"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.privileges",
+]
+note = "(d) stricter call: documented keyword securables land as names: o001/o018 GRANT SELECT ON CATALOG TO `u1` and o008 ON METASTORE -> \"securable\":\"CATALOG\"/\"METASTORE\" with no kind, the tree of a table named so (cf. o053 ON t1). (a)(b)(c) and suppress rows hold."
+
+[review.fingerprints]
+"db.security_admin.privileges" = "16d337a7e576610f52e2a3cff5d04d2f0d40950b66e57fa54faf9c604da55a6b"
+
+[review.definitions]
+"db.security_admin.privileges" = "9bd1366bc81d5ba58c3c6a695d03ce84033a448206f60da2be7e686ecf653a9b"
+
+[[review]]
+id = "db-security_admin-006"
+family = "security_admin"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.privileges-hms",
+]
+note = "(d) o001/o002 GRANT SELECT ON ANY FILE TO `u1` -> \"kind\":\"ANY FILE\",\"securable\":\"\" (invented empty name); o003/o009 ON CATALOG TO `u1` -> \"securable\":\"CATALOG\" with no kind (stricter call). (a)(b)(c) and suppress rows hold."
+
+[review.fingerprints]
+"db.security_admin.privileges-hms" = "89ace3d6bf349ba431c4d87a3b22b474e860d890e63eb53f81df88e808fb1b98"
+
+[review.definitions]
+"db.security_admin.privileges-hms" = "c5f210a7c5cdd328c813342a90191475289328160c66d8cb3e5b157c8beadbd9"
+
+[[review]]
+id = "db-security_admin-007"
+family = "security_admin"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.create-group",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint a7b4b3779cad9684786b070a46f96e4542cfaf5ffbc724fcabc354df943fec91 -> abbb017b9502e7b6ec64c32f14e39c455bda46c1e9e7f970cf5970dfc0cedf46: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.security_admin.create-group" = "abbb017b9502e7b6ec64c32f14e39c455bda46c1e9e7f970cf5970dfc0cedf46"
+
+[review.definitions]
+"db.security_admin.create-group" = "bf7efb687b6f75920e7235df0091d85a822a8e3597f67084ba76b096f87fccce"
+
+[[review]]
+id = "db-security_admin-008"
+family = "security_admin"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.principal",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 60c278cb596d3e78ef8007b9229772e3684c094f36c96ce60dd7682c6d040085 -> 1c66fcce30325b24fa8f32047f339057865d9b8dd0172bcce5afe78d6c739f45: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.security_admin.principal" = "1c66fcce30325b24fa8f32047f339057865d9b8dd0172bcce5afe78d6c739f45"
+
+[review.definitions]
+"db.security_admin.principal" = "79088c253c35e2140686d01bff6a00571f6d89dca689e78ecf83fbdbd2b60ef5"
+
+[[review]]
+id = "db-security_admin-009"
+family = "security_admin"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.show-grant",
+  "db.security_admin.show-grant-on-share",
+  "db.security_admin.show-grant-to-recipient",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.security_admin.show-grant" = "6e59ac8cdb0581bf00a3fb6b30a6df4b5d67ec5a763968caf65dd1ed075fc8f7"
+"db.security_admin.show-grant-on-share" = "c8cb4c330926e58b761099f23342f786fb96ceea4dbef55ef913c4a4284371e1"
+"db.security_admin.show-grant-to-recipient" = "5c8a094444f19f61f1c10361b08fb8803f6e31eb5041e4707c5936cc8a5e931a"
+
+[review.definitions]
+"db.security_admin.show-grant" = "e632ff336f2ee478df322687496af8b62729166c95f1413dac2010858d9f8af9"
+"db.security_admin.show-grant-on-share" = "36715f789f5d82931fd9372236e945d7aca1b617bfc3325c5df462506a1619c9"
+"db.security_admin.show-grant-to-recipient" = "a77b29d603336821ef27495e98f9ac58637fdc3cd225416cb485187629227632"
+
+[[review]]
+id = "db-security_admin-010"
+family = "security_admin"
+parser_tree = "3c548df564a937f1ee8115bf76553e2f84fb9f13"
+reviewed_utc = "2026-11-17T09:41:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.show-grant-on-share",
+]
+note = "Withdraws this form from the 17 Nov approval db-security_admin-009. Its only positive, SHOW GRANTS ON SHARE, passes by accident: the warehouse (TABLE_DOES_NOT_EXIST for a table named share) and the local parser both read SHARE as a table name, which is evidence for SHOW GRANTS ON <table>, not for the share form. The catalogue copied the page's Syntax line, which has no name, but the page's Parameters list has share_name and its example names a share. A hand reading SHOW GRANTS ON SHARE <share_name> is needed, with recorded cases that reach the local ON SHARE scope."
+
+[review.fingerprints]
+"db.security_admin.show-grant-on-share" = "c8cb4c330926e58b761099f23342f786fb96ceea4dbef55ef913c4a4284371e1"
+
+[review.definitions]
+"db.security_admin.show-grant-on-share" = "36715f789f5d82931fd9372236e945d7aca1b617bfc3325c5df462506a1619c9"
+
+[[review]]
+id = "db-security_admin-011"
+family = "security_admin"
+parser_tree = "4109a513b38f100406891e449ac7bbb0b975fffb"
+reviewed_utc = "2026-11-17T11:50:12Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.show-grant-on-share",
+]
+note = "Re-read on 17 Nov 2026 after the hand reading in 535c8ff63, which reads the Syntax line as SHOW GRANTS ON SHARE <share_name> from the page's Parameters and example. Read against the 2026.45 receipts in evidence set evK-17nov (evJ-17nov plus the recI recording). Every positive names a share, and each tree is a show of GRANTS with scope_kind ON SHARE and the share as its scope, so none shares a tree with SHOW GRANTS ON a table (scope_kind ON). The observed SHOW GRANTS ON v1 (accepted, a view) and SHOW GRANTS ON SHARE (TABLE_DOES_NOT_EXIST for a table named share) parse locally as SHOW GRANTS ON a name, the warehouse's reading. Of the 3 locally rejected cases, SHOW GRANTS ON SHARE 'v1' fails at the warehouse's position (pos 21). SHOW GRANTS SHARE v1 fails locally at v1 (pos 18) and in the warehouse at end of input (pos 20), and SHOW ON SHARE v1 locally at ON (pos 5) and in the warehouse at SHARE (pos 8), the same two differences show-grant's approved cases have; their repairs (adding ON, and adding GRANTS) give SHOW GRANTS ON SHARE v1, which parses locally and in its receipt (SHARE_DOES_NOT_EXIST). The mechanical check finds every name and literal in each accepted tree. This supersedes the concern of db-security_admin-010. The form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.security_admin.show-grant-on-share" = "18706107e501d7fd6e698d54a9522e0e7f37fd724bd265d0f8c871e9b732c6ef"
+
+[review.definitions]
+"db.security_admin.show-grant-on-share" = "ca6c1a1178bd4211b132f144c7358fa4b0de4760bb5ff903d9c402f83935b43c"
+
+[[review]]
+id = "db-security_admin-012"
+family = "security_admin"
+parser_tree = "fe929d66181dd6dace2630744e5bd823f3cee506"
+reviewed_utc = "2026-11-17T13:08:12Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.privileges",
+  "db.security_admin.privileges-hms",
+]
+note = "Re-read on 17 Nov 2026 at 1692092fd against the 2026.45 receipts in evidence set evK-17nov, after the keyword-securable parser fix. It answers db-security_admin-005 (privileges) and db-security_admin-006 (privileges-hms), whose bindings went stale with this tree. GRANT SELECT ON CATALOG TO `u1` (UC_CATALOG_NAME_NOT_PROVIDED) is now kind CATALOG with no securable name, not a securable named CATALOG; ON METASTORE TO `u1` (PRINCIPAL_DOES_NOT_EXIST for u1) is kind METASTORE with no name, as the page's securable_object writes METASTORE; ON ANY FILE TO `u1` (RESOURCE_DOES_NOT_EXIST for the principal) has no name instead of an empty one. A named catalog (ON CATALOG `v1 Q`, ON CATALOG SELECT) keeps its name, and ON t1 stays a bare name with no kind, so the keyword kinds and a table of that name have different trees. Rejects: the three quoted-name cases under EXTERNAL METADATA, MATERIALIZED VIEW and EXTERNAL LOCATION are refused at the string, where the warehouse refuses at the kind's second word; positions are unchanged from the tree the earlier reviews read, which held (a)(b)(c). The forms are bound at their current fingerprints and definitions."
+
+[review.fingerprints]
+"db.security_admin.privileges" = "954646c15bd016933f0b4aa1f51c298902a963283261db2e6f1f3f363559299a"
+"db.security_admin.privileges-hms" = "40b9186aedc331dd84739f2ca90fc28b3a7b4b5d74b50446e1fa9b3ce498f85b"
+
+[review.definitions]
+"db.security_admin.privileges" = "9bd1366bc81d5ba58c3c6a695d03ce84033a448206f60da2be7e686ecf653a9b"
+"db.security_admin.privileges-hms" = "c5f210a7c5cdd328c813342a90191475289328160c66d8cb3e5b157c8beadbd9"
+
+[[review]]
+id = "db-security_admin-013"
+family = "security_admin"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.deny",
+  "db.security_admin.grant",
+  "db.security_admin.revoke",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.security_admin.deny" = "735e2f8a30663c020ad4d5f79441abe9938e122c9a7df53973a10d5dc18e7287"
+"db.security_admin.grant" = "3fd2d04d6bbe20633d11720cacc6a45ac9f20c8cff50036eb306c5d43a9dcf07"
+"db.security_admin.revoke" = "39fe5bc058f7aa665251cc53eac247131a6902cfd7108b66bff77f2a27c51b77"
+
+[review.definitions]
+"db.security_admin.deny" = "880b5d54a47f19ebec89f39ec5e8f3e6acf1bf1086078eadd9daa75b46fd6ccb"
+"db.security_admin.grant" = "7bedd6ac3b0c8770f07af2508f92a24d7c2b20dac66fdaf03bd7afaf8472d8f4"
+"db.security_admin.revoke" = "6c1e0138da98e5fcae106727e9dd7aa085bdafb9097ceafd45a2e49edf9604a6"
+
+[[review]]
+id = "db-security_admin-014"
+family = "security_admin"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.security_admin.alter-group",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: alter-group: db-security_admin-003's finding still holds: o018/o019 ('without its required GROUP/USER after DROP') are still ALTER GROUP v1 ADD v1, so no case leaves the keyword out after DROP. Needs new cases and their receipts."
+
+[review.fingerprints]
+"db.security_admin.alter-group" = "6081d4d74df9f7301ebcd7c8c0d7d9635a8ef79ce16ff21a30588c683b346dbb"
+
+[review.definitions]
+"db.security_admin.alter-group" = "723efe6d90faea0fd300a8aad2bd90a46f473b10459e359bc9c9ac2acd126b64"

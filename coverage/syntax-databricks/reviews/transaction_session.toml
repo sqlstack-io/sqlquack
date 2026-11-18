@@ -57,3 +57,406 @@ note = "Read against the pinned Databricks documentation pages and the Spark 4.2
 "db.transaction_session.use-cached-result" = "16e5654e3de577675d641b8f9736c4c9e0c046b74fcf36f9bf62f49ef24f1d16"
 "db.transaction_session.use-schema" = "9086fedaf7a4a5a1b1bc7d4e1451d249467bf85f86d0e0abaf5d67a27f066bf4"
 "db.transaction_session.usedb" = "0a00ed90a5bb723e022aaecd1129291dc97e89e2e23e623abd4bfe0c4d191cf0"
+
+[[review]]
+id = "db-transaction_session-002"
+family = "transaction_session"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T05:37:21Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.begin",
+  "db.transaction_session.collation",
+  "db.transaction_session.commit",
+  "db.transaction_session.conf-mgmt-set-collation",
+  "db.transaction_session.conf-mgmt-set-timezone",
+  "db.transaction_session.conf-mgmt-set.set.syntax",
+  "db.transaction_session.rollback",
+  "db.transaction_session.set-recipient",
+  "db.transaction_session.set-variable.set",
+  "db.transaction_session.use-cached-result",
+  "db.transaction_session.use-catalog",
+]
+note = "Re-read in full on 16 Nov 2026 against the documentation page, the form's obligations, its cases with their Databricks receipts and the local parse trees. Bound on 251cfd3dc only where the form's fingerprint and definition hash still equal those of the dossier that was read; forms that changed since are left for a new reading."
+
+[review.fingerprints]
+"db.transaction_session.begin" = "d9a6703f0b4a66c23a0cb09d3b0240a9614ce460b3dd186fe4c8a84d5bacaedd"
+"db.transaction_session.collation" = "9e6c79c35e60ff9e1b4e70e37431cebe93096b60d8fb486a4fbd6ad2266eed40"
+"db.transaction_session.commit" = "48b12d279209a9ea858a83fab09c5041815063638e2cfd7f8ba84870d31d6255"
+"db.transaction_session.conf-mgmt-set-collation" = "9e6c79c35e60ff9e1b4e70e37431cebe93096b60d8fb486a4fbd6ad2266eed40"
+"db.transaction_session.conf-mgmt-set-timezone" = "2049f36db8d573f7a2322022298abe2ec943ac1b3bda7691c8db5e907b4795a1"
+"db.transaction_session.conf-mgmt-set.set.syntax" = "1d69a4ef84e6d9973d0600ab7b9680413efdb144a54e08577f0ce4b7d25f17ec"
+"db.transaction_session.rollback" = "98bb5508ac0459a8b9249ad51c4342337126b114573f7d4e83f61d71335f7214"
+"db.transaction_session.set-recipient" = "f29dfb2b8ed1b298d04a36dbd2257137dc5c2b7de9074e5740de3d2f73cd1041"
+"db.transaction_session.set-variable.set" = "c31d0de58c916c7036b2e087ee9b7fd0343c3576b014f55cf1360684e28e7dec"
+"db.transaction_session.use-cached-result" = "ea7d579dcb2aa27960582bf7cfae1db63837538a4e67a911d6627dfc00e9ba13"
+"db.transaction_session.use-catalog" = "d066747fc7f1e5a2c5eb6d1dee6d1f99e864c7a9b111111d7c92e3ed57b4198e"
+
+[review.definitions]
+"db.transaction_session.begin" = "15a105425c6b38668e9c679bf22cb4f4e8fb05863f1cb31de5a1f2e171788e8f"
+"db.transaction_session.collation" = "967c4ad4134ed3104ed2674f65ba5be3ffa3c4ee293fc0c85ebd842873dc774e"
+"db.transaction_session.commit" = "c863a20bc3eb7c7fdcc7d2655b6e25c0551e8f5b4d3c7e659589a3a559236b49"
+"db.transaction_session.conf-mgmt-set-collation" = "9592c66d48f2f0436971ffcf547f72d5acfaa9fd2a5fbf422a9bfb35a8d7608e"
+"db.transaction_session.conf-mgmt-set-timezone" = "a6c51caba295f148d74ff1b11b8dd6a0ddcd54b7471ae7c0ac3a41e215111bde"
+"db.transaction_session.conf-mgmt-set.set.syntax" = "f88b3139cb7a5c52d1b61ae8ea12236fcf858e4505b422a20c3583b81722c0fd"
+"db.transaction_session.rollback" = "ed6b48108a40186212c91275aeeb9a1eea7cbea5da61fe48e65a99541c9f3afa"
+"db.transaction_session.set-recipient" = "3ba90511f0fb173086c0fc38d6fd134e79028311dcb4f4481743e2986e09a54c"
+"db.transaction_session.set-variable.set" = "aea8a0b7314908580e435c077163ec27e1ba524a62929af31535f4cf80c3c667"
+"db.transaction_session.use-cached-result" = "16e5654e3de577675d641b8f9736c4c9e0c046b74fcf36f9bf62f49ef24f1d16"
+"db.transaction_session.use-catalog" = "d9bf33bfb16a40670377a100bc19b8b130d2e546d78459992dd2e3de4156aed6"
+
+[[review]]
+id = "db-transaction_session-003"
+family = "transaction_session"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.conf-mgmt-set-path",
+]
+note = "(d) stricter reading: o001/o003/o007 two-part schema_name workspace.s1 lands as one raw identifier string {\"identifier\":\"workspace.s1\"} instead of catalog/schema parts (USE trees split parts). (a)-(c) pass with [[reading]]/[[suppress]]."
+
+[review.fingerprints]
+"db.transaction_session.conf-mgmt-set-path" = "46bea742672c0955e941cd61dd6aafeeeb25b744f5c149d5c491b67004c02b12"
+
+[review.definitions]
+"db.transaction_session.conf-mgmt-set-path" = "de423da9abd7258db8954b6bf9f3c036ea969eba8f6779df1ce38986aa08ad5e"
+
+[[review]]
+id = "db-transaction_session-004"
+family = "transaction_session"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.conf-mgmt-set-query-tags.query-tags",
+]
+note = "(d) every accepted case is an opaque tree, e.g. o001 SET QUERY_TAGS [ 'k' ] = 'v' -> {\"command\":{\"this\":\"SET QUERY_TAGS [ 'k' ] = 'v'\"}}; key, value and list items are not fields. (a)-(c) pass with the [[reading]]."
+
+[review.fingerprints]
+"db.transaction_session.conf-mgmt-set-query-tags.query-tags" = "1f36688afcd515eac047964d52403734c6321b78f6a4e1ce7f1c79affd9de98c"
+
+[review.definitions]
+"db.transaction_session.conf-mgmt-set-query-tags.query-tags" = "bb28754d443bfbc6fe768ad90e9b5e41dd9fb983d80b540590fa032146c90ac9"
+
+[[review]]
+id = "db-transaction_session-005"
+family = "transaction_session"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.declare-variable",
+]
+note = "(d) optional keyword VARIABLE leaves no mark: o004 DECLARE OR REPLACE VARIABLE v1 , v1 INT DEFAULT 1 -> declare{replace:true,...} with no variable flag, as DECLARE OR REPLACE without VARIABLE would. (a)-(c) pass."
+
+[review.fingerprints]
+"db.transaction_session.declare-variable" = "60802a17b78f3fbaae73d3da096b37103cff459bff69c67cedff05a70adc1ce4"
+
+[review.definitions]
+"db.transaction_session.declare-variable" = "820853aba9c95b75327a37d7423b3988f7647fe3b150037ff347959f812449f0"
+
+[[review]]
+id = "db-transaction_session-006"
+family = "transaction_session"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.max-partition-bytes",
+]
+note = "(b) stricter reading: o001/o003 'a valid operand' uses SET MAX_FILE_PARTITION_BYTES = v1 (runtime_error); Settings prose requires a positive integral number with optional unit, e.g. 64mb. Fix: SET MAX_FILE_PARTITION_BYTES = 64mb."
+
+[review.fingerprints]
+"db.transaction_session.max-partition-bytes" = "5b24d470dee5b584ab0da80559d99c51d0afbb7d479cd70af71fe78a449d601e"
+
+[review.definitions]
+"db.transaction_session.max-partition-bytes" = "731e9c4b55cc298dc7ac1135f8fc9a870a92146faca20a31bae9458362f56915"
+
+[[review]]
+id = "db-transaction_session-007"
+family = "transaction_session"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.set-variable.set-default",
+]
+note = "(b) stricter reading: page note makes VAR/VARIABLE mandatory outside a compound stmt (sibling .set has that [[reading]]); o001/o006/o008/o010-o012/o014/o017/o019 omit VAR, so SET v1 = 1 is a config SET (tree value var \"1\"), not a variable assignment."
+
+[review.fingerprints]
+"db.transaction_session.set-variable.set-default" = "bd6211451772b4e6cfb5161d30ee7b30e10c2275aa4aeca31917c90fcb933daf"
+
+[review.definitions]
+"db.transaction_session.set-variable.set-default" = "15969e8c230b484b1f6a258dc9a6e6b67df0bd1581c72da7e5a49c17f89a9c3f"
+
+[[review]]
+id = "db-transaction_session-008"
+family = "transaction_session"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.statement-timeout",
+]
+note = "(b) stricter reading: o001/o003 'a valid operand' uses SET STATEMENT_TIMEOUT = v1 (runtime_error); Setting prose requires seconds 0..172800. Fix: SET STATEMENT_TIMEOUT = 86400 (page example)."
+
+[review.fingerprints]
+"db.transaction_session.statement-timeout" = "6953e1da191bd3177c395cd7ba931a1227d15c8f2ac1e101e29b6a883ddd1eb8"
+
+[review.definitions]
+"db.transaction_session.statement-timeout" = "46863e76053168f418af5a24dc86c13520eb537627143cd86599af16061679db"
+
+[[review]]
+id = "db-transaction_session-009"
+family = "transaction_session"
+parser_tree = "b00a3ec30ed5ce220ad7a078b3aed69b42a64d7c"
+reviewed_utc = "2026-11-16T19:09:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.timezone",
+]
+note = "(b) stricter reading: o001/o003 'a valid operand' uses SET TIMEZONE = v1 (runtime_error); Setting prose requires a region ID or zone offset. Fix: SET TIMEZONE = America/Los_Angeles (page example)."
+
+[review.fingerprints]
+"db.transaction_session.timezone" = "0451e04c44883c67a7c614332f605964f38ad36ee4c8b26f33d25db9290dd47f"
+
+[review.definitions]
+"db.transaction_session.timezone" = "d8b08eb678665ca8473def72ab1f8d5ebbd052b206cfb00352b376338740beb7"
+
+[[review]]
+id = "db-transaction_session-010"
+family = "transaction_session"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.collation",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 9e6c79c35e60ff9e1b4e70e37431cebe93096b60d8fb486a4fbd6ad2266eed40 -> a7fbd3a98eaf5dbf72e4b3f5c6602c3dcf74a70c6c04cf48cb2ab9148af34a60: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.transaction_session.collation" = "a7fbd3a98eaf5dbf72e4b3f5c6602c3dcf74a70c6c04cf48cb2ab9148af34a60"
+
+[review.definitions]
+"db.transaction_session.collation" = "967c4ad4134ed3104ed2674f65ba5be3ffa3c4ee293fc0c85ebd842873dc774e"
+
+[[review]]
+id = "db-transaction_session-011"
+family = "transaction_session"
+parser_tree = "525eb55c0128d4e40db7520afbd584d4dd52ffeb"
+reviewed_utc = "2026-11-17T06:20:00Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.conf-mgmt-set-collation",
+]
+note = "re-bound: stage from its receipt, diff-checked. Diff class: stage. Fingerprint 9e6c79c35e60ff9e1b4e70e37431cebe93096b60d8fb486a4fbd6ad2266eed40 -> a7fbd3a98eaf5dbf72e4b3f5c6602c3dcf74a70c6c04cf48cb2ab9148af34a60: the cases differ only by the stage the regenerated cases take from their receipts."
+
+[review.fingerprints]
+"db.transaction_session.conf-mgmt-set-collation" = "a7fbd3a98eaf5dbf72e4b3f5c6602c3dcf74a70c6c04cf48cb2ab9148af34a60"
+
+[review.definitions]
+"db.transaction_session.conf-mgmt-set-collation" = "9592c66d48f2f0436971ffcf547f72d5acfaa9fd2a5fbf422a9bfb35a8d7608e"
+
+[[review]]
+id = "db-transaction_session-012"
+family = "transaction_session"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:18:27Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.ansi-mode",
+  "db.transaction_session.conf-mgmt-reset",
+  "db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax",
+  "db.transaction_session.conf-mgmt-set.set",
+  "db.transaction_session.conf-mgmt-set.set-2",
+  "db.transaction_session.legacy-time-parser-policy",
+  "db.transaction_session.use-schema",
+  "db.transaction_session.usedb",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 1: a form whose cases are all in the 2026.45 recording set and whose earlier approval went stale. Read on 6ceea8e4e against the 2026.45 receipts. Every locally accepted case's parse tree was read, after a mechanical check that every name and literal of its SQL appears in the tree (299 cases, none missing). Every locally rejected case was compared with its receipt's phase and position. The 58 whose positions differ fail on the same defect one token earlier or later: the warehouse backtracks to the clause keyword (WINDOW, SHOW, ALTER) or reads the next word as an alias, or reports a value check without a position. No reject depends on an unrelated token. SHOW GRANTS ON SHARE parses as a grant scope named SHARE, which is how the warehouse reads it (TABLE_DOES_NOT_EXIST on that name). Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.transaction_session.ansi-mode" = "e1f0231e8da0193549ac91a551e190a5b2a98c326fc2b91f661f81bcb201cb77"
+"db.transaction_session.conf-mgmt-reset" = "0a213ccd9dadbf2563b60bce4b7230b3544d2929fe6ff9340cf8c29b56c1e488"
+"db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax" = "4259e1e53a17a40fbdf7412bd51b428e5c653f5296f2d5da51495ee3c8337b60"
+"db.transaction_session.conf-mgmt-set.set" = "46f8ad58faaeae2c905417eb0eb6e614d3a97533da8370e91331aae40f1fe32a"
+"db.transaction_session.conf-mgmt-set.set-2" = "6de82eaca2721ace5f86f181a43f625dff714e9b048a7028c2632ba1b6d51108"
+"db.transaction_session.legacy-time-parser-policy" = "330529d01f685bf9beabb9fde4e9144e1082dfafcb3f7a1535b3243fe11e02f1"
+"db.transaction_session.use-schema" = "299715d610ec6fc66c0cd0a6ae0193a7362975fffc94306f6ad8d24afb3b1f29"
+"db.transaction_session.usedb" = "2451a2cdc84757724c76d2d12d9a883206742f9caa5de8c24f3696998817205d"
+
+[review.definitions]
+"db.transaction_session.ansi-mode" = "d2421ff73deae00091b5c805421e0e888b4b75edd028387b53826978da8f643d"
+"db.transaction_session.conf-mgmt-reset" = "a5e5632145a0eb6543944ede1c35339abd0468c2f4c39279cb87b57beb104eae"
+"db.transaction_session.conf-mgmt-set-query-tags.query-tags.syntax" = "c54b4349327942ef2c1dc4ff7c06fe2a3c14bf75351e8db1a412696181fad878"
+"db.transaction_session.conf-mgmt-set.set" = "ede080cc7559ca5799032c37e042bfb64ef37c85b720aee52b2ecd58b022c5fd"
+"db.transaction_session.conf-mgmt-set.set-2" = "283bccbe4bcc5f216c1cee23b20db4ea09b9fb12d829cc321e547eabd43ba287"
+"db.transaction_session.legacy-time-parser-policy" = "a6c9a16624f1ba6d89ddabc2a07e4c64515a10499f3775a30d3e3959baa739d0"
+"db.transaction_session.use-schema" = "9086fedaf7a4a5a1b1bc7d4e1451d249467bf85f86d0e0abaf5d67a27f066bf4"
+"db.transaction_session.usedb" = "0a00ed90a5bb723e022aaecd1129291dc97e89e2e23e623abd4bfe0c4d191cf0"
+
+[[review]]
+id = "db-transaction_session-013"
+family = "transaction_session"
+parser_tree = "16c24f0d7c831e80d9c4de17857b9eeedd3b33d8"
+reviewed_utc = "2026-11-17T09:28:47Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.max-partition-bytes",
+  "db.transaction_session.statement-timeout",
+]
+note = "Re-read on 17 Nov 2026, (c) batch 6: a form whose earlier approval went stale and that gained cases after it, nearly all missing-parenthesis negatives. Read on e8c8ae5f7 against the 2026.45 receipts. Every new case was read. Each new reject fails where its receipt does, at the token where the parenthesis belongs; the position differences were read on purpose: the warehouse reads FILTER or file as an alias before failing, reports SET with no key without a position, or fails at the missing operand where the parser reports the start of the failed alternative (SUBSTR ... FROM, GROUPING SETS). The mechanical repair of each differing reject (restoring the operand or the parentheses) is accepted locally and matches a recorded positive. The new accepts (a hint list without parentheses, two session settings) were read as trees. Every accepted case of the form passed the check that its SQL's names and literals all appear in its tree. Each form is bound at its current fingerprint and definition."
+
+[review.fingerprints]
+"db.transaction_session.max-partition-bytes" = "f7218e5c1f04c7b9f4483319a6b32a3f3cf067f3d7ee7f1583a48bf6bce5764a"
+"db.transaction_session.statement-timeout" = "a7dd44ec19f15497aa17e0b08d51ae61765f3112742f7aff40c7ee311db03647"
+
+[review.definitions]
+"db.transaction_session.max-partition-bytes" = "731e9c4b55cc298dc7ac1135f8fc9a870a92146faca20a31bae9458362f56915"
+"db.transaction_session.statement-timeout" = "46863e76053168f418af5a24dc86c13520eb537627143cd86599af16061679db"
+
+[[review]]
+id = "db-transaction_session-014"
+family = "transaction_session"
+parser_tree = "3c548df564a937f1ee8115bf76553e2f84fb9f13"
+reviewed_utc = "2026-11-17T09:50:00Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.use-catalog",
+]
+note = "Withdraws this form's approval. A sweep for grammar keywords that the parse tree holds only as a name found that the form's positive USE CATALOG (o001, o002, o005) and SET CATALOG (o003) pass by accident: the warehouse reads USE CATALOG as USE of a schema named catalog (SCHEMA_NOT_FOUND workspace.catalog) and SET CATALOG as a configuration key (CONFIG_NOT_AVAILABLE CATALOG), and the local parser reads CATALOG as a name in both. The catalogue copied the page's [ <catalog_name> | ' catalog_name ' ] as optional; a hand reading that requires the name, and recorded cases for SET CATALOG with a name, are needed."
+
+[review.fingerprints]
+"db.transaction_session.use-catalog" = "d066747fc7f1e5a2c5eb6d1dee6d1f99e864c7a9b111111d7c92e3ed57b4198e"
+
+[review.definitions]
+"db.transaction_session.use-catalog" = "d9bf33bfb16a40670377a100bc19b8b130d2e546d78459992dd2e3de4156aed6"
+
+[[review]]
+id = "db-transaction_session-015"
+family = "transaction_session"
+parser_tree = "4109a513b38f100406891e449ac7bbb0b975fffb"
+reviewed_utc = "2026-11-17T11:50:12Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.use-catalog",
+  "db.transaction_session.use-schema",
+]
+note = "Re-read on 17 Nov 2026 after the hand reading in 535c8ff63, which requires use-catalog's name, and the parser fix in 8d5fb7e14, which reads SET CATALOG with a name or string as a use of kind Catalog with keyword SET. Read against the 2026.45 receipts in evidence set evK-17nov (evJ-17nov plus the recI and recJ recordings). use-catalog: every positive writes a catalog name or string, and each tree is a use of kind Catalog with that name; SET CATALOG v1 (NO_SUCH_CATALOG_EXCEPTION 'v1', recorded) and SET CATALOG ' catalog_name ' keep keyword SET and, for the string, string_name, so neither shares a tree with its USE spelling. The observed USE v1 and USE CATALOG parse in the warehouse as USE of a schema (SCHEMA_NOT_FOUND workspace.v1 and workspace.catalog), and locally as a use with no kind naming v1 and CATALOG, which is the same reading. use-schema: re-read because the bare USE case is now its own (re-recorded under its id: syntax error at end of input, pos 3), and it fails locally at the warehouse's position; its other cases are unchanged. The mechanical check finds every name and literal in each accepted tree. The forms are bound at their current fingerprints and definitions; use-catalog's approval supersedes the concern of db-transaction_session-014."
+
+[review.fingerprints]
+"db.transaction_session.use-catalog" = "d06fbb5e4bb218e79b5bc58bd5d90b439f2637764bb43882f1bc1df9fb8b2986"
+"db.transaction_session.use-schema" = "d995053a79f00236112a4bfd1b8d67b095767b147cde185b8eabe6feb1b719b8"
+
+[review.definitions]
+"db.transaction_session.use-catalog" = "4880df0a0bb5e1408647670faeaeffae8cb1211dd75c6d4e6ff94b0b6ffeaf64"
+"db.transaction_session.use-schema" = "9086fedaf7a4a5a1b1bc7d4e1451d249467bf85f86d0e0abaf5d67a27f066bf4"
+
+[[review]]
+id = "db-transaction_session-016"
+family = "transaction_session"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:02Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.set-variable.set-default",
+  "db.transaction_session.timezone",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the form's obligations, its cases with their 2026.45 receipts and the local parse trees; these forms' definitions changed since their last review, or they were approved on both sides and had gone Unreviewed. Of the 947 cases, 448 are accepted locally and each is a tree that keeps each word of its text (the screen flags one: clone k4a580d3cca1a, CREATE TABLE t3 CLONE t1@v1, gives VERSION with kind @ and the string 1, which is the @v<version> spelling and differs from VERSION AS OF 1); 499 are rejected, 415 at the warehouse's position, 63 elsewhere (44 earlier, 19 later, by -13 to +16 characters; each is a PARSE_SYNTAX_ERROR on the warehouse side, one of them, create-procedure k98b847867eac, refused locally as an unsupported data type SQL rather than a syntax error), 21 whose receipt gives no position. The earlier changes_requested findings on these forms are answered at this tree: expression alternatives take their branch (:v1, ?, field reference, function call), create-policy keeps ON METASTORE and each clause apart, create-procedure is a tree, refresh-policy has the REFRESH AUTO case, timezone uses the page's region ID, and auto-cdc, references, alter-change-set-mask, null-type, set-default, deny, column-mask, named-struct and the [[reading]] rows of clone, create-table-using, vector-search and remote-query are in place. Readings settled here: ORDER BY ALL is a column named ALL, as in Spark's own parser, which leaves it an unresolved name for the analyzer to expand (the receipts k26fbf71f80a7, k2eef8b635584, k432b73189989 run to completion); REPLACE TEMP TABLE t3 DEFAULT COLLATION AS SELECT 1 (kc52ce615290b) reads AS as the collation name and the query without AS, the only reading the grammar allows (collation name required, AS before the query optional), and the warehouse got past parsing to TABLE_OR_VIEW_NOT_FOUND."
+
+[review.fingerprints]
+"db.transaction_session.set-variable.set-default" = "f1ea74d204347434213f302c88bfc79d86a70ab79959506d411ec0a7f77fbadc"
+"db.transaction_session.timezone" = "a08c26cd6cec5ae89aed87179faf0dc455b4e5f062439004c92a348374b3eb5f"
+
+[review.definitions]
+"db.transaction_session.set-variable.set-default" = "d3cfde454a873752ac7b9bba97e6ac330ecb7b2bd99c136a705324ee43371a5c"
+"db.transaction_session.timezone" = "09ce196ebe61e357d453bbf779d100c6234f5fc524e439f589bec33b1893b2db"
+
+[[review]]
+id = "db-transaction_session-017"
+family = "transaction_session"
+parser_tree = "880c142a1d8c3dd95c62a34e4dc4ea5fc10513f0"
+reviewed_utc = "2026-11-17T19:59:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.conf-mgmt-set-path",
+  "db.transaction_session.declare-variable",
+]
+note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) against the documentation page, the obligations, the 2026.45 receipts and the local parse trees, as part of the re-read of forms whose definitions changed. Held for these reasons, form by form: conf-mgmt-set-path: db-transaction_session-003's finding still holds: SET PATH = workspace.s1 gives one identifier named workspace.s1, not catalog and schema parts. Parser fix. declare-variable: db-transaction_session-005's finding still holds, and the strict tree sweep confirms it: DECLARE v1 INT and DECLARE VARIABLE v1 INT give the same tree, so the optional VARIABLE leaves no mark. Parser fix."
+
+[review.fingerprints]
+"db.transaction_session.conf-mgmt-set-path" = "03b1fe6873692df2664387404342e26630d262798b6c43feeac6e3ab4e28279f"
+"db.transaction_session.declare-variable" = "d01941cce1d38a180a697f7a6de8edc7087f9263d66985bcf661012f50bd5533"
+
+[review.definitions]
+"db.transaction_session.conf-mgmt-set-path" = "cfddfe09d7dd6decbe3184ea9611b10e293b6a3de4b8e38e6b73b92906cc238b"
+"db.transaction_session.declare-variable" = "6ba55f226593ba2ead11a8ffdd0bf65e0900f5c01b15e234b2f15d38771454ea"
+
+[[review]]
+id = "db-transaction_session-018"
+family = "transaction_session"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T21:58:43Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.declare-variable",
+]
+note = "The tree screen (syntax-coverage screen, parser at fd2b25d17) finds accepted one-token variants that parse to the same tree as the case they change; each is reproduced locally at parser tree 6546c748; earlier records are unchanged. Form by form: declare-variable: DECLARE VARIABLE v1 INT and DECLARE v1 INT parse to the same tree (k8d32413a0428, kb1a3d4f53537): the optional VARIABLE keyword leaves no mark, a collapse. Next parser batch. The earlier changes_requested findings on this form still stand."
+
+[review.fingerprints]
+"db.transaction_session.declare-variable" = "d01941cce1d38a180a697f7a6de8edc7087f9263d66985bcf661012f50bd5533"
+
+[review.definitions]
+"db.transaction_session.declare-variable" = "6ba55f226593ba2ead11a8ffdd0bf65e0900f5c01b15e234b2f15d38771454ea"
+
+[[review]]
+id = "db-transaction_session-019"
+family = "transaction_session"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.conf-mgmt-set-path",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 6 of 6 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. conf-mgmt-set-path: db-transaction_session-003 and db-transaction_session-017 are answered: SET PATH = workspace.s1 gives dot(workspace, s1), a qualified name kept as parts."
+
+[review.fingerprints]
+"db.transaction_session.conf-mgmt-set-path" = "7ae66a4a0b305dd0879552ebcb45fa91a8f31557df23deeea75b9568e5ddc589"
+
+[review.definitions]
+"db.transaction_session.conf-mgmt-set-path" = "cfddfe09d7dd6decbe3184ea9611b10e293b6a3de4b8e38e6b73b92906cc238b"
+
+[[review]]
+id = "db-transaction_session-020"
+family = "transaction_session"
+parser_tree = "6546c7481466b6c666bed019df90308258e11022"
+reviewed_utc = "2026-11-17T23:07:42Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.set-variable.set",
+]
+note = "Re-read on 17 Nov 2026 after the parser batch, at parser tree 6546c748, from the existing 2026.45 receipts; 18 of 18 required obligations are met. The tree screen with insert AS, insert =, every synonym swap and double quotes finds no same-tree variant of any accepted case. set-variable.set: no open finding. The trees are unchanged since db-transaction_session-002."
+
+[review.fingerprints]
+"db.transaction_session.set-variable.set" = "25770f32f6d419f02b3ecf2b8eef391e9a76f25e4fa8090e44b62e8ee3f78b84"
+
+[review.definitions]
+"db.transaction_session.set-variable.set" = "aea8a0b7314908580e435c077163ec27e1ba524a62929af31535f4cf80c3c667"
+
+[[review]]
+id = "db-transaction_session-021"
+family = "transaction_session"
+parser_tree = "c440afd22e293de175444dd79842e4144ba8806c"
+reviewed_utc = "2026-11-18T03:01:00Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.declare-variable",
+]
+note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tree c440afd2, from the existing 2026.45 receipts; 30 of 30 required obligations are met. The gated tree screen (drop, synonym swap, backquote, string, double quote, requote, unquote, insert AS, insert = and paren pair) finds no same-tree variant of any accepted case. declare-variable: db-transaction_session-005, -017 and -018 are answered: the optional VARIABLE keyword is kept, so DECLARE VARIABLE v1 INT and DECLARE v1 INT give two trees (k8d32413a0428, kb1a3d4f53537), as do DECLARE OR REPLACE VARIABLE and DECLARE OR REPLACE."
+
+[review.fingerprints]
+"db.transaction_session.declare-variable" = "eb9a342d6f99eef4d912f29ba9273e14fa812d99205352820531223d4b39d90c"
+
+[review.definitions]
+"db.transaction_session.declare-variable" = "6ba55f226593ba2ead11a8ffdd0bf65e0900f5c01b15e234b2f15d38771454ea"
