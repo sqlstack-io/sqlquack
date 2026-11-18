@@ -25,14 +25,14 @@ fn collapse(item: Expression, joins: Vec<Join>) -> Expression {
     }
 }
 
-/// A relation written alone in parentheses, a table marked so that `( t )` and `t` differ.
+/// A relation alone in parentheses: a table's first pair marks it, any other pair is a paren node.
 fn parenthesized(item: Expression) -> Expression {
     match item {
-        Expression::Table(mut relation) => {
+        Expression::Table(mut relation) if !relation.parenthesized => {
             relation.parenthesized = true;
             Expression::Table(relation)
         }
-        other => other,
+        other => paren(other),
     }
 }
 
