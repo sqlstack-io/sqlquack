@@ -58,6 +58,10 @@ impl DialectRules for BigQueryRules {
         false
     }
 
+    fn window_keys_read_outputs(&self) -> bool {
+        false
+    }
+
     fn checks_call_signatures(&self) -> bool {
         true
     }
