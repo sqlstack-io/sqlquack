@@ -11,7 +11,7 @@ use crate::lineage::_helpers::checks::scope_rules::output_width;
 use crate::lineage::_helpers::tracing::queries::empty_scope;
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::holds_unpivot;
-use crate::lineage::_helpers::tracing::sources::{from_parts, item_sources, sided_parts};
+use crate::lineage::_helpers::tracing::sources::{from_parts, item_sources, natural, sided_parts};
 use crate::lineage::constants::{
     ALIAS_COUNT_CODE, AMBIGUOUS_COLUMN_CODE, COLUMNS_NO_MATCH, CONNECT_BY_LEVEL, NAME_PHASE,
     UNKNOWN_COLUMN_CODE, UNKNOWN_QUALIFIER_CODE,
@@ -19,7 +19,7 @@ use crate::lineage::constants::{
 use crate::lineage::constants::{
     METADATA_PREFIX, POSITIONAL_PREFIX, SEQUENCE_COLUMNS, SINGLE_JOIN_SOURCES, SQL_STAR,
 };
-use crate::lineage::models::NameFinding;
+use crate::lineage::models::{Engine, NameFinding};
 use crate::lineage::models::{LineageContext, LineageScope, NamedQuery, ScopeSource};
 
 /// The level a clause is read in: its scope, the aliases it may read, CONNECT BY and filter joins.
@@ -394,7 +394,7 @@ fn unknown_message(written: &str, scope: &LineageScope<'_>, context: LineageCont
     }
 }
 
-/// A USING key a closed side of its join lacks.
+/// A USING key a closed side of its join lacks, or on DuckDB a NATURAL join of closed sides sharing no name.
 pub(crate) fn using_findings(
     select: &Select,
     scope: &LineageScope<'_>,
@@ -415,6 +415,18 @@ pub(crate) fn using_findings(
             continue;
         };
         let (left, right) = (sources(part.left), sources(part.right));
+        if natural(join.kind)
+            && Engine::of(context) == Engine::DuckDB
+            && !shares_name(left, right, context)
+        {
+            findings.push(NameFinding {
+                code: UNKNOWN_COLUMN_CODE,
+                message: "NATURAL JOIN has no column both sides offer".to_owned(),
+                span: join.this.source_span().or(at),
+                phase: NAME_PHASE,
+                ..NameFinding::default()
+            });
+        }
         for name in &join.using {
             let wanted: String = key(name, context);
             if lacks(left, &wanted, context) || lacks(right, &wanted, context) {
@@ -430,6 +442,15 @@ pub(crate) fn using_findings(
         }
     }
     findings
+}
+
+/// Whether a side of a join is open or offers a column the other side offers.
+fn shares_name(left: &[ScopeSource], right: &[ScopeSource], context: LineageContext<'_>) -> bool {
+    left.iter().chain(right).any(unjudged)
+        || right
+            .iter()
+            .flat_map(|source| source.query.columns.iter())
+            .any(|column| !lacks(left, &column.key, context))
 }
 
 /// Whether a closed side of a join offers no column named `wanted`.
