@@ -371,13 +371,9 @@ fn select_findings(
     let reads: Vec<&Expression> = std::iter::once(node)
         .chain(orders.iter().flat_map(|order| order_keys(order)))
         .collect();
-    let windowed = if anywhere { level } else { unnamed };
-    let used: Vec<&NamedWindow> = used_windows(windows, &reads, context);
-    for key in used.into_iter().flat_map(window_keys) {
-        let (found, inner) = clause_findings(key, &windowed, context);
-        own.extend(found);
-        nested.extend(inner);
-    }
+    let (found, inner) = window_findings(select, (windows, &reads), (level, anywhere), context);
+    own.extend(found);
+    nested.extend(inner);
     own.sort_by_key(|finding| finding.span.map(|span| span.start));
     own.extend(nested);
     own
@@ -415,6 +411,72 @@ fn ordered_name_place(select: &Select, after: &[&OrderBy], clause: &Expression) 
             .chain(after.iter().copied())
             .flat_map(|order| &order.expressions)
             .any(|ordered| std::ptr::eq(&ordered.this, clause))
+}
+
+/// The findings in the windows OVERs in `reads` reach, each read as the projection reaching it reads.
+fn window_findings(
+    select: &Select,
+    (windows, reads): (Vec<&NamedWindow>, &[&Expression]),
+    (level, anywhere): (Level<'_, '_>, bool),
+    context: LineageContext<'_>,
+) -> (Vec<NameFinding>, Vec<NameFinding>) {
+    let used: Vec<&NamedWindow> = used_windows(windows.clone(), reads, context);
+    let names: Vec<String> = select
+        .expressions
+        .iter()
+        .map(|projection| output_key(unannotated(projection), context))
+        .collect();
+    let mut readers: Vec<(Level<'_, '_>, Vec<&NamedWindow>)> = match anywhere {
+        true => select
+            .expressions
+            .iter()
+            .zip(&names)
+            .map(|(projection, name)| {
+                let reached = used_windows(windows.clone(), &[projection], context);
+                let hidden = Level {
+                    hidden: Some(name.as_str()),
+                    ..level
+                };
+                (hidden, reached)
+            })
+            .collect(),
+        false => Vec::new(),
+    };
+    let projected: Vec<&NamedWindow> = readers
+        .iter()
+        .flat_map(|(_, reached)| reached.iter().copied())
+        .collect();
+    let mut rest: Vec<&NamedWindow> = Vec::new();
+    for window in used {
+        if !projected.iter().any(|read| std::ptr::eq(*read, window)) {
+            rest.push(window);
+        }
+    }
+    let unnamed = Level {
+        enclosing: &[],
+        own: &[],
+        ..level
+    };
+    readers.push((if anywhere { level } else { unnamed }, rest));
+    let (mut own, mut nested): (Vec<NameFinding>, Vec<NameFinding>) = (Vec::new(), Vec::new());
+    for (reader, reached) in readers {
+        for key in reached.into_iter().flat_map(window_keys) {
+            let (found, inner) = clause_findings(key, &reader, context);
+            own.extend(
+                found
+                    .into_iter()
+                    .filter(|finding| !own.contains(finding))
+                    .collect::<Vec<_>>(),
+            );
+            nested.extend(
+                inner
+                    .into_iter()
+                    .filter(|finding| !nested.contains(finding))
+                    .collect::<Vec<_>>(),
+            );
+        }
+    }
+    (own, nested)
 }
 
 /// The windows of `windows` an OVER in `reads` names, directly or through a window extending it.
