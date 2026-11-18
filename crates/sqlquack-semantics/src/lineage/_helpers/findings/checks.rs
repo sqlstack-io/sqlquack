@@ -103,13 +103,11 @@ pub(crate) fn column_finding(
         return None;
     }
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
+    let merged_hide: bool = dialect_rules(context.profile).merged_keys_hide_other_items();
     while let Some(current) = scope {
-        if current
-            .merged
-            .iter()
-            .any(|merged| context.profile.same_identifier(&merged.column.key, &wanted))
-        {
-            return None;
+        match merged_readings(current, &wanted, context) {
+            Some(readings) if merged_hide || readings < 2 => return None,
+            _ => {}
         }
         let matches: usize = offering_count(current, &wanted, context);
         if matches > 1
@@ -508,6 +506,32 @@ fn offers(source: &ScopeSource, wanted: &str, context: LineageContext<'_>) -> bo
             && dialect_rules(context.profile)
                 .system_columns()
                 .contains(&wanted))
+}
+
+/// With a USING or NATURAL key named `wanted`, how many columns it may read: the keys and the items no key covers.
+fn merged_readings(
+    scope: &LineageScope<'_>,
+    wanted: &str,
+    context: LineageContext<'_>,
+) -> Option<usize> {
+    let keys: Vec<&std::ops::Range<usize>> = scope
+        .merged
+        .iter()
+        .filter(|merged| context.profile.same_identifier(&merged.column.key, wanted))
+        .map(|merged| &merged.sources)
+        .collect();
+    if keys.is_empty() {
+        return None;
+    }
+    let uncovered: usize = scope
+        .sources
+        .iter()
+        .enumerate()
+        .filter(|(index, source)| {
+            !keys.iter().any(|range| range.contains(index)) && offers(source, wanted, context)
+        })
+        .count();
+    Some(keys.len() + uncovered)
 }
 
 /// How many FROM items offer `wanted`, two under one name counted once.
