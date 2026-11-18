@@ -144,7 +144,7 @@ impl Parser<'_> {
             "TIMESTAMP" => {
                 let precision: Option<u32> = self.optional_length()?;
                 let without: bool = !self.kw("WITH") && self.eat_kws(&["WITHOUT", "TIME", "ZONE"]);
-                let local: bool = self.eat_kws(&["WITH", "LOCAL", "TIME", "ZONE"]);
+                let local: bool = !without && self.eat_kws(&["WITH", "LOCAL", "TIME", "ZONE"]);
                 DataType::Timestamp {
                     precision,
                     timezone: local || !without,

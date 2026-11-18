@@ -19,6 +19,21 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "TIMESTAMP takes one time zone clause, not WITHOUT and then WITH LOCAL",
+            sql: "SELECT CAST ( v1 AS TIMESTAMP WITHOUT TIME ZONE WITH LOCAL TIME ZONE )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "TIMESTAMP WITHOUT TIME ZONE alone",
+            sql: "SELECT CAST ( v1 AS TIMESTAMP WITHOUT TIME ZONE )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "TIMESTAMP WITH LOCAL TIME ZONE alone",
+            sql: "SELECT CAST ( v1 AS TIMESTAMP WITH LOCAL TIME ZONE )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "STREAM's parentheses hold a table name or a table function call, with no alias",
             sql: "SELECT * FROM STREAM ( t1 a1 )",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
