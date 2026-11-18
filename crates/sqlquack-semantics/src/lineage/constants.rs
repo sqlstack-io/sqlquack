@@ -238,6 +238,10 @@ pub(crate) const WINDOW_ONLY_FUNCTIONS: [&str; 11] = [
 pub(crate) const SPAN_FIELD: &str = "span";
 /// The field a serialized node records its name in.
 pub(crate) const NAME_FIELD: &str = "name";
+/// The field a serialized literal records its kind in.
+pub(crate) const LITERAL_TYPE_FIELD: &str = "literal_type";
+/// The field a serialized literal records its value in.
+pub(crate) const LITERAL_VALUE_FIELD: &str = "value";
 /// Snowflake's VARIANT type.
 pub(crate) const SNOWFLAKE_VARIANT_TYPE: &str = "VARIANT";
 /// The aggregates of a PIVOT whose columns DuckDB names by value alone.
