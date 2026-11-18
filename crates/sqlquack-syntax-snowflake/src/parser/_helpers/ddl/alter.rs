@@ -362,7 +362,7 @@ impl Parser {
                     break;
                 }
             }
-            Ok(AlterTableAction::UnsetTag { names })
+            Ok(AlterTableAction::unset_tag(names))
         } else if self.peek_nth(1).map(|t| {
             t.token_type != TokenType::Comma
                 && t.token_type != TokenType::Semicolon
@@ -561,7 +561,7 @@ impl Parser {
                 break;
             }
         }
-        Ok(AlterTableAction::SetTag { expressions: tags })
+        Ok(AlterTableAction::set_tag(tags))
     }
 
     fn parse_alter_set_properties(&mut self) -> Result<AlterTableAction> {

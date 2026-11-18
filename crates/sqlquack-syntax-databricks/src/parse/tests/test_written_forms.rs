@@ -640,6 +640,49 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             ],
             expected_distinct_trees: 3,
         },
+        DistinctTreesTestCase {
+            description: "TIMESTAMP bare, WITH LOCAL TIME ZONE and WITHOUT TIME ZONE",
+            written: &[
+                "SELECT CAST ( v1 AS TIMESTAMP )",
+                "SELECT CAST ( v1 AS TIMESTAMP WITH LOCAL TIME ZONE )",
+                "SELECT CAST ( v1 AS TIMESTAMP WITHOUT TIME ZONE )",
+            ],
+            expected_distinct_trees: 3,
+        },
+        DistinctTreesTestCase {
+            description: "a COPY credential value written as a string, a number and a boolean",
+            written: &[
+                "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( k = '1' ) ) FILEFORMAT = CSV",
+                "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( k = 1 ) ) FILEFORMAT = CSV",
+                "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( k = 'true' ) ) FILEFORMAT = CSV",
+                "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( k = true ) ) FILEFORMAT = CSV",
+            ],
+            expected_distinct_trees: 4,
+        },
+        DistinctTreesTestCase {
+            description: "a resource kind, a stored format and an EXTRACT field, bare and backquoted",
+            written: &[
+                "CREATE FUNCTION f1 AS 'a.B' USING JAR 'x.jar'",
+                "CREATE FUNCTION f1 AS 'a.B' USING `JAR` 'x.jar'",
+                "INSERT OVERWRITE DIRECTORY '/p' STORED AS TEXTFILE SELECT 1",
+                "INSERT OVERWRITE DIRECTORY '/p' STORED AS `TEXTFILE` SELECT 1",
+                "SELECT EXTRACT ( YEAR FROM v1 )",
+                "SELECT EXTRACT ( `YEAR` FROM v1 )",
+            ],
+            expected_distinct_trees: 6,
+        },
+        DistinctTreesTestCase {
+            description: "a tag key written as a name, backquoted and as a string",
+            written: &[
+                "ALTER TABLE t1 UNSET TAGS ( k )",
+                "ALTER TABLE t1 UNSET TAGS ( `k` )",
+                "ALTER TABLE t1 UNSET TAGS ( 'k' )",
+                "ALTER TABLE t1 SET TAGS ( k = 'v' )",
+                "ALTER TABLE t1 SET TAGS ( `k` = 'v' )",
+                "ALTER TABLE t1 SET TAGS ( 'k' = 'v' )",
+            ],
+            expected_distinct_trees: 6,
+        },
     ];
     for test_case in test_cases {
         assert_eq!(

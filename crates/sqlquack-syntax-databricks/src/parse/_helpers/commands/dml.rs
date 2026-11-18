@@ -134,6 +134,7 @@ impl Parser<'_> {
             },
             row_format: None,
             stored_as: None,
+            stored_as_quoted: false,
             input_format: None,
             output_format: None,
             using: None,
@@ -194,7 +195,9 @@ impl Parser<'_> {
             self.expect_kw("OUTPUTFORMAT")?;
             node.output_format = Some(self.string_lit()?);
         } else {
-            node.stored_as = Some(self.ident()?.name);
+            let format: Identifier = self.ident()?;
+            node.stored_as_quoted = format.quoted;
+            node.stored_as = Some(format.name);
         }
         Ok(node)
     }

@@ -922,6 +922,7 @@ impl Parser {
                                 without_equals: Vec::new(),
                                 quoted_keys: Vec::new(),
                                 string_keys: Vec::new(),
+                                bare_values: Vec::new(),
                             };
                             credentials = Some(Box::new(creds));
                         }
@@ -958,6 +959,7 @@ impl Parser {
                             without_equals: Vec::new(),
                             quoted_keys: Vec::new(),
                             string_keys: Vec::new(),
+                            bare_values: Vec::new(),
                         };
                         credentials = Some(Box::new(creds));
                     }
