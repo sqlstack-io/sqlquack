@@ -77,8 +77,21 @@ impl Parser<'_> {
                     credentials.quoted_keys = spellings.quoted;
                     credentials.string_keys = spellings.strings;
                     credentials.written_keys = spellings.written;
-                    credentials.written_values =
-                        key_spellings(options.iter().map(|((_, value), _)| value)).written;
+                    credentials.written_values = options
+                        .iter()
+                        .enumerate()
+                        .filter_map(|(position, ((_, value), _))| match value {
+                            Expression::Literal(literal)
+                                if matches!(
+                                    literal.as_ref(),
+                                    Literal::RawString(_) | Literal::JoinedString(..)
+                                ) =>
+                            {
+                                Some((position, literal.as_ref().clone()))
+                            }
+                            _ => None,
+                        })
+                        .collect();
                     for (position, ((key, value), without_equals)) in
                         options.into_iter().enumerate()
                     {
