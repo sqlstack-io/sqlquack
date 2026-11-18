@@ -18,8 +18,8 @@ use crate::quality::models::QualityRequest;
 use crate::quality::projection_spans::projection_spans;
 use crate::quality::removal_safety::{expression_refusal, reads_whole_rows, select_refusal};
 use crate::quality::syntax::{
-    Projection, columns, cte_select_tokens, lower, projection_removal, projections, qualifier,
-    sources,
+    Projection, clauses_around, columns, cte_select_tokens, lower, projection_removal, projections,
+    qualifier, query_within, sources,
 };
 use rustc_hash::{FxHashMap, FxHashSet};
 
@@ -58,7 +58,8 @@ pub(crate) fn diagnostics(request: &QualityRequest<'_>) -> Vec<LintDiagnostic> {
         return Vec::new();
     }
     let mut found: Vec<LintDiagnostic> = Vec::new();
-    for statement in request.statements {
+    for written in request.statements {
+        let statement: &Expression = query_within(written);
         let Expression::Select(root) = statement else {
             continue;
         };
@@ -66,8 +67,13 @@ pub(crate) fn diagnostics(request: &QualityRequest<'_>) -> Vec<LintDiagnostic> {
             continue;
         };
         let names: Vec<String> = with.ctes.iter().map(|cte| lower(&cte.alias.name)).collect();
-        let used: FxHashMap<String, Usage> =
-            reads(&with.ctes, &names, terminal_nodes(statement, with));
+        let mut terminal: Vec<&Expression> = terminal_nodes(statement, with);
+        terminal.extend(
+            clauses_around(written)
+                .into_iter()
+                .flat_map(|clause| clause.dfs()),
+        );
+        let used: FxHashMap<String, Usage> = reads(&with.ctes, &names, terminal);
         let select_tokens: FxHashMap<String, usize> = cte_select_tokens(request.tokens);
         for (index, cte) in with
             .ctes
@@ -152,7 +158,7 @@ fn reads<'a>(
 
 /// The output names of a CTE, or None when a star or unnamed projection hides them.
 fn output_names(cte: &Cte) -> Option<FxHashSet<String>> {
-    let Expression::Select(select) = &cte.this else {
+    let Expression::Select(select) = query_within(&cte.this) else {
         return None;
     };
     projections(select)
@@ -333,7 +339,7 @@ fn clause_roots(select: &Select) -> Vec<&Expression> {
 /// Lateral alias reuse: a later projection or a clause of the CTE reading an earlier output.
 fn self_reads(body: &Expression) -> FxHashSet<String> {
     let mut reads: FxHashSet<String> = FxHashSet::default();
-    let Expression::Select(select) = body else {
+    let Expression::Select(select) = query_within(body) else {
         return reads;
     };
     let mut earlier: FxHashSet<String> = FxHashSet::default();
@@ -360,6 +366,7 @@ fn self_reads(body: &Expression) -> FxHashSet<String> {
     if let Some(order) = &select.order_by {
         clauses.extend(order.expressions.iter().map(|ordered| &ordered.this));
     }
+    clauses.extend(clauses_around(body));
     for clause in clauses {
         reads.extend(
             unqualified_reads(clause)
@@ -384,7 +391,7 @@ fn unused_outputs(
     outputs: CteOutputs<'_>,
 ) -> Vec<LintDiagnostic> {
     let CteOutputs { cte, name, usage } = outputs;
-    let Expression::Select(select) = &cte.this else {
+    let Expression::Select(select) = query_within(&cte.this) else {
         return Vec::new();
     };
     let Some(usage) = usage.filter(|usage| !usage.everything && usage.read) else {
