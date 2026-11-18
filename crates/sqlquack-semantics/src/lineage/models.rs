@@ -7,7 +7,9 @@ use std::rc::Rc;
 
 use rustc_hash::FxHashMap;
 
+use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Column;
+use sqlquack_syntax::expressions::queries::models::Join;
 use sqlquack_syntax::tokens::models::Span;
 
 use crate::dialects::types::DialectProfile;
@@ -186,7 +188,7 @@ pub(crate) struct LineageScope<'a> {
     pub(crate) traced: RefCell<FxHashMap<usize, (Lineage, bool)>>,
     /// Lineages that read no SELECT alias, shared by every scope of this level analysed alike.
     pub(crate) shared: Option<Rc<RefCell<FxHashMap<usize, Lineage>>>>,
-    /// How many of `sources` the items before each FROM part give, in `from_parts` order.
+    /// How many of `sources` come before each FROM part, in `from_parts` order, then the total.
     pub(crate) starts: Vec<usize>,
 }
 
@@ -223,7 +225,7 @@ pub(crate) struct FromItems {
     pub(crate) sources: Vec<ScopeSource>,
     pub(crate) merged: Vec<ScopedColumn>,
     pub(crate) rows: RowReads,
-    /// How many sources the items before each FROM part give, in `from_parts` order.
+    /// How many sources come before each FROM part, in `from_parts` order, then the total.
     pub(crate) starts: Vec<usize>,
 }
 
@@ -486,4 +488,15 @@ impl Family {
             Self::Struct => "struct",
         }
     }
+}
+
+/// A FROM part, the join that adds it, and the parts on each side of that join, by `from_parts` index.
+#[derive(Debug)]
+pub(crate) struct FromPart<'a> {
+    pub(crate) item: &'a Expression,
+    pub(crate) join: Option<&'a Join>,
+    /// The parts before it in its own parentheses, or every earlier part outside any.
+    pub(crate) left: Range<usize>,
+    /// The part itself, or the whole parenthesised join it starts when the join adds that.
+    pub(crate) right: Range<usize>,
 }

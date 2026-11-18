@@ -24,8 +24,8 @@ use crate::lineage::constants::{
     STRUCT_FUNCTION, TABLE_FUNCTION_COLUMNS, TABLE_WRAPPER, UNNEST_FUNCTION,
 };
 use crate::lineage::models::{
-    FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
-    RowReads, SchemaColumn, ScopeSource, ScopedColumn, TransformKind,
+    FromItems, FromPart, Lineage, LineageContext, LineageScope, NamedQuery, Nullability,
+    ResolvedQuery, RowReads, SchemaColumn, ScopeSource, ScopedColumn, TransformKind,
 };
 
 /// The FROM items of `select` and its joins; a later item may read earlier ones (LATERAL).
@@ -71,6 +71,7 @@ pub(crate) fn from_sources(
         }
         from.sources.extend(added);
     }
+    from.starts.push(from.sources.len());
     if dialect_rules(context.profile).has_lateral_views() {
         for view in &select.lateral_views {
             let scope = LineageScope {
@@ -99,9 +100,20 @@ fn top_items(select: &Select) -> impl Iterator<Item = (&Expression, Option<&Join
 
 /// Every FROM item and joined item of `select`, a parenthesised join's tables and joins in order.
 pub(crate) fn from_parts(select: &Select) -> Vec<(&Expression, Option<&Join>)> {
-    top_items(select)
-        .flat_map(|(item, join)| flattened(item, join))
+    sided_parts(select)
+        .into_iter()
+        .map(|part| (part.item, part.join))
         .collect()
+}
+
+/// `from_parts`, each with the parts on either side of the join that adds it.
+pub(crate) fn sided_parts(select: &Select) -> Vec<FromPart<'_>> {
+    let mut parts: Vec<FromPart<'_>> = Vec::new();
+    for (item, join) in top_items(select) {
+        let added = sided(item, join, 0, parts.len());
+        parts.extend(added);
+    }
+    parts
 }
 
 /// Every join of `select`, including those written inside a parenthesised join.
@@ -160,22 +172,34 @@ fn outer_nullable(mut source: ScopeSource) -> ScopeSource {
     source
 }
 
-/// A FROM item, with a parenthesised join's tables and joins listed in order.
-fn flattened<'a>(
+/// The parts of a FROM item numbered from `start`, the first added by `join` after `group_start`.
+fn sided<'a>(
     item: &'a Expression,
     join: Option<&'a Join>,
-) -> Vec<(&'a Expression, Option<&'a Join>)> {
-    match item {
+    group_start: usize,
+    start: usize,
+) -> Vec<FromPart<'a>> {
+    let mut parts: Vec<FromPart<'a>> = match item {
         Expression::JoinedTable(joined) if joined.alias.is_none() => {
-            let mut items = flattened(&joined.left, join);
+            let mut parts: Vec<FromPart<'a>> = sided(&joined.left, join, group_start, start);
             for inner in &joined.joins {
-                items.extend(flattened(&inner.this, Some(inner)));
+                let added = sided(&inner.this, Some(inner), start, start + parts.len());
+                parts.extend(added);
             }
-            items
+            parts
         }
-        Expression::Paren(paren) if holds_join(&paren.this) => flattened(&paren.this, join),
-        _ => vec![(item, join)],
-    }
+        Expression::Paren(paren) if holds_join(&paren.this) => {
+            sided(&paren.this, join, group_start, start)
+        }
+        _ => vec![FromPart {
+            item,
+            join,
+            left: group_start..start,
+            right: start..start,
+        }],
+    };
+    parts[0].right = start..start + parts.len();
+    parts
 }
 
 /// Whether `item` is a join, in any number of parentheses.
