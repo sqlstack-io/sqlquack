@@ -139,9 +139,9 @@ impl Parser<'_> {
         if self.string_at(0) {
             return match self.string_literal()? {
                 Expression::Literal(literal) => match *literal {
-                    Literal::String(text) | Literal::RawString(text) => {
-                        Ok(principal(Identifier::new(text), None))
-                    }
+                    Literal::String(text)
+                    | Literal::RawString(text)
+                    | Literal::JoinedString(text, _) => Ok(principal(Identifier::new(text), None)),
                     _ => Err(self.error()),
                 },
                 _ => Err(self.error()),

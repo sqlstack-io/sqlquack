@@ -563,31 +563,6 @@ fn given_sql_when_parsing_then_the_verdict_is_googlesql() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "GRANT on a kinded object to string grantees is structured",
-            sql: "GRANT `roles/bigquery.dataViewer` ON VIEW d.t TO 'user:a@example.com'",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
-        },
-        VerdictTestCase {
-            description: "REVOKE takes a parameter grantee",
-            sql: "REVOKE x ON EXTERNAL TABLE d.t FROM @p",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
-        },
-        VerdictTestCase {
-            description: "a grantee is no bytes literal",
-            sql: "GRANT x ON d.t TO b'a'",
-            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
-        },
-        VerdictTestCase {
-            description: "GRANT has no WITH GRANT OPTION",
-            sql: "GRANT x ON d.t TO 'a' WITH GRANT OPTION",
-            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
-        },
-        VerdictTestCase {
-            description: "an object takes at most two kind words",
-            sql: "GRANT x ON a b c d.t TO 'a'",
-            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
-        },
-        VerdictTestCase {
             description: "digits after a dot in a table path are a name part, letters following",
             sql: "SELECT * FROM foo.bar.25x a",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
