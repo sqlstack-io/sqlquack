@@ -23,6 +23,9 @@ impl Parser {
         if !self.applies_snowflake_context_rules() {
             return Ok(());
         }
+        if self.is_statement_end_at(0) {
+            return Err(self.parse_error("Expected an object kind and a name"));
+        }
         let start = self.current;
         let checked = match create {
             true if self.check_text_seq(&["AI", "FUNCTION"]) => self.check_ai_function(),
@@ -41,8 +44,12 @@ impl Parser {
     /// After a CREATE's name, the shape its kind needs: FROM and a quoted location for a code bundle or notebook project, a snapshot's service volume, an external agent's version, a variable's type, AS COPY for a pipe's body, no bare list after an interactive warehouse's name, an Openflow connector's added version and push, and a warehouse's actions; the cursor stays after the name.
     fn check_opaque_shape(&mut self, create: bool, kind_at: usize) -> Result<()> {
         let after_name = self.current;
-        let kind = self.tokens[kind_at].text.to_ascii_uppercase();
-        let second = self.tokens[kind_at + 1].text.to_ascii_uppercase();
+        let word = |at: usize| {
+            self.tokens
+                .get(at)
+                .map_or_else(String::new, |token| token.text.to_ascii_uppercase())
+        };
+        let (kind, second) = (word(kind_at), word(kind_at + 1));
         if !create {
             let connector = matches!((kind.as_str(), second.as_str()), ("OPENFLOW", "CONNECTOR"));
             let warehouse = matches!(kind.as_str(), "WAREHOUSE");
@@ -50,7 +57,8 @@ impl Parser {
                 (true, _) if self.check_text_seq(&["ADD"]) => self.check_connector_version(),
                 (true, _) if self.check_text_seq(&["PUSH"]) => self.check_connector_push(),
                 (_, true) => {
-                    let exists = self.tokens[kind_at + 1].token_type == TokenType::If
+                    let exists = self.tokens.get(kind_at + 1).map(|token| token.token_type)
+                        == Some(TokenType::If)
                         && self.tokens.get(kind_at + 2).map(|token| token.token_type)
                             == Some(TokenType::Exists);
                     let unnamed =
