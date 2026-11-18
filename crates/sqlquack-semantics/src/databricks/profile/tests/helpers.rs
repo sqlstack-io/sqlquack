@@ -70,8 +70,11 @@ pub(crate) fn databricks_shop_schema() -> TypedShopSchema {
     }
 }
 
+/// A query's outputs with their types, and its findings' codes and messages.
+type Reading = (Vec<(String, Option<String>)>, Vec<(&'static str, String)>);
+
 /// The outputs and the findings without their positions, which differ between spellings.
-pub(crate) fn reading(sql: &str) -> (Vec<(String, Option<String>)>, Vec<(&'static str, String)>) {
+pub(crate) fn reading(sql: &str) -> Reading {
     let findings: Vec<(&str, String)> = databricks_findings(sql)
         .into_iter()
         .map(|(code, message, _)| (code, message))
