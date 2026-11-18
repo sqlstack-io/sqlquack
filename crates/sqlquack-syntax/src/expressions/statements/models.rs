@@ -373,6 +373,9 @@ pub struct Credentials {
     /// Databricks: the credential keys written as a raw string or as adjacent strings, by position, as written
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub written_keys: Vec<(usize, Literal)>,
+    /// Databricks: the credential values written as a raw string or as adjacent strings, by position
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub written_values: Vec<(usize, Literal)>,
 }
 
 /// Historical data / Time travel (Snowflake) - BEFORE (STATEMENT => ...) or AT (TIMESTAMP => ...)
