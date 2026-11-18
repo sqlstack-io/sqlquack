@@ -28,6 +28,7 @@ pub fn configured_choices(
         allow: config.allow,
         strict,
         python_runtime: config.project.python_runtime,
+        max_call_depth: None,
     };
     Ok((choices, session))
 }

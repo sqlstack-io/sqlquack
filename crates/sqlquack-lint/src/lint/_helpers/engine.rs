@@ -387,10 +387,13 @@ pub(crate) fn lint(request: LintRequest) -> Result<LintResponse, String> {
     } = parse(
         &request.sql,
         dialect,
-        request
-            .fixture_harness
-            .as_ref()
-            .and_then(|harness| harness.empty_relation.as_deref()),
+        (
+            request
+                .fixture_harness
+                .as_ref()
+                .and_then(|harness| harness.empty_relation.as_deref()),
+            request.max_function_call_depth,
+        ),
     )?;
     let external_identifiers: HashSet<String> = request
         .external_identifiers

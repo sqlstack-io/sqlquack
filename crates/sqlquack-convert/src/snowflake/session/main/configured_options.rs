@@ -11,6 +11,7 @@ use sqlquack_policy::policy::main::evidence_policy::evidence_policy;
 pub fn configured_options(choices: &ConversionChoices) -> ConversionOptions {
     let evidence = evidence_policy();
     let mut options = builtin_conversion_options(choices.strict);
+    options.max_call_depth = choices.max_call_depth;
     if let Some(budget) = evidence.conversion_budget {
         options.budget = ConversionBudget {
             milliseconds: budget.milliseconds,

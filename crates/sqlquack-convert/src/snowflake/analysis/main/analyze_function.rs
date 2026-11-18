@@ -9,7 +9,7 @@ use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_diagnostics::refusals::types::ConstructPolicy;
 use sqlquack_diagnostics::snowflake::classification::main::cast_type_name::cast_type_name;
-use sqlquack_parse::parsing::main::parse_source::parse_source;
+use sqlquack_parse::parsing::main::parse_source_within::parse_source_within;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 use sqlquack_semantics::snowflake::typing::types::{FunctionReturns, FunctionSpec, Schema};
 use sqlquack_syntax::Dialect;
@@ -42,7 +42,7 @@ pub fn analyze_function(
         ..options.clone()
     };
     let lines = SourceLines::shifted(body, prefix.chars().count());
-    let statements = parse_source(&sql, Dialect::Snowflake)
+    let statements = parse_source_within(&sql, Dialect::Snowflake, options.max_call_depth)
         .map_err(|failure| vec![refuse_unparsed(&failure, &lines)])?;
     let [statement] = statements.as_slice() else {
         return Err(vec![Refusal {

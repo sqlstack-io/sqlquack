@@ -4,14 +4,14 @@ use sqlquack_diagnostics::diagnostics::main::diagnose::diagnose;
 use sqlquack_diagnostics::diagnostics::models::Diagnostic;
 use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
-use sqlquack_parse::parsing::main::parse_source::parse_source;
+use sqlquack_parse::parsing::main::parse_source_within::parse_source_within;
 use sqlquack_syntax::Dialect;
 use sqlquack_syntax::tokens::models::SourceLines;
 
-/// The parse failure, or every construct Snowflake would reject; empty when the SQL is sound.
-pub fn check_source(sql: &str) -> Result<Vec<Diagnostic>, String> {
+/// The parse failure, or every construct Snowflake rejects, calls nesting `max_call_depth` deep.
+pub fn check_source(sql: &str, max_call_depth: Option<usize>) -> Result<Vec<Diagnostic>, String> {
     let lines = SourceLines::new(sql);
-    let refusals = match parse_source(sql, Dialect::Snowflake) {
+    let refusals = match parse_source_within(sql, Dialect::Snowflake, max_call_depth) {
         Ok(statements) if statements.is_empty() => {
             return Err("the input holds no SQL statement".to_owned());
         }

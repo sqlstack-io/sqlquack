@@ -97,6 +97,9 @@ pub struct LintRequest {
     pub max_literal_length: Option<usize>,
     #[serde(default)]
     pub max_ranking_order_by: Option<usize>,
+    /// Function calls nested deeper than this are a parse error; 256 when absent, at most 512.
+    #[serde(default)]
+    pub max_function_call_depth: Option<usize>,
     #[serde(default)]
     pub relation_keys: HashMap<String, Vec<Vec<String>>>,
     #[serde(default)]

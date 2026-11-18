@@ -2,7 +2,7 @@
 
 __version__: str
 
-def check_json(sql: str, path: str) -> str:
+def check_json(sql: str, path: str, max_call_depth: int | None = None) -> str:
     """``{"report": <check --json report>, "rendered": <text>}``; ``ValueError`` without SQL."""
 
 def convert_json(sql: str, request: str, path: str) -> str:

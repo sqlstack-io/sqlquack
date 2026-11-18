@@ -261,12 +261,13 @@ pub const CODES: &[CodeEntry] = &[
         alias: Some("E_GUARD_NESTING_DEPTH_EXCEEDED"),
         title: "brackets nest deeper than the parser accepts",
         help: Some(
-            "remove redundant parentheses, or move nested parts into common table expressions",
+            "remove redundant parentheses, or move nested parts into common table expressions; \
+             the limit of 512 is fixed, and --max-call-depth can't raise it",
         ),
         explanation: "Parentheses, brackets and braces nest deeper at the span than the \
-            parser's limit. The limit keeps parsing from exhausting the stack. Redundant \
-            parentheses can be removed; deeply nested subqueries can usually become common \
-            table expressions.",
+            parser's limit of 512. The limit keeps parsing from exhausting the stack, and no \
+            setting raises it. Redundant parentheses can be removed; deeply nested subqueries \
+            can usually become common table expressions.",
         example: r#"python3 -c "print('SELECT ' + '(' * 600 + '1' + ')' * 600)" | sqlquack check"#,
     },
     CodeEntry {
@@ -285,10 +286,13 @@ pub const CODES: &[CodeEntry] = &[
         name: "ast_depth_exceeded",
         alias: Some("E_GUARD_AST_DEPTH_EXCEEDED"),
         title: "the parsed statement nests deeper than SQLQuack accepts",
-        help: Some("move nested parts into common table expressions"),
-        explanation: "The statement parsed, but its tree nests deeper than the limit SQLQuack \
-            places on later analysis, which keeps conversion from exhausting the stack. \
-            Restructure the deepest part of the statement.",
+        help: Some(
+            "move nested parts into common table expressions; the limit of 512 is fixed, and \
+             --max-call-depth can't raise it",
+        ),
+        explanation: "The statement parsed, but its tree nests deeper than the limit of 512 \
+            SQLQuack places on later analysis, which keeps conversion from exhausting the stack. \
+            No setting raises it. Restructure the deepest part of the statement.",
         example: r#"python3 -c "print('SELECT ' + 'CASE WHEN TRUE THEN ' * 600 + '1' + ' END' * 600)" | sqlquack check"#,
     },
     CodeEntry {
@@ -306,10 +310,15 @@ pub const CODES: &[CodeEntry] = &[
         name: "function_nesting_depth_exceeded",
         alias: Some("E_GUARD_FUNCTION_NESTING_DEPTH_EXCEEDED"),
         title: "function calls nest deeper than SQLQuack accepts",
-        help: Some("compute inner calls in a common table expression first"),
+        help: Some(
+            "compute inner calls in a common table expression first, or raise the limit, up to \
+             512, with --max-call-depth (command line) or max_call_depth= (Python)",
+        ),
         explanation: "Function calls nest inside each other deeper than SQLQuack's limit at \
-            the span. Compute the innermost calls in a common table expression or a subquery \
-            and refer to their results.",
+            the span, 256 by default. Compute the innermost calls in a common table expression \
+            or a subquery and refer to their results, or raise the limit with \
+            `--max-call-depth` on the command line or `max_call_depth=` in Python. The limit \
+            goes up to 512, the parser's fixed nesting limit.",
         example: r#"python3 -c "print('SELECT ' + 'ABS(' * 300 + '1' + ')' * 300)" | sqlquack check"#,
     },
     CodeEntry {

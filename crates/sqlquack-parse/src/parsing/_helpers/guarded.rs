@@ -2,14 +2,17 @@
 
 use sqlquack_syntax::{CallMode, ComplexityGuardOptions, Dialect, Error, Expression, ParseOptions};
 
-use crate::parsing::constants::MAX_FUNCTION_CALL_DEPTH;
 use sqlquack_syntax::tokens::errors::ParseFailure;
 use sqlquack_syntax::tokens::models::SourceLocation;
 
-pub(crate) fn parse_guarded(sql: &str, dialect: Dialect) -> Result<Vec<Expression>, ParseFailure> {
+pub(crate) fn parse_guarded(
+    sql: &str,
+    dialect: Dialect,
+    max_call_depth: usize,
+) -> Result<Vec<Expression>, ParseFailure> {
     let options = ParseOptions {
         complexity_guard: Some(ComplexityGuardOptions {
-            max_function_call_depth: Some(MAX_FUNCTION_CALL_DEPTH),
+            max_function_call_depth: Some(max_call_depth),
             ..ComplexityGuardOptions::default()
         }),
     };

@@ -2,6 +2,9 @@
 
 use std::collections::HashSet;
 
+use sqlquack_parse::parsing::constants::MAX_FUNCTION_CALL_DEPTH;
+use sqlquack_parse::parsing::main::call_depth_hint::call_depth_hint;
+use sqlquack_parse::parsing::main::checked_call_depth::checked_call_depth;
 use sqlquack_syntax::tokens::models::{Token, TokenType};
 use sqlquack_syntax::{ComplexityGuardOptions, Expression, ExpressionWalk, ParseOptions};
 
@@ -9,19 +12,20 @@ use crate::dialects::main::profile::profile;
 use crate::dialects::models::LintProfile;
 use crate::lint::models::{LintDialect, ParsedSql};
 
-const MAX_LINT_FUNCTION_CALL_DEPTH: usize = 128;
-
 /// Tokenize and parse `sql`, reading a harness's `FROM <empty_relation>()` as a bare relation.
 pub(crate) fn parse(
     sql: &str,
     dialect: LintDialect,
-    empty_relation: Option<&str>,
+    (empty_relation, max_call_depth): (Option<&str>, Option<usize>),
 ) -> Result<ParsedSql, String> {
+    let max_call_depth: usize =
+        checked_call_depth(max_call_depth.unwrap_or(MAX_FUNCTION_CALL_DEPTH))
+            .map_err(|reason| format!("max_function_call_depth: {reason}"))?;
     let profile: LintProfile = profile(dialect);
     let tokens: Vec<Token> = (profile.tokens)(sql)?;
     let options = ParseOptions {
         complexity_guard: Some(ComplexityGuardOptions {
-            max_function_call_depth: Some(MAX_LINT_FUNCTION_CALL_DEPTH),
+            max_function_call_depth: Some(max_call_depth),
             ..Default::default()
         }),
     };
@@ -33,7 +37,10 @@ pub(crate) fn parse(
     } else {
         &parse_text
     };
-    let statements: Vec<Expression> = (profile.statements)(parse_text, &options)?;
+    let statements: Vec<Expression> =
+        (profile.statements)(parse_text, &options).map_err(|message| {
+            call_depth_hint(message, max_call_depth, Some("max_function_call_depth"))
+        })?;
     for statement in &statements {
         if statement
             .dfs()

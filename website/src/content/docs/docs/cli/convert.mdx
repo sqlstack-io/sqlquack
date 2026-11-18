@@ -64,6 +64,7 @@ SQL that does not parse, or that Snowflake rejects, is refused with the same cod
 | `--overrides <path>` | [Replacements](/docs/policy/#replace): a `FUNCTION()` file, or a directory of them, each with `replaces` and `dialect duckdb`. Replaces the project's `overrides/` folder. |
 | `--verified-override NAME=SHA256` | An override verified for the body with that hash, as `convert --json` reports. |
 | `--compact` | Print each statement on one line instead, in the JSON report too. |
+| `--max-call-depth <n>` | Refuse function calls nested more than `n` deep, as for [`check`](/docs/cli/check/#options). Default `256`, at most `512`. `run`, `function` and `census` take it too. |
 | `--format text\|json`, `--json` | Print the report as text or JSON. |
 | `--color auto\|always\|never` | Highlight the SQL and colour diagnostics, as for [`check`](/docs/cli/check/#options). JSON is never coloured. |
 

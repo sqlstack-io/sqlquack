@@ -344,6 +344,20 @@ jobs:
           "${python[@]}" -c 'import sqlquack
           result = sqlquack.convert(sql="SELECT 1 AS total", options=sqlquack.ConvertOptions(no_config=True))
           assert result.sql == "SELECT CAST(1 AS DECIMAL(1, 0)) AS \"TOTAL\"", result.sql'
+          # Deep function-call nesting on a small thread stack, where Windows threads are smallest:
+          # 511 levels read at the 512 ceiling; 257 at the default is a clean error, not a crash.
+          "${python[@]}" -c 'import sqlquack, threading
+          def nested(levels):
+              return "SELECT " + "ABS(" * levels + "1" + ")" * levels
+          found = []
+          threading.stack_size(256 * 1024)
+          def check():
+              found.append(sqlquack.check(sql=nested(511), max_call_depth=512).ok)
+              found.append(sqlquack.check(sql=nested(257)).diagnostics[0].code)
+          thread = threading.Thread(target=check)
+          thread.start()
+          thread.join()
+          assert found == [True, "SQ0107"], found'
       # A transient network error in the upload would otherwise cost the whole build, so it retries
       # once, replacing any artifact the failed attempt left behind.
       - id: upload-wheel

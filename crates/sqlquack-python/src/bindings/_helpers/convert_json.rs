@@ -4,10 +4,12 @@ use pyo3::exceptions::PyValueError;
 use pyo3::{PyResult, pyfunction};
 use sqlquack::cli::main::convert_report::convert_report;
 use sqlquack::cli::models::{
-    ColorArguments, ConvertArguments, OutputArguments, OutputFormat, PolicyArguments,
+    ColorArguments, ConvertArguments, OutputArguments, OutputFormat, ParseArguments,
+    PolicyArguments,
 };
 use sqlquack_diagnostics::diagnostics::main::render_diagnostics::render_diagnostics;
 use sqlquack_diagnostics::diagnostics::models::Diagnostic;
+use sqlquack_parse::parsing::main::checked_call_depth::checked_call_depth;
 use sqlquack_semantics::snowflake::types::errors::SchemaError;
 use sqlquack_semantics::snowflake::types::main::parse_schema::parse_schema;
 
@@ -49,6 +51,13 @@ pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<Str
             no_config: request.no_config,
             strict: request.strict,
             python_runtime: request.python_runtime,
+            parse: ParseArguments {
+                max_call_depth: request
+                    .max_call_depth
+                    .map(checked_call_depth)
+                    .transpose()
+                    .map_err(|reason| PyValueError::new_err(format!("max_call_depth: {reason}")))?,
+            },
         },
     };
     let report = convert_report(&arguments, sql).map_err(PyValueError::new_err)?;

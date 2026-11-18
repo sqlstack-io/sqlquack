@@ -7,6 +7,7 @@ use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use sqlquack_convert::snowflake::session::main::configured_options::configured_options;
 use sqlquack_evidence::cases::main::load_cases::load_cases;
 use sqlquack_evidence::cases::models::LoadedCase;
+use sqlquack_parse::parsing::main::checked_call_depth::checked_call_depth;
 use sqlquack_policy::config::models::UserConfig;
 use sqlquack_policy::policy::main::load_policy::load_policy;
 use sqlquack_policy::policy::models::Policy;
@@ -29,6 +30,15 @@ pub(crate) fn divergence_options(choices: &ConversionChoices) -> ConversionOptio
     configured_options(choices)
 }
 
+/// Parses `--max-call-depth`, a whole number from 1 up to the parser's fixed nesting ceiling.
+pub(crate) fn parse_call_depth(depth: &str) -> Result<usize, String> {
+    let depth: usize = depth
+        .trim()
+        .parse()
+        .map_err(|_| format!("--max-call-depth needs a whole number, not `{depth}`"))?;
+    checked_call_depth(depth)
+}
+
 /// Parses `10%` and similar into a percentage between 0 and 100.
 pub(crate) fn parse_percent(sample: &str) -> Result<f64, String> {
     let invalid = || format!("--sample needs a percentage such as 10%, not `{sample}`");
@@ -49,5 +59,6 @@ pub(crate) fn conversion_choices(
         allow: config.allow.clone(),
         strict: arguments.strict,
         python_runtime: arguments.python_runtime || config.project.python_runtime,
+        max_call_depth: arguments.parse.max_call_depth,
     }
 }

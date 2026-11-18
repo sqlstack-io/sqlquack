@@ -10,7 +10,7 @@ use sqlquack_diagnostics::refusals::main::refuse_unparsed::refuse_unparsed;
 use sqlquack_diagnostics::refusals::models::RefusalCategory;
 use sqlquack_diagnostics::refusals::types::ConstructPolicy;
 use sqlquack_diagnostics::snowflake::refusals::main::snowflake_rejections::snowflake_rejections;
-use sqlquack_parse::parsing::main::parse_source::parse_source;
+use sqlquack_parse::parsing::main::parse_source_within::parse_source_within;
 use sqlquack_semantics::snowflake::typing::types::Schema;
 use sqlquack_syntax::tokens::models::SourceLines;
 
@@ -28,7 +28,7 @@ pub fn collect_all_refusals(
         quoted_exclusions: quoted_exclusions(sql),
         ..options.clone()
     };
-    let statements = match parse_source(sql, dialect.syntax()) {
+    let statements = match parse_source_within(sql, dialect.syntax(), options.max_call_depth) {
         Ok(statements) => statements,
         Err(failure) => {
             return CollectedRefusals {

@@ -4,6 +4,8 @@ mod batch_lint;
 mod cross_joins;
 #[path = "tests/test_empty_fixture_lint.rs"]
 mod empty_fixture_lint;
+#[path = "tests/test_function_depth.rs"]
+mod function_depth;
 #[path = "tests/helpers.rs"]
 mod helpers;
 #[path = "tests/test_join_predicates.rs"]
