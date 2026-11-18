@@ -1814,7 +1814,7 @@ impl Parser {
         let mut windows: Vec<NamedWindow> = Vec::new();
 
         loop {
-            let name = self.parse_unquoted_identifier(Self::expect_identifier)?;
+            let name = self.parse_quoting_identifier(Self::expect_identifier)?;
             self.expect_token(TokenType::As)?;
             self.expect_token(TokenType::LParen)?;
 
@@ -1835,7 +1835,7 @@ impl Parser {
                             | TokenType::Comma
                     )
                 }) {
-                Some(self.parse_unquoted_identifier(Self::expect_identifier)?)
+                Some(self.parse_quoting_identifier(Self::expect_identifier)?)
             } else {
                 None
             };

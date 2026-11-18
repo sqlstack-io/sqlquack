@@ -1677,8 +1677,10 @@ impl Parser {
             if self.check(TokenType::Window) && {
                 let next_pos = self.current + 1;
                 next_pos < self.tokens.len()
-                    && (self.tokens[next_pos].token_type == TokenType::Var
-                        || self.tokens[next_pos].token_type == TokenType::Identifier)
+                    && matches!(
+                        self.tokens[next_pos].token_type,
+                        TokenType::Var | TokenType::Identifier | TokenType::QuotedIdentifier
+                    )
             } {
                 self.skip();
                 Some(self.parse_named_windows()?)

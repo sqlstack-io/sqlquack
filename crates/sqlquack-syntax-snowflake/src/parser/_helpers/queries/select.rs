@@ -100,7 +100,12 @@ impl Parser {
                     && !(self.is_snowflake_reserved_keyword() && !self.check(TokenType::Window))
                     && !(self.check(TokenType::Window)
                         && self.peek_nth(1).is_some_and(|token| {
-                            matches!(token.token_type, TokenType::Var | TokenType::Identifier)
+                            matches!(
+                                token.token_type,
+                                TokenType::Var
+                                    | TokenType::Identifier
+                                    | TokenType::QuotedIdentifier
+                            )
                         }))
                 {
                     let alias = self.parse_projection_alias_identifier(false)?;
