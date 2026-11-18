@@ -42,8 +42,7 @@ pub(crate) fn property_text(expression: &Expression) -> String {
     }
 }
 
-/// How the property `keys` were written: the positions of those in backquotes and of those written as
-/// strings, and each one written as a raw string or adjacent strings, as written.
+/// Where the property `keys` were backquoted or strings, and each raw or adjacent-string key as written.
 pub(crate) fn key_spellings<'a>(keys: impl IntoIterator<Item = &'a Expression>) -> KeySpellings {
     let mut spellings: KeySpellings = KeySpellings::default();
     for (position, key) in keys.into_iter().enumerate() {
