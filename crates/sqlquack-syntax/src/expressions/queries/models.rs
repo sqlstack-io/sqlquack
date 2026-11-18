@@ -526,6 +526,9 @@ pub struct Subquery {
     /// Databricks: `WATERMARK ... DELAY OF ...` after the parenthesized query
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub watermark: Option<Box<Watermark>>,
+    /// Databricks: the query's `WITH` was written before these parentheses, not inside them
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub ctes_outside: bool,
     /// SQLQuack: the node's source range, recorded by a located parse.
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]

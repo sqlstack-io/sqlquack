@@ -692,6 +692,7 @@ impl Parser {
             span: SourceSpan::default(),
             table_sample: None,
             watermark: None,
+            ctes_outside: false,
         })))
     }
 
@@ -746,6 +747,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 table_sample: None,
                 watermark: None,
+                ctes_outside: false,
             }))
         } else {
             Expression::Subquery(Box::new(Subquery {
@@ -767,6 +769,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 table_sample: None,
                 watermark: None,
+                ctes_outside: false,
             }))
         };
 
@@ -826,6 +829,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     table_sample: None,
                     watermark: None,
+                    ctes_outside: false,
                 }))
             } else {
                 set_result
@@ -906,6 +910,7 @@ impl Parser {
                         span: SourceSpan::default(),
                         table_sample: None,
                         watermark: None,
+                        ctes_outside: false,
                     })))
                 }
                 _ => None,
@@ -957,6 +962,7 @@ impl Parser {
                     span: SourceSpan::default(),
                     table_sample: None,
                     watermark: None,
+                    ctes_outside: false,
                 })));
             }
         }

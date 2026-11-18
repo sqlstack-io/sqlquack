@@ -128,7 +128,7 @@ fn takes(body: &Expression, organization: &Organization) -> bool {
     }
 }
 
-/// A parenthesized query whose query cannot take `organization`, as a subquery node holding it.
+/// A parenthesized query with `organization` after it, as an unaliased subquery node holding both.
 fn organized_parenthesized(this: Expression, organization: Organization) -> Expression {
     let mut node: Expression = subquery(this, None, false);
     if let Expression::Subquery(subquery) = &mut node {
@@ -171,11 +171,11 @@ fn organized(body: Expression, organization: Organization) -> Expression {
         return body;
     }
     let body: Expression = match body {
-        Expression::Paren(paren) if takes_within(&paren.this, &organization) => {
-            return subquery(organized_within(paren.this, organization), None, false);
-        }
         Expression::Paren(paren) if organization.windows.is_none() => {
             return organized_parenthesized(paren.this, organization);
+        }
+        Expression::Paren(paren) if takes_within(&paren.this, &organization) => {
+            return subquery(organized_within(paren.this, organization), None, false);
         }
         other => other,
     };
@@ -229,16 +229,49 @@ fn organized(body: Expression, organization: Organization) -> Expression {
     body
 }
 
-/// `body` with `with` as its CTEs; a parenthesized query takes them inside a bare subquery node.
-pub(crate) fn with_ctes(body: Expression, with: With) -> Expression {
-    let body: Expression = match body {
-        Expression::Paren(paren) => return subquery(with_ctes(paren.this, with), None, false),
-        Expression::Subquery(mut node) if node.alias.is_none() => {
-            node.this = with_ctes(node.this, with);
-            return subquery(Expression::Subquery(node), None, false);
+/// Whether the select within any parentheses of `query` took the pipe `marked`, which it then records.
+fn marked_within(query: &mut Expression, marked: String) -> bool {
+    match query {
+        Expression::Paren(paren) => marked_within(&mut paren.this, marked),
+        Expression::Select(select) => {
+            select.pipe_operators.push(marked);
+            true
         }
-        other => other,
+        _ => false,
+    }
+}
+
+/// `body` with `with` as its CTEs; a parenthesized query takes them inside, flagged as written outside.
+pub(crate) fn with_ctes(body: Expression, with: With) -> Expression {
+    let mut node: Expression = match body {
+        Expression::Paren(paren) => subquery(paren.this, None, false),
+        Expression::Subquery(node) if node.alias.is_none() => Expression::Subquery(node),
+        other => return with_query(other, with),
     };
+    if let Expression::Subquery(subquery) = &mut node {
+        subquery.this = with_inside(std::mem::replace(&mut subquery.this, null()), with);
+        subquery.ctes_outside = true;
+    }
+    node
+}
+
+/// `body` with `with` on the query within any parentheses and unaliased subquery nodes.
+fn with_inside(body: Expression, with: With) -> Expression {
+    match body {
+        Expression::Paren(mut paren) => {
+            paren.this = with_inside(paren.this, with);
+            Expression::Paren(paren)
+        }
+        Expression::Subquery(mut node) if node.alias.is_none() => {
+            node.this = with_inside(node.this, with);
+            Expression::Subquery(node)
+        }
+        other => with_query(other, with),
+    }
+}
+
+/// A query with `with` as its CTEs, wrapped first when it already has some.
+fn with_query(body: Expression, with: With) -> Expression {
     let has_with: bool = match &body {
         Expression::Select(select) => select.with.is_some(),
         Expression::Union(node) => node.with.is_some(),
@@ -717,6 +750,12 @@ impl Parser<'_> {
                 }
                 match organized(left, organization) {
                     Expression::Select(select) => *select,
+                    Expression::Subquery(mut node) => {
+                        if marked_within(&mut node.this, mark(&word)) {
+                            return Ok(Expression::Subquery(node));
+                        }
+                        wrapped(Expression::Subquery(node))
+                    }
                     other => wrapped(other),
                 }
             }

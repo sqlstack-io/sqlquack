@@ -685,6 +685,7 @@ impl Parser {
                 span: SourceSpan::default(),
                 table_sample: None,
                 watermark: None,
+                ctes_outside: false,
             };
             let explicit_as = self.match_token(TokenType::As);
             if explicit_as || self.is_identifier_token() || self.is_safe_keyword_as_identifier() {
