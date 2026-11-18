@@ -7,6 +7,11 @@ use crate::lineage::tests::test_types::QueryFindingsTestCase;
 fn given_a_bigquery_query_when_checking_it_then_findings_follow_googlesql() {
     let test_cases = [
         QueryFindingsTestCase {
+            description: "an inline window ordered by another output's alias",
+            sql: "SELECT quantity AS q, sum(quantity) OVER (ORDER BY q) AS x FROM orders",
+            expected_findings: &[("E201", "Unknown column 'q' in table 'orders'", 51)],
+        },
+        QueryFindingsTestCase {
             description: "a TIMESTAMP_TRUNC date part is not a column (analyzer: accepted)",
             sql: "SELECT TIMESTAMP_TRUNC(ordered_at, DAY) AS v FROM orders",
             expected_findings: &[],

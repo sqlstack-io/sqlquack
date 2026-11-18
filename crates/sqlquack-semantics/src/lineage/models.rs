@@ -282,6 +282,10 @@ impl DialectRules for SharedRules {
         false
     }
 
+    fn window_keys_read_outputs(&self) -> bool {
+        true
+    }
+
     fn checks_call_signatures(&self) -> bool {
         true
     }
