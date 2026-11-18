@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.21.0](https://github.com/sqlstack-io/sqlquack/compare/v0.20.0...v0.21.0) (2026-11-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **lint:** take the function-call depth limit in parse_sql
+* **bigquery:** the BigQuery parser now gives Literal::JoinedString, serialized as literal_type "joined_string" with the joined value and its pieces, for adjacent string literals, where it gave one Literal::String of the joined text.
+
+### Features
+
+* **lint:** take the function-call depth limit in parse_sql ([4dd6098](https://github.com/sqlstack-io/sqlquack/commit/4dd60981c0fbce202fa36f6ce13eb3d040bfc0ae))
+
+
+### Bug Fixes
+
+* **bigquery:** accept a grantee written as adjacent strings ([714b00f](https://github.com/sqlstack-io/sqlquack/commit/714b00fc1a5cbc18c346a2c5e6cf297b055ca1d9))
+* **bigquery:** keep the pieces of adjacent string literals ([2cd6428](https://github.com/sqlstack-io/sqlquack/commit/2cd6428f560002a5c46e186a0a69a38dcaf0e4b1))
+* **databricks:** keep a function parameter's comment ([999f5ed](https://github.com/sqlstack-io/sqlquack/commit/999f5edf5c8ad0a9a249b8923b4a967eceefa593))
+* **databricks:** keep only raw and adjacent credential values as written ([62fa162](https://github.com/sqlstack-io/sqlquack/commit/62fa162e8fb526bc9720e9065d1871c1c7069a19))
+* **databricks:** keep raw and adjacent credential values and raw typed literals ([9d4a165](https://github.com/sqlstack-io/sqlquack/commit/9d4a1650267cf55113a9af596ae15140ac6c9c20))
+* **databricks:** keep raw and adjacent spellings in plain-text string fields ([b05cd31](https://github.com/sqlstack-io/sqlquack/commit/b05cd31d40cbfadcb57fd32f830012685703fde8))
+* **lint:** resolve a named window written after a parenthesized query ([20f2974](https://github.com/sqlstack-io/sqlquack/commit/20f297429a38f3c6de85195bc429f679fef8d319))
+* **semantics:** check only the named windows an OVER reads ([6e472d2](https://github.com/sqlstack-io/sqlquack/commit/6e472d23657a5939ae51cb3bc7dfebc8dbbe3390))
+* **semantics:** check the keys of a named window as column references ([ffbf6f8](https://github.com/sqlstack-io/sqlquack/commit/ffbf6f8db2fba15cacaa7ec32eb2c9a49e78662b))
+* **semantics:** match a raw typed literal against its plain form when grouping ([3c700d5](https://github.com/sqlstack-io/sqlquack/commit/3c700d55e4b8a81e621dbd364e2069968982652d))
+* **semantics:** match grouping expressions whose strings are spelled differently ([08c3ff8](https://github.com/sqlstack-io/sqlquack/commit/08c3ff804751356b26122780962183fd81f545c9))
+
 ## [0.20.0](https://github.com/sqlstack-io/sqlquack/compare/v0.19.0...v0.20.0) (2026-11-18)
 
 
