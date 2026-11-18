@@ -20,7 +20,9 @@ const MAX_DECIMAL_PRECISION: usize = 38;
 pub(crate) fn databricks_literal_type(literal: &Literal) -> Option<String> {
     match literal {
         Literal::Number(text) => number_type(text, false),
-        Literal::String(_) | Literal::JoinedString(..) => Some(STRING_TYPE.to_owned()),
+        Literal::String(_) | Literal::RawString(_) | Literal::JoinedString(..) => {
+            Some(STRING_TYPE.to_owned())
+        }
         _ => None,
     }
 }
