@@ -169,7 +169,11 @@ pub(crate) fn cast_type(data_type: &DataType) -> Option<DuckType> {
             precision: None, ..
         } => DuckType::Real,
         DataType::Double { .. } => DuckType::Double,
-        DataType::Decimal { precision, scale } => match (precision, scale) {
+        DataType::Decimal {
+            precision,
+            scale,
+            spelling: _,
+        } => match (precision, scale) {
             (None, _) => DuckType::Decimal(DUCKDB_DEFAULT_DECIMAL.0, DUCKDB_DEFAULT_DECIMAL.1),
             (Some(precision), scale) => DuckType::Decimal(*precision, scale.unwrap_or(0)),
         },

@@ -47,6 +47,7 @@ impl Parser {
         let (algorithm, lock) = self.parse_alter_table_algorithm_and_lock()?;
 
         Ok(Expression::AlterTable(Box::new(AlterTable {
+            columns_parenthesized: false,
             name,
             actions,
             if_exists,
@@ -78,6 +79,7 @@ impl Parser {
                     use_modify_keyword: false,
                     column_keyword: column_keyword && self.is_snowflake(),
                     action_words,
+                    keyword: None,
                 });
                 if !self.match_token(TokenType::Comma) {
                     break;
@@ -92,6 +94,7 @@ impl Parser {
                     if_exists,
                     cascade: false,
                     column_keyword,
+                    keyword: None,
                 });
                 if !self.match_token(TokenType::Comma) {
                     break;
@@ -159,6 +162,7 @@ impl Parser {
                     if_not_exists,
                     position,
                     column_keyword,
+                    keyword: None,
                 });
             } else {
                 if self.check_identifier("ALGORITHM") || self.check_identifier("LOCK") {

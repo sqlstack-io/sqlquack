@@ -137,6 +137,7 @@ impl Parser {
                     comments: cte_comments,
                     span: self.source_range(cte_start),
                     key_items: Vec::new(),
+                    as_omitted: false,
                 });
                 if self.match_token(TokenType::Comma) {
                     continue;
@@ -181,6 +182,7 @@ impl Parser {
                 comments: cte_comments,
                 span: self.source_range(cte_start),
                 key_items: Vec::new(),
+                as_omitted: false,
             });
 
             if !self.match_token(TokenType::Comma) {

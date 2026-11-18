@@ -188,6 +188,10 @@ impl Parser {
             settings: insert_settings,
             overriding: None,
             returning_aliases: Vec::new(),
+            schema_evolution: false,
+            replace_on: None,
+            replace_using: Vec::new(),
+            table_keyword: false,
         })))
     }
 
@@ -357,6 +361,12 @@ impl Parser {
                 path,
                 row_format,
                 stored_as,
+                input_format: None,
+                output_format: None,
+                using: None,
+                using_quoted: false,
+                options: Vec::new(),
+                options_without_equals: Vec::new(),
             }),
             returning: Vec::new(),
             output: None,
@@ -380,6 +390,10 @@ impl Parser {
             settings: Vec::new(),
             overriding: None,
             returning_aliases: Vec::new(),
+            schema_evolution: false,
+            table_keyword: false,
+            replace_on: None,
+            replace_using: Vec::new(),
         })))
     }
 
@@ -410,6 +424,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))));
         }
         Ok(function_target)
@@ -429,6 +444,7 @@ impl Parser {
             };
             let trailing_comments = self.previous_trailing_comments().to_vec();
             TableRef {
+                parenthesized: false,
                 sample_call: None,
                 name,
                 schema: Some(schema),
@@ -452,10 +468,12 @@ impl Parser {
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
                 schema_omitted: false,
+                watermark: None,
             }
         } else {
             let trailing_comments = self.previous_trailing_comments().to_vec();
             TableRef {
+                parenthesized: false,
                 sample_call: None,
                 name: table_name,
                 schema: None,
@@ -479,6 +497,7 @@ impl Parser {
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
                 schema_omitted: false,
+                watermark: None,
             }
         })
     }
@@ -582,6 +601,7 @@ impl Parser {
                 let name = self.expect_identifier_with_quoted()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 TableRef {
+                    parenthesized: false,
                     sample_call: None,
                     name,
                     schema: Some(schema),
@@ -605,10 +625,12 @@ impl Parser {
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
                     schema_omitted: false,
+                    watermark: None,
                 }
             } else {
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 TableRef {
+                    parenthesized: false,
                     sample_call: None,
                     name: source_name,
                     schema: None,
@@ -632,6 +654,7 @@ impl Parser {
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
                     schema_omitted: false,
+                    watermark: None,
                 }
             };
             Some(Expression::Table(Box::new(source_table)))
@@ -674,6 +697,7 @@ impl Parser {
                         trailing_comments: Vec::new(),
                         inferred_type: None,
                         span: SourceSpan::default(),
+                        written_as: None,
                     })));
                     if !self.match_token(TokenType::Comma) {
                         break;

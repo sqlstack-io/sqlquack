@@ -304,6 +304,7 @@ impl Parser {
         column
             .constraints
             .push(ColumnConstraint::References(Box::new(ForeignKeyRef {
+                written_order: Vec::new(),
                 table,
                 columns,
                 on_delete: None,

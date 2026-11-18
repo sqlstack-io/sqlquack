@@ -208,5 +208,6 @@ fn role_name_refused(role: &Expression, position: usize) -> ParseError {
         message,
         position,
         syntax: false,
+        guard: false,
     }
 }

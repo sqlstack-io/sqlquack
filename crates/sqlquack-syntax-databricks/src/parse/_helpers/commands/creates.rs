@@ -4,27 +4,36 @@ use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::columns::models::{
     ColumnConstraint, ColumnDef, ComputedColumn, ConstraintModifiers, ForeignKeyRef,
-    GeneratedAsIdentity, TableConstraint,
+    GeneratedAsIdentity, ReferentialAction, TableConstraint,
 };
-use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
+use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{CreateView, DropView, ViewColumn};
 use sqlquack_syntax::expressions::tables::models::{
-    ClusterByColumnsProperty, CreateTable, DropTable, FileFormatProperty, LocationProperty,
-    OptionEntry, OptionsProperty, PartitionedByProperty, Properties, Property,
-    SchemaCommentProperty,
+    ClusterByColumnsProperty, ConstraintType, CreateTable, DropTable, FileFormatProperty,
+    InputOutputFormat, LocationProperty, OptionEntry, OptionsProperty, PartitionedByProperty,
+    Property, RowFormatDelimitedProperty, RowFormatSerdeProperty, SchemaCommentProperty,
+    SerdeProperties, StorageHandlerProperty,
 };
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
-use crate::parse::_helpers::tree::nodes::{binary, column_from, joined, null, string, tuple, var};
-use crate::parse::constants::{CREATE_KINDS, DROP_KINDS};
-use crate::scan::models::{NumberKind, TokenKind};
+use crate::parse::_helpers::tree::nodes::{
+    boolean, collate, column_from, joined, literal, null, table, too_deep_to_keep, tuple, var,
+};
+use crate::parse::constants::{
+    CREATE_KINDS, DROP_KINDS, DROP_TABLE_FORCE, DROP_TEMPORARY_TABLE, TEMPORARY_VIEW_USING,
+};
+use crate::scan::models::{NumberKind, Token, TokenKind};
 
 /// What `CREATE` heads: a table (`OR REPLACE`, `TEMPORARY`, `EXTERNAL`) or a view.
 pub(crate) struct Head {
     pub(crate) or_replace: bool,
+    pub(crate) replace_only: bool,
     pub(crate) temporary: bool,
+    pub(crate) temporary_spelling: Option<String>,
     pub(crate) global: bool,
     pub(crate) external: bool,
+    /// The token `CREATE` or `REPLACE` is at.
+    pub(crate) at: usize,
 }
 
 pub(crate) fn property(name: &str, value: Expression) -> Expression {
@@ -34,18 +43,63 @@ pub(crate) fn property(name: &str, value: Expression) -> Expression {
     }))
 }
 
+/// `ENABLE` or `DISABLE`, then `VALIDATE` or `NOVALIDATE`, as modifier values, when both read.
+fn validation_words(
+    enable: Option<&str>,
+    validate: Option<&str>,
+) -> Option<(Option<bool>, Option<bool>)> {
+    let enabled: Option<bool> = match enable {
+        None => None,
+        Some("ENABLE") => Some(true),
+        Some("DISABLE") => Some(false),
+        Some(_) => return None,
+    };
+    let validated: Option<bool> = match validate {
+        None => None,
+        Some("VALIDATE") => Some(true),
+        Some("NOVALIDATE") => Some(false),
+        Some(_) => return None,
+    };
+    Some((enabled, validated))
+}
+
+/// The modifiers `constraint` holds, if its kind has them.
+fn modifiers_of(constraint: &mut TableConstraint) -> Option<&mut ConstraintModifiers> {
+    match constraint {
+        TableConstraint::PrimaryKey { modifiers, .. }
+        | TableConstraint::ForeignKey { modifiers, .. }
+        | TableConstraint::Unique { modifiers, .. }
+        | TableConstraint::Check { modifiers, .. } => Some(modifiers),
+        _ => None,
+    }
+}
+
+/// Whether the written foreign key options repeat one or put MATCH between the two actions.
+fn order_unsaid(written: &[String]) -> bool {
+    let distinct: std::collections::BTreeSet<&String> = written.iter().collect();
+    let between: bool = written
+        .iter()
+        .position(|option| option.starts_with("MATCH"))
+        .is_some_and(|at| at > 0 && at + 1 < written.len());
+    distinct.len() < written.len() || between
+}
+
 impl Parser<'_> {
     /// `CREATE ...` or `REPLACE TABLE ...`; any other `CREATE` is an opaque gap.
     pub(crate) fn create_statement(&mut self) -> Parsing<Expression> {
         let start_at: usize = self.at;
         let mut head = Head {
             or_replace: false,
+            replace_only: false,
             temporary: false,
+            temporary_spelling: None,
             global: false,
             external: false,
+            at: start_at,
         };
         if self.eat_kw("REPLACE") {
             head.or_replace = true;
+            head.replace_only = true;
             let temporary: bool = self.kw_in(0, &["TEMP", "TEMPORARY"]) && self.kw_at(1, "TABLE");
             if !self.kw("TABLE") && !temporary {
                 return Err(self.error());
@@ -59,7 +113,14 @@ impl Parser<'_> {
         }
         let global: bool = self.eat_kw("GLOBAL");
         head.global = global;
+        let temp: bool = self.kw("TEMP");
         head.temporary = self.eat_kw("TEMPORARY") || self.eat_kw("TEMP");
+        head.temporary_spelling = match (global, temp) {
+            (true, true) => Some("GLOBAL TEMP".to_owned()),
+            (true, false) => Some("GLOBAL TEMPORARY".to_owned()),
+            (false, true) => Some("TEMP".to_owned()),
+            (false, false) => None,
+        };
         if !global {
             head.external = self.eat_kw("EXTERNAL");
         }
@@ -94,7 +155,9 @@ impl Parser<'_> {
         node.name = name;
         node.if_not_exists = if_not_exists;
         node.or_replace = head.or_replace;
+        node.replace_only = head.replace_only;
         node.temporary = head.temporary;
+        node.temporary_spelling = head.temporary_spelling.clone();
         if head.external {
             node.table_modifier = Some("EXTERNAL".to_owned());
         }
@@ -119,11 +182,10 @@ impl Parser<'_> {
                         constraint,
                         TableConstraint::PrimaryKey { .. } | TableConstraint::ForeignKey { .. }
                     );
-                    let validation: usize = self.offset();
-                    if keyed && self.kw_in(0, &["ENABLE", "NOVALIDATE"]) {
-                        while self.eat_kw("ENABLE") || self.eat_kw("NOVALIDATE") {}
-                        self.gap("constraint_validation", validation);
-                    }
+                    let constraint: TableConstraint = match keyed {
+                        true => self.constraint_validation(constraint, &["ENABLE", "NOVALIDATE"]),
+                        false => constraint,
+                    };
                     node.constraints.push(constraint);
                 } else {
                     node.columns.push(self.column_definition()?);
@@ -170,6 +232,7 @@ impl Parser<'_> {
             let parenthesized: bool = self.is_char('(');
             node.as_select = Some(self.query()?);
             node.as_select_parenthesized = parenthesized;
+            node.as_select_without_as = !as_query;
         }
         Ok(Expression::CreateTable(Box::new(node)))
     }
@@ -206,9 +269,25 @@ impl Parser<'_> {
         let clause: (&'static str, Option<Expression>) = match word.as_str() {
             "OPTIONS" if self.char_at(1, '(') => {
                 self.at += 1;
-                let entries: Vec<OptionEntry> =
+                let spelled: Vec<(OptionEntry, bool, bool)> =
                     self.parenthesized(|parser| parser.table_option())?;
-                let options = Expression::OptionsProperty(Box::new(OptionsProperty { entries }));
+                let mut entries: Vec<OptionEntry> = Vec::new();
+                let mut string_keys: Vec<usize> = Vec::new();
+                let mut without_equals: Vec<usize> = Vec::new();
+                for (at, (entry, string_key, without)) in spelled.into_iter().enumerate() {
+                    if string_key {
+                        string_keys.push(at);
+                    }
+                    if without {
+                        without_equals.push(at);
+                    }
+                    entries.push(entry);
+                }
+                let options = Expression::OptionsProperty(Box::new(OptionsProperty {
+                    entries,
+                    string_keys,
+                    without_equals,
+                }));
                 ("OPTIONS", Some(options))
             }
             "PARTITIONED" if self.kw_at(1, "BY") => {
@@ -227,9 +306,9 @@ impl Parser<'_> {
                     self.at += 1;
                     Some(property("CLUSTER BY", var("AUTO")))
                 } else if self.char_at(0, '(') && self.string_at(1) {
-                    self.parenthesized(|parser| parser.expression())?;
-                    self.gap("cluster_by_expression", start);
-                    None
+                    let expressions: Vec<Expression> =
+                        self.parenthesized(|parser| parser.expression())?;
+                    Some(property("CLUSTER BY", tuple(expressions)))
                 } else {
                     let columns: Vec<Identifier> =
                         self.parenthesized(|parser| parser.multipart_identifier().map(joined))?;
@@ -257,41 +336,33 @@ impl Parser<'_> {
             }
             "TBLPROPERTIES" => {
                 self.at += 1;
-                let expressions: Vec<Expression> = self
-                    .valued_property_list()?
-                    .into_iter()
-                    .map(|(key, value)| binary(Expression::Eq, key, value))
-                    .collect();
-                let properties = Expression::Properties(Box::new(Properties { expressions }));
-                ("TBLPROPERTIES", Some(properties))
+                ("TBLPROPERTIES", Some(self.properties_node(true)?))
             }
             "WITH" if self.kw_at(1, "ROW") && self.kw_at(2, "FILTER") => {
                 self.at += 3;
-                self.multipart_identifier()?;
-                self.expect_kw("ON")?;
-                self.expect_char('(')?;
-                if !self.is_char(')') {
-                    self.comma_list(|parser| parser.expression())?;
+                let filter = Expression::Table(Box::new(table(self.multipart_identifier()?)));
+                let columns: Vec<Expression> = self.row_filter_columns()?;
+                let row_filter = property("WITH ROW FILTER", tuple(vec![filter, tuple(columns)]));
+                if too_deep_to_keep(&row_filter) {
+                    self.gap("row_filter", start);
+                    return Ok(Some(("WITH", None)));
                 }
-                self.expect_char(')')?;
-                self.gap("row_filter", start);
-                ("WITH", None)
+                self.treed("row_filter", start);
+                ("WITH", Some(row_filter))
             }
             "DEFAULT" if self.kw_at(1, "COLLATION") => {
                 self.at += 2;
                 let name: Identifier = self.ident()?;
-                let collation = property("DEFAULT COLLATION", string(&name.name));
+                let collation = property("DEFAULT COLLATION", Expression::Identifier(name));
                 ("COLLATION", Some(collation))
             }
-            "ROW" if self.kw_at(1, "FORMAT") => {
-                self.row_format()?;
-                self.gap("row_format", start);
-                ("ROW", None)
-            }
+            "ROW" if self.kw_at(1, "FORMAT") => ("ROW", Some(self.row_format()?)),
             "STORED" if self.kw_in(1, &["AS", "BY"]) => {
-                self.create_file_format()?;
-                self.gap("stored_as", start);
-                ("STORED", None)
+                let format: Option<Expression> = self.create_file_format()?;
+                if format.is_none() {
+                    self.gap("stored_as", start);
+                }
+                ("STORED", format)
             }
             "CLUSTERED" if self.kw_at(1, "BY") => {
                 self.bucket_spec()?;
@@ -308,13 +379,14 @@ impl Parser<'_> {
         Ok(Some(clause))
     }
 
-    /// One `OPTIONS` entry: adjacent strings are the key and its value unless `=` follows them.
-    fn table_option(&mut self) -> Parsing<OptionEntry> {
+    /// One `OPTIONS` entry, whether its key is a string and whether its value lacks `=`.
+    fn table_option(&mut self) -> Parsing<(OptionEntry, bool, bool)> {
         let mut strings: usize = 0;
         while self.string_at(strings) {
             strings += 1;
         }
-        let key: Identifier = match self.string_at(0) {
+        let string_key: bool = self.string_at(0);
+        let key: Identifier = match string_key {
             true if !self.char_at(strings, '=') => Identifier::new(self.advance()?.value),
             true => Identifier::new(self.string_lit()?),
             false => joined(self.multipart_identifier()?),
@@ -331,7 +403,7 @@ impl Parser<'_> {
             ));
         }
         let value: Expression = self.expression()?;
-        Ok(OptionEntry { key, value })
+        Ok((OptionEntry { key, value }, string_key, !equals))
     }
 
     /// `bucketSpec`: `CLUSTERED BY (columns) [SORTED BY (columns)] INTO n BUCKETS`.
@@ -370,24 +442,42 @@ impl Parser<'_> {
     }
 
     /// `createFileFormat`: `STORED AS format` or `STORED BY handler`.
-    pub(crate) fn create_file_format(&mut self) -> Parsing<()> {
+    pub(crate) fn create_file_format(&mut self) -> Parsing<Option<Expression>> {
+        let start: usize = self.offset();
         self.expect_kw("STORED")?;
         if self.eat_kw("BY") {
-            self.string_lit()?;
+            let handler: Expression = self.string_literal()?;
             if self.eat_kws(&["WITH", "SERDEPROPERTIES"]) {
                 self.property_list()?;
+                return Ok(None);
             }
-            return Ok(());
+            self.treed("stored_as", start);
+            return Ok(Some(Expression::StorageHandlerProperty(Box::new(
+                StorageHandlerProperty {
+                    this: Box::new(handler),
+                },
+            ))));
         }
         self.expect_kw("AS")?;
-        if self.eat_kw("INPUTFORMAT") {
-            self.string_lit()?;
-            self.expect_kw("OUTPUTFORMAT")?;
-            self.string_lit()?;
-        } else {
-            self.ident()?;
-        }
-        Ok(())
+        let format: Expression = match self.eat_kw("INPUTFORMAT") {
+            true => {
+                let input: Expression = self.string_literal()?;
+                self.expect_kw("OUTPUTFORMAT")?;
+                Expression::InputOutputFormat(Box::new(InputOutputFormat {
+                    input_format: Some(Box::new(input)),
+                    output_format: Some(Box::new(self.string_literal()?)),
+                }))
+            }
+            false => Expression::Identifier(self.ident()?),
+        };
+        self.treed("stored_as", start);
+        Ok(Some(Expression::FileFormatProperty(Box::new(
+            FileFormatProperty {
+                this: Some(Box::new(format)),
+                expressions: Vec::new(),
+                hive_format: Some(Box::new(boolean(true))),
+            },
+        ))))
     }
 
     /// `createTableLike` after the new table's name: `LIKE source` and its clauses.
@@ -417,15 +507,16 @@ impl Parser<'_> {
                         this: Box::new(path),
                     })));
             } else if self.eat_kw("TBLPROPERTIES") {
-                let expressions: Vec<Expression> = self.property_list()?;
-                node.properties
-                    .push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                node.properties.push(properties);
             } else if self.kw("ROW") && self.kw_at(1, "FORMAT") {
-                self.row_format()?;
-                self.gap("row_format", start);
+                let format: Expression = self.row_format()?;
+                node.properties.push(format);
             } else if self.kw("STORED") && self.kw_in(1, &["AS", "BY"]) {
-                self.create_file_format()?;
-                self.gap("stored_as", start);
+                match self.create_file_format()? {
+                    Some(format) => node.properties.push(format),
+                    None => self.gap("stored_as", start),
+                }
             } else {
                 return Ok(Expression::CreateTable(Box::new(node)));
             }
@@ -438,14 +529,16 @@ impl Parser<'_> {
         node.deep_clone = !node.shallow_clone && self.eat_kw("DEEP");
         self.expect_kw("CLONE")?;
         node.clone_source = Some(self.table_reference()?);
-        node.clone_at_clause = self.temporal_clause()?.map(Expression::Version);
+        node.clone_at_clause = match self.at_version()? {
+            Some(version) => Some(Expression::Version(version)),
+            None => self.temporal_clause()?.map(Expression::Version),
+        };
         let mut seen: Vec<&str> = Vec::new();
         loop {
             let start: usize = self.offset();
             let clause: &str = if self.eat_kw("TBLPROPERTIES") {
-                let expressions: Vec<Expression> = self.property_list()?;
-                node.properties
-                    .push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                node.properties.push(properties);
                 "TBLPROPERTIES"
             } else if self.eat_kw("LOCATION") {
                 let path: Expression = self.string_literal()?;
@@ -468,37 +561,66 @@ impl Parser<'_> {
         }
     }
 
+    /// `rowFormat` in a table's definition, marked as a tree not yet reviewed for layout.
+    fn row_format(&mut self) -> Parsing<Expression> {
+        let start: usize = self.offset();
+        let format: Expression = self.read_row_format()?;
+        self.treed("row_format", start);
+        Ok(format)
+    }
+
     /// `rowFormat`.
-    pub(crate) fn row_format(&mut self) -> Parsing<()> {
+    pub(crate) fn read_row_format(&mut self) -> Parsing<Expression> {
         self.expect_kw("ROW")?;
         self.expect_kw("FORMAT")?;
         if self.eat_kw("SERDE") {
-            self.string_lit()?;
-            if self.eat_kws(&["WITH", "SERDEPROPERTIES"]) {
-                self.property_list()?;
-            }
-            return Ok(());
+            let serde: Expression = self.string_literal()?;
+            let serde_properties: Option<Box<Expression>> =
+                match self.eat_kws(&["WITH", "SERDEPROPERTIES"]) {
+                    true => Some(Box::new(Expression::SerdeProperties(Box::new(
+                        SerdeProperties {
+                            expressions: self.property_list()?,
+                            with_: Some(Box::new(boolean(true))),
+                        },
+                    )))),
+                    false => None,
+                };
+            return Ok(Expression::RowFormatSerdeProperty(Box::new(
+                RowFormatSerdeProperty {
+                    this: Box::new(serde),
+                    serde_properties,
+                },
+            )));
         }
         self.expect_kw("DELIMITED")?;
+        let mut node: RowFormatDelimitedProperty = RowFormatDelimitedProperty {
+            fields: None,
+            escaped: None,
+            collection_items: None,
+            map_keys: None,
+            lines: None,
+            null: None,
+            serde: None,
+        };
         if self.eat_kws(&["FIELDS", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            node.fields = Some(Box::new(self.string_literal()?));
             if self.eat_kws(&["ESCAPED", "BY"]) {
-                self.string_lit()?;
+                node.escaped = Some(Box::new(self.string_literal()?));
             }
         }
         if self.eat_kws(&["COLLECTION", "ITEMS", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            node.collection_items = Some(Box::new(self.string_literal()?));
         }
         if self.eat_kws(&["MAP", "KEYS", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            node.map_keys = Some(Box::new(self.string_literal()?));
         }
         if self.eat_kws(&["LINES", "TERMINATED", "BY"]) {
-            self.string_lit()?;
+            node.lines = Some(Box::new(self.string_literal()?));
         }
         if self.eat_kws(&["NULL", "DEFINED", "AS"]) {
-            self.string_lit()?;
+            node.null = Some(Box::new(self.string_literal()?));
         }
-        Ok(())
+        Ok(Expression::RowFormatDelimitedProperty(Box::new(node)))
     }
 
     /// `partitionField`: a column (`name type`), a column name, or a transform call.
@@ -526,9 +648,10 @@ impl Parser<'_> {
     /// `colDefinition`: `name dataType colDefinitionOption*`.
     pub(crate) fn column_definition(&mut self) -> Parsing<ColumnDef> {
         let name: Identifier = self.ident()?;
-        let data_type: DataType = self.data_type()?;
+        let (data_type, collation) = self.collated_type()?;
         let mut column: ColumnDef = ColumnDef::new(String::new(), data_type);
         column.name = name;
+        column = collate(column, collation);
         loop {
             if (self.kw("NOT") || self.is_char('!')) && self.kw_at(1, "NULL") {
                 self.at += 2;
@@ -542,8 +665,14 @@ impl Parser<'_> {
             } else if self.kw("MASK") {
                 let start: usize = self.offset();
                 self.at += 1;
-                self.column_mask()?;
-                self.gap("column_mask", start);
+                let mask: Expression = self.column_mask()?;
+                match too_deep_to_keep(&mask) {
+                    true => self.gap("column_mask", start),
+                    false => {
+                        column.options.push(mask);
+                        self.treed("column_mask", start);
+                    }
+                }
             } else if self.kw_in(
                 0,
                 &[
@@ -555,26 +684,40 @@ impl Parser<'_> {
                     "FOREIGN",
                 ],
             ) {
-                if self.eat_kw("CONSTRAINT") {
-                    self.ident()?;
-                }
-                if self.kw("PRIMARY") && self.kw_at(1, "KEY") {
+                let name: Option<Identifier> = match self.eat_kw("CONSTRAINT") {
+                    true => Some(self.ident()?),
+                    false => None,
+                };
+                let kind: ConstraintType = if self.kw("PRIMARY") && self.kw_at(1, "KEY") {
                     self.at += 2;
                     column.primary_key = true;
+                    ConstraintType::PrimaryKey
                 } else if self.eat_kw("UNIQUE") {
                     column.unique = true;
+                    ConstraintType::Unique
                 } else if self.kw("CHECK") {
                     column
                         .constraints
                         .push(ColumnConstraint::Check(self.check_constraint()?));
+                    ConstraintType::Check
                 } else {
-                    self.eat_kws(&["FOREIGN", "KEY"]);
-                    let reference: ForeignKeyRef = self.reference_spec()?;
+                    let has_foreign_key_keywords: bool = self.eat_kws(&["FOREIGN", "KEY"]);
+                    let mut reference: ForeignKeyRef = self.reference_spec()?;
+                    reference.has_foreign_key_keywords = has_foreign_key_keywords;
                     column
                         .constraints
                         .push(ColumnConstraint::References(Box::new(reference)));
+                    ConstraintType::References
+                };
+                let index: usize = column.constraint_order.len();
+                column.constraint_order.push(kind);
+                column
+                    .constraint_names
+                    .extend(name.map(|name| (index, name)));
+                let modifiers: ConstraintModifiers = self.constraint_characteristics()?;
+                if modifiers != ConstraintModifiers::default() {
+                    column.constraint_modifiers.push((index, modifiers));
                 }
-                self.constraint_characteristics()?;
             } else {
                 return Ok(column);
             }
@@ -641,7 +784,7 @@ impl Parser<'_> {
             false => digits,
         };
         Ok(crate::parse::_helpers::tree::nodes::literal(
-            sqlquack_syntax::expressions::names::models::Literal::Number(text),
+            Literal::Number(text),
         ))
     }
 
@@ -664,14 +807,32 @@ impl Parser<'_> {
             false => Vec::new(),
         };
         let mut match_full: bool = false;
+        let mut on_delete: Option<ReferentialAction> = None;
+        let mut on_update: Option<ReferentialAction> = None;
+        let mut on_update_first: bool = false;
+        let mut match_after_actions: bool = false;
+        let mut written: Vec<String> = Vec::new();
         loop {
             if self.eat_kws(&["MATCH", "FULL"]) {
                 match_full = true;
+                match_after_actions = on_delete.is_some() || on_update.is_some();
+                written.push("MATCH FULL".to_owned());
             } else if self.kw("ON")
                 && self.kw_in(1, &["DELETE", "UPDATE"])
                 && self.kw_at(2, "NO")
                 && self.kw_at(3, "ACTION")
             {
+                match self.kw_at(1, "UPDATE") {
+                    true => {
+                        on_update_first = on_delete.is_none();
+                        on_update = Some(ReferentialAction::NoAction);
+                        written.push("ON UPDATE NO ACTION".to_owned());
+                    }
+                    false => {
+                        on_delete = Some(ReferentialAction::NoAction);
+                        written.push("ON DELETE NO ACTION".to_owned());
+                    }
+                }
                 self.at += 4;
             } else {
                 break;
@@ -680,35 +841,88 @@ impl Parser<'_> {
         Ok(ForeignKeyRef {
             table,
             columns,
-            on_delete: None,
-            on_update: None,
-            on_update_first: false,
+            on_delete,
+            on_update,
+            on_update_first,
             match_type: match_full
                 .then_some(sqlquack_syntax::expressions::columns::models::MatchType::Full),
-            match_after_actions: false,
+            match_after_actions,
             constraint_name: None,
             deferrable: None,
             has_foreign_key_keywords: false,
+            written_order: match order_unsaid(&written) {
+                true => written,
+                false => Vec::new(),
+            },
         })
     }
 
     /// `constraintCharacteristic*`: `[NOT] ENFORCED`, `RELY` and `NORELY`.
     fn constraint_characteristics(&mut self) -> Parsing<ConstraintModifiers> {
         let mut modifiers: ConstraintModifiers = ConstraintModifiers::default();
+        let mut written: Vec<String> = Vec::new();
         loop {
             if self.eat_kw("ENFORCED") {
                 modifiers.enforced = Some(true);
+                written.push("ENFORCED".to_owned());
             } else if self.kw("NOT") && self.kw_at(1, "ENFORCED") {
                 self.at += 2;
                 modifiers.enforced = Some(false);
+                written.push("NOT ENFORCED".to_owned());
             } else if self.eat_kw("RELY") {
                 modifiers.rely = true;
+                written.push("RELY".to_owned());
             } else if self.eat_kw("NORELY") {
                 modifiers.norely = true;
+                written.push("NORELY".to_owned());
             } else {
+                if written.len() > 1 {
+                    modifiers.properties = written;
+                }
                 return Ok(modifiers);
             }
         }
+    }
+
+    /// `constraint` with the `words` after it as its modifiers when written once each, else a gap.
+    pub(crate) fn constraint_validation(
+        &mut self,
+        mut constraint: TableConstraint,
+        words: &[&str],
+    ) -> TableConstraint {
+        let start: usize = self.offset();
+        let mut written: Vec<String> = Vec::new();
+        while let Some(word) = self
+            .word_at(0)
+            .filter(|word| words.contains(&word.as_str()))
+        {
+            self.at += 1;
+            written.push(word);
+        }
+        if written.is_empty() {
+            return constraint;
+        }
+        let read: Option<(Option<bool>, Option<bool>)> = match written
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<&str>>()
+            .as_slice()
+        {
+            [enable] => {
+                validation_words(None, Some(enable)).or(validation_words(Some(enable), None))
+            }
+            [enable, validate] => validation_words(Some(enable), Some(validate)),
+            _ => None,
+        };
+        match (read, modifiers_of(&mut constraint)) {
+            (Some((enabled, validated)), Some(modifiers)) => {
+                modifiers.enabled = enabled;
+                modifiers.validated = validated;
+                self.treed("constraint_validation", start);
+            }
+            _ => self.gap("constraint_validation", start),
+        }
+        constraint
     }
 
     /// `tableConstraintDefinition`.
@@ -795,7 +1009,7 @@ impl Parser<'_> {
         let name: TableRef = self.table_reference()?;
         if head.temporary && !if_not_exists && self.temporary_view_using_ahead() {
             self.at = name_at;
-            return self.temporary_view_using();
+            return self.temporary_view_using(head.at, name_at - 1);
         }
         let mut columns: Vec<ViewColumn> = Vec::new();
         if self.is_char('(') {
@@ -811,46 +1025,41 @@ impl Parser<'_> {
         let mut comment: Option<String> = None;
         let mut table_properties: Vec<Expression> = Vec::new();
         let mut copy_grants: bool = false;
+        let mut options: Vec<Expression> = Vec::new();
         loop {
             let start: usize = self.offset();
+            if let Some(option) = self.view_option(start)? {
+                options.push(option);
+                continue;
+            }
             if self.eat_kw("COMMENT") {
                 if comment.is_some() {
                     return Err(self.error_with("Found duplicate clauses: COMMENT", start, true));
                 }
                 comment = Some(self.string_lit()?);
             } else if self.eat_kw("TBLPROPERTIES") {
-                let expressions: Vec<Expression> = self.property_list()?;
-                table_properties.push(Expression::Properties(Box::new(Properties { expressions })));
-            } else if self.kw("WITH") && self.kw_at(1, "SCHEMA") {
-                self.at += 2;
-                if !(self.eat_kw("BINDING")
-                    || self.eat_kw("COMPENSATION")
-                    || self.eat_kw("EVOLUTION")
-                    || self.eat_kws(&["TYPE", "EVOLUTION"]))
-                {
-                    return Err(self.error());
-                }
-                self.gap("schema_binding", start);
+                let properties: Expression = self.properties_node(false)?;
+                table_properties.push(properties);
             } else if self.kw("WITH") && self.kw_at(1, "METRICS") {
                 if head.global {
                     self.at += 1;
                     return Err(self.error());
                 }
-                return self.metric_view(start);
-            } else if self.kw("DEFAULT") && self.kw_at(1, "COLLATION") {
-                self.at += 2;
-                self.ident()?;
-                self.gap("view_collation", start);
-            } else if self.kw("PARTITIONED") && self.kw_at(1, "ON") {
-                self.at += 2;
-                self.identifier_list()?;
-                self.gap("view_partitioned_on", start);
+                let mut node: CreateView = CreateView::new(String::new(), null());
+                node.name = name;
+                node.columns = columns;
+                node.or_replace = head.or_replace;
+                node.if_not_exists = if_not_exists;
+                node.temporary = head.temporary;
+                node.temporary_spelling = head.temporary_spelling;
+                node.comment = comment;
+                node.table_properties = table_properties;
+                node.copy_grants = copy_grants;
+                node.options = options;
+                return self.metric_view(node);
             } else if self.kw("COPY") && self.char_at(1, '*') {
                 self.at += 2;
                 copy_grants = true;
-            } else if self.kw("NOCOPY") && self.char_at(1, '*') {
-                self.at += 2;
-                self.gap("view_nocopy", start);
             } else {
                 break;
             }
@@ -878,33 +1087,80 @@ impl Parser<'_> {
         node.or_replace = head.or_replace;
         node.if_not_exists = if_not_exists;
         node.temporary = head.temporary;
+        node.temporary_spelling = head.temporary_spelling;
         node.comment = comment;
         node.table_properties = table_properties;
         node.query_parenthesized = parenthesized;
         node.copy_grants = copy_grants;
+        node.options = options;
         Ok(Expression::CreateView(Box::new(node)))
     }
 
-    /// `createMetricView` from `WITH METRICS`: its clauses, then `AS $$ body $$`; kept as a gap.
-    fn metric_view(&mut self, start: usize) -> Parsing<Expression> {
+    /// A view's schema binding, default collation, partitioning columns or `NOCOPY *`, read from `start`.
+    fn view_option(&mut self, start: usize) -> Parsing<Option<Expression>> {
+        let (construct, option) = if self.kw("WITH") && self.kw_at(1, "SCHEMA") {
+            self.at += 2;
+            let mode: &str = match self.word_at(0).as_deref() {
+                Some("BINDING") => "BINDING",
+                Some("COMPENSATION") => "COMPENSATION",
+                Some("EVOLUTION") => "EVOLUTION",
+                Some("TYPE") if self.kw_at(1, "EVOLUTION") => "TYPE EVOLUTION",
+                _ => return Err(self.error()),
+            };
+            self.at += mode.split(' ').count();
+            ("schema_binding", property("WITH SCHEMA", var(mode)))
+        } else if self.kw("DEFAULT") && self.kw_at(1, "COLLATION") {
+            self.at += 2;
+            let name: Identifier = self.ident()?;
+            (
+                "view_collation",
+                property("DEFAULT COLLATION", Expression::Identifier(name)),
+            )
+        } else if self.kw("PARTITIONED") && self.kw_at(1, "ON") {
+            self.at += 2;
+            let columns: Vec<Expression> = self
+                .identifier_list()?
+                .into_iter()
+                .map(Expression::Identifier)
+                .collect();
+            (
+                "view_partitioned_on",
+                property("PARTITIONED ON", tuple(columns)),
+            )
+        } else if self.kw("NOCOPY") && self.char_at(1, '*') {
+            self.at += 2;
+            ("view_nocopy", property("NOCOPY", var("*")))
+        } else {
+            return Ok(None);
+        };
+        self.treed(construct, start);
+        Ok(Some(option))
+    }
+
+    /// `createMetricView` from `WITH METRICS`: its clauses, then `AS $$ body $$`, the body as the view's query.
+    fn metric_view(&mut self, mut node: CreateView) -> Parsing<Expression> {
         loop {
             if self.eat_kws(&["WITH", "METRICS"]) {
+                node.options.push(property("WITH", var("METRICS")));
             } else if self.eat_kw("LANGUAGE") {
-                self.expect_token(|token| token.kind == TokenKind::Word)?;
+                let language: Token = self.expect_token(|token| token.kind == TokenKind::Word)?;
+                node.options
+                    .push(property("LANGUAGE", var(&language.value)));
             } else if self.eat_kw("COMMENT") {
-                self.string_lit()?;
+                node.comment = Some(self.string_lit()?);
             } else if self.eat_kw("TBLPROPERTIES") {
-                self.property_list()?;
+                let properties: Expression = self.properties_node(false)?;
+                node.table_properties.push(properties);
             } else {
                 break;
             }
         }
         self.expect_kw("AS")?;
-        self.expect_token(|token| {
+        let body: Token = self.expect_token(|token| {
             token.kind == TokenKind::DollarString && !token.value.is_empty()
         })?;
-        self.gap("metric_view", start);
-        Ok(null())
+        node.query = literal(Literal::DollarString(body.value));
+        Ok(Expression::CreateView(Box::new(node)))
     }
 
     /// Whether `createTempViewUsing` follows the view name: `USING`, or a column list with types.
@@ -917,8 +1173,8 @@ impl Parser<'_> {
                 && !self.kw_at(2, "COMMENT"))
     }
 
-    /// `createTempViewUsing` after the view, every option with a value; kept as a gap.
-    fn temporary_view_using(&mut self) -> Parsing<Expression> {
+    /// `createTempViewUsing` after the view, from `CREATE` at `from` to `VIEW` at `view`; a gap unless its documented form reads it all.
+    fn temporary_view_using(&mut self, from: usize, view: usize) -> Parsing<Expression> {
         let start: usize = self.offset();
         self.ident()?;
         if self.is_char('.') {
@@ -954,8 +1210,16 @@ impl Parser<'_> {
                 ));
             }
         }
-        self.gap("temporary_view_using", start);
-        Ok(null())
+        match self.tree_within(from, self.at, view + 1 - from, TEMPORARY_VIEW_USING) {
+            Some(tree) => {
+                self.treed("temporary_view_using", start);
+                Ok(tree)
+            }
+            None => {
+                self.gap("temporary_view_using", start);
+                Ok(null())
+            }
+        }
     }
 
     /// `DROP TABLE` and `DROP VIEW`; any other `DROP` is an opaque gap.
@@ -975,17 +1239,28 @@ impl Parser<'_> {
                 node.names = vec![name];
                 node.if_exists = if_exists;
                 node.purge = self.eat_kw("PURGE");
-                if !temporary {
-                    let start: usize = self.offset();
-                    if self.eat_kw("FORCE") {
-                        self.gap("drop_table_force", start);
+                let (construct, start, lead, pattern) = match temporary {
+                    true => (
+                        "drop_temporary_table",
+                        self.tokens[start_at].start,
+                        3,
+                        DROP_TEMPORARY_TABLE,
+                    ),
+                    false => ("drop_table_force", self.offset(), 2, DROP_TABLE_FORCE),
+                };
+                if !(temporary || self.eat_kw("FORCE")) {
+                    return Ok(Expression::DropTable(Box::new(node)));
+                }
+                match self.tree_within(start_at, self.at, lead, pattern) {
+                    Some(tree) => {
+                        self.treed(construct, start);
+                        Ok(tree)
+                    }
+                    None => {
+                        self.gap(construct, start);
+                        Ok(Expression::DropTable(Box::new(node)))
                     }
                 }
-                if temporary {
-                    let start: usize = self.tokens[start_at].start;
-                    self.gap("drop_temporary_table", start);
-                }
-                Ok(Expression::DropTable(Box::new(node)))
             }
             Some("VIEW") => {
                 self.at += 1;

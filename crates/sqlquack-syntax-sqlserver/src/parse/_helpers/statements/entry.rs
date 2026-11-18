@@ -1,11 +1,14 @@
 //! Statements: dispatch on the leading words, control of flow, variables, transactions and `EXEC`.
 
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::scripting::main::scripting_sql::scripting_sql;
+use sqlquack_syntax::expressions::scripting::models::{
+    ScriptingBlock, ScriptingBranch, ScriptingElse, ScriptingIf, ScriptingJump,
+    ScriptingJumpKeyword, ScriptingLoopKeyword, ScriptingRaise, ScriptingStatement, ScriptingWhile,
+};
 use sqlquack_syntax::expressions::statements::models::{
-    Commit, Declare, DeclareItem, ExecuteParameter, ExecuteStatement, Rollback, ScriptingBlock,
-    ScriptingBranch, ScriptingElse, ScriptingIf, ScriptingJump, ScriptingJumpKeyword,
-    ScriptingLoopKeyword, ScriptingRaise, ScriptingSql, ScriptingStatement, ScriptingWhile,
-    SetItem, SetStatement, Transaction, TryCatch, Use,
+    Commit, Declare, DeclareItem, ExecuteParameter, ExecuteStatement, Rollback, SetItem,
+    SetStatement, Transaction, TryCatch, Use,
 };
 use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::{Expression, ExpressionWalk};
@@ -14,7 +17,7 @@ use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_any_n
 use crate::parse::_helpers::tree::nodes::{column_from, paren, var};
 use crate::parse::_helpers::values::primary::variable;
 use crate::parse::constants::{
-    MAX_DEPTH, STATISTICS_SWITCH, THROW_OUTSIDE_CATCH, UNREAD_STATEMENTS,
+    MAX_DEPTH, NESTING_DEPTH_GAP, STATISTICS_SWITCH, THROW_OUTSIDE_CATCH, UNREAD_STATEMENTS,
 };
 use crate::scan::models::{Token, TokenKind};
 
@@ -72,13 +75,6 @@ const CURSOR_WORDS: [&str; 14] = [
     "TYPE_WARNING",
 ];
 
-fn sql(statement: Expression) -> ScriptingStatement {
-    ScriptingStatement::Sql(ScriptingSql {
-        span: SourceSpan(None),
-        statement,
-    })
-}
-
 fn block(body: Vec<ScriptingStatement>) -> ScriptingBlock {
     ScriptingBlock {
         span: SourceSpan(None),
@@ -86,6 +82,8 @@ fn block(body: Vec<ScriptingStatement>) -> ScriptingBlock {
         body,
         exception_handlers: Vec::new(),
         label: None,
+        begin_label: None,
+        atomic: None,
     }
 }
 
@@ -120,10 +118,10 @@ impl<'sql> Parser<'sql> {
         }
     }
 
-    /// `statement`, or the gap `nesting_depth` from `start` when its tree is deeper than the limit.
+    /// `statement`, or the gap `NESTING_DEPTH_GAP` from `start` when its tree is deeper than the limit.
     fn within_depth(&mut self, statement: Expression, start: usize) -> Parsing<Expression> {
         match statement.tree_depth() > MAX_DEPTH {
-            true => Err(self.gap("nesting_depth", start)),
+            true => Err(self.gap(NESTING_DEPTH_GAP, start)),
             false => Ok(statement),
         }
     }
@@ -211,6 +209,8 @@ impl<'sql> Parser<'sql> {
                     this: name,
                     roles: Vec::new(),
                     parts: Vec::new(),
+                    string_name: false,
+                    keyword: None,
                 })))
             }
             "RETURN" => {
@@ -282,7 +282,7 @@ impl<'sql> Parser<'sql> {
     /// The statement after `IF`, `ELSE` or `WHILE`, which may not be a batch-first `CREATE`.
     fn branch(&mut self) -> Parsing<Vec<ScriptingStatement>> {
         while self.eat_char(';') {}
-        Ok(vec![sql(self.statement()?)])
+        Ok(vec![scripting_sql(self.statement()?)])
     }
 
     /// `IF condition statement [ELSE statement]`.
@@ -333,6 +333,7 @@ impl<'sql> Parser<'sql> {
                 keyword: ScriptingLoopKeyword::Do,
                 body,
                 label: None,
+                begin_label: None,
             }),
         ]))))
     }
@@ -392,7 +393,7 @@ impl<'sql> Parser<'sql> {
             _ => {
                 let body: Vec<Expression> = self.block_body(&["END"])?;
                 Ok(Expression::ScriptingBlock(Box::new(block(
-                    body.into_iter().map(sql).collect(),
+                    body.into_iter().map(scripting_sql).collect(),
                 ))))
             }
         }
@@ -506,9 +507,11 @@ impl<'sql> Parser<'sql> {
                 has_as,
                 additional_names: Vec::new(),
                 span: parser.range_from(first),
+                equals: false,
             })))
         })?;
         Ok(Expression::Declare(Box::new(Declare {
+            keyword: None,
             expressions,
             replace: false,
         })))

@@ -252,6 +252,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 }))));
             }
             let args = self.parse_expression_list()?;
@@ -290,6 +291,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 }))));
             } else {
                 return Err(self.parse_error("IF function requires 2 or 3 arguments"));
@@ -681,6 +683,8 @@ impl Parser {
                 trailing_comments: trailing,
                 inferred_type: None,
                 span: SourceSpan::default(),
+                table_sample: None,
+                watermark: None,
             };
             let explicit_as = self.match_token(TokenType::As);
             if explicit_as || self.is_identifier_token() || self.is_safe_keyword_as_identifier() {
@@ -782,6 +786,7 @@ impl Parser {
             with_: None,
             returning: returning.map(Box::new),
             returning_aliases: Vec::new(),
+            schema_evolution: false,
         }))))
     }
 
@@ -1087,6 +1092,7 @@ impl Parser {
                                     trailing_comments: Vec::new(),
                                     inferred_type: None,
                                     span: SourceSpan::default(),
+                                    written_as: None,
                                 }));
                                 assignments.push(assignment);
                             }
@@ -1282,12 +1288,15 @@ impl Parser {
                 let data_type = match type_name {
                     "BIGINT" => sqlquack_syntax::expressions::types::models::DataType::BigInt {
                         length: None,
+                        spelling: None,
                     },
                     "SMALLINT" => sqlquack_syntax::expressions::types::models::DataType::SmallInt {
                         length: None,
+                        spelling: None,
                     },
                     "TINYINT" => sqlquack_syntax::expressions::types::models::DataType::TinyInt {
                         length: None,
+                        spelling: None,
                     },
                     "DOUBLE" => sqlquack_syntax::expressions::types::models::DataType::Double {
                         precision: None,
@@ -1301,6 +1310,7 @@ impl Parser {
                     "DECIMAL" => sqlquack_syntax::expressions::types::models::DataType::Decimal {
                         precision: None,
                         scale: None,
+                        spelling: None,
                     },
                     _ => sqlquack_syntax::expressions::types::models::DataType::Custom {
                         name: type_name.to_string(),

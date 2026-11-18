@@ -123,6 +123,7 @@ impl Parser<'_> {
                     .to_owned(),
                 position: self.tokens[path_start].start,
                 syntax: false,
+                guard: false,
             }),
         }
     }
@@ -262,6 +263,7 @@ impl Parser<'_> {
                 message: format!("unrecognized JSON encoding: {encoding}"),
                 position,
                 syntax: false,
+                guard: false,
             }),
         }
     }

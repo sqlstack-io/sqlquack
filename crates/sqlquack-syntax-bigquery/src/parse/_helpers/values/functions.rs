@@ -118,6 +118,7 @@ impl Parser<'_> {
             self.at += 1;
             let path: Vec<Identifier> = self.multipart_identifier()?;
             return Ok(Expression::TableArgument(Box::new(TableArgument {
+                parenthesized: false,
                 prefix: kind,
                 this: Expression::Table(Box::new(table(path))),
             })));
@@ -126,6 +127,7 @@ impl Parser<'_> {
             self.at += 1;
             let columns: Vec<Identifier> = self.identifier_list()?;
             return Ok(Expression::TableArgument(Box::new(TableArgument {
+                parenthesized: false,
                 prefix: "DESCRIPTOR".to_owned(),
                 this: tuple(
                     columns

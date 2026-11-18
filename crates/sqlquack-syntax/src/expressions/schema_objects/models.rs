@@ -223,6 +223,9 @@ pub struct AlterView {
     /// Hive: Column aliases with optional comments: (c1 COMMENT 'text', c2)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub columns: Vec<ViewColumn>,
+    /// Databricks: the optional `AS` before a redefining query was not written
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub as_omitted: bool,
 }
 
 /// Actions for ALTER VIEW
@@ -248,6 +251,19 @@ pub enum AlterViewAction {
     SetTblproperties(Vec<(String, String)>),
     /// Hive: UNSET TBLPROPERTIES ('key1', 'key2', ...)
     UnsetTblproperties(Vec<String>),
+    /// Databricks: SET TBLPROPERTIES ( k [ = ] v , ... ), each key and value as written.
+    SetTableProperties {
+        properties: Vec<(Expression, Expression)>,
+        /// The positions in `properties` of values written without the optional `=`
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        without_equals: Vec<usize>,
+    },
+    /// Databricks: UNSET TBLPROPERTIES [ IF EXISTS ] ( k , ... ), each key as written.
+    UnsetTableProperties {
+        properties: Vec<Expression>,
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        if_exists: bool,
+    },
 }
 
 impl AlterView {
@@ -260,6 +276,7 @@ impl AlterView {
             sql_security: None,
             with_option: None,
             columns: Vec::new(),
+            as_omitted: false,
         }
     }
 }
@@ -324,6 +341,14 @@ pub struct CreateSchema {
     /// Snowflake: the modifier before SCHEMA as written, e.g. "TRANSIENT"
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub modifier: Option<String>,
+    /// Databricks: the keyword written for the schema when it is a synonym, DATABASE or NAMESPACE
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub keyword: Option<String>,
+    /// Databricks: PROPERTIES when written for the documented WITH DBPROPERTIES
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub properties_keyword: Option<String>,
 }
 
 impl CreateSchema {
@@ -340,6 +365,8 @@ impl CreateSchema {
             or_alter: false,
             define: false,
             modifier: None,
+            keyword: None,
+            properties_keyword: None,
         }
     }
 }
@@ -353,6 +380,10 @@ pub struct DropSchema {
     /// RESTRICT, kept apart from the default; left out of the tree when absent
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub restrict: bool,
+    /// Databricks: the keyword written for the schema when it is a synonym, DATABASE or NAMESPACE
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub keyword: Option<String>,
 }
 
 impl DropSchema {
@@ -362,6 +393,7 @@ impl DropSchema {
             if_exists: false,
             cascade: false,
             restrict: false,
+            keyword: None,
         }
     }
 }

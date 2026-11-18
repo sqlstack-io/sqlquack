@@ -2,7 +2,7 @@
 
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
-use sqlquack_syntax::expressions::statements::models::{
+use sqlquack_syntax::expressions::scripting::models::{
     ScriptingAssignment, ScriptingAssignmentOperator, ScriptingAwait, ScriptingAwaitTarget,
     ScriptingBlock, ScriptingBranch, ScriptingCase, ScriptingCursor, ScriptingCursorSource,
     ScriptingDeclaration, ScriptingDefault, ScriptingElse, ScriptingException,
@@ -158,6 +158,8 @@ impl Parser {
             body,
             exception_handlers,
             label,
+            begin_label: None,
+            atomic: None,
         })
     }
 
@@ -435,6 +437,7 @@ impl Parser {
             span: self.source_range(start),
             body,
             label,
+            begin_label: None,
         }))
     }
 
@@ -475,7 +478,9 @@ impl Parser {
         Ok(ScriptingStatement::Open(ScriptingOpen {
             span: self.source_range(start),
             cursor,
+            cursor_qualifier: Vec::new(),
             using,
+            using_bare: false,
         }))
     }
 
@@ -492,7 +497,9 @@ impl Parser {
         Ok(ScriptingStatement::Fetch(ScriptingFetch {
             span: self.source_range(start),
             cursor,
+            cursor_qualifier: Vec::new(),
             targets,
+            keyword: None,
         }))
     }
 
@@ -502,6 +509,7 @@ impl Parser {
         Ok(ScriptingName {
             name: self.expect_scripting_name()?,
             span: self.source_range(start),
+            qualifier: Vec::new(),
         })
     }
 
@@ -691,11 +699,12 @@ impl Parser {
         let label = self.expect_scripting_loop_end(keyword, "FOR")?;
         Ok(ScriptingStatement::For(ScriptingFor {
             span: self.source_range(start),
-            variable,
+            variable: Some(variable),
             iteration,
             keyword,
             body,
             label,
+            begin_label: None,
         }))
     }
 
@@ -711,6 +720,7 @@ impl Parser {
             keyword,
             body,
             label,
+            begin_label: None,
         }))
     }
 
@@ -726,6 +736,7 @@ impl Parser {
             body,
             condition,
             label,
+            begin_label: None,
         }))
     }
 

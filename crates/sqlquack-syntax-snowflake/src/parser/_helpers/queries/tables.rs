@@ -548,6 +548,7 @@ impl Parser {
                             this: Box::new(Expression::Identifier(Identifier::new(&version_kind))),
                             kind: "AS OF".to_string(),
                             expression: Some(Box::new(value_expr)),
+                            for_keyword: false,
                         };
                         if let Expression::Table(ref mut table) = expr {
                             table.version = Some(Box::new(version));
@@ -579,6 +580,7 @@ impl Parser {
                         this: Box::new(Expression::Identifier(Identifier::new(&version_kind))),
                         kind: "AS OF".to_string(),
                         expression: Some(Box::new(value_expr)),
+                        for_keyword: false,
                     };
                     if let Expression::Table(ref mut table) = expr {
                         table.version = Some(Box::new(version));
@@ -1167,6 +1169,7 @@ impl Parser {
         self.expect_token(TokenType::RParen)?;
 
         Ok(Expression::Pivot(Box::new(Pivot {
+            alias_explicit_as: false,
             this: source,
             expressions,
             fields,
@@ -1387,6 +1390,7 @@ impl Parser {
         self.expect_token(TokenType::RParen)?;
 
         Ok(Expression::Unpivot(Box::new(Unpivot {
+            alias_explicit_as: false,
             this: source,
             value_column,
             name_column,
@@ -1416,6 +1420,7 @@ impl Parser {
         };
 
         Ok(Expression::Pivot(Box::new(Pivot {
+            alias_explicit_as: false,
             this,
             expressions: Vec::new(),
             fields: Vec::new(),
@@ -1532,9 +1537,11 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 },
             ));
             return Ok(TableRef {
+                parenthesized: false,
                 sample_call: None,
                 catalog: None,
                 schema: None,
@@ -1558,6 +1565,7 @@ impl Parser {
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
                 schema_omitted: false,
+                watermark: None,
             });
         }
 
@@ -1569,6 +1577,7 @@ impl Parser {
                 let table = self.parse_bigquery_table_part()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
                 Ok(TableRef {
+                    parenthesized: false,
                     sample_call: None,
                     catalog: Some(first),
                     schema: None,
@@ -1592,6 +1601,7 @@ impl Parser {
                     whole_quoted: false,
                     catalog_parts: Vec::new(),
                     schema_omitted: true,
+                    watermark: None,
                 })
             } else {
                 let table = self.parse_bigquery_table_part()?;
@@ -1599,6 +1609,7 @@ impl Parser {
                     let actual_table = self.parse_bigquery_table_part()?;
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Ok(TableRef {
+                        parenthesized: false,
                         sample_call: None,
                         catalog: Some(first),
                         schema: Some(table),
@@ -1622,10 +1633,12 @@ impl Parser {
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
                         schema_omitted: false,
+                        watermark: None,
                     })
                 } else {
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Ok(TableRef {
+                        parenthesized: false,
                         sample_call: None,
                         catalog: None,
                         schema: Some(first),
@@ -1649,12 +1662,14 @@ impl Parser {
                         whole_quoted: false,
                         catalog_parts: Vec::new(),
                         schema_omitted: false,
+                        watermark: None,
                     })
                 }
             }
         } else {
             let trailing_comments = self.previous_trailing_comments().to_vec();
             Ok(TableRef {
+                parenthesized: false,
                 sample_call: None,
                 catalog: None,
                 schema: None,
@@ -1678,6 +1693,7 @@ impl Parser {
                 whole_quoted: false,
                 catalog_parts: Vec::new(),
                 schema_omitted: false,
+                watermark: None,
             })
         }
     }

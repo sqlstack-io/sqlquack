@@ -297,6 +297,8 @@ impl Parser {
                             trailing_comments: values.trailing_comments,
                             inferred_type: None,
                             span: values.span,
+                            table_sample: None,
+                            watermark: None,
                         },
                         _ => return Err(self.parse_error("Expected a query in DELETE USING ( )")),
                     };
@@ -892,6 +894,10 @@ impl Parser {
                 settings: Vec::new(),
                 overriding: None,
                 returning_aliases: Vec::new(),
+                schema_evolution: false,
+                replace_on: None,
+                replace_using: Vec::new(),
+                table_keyword: false,
             }));
 
             let conditional_insert = Expression::ConditionalInsert(Box::new(ConditionalInsert {

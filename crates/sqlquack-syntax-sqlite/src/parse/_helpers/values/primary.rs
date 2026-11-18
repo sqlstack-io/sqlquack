@@ -30,9 +30,18 @@ fn named_type(name: &str, modifiers: &[u32]) -> Option<DataType> {
             length: None,
             integer_spelling: true,
         },
-        "BIGINT" if plain => DataType::BigInt { length: None },
-        "SMALLINT" if plain => DataType::SmallInt { length: None },
-        "TINYINT" if plain => DataType::TinyInt { length: None },
+        "BIGINT" if plain => DataType::BigInt {
+            length: None,
+            spelling: None,
+        },
+        "SMALLINT" if plain => DataType::SmallInt {
+            length: None,
+            spelling: None,
+        },
+        "TINYINT" if plain => DataType::TinyInt {
+            length: None,
+            spelling: None,
+        },
         "REAL" if plain => DataType::Float {
             precision: None,
             scale: None,
@@ -50,6 +59,7 @@ fn named_type(name: &str, modifiers: &[u32]) -> Option<DataType> {
         "NUMERIC" | "DECIMAL" if modifiers.len() <= MAX_TYPE_MODIFIERS => DataType::Decimal {
             precision: first,
             scale: second,
+            spelling: None,
         },
         "TEXT" if plain => DataType::Text,
         "VARCHAR" if modifiers.len() <= 1 => DataType::VarChar {
@@ -63,6 +73,7 @@ fn named_type(name: &str, modifiers: &[u32]) -> Option<DataType> {
         "TIMESTAMP" if plain => DataType::Timestamp {
             precision: None,
             timezone: false,
+            spelling: None,
         },
         _ => return None,
     })

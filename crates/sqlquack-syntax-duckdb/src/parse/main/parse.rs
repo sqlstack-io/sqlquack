@@ -21,6 +21,7 @@ pub fn parse(sql: &str) -> Result<Parsed, ParseError> {
             message: fault.value.clone(),
             position: fault.start,
             syntax: true,
+            guard: false,
         });
     }
     let mut parser: Parser<'_> = Parser::new(sql, tokens);
@@ -57,7 +58,10 @@ pub fn parse(sql: &str) -> Result<Parsed, ParseError> {
         let start: usize = parser.tokens[first].start;
         let end: usize = parser.tokens[parser.at - 1].end;
         if statement.tree_depth() > MAX_TREE_DEPTH {
-            return Err(parser.error_with("the statement nests too deeply", start, false));
+            return Err(ParseError {
+                guard: true,
+                ..parser.error_with("the statement nests too deeply", start, false)
+            });
         }
         statements.push(match parser.opaque {
             true => command(&sql[start..end]),

@@ -8,6 +8,7 @@ pub mod scan;
 
 pub use crate::keywords::main::is_reserved::is_reserved;
 pub use crate::keywords::main::keyword_status::keyword_status;
+pub use crate::parse::constants::NESTING_DEPTH_GAP;
 pub use crate::parse::errors::{ParseError, StrictFailure};
 pub use crate::parse::main::parse::parse;
 pub use crate::parse::main::parse_strict::parse_strict;

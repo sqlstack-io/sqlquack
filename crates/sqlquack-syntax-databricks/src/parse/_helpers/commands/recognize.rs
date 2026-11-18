@@ -4,6 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::queries::models::{
     MatchRecognize, MatchRecognizeAfter, MatchRecognizeMeasure, MatchRecognizeRows, Ordered,
+    RowPattern, RowPatternQuantifier,
 };
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
@@ -53,7 +54,7 @@ impl Parser<'_> {
         self.expect_kw("PATTERN")?;
         self.expect_char('(')?;
         let first: usize = self.at;
-        self.row_pattern()?;
+        let row_pattern: RowPattern = self.row_pattern()?;
         let pattern: String = match self.at > first {
             true => self.sql[self.tokens[first].start..self.tokens[self.at - 1].end].to_owned(),
             false => return Err(self.error()),
@@ -66,8 +67,7 @@ impl Parser<'_> {
             Ok((name, parser.expression()?))
         })?;
         self.expect_char(')')?;
-        let alias_explicit_as: bool = self.kw("AS");
-        let name: Option<Identifier> = self.pivot_alias()?;
+        let (name, alias_explicit_as) = self.pivot_alias()?;
         Ok(Expression::MatchRecognize(Box::new(MatchRecognize {
             options: Vec::new(),
             this: Some(Box::new(input)),
@@ -77,7 +77,7 @@ impl Parser<'_> {
             rows,
             after,
             pattern: Some(pattern),
-            row_pattern: None,
+            row_pattern: Some(row_pattern),
             define: Some(define),
             define_semantics: Vec::new(),
             alias_explicit_as,
@@ -104,68 +104,105 @@ impl Parser<'_> {
         })
     }
 
-    /// `row_pattern`: alternatives of sequences of terms; an empty pattern consumes nothing.
-    fn row_pattern(&mut self) -> Parsing<()> {
+    /// `row_pattern`: alternatives of sequences of quantified terms; an empty pattern is an empty sequence.
+    fn row_pattern(&mut self) -> Parsing<RowPattern> {
         self.deeper(|parser| {
             if parser.is_char(')') {
-                return Ok(());
+                return Ok(RowPattern::Sequence(Vec::new()));
             }
+            let mut alternatives: Vec<RowPattern> = Vec::new();
             loop {
-                parser.pattern_term()?;
+                let mut terms: Vec<RowPattern> = vec![parser.pattern_term()?];
                 while !(parser.is_char('|') || parser.is_char(')') || parser.is_char(',')) {
-                    parser.pattern_term()?;
+                    terms.push(parser.pattern_term()?);
                 }
+                alternatives.push(match terms.len() {
+                    1 => terms.remove(0),
+                    _ => RowPattern::Sequence(terms),
+                });
                 if !parser.eat_char('|') {
-                    return Ok(());
+                    break;
                 }
             }
+            Ok(match alternatives.len() {
+                1 => alternatives.remove(0),
+                _ => RowPattern::Alternation(alternatives),
+            })
         })
     }
 
-    /// One pattern term and its quantifier.
-    fn pattern_term(&mut self) -> Parsing<()> {
-        if self.kw("PERMUTE") && self.char_at(1, '(') {
+    /// One pattern term with its quantifier, when written.
+    fn pattern_term(&mut self) -> Parsing<RowPattern> {
+        let term: RowPattern = if self.kw("PERMUTE") && self.char_at(1, '(') {
             self.at += 2;
+            let mut members: Vec<RowPattern> = Vec::new();
             loop {
                 if self.is_char(')') || self.is_char(',') {
                     return Err(self.error());
                 }
-                self.row_pattern()?;
+                members.push(self.row_pattern()?);
                 if !self.eat_char(',') {
                     break;
                 }
             }
             self.expect_char(')')?;
+            RowPattern::Permute(members)
         } else if self.eat_char('(') {
-            self.row_pattern()?;
+            let inner: RowPattern = self.row_pattern()?;
             self.expect_char(')')?;
-        } else if !(self.eat_char('^') || self.eat_char('$')) {
-            self.ident()?;
-        }
-        self.pattern_quantifier()
+            RowPattern::Group(Box::new(inner))
+        } else if self.eat_char('^') {
+            RowPattern::Start
+        } else if self.eat_char('$') {
+            RowPattern::End
+        } else {
+            RowPattern::Symbol(self.ident()?)
+        };
+        Ok(match self.pattern_quantifier()? {
+            Some(quantifier) => RowPattern::Quantified {
+                this: Box::new(term),
+                quantifier,
+                reluctant: false,
+            },
+            None => term,
+        })
     }
 
     /// `pattern_quantifier`: `*`, `+`, `?`, `{n}`, `{min, [max]}` or `{, max}`, when written.
-    fn pattern_quantifier(&mut self) -> Parsing<()> {
-        if self.eat_char('*') || self.eat_char('+') || self.eat_char('?') {
-            return Ok(());
+    fn pattern_quantifier(&mut self) -> Parsing<Option<RowPatternQuantifier>> {
+        if self.eat_char('*') {
+            return Ok(Some(RowPatternQuantifier::ZeroOrMore));
+        }
+        if self.eat_char('+') {
+            return Ok(Some(RowPatternQuantifier::OneOrMore));
+        }
+        if self.eat_char('?') {
+            return Ok(Some(RowPatternQuantifier::ZeroOrOne));
         }
         if !self.eat_char('{') {
-            return Ok(());
+            return Ok(None);
         }
-        let min: bool = self.is(is_integer);
-        if min {
-            self.at += 1;
-        }
-        if self.eat_char(',') {
-            if self.is(is_integer) {
-                self.at += 1;
-            } else if !min {
-                return Err(self.error());
+        let min: Option<u64> = self.pattern_bound()?;
+        let quantifier: RowPatternQuantifier = match self.eat_char(',') {
+            true => {
+                let max: Option<u64> = self.pattern_bound()?;
+                if min.is_none() && max.is_none() {
+                    return Err(self.error());
+                }
+                RowPatternQuantifier::Between { min, max }
             }
-        } else if !min {
-            return Err(self.error());
+            false => RowPatternQuantifier::Exactly(min.ok_or_else(|| self.error())?),
+        };
+        self.expect_char('}')?;
+        Ok(Some(quantifier))
+    }
+
+    /// An integer bound of a quantifier, when written.
+    fn pattern_bound(&mut self) -> Parsing<Option<u64>> {
+        if !self.is(is_integer) {
+            return Ok(None);
         }
-        self.expect_char('}')
+        let bound: u64 = self.advance()?.value.parse().map_err(|_| self.error())?;
+        Ok(Some(bound))
     }
 }

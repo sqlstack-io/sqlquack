@@ -7,22 +7,24 @@ use sqlquack_syntax::expressions::schema_objects::models::{
     CreateFunction, CreateSchema, DropFunction, DropSchema, FunctionBody, FunctionParameter,
     FunctionSecurity, FunctionUsingResource, SqlDataAccess,
 };
-use sqlquack_syntax::expressions::tables::models::{
-    LocationProperty, Properties, SchemaCommentProperty,
-};
+use sqlquack_syntax::expressions::tables::models::{LocationProperty, SchemaCommentProperty};
 use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::commands::creates::{Head, property};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
-use crate::parse::_helpers::tree::nodes::{joined, string, table, var};
-use crate::parse::constants::SQL_LANGUAGE;
-use crate::scan::models::{NumberKind, TokenKind};
+use crate::parse::_helpers::tree::nodes::{joined, string, table};
+use crate::parse::constants::{
+    DROP_TEMPORARY_FUNCTION, SCALA_LANGUAGE, SCHEMA_SYNONYMS, SQL_LANGUAGE,
+};
+use crate::scan::models::TokenKind;
 
 impl Parser<'_> {
     /// `createNamespace` after `CREATE`: `SCHEMA [IF NOT EXISTS] name` and its clauses.
     pub(crate) fn create_schema(&mut self) -> Parsing<Expression> {
+        let keyword: Option<String> = self.schema_synonym();
         self.at += 1;
         let mut node: CreateSchema = CreateSchema::new(String::new());
+        node.keyword = keyword;
         node.if_not_exists = self.eat_kws(&["IF", "NOT", "EXISTS"]);
         node.name = self.multipart_identifier()?;
         loop {
@@ -46,30 +48,17 @@ impl Parser<'_> {
             } else if self.eat_kws(&["DEFAULT", "COLLATION"]) {
                 let name: Identifier = self.ident()?;
                 node.properties
-                    .push(property("DEFAULT COLLATION", string(&name.name)));
+                    .push(property("DEFAULT COLLATION", Expression::Identifier(name)));
             } else if self.kw("WITH") && self.kw_in(1, &["DBPROPERTIES", "PROPERTIES"]) {
+                if self.kw_at(1, "PROPERTIES") {
+                    node.properties_keyword = Some("PROPERTIES".to_owned());
+                }
                 self.at += 2;
-                let expressions: Vec<Expression> = self.property_list()?;
-                node.properties
-                    .push(Expression::Properties(Box::new(Properties { expressions })));
+                let properties: Expression = self.properties_node(false)?;
+                node.properties.push(properties);
             } else if self.eat_kws(&["RETAIN", "DROPPED", "FOR"]) {
-                let count: String = self
-                    .expect_token(|token| token.kind == TokenKind::Number(NumberKind::Integer))?
-                    .value;
-                let unit: String = match self.word_at(0) {
-                    Some(unit)
-                        if ["HOUR", "HOURS", "DAY", "DAYS", "WEEK", "WEEKS"]
-                            .contains(&unit.as_str()) =>
-                    {
-                        unit
-                    }
-                    _ => return Err(self.error()),
-                };
-                self.at += 1;
-                node.properties.push(property(
-                    "RETAIN DROPPED FOR",
-                    var(&format!("{count} {unit}")),
-                ));
+                let period: Expression = self.retention_period()?;
+                node.properties.push(property("RETAIN DROPPED FOR", period));
             } else {
                 return Ok(Expression::CreateSchema(Box::new(node)));
             }
@@ -78,8 +67,10 @@ impl Parser<'_> {
 
     /// `dropNamespace` after `DROP`: `SCHEMA [IF EXISTS] name [RESTRICT | CASCADE]`.
     pub(crate) fn drop_schema(&mut self) -> Parsing<Expression> {
+        let keyword: Option<String> = self.schema_synonym();
         self.at += 1;
         let mut node: DropSchema = DropSchema::new(String::new());
+        node.keyword = keyword;
         node.if_exists = self.eat_kws(&["IF", "EXISTS"]);
         node.name = joined(self.multipart_identifier()?);
         node.cascade = self.eat_kw("CASCADE");
@@ -87,17 +78,33 @@ impl Parser<'_> {
         Ok(Expression::DropSchema(Box::new(node)))
     }
 
+    /// DATABASE or NAMESPACE when the word at the cursor writes one for SCHEMA.
+    fn schema_synonym(&self) -> Option<String> {
+        self.word_at(0)
+            .filter(|word| SCHEMA_SYNONYMS.contains(&word.as_str()))
+    }
+
     /// `dropFunction` after `DROP [TEMPORARY]`; a temporary function's drop is a gap.
     pub(crate) fn drop_function(&mut self, temporary: bool) -> Parsing<Expression> {
-        let start: usize = self.tokens[self.at.saturating_sub(1 + usize::from(temporary))].start;
+        let first: usize = self.at.saturating_sub(1 + usize::from(temporary));
+        let start: usize = self.tokens[first].start;
         self.expect_kw("FUNCTION")?;
         let mut node: DropFunction = DropFunction::new(String::new());
         node.if_exists = self.eat_kws(&["IF", "EXISTS"]);
         node.name = self.table_reference()?;
-        if temporary {
-            self.gap("drop_temporary_function", start);
+        if !temporary {
+            return Ok(Expression::DropFunction(Box::new(node)));
         }
-        Ok(Expression::DropFunction(Box::new(node)))
+        match self.tree_within(first, self.at, 3, DROP_TEMPORARY_FUNCTION) {
+            Some(tree) => {
+                self.treed("drop_temporary_function", start);
+                Ok(tree)
+            }
+            None => {
+                self.gap("drop_temporary_function", start);
+                Ok(Expression::DropFunction(Box::new(node)))
+            }
+        }
     }
 
     /// `colDefinition` as a routine parameter: `name type [NOT NULL] [DEFAULT expr] [COMMENT 'x']`.
@@ -132,6 +139,7 @@ impl Parser<'_> {
         let mut node: CreateFunction = CreateFunction::new(String::new());
         node.or_replace = head.or_replace;
         node.temporary = head.temporary;
+        node.temporary_spelling = head.temporary_spelling;
         node.if_not_exists = self.eat_kws(&["IF", "NOT", "EXISTS"]);
         if node.or_replace && node.if_not_exists {
             return Err(self.error_with(
@@ -186,8 +194,21 @@ impl Parser<'_> {
                 .language
                 .as_deref()
                 .is_some_and(|language| language != SQL_LANGUAGE);
-            if foreign && self.eat_kw("HANDLER") {
-                node.handler = Some(joined(self.multipart_identifier()?).name);
+            if foreign && self.kw("HANDLER") {
+                let handler: usize = self.offset();
+                self.at += 1;
+                node.handler = Some(self.string_lit()?);
+                let scala: bool = node
+                    .language
+                    .as_deref()
+                    .is_some_and(|language| language.eq_ignore_ascii_case(SCALA_LANGUAGE));
+                if scala && node.environment.is_empty() {
+                    return Err(self.error_with(
+                        "Operation not allowed: ENVIRONMENT is required for Scala UDF",
+                        handler,
+                        true,
+                    ));
+                }
                 if !self.kw("AS") {
                     return Ok(Expression::CreateFunction(Box::new(node)));
                 }
@@ -232,7 +253,7 @@ impl Parser<'_> {
             } else if self.eat_kws(&["DEFAULT", "COLLATION"]) {
                 let name: Identifier = self.ident()?;
                 node.options
-                    .push(property("DEFAULT COLLATION", string(&name.name)));
+                    .push(property("DEFAULT COLLATION", Expression::Identifier(name)));
             } else if self.eat_kws(&["PARAMETER", "STYLE"]) {
                 node.parameter_style = Some(self.ident()?.name.to_ascii_uppercase());
             } else if self.eat_kw("SPECIFIC") {

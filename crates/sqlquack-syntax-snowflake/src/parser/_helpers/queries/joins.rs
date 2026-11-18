@@ -185,6 +185,7 @@ impl Parser {
                     first_last,
                     first_last_alias,
                     span: self.source_range(pos_before_join_kind),
+                    nearest_by: None,
                 });
             }
 

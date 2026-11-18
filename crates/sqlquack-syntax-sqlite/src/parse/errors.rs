@@ -8,6 +8,8 @@ pub struct ParseError {
     pub position: usize,
     /// Whether the grammar, the tokenizer or a check SQLite classes with them refused it, unlike a limit.
     pub syntax: bool,
+    /// Whether a resource guard refused it (nesting depth, recursion or an input-size limit): never a syntax verdict.
+    pub guard: bool,
 }
 
 /// Why strict parsing refused the input.

@@ -188,6 +188,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))))
         } else {
             self.expect_token(TokenType::RParen)?;
@@ -257,6 +258,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))));
         }
         self.expect_token(TokenType::RParen)?;
@@ -393,6 +395,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))))
         }
     }
@@ -434,6 +437,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator,
+            written_as: None,
         }))))
     }
 
@@ -475,6 +479,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))))
         } else {
             self.expect_token(TokenType::RParen)?;
@@ -494,6 +499,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))))
         }
     }
@@ -546,6 +552,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         }))))
     }
 
@@ -611,6 +618,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))));
         }
         let first = self.parse_expression()?;
@@ -632,6 +640,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))));
         }
         self.expect_token(TokenType::Comma)?;
@@ -723,6 +732,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))));
         }
         self.expect_token(TokenType::RParen)?;
@@ -790,6 +800,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))));
         }
 
@@ -840,6 +851,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))))
         }
     }
@@ -878,6 +890,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))))
         }
     }
@@ -948,6 +961,7 @@ impl Parser {
             inferred_type: None,
             export_state: false,
             from_separator: false,
+            written_as: None,
         }))))
     }
 
@@ -981,6 +995,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))));
         }
 
@@ -1089,6 +1104,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))))
         }
     }
@@ -1140,6 +1156,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))))
         } else {
             self.expect_token(TokenType::RParen)?;
@@ -1160,6 +1177,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))))
         }
     }
@@ -1307,6 +1325,7 @@ impl Parser {
                     inferred_type: None,
                     export_state: false,
                     from_separator: false,
+                    written_as: None,
                 }))))
             }
         } else {
@@ -1327,6 +1346,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))))
         }
     }
@@ -1374,6 +1394,7 @@ impl Parser {
                 inferred_type: None,
                 export_state: false,
                 from_separator: false,
+                written_as: None,
             }))));
         }
         let args = self.parse_expression_list()?;

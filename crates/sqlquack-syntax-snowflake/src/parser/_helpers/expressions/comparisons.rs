@@ -108,16 +108,9 @@ impl Parser {
                     self.parse_quantified_comparison(left, QuantifiedOp::Gte, Expression::Gte)?
                 } else if self.match_token(TokenType::NullsafeEq) {
                     let right = self.parse_bitwise_or()?;
-                    let trailing_comments = self.previous_trailing_comments().to_vec();
-                    Expression::NullSafeEq(Box::new(BinaryOp {
-                        left,
-                        right,
-                        left_comments: Vec::new(),
-                        operator_comments: Vec::new(),
-                        trailing_comments,
-                        inferred_type: None,
-                        span: SourceSpan::default(),
-                    }))
+                    let mut node = BinaryOp::new(left, right);
+                    node.trailing_comments = self.previous_trailing_comments().to_vec();
+                    Expression::NullSafeEq(Box::new(node))
                 } else if self.check_identifier("SOUNDS") && self.check_next(TokenType::Like) {
                     self.parse_sounds_like_comparison(left)?
                 } else if self.match_token(TokenType::Like) {
@@ -939,16 +932,9 @@ impl Parser {
                 }))
             } else {
                 let right = self.parse_bitwise_or()?;
-                let trailing_comments = self.previous_trailing_comments().to_vec();
-                binary(Box::new(BinaryOp {
-                    left,
-                    right,
-                    left_comments: Vec::new(),
-                    operator_comments: Vec::new(),
-                    trailing_comments,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                }))
+                let mut node = BinaryOp::new(left, right);
+                node.trailing_comments = self.previous_trailing_comments().to_vec();
+                binary(Box::new(node))
             }
         })
     }
@@ -1116,6 +1102,7 @@ impl Parser {
                     trailing_comments,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    written_as: None,
                 }))
             } else if self.match_token(TokenType::Dash) {
                 let operator_comments = self.previous_trailing_comments().to_vec();
@@ -1129,6 +1116,7 @@ impl Parser {
                     trailing_comments,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    written_as: None,
                 }))
             } else if (self.config.dialect
                 != Some(sqlquack_syntax::tokens::models::DialectType::DuckDB))
@@ -1145,6 +1133,7 @@ impl Parser {
                     trailing_comments,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    written_as: None,
                 }))
             } else if self.match_token(TokenType::DQMark) {
                 let right = self.parse_at_time_zone()?;
@@ -1286,6 +1275,7 @@ impl Parser {
                     trailing_comments,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    written_as: None,
                 }));
             } else {
                 return Ok(left);
@@ -1319,6 +1309,7 @@ impl Parser {
                     trailing_comments,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    written_as: None,
                 }))
             } else if self.match_token(TokenType::Dash) {
                 let operator_comments = self.previous_trailing_comments().to_vec();
@@ -1332,6 +1323,7 @@ impl Parser {
                     trailing_comments,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    written_as: None,
                 }))
             } else if (self.config.dialect
                 != Some(sqlquack_syntax::tokens::models::DialectType::DuckDB))
@@ -1348,6 +1340,7 @@ impl Parser {
                     trailing_comments,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    written_as: None,
                 }))
             } else if self.match_token(TokenType::DQMark) {
                 let right = self.parse_at_time_zone()?;
@@ -1453,6 +1446,7 @@ impl Parser {
                     trailing_comments,
                     inferred_type: None,
                     span: SourceSpan::default(),
+                    written_as: None,
                 }));
             } else if self.check(TokenType::Arrow)
                 || (self.check(TokenType::DArrow) && !self.applies_snowflake_context_rules())
@@ -1721,19 +1715,15 @@ impl Parser {
                 length: None,
                 integer_spelling: type_name == INTEGER,
             },
-            "BIGINT" => DataType::BigInt { length: None },
-            "SMALLINT" => DataType::SmallInt { length: None },
-            "TINYINT" => DataType::TinyInt { length: None },
+            "BIGINT" | "SMALLINT" | "TINYINT" | "DECIMAL" | "NUMERIC" => {
+                self.convert_name_to_type(&type_name)?
+            }
             "FLOAT" => DataType::Float {
                 precision: None,
                 scale: None,
                 real_spelling: false,
             },
             "DOUBLE" => DataType::Double {
-                precision: None,
-                scale: None,
-            },
-            "DECIMAL" | "NUMERIC" => DataType::Decimal {
                 precision: None,
                 scale: None,
             },

@@ -66,6 +66,9 @@ impl Parser {
             with_wrapped: false,
             where_clause: None,
             copy_files,
+            by_position: false,
+            columns: Vec::new(),
+            target_credentials: None,
         })))
     }
 
@@ -645,5 +648,6 @@ fn copy_option_pair(left: Expression, right: Expression) -> Expression {
         trailing_comments: Vec::new(),
         inferred_type: None,
         span: SourceSpan::default(),
+        written_as: None,
     }))
 }

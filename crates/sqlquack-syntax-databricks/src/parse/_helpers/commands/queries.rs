@@ -2,7 +2,7 @@
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
-use sqlquack_syntax::expressions::operators::models::Alias;
+use sqlquack_syntax::expressions::operators::models::{Alias, GroupingSets};
 use sqlquack_syntax::expressions::queries::models::{
     ClusterBy, Cte, DistributeBy, From, GroupBy, Having, Hint, HintExpression, Limit, NamedWindow,
     OrderBy, Ordered, Qualify, Select, SortBy, Where, With,
@@ -10,7 +10,7 @@ use sqlquack_syntax::expressions::queries::models::{
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    TableAlias, binary, call, cte, null, set_operation, star, subquery, tuple,
+    TableAlias, binary, call, cte, null, set_operation, star, subquery, tuple, var,
 };
 use crate::parse::constants::{CUBE, GROUPING_SETS, ROLLUP};
 use crate::scan::models::TokenKind;
@@ -48,7 +48,7 @@ fn order_by(expressions: Vec<Ordered>) -> OrderBy {
     }
 }
 
-fn limit(this: Expression) -> Limit {
+pub(crate) fn limit(this: Expression) -> Limit {
     Limit {
         this,
         percent: false,
@@ -267,11 +267,13 @@ impl Parser<'_> {
                 token.kind == TokenKind::Number(crate::scan::models::NumberKind::Integer)
             })?;
         }
-        self.eat_kw("AS");
+        let as_omitted: bool = !self.eat_kw("AS");
         self.expect_char('(')?;
         let body: Expression = self.query()?;
         self.expect_char(')')?;
-        Ok(cte(name, columns, body))
+        let mut node: Cte = cte(name, columns, body);
+        node.as_omitted = as_omitted;
+        Ok(node)
     }
 
     /// `queryTerm` of at least precedence `min`, every operator left-associative.
@@ -283,8 +285,12 @@ impl Parser<'_> {
                 if min > 1 {
                     return Ok(left);
                 }
+                let token: &str = match self.is_op("|>") {
+                    true => "|>",
+                    false => "|",
+                };
                 self.at += 1;
-                left = self.deeper(|parser| parser.pipe(left))?;
+                left = self.deeper(|parser| parser.pipe(left, token))?;
                 continue;
             }
             let operator: String = match self.word_at(0) {
@@ -332,6 +338,7 @@ impl Parser<'_> {
                 select.from = Some(From {
                     expressions: vec![item],
                 });
+                select.table_statement = true;
                 Ok(Expression::Select(Box::new(select)))
             }
             Some("VALUES") => self.inline_table(),
@@ -391,29 +398,39 @@ impl Parser<'_> {
 
     /// One or more `/*+ ... */` hints.
     fn hints(&mut self) -> Parsing<Hint> {
-        let mut expressions: Vec<HintExpression> = Vec::new();
+        let mut hint: Hint = Hint {
+            source_dialect: None,
+            expressions: Vec::new(),
+            quoted_names: Vec::new(),
+            without_commas: Vec::new(),
+        };
         while self.is_kind(TokenKind::HintStart) {
             self.at += 1;
+            let mut comma: bool = true;
             loop {
                 let name: Identifier = self.name(is_identifier)?;
-                expressions.push(match self.is_char('(') {
+                let at: usize = hint.expressions.len();
+                if name.quoted {
+                    hint.quoted_names.push(at);
+                }
+                if !comma {
+                    hint.without_commas.push(at);
+                }
+                hint.expressions.push(match self.is_char('(') {
                     true => HintExpression::Function {
                         name: name.name,
                         args: self.parenthesized(|parser| parser.primary_expression())?,
                     },
                     false => HintExpression::Identifier(name.name),
                 });
-                self.eat_char(',');
+                comma = self.eat_char(',');
                 if self.is_kind(TokenKind::HintEnd) {
                     break;
                 }
             }
             self.at += 1;
         }
-        Ok(Hint {
-            source_dialect: None,
-            expressions,
-        })
+        Ok(hint)
     }
 
     /// Whether the current token is of `kind`.
@@ -472,19 +489,26 @@ impl Parser<'_> {
                 all: Some(true),
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             });
         }
         let items: Vec<Expression> = self.comma_list(|parser| parser.group_item())?;
-        let expressions: Vec<Expression> = if self.kw("WITH") && self.kw_in(1, &[ROLLUP, CUBE]) {
+        let with_kind: bool = self.kw("WITH") && self.kw_in(1, &[ROLLUP, CUBE]);
+        let hive_sets: bool = self.kw("GROUPING") && self.kw_at(1, "SETS");
+        let with_modifier: bool = with_kind || hive_sets;
+        let expressions: Vec<Expression> = if with_kind {
             let name: String = self.word_at(1).unwrap_or_default();
             self.at += 2;
             vec![call(&name, items)]
-        } else if self.kw("GROUPING") && self.kw_at(1, "SETS") {
+        } else if hive_sets {
             self.at += 2;
-            vec![call(
-                GROUPING_SETS,
-                self.parenthesized(|parser| parser.grouping_set())?,
-            )]
+            let sets: Vec<Expression> = self.parenthesized(|parser| parser.grouping_set())?;
+            let mut kept: Vec<Expression> = items;
+            kept.push(Expression::GroupingSets(Box::new(GroupingSets {
+                options: None,
+                expressions: sets,
+            })));
+            kept
         } else {
             items
         };
@@ -493,6 +517,7 @@ impl Parser<'_> {
             all: None,
             totals: false,
             comments: Vec::new(),
+            with_modifier,
         })
     }
 
@@ -570,7 +595,7 @@ impl Parser<'_> {
         }
         if self.eat_kw("LIMIT") {
             organization.limit = Some(match self.eat_kw("ALL") {
-                true => null(),
+                true => var("ALL"),
                 false => self.expression()?,
             });
         }
@@ -580,9 +605,10 @@ impl Parser<'_> {
         Ok(organization)
     }
 
-    /// `operatorPipeRightSide` after `|>`, applied to `left` as the select it amounts to.
-    fn pipe(&mut self, left: Expression) -> Parsing<Expression> {
+    /// `operatorPipeRightSide` after the pipe `token`, applied to `left` as the select it amounts to.
+    fn pipe(&mut self, left: Expression, token: &str) -> Parsing<Expression> {
         let word: String = self.word_at(0).unwrap_or_default();
+        let mark = |operator: &str| format!("{token} {operator}");
         let select: Select = match word.as_str() {
             "SELECT" => {
                 let mut select: Select = self.select_clause(pipe_input(left, false))?;
@@ -602,22 +628,7 @@ impl Parser<'_> {
                     .extend(self.comma_list(|parser| parser.named_expression())?);
                 select
             }
-            "SET" => {
-                self.at += 1;
-                let replace: Vec<Alias> = self.comma_list(|parser| {
-                    let name: Identifier = parser.ident()?;
-                    parser.expect_char('=')?;
-                    Ok(Alias::new(parser.expression()?, name))
-                })?;
-                let mut select: Select = pipe_input(left, false);
-                select.expressions = vec![Expression::Star(Box::new(
-                    sqlquack_syntax::expressions::names::models::Star {
-                        replace: Some(replace),
-                        ..star(None, None)
-                    },
-                ))];
-                select
-            }
+            "SET" => self.pipe_set(left)?,
             "DROP" => {
                 self.at += 1;
                 let except: Vec<Identifier> = self.name_parts_list()?;
@@ -625,66 +636,9 @@ impl Parser<'_> {
                 select.expressions = vec![Expression::Star(Box::new(star(None, Some(except))))];
                 select
             }
-            "AS" => {
-                self.at += 1;
-                let name: Identifier = self.ident()?;
-                let alias = TableAlias {
-                    name,
-                    columns: Vec::new(),
-                    explicit: true,
-                };
-                let mut select: Select = Select::new();
-                select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
-                select.from = Some(From {
-                    expressions: vec![subquery(left, Some(alias), false)],
-                });
-                select
-            }
-            "WHERE" => {
-                self.at += 1;
-                let condition: Expression = self.expression()?;
-                if self.kw("WINDOW") {
-                    return Err(self.error_with(
-                        "the WHERE pipe operator takes no WINDOW clause",
-                        self.offset(),
-                        false,
-                    ));
-                }
-                let mut select: Select = pipe_input(left, false);
-                select.where_clause = Some(Where {
-                    this: match select.where_clause.take() {
-                        Some(earlier) => binary(Expression::And, earlier.this, condition),
-                        None => condition,
-                    },
-                });
-                select
-            }
-            "PIVOT" | "UNPIVOT" => {
-                let input: Expression = match pipe_input(left, true) {
-                    select
-                        if select.joins.is_empty()
-                            && select.lateral_views.is_empty()
-                            && select.where_clause.is_none()
-                            && select
-                                .from
-                                .as_ref()
-                                .is_some_and(|from| from.expressions.len() == 1) =>
-                    {
-                        select
-                            .from
-                            .map(|mut from| from.expressions.remove(0))
-                            .unwrap_or_else(null)
-                    }
-                    select => subquery(Expression::Select(Box::new(select)), None, false),
-                };
-                let pivoted: Expression = self.pivot_or_unpivot(input)?;
-                let mut select: Select = Select::new();
-                select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
-                select.from = Some(From {
-                    expressions: vec![pivoted],
-                });
-                select
-            }
+            "AS" => self.pipe_as(left)?,
+            "WHERE" => self.pipe_where(left)?,
+            "PIVOT" | "UNPIVOT" => self.pipe_pivot(left)?,
             "TABLESAMPLE" => {
                 let sample = self.sample()?;
                 let mut select: Select = wrapped(left);
@@ -696,45 +650,145 @@ impl Parser<'_> {
                 let all: bool = self.eat_kw("ALL");
                 let distinct: bool = !all && self.eat_kw("DISTINCT");
                 let right: Expression = self.query_primary()?;
-                return Ok(set_operation(&word, left, right, (all, distinct)));
+                wrapped(set_operation(&word, left, right, (all, distinct)))
             }
             "ORDER" | "CLUSTER" | "DISTRIBUTE" | "SORT" | "WINDOW" | "LIMIT" | "OFFSET" => {
                 let organization: Organization = self.organization()?;
                 if organization.is_empty() {
                     return Err(self.error());
                 }
-                return Ok(organized(left, organization));
+                match organized(left, organization) {
+                    Expression::Select(select) => *select,
+                    other => wrapped(other),
+                }
             }
-            "AGGREGATE" => {
-                self.at += 1;
-                let mut select: Select = pipe_input(left, false);
-                let aggregates: Vec<Expression> =
-                    match self.terminal_at(0) || (self.kw("GROUP") && self.kw_at(1, "BY")) {
-                        true => Vec::new(),
-                        false => self.comma_list(|parser| parser.named_expression())?,
-                    };
-                let group: Option<GroupBy> = match self.kw("GROUP") && self.kw_at(1, "BY") {
-                    true => Some(self.group_by()?),
-                    false => None,
+            "AGGREGATE" => self.pipe_aggregate(left)?,
+            _ if self.terminal_at(0) => {
+                let mut select: Select = match left {
+                    Expression::Select(select) => *select,
+                    other => wrapped(other),
                 };
-                let keys: Vec<Expression> = group
-                    .as_ref()
-                    .map(|group| group.expressions.clone())
-                    .unwrap_or_default();
-                select.expressions = keys.into_iter().chain(aggregates).collect();
-                select.group_by = group;
-                select
+                select.pipe_operators.push(token.to_owned());
+                return Ok(Expression::Select(Box::new(select)));
             }
-            _ if self.terminal_at(0) => return Ok(left),
             _ if self.at_join() => {
                 let join = self.join_relation()?;
                 let mut select: Select = pipe_input(left, true);
                 select.joins.push(join);
-                select
+                select.pipe_operators.push(mark("JOIN"));
+                return Ok(Expression::Select(Box::new(select)));
             }
             _ => return Err(self.error()),
         };
+        let mut select: Select = select;
+        select.pipe_operators.push(mark(&word));
         Ok(Expression::Select(Box::new(select)))
+    }
+
+    /// `|> SET c = e, ...`: the input with those columns replaced.
+    fn pipe_set(&mut self, left: Expression) -> Parsing<Select> {
+        self.at += 1;
+        let replace: Vec<Alias> = self.comma_list(|parser| {
+            let name: Identifier = parser.ident()?;
+            parser.expect_char('=')?;
+            Ok(Alias::new(parser.expression()?, name))
+        })?;
+        let mut select: Select = pipe_input(left, false);
+        select.expressions = vec![Expression::Star(Box::new(
+            sqlquack_syntax::expressions::names::models::Star {
+                replace: Some(replace),
+                ..star(None, None)
+            },
+        ))];
+        Ok(select)
+    }
+
+    /// `|> AS name`: the input as a subquery under that alias.
+    fn pipe_as(&mut self, left: Expression) -> Parsing<Select> {
+        self.at += 1;
+        let name: Identifier = self.ident()?;
+        let alias = TableAlias {
+            name,
+            columns: Vec::new(),
+            explicit: true,
+        };
+        let mut select: Select = Select::new();
+        select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
+        select.from = Some(From {
+            expressions: vec![subquery(left, Some(alias), false)],
+        });
+        Ok(select)
+    }
+
+    /// `|> WHERE condition`: the input filtered, joined to an earlier filter with AND.
+    fn pipe_where(&mut self, left: Expression) -> Parsing<Select> {
+        self.at += 1;
+        let condition: Expression = self.expression()?;
+        if self.kw("WINDOW") {
+            return Err(self.error_with(
+                "the WHERE pipe operator takes no WINDOW clause",
+                self.offset(),
+                false,
+            ));
+        }
+        let mut select: Select = pipe_input(left, false);
+        select.where_clause = Some(Where {
+            this: match select.where_clause.take() {
+                Some(earlier) => binary(Expression::And, earlier.this, condition),
+                None => condition,
+            },
+        });
+        Ok(select)
+    }
+
+    /// `|> PIVOT` or `|> UNPIVOT`: the pivoted input as the one FROM item.
+    fn pipe_pivot(&mut self, left: Expression) -> Parsing<Select> {
+        let input: Expression = match pipe_input(left, true) {
+            select
+                if select.joins.is_empty()
+                    && select.lateral_views.is_empty()
+                    && select.where_clause.is_none()
+                    && select
+                        .from
+                        .as_ref()
+                        .is_some_and(|from| from.expressions.len() == 1) =>
+            {
+                select
+                    .from
+                    .map(|mut from| from.expressions.remove(0))
+                    .unwrap_or_else(null)
+            }
+            select => subquery(Expression::Select(Box::new(select)), None, false),
+        };
+        let pivoted: Expression = self.pivot_or_unpivot(input)?;
+        let mut select: Select = Select::new();
+        select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
+        select.from = Some(From {
+            expressions: vec![pivoted],
+        });
+        Ok(select)
+    }
+
+    /// `|> AGGREGATE ... [GROUP BY ...]`: the grouping keys, then the aggregates.
+    fn pipe_aggregate(&mut self, left: Expression) -> Parsing<Select> {
+        self.at += 1;
+        let mut select: Select = pipe_input(left, false);
+        let aggregates: Vec<Expression> =
+            match self.terminal_at(0) || (self.kw("GROUP") && self.kw_at(1, "BY")) {
+                true => Vec::new(),
+                false => self.comma_list(|parser| parser.named_expression())?,
+            };
+        let group: Option<GroupBy> = match self.kw("GROUP") && self.kw_at(1, "BY") {
+            true => Some(self.group_by()?),
+            false => None,
+        };
+        let keys: Vec<Expression> = group
+            .as_ref()
+            .map(|group| group.expressions.clone())
+            .unwrap_or_default();
+        select.expressions = keys.into_iter().chain(aggregates).collect();
+        select.group_by = group;
+        Ok(select)
     }
 
     /// `inlineTable` as a query: `VALUES expression, ... [alias]`.

@@ -310,6 +310,7 @@ impl<'sql> Parser<'sql> {
             with_: None,
             returning: None,
             returning_aliases: Vec::new(),
+            schema_evolution: false,
         })))
     }
 

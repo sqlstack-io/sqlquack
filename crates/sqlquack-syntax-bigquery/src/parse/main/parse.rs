@@ -64,6 +64,7 @@ fn within_tree_depth(statement: Expression, start: usize) -> Result<Expression, 
                 message: TOO_DEEP_MESSAGE.to_owned(),
                 position: start,
                 syntax: false,
+                guard: true,
             })
         }
     }

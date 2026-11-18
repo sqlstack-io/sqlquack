@@ -22,5 +22,6 @@ pub fn make_unquoted_function(name: &str, args: Vec<Expression>) -> Expression {
         inferred_type: None,
         export_state: false,
         from_separator: false,
+        written_as: None,
     }))
 }

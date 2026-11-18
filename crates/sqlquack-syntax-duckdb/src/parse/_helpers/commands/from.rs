@@ -646,6 +646,7 @@ impl Parser<'_> {
         self.expect_char(')')?;
         let (name, columns) = self.pivot_alias()?;
         Ok(Expression::Pivot(Box::new(Pivot {
+            alias_explicit_as: false,
             this: input,
             expressions: aggregates,
             fields,
@@ -685,6 +686,7 @@ impl Parser<'_> {
         let (name, alias_columns) = self.pivot_alias()?;
         let value_column: Identifier = value_columns.remove(0);
         Ok(Expression::Unpivot(Box::new(Unpivot {
+            alias_explicit_as: false,
             this: input,
             value_column,
             name_column,

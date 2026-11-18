@@ -30,6 +30,7 @@ pub fn format_type(data_type: &DataType) -> Option<String> {
         DataType::Decimal {
             precision: Some(precision),
             scale,
+            spelling: _,
         } => format!("numeric({precision},{})", scale.unwrap_or(0)),
         DataType::Decimal { .. } => "numeric".to_owned(),
         DataType::Boolean => "boolean".to_owned(),
@@ -42,10 +43,12 @@ pub fn format_type(data_type: &DataType) -> Option<String> {
         DataType::Time {
             precision,
             timezone,
+            ..
         } => temporal("time", *precision, *timezone),
         DataType::Timestamp {
             precision,
             timezone,
+            ..
         } => temporal("timestamp", *precision, *timezone),
         DataType::Interval { unit, to } => {
             let fields: Vec<String> = [unit, to]

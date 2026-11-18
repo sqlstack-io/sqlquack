@@ -2,10 +2,15 @@
 
 use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::functions::models::JSONExtract;
+use sqlquack_syntax::expressions::functions::models::{
+    Function, JSONExtract, JSONPath, JSONPathKey, JSONPathSubscript,
+};
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 use sqlquack_syntax::expressions::operators::models::{
     CollationExpr, MethodCall, Subscript, UnaryOp,
+};
+use sqlquack_syntax::expressions::typed_functions::models::{
+    DateTimeField, ExtractFunc, TrimFunc, TrimPosition,
 };
 use sqlquack_syntax::expressions::types::models::{
     Interval, IntervalSpan, IntervalUnit, IntervalUnitSpec,
@@ -14,14 +19,35 @@ use sqlquack_syntax::expressions::types::models::{
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
     aggregate, binary, boolean, call, case, cast, column_from, dot, function, joined, lambda,
-    literal, null, parameter, paren, star, string, subquery, tuple,
+    literal, null, parameter, paren, star, string, subquery, tuple, var,
 };
 use crate::parse::constants::{
     CURRENT_LIKE, DATETIME_UNITS, DAY_SEGMENT, IDENTIFIER_CLAUSE, INTERVAL_UNITS, LITERAL_TYPES,
-    MIN_LAMBDA_PARAMETERS, TIMESTAMP_ADD_NAMES, TIMESTAMP_DIFF_NAMES, TRUE, TRY_CAST,
-    UNIT_TO_UNITS,
+    MIN_LAMBDA_PARAMETERS, RETENTION_UNITS, TIMESTAMP_ADD_NAMES, TIMESTAMP_DIFF_NAMES, TRUE,
+    TRY_CAST, UNIT_TO_UNITS,
 };
 use crate::scan::models::{NumberKind, Token, TokenKind};
+
+/// The decimal type Spark gives a `BD` literal's digits: their scale, at least 0, and precision.
+fn big_decimal_type(digits: &str) -> (u32, u32) {
+    let (mantissa, exponent) = digits
+        .split_once(['E', 'e'])
+        .map_or((digits, 0), |(mantissa, exponent)| {
+            (mantissa, exponent.parse::<i64>().unwrap_or(0))
+        });
+    let (whole, fraction) = mantissa.split_once('.').unwrap_or((mantissa, ""));
+    let unscaled: String = format!("{whole}{fraction}");
+    let significant: i64 = unscaled.trim_start_matches('0').len().max(1) as i64;
+    let scale: i64 = fraction.len() as i64 - exponent;
+    let (precision, scale) = match scale < 0 {
+        true => (significant - scale, 0),
+        false => (significant.max(scale), scale),
+    };
+    (
+        u32::try_from(precision).unwrap_or(u32::MAX),
+        u32::try_from(scale).unwrap_or(u32::MAX),
+    )
+}
 
 /// A numeric literal; a suffixed one is its digits cast to the type its suffix names.
 fn number_literal(token: &Token, kind: NumberKind) -> Expression {
@@ -35,11 +61,20 @@ fn number_literal(token: &Token, kind: NumberKind) -> Expression {
         NumberKind::Integer | NumberKind::Decimal | NumberKind::Exponent => 0,
     };
     let digits: String = token.value[..token.value.len() - suffix].to_owned();
-    let number: Expression = literal(Literal::Number(digits));
+    let number: Expression = literal(Literal::Number(digits.clone()));
     let to: DataType = match kind {
-        NumberKind::BigInt => DataType::BigInt { length: None },
-        NumberKind::SmallInt => DataType::SmallInt { length: None },
-        NumberKind::TinyInt => DataType::TinyInt { length: None },
+        NumberKind::BigInt => DataType::BigInt {
+            length: None,
+            spelling: None,
+        },
+        NumberKind::SmallInt => DataType::SmallInt {
+            length: None,
+            spelling: None,
+        },
+        NumberKind::TinyInt => DataType::TinyInt {
+            length: None,
+            spelling: None,
+        },
         NumberKind::Double => DataType::Double {
             precision: None,
             scale: None,
@@ -49,13 +84,26 @@ fn number_literal(token: &Token, kind: NumberKind) -> Expression {
             scale: None,
             real_spelling: false,
         },
-        NumberKind::BigDecimal => DataType::Decimal {
-            precision: None,
-            scale: None,
-        },
+        NumberKind::BigDecimal => {
+            let (precision, scale) = big_decimal_type(&digits);
+            DataType::Decimal {
+                precision: Some(precision),
+                scale: Some(scale),
+                spelling: None,
+            }
+        }
         NumberKind::Integer | NumberKind::Decimal | NumberKind::Exponent => return number,
     };
     Expression::Cast(Box::new(cast(number, to, false)))
+}
+
+/// A path name as a key: its name as written, and whether it was backquoted.
+fn path_key(token: &Token) -> Expression {
+    let mut name: Identifier = Identifier::new(token.value.clone());
+    name.quoted = token.kind == TokenKind::Quoted;
+    Expression::JSONPathKey(Box::new(JSONPathKey {
+        this: Box::new(Expression::Identifier(name)),
+    }))
 }
 
 /// The shared-tree unit an interval unit word names, and whether it was plural.
@@ -128,12 +176,34 @@ fn is_typed_text(word: &str, text: &str) -> bool {
             .next()
             .is_some_and(|first| first.is_ascii_digit() || matches!(first, '+' | '-' | 'T')),
         "X" => text.chars().all(|character| character.is_ascii_hexdigit()),
-        "INTERVAL" => trimmed.chars().any(|character| character.is_ascii_digit()),
+        "INTERVAL" => {
+            trimmed.chars().any(|character| character.is_ascii_digit())
+                && trimmed
+                    .chars()
+                    .any(|character| character.is_ascii_alphabetic())
+        }
         _ => true,
     }
 }
 
 impl Parser<'_> {
+    /// A `RETAIN DROPPED` period: an interval of the integer count in the unit as written.
+    pub(crate) fn retention_period(&mut self) -> Parsing<Expression> {
+        let count: String = self
+            .expect_token(|token| token.kind == TokenKind::Number(NumberKind::Integer))?
+            .value;
+        let (unit, use_plural) = self
+            .word_at(0)
+            .filter(|word| RETENTION_UNITS.contains(&word.as_str()))
+            .and_then(|word| interval_unit(&word))
+            .ok_or_else(|| self.error())?;
+        self.at += 1;
+        Ok(interval(
+            literal(Literal::Number(count)),
+            Some(IntervalUnitSpec::Simple { unit, use_plural }),
+        ))
+    }
+
     /// `INVALID_TYPED_LITERAL`, Spark's refusal of a typed literal whose text is no such value.
     fn invalid_typed_literal(
         &self,
@@ -202,7 +272,11 @@ impl Parser<'_> {
             TokenKind::Char(':') if self.adjacent(0) && self.is_at(1, is_identifier) => {
                 self.at += 1;
                 let name: Token = self.advance()?;
-                Ok(parameter(Some(name.value)))
+                let mut marker: Expression = parameter(Some(name.value));
+                if let Expression::Parameter(node) = &mut marker {
+                    node.quoted = name.kind == TokenKind::Quoted;
+                }
+                Ok(marker)
             }
             TokenKind::Char('@') if self.adjacent(0) && self.word_at(1).is_some() => {
                 self.macro_call()
@@ -306,6 +380,7 @@ impl Parser<'_> {
 
     /// A dotted name: a column reference, `t.*`, or a (qualified) function call.
     pub(crate) fn name_expression(&mut self) -> Parsing<Expression> {
+        let start: usize = self.offset();
         let mut parts: Vec<Identifier> = vec![self.name(is_identifier)?];
         while self.is_char('.') {
             if self.char_at(1, '*') {
@@ -320,7 +395,13 @@ impl Parser<'_> {
             parts.push(self.name(is_identifier)?);
         }
         if self.is_char('(') {
-            return self.function_call(parts);
+            let clause: bool = matches!(parts.as_slice(), [name] if !name.quoted && name.name.eq_ignore_ascii_case(IDENTIFIER_CLAUSE));
+            let named: Expression = self.function_call(parts)?;
+            if clause && self.is_char('(') {
+                self.gap("identifier_clause_function", start);
+                self.function_call(vec![Identifier::new(IDENTIFIER_CLAUSE)])?;
+            }
+            return Ok(named);
         }
         Ok(column_from(parts))
     }
@@ -458,7 +539,8 @@ impl Parser<'_> {
 
     fn interval_value(&mut self) -> Parsing<Expression> {
         let negative: bool = self.is_char('-');
-        if negative || self.is_char('+') {
+        let positive: bool = self.is_char('+');
+        if negative || positive {
             self.at += 1;
         }
         let token: Token = self.advance()?;
@@ -470,7 +552,10 @@ impl Parser<'_> {
             _ if negative => Expression::Neg(Box::new(UnaryOp::new(string(&token.value)))),
             _ => string(&token.value),
         };
-        Ok(value)
+        Ok(match positive {
+            true => Expression::Pos(Box::new(UnaryOp::new(value))),
+            false => value,
+        })
     }
 
     /// `INTERVAL` with units, a unit range, or a string alone (a typed literal).
@@ -594,12 +679,16 @@ impl Parser<'_> {
                 parser.expect_kw("FROM")?;
                 let source: Expression = parser.value_expression(0)?;
                 parser.expect_char(')')?;
-                Ok(call("extract", vec![string(&field.value), source]))
+                Ok(Expression::Extract(Box::new(ExtractFunc {
+                    this: source,
+                    field: DateTimeField::Custom(field.value),
+                })))
             }),
             "SUBSTR" | "SUBSTRING" => self.attempt(|parser| {
                 parser.at += 2;
                 let text: Expression = parser.value_expression(0)?;
-                if !(parser.eat_kw("FROM") || parser.eat_char(',')) {
+                let from_separator: bool = parser.eat_kw("FROM");
+                if !(from_separator || parser.eat_char(',')) {
                     return Err(parser.error());
                 }
                 let mut args: Vec<Expression> = vec![text, parser.value_expression(0)?];
@@ -607,19 +696,19 @@ impl Parser<'_> {
                     args.push(parser.value_expression(0)?);
                 }
                 parser.expect_char(')')?;
-                Ok(call(&lower, args))
+                let mut node: Function = function(vec![Identifier::new(&lower)], args);
+                node.from_separator = from_separator;
+                Ok(Expression::Function(Box::new(node)))
             }),
             "TRIM" => self.attempt(|parser| {
                 parser.at += 2;
-                let side: &str = match parser.word_at(0).as_deref() {
-                    Some("LEADING") => "ltrim",
-                    Some("TRAILING") => "rtrim",
-                    Some("BOTH") => "trim",
-                    _ => "",
+                let position: Option<TrimPosition> = match parser.word_at(0).as_deref() {
+                    Some("LEADING") => Some(TrimPosition::Leading),
+                    Some("TRAILING") => Some(TrimPosition::Trailing),
+                    Some("BOTH") => Some(TrimPosition::Both),
+                    _ => None,
                 };
-                if !side.is_empty() {
-                    parser.at += 1;
-                }
+                parser.at += usize::from(position.is_some());
                 let characters: Option<Expression> = match parser.kw("FROM") {
                     true => None,
                     false => Some(parser.value_expression(0)?),
@@ -627,14 +716,14 @@ impl Parser<'_> {
                 parser.expect_kw("FROM")?;
                 let source: Expression = parser.value_expression(0)?;
                 parser.expect_char(')')?;
-                let name: &str = match side {
-                    "" => "trim",
-                    other => other,
-                };
-                Ok(call(
-                    name,
-                    std::iter::once(source).chain(characters).collect(),
-                ))
+                Ok(Expression::Trim(Box::new(TrimFunc {
+                    this: source,
+                    characters,
+                    position: position.unwrap_or(TrimPosition::Both),
+                    sql_standard_syntax: true,
+                    position_explicit: position.is_some(),
+                    inferred_type: None,
+                })))
             }),
             "OVERLAY" => self.attempt(|parser| {
                 parser.at += 2;
@@ -661,7 +750,7 @@ impl Parser<'_> {
                     let unit: Expression = match parser.word_at(0) {
                         Some(unit) if DATETIME_UNITS.contains(&unit.as_str()) => {
                             parser.at += 1;
-                            string(&unit)
+                            var(&unit)
                         }
                         _ => parser.string_literal()?,
                     };
@@ -725,8 +814,8 @@ impl Parser<'_> {
                 let name: Identifier = joined(self.multipart_identifier()?);
                 this = Expression::Collation(Box::new(CollationExpr {
                     this,
+                    quoted: name.quoted,
                     collation: name.name,
-                    quoted: false,
                     double_quoted: false,
                 }));
             } else {
@@ -735,28 +824,30 @@ impl Parser<'_> {
         }
     }
 
-    /// `col : path`, the path written as text, as the shared tree's variant extraction holds it.
+    /// `col : path`, each segment of the path a key or a subscript of the shared tree's JSON path.
     fn semi_structured(&mut self, this: Expression) -> Parsing<Expression> {
         self.at += 1;
-        let mut path: String = String::new();
-        match self.is_char('[') {
-            true => path.push_str(&self.path_bracket(false)?),
-            false => path.push_str(&self.advance()?.value),
-        }
+        let mut segments: Vec<Expression> = vec![match self.is_char('[') {
+            true => self.path_bracket(false)?,
+            false => self.path_name()?,
+        }];
         loop {
             if self.is_char('.') && self.is_at(1, is_identifier) {
                 self.at += 1;
-                path.push('.');
-                path.push_str(&self.advance()?.value);
+                segments.push(self.path_name()?);
             } else if self.is_char('[') {
-                path.push_str(&self.path_bracket(true)?);
+                segments.push(self.path_bracket(true)?);
             } else {
                 break;
             }
         }
+        let path: Expression = Expression::JSONPath(Box::new(JSONPath {
+            expressions: segments,
+            escape: None,
+        }));
         Ok(Expression::JSONExtract(Box::new(JSONExtract {
             this: Box::new(this),
-            expression: Box::new(string(&path)),
+            expression: Box::new(path),
             only_json_types: None,
             expressions: Vec::new(),
             variant_extract: Some(Box::new(boolean(true))),
@@ -768,42 +859,44 @@ impl Parser<'_> {
         })))
     }
 
-    /// `['key']`, `[n]` or, after the first part, `[name]` in a path.
-    fn path_bracket(&mut self, names: bool) -> Parsing<String> {
+    /// One name in a path, as a key holding the name as written.
+    fn path_name(&mut self) -> Parsing<Expression> {
+        let token = self.advance()?;
+        Ok(path_key(&token))
+    }
+
+    /// `['key']`, `[n]`, `[*]` (a keyword, not a star of columns) or, after the first part, `[name]`.
+    fn path_bracket(&mut self, names: bool) -> Parsing<Expression> {
         self.expect_char('[')?;
-        let text: String = match self.peek().map(|token| token.kind) {
-            Some(TokenKind::String { .. }) => {
-                let key: Token = self.advance()?;
-                format!("['{}']", key.value)
-            }
+        let index: Expression = match self.peek().map(|token| token.kind) {
+            Some(TokenKind::String { .. }) => string(&self.advance()?.value),
             Some(TokenKind::Number(NumberKind::Integer)) => {
-                let index: Token = self.advance()?;
-                format!("[{}]", index.value)
+                literal(Literal::Number(self.advance()?.value))
             }
-            Some(TokenKind::Char('*')) => {
-                self.advance()?;
-                "[*]".to_owned()
-            }
-            _ if names && self.is(is_identifier) => {
-                let name: Token = self.advance()?;
-                format!("[{}]", name.value)
-            }
+            Some(TokenKind::Char('*')) => var(&self.advance()?.value),
+            _ if names && self.is(is_identifier) => path_key(&self.advance()?),
             _ => return Err(self.error()),
         };
         self.expect_char(']')?;
-        Ok(text)
+        Ok(Expression::JSONPathSubscript(Box::new(JSONPathSubscript {
+            this: Box::new(index),
+        })))
     }
 
-    /// `namedExpression`: `expression [AS] alias` or `expression AS (a, b)`.
+    /// `namedExpression`: `expression [AS] alias` or `expression [AS] (a, b)`.
     pub(crate) fn named_expression(&mut self) -> Parsing<Expression> {
         let first: usize = self.at;
         let this: Expression = self.expression()?;
-        let node: Expression = if self.kw("AS") && self.char_at(1, '(') {
-            self.at += 1;
+        let explicit: bool = self.kw("AS") && self.char_at(1, '(');
+        let node: Expression = if explicit
+            || (self.is_char('(')
+                && self.is_at(1, crate::parse::_helpers::tree::cursor::is_identifier))
+        {
+            self.at += usize::from(explicit);
             let names: Vec<Identifier> = self.identifier_list()?;
             let mut node =
                 sqlquack_syntax::expressions::operators::models::Alias::with_columns(this, names);
-            node.alias_explicit_as = true;
+            node.alias_explicit_as = explicit;
             Expression::Alias(Box::new(node))
         } else if self.eat_kw("AS") {
             let name: Identifier = self.ident()?;

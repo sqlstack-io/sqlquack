@@ -109,6 +109,7 @@ pub(crate) fn unsupported(message: String, position: usize) -> ParseError {
         message,
         position,
         syntax: false,
+        guard: false,
     }
 }
 

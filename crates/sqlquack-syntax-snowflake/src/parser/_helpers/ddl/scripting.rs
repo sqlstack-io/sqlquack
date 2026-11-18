@@ -178,6 +178,7 @@ impl Parser {
             leading_comments,
             as_json,
             params,
+            short_form: false,
         })))
     }
 
@@ -412,6 +413,9 @@ impl Parser {
             listing_filters,
             exclude_jobs: false,
             service_types: Vec::new(),
+            scope_keyword: None,
+            target_keyword: None,
+            like_keyword: false,
         })))
     }
 
@@ -914,6 +918,10 @@ impl Parser {
                                 credentials: vec![("".to_string(), s.clone())],
                                 storage: None,
                                 encryption: None,
+                                name_quoted: false,
+                                without_equals: Vec::new(),
+                                quoted_keys: Vec::new(),
+                                string_keys: Vec::new(),
                             };
                             credentials = Some(Box::new(creds));
                         }
@@ -946,6 +954,10 @@ impl Parser {
                                 .collect(),
                             storage: None,
                             encryption: None,
+                            name_quoted: false,
+                            without_equals: Vec::new(),
+                            quoted_keys: Vec::new(),
+                            string_keys: Vec::new(),
                         };
                         credentials = Some(Box::new(creds));
                     }
@@ -967,6 +979,9 @@ impl Parser {
             with_wrapped,
             where_clause: None,
             copy_files: false,
+            by_position: false,
+            columns: Vec::new(),
+            target_credentials: None,
         })))
     }
 
@@ -1136,6 +1151,7 @@ impl Parser {
                                 operator_comments: Vec::new(),
                                 trailing_comments: Vec::new(),
                                 inferred_type: None,
+                                written_as: None,
                             })));
                         } else {
                             values.push(Self::parsed_column(Column {
@@ -1178,6 +1194,7 @@ impl Parser {
                                     trailing_comments: Vec::new(),
                                     inferred_type: None,
                                     span: SourceSpan::default(),
+                                    written_as: None,
                                 })));
                             } else {
                                 values.push(Expression::Literal(Box::new(Literal::String(key))));
@@ -1204,6 +1221,7 @@ impl Parser {
                                     operator_comments: Vec::new(),
                                     trailing_comments: Vec::new(),
                                     inferred_type: None,
+                                    written_as: None,
                                 })));
                             } else {
                                 values.push(Self::parsed_column(Column {

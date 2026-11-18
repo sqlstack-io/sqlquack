@@ -312,6 +312,7 @@ impl<'sql> Parser<'sql> {
                 all: None,
                 totals: false,
                 comments: Vec::new(),
+                with_modifier: false,
             });
         }
         if self.eat_kw("HAVING") {
@@ -674,6 +675,7 @@ impl<'sql> Parser<'sql> {
             this: Box::new(Expression::Identifier(Identifier::new("SYSTEM_TIME"))),
             kind: kind.to_owned(),
             expression,
+            for_keyword: false,
         })
     }
 

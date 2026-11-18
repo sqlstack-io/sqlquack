@@ -27,11 +27,36 @@ use crate::expressions::types::models::StructField;
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DirectoryInsert {
     pub local: bool,
+    /// The directory; empty when only Databricks' `OPTIONS ( 'path' ... )` names it
+    #[serde(default, skip_serializing_if = "String::is_empty")]
     pub path: String,
     pub row_format: Option<RowFormat>,
     /// STORED AS clause (e.g., TEXTFILE, ORC, PARQUET)
     #[serde(default)]
     pub stored_as: Option<String>,
+    /// Hive: `STORED AS INPUTFORMAT` class
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub input_format: Option<String>,
+    /// Hive: `STORED AS ... OUTPUTFORMAT` class
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub output_format: Option<String>,
+    /// Databricks: `USING format`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub using: Option<String>,
+    /// Databricks: the `USING` format was written in backquotes
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub using_quoted: bool,
+    /// Databricks: `OPTIONS ( key [=] value, ... )`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<(Expression, Expression)>,
+    /// Databricks: the positions in `options` of values written without the optional `=`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub options_without_equals: Vec<usize>,
 }
 
 /// INSERT statement
@@ -117,6 +142,20 @@ pub struct Insert {
     /// PostgreSQL: the column list when a column has a subfield or subscript; `columns` is empty
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub column_targets: Vec<Expression>,
+    /// Databricks: `WITH SCHEMA EVOLUTION` after `INSERT`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub schema_evolution: bool,
+    /// Databricks: whether `TABLE` was written before the target
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub table_keyword: bool,
+    /// Databricks: `REPLACE ON condition`, the rows the query replaces
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub replace_on: Option<Box<Expression>>,
+    /// Databricks: `REPLACE USING ( columns )`, the columns whose matching rows the query replaces
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub replace_using: Vec<Identifier>,
 }
 
 /// OUTPUT clause (TSQL) - used in INSERT, UPDATE, DELETE
@@ -273,6 +312,16 @@ pub struct CopyStmt {
     /// Snowflake `COPY FILES INTO`, which copies files between stages
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub copy_files: bool,
+    /// Databricks: `BY POSITION` after the target, matching source columns by position
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub by_position: bool,
+    /// Databricks: the target's column list
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub columns: Vec<Identifier>,
+    /// Databricks: the target's own `WITH ( CREDENTIAL ... )`, apart from the source's
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub target_credentials: Option<Box<Credentials>>,
 }
 
 /// COPY parameter (e.g., FILE_FORMAT = CSV or FORMAT PARQUET)
@@ -292,6 +341,18 @@ pub struct Credentials {
     pub credentials: Vec<(String, String)>,
     pub encryption: Option<String>,
     pub storage: Option<String>,
+    /// Databricks: the `CREDENTIAL name` was written in backquotes
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub name_quoted: bool,
+    /// Databricks: the positions of the credential options written without `=`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub without_equals: Vec<usize>,
+    /// Databricks: the positions of the credential options whose key was written in backquotes
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub quoted_keys: Vec<usize>,
+    /// Databricks: the positions of the credential options whose key was written as a string
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub string_keys: Vec<usize>,
 }
 
 /// Historical data / Time travel (Snowflake) - BEFORE (STATEMENT => ...) or AT (TIMESTAMP => ...)
@@ -531,6 +592,13 @@ pub struct Use {
     /// Snowflake's qualified name part by part, quoting kept; empty for a one-part name.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub parts: Vec<Identifier>,
+    /// Databricks: whether the name was written as a string literal
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub string_name: bool,
+    /// Databricks: NAMESPACE written for DATABASE, or SET for `SET CATALOG` instead of `USE CATALOG`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub keyword: Option<String>,
 }
 
 /// Kind of USE statement
@@ -603,8 +671,15 @@ pub struct Cache {
     pub lazy: bool,
     /// Optional OPTIONS clause (key-value pairs)
     pub options: Vec<(Expression, Expression)>,
+    /// Databricks: the positions in `options` of values written without the optional `=`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[ast(skip)]
+    pub options_without_equals: Vec<usize>,
     /// Optional AS clause with query
     pub query: Option<Expression>,
+    /// Whether AS was written before the query
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub query_as: bool,
 }
 
 /// UNCACHE TABLE statement (Spark)
@@ -709,6 +784,9 @@ pub struct Describe {
     /// Parenthesized parameter types for DESCRIBE PROCEDURE/FUNCTION (e.g., INT, VARCHAR)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub params: Vec<DataType>,
+    /// Whether the short DESC was written for DESCRIBE
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub short_form: bool,
 }
 
 impl Describe {
@@ -724,6 +802,7 @@ impl Describe {
             leading_comments: Vec::new(),
             as_json: false,
             params: Vec::new(),
+            short_form: false,
         }
     }
 }
@@ -781,6 +860,15 @@ pub struct Show {
     /// Snowflake SHOW SERVICES OF TYPE <type> [ , ... ], upper case in source order
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub service_types: Vec<String>,
+    /// The FROM or IN written before `scope` or `db`, when either was
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub scope_keyword: Option<String>,
+    /// The FROM or IN written before `target`, when either was
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub target_keyword: Option<String>,
+    /// Whether LIKE was written before the `like` pattern
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub like_keyword: bool,
 }
 
 impl Show {
@@ -805,6 +893,9 @@ impl Show {
             listing_filters: Vec::new(),
             exclude_jobs: false,
             service_types: Vec::new(),
+            scope_keyword: None,
+            target_keyword: None,
+            like_keyword: false,
         }
     }
 }
@@ -944,6 +1035,10 @@ pub struct Declare {
     pub expressions: Vec<Expression>,
     #[serde(default)]
     pub replace: bool,
+    /// Databricks: VAR or VARIABLE as written after DECLARE [OR REPLACE]; none when omitted
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub keyword: Option<String>,
 }
 
 /// DeclareItem
@@ -956,6 +1051,9 @@ pub struct DeclareItem {
     pub default: Option<Box<Expression>>,
     #[serde(default)]
     pub has_as: bool,
+    /// Databricks: whether `=` was written for DEFAULT
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub equals: bool,
     /// BigQuery: additional variable names in multi-variable DECLARE (DECLARE X, Y, Z INT64)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub additional_names: Vec<Expression>,
@@ -1078,6 +1176,8 @@ pub struct Version {
     pub kind: String,
     #[serde(default)]
     pub expression: Option<Box<Expression>>,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub for_keyword: bool,
 }
 
 /// Schema
@@ -1350,6 +1450,10 @@ pub struct Merge {
     /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub returning_aliases: Vec<Expression>,
+    /// Databricks: `WITH SCHEMA EVOLUTION` after `MERGE`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub schema_evolution: bool,
 }
 
 /// When
@@ -1579,395 +1683,4 @@ pub struct VerticaProjectionColumn {
 pub struct VerticaParserCall {
     pub name: TableRef,
     pub parameters: Vec<VerticaParameter>,
-}
-
-/// `[DECLARE ...] BEGIN ... [EXCEPTION ...] END [label]`, with every member in written order.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingBlock {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub declarations: Vec<ScriptingDeclaration>,
-    pub body: Vec<ScriptingStatement>,
-    pub exception_handlers: Vec<ScriptingExceptionHandler>,
-    pub label: Option<Identifier>,
-}
-
-/// One DECLARE or LET member; LET-only and DECLARE-only forms are separated by the parser.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ScriptingDeclaration {
-    Variable(ScriptingVariable),
-    Cursor(ScriptingCursor),
-    Resultset(ScriptingResultset),
-    Exception(ScriptingException),
-    Procedure(Box<ScriptingProcedure>),
-}
-
-/// `name [type] [{DEFAULT | :=} expression]`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingVariable {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub name: Identifier,
-    pub data_type: Option<DataType>,
-    pub default: Option<ScriptingDefault>,
-}
-
-/// The written assignment spelling and its value.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingDefault {
-    pub operator: ScriptingAssignmentOperator,
-    pub value: Expression,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ScriptingAssignmentOperator {
-    Default,
-    ColonEquals,
-}
-
-/// `name CURSOR FOR {query | resultset}`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingCursor {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub name: Identifier,
-    pub source: ScriptingCursorSource,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ScriptingCursorSource {
-    Query(Expression),
-    Resultset(Identifier),
-}
-
-/// `name RESULTSET [{DEFAULT | :=} [ASYNC] (statement)]`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingResultset {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub name: Identifier,
-    pub default: Option<ScriptingResultsetDefault>,
-}
-
-/// The statement is a child job only when ASYNC is written; it is never run here.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingResultsetDefault {
-    pub operator: ScriptingAssignmentOperator,
-    pub asynchronous: bool,
-    pub statement: Expression,
-}
-
-/// `name EXCEPTION [(number, 'message')]`; omitted values are not defaulted.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingException {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub name: Identifier,
-    pub number: Option<Expression>,
-    pub message: Option<Expression>,
-}
-
-/// `name PROCEDURE ( [<arg> <type>, ...] ) RETURNS { <type> | TABLE ( ... ) } AS <block>`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingProcedure {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub name: Identifier,
-    pub parameters: Vec<crate::expressions::schema_objects::models::FunctionParameter>,
-    pub return_type: Option<DataType>,
-    pub returns_table: Option<Vec<StructField>>,
-    pub body: ScriptingBlock,
-}
-
-/// One body member, terminated by its own semicolon.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ScriptingStatement {
-    Sql(ScriptingSql),
-    Block(ScriptingBlock),
-    Let(Box<ScriptingLet>),
-    Assignment(ScriptingAssignment),
-    If(ScriptingIf),
-    Case(ScriptingCase),
-    For(ScriptingFor),
-    While(ScriptingWhile),
-    Repeat(ScriptingRepeat),
-    Loop(ScriptingLoop),
-    Break(ScriptingJump),
-    Continue(ScriptingJump),
-    Open(ScriptingOpen),
-    Fetch(ScriptingFetch),
-    Close(ScriptingName),
-    Await(ScriptingAwait),
-    Cancel(ScriptingName),
-    Null(ScriptingNull),
-    Raise(ScriptingRaise),
-    Return(ScriptingReturn),
-}
-
-/// An ordinary SQL statement inside a block.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingSql {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub statement: Expression,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingLet {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub declaration: ScriptingDeclaration,
-}
-
-/// `name := expression`, without LET.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingAssignment {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub target: Identifier,
-    pub value: Expression,
-}
-
-/// `IF (c) THEN ... [ELSEIF (c) THEN ...] [ELSE ...] END IF`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingIf {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub branches: Vec<ScriptingBranch>,
-    pub else_branch: Option<ScriptingElse>,
-}
-
-/// A condition or WHEN value and the statements it guards.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingBranch {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub condition: Expression,
-    pub body: Vec<ScriptingStatement>,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingElse {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub body: Vec<ScriptingStatement>,
-}
-
-/// Simple (with operand) or searched CASE statement; `END CASE` versus bare `END` is kept.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingCase {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub operand: Option<Expression>,
-    pub branches: Vec<ScriptingBranch>,
-    pub else_branch: Option<ScriptingElse>,
-    pub end_case: bool,
-}
-
-/// `FOR name IN {source | [REVERSE] start TO end} {DO | LOOP} ... END {FOR | LOOP} [label]`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingFor {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub variable: Identifier,
-    pub iteration: ScriptingForIteration,
-    pub keyword: ScriptingLoopKeyword,
-    pub body: Vec<ScriptingStatement>,
-    pub label: Option<Identifier>,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ScriptingForIteration {
-    /// A cursor or RESULTSET name; which one is not resolved here.
-    Rows(Identifier),
-    Range(Box<ScriptingRange>),
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingRange {
-    pub reverse: bool,
-    pub start: Expression,
-    pub end: Expression,
-}
-
-/// The body keyword, which fixes the closing `END FOR`/`END WHILE` or `END LOOP`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ScriptingLoopKeyword {
-    Do,
-    Loop,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingWhile {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub condition: Expression,
-    pub keyword: ScriptingLoopKeyword,
-    pub body: Vec<ScriptingStatement>,
-    pub label: Option<Identifier>,
-}
-
-/// `REPEAT ... UNTIL (c) END REPEAT [label]`: the condition follows the body.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingRepeat {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub body: Vec<ScriptingStatement>,
-    pub condition: Expression,
-    pub label: Option<Identifier>,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingLoop {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub body: Vec<ScriptingStatement>,
-    pub label: Option<Identifier>,
-}
-
-/// BREAK/EXIT or CONTINUE/ITERATE, keeping the synonym written.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingJump {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub keyword: ScriptingJumpKeyword,
-    pub label: Option<Identifier>,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ScriptingJumpKeyword {
-    Break,
-    Exit,
-    Continue,
-    Iterate,
-}
-
-/// `OPEN cursor [USING (bind, ...)]`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingOpen {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub cursor: Identifier,
-    pub using: Option<Vec<Expression>>,
-}
-
-/// `FETCH cursor INTO variable, ...`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingFetch {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub cursor: Identifier,
-    pub targets: Vec<Identifier>,
-}
-
-/// A statement whose only operand is a cursor or RESULTSET name: CLOSE and CANCEL.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingName {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub name: Identifier,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingAwait {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub target: ScriptingAwaitTarget,
-}
-
-/// Unquoted `ALL`; a quoted `"ALL"` names a RESULTSET.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ScriptingAwaitTarget {
-    All,
-    Resultset(Identifier),
-}
-
-/// The no-op `NULL;` statement, distinct from a NULL value.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingNull {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-}
-
-/// `RAISE [exception]`; without a name it re-raises inside a handler.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingRaise {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub exception: Option<Identifier>,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingReturn {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    /// Absent for a bare `RETURN;`, which returns NULL.
-    pub value: Option<ScriptingReturnValue>,
-}
-
-/// A scalar expression, or `TABLE(...)` returning the rows its argument names.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ScriptingReturnValue {
-    Scalar(Expression),
-    Table(Expression),
-}
-
-/// `WHEN {name [OR name ...] | OTHER} [EXIT | CONTINUE] THEN ...`.
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ScriptingExceptionHandler {
-    #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
-    #[ast(skip)]
-    pub span: SourceSpan,
-    pub exceptions: ScriptingHandledExceptions,
-    /// Absent when not written; EXIT is Snowflake's default, never filled in here.
-    pub action: Option<ScriptingHandlerAction>,
-    pub body: Vec<ScriptingStatement>,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ScriptingHandledExceptions {
-    Named(Vec<Identifier>),
-    Other,
-}
-
-#[derive(sqlquack_derive::AstNode, Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum ScriptingHandlerAction {
-    Exit,
-    Continue,
 }

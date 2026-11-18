@@ -20,6 +20,7 @@ fn given_a_standalone_type_when_parsing_then_it_becomes_its_data_type() {
             expected_data_type: DataType::Decimal {
                 precision: Some(10),
                 scale: Some(2),
+                spelling: None,
             },
         },
         DataTypeTestCase {
@@ -52,6 +53,7 @@ fn given_a_standalone_type_when_parsing_then_it_becomes_its_data_type() {
             expected_data_type: DataType::Decimal {
                 precision: Some(10),
                 scale: Some(2),
+                spelling: None,
             },
         },
     ];

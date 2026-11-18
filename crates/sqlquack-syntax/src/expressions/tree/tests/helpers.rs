@@ -42,7 +42,10 @@ pub(crate) fn annotation_round_trip(annotated: &Annotated) -> (bool, Option<Anno
 }
 
 pub(crate) fn bigint() -> DataType {
-    DataType::BigInt { length: None }
+    DataType::BigInt {
+        length: None,
+        spelling: None,
+    }
 }
 
 pub(crate) fn varchar() -> DataType {

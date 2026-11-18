@@ -186,12 +186,21 @@ impl<'sql> Parser<'sql> {
         }
     }
 
+    /// The depth limit's refusal at the cursor, a guard rather than a syntax verdict.
+    pub(crate) fn too_deep(&self) -> ParseError {
+        ParseError {
+            guard: true,
+            ..self.error_with(TOO_DEEP, self.offset(), false)
+        }
+    }
+
     /// An error with its own message: a grammar action's check or a limit.
     pub(crate) fn error_with(&self, message: &str, position: usize, syntax: bool) -> ParseError {
         ParseError {
             message: message.to_owned(),
             position,
             syntax,
+            guard: false,
         }
     }
 
@@ -228,7 +237,7 @@ impl<'sql> Parser<'sql> {
     /// Runs `parse` one level deeper, failing past the depth limit, growing the stack when low.
     pub(crate) fn deeper<T>(&mut self, parse: impl FnOnce(&mut Self) -> Parsing<T>) -> Parsing<T> {
         if self.depth >= MAX_DEPTH {
-            return Err(self.error_with(TOO_DEEP, self.offset(), false));
+            return Err(self.too_deep());
         }
         self.depth += 1;
         let result: Parsing<T> = stacker::maybe_grow(STACK_RED_ZONE, STACK_SEGMENT, || parse(self));
@@ -239,7 +248,7 @@ impl<'sql> Parser<'sql> {
     /// Counts one more level of an operator chain's tree, failing past the depth limit.
     pub(crate) fn lengthen(&mut self) -> Parsing<()> {
         if self.depth >= MAX_DEPTH {
-            return Err(self.error_with(TOO_DEEP, self.offset(), false));
+            return Err(self.too_deep());
         }
         self.depth += 1;
         Ok(())

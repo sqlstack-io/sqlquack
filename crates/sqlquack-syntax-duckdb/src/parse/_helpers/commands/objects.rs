@@ -348,6 +348,7 @@ impl Parser<'_> {
             self.gap("schema_options", options);
         }
         Ok(Expression::CreateSchema(Box::new(CreateSchema {
+            properties_keyword: None,
             name,
             or_replace,
             if_not_exists,
@@ -359,6 +360,7 @@ impl Parser<'_> {
             or_alter: false,
             define: false,
             modifier: None,
+            keyword: None,
         })))
     }
 

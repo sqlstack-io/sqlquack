@@ -17,6 +17,7 @@ use crate::scan::models::Token;
 /// `prefix this`, a `MODEL`, `CONNECTION`, `GRAPH`, `DESCRIPTOR` or `TABLE` argument.
 fn prefixed(prefix: &str, this: Expression) -> Expression {
     Expression::TableArgument(Box::new(TableArgument {
+        parenthesized: false,
         prefix: prefix.to_owned(),
         this,
     }))

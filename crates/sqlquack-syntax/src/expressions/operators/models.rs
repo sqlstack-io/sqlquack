@@ -158,6 +158,38 @@ pub struct Case {
     pub span: SourceSpan,
 }
 
+/// A written spelling of an operator or call that another documented spelling shares a node with.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum OperatorSpelling {
+    /// `==` for `=`.
+    #[serde(rename = "==")]
+    DoubleEquals,
+    /// `!=` for `<>`.
+    #[serde(rename = "!=")]
+    BangEquals,
+    /// Databricks: `!` for prefix `NOT`.
+    #[serde(rename = "!")]
+    Bang,
+    /// `IS NOT DISTINCT FROM` for `<=>`.
+    #[serde(rename = "IS NOT DISTINCT FROM")]
+    IsNotDistinctFrom,
+    /// `IS DISTINCT FROM`, the negation of `<=>`.
+    #[serde(rename = "IS DISTINCT FROM")]
+    IsDistinctFrom,
+    /// The `RLIKE` operator for the `rlike` call.
+    #[serde(rename = "RLIKE")]
+    Rlike,
+    /// The `REGEXP` operator for the `rlike` call.
+    #[serde(rename = "REGEXP")]
+    Regexp,
+    /// The `>>>` operator for the `shiftrightunsigned` call.
+    #[serde(rename = ">>>")]
+    ShiftRightUnsigned,
+    /// Databricks: no `=` written between a property's key and its value.
+    #[serde(rename = "omitted")]
+    Omitted,
+}
+
 /// The payload of every binary operator variant: arithmetic, comparison, logical, bitwise.
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BinaryOp {
@@ -180,6 +212,10 @@ pub struct BinaryOp {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// Databricks: the operator as written, when another documented spelling shares this node
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub written_as: Option<OperatorSpelling>,
 }
 
 impl BinaryOp {
@@ -192,6 +228,7 @@ impl BinaryOp {
             trailing_comments: Vec::new(),
             inferred_type: None,
             span: SourceSpan::default(),
+            written_as: None,
         }
     }
 }
@@ -259,6 +296,10 @@ pub struct UnaryOp {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// Databricks: the operator as written, when another documented spelling shares this node
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub written_as: Option<OperatorSpelling>,
 }
 
 impl UnaryOp {
@@ -267,6 +308,7 @@ impl UnaryOp {
             this,
             inferred_type: None,
             span: SourceSpan::default(),
+            written_as: None,
         }
     }
 }
@@ -629,6 +671,10 @@ pub struct TableArgument {
     pub prefix: String,
     /// The table/model reference expression
     pub this: Expression,
+    /// Databricks: whether the table name was written in parentheses, as in `TABLE ( t )`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub parenthesized: bool,
 }
 
 /// SQL Comment preservation
@@ -1042,6 +1088,10 @@ pub struct Lateral {
     /// Whether the alias was originally quoted (backtick/double-quote)
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub alias_quoted: bool,
+    /// Databricks: whether AS was written before the alias
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub alias_explicit_as: bool,
     #[serde(default)]
     pub cross_apply: Option<Box<Expression>>,
     #[serde(default)]

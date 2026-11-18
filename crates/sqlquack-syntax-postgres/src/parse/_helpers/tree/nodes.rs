@@ -359,6 +359,8 @@ pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: boo
         trailing_comments: Vec::new(),
         inferred_type: None,
         span: SourceSpan(None),
+        table_sample: None,
+        watermark: None,
     }))
 }
 
@@ -368,6 +370,7 @@ pub(crate) fn lateral(
     columns: Vec<Identifier>,
 ) -> Expression {
     Expression::Lateral(Box::new(Lateral {
+        alias_explicit_as: false,
         this: Box::new(this),
         view: None,
         outer: None,
@@ -411,6 +414,7 @@ pub(crate) fn join(
         first_last: None,
         first_last_alias: None,
         span: SourceSpan(None),
+        nearest_by: None,
     }
 }
 
@@ -439,6 +443,7 @@ pub(crate) fn set_operation(
         ($variant:ident, $node:ident) => {
             Expression::$variant(Box::new($node {
                 with_ties: false,
+                keyword: None,
                 left,
                 right,
                 all,
@@ -470,12 +475,14 @@ pub(crate) fn set_operation(
 
 pub(crate) fn values(rows: Vec<Vec<Expression>>) -> Expression {
     Expression::Values(Box::new(Values {
+        alias_explicit_as: false,
         expressions: rows
             .into_iter()
             .map(|expressions| Tuple { expressions })
             .collect(),
         alias: None,
         column_aliases: Vec::new(),
+        bare_rows: Vec::new(),
     }))
 }
 
@@ -496,6 +503,7 @@ pub(crate) fn cte(
         comments: Vec::new(),
         span: SourceSpan(None),
         key_items: Vec::new(),
+        as_omitted: false,
     }
 }
 
@@ -537,6 +545,10 @@ pub(crate) fn insert(table: TableRef, columns: Vec<Identifier>) -> Insert {
         settings: Vec::new(),
         overriding: None,
         returning_aliases: Vec::new(),
+        schema_evolution: false,
+        replace_on: None,
+        replace_using: Vec::new(),
+        table_keyword: false,
     }
 }
 

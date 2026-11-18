@@ -932,6 +932,7 @@ impl Parser<'_> {
                 message: format!("role name \"{RESERVED_ROLE}\" is reserved"),
                 position: start,
                 syntax: false,
+                guard: false,
             }),
             _ => Ok(name_from(role)),
         }

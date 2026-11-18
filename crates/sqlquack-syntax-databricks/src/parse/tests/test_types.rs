@@ -28,6 +28,13 @@ pub(crate) struct ValueTestCase {
     pub(crate) expected_json: &'static str,
 }
 
+/// A refused input and the byte offset its error is at.
+pub(crate) struct RefusalTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_position: usize,
+}
+
 /// An input's strict statement and gap counts, or whether its failure is a syntax refusal.
 pub(crate) struct StrictTestCase {
     pub(crate) description: &'static str,
@@ -62,4 +69,27 @@ pub(crate) struct NestingTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: fn() -> String,
     pub(crate) expected_refusal: Option<&'static str>,
+}
+
+/// Texts that write one form in different ways, whose trees must all differ.
+pub(crate) struct DistinctTreesTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) written: &'static [&'static str],
+    pub(crate) expected_distinct_trees: usize,
+}
+
+/// A form of `TREED_FORMS`, written as `sql`, before `ALTER TABLE t1 ALTER COLUMN c1` in one compound and in two statements.
+pub(crate) struct TreedFormTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) construct: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_in_compound: ExpectedVerdict,
+    pub(crate) expected_as_script: ExpectedVerdict,
+}
+
+/// A treed form written around `{E}`, a left-deep sum the tree depth limit would refuse were it kept.
+pub(crate) struct DeepValueTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) shape: &'static str,
+    pub(crate) expected_verdict: ExpectedVerdict,
 }

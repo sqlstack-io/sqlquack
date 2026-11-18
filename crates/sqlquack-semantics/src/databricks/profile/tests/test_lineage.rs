@@ -1,6 +1,7 @@
 use crate::databricks::profile::tests::helpers::databricks_findings;
 use crate::databricks::profile::tests::helpers::databricks_outputs;
 use crate::databricks::profile::tests::test_types::DatabricksOutputsTestCase;
+use crate::databricks::profile::tests::test_types::SameReadingTestCase;
 use crate::dialects::constants::DATABRICKS;
 use crate::lineage::tests::helpers::duckdb_shop_schema;
 use crate::lineage::tests::helpers::output_ranges;
@@ -239,30 +240,101 @@ fn given_a_strict_parse_when_tracing_lineage_then_each_output_has_its_items_byte
 
 #[test]
 fn given_an_aggregate_written_with_all_when_analysed_then_it_reads_as_no_quantifier() {
-    let calls = [
-        "sum({q}quantity)",
-        "avg({q}price)",
-        "count({q}status)",
-        "max({q}status)",
+    let test_cases = [
+        SameReadingTestCase {
+            description: "SUM with ALL",
+            sql: "SELECT sum(ALL quantity) AS a FROM orders HAVING sum(ALL quantity) > 0",
+            expected_same_as: "SELECT sum(quantity) AS a FROM orders HAVING sum(quantity) > 0",
+        },
+        SameReadingTestCase {
+            description: "AVG with ALL",
+            sql: "SELECT avg(ALL price) AS a FROM orders HAVING avg(ALL price) > 0",
+            expected_same_as: "SELECT avg(price) AS a FROM orders HAVING avg(price) > 0",
+        },
+        SameReadingTestCase {
+            description: "COUNT with ALL",
+            sql: "SELECT count(ALL status) AS a FROM orders HAVING count(ALL status) > 0",
+            expected_same_as: "SELECT count(status) AS a FROM orders HAVING count(status) > 0",
+        },
+        SameReadingTestCase {
+            description: "MAX with ALL",
+            sql: "SELECT max(ALL status) AS a FROM orders HAVING max(ALL status) > 0",
+            expected_same_as: "SELECT max(status) AS a FROM orders HAVING max(status) > 0",
+        },
     ];
-    for call in calls {
-        let sql = |quantifier: &str| {
-            format!(
-                "SELECT {} AS a FROM orders HAVING {} > 0",
-                call.replace("{q}", quantifier),
-                call.replace("{q}", quantifier)
-            )
-        };
-        let (none, all) = (sql(""), sql("ALL "));
+    for test_case in test_cases {
         assert_eq!(
-            databricks_outputs(&all),
-            databricks_outputs(&none),
-            "{call}: outputs"
+            (
+                databricks_outputs(test_case.sql),
+                databricks_findings(test_case.sql)
+            ),
+            (
+                databricks_outputs(test_case.expected_same_as),
+                databricks_findings(test_case.expected_same_as)
+            ),
+            "{}",
+            test_case.description
         );
+    }
+}
+
+#[test]
+fn given_synonymous_operator_spellings_when_analysed_then_each_reads_alike() {
+    let test_cases = [
+        SameReadingTestCase {
+            description: "== against =",
+            sql: "SELECT quantity == 2 AS a FROM orders WHERE quantity == 2",
+            expected_same_as: "SELECT quantity = 2 AS a FROM orders WHERE quantity = 2",
+        },
+        SameReadingTestCase {
+            description: "== against = between a string and a number",
+            sql: "SELECT status == price AS a FROM orders WHERE status == price",
+            expected_same_as: "SELECT status = price AS a FROM orders WHERE status = price",
+        },
+        SameReadingTestCase {
+            description: "!= against <>",
+            sql: "SELECT quantity != 2 AS a FROM orders WHERE quantity != 2",
+            expected_same_as: "SELECT quantity <> 2 AS a FROM orders WHERE quantity <> 2",
+        },
+        SameReadingTestCase {
+            description: "<=> against IS NOT DISTINCT FROM",
+            sql: "SELECT quantity <=> 2 AS a FROM orders WHERE quantity <=> 2",
+            expected_same_as: "SELECT quantity IS NOT DISTINCT FROM 2 AS a FROM orders WHERE quantity IS NOT DISTINCT FROM 2",
+        },
+        SameReadingTestCase {
+            description: "NOT <=> against IS DISTINCT FROM",
+            sql: "SELECT NOT quantity <=> 2 AS a FROM orders WHERE NOT quantity <=> 2",
+            expected_same_as: "SELECT quantity IS DISTINCT FROM 2 AS a FROM orders WHERE quantity IS DISTINCT FROM 2",
+        },
+        SameReadingTestCase {
+            description: "REGEXP against RLIKE",
+            sql: "SELECT status REGEXP 'x' AS a FROM orders WHERE status REGEXP 'x'",
+            expected_same_as: "SELECT status RLIKE 'x' AS a FROM orders WHERE status RLIKE 'x'",
+        },
+        SameReadingTestCase {
+            description: "RLIKE against the rlike call",
+            sql: "SELECT status RLIKE 'x' AS a FROM orders WHERE status RLIKE 'x'",
+            expected_same_as: "SELECT rlike(status, 'x') AS a FROM orders WHERE rlike(status, 'x')",
+        },
+        SameReadingTestCase {
+            description: ">>> against the shiftrightunsigned call",
+            sql: "SELECT quantity >>> 1 AS a FROM orders WHERE quantity >>> 1",
+            expected_same_as: "SELECT shiftrightunsigned(quantity, 1) AS a FROM orders WHERE shiftrightunsigned(quantity, 1)",
+        },
+    ];
+    let read = |sql: &str| {
+        let findings: Vec<(&str, String)> = databricks_findings(sql)
+            .into_iter()
+            .map(|(code, message, _)| (code, message))
+            .collect();
+        (databricks_outputs(sql), findings)
+    };
+    for test_case in test_cases {
         assert_eq!(
-            databricks_findings(&all),
-            databricks_findings(&none),
-            "{call}: findings"
+            read(test_case.sql),
+            read(test_case.expected_same_as),
+            "{}",
+            test_case.description
         );
     }
 }

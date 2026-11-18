@@ -3,6 +3,7 @@
 use serde::Deserialize;
 use serde::Serialize;
 
+use crate::expressions::names::models::Identifier;
 use crate::expressions::statements::models::VerticaDataType;
 use crate::expressions::tree::models::Expression;
 
@@ -16,6 +17,12 @@ pub struct StructField {
     pub options: Vec<Expression>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub comment: Option<String>,
+    /// Databricks: the COLLATE written after a string field's type
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub collation: Option<Box<Identifier>>,
+    /// Databricks: whether the optional `:` was written between the field's name and type
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub colon: bool,
 }
 
 impl StructField {
@@ -26,6 +33,8 @@ impl StructField {
             data_type,
             options: Vec::new(),
             comment: None,
+            collation: None,
+            colon: false,
         }
     }
 
@@ -36,6 +45,8 @@ impl StructField {
             data_type,
             options,
             comment: None,
+            collation: None,
+            colon: false,
         }
     }
 
@@ -51,6 +62,8 @@ impl StructField {
             data_type,
             options,
             comment,
+            collation: None,
+            colon: false,
         }
     }
 }
@@ -128,6 +141,28 @@ pub struct TableArgumentType {
     pub column_types: Vec<DataType>,
 }
 
+/// A synonym written for a type's name, which the tree keeps as written.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum TypeSpelling {
+    /// `BYTE` for `TINYINT`.
+    Byte,
+    /// `SHORT` for `SMALLINT`.
+    Short,
+    /// `LONG` for `BIGINT`.
+    Long,
+    /// `DEC` for `DECIMAL`.
+    Dec,
+    /// `NUMERIC` for `DECIMAL`.
+    Numeric,
+    /// `TIMESTAMP_LTZ` for `TIMESTAMP`.
+    #[serde(rename = "TIMESTAMP_LTZ")]
+    TimestampLtz,
+    /// Databricks: `WITHOUT TIME ZONE` written after `TIMESTAMP` or `TIME`.
+    #[serde(rename = "WITHOUT TIME ZONE")]
+    WithoutTimeZone,
+}
+
 /// Every data type the parser recognizes, standard and dialect-specific.
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "data_type", rename_all = "snake_case")]
@@ -141,9 +176,17 @@ pub enum DataType {
     Boolean,
     TinyInt {
         length: Option<u32>,
+        /// The synonym written for the type's name, such as LONG for BIGINT
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[ast(skip)]
+        spelling: Option<TypeSpelling>,
     },
     SmallInt {
         length: Option<u32>,
+        /// The synonym written for the type's name, such as LONG for BIGINT
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[ast(skip)]
+        spelling: Option<TypeSpelling>,
     },
     /// INT with optional length; `integer_spelling` records an `INTEGER` spelling.
     Int {
@@ -153,6 +196,10 @@ pub enum DataType {
     },
     BigInt {
         length: Option<u32>,
+        /// The synonym written for the type's name, such as LONG for BIGINT
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[ast(skip)]
+        spelling: Option<TypeSpelling>,
     },
     /// Signed 128-bit integer (DuckDB HUGEINT, ClickHouse Int128, StarRocks LARGEINT).
     Int128,
@@ -185,6 +232,10 @@ pub enum DataType {
     Decimal {
         precision: Option<u32>,
         scale: Option<u32>,
+        /// The synonym written for the type's name, such as LONG for BIGINT
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[ast(skip)]
+        spelling: Option<TypeSpelling>,
     },
     /// Structured Oracle data type retained until the target dialect is known.
     Oracle {
@@ -235,10 +286,18 @@ pub enum DataType {
         precision: Option<u32>,
         #[serde(default)]
         timezone: bool,
+        /// Databricks: the WITHOUT TIME ZONE written after the type's name
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[ast(skip)]
+        spelling: Option<TypeSpelling>,
     },
     Timestamp {
         precision: Option<u32>,
         timezone: bool,
+        /// The synonym written for the type's name, such as TIMESTAMP_LTZ for TIMESTAMP
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[ast(skip)]
+        spelling: Option<TypeSpelling>,
     },
     Interval {
         unit: Option<String>,
