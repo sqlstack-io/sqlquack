@@ -787,6 +787,55 @@ fn given_a_comma_after_a_joined_item_when_resolving_names_then_the_join_reads_on
 }
 
 #[test]
+fn given_a_natural_join_when_resolving_names_then_sides_sharing_no_column_are_refused() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a NATURAL join of tables sharing no column (2.0: no columns found to join on)",
+            sql: "SELECT * FROM orders NATURAL JOIN shop.products",
+            expected_findings: &[("E201", "NATURAL JOIN has no column both sides offer", 39)],
+        },
+        QueryFindingsTestCase {
+            description: "a NATURAL LEFT join sharing no column",
+            sql: "SELECT * FROM customers NATURAL LEFT JOIN exports",
+            expected_findings: &[("E201", "NATURAL JOIN has no column both sides offer", 42)],
+        },
+        QueryFindingsTestCase {
+            description: "a NATURAL join whose comma neighbour, not its left item, shares a column",
+            sql: "SELECT * FROM customers c, shop.products p NATURAL JOIN orders o",
+            expected_findings: &[("E201", "NATURAL JOIN has no column both sides offer", 56)],
+        },
+        QueryFindingsTestCase {
+            description: "a NATURAL join of a derived table sharing no column",
+            sql: "SELECT * FROM orders NATURAL JOIN (SELECT 1 AS z) s",
+            expected_findings: &[("E201", "NATURAL JOIN has no column both sides offer", 34)],
+        },
+        QueryFindingsTestCase {
+            description: "a second NATURAL join whose right shares no column with the joined left",
+            sql: "SELECT * FROM orders o NATURAL JOIN customers c NATURAL JOIN exports e",
+            expected_findings: &[("E201", "NATURAL JOIN has no column both sides offer", 61)],
+        },
+        QueryFindingsTestCase {
+            description: "a NATURAL join of tables sharing a column",
+            sql: "SELECT * FROM orders NATURAL JOIN customers",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a NATURAL join sharing a column spelled in another case",
+            sql: "SELECT * FROM orders NATURAL JOIN (SELECT 1 AS ID) s",
+            expected_findings: &[],
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            duckdb_parser_findings(test_case.sql),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_joined_and_comma_items_when_expanding_a_star_then_the_columns_follow_the_written_order() {
     let test_cases = [
         StarOrderTestCase {
