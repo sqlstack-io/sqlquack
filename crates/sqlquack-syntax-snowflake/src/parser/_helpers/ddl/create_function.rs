@@ -397,9 +397,11 @@ impl Parser {
         {
             let kind = self.previous_text().to_ascii_uppercase();
             let uri = self.expect_string()?;
-            function
-                .using_resources
-                .push(FunctionUsingResource { kind, uri });
+            function.using_resources.push(FunctionUsingResource {
+                kind,
+                uri,
+                kind_quoted: false,
+            });
             let _ = self.match_token(TokenType::Comma);
         }
         function = record_function_property(function, FunctionPropertyKind::Using);

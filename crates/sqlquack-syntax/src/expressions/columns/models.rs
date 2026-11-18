@@ -800,10 +800,22 @@ pub enum AlterTableAction {
     /// SET TAG action (Snowflake): ALTER TABLE t SET TAG key='value'
     SetTag {
         expressions: Vec<(String, Expression)>,
+        /// Databricks: the positions of the keys written in backquotes
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        quoted_keys: Vec<usize>,
+        /// Databricks: the positions of the keys written as strings
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        string_keys: Vec<usize>,
     },
     /// UNSET TAG action (Snowflake): ALTER TABLE t UNSET TAG key1, key2
     UnsetTag {
         names: Vec<String>,
+        /// Databricks: the positions of the names written in backquotes
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        quoted_keys: Vec<usize>,
+        /// Databricks: the positions of the names written as strings
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        string_keys: Vec<usize>,
     },
     /// SET with parenthesized options (TSQL): ALTER TABLE t SET (SYSTEM_VERSIONING=ON, ...)
     SetOptions {
@@ -913,6 +925,26 @@ pub enum AlterTableAction {
         names: Vec<Identifier>,
         new_name: Identifier,
     },
+}
+
+impl AlterTableAction {
+    /// `SET TAG` with keys written plainly.
+    pub fn set_tag(expressions: Vec<(String, Expression)>) -> Self {
+        Self::SetTag {
+            expressions,
+            quoted_keys: Vec::new(),
+            string_keys: Vec::new(),
+        }
+    }
+
+    /// `UNSET TAG` with names written plainly.
+    pub fn unset_tag(names: Vec<String>) -> Self {
+        Self::UnsetTag {
+            names,
+            quoted_keys: Vec::new(),
+            string_keys: Vec::new(),
+        }
+    }
 }
 
 /// Actions for ALTER COLUMN

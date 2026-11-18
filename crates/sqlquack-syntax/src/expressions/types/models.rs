@@ -161,6 +161,9 @@ pub enum TypeSpelling {
     /// Databricks: `WITHOUT TIME ZONE` written after `TIMESTAMP` or `TIME`.
     #[serde(rename = "WITHOUT TIME ZONE")]
     WithoutTimeZone,
+    /// Databricks: `WITH LOCAL TIME ZONE` written after `TIMESTAMP`.
+    #[serde(rename = "WITH LOCAL TIME ZONE")]
+    WithLocalTimeZone,
 }
 
 /// Every data type the parser recognizes, standard and dialect-specific.

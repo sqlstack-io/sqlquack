@@ -681,6 +681,7 @@ impl Parser<'_> {
                 parser.expect_char(')')?;
                 Ok(Expression::Extract(Box::new(ExtractFunc {
                     this: source,
+                    field_quoted: field.kind == TokenKind::Quoted,
                     field: DateTimeField::Custom(field.value),
                 })))
             }),

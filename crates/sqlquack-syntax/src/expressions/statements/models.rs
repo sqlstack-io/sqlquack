@@ -34,6 +34,10 @@ pub struct DirectoryInsert {
     /// STORED AS clause (e.g., TEXTFILE, ORC, PARQUET)
     #[serde(default)]
     pub stored_as: Option<String>,
+    /// Databricks: the `STORED AS` format was written in backquotes
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[ast(skip)]
+    pub stored_as_quoted: bool,
     /// Hive: `STORED AS INPUTFORMAT` class
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
@@ -353,6 +357,9 @@ pub struct Credentials {
     /// Databricks: the positions of the credential options whose key was written as a string
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub string_keys: Vec<usize>,
+    /// Databricks: the positions of the credential options whose value was not a string, as in `k = 1`
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub bare_values: Vec<usize>,
 }
 
 /// Historical data / Time travel (Snowflake) - BEFORE (STATEMENT => ...) or AT (TIMESTAMP => ...)
