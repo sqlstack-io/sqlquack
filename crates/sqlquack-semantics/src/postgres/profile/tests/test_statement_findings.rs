@@ -358,6 +358,61 @@ fn given_a_comma_after_a_joined_item_when_resolving_names_then_the_join_reads_on
             sql: "SELECT * FROM orders a JOIN orders b USING (status), customers c",
             expected_findings: &[],
         },
+        QueryFindingsTestCase {
+            description: "a USING key read unqualified beside a comma item offering it (18: ambiguous)",
+            sql: "SELECT id FROM orders a JOIN customers b USING (id), customers c",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key read unqualified beside a later ON join offering it (18: ambiguous)",
+            sql: "SELECT id FROM orders a JOIN customers b USING (id) JOIN customers c ON c.id = a.id",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key read unqualified beside an earlier comma item offering it (18: ambiguous)",
+            sql: "SELECT id FROM orders a, customers b JOIN customers c USING (id)",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a NATURAL key read unqualified beside a comma item offering it (18: ambiguous)",
+            sql: "SELECT id FROM orders a NATURAL JOIN customers b, customers c",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key of a parenthesised join beside a later item offering it (18: ambiguous)",
+            sql: "SELECT id FROM (orders a JOIN customers b USING (id)) JOIN customers c ON true",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key a later USING join merges again (18: accepted)",
+            sql: "SELECT id FROM orders a JOIN customers b USING (id) JOIN customers c USING (id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key outer joins merge again (18: accepted)",
+            sql: "SELECT id FROM orders a LEFT JOIN customers b USING (id) RIGHT JOIN customers c USING (id)",
+            expected_findings: &[],
+        },
     ];
     let schema = duckdb_shop_schema();
     for test_case in test_cases {

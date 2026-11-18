@@ -71,6 +71,10 @@ impl DialectRules for DatabricksRules {
         true
     }
 
+    fn merged_keys_hide_other_items(&self) -> bool {
+        true
+    }
+
     fn checks_call_signatures(&self) -> bool {
         true
     }
