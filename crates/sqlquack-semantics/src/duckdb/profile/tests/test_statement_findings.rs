@@ -723,6 +723,21 @@ fn given_named_windows_when_resolving_names_then_only_the_windows_an_over_reads_
             )],
         },
         QueryFindingsTestCase {
+            description: "a used window ordered by its own projection's alias, as inline (2.0: Binder Error)",
+            sql: "SELECT sum(amount) OVER w AS x FROM orders WINDOW w AS (ORDER BY x)",
+            expected_findings: &[("E201", "Unknown column 'x' in table 'orders'", 65)],
+        },
+        QueryFindingsTestCase {
+            description: "a window shared by two projections, ordered by one's alias",
+            sql: "SELECT sum(amount) OVER w AS x, avg(amount) OVER w AS y FROM orders WINDOW w AS (ORDER BY y)",
+            expected_findings: &[("E201", "Unknown column 'y' in table 'orders'", 90)],
+        },
+        QueryFindingsTestCase {
+            description: "an unknown column in a window shared by two projections is reported once",
+            sql: "SELECT sum(amount) OVER w AS x, avg(amount) OVER w AS y FROM orders WINDOW w AS (ORDER BY nope)",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 90)],
+        },
+        QueryFindingsTestCase {
             description: "a window that the used window extends",
             sql: "SELECT sum(amount) OVER w2 AS x FROM orders WINDOW w AS (PARTITION BY nope), w2 AS (w ORDER BY id)",
             expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 70)],
