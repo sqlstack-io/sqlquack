@@ -661,6 +661,7 @@ impl Parser {
                 is_group,
                 is_share,
                 kind: None,
+                written: None,
             });
             if !self.match_token(TokenType::Comma) {
                 break;

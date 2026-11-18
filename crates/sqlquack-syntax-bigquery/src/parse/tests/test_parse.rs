@@ -1065,10 +1065,10 @@ fn given_bytes_literals_when_parsing_then_each_byte_is_one_unit() {
             expected_same: false,
         },
         TreePairTestCase {
-            description: "a raw bytes literal also reads a character as its UTF-8 bytes",
+            description: "a raw bytes literal is kept apart from the escaped bytes it reads as",
             sql: "SELECT rb'\u{ff}'",
             other_sql: "SELECT b'\\xc3\\xbf'",
-            expected_same: true,
+            expected_same: false,
         },
     ];
     for test_case in test_cases {

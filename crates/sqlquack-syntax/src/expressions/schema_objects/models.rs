@@ -1557,6 +1557,9 @@ pub struct GrantPrincipal {
     /// Snowflake: the grantee kind, such as ROLE, DATABASE ROLE, APPLICATION or USER
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub kind: Option<String>,
+    /// BigQuery: a grantee string written raw or as adjacent pieces, as written; absent for one plain string
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub written: Option<Literal>,
 }
 
 /// GRANT statement

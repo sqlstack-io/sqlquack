@@ -248,6 +248,8 @@ pub(crate) const CAST_FIELDS: [&str; 3] = ["cast", "this", "to"];
 pub(crate) const LITERAL_FIELD: &str = "literal";
 /// The field a serialized data type records its kind in, and the kind of a type named by a word.
 pub(crate) const CUSTOM_TYPE_FIELDS: [&str; 2] = ["data_type", "custom"];
+/// The field a serialized cast records the type a BigQuery typed literal gave itself in.
+pub(crate) const INFERRED_TYPE_FIELD: &str = "inferred_type";
 /// The kind of a serialized raw string literal.
 pub(crate) const RAW_STRING_KIND: &str = "raw_string";
 /// Typed literal words whose plain string makes a literal of the kind given, a raw one a cast.
