@@ -325,3 +325,51 @@ fn given_a_named_window_when_resolving_names_then_its_keys_read_the_input_column
         );
     }
 }
+
+#[test]
+fn given_a_comma_after_a_joined_item_when_resolving_names_then_the_join_reads_only_its_own_items() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a USING key the left of its join lacks, a later comma item offering it",
+            sql: "SELECT * FROM customers a JOIN orders b USING (status), orders c",
+            expected_findings: &[(
+                "E201",
+                "JOIN USING column 'status' must exist on both sides",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key both sides of its join offer, before a comma item",
+            sql: "SELECT * FROM orders a JOIN orders b USING (status), customers c",
+            expected_findings: &[],
+        },
+    ];
+    let schema = duckdb_shop_schema();
+    for test_case in test_cases {
+        let statement = sqlquack_syntax_postgres::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        let context = LineageContext {
+            profile: &POSTGRES,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let native: Vec<(&'static str, String, usize)> = statement_findings(&statement, context)
+            .into_iter()
+            .map(|finding| {
+                (
+                    finding.code,
+                    finding.message,
+                    finding.span.map_or(0, |span| span.start),
+                )
+            })
+            .collect();
+        assert_eq!(
+            native,
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}

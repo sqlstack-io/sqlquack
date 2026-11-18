@@ -3,6 +3,7 @@ use crate::lineage::tests::helpers::duckdb_shop_schema;
 use crate::lineage::tests::helpers::output_ranges;
 use crate::lineage::tests::helpers::owned_findings;
 use crate::lineage::tests::test_types::QueryFindingsTestCase;
+use crate::lineage::tests::test_types::StarOrderTestCase;
 use crate::lineage::tests::test_types::StrictRangeTestCase;
 use crate::sqlserver::profile::tests::helpers::sqlserver_findings;
 use crate::sqlserver::profile::tests::helpers::sqlserver_outputs;
@@ -288,5 +289,36 @@ fn given_a_strict_parse_when_tracing_lineage_then_each_output_has_its_items_byte
             "{}",
             test_case.description
         );
+    }
+}
+
+#[test]
+fn given_a_comma_after_a_joined_source_when_expanding_a_star_then_the_columns_follow_the_written_order()
+ {
+    let test_cases = [StarOrderTestCase {
+        description: "the joined source's columns come before the comma source's",
+        sql: "SELECT * FROM customers a JOIN customers b ON a.id = b.id, orders c",
+        expected_names: &[
+            "id",
+            "name",
+            "id",
+            "name",
+            "id",
+            "big",
+            "amount",
+            "price",
+            "status",
+            "created_at",
+            "logged_at",
+            "label",
+        ],
+    }];
+    let schema = sqlserver_shop_schema();
+    for test_case in test_cases {
+        let names: Vec<String> = sqlserver_outputs(&schema, test_case.sql)
+            .into_iter()
+            .map(|(name, _)| name)
+            .collect();
+        assert_eq!(names, test_case.expected_names, "{}", test_case.description);
     }
 }

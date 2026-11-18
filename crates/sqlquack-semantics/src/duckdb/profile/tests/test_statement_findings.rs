@@ -6,11 +6,12 @@ use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
 use crate::dialects::constants::DUCKDB;
 use crate::duckdb::profile::tests::helpers::duckdb_parser_findings;
 use crate::lineage::_helpers::findings::statement::statement_findings;
+use crate::lineage::main::statement_lineage::statement_lineage;
 use crate::lineage::models::LineageContext;
 use crate::lineage::tests::helpers::{
     duckdb_shop_schema, found_findings, owned_findings, shop_schema,
 };
-use crate::lineage::tests::test_types::QueryFindingsTestCase;
+use crate::lineage::tests::test_types::{QueryFindingsTestCase, StarOrderTestCase};
 
 #[test]
 fn given_a_duckdb_name_not_definitely_unresolved_when_resolving_names_then_nothing_is_found() {
@@ -695,5 +696,94 @@ fn given_named_windows_when_resolving_names_then_only_the_windows_an_over_reads_
             "{}",
             test_case.description
         );
+    }
+}
+
+#[test]
+fn given_a_comma_after_a_joined_item_when_resolving_names_then_the_join_reads_only_its_own_items() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "a USING key the left of its join lacks, a later comma item offering it",
+            sql: "SELECT * FROM customers a JOIN orders b USING (status), orders c",
+            expected_findings: &[(
+                "E201",
+                "JOIN USING column 'status' must exist on both sides",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key both sides of its join offer, before a comma item",
+            sql: "SELECT * FROM orders a JOIN orders b USING (status), customers c",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an unqualified USING key beside a later item's column of its name, which DuckDB binds",
+            sql: "SELECT id FROM orders a JOIN customers b USING (id), exports c CROSS JOIN customers d",
+            expected_findings: &[],
+        },
+    ];
+    for test_case in test_cases {
+        assert_eq!(
+            duckdb_parser_findings(test_case.sql),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_comma_after_a_joined_item_when_expanding_a_star_then_the_columns_follow_the_written_order()
+ {
+    let test_cases = [
+        StarOrderTestCase {
+            description: "the joined item's columns come before the comma item's",
+            sql: "SELECT * FROM orders a JOIN customers b ON a.id = b.id, exports c",
+            expected_names: &[
+                "id",
+                "customer_id",
+                "amount",
+                "items",
+                "status",
+                "id",
+                "name",
+                "country",
+                "listingId",
+                "listing_status",
+            ],
+        },
+        StarOrderTestCase {
+            description: "a USING key once, first in its own join, before the comma item",
+            sql: "SELECT * FROM orders a JOIN customers b USING (id), exports c",
+            expected_names: &[
+                "id",
+                "customer_id",
+                "amount",
+                "items",
+                "status",
+                "name",
+                "country",
+                "listingId",
+                "listing_status",
+            ],
+        },
+    ];
+    let schema = duckdb_shop_schema();
+    for test_case in test_cases {
+        let statement = sqlquack_syntax_duckdb::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        let context = LineageContext {
+            profile: &DUCKDB,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let names: Vec<String> = statement_lineage(&statement, context)
+            .outputs
+            .into_iter()
+            .map(|output| output.name)
+            .collect();
+        assert_eq!(names, test_case.expected_names, "{}", test_case.description);
     }
 }

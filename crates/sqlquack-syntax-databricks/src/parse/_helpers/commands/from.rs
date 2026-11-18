@@ -67,21 +67,29 @@ fn percent_outside_range(text: &str, negated: bool) -> Option<f64> {
 }
 
 impl Parser<'_> {
-    /// `fromClause`: `FROM relation, ... lateralView*`, into `select`'s sources and joins.
+    /// `fromClause`: `FROM relation, ... lateralView*`; several relations each keep their joins.
     pub(crate) fn select_from_clause(&mut self, mut select: Select) -> Parsing<Select> {
         self.expect_kw("FROM")?;
-        let mut items: Vec<Expression> = Vec::new();
-        let mut joins: Vec<Join> = Vec::new();
+        let mut refs: Vec<(Expression, Vec<Join>)> = Vec::new();
         loop {
-            let (item, more) = self.relation()?;
-            items.push(item);
-            joins.extend(more);
+            refs.push(self.relation()?);
             if !self.eat_char(',') {
                 break;
             }
         }
-        select.from = Some(From { expressions: items });
-        select.joins = joins;
+        if refs.len() == 1 {
+            let (item, joins) = refs.remove(0);
+            select.from = Some(From {
+                expressions: vec![item],
+            });
+            select.joins = joins;
+        } else {
+            let items: Vec<Expression> = refs
+                .into_iter()
+                .map(|(item, joins)| collapse(item, joins))
+                .collect();
+            select.from = Some(From { expressions: items });
+        }
         select.lateral_views = self.lateral_views()?;
         if self.kw_in(0, &["PIVOT", "UNPIVOT"]) {
             let start: usize = self.offset();

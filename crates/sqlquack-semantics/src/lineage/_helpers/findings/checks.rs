@@ -105,7 +105,7 @@ pub(crate) fn column_finding(
         if current
             .merged
             .iter()
-            .any(|merged| context.profile.same_identifier(&merged.key, &wanted))
+            .any(|merged| context.profile.same_identifier(&merged.column.key, &wanted))
         {
             return None;
         }
@@ -173,7 +173,7 @@ pub(crate) fn value_keyword(
             || level
                 .merged
                 .iter()
-                .any(|merged| context.profile.same_identifier(&merged.key, &wanted))
+                .any(|merged| context.profile.same_identifier(&merged.column.key, &wanted))
         {
             return false;
         }

@@ -29,8 +29,8 @@ use crate::lineage::constants::{
     ORDINAL_BASE, RECURSION_LIMIT, SQL_STAR, SUBTOTAL_GROUPINGS, UNNAMED_CHARACTERS,
 };
 use crate::lineage::models::{
-    FromItems, Lineage, LineageContext, LineageScope, NamedQuery, Nullability, ResolvedQuery,
-    RowReads, ScopeSource, ScopedColumn, TransformKind,
+    FromItems, Lineage, LineageContext, LineageScope, MergedKey, NamedQuery, Nullability,
+    ResolvedQuery, RowReads, ScopeSource, ScopedColumn, TransformKind,
 };
 
 /// The outputs of `query`, with `ctes` in reach and `outer` the enclosing level.
@@ -860,7 +860,7 @@ pub(crate) fn after_windows(
     named_windows(windows, scope, context)
 }
 
-/// The columns a star selects (a bare star's merged join keys once, first), EXCLUDE etc. applied.
+/// The columns a star selects (a bare star's merged join keys once each), EXCLUDE etc. applied.
 pub(crate) fn expanded_star(
     star: &Star,
     scope: &LineageScope<'_>,
@@ -882,10 +882,11 @@ pub(crate) fn expanded_star(
         owner = outer;
     }
     let scope: &LineageScope<'_> = owner;
-    let selected: Vec<&ScopeSource> = scope
+    let selected: Vec<(usize, &ScopeSource)> = scope
         .sources
         .iter()
-        .filter(|source| match (&qualifier, &source.key) {
+        .enumerate()
+        .filter(|(_, source)| match (&qualifier, &source.key) {
             (None, _) => true,
             (Some(qualifier), Some(key)) => context.profile.same_identifier(key, qualifier),
             (Some(_), None) => false,
@@ -897,31 +898,19 @@ pub(crate) fn expanded_star(
         .flatten()
         .map(|name| key(name, context))
         .collect();
-    let keys: Vec<&ScopedColumn> = match qualifier {
+    let keys: Vec<&MergedKey> = match qualifier {
         None => scope.merged.iter().collect(),
         Some(_) => Vec::new(),
     };
-    let merged_keys: Vec<String> = keys.iter().map(|column| column.key.clone()).collect();
     let open: Vec<&ScopeSource> = selected
         .iter()
-        .copied()
+        .map(|(_, source)| *source)
         .filter(|source| source.query.open)
         .collect();
     let mut columns: Vec<ScopedColumn> = Vec::new();
-    let in_place: bool = dialect_rules(context.profile).star_keys_in_place();
-    let offered: Vec<ScopedColumn> = match in_place {
+    let offered: Vec<ScopedColumn> = match dialect_rules(context.profile).star_keys_in_place() {
         true => keys_in_place(&keys, &selected, context),
-        false => keys
-            .into_iter()
-            .cloned()
-            .chain(
-                selected
-                    .iter()
-                    .flat_map(|source| source.query.columns.iter())
-                    .filter(|column| !listed(&merged_keys, &column.key, context))
-                    .cloned(),
-            )
-            .collect(),
+        false => keys_first(&keys, &selected, context),
     };
     for column in &offered {
         if !listed(&excluded, &column.key, context) {
@@ -948,51 +937,89 @@ pub(crate) fn expanded_star(
     }
 }
 
-/// DuckDB's and SQLite's star: each join key once, where and as its first source offers it.
-fn keys_in_place(
-    keys: &[&ScopedColumn],
-    selected: &[&ScopeSource],
+/// The columns a bare star offers with each merged key first in its join, hiding its sources' own.
+fn keys_first(
+    keys: &[&MergedKey],
+    selected: &[(usize, &ScopeSource)],
     context: LineageContext<'_>,
 ) -> Vec<ScopedColumn> {
-    let offered: Vec<&ScopedColumn> = selected
-        .iter()
-        .flat_map(|source| source.query.columns.iter())
-        .collect();
     let mut columns: Vec<ScopedColumn> = Vec::new();
-    for merged in keys {
-        if same_key(&offered, merged, context).is_none() {
-            columns.push((*merged).clone());
-        }
+    for (index, source) in selected {
+        columns.extend(
+            keys.iter()
+                .filter(|key| key.sources.start == *index)
+                .map(|key| key.column.clone()),
+        );
+        columns.extend(
+            source
+                .query
+                .columns
+                .iter()
+                .filter(|column| covering(keys, *index, column, context).is_none())
+                .cloned(),
+        );
     }
-    let mut placed: Vec<&ScopedColumn> = Vec::new();
-    for column in offered {
-        match same_key(keys, column, context) {
-            Some(merged) if same_key(&placed, merged, context).is_some() => {}
-            Some(merged) => {
-                placed.push(merged);
-                columns.push(ScopedColumn {
-                    name: column.name.clone(),
-                    key: column.key.clone(),
-                    lineage: merged.lineage.clone(),
-                    expression: None,
-                });
+    columns
+}
+
+/// The columns a bare star offers with each merged key where its join first offers it.
+fn keys_in_place(
+    keys: &[&MergedKey],
+    selected: &[(usize, &ScopeSource)],
+    context: LineageContext<'_>,
+) -> Vec<ScopedColumn> {
+    let mut columns: Vec<ScopedColumn> = Vec::new();
+    let mut placed: Vec<&MergedKey> = Vec::new();
+    for (index, source) in selected {
+        for key in keys.iter().filter(|key| key.sources.start == *index) {
+            let offered: bool = selected
+                .iter()
+                .any(|(at, source)| key.sources.contains(at) && offers_key(source, key, context));
+            if !offered {
+                columns.push(key.column.clone());
             }
-            None => columns.push(column.clone()),
+        }
+        for column in source.query.columns.iter() {
+            match covering(keys, *index, column, context) {
+                Some(key) if placed.iter().any(|done| std::ptr::eq(*done, key)) => {}
+                Some(key) => {
+                    placed.push(key);
+                    columns.push(ScopedColumn {
+                        name: column.name.clone(),
+                        key: column.key.clone(),
+                        lineage: key.column.lineage.clone(),
+                        expression: None,
+                    });
+                }
+                None => columns.push(column.clone()),
+            }
         }
     }
     columns
 }
 
-/// The first of `columns` naming the same key as `column`.
-fn same_key<'a>(
-    columns: &[&'a ScopedColumn],
+/// Whether `source` offers a column named as merged `key`.
+fn offers_key(source: &ScopeSource, key: &MergedKey, context: LineageContext<'_>) -> bool {
+    source.query.columns.iter().any(|column| {
+        context
+            .profile
+            .same_identifier(&column.key, &key.column.key)
+    })
+}
+
+/// The merged key that stands in for `column` of the source at `index`, if any.
+fn covering<'k>(
+    keys: &[&'k MergedKey],
+    index: usize,
     column: &ScopedColumn,
     context: LineageContext<'_>,
-) -> Option<&'a ScopedColumn> {
-    columns
-        .iter()
-        .find(|candidate| context.profile.same_identifier(&candidate.key, &column.key))
-        .copied()
+) -> Option<&'k MergedKey> {
+    keys.iter().copied().find(|key| {
+        key.sources.contains(&index)
+            && context
+                .profile
+                .same_identifier(&key.column.key, &column.key)
+    })
 }
 
 fn star_column(
