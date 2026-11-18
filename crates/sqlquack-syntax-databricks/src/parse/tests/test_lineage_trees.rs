@@ -244,6 +244,12 @@ fn given_sql_when_parsing_then_the_tree_keeps_what_lineage_reads() {
             expected_json: "[0]",
         },
         ValueTestCase {
+            description: "a credential value written as a number is a bare value, not a written spelling",
+            sql: "COPY INTO t1 FROM 's3://b/p' WITH ( CREDENTIAL ( k = 1 ) ) FILEFORMAT = CSV",
+            pointer: "/0/copy/credentials",
+            expected_json: r#"{"bare_values":[0],"credentials":[["k","1"]],"encryption":null,"storage":null}"#,
+        },
+        ValueTestCase {
             description: "a table property written without = keeps its position",
             sql: "ALTER TABLE t1 SET TBLPROPERTIES ( 'k1' = 1 , 'k2' 2 )",
             pointer: "/0/alter_table/actions/0/SetTableProperties/without_equals",
