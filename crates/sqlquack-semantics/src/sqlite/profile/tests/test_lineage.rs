@@ -71,6 +71,42 @@ fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_fou
             )],
         },
         QueryFindingsTestCase {
+            description: "a USING key read unqualified beside a comma item offering it (3.40: ambiguous)",
+            sql: "SELECT id FROM orders a JOIN customers b USING (id), customers c",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key read unqualified beside a later ON join offering it (3.40: ambiguous)",
+            sql: "SELECT id FROM orders a JOIN customers b USING (id) JOIN customers c ON c.id = a.id",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a NATURAL key read unqualified beside a comma item offering it (3.40: ambiguous)",
+            sql: "SELECT id FROM orders a NATURAL JOIN customers b, customers c",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key of a parenthesised join beside a later item offering it (3.40: ambiguous)",
+            sql: "SELECT id FROM (orders a JOIN customers b USING (id)) JOIN customers c ON true",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "a ranking function without OVER",
             sql: "SELECT ROW_NUMBER() AS r FROM orders",
             expected_findings: &[("E232", "Window function requires an OVER clause", 0)],
@@ -116,6 +152,16 @@ fn given_a_sqlite_query_sqlite_accepts_when_checking_then_nothing_is_found() {
         QueryFindingsTestCase {
             description: "a nested select list's named window reading the enclosing query's alias (3.40: accepted)",
             sql: "SELECT quantity AS q FROM orders WHERE EXISTS (SELECT sum(1) OVER w FROM customers WINDOW w AS (ORDER BY q))",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key a later USING join merges again (3.40: accepted)",
+            sql: "SELECT id FROM orders a JOIN customers b USING (id) JOIN customers c USING (id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key outer joins merge again (3.40: accepted)",
+            sql: "SELECT id FROM orders a LEFT JOIN customers b USING (id) RIGHT JOIN customers c USING (id)",
             expected_findings: &[],
         },
         QueryFindingsTestCase {
