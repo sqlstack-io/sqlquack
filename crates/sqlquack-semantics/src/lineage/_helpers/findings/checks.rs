@@ -32,6 +32,8 @@ pub(crate) struct Level<'s, 'a> {
     pub(crate) own: &'s [String],
     /// The name of the projection being read, which hides own aliases spelled the same.
     pub(crate) hidden: Option<&'s str>,
+    /// Whether the keys of a window the clause reads may read this level's output aliases.
+    pub(crate) windows_read_outputs: bool,
     pub(crate) connect: bool,
     /// Whether a SEMI or ANTI join filters the level, its right side hidden from the outputs.
     pub(crate) filtering_join: bool,

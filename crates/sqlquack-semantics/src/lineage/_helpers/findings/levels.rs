@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::queries::models::{
-    JoinKind, NamedWindow, OrderBy, Select, Subquery, WindowFrameBound, With,
+    JoinKind, NamedWindow, OrderBy, Over, Select, Subquery, WindowFrameBound, With,
 };
 
 use crate::dialects::main::dialect_rules::dialect_rules;
@@ -314,6 +314,7 @@ fn select_findings(
         enclosing: aliases,
         own: &own_outputs,
         hidden: None,
+        windows_read_outputs: true,
         connect: select.connect.is_some(),
         filtering_join: every_join(select).into_iter().any(|join| {
             matches!(
@@ -338,6 +339,7 @@ fn select_findings(
         let projected = match &own_name {
             Some(own_name) => Level {
                 hidden: Some(own_name),
+                windows_read_outputs: rules.window_keys_read_outputs(),
                 ..level
             },
             None => unnamed,
@@ -426,6 +428,12 @@ fn window_findings(
         .iter()
         .map(|projection| output_key(unannotated(projection), context))
         .collect();
+    let unnamed = Level {
+        enclosing: &[],
+        own: &[],
+        ..level
+    };
+    let projected_reads: bool = dialect_rules(context.profile).window_keys_read_outputs();
     let mut readers: Vec<(Level<'_, '_>, Vec<&NamedWindow>)> = match anywhere {
         true => select
             .expressions
@@ -433,11 +441,14 @@ fn window_findings(
             .zip(&names)
             .map(|(projection, name)| {
                 let reached = used_windows(windows.clone(), &[projection], context);
-                let hidden = Level {
-                    hidden: Some(name.as_str()),
-                    ..level
+                let reader = match projected_reads {
+                    true => Level {
+                        hidden: Some(name.as_str()),
+                        ..level
+                    },
+                    false => unnamed,
                 };
-                (hidden, reached)
+                (reader, reached)
             })
             .collect(),
         false => Vec::new(),
@@ -452,11 +463,6 @@ fn window_findings(
             rest.push(window);
         }
     }
-    let unnamed = Level {
-        enclosing: &[],
-        own: &[],
-        ..level
-    };
     readers.push((if anywhere { level } else { unnamed }, rest));
     let (mut own, mut nested): (Vec<NameFinding>, Vec<NameFinding>) = (Vec::new(), Vec::new());
     for (reader, reached) in readers {
@@ -526,8 +532,13 @@ fn used_windows<'w>(
 
 /// The partition and order keys of `window`, and its frame's offsets.
 fn window_keys(window: &NamedWindow) -> impl Iterator<Item = &Expression> {
-    let orders = window.spec.order_by.iter().map(|ordered| &ordered.this);
-    let frame = window.spec.frame.iter();
+    over_keys(&window.spec)
+}
+
+/// The partition and order keys of `over`, and its frame's offsets.
+fn over_keys(over: &Over) -> impl Iterator<Item = &Expression> {
+    let orders = over.order_by.iter().map(|ordered| &ordered.this);
+    let frame = over.frame.iter();
     let bounds = frame.flat_map(|frame| std::iter::once(&frame.start).chain(&frame.end));
     let offsets = bounds.filter_map(|bound| match bound {
         WindowFrameBound::Preceding(offset)
@@ -535,7 +546,7 @@ fn window_keys(window: &NamedWindow) -> impl Iterator<Item = &Expression> {
         | WindowFrameBound::Value(offset) => Some(offset.as_ref()),
         _ => None,
     });
-    window.spec.partition_by.iter().chain(orders).chain(offsets)
+    over.partition_by.iter().chain(orders).chain(offsets)
 }
 
 /// The keys of `order`.
@@ -648,6 +659,27 @@ fn clause_findings(
             Expression::Lambda(lambda) => {
                 bound.extend(lambda.parameters.iter().map(|name| key(name, context)));
                 pending.push(&lambda.body);
+            }
+            Expression::WindowFunction(window) if !level.windows_read_outputs => {
+                pending.push(&window.this);
+                pending.extend(
+                    window
+                        .keep
+                        .iter()
+                        .flat_map(|keep| &keep.order_by)
+                        .map(|ordered| &ordered.this),
+                );
+                let keys = Level {
+                    enclosing: &[],
+                    own: &[],
+                    windows_read_outputs: true,
+                    ..*level
+                };
+                for key in over_keys(&window.over) {
+                    let (found, inner) = clause_findings(key, &keys, context);
+                    own.extend(found);
+                    nested.extend(inner);
+                }
             }
             _ => {
                 for child in node.children() {

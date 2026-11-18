@@ -73,6 +73,10 @@ impl DialectRules for ClickHouseRules {
         false
     }
 
+    fn window_keys_read_outputs(&self) -> bool {
+        true
+    }
+
     fn checks_call_signatures(&self) -> bool {
         true
     }
