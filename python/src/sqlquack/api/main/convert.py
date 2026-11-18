@@ -27,6 +27,7 @@ def convert(
         "overrides": path_argument(chosen.overrides),
         "verified_overrides": dict(chosen.verified_overrides),
         "compact": chosen.compact,
+        "max_call_depth": chosen.max_call_depth,
     }
     result: dict[str, Any] = loaded(lambda: convert_json(sql, json.dumps(request), path))
     report: dict[str, Any] = result["report"]

@@ -3,3 +3,6 @@
 pub(crate) mod _helpers;
 pub mod constants;
 pub mod main;
+
+#[cfg(test)]
+mod tests;

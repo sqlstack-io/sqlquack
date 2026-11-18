@@ -26,6 +26,23 @@ class RenderTestCase:
 
 
 @dataclass(frozen=True)
+class CallDepthTestCase:
+    description: str
+    levels: int
+    max_call_depth: int | None
+    expected_codes: tuple[str, ...]
+    expected_helps: tuple[str, ...]
+    expected_labels: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class CallDepthRefusalTestCase:
+    description: str
+    max_call_depth: int
+    expected_message: str
+
+
+@dataclass(frozen=True)
 class FailureTestCase:
     description: str
     sql: str

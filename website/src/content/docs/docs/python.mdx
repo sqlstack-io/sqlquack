@@ -45,8 +45,10 @@ With an existing Python 3.12 or newer, `pip install target/wheels/sqlquack-*.whl
 
 ## Checking
 
-`check(*, sql, path="<string>")` parses `sql` and finds what Snowflake rejects. `path` names the
-SQL in rendered diagnostics. It returns a `CheckResult`:
+`check(*, sql, path="<string>", max_call_depth=None)` parses `sql` and finds what Snowflake
+rejects. `path` names the SQL in rendered diagnostics. `max_call_depth` is
+[`--max-call-depth`](/docs/cli/check/#options): function calls may nest that deep, `256` by
+default and at most `512`. It returns a `CheckResult`:
 
 | Field | Type | Meaning |
 |-------|------|---------|
@@ -75,7 +77,7 @@ SQL in rendered diagnostics. It returns a `CheckResult`:
 
 `ConvertOptions` has one field per [`convert`](/docs/cli/convert/) flag, with the same defaults:
 `project`, `config`, `no_config`, `session`, `strict`, `python_runtime`, `overrides`,
-`verified_overrides` and `compact`. `project`, `config` and `overrides` take a path (`str` or
+`verified_overrides`, `compact` and `max_call_depth`. `project`, `config` and `overrides` take a path (`str` or
 `os.PathLike`), not the parsed contents. `session` and `verified_overrides` take a mapping, such as
 `session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings.
 
@@ -101,4 +103,5 @@ SQL.
 ## Errors
 
 Where the command line exits 2, the functions raise `SqlQuackError`, a `ValueError`: for example,
-for input that holds no SQL statement or a `schema` that is not a valid mapping.
+for input that holds no SQL statement, a `schema` that is not a valid mapping, or a
+`max_call_depth` above `512`.

@@ -1,7 +1,7 @@
 //! `analyze`: parse, classify, convert or refuse.
 
 use sqlquack_diagnostics::classification::main::classify::classify;
-use sqlquack_parse::parsing::main::parse_source::parse_source;
+use sqlquack_parse::parsing::main::parse_source_within::parse_source_within;
 use sqlquack_syntax::Expression;
 use std::time::Instant;
 
@@ -36,7 +36,7 @@ pub fn analyze(
         quoted_exclusions: quoted_exclusions(sql),
         ..options.clone()
     };
-    let statements = match parse_source(sql, Dialect::Snowflake) {
+    let statements = match parse_source_within(sql, Dialect::Snowflake, options.max_call_depth) {
         Ok(statements) => statements,
         Err(failure) => {
             let refusal = refuse_unparsed(&failure, &lines);

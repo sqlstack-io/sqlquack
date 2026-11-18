@@ -33,4 +33,6 @@ pub struct ConversionChoices {
     pub strict: bool,
     /// A Python runtime registers the project's Python functions.
     pub python_runtime: bool,
+    /// Function calls nested deeper than this are a parse error; the parser's default when absent.
+    pub max_call_depth: Option<usize>,
 }

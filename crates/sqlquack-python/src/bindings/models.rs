@@ -38,4 +38,6 @@ pub struct ConvertRequest {
     pub session: BTreeMap<String, String>,
     /// `--compact`.
     pub compact: bool,
+    /// `--max-call-depth`; the default when absent.
+    pub max_call_depth: Option<usize>,
 }

@@ -49,6 +49,7 @@ sqlquack check: found 1 problem
 | `--format text\|json` | Print the report as text for people or JSON for programs. Default `text`. |
 | `--json` | The same as `--format json`. |
 | `--color auto\|always\|never` | Colour diagnostics. Default `auto`: only on a terminal, honouring `NO_COLOR` and `CLICOLOR_FORCE`. |
+| `--max-call-depth <n>` | Refuse function calls nested more than `n` deep with [`SQ0107`](/docs/diagnostics/reference/#sq0107). Default `256`, at most `512`, the parser's fixed nesting limit. |
 
 With `--json`, `check` prints `{"ok": …, "diagnostics": [...]}`. See
 [JSON output](/docs/diagnostics/overview/#json-output).
@@ -59,4 +60,4 @@ With `--json`, `check` prints `{"ok": …, "diagnostics": [...]}`. See
 |------|---------|
 | `0` | No problem found. |
 | `1` | At least one problem found. |
-| `2` | The input holds no SQL, or can't be read. |
+| `2` | The input holds no SQL, can't be read, or an option is invalid, such as `--max-call-depth` above `512`. |

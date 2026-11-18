@@ -268,6 +268,17 @@ pub(crate) struct CheckCommandTestCase {
     pub(crate) expected_stderr_mention: &'static str,
 }
 
+pub(crate) struct CallDepthCommandTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) arguments: &'static [&'static str],
+    /// The SQL is a SELECT of this many nested ABS calls.
+    pub(crate) levels: usize,
+    pub(crate) expected_exit_code: Option<i32>,
+    pub(crate) expected_stderr_mentions: &'static [&'static str],
+    /// Text stderr must not hold, such as a code the case must not report.
+    pub(crate) expected_stderr_absences: &'static [&'static str],
+}
+
 pub(crate) struct FailureKindTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,

@@ -75,3 +75,4 @@ class ConvertOptions:
     overrides: str | os.PathLike[str] | None = None
     verified_overrides: Mapping[str, str] = field(default_factory=dict)
     compact: bool = False
+    max_call_depth: int | None = None

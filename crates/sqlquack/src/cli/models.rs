@@ -22,6 +22,7 @@ use sqlquack_syntax::tokens::models::SourceLocation;
 use crate::analysis::models::PythonSignature;
 use crate::census::constants::DEFAULT_TEXT_LIMIT;
 use crate::census::models::CursorType;
+use crate::cli::_helpers::evidence::parse_call_depth;
 use crate::cli::constants::EXIT_STATUS_HELP;
 
 /// Snowflake-to-DuckDB SQL conversion that refuses to guess.
@@ -101,6 +102,9 @@ pub struct CheckArguments {
     /// How standard output and standard error are coloured.
     #[command(flatten)]
     pub colors: ColorArguments,
+    /// How deep the SQL may nest.
+    #[command(flatten)]
+    pub parse: ParseArguments,
 }
 
 /// Arguments of `sqlquack convert`.
@@ -394,6 +398,17 @@ pub struct PolicyArguments {
     /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
     #[arg(long)]
     pub python_runtime: bool,
+    /// How deep the SQL may nest.
+    #[command(flatten)]
+    pub parse: ParseArguments,
+}
+
+/// How deep the SQL may nest.
+#[derive(Clone, Debug, Default, Args)]
+pub struct ParseArguments {
+    /// Refuse function calls nested deeper than this; 256 by default, at most 512.
+    #[arg(long, value_name = "DEPTH", value_parser = parse_call_depth)]
+    pub max_call_depth: Option<usize>,
 }
 
 /// How a report is printed.

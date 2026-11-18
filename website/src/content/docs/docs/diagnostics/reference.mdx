@@ -193,9 +193,9 @@ Also reported by its guard name, `E_GUARD_TOKEN_BUDGET_EXCEEDED`.
 
 **brackets nest deeper than the parser accepts** (`nesting_depth_exceeded`)
 
-Parentheses, brackets and braces nest deeper at the span than the parser's limit. The limit keeps parsing from exhausting the stack. Redundant parentheses can be removed; deeply nested subqueries can usually become common table expressions.
+Parentheses, brackets and braces nest deeper at the span than the parser's limit of 512. The limit keeps parsing from exhausting the stack, and no setting raises it. Redundant parentheses can be removed; deeply nested subqueries can usually become common table expressions.
 
-**Help:** remove redundant parentheses, or move nested parts into common table expressions
+**Help:** remove redundant parentheses, or move nested parts into common table expressions; the limit of 512 is fixed, and --max-call-depth can't raise it
 
 **Example:**
 
@@ -225,9 +225,9 @@ Also reported by its guard name, `E_GUARD_PARSER_DEPTH_EXCEEDED`.
 
 **the parsed statement nests deeper than SQLQuack accepts** (`ast_depth_exceeded`)
 
-The statement parsed, but its tree nests deeper than the limit SQLQuack places on later analysis, which keeps conversion from exhausting the stack. Restructure the deepest part of the statement.
+The statement parsed, but its tree nests deeper than the limit of 512 SQLQuack places on later analysis, which keeps conversion from exhausting the stack. No setting raises it. Restructure the deepest part of the statement.
 
-**Help:** move nested parts into common table expressions
+**Help:** move nested parts into common table expressions; the limit of 512 is fixed, and --max-call-depth can't raise it
 
 **Example:**
 
@@ -253,9 +253,9 @@ Also reported by its guard name, `E_GUARD_AST_BUDGET_EXCEEDED`.
 
 **function calls nest deeper than SQLQuack accepts** (`function_nesting_depth_exceeded`)
 
-Function calls nest inside each other deeper than SQLQuack's limit at the span. Compute the innermost calls in a common table expression or a subquery and refer to their results.
+Function calls nest inside each other deeper than SQLQuack's limit at the span, 256 by default. Compute the innermost calls in a common table expression or a subquery and refer to their results, or raise the limit with `--max-call-depth` on the command line or `max_call_depth=` in Python. The limit goes up to 512, the parser's fixed nesting limit.
 
-**Help:** compute inner calls in a common table expression first
+**Help:** compute inner calls in a common table expression first, or raise the limit, up to 512, with --max-call-depth (command line) or max_call_depth= (Python)
 
 **Example:**
 

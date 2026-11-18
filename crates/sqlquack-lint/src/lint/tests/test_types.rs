@@ -98,14 +98,18 @@ pub(crate) struct InvalidRuleTestCase {
 pub(crate) struct FunctionDepthTestCase {
     pub description: &'static str,
     pub depth: usize,
+    /// The request's `max_function_call_depth`; absent for the default.
+    pub max_function_call_depth: Option<usize>,
     pub expected_diagnostic_count: usize,
 }
 
 pub(crate) struct FunctionDepthFailureTestCase {
     pub description: &'static str,
     pub depth: usize,
-    pub expected_code: &'static str,
-    pub expected_limit: &'static str,
+    /// The request's `max_function_call_depth`; absent for the default.
+    pub max_function_call_depth: Option<usize>,
+    /// How the error ends: the guard's value and limit, then how to raise it or why it can't be.
+    pub expected_error_end: &'static str,
 }
 
 pub(crate) struct NestingRefusalTestCase {

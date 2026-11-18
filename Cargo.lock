@@ -1551,6 +1551,7 @@ dependencies = [
  "serde_json",
  "sqlquack",
  "sqlquack-diagnostics",
+ "sqlquack-parse",
  "sqlquack-policy",
  "sqlquack-semantics",
 ]

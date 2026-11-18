@@ -486,18 +486,19 @@ pub(crate) fn check_command(
 ) -> ExitCode {
     let _ = writeln!(stderr, "sqlquack check: checking…");
     let path = arguments.path.as_deref();
-    let (sql, diagnostics) =
-        match read_sql(path).and_then(|sql| check_source(&sql).map(|found| (sql, found))) {
-            Ok(checked) => checked,
-            Err(error) => {
-                let _ = writeln!(
-                    stderr,
-                    "sqlquack check: {}failed{}: {error}",
-                    palette.error, palette.reset
-                );
-                return ExitCode::from(2);
-            }
-        };
+    let (sql, diagnostics) = match read_sql(path).and_then(|sql| {
+        check_source(&sql, arguments.parse.max_call_depth).map(|found| (sql, found))
+    }) {
+        Ok(checked) => checked,
+        Err(error) => {
+            let _ = writeln!(
+                stderr,
+                "sqlquack check: {}failed{}: {error}",
+                palette.error, palette.reset
+            );
+            return ExitCode::from(2);
+        }
+    };
     let report = CheckReport {
         ok: diagnostics.is_empty(),
         diagnostics,

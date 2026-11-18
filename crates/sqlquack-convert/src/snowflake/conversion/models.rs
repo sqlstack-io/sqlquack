@@ -46,6 +46,8 @@ pub struct ConversionOptions {
     pub overrides: BTreeMap<String, UserOverride>,
     /// Override names to the SHA-256 of the body recorded cases verified, which strict mode allows.
     pub verified_overrides: BTreeMap<String, String>,
+    /// Function calls nested deeper than this are a parse error; the parser's default when absent.
+    pub max_call_depth: Option<usize>,
 }
 
 /// A user's DuckDB SQL standing in for a Snowflake function, written in SQLBuild's FUNCTION() format.

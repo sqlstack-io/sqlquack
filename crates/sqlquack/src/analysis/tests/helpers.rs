@@ -38,7 +38,8 @@ use crate::analysis::tests::test_types::{
 };
 use crate::cli::main::convert_report::convert_report;
 use crate::cli::models::{
-    ColorArguments, ConvertArguments, OutputArguments, OutputFormat, PolicyArguments,
+    ColorArguments, ConvertArguments, OutputArguments, OutputFormat, ParseArguments,
+    PolicyArguments,
 };
 use sqlquack_convert::snowflake::analysis::main::analyze::analyze;
 use sqlquack_convert::snowflake::analysis::main::analyze_function::analyze_function;
@@ -947,13 +948,14 @@ fn everyday_arguments(root: &std::path::Path, no_config: bool) -> ConvertArgumen
             no_config,
             strict: false,
             python_runtime: false,
+            parse: ParseArguments::default(),
         },
     }
 }
 
 /// What SQLQuack does with `sql`: its first diagnostic or refusal, with span, or `translated`.
 fn everyday_outcome(sql: &str, arguments: &ConvertArguments) -> (String, Option<String>) {
-    let diagnostics = check_source(sql).expect("the query holds a statement");
+    let diagnostics = check_source(sql, None).expect("the query holds a statement");
     diagnostics.first().map_or_else(
         || converted_outcome(sql, arguments),
         |found| {

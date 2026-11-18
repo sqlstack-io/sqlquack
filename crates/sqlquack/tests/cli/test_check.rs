@@ -1,5 +1,7 @@
 use crate::helpers::{first_refusal_help, run_with_environment, run_with_input};
-use crate::test_types::{CheckCommandTestCase, ColorTestCase, DivergenceHelpTestCase};
+use crate::test_types::{
+    CallDepthCommandTestCase, CheckCommandTestCase, ColorTestCase, DivergenceHelpTestCase,
+};
 
 const PLAIN_CHECK: &str = "sqlquack check: checking…\n\
     error[SQ0203]: QUALIFY needs a window function\n \
@@ -20,6 +22,117 @@ const PLAIN_CONVERTED: &str = "sqlquack convert: converting…\n\
 
 const STYLED_CONVERTED: &str = "sqlquack convert: converting…\n\
     sqlquack convert: \x1b[1;32mdone, converted\x1b[0m\n";
+
+#[test]
+fn given_nested_function_calls_when_checked_or_converted_then_the_call_depth_limit_decides() {
+    let test_cases = [
+        CallDepthCommandTestCase {
+            description: "check reads 256 nested calls by default",
+            arguments: &["check"],
+            levels: 256,
+            expected_exit_code: Some(0),
+            expected_stderr_mentions: &["sqlquack check: done, no problems"],
+            expected_stderr_absences: &[],
+        },
+        CallDepthCommandTestCase {
+            description: "check refuses 257 nested calls, naming the limit and how to raise it",
+            arguments: &["check"],
+            levels: 257,
+            expected_exit_code: Some(1),
+            expected_stderr_mentions: &[
+                "error[SQ0107]",
+                "value 257 exceeds configured limit 256",
+                "= help: compute inner calls in a common table expression first, or raise the \
+                 limit, up to 512, with --max-call-depth (command line) or max_call_depth= (Python)",
+            ],
+            expected_stderr_absences: &[],
+        },
+        CallDepthCommandTestCase {
+            description: "check --max-call-depth 300 reads 300 nested calls",
+            arguments: &["check", "--max-call-depth", "300"],
+            levels: 300,
+            expected_exit_code: Some(0),
+            expected_stderr_mentions: &["sqlquack check: done, no problems"],
+            expected_stderr_absences: &[],
+        },
+        CallDepthCommandTestCase {
+            description: "check --max-call-depth 1000 is refused, naming the ceiling",
+            arguments: &["check", "--max-call-depth", "1000"],
+            levels: 300,
+            expected_exit_code: Some(2),
+            expected_stderr_mentions: &[
+                "must be between 1 and 512, SQLQuack's fixed nesting ceiling, not 1000",
+            ],
+            expected_stderr_absences: &[],
+        },
+        CallDepthCommandTestCase {
+            description: "at the ceiling, 600 nested calls meet the fixed limit, which says so",
+            arguments: &["check", "--max-call-depth", "512"],
+            levels: 600,
+            expected_exit_code: Some(1),
+            expected_stderr_mentions: &[
+                "exceeds configured limit 512; 512 is SQLQuack's fixed nesting ceiling, which no \
+                 setting raises",
+                "the limit of 512 is fixed, and --max-call-depth can't raise it",
+            ],
+            expected_stderr_absences: &["SQ0107"],
+        },
+        CallDepthCommandTestCase {
+            description: "convert refuses 257 nested calls by default",
+            arguments: &["convert", "--no-config"],
+            levels: 257,
+            expected_exit_code: Some(1),
+            expected_stderr_mentions: &["error[SQ0107]", "--max-call-depth"],
+            expected_stderr_absences: &[],
+        },
+        CallDepthCommandTestCase {
+            description: "convert --max-call-depth 300 parses 300 nested calls",
+            arguments: &["convert", "--no-config", "--max-call-depth", "300"],
+            levels: 300,
+            expected_exit_code: Some(0),
+            expected_stderr_mentions: &["sqlquack convert: done, converted"],
+            expected_stderr_absences: &["SQ0107"],
+        },
+        CallDepthCommandTestCase {
+            description: "run takes the flag and refuses one past the ceiling",
+            arguments: &["run", "--no-config", "--max-call-depth", "513"],
+            levels: 1,
+            expected_exit_code: Some(2),
+            expected_stderr_mentions: &["SQLQuack's fixed nesting ceiling, not 513"],
+            expected_stderr_absences: &[],
+        },
+    ];
+
+    for test_case in test_cases {
+        let directory = tempfile::tempdir().expect("a temporary folder");
+        let sql = format!(
+            "SELECT {}1{} AS total",
+            "ABS(".repeat(test_case.levels),
+            ")".repeat(test_case.levels)
+        );
+        let (exit_code, _stdout, stderr) =
+            run_with_input(directory.path(), test_case.arguments, &sql);
+        assert_eq!(
+            exit_code, test_case.expected_exit_code,
+            "{}: {stderr}",
+            test_case.description
+        );
+        for mention in test_case.expected_stderr_mentions {
+            assert!(
+                stderr.contains(mention),
+                "{}: {mention:?} in {stderr}",
+                test_case.description
+            );
+        }
+        for absence in test_case.expected_stderr_absences {
+            assert!(
+                !stderr.contains(absence),
+                "{}: {absence:?} in {stderr}",
+                test_case.description
+            );
+        }
+    }
+}
 
 #[test]
 fn given_snowflake_sql_when_checked_then_problems_are_coded_and_the_exit_status_says_so() {
