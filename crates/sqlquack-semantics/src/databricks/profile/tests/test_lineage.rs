@@ -440,6 +440,11 @@ fn given_a_parenthesized_query_with_clauses_after_it_when_analysed_then_they_rea
             sql: "WITH c AS ( SELECT id, quantity FROM orders ) ( SELECT id FROM c ) ORDER BY quantity",
             expected_same_as: "WITH c AS ( SELECT id, quantity FROM orders ) SELECT id FROM c ORDER BY quantity",
         },
+        SameReadingTestCase {
+            description: "common table expressions before the parentheses, a LIMIT inside and a clause after",
+            sql: "WITH c AS ( SELECT id, quantity FROM orders ) ( SELECT id, nope FROM c LIMIT 1 ) ORDER BY id",
+            expected_same_as: "( WITH c AS ( SELECT id, quantity FROM orders ) SELECT id, nope FROM c LIMIT 1 ) ORDER BY id",
+        },
     ];
     for test_case in test_cases {
         assert_eq!(

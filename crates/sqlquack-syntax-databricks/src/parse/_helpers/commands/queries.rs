@@ -229,13 +229,13 @@ fn organized(body: Expression, organization: Organization) -> Expression {
     body
 }
 
-/// `body` with `with` as its CTEs: inside a parenthesized query's subquery node, else wrapped if it has its own.
+/// `body` with `with` as its CTEs; a parenthesized query takes them inside a bare subquery node.
 pub(crate) fn with_ctes(body: Expression, with: With) -> Expression {
     let body: Expression = match body {
         Expression::Paren(paren) => return subquery(with_ctes(paren.this, with), None, false),
         Expression::Subquery(mut node) if node.alias.is_none() => {
             node.this = with_ctes(node.this, with);
-            return Expression::Subquery(node);
+            return subquery(Expression::Subquery(node), None, false);
         }
         other => other,
     };
