@@ -159,36 +159,12 @@ fn organized_parenthesized(this: Expression, organization: Organization) -> Expr
     node
 }
 
-/// Whether the query within any parentheses of `body` can take every clause of `organization`.
-fn takes_within(body: &Expression, organization: &Organization) -> bool {
-    match body {
-        Expression::Paren(paren) => takes_within(&paren.this, organization),
-        other => takes(other, organization),
-    }
-}
-
-/// `body` with `organization` applied to the query within its parentheses, which stay.
-fn organized_within(body: Expression, organization: Organization) -> Expression {
-    match body {
-        Expression::Paren(mut paren) => {
-            paren.this = organized_within(paren.this, organization);
-            Expression::Paren(paren)
-        }
-        other => organized(other, organization),
-    }
-}
-
 /// `body` with `organization` applied, wrapped first when it cannot take it as it is.
 fn organized(body: Expression, organization: Organization) -> Expression {
     if organization.is_empty() {
         return body;
     }
     let body: Expression = match body {
-        Expression::Paren(paren)
-            if organization.windows.is_some() && takes_within(&paren.this, &organization) =>
-        {
-            return subquery(organized_within(paren.this, organization), None, false);
-        }
         Expression::Paren(paren) => return organized_parenthesized(paren.this, organization),
         other => other,
     };

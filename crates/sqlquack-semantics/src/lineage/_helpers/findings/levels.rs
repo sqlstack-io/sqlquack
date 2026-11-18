@@ -4,7 +4,9 @@ use std::collections::HashMap;
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
-use sqlquack_syntax::expressions::queries::models::{JoinKind, OrderBy, Select, With};
+use sqlquack_syntax::expressions::queries::models::{
+    JoinKind, NamedWindow, OrderBy, Select, Subquery, With,
+};
 
 use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::checks::issues::in_scope;
@@ -19,8 +21,8 @@ use crate::lineage::_helpers::findings::checks::{
 };
 use crate::lineage::_helpers::tracing::expressions::date_part_argument;
 use crate::lineage::_helpers::tracing::queries::{
-    clauses_within, empty_scope, level_scope, output_key, takes_clauses, unannotated,
-    with_ctes_visiting,
+    after_windows, clauses_within, empty_scope, level_scope, output_key, takes_clauses,
+    unannotated, with_ctes_visiting,
 };
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::{Reach, Reuse, reusing};
@@ -28,7 +30,7 @@ use crate::lineage::_helpers::tracing::sources::{every_join, from_parts};
 use crate::lineage::constants::{COLUMNS_FUNCTION, OUTER_RIGHT_JOINS};
 use crate::lineage::models::Engine;
 use crate::lineage::models::NameFinding;
-use crate::lineage::models::{LineageContext, LineageScope, NamedQuery};
+use crate::lineage::models::{Lineage, LineageContext, LineageScope, NamedQuery};
 use crate::lineage::types::DialectRules;
 
 /// The findings of `query` and its inner queries; `aliases` are enclosing levels' output aliases.
@@ -75,7 +77,7 @@ fn query_findings_level(
                 .collect();
             match inner {
                 Expression::Select(select) => {
-                    select_findings((inner, select, &orders), (ctes, outer, aliases), context)
+                    select_findings((inner, select, &after), (ctes, outer, aliases), context)
                 }
                 _ => {
                     let mut found: Vec<NameFinding> =
@@ -234,7 +236,7 @@ fn faulted_cte(name: &str, reach: &[NamedQuery], context: LineageContext<'_>) ->
 }
 
 fn select_findings(
-    (node, select, after): (&Expression, &Select, &[&OrderBy]),
+    (node, select, after): (&Expression, &Select, &[&Subquery]),
     (ctes, outer, aliases): (&[NamedQuery], Option<&LineageScope<'_>>, &[String]),
     context: LineageContext<'_>,
 ) -> Vec<NameFinding> {
@@ -245,6 +247,12 @@ fn select_findings(
     );
     let _reuse: Reuse = reusing(&ctes);
     let mut scope: LineageScope<'_> = level_scope(select, &ctes, outer, context);
+    let found: Vec<(String, Lineage)> = after_windows(after, &scope, context);
+    scope.windows.extend(found);
+    let orders: Vec<&OrderBy> = after
+        .iter()
+        .filter_map(|node| node.order_by.as_ref())
+        .collect();
     let level = NodeLevel {
         scope: &scope,
         context,
@@ -257,7 +265,12 @@ fn select_findings(
                 context,
             },
         ));
-        let after_keys = after.iter().flat_map(|order| order_keys(order));
+        let after_orders = orders.iter().flat_map(|order| order_keys(order));
+        let after_windows = after
+            .iter()
+            .flat_map(|node| node.windows.iter().flatten())
+            .flat_map(window_keys);
+        let after_keys = after_orders.chain(after_windows);
         for checked in in_scope(node)
             .into_iter()
             .chain(after_keys.flat_map(in_scope))
@@ -334,9 +347,9 @@ fn select_findings(
         nested.extend(inner);
     }
     let mut read: Vec<&Expression> = clauses(select);
-    read.extend(after.iter().flat_map(|order| order_keys(order)));
+    read.extend(orders.iter().flat_map(|order| order_keys(order)));
     for clause in read {
-        let named_place: bool = ordered_name_place(select, after, clause)
+        let named_place: bool = ordered_name_place(select, &orders, clause)
             || (rules.group_keys_read_outputs() && group_key_place(select, clause));
         let read = match (anywhere, named_place) {
             (true, _) => level,
@@ -387,6 +400,12 @@ fn ordered_name_place(select: &Select, after: &[&OrderBy], clause: &Expression) 
             .chain(after.iter().copied())
             .flat_map(|order| &order.expressions)
             .any(|ordered| std::ptr::eq(&ordered.this, clause))
+}
+
+/// The partition and order keys of `window`.
+fn window_keys(window: &NamedWindow) -> impl Iterator<Item = &Expression> {
+    let orders = window.spec.order_by.iter().map(|ordered| &ordered.this);
+    window.spec.partition_by.iter().chain(orders)
 }
 
 /// The keys of `order`.

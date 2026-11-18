@@ -453,6 +453,16 @@ fn given_a_join_in_parentheses_when_analysed_then_its_conditions_and_items_are_c
 fn given_a_parenthesized_query_with_clauses_after_it_when_analysed_then_they_read_its_sources() {
     let test_cases = [
         SameReadingTestCase {
+            description: "a named window written after the parentheses",
+            sql: "( SELECT sum ( quantity ) OVER w AS x FROM orders LIMIT 1 ) WINDOW w AS ( ORDER BY quantity )",
+            expected_same_as: "SELECT sum ( quantity ) OVER w AS x FROM orders WINDOW w AS ( ORDER BY quantity ) LIMIT 1",
+        },
+        SameReadingTestCase {
+            description: "an unknown column in a named window written after the parentheses",
+            sql: "( SELECT sum ( quantity ) OVER w AS x FROM orders LIMIT 1 ) WINDOW w AS ( ORDER BY nope )",
+            expected_same_as: "SELECT sum ( quantity ) OVER w AS x FROM orders WINDOW w AS ( ORDER BY nope ) LIMIT 1",
+        },
+        SameReadingTestCase {
             description: "ORDER BY a column the query does not output",
             sql: "( SELECT id FROM orders ) ORDER BY quantity",
             expected_same_as: "SELECT id FROM orders ORDER BY quantity",
