@@ -182,3 +182,11 @@ pub(crate) fn window_only_answers(name: &str) -> Vec<(&'static str, [bool; 3])> 
         })
         .collect()
 }
+
+/// The one statement of `sql` as the native PostgreSQL parser reads it.
+pub(crate) fn native_postgres_statement(sql: &str) -> Expression {
+    sqlquack_syntax_postgres::parse_strict(sql)
+        .unwrap_or_else(|failure| panic!("{sql}: {failure:?}"))
+        .statements
+        .remove(0)
+}

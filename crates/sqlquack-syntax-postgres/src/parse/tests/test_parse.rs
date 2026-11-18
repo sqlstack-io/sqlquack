@@ -793,6 +793,12 @@ fn given_sql_when_parsing_then_the_tree_follows_postgresqls_grammar() {
             expected_node: "joined_table",
         },
         ShapeTestCase {
+            description: "a comma binds looser than JOIN, so the join stays with the item after the comma",
+            sql: "SELECT * FROM a, b JOIN c ON true",
+            pointer: "/0/select/from/expressions/1",
+            expected_node: "joined_table",
+        },
+        ShapeTestCase {
             description: "INTERSECT binds tighter than UNION",
             sql: "SELECT 1 UNION SELECT 2 INTERSECT SELECT 3",
             pointer: "/0/union/right",
