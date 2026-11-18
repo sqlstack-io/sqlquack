@@ -26,6 +26,7 @@ fn principal(name: Identifier, kind: Option<&str>) -> GrantPrincipal {
         is_group: false,
         is_share: false,
         kind: kind.map(str::to_owned),
+        written: None,
     }
 }
 
@@ -139,9 +140,13 @@ impl Parser<'_> {
         if self.string_at(0) {
             return match self.string_literal()? {
                 Expression::Literal(literal) => match *literal {
-                    Literal::String(text)
-                    | Literal::RawString(text)
-                    | Literal::JoinedString(text, _) => Ok(principal(Identifier::new(text), None)),
+                    Literal::String(text) => Ok(principal(Identifier::new(text), None)),
+                    written @ (Literal::RawString(_) | Literal::JoinedString(..)) => {
+                        Ok(GrantPrincipal {
+                            written: Some(written.clone()),
+                            ..principal(Identifier::new(written.value_str()), None)
+                        })
+                    }
                     _ => Err(self.error()),
                 },
                 _ => Err(self.error()),

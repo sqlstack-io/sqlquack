@@ -73,6 +73,11 @@ impl Parser<'_> {
         loop {
             let token: Token = self.advance()?;
             chunks.push(match token.kind {
+                TokenKind::String {
+                    raw: true,
+                    bytes: true,
+                } => Literal::RawByteString(token.value),
+                TokenKind::String { bytes: true, .. } => Literal::ByteString(token.value),
                 TokenKind::String { raw: true, .. } => Literal::RawString(token.value),
                 _ => Literal::String(token.value),
             });
@@ -109,15 +114,30 @@ impl Parser<'_> {
         }
     }
 
-    /// A string or bytes literal; one string chunk stays as written, several keep their chunks.
+    /// A string or bytes literal; one chunk stays as written, several keep their chunks.
     pub(crate) fn string_literal(&mut self) -> Parsing<Expression> {
         let (mut chunks, bytes) = self.literal_chunks()?;
         let text: String = chunks.iter().map(Literal::value_str).collect();
         Ok(literal(match (bytes, chunks.len()) {
-            (true, _) => Literal::ByteString(text),
-            (false, 1) => chunks.remove(0),
+            (_, 1) => chunks.remove(0),
+            (true, _) => Literal::JoinedBytes(text, chunks),
             (false, _) => Literal::JoinedString(text, chunks),
         }))
+    }
+
+    /// A string literal as written: one plain chunk as its text, else the literal it makes.
+    fn written_string(&mut self) -> Parsing<Result<String, Literal>> {
+        let start: usize = self.offset();
+        let (mut chunks, bytes) = self.literal_chunks()?;
+        if bytes {
+            return Err(self.error_with("Syntax error: Unexpected bytes literal", start, true));
+        }
+        let text: String = chunks.iter().map(Literal::value_str).collect();
+        Ok(match (chunks.len(), chunks.first()) {
+            (1, Some(Literal::String(_))) => Ok(text),
+            (1, _) => Err(chunks.remove(0)),
+            _ => Err(Literal::JoinedString(text, chunks)),
+        })
     }
 
     fn primary_base(&mut self) -> Parsing<Expression> {
@@ -280,8 +300,8 @@ impl Parser<'_> {
             }
             "RANGE" if self.char_at(1, '<') => {
                 let to: DataType = self.data_type()?;
-                let value: String = self.string_lit()?;
-                return Ok(typed(string(&value), to));
+                let text: Result<String, Literal> = self.written_string()?;
+                return Ok(typed(text.map_or_else(literal, |value| string(&value)), to));
             }
             "ARRAY" if call_follows && self.starts_query_at(1) => {
                 self.at += 2;
@@ -559,22 +579,22 @@ impl Parser<'_> {
         })
     }
 
-    /// A typed literal: a literal node for the date and time types, else a self-typed cast.
+    /// A typed literal: a literal node for a date or time type of one plain string, else a self-typed cast.
     fn typed_literal(&mut self, word: &str) -> Parsing<Expression> {
         let type_at: usize = self.at;
         self.at += 1;
-        let value: String = self.string_lit()?;
-        Ok(match word {
-            "DATE" => literal(Literal::Date(value)),
-            "TIME" => literal(Literal::Time(value)),
-            "DATETIME" => literal(Literal::Datetime(value)),
-            "TIMESTAMP" => literal(Literal::Timestamp(value)),
-            _ => {
+        let text: Result<String, Literal> = self.written_string()?;
+        Ok(match (word, text) {
+            ("DATE", Ok(value)) => literal(Literal::Date(value)),
+            ("TIME", Ok(value)) => literal(Literal::Time(value)),
+            ("DATETIME", Ok(value)) => literal(Literal::Datetime(value)),
+            ("TIMESTAMP", Ok(value)) => literal(Literal::Timestamp(value)),
+            (_, text) => {
                 let end: usize = self.at;
                 self.at = type_at;
                 let to: DataType = self.data_type()?;
                 self.at = end;
-                typed(string(&value), to)
+                typed(text.map_or_else(literal, |value| string(&value)), to)
             }
         })
     }
