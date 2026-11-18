@@ -13,7 +13,9 @@ use sqlquack_syntax::{DataType, Expression};
 use crate::dialects::main::canonical_type::canonical_type;
 use crate::dialects::main::dialect_rules::dialect_rules;
 use crate::lineage::_helpers::tracing::lineages::{combined, constant, traced_if, unresolved};
-use crate::lineage::_helpers::tracing::queries::{empty_scope, expanded_star, resolved_query};
+use crate::lineage::_helpers::tracing::queries::{
+    empty_scope, expanded_star, resolved_query, takes_clauses,
+};
 use crate::lineage::_helpers::tracing::resolution::{column_lineage, key, positional_column};
 use crate::lineage::_helpers::tracing::reuse::{alias_read, alias_reads, worked};
 use crate::lineage::_helpers::typing::rules::{
@@ -151,6 +153,9 @@ fn expression_lineage_level(
                 data_type: Some(Rc::from(BOOLEAN_TYPE)),
                 ..constant()
             }
+        }
+        Expression::Subquery(subquery) if takes_clauses(subquery) => {
+            query_value(expression, scope, context)
         }
         Expression::Subquery(subquery) => query_value(&subquery.this, scope, context),
         Expression::Select(_)

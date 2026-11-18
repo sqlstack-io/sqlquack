@@ -6,7 +6,7 @@ use std::rc::Rc;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, Star};
-use sqlquack_syntax::expressions::queries::models::{Cte, OrderBy, Select, Union, With};
+use sqlquack_syntax::expressions::queries::models::{Cte, OrderBy, Select, Subquery, Union, With};
 use sqlquack_syntax::tokens::models::Span;
 
 use crate::dialects::main::dialect_rules::dialect_rules;
@@ -57,7 +57,35 @@ fn resolved_query_level(
     context: LineageContext<'_>,
 ) -> ResolvedQuery {
     match query {
-        Expression::Select(select) => select_query(select, ctes, outer, context),
+        Expression::Select(select) => select_query((select, &[]), ctes, outer, context),
+        Expression::Subquery(subquery) if takes_clauses(subquery) => match clauses_within(query) {
+            (Expression::Select(select), after) => {
+                select_query((select, &after), ctes, outer, context)
+            }
+            (inner, after) => {
+                let mut query: ResolvedQuery = resolved_query(inner, ctes, outer, context);
+                let own: Option<&OrderBy> = match inner {
+                    Expression::Union(node) if node.limit.is_none() && node.offset.is_none() => {
+                        node.order_by.as_ref()
+                    }
+                    Expression::Intersect(node)
+                        if node.limit.is_none() && node.offset.is_none() =>
+                    {
+                        node.order_by.as_ref()
+                    }
+                    Expression::Except(node) if node.limit.is_none() && node.offset.is_none() => {
+                        node.order_by.as_ref()
+                    }
+                    _ => None,
+                };
+                let mut levels: Vec<(Option<&OrderBy>, bool)> = vec![(own, false)];
+                levels.extend(after.iter().map(|node| clause_level(node)));
+                for read in output_reads(&deciding(&levels), &query.columns, context) {
+                    query.rows.read(&read);
+                }
+                query
+            }
+        },
         Expression::Union(union) if union.by_name => {
             let ctes = with_ctes(union.with.as_ref(), ctes, outer, context);
             let sides: (&Expression, &Expression) = (&union.left, &union.right);
@@ -543,7 +571,7 @@ fn level_scope_and_rows<'a>(
 }
 
 fn select_query(
-    select: &Select,
+    (select, after): (&Select, &[&Subquery]),
     ctes: &[NamedQuery],
     outer: Option<&LineageScope<'_>>,
     context: LineageContext<'_>,
@@ -620,7 +648,7 @@ fn select_query(
         .group_by
         .iter()
         .flat_map(|group| group.expressions.iter());
-    for item in grouping.chain(ordering(select)) {
+    for item in grouping.chain(ordering(select, after)) {
         let read: Lineage = match ordinal(item) {
             Some(position) => output_at(&query.columns, position),
             None => expression_lineage(item, &scope, context),
@@ -662,20 +690,62 @@ fn unwrapped_projection(mut projection: &Expression) -> &Expression {
     }
 }
 
-/// The ORDER BY keys that decide rows: those of a level with LIMIT, OFFSET, TOP or FETCH.
-fn ordering(select: &Select) -> Vec<&Expression> {
+/// The ORDER BY keys that decide rows of `select` with the clauses of the nodes `after` it.
+fn ordering<'a>(select: &'a Select, after: &[&'a Subquery]) -> Vec<&'a Expression> {
     let limited: bool = select.limit.is_some()
         || select.offset.is_some()
         || select.top.is_some()
         || select.fetch.is_some();
-    match (limited, &select.order_by) {
-        (true, Some(order)) => order
-            .expressions
-            .iter()
-            .map(|ordered| &ordered.this)
-            .collect(),
-        _ => Vec::new(),
+    let mut levels: Vec<(Option<&OrderBy>, bool)> = vec![(select.order_by.as_ref(), limited)];
+    levels.extend(after.iter().map(|node| clause_level(node)));
+    deciding(&levels)
+}
+
+/// The ORDER BY keys of `levels`, innermost first, that a LIMIT or OFFSET at or outside them follows.
+fn deciding<'a>(levels: &[(Option<&'a OrderBy>, bool)]) -> Vec<&'a Expression> {
+    let outermost: Option<usize> = levels.iter().rposition(|(_, limited)| *limited);
+    levels
+        .iter()
+        .take(outermost.map_or(0, |index| index + 1))
+        .flat_map(|(order, _)| order_keys(*order))
+        .collect()
+}
+
+/// A subquery node's ORDER BY, and whether a LIMIT or OFFSET follows it.
+fn clause_level(node: &Subquery) -> (Option<&OrderBy>, bool) {
+    (
+        node.order_by.as_ref(),
+        node.limit.is_some() || node.offset.is_some(),
+    )
+}
+
+/// Whether `node` is an unaliased subquery node holding clauses written after its parentheses.
+pub(crate) fn takes_clauses(node: &Subquery) -> bool {
+    node.alias.is_none()
+        && (node.order_by.is_some()
+            || node.limit.is_some()
+            || node.offset.is_some()
+            || node.sort_by.is_some()
+            || node.cluster_by.is_some()
+            || node.distribute_by.is_some())
+}
+
+/// The query within `query`'s parentheses and unaliased subquery nodes, and those nodes, innermost first.
+pub(crate) fn clauses_within(query: &Expression) -> (&Expression, Vec<&Subquery>) {
+    let mut nodes: Vec<&Subquery> = Vec::new();
+    let mut inner: &Expression = query;
+    loop {
+        inner = match inner {
+            Expression::Paren(paren) => &paren.this,
+            Expression::Subquery(node) if node.alias.is_none() => {
+                nodes.push(node);
+                &node.this
+            }
+            _ => break,
+        };
     }
+    nodes.reverse();
+    (inner, nodes)
 }
 
 /// What ORDER BY keys read: an ordinal or output name reads that output, else nothing traced.

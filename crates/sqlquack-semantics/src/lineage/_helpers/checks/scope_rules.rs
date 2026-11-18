@@ -1157,10 +1157,25 @@ fn distinct_order(
 
 /// A set operation's ORDER BY column that is not one of its outputs.
 pub(crate) fn set_order(query: &Expression, context: LineageContext<'_>) -> Vec<NameFinding> {
-    let (order, left) = match query {
-        Expression::Union(set) => (set.order_by.as_ref(), &set.left),
-        Expression::Intersect(set) => (set.order_by.as_ref(), &set.left),
-        Expression::Except(set) => (set.order_by.as_ref(), &set.left),
+    let order: Option<&OrderBy> = match query {
+        Expression::Union(set) => set.order_by.as_ref(),
+        Expression::Intersect(set) => set.order_by.as_ref(),
+        Expression::Except(set) => set.order_by.as_ref(),
+        _ => return Vec::new(),
+    };
+    set_order_by(query, order, context)
+}
+
+/// `order`'s bare names that are not outputs of the set operation `query`, which it follows.
+pub(crate) fn set_order_by(
+    query: &Expression,
+    order: Option<&OrderBy>,
+    context: LineageContext<'_>,
+) -> Vec<NameFinding> {
+    let left: &Expression = match query {
+        Expression::Union(set) => &set.left,
+        Expression::Intersect(set) => &set.left,
+        Expression::Except(set) => &set.left,
         _ => return Vec::new(),
     };
     let Some(outputs) = output_names(left, context) else {
