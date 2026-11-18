@@ -80,3 +80,39 @@ fn given_excessive_function_depth_when_linting_then_complexity_guard_rejects_it(
         );
     }
 }
+
+#[test]
+fn given_a_call_depth_limit_when_parsing_sql_then_the_limit_applies() {
+    let test_cases = [
+        test_types::ParseSqlDepthTestCase {
+            description: "a raised limit of 400 parses 300 nested calls",
+            depth: 300,
+            max_function_call_depth: Some(400),
+            expected_outcome_end: "parsed",
+        },
+        test_types::ParseSqlDepthTestCase {
+            description: "the default limit refuses 300 nested calls",
+            depth: 300,
+            max_function_call_depth: None,
+            expected_outcome_end: "value 257 exceeds configured limit 256; raise \
+                max_function_call_depth, up to 512",
+        },
+        test_types::ParseSqlDepthTestCase {
+            description: "a limit past the ceiling is refused",
+            depth: 300,
+            max_function_call_depth: Some(1000),
+            expected_outcome_end: "the function-call depth limit must be between 1 and 512, \
+                SQLQuack's fixed nesting ceiling, not 1000",
+        },
+    ];
+    for test_case in test_cases {
+        let sql = helpers::nested_function_sql(test_case.depth);
+        let outcome: String = crate::parse_sql(&sql, "duckdb", test_case.max_function_call_depth)
+            .map_or_else(|error| error, |_| "parsed".to_owned());
+        assert!(
+            outcome.ends_with(test_case.expected_outcome_end),
+            "{}: {outcome}",
+            test_case.description
+        );
+    }
+}
