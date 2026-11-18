@@ -35,18 +35,9 @@ pub(crate) fn from_sources(
     outer: Option<&LineageScope<'_>>,
     context: LineageContext<'_>,
 ) -> FromItems {
-    let mut items: Vec<(&Expression, Option<&Join>, bool)> = Vec::new();
-    for item in select.from.iter().flat_map(|from| from.expressions.iter()) {
-        items.extend(starting(flattened(item, None)));
-    }
-    for join in &select.joins {
-        items.extend(starting(flattened(&join.this, Some(join))));
-    }
     let mut from = FromItems::default();
-    for (item, join, starts) in items {
-        if starts {
-            from.starts.push(from.sources.len());
-        }
+    for (item, join) in from_parts(select) {
+        from.starts.push(from.sources.len());
         if join.is_some_and(|join| OUTER_RIGHT_JOINS.contains(&join.kind)) {
             for key in &mut from.merged {
                 key.lineage.nullability = Nullability::Nullable;
@@ -96,14 +87,29 @@ pub(crate) fn from_sources(
     from
 }
 
-/// One FROM item's flattened parts, the first marked as where the item starts.
-fn starting<'a>(
-    parts: Vec<(&'a Expression, Option<&'a Join>)>,
-) -> impl Iterator<Item = (&'a Expression, Option<&'a Join>, bool)> {
-    parts
+/// The FROM items of `select`, then each join's item, with the join that adds it.
+fn top_items(select: &Select) -> impl Iterator<Item = (&Expression, Option<&Join>)> {
+    select
+        .from
+        .iter()
+        .flat_map(|from| from.expressions.iter())
+        .map(|item| (item, None))
+        .chain(select.joins.iter().map(|join| (&join.this, Some(join))))
+}
+
+/// Every FROM item and joined item of `select`, a parenthesised join's tables and joins in order.
+pub(crate) fn from_parts(select: &Select) -> Vec<(&Expression, Option<&Join>)> {
+    top_items(select)
+        .flat_map(|(item, join)| flattened(item, join))
+        .collect()
+}
+
+/// Every join of `select`, including those written inside a parenthesised join.
+pub(crate) fn every_join(select: &Select) -> Vec<&Join> {
+    from_parts(select)
         .into_iter()
-        .enumerate()
-        .map(|(index, (item, join))| (item, join, index == 0))
+        .filter_map(|(_, join)| join)
+        .collect()
 }
 
 /// A LATERAL VIEW's columns under its alias, untyped; open when it names no columns.
@@ -167,10 +173,17 @@ fn flattened<'a>(
             }
             items
         }
-        Expression::Paren(paren) if matches!(paren.this, Expression::JoinedTable(_)) => {
-            flattened(&paren.this, join)
-        }
+        Expression::Paren(paren) if holds_join(&paren.this) => flattened(&paren.this, join),
         _ => vec![(item, join)],
+    }
+}
+
+/// Whether `item` is a join, in any number of parentheses.
+fn holds_join(item: &Expression) -> bool {
+    match item {
+        Expression::JoinedTable(_) => true,
+        Expression::Paren(paren) => holds_join(&paren.this),
+        _ => false,
     }
 }
 

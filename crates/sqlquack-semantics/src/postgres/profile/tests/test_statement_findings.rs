@@ -167,3 +167,87 @@ fn given_from_items_that_read_each_other_when_resolving_names_then_each_reads_on
         );
     }
 }
+
+#[test]
+fn given_a_join_in_parentheses_when_resolving_names_then_its_conditions_and_items_are_checked() {
+    let test_cases = [
+        QueryFindingsTestCase {
+            description: "an unknown column in a parenthesised join's ON",
+            sql: "SELECT o.id FROM (orders o JOIN customers c ON o.nope = c.id)",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'orders'", 49)],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key one side lacks",
+            sql: "SELECT o.id FROM (orders o JOIN customers c USING (nope))",
+            expected_findings: &[(
+                "E201",
+                "JOIN USING column 'nope' must exist on both sides",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a scalar subquery of two columns in a parenthesised join's ON",
+            sql: "SELECT o.id FROM (orders o JOIN customers c ON o.id = (SELECT id, name FROM customers))",
+            expected_findings: &[("E216", "Scalar subquery must return one column", 47)],
+        },
+        QueryFindingsTestCase {
+            description: "an alias inside the parentheses repeated after them",
+            sql: "SELECT o.id FROM (orders o JOIN customers c ON true) JOIN customers c ON true",
+            expected_findings: &[("E233", "Duplicate table alias 'c'", 0)],
+        },
+        QueryFindingsTestCase {
+            description: "a derived table in a parenthesised join joined to an earlier table",
+            sql: "SELECT o.id FROM customers c2 JOIN (orders o JOIN (SELECT nope FROM customers) d \
+                  ON o.id = d.nope) ON c2.id = o.id",
+            expected_findings: &[("E201", "Unknown column 'nope' in table 'customers'", 58)],
+        },
+        QueryFindingsTestCase {
+            description: "a LATERAL item reading the table before it inside the parentheses",
+            sql: "SELECT l.n FROM (orders o JOIN LATERAL (SELECT o.id AS n) l ON true)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a derived table without LATERAL reading the table before it inside the parentheses",
+            sql: "SELECT l.n FROM (orders o JOIN (SELECT o.id AS n) l ON true)",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'o' referenced by column 'id'",
+                39,
+            )],
+        },
+    ];
+    let schema = duckdb_shop_schema();
+    for test_case in test_cases {
+        let statement = sqlquack_syntax_postgres::parse_strict(test_case.sql)
+            .unwrap_or_else(|failure| panic!("{}: {failure:?}", test_case.description))
+            .statements
+            .remove(0);
+        let context = LineageContext {
+            profile: &POSTGRES,
+            schema: &schema,
+            sql: Some(test_case.sql),
+        };
+        let native: Vec<(&'static str, String, usize)> = statement_findings(&statement, context)
+            .into_iter()
+            .map(|finding| {
+                (
+                    finding.code,
+                    finding.message,
+                    finding.span.map_or(0, |span| span.start),
+                )
+            })
+            .collect();
+        assert_eq!(
+            found_findings(test_case.sql, (Dialect::PostgreSQL, &POSTGRES, &schema)),
+            owned_findings(test_case.expected_findings),
+            "{}",
+            test_case.description
+        );
+        assert_eq!(
+            native,
+            owned_findings(test_case.expected_findings),
+            "{}, PostgreSQL's parser",
+            test_case.description
+        );
+    }
+}
