@@ -74,6 +74,7 @@ impl Parser {
                 let action_words = self.written_alter_column_words();
                 let action = self.parse_alter_column_action()?;
                 actions.push(AlterTableAction::AlterColumn {
+                    comment_written: None,
                     name,
                     action,
                     use_modify_keyword: false,

@@ -228,20 +228,8 @@ impl Parser<'_> {
         Ok(self.spanned(first, node))
     }
 
-    /// `stringLit`: one or more adjacent string literals, joined.
-    pub(crate) fn string_lit(&mut self) -> Parsing<String> {
-        if !self.string_at(0) {
-            return Err(self.error());
-        }
-        let mut text: String = String::new();
-        while self.string_at(0) {
-            text.push_str(&self.advance()?.value);
-        }
-        Ok(text)
-    }
-
-    /// `stringLit` as a string literal: a single raw string stays raw, adjacent strings keep their pieces.
-    pub(crate) fn string_literal(&mut self) -> Parsing<Expression> {
+    /// `stringLit` as one literal: a single string as written, adjacent strings joined with their pieces.
+    pub(crate) fn string_spelling(&mut self) -> Parsing<Literal> {
         if !self.string_at(0) {
             return Err(self.error());
         }
@@ -250,12 +238,27 @@ impl Parser<'_> {
             pieces.push(self.one_string()?);
         }
         Ok(match pieces.len() {
-            1 => literal(pieces.remove(0)),
+            1 => pieces.remove(0),
             _ => {
                 let joined: String = pieces.iter().map(Literal::value_str).collect();
-                literal(Literal::JoinedString(joined, pieces))
+                Literal::JoinedString(joined, pieces)
             }
         })
+    }
+
+    /// `stringLit` as text, with its spelling when it was a raw string or adjacent strings.
+    pub(crate) fn written_string(&mut self) -> Parsing<(String, Option<Literal>)> {
+        let spelling: Literal = self.string_spelling()?;
+        let text: String = spelling.value_str().to_string();
+        Ok((
+            text,
+            (!matches!(spelling, Literal::String(_))).then_some(spelling),
+        ))
+    }
+
+    /// `stringLit` as a string literal: a single raw string stays raw, adjacent strings keep their pieces.
+    pub(crate) fn string_literal(&mut self) -> Parsing<Expression> {
+        Ok(literal(self.string_spelling()?))
     }
 
     /// One string token as a literal; a raw string stays raw.

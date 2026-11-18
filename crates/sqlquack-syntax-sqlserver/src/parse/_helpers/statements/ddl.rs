@@ -625,6 +625,7 @@ impl<'sql> Parser<'sql> {
                     return Err(self.gap("alter_column_option", start));
                 }
                 let mut actions: Vec<AlterTableAction> = vec![AlterTableAction::AlterColumn {
+                    comment_written: None,
                     name: name.clone(),
                     action: AlterColumnAction::SetDataType {
                         data_type,
@@ -646,6 +647,7 @@ impl<'sql> Parser<'sql> {
                 };
                 if let Some(action) = nullability {
                     actions.push(AlterTableAction::AlterColumn {
+                        comment_written: None,
                         name,
                         action,
                         use_modify_keyword: false,

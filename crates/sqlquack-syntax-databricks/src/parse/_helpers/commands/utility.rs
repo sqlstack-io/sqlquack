@@ -1,7 +1,7 @@
 //! The auxiliary statements (SqlBaseParser.g4), such as `DESCRIBE`, `SHOW` and `SET`.
 
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
+use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
 use sqlquack_syntax::expressions::schema_objects::models::{
     Grant, GrantPrincipal, Privilege, Revoke,
 };
@@ -15,7 +15,7 @@ use crate::parse::_helpers::commands::alters::partition;
 use crate::parse::_helpers::commands::queries::limit;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    alias, call, column, column_from, dot, joined, null, property, qualified, string, table,
+    alias, call, column, column_from, dot, joined, null, property, qualified, table,
     too_deep_to_keep, tuple, utility, var,
 };
 use crate::parse::constants::{
@@ -424,7 +424,7 @@ impl Parser<'_> {
         node.target = Some(Expression::Table(Box::new(self.table_reference()?)));
         if self.eat_char('(') {
             let key: Expression = match self.string_at(0) {
-                true => string(&self.string_lit()?),
+                true => self.string_literal()?,
                 false => qualified(self.multipart_identifier()?),
             };
             self.expect_char(')')?;
@@ -528,11 +528,15 @@ impl Parser<'_> {
                 let value: Expression = self.expression()?;
                 return Ok(set_statement(vec![set_item("CATALOG", value, None)]));
             }
-            let parts: Vec<Identifier> = match string_name {
-                true => vec![Identifier::new(self.string_lit()?)],
-                false => vec![self.ident()?],
+            let (parts, name_written): (Vec<Identifier>, Option<Literal>) = match string_name {
+                true => {
+                    let (name, written) = self.written_string()?;
+                    (vec![Identifier::new(name)], written)
+                }
+                false => (vec![self.ident()?], None),
             };
             return Ok(Expression::Use(Box::new(Use {
+                name_written,
                 kind: Some(UseKind::Catalog),
                 this: joined(parts.clone()),
                 roles: Vec::new(),
@@ -706,11 +710,15 @@ impl Parser<'_> {
             .filter(|word| word == NAMESPACE);
         self.at += usize::from(kind.is_some());
         let string_name: bool = kind == Some(UseKind::Catalog) && self.string_at(0);
-        let parts: Vec<Identifier> = match string_name {
-            true => vec![Identifier::new(self.string_lit()?)],
-            false => self.multipart_identifier()?,
+        let (parts, name_written): (Vec<Identifier>, Option<Literal>) = match string_name {
+            true => {
+                let (name, written) = self.written_string()?;
+                (vec![Identifier::new(name)], written)
+            }
+            false => (self.multipart_identifier()?, None),
         };
         Ok(Expression::Use(Box::new(Use {
+            name_written,
             kind,
             this: joined(parts.clone()),
             roles: Vec::new(),

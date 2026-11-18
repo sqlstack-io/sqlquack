@@ -120,6 +120,7 @@ fn use_node(parts: Vec<Identifier>) -> Expression {
         _ => parts,
     };
     Expression::Use(Box::new(Use {
+        name_written: None,
         kind: None,
         this,
         roles: Vec::new(),
