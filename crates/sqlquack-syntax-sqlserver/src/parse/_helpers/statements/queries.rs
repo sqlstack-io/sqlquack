@@ -268,27 +268,8 @@ impl<'sql> Parser<'sql> {
             });
         }
         if self.eat_kw("FROM") {
-            let mut sources: Vec<Expression> = Vec::new();
-            let mut joins: Vec<Join> = Vec::new();
-            loop {
-                let source: Expression = self.table_source()?;
-                if sources.is_empty() {
-                    sources.push(source);
-                    joins = self.joins()?;
-                } else {
-                    let more: Vec<Join> = self.joins()?;
-                    sources.push(match more.is_empty() {
-                        true => source,
-                        false => joined_table(source, more, None),
-                    });
-                }
-                if !self.eat_char(',') {
-                    break;
-                }
-            }
-            select.from = Some(From {
-                expressions: sources,
-            });
+            let (from, joins) = self.read_sources()?;
+            select.from = Some(from);
             select.joins = joins;
         }
         if self.eat_kw("WHERE") {
@@ -928,6 +909,29 @@ impl<'sql> Parser<'sql> {
             }
             None => node,
         })
+    }
+
+    /// The `FROM` sources of a query, `UPDATE` or `DELETE`, and a lone source's joins.
+    ///
+    /// A comma binds looser than JOIN, so in a list of several sources each keeps its own joins.
+    pub(crate) fn read_sources(&mut self) -> Parsing<(From, Vec<Join>)> {
+        let mut sources: Vec<(Expression, Vec<Join>)> = vec![self.single_source()?];
+        while self.eat_char(',') {
+            sources.push(self.single_source()?);
+        }
+        if sources.len() == 1 {
+            let (source, joins) = sources.remove(0);
+            let expressions: Vec<Expression> = vec![source];
+            return Ok((From { expressions }, joins));
+        }
+        let expressions: Vec<Expression> = sources
+            .into_iter()
+            .map(|(source, joins)| match joins.is_empty() {
+                true => source,
+                false => joined_table(source, joins, None),
+            })
+            .collect();
+        Ok((From { expressions }, Vec::new()))
     }
 
     /// One table source and the joins after it.

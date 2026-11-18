@@ -2,7 +2,7 @@
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{BooleanLiteral, Identifier, TableRef};
-use sqlquack_syntax::expressions::queries::models::{From, Join, Where, With};
+use sqlquack_syntax::expressions::queries::models::{Where, With};
 use sqlquack_syntax::expressions::statements::models::{Merge, OutputClause, When, Whens};
 use sqlquack_syntax::expressions::types::models::Tuple;
 
@@ -312,19 +312,5 @@ impl<'sql> Parser<'sql> {
             returning_aliases: Vec::new(),
             schema_evolution: false,
         })))
-    }
-
-    /// The `FROM` sources of `UPDATE` and `DELETE`.
-    fn read_sources(&mut self) -> Parsing<(From, Vec<Join>)> {
-        let (first, joins) = self.single_source()?;
-        let mut expressions: Vec<Expression> = vec![first];
-        while self.eat_char(',') {
-            let (next, more) = self.single_source()?;
-            expressions.push(match more.is_empty() {
-                true => next,
-                false => crate::parse::_helpers::tree::nodes::joined_table(next, more, None),
-            });
-        }
-        Ok((From { expressions }, joins))
     }
 }

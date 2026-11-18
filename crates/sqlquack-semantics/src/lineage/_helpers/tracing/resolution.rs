@@ -116,8 +116,8 @@ fn unqualified(
     if scope.lambda_names.iter().any(|name| same(name)) {
         return Some(constant());
     }
-    if let Some(merged) = scope.merged.iter().find(|merged| same(&merged.key)) {
-        return Some(merged.lineage.clone());
+    if let Some(merged) = scope.merged.iter().find(|merged| same(&merged.column.key)) {
+        return Some(merged.column.lineage.clone());
     }
     let known = scope
         .sources

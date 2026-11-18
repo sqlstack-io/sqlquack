@@ -20,7 +20,7 @@ use crate::lineage::constants::{
     METADATA_PREFIX, POSITIONAL_PREFIX, SEQUENCE_COLUMNS, SINGLE_JOIN_SOURCES, SQL_STAR,
 };
 use crate::lineage::models::NameFinding;
-use crate::lineage::models::{LineageContext, LineageScope, NamedQuery, ScopeSource};
+use crate::lineage::models::{LineageContext, LineageScope, MergedKey, NamedQuery, ScopeSource};
 
 /// The level a clause is read in: its scope, the aliases it may read, CONNECT BY and filter joins.
 #[derive(Clone, Copy)]
@@ -102,14 +102,12 @@ pub(crate) fn column_finding(
     }
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
     while let Some(current) = scope {
-        if current
+        let keys: Vec<&MergedKey> = current
             .merged
             .iter()
-            .any(|merged| context.profile.same_identifier(&merged.key, &wanted))
-        {
-            return None;
-        }
-        let matches: usize = offering_count(current, &wanted, context);
+            .filter(|merged| context.profile.same_identifier(&merged.column.key, &wanted))
+            .collect();
+        let matches: usize = keys.len() + offering_count(current, (&wanted, &keys), context);
         if matches > 1
             && !(level.filtering_join && std::ptr::eq(current, level.scope))
             && !single_join_prefers_left(current, context)
@@ -169,11 +167,11 @@ pub(crate) fn value_keyword(
     let wanted: String = key(name, context);
     let mut current: Option<&LineageScope<'_>> = Some(scope);
     while let Some(level) = current {
-        if offering_count(level, &wanted, context) > 0
+        if offering_count(level, (&wanted, &[]), context) > 0
             || level
                 .merged
                 .iter()
-                .any(|merged| context.profile.same_identifier(&merged.key, &wanted))
+                .any(|merged| context.profile.same_identifier(&merged.column.key, &wanted))
         {
             return false;
         }
@@ -488,14 +486,16 @@ fn offers(source: &ScopeSource, wanted: &str, context: LineageContext<'_>) -> bo
 }
 
 /// How many FROM items offer `wanted`, two under one name counted once.
-fn offering_count(scope: &LineageScope<'_>, wanted: &str, context: LineageContext<'_>) -> usize {
+fn offering_count(
+    scope: &LineageScope<'_>,
+    (wanted, keys): (&str, &[&MergedKey]),
+    context: LineageContext<'_>,
+) -> usize {
     let mut names: Vec<&str> = Vec::new();
     let mut keyless: usize = 0;
-    for source in scope
-        .sources
-        .iter()
-        .filter(|source| offers(source, wanted, context))
-    {
+    for (_, source) in scope.sources.iter().enumerate().filter(|(index, source)| {
+        !keys.iter().any(|key| key.sources.contains(index)) && offers(source, wanted, context)
+    }) {
         match source.key.as_deref() {
             Some(name) if !names.contains(&name) => names.push(name),
             Some(_) => {}

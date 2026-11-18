@@ -60,15 +60,25 @@ pub(crate) fn is_table_name(token: &Token) -> bool {
 
 impl Parser<'_> {
     /// `FromClause`: `FROM TableRef, ...`, into `select`'s sources and joins.
+    ///
+    /// A comma binds looser than JOIN, so in a list of several items each keeps its own joins.
     pub(crate) fn select_from_clause(&mut self, mut select: Select) -> Parsing<Select> {
         self.expect_kw("FROM")?;
         let mut refs: Vec<(Expression, Vec<Join>)> =
             self.comma_list(|parser| parser.table_ref())?;
-        let (first, joins) = refs.remove(0);
-        let mut items: Vec<Expression> = vec![first];
-        items.extend(refs.into_iter().map(|(item, more)| collapse(item, more)));
+        if refs.len() == 1 {
+            let (item, joins) = refs.remove(0);
+            select.from = Some(From {
+                expressions: vec![item],
+            });
+            select.joins = joins;
+            return Ok(select);
+        }
+        let items: Vec<Expression> = refs
+            .into_iter()
+            .map(|(item, joins)| collapse(item, joins))
+            .collect();
         select.from = Some(From { expressions: items });
-        select.joins = joins;
         Ok(select)
     }
 
