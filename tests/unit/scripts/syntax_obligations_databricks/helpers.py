@@ -40,6 +40,7 @@ IDENTIFIER_CLASS_KIND: str = "identifier_class"
 CLASS_NOTE_PREFIXES: tuple[str, ...] = ("reserved:", "keyword:")
 NO_NOTE: tuple[str, str] = ("", "")
 MISSING_OPEN: str = "the form without its required ("
+NEGATIVE_KINDS: frozenset[str] = frozenset({"negative_neighbour", "required_operand_missing"})
 QUOTED: re.Pattern[str] = re.compile(r"'(?:[^']|'')*'|`[^`]*`")
 
 
@@ -191,3 +192,32 @@ def accepted_sql(form: str) -> set[str]:
             _built_cases(),
         )
     }
+
+
+def family_cases(root: Path, family: str) -> dict[str, Row]:
+    """The built cases of one family, by case id."""
+    path: Path = root / "cases" / f"{family}.jsonl"
+    return {str(row["case_id"]): row for row in map(json.loads, path.read_text().splitlines())}
+
+
+def observed_negatives(root: Path, cases: dict[str, Row], family: str) -> tuple[str, str]:
+    """An observed case only derived negatives cite, and one a hand [[limit]] negative renders."""
+    rows: list[Row] = tomllib.loads((root / "obligations" / f"{family}.toml").read_text())[
+        "obligation"
+    ]
+    kinds: dict[str, str] = {str(row["id"]): str(row["kind"]) for row in rows}
+    limits: list[Row] = tomllib.loads((root / "limits.toml").read_text())["limit"]
+    hand: set[str] = {
+        " ".join(str(row["sql"]).split()) for row in filter(lambda row: "sql" in row, limits)
+    }
+    negatives: list[str] = sorted(
+        filter(lambda case_id: _only_negatives_cite(cases[case_id], kinds), cases)
+    )
+    derived: list[str] = list(filter(lambda case_id: cases[case_id]["sql"] not in hand, negatives))
+    written: list[str] = list(filter(lambda case_id: cases[case_id]["sql"] in hand, negatives))
+    return derived[0], written[0]
+
+
+def _only_negatives_cite(case: Row, kinds: dict[str, str]) -> bool:
+    cited: set[str] = set(map(lambda identifier: kinds[str(identifier)], case["obligations"]))
+    return case["expect"] == "observe" and cited <= NEGATIVE_KINDS

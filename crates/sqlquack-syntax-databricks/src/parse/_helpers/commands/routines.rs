@@ -13,7 +13,9 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 use crate::parse::_helpers::commands::creates::{Head, property};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{joined, string, table};
-use crate::parse::constants::{DROP_TEMPORARY_FUNCTION, SCALA_LANGUAGE, SQL_LANGUAGE};
+use crate::parse::constants::{
+    DROP_TEMPORARY_FUNCTION, SCALA_LANGUAGE, SCHEMA_SYNONYMS, SQL_LANGUAGE,
+};
 use crate::scan::models::TokenKind;
 
 impl Parser<'_> {
@@ -79,7 +81,7 @@ impl Parser<'_> {
     /// DATABASE or NAMESPACE when the word at the cursor writes one for SCHEMA.
     fn schema_synonym(&self) -> Option<String> {
         self.word_at(0)
-            .filter(|word| word == "DATABASE" || word == "NAMESPACE")
+            .filter(|word| SCHEMA_SYNONYMS.contains(&word.as_str()))
     }
 
     /// `dropFunction` after `DROP [TEMPORARY]`; a temporary function's drop is a gap.

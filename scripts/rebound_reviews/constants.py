@@ -11,8 +11,13 @@ STAGE_CLASS: str = "stage"
 STAGE_KEY: str = "stage"
 EXPECT_KEY: str = "expect"
 EXPECT_ACCEPT: str = "accept"
-# The stage a case settled to accept carries, by its receipt's phase; accepted carries none. A phase
-# not listed here, a syntax error among them, gives no stage a re-bind may take.
+CHECK_EPILOG: str = (
+    "A set_quantifier re-bind may differ only by the call flag read as its quantifier in the "
+    "trees. A stage re-bind may differ only by the stage of cases expected to be accepted, each "
+    "the stage of its receipt phase (accepted gives none; a phase not listed, such as a syntax "
+    "error, gives no stage a re-bind may take); their setup, session, SQL text and obligations "
+    "are taken from --old-cases, compared with the current cases field by field."
+)
 STAGE_OF_PHASE: dict[str, str | None] = {
     "accepted": None,
     "semantic_error": "semantic",

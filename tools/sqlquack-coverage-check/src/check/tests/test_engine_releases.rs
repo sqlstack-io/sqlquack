@@ -1,18 +1,9 @@
 use crate::check::_helpers::receipts::case_result;
 use crate::check::models::{LocalVerdict, Reason};
-use crate::check::tests::helpers::{SETUP, case_line, receipt_line, with_fields};
+use crate::check::tests::helpers::{SETUP, case_line, release_receipt};
 use crate::check::tests::test_types::EngineReleaseTestCase;
 use crate::formats::_helpers::dialect::{set_dialect, snowflake};
 use crate::formats::models::{Case, Dialect, Receipt};
-
-/// A receipt of `case` recording `phase` at engine release `version`.
-fn release_receipt(case: &str, phase: &str, version: &str) -> Receipt {
-    let line: String = with_fields(
-        &receipt_line(case, phase),
-        serde_json::json!({"engine_version": version}),
-    );
-    serde_json::from_str(&line).expect("receipt")
-}
 
 #[test]
 fn given_receipts_from_several_releases_when_pinned_then_only_the_pin_year_counts_and_the_newest_decides()

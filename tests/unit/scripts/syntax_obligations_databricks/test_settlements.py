@@ -8,52 +8,47 @@ the build is tested with a derived negative, beside a hand-written one, and the 
 from __future__ import annotations
 
 import json
-import tomllib
 from pathlib import Path
 
 import pytest
 
 from scripts.grammar_obligations.types import Row
 from scripts.syntax_obligations_databricks._helpers.cases import kind_settlement
-from tests.unit.scripts.syntax_obligations_databricks._test_types import PreviewSettlementTestCase
-from tests.unit.scripts.syntax_obligations_databricks.helpers import build_error, small_root
-
-FAMILY: str = "ddl"
-NEGATIVE_KINDS: frozenset[str] = frozenset({"negative_neighbour", "required_operand_missing"})
-
-
-def _cases(root: Path) -> dict[str, Row]:
-    path: Path = root / "cases" / f"{FAMILY}.jsonl"
-    return {str(row["case_id"]): row for row in map(json.loads, path.read_text().splitlines())}
-
-
-def _observed_negatives(root: Path, cases: dict[str, Row]) -> tuple[str, str]:
-    """An observed case only derived negatives cite, and one a hand [[limit]] negative renders."""
-    rows: list[Row] = tomllib.loads((root / "obligations" / f"{FAMILY}.toml").read_text())[
-        "obligation"
-    ]
-    kinds: dict[str, str] = {str(row["id"]): str(row["kind"]) for row in rows}
-    limits: list[Row] = tomllib.loads((root / "limits.toml").read_text())["limit"]
-    hand: set[str] = {" ".join(str(row["sql"]).split()) for row in limits if "sql" in row}
-    derived: list[str] = []
-    written: list[str] = []
-    for case_id, case in sorted(cases.items()):
-        cited: set[str] = {kinds[str(identifier)] for identifier in case["obligations"]}
-        if case["expect"] != "observe" or not cited <= NEGATIVE_KINDS:
-            continue
-        (written if case["sql"] in hand else derived).append(case_id)
-    return derived[0], written[0]
+from tests.unit.scripts.syntax_obligations_databricks._test_types import (
+    KindSettlementTestCase,
+    PreviewSettlementTestCase,
+    SettlementBuildTestCase,
+)
+from tests.unit.scripts.syntax_obligations_databricks.helpers import (
+    build_error,
+    family_cases,
+    observed_negatives,
+    small_root,
+)
 
 
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        SettlementBuildTestCase(
+            description="a semantic error receipt settles only the hand-written negative",
+            family="ddl",
+            phase="semantic_error",
+            expected_derived_expect="observe",
+            expected_written=("accept", "semantic"),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
 def test_given_parsed_receipts_when_built_then_only_the_derived_negative_stays_observed(
-    tmp_path: Path,
+    test_case: SettlementBuildTestCase, tmp_path: Path
 ) -> None:
-    root: Path = small_root(directory=tmp_path, limits="", retired="", family=FAMILY)
+    root: Path = small_root(directory=tmp_path, limits="", retired="", family=test_case.family)
     assert build_error(root) == ""
-    before: dict[str, Row] = _cases(root)
-    derived, written = _observed_negatives(root, before)
+    before: dict[str, Row] = family_cases(root, test_case.family)
+    derived, written = observed_negatives(root, before, test_case.family)
     (root / "receipts").mkdir()
-    (root / "receipts" / f"{FAMILY}.jsonl").write_text(
+    (root / "receipts" / f"{test_case.family}.jsonl").write_text(
         "".join(
             json.dumps(
                 {
@@ -61,7 +56,7 @@ def test_given_parsed_receipts_when_built_then_only_the_derived_negative_stays_o
                     "sql_sha256": before[case]["sql_sha256"],
                     "setup_sha256": before[case]["setup_sha256"],
                     "session_sha256": before[case]["session_sha256"],
-                    "phase": "semantic_error",
+                    "phase": test_case.phase,
                 }
             )
             + "\n"
@@ -71,35 +66,97 @@ def test_given_parsed_receipts_when_built_then_only_the_derived_negative_stays_o
 
     assert build_error(root) == ""
 
-    after: dict[str, Row] = _cases(root)
-    assert after[derived]["expect"] == "observe"
-    assert (after[written]["expect"], after[written].get("stage")) == ("accept", "semantic")
+    after: dict[str, Row] = family_cases(root, test_case.family)
+    assert after[derived]["expect"] == test_case.expected_derived_expect
+    assert (after[written]["expect"], after[written].get("stage")) == test_case.expected_written
 
 
 @pytest.mark.parametrize(
-    ("kinds", "expect", "settlement", "expected"),
-    [
-        ({"positive"}, "observe", ("reject", ""), None),
-        ({"identifier_class"}, "observe", ("reject", ""), None),
-        ({"alternative", "option_present"}, "observe", ("reject", ""), None),
-        ({"nesting_depth"}, "observe", ("reject", ""), None),
-        ({"negative_neighbour"}, "observe", ("accept", "semantic"), None),
-        ({"negative_neighbour", "positive"}, "observe", ("reject", ""), None),
-        ({"negative_neighbour"}, "observe", ("reject", ""), ("reject", "")),
-        ({"identifier_class"}, "observe", ("accept", "semantic"), ("accept", "semantic")),
-        (set(), "observe", ("reject", ""), ("reject", "")),
-        ({"positive"}, "accept", ("reject", ""), ("reject", "")),
-    ],
+    "test_case",
+    (
+        KindSettlementTestCase(
+            description="a positive refutes a reject",
+            kinds={"positive"},
+            expect="observe",
+            settlement=("reject", ""),
+            expected_settlement=None,
+        ),
+        KindSettlementTestCase(
+            description="an identifier class refutes a reject",
+            kinds={"identifier_class"},
+            expect="observe",
+            settlement=("reject", ""),
+            expected_settlement=None,
+        ),
+        KindSettlementTestCase(
+            description="an alternative with an option refutes a reject",
+            kinds={"alternative", "option_present"},
+            expect="observe",
+            settlement=("reject", ""),
+            expected_settlement=None,
+        ),
+        KindSettlementTestCase(
+            description="a nesting depth refutes a reject",
+            kinds={"nesting_depth"},
+            expect="observe",
+            settlement=("reject", ""),
+            expected_settlement=None,
+        ),
+        KindSettlementTestCase(
+            description="a negative neighbour refutes an accept",
+            kinds={"negative_neighbour"},
+            expect="observe",
+            settlement=("accept", "semantic"),
+            expected_settlement=None,
+        ),
+        KindSettlementTestCase(
+            description="a negative beside a positive refutes a reject",
+            kinds={"negative_neighbour", "positive"},
+            expect="observe",
+            settlement=("reject", ""),
+            expected_settlement=None,
+        ),
+        KindSettlementTestCase(
+            description="a negative neighbour agrees with a reject",
+            kinds={"negative_neighbour"},
+            expect="observe",
+            settlement=("reject", ""),
+            expected_settlement=("reject", ""),
+        ),
+        KindSettlementTestCase(
+            description="an identifier class agrees with an accept",
+            kinds={"identifier_class"},
+            expect="observe",
+            settlement=("accept", "semantic"),
+            expected_settlement=("accept", "semantic"),
+        ),
+        KindSettlementTestCase(
+            description="no citing kind keeps the settlement",
+            kinds=set(),
+            expect="observe",
+            settlement=("reject", ""),
+            expected_settlement=("reject", ""),
+        ),
+        KindSettlementTestCase(
+            description="a case not observed keeps the settlement",
+            kinds={"positive"},
+            expect="accept",
+            settlement=("reject", ""),
+            expected_settlement=("reject", ""),
+        ),
+    ),
+    ids=lambda case: case.description,
 )
 def test_given_a_settlement_when_derived_kinds_cite_the_case_then_only_an_agreeing_one_stands(
-    kinds: set[str],
-    expect: str,
-    settlement: tuple[str, str],
-    expected: tuple[str, str] | None,
+    test_case: KindSettlementTestCase,
 ) -> None:
-    case: Row = {"case_id": "db.f.k1", "expect": expect}
+    case: Row = {"case_id": "db.f.k1", "expect": test_case.expect}
 
-    assert kind_settlement(case=case, settlement=settlement, kinds=kinds) == expected
+    found: tuple[str, str] | None = kind_settlement(
+        case=case, settlement=test_case.settlement, kinds=test_case.kinds
+    )
+
+    assert found == test_case.expected_settlement
 
 
 @pytest.mark.parametrize(

@@ -41,8 +41,6 @@ SETUP: list[str] = [
 CAPTURE: str = "execute_autocommit_in_throwaway_database"
 DIGEST_WIDTH: int = 12
 STAGE_KEY: str = "stage"
-# The obligation kinds that expect a syntax error. A receipt never settles a case to accept that
-# a derived obligation of these kinds cites, nor to reject one that any other derived kind cites.
 REJECTING_KINDS: frozenset[str] = frozenset({"negative_neighbour", "required_operand_missing"})
 
 FILLS: dict[str, str] = {

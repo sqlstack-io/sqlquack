@@ -2,7 +2,7 @@
 
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
-use sqlquack_syntax::expressions::statements::models::{
+use sqlquack_syntax::expressions::scripting::models::{
     ScriptingAssignment, ScriptingAssignmentOperator, ScriptingAwait, ScriptingAwaitTarget,
     ScriptingBlock, ScriptingBranch, ScriptingCase, ScriptingCursor, ScriptingCursorSource,
     ScriptingDeclaration, ScriptingDefault, ScriptingElse, ScriptingException,

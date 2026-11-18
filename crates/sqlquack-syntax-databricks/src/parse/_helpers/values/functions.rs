@@ -98,10 +98,7 @@ impl Parser<'_> {
         self.expression()
     }
 
-    /// A `TABLE` argument or, when what follows `TABLE` is not one, an expression: the warehouse
-    /// reads `TABLE ( v1 , k => v1 )` as a call of a function named TABLE (UNRESOLVED_ROUTINE).
-    /// When the call reading fails too, or stops short of the argument's end, the argument
-    /// reading's error is kept if it hit a resource guard or got further.
+    /// A `TABLE` argument, else the call of a function named TABLE, keeping the further error.
     fn table_argument_or_call(&mut self) -> Parsing<Expression> {
         let (argument_error, _) = match self.attempt(|parser| parser.table_argument()) {
             Ok(argument) => return Ok(argument),

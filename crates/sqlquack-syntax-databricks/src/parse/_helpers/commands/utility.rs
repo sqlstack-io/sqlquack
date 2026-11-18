@@ -21,8 +21,8 @@ use crate::parse::_helpers::tree::nodes::{
 use crate::parse::constants::{
     ADD_RESOURCE, ADD_RESOURCES, CACHE_SELECT, CATALOG, COMMENT_KINDS, DESCRIBE_KINDS,
     EXPLAIN_MODES, FUNCTIONS, IDENTIFIER_CLAUSE, LIST_RESOURCES, MIN_BACKQUOTED_LENGTH,
-    MIN_PATH_PARTS, NAMELESS_SECURABLES, PATH_ELEMENTS, SCHEMA_SCOPE, SECURABLE_KINDS, SET_VERBOSE,
-    VOLUME,
+    MIN_PATH_PARTS, NAMELESS_SECURABLES, NAMESPACE, PATH_ELEMENTS, SCHEMA_SCOPE, SECURABLE_KINDS,
+    SET_VERBOSE, VOLUME,
 };
 use crate::parse::errors::ParseError;
 use crate::scan::models::{Token, TokenKind};
@@ -703,7 +703,7 @@ impl Parser<'_> {
         let keyword: Option<String> = (kind == Some(UseKind::Database))
             .then(|| self.word_at(0))
             .flatten()
-            .filter(|word| word == "NAMESPACE");
+            .filter(|word| word == NAMESPACE);
         self.at += usize::from(kind.is_some());
         let string_name: bool = kind == Some(UseKind::Catalog) && self.string_at(0);
         let parts: Vec<Identifier> = match string_name {

@@ -364,3 +364,23 @@ def unmapped_run(
         cast(Row, cast(Row, line["answer"])["found"]).pop("statement_id")
     journal.write_text("".join(json.dumps(line) + "\n" for line in lines))
     return fake, journal, cases
+
+
+def write_run(directory: Path, batches: dict[str, list[tuple[str, str]]]) -> None:
+    """One `.jsonl` per batch, each line a receipt with the compared keys, plus a report file."""
+    directory.mkdir()
+    for name, receipts in batches.items():
+        lines: list[str] = [
+            json.dumps(
+                {
+                    "case_id": case_id,
+                    "phase": phase,
+                    "engine_code": None,
+                    "parse_only_sqlstate": None,
+                    "capture_method": "execute",
+                }
+            )
+            for case_id, phase in receipts
+        ]
+        (directory / f"{name}.jsonl").write_text("\n".join(lines) + "\n")
+        (directory / f"{name}.report.json").write_text("{}\n")

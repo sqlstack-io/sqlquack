@@ -6,6 +6,7 @@ use sha2::{Digest, Sha256};
 
 use crate::check::models::{LocalFailure, LocalVerdict};
 use crate::formats::constants::FAMILIES;
+use crate::formats::models::Receipt;
 
 /// The parser tree every family review in the fixture binds.
 pub(crate) const TREE: &str = "0123456789abcdef0123456789abcdef01234567";
@@ -516,4 +517,13 @@ pub(crate) fn report_input(root: &Path, sql: &str) {
         "inputs": [{"sql": sql, "sql_sha256": sha256(sql)}],
     });
     write(root, "receipts/run-1.report.json", &report.to_string());
+}
+
+/// A receipt of `case` recording `phase` at engine release `version`.
+pub(crate) fn release_receipt(case: &str, phase: &str, version: &str) -> Receipt {
+    let line: String = with_fields(
+        &receipt_line(case, phase),
+        serde_json::json!({"engine_version": version}),
+    );
+    serde_json::from_str(&line).expect("receipt")
 }

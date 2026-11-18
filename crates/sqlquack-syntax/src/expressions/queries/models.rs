@@ -96,9 +96,7 @@ pub struct Select {
     /// Databricks: a TABLE statement, which reads every column of its table
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub table_statement: bool,
-    /// Databricks: the pipe operators written into this select, in order, each with the pipe
-    /// token as written (`|> WHERE`, `| WHERE`, or `|>` alone when nothing follows it); the select already applies them, so analysis
-    /// reads nothing from them
+    /// Databricks: the pipe operators as written (`|> WHERE`, `| WHERE`, `|>`), already applied above
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     #[ast(skip)]
     pub pipe_operators: Vec<String>,
@@ -857,8 +855,7 @@ pub struct GroupBy {
     /// ClickHouse: WITH TOTALS modifier
     #[serde(default)]
     pub totals: bool,
-    /// Hive and Databricks: the item list ends with a trailing `WITH ROLLUP`, `WITH CUBE` or
-    /// `GROUPING SETS ( ... )` rather than a `ROLLUP ( ... )` call or a comma before the sets
+    /// Hive and Databricks: the items end with a trailing `WITH ROLLUP`, `WITH CUBE` or `GROUPING SETS`
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     #[ast(skip)]
     pub with_modifier: bool,

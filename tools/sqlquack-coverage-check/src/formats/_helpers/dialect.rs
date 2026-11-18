@@ -63,9 +63,13 @@ fn is_engine_code(code: &str) -> bool {
 pub(crate) fn engine_release(version: &str) -> Option<(u32, u32)> {
     let (year, release) = version.split_once('.')?;
     let digits = |part: &str| !part.is_empty() && part.bytes().all(|byte| byte.is_ascii_digit());
-    match digits(year) && digits(release) {
-        true => Some((year.parse().ok()?, release.parse().ok()?)),
-        false => None,
+    match (
+        digits(year) && digits(release),
+        year.parse::<u32>(),
+        release.parse::<u32>(),
+    ) {
+        (true, Ok(year), Ok(release)) => Some((year, release)),
+        _ => None,
     }
 }
 

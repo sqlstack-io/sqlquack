@@ -288,7 +288,9 @@ def finish(*, client: Client, versions: Versions, judged: list[Judged], run: Run
 def by_case(path: Path) -> dict[str, Row]:
     """The receipts of a receipt file, or of every run's `.jsonl` in a run directory, by case id."""
     files: list[Path] = sorted(path.glob("*.jsonl")) if path.is_dir() else [path]
-    rows: list[Row] = [json.loads(line) for file in files for line in file.read_text().splitlines()]
+    rows: list[Row] = []
+    for file in files:
+        rows.extend(json.loads(line) for line in file.read_text().splitlines())
     return {str(row["case_id"]): row for row in rows}
 
 

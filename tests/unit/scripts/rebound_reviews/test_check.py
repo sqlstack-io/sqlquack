@@ -12,6 +12,7 @@ from tests.unit.scripts.rebound_reviews.helpers import call, write_inputs, write
 
 _SQL: str = "SELECT COUNT(c1) FROM t1"
 _FALSE: str = call('"distinct":false')
+_ACCEPT: dict[str, object] = {"expect": "accept"}
 
 
 @pytest.mark.parametrize(
@@ -120,9 +121,6 @@ def test_given_a_rebound_review_when_checked_then_only_the_quantifier_rename_pas
 
     assert code == test_case.expected_code
     assert test_case.expected_fragment in capsys.readouterr().err
-
-
-_ACCEPT: dict[str, object] = {"expect": "accept"}
 
 
 @pytest.mark.parametrize(

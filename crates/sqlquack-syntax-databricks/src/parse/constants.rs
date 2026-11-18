@@ -11,6 +11,12 @@ pub(crate) const FLAG_PHRASES: &[&str] = &[
     "FOR TABLES",
 ];
 
+/// The words written for SCHEMA that the tree keeps as written.
+pub(crate) const SCHEMA_SYNONYMS: &[&str] = &["DATABASE", "NAMESPACE"];
+
+/// The word `USE NAMESPACE` writes for `USE DATABASE`.
+pub(crate) const NAMESPACE: &str = "NAMESPACE";
+
 /// A statement whose shared tree nests deeper than this is refused after it parses.
 pub(crate) const MAX_TREE_DEPTH: usize = 8000;
 

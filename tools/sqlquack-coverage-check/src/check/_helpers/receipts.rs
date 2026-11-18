@@ -3,9 +3,9 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::check::models::{CaseResult, LocalVerdict, Reason, SnowflakeSyntax};
-use crate::formats::_helpers::dialect::engine_release;
 use crate::formats::constants::SYNTAX_ERRNO;
 use crate::formats::main::current_dialect::current_dialect;
+use crate::formats::main::engine_release::engine_release;
 use crate::formats::models::{AccountSetting, Case, Expect, NoEffect, Phase, Receipt};
 
 /// A receipt bound to this case's SQL, setup, session and capture; a probe-role receipt binds any setup.

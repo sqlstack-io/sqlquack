@@ -1,11 +1,14 @@
 //! Statements: dispatch on the leading words, control of flow, variables, transactions and `EXEC`.
 
 use sqlquack_syntax::expressions::names::models::Identifier;
+use sqlquack_syntax::expressions::scripting::main::scripting_sql::scripting_sql;
+use sqlquack_syntax::expressions::scripting::models::{
+    ScriptingBlock, ScriptingBranch, ScriptingElse, ScriptingIf, ScriptingJump,
+    ScriptingJumpKeyword, ScriptingLoopKeyword, ScriptingRaise, ScriptingStatement, ScriptingWhile,
+};
 use sqlquack_syntax::expressions::statements::models::{
-    Commit, Declare, DeclareItem, ExecuteParameter, ExecuteStatement, Rollback, ScriptingBlock,
-    ScriptingBranch, ScriptingElse, ScriptingIf, ScriptingJump, ScriptingJumpKeyword,
-    ScriptingLoopKeyword, ScriptingRaise, ScriptingSql, ScriptingStatement, ScriptingWhile,
-    SetItem, SetStatement, Transaction, TryCatch, Use,
+    Commit, Declare, DeclareItem, ExecuteParameter, ExecuteStatement, Rollback, SetItem,
+    SetStatement, Transaction, TryCatch, Use,
 };
 use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::{Expression, ExpressionWalk};
@@ -71,13 +74,6 @@ const CURSOR_WORDS: [&str; 14] = [
     "OPTIMISTIC",
     "TYPE_WARNING",
 ];
-
-fn sql(statement: Expression) -> ScriptingStatement {
-    ScriptingStatement::Sql(ScriptingSql {
-        span: SourceSpan(None),
-        statement,
-    })
-}
 
 fn block(body: Vec<ScriptingStatement>) -> ScriptingBlock {
     ScriptingBlock {
@@ -286,7 +282,7 @@ impl<'sql> Parser<'sql> {
     /// The statement after `IF`, `ELSE` or `WHILE`, which may not be a batch-first `CREATE`.
     fn branch(&mut self) -> Parsing<Vec<ScriptingStatement>> {
         while self.eat_char(';') {}
-        Ok(vec![sql(self.statement()?)])
+        Ok(vec![scripting_sql(self.statement()?)])
     }
 
     /// `IF condition statement [ELSE statement]`.
@@ -397,7 +393,7 @@ impl<'sql> Parser<'sql> {
             _ => {
                 let body: Vec<Expression> = self.block_body(&["END"])?;
                 Ok(Expression::ScriptingBlock(Box::new(block(
-                    body.into_iter().map(sql).collect(),
+                    body.into_iter().map(scripting_sql).collect(),
                 ))))
             }
         }

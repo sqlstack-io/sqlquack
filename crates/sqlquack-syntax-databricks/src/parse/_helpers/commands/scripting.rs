@@ -2,14 +2,14 @@
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
-use sqlquack_syntax::expressions::statements::models::{
+use sqlquack_syntax::expressions::scripting::main::scripting_sql::scripting_sql;
+use sqlquack_syntax::expressions::scripting::models::{
     ScriptingBlock, ScriptingBranch, ScriptingCase, ScriptingCondition, ScriptingConditionValue,
     ScriptingCursor, ScriptingCursorSource, ScriptingDeclaration, ScriptingDiagnostics,
     ScriptingDiagnosticsItem, ScriptingElse, ScriptingFetch, ScriptingFor, ScriptingForIteration,
     ScriptingHandler, ScriptingHandlerAction, ScriptingIf, ScriptingJump, ScriptingJumpKeyword,
     ScriptingLoop, ScriptingLoopKeyword, ScriptingName, ScriptingOpen, ScriptingRepeat,
-    ScriptingSignal, ScriptingSignalSet, ScriptingSql, ScriptingSqlstate, ScriptingStatement,
-    ScriptingWhile,
+    ScriptingSignal, ScriptingSignalSet, ScriptingSqlstate, ScriptingStatement, ScriptingWhile,
 };
 use sqlquack_syntax::tokens::models::SourceSpan;
 
@@ -53,14 +53,6 @@ const SET_KEYWORDS: [&str; 9] = [
 
 /// Documented statements a compound also reads as scripting nodes, once their documented form accepts them.
 const CHECKED_STATEMENTS: [&str; 5] = ["OPEN", "FETCH", "CLOSE", "SIGNAL", "RESIGNAL"];
-
-/// An ordinary statement as a body member.
-fn sql(statement: Expression) -> ScriptingStatement {
-    ScriptingStatement::Sql(ScriptingSql {
-        span: SourceSpan::default(),
-        statement,
-    })
-}
 
 impl Parser<'_> {
     /// `BEGIN [NOT ATOMIC] [compoundBody] END`, the form `compound`, or its gap for an IDENTIFIER-clause label or a tree too deep to keep.
@@ -222,7 +214,7 @@ impl Parser<'_> {
             }
         });
         match assignment {
-            Ok(statement) => Ok(sql(statement)),
+            Ok(statement) => Ok(scripting_sql(statement)),
             Err(_) => self.simple_statement(),
         }
     }
@@ -233,7 +225,7 @@ impl Parser<'_> {
             Some(word) if CHECKED_STATEMENTS.contains(&word.as_str()) => {
                 self.checked_statement(&word)
             }
-            _ => Ok(sql(self.statement()?)),
+            _ => Ok(scripting_sql(self.statement()?)),
         }
     }
 
@@ -244,7 +236,7 @@ impl Parser<'_> {
         let statement: Expression = self.statement()?;
         let end: usize = self.at;
         if self.gaps.len() > gaps {
-            return Ok(sql(statement));
+            return Ok(scripting_sql(statement));
         }
         self.at = first;
         let read: Parsing<ScriptingStatement> = match word {
@@ -267,7 +259,7 @@ impl Parser<'_> {
             Ok(node) if self.at == end => Ok(node),
             _ => {
                 self.at = end;
-                Ok(sql(statement))
+                Ok(scripting_sql(statement))
             }
         }
     }

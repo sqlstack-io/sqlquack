@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from typing import cast
 
 from scripts.rebound_reviews.constants import REBOUND_NOTE, STAGE_REBOUND_NOTE
 
@@ -83,8 +84,7 @@ def write_stage_inputs(  # noqa: PLR0913
         (root / name).mkdir()
         row: dict[str, object] = {"case_id": _CASE, "sql": "SELECT COUNT(c1) FROM t1", **case}
         (root / name / "functions.jsonl").write_text(json.dumps(row) + "\n")
-    stage: object = new_case.get("stage")
-    new_stage: str | None = stage if isinstance(stage, str) else None
+    new_stage: str | None = cast("str | None", new_case.get("stage"))
     old_expect: str = str(old_case.get("expect"))
     new_expect: str = str(new_case.get("expect"))
     (root / "reviews").mkdir()

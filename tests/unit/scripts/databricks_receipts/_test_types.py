@@ -262,3 +262,11 @@ class DeadlineTestCase:
     seconds: str
     expected_error: str
     expected_calls: list[str]
+
+
+@dataclass(frozen=True)
+class CompareTestCase:
+    description: str
+    second_phase: str
+    expected_exit: int
+    expected_line: str

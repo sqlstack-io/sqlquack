@@ -605,8 +605,7 @@ impl Parser<'_> {
         Ok(organization)
     }
 
-    /// `operatorPipeRightSide` after `token` (`|>`, or `|` where `isOperatorPipeStart` reads it
-    /// as one), applied to `left` as the select it amounts to, which records both as written.
+    /// `operatorPipeRightSide` after the pipe `token`, applied to `left` as the select it amounts to.
     fn pipe(&mut self, left: Expression, token: &str) -> Parsing<Expression> {
         let word: String = self.word_at(0).unwrap_or_default();
         let mark = |operator: &str| format!("{token} {operator}");
@@ -629,22 +628,7 @@ impl Parser<'_> {
                     .extend(self.comma_list(|parser| parser.named_expression())?);
                 select
             }
-            "SET" => {
-                self.at += 1;
-                let replace: Vec<Alias> = self.comma_list(|parser| {
-                    let name: Identifier = parser.ident()?;
-                    parser.expect_char('=')?;
-                    Ok(Alias::new(parser.expression()?, name))
-                })?;
-                let mut select: Select = pipe_input(left, false);
-                select.expressions = vec![Expression::Star(Box::new(
-                    sqlquack_syntax::expressions::names::models::Star {
-                        replace: Some(replace),
-                        ..star(None, None)
-                    },
-                ))];
-                select
-            }
+            "SET" => self.pipe_set(left)?,
             "DROP" => {
                 self.at += 1;
                 let except: Vec<Identifier> = self.name_parts_list()?;
@@ -652,66 +636,9 @@ impl Parser<'_> {
                 select.expressions = vec![Expression::Star(Box::new(star(None, Some(except))))];
                 select
             }
-            "AS" => {
-                self.at += 1;
-                let name: Identifier = self.ident()?;
-                let alias = TableAlias {
-                    name,
-                    columns: Vec::new(),
-                    explicit: true,
-                };
-                let mut select: Select = Select::new();
-                select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
-                select.from = Some(From {
-                    expressions: vec![subquery(left, Some(alias), false)],
-                });
-                select
-            }
-            "WHERE" => {
-                self.at += 1;
-                let condition: Expression = self.expression()?;
-                if self.kw("WINDOW") {
-                    return Err(self.error_with(
-                        "the WHERE pipe operator takes no WINDOW clause",
-                        self.offset(),
-                        false,
-                    ));
-                }
-                let mut select: Select = pipe_input(left, false);
-                select.where_clause = Some(Where {
-                    this: match select.where_clause.take() {
-                        Some(earlier) => binary(Expression::And, earlier.this, condition),
-                        None => condition,
-                    },
-                });
-                select
-            }
-            "PIVOT" | "UNPIVOT" => {
-                let input: Expression = match pipe_input(left, true) {
-                    select
-                        if select.joins.is_empty()
-                            && select.lateral_views.is_empty()
-                            && select.where_clause.is_none()
-                            && select
-                                .from
-                                .as_ref()
-                                .is_some_and(|from| from.expressions.len() == 1) =>
-                    {
-                        select
-                            .from
-                            .map(|mut from| from.expressions.remove(0))
-                            .unwrap_or_else(null)
-                    }
-                    select => subquery(Expression::Select(Box::new(select)), None, false),
-                };
-                let pivoted: Expression = self.pivot_or_unpivot(input)?;
-                let mut select: Select = Select::new();
-                select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
-                select.from = Some(From {
-                    expressions: vec![pivoted],
-                });
-                select
-            }
+            "AS" => self.pipe_as(left)?,
+            "WHERE" => self.pipe_where(left)?,
+            "PIVOT" | "UNPIVOT" => self.pipe_pivot(left)?,
             "TABLESAMPLE" => {
                 let sample = self.sample()?;
                 let mut select: Select = wrapped(left);
@@ -735,26 +662,7 @@ impl Parser<'_> {
                     other => wrapped(other),
                 }
             }
-            "AGGREGATE" => {
-                self.at += 1;
-                let mut select: Select = pipe_input(left, false);
-                let aggregates: Vec<Expression> =
-                    match self.terminal_at(0) || (self.kw("GROUP") && self.kw_at(1, "BY")) {
-                        true => Vec::new(),
-                        false => self.comma_list(|parser| parser.named_expression())?,
-                    };
-                let group: Option<GroupBy> = match self.kw("GROUP") && self.kw_at(1, "BY") {
-                    true => Some(self.group_by()?),
-                    false => None,
-                };
-                let keys: Vec<Expression> = group
-                    .as_ref()
-                    .map(|group| group.expressions.clone())
-                    .unwrap_or_default();
-                select.expressions = keys.into_iter().chain(aggregates).collect();
-                select.group_by = group;
-                select
-            }
+            "AGGREGATE" => self.pipe_aggregate(left)?,
             _ if self.terminal_at(0) => {
                 let mut select: Select = match left {
                     Expression::Select(select) => *select,
@@ -775,6 +683,112 @@ impl Parser<'_> {
         let mut select: Select = select;
         select.pipe_operators.push(mark(&word));
         Ok(Expression::Select(Box::new(select)))
+    }
+
+    /// `|> SET c = e, ...`: the input with those columns replaced.
+    fn pipe_set(&mut self, left: Expression) -> Parsing<Select> {
+        self.at += 1;
+        let replace: Vec<Alias> = self.comma_list(|parser| {
+            let name: Identifier = parser.ident()?;
+            parser.expect_char('=')?;
+            Ok(Alias::new(parser.expression()?, name))
+        })?;
+        let mut select: Select = pipe_input(left, false);
+        select.expressions = vec![Expression::Star(Box::new(
+            sqlquack_syntax::expressions::names::models::Star {
+                replace: Some(replace),
+                ..star(None, None)
+            },
+        ))];
+        Ok(select)
+    }
+
+    /// `|> AS name`: the input as a subquery under that alias.
+    fn pipe_as(&mut self, left: Expression) -> Parsing<Select> {
+        self.at += 1;
+        let name: Identifier = self.ident()?;
+        let alias = TableAlias {
+            name,
+            columns: Vec::new(),
+            explicit: true,
+        };
+        let mut select: Select = Select::new();
+        select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
+        select.from = Some(From {
+            expressions: vec![subquery(left, Some(alias), false)],
+        });
+        Ok(select)
+    }
+
+    /// `|> WHERE condition`: the input filtered, joined to an earlier filter with AND.
+    fn pipe_where(&mut self, left: Expression) -> Parsing<Select> {
+        self.at += 1;
+        let condition: Expression = self.expression()?;
+        if self.kw("WINDOW") {
+            return Err(self.error_with(
+                "the WHERE pipe operator takes no WINDOW clause",
+                self.offset(),
+                false,
+            ));
+        }
+        let mut select: Select = pipe_input(left, false);
+        select.where_clause = Some(Where {
+            this: match select.where_clause.take() {
+                Some(earlier) => binary(Expression::And, earlier.this, condition),
+                None => condition,
+            },
+        });
+        Ok(select)
+    }
+
+    /// `|> PIVOT` or `|> UNPIVOT`: the pivoted input as the one FROM item.
+    fn pipe_pivot(&mut self, left: Expression) -> Parsing<Select> {
+        let input: Expression = match pipe_input(left, true) {
+            select
+                if select.joins.is_empty()
+                    && select.lateral_views.is_empty()
+                    && select.where_clause.is_none()
+                    && select
+                        .from
+                        .as_ref()
+                        .is_some_and(|from| from.expressions.len() == 1) =>
+            {
+                select
+                    .from
+                    .map(|mut from| from.expressions.remove(0))
+                    .unwrap_or_else(null)
+            }
+            select => subquery(Expression::Select(Box::new(select)), None, false),
+        };
+        let pivoted: Expression = self.pivot_or_unpivot(input)?;
+        let mut select: Select = Select::new();
+        select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
+        select.from = Some(From {
+            expressions: vec![pivoted],
+        });
+        Ok(select)
+    }
+
+    /// `|> AGGREGATE ... [GROUP BY ...]`: the grouping keys, then the aggregates.
+    fn pipe_aggregate(&mut self, left: Expression) -> Parsing<Select> {
+        self.at += 1;
+        let mut select: Select = pipe_input(left, false);
+        let aggregates: Vec<Expression> =
+            match self.terminal_at(0) || (self.kw("GROUP") && self.kw_at(1, "BY")) {
+                true => Vec::new(),
+                false => self.comma_list(|parser| parser.named_expression())?,
+            };
+        let group: Option<GroupBy> = match self.kw("GROUP") && self.kw_at(1, "BY") {
+            true => Some(self.group_by()?),
+            false => None,
+        };
+        let keys: Vec<Expression> = group
+            .as_ref()
+            .map(|group| group.expressions.clone())
+            .unwrap_or_default();
+        select.expressions = keys.into_iter().chain(aggregates).collect();
+        select.group_by = group;
+        Ok(select)
     }
 
     /// `inlineTable` as a query: `VALUES expression, ... [alias]`.

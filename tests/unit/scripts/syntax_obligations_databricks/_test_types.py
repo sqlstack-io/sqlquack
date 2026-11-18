@@ -57,3 +57,21 @@ class PreviewSettlementTestCase:
     description: str
     case_id: str
     expected_settlement: tuple[str, str] | None
+
+
+@dataclass(frozen=True)
+class SettlementBuildTestCase:
+    description: str
+    family: str
+    phase: str
+    expected_derived_expect: str
+    expected_written: tuple[str, str]
+
+
+@dataclass(frozen=True)
+class KindSettlementTestCase:
+    description: str
+    kinds: set[str]
+    expect: str
+    settlement: tuple[str, str]
+    expected_settlement: tuple[str, str] | None
