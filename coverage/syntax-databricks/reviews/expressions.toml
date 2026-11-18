@@ -1224,3 +1224,20 @@ note = "Re-binds db-expressions-057, not a re-read: that exclusion was bound to 
 [[review.exclusion]]
 form = "db.expressions.object-type"
 reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
+
+[[review]]
+id = "db-expressions-062"
+family = "expressions"
+catalogue_sha256 = "ffc590e2daad0e5c31541285aca1a5a7d1ce7e7bedb0c1ccdc4c1cfcdd32473c"
+obligations_sha256 = "697332d6178cfd5465cf1ebae8c6d98f956a76ed507c8807032c76c97f48bc11"
+parser_tree = "dafbc1c0aa3e303fd9bbf21b7a8f4d1842d3661e"
+reviewed_utc = "2026-11-18T05:39:30Z"
+verdict = "approved"
+forms = [
+  "db.expressions.object-type",
+]
+note = "Re-binds db-expressions-061, not a re-read: that exclusion was bound to parser tree a367f5c7 and went stale when the parser kept backquoted names, tag key spellings, credential value types and every pair of parentheses (parser tree dafbc1c0), so object-type again left the excluded count. The catalogue and obligation files are byte-identical to the ones it bound (catalogue ffc590e2, obligations 697332d6), and the local parser still refuses OBJECT as input in all three cases, with the same error as before. The exclusion and its reason are repeated unchanged."
+
+[[review.exclusion]]
+form = "db.expressions.object-type"
+reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
