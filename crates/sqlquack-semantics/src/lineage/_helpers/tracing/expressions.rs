@@ -2,8 +2,9 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::sync::LazyLock;
 
-use rustc_hash::FxHashMap;
+use rustc_hash::{FxHashMap, FxHashSet};
 
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::names::models::{Identifier, Star};
@@ -31,6 +32,13 @@ use crate::lineage::models::{
 };
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
+
+/// The longest name in `AGGREGATE_FUNCTIONS`.
+const AGGREGATE_NAME_CAPACITY: usize = longest_name(AGGREGATE_FUNCTIONS);
+
+/// `AGGREGATE_FUNCTIONS` as a set, every name in upper case.
+static AGGREGATE_NAMES: LazyLock<FxHashSet<&'static str>> =
+    LazyLock::new(|| AGGREGATE_FUNCTIONS.iter().copied().collect());
 
 /// The lineage of `expression` read in `scope`.
 pub(crate) fn expression_lineage(
@@ -422,11 +430,33 @@ pub(crate) fn is_aggregate(expression: &Expression) -> bool {
         | Expression::BitwiseXorAgg(_)
         | Expression::ArgMax(_)
         | Expression::ArgMin(_) => true,
-        Expression::Function(function) => AGGREGATE_FUNCTIONS
-            .iter()
-            .any(|name| function.name.eq_ignore_ascii_case(name)),
+        Expression::Function(function) => aggregate_name(&function.name),
         _ => false,
     }
+}
+
+/// The length of the longest of `names`.
+const fn longest_name(names: &[&str]) -> usize {
+    let mut longest: usize = 0;
+    let mut index: usize = 0;
+    while index < names.len() {
+        if names[index].len() > longest {
+            longest = names[index].len();
+        }
+        index += 1;
+    }
+    longest
+}
+
+/// Whether `name` is an aggregate function's in any ASCII case, upper-cased on the stack.
+fn aggregate_name(name: &str) -> bool {
+    let mut upper: [u8; AGGREGATE_NAME_CAPACITY] = [0; AGGREGATE_NAME_CAPACITY];
+    let Some(written) = upper.get_mut(..name.len()) else {
+        return false;
+    };
+    written.copy_from_slice(name.as_bytes());
+    written.make_ascii_uppercase();
+    AGGREGATE_NAMES.contains(String::from_utf8_lossy(written).as_ref())
 }
 
 /// A star read as a value, as in `OBJECT_CONSTRUCT(*)`: everything its columns read.
