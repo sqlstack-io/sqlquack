@@ -8,7 +8,7 @@ use sqlquack_syntax::{DataType, Expression};
 use crate::dialects::types::DialectProfile;
 use crate::lineage::_helpers::checks::window_only::named_window_only;
 use crate::lineage::main::rendered_type::rendered_type;
-use crate::lineage::models::{Engine, Nullability};
+use crate::lineage::models::{Engine, JoinConditionReach, Nullability};
 use crate::lineage::models::{
     Lineage, LineageContext, NullabilityRule, SchemaColumn, SourceColumn,
 };
@@ -80,6 +80,9 @@ pub(crate) trait DialectRules: Sync {
 
     /// Whether an unqualified USING or NATURAL key reads its merged column though an item outside its join offers the name.
     fn merged_keys_hide_other_items(&self) -> bool;
+
+    /// Which FROM items a join's ON condition may read.
+    fn join_conditions_read(&self) -> JoinConditionReach;
 
     /// Whether calls are checked against the signatures of the functions they name.
     fn checks_call_signatures(&self) -> bool;
