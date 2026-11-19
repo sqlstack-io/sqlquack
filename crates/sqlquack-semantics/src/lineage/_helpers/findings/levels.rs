@@ -9,7 +9,7 @@ use sqlquack_syntax::expressions::queries::models::{
 };
 
 use crate::dialects::main::dialect_rules::dialect_rules;
-use crate::lineage::_helpers::checks::issues::in_scope;
+use crate::lineage::_helpers::checks::issues::{each_child, in_scope};
 use crate::lineage::_helpers::checks::node_checks::{NodeLevel, node_findings};
 use crate::lineage::_helpers::checks::scope_rules::{
     RuleLevel, select_rules, set_order, set_order_by,
@@ -580,11 +580,11 @@ fn clause_findings(
                 pending.push(&lambda.body);
             }
             _ => {
-                for child in node.children() {
+                each_child(node, |child| {
                     if !date_part_argument(node, child, context) {
                         pending.push(child);
                     }
-                }
+                });
             }
         }
     }
