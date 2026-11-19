@@ -12,8 +12,8 @@ use crate::scan::models::{Token, TokenKind};
 
 pub(crate) type Parsing<T> = Result<T, ParseError>;
 
-/// Nesting deeper than this fails as a parser check, not as a syntax error.
-const MAX_DEPTH: usize = 200;
+/// Nesting deeper than this fails as a parser check, past SQLQuack's 512-call ceiling.
+const MAX_DEPTH: usize = 600;
 
 /// Stack left below which a deeper level moves to a new segment, whatever the caller's stack.
 const RED_ZONE: usize = if cfg!(debug_assertions) {

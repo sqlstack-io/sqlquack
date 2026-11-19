@@ -115,8 +115,8 @@ fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_is_refused_not_abort
             sql: || {
                 format!(
                     "SELECT 1 IN {}(1){}",
-                    "(SELECT 1 IN ".repeat(150),
-                    ")".repeat(150)
+                    "(SELECT 1 IN ".repeat(400),
+                    ")".repeat(400)
                 )
             },
             expected_refusal: too_deep,
@@ -139,8 +139,8 @@ fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_is_refused_not_abort
             sql: || {
                 format!(
                     "CACHE SELECT {}1{} FROM t1",
-                    "(".repeat(300),
-                    ")".repeat(300)
+                    "(".repeat(700),
+                    ")".repeat(700)
                 )
             },
             expected_refusal: None,
