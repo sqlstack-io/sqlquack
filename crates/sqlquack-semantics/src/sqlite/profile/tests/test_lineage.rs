@@ -107,6 +107,33 @@ fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_fou
             )],
         },
         QueryFindingsTestCase {
+            description: "a USING key read unqualified when a comma item before the join offers it too (3.53: ambiguous)",
+            sql: "SELECT id FROM customers c, orders a JOIN customers b USING (id)",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key read unqualified when a CROSS JOIN item before the join offers it too (3.53: ambiguous)",
+            sql: "SELECT id FROM orders a CROSS JOIN customers c JOIN customers b USING (id)",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a NATURAL key read unqualified when a comma item before the join offers it too (3.53: ambiguous)",
+            sql: "SELECT id FROM customers c, orders a NATURAL JOIN customers b",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                7,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "a ranking function without OVER",
             sql: "SELECT ROW_NUMBER() AS r FROM orders",
             expected_findings: &[("E232", "Window function requires an OVER clause", 0)],
@@ -162,6 +189,21 @@ fn given_a_sqlite_query_sqlite_accepts_when_checking_then_nothing_is_found() {
         QueryFindingsTestCase {
             description: "an ON condition reading a later item of its own join chain (3.40: accepted)",
             sql: "SELECT 1 FROM orders a JOIN customers b ON c.id = a.id JOIN customers c ON true",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key qualified beside a comma item that offers it too (3.53: accepted)",
+            sql: "SELECT a.id FROM customers c, orders a JOIN customers b USING (id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a USING key merged again with a parenthesised join's own key (3.53: accepted)",
+            sql: "SELECT id FROM orders a JOIN (customers b JOIN customers c USING (id)) USING (id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a named window read in another case (3.53: accepted)",
+            sql: "SELECT sum(quantity) OVER W AS x FROM orders WINDOW w AS (ORDER BY id)",
             expected_findings: &[],
         },
         QueryFindingsTestCase {

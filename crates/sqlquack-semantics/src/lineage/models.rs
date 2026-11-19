@@ -163,6 +163,8 @@ pub(crate) struct MergedKey {
     pub(crate) sources: Range<usize>,
     /// The sources it stood for before later joins merged it again, oldest first.
     pub(crate) earlier: Vec<Range<usize>>,
+    /// Left-side items that offer its name but that no join merged with it.
+    pub(crate) shadowed: usize,
 }
 
 /// A FROM item: its key, its known columns, and whether it offers others of unknown name.

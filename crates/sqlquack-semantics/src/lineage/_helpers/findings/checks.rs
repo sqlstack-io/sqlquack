@@ -521,13 +521,19 @@ fn merged_answers(scope: &LineageScope<'_>, wanted: &str, context: LineageContex
         .filter(named)
         .map(|merged| &merged.sources)
         .collect();
+    let shadowed: usize = scope
+        .merged
+        .iter()
+        .filter(named)
+        .map(|merged| merged.shadowed)
+        .sum();
     let uncovered: usize = scope
         .sources
         .iter()
         .enumerate()
         .filter(|(index, source)| !covered(&keys, *index) && offers(source, wanted, context))
         .count();
-    keys.len() + uncovered <= 1
+    keys.len() + uncovered + shadowed <= 1
 }
 
 /// Whether one of the merged keys' joins holds the `index`th source.

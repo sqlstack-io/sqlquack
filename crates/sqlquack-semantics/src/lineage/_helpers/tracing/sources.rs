@@ -262,6 +262,11 @@ fn joined(
         .map(|merged| merged.column.clone())
         .collect();
     let left: &[ScopeSource] = &both.sources[left];
+    let left_offering = |name: &str| {
+        left.iter()
+            .filter(|source| listed_columns(source, name, context))
+            .count()
+    };
     let mut merged_keys: Vec<MergedKey> = both.merged.clone();
     let mut rows: RowReads = RowReads::default();
     for condition in join.on.iter().chain(join.match_condition.iter()) {
@@ -293,6 +298,10 @@ fn joined(
             }
             _ => left_side,
         };
+        let shadowed: usize = match listed_keys(&left_keys, &name, context) {
+            true => 0,
+            false => left_offering(&name).saturating_sub(1),
+        };
         let column = MergedKey {
             column: ScopedColumn {
                 name: name.clone(),
@@ -302,6 +311,7 @@ fn joined(
             },
             sources: reach.clone(),
             earlier: Vec::new(),
+            shadowed,
         };
         match merged_keys.iter_mut().find(|merged| {
             overlaps(&merged.sources, &reach)
@@ -317,6 +327,7 @@ fn joined(
                 *merged = MergedKey {
                     sources,
                     earlier,
+                    shadowed: merged.shadowed + column.shadowed,
                     ..column
                 };
             }
@@ -324,6 +335,21 @@ fn joined(
         }
     }
     (merged_keys, rows)
+}
+
+/// Whether `source` knows a column named `name`.
+fn listed_columns(source: &ScopeSource, name: &str, context: LineageContext<'_>) -> bool {
+    source
+        .query
+        .columns
+        .iter()
+        .any(|column| context.profile.same_identifier(&column.key, name))
+}
+
+/// Whether one of `keys` is named `name`.
+fn listed_keys(keys: &[ScopedColumn], name: &str, context: LineageContext<'_>) -> bool {
+    keys.iter()
+        .any(|column| context.profile.same_identifier(&column.key, name))
 }
 
 /// Whether a join is NATURAL, joining on the column names both sides offer.
