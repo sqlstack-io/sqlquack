@@ -24,6 +24,19 @@ pub(crate) fn parse(
             .map_err(|reason| format!("max_function_call_depth: {reason}"))?;
     let profile: LintProfile = profile(dialect);
     let tokens: Vec<Token> = (profile.tokens)(sql)?;
+    let parse_text = empty_relation
+        .map(|name| without_empty_relation_parentheses(sql, &tokens, name))
+        .unwrap_or_default();
+    let (parse_text, parse_tokens): (&str, Vec<Token>) = if parse_text.is_empty() {
+        (sql, Vec::new())
+    } else {
+        (&parse_text, (profile.tokens)(&parse_text)?)
+    };
+    let guarded_tokens: &[Token] = if parse_tokens.is_empty() {
+        &tokens
+    } else {
+        &parse_tokens
+    };
     let depth_guard = ComplexityGuardOptions {
         max_parser_depth: None,
         max_input_bytes: None,
@@ -33,7 +46,7 @@ pub(crate) fn parse(
         max_parenthesis_depth: Some(MAX_CALL_DEPTH_CEILING),
         max_function_call_depth: Some(max_call_depth),
     };
-    enforce_lexed_tokens(&tokens, &depth_guard).map_err(|error| {
+    enforce_lexed_tokens(guarded_tokens, &depth_guard).map_err(|error| {
         call_depth_hint(
             error.to_string(),
             max_call_depth,
@@ -45,14 +58,6 @@ pub(crate) fn parse(
             max_function_call_depth: Some(max_call_depth),
             ..Default::default()
         }),
-    };
-    let parse_text = empty_relation
-        .map(|name| without_empty_relation_parentheses(sql, &tokens, name))
-        .unwrap_or_default();
-    let parse_text = if parse_text.is_empty() {
-        sql
-    } else {
-        &parse_text
     };
     let statements: Vec<Expression> =
         (profile.statements)(parse_text, &options).map_err(|message| {

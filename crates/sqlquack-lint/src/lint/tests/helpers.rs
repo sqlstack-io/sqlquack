@@ -37,6 +37,15 @@ pub(crate) fn cte_calls_sql(depth: usize) -> String {
     )
 }
 
+/// `depth` nested calls around a subquery reading the fixture harness's empty relation.
+pub(crate) fn calls_around_empty_relation_sql(depth: usize) -> String {
+    format!(
+        "SELECT {}(SELECT 1 FROM __empty_fixture()){}",
+        "F(".repeat(depth),
+        ")".repeat(depth)
+    )
+}
+
 pub(crate) fn nested_from_sql(depth: usize) -> String {
     format!(
         "SELECT * FROM {}orders{}",
@@ -68,6 +77,23 @@ pub(crate) fn dialect_diagnostics_within(
         "sql": sql,
         "dialect": dialect,
         "max_function_call_depth": max_function_call_depth
+    });
+    let response = lint_json(&request.to_string())?;
+    diagnostic_values(&response)
+}
+
+/// The `dialect` diagnostics of `sql` in the fixture harness, with the request's `max_function_call_depth`.
+pub(crate) fn harness_diagnostics_within(
+    sql: &str,
+    dialect: &str,
+    max_function_call_depth: Option<usize>,
+) -> Result<Vec<Value>, String> {
+    let request = json!({
+        "version": 1,
+        "sql": sql,
+        "dialect": dialect,
+        "max_function_call_depth": max_function_call_depth,
+        "fixture_harness": fixture_harness()
     });
     let response = lint_json(&request.to_string())?;
     diagnostic_values(&response)
