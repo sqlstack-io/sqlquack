@@ -27,10 +27,19 @@ pub(crate) fn diagnostics_within(
     sql: &str,
     max_function_call_depth: Option<usize>,
 ) -> Result<Vec<Value>, String> {
+    dialect_diagnostics_within(sql, "snowflake", max_function_call_depth)
+}
+
+/// The `dialect` diagnostics of `sql`, with the request's `max_function_call_depth`, null when absent.
+pub(crate) fn dialect_diagnostics_within(
+    sql: &str,
+    dialect: &str,
+    max_function_call_depth: Option<usize>,
+) -> Result<Vec<Value>, String> {
     let request = json!({
         "version": 1,
         "sql": sql,
-        "dialect": "snowflake",
+        "dialect": dialect,
         "max_function_call_depth": max_function_call_depth
     });
     let response = lint_json(&request.to_string())?;

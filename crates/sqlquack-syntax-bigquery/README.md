@@ -125,10 +125,11 @@ No input exhausts the caller's stack, and none takes more than polynomial time i
   prefixes, subscript indexes, the operands of keyword-led calls such as `EXTRACT` and `TRIM`,
   table-valued function arguments, parenthesised FROM items, joins and row patterns) runs on a
   stack that grows on demand, so a 2 MiB thread parses as an 8 MiB one does. A statement
-  nesting past 200 levels is refused with "the statement nests too deeply", a parser check
+  nesting past 600 levels is refused with "the statement nests too deeply", a parser check
   rather than a syntax error; once one reading passes the limit, every other reading fails at
-  once. A level can cost more than one unit, so the limit allows 98 nested subqueries, 197
-  parentheses or calls, and fewer levels of mixed constructs. GoogleSQL's parser has no such
+  once. A level can cost more than one unit, so the limit allows 298 nested subqueries, 597
+  parentheses or calls, and fewer levels of mixed constructs. That is past SQLQuack's fixed
+  ceiling of 512 nested calls, so the configured call-depth limit decides first. GoogleSQL's parser has no such
   limit, so deeper inputs it accepts are refused here.
 - Flat chains of operators, set operations, joins and pipe operators parse in linear time, but
   a statement whose tree nests more than 8,000 levels is refused with the same error, so a

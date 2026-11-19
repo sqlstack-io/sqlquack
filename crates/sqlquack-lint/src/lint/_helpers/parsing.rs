@@ -2,9 +2,10 @@
 
 use std::collections::HashSet;
 
-use sqlquack_parse::parsing::constants::MAX_FUNCTION_CALL_DEPTH;
+use sqlquack_parse::parsing::constants::{MAX_CALL_DEPTH_CEILING, MAX_FUNCTION_CALL_DEPTH};
 use sqlquack_parse::parsing::main::call_depth_hint::call_depth_hint;
 use sqlquack_parse::parsing::main::checked_call_depth::checked_call_depth;
+use sqlquack_syntax::guard::main::enforce_lexed_tokens::enforce_lexed_tokens;
 use sqlquack_syntax::tokens::models::{Token, TokenType};
 use sqlquack_syntax::{ComplexityGuardOptions, Expression, ExpressionWalk, ParseOptions};
 
@@ -23,6 +24,22 @@ pub(crate) fn parse(
             .map_err(|reason| format!("max_function_call_depth: {reason}"))?;
     let profile: LintProfile = profile(dialect);
     let tokens: Vec<Token> = (profile.tokens)(sql)?;
+    let depth_guard = ComplexityGuardOptions {
+        max_parser_depth: None,
+        max_input_bytes: None,
+        max_tokens: None,
+        max_ast_nodes: None,
+        max_ast_depth: None,
+        max_parenthesis_depth: Some(MAX_CALL_DEPTH_CEILING),
+        max_function_call_depth: Some(max_call_depth),
+    };
+    enforce_lexed_tokens(&tokens, &depth_guard).map_err(|error| {
+        call_depth_hint(
+            error.to_string(),
+            max_call_depth,
+            Some("max_function_call_depth"),
+        )
+    })?;
     let options = ParseOptions {
         complexity_guard: Some(ComplexityGuardOptions {
             max_function_call_depth: Some(max_call_depth),

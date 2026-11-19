@@ -1591,10 +1591,10 @@ fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_parses_or_is_refused
             expected_refusal: None,
         },
         NestingTestCase {
-            description: "100 rounds of a call, CASE and CAST nest past the limit",
+            description: "300 rounds of a call, CASE and CAST nest past the limit",
             sql: || {
-                let open: String = "abs(CASE WHEN true THEN CAST(".repeat(100);
-                format!("SELECT {open}1{}", " AS INT64) END)".repeat(100))
+                let open: String = "abs(CASE WHEN true THEN CAST(".repeat(300);
+                format!("SELECT {open}1{}", " AS INT64) END)".repeat(300))
             },
             expected_refusal: too_deep,
         },
@@ -1604,8 +1604,8 @@ fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_parses_or_is_refused
             expected_refusal: None,
         },
         NestingTestCase {
-            description: "201 nested bare subscripts nest past the limit",
-            sql: || format!("SELECT {}0{} FROM t", "a[".repeat(201), "]".repeat(201)),
+            description: "601 nested bare subscripts nest past the limit",
+            sql: || format!("SELECT {}0{} FROM t", "a[".repeat(601), "]".repeat(601)),
             expected_refusal: too_deep,
         },
         NestingTestCase {
@@ -1658,10 +1658,10 @@ fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_parses_or_is_refused
             expected_refusal: too_deep,
         },
         NestingTestCase {
-            description: "201 nested OVERLAY inputs",
+            description: "601 nested OVERLAY inputs",
             sql: || {
-                let open: String = "OVERLAY(".repeat(201);
-                format!("SELECT {open}'a'{}", " PLACING 'b' FROM 1)".repeat(201))
+                let open: String = "OVERLAY(".repeat(601);
+                format!("SELECT {open}'a'{}", " PLACING 'b' FROM 1)".repeat(601))
             },
             expected_refusal: too_deep,
         },
@@ -1754,8 +1754,8 @@ fn given_deep_nesting_when_parsing_on_a_small_stack_then_it_parses_or_is_refused
         NestingTestCase {
             description: "past the limit, every other reading fails at once instead of retrying",
             sql: || {
-                let open: String = "(SELECT 1 IN ".repeat(150);
-                format!("SELECT 1 IN {open}(1){}", ")".repeat(150))
+                let open: String = "(SELECT 1 IN ".repeat(400);
+                format!("SELECT 1 IN {open}(1){}", ")".repeat(400))
             },
             expected_refusal: too_deep,
         },

@@ -15,8 +15,9 @@ Nesting is bounded so that no input exhausts the caller's stack or takes exponen
 
 - Each nested level (parentheses, subqueries, FROM items, calls, CASE, prefixes such as `NOT`,
   statements inside `BEGIN ATOMIC` and `EXPLAIN`, and type names) runs on a stack that grows on
-  demand (the default `stacker` feature), and a statement nesting past 300 levels is refused with
-  54001's "stack depth limit exceeded". A type's `[]` bounds count against the same limit. Once
+  demand (the default `stacker` feature), and a statement nesting past 600 levels, beyond
+  SQLQuack's fixed ceiling of 512 nested calls, is refused with 54001's "stack depth limit
+  exceeded". A type's `[]` bounds count against the same limit. Once
   one reading passes the limit, every other reading fails at once and the statement is refused.
   PostgreSQL's own limit depends on its stack size, so it accepts some deeper texts.
 - A flat chain of operators (other than `AND` and `OR`), casts or indirections is refused with

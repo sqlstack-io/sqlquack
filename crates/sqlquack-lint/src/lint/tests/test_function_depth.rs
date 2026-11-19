@@ -116,3 +116,78 @@ fn given_a_call_depth_limit_when_parsing_sql_then_the_limit_applies() {
         );
     }
 }
+
+#[test]
+fn given_a_call_depth_limit_in_each_linted_dialect_when_linting_then_it_is_the_exact_limit() {
+    let test_cases = [
+        test_types::DialectDepthTestCase {
+            description: "a lowered limit of 3 lints 3 nested calls",
+            depth: 3,
+            max_function_call_depth: Some(3),
+            expected_outcome_end: "linted",
+        },
+        test_types::DialectDepthTestCase {
+            description: "a lowered limit of 3 refuses 4 nested calls",
+            depth: 4,
+            max_function_call_depth: Some(3),
+            expected_outcome_end: "value 4 exceeds configured limit 3; raise \
+                max_function_call_depth, up to 512",
+        },
+        test_types::DialectDepthTestCase {
+            description: "a limit of 64 refuses 100 nested calls at the 65th",
+            depth: 100,
+            max_function_call_depth: Some(64),
+            expected_outcome_end: "value 65 exceeds configured limit 64; raise \
+                max_function_call_depth, up to 512",
+        },
+        test_types::DialectDepthTestCase {
+            description: "the default limit lints 256 nested calls",
+            depth: 256,
+            max_function_call_depth: None,
+            expected_outcome_end: "linted",
+        },
+        test_types::DialectDepthTestCase {
+            description: "the default limit refuses 257 nested calls",
+            depth: 257,
+            max_function_call_depth: None,
+            expected_outcome_end: "value 257 exceeds configured limit 256; raise \
+                max_function_call_depth, up to 512",
+        },
+        test_types::DialectDepthTestCase {
+            description: "the ceiling of 512 lints 511 nested calls, the statement's tree being one deeper",
+            depth: 511,
+            max_function_call_depth: Some(512),
+            expected_outcome_end: "linted",
+        },
+        test_types::DialectDepthTestCase {
+            description: "the ceiling of 512 refuses 513 nested calls, naming it as fixed",
+            depth: 513,
+            max_function_call_depth: Some(512),
+            expected_outcome_end: "value 513 exceeds configured limit 512; 512 is SQLQuack's \
+                fixed nesting ceiling, which no setting raises",
+        },
+    ];
+    let mut mismatches: Vec<String> = Vec::new();
+    for dialect in [
+        "snowflake",
+        "duckdb",
+        "sqlite",
+        "postgres",
+        "bigquery",
+        "databricks",
+    ] {
+        for test_case in &test_cases {
+            let sql = helpers::nested_function_sql(test_case.depth);
+            let outcome: String = helpers::dialect_diagnostics_within(
+                &sql,
+                dialect,
+                test_case.max_function_call_depth,
+            )
+            .map_or_else(|error| error, |_| "linted".to_owned());
+            if !outcome.ends_with(test_case.expected_outcome_end) {
+                mismatches.push(format!("{dialect}: {}: {outcome}", test_case.description));
+            }
+        }
+    }
+    assert!(mismatches.is_empty(), "{}", mismatches.join("\n"));
+}

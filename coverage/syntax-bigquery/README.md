@@ -490,18 +490,18 @@ parser reports every case as `no_parser`, which must fail rather than compare eq
 
 Where the local parser and BigQuery differ by design rather than by a missing form:
 
-- **Nesting.** The parser counts nested levels against a budget of 200 units and refuses deeper
+- **Nesting.** The parser counts nested levels against a budget of 600 units and refuses deeper
   statements with "the statement nests too deeply", a parser check rather than a syntax error.
-  A level can cost more than one unit: the budget allows 98 nested scalar, `EXISTS` and `IN`
+  A level can cost more than one unit: the budget allows 298 nested scalar, `EXISTS` and `IN`
   subqueries, parenthesised joins and set operations, lambdas and parenthesised table-valued
-  function arguments, 197 parentheses, calls and `CASE` expressions, and fewer levels of mixed
-  constructs (39 of `(SELECT f(-( ... )))`). It also refuses a statement whose tree nests more
+  function arguments, 597 parentheses, calls and `CASE` expressions, and fewer levels of mixed
+  constructs (119 of `(SELECT f(-( ... )))`). It also refuses a statement whose tree nests more
   than 8,000 levels, which bounds flat chains and chains nested in another chain's operand.
   GoogleSQL's parser accepts all of these at 20,000 levels.
 - **Nested keyword-led calls.** A keyword reading of a call such as `TRIM` or `POSITION` is tried
   at most once at each position, so nested calls take about quadratic time in their depth; the
-  nesting budget caps it at about 0.4 s in a debug build and 31 ms in a release build at 195
-  levels.
+  nesting budget caps it at about 2.6 s in a debug build and 0.37 s in a release build at 590
+  levels of `TRIM(`.
 - **A string date part.** `EXTRACT('HOUR' FROM ts)` is refused by the local parser as a syntax
   error. GoogleSQL's parser takes it and its analysis refuses it ("A valid date part name is
   required"), so the verdict matches BigQuery's and only the syntax flag differs.

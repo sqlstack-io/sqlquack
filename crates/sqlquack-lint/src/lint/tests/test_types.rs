@@ -112,6 +112,15 @@ pub(crate) struct FunctionDepthFailureTestCase {
     pub expected_error_end: &'static str,
 }
 
+pub(crate) struct DialectDepthTestCase {
+    pub description: &'static str,
+    pub depth: usize,
+    /// The request's `max_function_call_depth`; absent for the default.
+    pub max_function_call_depth: Option<usize>,
+    /// How the error ends, or `linted` when the SQL lints.
+    pub expected_outcome_end: &'static str,
+}
+
 pub(crate) struct ParseSqlDepthTestCase {
     pub description: &'static str,
     pub depth: usize,

@@ -13,8 +13,8 @@ use sqlquack_syntax::Gap;
 
 pub(crate) type Parsing<T> = Result<T, ParseError>;
 
-/// Recursion deeper than this fails as PostgreSQL's stack depth limit does (54001), not as syntax.
-const MAX_DEPTH: usize = 300;
+/// Recursion deeper than this fails as 54001, past SQLQuack's 512-call ceiling; PostgreSQL nests deeper.
+const MAX_DEPTH: usize = 600;
 
 /// The longest flat chain of operators other than AND and OR, or of indirections.
 const MAX_CHAIN: usize = 1000;
