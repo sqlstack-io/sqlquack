@@ -106,7 +106,7 @@ pub(crate) fn column_finding(
     let merged_hide: bool = dialect_rules(context.profile).merged_keys_hide_other_items();
     while let Some(current) = scope {
         match merged_readings(current, &wanted, context) {
-            Some(readings) if merged_hide || readings < 2 => return None,
+            Some(readings) if merged_hide || readings <= 1 => return None,
             _ => {}
         }
         let matches: usize = offering_count(current, &wanted, context);
@@ -527,11 +527,14 @@ fn merged_readings(
         .sources
         .iter()
         .enumerate()
-        .filter(|(index, source)| {
-            !keys.iter().any(|range| range.contains(index)) && offers(source, wanted, context)
-        })
+        .filter(|(index, source)| !covered(&keys, *index) && offers(source, wanted, context))
         .count();
     Some(keys.len() + uncovered)
+}
+
+/// Whether one of the merged keys' joins holds the `index`th source.
+fn covered(keys: &[&std::ops::Range<usize>], index: usize) -> bool {
+    keys.iter().any(|range| range.contains(&index))
 }
 
 /// How many FROM items offer `wanted`, two under one name counted once.
