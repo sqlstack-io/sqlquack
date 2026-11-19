@@ -15,5 +15,5 @@ rustc = "rustc 1.99.1 (58cf8f9c3 2026-10-13)"
 tolerance_percent = 2
 
 [counts]
-analysis = 239698431
-parse = 253081114
+analysis = 182168067
+parse = 252986430
