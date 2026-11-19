@@ -771,6 +771,11 @@ fn given_a_comma_after_a_joined_item_when_resolving_names_then_the_join_reads_on
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "an ON condition reading a USING key a later join merges again (2.0: accepted)",
+            sql: "SELECT 1 FROM orders a JOIN customers b USING (id) JOIN exports c ON id IS NOT NULL JOIN customers d USING (id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
             description: "an ON condition reading a later comma group's item (2.0: table not found)",
             sql: "SELECT 1 FROM orders a JOIN customers c ON b.id = c.id, customers b",
             expected_findings: &[(

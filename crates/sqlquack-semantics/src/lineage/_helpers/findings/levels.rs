@@ -233,20 +233,21 @@ fn condition_scopes<'s, 'a>(
     scopes
 }
 
-/// `scope` narrowed to the sources in `reached`, with the merged keys of joins wholly inside it.
+/// `scope` narrowed to the sources in `reached`, with the merged keys of joins starting inside it.
 fn reached_scope<'a>(
     scope: &LineageScope<'a>,
     reached: std::ops::Range<usize>,
 ) -> LineageScope<'a> {
-    let shift =
-        |range: &std::ops::Range<usize>| range.start - reached.start..range.end - reached.start;
+    let shift = |range: &std::ops::Range<usize>| {
+        range.start - reached.start..range.end.min(reached.end) - reached.start
+    };
     LineageScope {
         sources: scope.sources[reached.clone()].to_vec(),
         merged: scope
             .merged
             .iter()
             .filter(|merged| {
-                reached.start <= merged.sources.start && merged.sources.end <= reached.end
+                reached.start <= merged.sources.start && merged.sources.start < reached.end
             })
             .map(|merged| MergedKey {
                 sources: shift(&merged.sources),

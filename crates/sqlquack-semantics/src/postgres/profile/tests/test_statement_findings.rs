@@ -359,6 +359,16 @@ fn given_a_comma_after_a_joined_item_when_resolving_names_then_the_join_reads_on
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "an ON condition reading a USING key a later join merges again (18: accepted)",
+            sql: "SELECT 1 FROM orders a JOIN customers b USING (id) JOIN exports c ON id IS NOT NULL JOIN customers d USING (id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading a NATURAL key a later join merges again (18: accepted)",
+            sql: "SELECT 1 FROM orders a NATURAL JOIN customers b JOIN exports c ON id IS NOT NULL NATURAL JOIN customers d",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
             description: "an ON condition reading an earlier comma group's item (18: invalid reference)",
             sql: "SELECT 1 FROM orders a, customers b JOIN customers c ON a.id = c.id",
             expected_findings: &[(
