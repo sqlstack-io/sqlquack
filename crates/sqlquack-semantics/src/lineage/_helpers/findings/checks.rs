@@ -20,7 +20,7 @@ use crate::lineage::constants::{
     METADATA_PREFIX, POSITIONAL_PREFIX, SEQUENCE_COLUMNS, SINGLE_JOIN_SOURCES, SQL_STAR,
 };
 use crate::lineage::models::{Engine, NameFinding};
-use crate::lineage::models::{LineageContext, LineageScope, NamedQuery, ScopeSource};
+use crate::lineage::models::{LineageContext, LineageScope, MergedKey, NamedQuery, ScopeSource};
 
 /// The level a clause is read in: its scope, the aliases it may read, CONNECT BY and filter joins.
 #[derive(Clone, Copy)]
@@ -103,11 +103,9 @@ pub(crate) fn column_finding(
         return None;
     }
     let mut scope: Option<&LineageScope<'_>> = Some(level.scope);
-    let merged_hide: bool = dialect_rules(context.profile).merged_keys_hide_other_items();
     while let Some(current) = scope {
-        match merged_readings(current, &wanted, context) {
-            Some(readings) if merged_hide || readings <= 1 => return None,
-            _ => {}
+        if merged_answers(current, &wanted, context) {
+            return None;
         }
         let matches: usize = offering_count(current, &wanted, context);
         if matches > 1
@@ -508,28 +506,28 @@ fn offers(source: &ScopeSource, wanted: &str, context: LineageContext<'_>) -> bo
                 .contains(&wanted))
 }
 
-/// With a USING or NATURAL key named `wanted`, how many columns it may read: the keys and the items no key covers.
-fn merged_readings(
-    scope: &LineageScope<'_>,
-    wanted: &str,
-    context: LineageContext<'_>,
-) -> Option<usize> {
+/// Whether a USING or NATURAL key named `wanted` answers it: where other items may share the name, alone.
+fn merged_answers(scope: &LineageScope<'_>, wanted: &str, context: LineageContext<'_>) -> bool {
+    let named = |merged: &&MergedKey| context.profile.same_identifier(&merged.column.key, wanted);
+    if !scope.merged.iter().any(|merged| named(&merged)) {
+        return false;
+    }
+    if dialect_rules(context.profile).merged_keys_hide_other_items() {
+        return true;
+    }
     let keys: Vec<&std::ops::Range<usize>> = scope
         .merged
         .iter()
-        .filter(|merged| context.profile.same_identifier(&merged.column.key, wanted))
+        .filter(named)
         .map(|merged| &merged.sources)
         .collect();
-    if keys.is_empty() {
-        return None;
-    }
     let uncovered: usize = scope
         .sources
         .iter()
         .enumerate()
         .filter(|(index, source)| !covered(&keys, *index) && offers(source, wanted, context))
         .count();
-    Some(keys.len() + uncovered)
+    keys.len() + uncovered <= 1
 }
 
 /// Whether one of the merged keys' joins holds the `index`th source.
