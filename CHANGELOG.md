@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.22.1](https://github.com/sqlstack-io/sqlquack/compare/v0.22.0...v0.22.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* **databricks:** keep a returned table's columns apart from their spacing ([b0b1471](https://github.com/sqlstack-io/sqlquack/commit/b0b1471cd342a61ce31ee39221a5932df98cf5bd))
+* **databricks:** keep raw strings in path keys and resources ([f20770d](https://github.com/sqlstack-io/sqlquack/commit/f20770ddfcd0ede142dbcec49c78f3d3b6028f62))
+* **duckdb:** a NATURAL join of sides sharing no column is an error ([f676760](https://github.com/sqlstack-io/sqlquack/commit/f676760ac2097ce38a628da231be13023113290d))
+* **semantics:** a join condition reads only the items its engine lets it see ([59eee86](https://github.com/sqlstack-io/sqlquack/commit/59eee86478b87288875746b243cd3de651a75631))
+* **semantics:** a merged join key is ambiguous beside another item's column on PostgreSQL and SQLite ([1491c39](https://github.com/sqlstack-io/sqlquack/commit/1491c39718a7bd4155d1d991ff801271be352358))
+* **semantics:** check a named window's frame offsets as column references ([5226ec6](https://github.com/sqlstack-io/sqlquack/commit/5226ec6a91e26d401265159891a0b2859cbb3ec7))
+* **semantics:** find a named window in any case where names fold ([922c838](https://github.com/sqlstack-io/sqlquack/commit/922c838542ca2d4df3fdde2ecf680422c9b42d75))
+* **semantics:** hide a projection's own alias from the named window it reads ([069484f](https://github.com/sqlstack-io/sqlquack/commit/069484f0d506b74dc89d4effad6b9fc758fa897f))
+* **semantics:** keep SQLite and BigQuery window keys from reading output aliases ([d83c2c0](https://github.com/sqlstack-io/sqlquack/commit/d83c2c06fedfde94fb3b6c3f9e1206753a50886d))
+* **semantics:** report an unknown base of a window an OVER reads ([b04bf13](https://github.com/sqlstack-io/sqlquack/commit/b04bf13943f46ce61379ad0c50698eb464108489))
+* **sqlite:** a projection cannot read another projection's alias ([ed2cee5](https://github.com/sqlstack-io/sqlquack/commit/ed2cee511d3016b5366bd6b432425b357b45e60e))
+* **syntax:** keep a window name's quotes in OVER and WINDOW ([c418bc4](https://github.com/sqlstack-io/sqlquack/commit/c418bc4b819d494a6d3f7ce49836fe1c435825c7))
+
+
+### Performance Improvements
+
+* **semantics:** append a level's findings instead of extending with them ([2d5c958](https://github.com/sqlstack-io/sqlquack/commit/2d5c95888f367b673e773b873461f1121b51203a))
+* **semantics:** append a node's findings instead of extending with them ([0a2ba35](https://github.com/sqlstack-io/sqlquack/commit/0a2ba35459fe5c2b80af000ce9db0be1dbd7522c))
+* **semantics:** collect a SELECT's scope once for its structure rules ([2859752](https://github.com/sqlstack-io/sqlquack/commit/2859752543010e8bad8038e1e51c1f26cf581d74))
+* **semantics:** hash scope-rule names with FxHash ([5ffe07e](https://github.com/sqlstack-io/sqlquack/commit/5ffe07edf3de849ffc002b5b46918a0ba81b3f82))
+* **semantics:** look an aggregate's name up in a set ([d783426](https://github.com/sqlstack-io/sqlquack/commit/d78342663d5c086cb70aef906b5c94efa1f69c23))
+* **semantics:** normalise a single-spaced ASCII type spelling in one step ([f9ad7cf](https://github.com/sqlstack-io/sqlquack/commit/f9ad7cf968378bae819a2fec1bfc93fb5af1c55c))
+* **semantics:** order findings without a position map when none needs one ([d8a7ea5](https://github.com/sqlstack-io/sqlquack/commit/d8a7ea5fa420d73542d81d4d691790528f09392e))
+* **semantics:** read the family of a bare type word without allocating ([8fbc3b7](https://github.com/sqlstack-io/sqlquack/commit/8fbc3b788f1220b99dcf0599982c3b6041fc7a9d))
+* **semantics:** record the lower analysis instruction count ([3ce6c39](https://github.com/sqlstack-io/sqlquack/commit/3ce6c391429da21beafda478240b41c383a43606))
+* **semantics:** upper-case a Snowflake identifier in place ([6395a1e](https://github.com/sqlstack-io/sqlquack/commit/6395a1e77f9f8ac611686c38592d933830a3cc79))
+* **semantics:** walk a node's children without collecting them first ([edfdae5](https://github.com/sqlstack-io/sqlquack/commit/edfdae5593d6158fdd812da1349c7598136f71e5))
+
 ## [0.22.0](https://github.com/sqlstack-io/sqlquack/compare/v0.21.0...v0.22.0) (2026-11-19)
 
 
