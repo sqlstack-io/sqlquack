@@ -1,7 +1,6 @@
 //! A SELECT's scope rules: structure, aggregate and window placement, grouping and ordering.
 
-use std::collections::{HashMap, HashSet};
-
+use rustc_hash::{FxHashMap, FxHashSet};
 use serde_json::{Map, Value};
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
@@ -86,7 +85,7 @@ fn rule(code: &'static str, message: String, at: &Expression, select: &Expressio
 type Clause<'s, 'm> = (
     &'s Expression,
     (bool, bool),
-    &'m HashMap<String, &'s Expression>,
+    &'m FxHashMap<String, &'s Expression>,
 );
 
 /// What the rules read of a SELECT's level: its scope and the engine.
@@ -109,8 +108,8 @@ impl RuleLevel<'_, '_> {
             .any(|source| source.query.open || source.query.columns.is_empty())
     }
 
-    fn input_names(&self) -> HashSet<&str> {
-        let mut names: HashSet<&str> = HashSet::new();
+    fn input_names(&self) -> FxHashSet<&str> {
+        let mut names: FxHashSet<&str> = FxHashSet::default();
         for source in &self.scope.sources {
             names.extend(
                 source
@@ -132,13 +131,13 @@ pub(crate) fn select_rules(
     let mut findings: Vec<NameFinding> = structure_rules((node, select), level);
     findings.extend(order_positions((node, select), level));
     findings.extend(star_modifiers((node, select), level));
-    let aliases: HashMap<String, &Expression> = output_aliases(select, level);
-    let empty: HashMap<String, &Expression> = HashMap::new();
-    let usable: &HashMap<String, &Expression> = match level.open() {
+    let aliases: FxHashMap<String, &Expression> = output_aliases(select, level);
+    let empty: FxHashMap<String, &Expression> = FxHashMap::default();
+    let usable: &FxHashMap<String, &Expression> = match level.open() {
         true => &empty,
         false => &aliases,
     };
-    let mut seen: HashMap<String, &Expression> = HashMap::new();
+    let mut seen: FxHashMap<String, &Expression> = FxHashMap::default();
     for projection in &select.expressions {
         findings.extend(placement(projection, (true, true), (&seen, level), node));
         if let Expression::Alias(alias) = projection {
@@ -250,8 +249,8 @@ fn order_by_all(order: &OrderBy, _level: RuleLevel<'_, '_>) -> bool {
 fn output_aliases<'s>(
     select: &'s Select,
     level: RuleLevel<'_, '_>,
-) -> HashMap<String, &'s Expression> {
-    let mut aliases: HashMap<String, &Expression> = HashMap::new();
+) -> FxHashMap<String, &'s Expression> {
+    let mut aliases: FxHashMap<String, &Expression> = FxHashMap::default();
     if !select
         .expressions
         .iter()
@@ -259,8 +258,8 @@ fn output_aliases<'s>(
     {
         return aliases;
     }
-    let inputs: HashSet<&str> = level.input_names();
-    let mut duplicate: HashSet<String> = HashSet::new();
+    let inputs: FxHashSet<&str> = level.input_names();
+    let mut duplicate: FxHashSet<String> = FxHashSet::default();
     for projection in &select.expressions {
         let Expression::Alias(alias) = projection else {
             continue;
@@ -288,7 +287,7 @@ fn structure_rules(
     let rules: &dyn DialectRules = dialect_rules(level.context.profile);
     let mut findings: Vec<NameFinding> = Vec::new();
     if let Some(with) = &select.with {
-        let mut names: HashSet<String> = HashSet::new();
+        let mut names: FxHashSet<String> = FxHashSet::default();
         for cte in &with.ctes {
             let mismatched = |width: usize| rules.refuses_cte_alias_count(cte.columns.len(), width);
             if !cte.columns.is_empty() && output_width(&cte.this).is_some_and(mismatched) {
@@ -318,7 +317,7 @@ fn structure_rules(
             }
         }
     }
-    let mut names: HashSet<String> = HashSet::new();
+    let mut names: FxHashSet<String> = FxHashSet::default();
     for (item, _) in from_parts(select)
         .into_iter()
         .filter(|_| !matches!(engine, Engine::Sqlite | Engine::Databricks))
@@ -334,7 +333,7 @@ fn structure_rules(
             ));
         }
     }
-    let windows: HashSet<&str> = level
+    let windows: FxHashSet<&str> = level
         .scope
         .windows
         .iter()
@@ -533,7 +532,7 @@ fn star_modifiers(
     if level.open() || !select.expressions.iter().any(modified) {
         return Vec::new();
     }
-    let inputs: HashSet<&str> = level.input_names();
+    let inputs: FxHashSet<&str> = level.input_names();
     let mut findings: Vec<NameFinding> = Vec::new();
     for projection in &select.expressions {
         let Expression::Star(star) = projection else {
@@ -587,7 +586,7 @@ fn query_start(node: &Expression) -> bool {
 fn placement(
     expression: &Expression,
     (aggregates, windows): (bool, bool),
-    (aliases, level): (&HashMap<String, &Expression>, RuleLevel<'_, '_>),
+    (aliases, level): (&FxHashMap<String, &Expression>, RuleLevel<'_, '_>),
     select: &Expression,
 ) -> Vec<NameFinding> {
     let mut findings: Vec<NameFinding> = Vec::new();
@@ -597,7 +596,7 @@ fn placement(
         inside_window: false,
         window_function: false,
     }];
-    let mut expanded: HashSet<(String, bool, bool)> = HashSet::new();
+    let mut expanded: FxHashSet<(String, bool, bool)> = FxHashSet::default();
     while let Some(placed) = pending.pop() {
         let node: &Expression = placed.node;
         if query_start(node) {
@@ -706,7 +705,7 @@ fn ordinary_aggregate(expression: &Expression) -> bool {
 /// The group keys of `select`: GROUP BY expressions, ordinals and aliases resolved, sets opened.
 fn group_keys<'s>(
     select: &'s Select,
-    aliases: &HashMap<String, &'s Expression>,
+    aliases: &FxHashMap<String, &'s Expression>,
     level: RuleLevel<'_, '_>,
 ) -> Vec<&'s Expression> {
     let mut groups: Vec<&Expression> = Vec::new();
@@ -1004,7 +1003,7 @@ fn offers(source: &ScopeSource, name: &str, level: RuleLevel<'_, '_>) -> bool {
 /// Ungrouped, unaggregated columns an aggregate query reads; none in SQLite, which reads any row.
 fn grouping(
     (node, select): (&Expression, &Select),
-    aliases: &HashMap<String, &Expression>,
+    aliases: &FxHashMap<String, &Expression>,
     level: RuleLevel<'_, '_>,
 ) -> Vec<NameFinding> {
     if Engine::of(level.context) == Engine::Sqlite {
@@ -1101,7 +1100,7 @@ fn grouping(
     for (expression, named) in read {
         let mut lambdas: Vec<(usize, Vec<String>)> = vec![(0, Vec::new())];
         let mut pending: Vec<(&Expression, usize)> = vec![(unalias(expression), 0)];
-        let mut expanded: HashSet<String> = HashSet::new();
+        let mut expanded: FxHashSet<String> = FxHashSet::default();
         while let Some((current, frame)) = pending.pop() {
             if query_start(current)
                 || is_aggregate(current)
@@ -1220,7 +1219,7 @@ fn distinct_order(
     {
         return Vec::new();
     }
-    let mut selected: HashSet<String> = HashSet::new();
+    let mut selected: FxHashSet<String> = FxHashSet::default();
     for projection in &select.expressions {
         if let Expression::Alias(alias) = projection {
             selected.insert(level.key(&alias.alias));
@@ -1297,7 +1296,7 @@ pub(crate) fn set_order_by(
 }
 
 /// The output names of a set operation's first branch, when every one is named.
-fn output_names(query: &Expression, context: LineageContext<'_>) -> Option<HashSet<String>> {
+fn output_names(query: &Expression, context: LineageContext<'_>) -> Option<FxHashSet<String>> {
     match query {
         Expression::Select(select) => select
             .expressions

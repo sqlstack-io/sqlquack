@@ -1,7 +1,6 @@
 //! Walking a query level by level: each level's clauses read in its scope, inner queries after.
 
-use std::collections::HashMap;
-
+use rustc_hash::FxHashMap;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::queries::models::{
@@ -143,7 +142,7 @@ fn unread_ctes(owner: &Expression, with: &With, context: LineageContext<'_>) -> 
         .iter()
         .map(|cte| key(&cte.alias, context))
         .collect();
-    let mut indices: HashMap<String, Vec<usize>> = HashMap::new();
+    let mut indices: FxHashMap<String, Vec<usize>> = FxHashMap::default();
     for (index, name) in names.iter().enumerate() {
         indices
             .entry(name.to_ascii_lowercase())
