@@ -14,6 +14,9 @@ use crate::lineage::models::{LineageContext, LineageScope};
 /// The scale of a fixed-point type that holds only integers.
 const INTEGER_SCALE: &str = "0";
 
+/// The longest bare type word `word_family` lowers on the stack.
+const WORD_CAPACITY: usize = 32;
+
 pub(crate) fn type_arguments(normalized: &str) -> Option<(&str, &str)> {
     let open: usize = normalized.find('(')?;
     if !normalized.ends_with(')') || open + 1 >= normalized.len() {
@@ -23,6 +26,26 @@ pub(crate) fn type_arguments(normalized: &str) -> Option<(&str, &str)> {
         normalized[..open].trim(),
         normalized[open + 1..normalized.len() - 1].trim(),
     ))
+}
+
+/// The family of a bare type word such as `BIGINT`, lowered without allocating, else `None`.
+pub(crate) fn word_family(spelling: &str) -> Option<Family> {
+    let bytes: &[u8] = spelling.as_bytes();
+    if bytes.is_empty()
+        || bytes.len() > WORD_CAPACITY
+        || !bytes
+            .iter()
+            .all(|byte| byte.is_ascii_alphanumeric() || *byte == b'_')
+    {
+        return None;
+    }
+    let mut lowered: [u8; WORD_CAPACITY] = [0; WORD_CAPACITY];
+    for (slot, byte) in lowered.iter_mut().zip(bytes) {
+        *slot = byte.to_ascii_lowercase();
+    }
+    Some(base_family(&String::from_utf8_lossy(
+        &lowered[..bytes.len()],
+    )))
 }
 
 fn base_family(base: &str) -> Family {
