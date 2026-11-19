@@ -121,12 +121,14 @@ fn given_a_call_depth_limit_when_parsing_sql_then_the_limit_applies() {
 fn given_a_call_depth_limit_in_each_linted_dialect_when_linting_then_it_is_the_exact_limit() {
     let test_cases = [
         test_types::DialectDepthTestCase {
+            sql: helpers::nested_function_sql,
             description: "a lowered limit of 3 lints 3 nested calls",
             depth: 3,
             max_function_call_depth: Some(3),
             expected_outcome_end: "linted",
         },
         test_types::DialectDepthTestCase {
+            sql: helpers::nested_function_sql,
             description: "a lowered limit of 3 refuses 4 nested calls",
             depth: 4,
             max_function_call_depth: Some(3),
@@ -134,6 +136,7 @@ fn given_a_call_depth_limit_in_each_linted_dialect_when_linting_then_it_is_the_e
                 max_function_call_depth, up to 512",
         },
         test_types::DialectDepthTestCase {
+            sql: helpers::nested_function_sql,
             description: "a limit of 64 refuses 100 nested calls at the 65th",
             depth: 100,
             max_function_call_depth: Some(64),
@@ -141,12 +144,14 @@ fn given_a_call_depth_limit_in_each_linted_dialect_when_linting_then_it_is_the_e
                 max_function_call_depth, up to 512",
         },
         test_types::DialectDepthTestCase {
+            sql: helpers::nested_function_sql,
             description: "the default limit lints 256 nested calls",
             depth: 256,
             max_function_call_depth: None,
             expected_outcome_end: "linted",
         },
         test_types::DialectDepthTestCase {
+            sql: helpers::nested_function_sql,
             description: "the default limit refuses 257 nested calls",
             depth: 257,
             max_function_call_depth: None,
@@ -154,12 +159,75 @@ fn given_a_call_depth_limit_in_each_linted_dialect_when_linting_then_it_is_the_e
                 max_function_call_depth, up to 512",
         },
         test_types::DialectDepthTestCase {
-            description: "the ceiling of 512 lints 511 nested calls, the statement's tree being one deeper",
+            sql: helpers::nested_function_sql,
+            description: "the ceiling of 512 lints 511 nested calls in a bare SELECT",
             depth: 511,
             max_function_call_depth: Some(512),
             expected_outcome_end: "linted",
         },
         test_types::DialectDepthTestCase {
+            sql: helpers::nested_function_sql,
+            description: "the ceiling of 512 refuses 512 nested calls, the statement being a level",
+            depth: 512,
+            max_function_call_depth: Some(512),
+            expected_outcome_end: "value 513 exceeds configured limit 512. The maximum is 512. The \
+                statement and every expression around the calls also count toward that limit, so at \
+                512 a bare SELECT can nest at most 511 calls, and fewer fit inside an alias, \
+                comparison or CTE.",
+        },
+        test_types::DialectDepthTestCase {
+            sql: helpers::aliased_calls_sql,
+            description: "the ceiling of 512 lints 510 nested calls under an alias",
+            depth: 510,
+            max_function_call_depth: Some(512),
+            expected_outcome_end: "linted",
+        },
+        test_types::DialectDepthTestCase {
+            sql: helpers::aliased_calls_sql,
+            description: "the ceiling of 512 refuses 511 nested calls under an alias",
+            depth: 511,
+            max_function_call_depth: Some(512),
+            expected_outcome_end: "value 513 exceeds configured limit 512. The maximum is 512. The \
+                statement and every expression around the calls also count toward that limit, so at \
+                512 a bare SELECT can nest at most 511 calls, and fewer fit inside an alias, \
+                comparison or CTE.",
+        },
+        test_types::DialectDepthTestCase {
+            sql: helpers::compared_calls_sql,
+            description: "the ceiling of 512 lints 510 nested calls in a comparison",
+            depth: 510,
+            max_function_call_depth: Some(512),
+            expected_outcome_end: "linted",
+        },
+        test_types::DialectDepthTestCase {
+            sql: helpers::compared_calls_sql,
+            description: "the ceiling of 512 refuses 511 nested calls in a comparison",
+            depth: 511,
+            max_function_call_depth: Some(512),
+            expected_outcome_end: "value 513 exceeds configured limit 512. The maximum is 512. The \
+                statement and every expression around the calls also count toward that limit, so at \
+                512 a bare SELECT can nest at most 511 calls, and fewer fit inside an alias, \
+                comparison or CTE.",
+        },
+        test_types::DialectDepthTestCase {
+            sql: helpers::cte_calls_sql,
+            description: "the ceiling of 512 lints 509 nested calls in a CTE",
+            depth: 509,
+            max_function_call_depth: Some(512),
+            expected_outcome_end: "linted",
+        },
+        test_types::DialectDepthTestCase {
+            sql: helpers::cte_calls_sql,
+            description: "the ceiling of 512 refuses 510 nested calls in a CTE",
+            depth: 510,
+            max_function_call_depth: Some(512),
+            expected_outcome_end: "value 513 exceeds configured limit 512. The maximum is 512. The \
+                statement and every expression around the calls also count toward that limit, so at \
+                512 a bare SELECT can nest at most 511 calls, and fewer fit inside an alias, \
+                comparison or CTE.",
+        },
+        test_types::DialectDepthTestCase {
+            sql: helpers::nested_function_sql,
             description: "the ceiling of 512 refuses 513 nested calls, naming it as fixed",
             depth: 513,
             max_function_call_depth: Some(512),
@@ -167,7 +235,6 @@ fn given_a_call_depth_limit_in_each_linted_dialect_when_linting_then_it_is_the_e
                 fixed nesting ceiling, which no setting raises",
         },
     ];
-    let mut mismatches: Vec<String> = Vec::new();
     for dialect in [
         "snowflake",
         "duckdb",
@@ -177,17 +244,18 @@ fn given_a_call_depth_limit_in_each_linted_dialect_when_linting_then_it_is_the_e
         "databricks",
     ] {
         for test_case in &test_cases {
-            let sql = helpers::nested_function_sql(test_case.depth);
+            let sql = (test_case.sql)(test_case.depth);
             let outcome: String = helpers::dialect_diagnostics_within(
                 &sql,
                 dialect,
                 test_case.max_function_call_depth,
             )
             .map_or_else(|error| error, |_| "linted".to_owned());
-            if !outcome.ends_with(test_case.expected_outcome_end) {
-                mismatches.push(format!("{dialect}: {}: {outcome}", test_case.description));
-            }
+            assert!(
+                outcome.ends_with(test_case.expected_outcome_end),
+                "{dialect}: {}: {outcome}",
+                test_case.description
+            );
         }
     }
-    assert!(mismatches.is_empty(), "{}", mismatches.join("\n"));
 }

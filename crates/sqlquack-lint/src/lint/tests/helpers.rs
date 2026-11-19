@@ -10,6 +10,33 @@ pub(crate) fn nested_function_sql(depth: usize) -> String {
     format!("SELECT {}1{}", "F(".repeat(depth), ")".repeat(depth))
 }
 
+/// `depth` nested calls under an output alias.
+pub(crate) fn aliased_calls_sql(depth: usize) -> String {
+    format!(
+        "SELECT {}1{} AS n FROM t",
+        "F(".repeat(depth),
+        ")".repeat(depth)
+    )
+}
+
+/// `depth` nested calls compared in a WHERE clause.
+pub(crate) fn compared_calls_sql(depth: usize) -> String {
+    format!(
+        "SELECT * FROM t WHERE {}1{} = 1",
+        "F(".repeat(depth),
+        ")".repeat(depth)
+    )
+}
+
+/// `depth` nested calls under an alias inside a CTE.
+pub(crate) fn cte_calls_sql(depth: usize) -> String {
+    format!(
+        "WITH c AS (SELECT {}1{} AS n FROM t) SELECT n FROM c",
+        "F(".repeat(depth),
+        ")".repeat(depth)
+    )
+}
+
 pub(crate) fn nested_from_sql(depth: usize) -> String {
     format!(
         "SELECT * FROM {}orders{}",

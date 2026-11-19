@@ -114,6 +114,8 @@ pub(crate) struct FunctionDepthFailureTestCase {
 
 pub(crate) struct DialectDepthTestCase {
     pub description: &'static str,
+    /// The statement holding `depth` nested calls.
+    pub sql: fn(usize) -> String,
     pub depth: usize,
     /// The request's `max_function_call_depth`; absent for the default.
     pub max_function_call_depth: Option<usize>,

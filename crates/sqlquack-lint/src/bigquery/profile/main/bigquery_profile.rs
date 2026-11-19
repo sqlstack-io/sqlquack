@@ -17,7 +17,7 @@ pub(crate) fn bigquery_profile() -> LintProfile {
                 .tokenize(sql)
                 .map_err(|error| error.to_string())
         },
-        statements: |sql, _| native_statements(sql, strict_parse),
+        statements: |sql, options| native_statements(sql, strict_parse, options),
         predicates: |text, _| native_predicates(text, strict_parse),
         own_predicate_parser: true,
         foreign_aggregates: &FOREIGN_AGGREGATE_CALLS,
