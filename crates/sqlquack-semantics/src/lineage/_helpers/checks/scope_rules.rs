@@ -9,7 +9,7 @@ use sqlquack_syntax::expressions::names::models::{Column, Identifier, Literal};
 use sqlquack_syntax::expressions::queries::models::{OrderBy, Select};
 
 use crate::dialects::main::dialect_rules::dialect_rules;
-use crate::lineage::_helpers::checks::issues::{in_scope, issue, rule_location};
+use crate::lineage::_helpers::checks::issues::{each_child, in_scope, issue, rule_location};
 use crate::lineage::_helpers::findings::checks::keyword_function;
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::_helpers::tracing::resolution::key;
@@ -709,14 +709,16 @@ fn placement(
             findings.push(rule("E231", MISPLACED_AGGREGATE.to_owned(), node, select));
             continue;
         }
-        let mut children: Vec<&Expression> = node.children();
-        children.reverse();
-        pending.extend(children.into_iter().map(|child| Placed {
-            node: child,
-            inside_aggregate: placed.inside_aggregate || aggregate,
-            inside_window: placed.inside_window,
-            window_function: false,
-        }));
+        let start: usize = pending.len();
+        each_child(node, |child| {
+            pending.push(Placed {
+                node: child,
+                inside_aggregate: placed.inside_aggregate || aggregate,
+                inside_window: placed.inside_window,
+                window_function: false,
+            });
+        });
+        pending[start..].reverse();
     }
     findings
 }
@@ -740,7 +742,7 @@ fn ordinary_aggregate(expression: &Expression) -> bool {
         if is_aggregate(node) {
             return true;
         }
-        pending.extend(node.children());
+        each_child(node, |child| pending.push(child));
     }
     false
 }

@@ -10,6 +10,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::expressions::queries::models::With;
 
+use crate::lineage::_helpers::checks::issues::each_child;
 use crate::lineage::_helpers::tracing::expressions::is_aggregate;
 use crate::lineage::models::{FromItems, Lineage, NamedQuery, ResolvedQuery};
 
@@ -135,11 +136,9 @@ fn holds(
         Some(Some(holds_it)) => holds_it,
         Some(None) => {
             let holds_it: bool = crate::lineage::_helpers::tracing::stack::deeper(|| {
-                wanted(node)
-                    || node
-                        .children()
-                        .into_iter()
-                        .any(|child| holds(child, judged, wanted))
+                let mut found: bool = wanted(node);
+                each_child(node, |child| found = found || holds(child, judged, wanted));
+                found
             });
             with_kept(|kept| judged(kept).insert(address, holds_it));
             holds_it
