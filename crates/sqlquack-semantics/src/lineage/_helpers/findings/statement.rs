@@ -1,6 +1,6 @@
 //! The findings of one parsed statement, each finding once, in polyglot's order.
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::ExpressionWalk;
@@ -42,7 +42,10 @@ pub(crate) fn ordered_findings(
             distinct.push(finding);
         }
     }
-    let order: HashMap<usize, usize> = statement
+    if distinct.iter().all(|finding| finding.phase == NAME_PHASE) {
+        return distinct;
+    }
+    let order: FxHashMap<usize, usize> = statement
         .dfs()
         .enumerate()
         .map(|(position, node)| (std::ptr::from_ref(node) as usize, position))
