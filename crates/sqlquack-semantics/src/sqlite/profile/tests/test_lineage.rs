@@ -150,6 +150,11 @@ fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_fou
 fn given_a_sqlite_query_sqlite_accepts_when_checking_then_nothing_is_found() {
     let test_cases = [
         QueryFindingsTestCase {
+            description: "a nested select list's named window reading the enclosing query's alias (3.40: accepted)",
+            sql: "SELECT quantity AS q FROM orders WHERE EXISTS (SELECT sum(1) OVER w FROM customers WINDOW w AS (ORDER BY q))",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
             description: "an ON condition reading a later comma group's item (3.40: accepted)",
             sql: "SELECT 1 FROM orders a JOIN customers c ON b.id = c.id, customers b",
             expected_findings: &[],
