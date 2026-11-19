@@ -233,29 +233,37 @@ fn condition_scopes<'s, 'a>(
     scopes
 }
 
-/// `scope` narrowed to the sources in `reached`, with the merged keys of joins starting inside it.
+/// `scope` narrowed to the sources in `reached`, with each merged key as it stood within them.
 fn reached_scope<'a>(
     scope: &LineageScope<'a>,
     reached: std::ops::Range<usize>,
 ) -> LineageScope<'a> {
-    let shift = |range: &std::ops::Range<usize>| {
-        range.start - reached.start..range.end.min(reached.end) - reached.start
-    };
     LineageScope {
         sources: scope.sources[reached.clone()].to_vec(),
         merged: scope
             .merged
             .iter()
-            .filter(|merged| {
-                reached.start <= merged.sources.start && merged.sources.start < reached.end
-            })
-            .map(|merged| MergedKey {
-                sources: shift(&merged.sources),
-                ..merged.clone()
+            .filter_map(|merged| {
+                let range = reached_range(merged, &reached)?;
+                Some(MergedKey {
+                    sources: range.start - reached.start..range.end - reached.start,
+                    earlier: Vec::new(),
+                    ..merged.clone()
+                })
             })
             .collect(),
         ..empty_scope(scope.ctes, scope.outer)
     }
+}
+
+/// The latest sources a merged key stood for wholly inside `reached`, if it was merged by then.
+fn reached_range<'k>(
+    merged: &'k MergedKey,
+    reached: &std::ops::Range<usize>,
+) -> Option<&'k std::ops::Range<usize>> {
+    std::iter::once(&merged.sources)
+        .chain(merged.earlier.iter().rev())
+        .find(|range| reached.start <= range.start && range.end <= reached.end)
 }
 
 /// The key of a derived table in FROM, by its alias; none when `item` is not a derived table.

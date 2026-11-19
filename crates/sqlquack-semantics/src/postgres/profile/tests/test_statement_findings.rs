@@ -359,6 +359,24 @@ fn given_a_comma_after_a_joined_item_when_resolving_names_then_the_join_reads_on
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "an ON condition reading a USING key only a later join merges (18: column does not exist)",
+            sql: "SELECT 1 FROM exports a JOIN exports b ON id IS NOT NULL JOIN orders c ON true JOIN customers d USING (id)",
+            expected_findings: &[(
+                "E201",
+                "Unknown column 'id' (not found in any referenced table)",
+                42,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading a key a later join widens past an item offering the name (18: ambiguous)",
+            sql: "SELECT 1 FROM orders x JOIN (orders a JOIN customers b USING (id)) ON true JOIN exports c ON id IS NOT NULL JOIN customers d USING (id)",
+            expected_findings: &[(
+                "E221",
+                "Ambiguous unqualified column 'id' found in 3 referenced tables",
+                93,
+            )],
+        },
+        QueryFindingsTestCase {
             description: "an ON condition reading a USING key a later join merges again (18: accepted)",
             sql: "SELECT 1 FROM orders a JOIN customers b USING (id) JOIN exports c ON id IS NOT NULL JOIN customers d USING (id)",
             expected_findings: &[],
