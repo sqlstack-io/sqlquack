@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.22.0](https://github.com/sqlstack-io/sqlquack/compare/v0.21.0...v0.22.0) (2026-11-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **lint:** lint now refuses a Postgres, BigQuery or Databricks statement whose tree nests past 512 levels, as Snowflake, DuckDB and SQLite already did, so 600 UNION ALL operands or 600
+* keep each comma item's joins with it in Postgres, Databricks, DuckDB and SQL Server
+* **bigquery:** sqlquack-syntax adds Literal::RawByteString and Literal::JoinedBytes, and GrantPrincipal gains a written field, so an exhaustive match on Literal or a GrantPrincipal struct literal no longer compiles.
+
+### Bug Fixes
+
+* **bigquery:** keep a column's and a struct field's OPTIONS ([563407d](https://github.com/sqlstack-io/sqlquack/commit/563407d12b0b425e51296d81036a0b3597c445bf))
+* **bigquery:** keep raw and adjacent pieces of bytes, typed literals and grantees ([42ce043](https://github.com/sqlstack-io/sqlquack/commit/42ce0431c5a9cb4f63a99697a824b4f5301b6a63))
+* keep each comma item's joins with it in Postgres, Databricks, DuckDB and SQL Server ([65ef255](https://github.com/sqlstack-io/sqlquack/commit/65ef2556d22343d71607eab399f7d0417d4c6c95))
+* **lint:** a join inside UPDATE FROM never limits the write ([2786df7](https://github.com/sqlstack-io/sqlquack/commit/2786df7d5edeba8c0e32fb205259eb2b39fb585d))
+* **lint:** add the call-depth note only to refusals of SQL that calls something ([30b4ed0](https://github.com/sqlstack-io/sqlquack/commit/30b4ed0c8b84329cc22c62d5c122ca3c2feea459))
+* **lint:** leave a fixture harness's empty relation out of the call depth ([f5af215](https://github.com/sqlstack-io/sqlquack/commit/f5af2154b72b2741d869751da0230a9c683154d0))
+* **lint:** make max_function_call_depth the exact limit in every linted dialect ([22a2a4c](https://github.com/sqlstack-io/sqlquack/commit/22a2a4cdfd0832aebed01b85df42f2439189ed2b))
+* **lint:** read cross joins and join keys inside FROM items ([9db4571](https://github.com/sqlstack-io/sqlquack/commit/9db457140547d1c387990e7c610ab108af7be3a5))
+* **lint:** refuse native trees past the 512 depth ceiling, as the shared parser does ([5c7768c](https://github.com/sqlstack-io/sqlquack/commit/5c7768ccfa7a9c9625a31df4e95fb5049a5b83b0))
+* list a nested USING or NATURAL key once in a star ([2ddd78a](https://github.com/sqlstack-io/sqlquack/commit/2ddd78a58436da41fea6884ca7dbb315606dc400))
+
 ## [0.21.0](https://github.com/sqlstack-io/sqlquack/compare/v0.20.0...v0.21.0) (2026-11-18)
 
 
