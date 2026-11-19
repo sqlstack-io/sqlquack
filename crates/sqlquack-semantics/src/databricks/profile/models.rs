@@ -11,7 +11,7 @@ use crate::databricks::profile::_helpers::typing::{
 use crate::databricks::profile::constants::DATABRICKS_VALUES_COLUMN;
 use crate::dialects::types::DialectProfile;
 use crate::lineage::constants::DATE_PART_FUNCTIONS;
-use crate::lineage::models::Engine;
+use crate::lineage::models::{Engine, JoinConditionReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -73,6 +73,10 @@ impl DialectRules for DatabricksRules {
 
     fn merged_keys_hide_other_items(&self) -> bool {
         true
+    }
+
+    fn join_conditions_read(&self) -> JoinConditionReach {
+        JoinConditionReach::Every
     }
 
     fn checks_call_signatures(&self) -> bool {

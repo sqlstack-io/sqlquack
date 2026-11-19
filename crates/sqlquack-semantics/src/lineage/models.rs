@@ -294,6 +294,10 @@ impl DialectRules for SharedRules {
         true
     }
 
+    fn join_conditions_read(&self) -> JoinConditionReach {
+        JoinConditionReach::Every
+    }
+
     fn checks_call_signatures(&self) -> bool {
         true
     }
@@ -425,6 +429,17 @@ impl DialectRules for SharedRules {
     fn system_columns(&self) -> &'static [&'static str] {
         &[]
     }
+}
+
+/// Which FROM items a join's ON condition may read.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum JoinConditionReach {
+    /// Every FROM item of its query level.
+    Every,
+    /// Every item before the join, and the join's own item.
+    Earlier,
+    /// The items of its own comma group before the join, and the join's own item.
+    OwnGroup,
 }
 
 /// The engine whose binder the checks follow.

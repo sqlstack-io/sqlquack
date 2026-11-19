@@ -771,6 +771,44 @@ fn given_a_comma_after_a_joined_item_when_resolving_names_then_the_join_reads_on
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "an ON condition reading a USING key a later join merges again (2.0: accepted)",
+            sql: "SELECT 1 FROM orders a JOIN customers b USING (id) JOIN exports c ON id IS NOT NULL JOIN customers d USING (id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading a later comma group's item (2.0: table not found)",
+            sql: "SELECT 1 FROM orders a JOIN customers c ON b.id = c.id, customers b",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'b' referenced by column 'id'",
+                43,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading a later item of its own join chain (2.0: table not found)",
+            sql: "SELECT 1 FROM orders a JOIN customers b ON c.id = a.id JOIN customers c ON true",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'c' referenced by column 'id'",
+                43,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading an earlier comma group's item (2.0: accepted)",
+            sql: "SELECT 1 FROM orders a, customers b JOIN customers c ON a.id = c.id",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading an earlier comma group's column (2.0: accepted)",
+            sql: "SELECT 1 FROM orders a, customers b JOIN customers c ON customer_id = c.id",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "a parenthesised join's ON condition reading an earlier comma item (2.0: accepted)",
+            sql: "SELECT 1 FROM orders a, (customers b JOIN customers c ON a.id = c.id)",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
             description: "an unqualified USING key beside a later item's column of its name, which DuckDB binds",
             sql: "SELECT id FROM orders a JOIN customers b USING (id), exports c CROSS JOIN customers d",
             expected_findings: &[],

@@ -26,11 +26,11 @@ use crate::lineage::_helpers::tracing::queries::{
 };
 use crate::lineage::_helpers::tracing::resolution::key;
 use crate::lineage::_helpers::tracing::reuse::{Reach, Reuse, reusing};
-use crate::lineage::_helpers::tracing::sources::{every_join, from_parts};
+use crate::lineage::_helpers::tracing::sources::{every_join, from_parts, sided_parts};
 use crate::lineage::constants::{COLUMNS_FUNCTION, OUTER_RIGHT_JOINS};
-use crate::lineage::models::Engine;
 use crate::lineage::models::NameFinding;
-use crate::lineage::models::{Lineage, LineageContext, LineageScope, NamedQuery};
+use crate::lineage::models::{Engine, JoinConditionReach};
+use crate::lineage::models::{Lineage, LineageContext, LineageScope, MergedKey, NamedQuery};
 use crate::lineage::types::DialectRules;
 
 /// The findings of `query` and its inner queries; `aliases` are enclosing levels' output aliases.
@@ -205,6 +205,59 @@ fn left_scope<'a>(
     })
 }
 
+/// Each join condition of `select`, with the FROM items `reach` lets it read.
+fn condition_scopes<'s, 'a>(
+    select: &'s Select,
+    scope: &LineageScope<'a>,
+    reach: JoinConditionReach,
+) -> Vec<(&'s Expression, LineageScope<'a>)> {
+    let at = |part: usize| {
+        scope.starts.get(part).map_or(scope.sources.len(), |start| {
+            (*start).min(scope.sources.len())
+        })
+    };
+    let mut scopes: Vec<(&'s Expression, LineageScope<'a>)> = Vec::new();
+    for part in sided_parts(select) {
+        let Some(join) = part.join else {
+            continue;
+        };
+        let first: usize = match reach {
+            JoinConditionReach::OwnGroup => at(part.left.start),
+            _ => 0,
+        };
+        let reached: std::ops::Range<usize> = first..at(part.right.end);
+        for condition in join.on.iter().chain(join.match_condition.iter()) {
+            scopes.push((condition, reached_scope(scope, reached.clone())));
+        }
+    }
+    scopes
+}
+
+/// `scope` narrowed to the sources in `reached`, with the merged keys of joins starting inside it.
+fn reached_scope<'a>(
+    scope: &LineageScope<'a>,
+    reached: std::ops::Range<usize>,
+) -> LineageScope<'a> {
+    let shift = |range: &std::ops::Range<usize>| {
+        range.start - reached.start..range.end.min(reached.end) - reached.start
+    };
+    LineageScope {
+        sources: scope.sources[reached.clone()].to_vec(),
+        merged: scope
+            .merged
+            .iter()
+            .filter(|merged| {
+                reached.start <= merged.sources.start && merged.sources.start < reached.end
+            })
+            .map(|merged| MergedKey {
+                sources: shift(&merged.sources),
+                ..merged.clone()
+            })
+            .collect(),
+        ..empty_scope(scope.ctes, scope.outer)
+    }
+}
+
 /// The key of a derived table in FROM, by its alias; none when `item` is not a derived table.
 fn derived_key(item: &Expression, context: LineageContext<'_>) -> Option<Option<String>> {
     match item {
@@ -355,6 +408,10 @@ fn select_findings(
     }
     let mut read: Vec<&Expression> = clauses(select);
     read.extend(orders.iter().flat_map(|order| order_keys(order)));
+    let conditions: Vec<(&Expression, LineageScope<'_>)> = match rules.join_conditions_read() {
+        JoinConditionReach::Every => Vec::new(),
+        reach => condition_scopes(select, &scope, reach),
+    };
     for clause in read {
         let named_place: bool = ordered_name_place(select, &orders, clause)
             || (rules.group_keys_read_outputs() && group_key_place(select, clause));
@@ -365,6 +422,13 @@ fn select_findings(
                 ..level
             },
             (false, false) => unnamed,
+        };
+        let read = match conditions.iter().find(|(on, _)| std::ptr::eq(*on, clause)) {
+            Some((_, reached)) => Level {
+                scope: reached,
+                ..read
+            },
+            None => read,
         };
         let (found, inner) = clause_findings(clause, &read, context);
         own.extend(found);
