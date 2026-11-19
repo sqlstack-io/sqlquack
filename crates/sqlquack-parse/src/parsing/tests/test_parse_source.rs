@@ -111,6 +111,34 @@ fn given_nested_function_calls_when_parsed_on_a_small_stack_then_the_limit_decid
 }
 
 #[test]
+fn given_a_deep_tree_without_calls_when_parsed_at_the_ceiling_then_the_refusal_has_no_calls_note() {
+    let test_cases = [CallDepthTestCase {
+        description: "600 UNION ALL operands at the ceiling of 512 get the bare depth refusal",
+        limit: Some(512),
+        levels: 600,
+        expected_outcome: Err("E_GUARD_AST_DEPTH_EXCEEDED: value 513 exceeds configured limit 512"),
+    }];
+
+    for test_case in test_cases {
+        let sql = format!("SELECT 1{}", " UNION ALL SELECT 1".repeat(test_case.levels));
+        let outcome: Result<usize, String> =
+            parse_source_within(&sql, Dialect::Snowflake, test_case.limit)
+                .map(|statements| statements.len())
+                .map_err(|failure| failure.message);
+        let ends_as_expected: Result<usize, bool> =
+            outcome.as_ref().map(|count| *count).map_err(|message| {
+                message.ends_with(test_case.expected_outcome.err().unwrap_or_default())
+            });
+        assert_eq!(
+            ends_as_expected,
+            test_case.expected_outcome.map_err(|_| true),
+            "{}: {outcome:?}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
 fn given_a_requested_call_depth_when_checked_then_only_1_to_512_is_accepted() {
     let test_cases = [
         CheckedDepthTestCase {
