@@ -257,7 +257,7 @@ fn select_findings(
         context,
     };
     if typed_rules(context) {
-        nested.extend(select_rules(
+        nested.append(&mut select_rules(
             (node, select),
             RuleLevel {
                 scope: &scope,
@@ -274,11 +274,11 @@ fn select_findings(
             .into_iter()
             .chain(after_keys.flat_map(in_scope))
         {
-            nested.extend(node_findings(checked, level));
+            nested.append(&mut node_findings(checked, level));
         }
     }
     let mut own: Vec<NameFinding> = alias_count_findings(select, &scope, context);
-    own.extend(using_findings(select, &scope, context));
+    own.append(&mut using_findings(select, &scope, context));
     let postgres: bool = Engine::of(context) == Engine::Postgres;
     let rules: &dyn DialectRules = dialect_rules(context.profile);
     let anywhere: bool = rules.outputs_read_anywhere();
@@ -341,9 +341,9 @@ fn select_findings(
             },
             None => unnamed,
         };
-        let (found, inner) = clause_findings(projection, &projected, context);
-        own.extend(found);
-        nested.extend(inner);
+        let (mut found, mut inner) = clause_findings(projection, &projected, context);
+        own.append(&mut found);
+        nested.append(&mut inner);
     }
     let mut read: Vec<&Expression> = clauses(select);
     read.extend(orders.iter().flat_map(|order| order_keys(order)));
@@ -358,9 +358,9 @@ fn select_findings(
             },
             (false, false) => unnamed,
         };
-        let (found, inner) = clause_findings(clause, &read, context);
-        own.extend(found);
-        nested.extend(inner);
+        let (mut found, mut inner) = clause_findings(clause, &read, context);
+        own.append(&mut found);
+        nested.append(&mut inner);
     }
     let windows: Vec<&NamedWindow> = std::iter::once(&select.windows)
         .chain(after.iter().map(|node| &node.windows))
@@ -373,12 +373,12 @@ fn select_findings(
     let windowed = if anywhere { level } else { unnamed };
     let used: Vec<&NamedWindow> = used_windows(windows, &reads, context);
     for key in used.into_iter().flat_map(window_keys) {
-        let (found, inner) = clause_findings(key, &windowed, context);
-        own.extend(found);
-        nested.extend(inner);
+        let (mut found, mut inner) = clause_findings(key, &windowed, context);
+        own.append(&mut found);
+        nested.append(&mut inner);
     }
     own.sort_by_key(|finding| finding.span.map(|span| span.start));
-    own.extend(nested);
+    own.append(&mut nested);
     own
 }
 
