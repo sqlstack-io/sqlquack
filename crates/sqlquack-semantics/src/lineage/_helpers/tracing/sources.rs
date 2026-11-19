@@ -285,6 +285,7 @@ fn joined(
                 expression: None,
             },
             sources: reach.clone(),
+            earlier: Vec::new(),
         };
         match merged_keys.iter_mut().find(|merged| {
             overlaps(&merged.sources, &reach)
@@ -295,7 +296,13 @@ fn joined(
             Some(merged) => {
                 let sources: Range<usize> =
                     merged.sources.start.min(reach.start)..merged.sources.end.max(reach.end);
-                *merged = MergedKey { sources, ..column };
+                let mut earlier: Vec<Range<usize>> = std::mem::take(&mut merged.earlier);
+                earlier.push(merged.sources.clone());
+                *merged = MergedKey {
+                    sources,
+                    earlier,
+                    ..column
+                };
             }
             None => merged_keys.push(column),
         }

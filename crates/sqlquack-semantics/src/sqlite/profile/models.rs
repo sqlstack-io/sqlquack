@@ -6,7 +6,7 @@ use sqlquack_syntax::{DataType, Dialect, Expression};
 
 use crate::dialects::types::DialectProfile;
 use crate::lineage::constants::{DATE_PART_FUNCTIONS, WINDOW_ONLY_FUNCTIONS};
-use crate::lineage::models::Engine;
+use crate::lineage::models::{Engine, JoinConditionReach};
 use crate::lineage::models::{Lineage, LineageContext, Nullability};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -68,6 +68,10 @@ impl DialectRules for SqliteRules {
 
     fn merged_keys_hide_other_items(&self) -> bool {
         false
+    }
+
+    fn join_conditions_read(&self) -> JoinConditionReach {
+        JoinConditionReach::Every
     }
 
     fn checks_call_signatures(&self) -> bool {
