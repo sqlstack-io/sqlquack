@@ -14,7 +14,7 @@ use crate::lineage::constants::{
     DATE_PART_FUNCTIONS, SNOWFLAKE_VALUES_COLUMN, WINDOW_ONLY_FUNCTIONS,
 };
 use crate::lineage::main::rendered_type::rendered_type;
-use crate::lineage::models::Engine;
+use crate::lineage::models::{Engine, JoinConditionReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -83,6 +83,10 @@ impl DialectRules for ClickHouseRules {
 
     fn merged_keys_hide_other_items(&self) -> bool {
         true
+    }
+
+    fn join_conditions_read(&self) -> JoinConditionReach {
+        JoinConditionReach::Every
     }
 
     fn checks_call_signatures(&self) -> bool {

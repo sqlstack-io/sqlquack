@@ -161,6 +161,8 @@ pub(crate) struct MergedKey {
     pub(crate) column: ScopedColumn,
     /// The sources of the join, whose columns of the key's name it stands in for.
     pub(crate) sources: Range<usize>,
+    /// The sources it stood for before later joins merged it again, oldest first.
+    pub(crate) earlier: Vec<Range<usize>>,
 }
 
 /// A FROM item: its key, its known columns, and whether it offers others of unknown name.
@@ -294,6 +296,10 @@ impl DialectRules for SharedRules {
         true
     }
 
+    fn join_conditions_read(&self) -> JoinConditionReach {
+        JoinConditionReach::Every
+    }
+
     fn checks_call_signatures(&self) -> bool {
         true
     }
@@ -425,6 +431,17 @@ impl DialectRules for SharedRules {
     fn system_columns(&self) -> &'static [&'static str] {
         &[]
     }
+}
+
+/// Which FROM items a join's ON condition may read.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum JoinConditionReach {
+    /// Every FROM item of its query level.
+    Every,
+    /// Every item before the join, and the join's own item.
+    Earlier,
+    /// The items of its own comma group before the join, and the join's own item.
+    OwnGroup,
 }
 
 /// The engine whose binder the checks follow.

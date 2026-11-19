@@ -16,7 +16,7 @@ use crate::duckdb::profile::constants::{
     DUCKDB_VALUES_COLUMN,
 };
 use crate::lineage::constants::{DATE_PART_FUNCTIONS, WINDOW_ONLY_FUNCTIONS};
-use crate::lineage::models::Engine;
+use crate::lineage::models::{Engine, JoinConditionReach};
 use crate::lineage::models::{Lineage, LineageContext};
 use crate::lineage::types::DialectRules;
 use crate::lineage::types::ValueType;
@@ -74,6 +74,10 @@ impl DialectRules for DuckDbRules {
 
     fn merged_keys_hide_other_items(&self) -> bool {
         true
+    }
+
+    fn join_conditions_read(&self) -> JoinConditionReach {
+        JoinConditionReach::Earlier
     }
 
     fn checks_call_signatures(&self) -> bool {
