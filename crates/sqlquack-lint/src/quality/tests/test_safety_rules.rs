@@ -165,6 +165,33 @@ fn given_safety_rule_inputs_when_linting_then_exactly_the_mistakes_are_reported(
             expected_anchors: &["UPDATE", "DELETE"],
         },
         SafetyRuleTestCase {
+            description: "a join inside UPDATE FROM or DELETE USING does not limit the write (PostgreSQL 18: 3 of 3 rows)",
+            dialect: "postgres",
+            sql: "UPDATE orders SET status = 'closed' FROM customers c JOIN refunds r ON r.id = c.id; \
+                  UPDATE orders SET status = 'closed' FROM stores s, customers c JOIN refunds r ON r.id = c.id; \
+                  UPDATE orders SET status = 'closed' FROM customers c JOIN refunds r ON r.id = c.id, stores s; \
+                  UPDATE orders SET status = 'closed' FROM (customers c JOIN refunds r ON r.id = c.id); \
+                  DELETE FROM orders USING customers c JOIN refunds r ON r.id = c.id",
+            rule: "SQLCLEAN049",
+            expected_anchors: &["UPDATE", "UPDATE", "UPDATE", "UPDATE", "DELETE"],
+        },
+        SafetyRuleTestCase {
+            description: "a WHERE reading the target limits an UPDATE FROM or DELETE USING with joins",
+            dialect: "postgres",
+            sql: "UPDATE orders SET status = 'closed' FROM stores s, customers c JOIN refunds r ON r.id = c.id WHERE r.id = orders.id; \
+                  DELETE FROM orders USING customers c JOIN refunds r ON r.id = c.id WHERE r.id = orders.id",
+            rule: "SQLCLEAN049",
+            expected_anchors: &[],
+        },
+        SafetyRuleTestCase {
+            description: "a join inside UPDATE FROM does not limit the write (DuckDB 2.0: 3 of 3 rows)",
+            dialect: "duckdb",
+            sql: "UPDATE orders SET status = 'closed' FROM customers c JOIN refunds r ON r.id = c.id; \
+                  UPDATE orders SET status = 'closed' FROM (customers c JOIN refunds r ON r.id = c.id)",
+            rule: "SQLCLEAN049",
+            expected_anchors: &["UPDATE", "UPDATE"],
+        },
+        SafetyRuleTestCase {
             description: "DEFAULT VALUES needs no column list",
             dialect: "postgres",
             sql: "INSERT INTO orders DEFAULT VALUES",
