@@ -270,11 +270,27 @@ pub(crate) fn normalized_spelling(spelling: &str) -> String {
     let trimmed: &str = spelling
         .trim()
         .trim_matches(|character| matches!(character, '"' | '\'' | '`'));
+    if is_single_spaced_ascii(trimmed) {
+        let mut lowered: String = trimmed.to_owned();
+        lowered.make_ascii_lowercase();
+        return lowered;
+    }
     trimmed
         .split_whitespace()
         .collect::<Vec<&str>>()
         .join(" ")
         .to_lowercase()
+}
+
+/// Whether `text` is printable ASCII with single spaces between words and none around them.
+fn is_single_spaced_ascii(text: &str) -> bool {
+    let bytes: &[u8] = text.as_bytes();
+    bytes.first() != Some(&b' ')
+        && bytes.last() != Some(&b' ')
+        && !text.contains("  ")
+        && bytes
+            .iter()
+            .all(|byte| *byte == b' ' || byte.is_ascii_graphic())
 }
 
 /// The family of an array, map or struct spelling, or of a decimal that holds only integers.
