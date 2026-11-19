@@ -97,7 +97,7 @@ pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<
     };
     let signatures_abstain: bool = !dialect_rules(level.context.profile).checks_call_signatures();
     if signatures_abstain {
-        findings.extend(located(own, node));
+        findings.append(&mut located(own, node));
         return findings;
     }
     let checked = check_call(node, level.engine(), &family);
@@ -113,18 +113,18 @@ pub(crate) fn node_findings(node: &Expression, level: NodeLevel<'_, '_>) -> Vec<
         }
         call.extend(refused);
     }
-    own.extend(call);
-    own.extend(expression_checks(node, level));
+    own.append(&mut call);
+    own.append(&mut expression_checks(node, level));
     if !(signed && !matches!(node, Expression::Function(_))) {
-        own.extend(operator_checks(node, level, signed));
+        own.append(&mut operator_checks(node, level, signed));
     }
-    findings.extend(located(own, node));
+    findings.append(&mut located(own, node));
     if let Expression::Function(function) = node {
-        let keyword_only: Vec<NameFinding> = keyword_only_call(function, level.engine(), node);
+        let mut keyword_only: Vec<NameFinding> = keyword_only_call(function, level.engine(), node);
         if keyword_only.is_empty() {
-            findings.extend(unknown_duckdb_call(function, level, node));
+            findings.append(&mut unknown_duckdb_call(function, level, node));
         }
-        findings.extend(keyword_only);
+        findings.append(&mut keyword_only);
     }
     findings
 }
