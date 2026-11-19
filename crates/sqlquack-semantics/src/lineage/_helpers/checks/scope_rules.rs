@@ -34,12 +34,11 @@ const MISPLACED_WINDOW: &str =
 
 /// A finding for each window function without OVER that the all-engine placement rule misses (42809).
 fn unwindowed_calls(
-    node: &Expression,
+    (node, scoped): (&Expression, &[&Expression]),
     window_only: &dyn Fn(&Expression) -> bool,
 ) -> Vec<NameFinding> {
-    let scoped: Vec<&Expression> = in_scope(node);
     let mut wrapped: Vec<&Expression> = Vec::new();
-    for expression in &scoped {
+    for expression in scoped {
         match expression {
             Expression::WindowFunction(window) => wrapped.push(&window.this),
             Expression::WithinGroup(group) => wrapped.push(&group.this),
@@ -47,7 +46,7 @@ fn unwindowed_calls(
         }
     }
     let mut findings: Vec<NameFinding> = Vec::new();
-    for expression in scoped {
+    for &expression in scoped {
         let named: bool = matches!(
             expression,
             Expression::Function(_) | Expression::AggregateFunction(_)
@@ -340,7 +339,8 @@ fn structure_rules(
         .map(|(name, _)| name.as_str())
         .collect();
     let mut has_window: bool = false;
-    for expression in in_scope(node) {
+    let scoped: Vec<&Expression> = in_scope(node);
+    for &expression in &scoped {
         if let Expression::WindowFunction(window) = expression {
             has_window = true;
             if let Some(name) = &window.over.window_name
@@ -358,9 +358,13 @@ fn structure_rules(
     match engine {
         Engine::Postgres | Engine::Sqlite | Engine::Snowflake | Engine::DuckDB => {
             let rules = dialect_rules(level.context.profile);
-            findings.extend(unwindowed_calls(node, &|call| rules.window_only(call)));
+            findings.extend(unwindowed_calls((node, &scoped), &|call| {
+                rules.window_only(call)
+            }));
         }
-        Engine::BigQuery => findings.extend(unwindowed_calls(node, &bigquery_window_only)),
+        Engine::BigQuery => {
+            findings.extend(unwindowed_calls((node, &scoped), &bigquery_window_only));
+        }
         Engine::Databricks => {}
     }
     if select.qualify.is_some() && !has_window {
