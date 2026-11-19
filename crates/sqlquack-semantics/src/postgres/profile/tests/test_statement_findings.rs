@@ -359,6 +359,70 @@ fn given_a_comma_after_a_joined_item_when_resolving_names_then_the_join_reads_on
             expected_findings: &[],
         },
         QueryFindingsTestCase {
+            description: "an ON condition reading an earlier comma group's item (18: invalid reference)",
+            sql: "SELECT 1 FROM orders a, customers b JOIN customers c ON a.id = c.id",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'a' referenced by column 'id'",
+                56,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading an earlier comma group's column (18: cannot be referenced)",
+            sql: "SELECT 1 FROM orders a, customers b JOIN customers c ON customer_id = c.id",
+            expected_findings: &[(
+                "E201",
+                "Unknown column 'customer_id' (not found in any referenced table)",
+                56,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading a later comma group's item (18: missing FROM entry)",
+            sql: "SELECT 1 FROM orders a JOIN customers c ON b.id = c.id, customers b",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'b' referenced by column 'id'",
+                43,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading a later item of its own join chain (18: missing FROM entry)",
+            sql: "SELECT 1 FROM orders a JOIN customers b ON c.id = a.id JOIN customers c ON true",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'c' referenced by column 'id'",
+                43,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a parenthesised join's ON condition reading an earlier comma item (18: invalid reference)",
+            sql: "SELECT 1 FROM orders a, (customers b JOIN customers c ON a.id = c.id)",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'a' referenced by column 'id'",
+                57,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "a subquery in an ON condition reading an earlier comma group's item (18: invalid reference)",
+            sql: "SELECT 1 FROM orders a, customers b JOIN customers c ON (SELECT a.id) = c.id",
+            expected_findings: &[(
+                "E222",
+                "Unknown table or alias 'a' referenced by column 'id'",
+                64,
+            )],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading its own comma group (18: accepted)",
+            sql: "SELECT 1 FROM orders a, customers b JOIN customers c ON b.id = c.id",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading its group's merged key, an earlier group offering the name (18: accepted)",
+            sql: "SELECT 1 FROM customers a, customers b JOIN customers c USING (name) JOIN orders d ON name = d.status",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
             description: "a USING key read unqualified beside a comma item offering it (18: ambiguous)",
             sql: "SELECT id FROM orders a JOIN customers b USING (id), customers c",
             expected_findings: &[(

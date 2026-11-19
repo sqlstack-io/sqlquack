@@ -150,6 +150,16 @@ fn given_a_sqlite_query_sqlite_rejects_when_checking_then_the_broken_rule_is_fou
 fn given_a_sqlite_query_sqlite_accepts_when_checking_then_nothing_is_found() {
     let test_cases = [
         QueryFindingsTestCase {
+            description: "an ON condition reading a later comma group's item (3.40: accepted)",
+            sql: "SELECT 1 FROM orders a JOIN customers c ON b.id = c.id, customers b",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
+            description: "an ON condition reading a later item of its own join chain (3.40: accepted)",
+            sql: "SELECT 1 FROM orders a JOIN customers b ON c.id = a.id JOIN customers c ON true",
+            expected_findings: &[],
+        },
+        QueryFindingsTestCase {
             description: "a USING key a later USING join merges again (3.40: accepted)",
             sql: "SELECT id FROM orders a JOIN customers b USING (id) JOIN customers c USING (id)",
             expected_findings: &[],
