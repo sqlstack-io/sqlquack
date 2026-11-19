@@ -5,7 +5,7 @@
 
 ### ⚠ BREAKING CHANGES
 
-* **lint:** lint now refuses a Postgres, BigQuery or Databricks statement whose tree nests past 512 levels, as Snowflake, DuckDB and SQLite already did, so 600 UNION ALL operands or 600
+* **lint:** lint now refuses a Postgres, BigQuery or Databricks statement whose tree nests past 512 levels, as Snowflake, DuckDB and SQLite already did, so 600 UNION ALL operands or 600 `::` casts no longer lint in those dialects.
 * keep each comma item's joins with it in Postgres, Databricks, DuckDB and SQL Server
 * **bigquery:** sqlquack-syntax adds Literal::RawByteString and Literal::JoinedBytes, and GrantPrincipal gains a written field, so an exhaustive match on Literal or a GrantPrincipal struct literal no longer compiles.
 
