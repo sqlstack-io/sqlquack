@@ -15,7 +15,7 @@ use crate::postgres::profile::constants::{
 pub(crate) fn postgres_profile() -> LintProfile {
     LintProfile {
         tokens: |sql| shared_tokens(sql, Dialect::PostgreSQL),
-        statements: |sql, _| native_statements(sql, strict_parse),
+        statements: |sql, options| native_statements(sql, strict_parse, options),
         predicates: |_, tokens| shared_predicates(tokens, Dialect::PostgreSQL),
         own_predicate_parser: false,
         foreign_aggregates: &FOREIGN_AGGREGATE_CALLS,
