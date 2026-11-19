@@ -259,3 +259,47 @@ fn given_a_call_depth_limit_in_each_linted_dialect_when_linting_then_it_is_the_e
         }
     }
 }
+
+#[test]
+fn given_a_fixture_harness_when_linting_at_a_call_depth_limit_then_its_empty_relation_is_no_call() {
+    let test_cases = [
+        test_types::DialectDepthTestCase {
+            sql: helpers::calls_around_empty_relation_sql,
+            description: "a limit of 1 lints one call around the harness's empty relation",
+            depth: 1,
+            max_function_call_depth: Some(1),
+            expected_outcome_end: "linted",
+        },
+        test_types::DialectDepthTestCase {
+            sql: helpers::calls_around_empty_relation_sql,
+            description: "a limit of 1 refuses two calls around the harness's empty relation",
+            depth: 2,
+            max_function_call_depth: Some(1),
+            expected_outcome_end: "value 2 exceeds configured limit 1; raise \
+                max_function_call_depth, up to 512",
+        },
+    ];
+    for dialect in [
+        "snowflake",
+        "duckdb",
+        "sqlite",
+        "postgres",
+        "bigquery",
+        "databricks",
+    ] {
+        for test_case in &test_cases {
+            let sql = (test_case.sql)(test_case.depth);
+            let outcome: String = helpers::harness_diagnostics_within(
+                &sql,
+                dialect,
+                test_case.max_function_call_depth,
+            )
+            .map_or_else(|error| error, |_| "linted".to_owned());
+            assert!(
+                outcome.ends_with(test_case.expected_outcome_end),
+                "{dialect}: {}: {outcome}",
+                test_case.description
+            );
+        }
+    }
+}
