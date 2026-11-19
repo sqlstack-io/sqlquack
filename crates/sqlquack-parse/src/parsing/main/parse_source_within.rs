@@ -1,5 +1,6 @@
 //! `parse_source_within`: source SQL to statements, with the caller's function-call limit.
 
+use sqlquack_syntax::guard::main::has_function_call::has_function_call;
 use sqlquack_syntax::tokens::errors::ParseFailure;
 use sqlquack_syntax::{Dialect, Expression};
 
@@ -21,7 +22,10 @@ pub fn parse_source_within(
         },
     )?;
     parse_guarded(sql, dialect, limit).map_err(|failure| ParseFailure {
-        message: call_depth_hint(failure.message, limit, None),
+        message: call_depth_hint(failure.message, limit, None, || {
+            sqlquack_syntax_snowflake::dialect_tokens(sql, dialect)
+                .is_ok_and(|tokens| has_function_call(&tokens))
+        }),
         ..failure
     })
 }
