@@ -478,17 +478,14 @@ fn statement_spans(
     (writes, inserts)
 }
 
+/// Whether a WHERE, LIMIT or join on the target limits an UPDATE; a join inside FROM cannot read it.
 fn update_is_limited(update: &Update) -> bool {
     update
         .where_clause
         .as_ref()
         .is_some_and(|clause| reads_rows(&clause.this))
         || update.limit.is_some()
-        || update
-            .table_joins
-            .iter()
-            .chain(&update.from_joins)
-            .any(join_is_limiting)
+        || update.table_joins.iter().any(join_is_limiting)
 }
 
 fn delete_is_limited(delete: &Delete) -> bool {
