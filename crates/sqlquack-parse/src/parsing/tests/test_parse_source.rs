@@ -45,6 +45,17 @@ fn given_nested_function_calls_when_parsed_on_a_small_stack_then_the_limit_decid
             expected_outcome: Ok(1),
         },
         CallDepthTestCase {
+            description: "the ceiling of 512 refuses 512 nested calls, saying why fewer fit",
+            limit: Some(512),
+            levels: 512,
+            expected_outcome: Err(
+                "value 513 exceeds configured limit 512. The maximum is 512. The statement and \
+                 every expression around the calls also count toward that limit, so at 512 a bare \
+                 SELECT can nest at most 511 calls, and fewer fit inside an alias, comparison or \
+                 CTE.",
+            ),
+        },
+        CallDepthTestCase {
             description: "a limit of 1000 is refused, naming the ceiling of 512",
             limit: Some(1000),
             levels: 1000,

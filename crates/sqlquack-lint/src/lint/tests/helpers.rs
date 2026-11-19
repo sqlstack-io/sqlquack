@@ -46,6 +46,11 @@ pub(crate) fn calls_around_empty_relation_sql(depth: usize) -> String {
     )
 }
 
+/// `depth` UNION ALL operands after a first SELECT, with no call.
+pub(crate) fn union_chain_sql(depth: usize) -> String {
+    format!("SELECT 1{}", " UNION ALL SELECT 1".repeat(depth))
+}
+
 pub(crate) fn nested_from_sql(depth: usize) -> String {
     format!(
         "SELECT * FROM {}orders{}",

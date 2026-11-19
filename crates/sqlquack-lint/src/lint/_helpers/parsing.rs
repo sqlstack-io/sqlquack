@@ -6,6 +6,7 @@ use sqlquack_parse::parsing::constants::{MAX_CALL_DEPTH_CEILING, MAX_FUNCTION_CA
 use sqlquack_parse::parsing::main::call_depth_hint::call_depth_hint;
 use sqlquack_parse::parsing::main::checked_call_depth::checked_call_depth;
 use sqlquack_syntax::guard::main::enforce_lexed_tokens::enforce_lexed_tokens;
+use sqlquack_syntax::guard::main::has_function_call::has_function_call;
 use sqlquack_syntax::tokens::models::{Token, TokenType};
 use sqlquack_syntax::{ComplexityGuardOptions, Expression, ExpressionWalk, ParseOptions};
 
@@ -51,6 +52,7 @@ pub(crate) fn parse(
             error.to_string(),
             max_call_depth,
             Some("max_function_call_depth"),
+            || has_function_call(guarded_tokens),
         )
     })?;
     let options = ParseOptions {
@@ -61,7 +63,12 @@ pub(crate) fn parse(
     };
     let statements: Vec<Expression> =
         (profile.statements)(parse_text, &options).map_err(|message| {
-            call_depth_hint(message, max_call_depth, Some("max_function_call_depth"))
+            call_depth_hint(
+                message,
+                max_call_depth,
+                Some("max_function_call_depth"),
+                || has_function_call(guarded_tokens),
+            )
         })?;
     for statement in &statements {
         if statement
