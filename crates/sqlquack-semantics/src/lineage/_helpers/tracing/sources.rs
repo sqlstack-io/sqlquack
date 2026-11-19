@@ -37,7 +37,12 @@ pub(crate) fn from_sources(
     context: LineageContext<'_>,
 ) -> FromItems {
     let mut from = FromItems::default();
-    for part in sided_parts(select) {
+    let mut null_filled: Vec<(Range<usize>, usize)> = Vec::new();
+    for (index, part) in sided_parts(select).into_iter().enumerate() {
+        let filled_from: Option<usize> = null_filled
+            .iter()
+            .find(|(parts, _)| parts.start < index && parts.contains(&index))
+            .map(|(_, first)| *first);
         from.starts.push(from.sources.len());
         let left: Range<usize> = from.starts[part.left.start]..from.sources.len();
         if part
@@ -83,6 +88,17 @@ pub(crate) fn from_sources(
         }
         if OUTER_LEFT_JOINS.contains(&join.kind) || outer_as_of(join.kind, context) {
             added = added.into_iter().map(outer_nullable).collect();
+            if part.right.len() > 1 {
+                null_filled.push((part.right.clone(), earlier));
+            }
+        }
+        if let Some(first) = filled_from {
+            added = added.into_iter().map(outer_nullable).collect();
+            for key in &mut from.merged {
+                if key.sources.start >= first {
+                    key.column.lineage.nullability = Nullability::Nullable;
+                }
+            }
         }
         from.sources.extend(added);
     }

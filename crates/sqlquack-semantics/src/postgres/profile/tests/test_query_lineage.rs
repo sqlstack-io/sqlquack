@@ -315,18 +315,48 @@ fn given_joined_and_comma_items_when_expanding_a_star_then_each_group_places_its
 }
 
 #[test]
-fn given_an_outer_join_after_a_comma_when_tracing_nullability_then_only_its_group_is_nulled() {
-    let test_cases = [DialectTypeTestCase {
-        description: "a RIGHT JOIN nulls only its own group's left side",
-        sql: "SELECT a.name, b.status, c.name FROM customers a, orders b RIGHT JOIN customers c ON b.id = c.id",
-        dialect: Dialect::PostgreSQL,
-        profile: &POSTGRES,
-        expected_outputs: &[
-            ("name", Some("TEXT"), Nullability::NonNull),
-            ("status", Some("TEXT"), Nullability::Nullable),
-            ("name", Some("TEXT"), Nullability::NonNull),
-        ],
-    }];
+fn given_an_outer_join_when_tracing_nullability_then_only_the_items_it_null_fills_are_nulled() {
+    let test_cases = [
+        DialectTypeTestCase {
+            description: "a RIGHT JOIN nulls only its own group's left side",
+            sql: "SELECT a.name, b.status, c.name FROM customers a, orders b RIGHT JOIN customers c ON b.id = c.id",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[
+                ("name", Some("TEXT"), Nullability::NonNull),
+                ("status", Some("TEXT"), Nullability::Nullable),
+                ("name", Some("TEXT"), Nullability::NonNull),
+            ],
+        },
+        DialectTypeTestCase {
+            description: "a LEFT JOIN nulls every item of the parenthesised join it adds (18: NULL)",
+            sql: "SELECT a.name, c.name FROM customers a LEFT JOIN (orders b JOIN customers c USING (id)) USING (id)",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[
+                ("name", Some("TEXT"), Nullability::NonNull),
+                ("name", Some("TEXT"), Nullability::Nullable),
+            ],
+        },
+        DialectTypeTestCase {
+            description: "a LEFT JOIN nulls a parenthesised RIGHT JOIN's preserved side too (18: NULL)",
+            sql: "SELECT a.name, b.status, c.name FROM customers a LEFT JOIN (orders b RIGHT JOIN customers c ON b.id = c.id) ON false",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[
+                ("name", Some("TEXT"), Nullability::NonNull),
+                ("status", Some("TEXT"), Nullability::Nullable),
+                ("name", Some("TEXT"), Nullability::Nullable),
+            ],
+        },
+        DialectTypeTestCase {
+            description: "a LEFT JOIN nulls a key merged inside the parenthesised join it adds (18: NULL)",
+            sql: "SELECT id FROM (SELECT 1 AS z) a LEFT JOIN (orders b RIGHT JOIN customers c USING (id)) ON false",
+            dialect: Dialect::PostgreSQL,
+            profile: &POSTGRES,
+            expected_outputs: &[("id", Some("TEXT"), Nullability::Nullable)],
+        },
+    ];
     let column = |name: &str| SchemaColumn {
         nullability: Nullability::NonNull,
         ..typed_column(name, "TEXT")
