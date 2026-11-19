@@ -176,6 +176,20 @@ fn given_a_call_depth_limit_in_each_linted_dialect_when_linting_then_it_is_the_e
                 comparison or CTE.",
         },
         test_types::DialectDepthTestCase {
+            sql: helpers::union_chain_sql,
+            description: "the ceiling of 512 refuses 600 UNION ALL operands without the calls note",
+            depth: 600,
+            max_function_call_depth: Some(512),
+            expected_outcome_end: "E_GUARD_AST_DEPTH_EXCEEDED: value 513 exceeds configured limit 512",
+        },
+        test_types::DialectDepthTestCase {
+            sql: helpers::union_chain_sql,
+            description: "the ceiling of 512 lints 300 UNION ALL operands",
+            depth: 300,
+            max_function_call_depth: Some(512),
+            expected_outcome_end: "linted",
+        },
+        test_types::DialectDepthTestCase {
             sql: helpers::aliased_calls_sql,
             description: "the ceiling of 512 lints 510 nested calls under an alias",
             depth: 510,

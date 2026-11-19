@@ -5,10 +5,15 @@ use crate::parsing::constants::{
     NESTING_CODE,
 };
 
-/// `message` naming the fixed ceiling it met, or how to raise `limit` through `setting`.
-pub fn call_depth_hint(message: String, limit: usize, setting: Option<&str>) -> String {
+/// `message` naming the fixed ceiling it met, or how to raise `limit` through `setting`; `has_calls` says whether the SQL calls anything.
+pub fn call_depth_hint(
+    message: String,
+    limit: usize,
+    setting: Option<&str>,
+    has_calls: impl FnOnce() -> bool,
+) -> String {
     let function_nesting: bool = message.contains(FUNCTION_NESTING_CODE);
-    if message.contains(AST_DEPTH_CODE) && limit >= MAX_CALL_DEPTH_CEILING {
+    if message.contains(AST_DEPTH_CODE) && limit >= MAX_CALL_DEPTH_CEILING && has_calls() {
         return format!("{message}. {CALL_DEPTH_CEILING_NOTE}");
     }
     if message.contains(NESTING_CODE) || (function_nesting && limit >= MAX_CALL_DEPTH_CEILING) {
