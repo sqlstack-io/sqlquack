@@ -35,7 +35,11 @@ impl DialectProfile for Snowflake {
     fn resolved_identifier(&self, name: &str, quoted: bool) -> String {
         match quoted {
             true => name.to_owned(),
-            false => name.to_ascii_uppercase(),
+            false => {
+                let mut upper: String = name.to_owned();
+                upper.make_ascii_uppercase();
+                upper
+            }
         }
     }
 
@@ -66,7 +70,9 @@ impl DialectProfile for SnowflakeQuotedIgnoringCase {
     }
 
     fn resolved_identifier(&self, name: &str, _quoted: bool) -> String {
-        name.to_ascii_uppercase()
+        let mut upper: String = name.to_owned();
+        upper.make_ascii_uppercase();
+        upper
     }
 
     fn same_identifier(&self, left: &str, right: &str) -> bool {
