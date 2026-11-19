@@ -1,8 +1,8 @@
 //! Findings of the checks: where polyglot locates them, and their codes.
 
 use sqlquack_syntax::Expression;
-use sqlquack_syntax::ExpressionWalk;
 use sqlquack_syntax::tokens::models::Span;
+use sqlquack_syntax::traversal::types::AstNode;
 
 use crate::lineage::_helpers::tracing::queries::takes_clauses;
 use crate::lineage::models::NameFinding;
@@ -58,11 +58,16 @@ pub(crate) fn in_scope(node: &Expression) -> Vec<&Expression> {
             continue;
         }
         visited.push(current);
-        let mut children: Vec<&Expression> = current.children();
-        children.reverse();
-        pending.extend(children);
+        let start: usize = pending.len();
+        each_child(current, |child| pending.push(child));
+        pending[start..].reverse();
     }
     visited
+}
+
+/// Calls `visit` on each direct child of `node`, in the order `children` lists them, collecting none.
+pub(crate) fn each_child<'a>(node: &'a Expression, mut visit: impl FnMut(&'a Expression)) {
+    node.visit_syntax_untracked(&mut visit, &mut |_| {});
 }
 
 /// Whether `node` starts a query of its own: a SELECT, set operation, CTE or derived table.
