@@ -12,6 +12,7 @@ use sqlquack_syntax::expressions::queries::models::{
 use sqlquack_syntax::expressions::statements::models::Version;
 use sqlquack_syntax::expressions::tables::models::{IndexTableHint, WithTableHint};
 use sqlquack_syntax::expressions::types::models::Tuple;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 use sqlquack_syntax::traversal::types::AstNode;
 use sqlquack_syntax::{DataType, Expression};
@@ -916,7 +917,9 @@ impl<'sql> Parser<'sql> {
     /// The `FROM` sources of a query, `UPDATE` or `DELETE`; several sources each keep their joins.
     pub(crate) fn read_sources(&mut self) -> Parsing<(From, Vec<Join>)> {
         let mut sources: Vec<(Expression, Vec<Join>)> = vec![self.single_source()?];
+        let mut comma_spans: SeparatorSpans = SeparatorSpans::default();
         while self.eat_char(',') {
+            comma_spans.0.extend(self.token_range(self.at - 1).0);
             sources.push(self.single_source()?);
         }
         if sources.len() == 1 {
@@ -924,7 +927,7 @@ impl<'sql> Parser<'sql> {
             let expressions: Vec<Expression> = vec![source];
             return Ok((
                 From {
-                    comma_spans: Default::default(),
+                    comma_spans,
                     expressions,
                 },
                 joins,
@@ -939,7 +942,7 @@ impl<'sql> Parser<'sql> {
             .collect();
         Ok((
             From {
-                comma_spans: Default::default(),
+                comma_spans,
                 expressions,
             },
             Vec::new(),
@@ -1003,7 +1006,9 @@ impl<'sql> Parser<'sql> {
                 .checked_sub(2)
                 .and_then(|at| self.word_at(at))
                 .filter(|word| JOIN_HINTS.contains(&word.as_str()));
+            let kind_span: SourceSpan = self.token_range(self.at);
             self.at += words;
+            let keyword_span: SourceSpan = self.token_range(self.at - 1);
             let right: Expression = self.table_source()?;
             let constraint: JoinConstraint = match kind {
                 JoinKind::Cross | JoinKind::CrossApply | JoinKind::OuterApply => {
@@ -1015,11 +1020,14 @@ impl<'sql> Parser<'sql> {
                         return Err(self.gap("nested_join", self.offset()));
                     }
                     self.expect_kw("ON")?;
-                    JoinConstraint::On(Box::new(self.condition()?))
+                    let on_span: SourceSpan = self.token_range(self.at - 1);
+                    JoinConstraint::On(Box::new(self.condition()?), on_span)
                 }
             };
             let mut node: Join = join(right, kind, constraint, keywords);
             node.join_hint = hint;
+            node.kind_span = kind_span;
+            node.keyword_span = keyword_span;
             joins.push(node);
         }
     }

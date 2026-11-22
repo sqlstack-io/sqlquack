@@ -8,6 +8,8 @@ use sqlquack_syntax::expressions::queries::models::{
     Pivot, Sample, SampleMethod, Select, Unpivot,
 };
 use sqlquack_syntax::expressions::statements::models::Version;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_strict_identifier};
 use crate::parse::_helpers::tree::nodes::{
@@ -62,14 +64,17 @@ fn qualified(join: &Join) -> bool {
 
 /// One `ON` or `USING` clause of a join's condition list.
 enum Condition {
-    On(Box<Expression>),
+    On(Box<Expression>, SourceSpan),
     Using(Vec<Identifier>),
 }
 
 impl Condition {
     fn close(self, mut join: Join) -> Join {
         match self {
-            Condition::On(condition) => join.on = Some(*condition),
+            Condition::On(condition, keyword) => {
+                join.on = Some(*condition);
+                join.on_span = keyword;
+            }
             Condition::Using(columns) => join.using = columns,
         }
         join
@@ -144,6 +149,8 @@ impl Parser<'_> {
         self.expect_kw("FROM")?;
         let mut items: Vec<Expression> = Vec::new();
         let mut joins: Vec<Join> = Vec::new();
+        let mut comma_spans: SeparatorSpans = SeparatorSpans::default();
+        let mut comma: SourceSpan = SourceSpan::default();
         loop {
             let (item, more) = self.relation()?;
             if deferred(&more) && (!items.is_empty() || self.is_char(',')) {
@@ -168,21 +175,30 @@ impl Parser<'_> {
                 return Err(self.error_with(OUTER_JOIN_AFTER_COMMA, start, true));
             }
             match joins.is_empty() {
-                true => items.push(item),
-                false => joins.push(join(
-                    item,
-                    JoinKind::Implicit,
-                    JoinConstraint::None,
-                    (false, false),
-                )),
+                true => {
+                    items.push(item);
+                    comma_spans.0.extend(comma.0);
+                }
+                false => {
+                    let mut node: Join = join(
+                        item,
+                        JoinKind::Implicit,
+                        JoinConstraint::None,
+                        (false, false),
+                    );
+                    node.kind_span = comma;
+                    node.keyword_span = comma;
+                    joins.push(node);
+                }
             }
             joins.extend(more);
             if !self.eat_char(',') {
                 break;
             }
+            comma = self.token_range(self.at - 1);
         }
         select.from = Some(From {
-            comma_spans: Default::default(),
+            comma_spans,
             expressions: items,
         });
         select.joins = joins;
@@ -204,18 +220,27 @@ impl Parser<'_> {
         loop {
             if self.at_join() {
                 let first: usize = self.at;
+                let (kind_span, keyword_span) = self.join_keywords();
                 let mut node: Join = self.deeper(|parser| parser.join_relation())?;
                 node.span = self.source_range(first);
+                node.kind_span = kind_span;
+                node.keyword_span = keyword_span;
                 let mut conditions: Vec<Condition> = Vec::new();
                 if let Some(on) = node.on.take() {
-                    conditions.push(Condition::On(Box::new(on)));
+                    conditions.push(Condition::On(
+                        Box::new(on),
+                        std::mem::take(&mut node.on_span),
+                    ));
                 } else if !node.using.is_empty() {
                     conditions.push(Condition::Using(std::mem::take(&mut node.using)));
                 }
                 while self.kw_in(0, &["ON", "USING"]) {
                     let start: usize = self.offset();
                     conditions.push(match self.eat_kw("ON") {
-                        true => Condition::On(Box::new(self.expression()?)),
+                        true => {
+                            let keyword: SourceSpan = self.token_range(self.at - 1);
+                            Condition::On(Box::new(self.expression()?), keyword)
+                        }
                         false => {
                             self.expect_kw("USING")?;
                             Condition::Using(self.identifier_list()?)
@@ -320,7 +345,8 @@ impl Parser<'_> {
             return Ok(join(right, kind, JoinConstraint::None, (inner, outer)));
         }
         let constraint: JoinConstraint = if self.eat_kw("ON") {
-            JoinConstraint::On(Box::new(self.expression()?))
+            let on_span: SourceSpan = self.token_range(self.at - 1);
+            JoinConstraint::On(Box::new(self.expression()?), on_span)
         } else if self.eat_kw("USING") {
             JoinConstraint::Using(self.identifier_list()?)
         } else if self.kw_in(0, &["APPROX", "EXACT"]) && self.kw_at(1, "NEAREST") {

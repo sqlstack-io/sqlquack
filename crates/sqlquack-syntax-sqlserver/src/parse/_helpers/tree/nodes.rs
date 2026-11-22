@@ -272,7 +272,8 @@ pub(crate) struct TableAlias {
 /// What follows a join's right side: nothing or `ON condition`.
 pub(crate) enum JoinConstraint {
     None,
-    On(Box<Expression>),
+    /// The condition, and where its ON is written.
+    On(Box<Expression>, SourceSpan),
 }
 
 pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: bool) -> Expression {
@@ -311,14 +312,18 @@ pub(crate) fn join(
     constraint: JoinConstraint,
     keywords: (bool, bool),
 ) -> Join {
+    let mut on_span: SourceSpan = SourceSpan::default();
     let (on, using) = match constraint {
         JoinConstraint::None => (None, Vec::new()),
-        JoinConstraint::On(condition) => (Some(*condition), Vec::new()),
+        JoinConstraint::On(condition, keyword) => {
+            on_span = keyword;
+            (Some(*condition), Vec::new())
+        }
     };
     Join {
         kind_span: Default::default(),
         keyword_span: Default::default(),
-        on_span: Default::default(),
+        on_span,
         this,
         on,
         using,
@@ -543,6 +548,11 @@ impl Parser<'_> {
         let mut node: UnaryOp = UnaryOp::new(this);
         node.span = self.range_from(first);
         kind(Box::new(node))
+    }
+
+    /// The range of the single token at `index`.
+    pub(crate) fn token_range(&self, index: usize) -> SourceSpan {
+        SourceSpan(self.tokens.get(index).map(|token| token.span))
     }
 
     /// The source range from token `first` to the last consumed token.

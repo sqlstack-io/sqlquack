@@ -358,7 +358,8 @@ pub(crate) struct TableAlias {
 /// What follows a join's right side: nothing, `ON condition`, or `USING (columns)`.
 pub(crate) enum JoinConstraint {
     None,
-    On(Box<Expression>),
+    /// The condition, and where its ON is written.
+    On(Box<Expression>, SourceSpan),
     Using(Vec<Identifier>),
 }
 
@@ -398,15 +399,19 @@ pub(crate) fn join(
     constraint: JoinConstraint,
     keywords: (bool, bool),
 ) -> Join {
+    let mut on_span: SourceSpan = SourceSpan::default();
     let (on, using) = match constraint {
         JoinConstraint::None => (None, Vec::new()),
-        JoinConstraint::On(condition) => (Some(*condition), Vec::new()),
+        JoinConstraint::On(condition, keyword) => {
+            on_span = keyword;
+            (Some(*condition), Vec::new())
+        }
         JoinConstraint::Using(columns) => (None, columns),
     };
     Join {
         kind_span: Default::default(),
         keyword_span: Default::default(),
-        on_span: Default::default(),
+        on_span,
         this,
         on,
         using,

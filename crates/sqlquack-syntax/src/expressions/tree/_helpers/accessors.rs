@@ -8,6 +8,7 @@ use crate::expressions::names::models::Null;
 use crate::expressions::names::models::Star;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::operators::models::Alias;
+use crate::expressions::queries::models::Join;
 use crate::expressions::queries::models::Select;
 use crate::expressions::tree::main::_type_assertion_result::type_assertion_result;
 use crate::expressions::tree::models::Expression;
@@ -59,6 +60,15 @@ impl Expression {
     #[inline]
     pub fn boxed_table(t: TableRef) -> Self {
         Expression::Table(Box::new(t))
+    }
+
+    /// SQLQuack: the joins a query or a nested join holds itself, not those of queries inside it.
+    pub fn own_joins(&self) -> &[Join] {
+        match self {
+            Self::Select(node) => &node.joins,
+            Self::JoinedTable(node) => &node.joins,
+            _ => &[],
+        }
     }
 
     /// SQLQuack: where a set operation's keyword is written; `None` for any other node.

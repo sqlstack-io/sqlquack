@@ -77,6 +77,11 @@ fn span_field(expression: &mut Expression) -> Option<&mut Option<Span>> {
 }
 
 impl Parser<'_> {
+    /// The range of the single token at `index`.
+    pub(crate) fn token_range(&self, index: usize) -> SourceSpan {
+        SourceSpan(self.tokens.get(index).map(|token| token.span))
+    }
+
     /// The range from token `first` to the last consumed token; none when nothing was consumed.
     pub(crate) fn source_range(&self, first: usize) -> SourceSpan {
         let range: Option<Span> = match (self.tokens.get(first), self.at.checked_sub(1)) {

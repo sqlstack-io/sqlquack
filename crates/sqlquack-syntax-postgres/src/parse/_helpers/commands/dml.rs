@@ -331,9 +331,9 @@ impl Parser<'_> {
         self.expect_kw("set")?;
         (node.set, node.assignments) = self.set_clause_list()?;
         if self.eat_kw("from") {
-            let (items, joins) = self.parse_from_list()?;
+            let (items, joins, comma_spans) = self.parse_from_list()?;
             node.from_clause = Some(From {
-                comma_spans: Default::default(),
+                comma_spans,
                 expressions: items,
             });
             node.from_joins = joins;
@@ -354,7 +354,7 @@ impl Parser<'_> {
         node.alias = alias;
         node.alias_explicit_as = explicit;
         if self.eat_kw("using") {
-            let (items, joins) = self.parse_from_list()?;
+            let (items, joins, _) = self.parse_from_list()?;
             let tables: Option<Vec<TableRef>> = match joins.is_empty() {
                 true => items
                     .iter()

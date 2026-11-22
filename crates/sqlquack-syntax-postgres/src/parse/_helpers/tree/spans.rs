@@ -4,6 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 
 use crate::parse::_helpers::tree::cursor::Parser;
+use crate::parse::constants::MAX_JOIN_PREFIX;
 
 /// The span field of `expression`'s node, when its kind has one.
 fn span_field(expression: &mut Expression) -> Option<&mut Option<Span>> {
@@ -77,6 +78,22 @@ fn span_field(expression: &mut Expression) -> Option<&mut Option<Span>> {
 }
 
 impl Parser<'_> {
+    /// The first keyword of the join beginning here, and its JOIN keyword.
+    pub(crate) fn join_keywords(&self) -> (SourceSpan, SourceSpan) {
+        let join: Option<usize> = (0..=MAX_JOIN_PREFIX).find(|&ahead| self.kw_at(ahead, "join"));
+        (
+            self.token_range(self.at),
+            join.map_or_else(SourceSpan::default, |ahead| {
+                self.token_range(self.at + ahead)
+            }),
+        )
+    }
+
+    /// The range of the single token at `index`.
+    pub(crate) fn token_range(&self, index: usize) -> SourceSpan {
+        SourceSpan(self.tokens.get(index).map(|token| token.span))
+    }
+
     /// The range from token `first` to the last consumed token; none when nothing was consumed.
     pub(crate) fn source_range(&self, first: usize) -> SourceSpan {
         let range: Option<Span> = match (self.tokens.get(first), self.at.checked_sub(1)) {

@@ -204,6 +204,258 @@ fn given_joins_when_parsed_located_then_each_records_its_keywords_and_commas() {
             expected_joins: &[["JOIN", "JOIN", "on"], ["JOIN", "JOIN", "ON"]],
             expected_commas: &[],
         },
+        #[cfg(feature = "postgres")]
+        JoinSpanTestCase {
+            description: "PostgreSQL joins",
+            parse: |sql| {
+                sqlquack_syntax_postgres::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a LEFT OUTER JOIN b ON a.x = b.x CROSS JOIN c",
+            expected_joins: &[["LEFT", "JOIN", "ON"], ["CROSS", "JOIN", ""]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "postgres")]
+        JoinSpanTestCase {
+            description: "PostgreSQL commas",
+            parse: |sql| {
+                sqlquack_syntax_postgres::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a, b, c",
+            expected_joins: &[],
+            expected_commas: &[15, 18],
+        },
+        #[cfg(feature = "bigquery")]
+        JoinSpanTestCase {
+            description: "BigQuery joins",
+            parse: |sql| {
+                sqlquack_syntax_bigquery::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a LEFT OUTER JOIN b ON a.x = b.x CROSS JOIN c",
+            expected_joins: &[["LEFT", "JOIN", "ON"], ["CROSS", "JOIN", ""]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "bigquery")]
+        JoinSpanTestCase {
+            description: "BigQuery commas",
+            parse: |sql| {
+                sqlquack_syntax_bigquery::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a, b, c",
+            expected_joins: &[],
+            expected_commas: &[15, 18],
+        },
+        #[cfg(feature = "databricks")]
+        JoinSpanTestCase {
+            description: "Databricks joins",
+            parse: |sql| {
+                sqlquack_syntax_databricks::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a LEFT OUTER JOIN b ON a.x = b.x CROSS JOIN c",
+            expected_joins: &[["LEFT", "JOIN", "ON"], ["CROSS", "JOIN", ""]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "databricks")]
+        JoinSpanTestCase {
+            description: "Databricks commas",
+            parse: |sql| {
+                sqlquack_syntax_databricks::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a, b, c",
+            expected_joins: &[],
+            expected_commas: &[15, 18],
+        },
+        #[cfg(feature = "duckdb")]
+        JoinSpanTestCase {
+            description: "DuckDB's own parser joins",
+            parse: |sql| {
+                sqlquack_syntax_duckdb::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a LEFT OUTER JOIN b ON a.x = b.x CROSS JOIN c",
+            expected_joins: &[["LEFT", "JOIN", "ON"], ["CROSS", "JOIN", ""]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "duckdb")]
+        JoinSpanTestCase {
+            description: "DuckDB's own parser commas",
+            parse: |sql| {
+                sqlquack_syntax_duckdb::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a, b, c",
+            expected_joins: &[],
+            expected_commas: &[15, 18],
+        },
+        #[cfg(feature = "sqlite")]
+        JoinSpanTestCase {
+            description: "SQLite's own parser joins",
+            parse: |sql| {
+                sqlquack_syntax_sqlite::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a LEFT OUTER JOIN b ON a.x = b.x CROSS JOIN c",
+            expected_joins: &[["LEFT", "JOIN", "ON"], ["CROSS", "JOIN", ""]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "sqlite")]
+        JoinSpanTestCase {
+            description: "SQLite's own parser commas",
+            parse: |sql| {
+                sqlquack_syntax_sqlite::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a, b, c",
+            expected_joins: &[],
+            expected_commas: &[15, 18],
+        },
+        #[cfg(feature = "clickhouse")]
+        JoinSpanTestCase {
+            description: "ClickHouse joins",
+            parse: |sql| {
+                sqlquack_syntax_clickhouse::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a LEFT OUTER JOIN b ON a.x = b.x CROSS JOIN c",
+            expected_joins: &[["LEFT", "JOIN", "ON"], ["CROSS", "JOIN", ""]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "clickhouse")]
+        JoinSpanTestCase {
+            description: "ClickHouse commas",
+            parse: |sql| {
+                sqlquack_syntax_clickhouse::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a, b, c",
+            expected_joins: &[],
+            expected_commas: &[15, 18],
+        },
+        #[cfg(feature = "sqlserver")]
+        JoinSpanTestCase {
+            description: "SQL Server joins",
+            parse: |sql| {
+                sqlquack_syntax_sqlserver::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a LEFT OUTER JOIN b ON a.x = b.x CROSS JOIN c",
+            expected_joins: &[["LEFT", "JOIN", "ON"], ["CROSS", "JOIN", ""]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "sqlserver")]
+        JoinSpanTestCase {
+            description: "SQL Server commas",
+            parse: |sql| {
+                sqlquack_syntax_sqlserver::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a, b, c",
+            expected_joins: &[],
+            expected_commas: &[15, 18],
+        },
+        #[cfg(feature = "bigquery")]
+        JoinSpanTestCase {
+            description: "a BigQuery comma after a join",
+            parse: |sql| {
+                sqlquack_syntax_bigquery::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a JOIN b ON a.x = b.x, c",
+            expected_joins: &[["JOIN", "JOIN", "ON"], [",", ",", ""]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "bigquery")]
+        JoinSpanTestCase {
+            description: "BigQuery conditions written after their joins",
+            parse: |sql| {
+                sqlquack_syntax_bigquery::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a JOIN b JOIN c ON b.x = c.x on a.x = b.x",
+            expected_joins: &[["JOIN", "JOIN", "on"], ["JOIN", "JOIN", "ON"]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "sqlite")]
+        JoinSpanTestCase {
+            description: "a SQLite comma after a join",
+            parse: |sql| {
+                sqlquack_syntax_sqlite::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a JOIN b ON a.x = b.x, c",
+            expected_joins: &[["JOIN", "JOIN", "ON"], [",", ",", ""]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "duckdb")]
+        JoinSpanTestCase {
+            description: "a trailing DuckDB comma separates nothing",
+            parse: |sql| {
+                sqlquack_syntax_duckdb::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a, b,",
+            expected_joins: &[],
+            expected_commas: &[15],
+        },
+        #[cfg(feature = "duckdb")]
+        JoinSpanTestCase {
+            description: "a DuckDB ASOF join",
+            parse: |sql| {
+                sqlquack_syntax_duckdb::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a ASOF JOIN b ON a.ts >= b.ts",
+            expected_joins: &[["ASOF", "JOIN", "ON"]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "clickhouse")]
+        JoinSpanTestCase {
+            description: "a ClickHouse comma after a join",
+            parse: |sql| {
+                sqlquack_syntax_clickhouse::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a JOIN b ON a.x = b.x, c",
+            expected_joins: &[["JOIN", "JOIN", "ON"], [",", ",", ""]],
+            expected_commas: &[],
+        },
+        #[cfg(feature = "sqlserver")]
+        JoinSpanTestCase {
+            description: "a SQL Server APPLY",
+            parse: |sql| {
+                sqlquack_syntax_sqlserver::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT * FROM a CROSS APPLY f(a.x) AS b",
+            expected_joins: &[["CROSS", "APPLY", ""]],
+            expected_commas: &[],
+        },
     ];
 
     for test_case in test_cases {
@@ -223,9 +475,10 @@ fn given_joins_when_parsed_located_then_each_records_its_keywords_and_commas() {
                     .collect()
             })
         };
-        let joins: Vec<[String; 3]> = selects
+        let joins: Vec<[String; 3]> = statements
             .iter()
-            .flat_map(|select| &select.joins)
+            .flat_map(|statement| statement.dfs())
+            .flat_map(Expression::own_joins)
             .map(|join| {
                 [
                     text(join.kind_span),

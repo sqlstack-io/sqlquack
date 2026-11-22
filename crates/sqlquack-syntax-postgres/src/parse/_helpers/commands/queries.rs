@@ -179,9 +179,9 @@ impl Parser<'_> {
             select.into = Some(self.select_into_target()?);
         }
         if self.eat_kw("from") {
-            let (items, joins) = self.parse_from_list()?;
+            let (items, joins, comma_spans) = self.parse_from_list()?;
             select.from = Some(From {
-                comma_spans: Default::default(),
+                comma_spans,
                 expressions: items,
             });
             select.joins = joins;
