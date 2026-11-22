@@ -81,3 +81,19 @@ pub(crate) struct QueryScopeTestCase {
     /// Each qualified column, by name, with whether its qualifier is a relation the query can see.
     pub(crate) expected_visible: &'static [(&'static str, bool)],
 }
+
+pub(crate) struct BranchTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parse: LocatedParser,
+    pub(crate) sql: &'static str,
+    /// For the first set operation: whether the branch each side of its keyword projects a wildcard, and how many columns it has.
+    pub(crate) expected_sides: [(bool, Option<usize>); 2],
+}
+
+pub(crate) struct JoinedItemTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parse: LocatedParser,
+    pub(crate) sql: &'static str,
+    /// For each join, whether its item may read the items before it.
+    pub(crate) expected_lateral: &'static [bool],
+}

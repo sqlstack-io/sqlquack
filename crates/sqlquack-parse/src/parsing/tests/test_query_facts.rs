@@ -5,7 +5,7 @@ use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
 
 use crate::parsing::main::parse_source::parse_source;
 use crate::parsing::tests::test_types::{
-    FromItemTestCase, QueryScopeTestCase, SetOperationTestCase,
+    BranchTestCase, FromItemTestCase, JoinedItemTestCase, QueryScopeTestCase, SetOperationTestCase,
 };
 
 #[test]
@@ -390,6 +390,77 @@ fn given_qualified_columns_when_scoped_then_each_sees_the_relations_of_its_query
         visible.sort_unstable();
         assert_eq!(
             visible, test_case.expected_visible,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_set_operation_when_reading_the_branches_at_its_keyword_then_they_are_the_adjacent_ones()
+{
+    let test_cases = [
+        BranchTestCase {
+            description: "a chain's last branch meets the next",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT 1 UNION ALL SELECT * FROM t UNION ALL SELECT 3, 4",
+            expected_sides: [(true, None), (false, Some(2))],
+        },
+        BranchTestCase {
+            description: "parentheses are opened",
+            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            sql: "SELECT 1, 2 UNION ALL (SELECT t.* FROM t UNION ALL SELECT 3)",
+            expected_sides: [(false, Some(2)), (true, None)],
+        },
+        BranchTestCase {
+            description: "multiplication and VALUES are no wildcard",
+            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            sql: "SELECT qty * price FROM t UNION ALL VALUES (1)",
+            expected_sides: [(false, Some(1)), (false, Some(1))],
+        },
+    ];
+
+    for test_case in test_cases {
+        let statements: Vec<Expression> = (test_case.parse)(test_case.sql).unwrap_or_default();
+        let sides: Vec<(bool, Option<usize>)> = statements
+            .iter()
+            .flat_map(|statement| statement.dfs())
+            .filter_map(Expression::set_operation)
+            .take(1)
+            .flat_map(|set| [set.left.last_branch(), set.right.first_branch()])
+            .map(|branch| (branch.projects_wildcard(), branch.column_count()))
+            .collect();
+        assert_eq!(sides, test_case.expected_sides, "{}", test_case.description);
+    }
+}
+
+#[test]
+fn given_joins_when_their_item_is_lateral_then_it_may_read_the_items_before_it() {
+    let test_cases = [
+        JoinedItemTestCase {
+            description: "a lateral query, and a plain relation",
+            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            sql: "SELECT 1 FROM o LEFT JOIN LATERAL (SELECT o.id) AS l ON TRUE JOIN c ON TRUE",
+            expected_lateral: &[true, false],
+        },
+        JoinedItemTestCase {
+            description: "correlated UNNEST",
+            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            sql: "SELECT 1 FROM o LEFT JOIN UNNEST(o.items) AS u(x) ON TRUE",
+            expected_lateral: &[true],
+        },
+    ];
+
+    for test_case in test_cases {
+        let statements: Vec<Expression> = (test_case.parse)(test_case.sql).unwrap_or_default();
+        let lateral: Vec<bool> = statements
+            .iter()
+            .flat_map(|statement| statement.dfs())
+            .flat_map(Expression::own_joins)
+            .map(|join| join.may_read_earlier())
+            .collect();
+        assert_eq!(
+            lateral, test_case.expected_lateral,
             "{}",
             test_case.description
         );

@@ -1,5 +1,6 @@
 //! Expressions: what a query's structure says, for readers of the located tree.
 
+use crate::expressions::queries::models::Join;
 use crate::expressions::queries::models::JoinKind;
 use crate::expressions::queries::models::Select;
 use crate::expressions::tree::models::Expression;
@@ -74,6 +75,58 @@ impl Expression {
             }
             Self::Values(values) => values.expressions.first().map(|row| row.expressions.len()),
             _ => None,
+        }
+    }
+
+    /// SQLQuack: the first query of a chain of set operations, with parentheses opened.
+    pub fn first_branch(&self) -> &Self {
+        self.edge_branch(|set| set.left)
+    }
+
+    /// SQLQuack: the last query of a chain of set operations, with parentheses opened.
+    pub fn last_branch(&self) -> &Self {
+        self.edge_branch(|set| set.right)
+    }
+
+    /// The branch `side` leads to from this query.
+    fn edge_branch<'a>(&'a self, side: impl Fn(SetOperation<'a>) -> &'a Self) -> &'a Self {
+        let mut query: &Self = self;
+        loop {
+            query = match query {
+                Self::Annotated(node) => &node.this,
+                Self::Paren(node) => &node.this,
+                Self::Subquery(node) => &node.this,
+                _ => match query.set_operation() {
+                    Some(set) => side(set),
+                    None => return query,
+                },
+            };
+        }
+    }
+
+    /// SQLQuack: whether this SELECT projects `*` or `name.*`; multiplication is no wildcard.
+    pub fn projects_wildcard(&self) -> bool {
+        match self {
+            Self::Select(select) => {
+                let rows_only: bool = match &select.from {
+                    Some(from) => matches!(from.expressions.as_slice(), [Self::Values(_)]),
+                    None => false,
+                };
+                !rows_only && select.expressions.iter().any(Self::is_wildcard)
+            }
+            _ => false,
+        }
+    }
+
+    /// Whether a projection is written as a wildcard.
+    fn is_wildcard(&self) -> bool {
+        match self {
+            Self::Star(_) => true,
+            Self::Alias(node) => node.this.is_wildcard(),
+            Self::Annotated(node) => node.this.is_wildcard(),
+            Self::Column(column) => column.name.name == WILDCARD && !column.name.quoted,
+            Self::Dot(dot) => dot.field.name == WILDCARD && !dot.field.quoted,
+            _ => false,
         }
     }
 
@@ -172,6 +225,19 @@ impl Expression {
         let correlated: bool =
             DfsIter::new(self).any(|node| matches!(node, Self::Column(_) | Self::Dot(_)));
         FromItemKind::Unnest { correlated }
+    }
+}
+
+impl Join {
+    /// SQLQuack: whether the joined item may read the items before it, as a LATERAL one does.
+    pub fn may_read_earlier(&self) -> bool {
+        matches!(self.kind, JoinKind::Lateral | JoinKind::LeftLateral)
+            || matches!(
+                self.this.item_kind(&[]),
+                FromItemKind::Lateral
+                    | FromItemKind::TableFunction
+                    | FromItemKind::Unnest { correlated: true }
+            )
     }
 }
 
