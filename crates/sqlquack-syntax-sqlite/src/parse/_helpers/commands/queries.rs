@@ -6,6 +6,7 @@ use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{
     Cte, GroupBy, Having, Limit, NamedWindow, Offset, OrderBy, Ordered, Over, Select, Where, With,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_ids, is_nm};
 use crate::parse::_helpers::tree::nodes::{cte, set_operation, star, values};
@@ -112,7 +113,7 @@ impl Parser<'_> {
         let mut body: Expression = term.body;
         let mut last_values: bool = term.values;
         let mut misplaced: Option<String> = None;
-        while let Some((operator, all)) = self.compound_operator() {
+        while let Some((operator, all, operator_span)) = self.compound_operator() {
             if term.order_by.is_some() || term.limit.is_some() {
                 let clause: &str = match term.order_by.is_some() {
                     true => "ORDER BY",
@@ -126,7 +127,7 @@ impl Parser<'_> {
             term = self.one_select()?;
             terms += 1;
             last_values = term.values;
-            body = set_operation(operator, body, term.body, (all, false));
+            body = set_operation((operator, operator_span), body, term.body, (all, false));
         }
         if terms > MAX_COMPOUND_SELECT && !last_values {
             self.defer(self.error_with(COMPOUND_TERMS, start, false));
@@ -138,7 +139,7 @@ impl Parser<'_> {
     }
 
     /// `multiselect_op`: `UNION [ALL]`, `INTERSECT` or `EXCEPT`, consumed.
-    fn compound_operator(&mut self) -> Option<(&'static str, bool)> {
+    fn compound_operator(&mut self) -> Option<(&'static str, bool, SourceSpan)> {
         let operator: &'static str = match self.kind_at(0)? {
             TokenKind::Keyword("UNION") => "UNION",
             TokenKind::Keyword("INTERSECT") => "INTERSECT",
@@ -146,8 +147,9 @@ impl Parser<'_> {
             _ => return None,
         };
         self.at += 1;
+        let operator_span: SourceSpan = self.source_range(self.at - 1);
         let all: bool = matches!(operator, "UNION") && self.eat_kw("ALL");
-        Some((operator, all))
+        Some((operator, all, operator_span))
     }
 
     /// `oneselect`: a `SELECT` with its clauses, or `VALUES` rows.

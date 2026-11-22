@@ -6,6 +6,7 @@ use sqlquack_syntax::expressions::queries::models::{
     Cte, Fetch, From, GroupBy, Having, Limit, NamedWindow, Offset, OrderBy, OrderByAll, Ordered,
     Qualify, Select, Where, With,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
@@ -314,6 +315,7 @@ impl Parser<'_> {
         while self.kw_in(0, &["UNION", "EXCEPT"]) {
             let operator: String = self.word_at(0).unwrap_or_default();
             self.at += 1;
+            let operator_span: SourceSpan = self.source_range(self.at - 1);
             let quantifier: (bool, bool) = self.distinct_or_all();
             let by_name_start: usize = self.offset();
             let by_name: bool = self.eat_kws(&["BY", "NAME"]);
@@ -321,7 +323,8 @@ impl Parser<'_> {
                 self.refuse_later(EXCEPT_BY_NAME, by_name_start);
             }
             let right: Expression = self.deeper(|parser| parser.intersect_chain())?;
-            let mut node: Expression = set_operation(&operator, left, right, quantifier);
+            let mut node: Expression =
+                set_operation((&operator, operator_span), left, right, quantifier);
             if let Expression::Union(union) = &mut node {
                 union.by_name = by_name;
             }
@@ -342,9 +345,13 @@ impl Parser<'_> {
         let first: usize = self.at;
         let mut left: Expression = self.select_atom()?;
         while self.eat_kw("INTERSECT") {
+            let operator_span: SourceSpan = self.source_range(self.at - 1);
             let quantifier: (bool, bool) = self.distinct_or_all();
             let right: Expression = self.deeper(|parser| parser.select_atom())?;
-            left = self.spanned(first, set_operation("INTERSECT", left, right, quantifier));
+            left = self.spanned(
+                first,
+                set_operation(("INTERSECT", operator_span), left, right, quantifier),
+            );
         }
         Ok(left)
     }

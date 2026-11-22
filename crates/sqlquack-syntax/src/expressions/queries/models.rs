@@ -301,6 +301,10 @@ pub struct Union {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the operator keyword's range, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub operator_span: SourceSpan,
 }
 
 /// Flattens the left-recursive chain iteratively so dropping deep set operations cannot overflow.
@@ -374,6 +378,10 @@ pub struct Intersect {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the operator keyword's range, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub operator_span: SourceSpan,
 }
 
 impl Drop for Intersect {
@@ -446,6 +454,10 @@ pub struct Except {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the operator keyword's range, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub operator_span: SourceSpan,
 }
 
 impl Drop for Except {

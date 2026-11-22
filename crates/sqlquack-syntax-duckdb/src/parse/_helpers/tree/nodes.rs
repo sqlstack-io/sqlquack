@@ -444,7 +444,7 @@ pub(crate) fn joined_table(
 
 /// UNION, INTERSECT or EXCEPT of `left` and `right`, with `quantifier` as (`ALL`, `DISTINCT`).
 pub(crate) fn set_operation(
-    operator: &str,
+    (operator, operator_span): (&str, SourceSpan),
     left: Expression,
     right: Expression,
     quantifier: (bool, bool),
@@ -471,6 +471,7 @@ pub(crate) fn set_operation(
                 strict: false,
                 on_columns: Vec::new(),
                 span: SourceSpan(None),
+                operator_span,
                 locks: Vec::new(),
                 with_ties: false,
                 keyword: None,

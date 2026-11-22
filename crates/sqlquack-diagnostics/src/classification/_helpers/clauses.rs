@@ -170,6 +170,7 @@ macro_rules! set_operation_clauses {
                 with_ties,
                 keyword: _,
                 span: _,
+                operator_span: _,
             } = operation;
             present(&[
                 (*all, concat!($prefix, "_all")),

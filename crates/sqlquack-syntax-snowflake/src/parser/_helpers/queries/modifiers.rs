@@ -398,7 +398,9 @@ impl Parser {
             };
 
             if self.check_set_operation_start(TokenType::Union) {
+                let operator_start = self.current;
                 self.skip();
+                let operator_span = self.source_range(operator_start);
                 let all = self.match_token(TokenType::All);
                 let distinct = if !all {
                     self.match_token(TokenType::Distinct)
@@ -442,11 +444,14 @@ impl Parser {
                     strict,
                     on_columns,
                     span: self.range_from(left_span),
+                    operator_span,
                     locks: Vec::new(),
                 }));
                 found_set_op = true;
             } else if self.check_set_operation_start(TokenType::Intersect) {
+                let operator_start = self.current;
                 self.skip();
+                let operator_span = self.source_range(operator_start);
                 let all = self.match_token(TokenType::All);
                 let distinct = if !all {
                     self.match_token(TokenType::Distinct)
@@ -490,6 +495,7 @@ impl Parser {
                     strict,
                     on_columns,
                     span: self.range_from(left_span),
+                    operator_span,
                     locks: Vec::new(),
                 }));
                 if self.config.dialect
@@ -499,7 +505,9 @@ impl Parser {
                 }
                 found_set_op = true;
             } else if self.check_set_operation_start(TokenType::Except) {
+                let operator_start = self.current;
                 self.skip();
+                let operator_span = self.source_range(operator_start);
                 let all = self.match_token(TokenType::All);
                 let distinct = if !all {
                     self.match_token(TokenType::Distinct)
@@ -543,6 +551,7 @@ impl Parser {
                     strict,
                     on_columns,
                     span: self.range_from(left_span),
+                    operator_span,
                     locks: Vec::new(),
                 }));
                 found_set_op = true;

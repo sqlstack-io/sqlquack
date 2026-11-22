@@ -7,6 +7,7 @@ use sqlquack_syntax::expressions::queries::models::{
     ClusterBy, Cte, DistributeBy, From, GroupBy, Having, Hint, HintExpression, Limit, NamedWindow,
     Offset, OrderBy, Ordered, Qualify, Select, SortBy, Where, With,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
@@ -388,12 +389,13 @@ impl Parser<'_> {
                 return Ok(left);
             }
             self.at += 1;
+            let operator_span: SourceSpan = self.source_range(self.at - 1);
             let all: bool = self.eat_kw("ALL");
             let distinct: bool = !all && self.eat_kw("DISTINCT");
             let right: Expression = self.deeper(|parser| parser.query_term(level + 1))?;
             left = self.spanned(
                 first,
-                set_operation(&operator, left, right, (all, distinct)),
+                set_operation((&operator, operator_span), left, right, (all, distinct)),
             );
         }
     }
@@ -727,10 +729,16 @@ impl Parser<'_> {
             }
             "UNION" | "EXCEPT" | "MINUS" | "INTERSECT" => {
                 self.at += 1;
+                let operator_span: SourceSpan = self.source_range(self.at - 1);
                 let all: bool = self.eat_kw("ALL");
                 let distinct: bool = !all && self.eat_kw("DISTINCT");
                 let right: Expression = self.query_primary()?;
-                wrapped(set_operation(&word, left, right, (all, distinct)))
+                wrapped(set_operation(
+                    (&word, operator_span),
+                    left,
+                    right,
+                    (all, distinct),
+                ))
             }
             "ORDER" | "CLUSTER" | "DISTRIBUTE" | "SORT" | "WINDOW" | "LIMIT" | "OFFSET" => {
                 let organization: Organization = self.organization()?;

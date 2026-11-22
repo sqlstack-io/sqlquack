@@ -7,6 +7,7 @@ use sqlquack_syntax::expressions::queries::models::{
     ClusterBy, Cte, DistributeBy, From, GroupBy, Having, Limit, NamedWindow, OrderBy, Ordered,
     PipeOperator, Qualify, Select, SortBy, Where, With,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::keywords::main::is_reserved::is_reserved;
 use crate::parse::_helpers::commands::alters::{clause, named};
@@ -363,6 +364,7 @@ impl Parser<'_> {
                 }
             };
             self.at += 1;
+            let operator_span: SourceSpan = self.source_range(self.at - 1);
             let all: bool = self.eat_kw("ALL");
             let distinct: bool = !all && self.eat_kw("DISTINCT");
             if !(all || distinct) {
@@ -402,7 +404,8 @@ impl Parser<'_> {
                 _ => chain = Some(signature),
             }
             let right: Expression = self.deeper(|parser| parser.query_primary())?;
-            let mut node: Expression = set_operation(&operator, left, right, (all, distinct));
+            let mut node: Expression =
+                set_operation((&operator, operator_span), left, right, (all, distinct));
             macro_rules! matched {
                 ($node:expr) => {{
                     $node.by_name = by_name;
@@ -878,6 +881,7 @@ impl Parser<'_> {
         self.at += width;
         let word: String = self.word_at(0).unwrap_or_default();
         self.at += 1;
+        let operator_span: SourceSpan = self.source_range(self.at - 1);
         let all: bool = self.eat_kw("ALL");
         let distinct: bool = !all && self.eat_kw("DISTINCT");
         if !(all || distinct) {
@@ -908,7 +912,12 @@ impl Parser<'_> {
         if side || qualified || more {
             self.gap("pipe_set_operation", start);
         }
-        Ok(set_operation(&word, left, right, (all, distinct)))
+        Ok(set_operation(
+            (&word, operator_span),
+            left,
+            right,
+            (all, distinct),
+        ))
     }
 
     /// The pipe `AGGREGATE` operator after `|>`, with its `GROUP [AND ORDER] BY` keys.

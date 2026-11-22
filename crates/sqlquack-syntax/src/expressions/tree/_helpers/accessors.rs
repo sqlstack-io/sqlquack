@@ -61,6 +61,16 @@ impl Expression {
         Expression::Table(Box::new(t))
     }
 
+    /// SQLQuack: where a set operation's keyword is written; `None` for any other node.
+    pub fn set_operator_span(&self) -> Option<SourceSpan> {
+        match self {
+            Self::Union(node) => Some(node.operator_span),
+            Self::Intersect(node) => Some(node.operator_span),
+            Self::Except(node) => Some(node.operator_span),
+            _ => None,
+        }
+    }
+
     /// Whether this is a valid top-level statement, not a bare identifier, literal or call.
     pub fn is_statement(&self) -> bool {
         match self {

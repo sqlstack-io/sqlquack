@@ -6,6 +6,7 @@ use sqlquack_syntax::expressions::queries::models::{
     Cte, GroupBy, Having, Limit, NamedWindow, Offset, OrderBy, Ordered, Qualify, Select, Where,
     With,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{binary, column_from, cte, set_operation, string};
@@ -66,10 +67,14 @@ impl Parser<'_> {
             links += 1;
             self.within_depth(links)?;
             self.at += 1;
+            let operator_span: SourceSpan = self.source_range(self.at - 1);
             let all: bool = self.eat_kw("ALL");
             let distinct: bool = !all && self.eat_kw("DISTINCT");
             let right: Expression = self.deeper(|parser| parser.union_term(level))?;
-            left = self.spanned(first, set_operation(&word, left, right, (all, distinct)));
+            left = self.spanned(
+                first,
+                set_operation((&word, operator_span), left, right, (all, distinct)),
+            );
         }
     }
 

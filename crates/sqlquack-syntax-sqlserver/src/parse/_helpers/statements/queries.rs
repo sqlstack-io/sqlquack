@@ -213,9 +213,10 @@ impl<'sql> Parser<'sql> {
             };
             self.link()?;
             self.at += 1;
+            let operator_span: SourceSpan = self.range_from(self.at - 1);
             let all: bool = operator == UNION_OPERATOR && self.eat_kw("ALL");
             let right: Expression = self.intersect_expression()?;
-            left = set_operation(operator, left, right, (all, false));
+            left = set_operation((operator, operator_span), left, right, (all, false));
         }
     }
 
@@ -223,9 +224,10 @@ impl<'sql> Parser<'sql> {
         let mut left: Expression = self.query_term()?;
         let depth: usize = self.depth();
         while self.eat_kw("INTERSECT") {
+            let operator_span: SourceSpan = self.range_from(self.at - 1);
             self.link()?;
             let right: Expression = self.query_term()?;
-            left = set_operation("INTERSECT", left, right, (false, false));
+            left = set_operation(("INTERSECT", operator_span), left, right, (false, false));
         }
         self.restore_depth(depth);
         Ok(left)

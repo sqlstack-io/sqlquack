@@ -8,6 +8,7 @@ use sqlquack_syntax::expressions::queries::models::{
     SelectInto, Where, With,
 };
 use sqlquack_syntax::expressions::statements::models::Lock;
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::commands::tables::clause;
 use crate::parse::_helpers::tree::cursor::{
@@ -110,10 +111,14 @@ impl Parser<'_> {
                 return Ok(left);
             }
             self.at += 1;
+            let operator_span: SourceSpan = self.source_range(self.at - 1);
             let all: bool = self.eat_kw("all");
             let distinct: bool = !all && self.eat_kw("distinct");
             let right: Expression = self.deeper(|parser| parser.set_expression(level + 1))?;
-            left = self.spanned(first, set_operation(operator, left, right, (all, distinct)));
+            left = self.spanned(
+                first,
+                set_operation((operator, operator_span), left, right, (all, distinct)),
+            );
         }
     }
 
