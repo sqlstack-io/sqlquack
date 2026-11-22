@@ -390,6 +390,7 @@ pub(crate) fn lateral(
         view: None,
         outer: None,
         alias_quoted: alias.as_ref().is_some_and(|alias| alias.quoted),
+        alias_span: SourceSpan(alias.as_ref().and_then(|alias| alias.span)),
         alias: alias.map(|alias| alias.name),
         cross_apply: None,
         ordinality: None,

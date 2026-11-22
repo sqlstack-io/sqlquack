@@ -23,8 +23,8 @@ use sqlquack_syntax::tokens::models::DialectType;
 use sqlquack_syntax::tokens::models::Span;
 use sqlquack_syntax::tokens::models::Token;
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::tokens::models::Tokenizer;
 use sqlquack_syntax::traversal::types::ExpressionWalk;
+use sqlquack_tokenize::tokens::models::Tokenizer;
 
 pub(crate) fn parsed(dialect: Option<DialectType>, sql: &str) -> Result<Value, String> {
     dialect

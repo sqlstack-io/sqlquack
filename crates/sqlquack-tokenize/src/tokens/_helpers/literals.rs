@@ -6,14 +6,14 @@ use crate::tokens::constants::INSERT_FORMAT_MIN_TOKENS;
 use crate::tokens::constants::LOWERCASE_ESCAPE_STRING_PREFIX;
 use crate::tokens::constants::MAX_KEYWORD_LEN;
 use crate::tokens::constants::TRIPLE_QUOTE_LEN;
-use crate::tokens::errors::Error;
-use crate::tokens::models::Span;
 use crate::tokens::models::TokenSource;
-use crate::tokens::models::TokenType;
 use crate::tokens::models::TokenizerState;
-use crate::tokens::types::Result;
 use crate::tokens::types::TokenOutput;
 use crate::tokens::types::TokenizerCursor;
+use sqlquack_syntax::tokens::errors::Error;
+use sqlquack_syntax::tokens::models::Span;
+use sqlquack_syntax::tokens::models::TokenType;
+use sqlquack_syntax::tokens::types::Result;
 
 impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
     pub(crate) fn scan_string(&mut self) -> Result<()> {
@@ -403,7 +403,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
             .is_none()
             .then(|| self.text_from_range(self.start, self.current));
         let raw_text = source_text.or(raw_owned.as_deref()).ok_or_else(|| {
-            crate::tokens::errors::Error::internal("non-ASCII numbers own their text")
+            sqlquack_syntax::tokens::errors::Error::internal("non-ASCII numbers own their text")
         })?;
         let normalized = (self.config.numbers_can_be_underscore_separated
             && raw_text.contains('_'))
@@ -423,7 +423,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
                     .numeric_literals
                     .get(&suffix)
                     .ok_or_else(|| {
-                        crate::tokens::errors::Error::internal(
+                        sqlquack_syntax::tokens::errors::Error::internal(
                             "suffix verified by contains_key above",
                         )
                     })?
@@ -631,7 +631,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
             .is_none()
             .then(|| self.text_from_range(self.start, self.current));
         let raw_text = source_text.or(raw_owned.as_deref()).ok_or_else(|| {
-            crate::tokens::errors::Error::internal("non-ASCII numbers own their text")
+            sqlquack_syntax::tokens::errors::Error::internal("non-ASCII numbers own their text")
         })?;
         let normalized = (self.config.numbers_can_be_underscore_separated
             && raw_text.contains('_'))
@@ -707,7 +707,7 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
             .is_none()
             .then(|| self.text_from_range(self.start, self.current));
         let text = source_text.or(owned_text.as_deref()).ok_or_else(|| {
-            crate::tokens::errors::Error::internal("non-ASCII identifiers own their text")
+            sqlquack_syntax::tokens::errors::Error::internal("non-ASCII identifiers own their text")
         })?;
 
         if text.eq_ignore_ascii_case("NOT") && self.peek() == '=' {

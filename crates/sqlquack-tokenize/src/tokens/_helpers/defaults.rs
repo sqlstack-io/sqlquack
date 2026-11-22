@@ -3,7 +3,7 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-use crate::tokens::models::TokenType;
+use sqlquack_syntax::tokens::models::TokenType;
 
 pub(crate) static DEFAULT_KEYWORDS: LazyLock<HashMap<String, TokenType>> = LazyLock::new(|| {
     let mut keywords = HashMap::with_capacity(300);

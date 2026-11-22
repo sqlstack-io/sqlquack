@@ -349,7 +349,7 @@ impl Parser {
         } else if self.check(TokenType::DollarString) {
             let tok = self.advance()?;
             let (tag, content) =
-                sqlquack_syntax::tokens::main::parse_dollar_string_token::parse_dollar_string_token(
+                sqlquack_tokenize::tokens::main::parse_dollar_string_token::parse_dollar_string_token(
                     &tok.text,
                 );
             function.body = Some(FunctionBody::DollarQuoted { content, tag });

@@ -1,8 +1,10 @@
 use std::sync::Arc;
 
-use crate::tokens::models::ParserTokenText;
-use crate::tokens::models::Token;
-use crate::tokens::models::TokenType;
+use sqlquack_syntax::guard::main::enforce_lexed_tokens::enforce_lexed_tokens;
+use sqlquack_syntax::guard::main::enforce_parser_token_stats::enforce_parser_token_stats;
+use sqlquack_syntax::tokens::models::{ParserTokenText, Token, TokenType};
+use sqlquack_syntax::ComplexityGuardOptions;
+
 use crate::tokens::models::Tokenizer;
 use crate::tokens::models::TokenizerConfig;
 
@@ -87,4 +89,20 @@ pub(crate) fn parser_tokens_borrow_source(sql: &str) -> bool {
     tokens
         .iter()
         .all(|token| matches!(&token.text, ParserTokenText::Source { .. }))
+}
+
+pub(crate) fn guard_errors(
+    sql: &str,
+    options: &ComplexityGuardOptions,
+) -> (Result<(), String>, Result<(), String>) {
+    let sql: Arc<str> = Arc::from(sql);
+    let tokenizer = Tokenizer::default();
+    let public_tokens = tokenizer.tokenize(&sql).expect("the query tokenizes");
+    let (parser_tokens, stats) = tokenizer
+        .tokenize_for_parser(&sql)
+        .expect("the query tokenizes for the parser");
+    (
+        enforce_parser_token_stats(&parser_tokens, &stats, options).map_err(|e| e.to_string()),
+        enforce_lexed_tokens(&public_tokens, options).map_err(|e| e.to_string()),
+    )
 }

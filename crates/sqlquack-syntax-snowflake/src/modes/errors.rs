@@ -1,7 +1,7 @@
 //! Errors of modes.
 
-use sqlquack_syntax::lossless::errors::TokenizeFailure;
 use sqlquack_syntax::tokens::errors::Error;
+use sqlquack_tokenize::lossless::errors::TokenizeFailure;
 
 /// Why strict parsing refused the input.
 #[derive(Debug, thiserror::Error)]

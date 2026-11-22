@@ -106,11 +106,6 @@ pub(crate) fn enforce_token_slice<T: GuardToken>(
     Ok(())
 }
 
-#[cfg(test)]
-pub(crate) fn enforce_tokens(tokens: &[Token], options: &ComplexityGuardOptions) -> Result<()> {
-    enforce_token_slice(tokens, options)
-}
-
 pub(crate) fn is_trivia_token(token_type: TokenType) -> bool {
     matches!(
         token_type,

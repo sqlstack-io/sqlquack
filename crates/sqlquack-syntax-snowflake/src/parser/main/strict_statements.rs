@@ -2,8 +2,8 @@
 
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::guard::models::ParseOptions;
-use sqlquack_syntax::lossless::main::lossless_tokens::lossless_tokens;
 use sqlquack_syntax::tokens::models::{CallMode, Dialect};
+use sqlquack_tokenize::lossless::main::lossless_tokens::lossless_tokens;
 
 use crate::modes::errors::StrictFailure;
 use crate::parser::_helpers::support::dialects::dialect_type;

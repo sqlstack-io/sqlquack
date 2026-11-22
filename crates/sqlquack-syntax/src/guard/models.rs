@@ -62,7 +62,8 @@ pub struct TokenGuardStats {
 }
 
 impl TokenGuardStats {
-    pub(crate) fn observe(&mut self, token_type: TokenType, span: Span) {
+    /// Counts one token the tokenizer read, and the parenthesis and call depths it opens or closes.
+    pub fn observe(&mut self, token_type: TokenType, span: Span) {
         self.token_count += 1;
         match token_type {
             TokenType::LParen => {

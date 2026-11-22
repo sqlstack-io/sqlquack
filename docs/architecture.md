@@ -27,7 +27,8 @@ a parameter of every entry point; Snowflake is the only one implemented.
 
 | Crate | Role |
 |---|---|
-| `sqlquack-syntax` | The shared syntax tree, lossless tokens, spans, complexity guards and parse diagnostics that every dialect parser builds on. It names no dialect. Derived from polyglot; see [syntax.md](syntax.md). |
+| `sqlquack-syntax` | The shared syntax tree, token and span types, complexity guards and parse diagnostics that every dialect parser builds on. It names no dialect and holds no tokenizer or parser, so a crate that depends on it alone (SQLClean's Rules) can read trees but never re-read SQL. Derived from polyglot; see [syntax.md](syntax.md). |
+| `sqlquack-tokenize` | The tokenizer, its dialect configuration and the lossless tokenizer (significant tokens and trivia), apart from the tree. Derived from polyglot. |
 | `sqlquack-syntax-snowflake` | The Snowflake parser, with strict and tolerant modes, building the shared tree. It also reads DuckDB, PostgreSQL and SQLite. |
 | `sqlquack-derive` | The derive that generates the tree's child traversal. |
 | `sqlquack-syntax-bigquery`, `-clickhouse`, `-databricks`, `-duckdb`, `-postgres`, `-sqlite`, `-sqlserver` | Native parsers, one per dialect, each following its engine's own grammar and building the shared `sqlquack-syntax` tree. Each README lists what it covers and its gaps. |

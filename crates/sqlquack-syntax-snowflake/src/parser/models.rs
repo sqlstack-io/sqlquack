@@ -33,9 +33,9 @@ use sqlquack_syntax::tokens::models::DialectType;
 use sqlquack_syntax::tokens::models::ParserToken;
 use sqlquack_syntax::tokens::models::Span;
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::tokens::models::Tokenizer;
-use sqlquack_syntax::tokens::models::TokenizerConfig;
 use sqlquack_syntax::tokens::types::Result;
+use sqlquack_tokenize::tokens::models::Tokenizer;
+use sqlquack_tokenize::tokens::models::TokenizerConfig;
 
 /// Tokenizer and generator settings precomputed per dialect and cached in a `LazyLock`.
 #[derive(Debug)]

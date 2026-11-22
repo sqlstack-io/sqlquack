@@ -2,17 +2,17 @@
 
 use std::sync::Arc;
 
-use crate::guard::models::TokenGuardStats;
 use crate::tokens::constants::{MAX_RESERVED_TOKENS, SOURCE_CHARS_PER_TOKEN};
-use crate::tokens::errors::Error;
 use crate::tokens::models::AsciiLookups;
-use crate::tokens::models::Span;
-use crate::tokens::models::TokenType;
 use crate::tokens::models::TokenizerConfig;
 use crate::tokens::models::TokenizerState;
-use crate::tokens::types::Result;
 use crate::tokens::types::TokenOutput;
 use crate::tokens::types::TokenizerCursor;
+use sqlquack_syntax::guard::models::TokenGuardStats;
+use sqlquack_syntax::tokens::errors::Error;
+use sqlquack_syntax::tokens::models::Span;
+use sqlquack_syntax::tokens::models::TokenType;
+use sqlquack_syntax::tokens::types::Result;
 
 impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
     pub(crate) fn new(sql: &'a str, config: &'a TokenizerConfig, cursor: C) -> Self {

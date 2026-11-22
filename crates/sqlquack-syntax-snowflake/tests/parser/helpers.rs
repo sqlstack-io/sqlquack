@@ -1,8 +1,8 @@
 use serde_json::Value;
-use sqlquack_syntax::TokenizeFailure;
 use sqlquack_syntax::{CallMode, Dialect, ParseOptions};
 use sqlquack_syntax_snowflake::parse_statements_with;
 use sqlquack_syntax_snowflake::tokenize;
+use sqlquack_tokenize::TokenizeFailure;
 
 pub(crate) fn statements(sql: &str, dialect: Dialect, mode: CallMode) -> Value {
     serde_json::to_value(

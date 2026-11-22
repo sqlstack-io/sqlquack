@@ -3,8 +3,9 @@
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
 use serde_json::Value;
-use sqlquack_syntax::{CallMode, Dialect, Expression, ParseOptions, TokenizeFailure};
+use sqlquack_syntax::{CallMode, Dialect, Expression, ParseOptions};
 use sqlquack_syntax_snowflake::{parse_statements, parse_statements_with, tokenize};
+use sqlquack_tokenize::TokenizeFailure;
 
 use crate::verdicts::constants::SPAN_FIELD;
 use crate::verdicts::models::StatementCheck;

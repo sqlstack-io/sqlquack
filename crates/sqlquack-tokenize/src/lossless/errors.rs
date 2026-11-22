@@ -1,6 +1,6 @@
 //! Errors of lossless.
 
-use crate::tokens::errors::Error;
+use sqlquack_syntax::tokens::errors::Error;
 
 /// Why SQL could not be split into lossless tokens.
 #[derive(Debug, thiserror::Error)]

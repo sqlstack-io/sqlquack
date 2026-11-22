@@ -1,4 +1,3 @@
-use crate::tokens::models::TokenType;
 use crate::tokens::models::TokenizerConfig;
 use crate::tokens::tests::helpers::backslash_escapes;
 use crate::tokens::tests::helpers::fast_path_matches_character_path;
@@ -11,6 +10,7 @@ use crate::tokens::tests::helpers::underscore_numbers;
 use crate::tokens::tests::test_types::CommentTestCase;
 use crate::tokens::tests::test_types::TokenPathTestCase;
 use crate::tokens::tests::test_types::TokenizeTestCase;
+use sqlquack_syntax::tokens::models::TokenType;
 
 #[test]
 fn given_sql_when_tokenizing_then_each_token_has_its_type_and_text() {

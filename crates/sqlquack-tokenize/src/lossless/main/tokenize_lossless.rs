@@ -3,8 +3,9 @@
 use crate::lossless::errors::TokenizeFailure;
 use crate::lossless::main::lossless_tokens::lossless_tokens;
 use crate::lossless::models::LosslessToken;
+use crate::tokens::models::Tokenizer;
 use crate::tokens::models::TokenizerConfig;
-use crate::tokens::models::{Span, TokenType, Tokenizer};
+use sqlquack_syntax::tokens::models::{Span, TokenType};
 
 /// Lossless tokens of `sql`, with the tokenizer `config` builds deciding the significant tokens.
 pub fn tokenize_lossless(

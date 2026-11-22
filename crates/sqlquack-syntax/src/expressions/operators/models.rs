@@ -1170,6 +1170,10 @@ pub struct Lateral {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the alias as written, quotes included, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub alias_span: SourceSpan,
 }
 
 /// TableFromRows

@@ -1509,6 +1509,7 @@ impl Parser {
                     None
                 };
                 let alias_quoted = alias_ident.as_ref().is_some_and(|id| id.quoted);
+                let alias_span = SourceSpan(alias_ident.as_ref().and_then(|id| id.span));
                 let alias = alias_ident.map(|id| id.name);
 
                 let mut column_aliases_quoted: Vec<bool> = Vec::new();
@@ -1543,6 +1544,7 @@ impl Parser {
                     column_aliases,
                     column_aliases_quoted,
                     span: SourceSpan::default(),
+                    alias_span,
                 }))
             }
         })

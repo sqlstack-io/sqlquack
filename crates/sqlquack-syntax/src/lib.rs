@@ -1,11 +1,12 @@
-//! SQLQuack's shared syntax tree, tokens, spans and diagnostics for every dialect parser.
+//! SQLQuack's shared syntax tree, tokens, spans and diagnostics for every dialect parser. It holds no tokenizer
+//! or parser: those are in `sqlquack-tokenize` and the parser crates, so a crate that depends on this one alone
+//! can read trees but never re-read SQL.
 
 #![forbid(unsafe_code)]
 
 pub mod expressions;
 pub mod functions;
 pub mod guard;
-pub mod lossless;
 pub mod tokens;
 pub mod traversal;
 
@@ -16,9 +17,6 @@ pub use crate::expressions::types::models::DataType;
 pub use crate::functions::typed::main::canonical_call_name::canonical_call_name;
 pub use crate::guard::models::ComplexityGuardOptions;
 pub use crate::guard::models::ParseOptions;
-pub use crate::lossless::errors::TokenizeFailure;
-pub use crate::lossless::models::LosslessToken;
-pub use crate::lossless::models::TokenKind;
 pub use crate::tokens::errors::Error;
 pub use crate::tokens::models::CallMode;
 pub use crate::tokens::models::Dialect;

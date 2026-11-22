@@ -1,7 +1,7 @@
 //! Data models of lossless.
 
-use crate::tokens::models::Span;
-use crate::tokens::models::TokenType;
+use sqlquack_syntax::tokens::models::Span;
+use sqlquack_syntax::tokens::models::TokenType;
 
 /// What a lossless token holds.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -170,7 +170,7 @@ impl Parser {
             sql,
             &ComplexityGuardOptions::default(),
         )?;
-        let tokenizer = sqlquack_syntax::tokens::models::Tokenizer::default();
+        let tokenizer = sqlquack_tokenize::tokens::models::Tokenizer::default();
         let source: Arc<str> = Arc::from(sql);
         let (tokens, token_guard_stats) = tokenizer.tokenize_for_parser(&source)?;
         let mut parser =

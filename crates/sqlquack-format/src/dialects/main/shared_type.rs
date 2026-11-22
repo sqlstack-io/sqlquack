@@ -1,8 +1,9 @@
 //! `shared_type`: the type the shared tokenizer gives one token's text.
 
 use sqlquack_parse::tokenize;
+use sqlquack_syntax::Dialect;
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::{Dialect, TokenKind};
+use sqlquack_tokenize::TokenKind;
 
 /// The type the shared tokenizer, reading `dialect`, gives `text` when it reads it as exactly one token.
 pub(crate) fn shared_type(text: &str, dialect: Dialect) -> Option<TokenType> {

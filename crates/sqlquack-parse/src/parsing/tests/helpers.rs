@@ -80,6 +80,7 @@ pub(crate) fn written_positions(statements: &[Expression], sql: &str) -> Vec<Str
         );
         found.extend(deleted(node).map(|span| ("delete", Some(span))));
         found.extend(keyword_call(node).map(|span| ("call", Some(span))));
+        found.extend(lateral_alias(node).map(|span| ("lateral", Some(span))));
     }
     let mut written: Vec<String> = found
         .into_iter()
@@ -189,4 +190,11 @@ fn keyword_call(node: &Expression) -> Option<Span> {
         return None;
     };
     call.call_span.0
+}
+
+fn lateral_alias(node: &Expression) -> Option<Span> {
+    let Expression::Lateral(lateral) = node else {
+        return None;
+    };
+    lateral.alias_span.0
 }

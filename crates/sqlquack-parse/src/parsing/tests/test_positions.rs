@@ -115,6 +115,35 @@ fn given_queries_and_writes_when_parsed_located_then_clauses_items_and_operators
             expected_positions: &["delete DELETE", "operation / 2", "operation = 1"],
         },
         WrittenPositionsTestCase {
+            description: "Snowflake, a quoted LATERAL alias",
+            parse: |sql| parse_as_written(sql, Dialect::Snowflake),
+            sql: "SELECT f.v FROM s, LATERAL FLATTEN(input => s.items) \"a\"\"b\"",
+            expected_positions: &[
+                "from FROM",
+                "head f",
+                "item f.v",
+                "lateral \"a\"\"b\"",
+                "select SELECT",
+            ],
+        },
+        #[cfg(feature = "postgres")]
+        WrittenPositionsTestCase {
+            description: "PostgreSQL's own parser, a quoted LATERAL alias",
+            parse: |sql| {
+                sqlquack_syntax_postgres::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT f.v FROM s, LATERAL generate_series(1, 2) \"a\"\"b\"",
+            expected_positions: &[
+                "from FROM",
+                "head f",
+                "item f.v",
+                "lateral \"a\"\"b\"",
+                "select SELECT",
+            ],
+        },
+        WrittenPositionsTestCase {
             description: "DuckDB, a WITH before a VALUES statement",
             parse: |sql| parse_as_written(sql, Dialect::DuckDB),
             sql: "WITH a AS (SELECT 1 AS x) VALUES (2)",

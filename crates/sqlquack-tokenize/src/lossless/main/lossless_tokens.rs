@@ -5,7 +5,7 @@ use crate::lossless::errors::TokenizeFailure;
 use crate::lossless::models::CharOffsets;
 use crate::lossless::models::LosslessToken;
 use crate::lossless::models::TokenKind;
-use crate::tokens::models::{Span, TokenType};
+use sqlquack_syntax::tokens::models::{Span, TokenType};
 
 /// `significant` with the blanks and comments between them; refused on an overlap or other text.
 pub fn lossless_tokens(
