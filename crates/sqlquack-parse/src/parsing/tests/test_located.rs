@@ -5,10 +5,10 @@ use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
 
 use crate::parsing::main::parse_source::parse_source;
-use crate::parsing::tests::helpers::parse_as_written;
+use crate::parsing::tests::helpers::{case_keywords, parse_as_written};
 use crate::parsing::tests::test_types::{
-    DistinctSpanTestCase, JoinSpanTestCase, OperatorSpanTestCase, RowLimitSpanTestCase,
-    WrittenCallTestCase,
+    CaseKeywordsTestCase, DistinctSpanTestCase, JoinSpanTestCase, OperatorSpanTestCase,
+    RowLimitSpanTestCase, WrittenCallTestCase,
 };
 
 #[test]
@@ -980,6 +980,123 @@ fn given_row_limits_when_parsed_located_then_each_query_records_its_keyword() {
         starts.sort_unstable();
         assert_eq!(
             starts, test_case.expected_starts,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_case_expressions_when_parsed_located_then_each_records_its_keywords() {
+    let test_cases = [
+        CaseKeywordsTestCase {
+            description: "Snowflake",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
+            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+        },
+        CaseKeywordsTestCase {
+            description: "DuckDB through the shared parser",
+            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
+            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+        },
+        CaseKeywordsTestCase {
+            description: "SQLite through the shared parser",
+            parse: |sql| parse_source(sql, Dialect::SQLite).ok(),
+            sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
+            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+        },
+        CaseKeywordsTestCase {
+            description: "after a character of three bytes",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT '注', case when a then 1 end FROM t",
+            expected_keywords: &["case when then end"],
+        },
+        #[cfg(feature = "postgres")]
+        CaseKeywordsTestCase {
+            description: "postgres",
+            parse: |sql| {
+                sqlquack_syntax_postgres::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
+            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+        },
+        #[cfg(feature = "bigquery")]
+        CaseKeywordsTestCase {
+            description: "bigquery",
+            parse: |sql| {
+                sqlquack_syntax_bigquery::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
+            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+        },
+        #[cfg(feature = "databricks")]
+        CaseKeywordsTestCase {
+            description: "databricks",
+            parse: |sql| {
+                sqlquack_syntax_databricks::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
+            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+        },
+        #[cfg(feature = "duckdb")]
+        CaseKeywordsTestCase {
+            description: "duckdb",
+            parse: |sql| {
+                sqlquack_syntax_duckdb::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
+            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+        },
+        #[cfg(feature = "sqlite")]
+        CaseKeywordsTestCase {
+            description: "sqlite",
+            parse: |sql| {
+                sqlquack_syntax_sqlite::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
+            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+        },
+        #[cfg(feature = "clickhouse")]
+        CaseKeywordsTestCase {
+            description: "clickhouse",
+            parse: |sql| {
+                sqlquack_syntax_clickhouse::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
+            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+        },
+        #[cfg(feature = "sqlserver")]
+        CaseKeywordsTestCase {
+            description: "sqlserver",
+            parse: |sql| {
+                sqlquack_syntax_sqlserver::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
+            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+        },
+    ];
+
+    for test_case in test_cases {
+        let statements: Vec<Expression> = (test_case.parse)(test_case.sql).unwrap_or_default();
+        assert_eq!(
+            case_keywords(&statements, test_case.sql),
+            test_case.expected_keywords,
             "{}",
             test_case.description
         );

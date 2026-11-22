@@ -18,6 +18,7 @@ use sqlquack_syntax::expressions::queries::models::{
 };
 use sqlquack_syntax::expressions::statements::models::{Command, Paren};
 use sqlquack_syntax::expressions::types::models::Tuple;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::SourceSpan;
 
 pub(crate) fn column(table: Option<Identifier>, name: Identifier) -> Expression {
@@ -97,6 +98,7 @@ pub(crate) fn case(
     operand: Option<Expression>,
     whens: Vec<(Expression, Expression)>,
     else_: Option<Expression>,
+    keyword_spans: SeparatorSpans,
 ) -> Expression {
     Expression::Case(Box::new(Case {
         operand,
@@ -105,6 +107,7 @@ pub(crate) fn case(
         comments: Vec::new(),
         inferred_type: None,
         span: SourceSpan(None),
+        keyword_spans,
     }))
 }
 

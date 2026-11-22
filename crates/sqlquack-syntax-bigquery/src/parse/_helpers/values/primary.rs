@@ -7,6 +7,7 @@ use sqlquack_syntax::expressions::operators::models::{MethodCall, Subscript};
 use sqlquack_syntax::expressions::types::models::{
     Interval, IntervalSpan, IntervalUnit, IntervalUnitSpec,
 };
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 
 use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, identifier, is_identifier, is_path_word,
@@ -484,25 +485,33 @@ impl Parser<'_> {
     /// `CASE [value] WHEN ... THEN ... [ELSE ...] END`.
     fn case_expression(&mut self) -> Parsing<Expression> {
         self.at += 1;
+        let mut keywords = SeparatorSpans::default();
+        keywords.0.extend(self.token_range(self.at - 1).0);
         let operand: Option<Expression> = match self.kw("WHEN") {
             true => None,
             false => Some(self.expression()?),
         };
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.eat_kw("WHEN") {
+            keywords.0.extend(self.token_range(self.at - 1).0);
             let condition: Expression = self.expression()?;
             self.expect_kw("THEN")?;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             whens.push((condition, self.expression()?));
         }
         if whens.is_empty() {
             return Err(self.error());
         }
         let else_: Option<Expression> = match self.eat_kw("ELSE") {
-            true => Some(self.expression()?),
+            true => {
+                keywords.0.extend(self.token_range(self.at - 1).0);
+                Some(self.expression()?)
+            }
             false => None,
         };
         self.expect_kw("END")?;
-        Ok(case(operand, whens, else_))
+        keywords.0.extend(self.token_range(self.at - 1).0);
+        Ok(case(operand, whens, else_, keywords))
     }
 
     /// `CAST (expression AS dataType)` or `TRY_CAST (...)`.

@@ -7,6 +7,7 @@ use sqlquack_syntax::expressions::operators::models::{
     ArraySlice, DotAccess, OverlapsExpr, Subscript,
 };
 use sqlquack_syntax::expressions::typed_functions::models::ArrayConstructor;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::Span;
 
 use crate::parse::_helpers::commands::routines::var;
@@ -466,25 +467,33 @@ impl Parser<'_> {
     /// `CASE [a_expr] WHEN a_expr THEN a_expr ... [ELSE a_expr] END`.
     fn case_expression(&mut self) -> Parsing<Expression> {
         self.at += 1;
+        let mut keywords = SeparatorSpans::default();
+        keywords.0.extend(self.token_range(self.at - 1).0);
         let operand: Option<Expression> = match self.kw("when") {
             true => None,
             false => Some(self.a_expr()?),
         };
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.eat_kw("when") {
+            keywords.0.extend(self.token_range(self.at - 1).0);
             let condition: Expression = self.a_expr()?;
             self.expect_kw("then")?;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             whens.push((condition, self.a_expr()?));
         }
         if whens.is_empty() {
             return Err(self.error());
         }
         let otherwise: Option<Expression> = match self.eat_kw("else") {
-            true => Some(self.a_expr()?),
+            true => {
+                keywords.0.extend(self.token_range(self.at - 1).0);
+                Some(self.a_expr()?)
+            }
             false => None,
         };
         self.expect_kw("end")?;
-        Ok(case(operand, whens, otherwise))
+        keywords.0.extend(self.token_range(self.at - 1).0);
+        Ok(case(operand, whens, otherwise, keywords))
     }
 
     /// `array_expr`: `[ expr_list ]`, `[ array_expr, ... ]` or `[ ]`.

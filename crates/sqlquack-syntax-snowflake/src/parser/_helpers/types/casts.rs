@@ -20,6 +20,7 @@ use sqlquack_syntax::expressions::types::models::IntervalQualifier;
 use sqlquack_syntax::expressions::types::models::IntervalUnit;
 use sqlquack_syntax::expressions::types::models::IntervalUnitSpec;
 use sqlquack_syntax::expressions::types::models::TableArgumentType;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
@@ -60,7 +61,9 @@ impl Parser {
 
     /// Parse CASE expression
     pub(crate) fn parse_case(&mut self) -> Result<Expression> {
+        let mut keywords = SeparatorSpans::default();
         self.expect_token(TokenType::Case)?;
+        keywords.0.extend(self.token_range(self.current - 1).0);
         let case_comments = self.previous_trailing_comments().to_vec();
 
         let operand = if !self.check(TokenType::When) {
@@ -71,20 +74,24 @@ impl Parser {
 
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.match_token(TokenType::When) {
+            keywords.0.extend(self.token_range(self.current - 1).0);
             let condition = self.parse_expression()?;
             self.expect_token(TokenType::Then)?;
+            keywords.0.extend(self.token_range(self.current - 1).0);
             let result = self.parse_expression()?;
 
             whens.push((condition, result));
         }
 
         let else_ = if self.match_token(TokenType::Else) {
+            keywords.0.extend(self.token_range(self.current - 1).0);
             Some(self.parse_expression()?)
         } else {
             None
         };
 
         self.expect_token(TokenType::End)?;
+        keywords.0.extend(self.token_range(self.current - 1).0);
 
         Ok(Expression::Case(Box::new(Case {
             operand,
@@ -93,6 +100,7 @@ impl Parser {
             comments: case_comments,
             inferred_type: None,
             span: SourceSpan::default(),
+            keyword_spans: keywords,
         })))
     }
 

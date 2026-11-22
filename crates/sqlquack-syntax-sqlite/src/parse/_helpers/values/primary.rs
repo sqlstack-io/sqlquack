@@ -4,6 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{BooleanLiteral, Identifier, Literal};
 use sqlquack_syntax::expressions::operators::models::{Parameter, ParameterStyle, Placeholder};
 use sqlquack_syntax::expressions::types::models::DataType;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_idj, is_ids, is_nm};
@@ -315,6 +316,8 @@ impl Parser<'_> {
     /// `CASE [operand] WHEN expr THEN expr ... [ELSE expr] END`.
     fn case_expression(&mut self) -> Parsing<Expression> {
         self.expect_kw("CASE")?;
+        let mut keywords = SeparatorSpans::default();
+        keywords.0.extend(self.token_range(self.at - 1).0);
         let operand: Option<Expression> = match self.kw("WHEN") {
             true => None,
             false => Some(self.expression()?),
@@ -322,19 +325,25 @@ impl Parser<'_> {
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         loop {
             self.expect_kw("WHEN")?;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             let condition: Expression = self.expression()?;
             self.expect_kw("THEN")?;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             whens.push((condition, self.expression()?));
             if !self.kw("WHEN") {
                 break;
             }
         }
         let otherwise: Option<Expression> = match self.eat_kw("ELSE") {
-            true => Some(self.expression()?),
+            true => {
+                keywords.0.extend(self.token_range(self.at - 1).0);
+                Some(self.expression()?)
+            }
             false => None,
         };
         self.expect_kw("END")?;
-        Ok(case(operand, whens, otherwise))
+        keywords.0.extend(self.token_range(self.at - 1).0);
+        Ok(case(operand, whens, otherwise, keywords))
     }
 
     /// `RAISE (...)`, which only a trigger program may run: a gap.

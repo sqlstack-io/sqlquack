@@ -1,6 +1,6 @@
 //! Data models of expressions operators.
 
-use crate::tokens::models::SourceSpan;
+use crate::tokens::models::{SeparatorSpans, SourceSpan, Span};
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -156,6 +156,40 @@ pub struct Case {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: CASE, each WHEN and THEN, ELSE and END, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub keyword_spans: SeparatorSpans,
+}
+
+impl Case {
+    /// SQLQuack: where CASE is written, in a located parse.
+    pub fn case_keyword(&self) -> Option<Span> {
+        self.keywords()?.first().copied()
+    }
+
+    /// SQLQuack: where branch `branch`'s WHEN and THEN are written, in a located parse.
+    pub fn branch_keywords(&self, branch: usize) -> Option<(Span, Span)> {
+        let keywords: &[Span] = self.keywords()?;
+        (branch < self.whens.len()).then(|| (keywords[2 * branch + 1], keywords[2 * branch + 2]))
+    }
+
+    /// SQLQuack: where ELSE is written, in a located parse.
+    pub fn else_keyword(&self) -> Option<Span> {
+        let keywords: &[Span] = self.keywords()?;
+        self.else_.is_some().then(|| keywords[keywords.len() - 2])
+    }
+
+    /// SQLQuack: where END is written, in a located parse.
+    pub fn end_keyword(&self) -> Option<Span> {
+        self.keywords()?.last().copied()
+    }
+
+    /// Every keyword's range; none unless each was recorded, as a tree changed after parsing has not.
+    fn keywords(&self) -> Option<&[Span]> {
+        let written: usize = 2 * self.whens.len() + 2 + usize::from(self.else_.is_some());
+        (self.keyword_spans.0.len() == written).then_some(self.keyword_spans.0.as_slice())
+    }
 }
 
 /// A written spelling of an operator or call that another documented spelling shares a node with.

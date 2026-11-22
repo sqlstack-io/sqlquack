@@ -97,3 +97,11 @@ pub(crate) struct JoinedItemTestCase {
     /// For each join, whether its item may read the items before it.
     pub(crate) expected_lateral: &'static [bool],
 }
+
+pub(crate) struct CaseKeywordsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parse: LocatedParser,
+    pub(crate) sql: &'static str,
+    /// Each CASE's keywords as written, by where the CASE starts.
+    pub(crate) expected_keywords: &'static [&'static str],
+}

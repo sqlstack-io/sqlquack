@@ -4,6 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, Star};
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::types::models::{Interval, IntervalUnit, IntervalUnitSpec};
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
@@ -213,23 +214,31 @@ impl Parser<'_> {
 
     /// `CaseLayer`: `CASE [operand] WHEN a THEN b ... [ELSE c] END`.
     fn case_layer(&mut self) -> Parsing<Expression> {
+        let mut keywords = SeparatorSpans::default();
+        keywords.0.extend(self.token_range(self.at - 1).0);
         let operand: Option<Expression> = match self.kw("WHEN") {
             true => None,
             false => Some(self.element()?),
         };
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.eat_kw("WHEN") {
+            keywords.0.extend(self.token_range(self.at - 1).0);
             let condition: Expression = self.element()?;
             self.expect_kw("THEN")?;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             let result: Expression = self.element()?;
             whens.push((condition, result));
         }
         let otherwise: Option<Expression> = match self.eat_kw("ELSE") {
-            true => Some(self.element()?),
+            true => {
+                keywords.0.extend(self.token_range(self.at - 1).0);
+                Some(self.element()?)
+            }
             false => None,
         };
         self.expect_kw("END")?;
-        Ok(case(operand, whens, otherwise))
+        keywords.0.extend(self.token_range(self.at - 1).0);
+        Ok(case(operand, whens, otherwise, keywords))
     }
 
     /// A name: a call when `(` follows, a qualified asterisk, or a compound identifier.

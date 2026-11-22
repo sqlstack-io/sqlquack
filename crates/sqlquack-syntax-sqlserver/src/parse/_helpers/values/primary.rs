@@ -11,6 +11,7 @@ use sqlquack_syntax::expressions::statements::models::NextValueFor;
 use sqlquack_syntax::expressions::typed_functions::models::{
     ConvertFunc, IfFunc, JsonNullHandling, JsonObjectFunc, TrimFunc, TrimPosition,
 };
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_any_name, is_name};
@@ -559,28 +560,36 @@ impl<'sql> Parser<'sql> {
     /// `CASE [operand] WHEN ... THEN ... [ELSE ...] END`.
     fn case_expression(&mut self) -> Parsing<Expression> {
         self.expect_kw("CASE")?;
+        let mut keywords = SeparatorSpans::default();
+        keywords.0.extend(self.token_range(self.at - 1).0);
         let operand: Option<Expression> = match self.kw("WHEN") {
             true => None,
             false => Some(self.scalar()?),
         };
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.eat_kw("WHEN") {
+            keywords.0.extend(self.token_range(self.at - 1).0);
             let test: Expression = match operand {
                 Some(_) => self.scalar()?,
                 None => self.condition()?,
             };
             self.expect_kw("THEN")?;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             whens.push((test, self.scalar()?));
         }
         if whens.is_empty() {
             return Err(self.error());
         }
         let else_: Option<Expression> = match self.eat_kw("ELSE") {
-            true => Some(self.scalar()?),
+            true => {
+                keywords.0.extend(self.token_range(self.at - 1).0);
+                Some(self.scalar()?)
+            }
             false => None,
         };
         self.expect_kw("END")?;
-        Ok(case(operand, whens, else_))
+        keywords.0.extend(self.token_range(self.at - 1).0);
+        Ok(case(operand, whens, else_, keywords))
     }
 
     /// `CAST ( value AS type )` and `TRY_CAST`.
