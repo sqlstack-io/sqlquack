@@ -1,6 +1,4 @@
-//! SQLQuack's shared syntax tree, tokens, spans and diagnostics for every dialect parser. It holds no tokenizer
-//! or parser: those are in `sqlquack-tokenize` and the parser crates, so a crate that depends on this one alone
-//! can read trees but never re-read SQL.
+//! SQLQuack's shared syntax tree, tokens, spans and diagnostics, with no tokenizer or parser.
 
 #![forbid(unsafe_code)]
 
