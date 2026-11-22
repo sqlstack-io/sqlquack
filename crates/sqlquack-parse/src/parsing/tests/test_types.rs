@@ -73,3 +73,11 @@ pub(crate) struct SetOperationTestCase {
     /// For each set operation, outermost first: whether it pairs by name, and both sides' column counts.
     pub(crate) expected_operations: &'static [(bool, Option<usize>, Option<usize>)],
 }
+
+pub(crate) struct QueryScopeTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parse: LocatedParser,
+    pub(crate) sql: &'static str,
+    /// Each qualified column, by name, with whether its qualifier is a relation the query can see.
+    pub(crate) expected_visible: &'static [(&'static str, bool)],
+}

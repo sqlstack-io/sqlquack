@@ -1,9 +1,12 @@
 //! Facts a located tree gives about queries: FROM items after commas, and set operations.
 
+use sqlquack_syntax::traversal::models::QueryScopes;
 use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
 
 use crate::parsing::main::parse_source::parse_source;
-use crate::parsing::tests::test_types::{FromItemTestCase, SetOperationTestCase};
+use crate::parsing::tests::test_types::{
+    FromItemTestCase, QueryScopeTestCase, SetOperationTestCase,
+};
 
 #[test]
 fn given_from_items_after_commas_when_classified_then_the_lateral_ones_are_marked() {
@@ -280,6 +283,113 @@ fn given_set_operations_when_walked_then_each_gives_by_name_and_its_sides_column
         assert!(!statements.is_empty(), "{}: parses", test_case.description);
         assert_eq!(
             operations, test_case.expected_operations,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_qualified_columns_when_scoped_then_each_sees_the_relations_of_its_query_and_those_around()
+{
+    let test_cases = [
+        QueryScopeTestCase {
+            description: "aliases and a join",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT o.id, c.name, x.zip FROM orders o JOIN customers c ON o.customer_id = c.cid",
+            expected_visible: &[
+                ("cid", true),
+                ("customer_id", true),
+                ("id", true),
+                ("name", true),
+                ("zip", false),
+            ],
+        },
+        QueryScopeTestCase {
+            description: "an alias hides the table name",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT orders.id FROM orders o",
+            expected_visible: &[("id", false)],
+        },
+        QueryScopeTestCase {
+            description: "a subquery sees the queries around it",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT (SELECT MAX(p.paid) FROM payments p WHERE p.order_id = o.id) FROM orders o",
+            expected_visible: &[("id", true), ("order_id", true), ("paid", true)],
+        },
+        QueryScopeTestCase {
+            description: "a derived table does not see its neighbours",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT s.a FROM orders o, (SELECT o.id AS a FROM items i) s",
+            expected_visible: &[("a", true), ("id", false)],
+        },
+        QueryScopeTestCase {
+            description: "a lateral query does",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT s.a FROM orders o, LATERAL (SELECT o.id AS a) s",
+            expected_visible: &[("a", true), ("id", true)],
+        },
+        QueryScopeTestCase {
+            description: "a CTE does not see the query that reads it",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "WITH r AS (SELECT o.id FROM items i) SELECT o.total FROM orders o",
+            expected_visible: &[("id", false), ("total", true)],
+        },
+        QueryScopeTestCase {
+            description: "a derived table in a subquery sees past it",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT o.total FROM orders o WHERE EXISTS (SELECT 1 FROM (SELECT o.id FROM items i) s)",
+            expected_visible: &[("id", true), ("total", true)],
+        },
+        QueryScopeTestCase {
+            description: "set operation branches see their own relations",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT o.id FROM orders o UNION ALL SELECT o.rid FROM returns r",
+            expected_visible: &[("id", true), ("rid", false)],
+        },
+        QueryScopeTestCase {
+            description: "a table function reads an earlier item",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT f.value FROM orders o, LATERAL FLATTEN(input => o.items) f",
+            expected_visible: &[("items", true), ("value", true)],
+        },
+        QueryScopeTestCase {
+            description: "a qualified call is no qualifier",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT util.parse_day(o.day) FROM orders o",
+            expected_visible: &[("day", true)],
+        },
+        #[cfg(feature = "postgres")]
+        QueryScopeTestCase {
+            description: "PostgreSQL nested joins",
+            parse: |sql| {
+                sqlquack_syntax_postgres::parse_strict(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT b.y FROM a JOIN b ON a.x = b.y, c WHERE c.z = 1",
+            expected_visible: &[("x", true), ("y", true), ("y", true), ("z", true)],
+        },
+    ];
+
+    for test_case in test_cases {
+        let statements: Vec<Expression> = (test_case.parse)(test_case.sql).unwrap_or_default();
+        let scoped: Vec<QueryScopes<'_>> =
+            statements.iter().map(Expression::query_scopes).collect();
+        let mut visible: Vec<(&str, bool)> = scoped
+            .iter()
+            .flat_map(|query| query.qualified_columns())
+            .map(|read| {
+                let seen: bool = read
+                    .visible
+                    .iter()
+                    .any(|relation| relation.name.eq_ignore_ascii_case(read.qualifier));
+                (read.column.name.name.as_str(), seen)
+            })
+            .collect();
+        visible.sort_unstable();
+        assert_eq!(
+            visible, test_case.expected_visible,
             "{}",
             test_case.description
         );
