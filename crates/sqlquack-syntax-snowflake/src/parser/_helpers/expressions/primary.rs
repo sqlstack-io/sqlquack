@@ -474,6 +474,7 @@ impl Parser {
             };
             self.expect_token(TokenType::RParen)?;
             let func = Expression::Function(Box::new(Function {
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -721,6 +722,7 @@ impl Parser {
         let predicate = self.parse_expression()?;
         self.expect_token(TokenType::RParen)?;
         Ok(Expression::Function(Box::new(Function {
+            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -1027,6 +1029,7 @@ impl Parser {
         };
         self.expect_token(TokenType::RParen)?;
         let func_expr = Expression::Function(Box::new(Function {
+            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -1400,6 +1403,7 @@ impl Parser {
         };
         self.expect_token(TokenType::RParen)?;
         let func = Expression::Function(Box::new(Function {
+            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -1430,6 +1434,7 @@ impl Parser {
         };
         self.expect_token(TokenType::RParen)?;
         let func = Expression::Function(Box::new(Function {
+            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -1482,6 +1487,7 @@ impl Parser {
             };
             self.expect_token(TokenType::RParen)?;
             let func = Expression::Function(Box::new(Function {
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1503,6 +1509,7 @@ impl Parser {
         } else {
             let token = self.advance()?;
             let func = Expression::Function(Box::new(Function {
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1947,6 +1954,7 @@ impl Parser {
         let args = self.parse_function_args_list()?;
         self.expect_token(TokenType::RParen)?;
         Ok(Expression::Function(Box::new(Function {
+            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -1964,16 +1972,6 @@ impl Parser {
             from_separator: false,
             written_as: None,
         })))
-    }
-
-    /// Check if function name is a known aggregate function
-    pub(crate) fn is_aggregate_function(&self, name: &str) -> bool {
-        sqlquack_syntax::functions::names::main::is_aggregate_function_name_for_dialect::is_aggregate_function_name_for_dialect(name, self.config.dialect)
-    }
-
-    /// Whether the source dialect writes LOG(base, value), base first (not BigQuery or TSQL).
-    pub(crate) fn log_base_first(&self) -> bool {
-        !false
     }
 }
 

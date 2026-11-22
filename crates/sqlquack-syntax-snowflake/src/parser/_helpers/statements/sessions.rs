@@ -1785,6 +1785,7 @@ impl Parser {
         if self.is_no_paren_function() && !self.check_next(TokenType::LParen) {
             self.skip();
             return Ok(Some(Expression::Function(Box::new(Function {
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1834,6 +1835,7 @@ impl Parser {
         self.match_token(TokenType::RParen);
 
         let func_expr = Expression::Function(Box::new(Function {
+            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,

@@ -3,7 +3,7 @@
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::queries::models::Intersect;
 use sqlquack_syntax::expressions::tree::models::Expression;
-use sqlquack_syntax::tokens::models::{SourceSpan, Span};
+use sqlquack_syntax::tokens::models::{SourceSpan, Span, TokenType};
 use sqlquack_syntax::traversal::types::AstNode;
 
 impl Parser {
@@ -12,7 +12,52 @@ impl Parser {
         if !self.config.record_node_spans {
             return expr;
         }
+        let expr = self.named_at(start, expr);
         self.filled_span(start, expr)
+    }
+
+    /// SQLQuack: `expr` with the name range of the call it begins with, through LATERAL and an alias.
+    fn named_at(&self, start: usize, mut expr: Expression) -> Expression {
+        let mut at = start;
+        if self
+            .tokens
+            .get(at)
+            .is_some_and(|token| token.token_type == TokenType::Lateral)
+        {
+            at += 1;
+        }
+        let mut node = &mut expr;
+        loop {
+            node = match node {
+                Expression::Alias(alias) => &mut alias.this,
+                Expression::Lateral(lateral) => &mut *lateral.this,
+                other => {
+                    node = other;
+                    break;
+                }
+            };
+        }
+        let (name, field) = match node {
+            Expression::Function(call) => (&call.name, &mut call.name_span),
+            Expression::AggregateFunction(call) => (&call.name, &mut call.name_span),
+            _ => return expr,
+        };
+        if !field.is_absent() {
+            return expr;
+        }
+        let (qualifiers, last) = match name.rsplit_once('.') {
+            Some((qualifier, last)) => (qualifier.split('.').count(), last),
+            None => (0, name.as_str()),
+        };
+        let index = at + 2 * qualifiers;
+        if self
+            .tokens
+            .get(index)
+            .is_some_and(|token| token.text.eq_ignore_ascii_case(last))
+        {
+            *field = self.token_range(index);
+        }
+        expr
     }
 
     /// SQLQuack: a select item with its range when the parse records item ranges, which lineage reports.

@@ -17,7 +17,6 @@ use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::Null;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::Alias;
-use sqlquack_syntax::expressions::operators::models::MethodCall;
 use sqlquack_syntax::expressions::queries::models::From;
 use sqlquack_syntax::expressions::queries::models::GroupBy;
 use sqlquack_syntax::expressions::queries::models::Having;
@@ -258,15 +257,6 @@ impl Parser {
         {
             operation(self)
         }
-    }
-
-    pub(crate) fn parse_method_call_expression(
-        &self,
-        this: Expression,
-        method: Identifier,
-        args: Vec<Expression>,
-    ) -> Expression {
-        Expression::MethodCall(Box::new(MethodCall::new(this, method, args)))
     }
 
     /// Parses every remaining statement, split on semicolons, one `Expression` each.

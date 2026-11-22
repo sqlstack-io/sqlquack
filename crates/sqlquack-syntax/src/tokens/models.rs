@@ -48,6 +48,8 @@ pub enum CallMode {
     Faithful,
     /// As [`CallMode::Faithful`], recording each node's source range (for refusal locations).
     FaithfulLocated,
+    /// As [`CallMode::FaithfulLocated`], keeping every dialect's calls as written: the tree Rules read.
+    AsWrittenLocated,
 }
 
 /// Every supported SQL dialect; `Generic` is standard SQL and the default.

@@ -5,8 +5,9 @@ use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
 
 use crate::parsing::main::parse_source::parse_source;
+use crate::parsing::tests::helpers::parse_as_written;
 use crate::parsing::tests::test_types::{
-    DistinctSpanTestCase, JoinSpanTestCase, OperatorSpanTestCase,
+    DistinctSpanTestCase, JoinSpanTestCase, OperatorSpanTestCase, WrittenCallTestCase,
 };
 
 #[test]
@@ -621,6 +622,143 @@ fn given_select_distinct_when_parsed_located_then_it_records_the_distinct_keywor
         starts.sort_unstable();
         assert_eq!(
             starts, test_case.expected_starts,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_calls_when_parsed_as_written_then_each_keeps_its_name_and_qualifier() {
+    let test_cases = [
+        WrittenCallTestCase {
+            description: "Snowflake calls in QUALIFY",
+            parse: |sql| parse_as_written(sql, Dialect::Snowflake),
+            sql: "SELECT id FROM t QUALIFY ROW_NUMBER() OVER (ORDER BY id) = 1",
+            expected_calls: &[("ROW_NUMBER", "")],
+        },
+        WrittenCallTestCase {
+            description: "Snowflake nested calls",
+            parse: |sql| parse_as_written(sql, Dialect::Snowflake),
+            sql: "SELECT TRY_PARSE_JSON(LOWER(x)) FROM t",
+            expected_calls: &[("TRY_PARSE_JSON", ""), ("LOWER", "")],
+        },
+        WrittenCallTestCase {
+            description: "a Snowflake qualified call",
+            parse: |sql| parse_as_written(sql, Dialect::Snowflake),
+            sql: "SELECT db.sch.my_udf(x), util.Parse_Day(d) FROM t",
+            expected_calls: &[("my_udf", "db.sch"), ("Parse_Day", "util")],
+        },
+        WrittenCallTestCase {
+            description: "DuckDB calls in QUALIFY",
+            parse: |sql| parse_as_written(sql, Dialect::DuckDB),
+            sql: "SELECT id FROM t QUALIFY ROW_NUMBER() OVER (ORDER BY id) = 1",
+            expected_calls: &[("ROW_NUMBER", "")],
+        },
+        WrittenCallTestCase {
+            description: "DuckDB calls it knows keep their names",
+            parse: |sql| parse_as_written(sql, Dialect::DuckDB),
+            sql: "SELECT TRY_PARSE_JSON(LOWER(x)), count(*), Sum(x), coalesce(x, 0) FROM t",
+            expected_calls: &[
+                ("TRY_PARSE_JSON", ""),
+                ("LOWER", ""),
+                ("count", ""),
+                ("Sum", ""),
+                ("coalesce", ""),
+            ],
+        },
+        WrittenCallTestCase {
+            description: "a DuckDB qualified call",
+            parse: |sql| parse_as_written(sql, Dialect::DuckDB),
+            sql: "SELECT db.sch.my_udf(x) FROM t",
+            expected_calls: &[("my_udf", "db.sch")],
+        },
+        WrittenCallTestCase {
+            description: "a DuckDB method on a value is no qualified call",
+            parse: |sql| parse_as_written(sql, Dialect::DuckDB),
+            sql: "SELECT (x).upper() FROM t",
+            expected_calls: &[],
+        },
+        WrittenCallTestCase {
+            description: "SQLite calls",
+            parse: |sql| parse_as_written(sql, Dialect::SQLite),
+            sql: "SELECT LOWER(x), Count(*) FROM t",
+            expected_calls: &[("LOWER", ""), ("Count", "")],
+        },
+        #[cfg(feature = "postgres")]
+        WrittenCallTestCase {
+            description: "postgres",
+            parse: |sql| {
+                sqlquack_syntax_postgres::parse_strict(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT LOWER(x), Count(*), util.Parse_Day(d) FROM t",
+            expected_calls: &[("LOWER", ""), ("Count", ""), ("Parse_Day", "util")],
+        },
+        #[cfg(feature = "bigquery")]
+        WrittenCallTestCase {
+            description: "bigquery",
+            parse: |sql| {
+                sqlquack_syntax_bigquery::parse_strict(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT LOWER(x), Count(*), util.Parse_Day(d) FROM t",
+            expected_calls: &[("LOWER", ""), ("Count", ""), ("Parse_Day", "util")],
+        },
+        #[cfg(feature = "databricks")]
+        WrittenCallTestCase {
+            description: "databricks",
+            parse: |sql| {
+                sqlquack_syntax_databricks::parse_strict(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT LOWER(x), Count(*), util.Parse_Day(d) FROM t",
+            expected_calls: &[("LOWER", ""), ("Count", ""), ("Parse_Day", "util")],
+        },
+        WrittenCallTestCase {
+            description: "a table function in FROM",
+            parse: |sql| parse_as_written(sql, Dialect::DuckDB),
+            sql: "SELECT * FROM Generate_Series(1, 3) AS g(n)",
+            expected_calls: &[("Generate_Series", "")],
+        },
+        WrittenCallTestCase {
+            description: "a qualified table function in FROM",
+            parse: |sql| parse_as_written(sql, Dialect::DuckDB),
+            sql: "SELECT * FROM util.Split_Day(1)",
+            expected_calls: &[("Split_Day", "util")],
+        },
+        WrittenCallTestCase {
+            description: "a lateral table function after a comma",
+            parse: |sql| parse_as_written(sql, Dialect::Snowflake),
+            sql: "SELECT * FROM t, LATERAL Flatten(input => t.items) AS f",
+            expected_calls: &[("Flatten", "")],
+        },
+        WrittenCallTestCase {
+            description: "a call without parentheses",
+            parse: |sql| parse_as_written(sql, Dialect::Snowflake),
+            sql: "SELECT current_date FROM t",
+            expected_calls: &[("current_date", "")],
+        },
+    ];
+
+    for test_case in test_cases {
+        let statements: Vec<Expression> = (test_case.parse)(test_case.sql).unwrap_or_default();
+        let mut calls: Vec<(usize, String, String)> = statements
+            .iter()
+            .flat_map(|statement| statement.dfs())
+            .filter_map(|node| node.written_call(test_case.sql))
+            .map(|call| (call.span.start, call.name, call.qualifier.join(".")))
+            .collect();
+        calls.sort_unstable();
+        let written: Vec<(&str, &str)> = calls
+            .iter()
+            .map(|(_, name, qualifier)| (name.as_str(), qualifier.as_str()))
+            .collect();
+        assert_eq!(
+            written, test_case.expected_calls,
             "{}",
             test_case.description
         );

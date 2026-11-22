@@ -414,6 +414,7 @@ impl Parser {
                 };
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(Expression::Function(Box::new(Function {
+                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,
@@ -516,6 +517,7 @@ impl Parser {
                     ))))
                 } else {
                     Ok(Some(Expression::Function(Box::new(Function {
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -540,6 +542,7 @@ impl Parser {
                 self.expect_token(TokenType::RParen)?;
                 if args.len() > BINARY_ARITY {
                     Ok(Some(Expression::Function(Box::new(Function {
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -568,6 +571,7 @@ impl Parser {
                     ))))
                 } else {
                     Ok(Some(Expression::Function(Box::new(Function {
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -601,6 +605,7 @@ impl Parser {
                     ))))
                 } else {
                     Ok(Some(Expression::Function(Box::new(Function {
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -631,6 +636,7 @@ impl Parser {
                 };
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(Expression::Function(Box::new(Function {
+                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,
@@ -673,6 +679,7 @@ impl Parser {
                 } else {
                     self.expect_token(TokenType::RParen)?;
                     Ok(Some(Expression::Function(Box::new(Function {
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -704,6 +711,7 @@ impl Parser {
                 };
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(Expression::Function(Box::new(Function {
+                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,
@@ -767,6 +775,7 @@ impl Parser {
                 let args = self.parse_expression_list()?;
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(Expression::Function(Box::new(Function {
+                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,
@@ -842,6 +851,7 @@ impl Parser {
         filter: Option<Expression>,
     ) -> Expression {
         Expression::AggregateFunction(Box::new(AggregateFunction {
+            name_span: Default::default(),
             source_dialect: None,
 
             name: name.to_string(),

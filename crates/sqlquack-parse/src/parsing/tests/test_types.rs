@@ -41,3 +41,11 @@ pub(crate) struct DistinctSpanTestCase {
     /// Where each SELECT DISTINCT's keyword starts.
     pub(crate) expected_starts: &'static [usize],
 }
+
+pub(crate) struct WrittenCallTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parse: LocatedParser,
+    pub(crate) sql: &'static str,
+    /// Each call in source order: its name as written and its qualifier joined by dots.
+    pub(crate) expected_calls: &'static [(&'static str, &'static str)],
+}

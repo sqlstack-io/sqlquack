@@ -323,7 +323,9 @@ pub(crate) fn function(name: Vec<Identifier>, args: Vec<Expression>) -> Function
         .collect::<Vec<&str>>()
         .join(".");
     let quoted: bool = name.iter().any(|part| part.quoted);
+    let name_span: SourceSpan = SourceSpan(name.last().and_then(|part| part.span));
     Function {
+        name_span,
         qualified_name: match name.len() {
             1 => Vec::new(),
             _ => name,
@@ -355,6 +357,7 @@ pub(crate) fn aggregate(
             .join("."),
     };
     Expression::AggregateFunction(Box::new(AggregateFunction {
+        name_span: function.name_span,
         name,
         args: function.args,
         set_quantifier: function.set_quantifier,

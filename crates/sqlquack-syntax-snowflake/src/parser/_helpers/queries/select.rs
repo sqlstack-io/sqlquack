@@ -904,6 +904,7 @@ impl Parser {
                         self.expect_token(TokenType::RParen)?;
                         let trailing_comments = self.previous_trailing_comments().to_vec();
                         Expression::Function(Box::new(Function {
+                            name_span: Default::default(),
                             on_error: None,
                             qualified_name: Vec::new(),
                             source_dialect: None,
@@ -964,6 +965,7 @@ impl Parser {
                     self.expect_token(TokenType::RParen)?;
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Expression::Function(Box::new(Function {
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -1128,6 +1130,7 @@ impl Parser {
                         self.expect_token(TokenType::RParen)?;
                         let trailing_comments = self.previous_trailing_comments().to_vec();
                         Expression::Function(Box::new(Function {
+                            name_span: Default::default(),
                             on_error: None,
                             qualified_name: Vec::new(),
                             source_dialect: None,
@@ -1188,6 +1191,7 @@ impl Parser {
                                 first_name.clone()
                             };
                             let func = Function {
+                                name_span: Default::default(),
                                 on_error: None,
                                 qualified_name: Vec::new(),
                                 source_dialect: None,
@@ -1400,6 +1404,7 @@ impl Parser {
                     ))
                 } else {
                     Expression::Function(Box::new(Function {
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,

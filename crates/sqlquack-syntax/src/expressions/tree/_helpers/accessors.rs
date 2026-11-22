@@ -1,5 +1,6 @@
 //! Expressions: accessors.
 
+use crate::expressions::functions::models::WrittenCall;
 use crate::expressions::names::models::BooleanLiteral;
 use crate::expressions::names::models::Column;
 use crate::expressions::names::models::Identifier;
@@ -13,7 +14,7 @@ use crate::expressions::queries::models::Select;
 use crate::expressions::tree::main::_type_assertion_result::type_assertion_result;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
-use crate::tokens::models::SourceSpan;
+use crate::tokens::models::{SourceSpan, Span};
 
 impl Expression {
     /// Source semantics still needing dialect-aware lowering; kept through serialization.
@@ -60,6 +61,54 @@ impl Expression {
     #[inline]
     pub fn boxed_table(t: TableRef) -> Self {
         Expression::Table(Box::new(t))
+    }
+
+    /// SQLQuack: the call this node is, as written in `source`; `None` without a recorded name range.
+    pub fn written_call(&self, source: &str) -> Option<WrittenCall> {
+        let (name, quoted, parts, name_span) = match self {
+            Self::Function(node) => (
+                &node.name,
+                node.quoted,
+                &node.qualified_name,
+                node.name_span,
+            ),
+            Self::AggregateFunction(node) => (
+                &node.name,
+                node.quoted,
+                &node.qualified_name,
+                node.name_span,
+            ),
+            _ => return None,
+        };
+        let span = name_span.0?;
+        let written = |range: Span| -> String {
+            source
+                .chars()
+                .skip(range.start)
+                .take(range.end.saturating_sub(range.start))
+                .collect()
+        };
+        let part = |part: &Identifier| -> String {
+            match part.span {
+                Some(range) if !part.quoted => written(range),
+                _ => part.name.clone(),
+            }
+        };
+        Some(WrittenCall {
+            span,
+            name: match parts.last() {
+                Some(last) => part(last),
+                None if quoted => name.clone(),
+                None => written(span),
+            },
+            qualifier: match (parts.split_last(), name.rsplit_once('.')) {
+                (Some((_, first)), _) => first.iter().map(part).collect(),
+                (None, Some((qualifier, _))) if !quoted => {
+                    qualifier.split('.').map(str::to_owned).collect()
+                }
+                (None, _) => Vec::new(),
+            },
+        })
     }
 
     /// SQLQuack: the joins a query or a nested join holds itself, not those of queries inside it.

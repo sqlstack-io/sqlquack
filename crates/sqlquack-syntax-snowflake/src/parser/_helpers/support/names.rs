@@ -1573,6 +1573,7 @@ impl Parser {
         self.expect_token(TokenType::RParen)?;
 
         let func_expr = Expression::Function(Box::new(Function {
+            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,

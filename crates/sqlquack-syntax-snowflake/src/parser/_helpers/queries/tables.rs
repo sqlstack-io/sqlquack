@@ -1522,6 +1522,7 @@ impl Parser {
             let trailing_comments = self.previous_trailing_comments().to_vec();
             let identifier_func = Expression::Function(Box::new(
                 sqlquack_syntax::expressions::functions::models::Function {
+                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,

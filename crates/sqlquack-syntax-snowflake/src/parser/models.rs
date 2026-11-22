@@ -143,8 +143,9 @@ impl Dialect {
         let config = crate::parser::models::ParserConfig {
             dialect: Some(self.dialect_type),
             complexity_guard,
-            record_node_spans: mode == CallMode::FaithfulLocated,
-            record_item_spans: mode == CallMode::FaithfulLocated || strict,
+            record_node_spans: mode != CallMode::Faithful,
+            record_item_spans: mode != CallMode::Faithful || strict,
+            calls_as_written: mode == CallMode::AsWrittenLocated,
             ..Default::default()
         };
         let mut parser = Parser::with_parser_tokens(tokens, token_guard_stats, config, source);
@@ -453,6 +454,8 @@ pub(crate) struct ParserConfig {
     pub complexity_guard: ComplexityGuardOptions,
     /// SQLQuack: record each expression and statement node's source range (for locations).
     pub record_node_spans: bool,
+    /// SQLQuack: keep every dialect's calls as written, a qualified one as a call, as Rules read them.
+    pub(crate) calls_as_written: bool,
     /// SQLQuack: record each select item's source range, which lineage reports; a located or strict parse does.
     pub record_item_spans: bool,
     /// Whether a Snowflake CREATE SEMANTIC VIEW is being checked, where a window may PARTITION BY EXCLUDING.
