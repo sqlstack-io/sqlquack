@@ -468,6 +468,7 @@ pub(crate) struct SelectBodyHead {
     pub(crate) distinct: bool,
     pub(crate) all: bool,
     pub(crate) distinct_on: Option<Vec<Expression>>,
+    pub(crate) distinct_span: sqlquack_syntax::tokens::models::SourceSpan,
     pub(crate) kind: Option<String>,
     pub(crate) operation_modifiers: Vec<String>,
     pub(crate) expressions: Vec<Expression>,

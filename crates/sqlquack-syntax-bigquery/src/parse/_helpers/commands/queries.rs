@@ -522,6 +522,7 @@ impl Parser<'_> {
         if self.kw("DISTINCT") {
             self.at += 1;
             select.distinct = true;
+            select.distinct_span = self.token_range(self.at - 1);
         } else if self.kw("ALL") && !self.terminal_at(1) && !self.starts_clause(1) {
             self.at += 1;
             select.all = true;

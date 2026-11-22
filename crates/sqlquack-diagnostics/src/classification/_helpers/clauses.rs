@@ -58,6 +58,7 @@ fn select_clauses(select: &Select) -> Vec<String> {
         fetch,
         distinct,
         all: _,
+        distinct_span: _,
         distinct_on,
         top,
         with,

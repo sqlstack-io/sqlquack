@@ -133,12 +133,14 @@ impl Parser<'_> {
     fn select_head(&mut self, mut select: Select) -> Parsing<Select> {
         let mut all: bool = self.eat_kw("ALL");
         if self.kws(&["DISTINCT", "ON"]) {
+            select.distinct_span = self.token_range(self.at);
             self.at += 2;
             self.expect_kind(TokenKind::OpeningRoundBracket)?;
             select.distinct_on = Some(self.comma_list(|parser| parser.element())?);
             self.expect_kind(TokenKind::ClosingRoundBracket)?;
         } else if self.eat_kw("DISTINCT") {
             select.distinct = true;
+            select.distinct_span = self.token_range(self.at - 1);
         }
         if !all {
             all = self.eat_kw("ALL");

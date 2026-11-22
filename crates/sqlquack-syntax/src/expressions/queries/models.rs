@@ -116,6 +116,10 @@ pub struct Select {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the DISTINCT keyword, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub distinct_span: SourceSpan,
 }
 
 impl Select {
@@ -142,6 +146,7 @@ impl Select {
             distinct: false,
             all: false,
             distinct_on: None,
+            distinct_span: SourceSpan::default(),
             top: None,
             with: None,
             sample: None,

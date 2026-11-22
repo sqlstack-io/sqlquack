@@ -5,7 +5,9 @@ use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
 
 use crate::parsing::main::parse_source::parse_source;
-use crate::parsing::tests::test_types::{JoinSpanTestCase, OperatorSpanTestCase};
+use crate::parsing::tests::test_types::{
+    DistinctSpanTestCase, JoinSpanTestCase, OperatorSpanTestCase,
+};
 
 #[test]
 fn given_set_operations_when_parsed_located_then_each_records_its_operator_keyword() {
@@ -501,6 +503,124 @@ fn given_joins_when_parsed_located_then_each_records_its_keywords_and_commas() {
         assert_eq!(
             (joins, commas),
             (expected_joins, test_case.expected_commas.to_vec()),
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_select_distinct_when_parsed_located_then_it_records_the_distinct_keyword() {
+    let test_cases = [
+        DistinctSpanTestCase {
+            description: "the shared parser, in and around a subquery",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT DISTINCT a FROM (SELECT DISTINCT a FROM t) AS s",
+            expected_starts: &[7, 31],
+        },
+        DistinctSpanTestCase {
+            description: "only a SELECT's own DISTINCT",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT COUNT(DISTINCT a) FROM t",
+            expected_starts: &[],
+        },
+        DistinctSpanTestCase {
+            description: "DISTINCT ON",
+            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            sql: "SELECT DISTINCT ON (a) a, b FROM t",
+            expected_starts: &[7],
+        },
+        #[cfg(feature = "postgres")]
+        DistinctSpanTestCase {
+            description: "postgres",
+            parse: |sql| {
+                sqlquack_syntax_postgres::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT DISTINCT a FROM t",
+            expected_starts: &[7],
+        },
+        #[cfg(feature = "bigquery")]
+        DistinctSpanTestCase {
+            description: "bigquery",
+            parse: |sql| {
+                sqlquack_syntax_bigquery::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT DISTINCT a FROM t",
+            expected_starts: &[7],
+        },
+        #[cfg(feature = "databricks")]
+        DistinctSpanTestCase {
+            description: "databricks",
+            parse: |sql| {
+                sqlquack_syntax_databricks::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT DISTINCT a FROM t",
+            expected_starts: &[7],
+        },
+        #[cfg(feature = "duckdb")]
+        DistinctSpanTestCase {
+            description: "duckdb",
+            parse: |sql| {
+                sqlquack_syntax_duckdb::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT DISTINCT a FROM t",
+            expected_starts: &[7],
+        },
+        #[cfg(feature = "sqlite")]
+        DistinctSpanTestCase {
+            description: "sqlite",
+            parse: |sql| {
+                sqlquack_syntax_sqlite::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT DISTINCT a FROM t",
+            expected_starts: &[7],
+        },
+        #[cfg(feature = "clickhouse")]
+        DistinctSpanTestCase {
+            description: "clickhouse",
+            parse: |sql| {
+                sqlquack_syntax_clickhouse::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT DISTINCT a FROM t",
+            expected_starts: &[7],
+        },
+        #[cfg(feature = "sqlserver")]
+        DistinctSpanTestCase {
+            description: "sqlserver",
+            parse: |sql| {
+                sqlquack_syntax_sqlserver::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT DISTINCT a FROM t",
+            expected_starts: &[7],
+        },
+    ];
+
+    for test_case in test_cases {
+        let statements: Vec<Expression> = (test_case.parse)(test_case.sql).unwrap_or_default();
+        let mut starts: Vec<usize> = statements
+            .iter()
+            .flat_map(|statement| statement.dfs())
+            .filter_map(Expression::as_select)
+            .filter_map(|select| select.distinct_span.0)
+            .map(|keyword| keyword.start)
+            .collect();
+        starts.sort_unstable();
+        assert_eq!(
+            starts, test_case.expected_starts,
             "{}",
             test_case.description
         );

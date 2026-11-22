@@ -464,6 +464,7 @@ impl Parser<'_> {
         self.expect_kw("SELECT")?;
         if self.eat_kw("DISTINCT") {
             select.distinct = true;
+            select.distinct_span = self.token_range(self.at - 1);
             if self.kw("ON") && self.char_at(1, '(') {
                 self.at += 2;
                 select.distinct_on = Some(self.expression_list(')')?);

@@ -492,6 +492,7 @@ impl Parser {
             fetch: None,
             distinct: false,
             all: false,
+            distinct_span: SourceSpan::default(),
             distinct_on: None,
             top: None,
             with: None,

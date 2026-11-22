@@ -249,6 +249,7 @@ impl<'sql> Parser<'sql> {
         let mut select: Select = Select::new();
         if self.eat_kw("DISTINCT") {
             select.distinct = true;
+            select.distinct_span = self.token_range(self.at - 1);
         } else if self.eat_kw("ALL") {
             select.all = true;
         }

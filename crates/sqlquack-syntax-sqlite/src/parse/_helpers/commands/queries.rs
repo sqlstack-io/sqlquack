@@ -171,6 +171,7 @@ impl Parser<'_> {
         let mut select: Box<Select> = new_select();
         if self.eat_kw("DISTINCT") {
             select.distinct = true;
+            select.distinct_span = self.token_range(self.at - 1);
         } else if self.eat_kw("ALL") {
             select.all = true;
         }

@@ -166,6 +166,7 @@ impl Parser<'_> {
         let distinct: bool = self.eat_kw("distinct");
         if distinct {
             select.distinct = true;
+            select.distinct_span = self.token_range(self.at - 1);
             if self.eat_kw("on") {
                 select.distinct_on = Some(self.parenthesized(|parser| parser.a_expr())?);
             }

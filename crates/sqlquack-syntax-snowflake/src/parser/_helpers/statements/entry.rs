@@ -1235,7 +1235,12 @@ impl Parser {
 
         let top = self.parse_select_top()?;
 
+        let distinct_at = self.current;
         let is_distinct_token = self.match_token(TokenType::Distinct);
+        let mut distinct_span = SourceSpan::default();
+        if is_distinct_token {
+            distinct_span = self.token_range(distinct_at);
+        }
         let all = !is_distinct_token && self.check(TokenType::All);
         let all = all && self.is_snowflake() && !self.check_next(TokenType::Dot);
         let (distinct, distinct_on) = if is_distinct_token {
@@ -1248,6 +1253,7 @@ impl Parser {
                 (true, None)
             }
         } else if self.check_identifier("DISTINCTROW") {
+            distinct_span = self.token_range(self.current);
             self.skip();
             (true, None)
         } else {
@@ -1371,6 +1377,7 @@ impl Parser {
             top,
             distinct,
             all,
+            distinct_span,
             distinct_on,
             kind,
             operation_modifiers,
@@ -1609,6 +1616,7 @@ impl Parser {
             top,
             distinct,
             all,
+            distinct_span,
             distinct_on,
             kind,
             operation_modifiers,
@@ -1646,6 +1654,7 @@ impl Parser {
             fetch,
             distinct,
             all,
+            distinct_span,
             distinct_on,
             top,
             with: None,

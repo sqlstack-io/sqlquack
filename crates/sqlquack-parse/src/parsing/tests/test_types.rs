@@ -33,3 +33,11 @@ pub(crate) struct JoinSpanTestCase {
     /// Where the commas between the FROM clause's items are.
     pub(crate) expected_commas: &'static [usize],
 }
+
+pub(crate) struct DistinctSpanTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parse: LocatedParser,
+    pub(crate) sql: &'static str,
+    /// Where each SELECT DISTINCT's keyword starts.
+    pub(crate) expected_starts: &'static [usize],
+}
