@@ -59,6 +59,7 @@ impl Parser {
             tokens,
             eof_followed_by,
             current: 0,
+            select_modifiers_start: 0,
             config: ParserConfig::default(),
             source: None,
             pending_leading_comments: Vec::new(),
@@ -78,6 +79,7 @@ impl Parser {
             tokens,
             eof_followed_by,
             current: 0,
+            select_modifiers_start: 0,
             config,
             source: None,
             pending_leading_comments: Vec::new(),
@@ -98,6 +100,7 @@ impl Parser {
             tokens,
             eof_followed_by,
             current: 0,
+            select_modifiers_start: 0,
             config,
             source: Some(Arc::from(source)),
             pending_leading_comments: Vec::new(),
@@ -121,6 +124,7 @@ impl Parser {
             tokens,
             eof_followed_by,
             current: 0,
+            select_modifiers_start: 0,
             config,
             source: Some(source),
             pending_leading_comments: Vec::new(),
@@ -1211,7 +1215,9 @@ impl Parser {
 
     /// Parse a SELECT statement
     pub(crate) fn parse_select(&mut self) -> Result<Expression> {
-        let result = self.parse_select_body()?;
+        let start = self.current;
+        let body = self.parse_select_body()?;
+        let result = self.spanned(start, body);
         self.parse_set_operation(result)
     }
 
@@ -1564,6 +1570,7 @@ impl Parser {
             None
         };
 
+        let modifiers_start = self.current;
         let order_by = self.parse_select_order_by()?;
 
         let limits;
@@ -1668,6 +1675,7 @@ impl Parser {
             table_statement: false,
             pipe_operators: Vec::new(),
         };
+        self.select_modifiers_start = modifiers_start;
 
         Ok(Expression::Select(Box::new(select)))
     }

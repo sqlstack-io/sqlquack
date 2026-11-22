@@ -32,6 +32,13 @@ use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
 
+/// ORDER BY, LIMIT and OFFSET written after a set operation's last branch.
+type SetModifiers = (
+    Option<OrderBy>,
+    Option<Box<Expression>>,
+    Option<Box<Expression>>,
+);
+
 impl Parser {
     /// Parse SAMPLE / TABLESAMPLE / USING SAMPLE clause
     pub(crate) fn parse_sample_clause(&mut self) -> Result<Option<Sample>> {
@@ -412,9 +419,8 @@ impl Parser {
                     kind
                 };
 
-                let mut right = self.parse_select_or_paren_select()?;
-                let (order_by, limit, offset) =
-                    self.detach_unparenthesized_set_operation_modifiers(&mut right);
+                let left_span = Self::operand_span(&left);
+                let (right, (order_by, limit, offset)) = self.parse_set_operand()?;
                 result = Expression::Union(Box::new(Union {
                     with_ties: false,
                     keyword: None,
@@ -435,7 +441,7 @@ impl Parser {
                     corresponding,
                     strict,
                     on_columns,
-                    span: SourceSpan::default(),
+                    span: self.range_from(left_span),
                     locks: Vec::new(),
                 }));
                 found_set_op = true;
@@ -461,9 +467,8 @@ impl Parser {
                     kind
                 };
 
-                let mut right = self.parse_select_or_paren_select()?;
-                let (order_by, limit, offset) =
-                    self.detach_unparenthesized_set_operation_modifiers(&mut right);
+                let left_span = Self::operand_span(&left);
+                let (right, (order_by, limit, offset)) = self.parse_set_operand()?;
                 result = Expression::Intersect(Box::new(Intersect {
                     with_ties: false,
                     keyword: None,
@@ -484,7 +489,7 @@ impl Parser {
                     corresponding,
                     strict,
                     on_columns,
-                    span: SourceSpan::default(),
+                    span: self.range_from(left_span),
                     locks: Vec::new(),
                 }));
                 if self.config.dialect
@@ -515,9 +520,8 @@ impl Parser {
                     kind
                 };
 
-                let mut right = self.parse_select_or_paren_select()?;
-                let (order_by, limit, offset) =
-                    self.detach_unparenthesized_set_operation_modifiers(&mut right);
+                let left_span = Self::operand_span(&left);
+                let (right, (order_by, limit, offset)) = self.parse_set_operand()?;
                 result = Expression::Except(Box::new(Except {
                     with_ties: false,
                     keyword: None,
@@ -538,7 +542,7 @@ impl Parser {
                     corresponding,
                     strict,
                     on_columns,
-                    span: SourceSpan::default(),
+                    span: self.range_from(left_span),
                     locks: Vec::new(),
                 }));
                 found_set_op = true;
@@ -554,6 +558,7 @@ impl Parser {
 
         if found_set_op {
             result = self.parse_set_operation_modifiers(result)?;
+            self.extend_set_operation_span(&mut result);
         }
         Ok(result)
     }
@@ -571,6 +576,7 @@ impl Parser {
             }
             Expression::Union(mut outer) => {
                 intersect.left = std::mem::replace(&mut outer.right, Expression::null());
+                (outer.span, intersect.span) = Self::rebound_spans(&intersect, outer.span);
                 outer.order_by = intersect.order_by.take();
                 outer.limit = intersect.limit.take();
                 outer.offset = intersect.offset.take();
@@ -580,6 +586,7 @@ impl Parser {
             }
             Expression::Except(mut outer) => {
                 intersect.left = std::mem::replace(&mut outer.right, Expression::null());
+                (outer.span, intersect.span) = Self::rebound_spans(&intersect, outer.span);
                 outer.order_by = intersect.order_by.take();
                 outer.limit = intersect.limit.take();
                 outer.offset = intersect.offset.take();
@@ -594,14 +601,21 @@ impl Parser {
         }
     }
 
+    /// SQLQuack: a set operation's right operand, and the modifiers after it that are the operation's.
+    fn parse_set_operand(&mut self) -> Result<(Expression, SetModifiers)> {
+        let start = self.current;
+        let mut operand = self.parse_select_or_paren_select()?;
+        let modifiers = self.detach_unparenthesized_set_operation_modifiers(&mut operand);
+        if modifiers.0.is_some() || modifiers.1.is_some() || modifiers.2.is_some() {
+            self.end_select_before_modifiers(start, &mut operand);
+        }
+        Ok((operand, modifiers))
+    }
+
     pub(crate) fn detach_unparenthesized_set_operation_modifiers(
         &self,
         expr: &mut Expression,
-    ) -> (
-        Option<OrderBy>,
-        Option<Box<Expression>>,
-        Option<Box<Expression>>,
-    ) {
+    ) -> SetModifiers {
         match expr {
             Expression::Annotated(annotated) => {
                 self.detach_unparenthesized_set_operation_modifiers(&mut annotated.this)
@@ -812,7 +826,9 @@ impl Parser {
 
     /// Parse either a SELECT/VALUES query operand or a parenthesized query operand.
     pub(crate) fn parse_select_or_paren_select(&mut self) -> Result<Expression> {
-        self.with_parser_depth(|parser| parser.parse_select_or_paren_select_inner())
+        let start = self.current;
+        let query = self.with_parser_depth(|parser| parser.parse_select_or_paren_select_inner())?;
+        Ok(self.spanned(start, query))
     }
 
     #[inline(never)]

@@ -72,6 +72,66 @@ fn given_a_located_parse_when_reading_a_node_then_its_span_covers_its_source() {
             pointer: "/0/select/joins/0/this/alias/alias",
             expected_text: Ok("OFFSET"),
         },
+        LocatedTestCase {
+            description: "the first branch of a set operation covers its own query",
+            sql: "SELECT id FROM orders UNION ALL SELECT id FROM returns",
+            pointer: "/0/union/left",
+            expected_text: Ok("SELECT id FROM orders"),
+        },
+        LocatedTestCase {
+            description: "the last branch of a set operation covers its own query",
+            sql: "SELECT id FROM orders UNION ALL SELECT id FROM returns",
+            pointer: "/0/union/right",
+            expected_text: Ok("SELECT id FROM returns"),
+        },
+        LocatedTestCase {
+            description: "a middle branch covers its own query",
+            sql: "SELECT 1 AS a EXCEPT SELECT 2 EXCEPT SELECT 3",
+            pointer: "/0/except/left/except/right",
+            expected_text: Ok("SELECT 2"),
+        },
+        LocatedTestCase {
+            description: "a parenthesised branch covers its parentheses",
+            sql: "SELECT a FROM x UNION ALL (SELECT b FROM y)",
+            pointer: "/0/union/right",
+            expected_text: Ok("(SELECT b FROM y)"),
+        },
+        LocatedTestCase {
+            description: "the query inside a parenthesised branch covers itself",
+            sql: "SELECT a FROM x UNION ALL (SELECT b FROM y)",
+            pointer: "/0/union/right/subquery/this",
+            expected_text: Ok("SELECT b FROM y"),
+        },
+        LocatedTestCase {
+            description: "a set operation's ORDER BY stays outside its last branch",
+            sql: "SELECT 1 AS k UNION ALL SELECT 2 ORDER BY k",
+            pointer: "/0/union/right",
+            expected_text: Ok("SELECT 2"),
+        },
+        LocatedTestCase {
+            description: "a nested set operation covers its two branches",
+            sql: "SELECT 1 AS a EXCEPT SELECT 2 EXCEPT SELECT 3",
+            pointer: "/0/except/left",
+            expected_text: Ok("SELECT 1 AS a EXCEPT SELECT 2"),
+        },
+        LocatedTestCase {
+            description: "a set operation covers its trailing ORDER BY",
+            sql: "SELECT 1 AS k UNION ALL SELECT 2 ORDER BY k",
+            pointer: "/0/union",
+            expected_text: Ok("SELECT 1 AS k UNION ALL SELECT 2 ORDER BY k"),
+        },
+        LocatedTestCase {
+            description: "INTERSECT covers only the branches it binds",
+            sql: "SELECT 1 AS a UNION SELECT 2 INTERSECT SELECT 3",
+            pointer: "/0/union/right",
+            expected_text: Ok("SELECT 2 INTERSECT SELECT 3"),
+        },
+        LocatedTestCase {
+            description: "UNION covers the INTERSECT bound to its right",
+            sql: "SELECT 1 AS a UNION SELECT 2 INTERSECT SELECT 3",
+            pointer: "/0/union",
+            expected_text: Ok("SELECT 1 AS a UNION SELECT 2 INTERSECT SELECT 3"),
+        },
     ];
 
     for test_case in test_cases {
@@ -99,6 +159,12 @@ fn given_any_sql_when_parsed_located_then_it_equals_the_faithful_parse() {
         LocatedAgreementTestCase {
             description: "nested queries",
             sql: "WITH recent AS (SELECT id FROM orders) SELECT id FROM (SELECT id FROM recent) AS r",
+            dialect: Dialect::Snowflake,
+            expected_same: true,
+        },
+        LocatedAgreementTestCase {
+            description: "set operations with trailing modifiers",
+            sql: "SELECT 1 AS a UNION SELECT 2 INTERSECT (SELECT 3) ORDER BY a LIMIT 2",
             dialect: Dialect::Snowflake,
             expected_same: true,
         },

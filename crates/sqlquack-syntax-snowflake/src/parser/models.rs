@@ -421,6 +421,8 @@ impl Drop for ParserDepthScope {
 pub(crate) struct Parser {
     pub(crate) tokens: Vec<ParserToken>,
     pub(crate) current: usize,
+    /// SQLQuack: where the trailing modifiers of the last parsed SELECT body begin.
+    pub(crate) select_modifiers_start: usize,
     pub(crate) config: ParserConfig,
     /// Original source SQL (used for preserving exact text in Command expressions)
     pub(crate) source: Option<Arc<str>>,
