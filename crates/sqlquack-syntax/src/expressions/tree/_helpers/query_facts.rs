@@ -112,7 +112,8 @@ impl Expression {
                     Some(from) => matches!(from.expressions.as_slice(), [Self::Values(_)]),
                     None => false,
                 };
-                !rows_only && select.expressions.iter().any(Self::is_wildcard)
+                let parsers_wrapper: bool = rows_only && select.span.is_absent();
+                !parsers_wrapper && select.expressions.iter().any(Self::is_wildcard)
             }
             _ => false,
         }

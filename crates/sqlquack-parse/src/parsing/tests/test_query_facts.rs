@@ -418,6 +418,12 @@ fn given_a_set_operation_when_reading_the_branches_at_its_keyword_then_they_are_
             sql: "SELECT qty * price FROM t UNION ALL VALUES (1)",
             expected_sides: [(false, Some(1)), (false, Some(1))],
         },
+        BranchTestCase {
+            description: "a written star over VALUES is a wildcard",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT id FROM t UNION ALL SELECT * FROM VALUES (2)",
+            expected_sides: [(false, Some(1)), (true, Some(1))],
+        },
     ];
 
     for test_case in test_cases {
