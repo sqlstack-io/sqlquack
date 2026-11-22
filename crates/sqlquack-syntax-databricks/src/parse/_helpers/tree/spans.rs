@@ -89,6 +89,68 @@ impl Parser<'_> {
         )
     }
 
+    /// A VALUES list knowing its keyword, the token `keyword`.
+    pub(crate) fn keyworded(&self, keyword: usize, mut values: Expression) -> Expression {
+        if let Expression::Values(node) = &mut values {
+            node.keyword_span = self.token_range(keyword);
+        }
+        values
+    }
+
+    /// The list item from token `head` to the last consumed token.
+    pub(crate) fn item_range(
+        &self,
+        head: usize,
+    ) -> Option<sqlquack_syntax::tokens::models::OperatorSpan> {
+        let (first, last) = (
+            self.tokens.get(head)?,
+            self.tokens.get(self.at.checked_sub(1)?)?,
+        );
+        (self.at > head)
+            .then(|| sqlquack_syntax::tokens::models::OperatorSpan::new(first.span, last.span.end))
+    }
+
+    /// Each AS since token `from` with the name after it.
+    pub(crate) fn aliased_names(
+        &self,
+        from: usize,
+    ) -> sqlquack_syntax::tokens::models::SeparatorSpans {
+        let written = self.tokens.get(from..self.at).unwrap_or_default();
+        sqlquack_syntax::tokens::models::SeparatorSpans(
+            written
+                .windows(2)
+                .filter(|pair| pair[0].value.eq_ignore_ascii_case("as"))
+                .map(|pair| pair[0].span.through(pair[1].span))
+                .collect(),
+        )
+    }
+
+    /// `call` knowing its only argument's token, which is `argument`.
+    pub(crate) fn with_argument(argument: SourceSpan, mut call: Expression) -> Expression {
+        let mut node: &mut Expression = &mut call;
+        if let Expression::WindowFunction(window) = node {
+            node = &mut window.this;
+        }
+        match node {
+            Expression::Function(function) => function.argument_span = argument,
+            Expression::AggregateFunction(function) => function.argument_span = argument,
+            _ => {}
+        }
+        call
+    }
+
+    /// `expression` knowing where its operator, which begins at token `operator`, is written.
+    pub(crate) fn operated(&self, operator: usize, mut expression: Expression) -> Expression {
+        if self.at > operator
+            && let (Some(first), Some(last)) =
+                (self.tokens.get(operator), self.tokens.get(self.at - 1))
+        {
+            let following: Option<Span> = self.tokens.get(operator + 1).map(|token| token.span);
+            expression.record_operation(first.span, following, last.span);
+        }
+        expression
+    }
+
     /// The range of the single token at `index`.
     pub(crate) fn token_range(&self, index: usize) -> SourceSpan {
         SourceSpan(self.tokens.get(index).map(|token| token.span))

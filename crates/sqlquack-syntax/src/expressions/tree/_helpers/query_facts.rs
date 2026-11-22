@@ -3,6 +3,7 @@
 use crate::expressions::queries::models::Join;
 use crate::expressions::queries::models::JoinKind;
 use crate::expressions::queries::models::Select;
+use crate::expressions::queries::models::With;
 use crate::expressions::tree::models::Expression;
 use crate::tokens::models::SourceSpan;
 use crate::traversal::models::{CommaItem, DfsIter, FromItemKind, SetOperation, SetOperator};
@@ -20,6 +21,22 @@ const COLUMNS_CALL: &str = "COLUMNS";
 const WILDCARD: &str = "*";
 
 impl Expression {
+    /// SQLQuack: the WITH this node owns; `None` when it has none.
+    pub fn with_clause(&self) -> Option<&With> {
+        match self {
+            Self::Select(node) => node.with.as_ref(),
+            Self::Union(node) => node.with.as_ref(),
+            Self::Intersect(node) => node.with.as_ref(),
+            Self::Except(node) => node.with.as_ref(),
+            Self::Pivot(node) => node.with.as_ref(),
+            Self::Insert(node) => node.with.as_ref(),
+            Self::Update(node) => node.with.as_ref(),
+            Self::Delete(node) => node.with.as_ref(),
+            Self::Call(node) => node.with.as_ref(),
+            _ => None,
+        }
+    }
+
     /// SQLQuack: this node as a set operation; `None` for any other node.
     pub fn set_operation(&self) -> Option<SetOperation<'_>> {
         macro_rules! operation {

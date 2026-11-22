@@ -319,6 +319,7 @@ impl Parser {
                 let right = self.parse_assignment()?;
                 if let Some(right_expr) = right {
                     this = Some(Expression::PropertyEQ(Box::new(BinaryOp {
+                        operator_span: Default::default(),
                         left,
                         right: right_expr,
                         left_comments: Vec::new(),
@@ -1785,6 +1786,7 @@ impl Parser {
         if self.is_no_paren_function() && !self.check_next(TokenType::LParen) {
             self.skip();
             return Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
                 name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
@@ -1835,6 +1837,7 @@ impl Parser {
         self.match_token(TokenType::RParen);
 
         let func_expr = Expression::Function(Box::new(Function {
+            argument_span: Default::default(),
             name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),

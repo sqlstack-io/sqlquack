@@ -97,10 +97,16 @@ impl<'sql> Parser<'sql> {
         if !self.eat_kw("WITH") {
             return Ok(None);
         }
+        let keyword_span = self.token_range(self.at - 1);
+        let list_at: usize = self.at;
+        let mut comma_spans = SeparatorSpans::default();
         if self.kw("XMLNAMESPACES") {
             return Err(self.gap("xmlnamespaces", self.offset()));
         }
         let ctes = self.comma_list(|parser| {
+            if parser.at > list_at {
+                comma_spans.0.extend(parser.token_range(parser.at - 1).0);
+            }
             let name: Identifier = parser.name()?;
             let columns: Vec<Identifier> = match parser.is_char('(') {
                 true => parser.parenthesized(Parser::name)?,
@@ -113,6 +119,8 @@ impl<'sql> Parser<'sql> {
             Ok(cte(name, columns, query))
         })?;
         Ok(Some(With {
+            keyword_span,
+            comma_spans,
             ctes,
             recursive: false,
             leading_comments: Vec::new(),
@@ -125,8 +133,10 @@ impl<'sql> Parser<'sql> {
         self.deeper(|parser| {
             let mut query: Expression = parser.union_expression()?;
             if parser.kw("ORDER") && parser.kw_at(1, "BY") {
+                let keyword_span = parser.token_range(parser.at);
                 let order = parser.order_by_clause()?;
                 let order_by: OrderBy = OrderBy {
+                    keyword_span,
                     expressions: order,
                     siblings: false,
                     comments: Vec::new(),
@@ -255,6 +265,8 @@ impl<'sql> Parser<'sql> {
     fn select(&mut self) -> Parsing<Expression> {
         self.expect_kw("SELECT")?;
         let mut select: Select = Select::new();
+        select.select_span = self.token_range(self.at - 1);
+        select.list_head_span = self.token_range(self.at);
         if self.eat_kw("DISTINCT") {
             select.distinct = true;
             select.distinct_span = self.token_range(self.at - 1);
@@ -264,7 +276,15 @@ impl<'sql> Parser<'sql> {
         if self.eat_kw("TOP") {
             select.top = Some(self.top()?);
         }
-        select.expressions = self.comma_list(Self::select_item)?;
+        let mut item_head: usize = self.at;
+        let mut item_spans = sqlquack_syntax::tokens::models::ItemSpans::default();
+        select.expressions = self.comma_list(|parser| {
+            let item: Expression = parser.select_item()?;
+            item_spans.0.extend(parser.item_range(item_head));
+            item_head = parser.at + 1;
+            Ok(item)
+        })?;
+        select.item_spans = item_spans;
         if self.eat_kw("INTO") {
             let name: Vec<Identifier> = self.multipart(4)?;
             if self.kw("ON") {
@@ -280,7 +300,11 @@ impl<'sql> Parser<'sql> {
             });
         }
         if self.eat_kw("FROM") {
-            let (from, joins) = self.read_sources()?;
+            let keyword_span = self.token_range(self.at - 1);
+            let from_at: usize = self.at;
+            let (mut from, joins) = self.read_sources()?;
+            from.keyword_span = keyword_span;
+            select.alias_spans = self.aliased_names(from_at);
             select.from = Some(from);
             select.joins = joins;
         }
@@ -290,6 +314,7 @@ impl<'sql> Parser<'sql> {
             });
         }
         if self.kw("GROUP") && self.kw_at(1, "BY") {
+            let keyword_span = self.token_range(self.at);
             self.at += 2;
             if self.kw_in(0, &["ROLLUP", "CUBE", "GROUPING", "ALL"])
                 || (self.is_char('(') && self.char_at(1, ')'))
@@ -301,6 +326,7 @@ impl<'sql> Parser<'sql> {
                 return Err(self.gap("group_by_extension", self.offset()));
             }
             select.group_by = Some(GroupBy {
+                keyword_span,
                 expressions,
                 all: None,
                 totals: false,
@@ -936,6 +962,7 @@ impl<'sql> Parser<'sql> {
             let expressions: Vec<Expression> = vec![source];
             return Ok((
                 From {
+                    keyword_span: Default::default(),
                     comma_spans,
                     expressions,
                 },
@@ -951,6 +978,7 @@ impl<'sql> Parser<'sql> {
             .collect();
         Ok((
             From {
+                keyword_span: Default::default(),
                 comma_spans,
                 expressions,
             },

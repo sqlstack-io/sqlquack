@@ -107,6 +107,10 @@ pub struct Function {
     #[serde(skip)]
     #[ast(skip)]
     pub name_span: SourceSpan,
+    /// SQLQuack: a call's DISTINCT or its only one-token argument, or the last operand of an operator read as a call, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub argument_span: crate::tokens::models::SourceSpan,
 }
 
 impl Function {
@@ -125,6 +129,7 @@ impl Function {
     }
     pub fn new(name: impl Into<String>, args: Vec<Expression>) -> Self {
         Self {
+            argument_span: Default::default(),
             name_span: Default::default(),
             source_dialect: None,
             qualified_name: Vec::new(),
@@ -192,6 +197,10 @@ pub struct AggregateFunction {
     #[serde(skip)]
     #[ast(skip)]
     pub name_span: SourceSpan,
+    /// SQLQuack: a call's DISTINCT or its only one-token argument, or the last operand of an operator read as a call, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub argument_span: crate::tokens::models::SourceSpan,
 }
 
 /// A window function call; `over` holds PARTITION BY, ORDER BY and the frame.

@@ -41,6 +41,7 @@ struct Locking {
 /// The options gram.y's `insertSelectOptions` applies to a query body.
 struct SelectOptions {
     order: Option<Vec<Ordered>>,
+    order_keyword: sqlquack_syntax::tokens::models::SourceSpan,
     order_position: usize,
     limits: Limits,
     locking: Locking,
@@ -58,6 +59,7 @@ fn selectable(body: Expression) -> Expression {
             let mut select: Select = Select::new();
             select.expressions = vec![star(None)];
             select.from = Some(From {
+                keyword_span: Default::default(),
                 comma_spans: Default::default(),
                 expressions: vec![subquery(body, None, false)],
             });
@@ -138,6 +140,7 @@ impl Parser<'_> {
                 let mut select: Select = Select::new();
                 select.expressions = vec![star(None)];
                 select.from = Some(From {
+                    keyword_span: Default::default(),
                     comma_spans: Default::default(),
                     expressions: vec![relation],
                 });
@@ -150,13 +153,14 @@ impl Parser<'_> {
     /// `VALUES ( expr_list ), ...`.
     fn values_clause(&mut self) -> Parsing<Expression> {
         self.expect_kw("values")?;
+        let keyword: usize = self.at - 1;
         let rows: Vec<Vec<Expression>> = self.comma_list(|parser| {
             parser.expect_char('(')?;
             let row: Vec<Expression> = parser.expr_list()?;
             parser.expect_char(')')?;
             Ok(row)
         })?;
-        Ok(values(rows))
+        Ok(self.keyworded(keyword, values(rows)))
     }
 
     /// `simple_select`'s `SELECT` form, from its target list to its `WINDOW` clause.
@@ -164,6 +168,8 @@ impl Parser<'_> {
         let first: usize = self.at;
         self.expect_kw("select")?;
         let mut select: Select = Select::new();
+        select.select_span = self.token_range(self.at - 1);
+        select.list_head_span = self.token_range(self.at);
         let distinct: bool = self.eat_kw("distinct");
         if distinct {
             select.distinct = true;
@@ -175,14 +181,26 @@ impl Parser<'_> {
             select.all = self.eat_kw("all");
         }
         if distinct || self.is_char('*') || self.starts_expression_at(0) {
-            select.expressions = self.comma_list(|parser| parser.target())?;
+            let mut item_head: usize = self.at;
+            let mut item_spans = sqlquack_syntax::tokens::models::ItemSpans::default();
+            select.expressions = self.comma_list(|parser| {
+                let item: Expression = parser.target()?;
+                item_spans.0.extend(parser.item_range(item_head));
+                item_head = parser.at + 1;
+                Ok(item)
+            })?;
+            select.item_spans = item_spans;
         }
         if self.eat_kw("into") {
             select.into = Some(self.select_into_target()?);
         }
         if self.eat_kw("from") {
+            let keyword_span = self.token_range(self.at - 1);
+            let from_at: usize = self.at;
             let (items, joins, comma_spans) = self.parse_from_list()?;
+            select.alias_spans = self.aliased_names(from_at);
             select.from = Some(From {
+                keyword_span,
                 comma_spans,
                 expressions: items,
             });
@@ -194,12 +212,14 @@ impl Parser<'_> {
             });
         }
         if self.kw("group") && self.kw_at(1, "by") {
+            let keyword_span = self.token_range(self.at);
             self.at += 2;
             let distinct: bool = self.eat_kw("distinct");
             if !distinct {
                 self.eat_kw("all");
             }
             select.group_by = Some(GroupBy {
+                keyword_span,
                 expressions: self.comma_list(|parser| parser.group_item())?,
                 all: distinct.then_some(false),
                 totals: false,
@@ -308,14 +328,22 @@ impl Parser<'_> {
     /// `with_clause`: `WITH [RECURSIVE] cte, ...`.
     pub(crate) fn with_clause(&mut self) -> Parsing<With> {
         self.expect_kw("with")?;
+        let keyword_span = self.token_range(self.at - 1);
+        let list_at: usize = self.at;
         let recursive: bool = self.eat_kw("recursive");
+        let mut comma_spans = sqlquack_syntax::tokens::models::SeparatorSpans::default();
         let ctes: Vec<Cte> = self.comma_list(|parser| {
             let first: usize = parser.at;
+            if first > list_at + usize::from(recursive) {
+                comma_spans.0.extend(parser.token_range(first - 1).0);
+            }
             let mut node: Cte = parser.common_table_expression()?;
             node.span = parser.source_range(first);
             Ok(node)
         })?;
         Ok(With {
+            keyword_span,
+            comma_spans,
             ctes,
             recursive,
             leading_comments: Vec::new(),
@@ -396,6 +424,7 @@ impl Parser<'_> {
         with: Option<With>,
     ) -> Parsing<Expression> {
         let order_position: usize = self.offset();
+        let order_keyword = self.token_range(self.at);
         let order: Option<Vec<Ordered>> = match self.kw("order") && self.kw_at(1, "by") {
             true => Some(self.sort_clause()?),
             false => None,
@@ -429,6 +458,7 @@ impl Parser<'_> {
         let mut body: Expression = selectable(body);
         let options: SelectOptions = SelectOptions {
             order,
+            order_keyword,
             order_position,
             limits,
             locking,
@@ -441,6 +471,7 @@ impl Parser<'_> {
     fn apply_options(&mut self, body: &mut Expression, options: SelectOptions) -> Parsing<()> {
         let SelectOptions {
             order,
+            order_keyword,
             order_position,
             limits,
             locking,
@@ -459,7 +490,7 @@ impl Parser<'_> {
                         return Err(self
                             .error_with("multiple ORDER BY clauses not allowed", order_position));
                     }
-                    node.order_by = Some(order_by(order));
+                    node.order_by = Some(order_by(order).written_at(order_keyword));
                 }
                 if let Some(offset) = limits.offset {
                     if node.offset.is_some() {
@@ -511,7 +542,7 @@ impl Parser<'_> {
                         return Err(self
                             .error_with("multiple ORDER BY clauses not allowed", order_position));
                     }
-                    select.order_by = Some(order_by(order));
+                    select.order_by = Some(order_by(order).written_at(order_keyword));
                 }
                 if let Some(offset) = limits.offset {
                     if select.offset.is_some() {
@@ -750,6 +781,7 @@ impl Parser<'_> {
 
 fn order_by(expressions: Vec<Ordered>) -> OrderBy {
     OrderBy {
+        keyword_span: Default::default(),
         expressions,
         siblings: false,
         comments: Vec::new(),

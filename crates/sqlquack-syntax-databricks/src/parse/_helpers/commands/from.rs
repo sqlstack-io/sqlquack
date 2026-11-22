@@ -72,6 +72,8 @@ impl Parser<'_> {
     /// `fromClause`: `FROM relation, ... lateralView*`; several relations each keep their joins.
     pub(crate) fn select_from_clause(&mut self, mut select: Select) -> Parsing<Select> {
         self.expect_kw("FROM")?;
+        let keyword_span = self.token_range(self.at - 1);
+        let from_at: usize = self.at;
         let mut refs: Vec<(Expression, Vec<Join>)> = Vec::new();
         let mut comma_spans: SeparatorSpans = SeparatorSpans::default();
         loop {
@@ -84,6 +86,7 @@ impl Parser<'_> {
         if refs.len() == 1 {
             let (item, joins) = refs.remove(0);
             select.from = Some(From {
+                keyword_span,
                 comma_spans: Default::default(),
                 expressions: vec![item],
             });
@@ -94,6 +97,7 @@ impl Parser<'_> {
                 .map(|(item, joins)| collapse(item, joins))
                 .collect();
             select.from = Some(From {
+                keyword_span,
                 comma_spans,
                 expressions: items,
             });
@@ -104,6 +108,7 @@ impl Parser<'_> {
             self.pivot_or_unpivot(null())?;
             self.gap("pivot_after_lateral_view", start);
         }
+        select.alias_spans = self.aliased_names(from_at);
         Ok(select)
     }
 
@@ -323,6 +328,7 @@ impl Parser<'_> {
             return self.parenthesized_relation(start, is_lateral);
         }
         if self.kw("VALUES") {
+            let keyword: usize = self.at;
             self.at += 1;
             let items: Vec<Expression> = self.comma_list(|parser| parser.expression())?;
             let bare_rows: Vec<usize> = items
@@ -333,7 +339,7 @@ impl Parser<'_> {
                 .collect();
             let rows: Vec<Vec<Expression>> = items.into_iter().map(row).collect();
             let alias: Option<TableAlias> = self.table_alias()?;
-            return Ok(values(rows, bare_rows, alias));
+            return Ok(self.keyworded(keyword, values(rows, bare_rows, alias)));
         }
         if self.kw("IDENTIFIER") && self.char_at(1, '(') {
             self.at += 2;

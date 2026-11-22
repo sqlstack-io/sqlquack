@@ -24,6 +24,7 @@ fn set_level(word: &str) -> Option<u8> {
 
 fn order_by(expressions: Vec<Ordered>) -> OrderBy {
     OrderBy {
+        keyword_span: Default::default(),
         expressions,
         siblings: false,
         comments: Vec::new(),
@@ -105,12 +106,13 @@ impl Parser<'_> {
         }
         let from_first: bool = self.eat_kw("FROM");
         if from_first {
-            select = self.tables(select, false)?;
+            select = self.clause_tables(select, false)?;
         }
         self.expect_kw("SELECT")?;
+        select.select_span = self.token_range(self.at - 1);
         select = self.select_head(select)?;
         if !from_first && self.eat_kw("FROM") {
-            select = self.tables(select, true)?;
+            select = self.clause_tables(select, true)?;
         }
         if select.from.is_some() && self.is(TokenKind::OpeningRoundBracket) {
             let start: usize = self.offset();
@@ -129,8 +131,21 @@ impl Parser<'_> {
         Ok(self.spanned(first, Expression::Select(Box::new(select))))
     }
 
+    /// The tables after a `FROM` just consumed, with that clause's positions.
+    fn clause_tables(&mut self, select: Select, bare_alias: bool) -> Parsing<Select> {
+        let keyword_span = self.token_range(self.at - 1);
+        let from_at: usize = self.at;
+        let mut select: Select = self.tables(select, bare_alias)?;
+        select.alias_spans = self.aliased_names(from_at);
+        if let Some(from) = select.from.as_mut() {
+            from.keyword_span = keyword_span;
+        }
+        Ok(select)
+    }
+
     /// `[ALL] [DISTINCT [ON (...)]] [ALL] [TOP n [WITH TIES]] expressions`.
     fn select_head(&mut self, mut select: Select) -> Parsing<Select> {
+        select.list_head_span = self.token_range(self.at);
         let mut all: bool = self.eat_kw("ALL");
         if self.kws(&["DISTINCT", "ON"]) {
             select.distinct_span = self.token_range(self.at);
@@ -160,7 +175,15 @@ impl Parser<'_> {
             self.eat_kws(&["WITH", "TIES"]);
             self.gap("select_top", start);
         }
-        select.expressions = self.comma_list(|parser| parser.aliased())?;
+        let mut item_head: usize = self.at;
+        let mut item_spans = sqlquack_syntax::tokens::models::ItemSpans::default();
+        select.expressions = self.comma_list(|parser| {
+            let item: Expression = parser.aliased()?;
+            item_spans.0.extend(parser.item_range(item_head));
+            item_head = parser.at + 1;
+            Ok(item)
+        })?;
+        select.item_spans = item_spans;
         Ok(select)
     }
 
@@ -182,6 +205,7 @@ impl Parser<'_> {
         if self.eat_kws(&["GROUP", "BY"]) {
             let start: usize = self.offset();
             let mut group: GroupBy = GroupBy {
+                keyword_span: self.token_range(self.at - 2),
                 expressions: Vec::new(),
                 all: None,
                 totals: false,
@@ -264,9 +288,10 @@ impl Parser<'_> {
         if !self.eat_kws(&["ORDER", "BY"]) {
             return Ok(select);
         }
+        let keyword_span = self.token_range(self.at - 2);
         let items: Vec<Ordered> = self.comma_list(|parser| parser.order_element())?;
         let filled: bool = items.iter().any(|item| item.with_fill.is_some());
-        select.order_by = Some(order_by(items));
+        select.order_by = Some(order_by(items).written_at(keyword_span));
         if filled && self.kw("INTERPOLATE") {
             let start: usize = self.offset();
             self.at += 1;
@@ -378,13 +403,21 @@ impl Parser<'_> {
     /// `WITH [RECURSIVE] element, ...`, after `WITH`.
     pub(crate) fn with_clause(&mut self) -> Parsing<With> {
         let recursive: bool = self.eat_kw("RECURSIVE");
+        let keyword_span = self.token_range(self.at - 1 - usize::from(recursive));
+        let list_at: usize = self.at;
+        let mut comma_spans = sqlquack_syntax::tokens::models::SeparatorSpans::default();
         let ctes: Vec<Cte> = self.comma_list(|parser| {
             let first: usize = parser.at;
+            if first > list_at {
+                comma_spans.0.extend(parser.token_range(first - 1).0);
+            }
             let mut node: Cte = parser.with_element()?;
             node.span = parser.source_range(first);
             Ok(node)
         })?;
         Ok(With {
+            keyword_span,
+            comma_spans,
             ctes,
             recursive,
             leading_comments: Vec::new(),

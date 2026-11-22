@@ -1833,6 +1833,7 @@ impl Parser {
                 }));
             }
             left = Expression::Or(Box::new(BinaryOp {
+                operator_span: Default::default(),
                 left,
                 right,
                 left_comments,
@@ -1908,6 +1909,7 @@ impl Parser {
                 }));
             }
             left = Expression::And(Box::new(BinaryOp {
+                operator_span: Default::default(),
                 left,
                 right,
                 left_comments,

@@ -147,6 +147,8 @@ impl Parser<'_> {
     /// `fromClause`: `FROM relation, ... lateralView*`, into `select`'s sources and joins.
     pub(crate) fn select_from_clause(&mut self, mut select: Select) -> Parsing<Select> {
         self.expect_kw("FROM")?;
+        let keyword_span = self.token_range(self.at - 1);
+        let from_at: usize = self.at;
         let mut items: Vec<Expression> = Vec::new();
         let mut joins: Vec<Join> = Vec::new();
         let mut comma_spans: SeparatorSpans = SeparatorSpans::default();
@@ -198,6 +200,7 @@ impl Parser<'_> {
             comma = self.token_range(self.at - 1);
         }
         select.from = Some(From {
+            keyword_span,
             comma_spans,
             expressions: items,
         });
@@ -208,6 +211,7 @@ impl Parser<'_> {
             self.pivot_or_unpivot(null())?;
             self.gap("pivot_after_lateral_view", start);
         }
+        select.alias_spans = self.aliased_names(from_at);
         Ok(select)
     }
 
@@ -453,6 +457,7 @@ impl Parser<'_> {
             return self.with_offset(item);
         }
         if self.kw("VALUES") {
+            let keyword: usize = self.at;
             self.at += 1;
             let rows: Vec<Vec<Expression>> = self
                 .comma_list(|parser| parser.expression())?
@@ -460,7 +465,7 @@ impl Parser<'_> {
                 .map(row)
                 .collect();
             let alias: Option<TableAlias> = self.table_alias()?;
-            return Ok(values(rows, alias));
+            return Ok(self.keyworded(keyword, values(rows, alias)));
         }
         if self.kw("IDENTIFIER") && self.char_at(1, '(') {
             self.at += 2;

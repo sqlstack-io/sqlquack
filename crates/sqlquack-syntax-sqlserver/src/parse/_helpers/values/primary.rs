@@ -566,13 +566,16 @@ impl<'sql> Parser<'sql> {
             true => None,
             false => Some(self.scalar()?),
         };
+        let mut when_spans = SeparatorSpans::default();
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.eat_kw("WHEN") {
+            let when_at: usize = self.at - 1;
             keywords.0.extend(self.token_range(self.at - 1).0);
             let test: Expression = match operand {
                 Some(_) => self.scalar()?,
                 None => self.condition()?,
             };
+            when_spans.0.extend(self.range_from(when_at).0);
             self.expect_kw("THEN")?;
             keywords.0.extend(self.token_range(self.at - 1).0);
             whens.push((test, self.scalar()?));
@@ -593,7 +596,12 @@ impl<'sql> Parser<'sql> {
         };
         self.expect_kw("END")?;
         keywords.0.extend(self.token_range(self.at - 1).0);
-        Ok(case(operand, whens, else_, (keywords, else_span)))
+        Ok(case(
+            operand,
+            whens,
+            else_,
+            (keywords, when_spans, else_span),
+        ))
     }
 
     /// `CAST ( value AS type )` and `TRY_CAST`.

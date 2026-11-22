@@ -4,6 +4,8 @@ mod helpers;
 mod test_located;
 #[path = "tests/test_parse_source.rs"]
 mod test_parse_source;
+#[path = "tests/test_positions.rs"]
+mod test_positions;
 #[path = "tests/test_query_facts.rs"]
 mod test_query_facts;
 #[path = "tests/test_types.rs"]

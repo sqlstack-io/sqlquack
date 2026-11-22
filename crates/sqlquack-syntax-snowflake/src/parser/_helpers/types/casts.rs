@@ -72,10 +72,13 @@ impl Parser {
             None
         };
 
+        let mut when_spans = SeparatorSpans::default();
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.match_token(TokenType::When) {
             keywords.0.extend(self.token_range(self.current - 1).0);
+            let when_at = self.current - 1;
             let condition = self.parse_expression()?;
+            when_spans.0.extend(self.source_range(when_at).0);
             self.expect_token(TokenType::Then)?;
             keywords.0.extend(self.token_range(self.current - 1).0);
             let result = self.parse_expression()?;
@@ -98,6 +101,7 @@ impl Parser {
         keywords.0.extend(self.token_range(self.current - 1).0);
 
         Ok(Expression::Case(Box::new(Case {
+            when_spans,
             operand,
             whens,
             else_,

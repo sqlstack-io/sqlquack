@@ -89,6 +89,10 @@ fn select_clauses(select: &Select) -> Vec<String> {
         span: _,
         table_statement: _,
         pipe_operators: _,
+        select_span: _,
+        list_head_span: _,
+        alias_spans: _,
+        item_spans: _,
     } = select;
     present(&[
         (with.is_some(), "with"),

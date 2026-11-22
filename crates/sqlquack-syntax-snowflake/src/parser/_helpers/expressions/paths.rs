@@ -1095,6 +1095,7 @@ impl Parser {
         {
             let token = self.advance()?;
             let func = Expression::Function(Box::new(Function { name_span: Default::default(),
+                argument_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1135,6 +1136,7 @@ impl Parser {
                 let args = self.parse_function_args_list()?;
                 self.expect_token(TokenType::RParen)?;
                 return self.maybe_parse_over(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
                     name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),

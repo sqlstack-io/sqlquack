@@ -36,6 +36,7 @@ const EXCEPT_BY_NAME: &str = "Invalid combination of EXCEPT and BY NAME";
 #[derive(Default)]
 struct Modifiers {
     order: Option<Vec<Ordered>>,
+    order_keyword: SourceSpan,
     limit: Option<Limit>,
     offset: Option<Offset>,
     fetch: Option<Fetch>,
@@ -68,6 +69,7 @@ fn order_by(expressions: Vec<Ordered>) -> OrderBy {
         None => expressions,
     };
     OrderBy {
+        keyword_span: Default::default(),
         expressions,
         siblings: false,
         comments: Vec::new(),
@@ -80,6 +82,7 @@ pub(crate) fn wrapped(body: Expression) -> Select {
     let mut select: Select = Select::new();
     select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
     select.from = Some(From {
+        keyword_span: Default::default(),
         comma_spans: Default::default(),
         expressions: vec![subquery(body, None, false)],
     });
@@ -115,6 +118,7 @@ fn modified(body: Expression, modifiers: Modifiers) -> Expression {
     };
     let Modifiers {
         order,
+        order_keyword,
         limit,
         offset,
         fetch,
@@ -122,7 +126,7 @@ fn modified(body: Expression, modifiers: Modifiers) -> Expression {
     } = modifiers;
     macro_rules! set_operation_modified {
         ($node:expr) => {{
-            $node.order_by = order.map(order_by);
+            $node.order_by = order.map(|items| order_by(items).written_at(order_keyword));
             $node.row_limit_span = keyword;
             $node.limit = limit.map(set_operation_limit);
             $node.offset = offset.map(|offset| Box::new(offset.this));
@@ -133,7 +137,7 @@ fn modified(body: Expression, modifiers: Modifiers) -> Expression {
     }
     match &mut body {
         Expression::Select(select) => {
-            select.order_by = order.map(order_by);
+            select.order_by = order.map(|items| order_by(items).written_at(order_keyword));
             select.row_limit_span = keyword;
             select.limit = limit;
             select.offset = offset;
@@ -223,9 +227,15 @@ impl Parser<'_> {
     /// `WithClause`: `WITH [RECURSIVE] WithStatement, ...`.
     pub(crate) fn ctes(&mut self) -> Parsing<With> {
         self.expect_kw("WITH")?;
+        let keyword_span = self.token_range(self.at - 1);
+        let list_at: usize = self.at;
         let recursive: bool = self.eat_kw("RECURSIVE");
+        let mut comma_spans = sqlquack_syntax::tokens::models::SeparatorSpans::default();
         let ctes: Vec<Cte> = self.comma_list(|parser| {
             let first: usize = parser.at;
+            if first > list_at + usize::from(recursive) {
+                comma_spans.0.extend(parser.token_range(first - 1).0);
+            }
             let start: usize = parser.offset();
             let mut node: Cte = parser.with_statement()?;
             node.span = parser.source_range(first);
@@ -243,6 +253,8 @@ impl Parser<'_> {
             Ok(node)
         })?;
         Ok(With {
+            keyword_span,
+            comma_spans,
             ctes,
             recursive,
             leading_comments: Vec::new(),
@@ -385,14 +397,17 @@ impl Parser<'_> {
             Some("PIVOT" | "PIVOT_WIDER") => self.pivot_statement(),
             Some("UNPIVOT" | "PIVOT_LONGER") => self.unpivot_statement(),
             Some("VALUES") => {
+                let keyword: usize = self.at;
                 let rows = self.values_rows()?;
-                Ok(crate::parse::_helpers::tree::nodes::values(rows, None))
+                let node: Expression = crate::parse::_helpers::tree::nodes::values(rows, None);
+                Ok(self.keyworded(keyword, node))
             }
             Some("TABLE") => {
                 self.at += 1;
                 let mut select: Select = Select::new();
                 select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
                 select.from = Some(From {
+                    keyword_span: Default::default(),
                     comma_spans: Default::default(),
                     expressions: vec![Expression::Table(Box::new(self.base_table_name()?))],
                 });
@@ -466,6 +481,8 @@ impl Parser<'_> {
     /// `SelectClause`: `SELECT [DISTINCT [ON (...)] | ALL] [TargetList]`.
     fn select_clause(&mut self, mut select: Select) -> Parsing<Select> {
         self.expect_kw("SELECT")?;
+        select.select_span = self.token_range(self.at - 1);
+        select.list_head_span = self.token_range(self.at);
         if self.eat_kw("DISTINCT") {
             select.distinct = true;
             select.distinct_span = self.token_range(self.at - 1);
@@ -482,12 +499,16 @@ impl Parser<'_> {
             self.refuse_later("SELECT clause without selection list", position);
             return Ok(select);
         }
+        let first_item: usize = self.at;
         let mut expressions: Vec<Expression> = vec![self.named_expression()?];
+        select.item_spans.0.extend(self.item_range(first_item));
         while self.eat_char(',') {
             if self.target_ends() {
                 break;
             }
+            let head: usize = self.at;
             expressions.push(self.named_expression()?);
+            select.item_spans.0.extend(self.item_range(head));
         }
         select.expressions = expressions;
         Ok(select)
@@ -532,9 +553,11 @@ impl Parser<'_> {
 
     /// `GroupByClause`: `GROUP BY ALL` or a list of grouping items.
     fn group_by(&mut self) -> Parsing<GroupBy> {
+        let keyword_span = self.token_range(self.at);
         self.at += 2;
         if self.eat_kw("ALL") {
             return Ok(GroupBy {
+                keyword_span,
                 expressions: Vec::new(),
                 all: Some(true),
                 totals: false,
@@ -544,6 +567,7 @@ impl Parser<'_> {
         }
         let expressions: Vec<Expression> = self.comma_list(|parser| parser.group_item())?;
         Ok(GroupBy {
+            keyword_span,
             expressions,
             all: None,
             totals: false,
@@ -584,6 +608,7 @@ impl Parser<'_> {
     fn result_modifiers(&mut self) -> Parsing<Modifiers> {
         let mut modifiers: Modifiers = Modifiers::default();
         if self.order_by_at() {
+            modifiers.order_keyword = self.token_range(self.at);
             modifiers.order = Some(self.order_by_clause()?);
         }
         if self.kw_in(0, &["LIMIT", "OFFSET", "FETCH"]) {

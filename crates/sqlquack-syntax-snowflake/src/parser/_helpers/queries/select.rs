@@ -40,6 +40,7 @@ impl Parser {
         let capacity_hint = self.estimate_select_expression_capacity();
         let mut expressions = Vec::with_capacity(capacity_hint);
 
+        let mut item_spans = sqlquack_syntax::tokens::models::ItemSpans::default();
         loop {
             if self.is_at_end()
                 || self.check(TokenType::From)
@@ -70,6 +71,7 @@ impl Parser {
                 };
 
                 expressions.push(self.item_spanned(item_start, star_expr));
+                item_spans.0.extend(self.item_range(item_start));
             } else {
                 let leading_comments = self.current_leading_comments().to_vec();
                 let expr = match self.parse_snowflake_class_method_call()? {
@@ -136,6 +138,7 @@ impl Parser {
                 };
 
                 expressions.push(self.item_spanned(item_start, expr));
+                item_spans.0.extend(self.item_range(item_start));
             }
 
             if !self.match_token(TokenType::Comma) {
@@ -170,6 +173,7 @@ impl Parser {
             }
         }
 
+        self.select_items = item_spans;
         Ok(expressions)
     }
 
@@ -368,14 +372,23 @@ impl Parser {
     /// Parses DuckDB FROM-first queries: `FROM t` and `FROM t SELECT c`.
     pub(crate) fn parse_from_first_query(&mut self) -> Result<Expression> {
         self.expect_token(TokenType::From)?;
+        let from_at = self.current;
 
         let from = self.parse_from()?;
 
         let joins = self.parse_joins()?;
+        let alias_spans = self.aliased_names(from_at);
+        let mut select_span = SourceSpan::default();
+        let mut list_head_span = SourceSpan::default();
+        let mut item_spans = sqlquack_syntax::tokens::models::ItemSpans::default();
 
         let expressions = if self.check(TokenType::Select) {
+            select_span = self.token_range(self.current);
             self.skip();
-            self.parse_select_expressions()?
+            list_head_span = self.token_range(self.current);
+            let listed = self.parse_select_expressions()?;
+            item_spans = std::mem::take(&mut self.select_items);
+            listed
         } else {
             vec![Expression::Star(Box::new(
                 sqlquack_syntax::expressions::names::models::Star {
@@ -405,6 +418,7 @@ impl Parser {
             None
         };
 
+        let group_at = self.current;
         let group_by = if self.match_token(TokenType::Group) {
             self.expect_token(TokenType::By)?;
             let mut groups: Vec<Expression> = Vec::new();
@@ -415,6 +429,7 @@ impl Parser {
                 }
             }
             Some(GroupBy {
+                keyword_span: self.token_range(group_at),
                 expressions: groups,
                 all: None,
                 totals: false,
@@ -467,6 +482,10 @@ impl Parser {
 
         let row_limit_span = self.token_range_if(limit.is_some() || offset.is_some(), row_limit_at);
         let select = Select {
+            select_span,
+            item_spans,
+            list_head_span,
+            alias_spans,
             source_dialect: None,
             total_rowcount: false,
 
@@ -528,6 +547,7 @@ impl Parser {
 
     /// Parse FROM clause
     pub(crate) fn parse_from(&mut self) -> Result<From> {
+        let keyword_span = self.keyword_before(1, TokenType::From);
         let mut expressions: Vec<Expression> = Vec::new();
         let mut comma_spans = SeparatorSpans::default();
 
@@ -591,6 +611,7 @@ impl Parser {
         }
 
         Ok(From {
+            keyword_span,
             comma_spans,
             expressions,
         })
@@ -908,6 +929,7 @@ impl Parser {
                         self.expect_token(TokenType::RParen)?;
                         let trailing_comments = self.previous_trailing_comments().to_vec();
                         Expression::Function(Box::new(Function {
+                            argument_span: Default::default(),
                             name_span: Default::default(),
                             on_error: None,
                             qualified_name: Vec::new(),
@@ -969,6 +991,7 @@ impl Parser {
                     self.expect_token(TokenType::RParen)?;
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -1134,6 +1157,7 @@ impl Parser {
                         self.expect_token(TokenType::RParen)?;
                         let trailing_comments = self.previous_trailing_comments().to_vec();
                         Expression::Function(Box::new(Function {
+                            argument_span: Default::default(),
                             name_span: Default::default(),
                             on_error: None,
                             qualified_name: Vec::new(),
@@ -1195,6 +1219,7 @@ impl Parser {
                                 first_name.clone()
                             };
                             let func = Function {
+                                argument_span: Default::default(),
                                 name_span: Default::default(),
                                 on_error: None,
                                 qualified_name: Vec::new(),
@@ -1410,6 +1435,7 @@ impl Parser {
                     ))
                 } else {
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),

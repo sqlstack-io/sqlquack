@@ -1029,6 +1029,7 @@ impl Parser {
                 self.expect_token(TokenType::Eq)?;
                 let value = self.parse_expression()?;
                 sets.push(Expression::Eq(Box::new(BinaryOp {
+                    operator_span: Default::default(),
                     left: column,
                     right: value,
                     left_comments: Vec::new(),
@@ -1068,6 +1069,7 @@ impl Parser {
 
     /// Parse MySQL REPLACE [INTO] statement or REPLACE() function call
     pub(crate) fn parse_replace(&mut self) -> Result<Expression> {
+        let keyword_span = self.token_range(self.current);
         let replace_token = self.expect_token(TokenType::Replace)?;
         let leading_comments = replace_token.comments;
 
@@ -1076,6 +1078,7 @@ impl Parser {
             let args = self.parse_expression_list()?;
             self.expect_token(TokenType::RParen)?;
             return Ok(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
                 name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
@@ -1169,6 +1172,7 @@ impl Parser {
         };
 
         Ok(Expression::Insert(Box::new(Insert {
+            keyword_span,
             column_targets: Vec::new(),
             table,
             columns,
@@ -1208,6 +1212,7 @@ impl Parser {
 
     /// Parse UPDATE statement
     pub(crate) fn parse_update(&mut self) -> Result<Expression> {
+        let keyword_span = self.token_range(self.current);
         let update_token = self.expect_token(TokenType::Update)?;
         let leading_comments = update_token.comments;
         let hint = if self.check(TokenType::Hint) {
@@ -1303,6 +1308,7 @@ impl Parser {
         };
 
         Ok(Expression::Update(Box::new(Update {
+            keyword_span,
             table,
             hint,
             extra_tables,

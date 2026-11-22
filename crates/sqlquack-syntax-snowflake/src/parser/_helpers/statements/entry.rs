@@ -59,6 +59,7 @@ impl Parser {
             eof_followed_by,
             current: 0,
             select_modifiers_start: 0,
+            select_items: Default::default(),
             config: ParserConfig::default(),
             source: None,
             pending_leading_comments: Vec::new(),
@@ -79,6 +80,7 @@ impl Parser {
             eof_followed_by,
             current: 0,
             select_modifiers_start: 0,
+            select_items: Default::default(),
             config,
             source: None,
             pending_leading_comments: Vec::new(),
@@ -100,6 +102,7 @@ impl Parser {
             eof_followed_by,
             current: 0,
             select_modifiers_start: 0,
+            select_items: Default::default(),
             config,
             source: Some(Arc::from(source)),
             pending_leading_comments: Vec::new(),
@@ -124,6 +127,7 @@ impl Parser {
             eof_followed_by,
             current: 0,
             select_modifiers_start: 0,
+            select_items: Default::default(),
             config,
             source: Some(source),
             pending_leading_comments: Vec::new(),
@@ -1219,6 +1223,7 @@ impl Parser {
 
     #[inline(never)]
     pub(crate) fn parse_select_body_head(&mut self) -> Result<Box<SelectBodyHead>> {
+        let select_at = self.current;
         let select_token = self.expect_token(TokenType::Select)?;
         let leading_comments = select_token.comments;
         let post_select_comments = select_token.trailing_comments;
@@ -1229,6 +1234,7 @@ impl Parser {
             None
         };
 
+        let list_at = self.current;
         let top = self.parse_select_top()?;
 
         let distinct_at = self.current;
@@ -1277,6 +1283,9 @@ impl Parser {
         };
 
         let expressions = self.parse_select_expressions()?;
+        let select_span = self.token_range(select_at);
+        let item_spans = std::mem::take(&mut self.select_items);
+        let list_head_span = self.token_range(list_at);
         if expressions.is_empty()
             && matches!(
                 self.config.dialect,
@@ -1378,6 +1387,9 @@ impl Parser {
             kind,
             operation_modifiers,
             expressions,
+            select_span,
+            list_head_span,
+            item_spans,
             exclude,
             into,
         }))
@@ -1510,7 +1522,9 @@ impl Parser {
     pub(crate) fn parse_select_body(&mut self) -> Result<Expression> {
         let head = self.parse_select_body_head()?;
 
+        let from_at = self.current;
         let (from, joins) = self.parse_select_from_and_joins()?;
+        let alias_spans = self.aliased_names(from_at);
 
         let lateral_views = self.parse_lateral_views()?;
 
@@ -1622,11 +1636,18 @@ impl Parser {
             kind,
             operation_modifiers,
             expressions,
+            select_span,
+            list_head_span,
+            item_spans,
             exclude,
             into,
         } = *head;
 
         let select = Select {
+            select_span,
+            item_spans,
+            list_head_span,
+            alias_spans,
             vertica: if timeseries.is_some() || match_clause.is_some() || limit_over.is_some() {
                 Some(Box::new(VerticaSelectExtensions {
                     timeseries,

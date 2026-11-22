@@ -473,10 +473,13 @@ impl Parser<'_> {
             true => None,
             false => Some(self.a_expr()?),
         };
+        let mut when_spans = SeparatorSpans::default();
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.eat_kw("when") {
+            let when_at: usize = self.at - 1;
             keywords.0.extend(self.token_range(self.at - 1).0);
             let condition: Expression = self.a_expr()?;
+            when_spans.0.extend(self.source_range(when_at).0);
             self.expect_kw("then")?;
             keywords.0.extend(self.token_range(self.at - 1).0);
             whens.push((condition, self.a_expr()?));
@@ -497,7 +500,12 @@ impl Parser<'_> {
         };
         self.expect_kw("end")?;
         keywords.0.extend(self.token_range(self.at - 1).0);
-        Ok(case(operand, whens, otherwise, (keywords, else_span)))
+        Ok(case(
+            operand,
+            whens,
+            otherwise,
+            (keywords, when_spans, else_span),
+        ))
     }
 
     /// `array_expr`: `[ expr_list ]`, `[ array_expr, ... ]` or `[ ]`.

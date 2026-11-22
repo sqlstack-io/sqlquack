@@ -71,6 +71,7 @@ impl Parser {
                 let expression = self.parse_expression()?;
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(Expression::Atan2(Box::new(BinaryFunc {
+                    operator_span: Default::default(),
                     original_name: None,
                     this,
                     expression,
@@ -97,18 +98,21 @@ impl Parser {
                 self.expect_token(TokenType::RParen)?;
                 let expr = match spec.canonical_name {
                     "CONTAINS" => Expression::Contains(Box::new(BinaryFunc {
+                        operator_span: Default::default(),
                         original_name: None,
                         this,
                         expression,
                         inferred_type: None,
                     })),
                     "MOD" => Expression::ModFunc(Box::new(BinaryFunc {
+                        operator_span: Default::default(),
                         original_name: None,
                         this,
                         expression,
                         inferred_type: None,
                     })),
                     "POW" => Expression::Power(Box::new(BinaryFunc {
+                        operator_span: Default::default(),
                         original_name: None,
                         this,
                         expression,
@@ -414,6 +418,7 @@ impl Parser {
                 };
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
                     name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
@@ -517,6 +522,7 @@ impl Parser {
                     ))))
                 } else {
                     Ok(Some(Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -542,6 +548,7 @@ impl Parser {
                 self.expect_token(TokenType::RParen)?;
                 if args.len() > BINARY_ARITY {
                     Ok(Some(Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -563,6 +570,7 @@ impl Parser {
                 } else if args.len() == BINARY_ARITY {
                     Ok(Some(Expression::Nvl(Box::new(
                         sqlquack_syntax::expressions::typed_functions::models::BinaryFunc {
+                            operator_span: Default::default(),
                             original_name: Some("NVL".to_string()),
                             this: args[0].clone(),
                             expression: args[1].clone(),
@@ -571,6 +579,7 @@ impl Parser {
                     ))))
                 } else {
                     Ok(Some(Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -605,6 +614,7 @@ impl Parser {
                     ))))
                 } else {
                     Ok(Some(Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -636,6 +646,7 @@ impl Parser {
                 };
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
                     name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
@@ -679,6 +690,7 @@ impl Parser {
                 } else {
                     self.expect_token(TokenType::RParen)?;
                     Ok(Some(Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -711,6 +723,7 @@ impl Parser {
                 };
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
                     name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
@@ -775,6 +788,7 @@ impl Parser {
                 let args = self.parse_expression_list()?;
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
                     name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
@@ -851,6 +865,7 @@ impl Parser {
         filter: Option<Expression>,
     ) -> Expression {
         Expression::AggregateFunction(Box::new(AggregateFunction {
+            argument_span: Default::default(),
             name_span: Default::default(),
             source_dialect: None,
 

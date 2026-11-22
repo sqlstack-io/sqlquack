@@ -163,6 +163,7 @@ impl Parser {
             let in_expr = self.parse_in_with_expr(this.clone())?;
             this = if negate {
                 Some(Expression::Not(Box::new(UnaryOp {
+                    operator_span: Default::default(),
                     written_as: None,
                     this: in_expr,
                     inferred_type: None,
@@ -183,6 +184,7 @@ impl Parser {
         if negate && self.match_token(TokenType::Null) {
             if let Some(left) = this {
                 let is_null = Expression::Is(Box::new(BinaryOp {
+                    operator_span: Default::default(),
                     left,
                     right: Expression::Null(Null),
                     left_comments: Vec::new(),
@@ -193,6 +195,7 @@ impl Parser {
                     written_as: None,
                 }));
                 return Ok(Some(Expression::Not(Box::new(UnaryOp {
+                    operator_span: Default::default(),
                     written_as: None,
                     this: is_null,
                     inferred_type: None,
@@ -236,6 +239,7 @@ impl Parser {
             .ok_or_else(|| self.parse_error("Expected high expression after AND in BETWEEN"))?;
 
         Ok(Expression::Between(Box::new(Between {
+            operator_span: Default::default(),
             this: this_expr,
             low,
             high,
@@ -258,6 +262,7 @@ impl Parser {
             let unnest_expr = self.parse_expression()?;
             self.expect_token(TokenType::RParen)?;
             return Ok(Expression::In(Box::new(In {
+                operator_span: Default::default(),
                 this: this_expr,
                 expressions: Vec::new(),
                 query: None,
@@ -272,6 +277,7 @@ impl Parser {
         if !self.match_token(TokenType::LParen) {
             if let Ok(expr) = self.parse_primary() {
                 return Ok(Expression::In(Box::new(In {
+                    operator_span: Default::default(),
                     this: this_expr,
                     expressions: vec![expr],
                     query: None,
@@ -289,6 +295,7 @@ impl Parser {
             let subquery = self.parse_select()?;
             self.expect_token(TokenType::RParen)?;
             return Ok(Expression::In(Box::new(In {
+                operator_span: Default::default(),
                 this: this_expr,
                 expressions: Vec::new(),
                 query: Some(subquery),
@@ -309,6 +316,7 @@ impl Parser {
         }
 
         Ok(Expression::In(Box::new(In {
+            operator_span: Default::default(),
             this: this_expr,
             expressions,
             query: None,
@@ -331,6 +339,7 @@ impl Parser {
 
         if self.match_token(TokenType::Null) {
             let is_null = Expression::Is(Box::new(BinaryOp {
+                operator_span: Default::default(),
                 left: this_expr,
                 right: Expression::Null(Null),
                 left_comments: Vec::new(),
@@ -342,6 +351,7 @@ impl Parser {
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
+                    operator_span: Default::default(),
                     written_as: None,
                     this: is_null,
                     inferred_type: None,
@@ -354,6 +364,7 @@ impl Parser {
 
         if self.match_texts(&["TRUE"]) {
             let is_true = Expression::Is(Box::new(BinaryOp {
+                operator_span: Default::default(),
                 left: this_expr,
                 right: Expression::Boolean(BooleanLiteral { value: true }),
                 left_comments: Vec::new(),
@@ -365,6 +376,7 @@ impl Parser {
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
+                    operator_span: Default::default(),
                     written_as: None,
                     this: is_true,
                     inferred_type: None,
@@ -377,6 +389,7 @@ impl Parser {
 
         if self.match_texts(&["FALSE"]) {
             let is_false = Expression::Is(Box::new(BinaryOp {
+                operator_span: Default::default(),
                 left: this_expr,
                 right: Expression::Boolean(BooleanLiteral { value: false }),
                 left_comments: Vec::new(),
@@ -388,6 +401,7 @@ impl Parser {
             }));
             return if negate {
                 Ok(Expression::Not(Box::new(UnaryOp {
+                    operator_span: Default::default(),
                     written_as: None,
                     this: is_false,
                     inferred_type: None,
@@ -434,6 +448,7 @@ impl Parser {
             if let Some(right_expr) = right {
                 let expr = if negate {
                     Expression::NullSafeEq(Box::new(BinaryOp {
+                        operator_span: Default::default(),
                         left: this_expr,
                         right: right_expr,
                         left_comments: Vec::new(),
@@ -445,6 +460,7 @@ impl Parser {
                     }))
                 } else {
                     Expression::NullSafeNeq(Box::new(BinaryOp {
+                        operator_span: Default::default(),
                         left: this_expr,
                         right: right_expr,
                         left_comments: Vec::new(),
@@ -1104,6 +1120,7 @@ impl Parser {
                         }
                         self.expect_token(TokenType::RParen)?;
                         expr = Expression::In(Box::new(In {
+                            operator_span: Default::default(),
                             this: expr,
                             expressions: in_exprs,
                             query: None,
@@ -1574,6 +1591,7 @@ impl Parser {
         self.expect_token(TokenType::RParen)?;
 
         let func_expr = Expression::Function(Box::new(Function {
+            argument_span: Default::default(),
             name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),

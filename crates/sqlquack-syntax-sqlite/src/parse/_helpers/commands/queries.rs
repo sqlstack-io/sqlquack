@@ -159,12 +159,13 @@ impl Parser<'_> {
     fn one_select(&mut self) -> Parsing<Term> {
         let first: usize = self.at;
         if self.eat_kw("VALUES") {
+            let keyword: usize = self.at - 1;
             let mut rows: Vec<Vec<Expression>> = vec![self.values_row()?];
             while self.eat_op("COMMA") {
                 rows.push(self.values_row()?);
             }
             return Ok(Term {
-                body: self.respanned(first, values(rows, None)),
+                body: self.keyworded(keyword, self.respanned(first, values(rows, None))),
                 order_by: None,
                 limit: None,
                 limit_span: SourceSpan::default(),
@@ -173,15 +174,31 @@ impl Parser<'_> {
         }
         self.expect_kw("SELECT")?;
         let mut select: Box<Select> = new_select();
+        select.select_span = self.token_range(self.at - 1);
+        select.list_head_span = self.token_range(self.at);
         if self.eat_kw("DISTINCT") {
             select.distinct = true;
             select.distinct_span = self.token_range(self.at - 1);
         } else if self.eat_kw("ALL") {
             select.all = true;
         }
-        select.expressions = self.comma_list(|parser| parser.result_column())?;
+        let mut item_head: usize = self.at;
+        let mut item_spans = sqlquack_syntax::tokens::models::ItemSpans::default();
+        select.expressions = self.comma_list(|parser| {
+            let item: Expression = parser.result_column()?;
+            item_spans.0.extend(parser.item_range(item_head));
+            item_head = parser.at + 1;
+            Ok(item)
+        })?;
+        select.item_spans = item_spans;
         if self.eat_kw("FROM") {
+            let keyword_span = self.token_range(self.at - 1);
+            let from_at: usize = self.at;
             select = self.select_from(select)?;
+            select.alias_spans = self.aliased_names(from_at);
+            if let Some(from) = select.from.as_mut() {
+                from.keyword_span = keyword_span;
+            }
         }
         if self.eat_kw("WHERE") {
             select.where_clause = Some(Where {
@@ -189,9 +206,11 @@ impl Parser<'_> {
             });
         }
         if self.kw("GROUP") {
+            let keyword_span = self.token_range(self.at);
             self.at += 1;
             self.expect_kw("BY")?;
             select.group_by = Some(GroupBy {
+                keyword_span,
                 expressions: self.comma_list(|parser| parser.expression())?,
                 all: None,
                 totals: false,
@@ -266,9 +285,11 @@ impl Parser<'_> {
         if !self.kw("ORDER") {
             return Ok(None);
         }
+        let keyword_span = self.token_range(self.at);
         self.at += 1;
         self.expect_kw("BY")?;
         Ok(Some(OrderBy {
+            keyword_span,
             expressions: self.sort_list()?,
             siblings: false,
             comments: Vec::new(),
@@ -326,6 +347,8 @@ impl Parser<'_> {
     /// `with`: `WITH [RECURSIVE] wqitem, ...`.
     pub(crate) fn with_clause(&mut self) -> Parsing<With> {
         self.expect_kw("WITH")?;
+        let keyword_span = self.token_range(self.at - 1);
+        let mut comma_spans = sqlquack_syntax::tokens::models::SeparatorSpans::default();
         let recursive: bool = self.eat_kw("RECURSIVE");
         let mut ctes: Vec<Cte> = Vec::new();
         loop {
@@ -343,8 +366,11 @@ impl Parser<'_> {
             if !self.eat_op("COMMA") {
                 break;
             }
+            comma_spans.0.extend(self.token_range(self.at - 1).0);
         }
         Ok(With {
+            keyword_span,
+            comma_spans,
             ctes,
             recursive,
             leading_comments: Vec::new(),

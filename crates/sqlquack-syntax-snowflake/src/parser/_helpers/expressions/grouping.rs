@@ -237,7 +237,6 @@ impl Parser {
             if self.check(TokenType::RParen) {
                 self.skip();
                 return Ok(Some(Expression::Function(Box::new(Function {
-                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,
@@ -254,6 +253,7 @@ impl Parser {
                     export_state: false,
                     from_separator: false,
                     written_as: None,
+                    ..Function::default()
                 }))));
             }
             let args = self.parse_expression_list()?;
@@ -277,7 +277,6 @@ impl Parser {
                 }))));
             } else if args.len() == 1 {
                 return Ok(Some(Expression::Function(Box::new(Function {
-                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,
@@ -294,6 +293,7 @@ impl Parser {
                     export_state: false,
                     from_separator: false,
                     written_as: None,
+                    ..Function::default()
                 }))));
             } else {
                 return Err(self.parse_error("IF function requires 2 or 3 arguments"));
@@ -1090,6 +1090,7 @@ impl Parser {
                             if self.match_token(TokenType::Eq) {
                                 let value = self.parse_expression()?;
                                 let assignment = Expression::Eq(Box::new(BinaryOp {
+                                    operator_span: Default::default(),
                                     left: col,
                                     right: value,
                                     left_comments: Vec::new(),
@@ -1416,6 +1417,7 @@ impl Parser {
 
         let (expressions, all) = self.take_order_by_all(expressions);
         Ok(Some(Expression::OrderBy(Box::new(OrderBy {
+            keyword_span: Default::default(),
             expressions,
             siblings: false,
             comments: Vec::new(),

@@ -109,6 +109,7 @@ impl Parser<'_> {
             }
         }
         select.from = Some(From {
+            keyword_span: Default::default(),
             comma_spans,
             expressions: sources,
         });

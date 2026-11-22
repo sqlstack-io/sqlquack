@@ -220,10 +220,13 @@ impl Parser<'_> {
             true => None,
             false => Some(self.element()?),
         };
+        let mut when_spans = SeparatorSpans::default();
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.eat_kw("WHEN") {
+            let when_at: usize = self.at - 1;
             keywords.0.extend(self.token_range(self.at - 1).0);
             let condition: Expression = self.element()?;
+            when_spans.0.extend(self.source_range(when_at).0);
             self.expect_kw("THEN")?;
             keywords.0.extend(self.token_range(self.at - 1).0);
             let result: Expression = self.element()?;
@@ -242,7 +245,12 @@ impl Parser<'_> {
         };
         self.expect_kw("END")?;
         keywords.0.extend(self.token_range(self.at - 1).0);
-        Ok(case(operand, whens, otherwise, (keywords, else_span)))
+        Ok(case(
+            operand,
+            whens,
+            otherwise,
+            (keywords, when_spans, else_span),
+        ))
     }
 
     /// A name: a call when `(` follows, a qualified asterisk, or a compound identifier.

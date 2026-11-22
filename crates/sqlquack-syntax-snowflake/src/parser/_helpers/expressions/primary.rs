@@ -474,7 +474,6 @@ impl Parser {
             };
             self.expect_token(TokenType::RParen)?;
             let func = Expression::Function(Box::new(Function {
-                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -491,6 +490,7 @@ impl Parser {
                 export_state: false,
                 from_separator: false,
                 written_as: None,
+                ..Function::default()
             }));
 
             if self.match_token(TokenType::Within) {
@@ -722,7 +722,6 @@ impl Parser {
         let predicate = self.parse_expression()?;
         self.expect_token(TokenType::RParen)?;
         Ok(Expression::Function(Box::new(Function {
-            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -739,6 +738,7 @@ impl Parser {
             export_state: false,
             from_separator: false,
             written_as: None,
+            ..Function::default()
         })))
     }
 
@@ -1029,7 +1029,6 @@ impl Parser {
         };
         self.expect_token(TokenType::RParen)?;
         let func_expr = Expression::Function(Box::new(Function {
-            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -1046,6 +1045,7 @@ impl Parser {
             export_state: false,
             from_separator: false,
             written_as: None,
+            ..Function::default()
         }));
         self.maybe_parse_over(func_expr)
     }
@@ -1403,7 +1403,6 @@ impl Parser {
         };
         self.expect_token(TokenType::RParen)?;
         let func = Expression::Function(Box::new(Function {
-            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -1420,6 +1419,7 @@ impl Parser {
             export_state: false,
             from_separator: false,
             written_as: None,
+            ..Function::default()
         }));
         self.maybe_parse_over(func)
     }
@@ -1434,7 +1434,6 @@ impl Parser {
         };
         self.expect_token(TokenType::RParen)?;
         let func = Expression::Function(Box::new(Function {
-            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -1451,6 +1450,7 @@ impl Parser {
             export_state: false,
             from_separator: false,
             written_as: None,
+            ..Function::default()
         }));
         self.maybe_parse_over(func)
     }
@@ -1487,7 +1487,6 @@ impl Parser {
             };
             self.expect_token(TokenType::RParen)?;
             let func = Expression::Function(Box::new(Function {
-                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1504,12 +1503,12 @@ impl Parser {
                 export_state: false,
                 from_separator: false,
                 written_as: None,
+                ..Function::default()
             }));
             self.maybe_parse_subscript(func)
         } else {
             let token = self.advance()?;
             let func = Expression::Function(Box::new(Function {
-                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1526,6 +1525,7 @@ impl Parser {
                 export_state: false,
                 from_separator: false,
                 written_as: None,
+                ..Function::default()
             }));
             self.maybe_parse_subscript(func)
         }
@@ -1954,7 +1954,6 @@ impl Parser {
         let args = self.parse_function_args_list()?;
         self.expect_token(TokenType::RParen)?;
         Ok(Expression::Function(Box::new(Function {
-            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -1971,6 +1970,7 @@ impl Parser {
             export_state: false,
             from_separator: false,
             written_as: None,
+            ..Function::default()
         })))
     }
 }

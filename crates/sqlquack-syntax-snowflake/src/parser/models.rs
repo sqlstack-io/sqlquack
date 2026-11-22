@@ -428,6 +428,8 @@ pub(crate) struct Parser {
     pub(crate) current: usize,
     /// SQLQuack: where the trailing modifiers of the last parsed SELECT body begin.
     pub(crate) select_modifiers_start: usize,
+    /// SQLQuack: the items of the last parsed select list, for the SELECT that parsed it to take.
+    pub(crate) select_items: sqlquack_syntax::tokens::models::ItemSpans,
     pub(crate) config: ParserConfig,
     /// Original source SQL (used for preserving exact text in Command expressions)
     pub(crate) source: Option<Arc<str>>,
@@ -490,6 +492,9 @@ pub(crate) struct SelectBodyHead {
     pub(crate) kind: Option<String>,
     pub(crate) operation_modifiers: Vec<String>,
     pub(crate) expressions: Vec<Expression>,
+    pub(crate) select_span: sqlquack_syntax::tokens::models::SourceSpan,
+    pub(crate) list_head_span: sqlquack_syntax::tokens::models::SourceSpan,
+    pub(crate) item_spans: sqlquack_syntax::tokens::models::ItemSpans,
     pub(crate) exclude: Option<Vec<Expression>>,
     pub(crate) into: Option<SelectInto>,
 }

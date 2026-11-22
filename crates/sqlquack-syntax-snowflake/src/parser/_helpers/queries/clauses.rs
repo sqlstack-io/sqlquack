@@ -58,6 +58,7 @@ type MatchRecognizeDefinitions = (
 impl Parser {
     /// Parse GROUP BY clause
     pub(crate) fn parse_group_by(&mut self) -> Result<GroupBy> {
+        let keyword_span = self.keyword_before(2, TokenType::Group);
         let all = if self.match_token(TokenType::All) {
             Some(true)
         } else if self.match_token(TokenType::Distinct) {
@@ -70,6 +71,7 @@ impl Parser {
 
         if all.is_some() && self.is_at_query_modifier_or_end() {
             return Ok(GroupBy {
+                keyword_span,
                 expressions,
                 all,
                 totals: false,
@@ -107,6 +109,7 @@ impl Parser {
                 totals = true;
             }
             return Ok(GroupBy {
+                keyword_span,
                 expressions,
                 all,
                 totals,
@@ -131,6 +134,7 @@ impl Parser {
                     let args = self.parse_grouping_sets_args()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -154,6 +158,7 @@ impl Parser {
                     let args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -177,6 +182,7 @@ impl Parser {
                     let args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -246,6 +252,7 @@ impl Parser {
         };
 
         Ok(GroupBy {
+            keyword_span,
             expressions,
             all,
             totals,
@@ -279,6 +286,7 @@ impl Parser {
                     let inner_args = self.parse_grouping_sets_args()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -302,6 +310,7 @@ impl Parser {
                     let inner_args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -325,6 +334,7 @@ impl Parser {
                     let inner_args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -384,6 +394,7 @@ impl Parser {
 
     /// Parse ORDER BY clause with optional siblings flag (Oracle ORDER SIBLINGS BY)
     pub(crate) fn parse_order_by_with_siblings(&mut self, siblings: bool) -> Result<OrderBy> {
+        let keyword_span = self.keyword_before(if siblings { 3 } else { 2 }, TokenType::Order);
         let mut expressions: Vec<Ordered> = Vec::new();
 
         loop {
@@ -525,6 +536,7 @@ impl Parser {
 
         let (expressions, all) = self.take_order_by_all(expressions);
         Ok(OrderBy {
+            keyword_span,
             expressions,
             siblings,
             comments: Vec::new(),
@@ -724,6 +736,7 @@ impl Parser {
             let mut select = Select::new();
             select.expressions = vec![Expression::star()];
             select.from = Some(From {
+                keyword_span: Default::default(),
                 comma_spans: Default::default(),
                 expressions: vec![Expression::Subquery(Box::new(subquery))],
             });

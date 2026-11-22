@@ -105,3 +105,11 @@ pub(crate) struct CaseKeywordsTestCase {
     /// Each CASE's keywords, then its ELSE clause, as written, by where the CASE starts.
     pub(crate) expected_keywords: &'static [&'static str],
 }
+
+pub(crate) struct WrittenPositionsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parse: LocatedParser,
+    pub(crate) sql: &'static str,
+    /// Each recorded position's kind and text, sorted.
+    pub(crate) expected_positions: &'static [&'static str],
+}

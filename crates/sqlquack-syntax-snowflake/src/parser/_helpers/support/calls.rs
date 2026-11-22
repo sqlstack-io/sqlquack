@@ -5,7 +5,7 @@ use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::MethodCall;
 use sqlquack_syntax::expressions::tree::models::Expression;
-use sqlquack_syntax::tokens::models::SourceSpan;
+use sqlquack_syntax::tokens::models::{SourceSpan, TokenType};
 use sqlquack_syntax::tokens::types::Result;
 
 impl Parser {
@@ -153,13 +153,20 @@ impl Parser {
         if !names_it {
             return call;
         }
-        let field = match &mut call {
-            Expression::Function(node) => &mut node.name_span,
-            Expression::AggregateFunction(node) => &mut node.name_span,
+        let (field, argument) = match &mut call {
+            Expression::Function(node) => (&mut node.name_span, &mut node.argument_span),
+            Expression::AggregateFunction(node) => (&mut node.name_span, &mut node.argument_span),
             _ => return call,
         };
         if field.is_absent() {
             *field = self.token_range(at);
+        }
+        let token_type = |index: usize| self.tokens.get(index).map(|token| token.token_type);
+        let lone = token_type(arguments) != Some(TokenType::RParen)
+            && token_type(arguments + 1) == Some(TokenType::RParen);
+        let distinct = token_type(arguments) == Some(TokenType::Distinct);
+        if argument.is_absent() && (lone || distinct) {
+            *argument = self.token_range(arguments);
         }
         call
     }

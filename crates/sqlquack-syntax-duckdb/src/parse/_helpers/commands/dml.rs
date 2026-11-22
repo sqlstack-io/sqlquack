@@ -46,6 +46,7 @@ impl Parser<'_> {
     /// `InsertStatement`: `INSERT [OR action] INTO target [(columns)] values [ON CONFLICT ...]`.
     pub(crate) fn insert_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("INSERT")?;
+        let keyword_span = self.token_range(self.at - 1);
         let action: Option<String> = match self.kw("OR") {
             true => {
                 self.at += 1;
@@ -60,6 +61,7 @@ impl Parser<'_> {
         };
         self.expect_kw("INTO")?;
         let mut statement: Insert = insert(self.base_table_name()?);
+        statement.keyword_span = keyword_span;
         statement.with = with;
         statement.conflict_action = action;
         if self.eat_kw("AS") {
@@ -241,6 +243,7 @@ impl Parser<'_> {
     /// `UpdateStatement`: `UPDATE target [[AS] alias] SET ... [FROM ...] [WHERE ...] [RETURNING ...]`.
     pub(crate) fn update_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("UPDATE")?;
+        let keyword_span = self.token_range(self.at - 1);
         let mut target: TableRef = self.base_table_name()?;
         if !self.kw("SET") {
             let Some((name, explicit)) = self.target_alias()? else {
@@ -251,6 +254,7 @@ impl Parser<'_> {
         }
         self.expect_kw("SET")?;
         let mut statement: Update = update(target);
+        statement.keyword_span = keyword_span;
         statement.with = with;
         statement.set = self.set_clauses()?;
         if self.kw("FROM") {
@@ -266,8 +270,10 @@ impl Parser<'_> {
     /// `DeleteStatement`: `DELETE FROM target [[AS] alias] [USING tables] [WHERE ...] [RETURNING ...]`.
     pub(crate) fn delete_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("DELETE")?;
+        let keyword_span = self.token_range(self.at - 1);
         self.expect_kw("FROM")?;
         let mut statement: Delete = delete(self.base_table_name()?);
+        statement.keyword_span = keyword_span;
         statement.with = with;
         if let Some((name, explicit)) = self.target_alias()? {
             statement.alias = Some(name);

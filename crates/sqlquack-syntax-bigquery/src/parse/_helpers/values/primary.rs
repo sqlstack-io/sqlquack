@@ -491,10 +491,13 @@ impl Parser<'_> {
             true => None,
             false => Some(self.expression()?),
         };
+        let mut when_spans = SeparatorSpans::default();
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.eat_kw("WHEN") {
+            let when_at: usize = self.at - 1;
             keywords.0.extend(self.token_range(self.at - 1).0);
             let condition: Expression = self.expression()?;
+            when_spans.0.extend(self.source_range(when_at).0);
             self.expect_kw("THEN")?;
             keywords.0.extend(self.token_range(self.at - 1).0);
             whens.push((condition, self.expression()?));
@@ -515,7 +518,12 @@ impl Parser<'_> {
         };
         self.expect_kw("END")?;
         keywords.0.extend(self.token_range(self.at - 1).0);
-        Ok(case(operand, whens, else_, (keywords, else_span)))
+        Ok(case(
+            operand,
+            whens,
+            else_,
+            (keywords, when_spans, else_span),
+        ))
     }
 
     /// `CAST (expression AS dataType)` or `TRY_CAST (...)`.

@@ -263,6 +263,81 @@ impl PartialEq for SeparatorSpans {
     }
 }
 
+/// SQLQuack: an operator and where its last operand ends, recorded by a located parse and ignored by equality.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct OperatorSpan {
+    start: u32,
+    end: u32,
+    line: u32,
+    column: u32,
+    operation_end: u32,
+}
+
+impl OperatorSpan {
+    /// The range of `operator` in an operation that ends at `operation_end`; none past what it can hold.
+    pub fn new(operator: Span, operation_end: usize) -> Self {
+        let Span {
+            start,
+            end,
+            line,
+            column,
+        } = operator;
+        let limit: usize = u32::MAX as usize;
+        if end.max(operation_end).max(line).max(column) > limit {
+            return Self::default();
+        }
+        Self {
+            start: start as u32,
+            end: end as u32,
+            line: line as u32,
+            column: column as u32,
+            operation_end: operation_end as u32,
+        }
+    }
+
+    /// Whether no range was recorded.
+    pub fn is_absent(&self) -> bool {
+        self.end == 0
+    }
+
+    /// The operator's range.
+    pub fn operator(&self) -> Option<Span> {
+        self.through(self.end)
+    }
+
+    /// The range from the operator to the end of its last operand.
+    pub fn operation(&self) -> Option<Span> {
+        self.through(self.operation_end)
+    }
+
+    fn through(&self, end: u32) -> Option<Span> {
+        (!self.is_absent()).then(|| {
+            Span::new(
+                self.start as usize,
+                end as usize,
+                self.line as usize,
+                self.column as usize,
+            )
+        })
+    }
+}
+
+impl PartialEq for OperatorSpan {
+    fn eq(&self, _other: &Self) -> bool {
+        true
+    }
+}
+
+/// SQLQuack: a list's items, each its first token and where the item ends, ignored by equality.
+#[derive(Debug, Clone, Default)]
+pub struct ItemSpans(pub Vec<OperatorSpan>);
+
+impl PartialEq for ItemSpans {
+    fn eq(&self, _other: &Self) -> bool {
+        true
+    }
+}
+
 impl SpanField for Option<Span> {
     fn recorded(&self) -> Option<Span> {
         *self

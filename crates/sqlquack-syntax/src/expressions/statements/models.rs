@@ -170,6 +170,10 @@ pub struct Insert {
     /// Databricks: `REPLACE USING ( columns )`, the columns whose matching rows the query replaces
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub replace_using: Vec<Identifier>,
+    /// SQLQuack: the INSERT keyword, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub keyword_span: crate::tokens::models::SourceSpan,
 }
 
 /// OUTPUT clause (TSQL) - used in INSERT, UPDATE, DELETE
@@ -230,6 +234,10 @@ pub struct Update {
     /// PostgreSQL `RETURNING WITH (OLD AS o, NEW AS n)`: each `(OLD|NEW, alias)` in order
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub returning_aliases: Vec<Expression>,
+    /// SQLQuack: the UPDATE keyword, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub keyword_span: crate::tokens::models::SourceSpan,
 }
 
 /// DELETE statement
@@ -297,6 +305,10 @@ pub struct Delete {
     /// ClickHouse: SETTINGS key = val, ...
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub settings: Vec<Expression>,
+    /// SQLQuack: the DELETE keyword, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub keyword_span: crate::tokens::models::SourceSpan,
 }
 
 /// COPY statement (Snowflake, PostgreSQL, DuckDB, TSQL)

@@ -86,6 +86,7 @@ impl Parser {
         let recursive = self.match_token(TokenType::Recursive);
         let mut ctes: Vec<Cte> = Vec::new();
         let mut has_procedure = false;
+        let mut comma_spans = sqlquack_syntax::tokens::models::SeparatorSpans::default();
 
         loop {
             let cte_start = self.current;
@@ -141,6 +142,7 @@ impl Parser {
                     as_omitted: false,
                 });
                 if self.match_token(TokenType::Comma) {
+                    comma_spans.0.extend(self.token_range(self.current - 1).0);
                     continue;
                 }
                 break;
@@ -195,6 +197,7 @@ impl Parser {
                 break;
             }
 
+            comma_spans.0.extend(self.token_range(self.current - 1).0);
             self.match_token(TokenType::With);
         }
 
@@ -202,6 +205,8 @@ impl Parser {
 
         let statement = self.parse_with_statement(
             With {
+                keyword_span: self.token_range(with_start),
+                comma_spans,
                 ctes,
                 recursive,
                 leading_comments,

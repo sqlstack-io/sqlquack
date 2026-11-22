@@ -14,9 +14,53 @@ use crate::expressions::queries::models::Select;
 use crate::expressions::tree::main::_type_assertion_result::type_assertion_result;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
-use crate::tokens::models::{SourceSpan, Span};
+use crate::tokens::models::{OperatorSpan, SourceSpan, Span};
 
 impl Expression {
+    /// SQLQuack: records where the operator just parsed begins, or a NOT BETWEEN's keyword after it, unless recorded.
+    pub fn record_operation(&mut self, operator: Span, following: Option<Span>, end: Span) {
+        let written: OperatorSpan = OperatorSpan::new(operator, end.end);
+        let field: &mut OperatorSpan = match self {
+            Self::Eq(node)
+            | Self::Neq(node)
+            | Self::Lt(node)
+            | Self::Lte(node)
+            | Self::Gt(node)
+            | Self::Gte(node)
+            | Self::Div(node)
+            | Self::Mod(node) => &mut node.operator_span,
+            Self::IntDiv(node) => &mut node.operator_span,
+            Self::In(node) => &mut node.operator_span,
+            Self::Between(node) => {
+                if node.operator_span.is_absent() {
+                    node.operator_span = match (node.not, following) {
+                        (true, Some(keyword)) => OperatorSpan::new(keyword, end.end),
+                        _ => written,
+                    };
+                }
+                return;
+            }
+            Self::Not(node) => match &mut node.this {
+                Self::In(negated) if negated.operator_span.is_absent() => {
+                    negated.operator_span = written;
+                    &mut node.operator_span
+                }
+                _ => return,
+            },
+            Self::Function(node)
+                if node.name_span.is_absent() && matches!(node.args.as_slice(), [_, _]) =>
+            {
+                node.name_span = SourceSpan(Some(operator));
+                node.argument_span = SourceSpan(following.map(|first| first.through(end)));
+                return;
+            }
+            _ => return,
+        };
+        if field.is_absent() {
+            *field = written;
+        }
+    }
+
     /// Source semantics still needing dialect-aware lowering; kept through serialization.
     pub fn source_dialect(&self) -> Option<crate::tokens::models::DialectType> {
         match self {

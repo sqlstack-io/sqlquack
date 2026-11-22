@@ -157,9 +157,10 @@ pub(crate) fn case(
     operand: Option<Expression>,
     whens: Vec<(Expression, Expression)>,
     else_: Option<Expression>,
-    (keyword_spans, else_span): (SeparatorSpans, SourceSpan),
+    (keyword_spans, when_spans, else_span): (SeparatorSpans, SeparatorSpans, SourceSpan),
 ) -> Expression {
     Expression::Case(Box::new(Case {
+        when_spans,
         operand,
         whens,
         else_,
@@ -178,6 +179,7 @@ pub(crate) fn in_list(
     not: bool,
 ) -> Expression {
     Expression::In(Box::new(In {
+        operator_span: Default::default(),
         this,
         expressions,
         query,
@@ -196,6 +198,7 @@ pub(crate) fn between(
     not: bool,
 ) -> Expression {
     Expression::Between(Box::new(Between {
+        operator_span: Default::default(),
         this,
         low,
         high,
@@ -548,6 +551,7 @@ pub(crate) fn values(rows: Vec<Vec<Expression>>, alias: Option<TableAlias>) -> E
         None => (None, Vec::new()),
     };
     Expression::Values(Box::new(Values {
+        keyword_span: Default::default(),
         alias_explicit_as: false,
         expressions: rows
             .into_iter()
@@ -583,6 +587,7 @@ pub(crate) fn command(text: &str) -> Expression {
 
 pub(crate) fn insert(table: TableRef) -> Insert {
     Insert {
+        keyword_span: Default::default(),
         column_targets: Vec::new(),
         overriding: None,
         returning_aliases: Vec::new(),
@@ -622,6 +627,7 @@ pub(crate) fn insert(table: TableRef) -> Insert {
 
 pub(crate) fn update(table: TableRef) -> Update {
     Update {
+        keyword_span: Default::default(),
         assignments: Vec::new(),
         current_of: None,
         returning_aliases: Vec::new(),
@@ -645,6 +651,7 @@ pub(crate) fn update(table: TableRef) -> Update {
 
 pub(crate) fn delete(table: TableRef) -> Delete {
     Delete {
+        keyword_span: Default::default(),
         current_of: None,
         returning_aliases: Vec::new(),
         using_items: Vec::new(),

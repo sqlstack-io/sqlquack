@@ -346,6 +346,7 @@ impl Parser {
                 };
                 self.expect_token(TokenType::RParen)?;
                 Ok(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
                     name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
@@ -518,6 +519,7 @@ impl Parser {
             || filter.is_some()
         {
             Ok(Expression::AggregateFunction(Box::new(AggregateFunction {
+                argument_span: Default::default(),
                 name_span: Default::default(),
                 source_dialect: None,
 
@@ -536,6 +538,7 @@ impl Parser {
             })))
         } else {
             Ok(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
                 name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
@@ -562,6 +565,7 @@ impl Parser {
             let query = self.parse_select()?;
             self.expect_token(TokenType::RParen)?;
             return Ok(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
                 name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
@@ -640,6 +644,7 @@ impl Parser {
                 }));
 
                 return Ok(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
                     name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
@@ -669,6 +674,7 @@ impl Parser {
         };
         self.expect_token(TokenType::RParen)?;
         Ok(Expression::Function(Box::new(Function {
+            argument_span: Default::default(),
             name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
@@ -784,6 +790,7 @@ impl Parser {
             if is_duckdb_top_n {
                 let filter = self.parse_filter_clause()?;
                 Ok(Expression::AggregateFunction(Box::new(AggregateFunction {
+                    argument_span: Default::default(),
                     name_span: Default::default(),
                     source_dialect: None,
 
@@ -802,6 +809,7 @@ impl Parser {
                 })))
             } else {
                 Ok(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
                     name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
@@ -1145,6 +1153,7 @@ impl Parser {
                     self.expect_token(TokenType::RParen)?;
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Ok(Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
                         name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
@@ -1449,6 +1458,7 @@ impl Parser {
             }
             self.expect_token(TokenType::RParen)?;
             let func_expr = Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
                 name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
@@ -1560,6 +1570,7 @@ impl Parser {
             all_args.extend(remaining);
             self.expect_token(TokenType::RParen)?;
             Ok(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
                 name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
@@ -1777,6 +1788,7 @@ impl Parser {
             }
             if !order_exprs.is_empty() {
                 Some(Box::new(Expression::OrderBy(Box::new(OrderBy {
+                    keyword_span: Default::default(),
                     expressions: order_exprs,
                     siblings: false,
                     comments: Vec::new(),

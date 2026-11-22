@@ -196,6 +196,7 @@ impl<'sql> Parser<'sql> {
         }
         let start: usize = self.at;
         let left: Expression = self.additive_expression()?;
+        let operator: usize = self.at;
         if self.shift_at() {
             return Err(self.gap("shift_operator", self.offset()));
         }
@@ -218,7 +219,8 @@ impl<'sql> Parser<'sql> {
                 });
             }
             let right: Expression = self.operand()?;
-            return Ok(self.binary(start, build, left, right));
+            let node: Expression = self.binary(start, build, left, right);
+            return Ok(self.operated(operator, node));
         }
         let not: bool = self.kw("NOT");
         let offset: usize = usize::from(not);
@@ -228,7 +230,7 @@ impl<'sql> Parser<'sql> {
             let low: Expression = self.operand()?;
             self.expect_kw("AND")?;
             let high: Expression = self.operand()?;
-            return Ok(between(left, low, high, not));
+            return Ok(self.operated(operator, between(left, low, high, not)));
         }
         if self.kw_at(offset, "IN") {
             let left: Expression = self.value(left, start)?;
@@ -237,11 +239,12 @@ impl<'sql> Parser<'sql> {
             if self.starts_query() {
                 let query: Expression = self.query_expression()?;
                 self.expect_char(')')?;
-                return Ok(in_list(left, Vec::new(), Some(query), not));
+                let node: Expression = in_list(left, Vec::new(), Some(query), not);
+                return Ok(self.operated(operator, node));
             }
             let items: Vec<Expression> = self.comma_list(Self::scalar)?;
             self.expect_char(')')?;
-            return Ok(in_list(left, items, None, not));
+            return Ok(self.operated(operator, in_list(left, items, None, not)));
         }
         if self.kw_at(offset, "LIKE") {
             let left: Expression = self.value(left, start)?;
@@ -289,11 +292,13 @@ impl<'sql> Parser<'sql> {
         while let Some(build) = self.peek().and_then(operator) {
             left = self.value(left, start)?;
             self.link()?;
+            let operator: usize = self.at;
             self.at += 1;
             let right_start: usize = self.at;
             let right: Expression = self.deeper(operand)?;
             let right: Expression = self.value(right, right_start)?;
-            left = self.binary(start, build, left, right);
+            let node: Expression = self.binary(start, build, left, right);
+            left = self.operated(operator, node);
         }
         self.restore_depth(depth);
         Ok(left)

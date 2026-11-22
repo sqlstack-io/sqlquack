@@ -164,6 +164,10 @@ pub struct Case {
     #[serde(skip)]
     #[ast(skip)]
     pub else_span: SourceSpan,
+    /// SQLQuack: each WHEN through the end of what it tests, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub when_spans: crate::tokens::models::SeparatorSpans,
 }
 
 impl Case {
@@ -254,11 +258,16 @@ pub struct BinaryOp {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub written_as: Option<OperatorSpelling>,
+    /// SQLQuack: the operator and the end of its last operand, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub operator_span: crate::tokens::models::OperatorSpan,
 }
 
 impl BinaryOp {
     pub fn new(left: Expression, right: Expression) -> Self {
         Self {
+            operator_span: Default::default(),
             left,
             right,
             left_comments: Vec::new(),
@@ -338,11 +347,16 @@ pub struct UnaryOp {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub written_as: Option<OperatorSpelling>,
+    /// SQLQuack: the operator and the end of its last operand, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub operator_span: crate::tokens::models::OperatorSpan,
 }
 
 impl UnaryOp {
     pub fn new(this: Expression) -> Self {
         Self {
+            operator_span: Default::default(),
             this,
             inferred_type: None,
             span: SourceSpan::default(),
@@ -374,6 +388,10 @@ pub struct In {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the operator and the end of its last operand, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub operator_span: crate::tokens::models::OperatorSpan,
 }
 
 /// Represent a BETWEEN predicate (`x BETWEEN low AND high`).
@@ -394,6 +412,10 @@ pub struct Between {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the operator and the end of its last operand, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub operator_span: crate::tokens::models::OperatorSpan,
 }
 
 /// IS NULL predicate

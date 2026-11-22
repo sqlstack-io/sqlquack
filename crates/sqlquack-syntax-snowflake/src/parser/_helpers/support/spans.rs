@@ -3,7 +3,7 @@
 use crate::parser::models::Parser;
 use sqlquack_syntax::expressions::queries::models::Intersect;
 use sqlquack_syntax::expressions::tree::models::Expression;
-use sqlquack_syntax::tokens::models::{SourceSpan, Span, TokenType};
+use sqlquack_syntax::tokens::models::{OperatorSpan, SeparatorSpans, SourceSpan, Span, TokenType};
 use sqlquack_syntax::traversal::types::AstNode;
 
 impl Parser {
@@ -58,6 +58,59 @@ impl Parser {
             *field = self.token_range(index);
         }
         expr
+    }
+
+    /// SQLQuack: records on `node` the operator that begins at token `operator`, when located.
+    pub(crate) fn record_operation(&self, operator: usize, node: &mut Expression) {
+        if !self.config.record_node_spans || self.current <= operator {
+            return;
+        }
+        if let (Some(first), Some(last)) =
+            (self.tokens.get(operator), self.tokens.get(self.current - 1))
+        {
+            let following: Option<Span> = self.tokens.get(operator + 1).map(|token| token.span);
+            node.record_operation(first.span, following, last.span);
+        }
+    }
+
+    /// SQLQuack: the keyword `back` tokens before the cursor, when it is `keyword`.
+    pub(crate) fn keyword_before(&self, back: usize, keyword: TokenType) -> SourceSpan {
+        match self.current.checked_sub(back) {
+            Some(at)
+                if self
+                    .tokens
+                    .get(at)
+                    .is_some_and(|token| token.token_type == keyword) =>
+            {
+                self.token_range(at)
+            }
+            _ => SourceSpan::default(),
+        }
+    }
+
+    /// SQLQuack: the select item from token `head` to the last consumed token, when Rules read the tree.
+    pub(crate) fn item_range(&self, head: usize) -> Option<OperatorSpan> {
+        if !self.config.record_query_spans || self.current <= head {
+            return None;
+        }
+        let first = self.tokens.get(head)?;
+        let last = self.tokens.get(self.current - 1)?;
+        Some(OperatorSpan::new(first.span, last.span.end))
+    }
+
+    /// SQLQuack: each AS since token `from` with the name after it, when Rules read the tree.
+    pub(crate) fn aliased_names(&self, from: usize) -> SeparatorSpans {
+        if !self.config.record_query_spans {
+            return SeparatorSpans::default();
+        }
+        let written = self.tokens.get(from..self.current).unwrap_or_default();
+        SeparatorSpans(
+            written
+                .windows(2)
+                .filter(|pair| pair[0].token_type == TokenType::As)
+                .map(|pair| pair[0].span.through(pair[1].span))
+                .collect(),
+        )
     }
 
     /// SQLQuack: a query or set-operation branch with its own range, when Rules read the tree.
