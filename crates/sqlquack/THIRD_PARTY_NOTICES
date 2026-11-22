@@ -72,8 +72,6 @@ The semantic checks in crates/sqlquack-semantics/src/lineage/_helpers/checks are
 polyglot's validation: the type families in families.rs, the built-in function signatures in
 signatures.rs and the scope rules in scope_rules.rs, and the type checks and their messages in
 node_checks.rs, relational.rs and sets.rs.
-The lint Rules' scope walk and aggregate classifier, in crates/sqlquack-lint/src/tree, are ported
-from polyglot's scope.rs and traversal.rs.
 
 polyglot is distributed under the following licence:
 

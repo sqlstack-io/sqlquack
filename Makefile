@@ -142,7 +142,7 @@ bundled-extensions:
 	  done
 
 # The crates whose features include dialects, as consumers build them one dialect at a time.
-DIALECT_CRATES ?= sqlquack-semantics sqlquack-parse sqlquack-fingerprint sqlquack-format sqlquack-lint \
+DIALECT_CRATES ?= sqlquack-semantics sqlquack-parse sqlquack-fingerprint sqlquack-format \
   sqlquack-convert sqlquack-diagnostics
 
 # Fails when a DIALECT_CRATES library does not build with one of its dialect features alone. The

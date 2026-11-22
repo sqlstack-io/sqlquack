@@ -1507,19 +1507,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sqlquack-lint"
-version = "0.22.1"
-dependencies = [
- "rayon",
- "rustc-hash",
- "serde",
- "serde_json",
- "sqlquack-lint",
- "sqlquack-parse",
- "sqlquack-syntax",
-]
-
-[[package]]
 name = "sqlquack-parse"
 version = "0.22.1"
 dependencies = [

@@ -56,7 +56,6 @@ reason = "compiles in crates/sqlquack-policy/policy.toml, which sits at the crat
 dialect_registries = [
     "crates/sqlquack-semantics/src/dialects",
     "crates/sqlquack-format/src/dialects",
-    "crates/sqlquack-lint/src/dialects",
     "crates/sqlquack-fingerprint/src/dialects",
 ]
 
