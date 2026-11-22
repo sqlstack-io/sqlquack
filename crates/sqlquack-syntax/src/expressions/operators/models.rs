@@ -160,6 +160,10 @@ pub struct Case {
     #[serde(skip)]
     #[ast(skip)]
     pub keyword_spans: SeparatorSpans,
+    /// SQLQuack: ELSE through the end of its value, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub else_span: SourceSpan,
 }
 
 impl Case {

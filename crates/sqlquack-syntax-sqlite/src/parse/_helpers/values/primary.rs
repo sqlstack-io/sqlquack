@@ -334,16 +334,20 @@ impl Parser<'_> {
                 break;
             }
         }
+        let mut else_span = SourceSpan::default();
         let otherwise: Option<Expression> = match self.eat_kw("ELSE") {
             true => {
-                keywords.0.extend(self.token_range(self.at - 1).0);
-                Some(self.expression()?)
+                let else_at: usize = self.at - 1;
+                keywords.0.extend(self.token_range(else_at).0);
+                let value: Expression = self.expression()?;
+                else_span = self.source_range(else_at);
+                Some(value)
             }
             false => None,
         };
         self.expect_kw("END")?;
         keywords.0.extend(self.token_range(self.at - 1).0);
-        Ok(case(operand, whens, otherwise, keywords))
+        Ok(case(operand, whens, otherwise, (keywords, else_span)))
     }
 
     /// `RAISE (...)`, which only a trigger program may run: a gap.

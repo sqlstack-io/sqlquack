@@ -96,7 +96,7 @@ pub(crate) fn case(
     operand: Option<Expression>,
     whens: Vec<(Expression, Expression)>,
     else_: Option<Expression>,
-    keyword_spans: SeparatorSpans,
+    (keyword_spans, else_span): (SeparatorSpans, SourceSpan),
 ) -> Expression {
     Expression::Case(Box::new(Case {
         operand,
@@ -106,6 +106,7 @@ pub(crate) fn case(
         inferred_type: None,
         span: SourceSpan(None),
         keyword_spans,
+        else_span,
     }))
 }
 

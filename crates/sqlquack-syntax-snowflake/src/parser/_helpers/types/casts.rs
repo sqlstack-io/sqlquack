@@ -83,9 +83,13 @@ impl Parser {
             whens.push((condition, result));
         }
 
+        let mut else_span = SourceSpan::default();
         let else_ = if self.match_token(TokenType::Else) {
-            keywords.0.extend(self.token_range(self.current - 1).0);
-            Some(self.parse_expression()?)
+            let else_at = self.current - 1;
+            keywords.0.extend(self.token_range(else_at).0);
+            let value = self.parse_expression()?;
+            else_span = self.source_range(else_at);
+            Some(value)
         } else {
             None
         };
@@ -101,6 +105,7 @@ impl Parser {
             inferred_type: None,
             span: SourceSpan::default(),
             keyword_spans: keywords,
+            else_span,
         })))
     }
 

@@ -40,6 +40,7 @@ pub(crate) fn case_keywords(statements: &[Expression], sql: &str) -> Vec<String>
         }
         keywords.extend(case.else_.as_ref().map(|_| case.else_keyword()));
         keywords.push(case.end_keyword());
+        keywords.extend(case.else_span.0.map(Some));
         let words: Vec<String> = keywords
             .iter()
             .map(|span| span.map_or_else(|| "?".to_owned(), |span| written_at(sql, span)))

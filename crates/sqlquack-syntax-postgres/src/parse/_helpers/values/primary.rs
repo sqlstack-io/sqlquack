@@ -7,8 +7,8 @@ use sqlquack_syntax::expressions::operators::models::{
     ArraySlice, DotAccess, OverlapsExpr, Subscript,
 };
 use sqlquack_syntax::expressions::typed_functions::models::ArrayConstructor;
-use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::Span;
+use sqlquack_syntax::tokens::models::{SeparatorSpans, SourceSpan};
 
 use crate::parse::_helpers::commands::routines::var;
 use crate::parse::_helpers::tree::cursor::{
@@ -484,16 +484,20 @@ impl Parser<'_> {
         if whens.is_empty() {
             return Err(self.error());
         }
+        let mut else_span = SourceSpan::default();
         let otherwise: Option<Expression> = match self.eat_kw("else") {
             true => {
-                keywords.0.extend(self.token_range(self.at - 1).0);
-                Some(self.a_expr()?)
+                let else_at: usize = self.at - 1;
+                keywords.0.extend(self.token_range(else_at).0);
+                let value: Expression = self.a_expr()?;
+                else_span = self.source_range(else_at);
+                Some(value)
             }
             false => None,
         };
         self.expect_kw("end")?;
         keywords.0.extend(self.token_range(self.at - 1).0);
-        Ok(case(operand, whens, otherwise, keywords))
+        Ok(case(operand, whens, otherwise, (keywords, else_span)))
     }
 
     /// `array_expr`: `[ expr_list ]`, `[ array_expr, ... ]` or `[ ]`.

@@ -993,19 +993,28 @@ fn given_case_expressions_when_parsed_located_then_each_records_its_keywords() {
             description: "Snowflake",
             parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
             sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
-            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+            expected_keywords: &[
+                "CASE WHEN THEN WHEN THEN ELSE END ELSE CASE WHEN b = 1 THEN 'z' END",
+                "CASE WHEN THEN END",
+            ],
         },
         CaseKeywordsTestCase {
             description: "DuckDB through the shared parser",
             parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
             sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
-            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+            expected_keywords: &[
+                "CASE WHEN THEN WHEN THEN ELSE END ELSE CASE WHEN b = 1 THEN 'z' END",
+                "CASE WHEN THEN END",
+            ],
         },
         CaseKeywordsTestCase {
             description: "SQLite through the shared parser",
             parse: |sql| parse_source(sql, Dialect::SQLite).ok(),
             sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
-            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+            expected_keywords: &[
+                "CASE WHEN THEN WHEN THEN ELSE END ELSE CASE WHEN b = 1 THEN 'z' END",
+                "CASE WHEN THEN END",
+            ],
         },
         CaseKeywordsTestCase {
             description: "after a character of three bytes",
@@ -1022,7 +1031,10 @@ fn given_case_expressions_when_parsed_located_then_each_records_its_keywords() {
                     .map(|parsed| parsed.statements)
             },
             sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
-            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+            expected_keywords: &[
+                "CASE WHEN THEN WHEN THEN ELSE END ELSE CASE WHEN b = 1 THEN 'z' END",
+                "CASE WHEN THEN END",
+            ],
         },
         #[cfg(feature = "bigquery")]
         CaseKeywordsTestCase {
@@ -1033,7 +1045,10 @@ fn given_case_expressions_when_parsed_located_then_each_records_its_keywords() {
                     .map(|parsed| parsed.statements)
             },
             sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
-            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+            expected_keywords: &[
+                "CASE WHEN THEN WHEN THEN ELSE END ELSE CASE WHEN b = 1 THEN 'z' END",
+                "CASE WHEN THEN END",
+            ],
         },
         #[cfg(feature = "databricks")]
         CaseKeywordsTestCase {
@@ -1044,7 +1059,10 @@ fn given_case_expressions_when_parsed_located_then_each_records_its_keywords() {
                     .map(|parsed| parsed.statements)
             },
             sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
-            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+            expected_keywords: &[
+                "CASE WHEN THEN WHEN THEN ELSE END ELSE CASE WHEN b = 1 THEN 'z' END",
+                "CASE WHEN THEN END",
+            ],
         },
         #[cfg(feature = "duckdb")]
         CaseKeywordsTestCase {
@@ -1055,7 +1073,10 @@ fn given_case_expressions_when_parsed_located_then_each_records_its_keywords() {
                     .map(|parsed| parsed.statements)
             },
             sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
-            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+            expected_keywords: &[
+                "CASE WHEN THEN WHEN THEN ELSE END ELSE CASE WHEN b = 1 THEN 'z' END",
+                "CASE WHEN THEN END",
+            ],
         },
         #[cfg(feature = "sqlite")]
         CaseKeywordsTestCase {
@@ -1066,7 +1087,10 @@ fn given_case_expressions_when_parsed_located_then_each_records_its_keywords() {
                     .map(|parsed| parsed.statements)
             },
             sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
-            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+            expected_keywords: &[
+                "CASE WHEN THEN WHEN THEN ELSE END ELSE CASE WHEN b = 1 THEN 'z' END",
+                "CASE WHEN THEN END",
+            ],
         },
         #[cfg(feature = "clickhouse")]
         CaseKeywordsTestCase {
@@ -1077,7 +1101,10 @@ fn given_case_expressions_when_parsed_located_then_each_records_its_keywords() {
                     .map(|parsed| parsed.statements)
             },
             sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
-            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+            expected_keywords: &[
+                "CASE WHEN THEN WHEN THEN ELSE END ELSE CASE WHEN b = 1 THEN 'z' END",
+                "CASE WHEN THEN END",
+            ],
         },
         #[cfg(feature = "sqlserver")]
         CaseKeywordsTestCase {
@@ -1088,7 +1115,10 @@ fn given_case_expressions_when_parsed_located_then_each_records_its_keywords() {
                     .map(|parsed| parsed.statements)
             },
             sql: "SELECT CASE a WHEN 1 THEN 'x' WHEN 2 THEN 'y' ELSE CASE WHEN b = 1 THEN 'z' END END FROM t",
-            expected_keywords: &["CASE WHEN THEN WHEN THEN ELSE END", "CASE WHEN THEN END"],
+            expected_keywords: &[
+                "CASE WHEN THEN WHEN THEN ELSE END ELSE CASE WHEN b = 1 THEN 'z' END",
+                "CASE WHEN THEN END",
+            ],
         },
     ];
 

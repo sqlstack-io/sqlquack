@@ -542,16 +542,20 @@ impl Parser<'_> {
         if whens.is_empty() {
             return Err(self.error());
         }
+        let mut else_span = SourceSpan::default();
         let else_: Option<Expression> = match self.eat_kw("ELSE") {
             true => {
-                keywords.0.extend(self.token_range(self.at - 1).0);
-                Some(self.expression()?)
+                let else_at: usize = self.at - 1;
+                keywords.0.extend(self.token_range(else_at).0);
+                let value: Expression = self.expression()?;
+                else_span = self.source_range(else_at);
+                Some(value)
             }
             false => None,
         };
         self.expect_kw("END")?;
         keywords.0.extend(self.token_range(self.at - 1).0);
-        Ok(case(operand, whens, else_, keywords))
+        Ok(case(operand, whens, else_, (keywords, else_span)))
     }
 
     /// `CAST (expression AS Type)` or `TRY_CAST (...)`.

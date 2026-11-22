@@ -102,6 +102,6 @@ pub(crate) struct CaseKeywordsTestCase {
     pub(crate) description: &'static str,
     pub(crate) parse: LocatedParser,
     pub(crate) sql: &'static str,
-    /// Each CASE's keywords as written, by where the CASE starts.
+    /// Each CASE's keywords, then its ELSE clause, as written, by where the CASE starts.
     pub(crate) expected_keywords: &'static [&'static str],
 }
