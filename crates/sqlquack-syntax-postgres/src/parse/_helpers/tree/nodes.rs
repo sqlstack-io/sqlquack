@@ -188,6 +188,7 @@ pub(crate) fn keyword_call(
         kind: kind.to_owned(),
         operands,
         options,
+        call_span: Default::default(),
     }))
 }
 

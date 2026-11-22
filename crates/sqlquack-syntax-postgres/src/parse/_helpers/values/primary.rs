@@ -194,8 +194,12 @@ impl Parser<'_> {
                 self.value_function(name)
             }
             _ if call && JSON_CALLS.contains(&name) => {
+                let first: usize = self.at;
                 self.at += 1;
                 let mut node: Expression = self.json_call(name)?;
+                if let Expression::KeywordCall(written) = &mut node {
+                    written.call_span = self.source_range(first);
+                }
                 if JSON_AGGREGATES.contains(&name) {
                     let (filter, window) = self.filter_and_window()?;
                     if let (Some(filter), Expression::KeywordCall(aggregate)) = (filter, &mut node)

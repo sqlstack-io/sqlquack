@@ -33,6 +33,10 @@ impl Expression {
             Self::Update(node) => node.with.as_ref(),
             Self::Delete(node) => node.with.as_ref(),
             Self::Call(node) => node.with.as_ref(),
+            Self::Merge(node) => match node.with_.as_deref() {
+                Some(Self::With(with)) => Some(with),
+                _ => None,
+            },
             _ => None,
         }
     }

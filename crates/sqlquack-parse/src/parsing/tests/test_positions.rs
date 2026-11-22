@@ -159,6 +159,23 @@ fn given_queries_and_writes_when_parsed_located_then_clauses_items_and_operators
             sql: "DELETE FROM t WHERE x / 2 = 1",
             expected_positions: &["delete DELETE", "operation / 2", "operation = 1"],
         },
+        #[cfg(feature = "postgres")]
+        WrittenPositionsTestCase {
+            description: "PostgreSQL's own parser, a MERGE after a WITH and a SQL/JSON aggregate",
+            parse: |sql| {
+                sqlquack_syntax_postgres::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "WITH c AS (SELECT JSON_ARRAYAGG(x) AS v) MERGE INTO m USING c ON true WHEN MATCHED THEN DELETE",
+            expected_positions: &[
+                "call JSON_ARRAYAGG(x)",
+                "head JSON_ARRAYAGG",
+                "item JSON_ARRAYAGG(x) AS v",
+                "select SELECT",
+                "with WITH",
+            ],
+        },
         #[cfg(feature = "bigquery")]
         WrittenPositionsTestCase {
             description: "BigQuery's own parser, a query",

@@ -462,6 +462,10 @@ pub struct KeywordCall {
     /// The call's clauses in order, e.g. `(RETURNING, int)` or `(ON ERROR, NULL)`
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub options: Vec<Expression>,
+    /// SQLQuack: a SQL/JSON call from its name through its parenthesis, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub call_span: crate::tokens::models::SourceSpan,
 }
 
 /// JSON unique keys constraint variants

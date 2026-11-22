@@ -79,6 +79,7 @@ pub(crate) fn written_positions(statements: &[Expression], sql: &str) -> Vec<Str
                 .map(|span| ("when", Some(span))),
         );
         found.extend(deleted(node).map(|span| ("delete", Some(span))));
+        found.extend(keyword_call(node).map(|span| ("call", Some(span))));
     }
     let mut written: Vec<String> = found
         .into_iter()
@@ -181,4 +182,11 @@ fn deleted(node: &Expression) -> Option<Span> {
         return None;
     };
     delete.keyword_span.0
+}
+
+fn keyword_call(node: &Expression) -> Option<Span> {
+    let Expression::KeywordCall(call) = node else {
+        return None;
+    };
+    call.call_span.0
 }
