@@ -1045,6 +1045,7 @@ impl Parser {
                 let inner = self.parse_statement()?;
                 self.expect_token(TokenType::RParen)?;
                 Some(Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: inner,
                     alias: None,
                     column_aliases: Vec::new(),

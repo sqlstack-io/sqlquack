@@ -29,6 +29,7 @@ struct Limits {
     fetch: Option<Fetch>,
     offset: Option<Offset>,
     position: usize,
+    keyword: SourceSpan,
 }
 
 /// `FOR UPDATE` and its kin, with whether any skips locked rows.
@@ -450,6 +451,9 @@ impl Parser<'_> {
         macro_rules! set_operation_options {
             ($node:expr) => {{
                 let node = $node;
+                if !limits.keyword.is_absent() {
+                    node.row_limit_span = limits.keyword;
+                }
                 if let Some(order) = order {
                     if node.order_by.is_some() {
                         return Err(self
@@ -499,6 +503,9 @@ impl Parser<'_> {
         }
         match body {
             Expression::Select(select) => {
+                if !limits.keyword.is_absent() {
+                    select.row_limit_span = limits.keyword;
+                }
                 if let Some(order) = order {
                     if select.order_by.is_some() {
                         return Err(self
@@ -563,6 +570,7 @@ impl Parser<'_> {
             position: self.offset(),
             ..Limits::default()
         };
+        let first: usize = self.at;
         loop {
             let counted: bool = limits.limit.is_some() || limits.fetch.is_some();
             if self.kw("limit") && !counted {
@@ -583,6 +591,9 @@ impl Parser<'_> {
                 self.at += 1;
                 limits.offset = Some(self.offset_clause()?);
             } else {
+                if self.at > first {
+                    limits.keyword = self.token_range(first);
+                }
                 return Ok(limits);
             }
         }

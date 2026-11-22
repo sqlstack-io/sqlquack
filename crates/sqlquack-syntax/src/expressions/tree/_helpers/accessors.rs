@@ -120,6 +120,18 @@ impl Expression {
         }
     }
 
+    /// SQLQuack: where a query's row limit starts; `None` for a node that can hold none.
+    pub fn row_limit_span(&self) -> Option<SourceSpan> {
+        match self {
+            Self::Select(node) => Some(node.row_limit_span),
+            Self::Union(node) => Some(node.row_limit_span),
+            Self::Intersect(node) => Some(node.row_limit_span),
+            Self::Except(node) => Some(node.row_limit_span),
+            Self::Subquery(node) => Some(node.row_limit_span),
+            _ => None,
+        }
+    }
+
     /// SQLQuack: where a set operation's keyword is written; `None` for any other node.
     pub fn set_operator_span(&self) -> Option<SourceSpan> {
         match self {

@@ -18,6 +18,7 @@ struct Term {
     body: Expression,
     order_by: Option<OrderBy>,
     limit: Option<(Expression, Option<Expression>)>,
+    limit_span: SourceSpan,
     values: bool,
 }
 
@@ -32,7 +33,7 @@ struct Written {
 fn finished(
     body: Expression,
     order_by: Option<OrderBy>,
-    limit: Option<(Expression, Option<Expression>)>,
+    (limit, keyword): (Option<(Expression, Option<Expression>)>, SourceSpan),
 ) -> Expression {
     let (count, offset) = match limit {
         Some((count, offset)) => (Some(count), offset),
@@ -41,6 +42,7 @@ fn finished(
     macro_rules! set_operation_finished {
         ($node:expr) => {{
             $node.order_by = order_by;
+            $node.row_limit_span = keyword;
             $node.limit = count.map(Box::new);
             $node.offset = offset.map(Box::new);
         }};
@@ -49,6 +51,7 @@ fn finished(
     match &mut body {
         Expression::Select(select) => {
             select.order_by = order_by;
+            select.row_limit_span = keyword;
             select.limit = count.map(|this| Limit {
                 this,
                 percent: false,
@@ -134,7 +137,7 @@ impl Parser<'_> {
         } else if let Some(message) = misplaced {
             self.defer(self.error_with(&message, start, true));
         }
-        let body: Expression = finished(body, term.order_by, term.limit);
+        let body: Expression = finished(body, term.order_by, (term.limit, term.limit_span));
         Ok(self.respanned(first, with_ctes(body, with)))
     }
 
@@ -164,6 +167,7 @@ impl Parser<'_> {
                 body: self.respanned(first, values(rows, None)),
                 order_by: None,
                 limit: None,
+                limit_span: SourceSpan::default(),
                 values: true,
             });
         }
@@ -205,12 +209,18 @@ impl Parser<'_> {
             select.windows = Some(self.window_definitions()?);
         }
         let order_by: Option<OrderBy> = self.order_by_clause()?;
+        let limit_at: usize = self.at;
         let limit: Option<(Expression, Option<Expression>)> = self.limit_clause()?;
+        let limit_span: SourceSpan = match limit {
+            Some(_) => self.token_range(limit_at),
+            None => SourceSpan::default(),
+        };
         let body: Expression = Expression::Select(select);
         Ok(Term {
             body: self.respanned(first, body),
             order_by,
             limit,
+            limit_span,
             values: false,
         })
     }

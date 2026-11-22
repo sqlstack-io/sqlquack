@@ -3,6 +3,7 @@
 use crate::parser::constants::PERCENT_SIGN;
 use crate::parser::models::JoinKindParts;
 use crate::parser::models::Parser;
+use crate::parser::models::SetModifiers;
 use crate::parser::models::SetOperationCorresponding;
 use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::functions::models::SetQuantifier;
@@ -16,7 +17,6 @@ use sqlquack_syntax::expressions::queries::models::Except;
 use sqlquack_syntax::expressions::queries::models::Intersect;
 use sqlquack_syntax::expressions::queries::models::Join;
 use sqlquack_syntax::expressions::queries::models::Limit;
-use sqlquack_syntax::expressions::queries::models::OrderBy;
 use sqlquack_syntax::expressions::queries::models::Sample;
 use sqlquack_syntax::expressions::queries::models::SampleMethod;
 use sqlquack_syntax::expressions::queries::models::Subquery;
@@ -31,13 +31,6 @@ use sqlquack_syntax::expressions::types::models::Tuple;
 use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
-
-/// ORDER BY, LIMIT and OFFSET written after a set operation's last branch.
-type SetModifiers = (
-    Option<OrderBy>,
-    Option<Box<Expression>>,
-    Option<Box<Expression>>,
-);
 
 impl Parser {
     /// Parse SAMPLE / TABLESAMPLE / USING SAMPLE clause
@@ -422,7 +415,15 @@ impl Parser {
                 };
 
                 let left_span = Self::operand_span(&left);
-                let (right, (order_by, limit, offset)) = self.parse_set_operand()?;
+                let (
+                    right,
+                    SetModifiers {
+                        order_by,
+                        limit,
+                        offset,
+                        row_limit_span,
+                    },
+                ) = self.parse_set_operand()?;
                 result = Expression::Union(Box::new(Union {
                     with_ties: false,
                     keyword: None,
@@ -445,6 +446,7 @@ impl Parser {
                     on_columns,
                     span: self.range_from(left_span),
                     operator_span,
+                    row_limit_span,
                     locks: Vec::new(),
                 }));
                 found_set_op = true;
@@ -473,7 +475,15 @@ impl Parser {
                 };
 
                 let left_span = Self::operand_span(&left);
-                let (right, (order_by, limit, offset)) = self.parse_set_operand()?;
+                let (
+                    right,
+                    SetModifiers {
+                        order_by,
+                        limit,
+                        offset,
+                        row_limit_span,
+                    },
+                ) = self.parse_set_operand()?;
                 result = Expression::Intersect(Box::new(Intersect {
                     with_ties: false,
                     keyword: None,
@@ -496,6 +506,7 @@ impl Parser {
                     on_columns,
                     span: self.range_from(left_span),
                     operator_span,
+                    row_limit_span,
                     locks: Vec::new(),
                 }));
                 if self.config.dialect
@@ -529,7 +540,15 @@ impl Parser {
                 };
 
                 let left_span = Self::operand_span(&left);
-                let (right, (order_by, limit, offset)) = self.parse_set_operand()?;
+                let (
+                    right,
+                    SetModifiers {
+                        order_by,
+                        limit,
+                        offset,
+                        row_limit_span,
+                    },
+                ) = self.parse_set_operand()?;
                 result = Expression::Except(Box::new(Except {
                     with_ties: false,
                     keyword: None,
@@ -552,6 +571,7 @@ impl Parser {
                     on_columns,
                     span: self.range_from(left_span),
                     operator_span,
+                    row_limit_span,
                     locks: Vec::new(),
                 }));
                 found_set_op = true;
@@ -589,6 +609,7 @@ impl Parser {
                 outer.order_by = intersect.order_by.take();
                 outer.limit = intersect.limit.take();
                 outer.offset = intersect.offset.take();
+                outer.row_limit_span = std::mem::take(&mut intersect.row_limit_span);
                 outer.right =
                     Self::snowflake_intersect_precedence(Expression::Intersect(intersect));
                 Expression::Union(outer)
@@ -599,6 +620,7 @@ impl Parser {
                 outer.order_by = intersect.order_by.take();
                 outer.limit = intersect.limit.take();
                 outer.offset = intersect.offset.take();
+                outer.row_limit_span = std::mem::take(&mut intersect.row_limit_span);
                 outer.right =
                     Self::snowflake_intersect_precedence(Expression::Intersect(intersect));
                 Expression::Except(outer)
@@ -615,7 +637,7 @@ impl Parser {
         let start = self.current;
         let mut operand = self.parse_select_or_paren_select()?;
         let modifiers = self.detach_unparenthesized_set_operation_modifiers(&mut operand);
-        if modifiers.0.is_some() || modifiers.1.is_some() || modifiers.2.is_some() {
+        if modifiers.order_by.is_some() || modifiers.limit.is_some() || modifiers.offset.is_some() {
             self.end_select_before_modifiers(start, &mut operand);
         }
         Ok((operand, modifiers))
@@ -638,9 +660,15 @@ impl Parser {
                         .map(|fetch| Box::new(Expression::Fetch(Box::new(fetch))))
                 });
                 let offset = select.offset.take().map(|offset| Box::new(offset.this));
-                (order_by, limit, offset)
+                let row_limit_span = std::mem::take(&mut select.row_limit_span);
+                SetModifiers {
+                    order_by,
+                    limit,
+                    offset,
+                    row_limit_span,
+                }
             }
-            _ => (None, None, None),
+            _ => SetModifiers::default(),
         }
     }
 
@@ -775,7 +803,10 @@ impl Parser {
             None
         };
 
+        let row_limit_at = self.current;
         let (limit, offset, fetch) = self.parse_row_limit_modifiers()?;
+        let limited = limit.is_some() || offset.is_some() || fetch.is_some();
+        let row_limit_span = self.token_range_if(limited, row_limit_at);
         let limit = limit
             .map(Limit::into_set_limit)
             .or_else(|| fetch.map(|fetch| Box::new(Expression::Fetch(Box::new(fetch)))));
@@ -805,6 +836,9 @@ impl Parser {
                 if offset.is_some() {
                     union.offset = offset;
                 }
+                if limited {
+                    union.row_limit_span = row_limit_span;
+                }
             }
             Expression::Intersect(ref mut intersect) => {
                 if order_by.is_some() {
@@ -816,6 +850,9 @@ impl Parser {
                 if offset.is_some() {
                     intersect.offset = offset;
                 }
+                if limited {
+                    intersect.row_limit_span = row_limit_span;
+                }
             }
             Expression::Except(ref mut except) => {
                 if order_by.is_some() {
@@ -826,6 +863,9 @@ impl Parser {
                 }
                 if offset.is_some() {
                     except.offset = offset;
+                }
+                if limited {
+                    except.row_limit_span = row_limit_span;
                 }
             }
             _ => {}
@@ -856,6 +896,7 @@ impl Parser {
                     None
                 };
                 Ok(Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: query,
                     alias,
                     column_aliases: Vec::new(),
@@ -887,6 +928,7 @@ impl Parser {
                     None
                 };
                 Ok(Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: result,
                     alias,
                     column_aliases: Vec::new(),

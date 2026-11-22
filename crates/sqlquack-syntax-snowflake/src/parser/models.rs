@@ -462,6 +462,15 @@ pub(crate) struct ParserConfig {
     pub(crate) in_semantic_view: bool,
 }
 
+/// SQLQuack: what is written after a set operation's last branch and belongs to the operation.
+#[derive(Debug, Default)]
+pub(crate) struct SetModifiers {
+    pub(crate) order_by: Option<sqlquack_syntax::expressions::queries::models::OrderBy>,
+    pub(crate) limit: Option<Box<Expression>>,
+    pub(crate) offset: Option<Box<Expression>>,
+    pub(crate) row_limit_span: sqlquack_syntax::tokens::models::SourceSpan,
+}
+
 #[derive(Debug)]
 pub(crate) struct SelectBodyHead {
     pub(crate) leading_comments: Vec<String>,

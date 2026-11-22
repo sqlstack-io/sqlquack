@@ -1304,6 +1304,7 @@ impl Parser {
                 | Expression::Except(_)
         ) {
             Expression::Subquery(Box::new(Subquery {
+                row_limit_span: Default::default(),
                 this: inner,
                 alias: None,
                 column_aliases: Vec::new(),

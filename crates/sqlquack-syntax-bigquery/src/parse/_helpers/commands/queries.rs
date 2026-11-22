@@ -47,6 +47,7 @@ pub(crate) struct Organization {
     windows: Option<Vec<NamedWindow>>,
     limit: Option<Expression>,
     offset: Option<Expression>,
+    keyword: SourceSpan,
 }
 
 impl Organization {
@@ -166,6 +167,7 @@ fn organized(body: Expression, organization: Organization, parenthesised: bool) 
         windows,
         limit: count,
         offset,
+        keyword,
     } = organization;
     let cluster = cluster.map(|expressions| ClusterBy {
         expressions: expressions.into_iter().map(Ordered::asc).collect(),
@@ -180,6 +182,7 @@ fn organized(body: Expression, organization: Organization, parenthesised: bool) 
             $node.cluster_by = cluster.or($node.cluster_by.take());
             $node.distribute_by = distribute.or($node.distribute_by.take());
             $node.sort_by = sort.or($node.sort_by.take());
+            $node.row_limit_span = keyword;
             $node.limit = count.map(Box::new);
             $node.offset = offset.map(Box::new);
         }};
@@ -193,6 +196,7 @@ fn organized(body: Expression, organization: Organization, parenthesised: bool) 
             select.distribute_by = distribute.or(select.distribute_by.take());
             select.sort_by = sort.or(select.sort_by.take());
             select.windows = windows.or(select.windows.take());
+            select.row_limit_span = keyword;
             select.limit = count.map(limit);
             select.offset =
                 offset.map(
@@ -722,6 +726,9 @@ impl Parser<'_> {
         }
         if self.kw("WINDOW") && self.is_at(1, is_identifier) {
             organization.windows = Some(self.window_clause()?);
+        }
+        if self.kw_in(0, &["LIMIT", "OFFSET"]) {
+            organization.keyword = self.token_range(self.at);
         }
         if self.eat_kw("LIMIT") {
             organization.limit = Some(match self.eat_kw("ALL") {

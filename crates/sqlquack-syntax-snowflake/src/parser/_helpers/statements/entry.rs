@@ -814,6 +814,7 @@ impl Parser {
             let inner = { self.parse_statement()? };
             self.expect_token(TokenType::RParen)?;
             let subquery = Expression::Subquery(Box::new(Subquery {
+                row_limit_span: Default::default(),
                 this: inner,
                 alias: None,
                 column_aliases: Vec::new(),
@@ -843,6 +844,7 @@ impl Parser {
             let result = self.parse_set_operation(inner)?;
             self.expect_token(TokenType::RParen)?;
             let subquery = Expression::Subquery(Box::new(Subquery {
+                row_limit_span: Default::default(),
                 this: result,
                 alias: None,
                 column_aliases: Vec::new(),
@@ -1087,6 +1089,7 @@ impl Parser {
             let inner = self.parse_statement()?;
             self.expect_token(TokenType::RParen)?;
             let subquery = Expression::Subquery(Box::new(Subquery {
+                row_limit_span: Default::default(),
                 this: inner,
                 alias: None,
                 column_aliases: Vec::new(),
@@ -1116,6 +1119,7 @@ impl Parser {
             let result = self.parse_set_operation(inner)?;
             self.expect_token(TokenType::RParen)?;
             let subquery = Expression::Subquery(Box::new(Subquery {
+                row_limit_span: Default::default(),
                 this: result,
                 alias: None,
                 column_aliases: Vec::new(),
@@ -1400,6 +1404,7 @@ impl Parser {
                     let expr = if self.check(TokenType::Select) || self.check(TokenType::With) {
                         let stmt = self.parse_statement()?;
                         Expression::Subquery(Box::new(Subquery {
+                            row_limit_span: Default::default(),
                             this: stmt,
                             alias: None,
                             column_aliases: Vec::new(),
@@ -1455,6 +1460,7 @@ impl Parser {
                     let expr = if self.check(TokenType::Select) || self.check(TokenType::With) {
                         let stmt = self.parse_statement()?;
                         Expression::Subquery(Box::new(Subquery {
+                            row_limit_span: Default::default(),
                             this: stmt,
                             alias: None,
                             column_aliases: Vec::new(),
@@ -1570,6 +1576,7 @@ impl Parser {
         let modifiers_start = self.current;
         let order_by = self.parse_select_order_by()?;
 
+        let row_limit_at = self.current;
         let limits;
         (limits, where_clause) = self.parse_select_limit_offset(where_clause)?;
         let SelectLimitClauses {
@@ -1589,6 +1596,8 @@ impl Parser {
         if limit.is_some() && fetch.is_some() {
             return Err(self.parse_error("LIMIT and FETCH cannot be combined in the same query"));
         }
+        let limited = limit.is_some() || offset.is_some() || fetch.is_some();
+        let row_limit_span = self.token_range_if(limited, row_limit_at);
 
         let sample = self.parse_sample_clause()?;
 
@@ -1640,6 +1649,7 @@ impl Parser {
             sort_by,
             limit,
             offset,
+            row_limit_span,
             limit_by,
             fetch,
             distinct,

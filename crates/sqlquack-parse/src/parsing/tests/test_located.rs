@@ -7,7 +7,8 @@ use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
 use crate::parsing::main::parse_source::parse_source;
 use crate::parsing::tests::helpers::parse_as_written;
 use crate::parsing::tests::test_types::{
-    DistinctSpanTestCase, JoinSpanTestCase, OperatorSpanTestCase, WrittenCallTestCase,
+    DistinctSpanTestCase, JoinSpanTestCase, OperatorSpanTestCase, RowLimitSpanTestCase,
+    WrittenCallTestCase,
 };
 
 #[test]
@@ -759,6 +760,226 @@ fn given_calls_when_parsed_as_written_then_each_keeps_its_name_and_qualifier() {
             .collect();
         assert_eq!(
             written, test_case.expected_calls,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_row_limits_when_parsed_located_then_each_query_records_its_keyword() {
+    let test_cases = [
+        RowLimitSpanTestCase {
+            description: "a select",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT a FROM t ORDER BY a LIMIT 5",
+            expected_starts: &[27],
+        },
+        RowLimitSpanTestCase {
+            description: "an inner and an outer limit",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT a FROM (SELECT a FROM t LIMIT 9) AS s LIMIT 5 OFFSET 2",
+            expected_starts: &[31, 45],
+        },
+        RowLimitSpanTestCase {
+            description: "FETCH alone",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT a FROM t FETCH FIRST 5 ROWS ONLY",
+            expected_starts: &[16],
+        },
+        RowLimitSpanTestCase {
+            description: "OFFSET alone",
+            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            sql: "SELECT a FROM t OFFSET 5",
+            expected_starts: &[16],
+        },
+        RowLimitSpanTestCase {
+            description: "a set operation takes the limit after its last branch",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT a FROM t UNION ALL SELECT a FROM u LIMIT 5",
+            expected_starts: &[42],
+        },
+        RowLimitSpanTestCase {
+            description: "a limit after a parenthesised last branch",
+            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            sql: "SELECT a FROM t UNION ALL (SELECT a FROM u) LIMIT 5",
+            expected_starts: &[44],
+        },
+        RowLimitSpanTestCase {
+            description: "a limit after a parenthesised query",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "(SELECT a FROM t) LIMIT 5",
+            expected_starts: &[18],
+        },
+        RowLimitSpanTestCase {
+            description: "INTERSECT passes the limit to the looser operation",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT 1 UNION SELECT 2 INTERSECT SELECT 3 LIMIT 5",
+            expected_starts: &[43],
+        },
+        RowLimitSpanTestCase {
+            description: "a column named like the keyword is no limit",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT t.offset FROM t",
+            expected_starts: &[],
+        },
+        #[cfg(feature = "postgres")]
+        RowLimitSpanTestCase {
+            description: "postgres select",
+            parse: |sql| {
+                sqlquack_syntax_postgres::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t ORDER BY a LIMIT 5",
+            expected_starts: &[27],
+        },
+        #[cfg(feature = "postgres")]
+        RowLimitSpanTestCase {
+            description: "postgres set operation",
+            parse: |sql| {
+                sqlquack_syntax_postgres::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t UNION ALL SELECT a FROM u LIMIT 5",
+            expected_starts: &[42],
+        },
+        #[cfg(feature = "bigquery")]
+        RowLimitSpanTestCase {
+            description: "bigquery select",
+            parse: |sql| {
+                sqlquack_syntax_bigquery::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t ORDER BY a LIMIT 5",
+            expected_starts: &[27],
+        },
+        #[cfg(feature = "bigquery")]
+        RowLimitSpanTestCase {
+            description: "bigquery set operation",
+            parse: |sql| {
+                sqlquack_syntax_bigquery::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t UNION ALL SELECT a FROM u LIMIT 5",
+            expected_starts: &[42],
+        },
+        #[cfg(feature = "databricks")]
+        RowLimitSpanTestCase {
+            description: "databricks select",
+            parse: |sql| {
+                sqlquack_syntax_databricks::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t ORDER BY a LIMIT 5",
+            expected_starts: &[27],
+        },
+        #[cfg(feature = "databricks")]
+        RowLimitSpanTestCase {
+            description: "databricks set operation",
+            parse: |sql| {
+                sqlquack_syntax_databricks::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t UNION ALL SELECT a FROM u LIMIT 5",
+            expected_starts: &[42],
+        },
+        #[cfg(feature = "duckdb")]
+        RowLimitSpanTestCase {
+            description: "duckdb select",
+            parse: |sql| {
+                sqlquack_syntax_duckdb::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t ORDER BY a LIMIT 5",
+            expected_starts: &[27],
+        },
+        #[cfg(feature = "duckdb")]
+        RowLimitSpanTestCase {
+            description: "duckdb set operation",
+            parse: |sql| {
+                sqlquack_syntax_duckdb::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t UNION ALL SELECT a FROM u LIMIT 5",
+            expected_starts: &[42],
+        },
+        #[cfg(feature = "sqlite")]
+        RowLimitSpanTestCase {
+            description: "sqlite select",
+            parse: |sql| {
+                sqlquack_syntax_sqlite::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t ORDER BY a LIMIT 5",
+            expected_starts: &[27],
+        },
+        #[cfg(feature = "sqlite")]
+        RowLimitSpanTestCase {
+            description: "sqlite set operation",
+            parse: |sql| {
+                sqlquack_syntax_sqlite::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t UNION ALL SELECT a FROM u LIMIT 5",
+            expected_starts: &[42],
+        },
+        #[cfg(feature = "clickhouse")]
+        RowLimitSpanTestCase {
+            description: "clickhouse",
+            parse: |sql| {
+                sqlquack_syntax_clickhouse::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t ORDER BY a LIMIT 5",
+            expected_starts: &[27],
+        },
+        #[cfg(feature = "databricks")]
+        RowLimitSpanTestCase {
+            description: "databricks parenthesised query",
+            parse: |sql| {
+                sqlquack_syntax_databricks::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "(SELECT a FROM t) LIMIT 5",
+            expected_starts: &[18],
+        },
+        #[cfg(feature = "sqlserver")]
+        RowLimitSpanTestCase {
+            description: "sqlserver",
+            parse: |sql| {
+                sqlquack_syntax_sqlserver::parse(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "SELECT a FROM t ORDER BY a OFFSET 5 ROWS",
+            expected_starts: &[27],
+        },
+    ];
+
+    for test_case in test_cases {
+        let statements: Vec<Expression> = (test_case.parse)(test_case.sql).unwrap_or_default();
+        let mut starts: Vec<usize> = statements
+            .iter()
+            .flat_map(|statement| statement.dfs())
+            .filter_map(|node| node.row_limit_span())
+            .filter_map(|keyword| keyword.0)
+            .map(|keyword| keyword.start)
+            .collect();
+        starts.sort_unstable();
+        assert_eq!(
+            starts, test_case.expected_starts,
             "{}",
             test_case.description
         );

@@ -49,3 +49,11 @@ pub(crate) struct WrittenCallTestCase {
     /// Each call in source order: its name as written and its qualifier joined by dots.
     pub(crate) expected_calls: &'static [(&'static str, &'static str)],
 }
+
+pub(crate) struct RowLimitSpanTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parse: LocatedParser,
+    pub(crate) sql: &'static str,
+    /// Where each query's first LIMIT, OFFSET or FETCH keyword starts.
+    pub(crate) expected_starts: &'static [usize],
+}

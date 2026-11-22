@@ -59,6 +59,7 @@ fn select_clauses(select: &Select) -> Vec<String> {
         distinct,
         all: _,
         distinct_span: _,
+        row_limit_span: _,
         distinct_on,
         top,
         with,
@@ -172,6 +173,7 @@ macro_rules! set_operation_clauses {
                 keyword: _,
                 span: _,
                 operator_span: _,
+                row_limit_span: _,
             } = operation;
             present(&[
                 (*all, concat!($prefix, "_all")),

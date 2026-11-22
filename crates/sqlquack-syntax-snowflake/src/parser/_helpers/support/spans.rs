@@ -92,6 +92,14 @@ impl Parser {
         }
     }
 
+    /// SQLQuack: the range of the token at `index` when `written`, and none otherwise.
+    pub(crate) fn token_range_if(&self, written: bool, index: usize) -> SourceSpan {
+        match written {
+            true => self.token_range(index),
+            false => SourceSpan::default(),
+        }
+    }
+
     /// SQLQuack: the range of the single token at `index`, when located.
     pub(crate) fn token_range(&self, index: usize) -> SourceSpan {
         match (self.config.record_node_spans, self.tokens.get(index)) {

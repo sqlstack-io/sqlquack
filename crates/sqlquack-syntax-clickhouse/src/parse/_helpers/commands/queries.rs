@@ -290,6 +290,9 @@ impl Parser<'_> {
     /// `LIMIT [o,] n [OFFSET o] [WITH TIES] [BY ...]`, `OFFSET ... [FETCH ...]`, then a LIMIT.
     fn select_limits(&mut self, mut select: Select) -> Parsing<Select> {
         let mut limited: bool = false;
+        if self.kw("LIMIT") || self.kw("OFFSET") {
+            select.row_limit_span = self.token_range(self.at);
+        }
         if self.eat_kw("LIMIT") {
             limited = true;
             let (count, offset) = self.limit_values()?;

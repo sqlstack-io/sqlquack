@@ -669,6 +669,7 @@ impl Parser {
             self.expect_token(TokenType::RParen)?;
             let trailing = self.previous_trailing_comments().to_vec();
             let mut subq = Subquery {
+                row_limit_span: Default::default(),
                 this: query,
                 alias: None,
                 column_aliases: Vec::new(),

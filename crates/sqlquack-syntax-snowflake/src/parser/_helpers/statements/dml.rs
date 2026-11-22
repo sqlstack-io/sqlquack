@@ -281,6 +281,7 @@ impl Parser {
                     let mut derived = match subquery {
                         Expression::Subquery(derived) => *derived,
                         Expression::Paren(values) => Subquery {
+                            row_limit_span: Default::default(),
                             this: values.this,
                             alias: None,
                             column_aliases: Vec::new(),

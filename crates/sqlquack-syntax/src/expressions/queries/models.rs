@@ -120,6 +120,10 @@ pub struct Select {
     #[serde(skip)]
     #[ast(skip)]
     pub distinct_span: SourceSpan,
+    /// SQLQuack: the first LIMIT, OFFSET or FETCH keyword; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub row_limit_span: SourceSpan,
 }
 
 impl Select {
@@ -146,6 +150,7 @@ impl Select {
             distinct: false,
             all: false,
             distinct_on: None,
+            row_limit_span: SourceSpan::default(),
             distinct_span: SourceSpan::default(),
             top: None,
             with: None,
@@ -311,6 +316,10 @@ pub struct Union {
     #[serde(skip)]
     #[ast(skip)]
     pub operator_span: SourceSpan,
+    /// SQLQuack: the first LIMIT, OFFSET or FETCH keyword; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub row_limit_span: SourceSpan,
 }
 
 /// Flattens the left-recursive chain iteratively so dropping deep set operations cannot overflow.
@@ -388,6 +397,10 @@ pub struct Intersect {
     #[serde(skip)]
     #[ast(skip)]
     pub operator_span: SourceSpan,
+    /// SQLQuack: the first LIMIT, OFFSET or FETCH keyword; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub row_limit_span: SourceSpan,
 }
 
 impl Drop for Intersect {
@@ -464,6 +477,10 @@ pub struct Except {
     #[serde(skip)]
     #[ast(skip)]
     pub operator_span: SourceSpan,
+    /// SQLQuack: the first LIMIT, OFFSET or FETCH keyword; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub row_limit_span: SourceSpan,
 }
 
 impl Drop for Except {
@@ -554,6 +571,10 @@ pub struct Subquery {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the first LIMIT, OFFSET or FETCH keyword; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub row_limit_span: SourceSpan,
 }
 
 /// Pipe syntax step `query |> transform` (BigQuery, DataFusion).

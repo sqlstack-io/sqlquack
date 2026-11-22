@@ -39,6 +39,7 @@ struct Modifiers {
     limit: Option<Limit>,
     offset: Option<Offset>,
     fetch: Option<Fetch>,
+    keyword: SourceSpan,
 }
 
 impl Modifiers {
@@ -117,10 +118,12 @@ fn modified(body: Expression, modifiers: Modifiers) -> Expression {
         limit,
         offset,
         fetch,
+        keyword,
     } = modifiers;
     macro_rules! set_operation_modified {
         ($node:expr) => {{
             $node.order_by = order.map(order_by);
+            $node.row_limit_span = keyword;
             $node.limit = limit.map(set_operation_limit);
             $node.offset = offset.map(|offset| Box::new(offset.this));
             if let Some(fetch) = fetch {
@@ -131,6 +134,7 @@ fn modified(body: Expression, modifiers: Modifiers) -> Expression {
     match &mut body {
         Expression::Select(select) => {
             select.order_by = order.map(order_by);
+            select.row_limit_span = keyword;
             select.limit = limit;
             select.offset = offset;
             select.fetch = fetch;
@@ -581,6 +585,9 @@ impl Parser<'_> {
         let mut modifiers: Modifiers = Modifiers::default();
         if self.order_by_at() {
             modifiers.order = Some(self.order_by_clause()?);
+        }
+        if self.kw_in(0, &["LIMIT", "OFFSET", "FETCH"]) {
+            modifiers.keyword = self.token_range(self.at);
         }
         for _ in 0..2 {
             let counted: bool = modifiers.limit.is_some() || modifiers.fetch.is_some();

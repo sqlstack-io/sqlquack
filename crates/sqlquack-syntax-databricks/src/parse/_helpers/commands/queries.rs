@@ -26,6 +26,7 @@ pub(crate) struct Organization {
     windows: Option<Vec<NamedWindow>>,
     limit: Option<Expression>,
     offset: Option<Expression>,
+    keyword: SourceSpan,
 }
 
 impl Organization {
@@ -154,6 +155,7 @@ fn organized_parenthesized(this: Expression, organization: Organization) -> Expr
             .distribute
             .map(|expressions| DistributeBy { expressions });
         subquery.sort_by = organization.sort.map(|expressions| SortBy { expressions });
+        subquery.row_limit_span = organization.keyword;
         subquery.limit = organization.limit.map(limit);
         subquery.offset = organization.offset.map(|this| Offset { this, rows: None });
         subquery.windows = organization.windows;
@@ -182,6 +184,7 @@ fn organized(body: Expression, organization: Organization) -> Expression {
         windows,
         limit: count,
         offset,
+        keyword,
     } = organization;
     let cluster = cluster.map(|expressions| ClusterBy {
         expressions: expressions.into_iter().map(Ordered::asc).collect(),
@@ -196,6 +199,7 @@ fn organized(body: Expression, organization: Organization) -> Expression {
             $node.cluster_by = cluster.or($node.cluster_by.take());
             $node.distribute_by = distribute.or($node.distribute_by.take());
             $node.sort_by = sort.or($node.sort_by.take());
+            $node.row_limit_span = keyword;
             $node.limit = count.map(Box::new);
             $node.offset = offset.map(Box::new);
         }};
@@ -209,6 +213,7 @@ fn organized(body: Expression, organization: Organization) -> Expression {
             select.distribute_by = distribute.or(select.distribute_by.take());
             select.sort_by = sort.or(select.sort_by.take());
             select.windows = windows.or(select.windows.take());
+            select.row_limit_span = keyword;
             select.limit = count.map(limit);
             select.offset = offset.map(|this| Offset { this, rows: None });
         }
@@ -677,6 +682,9 @@ impl Parser<'_> {
         }
         if self.kw("WINDOW") && self.is_at(1, is_identifier) {
             organization.windows = Some(self.window_clause()?);
+        }
+        if self.kw_in(0, &["LIMIT", "OFFSET"]) {
+            organization.keyword = self.token_range(self.at);
         }
         if self.eat_kw("LIMIT") {
             organization.limit = Some(match self.eat_kw("ALL") {

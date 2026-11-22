@@ -369,6 +369,7 @@ pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: boo
         None => (None, Vec::new(), false),
     };
     Expression::Subquery(Box::new(Subquery {
+        row_limit_span: Default::default(),
         this,
         alias,
         column_aliases,
@@ -466,6 +467,7 @@ pub(crate) fn set_operation(
                 keyword: None,
                 span: SourceSpan(None),
                 operator_span,
+                row_limit_span: SourceSpan(None),
             }))
         };
     }

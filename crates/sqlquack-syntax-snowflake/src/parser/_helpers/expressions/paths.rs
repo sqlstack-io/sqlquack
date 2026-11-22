@@ -674,6 +674,7 @@ impl Parser {
         let values = self.parse_values()?;
         self.expect_token(TokenType::RParen)?;
         Ok(Expression::Subquery(Box::new(Subquery {
+            row_limit_span: Default::default(),
             this: values,
             alias: None,
             column_aliases: Vec::new(),
@@ -730,6 +731,7 @@ impl Parser {
 
         let subquery = if limit.is_some() || offset.is_some() {
             Expression::Subquery(Box::new(Subquery {
+                row_limit_span: Default::default(),
                 this: query,
                 alias: None,
                 column_aliases: Vec::new(),
@@ -753,6 +755,7 @@ impl Parser {
             }))
         } else {
             Expression::Subquery(Box::new(Subquery {
+                row_limit_span: Default::default(),
                 this: query,
                 alias: None,
                 column_aliases: Vec::new(),
@@ -814,6 +817,7 @@ impl Parser {
 
             if order_by.is_some() || limit_after.is_some() || offset_after.is_some() {
                 Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: set_result,
                     alias: None,
                     column_aliases: Vec::new(),
@@ -896,6 +900,7 @@ impl Parser {
                 Expression::Subquery(subq) => Some(subq.this.clone()),
                 Expression::Union(_) | Expression::Intersect(_) | Expression::Except(_) => {
                     Some(Expression::Subquery(Box::new(Subquery {
+                        row_limit_span: Default::default(),
                         this: result.clone(),
                         alias: None,
                         column_aliases: Vec::new(),
@@ -949,6 +954,7 @@ impl Parser {
                 };
 
                 return Ok(Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: set_result,
                     alias: None,
                     column_aliases: Vec::new(),

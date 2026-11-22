@@ -685,11 +685,17 @@ impl Parser {
             None
         };
 
+        let row_limit_at = self.current;
         let (limit, offset, fetch) = self.parse_row_limit_modifiers()?;
+        let row_limit_span = self.token_range_if(
+            limit.is_some() || offset.is_some() || fetch.is_some(),
+            row_limit_at,
+        );
         if fetch.is_some() || limit.as_ref().is_some_and(|limit| limit.percent) {
             let mut subquery = match inner {
                 Expression::Subquery(subquery) => *subquery,
                 this => Subquery {
+                    row_limit_span: Default::default(),
                     this,
                     alias: None,
                     column_aliases: Vec::new(),
@@ -724,6 +730,7 @@ impl Parser {
             select.order_by = order_by;
             select.offset = offset;
             select.limit = limit;
+            select.row_limit_span = row_limit_span;
             select.fetch = fetch;
             select.distribute_by = distribute_by;
             select.sort_by = sort_by;
@@ -742,12 +749,14 @@ impl Parser {
                 subq.order_by = order_by;
                 subq.limit = limit;
                 subq.offset = offset;
+                subq.row_limit_span = row_limit_span;
                 subq.distribute_by = distribute_by;
                 subq.sort_by = sort_by;
                 subq.cluster_by = cluster_by;
                 Ok(Expression::Subquery(subq))
             } else if let Expression::Paren(paren) = inner {
                 Ok(Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: Expression::Paren(paren),
                     alias: None,
                     column_aliases: Vec::new(),
@@ -771,6 +780,7 @@ impl Parser {
                 })))
             } else {
                 Ok(Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: inner,
                     alias: None,
                     column_aliases: Vec::new(),

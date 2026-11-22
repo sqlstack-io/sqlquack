@@ -132,6 +132,10 @@ impl<'sql> Parser<'sql> {
                     comments: Vec::new(),
                     all: None,
                 };
+                let keyword: SourceSpan = match parser.kw("OFFSET") {
+                    true => parser.token_range(parser.at),
+                    false => SourceSpan::default(),
+                };
                 let (offset, fetch) = parser.offset_fetch()?;
                 let offset_node = |offset: Option<Offset>| {
                     offset.map(|found| Box::new(Expression::Offset(Box::new(found))))
@@ -141,18 +145,22 @@ impl<'sql> Parser<'sql> {
                         select.order_by = Some(order_by);
                         select.offset = offset;
                         select.fetch = fetch;
+                        select.row_limit_span = keyword;
                     }
                     Expression::Union(node) if fetch.is_none() => {
                         node.order_by = Some(order_by);
                         node.offset = offset_node(offset);
+                        node.row_limit_span = keyword;
                     }
                     Expression::Except(node) if fetch.is_none() => {
                         node.order_by = Some(order_by);
                         node.offset = offset_node(offset);
+                        node.row_limit_span = keyword;
                     }
                     Expression::Intersect(node) if fetch.is_none() => {
                         node.order_by = Some(order_by);
                         node.offset = offset_node(offset);
+                        node.row_limit_span = keyword;
                     }
                     _ => return Err(parser.gap("set_operation_order", parser.offset())),
                 }
