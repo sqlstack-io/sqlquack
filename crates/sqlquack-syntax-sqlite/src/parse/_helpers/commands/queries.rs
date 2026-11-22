@@ -3,6 +3,7 @@
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::Alias;
+use sqlquack_syntax::expressions::queries::main::values_query::values_query;
 use sqlquack_syntax::expressions::queries::models::{
     Cte, GroupBy, Having, Limit, NamedWindow, Offset, OrderBy, Ordered, Over, Select, Where, With,
 };
@@ -75,6 +76,9 @@ fn new_select() -> Box<Select> {
 
 /// `body` with `with` as its common table expressions.
 fn with_ctes(mut body: Expression, with: Option<With>) -> Expression {
+    if with.is_some() && matches!(body, Expression::Values(_)) {
+        body = Expression::Select(Box::new(values_query(body)));
+    }
     match &mut body {
         Expression::Select(select) => select.with = with,
         Expression::Union(node) => node.with = with,

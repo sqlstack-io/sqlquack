@@ -1,6 +1,7 @@
 //! The statement a WITH clause prefixes, with the clause attached to it.
 
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::queries::main::values_query::values_query;
 use sqlquack_syntax::expressions::queries::models::Cte;
 use sqlquack_syntax::expressions::queries::models::With;
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -38,6 +39,10 @@ impl Parser {
                 }
                 _ => break,
             }
+        }
+
+        if let Expression::Values(_) = main_query {
+            main_query = Expression::Select(Box::new(values_query(main_query)));
         }
 
         match &mut main_query {

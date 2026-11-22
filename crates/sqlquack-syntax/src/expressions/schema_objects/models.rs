@@ -1214,6 +1214,8 @@ pub enum TriggerBody {
     },
     /// BEGIN ... END block
     Block(String),
+    /// BEGIN ... END block read as statements, where the dialect's own engine runs them (SQLite)
+    Statements(Vec<Expression>),
 }
 
 /// Trigger REFERENCING clause

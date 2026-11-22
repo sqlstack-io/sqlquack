@@ -114,6 +114,49 @@ fn given_queries_and_writes_when_parsed_located_then_clauses_items_and_operators
             sql: "DELETE FROM t WHERE x / 2 = 1",
             expected_positions: &["delete DELETE", "operation / 2", "operation = 1"],
         },
+        WrittenPositionsTestCase {
+            description: "DuckDB, a WITH before a VALUES statement",
+            parse: |sql| parse_as_written(sql, Dialect::DuckDB),
+            sql: "WITH a AS (SELECT 1 AS x) VALUES (2)",
+            expected_positions: &["head 1", "item 1 AS x", "select SELECT", "with WITH"],
+        },
+        WrittenPositionsTestCase {
+            description: "SQLite, a WITH before a VALUES statement",
+            parse: |sql| parse_as_written(sql, Dialect::SQLite),
+            sql: "WITH a AS (SELECT 1 AS x) VALUES (2)",
+            expected_positions: &["head 1", "item 1 AS x", "select SELECT", "with WITH"],
+        },
+        #[cfg(feature = "sqlite")]
+        WrittenPositionsTestCase {
+            description: "SQLite's own parser, a WITH before a VALUES statement",
+            parse: |sql| {
+                sqlquack_syntax_sqlite::parse_strict(sql)
+                    .ok()
+                    .map(|parsed| parsed.statements)
+            },
+            sql: "WITH a AS (SELECT 1 AS x) VALUES (2)",
+            expected_positions: &["head 1", "item 1 AS x", "select SELECT", "with WITH"],
+        },
+        WrittenPositionsTestCase {
+            description: "SQLite, the statements of a trigger program",
+            parse: |sql| parse_as_written(sql, Dialect::SQLite),
+            sql: "CREATE TRIGGER r AFTER DELETE ON t BEGIN SELECT a / 2 FROM t; DELETE FROM u WHERE b = 1; END",
+            expected_positions: &[
+                "delete DELETE",
+                "from FROM",
+                "head a",
+                "item a / 2",
+                "operation / 2",
+                "operation = 1",
+                "select SELECT",
+            ],
+        },
+        WrittenPositionsTestCase {
+            description: "DuckDB, which runs no trigger program, keeps it as text",
+            parse: |sql| parse_as_written(sql, Dialect::DuckDB),
+            sql: "CREATE TRIGGER r AFTER DELETE ON t BEGIN SELECT a / 2 FROM t; END",
+            expected_positions: &[],
+        },
         #[cfg(feature = "postgres")]
         WrittenPositionsTestCase {
             description: "PostgreSQL's own parser, a query",
@@ -314,7 +357,7 @@ fn given_queries_and_writes_when_parsed_located_then_clauses_items_and_operators
         WrittenPositionsTestCase {
             description: "SQLite's own parser, a query",
             parse: |sql| {
-                sqlquack_syntax_sqlite::parse(sql)
+                sqlquack_syntax_sqlite::parse_strict(sql)
                     .ok()
                     .map(|parsed| parsed.statements)
             },
