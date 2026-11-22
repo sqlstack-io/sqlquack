@@ -3,7 +3,7 @@
 use sqlquack_syntax::traversal::models::QueryScopes;
 use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
 
-use crate::parsing::main::parse_source::parse_source;
+use crate::parsing::tests::helpers::parse_queries;
 use crate::parsing::tests::test_types::{
     BranchTestCase, FromItemTestCase, JoinedItemTestCase, QueryScopeTestCase, SetOperationTestCase,
 };
@@ -13,73 +13,73 @@ fn given_from_items_after_commas_when_classified_then_the_lateral_ones_are_marke
     let test_cases = [
         FromItemTestCase {
             description: "a plain comma join",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1 FROM o, c",
             expected_after_commas: &[(15, false)],
         },
         FromItemTestCase {
             description: "TABLE(FLATTEN)",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1 FROM o, TABLE(FLATTEN(input => o.items)) f",
             expected_after_commas: &[(15, true)],
         },
         FromItemTestCase {
             description: "a table function over a window",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1 FROM p, TABLE(smooth(p.amount) OVER (PARTITION BY p.c)) s",
             expected_after_commas: &[(15, true)],
         },
         FromItemTestCase {
             description: "TABLE of a name is a relation",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1 FROM o, TABLE('customers') c",
             expected_after_commas: &[(15, false)],
         },
         FromItemTestCase {
             description: "LATERAL FLATTEN",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1 FROM o, LATERAL FLATTEN(input => o.items) f",
             expected_after_commas: &[(15, true)],
         },
         FromItemTestCase {
             description: "a lateral query",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1 FROM o, LATERAL (SELECT o.id) f",
             expected_after_commas: &[(15, true)],
         },
         FromItemTestCase {
             description: "a derived table",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1 FROM o, (SELECT id FROM c) d",
             expected_after_commas: &[(15, false)],
         },
         FromItemTestCase {
             description: "inline values",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1 FROM o, (VALUES (1), (2)) v(id)",
             expected_after_commas: &[(15, false)],
         },
         FromItemTestCase {
             description: "commas after a join",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1 FROM a JOIN b ON a.x = b.x, TABLE(FLATTEN(a.y)) f, c",
             expected_after_commas: &[(35, true), (58, false)],
         },
         FromItemTestCase {
             description: "a comma between named windows is no join",
-            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
             sql: "SELECT SUM(a) OVER w1 FROM t WINDOW w1 AS (ORDER BY a), w2 AS (ORDER BY b)",
             expected_after_commas: &[],
         },
         FromItemTestCase {
             description: "correlated UNNEST",
-            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
             sql: "SELECT 1 FROM t, UNNEST(t.arr) u(x)",
             expected_after_commas: &[(15, true)],
         },
         FromItemTestCase {
             description: "UNNEST of a literal reads nothing before it",
-            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
             sql: "SELECT 1 FROM t, UNNEST([1, 2]) u(x)",
             expected_after_commas: &[(15, false)],
         },
@@ -201,55 +201,55 @@ fn given_set_operations_when_walked_then_each_gives_by_name_and_its_sides_column
     let test_cases = [
         SetOperationTestCase {
             description: "BY NAME",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1 AS a, 'x' AS b UNION ALL BY NAME SELECT 'y' AS b",
             expected_operations: &[(true, Some(2), Some(1))],
         },
         SetOperationTestCase {
             description: "ORDER BY commas are no columns",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 'a' AS k, 1 AS v UNION ALL SELECT 'b', 2 ORDER BY k, v",
             expected_operations: &[(false, Some(2), Some(2))],
         },
         SetOperationTestCase {
             description: "multiplication is no wildcard",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT a * 2, b FROM t UNION ALL SELECT c FROM u",
             expected_operations: &[(false, Some(2), Some(1))],
         },
         SetOperationTestCase {
             description: "parenthesised branches",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "(SELECT a, b FROM x) UNION ALL (SELECT c FROM y)",
             expected_operations: &[(false, Some(2), Some(1))],
         },
         SetOperationTestCase {
             description: "a wildcard has no count",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT t.* FROM t UNION ALL SELECT c FROM u",
             expected_operations: &[(false, None, Some(1))],
         },
         SetOperationTestCase {
             description: "COLUMNS has no count",
-            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
             sql: "SELECT COLUMNS('a.*') FROM t UNION ALL SELECT c FROM u",
             expected_operations: &[(false, None, Some(1))],
         },
         SetOperationTestCase {
             description: "VALUES counts its first row",
-            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
             sql: "SELECT a, b FROM t UNION ALL VALUES (1, 2)",
             expected_operations: &[(false, Some(2), Some(2))],
         },
         SetOperationTestCase {
             description: "a chain counts each side",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1, 2 UNION ALL SELECT 3, 4 UNION ALL SELECT 5",
             expected_operations: &[(false, Some(2), Some(1)), (false, Some(2), Some(2))],
         },
         SetOperationTestCase {
             description: "a chain of names has no count",
-            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
             sql: "SELECT 1 AS a UNION BY NAME SELECT 2 AS b UNION ALL SELECT 3, 4",
             expected_operations: &[(false, None, Some(2)), (true, Some(1), Some(1))],
         },
@@ -295,7 +295,7 @@ fn given_qualified_columns_when_scoped_then_each_sees_the_relations_of_its_query
     let test_cases = [
         QueryScopeTestCase {
             description: "aliases and a join",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT o.id, c.name, x.zip FROM orders o JOIN customers c ON o.customer_id = c.cid",
             expected_visible: &[
                 ("cid", true),
@@ -307,55 +307,55 @@ fn given_qualified_columns_when_scoped_then_each_sees_the_relations_of_its_query
         },
         QueryScopeTestCase {
             description: "an alias hides the table name",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT orders.id FROM orders o",
             expected_visible: &[("id", false)],
         },
         QueryScopeTestCase {
             description: "a subquery sees the queries around it",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT (SELECT MAX(p.paid) FROM payments p WHERE p.order_id = o.id) FROM orders o",
             expected_visible: &[("id", true), ("order_id", true), ("paid", true)],
         },
         QueryScopeTestCase {
             description: "a derived table does not see its neighbours",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT s.a FROM orders o, (SELECT o.id AS a FROM items i) s",
             expected_visible: &[("a", true), ("id", false)],
         },
         QueryScopeTestCase {
             description: "a lateral query does",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT s.a FROM orders o, LATERAL (SELECT o.id AS a) s",
             expected_visible: &[("a", true), ("id", true)],
         },
         QueryScopeTestCase {
             description: "a CTE does not see the query that reads it",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "WITH r AS (SELECT o.id FROM items i) SELECT o.total FROM orders o",
             expected_visible: &[("id", false), ("total", true)],
         },
         QueryScopeTestCase {
             description: "a derived table in a subquery sees past it",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT o.total FROM orders o WHERE EXISTS (SELECT 1 FROM (SELECT o.id FROM items i) s)",
             expected_visible: &[("id", true), ("total", true)],
         },
         QueryScopeTestCase {
             description: "set operation branches see their own relations",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT o.id FROM orders o UNION ALL SELECT o.rid FROM returns r",
             expected_visible: &[("id", true), ("rid", false)],
         },
         QueryScopeTestCase {
             description: "a table function reads an earlier item",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT f.value FROM orders o, LATERAL FLATTEN(input => o.items) f",
             expected_visible: &[("items", true), ("value", true)],
         },
         QueryScopeTestCase {
             description: "a qualified call is no qualifier",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT util.parse_day(o.day) FROM orders o",
             expected_visible: &[("day", true)],
         },
@@ -402,25 +402,25 @@ fn given_a_set_operation_when_reading_the_branches_at_its_keyword_then_they_are_
     let test_cases = [
         BranchTestCase {
             description: "a chain's last branch meets the next",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT 1 UNION ALL SELECT * FROM t UNION ALL SELECT 3, 4",
             expected_sides: [(true, None), (false, Some(2))],
         },
         BranchTestCase {
             description: "parentheses are opened",
-            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
             sql: "SELECT 1, 2 UNION ALL (SELECT t.* FROM t UNION ALL SELECT 3)",
             expected_sides: [(false, Some(2)), (true, None)],
         },
         BranchTestCase {
             description: "multiplication and VALUES are no wildcard",
-            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
             sql: "SELECT qty * price FROM t UNION ALL VALUES (1)",
             expected_sides: [(false, Some(1)), (false, Some(1))],
         },
         BranchTestCase {
             description: "a written star over VALUES is a wildcard",
-            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
             sql: "SELECT id FROM t UNION ALL SELECT * FROM VALUES (2)",
             expected_sides: [(false, Some(1)), (true, Some(1))],
         },
@@ -445,13 +445,13 @@ fn given_joins_when_their_item_is_lateral_then_it_may_read_the_items_before_it()
     let test_cases = [
         JoinedItemTestCase {
             description: "a lateral query, and a plain relation",
-            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
             sql: "SELECT 1 FROM o LEFT JOIN LATERAL (SELECT o.id) AS l ON TRUE JOIN c ON TRUE",
             expected_lateral: &[true, false],
         },
         JoinedItemTestCase {
             description: "correlated UNNEST",
-            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
             sql: "SELECT 1 FROM o LEFT JOIN UNNEST(o.items) AS u(x) ON TRUE",
             expected_lateral: &[true],
         },

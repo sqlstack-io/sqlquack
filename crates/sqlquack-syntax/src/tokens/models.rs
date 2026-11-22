@@ -48,7 +48,9 @@ pub enum CallMode {
     Faithful,
     /// As [`CallMode::Faithful`], recording each node's source range (for refusal locations).
     FaithfulLocated,
-    /// As [`CallMode::FaithfulLocated`], keeping every dialect's calls as written: the tree Rules read.
+    /// As [`CallMode::FaithfulLocated`], also recording each query's and branch's own range, for Rules.
+    QueriesLocated,
+    /// As [`CallMode::QueriesLocated`], keeping every dialect's calls as written: the tree Rules read.
     AsWrittenLocated,
 }
 

@@ -145,6 +145,10 @@ impl Dialect {
             complexity_guard,
             record_node_spans: mode != CallMode::Faithful,
             record_item_spans: mode != CallMode::Faithful || strict,
+            record_query_spans: matches!(
+                mode,
+                CallMode::QueriesLocated | CallMode::AsWrittenLocated
+            ),
             calls_as_written: mode == CallMode::AsWrittenLocated,
             ..Default::default()
         };
@@ -454,6 +458,8 @@ pub(crate) struct ParserConfig {
     pub complexity_guard: ComplexityGuardOptions,
     /// SQLQuack: record each expression and statement node's source range (for locations).
     pub record_node_spans: bool,
+    /// SQLQuack: record each query's own range, for Rules only, as it would move others' locations.
+    pub(crate) record_query_spans: bool,
     /// SQLQuack: keep every dialect's calls as written, a qualified one as a call, as Rules read them.
     pub(crate) calls_as_written: bool,
     /// SQLQuack: record each select item's source range, which lineage reports; a located or strict parse does.

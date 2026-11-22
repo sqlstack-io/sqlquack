@@ -54,7 +54,12 @@ pub(crate) fn statement_at(sql: &str, pointer: &str) -> Value {
 
 /// The source text a located parse records for the node at `pointer`, or why there is none.
 pub(crate) fn located_text(sql: &str, pointer: &str) -> Result<String, String> {
-    let tree = statements(sql, Dialect::Snowflake, CallMode::FaithfulLocated);
+    located_text_in(sql, pointer, CallMode::QueriesLocated)
+}
+
+/// The source text `mode` records for the node at `pointer`, or why there is none.
+pub(crate) fn located_text_in(sql: &str, pointer: &str, mode: CallMode) -> Result<String, String> {
+    let tree = statements(sql, Dialect::Snowflake, mode);
     let node = tree.pointer(pointer).ok_or("no node at the pointer")?;
     let span = node
         .as_object()
@@ -70,7 +75,8 @@ pub(crate) fn located_text(sql: &str, pointer: &str) -> Result<String, String> {
 /// Whether a located parse equals the faithful parse, spans aside.
 pub(crate) fn located_matches_faithful(sql: &str, dialect: Dialect) -> bool {
     let parse = |mode| parse_statements_with(sql, dialect, &ParseOptions::default(), mode).ok();
-    parse(CallMode::FaithfulLocated) == parse(CallMode::Faithful)
+    let faithful = parse(CallMode::Faithful);
+    parse(CallMode::FaithfulLocated) == faithful && parse(CallMode::QueriesLocated) == faithful
 }
 
 /// The cast target types of `SELECT x::<type>` and `SELECT CAST(x AS <type>)`.

@@ -60,6 +60,14 @@ impl Parser {
         expr
     }
 
+    /// SQLQuack: a query or set-operation branch with its own range, when Rules read the tree.
+    pub(crate) fn query_spanned(&self, start: usize, query: Expression) -> Expression {
+        if !self.config.record_query_spans {
+            return query;
+        }
+        self.spanned(start, query)
+    }
+
     /// SQLQuack: a select item with its range when the parse records item ranges, which lineage reports.
     pub(crate) fn item_spanned(&self, start: usize, expr: Expression) -> Expression {
         if !self.config.record_item_spans {
@@ -122,14 +130,33 @@ impl Parser {
             .current
             .checked_sub(1)
             .and_then(|at| self.tokens.get(at));
-        match (self.config.record_node_spans, first, last) {
+        match (self.config.record_query_spans, first, last) {
             (true, Some(first), Some(last)) => SourceSpan(Some(first.through(last.span))),
             _ => SourceSpan::default(),
         }
     }
 
+    /// SQLQuack: a query from the WITH or hint at token `start`, replacing the range of its body alone.
+    pub(crate) fn spanned_with_prefix(&self, start: usize, mut query: Expression) -> Expression {
+        if !self.config.record_query_spans {
+            return query;
+        }
+        let span = match &mut query {
+            Expression::Select(select) => &mut select.span,
+            Expression::Union(union) => &mut union.span,
+            Expression::Intersect(intersect) => &mut intersect.span,
+            Expression::Except(except) => &mut except.span,
+            _ => return query,
+        };
+        *span = self.source_range(start);
+        query
+    }
+
     /// SQLQuack: a set operation's range, stretched over the modifiers parsed after its branches.
     pub(crate) fn extend_set_operation_span(&self, operation: &mut Expression) {
+        if !self.config.record_query_spans {
+            return;
+        }
         let mut node = operation;
         while let Expression::Annotated(annotated) = node {
             node = &mut annotated.this;
@@ -146,7 +173,7 @@ impl Parser {
     /// SQLQuack: the last branch's range, without the modifiers moved from it to its set operation.
     pub(crate) fn end_select_before_modifiers(&self, start: usize, operand: &mut Expression) {
         let end = self.select_modifiers_start;
-        if !self.config.record_node_spans || end <= start || end > self.current {
+        if !self.config.record_query_spans || end <= start || end > self.current {
             return;
         }
         let mut node = operand;

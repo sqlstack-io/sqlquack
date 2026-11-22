@@ -706,6 +706,7 @@ impl Parser {
     }
 
     fn parse_statement_hint(&mut self) -> Result<Expression> {
+        let hint_start = self.current;
         let hint_token = self.advance()?;
         let hint_text = hint_token.text.to_string();
         let comment = format!("/* + {} */", hint_text.trim());
@@ -730,7 +731,7 @@ impl Parser {
             }
             _ => {}
         }
-        Ok(stmt)
+        Ok(self.spanned_with_prefix(hint_start, stmt))
     }
 
     fn parse_undrop(&mut self) -> Result<Expression> {
@@ -1043,6 +1044,7 @@ impl Parser {
     }
 
     pub(crate) fn parse_statement_with_leading_hint(&mut self) -> Result<Expression> {
+        let hint_start = self.current;
         let hint_token = self.advance()?;
         let hint_text = hint_token.text.to_string();
         let comment = format!("/* + {} */", hint_text.trim());
@@ -1068,7 +1070,7 @@ impl Parser {
             _ => {}
         }
 
-        Ok(stmt)
+        Ok(self.spanned_with_prefix(hint_start, stmt))
     }
 
     pub(crate) fn parse_parenthesized_statement_or_expression(&mut self) -> Result<Expression> {
@@ -1211,7 +1213,7 @@ impl Parser {
     pub(crate) fn parse_select(&mut self) -> Result<Expression> {
         let start = self.current;
         let body = self.parse_select_body()?;
-        let result = self.spanned(start, body);
+        let result = self.query_spanned(start, body);
         self.parse_set_operation(result)
     }
 

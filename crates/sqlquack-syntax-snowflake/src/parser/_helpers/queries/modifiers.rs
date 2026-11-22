@@ -877,7 +877,7 @@ impl Parser {
     pub(crate) fn parse_select_or_paren_select(&mut self) -> Result<Expression> {
         let start = self.current;
         let query = self.with_parser_depth(|parser| parser.parse_select_or_paren_select_inner())?;
-        Ok(self.spanned(start, query))
+        Ok(self.query_spanned(start, query))
     }
 
     #[inline(never)]

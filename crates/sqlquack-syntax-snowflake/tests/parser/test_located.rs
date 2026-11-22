@@ -1,7 +1,7 @@
-use sqlquack_syntax::Dialect;
+use sqlquack_syntax::{CallMode, Dialect};
 
-use crate::helpers::{located_matches_faithful, located_text};
-use crate::test_types::{LocatedAgreementTestCase, LocatedTestCase};
+use crate::helpers::{located_matches_faithful, located_text, located_text_in};
+use crate::test_types::{LocatedAgreementTestCase, LocatedTestCase, LocationStabilityTestCase};
 
 #[test]
 fn given_a_located_parse_when_reading_a_node_then_its_span_covers_its_source() {
@@ -132,6 +132,48 @@ fn given_a_located_parse_when_reading_a_node_then_its_span_covers_its_source() {
             pointer: "/0/union",
             expected_text: Ok("SELECT 1 AS a UNION SELECT 2 INTERSECT SELECT 3"),
         },
+        LocatedTestCase {
+            description: "a query covers its WITH clause",
+            sql: "WITH RECURSIVE n AS (SELECT 1 AS i UNION ALL SELECT i + 1 FROM n WHERE i < 10) SELECT i FROM n",
+            pointer: "/0",
+            expected_text: Ok("WITH RECURSIVE n AS (SELECT 1 AS i UNION ALL SELECT i + 1 FROM n WHERE i < 10) SELECT i FROM n"),
+        },
+        LocatedTestCase {
+            description: "a set operation covers its WITH clause",
+            sql: "WITH a AS (SELECT 1 AS x) SELECT x FROM a UNION SELECT 2",
+            pointer: "/0",
+            expected_text: Ok("WITH a AS (SELECT 1 AS x) SELECT x FROM a UNION SELECT 2"),
+        },
+        LocatedTestCase {
+            description: "INTERSECT covers its WITH clause",
+            sql: "WITH a AS (SELECT 1 AS x) SELECT x FROM a INTERSECT SELECT 2",
+            pointer: "/0",
+            expected_text: Ok("WITH a AS (SELECT 1 AS x) SELECT x FROM a INTERSECT SELECT 2"),
+        },
+        LocatedTestCase {
+            description: "a parenthesised query after WITH covers both",
+            sql: "WITH a AS (SELECT 1 AS x) (SELECT x FROM a)",
+            pointer: "/0",
+            expected_text: Ok("WITH a AS (SELECT 1 AS x) (SELECT x FROM a)"),
+        },
+        LocatedTestCase {
+            description: "a CTE body covers its own WITH clause",
+            sql: "WITH a AS (WITH b AS (SELECT 1 AS x) SELECT x FROM b) SELECT x FROM a",
+            pointer: "/0/select/with/ctes/0/this",
+            expected_text: Ok("WITH b AS (SELECT 1 AS x) SELECT x FROM b"),
+        },
+        LocatedTestCase {
+            description: "a derived query covers its WITH clause",
+            sql: "SELECT s.x FROM (WITH b AS (SELECT 1 AS x) SELECT x FROM b) AS s",
+            pointer: "/0/select/from/expressions/0/subquery/this",
+            expected_text: Ok("WITH b AS (SELECT 1 AS x) SELECT x FROM b"),
+        },
+        LocatedTestCase {
+            description: "a query covers the hint before it",
+            sql: "/*+ some hint */ SELECT b.foo FROM baz AS b",
+            pointer: "/0",
+            expected_text: Ok("/*+ some hint */ SELECT b.foo FROM baz AS b"),
+        },
     ];
 
     for test_case in test_cases {
@@ -180,6 +222,48 @@ fn given_any_sql_when_parsed_located_then_it_equals_the_faithful_parse() {
         assert_eq!(
             located_matches_faithful(test_case.sql, test_case.dialect),
             test_case.expected_same,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_a_parse_for_locations_when_reading_queries_then_it_records_no_range_of_its_own_for_them() {
+    let test_cases = [
+        LocationStabilityTestCase {
+            description: "a statement's range starts at its WITH",
+            sql: "WITH a AS (SELECT 1 AS x) SELECT x FROM a",
+            pointer: "/0",
+            expected_text: Ok("WITH a AS (SELECT 1 AS x) SELECT x FROM a"),
+        },
+        LocationStabilityTestCase {
+            description: "a statement's range starts at its hint",
+            sql: "/*+ some hint */ SELECT 1",
+            pointer: "/0",
+            expected_text: Ok("/*+ some hint */ SELECT 1"),
+        },
+        LocationStabilityTestCase {
+            description: "a pivot's input keeps no range, so the pivot is placed as before",
+            sql: "SELECT * FROM (SELECT channel, total FROM orders) PIVOT (SUM(total) FOR channel IN ('web'))",
+            pointer: "/0/select/from/expressions/0/pivot/this/subquery/this",
+            expected_text: Err("the node has no span"),
+        },
+        LocationStabilityTestCase {
+            description: "a set operation's branch keeps none either",
+            sql: "SELECT id FROM orders UNION ALL SELECT id FROM returns",
+            pointer: "/0/union/right",
+            expected_text: Err("the node has no span"),
+        },
+    ];
+
+    for test_case in test_cases {
+        assert_eq!(
+            located_text_in(test_case.sql, test_case.pointer, CallMode::FaithfulLocated),
+            test_case
+                .expected_text
+                .map(str::to_owned)
+                .map_err(str::to_owned),
             "{}",
             test_case.description
         );

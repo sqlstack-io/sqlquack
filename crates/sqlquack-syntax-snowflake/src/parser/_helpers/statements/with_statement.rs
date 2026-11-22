@@ -79,6 +79,7 @@ impl Parser {
 
     /// Parse a WITH clause (CTEs)
     pub(crate) fn parse_with(&mut self) -> Result<Expression> {
+        let with_start = self.current;
         let with_token = self.expect_token(TokenType::With)?;
         let leading_comments = with_token.comments;
 
@@ -199,7 +200,7 @@ impl Parser {
 
         let search = self.parse_recursive_with_search()?;
 
-        self.parse_with_statement(
+        let statement = self.parse_with_statement(
             With {
                 ctes,
                 recursive,
@@ -207,6 +208,7 @@ impl Parser {
                 search,
             },
             has_procedure,
-        )
+        )?;
+        Ok(self.spanned_with_prefix(with_start, statement))
     }
 }
