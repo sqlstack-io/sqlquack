@@ -448,6 +448,9 @@ pub(crate) fn join(
         JoinConstraint::Using(columns) => (None, columns),
     };
     Join {
+        kind_span: Default::default(),
+        keyword_span: Default::default(),
+        on_span: Default::default(),
         using_alias: None,
         this,
         on,

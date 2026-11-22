@@ -99,6 +99,7 @@ impl Parser<'_> {
             }
         }
         select.from = Some(From {
+            comma_spans: Default::default(),
             expressions: sources,
         });
         Ok(select)

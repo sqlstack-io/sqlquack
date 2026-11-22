@@ -1,6 +1,6 @@
 //! Data models of expressions queries.
 
-use crate::tokens::models::SourceSpan;
+use crate::tokens::models::{SeparatorSpans, SourceSpan};
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -181,6 +181,7 @@ impl Select {
     /// Set the FROM clause
     pub fn from(mut self, table: Expression) -> Self {
         self.from = Some(From {
+            comma_spans: Default::default(),
             expressions: vec![table],
         });
         self
@@ -705,6 +706,10 @@ pub struct RowFormat {
 /// A FROM clause; several sources are comma-separated implicit joins.
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct From {
+    /// SQLQuack: the commas between the items, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub comma_spans: SeparatorSpans,
     /// The table source expressions.
     pub expressions: Vec<Expression>,
 }
@@ -760,6 +765,18 @@ pub struct Join {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the first keyword of the join, such as CROSS or LEFT, or its comma; never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub kind_span: SourceSpan,
+    /// SQLQuack: the JOIN keyword, or a comma join's comma; never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub keyword_span: SourceSpan,
+    /// SQLQuack: the ON keyword of the join's condition; never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub on_span: SourceSpan,
 }
 
 /// Databricks: a join's `{APPROX | EXACT} NEAREST [n] BY {DISTANCE | SIMILARITY} expression`.

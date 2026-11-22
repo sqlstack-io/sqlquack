@@ -47,6 +47,14 @@ impl Parser {
         }
     }
 
+    /// SQLQuack: the range of the single token at `index`, when located.
+    pub(crate) fn token_range(&self, index: usize) -> SourceSpan {
+        match (self.config.record_node_spans, self.tokens.get(index)) {
+            (true, Some(token)) => SourceSpan(Some(token.span)),
+            _ => SourceSpan::default(),
+        }
+    }
+
     /// SQLQuack: the range a set operation's operand records, looking through attached comments.
     pub(crate) fn operand_span(mut operand: &Expression) -> Option<Span> {
         while let Expression::Annotated(annotated) = operand {

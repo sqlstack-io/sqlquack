@@ -62,6 +62,7 @@ pub(crate) fn wrapped(body: Expression) -> Select {
     let mut select: Select = Select::new();
     select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
     select.from = Some(From {
+        comma_spans: Default::default(),
         expressions: vec![subquery(body, None, false)],
     });
     select
@@ -418,6 +419,7 @@ impl Parser<'_> {
                 let mut select: Select = Select::new();
                 select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
                 select.from = Some(From {
+                    comma_spans: Default::default(),
                     expressions: vec![item],
                 });
                 select.table_statement = true;
@@ -809,6 +811,7 @@ impl Parser<'_> {
         let mut select: Select = Select::new();
         select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
         select.from = Some(From {
+            comma_spans: Default::default(),
             expressions: vec![subquery(left, Some(alias), false)],
         });
         Ok(select)
@@ -858,6 +861,7 @@ impl Parser<'_> {
         let mut select: Select = Select::new();
         select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
         select.from = Some(From {
+            comma_spans: Default::default(),
             expressions: vec![pivoted],
         });
         Ok(select)

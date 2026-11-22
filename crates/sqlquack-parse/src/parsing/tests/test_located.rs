@@ -1,10 +1,11 @@
-//! A located parse records where each set operation's keyword is written, in every parser.
+//! A located parse records where the keywords and separators of queries are written.
 
-use sqlquack_syntax::tokens::models::Span;
+use sqlquack_syntax::expressions::queries::models::Select;
+use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
 
 use crate::parsing::main::parse_source::parse_source;
-use crate::parsing::tests::test_types::OperatorSpanTestCase;
+use crate::parsing::tests::test_types::{JoinSpanTestCase, OperatorSpanTestCase};
 
 #[test]
 fn given_set_operations_when_parsed_located_then_each_records_its_operator_keyword() {
@@ -152,6 +153,101 @@ fn given_set_operations_when_parsed_located_then_each_records_its_operator_keywo
             .collect();
         assert_eq!(
             written, test_case.expected_operators,
+            "{}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_joins_when_parsed_located_then_each_records_its_keywords_and_commas() {
+    let test_cases = [
+        JoinSpanTestCase {
+            description: "a comma join's commas are between the items",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT * FROM a, b, c",
+            expected_joins: &[],
+            expected_commas: &[15, 18],
+        },
+        JoinSpanTestCase {
+            description: "a plain join and an outer join",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT * FROM a JOIN b ON a.x = b.x LEFT OUTER join c on c.x = a.x",
+            expected_joins: &[["JOIN", "JOIN", "ON"], ["LEFT", "join", "on"]],
+            expected_commas: &[],
+        },
+        JoinSpanTestCase {
+            description: "a directed cross join",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT * FROM a CROSS DIRECTED JOIN b",
+            expected_joins: &[["CROSS", "JOIN", ""]],
+            expected_commas: &[],
+        },
+        JoinSpanTestCase {
+            description: "an ASOF join without ON",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT * FROM t ASOF JOIN q MATCH_CONDITION (t.ts >= q.ts)",
+            expected_joins: &[["ASOF", "JOIN", ""]],
+            expected_commas: &[],
+        },
+        JoinSpanTestCase {
+            description: "a comma after a join",
+            parse: |sql| parse_source(sql, Dialect::Snowflake).ok(),
+            sql: "SELECT * FROM a JOIN b ON a.x = b.x, c",
+            expected_joins: &[["JOIN", "JOIN", "ON"], [",", ",", ""]],
+            expected_commas: &[],
+        },
+        JoinSpanTestCase {
+            description: "conditions written after a chain of joins",
+            parse: |sql| parse_source(sql, Dialect::DuckDB).ok(),
+            sql: "SELECT * FROM a JOIN b JOIN c ON b.x = c.x on a.x = b.x",
+            expected_joins: &[["JOIN", "JOIN", "on"], ["JOIN", "JOIN", "ON"]],
+            expected_commas: &[],
+        },
+    ];
+
+    for test_case in test_cases {
+        let statements: Vec<Expression> = (test_case.parse)(test_case.sql).unwrap_or_default();
+        let selects: Vec<&Select> = statements
+            .iter()
+            .flat_map(|statement| statement.dfs())
+            .filter_map(Expression::as_select)
+            .collect();
+        let text = |span: SourceSpan| -> String {
+            span.0.map_or(String::new(), |span| {
+                test_case
+                    .sql
+                    .chars()
+                    .skip(span.start)
+                    .take(span.end - span.start)
+                    .collect()
+            })
+        };
+        let joins: Vec<[String; 3]> = selects
+            .iter()
+            .flat_map(|select| &select.joins)
+            .map(|join| {
+                [
+                    text(join.kind_span),
+                    text(join.keyword_span),
+                    text(join.on_span),
+                ]
+            })
+            .collect();
+        let commas: Vec<usize> = selects
+            .iter()
+            .filter_map(|select| select.from.as_ref())
+            .flat_map(|from| &from.comma_spans.0)
+            .map(|comma| comma.start)
+            .collect();
+        let expected_joins: Vec<[String; 3]> = test_case
+            .expected_joins
+            .iter()
+            .map(|join| join.map(str::to_owned))
+            .collect();
+        assert_eq!(
+            (joins, commas),
+            (expected_joins, test_case.expected_commas.to_vec()),
             "{}",
             test_case.description
         );

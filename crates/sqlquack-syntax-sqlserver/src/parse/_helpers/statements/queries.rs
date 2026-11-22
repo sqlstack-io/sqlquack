@@ -922,7 +922,13 @@ impl<'sql> Parser<'sql> {
         if sources.len() == 1 {
             let (source, joins) = sources.remove(0);
             let expressions: Vec<Expression> = vec![source];
-            return Ok((From { expressions }, joins));
+            return Ok((
+                From {
+                    comma_spans: Default::default(),
+                    expressions,
+                },
+                joins,
+            ));
         }
         let expressions: Vec<Expression> = sources
             .into_iter()
@@ -931,7 +937,13 @@ impl<'sql> Parser<'sql> {
                 false => joined_table(source, joins, None),
             })
             .collect();
-        Ok((From { expressions }, Vec::new()))
+        Ok((
+            From {
+                comma_spans: Default::default(),
+                expressions,
+            },
+            Vec::new(),
+        ))
     }
 
     /// One table source and the joins after it.

@@ -332,7 +332,10 @@ impl Parser<'_> {
         (node.set, node.assignments) = self.set_clause_list()?;
         if self.eat_kw("from") {
             let (items, joins) = self.parse_from_list()?;
-            node.from_clause = Some(From { expressions: items });
+            node.from_clause = Some(From {
+                comma_spans: Default::default(),
+                expressions: items,
+            });
             node.from_joins = joins;
         }
         (node.where_clause, node.current_of) = self.where_or_current()?;

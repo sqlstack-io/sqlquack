@@ -181,7 +181,10 @@ impl Parser<'_> {
                 break;
             }
         }
-        select.from = Some(From { expressions: items });
+        select.from = Some(From {
+            comma_spans: Default::default(),
+            expressions: items,
+        });
         select.joins = joins;
         select.lateral_views = self.lateral_views()?;
         if !select.lateral_views.is_empty() && self.kw_in(0, &["PIVOT", "UNPIVOT"]) {

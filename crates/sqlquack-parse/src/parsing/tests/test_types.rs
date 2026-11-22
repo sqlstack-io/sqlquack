@@ -23,3 +23,13 @@ pub(crate) struct OperatorSpanTestCase {
     /// The operators found at the recorded ranges, in source order.
     pub(crate) expected_operators: &'static [&'static str],
 }
+
+pub(crate) struct JoinSpanTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parse: LocatedParser,
+    pub(crate) sql: &'static str,
+    /// For each join: its first keyword, its JOIN keyword or comma, and its ON, empty when none.
+    pub(crate) expected_joins: &'static [[&'static str; 3]],
+    /// Where the commas between the FROM clause's items are.
+    pub(crate) expected_commas: &'static [usize],
+}

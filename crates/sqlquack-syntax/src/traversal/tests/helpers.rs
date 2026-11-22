@@ -9,6 +9,7 @@ pub(crate) fn select_from_where() -> Expression {
     let mut select = Select::new();
     select.expressions = vec![Expression::column("a"), Expression::column("b")];
     select.from = Some(From {
+        comma_spans: Default::default(),
         expressions: vec![Expression::Table(Box::new(TableRef::new("t")))],
     });
     select.where_clause = Some(Where {

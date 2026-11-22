@@ -249,6 +249,16 @@ impl PartialEq for SourceSpan {
     }
 }
 
+/// SQLQuack: the ranges of a list's separators, recorded by a located parse and ignored by equality.
+#[derive(Debug, Clone, Default)]
+pub struct SeparatorSpans(pub Vec<Span>);
+
+impl PartialEq for SeparatorSpans {
+    fn eq(&self, _other: &Self) -> bool {
+        true
+    }
+}
+
 impl SpanField for Option<Span> {
     fn recorded(&self) -> Option<Span> {
         *self

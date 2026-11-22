@@ -57,6 +57,7 @@ fn selectable(body: Expression) -> Expression {
             let mut select: Select = Select::new();
             select.expressions = vec![star(None)];
             select.from = Some(From {
+                comma_spans: Default::default(),
                 expressions: vec![subquery(body, None, false)],
             });
             Expression::Select(Box::new(select))
@@ -136,6 +137,7 @@ impl Parser<'_> {
                 let mut select: Select = Select::new();
                 select.expressions = vec![star(None)];
                 select.from = Some(From {
+                    comma_spans: Default::default(),
                     expressions: vec![relation],
                 });
                 Ok(Expression::Select(Box::new(select)))
@@ -178,7 +180,10 @@ impl Parser<'_> {
         }
         if self.eat_kw("from") {
             let (items, joins) = self.parse_from_list()?;
-            select.from = Some(From { expressions: items });
+            select.from = Some(From {
+                comma_spans: Default::default(),
+                expressions: items,
+            });
             select.joins = joins;
         }
         if self.eat_kw("where") {

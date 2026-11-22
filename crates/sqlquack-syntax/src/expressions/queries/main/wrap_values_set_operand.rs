@@ -16,6 +16,7 @@ pub fn wrap_values_set_operand(expr: Expression) -> Expression {
             let mut select = Select::new();
             select.expressions = vec![Expression::star()];
             select.from = Some(From {
+                comma_spans: Default::default(),
                 expressions: vec![Expression::Values(values)],
             });
             Expression::Select(Box::new(select))

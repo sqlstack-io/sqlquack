@@ -100,6 +100,7 @@ impl Parser<'_> {
             }
         }
         select.from = Some(From {
+            comma_spans: Default::default(),
             expressions: sources,
         });
         select.joins = joins;

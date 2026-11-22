@@ -1448,6 +1448,9 @@ impl Parser {
                 None
             };
             table_joins.push(Join {
+                kind_span: Default::default(),
+                keyword_span: Default::default(),
+                on_span: Default::default(),
                 using_alias: None,
                 this: join_expr,
                 on: on_condition,

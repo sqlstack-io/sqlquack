@@ -67,6 +67,7 @@ impl Parser<'_> {
         if refs.len() == 1 {
             let (item, joins) = refs.remove(0);
             select.from = Some(From {
+                comma_spans: Default::default(),
                 expressions: vec![item],
             });
             select.joins = joins;
@@ -76,7 +77,10 @@ impl Parser<'_> {
             .into_iter()
             .map(|(item, joins)| collapse(item, joins))
             .collect();
-        select.from = Some(From { expressions: items });
+        select.from = Some(From {
+            comma_spans: Default::default(),
+            expressions: items,
+        });
         Ok(select)
     }
 

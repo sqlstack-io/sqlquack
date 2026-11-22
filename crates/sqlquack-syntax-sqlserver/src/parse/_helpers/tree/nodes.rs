@@ -316,6 +316,9 @@ pub(crate) fn join(
         JoinConstraint::On(condition) => (Some(*condition), Vec::new()),
     };
     Join {
+        kind_span: Default::default(),
+        keyword_span: Default::default(),
+        on_span: Default::default(),
         this,
         on,
         using,

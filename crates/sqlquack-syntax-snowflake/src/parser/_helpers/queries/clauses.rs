@@ -712,6 +712,7 @@ impl Parser {
             let mut select = Select::new();
             select.expressions = vec![Expression::star()];
             select.from = Some(From {
+                comma_spans: Default::default(),
                 expressions: vec![Expression::Subquery(Box::new(subquery))],
             });
             select.order_by = order_by;

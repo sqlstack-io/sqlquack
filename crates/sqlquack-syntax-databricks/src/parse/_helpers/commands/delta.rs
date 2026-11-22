@@ -159,6 +159,7 @@ impl Parser<'_> {
                 let mut select: Select = Select::new();
                 select.expressions = expressions;
                 select.from = Some(From {
+                    comma_spans: Default::default(),
                     expressions: vec![location],
                 });
                 subquery(Expression::Select(Box::new(select)), None, false)

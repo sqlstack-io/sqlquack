@@ -29,6 +29,7 @@ use sqlquack_syntax::expressions::statements::models::Annotated;
 use sqlquack_syntax::expressions::statements::models::Paren;
 use sqlquack_syntax::expressions::statements::models::Var;
 use sqlquack_syntax::expressions::tree::models::Expression;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
@@ -524,6 +525,7 @@ impl Parser {
     /// Parse FROM clause
     pub(crate) fn parse_from(&mut self) -> Result<From> {
         let mut expressions: Vec<Expression> = Vec::new();
+        let mut comma_spans = SeparatorSpans::default();
 
         loop {
             let pre_table_comments = if !self.is_at_end() {
@@ -555,6 +557,7 @@ impl Parser {
             if !self.match_token(TokenType::Comma) {
                 break;
             }
+            comma_spans.0.extend(self.token_range(self.current - 1).0);
 
             let is_unpivot_boundary = self.check(TokenType::Unpivot);
             if self.is_at_end()
@@ -583,7 +586,10 @@ impl Parser {
             }
         }
 
-        Ok(From { expressions })
+        Ok(From {
+            comma_spans,
+            expressions,
+        })
     }
 
     /// Parse a table expression (table name, subquery, etc.)

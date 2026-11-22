@@ -211,6 +211,9 @@ set_operation_clauses!(except_clauses, Except, "except");
 
 fn join_constructs(join: &Join) -> Vec<Construct> {
     let Join {
+        kind_span: _,
+        keyword_span: _,
+        on_span: _,
         this: _,
         on: _,
         using,
