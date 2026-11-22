@@ -57,3 +57,19 @@ pub(crate) struct RowLimitSpanTestCase {
     /// Where each query's first LIMIT, OFFSET or FETCH keyword starts.
     pub(crate) expected_starts: &'static [usize],
 }
+
+pub(crate) struct FromItemTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parse: LocatedParser,
+    pub(crate) sql: &'static str,
+    /// For each item written after a comma: where the comma is, and whether the item may read the items before it.
+    pub(crate) expected_after_commas: &'static [(usize, bool)],
+}
+
+pub(crate) struct SetOperationTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) parse: LocatedParser,
+    pub(crate) sql: &'static str,
+    /// For each set operation, outermost first: whether it pairs by name, and both sides' column counts.
+    pub(crate) expected_operations: &'static [(bool, Option<usize>, Option<usize>)],
+}
