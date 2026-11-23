@@ -18,6 +18,7 @@ use sqlquack_syntax::expressions::queries::models::{
 };
 use sqlquack_syntax::expressions::statements::models::{Command, Delete, Insert, Paren, Var};
 use sqlquack_syntax::expressions::types::models::Tuple;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::SourceSpan;
 
 pub(crate) fn column(table: Option<Identifier>, name: Identifier) -> Expression {
@@ -153,14 +154,18 @@ pub(crate) fn case(
     operand: Option<Expression>,
     whens: Vec<(Expression, Expression)>,
     else_: Option<Expression>,
+    (keyword_spans, when_spans, else_span): (SeparatorSpans, SeparatorSpans, SourceSpan),
 ) -> Expression {
     Expression::Case(Box::new(Case {
+        when_spans,
         operand,
         whens,
         else_,
         comments: Vec::new(),
         inferred_type: None,
         span: SourceSpan(None),
+        keyword_spans,
+        else_span,
     }))
 }
 
@@ -171,6 +176,7 @@ pub(crate) fn in_list(
     not: bool,
 ) -> Expression {
     Expression::In(Box::new(In {
+        operator_span: Default::default(),
         this,
         expressions,
         query,
@@ -189,6 +195,7 @@ pub(crate) fn between(
     not: bool,
 ) -> Expression {
     Expression::Between(Box::new(Between {
+        operator_span: Default::default(),
         this,
         low,
         high,
@@ -358,7 +365,8 @@ pub(crate) struct TableAlias {
 /// What follows a join's right side: nothing, `ON condition`, or `USING (columns)`.
 pub(crate) enum JoinConstraint {
     None,
-    On(Box<Expression>),
+    /// The condition, and where its ON is written.
+    On(Box<Expression>, SourceSpan),
     Using(Vec<Identifier>),
 }
 
@@ -368,6 +376,7 @@ pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: boo
         None => (None, Vec::new(), false),
     };
     Expression::Subquery(Box::new(Subquery {
+        row_limit_span: Default::default(),
         this,
         alias,
         column_aliases,
@@ -398,12 +407,19 @@ pub(crate) fn join(
     constraint: JoinConstraint,
     keywords: (bool, bool),
 ) -> Join {
+    let mut on_span: SourceSpan = SourceSpan::default();
     let (on, using) = match constraint {
         JoinConstraint::None => (None, Vec::new()),
-        JoinConstraint::On(condition) => (Some(*condition), Vec::new()),
+        JoinConstraint::On(condition, keyword) => {
+            on_span = keyword;
+            (Some(*condition), Vec::new())
+        }
         JoinConstraint::Using(columns) => (None, columns),
     };
     Join {
+        kind_span: Default::default(),
+        keyword_span: Default::default(),
+        on_span,
         this,
         on,
         using,
@@ -427,7 +443,7 @@ pub(crate) fn join(
 
 /// UNION, INTERSECT or EXCEPT of `left` and `right`, with `quantifier` as (`ALL`, `DISTINCT`).
 pub(crate) fn set_operation(
-    operator: &str,
+    (operator, operator_span): (&str, SourceSpan),
     left: Expression,
     right: Expression,
     quantifier: (bool, bool),
@@ -457,6 +473,8 @@ pub(crate) fn set_operation(
                 with_ties: false,
                 keyword: None,
                 span: SourceSpan(None),
+                operator_span,
+                row_limit_span: SourceSpan(None),
             }))
         };
     }
@@ -491,6 +509,7 @@ pub(crate) fn command(text: &str) -> Expression {
 
 pub(crate) fn insert(table: TableRef) -> Insert {
     Insert {
+        keyword_span: Default::default(),
         table,
         columns: Vec::new(),
         values: Vec::new(),
@@ -530,6 +549,7 @@ pub(crate) fn insert(table: TableRef) -> Insert {
 
 pub(crate) fn delete(table: TableRef) -> Delete {
     Delete {
+        keyword_span: Default::default(),
         table,
         hint: None,
         on_cluster: None,

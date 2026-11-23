@@ -1,6 +1,6 @@
 //! Test case types for the SQL Server lexer.
 
-use sqlquack_syntax::TokenKind as LosslessKind;
+use sqlquack_tokenize::TokenKind as LosslessKind;
 
 use crate::scan::models::KeywordStatus;
 

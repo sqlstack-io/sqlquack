@@ -6,6 +6,7 @@ use sqlquack_syntax::expressions::queries::models::{
     Cte, Fetch, From, GroupBy, Having, Limit, NamedWindow, Offset, OrderBy, OrderByAll, Ordered,
     Qualify, Select, Where, With,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
@@ -35,9 +36,11 @@ const EXCEPT_BY_NAME: &str = "Invalid combination of EXCEPT and BY NAME";
 #[derive(Default)]
 struct Modifiers {
     order: Option<Vec<Ordered>>,
+    order_keyword: SourceSpan,
     limit: Option<Limit>,
     offset: Option<Offset>,
     fetch: Option<Fetch>,
+    keyword: SourceSpan,
 }
 
 impl Modifiers {
@@ -66,6 +69,7 @@ fn order_by(expressions: Vec<Ordered>) -> OrderBy {
         None => expressions,
     };
     OrderBy {
+        keyword_span: Default::default(),
         expressions,
         siblings: false,
         comments: Vec::new(),
@@ -78,6 +82,8 @@ pub(crate) fn wrapped(body: Expression) -> Select {
     let mut select: Select = Select::new();
     select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
     select.from = Some(From {
+        keyword_span: Default::default(),
+        comma_spans: Default::default(),
         expressions: vec![subquery(body, None, false)],
     });
     select
@@ -112,13 +118,16 @@ fn modified(body: Expression, modifiers: Modifiers) -> Expression {
     };
     let Modifiers {
         order,
+        order_keyword,
         limit,
         offset,
         fetch,
+        keyword,
     } = modifiers;
     macro_rules! set_operation_modified {
         ($node:expr) => {{
-            $node.order_by = order.map(order_by);
+            $node.order_by = order.map(|items| order_by(items).written_at(order_keyword));
+            $node.row_limit_span = keyword;
             $node.limit = limit.map(set_operation_limit);
             $node.offset = offset.map(|offset| Box::new(offset.this));
             if let Some(fetch) = fetch {
@@ -128,7 +137,8 @@ fn modified(body: Expression, modifiers: Modifiers) -> Expression {
     }
     match &mut body {
         Expression::Select(select) => {
-            select.order_by = order.map(order_by);
+            select.order_by = order.map(|items| order_by(items).written_at(order_keyword));
+            select.row_limit_span = keyword;
             select.limit = limit;
             select.offset = offset;
             select.fetch = fetch;
@@ -217,9 +227,15 @@ impl Parser<'_> {
     /// `WithClause`: `WITH [RECURSIVE] WithStatement, ...`.
     pub(crate) fn ctes(&mut self) -> Parsing<With> {
         self.expect_kw("WITH")?;
+        let keyword_span = self.token_range(self.at - 1);
+        let list_at: usize = self.at;
         let recursive: bool = self.eat_kw("RECURSIVE");
+        let mut comma_spans = sqlquack_syntax::tokens::models::SeparatorSpans::default();
         let ctes: Vec<Cte> = self.comma_list(|parser| {
             let first: usize = parser.at;
+            if first > list_at + usize::from(recursive) {
+                comma_spans.0.extend(parser.token_range(first - 1).0);
+            }
             let start: usize = parser.offset();
             let mut node: Cte = parser.with_statement()?;
             node.span = parser.source_range(first);
@@ -237,6 +253,8 @@ impl Parser<'_> {
             Ok(node)
         })?;
         Ok(With {
+            keyword_span,
+            comma_spans,
             ctes,
             recursive,
             leading_comments: Vec::new(),
@@ -314,6 +332,7 @@ impl Parser<'_> {
         while self.kw_in(0, &["UNION", "EXCEPT"]) {
             let operator: String = self.word_at(0).unwrap_or_default();
             self.at += 1;
+            let operator_span: SourceSpan = self.source_range(self.at - 1);
             let quantifier: (bool, bool) = self.distinct_or_all();
             let by_name_start: usize = self.offset();
             let by_name: bool = self.eat_kws(&["BY", "NAME"]);
@@ -321,7 +340,8 @@ impl Parser<'_> {
                 self.refuse_later(EXCEPT_BY_NAME, by_name_start);
             }
             let right: Expression = self.deeper(|parser| parser.intersect_chain())?;
-            let mut node: Expression = set_operation(&operator, left, right, quantifier);
+            let mut node: Expression =
+                set_operation((&operator, operator_span), left, right, quantifier);
             if let Expression::Union(union) = &mut node {
                 union.by_name = by_name;
             }
@@ -342,9 +362,13 @@ impl Parser<'_> {
         let first: usize = self.at;
         let mut left: Expression = self.select_atom()?;
         while self.eat_kw("INTERSECT") {
+            let operator_span: SourceSpan = self.source_range(self.at - 1);
             let quantifier: (bool, bool) = self.distinct_or_all();
             let right: Expression = self.deeper(|parser| parser.select_atom())?;
-            left = self.spanned(first, set_operation("INTERSECT", left, right, quantifier));
+            left = self.spanned(
+                first,
+                set_operation(("INTERSECT", operator_span), left, right, quantifier),
+            );
         }
         Ok(left)
     }
@@ -373,14 +397,18 @@ impl Parser<'_> {
             Some("PIVOT" | "PIVOT_WIDER") => self.pivot_statement(),
             Some("UNPIVOT" | "PIVOT_LONGER") => self.unpivot_statement(),
             Some("VALUES") => {
+                let keyword: usize = self.at;
                 let rows = self.values_rows()?;
-                Ok(crate::parse::_helpers::tree::nodes::values(rows, None))
+                let node: Expression = crate::parse::_helpers::tree::nodes::values(rows, None);
+                Ok(self.keyworded(keyword, node))
             }
             Some("TABLE") => {
                 self.at += 1;
                 let mut select: Select = Select::new();
                 select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
                 select.from = Some(From {
+                    keyword_span: Default::default(),
+                    comma_spans: Default::default(),
                     expressions: vec![Expression::Table(Box::new(self.base_table_name()?))],
                 });
                 Ok(Expression::Select(Box::new(select)))
@@ -453,8 +481,11 @@ impl Parser<'_> {
     /// `SelectClause`: `SELECT [DISTINCT [ON (...)] | ALL] [TargetList]`.
     fn select_clause(&mut self, mut select: Select) -> Parsing<Select> {
         self.expect_kw("SELECT")?;
+        select.select_span = self.token_range(self.at - 1);
+        select.list_head_span = self.token_range(self.at);
         if self.eat_kw("DISTINCT") {
             select.distinct = true;
+            select.distinct_span = self.token_range(self.at - 1);
             if self.kw("ON") && self.char_at(1, '(') {
                 self.at += 2;
                 select.distinct_on = Some(self.expression_list(')')?);
@@ -468,12 +499,16 @@ impl Parser<'_> {
             self.refuse_later("SELECT clause without selection list", position);
             return Ok(select);
         }
+        let first_item: usize = self.at;
         let mut expressions: Vec<Expression> = vec![self.named_expression()?];
+        select.item_spans.0.extend(self.item_range(first_item));
         while self.eat_char(',') {
             if self.target_ends() {
                 break;
             }
+            let head: usize = self.at;
             expressions.push(self.named_expression()?);
+            select.item_spans.0.extend(self.item_range(head));
         }
         select.expressions = expressions;
         Ok(select)
@@ -518,9 +553,11 @@ impl Parser<'_> {
 
     /// `GroupByClause`: `GROUP BY ALL` or a list of grouping items.
     fn group_by(&mut self) -> Parsing<GroupBy> {
+        let keyword_span = self.token_range(self.at);
         self.at += 2;
         if self.eat_kw("ALL") {
             return Ok(GroupBy {
+                keyword_span,
                 expressions: Vec::new(),
                 all: Some(true),
                 totals: false,
@@ -530,6 +567,7 @@ impl Parser<'_> {
         }
         let expressions: Vec<Expression> = self.comma_list(|parser| parser.group_item())?;
         Ok(GroupBy {
+            keyword_span,
             expressions,
             all: None,
             totals: false,
@@ -570,7 +608,11 @@ impl Parser<'_> {
     fn result_modifiers(&mut self) -> Parsing<Modifiers> {
         let mut modifiers: Modifiers = Modifiers::default();
         if self.order_by_at() {
+            modifiers.order_keyword = self.token_range(self.at);
             modifiers.order = Some(self.order_by_clause()?);
+        }
+        if self.kw_in(0, &["LIMIT", "OFFSET", "FETCH"]) {
+            modifiers.keyword = self.token_range(self.at);
         }
         for _ in 0..2 {
             let counted: bool = modifiers.limit.is_some() || modifiers.fetch.is_some();

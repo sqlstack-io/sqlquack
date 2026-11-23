@@ -1,8 +1,8 @@
 //! `shared_texts`: the significant token texts of SQL under the shared lossless tokenizer.
 
 use sqlquack_parse::tokenize;
-use sqlquack_syntax::lossless::models::TokenKind;
 use sqlquack_syntax::tokens::models::Dialect;
+use sqlquack_tokenize::lossless::models::TokenKind;
 
 use crate::fingerprint::errors::FingerprintError;
 

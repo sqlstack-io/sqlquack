@@ -190,18 +190,6 @@ impl Parser {
         }
     }
 
-    pub(crate) fn parse_typed_function(
-        &mut self,
-        name: &str,
-        upper_name: &str,
-        quoted: bool,
-    ) -> Result<Expression> {
-        if self.config.dialect == Some(sqlquack_syntax::tokens::models::DialectType::Snowflake) {
-            return self.parse_faithful_call(name, upper_name, quoted);
-        }
-        self.parse_typed_function_lowered(name, upper_name, quoted)
-    }
-
     /// polyglot's typed parse of a call, lowering it into a cross-dialect node where it can.
     pub(crate) fn parse_typed_function_lowered(
         &mut self,
@@ -249,48 +237,6 @@ impl Parser {
     /// SQLQuack: whether a faithful parse keeps a path key in brackets, so the path stays unambiguous.
     pub(crate) fn faithful_path_key_needs_brackets(&self, key: &str) -> bool {
         key.contains(['.', '[', ']', '"', ':'])
-    }
-
-    /// SQLQuack: a call as written, unless polyglot keeps it or the typed parse is the call itself.
-    pub(crate) fn parse_faithful_call(
-        &mut self,
-        name: &str,
-        upper_name: &str,
-        quoted: bool,
-    ) -> Result<Expression> {
-        let saved = self.current;
-        if let Some((expr, end)) = self.faithful_calls.get(&saved) {
-            let expr = expr.clone();
-            self.current = *end;
-            return Ok(expr);
-        }
-        let comments = self.call_comments(saved);
-        let typed = self.parse_typed_function_lowered(name, upper_name, quoted)?;
-        let expr = match Self::call_name(&typed) {
-            Some(kept) if kept.eq_ignore_ascii_case(name) => typed,
-            _ if sqlquack_syntax::functions::names::main::faithful_keyword_syntax_name::faithful_keyword_syntax_name(upper_name)
-                && self.tokens_use_keyword_syntax(saved) =>
-            {
-                typed
-            }
-            _ => {
-                let typed_end = self.current;
-                let typed_comments = self.call_comments(saved);
-                self.restore_comments(comments);
-                self.current = saved;
-                match self.parse_generic_function(name, quoted) {
-                    Ok(generic) if self.current == typed_end => generic,
-                    _ => {
-                        self.restore_comments(typed_comments);
-                        self.current = typed_end;
-                        typed
-                    }
-                }
-            }
-        };
-        self.faithful_calls
-            .insert(saved, (expr.clone(), self.current));
-        Ok(expr)
     }
 
     /// SQLQuack: comments on the tokens of the call starting at `start`, so a parse can be undone.
@@ -400,6 +346,8 @@ impl Parser {
                 };
                 self.expect_token(TokenType::RParen)?;
                 Ok(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
+                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,
@@ -571,6 +519,8 @@ impl Parser {
             || filter.is_some()
         {
             Ok(Expression::AggregateFunction(Box::new(AggregateFunction {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 source_dialect: None,
 
                 name: name.to_string(),
@@ -588,6 +538,8 @@ impl Parser {
             })))
         } else {
             Ok(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -613,6 +565,8 @@ impl Parser {
             let query = self.parse_select()?;
             self.expect_token(TokenType::RParen)?;
             return Ok(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -666,6 +620,7 @@ impl Parser {
                 self.expect_token(TokenType::RParen)?;
 
                 let subquery = Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: inner_query,
                     alias: None,
                     column_aliases: Vec::new(),
@@ -689,6 +644,8 @@ impl Parser {
                 }));
 
                 return Ok(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
+                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,
@@ -717,6 +674,8 @@ impl Parser {
         };
         self.expect_token(TokenType::RParen)?;
         Ok(Expression::Function(Box::new(Function {
+            argument_span: Default::default(),
+            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -831,6 +790,8 @@ impl Parser {
             if is_duckdb_top_n {
                 let filter = self.parse_filter_clause()?;
                 Ok(Expression::AggregateFunction(Box::new(AggregateFunction {
+                    argument_span: Default::default(),
+                    name_span: Default::default(),
                     source_dialect: None,
 
                     name: name.to_string(),
@@ -848,6 +809,8 @@ impl Parser {
                 })))
             } else {
                 Ok(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
+                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,
@@ -1190,6 +1153,8 @@ impl Parser {
                     self.expect_token(TokenType::RParen)?;
                     let trailing_comments = self.previous_trailing_comments().to_vec();
                     Ok(Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -1493,6 +1458,8 @@ impl Parser {
             }
             self.expect_token(TokenType::RParen)?;
             let func_expr = Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1603,6 +1570,8 @@ impl Parser {
             all_args.extend(remaining);
             self.expect_token(TokenType::RParen)?;
             Ok(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1819,6 +1788,7 @@ impl Parser {
             }
             if !order_exprs.is_empty() {
                 Some(Box::new(Expression::OrderBy(Box::new(OrderBy {
+                    keyword_span: Default::default(),
                     expressions: order_exprs,
                     siblings: false,
                     comments: Vec::new(),

@@ -352,3 +352,6 @@ pub(crate) const EXPLAINABLE_STARTS: [&str; 26] = [
 
 /// The deepest tree a statement may build, counted after it parses, so that serialising it cannot exhaust a stack.
 pub(crate) const MAX_TREE_DEPTH: usize = 8_000;
+
+/// The most keywords written before a JOIN, as in `NATURAL LEFT OUTER JOIN`.
+pub(crate) const MAX_JOIN_PREFIX: usize = 4;

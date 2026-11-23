@@ -1,8 +1,9 @@
 //! Parser support: the source ranges a located parse records on nodes.
 
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::queries::models::Intersect;
 use sqlquack_syntax::expressions::tree::models::Expression;
-use sqlquack_syntax::tokens::models::SourceSpan;
+use sqlquack_syntax::tokens::models::{OperatorSpan, SeparatorSpans, SourceSpan, Span, TokenType};
 use sqlquack_syntax::traversal::types::AstNode;
 
 impl Parser {
@@ -11,7 +12,113 @@ impl Parser {
         if !self.config.record_node_spans {
             return expr;
         }
+        let expr = self.named_at(start, expr);
         self.filled_span(start, expr)
+    }
+
+    /// SQLQuack: `expr` with the name range of the call it begins with, through LATERAL and an alias.
+    fn named_at(&self, start: usize, mut expr: Expression) -> Expression {
+        let mut at = start;
+        if self
+            .tokens
+            .get(at)
+            .is_some_and(|token| token.token_type == TokenType::Lateral)
+        {
+            at += 1;
+        }
+        let mut node = &mut expr;
+        loop {
+            node = match node {
+                Expression::Alias(alias) => &mut alias.this,
+                Expression::Lateral(lateral) => &mut *lateral.this,
+                other => {
+                    node = other;
+                    break;
+                }
+            };
+        }
+        let (name, field) = match node {
+            Expression::Function(call) => (&call.name, &mut call.name_span),
+            Expression::AggregateFunction(call) => (&call.name, &mut call.name_span),
+            _ => return expr,
+        };
+        if !field.is_absent() {
+            return expr;
+        }
+        let (qualifiers, last) = match name.rsplit_once('.') {
+            Some((qualifier, last)) => (qualifier.split('.').count(), last),
+            None => (0, name.as_str()),
+        };
+        let index = at + 2 * qualifiers;
+        if self
+            .tokens
+            .get(index)
+            .is_some_and(|token| token.text.eq_ignore_ascii_case(last))
+        {
+            *field = self.token_range(index);
+        }
+        expr
+    }
+
+    /// SQLQuack: records on `node` the operator that begins at token `operator`, when located.
+    pub(crate) fn record_operation(&self, operator: usize, node: &mut Expression) {
+        if !self.config.record_node_spans || self.current <= operator {
+            return;
+        }
+        if let (Some(first), Some(last)) =
+            (self.tokens.get(operator), self.tokens.get(self.current - 1))
+        {
+            let following: Option<Span> = self.tokens.get(operator + 1).map(|token| token.span);
+            node.record_operation(first.span, following, last.span);
+        }
+    }
+
+    /// SQLQuack: the keyword `back` tokens before the cursor, when it is `keyword`.
+    pub(crate) fn keyword_before(&self, back: usize, keyword: TokenType) -> SourceSpan {
+        match self.current.checked_sub(back) {
+            Some(at)
+                if self
+                    .tokens
+                    .get(at)
+                    .is_some_and(|token| token.token_type == keyword) =>
+            {
+                self.token_range(at)
+            }
+            _ => SourceSpan::default(),
+        }
+    }
+
+    /// SQLQuack: the select item from token `head` to the last consumed token, when Rules read the tree.
+    pub(crate) fn item_range(&self, head: usize) -> Option<OperatorSpan> {
+        if !self.config.record_query_spans || self.current <= head {
+            return None;
+        }
+        let first = self.tokens.get(head)?;
+        let last = self.tokens.get(self.current - 1)?;
+        Some(OperatorSpan::new(first.span, last.span.end))
+    }
+
+    /// SQLQuack: each AS since token `from` with the name after it, when Rules read the tree.
+    pub(crate) fn aliased_names(&self, from: usize) -> SeparatorSpans {
+        if !self.config.record_query_spans {
+            return SeparatorSpans::default();
+        }
+        let written = self.tokens.get(from..self.current).unwrap_or_default();
+        SeparatorSpans(
+            written
+                .windows(2)
+                .filter(|pair| pair[0].token_type == TokenType::As)
+                .map(|pair| pair[0].span.through(pair[1].span))
+                .collect(),
+        )
+    }
+
+    /// SQLQuack: a query or set-operation branch with its own range, when Rules read the tree.
+    pub(crate) fn query_spanned(&self, start: usize, query: Expression) -> Expression {
+        if !self.config.record_query_spans {
+            return query;
+        }
+        self.spanned(start, query)
     }
 
     /// SQLQuack: a select item with its range when the parse records item ranges, which lineage reports.
@@ -44,5 +151,107 @@ impl Parser {
             (Some(first), Some(last)) => SourceSpan(Some(first.span.through(last.span))),
             _ => SourceSpan::default(),
         }
+    }
+
+    /// SQLQuack: the range of the token at `index` when `written`, and none otherwise.
+    pub(crate) fn token_range_if(&self, written: bool, index: usize) -> SourceSpan {
+        match written {
+            true => self.token_range(index),
+            false => SourceSpan::default(),
+        }
+    }
+
+    /// SQLQuack: the range of the single token at `index`, when located.
+    pub(crate) fn token_range(&self, index: usize) -> SourceSpan {
+        match (self.config.record_node_spans, self.tokens.get(index)) {
+            (true, Some(token)) => SourceSpan(Some(token.span)),
+            _ => SourceSpan::default(),
+        }
+    }
+
+    /// SQLQuack: the range a set operation's operand records, looking through attached comments.
+    pub(crate) fn operand_span(mut operand: &Expression) -> Option<Span> {
+        while let Expression::Annotated(annotated) = operand {
+            operand = &annotated.this;
+        }
+        operand.recorded_span()
+    }
+
+    /// SQLQuack: the range from `first` to the last consumed token, when located.
+    pub(crate) fn range_from(&self, first: Option<Span>) -> SourceSpan {
+        let last = self
+            .current
+            .checked_sub(1)
+            .and_then(|at| self.tokens.get(at));
+        match (self.config.record_query_spans, first, last) {
+            (true, Some(first), Some(last)) => SourceSpan(Some(first.through(last.span))),
+            _ => SourceSpan::default(),
+        }
+    }
+
+    /// SQLQuack: a query from the WITH or hint at token `start`, replacing the range of its body alone.
+    pub(crate) fn spanned_with_prefix(&self, start: usize, mut query: Expression) -> Expression {
+        if !self.config.record_query_spans {
+            return query;
+        }
+        let span = match &mut query {
+            Expression::Select(select) => &mut select.span,
+            Expression::Union(union) => &mut union.span,
+            Expression::Intersect(intersect) => &mut intersect.span,
+            Expression::Except(except) => &mut except.span,
+            _ => return query,
+        };
+        *span = self.source_range(start);
+        query
+    }
+
+    /// SQLQuack: a set operation's range, stretched over the modifiers parsed after its branches.
+    pub(crate) fn extend_set_operation_span(&self, operation: &mut Expression) {
+        if !self.config.record_query_spans {
+            return;
+        }
+        let mut node = operation;
+        while let Expression::Annotated(annotated) = node {
+            node = &mut annotated.this;
+        }
+        let span = match node {
+            Expression::Union(union) => &mut union.span,
+            Expression::Intersect(intersect) => &mut intersect.span,
+            Expression::Except(except) => &mut except.span,
+            _ => return,
+        };
+        *span = self.range_from(span.0);
+    }
+
+    /// SQLQuack: the last branch's range, without the modifiers moved from it to its set operation.
+    pub(crate) fn end_select_before_modifiers(&self, start: usize, operand: &mut Expression) {
+        let end = self.select_modifiers_start;
+        if !self.config.record_query_spans || end <= start || end > self.current {
+            return;
+        }
+        let mut node = operand;
+        while let Expression::Annotated(annotated) = node {
+            node = &mut annotated.this;
+        }
+        if let (Expression::Select(select), Some(first), Some(last)) =
+            (node, self.tokens.get(start), self.tokens.get(end - 1))
+        {
+            select.span = SourceSpan(Some(first.span.through(last.span)));
+        }
+    }
+
+    /// SQLQuack: the (outer, INTERSECT) ranges after INTERSECT takes the outer's right operand.
+    pub(crate) fn rebound_spans(
+        intersect: &Intersect,
+        outer: SourceSpan,
+    ) -> (SourceSpan, SourceSpan) {
+        let Some(whole) = intersect.span.0 else {
+            return (outer, intersect.span);
+        };
+        let first = Self::operand_span(&intersect.left);
+        (
+            SourceSpan(outer.0.map(|span| span.through(whole))),
+            SourceSpan(first.map(|span| span.through(whole))),
+        )
     }
 }

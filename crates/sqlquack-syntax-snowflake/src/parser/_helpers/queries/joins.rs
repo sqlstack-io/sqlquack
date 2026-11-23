@@ -109,9 +109,11 @@ impl Parser {
                 } else {
                     false
                 };
+                let kind_span = self.token_range(pos_before_join_kind);
                 if needs_join_keyword {
                     self.expect_token(TokenType::Join)?;
                 }
+                let keyword_span = self.token_range(self.current.saturating_sub(1));
 
                 let table = self.parse_join_table(&kind)?;
 
@@ -145,10 +147,12 @@ impl Parser {
                     None
                 };
 
+                let mut on_span = SourceSpan::default();
                 let (on, using) = if (has_inline_condition || match_condition.is_some())
                     && !self.check_join_keyword()
                 {
                     if self.match_token(TokenType::On) {
+                        on_span = self.token_range(self.current - 1);
                         (Some(self.parse_expression()?), Vec::new())
                     } else if self.match_token(TokenType::Using) {
                         let has_parens = self.match_token(TokenType::LParen);
@@ -168,6 +172,9 @@ impl Parser {
                     self.parse_snowflake_join_read_order(table, conditionless)?;
 
                 joins.push(Join {
+                    kind_span,
+                    keyword_span,
+                    on_span,
                     using_alias: None,
                     this: table,
                     on,
@@ -308,6 +315,7 @@ impl Parser {
             if self.match_token(TokenType::On) {
                 idx -= 1;
                 let join_idx = unconditioned[idx];
+                joins[join_idx].on_span = self.token_range(self.current - 1);
                 joins[join_idx].on = Some(self.parse_expression()?);
                 joins[join_idx].deferred_condition = true;
             } else if self.match_token(TokenType::Using) {

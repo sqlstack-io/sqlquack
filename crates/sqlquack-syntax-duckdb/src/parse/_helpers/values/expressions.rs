@@ -169,12 +169,13 @@ impl<'sql> Parser<'sql> {
         let mut left: Expression = operand(self)?;
         let mut links: usize = 0;
         while let Some((width, build)) = operator(self) {
+            let operated: usize = self.at;
             let right = self.attempt(|parser| {
                 parser.at += width;
                 parser.deeper(operand)
             });
             match right {
-                Ok(right) => left = build(left, right),
+                Ok(right) => left = self.operated(operated, build(left, right)),
                 Err(_) => break,
             }
             if !matches!(left, Expression::And(_) | Expression::Or(_)) {
@@ -291,9 +292,10 @@ impl<'sql> Parser<'sql> {
             if self.distinct_from_at() {
                 this = self.distinct_from_tail(this)?;
             } else if let Some((width, build)) = self.comparison_operator() {
+                let operator: usize = self.at;
                 self.at += width;
                 let right: Expression = self.comparison_operand()?;
-                this = build(this, right);
+                this = self.operated(operator, build(this, right));
             } else if self
                 .peek()
                 .is_some_and(|token| is_generic_operator(token, false))
@@ -371,12 +373,13 @@ impl<'sql> Parser<'sql> {
         let mut left: Expression = self.between_in_like_expression()?;
         let mut tails: usize = 0;
         while let Some((width, build)) = self.comparison_operator() {
+            let operated: usize = self.at;
             let right = self.attempt(|parser| {
                 parser.at += width;
                 parser.comparison_operand()
             });
             match right {
-                Ok(right) => left = build(left, right),
+                Ok(right) => left = self.operated(operated, build(left, right)),
                 Err(_) => break,
             }
             tails += 1;
@@ -415,8 +418,10 @@ impl<'sql> Parser<'sql> {
             if !self.kw_at(offset, "IN") {
                 break;
             }
+            let operator: usize = self.at;
             self.at += offset + 1;
-            this = self.in_tail(this, not)?;
+            let tested: Expression = self.in_tail(this, not)?;
+            this = self.operated(operator, tested);
             while self.eat_op("::") {
                 let to = self.data_type()?;
                 this = Expression::Cast(Box::new(cast(this, to, true)));
@@ -425,6 +430,7 @@ impl<'sql> Parser<'sql> {
         let not: bool = self.kw("NOT");
         let offset: usize = usize::from(not);
         if self.kw_at(offset, "BETWEEN") {
+            let operator: usize = self.at;
             let range = self.attempt(|parser| {
                 parser.at += offset + 1;
                 parser.eat_kw("ASYMMETRIC");
@@ -433,7 +439,7 @@ impl<'sql> Parser<'sql> {
                 Ok((low, parser.other_operator_expression()?))
             });
             return Ok(match range {
-                Ok((low, high)) => between(this, low, high, not),
+                Ok((low, high)) => self.operated(operator, between(this, low, high, not)),
                 Err(_) => this,
             });
         }

@@ -1239,6 +1239,7 @@ impl Parser {
             };
             self.expect_token(TokenType::RParen)?;
             Ok(Expression::In(Box::new(In {
+                operator_span: Default::default(),
                 this: column,
                 expressions: in_exprs,
                 query: None,
@@ -1251,6 +1252,7 @@ impl Parser {
         } else {
             let field_id = self.parse_id_var()?.unwrap_or(Expression::Null(Null));
             Ok(Expression::In(Box::new(In {
+                operator_span: Default::default(),
                 this: column,
                 expressions: Vec::new(),
                 query: Some(field_id),
@@ -1522,6 +1524,8 @@ impl Parser {
             let trailing_comments = self.previous_trailing_comments().to_vec();
             let identifier_func = Expression::Function(Box::new(
                 sqlquack_syntax::expressions::functions::models::Function {
+                    argument_span: Default::default(),
+                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,

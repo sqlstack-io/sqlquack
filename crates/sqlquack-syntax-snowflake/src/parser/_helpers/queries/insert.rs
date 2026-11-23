@@ -22,6 +22,7 @@ use sqlquack_syntax::tokens::types::Result;
 impl Parser {
     /// Parse INSERT statement
     pub(crate) fn parse_insert(&mut self) -> Result<Expression> {
+        let keyword_span = self.token_range(self.current);
         let insert_token = self.expect_token(TokenType::Insert)?;
         let leading_comments = insert_token.comments;
 
@@ -158,6 +159,7 @@ impl Parser {
         };
 
         Ok(Expression::Insert(Box::new(Insert {
+            keyword_span,
             column_targets: Vec::new(),
             table,
             columns,
@@ -349,6 +351,7 @@ impl Parser {
         let query = self.parse_statement()?;
 
         Ok(Expression::Insert(Box::new(Insert {
+            keyword_span: Default::default(),
             column_targets: Vec::new(),
             table: TableRef::new(""),
             columns: Vec::new(),
@@ -413,6 +416,8 @@ impl Parser {
             };
             self.expect_token(TokenType::RParen)?;
             function_target = Some(Box::new(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -694,6 +699,7 @@ impl Parser {
                     self.expect_token(TokenType::Eq)?;
                     let value = self.parse_expression()?;
                     sets.push(Expression::Eq(Box::new(BinaryOp {
+                        operator_span: Default::default(),
                         left: column,
                         right: value,
                         left_comments: Vec::new(),

@@ -253,6 +253,7 @@ impl Parser {
                     export_state: false,
                     from_separator: false,
                     written_as: None,
+                    ..Function::default()
                 }))));
             }
             let args = self.parse_expression_list()?;
@@ -292,6 +293,7 @@ impl Parser {
                     export_state: false,
                     from_separator: false,
                     written_as: None,
+                    ..Function::default()
                 }))));
             } else {
                 return Err(self.parse_error("IF function requires 2 or 3 arguments"));
@@ -667,6 +669,7 @@ impl Parser {
             self.expect_token(TokenType::RParen)?;
             let trailing = self.previous_trailing_comments().to_vec();
             let mut subq = Subquery {
+                row_limit_span: Default::default(),
                 this: query,
                 alias: None,
                 column_aliases: Vec::new(),
@@ -1087,6 +1090,7 @@ impl Parser {
                             if self.match_token(TokenType::Eq) {
                                 let value = self.parse_expression()?;
                                 let assignment = Expression::Eq(Box::new(BinaryOp {
+                                    operator_span: Default::default(),
                                     left: col,
                                     right: value,
                                     left_comments: Vec::new(),
@@ -1413,6 +1417,7 @@ impl Parser {
 
         let (expressions, all) = self.take_order_by_all(expressions);
         Ok(Some(Expression::OrderBy(Box::new(OrderBy {
+            keyword_span: Default::default(),
             expressions,
             siblings: false,
             comments: Vec::new(),

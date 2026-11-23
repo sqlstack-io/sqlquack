@@ -490,6 +490,7 @@ impl Parser {
                 export_state: false,
                 from_separator: false,
                 written_as: None,
+                ..Function::default()
             }));
 
             if self.match_token(TokenType::Within) {
@@ -737,6 +738,7 @@ impl Parser {
             export_state: false,
             from_separator: false,
             written_as: None,
+            ..Function::default()
         })))
     }
 
@@ -1043,6 +1045,7 @@ impl Parser {
             export_state: false,
             from_separator: false,
             written_as: None,
+            ..Function::default()
         }));
         self.maybe_parse_over(func_expr)
     }
@@ -1416,6 +1419,7 @@ impl Parser {
             export_state: false,
             from_separator: false,
             written_as: None,
+            ..Function::default()
         }));
         self.maybe_parse_over(func)
     }
@@ -1446,6 +1450,7 @@ impl Parser {
             export_state: false,
             from_separator: false,
             written_as: None,
+            ..Function::default()
         }));
         self.maybe_parse_over(func)
     }
@@ -1498,6 +1503,7 @@ impl Parser {
                 export_state: false,
                 from_separator: false,
                 written_as: None,
+                ..Function::default()
             }));
             self.maybe_parse_subscript(func)
         } else {
@@ -1519,6 +1525,7 @@ impl Parser {
                 export_state: false,
                 from_separator: false,
                 written_as: None,
+                ..Function::default()
             }));
             self.maybe_parse_subscript(func)
         }
@@ -1963,17 +1970,8 @@ impl Parser {
             export_state: false,
             from_separator: false,
             written_as: None,
+            ..Function::default()
         })))
-    }
-
-    /// Check if function name is a known aggregate function
-    pub(crate) fn is_aggregate_function(&self, name: &str) -> bool {
-        sqlquack_syntax::functions::names::main::is_aggregate_function_name_for_dialect::is_aggregate_function_name_for_dialect(name, self.config.dialect)
-    }
-
-    /// Whether the source dialect writes LOG(base, value), base first (not BigQuery or TSQL).
-    pub(crate) fn log_base_first(&self) -> bool {
-        !false
     }
 }
 

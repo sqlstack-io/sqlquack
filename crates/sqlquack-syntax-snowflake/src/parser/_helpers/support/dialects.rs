@@ -14,8 +14,8 @@ use crate::parser::types::DialectImpl;
 use sqlquack_syntax::tokens::errors::Error;
 use sqlquack_syntax::tokens::models::Dialect;
 use sqlquack_syntax::tokens::models::DialectType;
-use sqlquack_syntax::tokens::models::TokenizerConfig;
 use sqlquack_syntax::tokens::types::Result;
+use sqlquack_tokenize::tokens::models::TokenizerConfig;
 
 pub(crate) static CACHED_GENERIC: LazyLock<CachedDialectConfig> =
     LazyLock::new(|| cached(GenericDialect));

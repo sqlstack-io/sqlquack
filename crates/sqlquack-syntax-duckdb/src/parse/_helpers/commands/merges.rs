@@ -37,7 +37,7 @@ impl Parser<'_> {
             false => joined_table(source, joins, None),
         };
         let (on, using_cond) = match self.join_qualifier()? {
-            JoinConstraint::On(condition) => (Some(condition), None),
+            JoinConstraint::On(condition, _) => (Some(condition), None),
             JoinConstraint::Using(columns) => (None, Some(Box::new(name_tuple(columns)))),
             JoinConstraint::None => (None, None),
         };

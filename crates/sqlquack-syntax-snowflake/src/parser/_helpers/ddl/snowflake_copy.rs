@@ -641,6 +641,7 @@ const COPY_NAME_OPTIONS: &[&str] = &["FILE_FORMAT", "FORMAT_NAME", "STORAGE_INTE
 /// A `<key> = <value>` item inside a parenthesised option value.
 fn copy_option_pair(left: Expression, right: Expression) -> Expression {
     Expression::Eq(Box::new(BinaryOp {
+        operator_span: Default::default(),
         left,
         right,
         left_comments: Vec::new(),

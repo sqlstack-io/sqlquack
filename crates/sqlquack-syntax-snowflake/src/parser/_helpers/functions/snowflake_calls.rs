@@ -111,6 +111,7 @@ impl Parser {
         }
         let query = self.parse_statement()?;
         Ok(Some(Expression::Subquery(Box::new(Subquery {
+            row_limit_span: Default::default(),
             this: query,
             alias: None,
             column_aliases: Vec::new(),

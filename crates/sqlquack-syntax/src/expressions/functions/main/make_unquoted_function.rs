@@ -7,6 +7,8 @@ use crate::tokens::models::SourceSpan;
 
 pub fn make_unquoted_function(name: &str, args: Vec<Expression>) -> Expression {
     Expression::Function(Box::new(Function {
+        argument_span: Default::default(),
+        name_span: Default::default(),
         on_error: None,
         qualified_name: Vec::new(),
         source_dialect: None,

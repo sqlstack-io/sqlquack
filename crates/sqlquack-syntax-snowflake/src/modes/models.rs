@@ -1,7 +1,7 @@
 //! Data models of modes.
 
 use sqlquack_syntax::expressions::tree::models::Expression;
-use sqlquack_syntax::lossless::models::LosslessToken;
+use sqlquack_tokenize::lossless::models::LosslessToken;
 
 /// One statement's range and what tolerant parsing made of it.
 #[derive(Debug)]

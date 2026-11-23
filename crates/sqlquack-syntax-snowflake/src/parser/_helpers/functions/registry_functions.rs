@@ -52,6 +52,7 @@ impl Parser {
         let expression = self.parse_expression()?;
         self.expect_token(TokenType::RParen)?;
         let func = BinaryFunc {
+            operator_span: Default::default(),
             original_name: None,
             this,
             expression,
@@ -78,6 +79,7 @@ impl Parser {
         let expression = self.parse_expression()?;
         self.expect_token(TokenType::RParen)?;
         let func = BinaryFunc {
+            operator_span: Default::default(),
             original_name: None,
             this,
             expression,
@@ -115,6 +117,7 @@ impl Parser {
         }
         self.expect_token(TokenType::RParen)?;
         let func = BinaryFunc {
+            operator_span: Default::default(),
             original_name: None,
             this,
             expression,
@@ -142,6 +145,7 @@ impl Parser {
         let expression = self.parse_expression()?;
         self.expect_token(TokenType::RParen)?;
         let func = BinaryFunc {
+            operator_span: Default::default(),
             original_name: None,
             this,
             expression,
@@ -173,6 +177,8 @@ impl Parser {
             all_args.extend(remaining);
             self.expect_token(TokenType::RParen)?;
             Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -205,6 +211,7 @@ impl Parser {
             let expression = self.parse_expression()?;
             self.expect_token(TokenType::RParen)?;
             return Ok(Some(Expression::Atan2(Box::new(BinaryFunc {
+                operator_span: Default::default(),
                 original_name: Some("ATAN".to_string()),
                 this,
                 expression,
@@ -243,6 +250,8 @@ impl Parser {
             let dimension = self.parse_expression()?;
             self.expect_token(TokenType::RParen)?;
             return Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -380,6 +389,8 @@ impl Parser {
         } else {
             self.expect_token(TokenType::RParen)?;
             Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -422,6 +433,8 @@ impl Parser {
         let mut args = vec![part, from_expr];
         args = self.normalize_date_part_arg("DATE_PART", args);
         Ok(Some(Expression::Function(Box::new(Function {
+            argument_span: Default::default(),
+            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -464,6 +477,8 @@ impl Parser {
             let mut args = vec![first_arg, second_arg, third_arg];
             args = self.normalize_date_part_arg(name, args);
             Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -484,6 +499,8 @@ impl Parser {
         } else {
             self.expect_token(TokenType::RParen)?;
             Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -537,6 +554,8 @@ impl Parser {
         }
         args = self.normalize_date_part_arg(name, args);
         Ok(Some(Expression::Function(Box::new(Function {
+            argument_span: Default::default(),
+            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -603,6 +622,8 @@ impl Parser {
         if self.check(TokenType::RParen) {
             self.skip();
             return Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -625,6 +646,8 @@ impl Parser {
         if !self.check(TokenType::Comma) && self.check(TokenType::RParen) {
             self.skip();
             return Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -717,6 +740,8 @@ impl Parser {
             }
             self.expect_token(TokenType::RParen)?;
             return Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -785,6 +810,8 @@ impl Parser {
             let args = self.parse_expression_list()?;
             self.expect_token(TokenType::RParen)?;
             return Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -837,6 +864,8 @@ impl Parser {
             ))))
         } else {
             Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -876,6 +905,8 @@ impl Parser {
             ))))
         } else {
             Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -947,6 +978,8 @@ impl Parser {
         }
         self.expect_token(TokenType::RParen)?;
         Ok(Some(Expression::Function(Box::new(Function {
+            argument_span: Default::default(),
+            name_span: Default::default(),
             on_error: None,
             qualified_name: Vec::new(),
             source_dialect: None,
@@ -981,6 +1014,8 @@ impl Parser {
 
         if !self.check_keyword_text("AGAINST") {
             return Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1090,6 +1125,8 @@ impl Parser {
             }))))
         } else {
             Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1142,6 +1179,8 @@ impl Parser {
             self.expect_token(TokenType::RParen)?;
             let func_name = if is_try { "TRY_CONVERT" } else { "CONVERT" };
             Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1163,6 +1202,8 @@ impl Parser {
             self.expect_token(TokenType::RParen)?;
             let func_name = if is_try { "TRY_CONVERT" } else { "CONVERT" };
             Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1311,6 +1352,8 @@ impl Parser {
             } else {
                 self.expect_token(TokenType::RParen)?;
                 Ok(Some(Expression::Function(Box::new(Function {
+                    argument_span: Default::default(),
+                    name_span: Default::default(),
                     on_error: None,
                     qualified_name: Vec::new(),
                     source_dialect: None,
@@ -1332,6 +1375,8 @@ impl Parser {
         } else {
             self.expect_token(TokenType::RParen)?;
             Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1380,6 +1425,8 @@ impl Parser {
         if self.check(TokenType::RParen) {
             self.skip();
             return Ok(Some(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,

@@ -7,6 +7,8 @@ use sqlquack_syntax::expressions::queries::models::{
     From, Join, JoinKind, Pivot, Sample, SampleMethod, Select, Unpivot,
 };
 use sqlquack_syntax::expressions::statements::models::{HistoricalData, TableSample};
+use sqlquack_syntax::tokens::models::SeparatorSpans;
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{
     Parser, Parsing, identifier, is_col_label, is_function_name, is_identifier, is_type_func_name,
@@ -62,21 +64,38 @@ impl Parser<'_> {
     /// `FromClause`: `FROM TableRef, ...`; several items each keep their joins (comma is lowest).
     pub(crate) fn select_from_clause(&mut self, mut select: Select) -> Parsing<Select> {
         self.expect_kw("FROM")?;
-        let mut refs: Vec<(Expression, Vec<Join>)> =
-            self.comma_list(|parser| parser.table_ref())?;
+        let keyword_span = self.token_range(self.at - 1);
+        let from_at: usize = self.at;
+        let mut comma_spans: SeparatorSpans = SeparatorSpans::default();
+        let list: usize = self.at;
+        let mut refs: Vec<(Expression, Vec<Join>)> = self.comma_list(|parser| {
+            if parser.at > list {
+                comma_spans.0.extend(parser.token_range(parser.at - 1).0);
+            }
+            parser.table_ref()
+        })?;
+        comma_spans.0.truncate(refs.len().saturating_sub(1));
         if refs.len() == 1 {
             let (item, joins) = refs.remove(0);
             select.from = Some(From {
+                keyword_span,
+                comma_spans: Default::default(),
                 expressions: vec![item],
             });
             select.joins = joins;
+            select.alias_spans = self.aliased_names(from_at);
             return Ok(select);
         }
         let items: Vec<Expression> = refs
             .into_iter()
             .map(|(item, joins)| collapse(item, joins))
             .collect();
-        select.from = Some(From { expressions: items });
+        select.from = Some(From {
+            keyword_span,
+            comma_spans,
+            expressions: items,
+        });
+        select.alias_spans = self.aliased_names(from_at);
         Ok(select)
     }
 
@@ -93,8 +112,11 @@ impl Parser<'_> {
                 item = self.table_unpivot(input)?;
             } else if self.at_join() {
                 let first: usize = self.at;
+                let (kind_span, keyword_span) = self.join_keywords();
                 let mut node: Join = self.deeper(|parser| parser.join_clause())?;
                 node.span = self.source_range(first);
+                node.kind_span = kind_span;
+                node.keyword_span = keyword_span;
                 joins.push(node);
             } else {
                 return Ok((item, joins));
@@ -224,7 +246,8 @@ impl Parser<'_> {
     /// `JoinQualifier`: `ON expression` or `USING (columns)`.
     pub(crate) fn join_qualifier(&mut self) -> Parsing<JoinConstraint> {
         if self.eat_kw("ON") {
-            return Ok(JoinConstraint::On(Box::new(self.expression()?)));
+            let on_span: SourceSpan = self.token_range(self.at - 1);
+            return Ok(JoinConstraint::On(Box::new(self.expression()?), on_span));
         }
         if self.eat_kw("USING") {
             let columns = self.parenthesized(|parser| parser.col_id_or_string())?;
@@ -308,9 +331,10 @@ impl Parser<'_> {
     fn inner_table_ref_unspanned(&mut self) -> Parsing<Expression> {
         let colon: Option<TableAlias> = self.alias_colon()?;
         if self.kw("VALUES") {
+            let keyword: usize = self.at;
             let rows: Vec<Vec<Expression>> = self.values_rows()?;
             let alias: Option<TableAlias> = self.trailing_alias(colon)?;
-            let node: Expression = values(rows, alias);
+            let node: Expression = self.keyworded(keyword, values(rows, alias));
             return self.sampled(node);
         }
         let is_lateral: bool = self.eat_kw("LATERAL");

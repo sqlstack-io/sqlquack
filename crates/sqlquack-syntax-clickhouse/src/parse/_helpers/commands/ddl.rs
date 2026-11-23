@@ -219,6 +219,7 @@ impl Parser<'_> {
                 include: None,
             })),
             2 => Expression::OrderBy(Box::new(OrderBy {
+                keyword_span: Default::default(),
                 expressions: vec![self.storage_order()?],
                 siblings: false,
                 comments: Vec::new(),

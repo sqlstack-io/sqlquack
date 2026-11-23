@@ -59,6 +59,10 @@ pub struct BinaryFunc {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub inferred_type: Option<DataType>,
+    /// SQLQuack: the operator and the end of its last operand, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub operator_span: crate::tokens::models::OperatorSpan,
 }
 
 /// Variable argument function

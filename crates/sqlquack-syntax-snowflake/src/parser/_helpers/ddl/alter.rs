@@ -1522,6 +1522,7 @@ impl Parser {
         parse_set_operations: bool,
     ) -> Result<Expression> {
         self.expect_token(TokenType::Values)?;
+        let keyword_span = self.token_range(self.current - 1);
 
         let mut expressions: Vec<Tuple> = Vec::new();
 
@@ -1578,6 +1579,7 @@ impl Parser {
             (None, Vec::new())
         };
         let values_expr = Expression::Values(Box::new(Values {
+            keyword_span,
             alias_explicit_as: false,
             expressions,
             alias,

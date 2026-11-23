@@ -192,8 +192,10 @@ impl Parser<'_> {
                 links += 1;
                 self.within_depth(links)?;
             }
+            let operator: usize = self.at;
             self.at += width;
-            left = self.apply(left, priority, form)?;
+            let node: Expression = self.apply(left, priority, form)?;
+            left = self.operated(operator, node);
         }
         Ok(left)
     }

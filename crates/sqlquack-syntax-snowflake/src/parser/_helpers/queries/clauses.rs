@@ -58,6 +58,7 @@ type MatchRecognizeDefinitions = (
 impl Parser {
     /// Parse GROUP BY clause
     pub(crate) fn parse_group_by(&mut self) -> Result<GroupBy> {
+        let keyword_span = self.keyword_before(2, TokenType::Group);
         let all = if self.match_token(TokenType::All) {
             Some(true)
         } else if self.match_token(TokenType::Distinct) {
@@ -70,6 +71,7 @@ impl Parser {
 
         if all.is_some() && self.is_at_query_modifier_or_end() {
             return Ok(GroupBy {
+                keyword_span,
                 expressions,
                 all,
                 totals: false,
@@ -107,6 +109,7 @@ impl Parser {
                 totals = true;
             }
             return Ok(GroupBy {
+                keyword_span,
                 expressions,
                 all,
                 totals,
@@ -131,6 +134,8 @@ impl Parser {
                     let args = self.parse_grouping_sets_args()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -153,6 +158,8 @@ impl Parser {
                     let args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -175,6 +182,8 @@ impl Parser {
                     let args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -243,6 +252,7 @@ impl Parser {
         };
 
         Ok(GroupBy {
+            keyword_span,
             expressions,
             all,
             totals,
@@ -276,6 +286,8 @@ impl Parser {
                     let inner_args = self.parse_grouping_sets_args()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -298,6 +310,8 @@ impl Parser {
                     let inner_args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -320,6 +334,8 @@ impl Parser {
                     let inner_args = self.parse_expression_list()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::Function(Box::new(Function {
+                        argument_span: Default::default(),
+                        name_span: Default::default(),
                         on_error: None,
                         qualified_name: Vec::new(),
                         source_dialect: None,
@@ -378,6 +394,7 @@ impl Parser {
 
     /// Parse ORDER BY clause with optional siblings flag (Oracle ORDER SIBLINGS BY)
     pub(crate) fn parse_order_by_with_siblings(&mut self, siblings: bool) -> Result<OrderBy> {
+        let keyword_span = self.keyword_before(if siblings { 3 } else { 2 }, TokenType::Order);
         let mut expressions: Vec<Ordered> = Vec::new();
 
         loop {
@@ -519,6 +536,7 @@ impl Parser {
 
         let (expressions, all) = self.take_order_by_all(expressions);
         Ok(OrderBy {
+            keyword_span,
             expressions,
             siblings,
             comments: Vec::new(),
@@ -679,11 +697,17 @@ impl Parser {
             None
         };
 
+        let row_limit_at = self.current;
         let (limit, offset, fetch) = self.parse_row_limit_modifiers()?;
+        let row_limit_span = self.token_range_if(
+            limit.is_some() || offset.is_some() || fetch.is_some(),
+            row_limit_at,
+        );
         if fetch.is_some() || limit.as_ref().is_some_and(|limit| limit.percent) {
             let mut subquery = match inner {
                 Expression::Subquery(subquery) => *subquery,
                 this => Subquery {
+                    row_limit_span: Default::default(),
                     this,
                     alias: None,
                     column_aliases: Vec::new(),
@@ -712,11 +736,14 @@ impl Parser {
             let mut select = Select::new();
             select.expressions = vec![Expression::star()];
             select.from = Some(From {
+                keyword_span: Default::default(),
+                comma_spans: Default::default(),
                 expressions: vec![Expression::Subquery(Box::new(subquery))],
             });
             select.order_by = order_by;
             select.offset = offset;
             select.limit = limit;
+            select.row_limit_span = row_limit_span;
             select.fetch = fetch;
             select.distribute_by = distribute_by;
             select.sort_by = sort_by;
@@ -735,12 +762,14 @@ impl Parser {
                 subq.order_by = order_by;
                 subq.limit = limit;
                 subq.offset = offset;
+                subq.row_limit_span = row_limit_span;
                 subq.distribute_by = distribute_by;
                 subq.sort_by = sort_by;
                 subq.cluster_by = cluster_by;
                 Ok(Expression::Subquery(subq))
             } else if let Expression::Paren(paren) = inner {
                 Ok(Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: Expression::Paren(paren),
                     alias: None,
                     column_aliases: Vec::new(),
@@ -764,6 +793,7 @@ impl Parser {
                 })))
             } else {
                 Ok(Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: inner,
                     alias: None,
                     column_aliases: Vec::new(),

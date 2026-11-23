@@ -35,6 +35,13 @@ pub(crate) struct LocatedTestCase {
     pub(crate) expected_text: Result<&'static str, &'static str>,
 }
 
+pub(crate) struct LocationStabilityTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) pointer: &'static str,
+    pub(crate) expected_text: Result<&'static str, &'static str>,
+}
+
 pub(crate) struct LocatedAgreementTestCase {
     pub(crate) description: &'static str,
     pub(crate) sql: &'static str,

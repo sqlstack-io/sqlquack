@@ -245,3 +245,6 @@ pub(crate) const SETOF_PREFIX: &str = "SETOF ";
 
 /// The suffix of a `name%TYPE` reference, kept as a named type.
 pub(crate) const TYPE_REFERENCE_SUFFIX: &str = "%TYPE";
+
+/// The most keywords written before a JOIN, as in `NATURAL LEFT OUTER JOIN`.
+pub(crate) const MAX_JOIN_PREFIX: usize = 4;

@@ -7,10 +7,10 @@ use crate::modes::models::TolerantParse;
 use crate::modes::models::TolerantStatement;
 use sqlquack_syntax::expressions::tree::models::Expression;
 use sqlquack_syntax::guard::models::ParseOptions;
-use sqlquack_syntax::lossless::models::LosslessToken;
-use sqlquack_syntax::lossless::models::TokenKind;
 use sqlquack_syntax::tokens::models::Dialect;
 use sqlquack_syntax::tokens::models::TokenType;
+use sqlquack_tokenize::lossless::models::LosslessToken;
+use sqlquack_tokenize::lossless::models::TokenKind;
 
 pub(crate) fn unparsed_whole(sql: &str, reason: String) -> TolerantParse {
     let (start, end) = trimmed(sql);

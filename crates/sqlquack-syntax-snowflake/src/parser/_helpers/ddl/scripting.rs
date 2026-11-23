@@ -1143,6 +1143,7 @@ impl Parser {
                         if self.match_token(TokenType::Eq) {
                             let nested_value = self.parse_copy_param_value()?;
                             values.push(Expression::Eq(Box::new(BinaryOp {
+                                operator_span: Default::default(),
                                 span: SourceSpan::default(),
                                 left: Self::parsed_column(Column {
                                     name: Identifier::new(nested_key),
@@ -1193,6 +1194,7 @@ impl Parser {
                             if self.match_token(TokenType::Eq) {
                                 let val = self.parse_copy_param_value()?;
                                 values.push(Expression::Eq(Box::new(BinaryOp {
+                                    operator_span: Default::default(),
                                     left: Expression::Literal(Box::new(Literal::String(key))),
                                     right: val,
                                     left_comments: Vec::new(),
@@ -1213,6 +1215,7 @@ impl Parser {
                             if self.match_token(TokenType::Eq) {
                                 let val = self.parse_copy_param_value()?;
                                 values.push(Expression::Eq(Box::new(BinaryOp {
+                                    operator_span: Default::default(),
                                     span: SourceSpan::default(),
                                     left: Self::parsed_column(Column {
                                         name: Identifier::new(key),
