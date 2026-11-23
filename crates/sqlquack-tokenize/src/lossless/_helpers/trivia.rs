@@ -17,15 +17,14 @@ pub(crate) fn trivia(
     let mut at = 0;
     while at < gap.len() {
         let rest = &gap[at..];
-        let (kind, len) =
-            if rest.starts_with("--") || rest.starts_with("//") || rest.starts_with('#') {
-                (
-                    TokenKind::LineComment,
-                    rest.find('\n').unwrap_or(rest.len()),
-                )
-            } else if rest.starts_with("/*") {
-                (TokenKind::BlockComment, block_comment_len(rest, nested))
-            } else {
+        let bytes: &[u8] = rest.as_bytes();
+        let (kind, len) = match (bytes.first(), bytes.get(1)) {
+            (Some(b'-'), Some(b'-')) | (Some(b'/'), Some(b'/')) | (Some(b'#'), _) => (
+                TokenKind::LineComment,
+                rest.find('\n').unwrap_or(rest.len()),
+            ),
+            (Some(b'/'), Some(b'*')) => (TokenKind::BlockComment, block_comment_len(rest, nested)),
+            _ => {
                 let len = rest
                     .char_indices()
                     .find(|(_, c)| !is_whitespace(*c))
@@ -37,7 +36,8 @@ pub(crate) fn trivia(
                     });
                 }
                 (TokenKind::Whitespace, len)
-            };
+            }
+        };
         out.push(LosslessToken {
             kind,
             start: start + at,

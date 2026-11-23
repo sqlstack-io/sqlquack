@@ -1162,7 +1162,9 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
                 span,
             )
         };
-        token.comments_mut().append(&mut self.comments);
+        if !self.comments.is_empty() {
+            token.comments_mut().append(&mut self.comments);
+        }
         self.tokens.push(token);
     }
 
@@ -1172,7 +1174,9 @@ impl<'a, C: TokenizerCursor, T: TokenOutput> TokenizerState<'a, C, T> {
             stats.observe(token_type, span);
         }
         let mut token = T::from_owned(token_type, text, span);
-        token.comments_mut().append(&mut self.comments);
+        if !self.comments.is_empty() {
+            token.comments_mut().append(&mut self.comments);
+        }
         self.tokens.push(token);
     }
 }
