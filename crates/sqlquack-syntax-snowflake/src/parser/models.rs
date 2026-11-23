@@ -33,9 +33,9 @@ use sqlquack_syntax::tokens::models::DialectType;
 use sqlquack_syntax::tokens::models::ParserToken;
 use sqlquack_syntax::tokens::models::Span;
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::tokens::models::Tokenizer;
-use sqlquack_syntax::tokens::models::TokenizerConfig;
 use sqlquack_syntax::tokens::types::Result;
+use sqlquack_tokenize::tokens::models::Tokenizer;
+use sqlquack_tokenize::tokens::models::TokenizerConfig;
 
 /// Tokenizer and generator settings precomputed per dialect and cached in a `LazyLock`.
 #[derive(Debug)]
@@ -143,8 +143,13 @@ impl Dialect {
         let config = crate::parser::models::ParserConfig {
             dialect: Some(self.dialect_type),
             complexity_guard,
-            record_node_spans: mode == CallMode::FaithfulLocated,
-            record_item_spans: mode == CallMode::FaithfulLocated || strict,
+            record_node_spans: mode != CallMode::Faithful,
+            record_item_spans: mode != CallMode::Faithful || strict,
+            record_query_spans: matches!(
+                mode,
+                CallMode::QueriesLocated | CallMode::AsWrittenLocated
+            ),
+            calls_as_written: mode == CallMode::AsWrittenLocated,
             ..Default::default()
         };
         let mut parser = Parser::with_parser_tokens(tokens, token_guard_stats, config, source);
@@ -421,6 +426,10 @@ impl Drop for ParserDepthScope {
 pub(crate) struct Parser {
     pub(crate) tokens: Vec<ParserToken>,
     pub(crate) current: usize,
+    /// SQLQuack: where the trailing modifiers of the last parsed SELECT body begin.
+    pub(crate) select_modifiers_start: usize,
+    /// SQLQuack: the items of the last parsed select list, for the SELECT that parsed it to take.
+    pub(crate) select_items: sqlquack_syntax::tokens::models::ItemSpans,
     pub(crate) config: ParserConfig,
     /// Original source SQL (used for preserving exact text in Command expressions)
     pub(crate) source: Option<Arc<str>>,
@@ -451,10 +460,23 @@ pub(crate) struct ParserConfig {
     pub complexity_guard: ComplexityGuardOptions,
     /// SQLQuack: record each expression and statement node's source range (for locations).
     pub record_node_spans: bool,
+    /// SQLQuack: record each query's own range, for Rules only, as it would move others' locations.
+    pub(crate) record_query_spans: bool,
+    /// SQLQuack: keep every dialect's calls as written, a qualified one as a call, as Rules read them.
+    pub(crate) calls_as_written: bool,
     /// SQLQuack: record each select item's source range, which lineage reports; a located or strict parse does.
     pub record_item_spans: bool,
     /// Whether a Snowflake CREATE SEMANTIC VIEW is being checked, where a window may PARTITION BY EXCLUDING.
     pub(crate) in_semantic_view: bool,
+}
+
+/// SQLQuack: what is written after a set operation's last branch and belongs to the operation.
+#[derive(Debug, Default)]
+pub(crate) struct SetModifiers {
+    pub(crate) order_by: Option<sqlquack_syntax::expressions::queries::models::OrderBy>,
+    pub(crate) limit: Option<Box<Expression>>,
+    pub(crate) offset: Option<Box<Expression>>,
+    pub(crate) row_limit_span: sqlquack_syntax::tokens::models::SourceSpan,
 }
 
 #[derive(Debug)]
@@ -466,9 +488,13 @@ pub(crate) struct SelectBodyHead {
     pub(crate) distinct: bool,
     pub(crate) all: bool,
     pub(crate) distinct_on: Option<Vec<Expression>>,
+    pub(crate) distinct_span: sqlquack_syntax::tokens::models::SourceSpan,
     pub(crate) kind: Option<String>,
     pub(crate) operation_modifiers: Vec<String>,
     pub(crate) expressions: Vec<Expression>,
+    pub(crate) select_span: sqlquack_syntax::tokens::models::SourceSpan,
+    pub(crate) list_head_span: sqlquack_syntax::tokens::models::SourceSpan,
+    pub(crate) item_spans: sqlquack_syntax::tokens::models::ItemSpans,
     pub(crate) exclude: Option<Vec<Expression>>,
     pub(crate) into: Option<SelectInto>,
 }

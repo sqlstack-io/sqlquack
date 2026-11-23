@@ -47,7 +47,7 @@ def converted(*, sql: str, sqlquack: Path, policy: Path) -> dict[str, Any]:
         sources.mkdir()
         (sources / "tables.yml").write_text(json.dumps({"sources": source_entries()}))
         completed: subprocess.CompletedProcess[str] = subprocess.run(
-            [str(sqlquack), "convert", "--json", "--compact", "--utc-session"]
+            [str(sqlquack), "convert", "--json", "--compact"]
             + ["--project", directory, "--config", str(policy)],
             input=sql,
             capture_output=True,

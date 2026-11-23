@@ -1376,6 +1376,7 @@ dependencies = [
  "sqlquack-semantics",
  "sqlquack-syntax",
  "sqlquack-syntax-snowflake",
+ "sqlquack-tokenize",
  "tempfile",
  "toml",
  "walkdir",
@@ -1413,6 +1414,7 @@ dependencies = [
  "sqlquack-policy",
  "sqlquack-semantics",
  "sqlquack-syntax",
+ "sqlquack-tokenize",
 ]
 
 [[package]]
@@ -1432,6 +1434,7 @@ dependencies = [
  "sqlquack-syntax-snowflake",
  "sqlquack-syntax-sqlite",
  "sqlquack-syntax-sqlserver",
+ "sqlquack-tokenize",
  "tempfile",
  "toml",
 ]
@@ -1484,6 +1487,7 @@ dependencies = [
  "sqlquack-fingerprint",
  "sqlquack-parse",
  "sqlquack-syntax",
+ "sqlquack-tokenize",
 ]
 
 [[package]]
@@ -1494,6 +1498,7 @@ dependencies = [
  "sqlquack-format",
  "sqlquack-parse",
  "sqlquack-syntax",
+ "sqlquack-tokenize",
 ]
 
 [[package]]
@@ -1503,19 +1508,6 @@ dependencies = [
  "duckdb",
  "serde_json",
  "sqlquack-format",
- "sqlquack-syntax",
-]
-
-[[package]]
-name = "sqlquack-lint"
-version = "0.22.1"
-dependencies = [
- "rayon",
- "rustc-hash",
- "serde",
- "serde_json",
- "sqlquack-lint",
- "sqlquack-parse",
  "sqlquack-syntax",
 ]
 
@@ -1643,6 +1635,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sqlquack-syntax",
+ "sqlquack-tokenize",
  "stacker",
  "thiserror 1.0.69",
  "unicode-segmentation",
@@ -1663,7 +1656,16 @@ version = "0.22.1"
 dependencies = [
  "serde_json",
  "sqlquack-syntax",
+ "sqlquack-tokenize",
  "stacker",
+]
+
+[[package]]
+name = "sqlquack-tokenize"
+version = "0.22.1"
+dependencies = [
+ "sqlquack-syntax",
+ "thiserror 1.0.69",
 ]
 
 [[package]]

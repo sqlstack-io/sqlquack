@@ -164,8 +164,10 @@ impl Parser<'_> {
         let mut left: Expression = self.operand()?;
         let mut links: usize = 0;
         let result: Parsing<Expression> = loop {
+            let operator: usize = self.at;
             match self.infix(level, left) {
                 Ok(Step::More(next)) => {
+                    let next: Expression = self.operated(operator, next);
                     left = self.respanned(first, next);
                     if let Err(error) = self.lengthen() {
                         break Err(error);

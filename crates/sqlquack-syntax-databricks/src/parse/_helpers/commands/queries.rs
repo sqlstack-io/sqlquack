@@ -7,6 +7,7 @@ use sqlquack_syntax::expressions::queries::models::{
     ClusterBy, Cte, DistributeBy, From, GroupBy, Having, Hint, HintExpression, Limit, NamedWindow,
     Offset, OrderBy, Ordered, Qualify, Select, SortBy, Where, With,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
@@ -19,12 +20,14 @@ use crate::scan::models::TokenKind;
 #[derive(Default)]
 pub(crate) struct Organization {
     order: Option<Vec<Ordered>>,
+    order_keyword: SourceSpan,
     cluster: Option<Vec<Expression>>,
     distribute: Option<Vec<Expression>>,
     sort: Option<Vec<Ordered>>,
     windows: Option<Vec<NamedWindow>>,
     limit: Option<Expression>,
     offset: Option<Expression>,
+    keyword: SourceSpan,
 }
 
 impl Organization {
@@ -41,6 +44,7 @@ impl Organization {
 
 fn order_by(expressions: Vec<Ordered>) -> OrderBy {
     OrderBy {
+        keyword_span: Default::default(),
         expressions,
         siblings: false,
         comments: Vec::new(),
@@ -61,6 +65,8 @@ pub(crate) fn wrapped(body: Expression) -> Select {
     let mut select: Select = Select::new();
     select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
     select.from = Some(From {
+        keyword_span: Default::default(),
+        comma_spans: Default::default(),
         expressions: vec![subquery(body, None, false)],
     });
     select
@@ -144,7 +150,9 @@ fn takes(body: &Expression, organization: &Organization) -> bool {
 fn organized_parenthesized(this: Expression, organization: Organization) -> Expression {
     let mut node: Expression = subquery(this, None, false);
     if let Expression::Subquery(subquery) = &mut node {
-        subquery.order_by = organization.order.map(order_by);
+        subquery.order_by = organization
+            .order
+            .map(|items| order_by(items).written_at(organization.order_keyword));
         subquery.cluster_by = organization.cluster.map(|expressions| ClusterBy {
             expressions: expressions.into_iter().map(Ordered::asc).collect(),
         });
@@ -152,6 +160,7 @@ fn organized_parenthesized(this: Expression, organization: Organization) -> Expr
             .distribute
             .map(|expressions| DistributeBy { expressions });
         subquery.sort_by = organization.sort.map(|expressions| SortBy { expressions });
+        subquery.row_limit_span = organization.keyword;
         subquery.limit = organization.limit.map(limit);
         subquery.offset = organization.offset.map(|this| Offset { this, rows: None });
         subquery.windows = organization.windows;
@@ -174,12 +183,14 @@ fn organized(body: Expression, organization: Organization) -> Expression {
     };
     let Organization {
         order,
+        order_keyword,
         cluster,
         distribute,
         sort,
         windows,
         limit: count,
         offset,
+        keyword,
     } = organization;
     let cluster = cluster.map(|expressions| ClusterBy {
         expressions: expressions.into_iter().map(Ordered::asc).collect(),
@@ -189,11 +200,12 @@ fn organized(body: Expression, organization: Organization) -> Expression {
     macro_rules! set_operation_organized {
         ($node:expr) => {{
             if order.is_some() {
-                $node.order_by = order.map(order_by);
+                $node.order_by = order.map(|items| order_by(items).written_at(order_keyword));
             }
             $node.cluster_by = cluster.or($node.cluster_by.take());
             $node.distribute_by = distribute.or($node.distribute_by.take());
             $node.sort_by = sort.or($node.sort_by.take());
+            $node.row_limit_span = keyword;
             $node.limit = count.map(Box::new);
             $node.offset = offset.map(Box::new);
         }};
@@ -201,12 +213,13 @@ fn organized(body: Expression, organization: Organization) -> Expression {
     match &mut body {
         Expression::Select(select) => {
             if order.is_some() {
-                select.order_by = order.map(order_by);
+                select.order_by = order.map(|items| order_by(items).written_at(order_keyword));
             }
             select.cluster_by = cluster.or(select.cluster_by.take());
             select.distribute_by = distribute.or(select.distribute_by.take());
             select.sort_by = sort.or(select.sort_by.take());
             select.windows = windows.or(select.windows.take());
+            select.row_limit_span = keyword;
             select.limit = count.map(limit);
             select.offset = offset.map(|this| Offset { this, rows: None });
         }
@@ -319,14 +332,22 @@ impl Parser<'_> {
     /// `ctes`: `WITH [RECURSIVE] namedQuery, ...`.
     pub(crate) fn ctes(&mut self) -> Parsing<With> {
         self.expect_kw("WITH")?;
+        let keyword_span = self.token_range(self.at - 1);
+        let list_at: usize = self.at;
         let recursive: bool = self.eat_kw("RECURSIVE");
+        let mut comma_spans = sqlquack_syntax::tokens::models::SeparatorSpans::default();
         let ctes: Vec<Cte> = self.comma_list(|parser| {
             let first: usize = parser.at;
+            if first > list_at + usize::from(recursive) {
+                comma_spans.0.extend(parser.token_range(first - 1).0);
+            }
             let mut node: Cte = parser.named_query()?;
             node.span = parser.source_range(first);
             Ok(node)
         })?;
         Ok(With {
+            keyword_span,
+            comma_spans,
             ctes,
             recursive,
             leading_comments: Vec::new(),
@@ -388,12 +409,13 @@ impl Parser<'_> {
                 return Ok(left);
             }
             self.at += 1;
+            let operator_span: SourceSpan = self.source_range(self.at - 1);
             let all: bool = self.eat_kw("ALL");
             let distinct: bool = !all && self.eat_kw("DISTINCT");
             let right: Expression = self.deeper(|parser| parser.query_term(level + 1))?;
             left = self.spanned(
                 first,
-                set_operation(&operator, left, right, (all, distinct)),
+                set_operation((&operator, operator_span), left, right, (all, distinct)),
             );
         }
     }
@@ -416,6 +438,8 @@ impl Parser<'_> {
                 let mut select: Select = Select::new();
                 select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
                 select.from = Some(From {
+                    keyword_span: Default::default(),
+                    comma_spans: Default::default(),
                     expressions: vec![item],
                 });
                 select.table_statement = true;
@@ -462,17 +486,28 @@ impl Parser<'_> {
     /// `selectClause`: `SELECT hints [DISTINCT|ALL] namedExpressionSeq`.
     fn select_clause(&mut self, mut select: Select) -> Parsing<Select> {
         self.expect_kw("SELECT")?;
+        select.select_span = self.token_range(self.at - 1);
+        select.list_head_span = self.token_range(self.at);
         if self.is_kind(TokenKind::HintStart) {
             select.hint = Some(self.hints()?);
         }
         if self.kw("DISTINCT") {
             self.at += 1;
             select.distinct = true;
+            select.distinct_span = self.token_range(self.at - 1);
         } else if self.kw("ALL") && !self.terminal_at(1) && !self.starts_clause(1) {
             self.at += 1;
             select.all = true;
         }
-        select.expressions = self.comma_list(|parser| parser.named_expression())?;
+        let mut item_head: usize = self.at;
+        let mut item_spans = sqlquack_syntax::tokens::models::ItemSpans::default();
+        select.expressions = self.comma_list(|parser| {
+            let item: Expression = parser.named_expression()?;
+            item_spans.0.extend(parser.item_range(item_head));
+            item_head = parser.at + 1;
+            Ok(item)
+        })?;
+        select.item_spans = item_spans;
         Ok(select)
     }
 
@@ -561,10 +596,12 @@ impl Parser<'_> {
 
     /// `aggregationClause`.
     fn group_by(&mut self) -> Parsing<GroupBy> {
+        let keyword_span = self.token_range(self.at);
         self.at += 2;
         if self.kw("ALL") && (self.terminal_at(1) || self.starts_clause(1)) {
             self.at += 1;
             return Ok(GroupBy {
+                keyword_span,
                 expressions: Vec::new(),
                 all: Some(true),
                 totals: false,
@@ -593,6 +630,7 @@ impl Parser<'_> {
             items
         };
         Ok(GroupBy {
+            keyword_span,
             expressions,
             all: None,
             totals: false,
@@ -655,6 +693,7 @@ impl Parser<'_> {
     pub(crate) fn organization(&mut self) -> Parsing<Organization> {
         let mut organization: Organization = Organization::default();
         if self.kw("ORDER") && self.kw_at(1, "BY") {
+            organization.order_keyword = self.token_range(self.at);
             self.at += 2;
             organization.order = Some(self.comma_list(|parser| parser.sort_item())?);
         }
@@ -672,6 +711,9 @@ impl Parser<'_> {
         }
         if self.kw("WINDOW") && self.is_at(1, is_identifier) {
             organization.windows = Some(self.window_clause()?);
+        }
+        if self.kw_in(0, &["LIMIT", "OFFSET"]) {
+            organization.keyword = self.token_range(self.at);
         }
         if self.eat_kw("LIMIT") {
             organization.limit = Some(match self.eat_kw("ALL") {
@@ -727,10 +769,16 @@ impl Parser<'_> {
             }
             "UNION" | "EXCEPT" | "MINUS" | "INTERSECT" => {
                 self.at += 1;
+                let operator_span: SourceSpan = self.source_range(self.at - 1);
                 let all: bool = self.eat_kw("ALL");
                 let distinct: bool = !all && self.eat_kw("DISTINCT");
                 let right: Expression = self.query_primary()?;
-                wrapped(set_operation(&word, left, right, (all, distinct)))
+                wrapped(set_operation(
+                    (&word, operator_span),
+                    left,
+                    right,
+                    (all, distinct),
+                ))
             }
             "ORDER" | "CLUSTER" | "DISTRIBUTE" | "SORT" | "WINDOW" | "LIMIT" | "OFFSET" => {
                 let organization: Organization = self.organization()?;
@@ -801,6 +849,8 @@ impl Parser<'_> {
         let mut select: Select = Select::new();
         select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
         select.from = Some(From {
+            keyword_span: Default::default(),
+            comma_spans: Default::default(),
             expressions: vec![subquery(left, Some(alias), false)],
         });
         Ok(select)
@@ -850,6 +900,8 @@ impl Parser<'_> {
         let mut select: Select = Select::new();
         select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
         select.from = Some(From {
+            keyword_span: Default::default(),
+            comma_spans: Default::default(),
             expressions: vec![pivoted],
         });
         Ok(select)

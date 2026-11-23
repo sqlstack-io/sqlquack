@@ -6,6 +6,8 @@ use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{
     From, Join, JoinKind, Sample, SampleMethod, Select,
 };
+use sqlquack_syntax::tokens::models::SeparatorSpans;
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing};
 use crate::parse::_helpers::tree::nodes::{
@@ -87,19 +89,37 @@ impl Parser<'_> {
         let first: Expression = self.table_expression(bare_alias)?;
         let mut sources: Vec<Expression> = vec![first];
         let mut joins: Vec<Join> = Vec::new();
-        while let Some(element) = self.table_element(bare_alias)? {
+        let mut comma_spans: SeparatorSpans = SeparatorSpans::default();
+        loop {
+            let operator: SourceSpan = self.token_range(self.at);
+            let Some(element) = self.table_element(bare_alias)? else {
+                break;
+            };
             match element {
-                Ok(join) => joins.push(join),
-                Err(source) if joins.is_empty() => sources.push(source),
-                Err(source) => joins.push(join(
-                    source,
-                    JoinKind::Cross,
-                    JoinConstraint::None,
-                    (false, false),
-                )),
+                Ok(mut node) => {
+                    node.kind_span = operator;
+                    joins.push(node);
+                }
+                Err(source) if joins.is_empty() => {
+                    sources.push(source);
+                    comma_spans.0.extend(operator.0);
+                }
+                Err(source) => {
+                    let mut node: Join = join(
+                        source,
+                        JoinKind::Cross,
+                        JoinConstraint::None,
+                        (false, false),
+                    );
+                    node.kind_span = operator;
+                    node.keyword_span = operator;
+                    joins.push(node);
+                }
             }
         }
         select.from = Some(From {
+            keyword_span: Default::default(),
+            comma_spans,
             expressions: sources,
         });
         select.joins = joins;
@@ -110,6 +130,7 @@ impl Parser<'_> {
     fn table_element(&mut self, bare_alias: bool) -> Parsing<Option<Result<Join, Expression>>> {
         let start: usize = self.offset();
         if let Some(kind) = self.array_join_kind() {
+            let keyword_span: SourceSpan = self.token_range(self.at - 1);
             let items: Vec<Expression> = self.comma_list(|parser| parser.element())?;
             let this: Expression = match items.len() {
                 1 => items
@@ -118,12 +139,9 @@ impl Parser<'_> {
                     .unwrap_or_else(|| tuple(Vec::new())),
                 _ => tuple(items),
             };
-            return Ok(Some(Ok(join(
-                this,
-                kind,
-                JoinConstraint::None,
-                (false, false),
-            ))));
+            let mut node: Join = join(this, kind, JoinConstraint::None, (false, false));
+            node.keyword_span = keyword_span;
+            return Ok(Some(Ok(node)));
         }
         if self.eat(TokenKind::Comma) {
             return Ok(Some(Err(self.table_expression(bare_alias)?)));
@@ -158,6 +176,7 @@ impl Parser<'_> {
             return Err(self.error_with("SEMI|ANTI JOIN should be LEFT or RIGHT.", true));
         }
         self.at += 1;
+        let keyword_span: SourceSpan = self.token_range(self.at - 1);
         let source: Expression = self.table_expression(bare_alias)?;
         let constraint: JoinConstraint = match kind.as_str() {
             "CROSS" | "PASTE" => JoinConstraint::None,
@@ -168,12 +187,14 @@ impl Parser<'_> {
             self.gap("join_locality_or_strictness", start);
         }
         let joined: JoinKind = shared.unwrap_or(JoinKind::Inner);
-        Ok(Some(Ok(join(
+        let mut node: Join = join(
             source,
             joined,
             constraint,
             (kind == INNER_JOIN && named, outer),
-        ))))
+        );
+        node.keyword_span = keyword_span;
+        Ok(Some(Ok(node)))
     }
 
     /// `LEFT ARRAY JOIN`, `[INNER] ARRAY JOIN`, consumed.
@@ -206,7 +227,8 @@ impl Parser<'_> {
             }));
         }
         self.expect_kw("ON")?;
-        Ok(JoinConstraint::On(Box::new(self.expression()?)))
+        let on_span: SourceSpan = self.token_range(self.at - 1);
+        Ok(JoinConstraint::On(Box::new(self.expression()?), on_span))
     }
 
     /// `ParserTableExpression`: a subquery, table function or name, with alias, FINAL and SAMPLE.

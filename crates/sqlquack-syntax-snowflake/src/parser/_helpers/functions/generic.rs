@@ -696,6 +696,7 @@ impl Parser {
             if self.check(TokenType::Number) {
                 let token = self.advance()?;
                 return Ok(Expression::Neg(Box::new(UnaryOp {
+                    operator_span: Default::default(),
                     written_as: None,
                     this: Expression::Literal(Box::new(Literal::Number(token.text))),
                     inferred_type: None,

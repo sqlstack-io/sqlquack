@@ -103,6 +103,7 @@ impl Parser<'_> {
     /// `singleInsertQuery`: `insertInto` and its query, or `( query ) alias`.
     pub(crate) fn insert_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("INSERT")?;
+        let keyword_span = self.token_range(self.at - 1);
         let overwrite: bool = false;
         self.eat_kw("INTO");
         if overwrite && (self.kw("DIRECTORY") || (self.kw("LOCAL") && self.kw_at(1, "DIRECTORY"))) {
@@ -115,6 +116,7 @@ impl Parser<'_> {
         }
         self.eat_kw("TABLE");
         let mut node = insert(self.table_reference()?);
+        node.keyword_span = keyword_span;
         node.overwrite = overwrite;
         node.with = with;
         let alias: Option<TableAlias> = match overwrite {
@@ -340,8 +342,10 @@ impl Parser<'_> {
     /// `updateTable`: `UPDATE t [alias] SET assignments [WHERE ...]`.
     pub(crate) fn update_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("UPDATE")?;
+        let keyword_span = self.token_range(self.at - 1);
         let relation: TableRef = self.table_reference()?;
         let mut node = update(with_alias(relation, self.table_alias()?));
+        node.keyword_span = keyword_span;
         self.expect_kw("SET")?;
         node.set = self.comma_list(|parser| {
             let whole: Option<Identifier> = match parser.peek() {
@@ -382,9 +386,11 @@ impl Parser<'_> {
     /// `deleteFromTable`: `DELETE FROM t [alias] [WHERE ...]`.
     pub(crate) fn delete_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("DELETE")?;
+        let keyword_span = self.token_range(self.at - 1);
         self.eat_kw("FROM");
         let relation: TableRef = self.table_reference()?;
         let mut node = delete(relation);
+        node.keyword_span = keyword_span;
         if let Some(alias) = self.table_alias()? {
             node.alias = Some(alias.name);
             node.alias_explicit_as = alias.explicit;

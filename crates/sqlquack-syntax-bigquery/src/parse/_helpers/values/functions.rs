@@ -19,6 +19,18 @@ use crate::scan::models::TokenKind;
 impl Parser<'_> {
     /// A call of `name`: `( [DISTINCT|ALL] args )` and its trailing clauses.
     pub(crate) fn function_call(&mut self, name: Vec<Identifier>) -> Parsing<Expression> {
+        let lone: bool = !self.char_at(1, ')') && self.char_at(2, ')');
+        let marked: bool = self.is_char('(') && (lone || self.kw_at(1, "DISTINCT"));
+        let argument: sqlquack_syntax::tokens::models::SourceSpan = match marked {
+            true => self.token_range(self.at + 1),
+            false => sqlquack_syntax::tokens::models::SourceSpan::default(),
+        };
+        let call: Expression = self.function_call_form(name)?;
+        Ok(Self::with_argument(argument, call))
+    }
+
+    /// The call `function_call` records positions on.
+    fn function_call_form(&mut self, name: Vec<Identifier>) -> Parsing<Expression> {
         self.expect_char('(')?;
         let mut distinct: bool = false;
         let mut args: Vec<Expression> = Vec::new();

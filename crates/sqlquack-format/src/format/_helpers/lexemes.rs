@@ -1,8 +1,8 @@
 //! The significant tokens and comments of SQL, read from the lossless tokenizer.
 
 use sqlquack_parse::tokenize;
-use sqlquack_syntax::TokenKind;
 use sqlquack_syntax::tokens::models::TokenType;
+use sqlquack_tokenize::TokenKind;
 
 use crate::dialects::main::comment::comment;
 use crate::dialects::main::is_unquoted_word::is_unquoted_word;

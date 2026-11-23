@@ -8,9 +8,9 @@ use sqlquack_blocks::raises::main::identify_raises::identify_raises;
 use sqlquack_diagnostics::failures::constants::{RAISE_ID_MARKER, TAG_END};
 use sqlquack_diagnostics::refusals::models::Refusal;
 use sqlquack_parse::tokenize;
-use sqlquack_syntax::TokenKind;
 use sqlquack_syntax::tokens::models::{Dialect, TokenType};
 use sqlquack_syntax::tokens::models::{SourceLines, SourceLocation};
+use sqlquack_tokenize::TokenKind;
 
 use crate::snowflake::conversion::_helpers::support::tree::{
     LITERAL_DATE, LITERAL_NUMBER, LITERAL_STRING, LITERAL_TIMESTAMP, node_kind,

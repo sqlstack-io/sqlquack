@@ -74,11 +74,13 @@ impl<'sql> Parser<'sql> {
     /// `INSERT [INTO] t [(columns)] { VALUES (...), ... | query | DEFAULT VALUES | EXEC ... }`.
     pub(crate) fn insert_statement(&mut self) -> Parsing<Expression> {
         self.expect_kw("INSERT")?;
+        let keyword_span = self.token_range(self.at - 1);
         if self.kw("BULK") {
             return Err(self.gap("insert_bulk", self.offset()));
         }
         self.eat_kw("INTO");
         let mut node = insert(self.dml_target(&DML_TARGET_REFUSED_HINTS)?);
+        node.keyword_span = keyword_span;
         if self.is_char('(') {
             node.columns = self.parenthesized(Parser::name)?;
         }
@@ -119,7 +121,9 @@ impl<'sql> Parser<'sql> {
             return Err(self.gap("update_statistics", self.offset()));
         }
         self.expect_kw("UPDATE")?;
+        let keyword_span = self.token_range(self.at - 1);
         let mut node = update(self.dml_target(&DML_TARGET_REFUSED_HINTS)?);
+        node.keyword_span = keyword_span;
         self.expect_kw("SET")?;
         node.set = self.comma_list(|parser| {
             if !parser.is(is_name) {
@@ -162,8 +166,10 @@ impl<'sql> Parser<'sql> {
     /// `DELETE [FROM] t [FROM ...] [WHERE ...]`.
     pub(crate) fn delete_statement(&mut self) -> Parsing<Expression> {
         self.expect_kw("DELETE")?;
+        let keyword_span = self.token_range(self.at - 1);
         let no_from: bool = !self.eat_kw("FROM");
         let mut node = delete(self.dml_target(&DML_TARGET_REFUSED_HINTS)?);
+        node.keyword_span = keyword_span;
         node.no_from = no_from;
         node.output = self.output_clause()?;
         if self.eat_kw("FROM") {

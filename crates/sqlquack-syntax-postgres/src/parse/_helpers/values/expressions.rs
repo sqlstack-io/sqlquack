@@ -161,7 +161,9 @@ impl Parser<'_> {
                 if pending == Some(level) {
                     return Err(parser.error());
                 }
+                let operator: usize = parser.at;
                 let (node, nonassociative) = parser.infix(left, level, flavor)?;
+                let node: Expression = parser.operated(operator, node);
                 if !matches!(node, Expression::And(_) | Expression::Or(_)) {
                     links = parser.link(links)?;
                 }

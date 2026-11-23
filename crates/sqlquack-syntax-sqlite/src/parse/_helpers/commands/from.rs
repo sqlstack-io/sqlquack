@@ -4,6 +4,8 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{From, Join, JoinKind, Select};
+use sqlquack_syntax::tokens::models::SeparatorSpans;
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_ids, is_nm};
 use crate::parse::_helpers::tree::nodes::{
@@ -28,6 +30,8 @@ enum Joiner {
 /// One `seltablist` item: how it joins, the item, and its `ON` or `USING`.
 struct Item {
     joiner: Joiner,
+    /// The joiner's first token and its JOIN or comma.
+    keywords: (SourceSpan, SourceSpan),
     this: Expression,
     constraint: JoinConstraint,
 }
@@ -90,15 +94,23 @@ impl Parser<'_> {
     pub(crate) fn select_from(&mut self, mut select: Box<Select>) -> Parsing<Box<Select>> {
         let (first, items) = self.table_list()?;
         let mut sources: Vec<Expression> = vec![first];
+        let mut comma_spans: SeparatorSpans = SeparatorSpans::default();
         for item in items {
             match (item.joiner, select.joins.is_empty()) {
-                (Joiner::Comma, true) => sources.push(item.this),
-                (joiner, _) => select
-                    .joins
-                    .push(Self::joined(item.this, joiner, item.constraint)),
+                (Joiner::Comma, true) => {
+                    sources.push(item.this);
+                    comma_spans.0.extend(item.keywords.1.0);
+                }
+                (joiner, _) => {
+                    let mut node: Join = Self::joined(item.this, joiner, item.constraint);
+                    (node.kind_span, node.keyword_span) = item.keywords;
+                    select.joins.push(node);
+                }
             }
         }
         select.from = Some(From {
+            keyword_span: Default::default(),
+            comma_spans,
             expressions: sources,
         });
         Ok(select)
@@ -116,7 +128,7 @@ impl Parser<'_> {
     fn table_list(&mut self) -> Parsing<(Expression, Vec<Item>)> {
         let (first, constraint) = self.table_item()?;
         let clause: Option<&str> = match &constraint {
-            JoinConstraint::On(_) => Some("ON"),
+            JoinConstraint::On(..) => Some("ON"),
             JoinConstraint::Using(_) => Some("USING"),
             JoinConstraint::None => None,
         };
@@ -125,10 +137,17 @@ impl Parser<'_> {
             self.defer(self.error_with(&message, self.offset(), false));
         }
         let mut items: Vec<Item> = Vec::new();
-        while let Some(joiner) = self.join_operator()? {
+        loop {
+            let operator: usize = self.at;
+            let Some(joiner) = self.join_operator()? else {
+                break;
+            };
+            let keywords: (SourceSpan, SourceSpan) =
+                (self.token_range(operator), self.token_range(self.at - 1));
             let (this, constraint) = self.table_item()?;
             items.push(Item {
                 joiner,
+                keywords,
                 this,
                 constraint,
             });
@@ -270,7 +289,8 @@ impl Parser<'_> {
     /// `on_using`: `ON expr`, `USING ( idlist )`, or nothing.
     fn join_constraint(&mut self) -> Parsing<JoinConstraint> {
         if self.eat_kw("ON") {
-            return Ok(JoinConstraint::On(Box::new(self.expression()?)));
+            let on_span: SourceSpan = self.token_range(self.at - 1);
+            return Ok(JoinConstraint::On(Box::new(self.expression()?), on_span));
         }
         if self.eat_kw("USING") {
             self.expect_op("LP")?;

@@ -1056,6 +1056,9 @@ impl Parser {
                 args,
             }
         } else if self.match_token(TokenType::Begin) {
+            if let Some(statements) = self.sqlite_trigger_program()? {
+                return Ok(TriggerBody::Statements(statements));
+            }
             let body_start = if !self.is_at_end() {
                 self.tokens[self.current].span.start
             } else {
@@ -1089,6 +1092,34 @@ impl Parser {
         } else {
             return Err(self.parse_error("Expected EXECUTE or BEGIN in trigger body"));
         })
+    }
+
+    /// SQLite: a trigger program after BEGIN, each statement through its semicolon, and END; none on another dialect or where a statement does not parse, which leaves the program as text.
+    fn sqlite_trigger_program(&mut self) -> Result<Option<Vec<Expression>>> {
+        if !matches!(
+            self.config.dialect,
+            Some(sqlquack_syntax::tokens::models::DialectType::SQLite)
+        ) {
+            return Ok(None);
+        }
+        let start = self.current;
+        let mut statements: Vec<Expression> = Vec::new();
+        while !self.check(TokenType::End) && !self.is_at_end() {
+            let Ok(statement) = self.parse_statement() else {
+                self.current = start;
+                return Ok(None);
+            };
+            statements.push(statement);
+            if !self.match_token(TokenType::Semicolon) {
+                self.current = start;
+                return Ok(None);
+            }
+        }
+        if statements.is_empty() || !self.match_token(TokenType::End) {
+            self.current = start;
+            return Ok(None);
+        }
+        Ok(Some(statements))
     }
 
     /// Parse DROP TRIGGER statement
@@ -1833,6 +1864,7 @@ impl Parser {
                 }));
             }
             left = Expression::Or(Box::new(BinaryOp {
+                operator_span: Default::default(),
                 left,
                 right,
                 left_comments,
@@ -1908,6 +1940,7 @@ impl Parser {
                 }));
             }
             left = Expression::And(Box::new(BinaryOp {
+                operator_span: Default::default(),
                 left,
                 right,
                 left_comments,

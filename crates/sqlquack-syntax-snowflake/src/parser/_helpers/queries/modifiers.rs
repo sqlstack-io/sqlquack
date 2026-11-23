@@ -3,6 +3,7 @@
 use crate::parser::constants::PERCENT_SIGN;
 use crate::parser::models::JoinKindParts;
 use crate::parser::models::Parser;
+use crate::parser::models::SetModifiers;
 use crate::parser::models::SetOperationCorresponding;
 use sqlquack_syntax::expressions::functions::models::Function;
 use sqlquack_syntax::expressions::functions::models::SetQuantifier;
@@ -16,7 +17,6 @@ use sqlquack_syntax::expressions::queries::models::Except;
 use sqlquack_syntax::expressions::queries::models::Intersect;
 use sqlquack_syntax::expressions::queries::models::Join;
 use sqlquack_syntax::expressions::queries::models::Limit;
-use sqlquack_syntax::expressions::queries::models::OrderBy;
 use sqlquack_syntax::expressions::queries::models::Sample;
 use sqlquack_syntax::expressions::queries::models::SampleMethod;
 use sqlquack_syntax::expressions::queries::models::Subquery;
@@ -391,7 +391,9 @@ impl Parser {
             };
 
             if self.check_set_operation_start(TokenType::Union) {
+                let operator_start = self.current;
                 self.skip();
+                let operator_span = self.source_range(operator_start);
                 let all = self.match_token(TokenType::All);
                 let distinct = if !all {
                     self.match_token(TokenType::Distinct)
@@ -412,9 +414,16 @@ impl Parser {
                     kind
                 };
 
-                let mut right = self.parse_select_or_paren_select()?;
-                let (order_by, limit, offset) =
-                    self.detach_unparenthesized_set_operation_modifiers(&mut right);
+                let left_span = Self::operand_span(&left);
+                let (
+                    right,
+                    SetModifiers {
+                        order_by,
+                        limit,
+                        offset,
+                        row_limit_span,
+                    },
+                ) = self.parse_set_operand()?;
                 result = Expression::Union(Box::new(Union {
                     with_ties: false,
                     keyword: None,
@@ -435,12 +444,16 @@ impl Parser {
                     corresponding,
                     strict,
                     on_columns,
-                    span: SourceSpan::default(),
+                    span: self.range_from(left_span),
+                    operator_span,
+                    row_limit_span,
                     locks: Vec::new(),
                 }));
                 found_set_op = true;
             } else if self.check_set_operation_start(TokenType::Intersect) {
+                let operator_start = self.current;
                 self.skip();
+                let operator_span = self.source_range(operator_start);
                 let all = self.match_token(TokenType::All);
                 let distinct = if !all {
                     self.match_token(TokenType::Distinct)
@@ -461,9 +474,16 @@ impl Parser {
                     kind
                 };
 
-                let mut right = self.parse_select_or_paren_select()?;
-                let (order_by, limit, offset) =
-                    self.detach_unparenthesized_set_operation_modifiers(&mut right);
+                let left_span = Self::operand_span(&left);
+                let (
+                    right,
+                    SetModifiers {
+                        order_by,
+                        limit,
+                        offset,
+                        row_limit_span,
+                    },
+                ) = self.parse_set_operand()?;
                 result = Expression::Intersect(Box::new(Intersect {
                     with_ties: false,
                     keyword: None,
@@ -484,7 +504,9 @@ impl Parser {
                     corresponding,
                     strict,
                     on_columns,
-                    span: SourceSpan::default(),
+                    span: self.range_from(left_span),
+                    operator_span,
+                    row_limit_span,
                     locks: Vec::new(),
                 }));
                 if self.config.dialect
@@ -494,7 +516,9 @@ impl Parser {
                 }
                 found_set_op = true;
             } else if self.check_set_operation_start(TokenType::Except) {
+                let operator_start = self.current;
                 self.skip();
+                let operator_span = self.source_range(operator_start);
                 let all = self.match_token(TokenType::All);
                 let distinct = if !all {
                     self.match_token(TokenType::Distinct)
@@ -515,9 +539,16 @@ impl Parser {
                     kind
                 };
 
-                let mut right = self.parse_select_or_paren_select()?;
-                let (order_by, limit, offset) =
-                    self.detach_unparenthesized_set_operation_modifiers(&mut right);
+                let left_span = Self::operand_span(&left);
+                let (
+                    right,
+                    SetModifiers {
+                        order_by,
+                        limit,
+                        offset,
+                        row_limit_span,
+                    },
+                ) = self.parse_set_operand()?;
                 result = Expression::Except(Box::new(Except {
                     with_ties: false,
                     keyword: None,
@@ -538,7 +569,9 @@ impl Parser {
                     corresponding,
                     strict,
                     on_columns,
-                    span: SourceSpan::default(),
+                    span: self.range_from(left_span),
+                    operator_span,
+                    row_limit_span,
                     locks: Vec::new(),
                 }));
                 found_set_op = true;
@@ -554,6 +587,7 @@ impl Parser {
 
         if found_set_op {
             result = self.parse_set_operation_modifiers(result)?;
+            self.extend_set_operation_span(&mut result);
         }
         Ok(result)
     }
@@ -571,18 +605,22 @@ impl Parser {
             }
             Expression::Union(mut outer) => {
                 intersect.left = std::mem::replace(&mut outer.right, Expression::null());
+                (outer.span, intersect.span) = Self::rebound_spans(&intersect, outer.span);
                 outer.order_by = intersect.order_by.take();
                 outer.limit = intersect.limit.take();
                 outer.offset = intersect.offset.take();
+                outer.row_limit_span = std::mem::take(&mut intersect.row_limit_span);
                 outer.right =
                     Self::snowflake_intersect_precedence(Expression::Intersect(intersect));
                 Expression::Union(outer)
             }
             Expression::Except(mut outer) => {
                 intersect.left = std::mem::replace(&mut outer.right, Expression::null());
+                (outer.span, intersect.span) = Self::rebound_spans(&intersect, outer.span);
                 outer.order_by = intersect.order_by.take();
                 outer.limit = intersect.limit.take();
                 outer.offset = intersect.offset.take();
+                outer.row_limit_span = std::mem::take(&mut intersect.row_limit_span);
                 outer.right =
                     Self::snowflake_intersect_precedence(Expression::Intersect(intersect));
                 Expression::Except(outer)
@@ -594,14 +632,21 @@ impl Parser {
         }
     }
 
+    /// SQLQuack: a set operation's right operand, and the modifiers after it that are the operation's.
+    fn parse_set_operand(&mut self) -> Result<(Expression, SetModifiers)> {
+        let start = self.current;
+        let mut operand = self.parse_select_or_paren_select()?;
+        let modifiers = self.detach_unparenthesized_set_operation_modifiers(&mut operand);
+        if modifiers.order_by.is_some() || modifiers.limit.is_some() || modifiers.offset.is_some() {
+            self.end_select_before_modifiers(start, &mut operand);
+        }
+        Ok((operand, modifiers))
+    }
+
     pub(crate) fn detach_unparenthesized_set_operation_modifiers(
         &self,
         expr: &mut Expression,
-    ) -> (
-        Option<OrderBy>,
-        Option<Box<Expression>>,
-        Option<Box<Expression>>,
-    ) {
+    ) -> SetModifiers {
         match expr {
             Expression::Annotated(annotated) => {
                 self.detach_unparenthesized_set_operation_modifiers(&mut annotated.this)
@@ -615,9 +660,15 @@ impl Parser {
                         .map(|fetch| Box::new(Expression::Fetch(Box::new(fetch))))
                 });
                 let offset = select.offset.take().map(|offset| Box::new(offset.this));
-                (order_by, limit, offset)
+                let row_limit_span = std::mem::take(&mut select.row_limit_span);
+                SetModifiers {
+                    order_by,
+                    limit,
+                    offset,
+                    row_limit_span,
+                }
             }
-            _ => (None, None, None),
+            _ => SetModifiers::default(),
         }
     }
 
@@ -752,7 +803,10 @@ impl Parser {
             None
         };
 
+        let row_limit_at = self.current;
         let (limit, offset, fetch) = self.parse_row_limit_modifiers()?;
+        let limited = limit.is_some() || offset.is_some() || fetch.is_some();
+        let row_limit_span = self.token_range_if(limited, row_limit_at);
         let limit = limit
             .map(Limit::into_set_limit)
             .or_else(|| fetch.map(|fetch| Box::new(Expression::Fetch(Box::new(fetch)))));
@@ -782,6 +836,9 @@ impl Parser {
                 if offset.is_some() {
                     union.offset = offset;
                 }
+                if limited {
+                    union.row_limit_span = row_limit_span;
+                }
             }
             Expression::Intersect(ref mut intersect) => {
                 if order_by.is_some() {
@@ -792,6 +849,9 @@ impl Parser {
                 }
                 if offset.is_some() {
                     intersect.offset = offset;
+                }
+                if limited {
+                    intersect.row_limit_span = row_limit_span;
                 }
             }
             Expression::Except(ref mut except) => {
@@ -804,6 +864,9 @@ impl Parser {
                 if offset.is_some() {
                     except.offset = offset;
                 }
+                if limited {
+                    except.row_limit_span = row_limit_span;
+                }
             }
             _ => {}
         }
@@ -812,7 +875,9 @@ impl Parser {
 
     /// Parse either a SELECT/VALUES query operand or a parenthesized query operand.
     pub(crate) fn parse_select_or_paren_select(&mut self) -> Result<Expression> {
-        self.with_parser_depth(|parser| parser.parse_select_or_paren_select_inner())
+        let start = self.current;
+        let query = self.with_parser_depth(|parser| parser.parse_select_or_paren_select_inner())?;
+        Ok(self.query_spanned(start, query))
     }
 
     #[inline(never)]
@@ -831,6 +896,7 @@ impl Parser {
                     None
                 };
                 Ok(Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: query,
                     alias,
                     column_aliases: Vec::new(),
@@ -862,6 +928,7 @@ impl Parser {
                     None
                 };
                 Ok(Expression::Subquery(Box::new(Subquery {
+                    row_limit_span: Default::default(),
                     this: result,
                     alias,
                     column_aliases: Vec::new(),
@@ -962,6 +1029,7 @@ impl Parser {
                 self.expect_token(TokenType::Eq)?;
                 let value = self.parse_expression()?;
                 sets.push(Expression::Eq(Box::new(BinaryOp {
+                    operator_span: Default::default(),
                     left: column,
                     right: value,
                     left_comments: Vec::new(),
@@ -1001,6 +1069,7 @@ impl Parser {
 
     /// Parse MySQL REPLACE [INTO] statement or REPLACE() function call
     pub(crate) fn parse_replace(&mut self) -> Result<Expression> {
+        let keyword_span = self.token_range(self.current);
         let replace_token = self.expect_token(TokenType::Replace)?;
         let leading_comments = replace_token.comments;
 
@@ -1009,6 +1078,8 @@ impl Parser {
             let args = self.parse_expression_list()?;
             self.expect_token(TokenType::RParen)?;
             return Ok(Expression::Function(Box::new(Function {
+                argument_span: Default::default(),
+                name_span: Default::default(),
                 on_error: None,
                 qualified_name: Vec::new(),
                 source_dialect: None,
@@ -1101,6 +1172,7 @@ impl Parser {
         };
 
         Ok(Expression::Insert(Box::new(Insert {
+            keyword_span,
             column_targets: Vec::new(),
             table,
             columns,
@@ -1140,6 +1212,7 @@ impl Parser {
 
     /// Parse UPDATE statement
     pub(crate) fn parse_update(&mut self) -> Result<Expression> {
+        let keyword_span = self.token_range(self.current);
         let update_token = self.expect_token(TokenType::Update)?;
         let leading_comments = update_token.comments;
         let hint = if self.check(TokenType::Hint) {
@@ -1235,6 +1308,7 @@ impl Parser {
         };
 
         Ok(Expression::Update(Box::new(Update {
+            keyword_span,
             table,
             hint,
             extra_tables,
@@ -1423,6 +1497,9 @@ impl Parser {
                 None
             };
             table_joins.push(Join {
+                kind_span: Default::default(),
+                keyword_span: Default::default(),
+                on_span: Default::default(),
                 using_alias: None,
                 this: join_expr,
                 on: on_condition,

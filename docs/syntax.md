@@ -37,7 +37,8 @@ Inside `sqlquack-syntax` the copied files are split into fensu's domain layout, 
 (the tokenizer, its errors and the `Dialect` and `CallMode` settings), `lossless`, `modes`, `guard`,
 `parser` (the parser, split by statement family under `_helpers/`, and the dialect settings it
 parses with), `functions` (polyglot's function registry), `traversal` and `expressions` (the tree,
-see below). The split moves items without editing them and re-points every path;
+see below). The split moves items without editing them and re-points every path; the tokenizer and
+`lossless` later moved again, into `sqlquack-tokenize`, so that the tree crate holds no tokenizer;
 `scripts/fensu_prune_imports.py` then drops the imports no build needs.
 
 The tree's node types are about 12,000 lines, more than fensu's 2,000-line limit for one file, so

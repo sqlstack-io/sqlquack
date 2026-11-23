@@ -8,6 +8,7 @@ use sqlquack_syntax::expressions::operators::models::{
 };
 use sqlquack_syntax::expressions::typed_functions::models::ArrayConstructor;
 use sqlquack_syntax::tokens::models::Span;
+use sqlquack_syntax::tokens::models::{SeparatorSpans, SourceSpan};
 
 use crate::parse::_helpers::commands::routines::var;
 use crate::parse::_helpers::tree::cursor::{
@@ -193,8 +194,12 @@ impl Parser<'_> {
                 self.value_function(name)
             }
             _ if call && JSON_CALLS.contains(&name) => {
+                let first: usize = self.at;
                 self.at += 1;
                 let mut node: Expression = self.json_call(name)?;
+                if let Expression::KeywordCall(written) = &mut node {
+                    written.call_span = self.source_range(first);
+                }
                 if JSON_AGGREGATES.contains(&name) {
                     let (filter, window) = self.filter_and_window()?;
                     if let (Some(filter), Expression::KeywordCall(aggregate)) = (filter, &mut node)
@@ -466,25 +471,45 @@ impl Parser<'_> {
     /// `CASE [a_expr] WHEN a_expr THEN a_expr ... [ELSE a_expr] END`.
     fn case_expression(&mut self) -> Parsing<Expression> {
         self.at += 1;
+        let mut keywords = SeparatorSpans::default();
+        keywords.0.extend(self.token_range(self.at - 1).0);
         let operand: Option<Expression> = match self.kw("when") {
             true => None,
             false => Some(self.a_expr()?),
         };
+        let mut when_spans = SeparatorSpans::default();
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.eat_kw("when") {
+            let when_at: usize = self.at - 1;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             let condition: Expression = self.a_expr()?;
+            when_spans.0.extend(self.source_range(when_at).0);
             self.expect_kw("then")?;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             whens.push((condition, self.a_expr()?));
         }
         if whens.is_empty() {
             return Err(self.error());
         }
+        let mut else_span = SourceSpan::default();
         let otherwise: Option<Expression> = match self.eat_kw("else") {
-            true => Some(self.a_expr()?),
+            true => {
+                let else_at: usize = self.at - 1;
+                keywords.0.extend(self.token_range(else_at).0);
+                let value: Expression = self.a_expr()?;
+                else_span = self.source_range(else_at);
+                Some(value)
+            }
             false => None,
         };
         self.expect_kw("end")?;
-        Ok(case(operand, whens, otherwise))
+        keywords.0.extend(self.token_range(self.at - 1).0);
+        Ok(case(
+            operand,
+            whens,
+            otherwise,
+            (keywords, when_spans, else_span),
+        ))
     }
 
     /// `array_expr`: `[ expr_list ]`, `[ array_expr, ... ]` or `[ ]`.

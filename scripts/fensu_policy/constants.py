@@ -101,6 +101,7 @@ DIALECTS: RuleOption[tuple[str, ...]] = RuleOption.string_list(
 
 DEFAULT_ROLES: tuple[str, ...] = (
     "syntax",
+    "tokenize",
     "parse",
     "semantics",
     "types",

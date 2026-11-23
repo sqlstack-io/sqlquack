@@ -15,6 +15,7 @@ use sqlquack_syntax::expressions::queries::models::{
 };
 use sqlquack_syntax::expressions::statements::models::{Delete, Insert, Paren, Update, Var};
 use sqlquack_syntax::expressions::types::models::Tuple;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 
 use crate::parse::_helpers::tree::cursor::Parser;
@@ -97,14 +98,18 @@ pub(crate) fn case(
     operand: Option<Expression>,
     whens: Vec<(Expression, Expression)>,
     else_: Option<Expression>,
+    (keyword_spans, when_spans, else_span): (SeparatorSpans, SeparatorSpans, SourceSpan),
 ) -> Expression {
     Expression::Case(Box::new(Case {
+        when_spans,
         operand,
         whens,
         else_,
         comments: Vec::new(),
         inferred_type: None,
         span: SourceSpan(None),
+        keyword_spans,
+        else_span,
     }))
 }
 
@@ -115,6 +120,7 @@ pub(crate) fn in_list(
     not: bool,
 ) -> Expression {
     Expression::In(Box::new(In {
+        operator_span: Default::default(),
         this,
         expressions,
         query,
@@ -133,6 +139,7 @@ pub(crate) fn between(
     not: bool,
 ) -> Expression {
     Expression::Between(Box::new(Between {
+        operator_span: Default::default(),
         this,
         low,
         high,
@@ -272,7 +279,8 @@ pub(crate) struct TableAlias {
 /// What follows a join's right side: nothing or `ON condition`.
 pub(crate) enum JoinConstraint {
     None,
-    On(Box<Expression>),
+    /// The condition, and where its ON is written.
+    On(Box<Expression>, SourceSpan),
 }
 
 pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: bool) -> Expression {
@@ -281,6 +289,7 @@ pub(crate) fn subquery(this: Expression, alias: Option<TableAlias>, lateral: boo
         None => (None, Vec::new(), false),
     };
     Expression::Subquery(Box::new(Subquery {
+        row_limit_span: Default::default(),
         this,
         alias,
         column_aliases,
@@ -311,11 +320,18 @@ pub(crate) fn join(
     constraint: JoinConstraint,
     keywords: (bool, bool),
 ) -> Join {
+    let mut on_span: SourceSpan = SourceSpan::default();
     let (on, using) = match constraint {
         JoinConstraint::None => (None, Vec::new()),
-        JoinConstraint::On(condition) => (Some(*condition), Vec::new()),
+        JoinConstraint::On(condition, keyword) => {
+            on_span = keyword;
+            (Some(*condition), Vec::new())
+        }
     };
     Join {
+        kind_span: Default::default(),
+        keyword_span: Default::default(),
+        on_span,
         this,
         on,
         using,
@@ -352,7 +368,7 @@ pub(crate) fn joined_table(
 
 /// UNION, INTERSECT or EXCEPT of `left` and `right`, with `quantifier` as (`ALL`, `DISTINCT`).
 pub(crate) fn set_operation(
-    operator: &str,
+    (operator, operator_span): (&str, SourceSpan),
     left: Expression,
     right: Expression,
     quantifier: (bool, bool),
@@ -382,6 +398,8 @@ pub(crate) fn set_operation(
                 strict: false,
                 on_columns: Vec::new(),
                 span: SourceSpan(None),
+                operator_span,
+                row_limit_span: SourceSpan(None),
             }))
         };
     }
@@ -398,6 +416,7 @@ pub(crate) fn values(rows: Vec<Vec<Expression>>, alias: Option<TableAlias>) -> E
         None => (None, Vec::new()),
     };
     Expression::Values(Box::new(Values {
+        keyword_span: Default::default(),
         alias_explicit_as: false,
         expressions: rows
             .into_iter()
@@ -427,6 +446,7 @@ pub(crate) fn cte(alias: Identifier, columns: Vec<Identifier>, this: Expression)
 
 pub(crate) fn insert(table: TableRef) -> Insert {
     Insert {
+        keyword_span: Default::default(),
         table,
         columns: Vec::new(),
         values: Vec::new(),
@@ -466,6 +486,7 @@ pub(crate) fn insert(table: TableRef) -> Insert {
 
 pub(crate) fn update(table: TableRef) -> Update {
     Update {
+        keyword_span: Default::default(),
         table,
         hint: None,
         extra_tables: Vec::new(),
@@ -489,6 +510,7 @@ pub(crate) fn update(table: TableRef) -> Update {
 
 pub(crate) fn delete(table: TableRef) -> Delete {
     Delete {
+        keyword_span: Default::default(),
         table,
         hint: None,
         on_cluster: None,
@@ -539,6 +561,52 @@ impl Parser<'_> {
         let mut node: UnaryOp = UnaryOp::new(this);
         node.span = self.range_from(first);
         kind(Box::new(node))
+    }
+
+    /// The list item from token `head` to the last consumed token.
+    pub(crate) fn item_range(
+        &self,
+        head: usize,
+    ) -> Option<sqlquack_syntax::tokens::models::OperatorSpan> {
+        let (first, last) = (
+            self.tokens.get(head)?,
+            self.tokens.get(self.at.checked_sub(1)?)?,
+        );
+        (self.at > head)
+            .then(|| sqlquack_syntax::tokens::models::OperatorSpan::new(first.span, last.span.end))
+    }
+
+    /// Each AS since token `from` with the name after it.
+    pub(crate) fn aliased_names(
+        &self,
+        from: usize,
+    ) -> sqlquack_syntax::tokens::models::SeparatorSpans {
+        let written = self.tokens.get(from..self.at).unwrap_or_default();
+        sqlquack_syntax::tokens::models::SeparatorSpans(
+            written
+                .windows(2)
+                .filter(|pair| pair[0].value.eq_ignore_ascii_case("as"))
+                .map(|pair| pair[0].span.through(pair[1].span))
+                .collect(),
+        )
+    }
+
+    /// `expression` knowing where its operator, which begins at token `operator`, is written.
+    pub(crate) fn operated(&self, operator: usize, mut expression: Expression) -> Expression {
+        if self.at > operator
+            && let (Some(first), Some(last)) =
+                (self.tokens.get(operator), self.tokens.get(self.at - 1))
+        {
+            let following: Option<sqlquack_syntax::tokens::models::Span> =
+                self.tokens.get(operator + 1).map(|token| token.span);
+            expression.record_operation(first.span, following, last.span);
+        }
+        expression
+    }
+
+    /// The range of the single token at `index`.
+    pub(crate) fn token_range(&self, index: usize) -> SourceSpan {
+        SourceSpan(self.tokens.get(index).map(|token| token.span))
     }
 
     /// The source range from token `first` to the last consumed token.

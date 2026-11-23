@@ -56,7 +56,9 @@ impl Parser<'_> {
             return Ok(exists(subquery(query, None, false)));
         }
         let value: Expression = self.value_expression(0)?;
-        self.predicate(value)
+        let operator: usize = self.at;
+        let tested: Expression = self.predicate(value)?;
+        Ok(self.operated(operator, tested))
     }
 
     /// `errorCapturingNot`: `NOT` or `!`.
@@ -266,9 +268,10 @@ impl Parser<'_> {
             if level <= min {
                 break;
             }
+            let operator: usize = self.at;
             self.at += width;
             let right: Expression = self.deeper(|parser| parser.value_expression(level))?;
-            left = build(left, right);
+            left = self.operated(operator, build(left, right));
         }
         Ok(left)
     }

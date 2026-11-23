@@ -29,6 +29,7 @@ use sqlquack_syntax::tokens::types::Result;
 impl Parser {
     /// Parses DELETE, including USING forms and MySQL multi-table deletes.
     pub(crate) fn parse_delete(&mut self) -> Result<Expression> {
+        let keyword_span = self.token_range(self.current);
         let delete_token = self.expect_token(TokenType::Delete)?;
         let leading_comments = delete_token.comments;
         let hint = if self.check(TokenType::Hint) {
@@ -149,6 +150,7 @@ impl Parser {
         };
 
         Ok(Expression::Delete(Box::new(Delete {
+            keyword_span,
             using_items,
             using_joins: Vec::new(),
             table,
@@ -281,6 +283,7 @@ impl Parser {
                     let mut derived = match subquery {
                         Expression::Subquery(derived) => *derived,
                         Expression::Paren(values) => Subquery {
+                            row_limit_span: Default::default(),
                             this: values.this,
                             alias: None,
                             column_aliases: Vec::new(),
@@ -866,6 +869,7 @@ impl Parser {
             };
 
             let insert_expr = Expression::Insert(Box::new(Insert {
+                keyword_span: Default::default(),
                 column_targets: Vec::new(),
                 table: table_ref,
                 columns,

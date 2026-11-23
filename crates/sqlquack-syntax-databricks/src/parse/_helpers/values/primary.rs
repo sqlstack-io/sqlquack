@@ -15,6 +15,7 @@ use sqlquack_syntax::expressions::typed_functions::models::{
 use sqlquack_syntax::expressions::types::models::{
     Interval, IntervalSpan, IntervalUnit, IntervalUnitSpec,
 };
+use sqlquack_syntax::tokens::models::{SeparatorSpans, SourceSpan};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
@@ -494,25 +495,45 @@ impl Parser<'_> {
     /// `CASE [value] WHEN ... THEN ... [ELSE ...] END`.
     fn case_expression(&mut self) -> Parsing<Expression> {
         self.at += 1;
+        let mut keywords = SeparatorSpans::default();
+        keywords.0.extend(self.token_range(self.at - 1).0);
         let operand: Option<Expression> = match self.kw("WHEN") {
             true => None,
             false => Some(self.expression()?),
         };
+        let mut when_spans = SeparatorSpans::default();
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.eat_kw("WHEN") {
+            let when_at: usize = self.at - 1;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             let condition: Expression = self.expression()?;
+            when_spans.0.extend(self.source_range(when_at).0);
             self.expect_kw("THEN")?;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             whens.push((condition, self.expression()?));
         }
         if whens.is_empty() {
             return Err(self.error());
         }
+        let mut else_span = SourceSpan::default();
         let else_: Option<Expression> = match self.eat_kw("ELSE") {
-            true => Some(self.expression()?),
+            true => {
+                let else_at: usize = self.at - 1;
+                keywords.0.extend(self.token_range(else_at).0);
+                let value: Expression = self.expression()?;
+                else_span = self.source_range(else_at);
+                Some(value)
+            }
             false => None,
         };
         self.expect_kw("END")?;
-        Ok(case(operand, whens, else_))
+        keywords.0.extend(self.token_range(self.at - 1).0);
+        Ok(case(
+            operand,
+            whens,
+            else_,
+            (keywords, when_spans, else_span),
+        ))
     }
 
     /// `CAST (expression AS dataType)` or `TRY_CAST (...)`.

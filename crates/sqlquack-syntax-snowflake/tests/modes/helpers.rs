@@ -1,12 +1,12 @@
 use std::sync::mpsc;
 use std::time::Duration;
 
-use sqlquack_syntax::lossless::main::lossless_tokens::lossless_tokens;
 use sqlquack_syntax::tokens::models::{Span, TokenType};
 use sqlquack_syntax::{Dialect, ParseOptions};
 use sqlquack_syntax_snowflake::{
     parse_statements, parse_strict, parse_tolerant, tokenize, StrictFailure,
 };
+use sqlquack_tokenize::lossless::main::lossless_tokens::lossless_tokens;
 
 pub(crate) fn strict_outcome(sql: &str) -> Result<usize, bool> {
     parse_strict(sql, Dialect::Snowflake, &ParseOptions::default())

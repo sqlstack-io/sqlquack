@@ -1,5 +1,6 @@
 //! Expressions: accessors.
 
+use crate::expressions::functions::models::WrittenCall;
 use crate::expressions::names::models::BooleanLiteral;
 use crate::expressions::names::models::Column;
 use crate::expressions::names::models::Identifier;
@@ -8,13 +9,58 @@ use crate::expressions::names::models::Null;
 use crate::expressions::names::models::Star;
 use crate::expressions::names::models::TableRef;
 use crate::expressions::operators::models::Alias;
+use crate::expressions::queries::models::Join;
 use crate::expressions::queries::models::Select;
 use crate::expressions::tree::main::_type_assertion_result::type_assertion_result;
 use crate::expressions::tree::models::Expression;
 use crate::expressions::types::models::DataType;
-use crate::tokens::models::SourceSpan;
+use crate::tokens::models::{OperatorSpan, SourceSpan, Span};
 
 impl Expression {
+    /// SQLQuack: records where the operator just parsed begins, or a NOT BETWEEN's keyword after it, unless recorded.
+    pub fn record_operation(&mut self, operator: Span, following: Option<Span>, end: Span) {
+        let written: OperatorSpan = OperatorSpan::new(operator, end.end);
+        let field: &mut OperatorSpan = match self {
+            Self::Eq(node)
+            | Self::Neq(node)
+            | Self::Lt(node)
+            | Self::Lte(node)
+            | Self::Gt(node)
+            | Self::Gte(node)
+            | Self::Div(node)
+            | Self::Mod(node) => &mut node.operator_span,
+            Self::IntDiv(node) => &mut node.operator_span,
+            Self::In(node) => &mut node.operator_span,
+            Self::Between(node) => {
+                if node.operator_span.is_absent() {
+                    node.operator_span = match (node.not, following) {
+                        (true, Some(keyword)) => OperatorSpan::new(keyword, end.end),
+                        _ => written,
+                    };
+                }
+                return;
+            }
+            Self::Not(node) => match &mut node.this {
+                Self::In(negated) if negated.operator_span.is_absent() => {
+                    negated.operator_span = written;
+                    &mut node.operator_span
+                }
+                _ => return,
+            },
+            Self::Function(node)
+                if node.name_span.is_absent() && matches!(node.args.as_slice(), [_, _]) =>
+            {
+                node.name_span = SourceSpan(Some(operator));
+                node.argument_span = SourceSpan(following.map(|first| first.through(end)));
+                return;
+            }
+            _ => return,
+        };
+        if field.is_absent() {
+            *field = written;
+        }
+    }
+
     /// Source semantics still needing dialect-aware lowering; kept through serialization.
     pub fn source_dialect(&self) -> Option<crate::tokens::models::DialectType> {
         match self {
@@ -59,6 +105,85 @@ impl Expression {
     #[inline]
     pub fn boxed_table(t: TableRef) -> Self {
         Expression::Table(Box::new(t))
+    }
+
+    /// SQLQuack: the call this node is, as written in `source`; `None` without a recorded name range.
+    pub fn written_call(&self, source: &str) -> Option<WrittenCall> {
+        let (name, quoted, parts, name_span) = match self {
+            Self::Function(node) => (
+                &node.name,
+                node.quoted,
+                &node.qualified_name,
+                node.name_span,
+            ),
+            Self::AggregateFunction(node) => (
+                &node.name,
+                node.quoted,
+                &node.qualified_name,
+                node.name_span,
+            ),
+            _ => return None,
+        };
+        let span = name_span.0?;
+        let written = |range: Span| -> String {
+            source
+                .chars()
+                .skip(range.start)
+                .take(range.end.saturating_sub(range.start))
+                .collect()
+        };
+        let part = |part: &Identifier| -> String {
+            match part.span {
+                Some(range) if !part.quoted => written(range),
+                _ => part.name.clone(),
+            }
+        };
+        Some(WrittenCall {
+            span,
+            name: match parts.last() {
+                Some(last) => part(last),
+                None if quoted => name.clone(),
+                None => written(span),
+            },
+            qualifier: match (parts.split_last(), name.rsplit_once('.')) {
+                (Some((_, first)), _) => first.iter().map(part).collect(),
+                (None, Some((qualifier, _))) if !quoted => {
+                    qualifier.split('.').map(str::to_owned).collect()
+                }
+                (None, _) => Vec::new(),
+            },
+        })
+    }
+
+    /// SQLQuack: the joins a query or a nested join holds itself, not those of queries inside it.
+    pub fn own_joins(&self) -> &[Join] {
+        match self {
+            Self::Select(node) => &node.joins,
+            Self::JoinedTable(node) => &node.joins,
+            _ => &[],
+        }
+    }
+
+    /// SQLQuack: where a query's row limit starts; `None` for a node that can hold none.
+    pub fn row_limit_span(&self) -> Option<SourceSpan> {
+        match self {
+            Self::Select(node) => Some(node.row_limit_span),
+            Self::Union(node) => Some(node.row_limit_span),
+            Self::Intersect(node) => Some(node.row_limit_span),
+            Self::Except(node) => Some(node.row_limit_span),
+            Self::Subquery(node) => Some(node.row_limit_span),
+            _ => None,
+        }
+    }
+
+    /// SQLQuack: where a set operation's keyword is written; `None` for any other node.
+    pub fn set_operator_span(&self) -> Option<SourceSpan> {
+        match self {
+            Self::Union(node) => Some(node.operator_span),
+            Self::Intersect(node) => Some(node.operator_span),
+            Self::Except(node) => Some(node.operator_span),
+            _ => None,
+        }
     }
 
     /// Whether this is a valid top-level statement, not a bare identifier, literal or call.

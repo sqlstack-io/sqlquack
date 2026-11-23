@@ -17,7 +17,6 @@ use sqlquack_syntax::expressions::names::models::Literal;
 use sqlquack_syntax::expressions::names::models::Null;
 use sqlquack_syntax::expressions::names::models::TableRef;
 use sqlquack_syntax::expressions::operators::models::Alias;
-use sqlquack_syntax::expressions::operators::models::MethodCall;
 use sqlquack_syntax::expressions::queries::models::From;
 use sqlquack_syntax::expressions::queries::models::GroupBy;
 use sqlquack_syntax::expressions::queries::models::Having;
@@ -59,6 +58,8 @@ impl Parser {
             tokens,
             eof_followed_by,
             current: 0,
+            select_modifiers_start: 0,
+            select_items: Default::default(),
             config: ParserConfig::default(),
             source: None,
             pending_leading_comments: Vec::new(),
@@ -78,6 +79,8 @@ impl Parser {
             tokens,
             eof_followed_by,
             current: 0,
+            select_modifiers_start: 0,
+            select_items: Default::default(),
             config,
             source: None,
             pending_leading_comments: Vec::new(),
@@ -98,6 +101,8 @@ impl Parser {
             tokens,
             eof_followed_by,
             current: 0,
+            select_modifiers_start: 0,
+            select_items: Default::default(),
             config,
             source: Some(Arc::from(source)),
             pending_leading_comments: Vec::new(),
@@ -121,6 +126,8 @@ impl Parser {
             tokens,
             eof_followed_by,
             current: 0,
+            select_modifiers_start: 0,
+            select_items: Default::default(),
             config,
             source: Some(source),
             pending_leading_comments: Vec::new(),
@@ -163,7 +170,7 @@ impl Parser {
             sql,
             &ComplexityGuardOptions::default(),
         )?;
-        let tokenizer = sqlquack_syntax::tokens::models::Tokenizer::default();
+        let tokenizer = sqlquack_tokenize::tokens::models::Tokenizer::default();
         let source: Arc<str> = Arc::from(sql);
         let (tokens, token_guard_stats) = tokenizer.tokenize_for_parser(&source)?;
         let mut parser =
@@ -254,15 +261,6 @@ impl Parser {
         {
             operation(self)
         }
-    }
-
-    pub(crate) fn parse_method_call_expression(
-        &self,
-        this: Expression,
-        method: Identifier,
-        args: Vec<Expression>,
-    ) -> Expression {
-        Expression::MethodCall(Box::new(MethodCall::new(this, method, args)))
     }
 
     /// Parses every remaining statement, split on semicolons, one `Expression` each.
@@ -712,6 +710,7 @@ impl Parser {
     }
 
     fn parse_statement_hint(&mut self) -> Result<Expression> {
+        let hint_start = self.current;
         let hint_token = self.advance()?;
         let hint_text = hint_token.text.to_string();
         let comment = format!("/* + {} */", hint_text.trim());
@@ -736,7 +735,7 @@ impl Parser {
             }
             _ => {}
         }
-        Ok(stmt)
+        Ok(self.spanned_with_prefix(hint_start, stmt))
     }
 
     fn parse_undrop(&mut self) -> Result<Expression> {
@@ -820,6 +819,7 @@ impl Parser {
             let inner = { self.parse_statement()? };
             self.expect_token(TokenType::RParen)?;
             let subquery = Expression::Subquery(Box::new(Subquery {
+                row_limit_span: Default::default(),
                 this: inner,
                 alias: None,
                 column_aliases: Vec::new(),
@@ -849,6 +849,7 @@ impl Parser {
             let result = self.parse_set_operation(inner)?;
             self.expect_token(TokenType::RParen)?;
             let subquery = Expression::Subquery(Box::new(Subquery {
+                row_limit_span: Default::default(),
                 this: result,
                 alias: None,
                 column_aliases: Vec::new(),
@@ -1047,6 +1048,7 @@ impl Parser {
     }
 
     pub(crate) fn parse_statement_with_leading_hint(&mut self) -> Result<Expression> {
+        let hint_start = self.current;
         let hint_token = self.advance()?;
         let hint_text = hint_token.text.to_string();
         let comment = format!("/* + {} */", hint_text.trim());
@@ -1072,7 +1074,7 @@ impl Parser {
             _ => {}
         }
 
-        Ok(stmt)
+        Ok(self.spanned_with_prefix(hint_start, stmt))
     }
 
     pub(crate) fn parse_parenthesized_statement_or_expression(&mut self) -> Result<Expression> {
@@ -1093,6 +1095,7 @@ impl Parser {
             let inner = self.parse_statement()?;
             self.expect_token(TokenType::RParen)?;
             let subquery = Expression::Subquery(Box::new(Subquery {
+                row_limit_span: Default::default(),
                 this: inner,
                 alias: None,
                 column_aliases: Vec::new(),
@@ -1122,6 +1125,7 @@ impl Parser {
             let result = self.parse_set_operation(inner)?;
             self.expect_token(TokenType::RParen)?;
             let subquery = Expression::Subquery(Box::new(Subquery {
+                row_limit_span: Default::default(),
                 this: result,
                 alias: None,
                 column_aliases: Vec::new(),
@@ -1211,12 +1215,15 @@ impl Parser {
 
     /// Parse a SELECT statement
     pub(crate) fn parse_select(&mut self) -> Result<Expression> {
-        let result = self.parse_select_body()?;
+        let start = self.current;
+        let body = self.parse_select_body()?;
+        let result = self.query_spanned(start, body);
         self.parse_set_operation(result)
     }
 
     #[inline(never)]
     pub(crate) fn parse_select_body_head(&mut self) -> Result<Box<SelectBodyHead>> {
+        let select_at = self.current;
         let select_token = self.expect_token(TokenType::Select)?;
         let leading_comments = select_token.comments;
         let post_select_comments = select_token.trailing_comments;
@@ -1227,9 +1234,15 @@ impl Parser {
             None
         };
 
+        let list_at = self.current;
         let top = self.parse_select_top()?;
 
+        let distinct_at = self.current;
         let is_distinct_token = self.match_token(TokenType::Distinct);
+        let mut distinct_span = SourceSpan::default();
+        if is_distinct_token {
+            distinct_span = self.token_range(distinct_at);
+        }
         let all = !is_distinct_token && self.check(TokenType::All);
         let all = all && self.is_snowflake() && !self.check_next(TokenType::Dot);
         let (distinct, distinct_on) = if is_distinct_token {
@@ -1242,6 +1255,7 @@ impl Parser {
                 (true, None)
             }
         } else if self.check_identifier("DISTINCTROW") {
+            distinct_span = self.token_range(self.current);
             self.skip();
             (true, None)
         } else {
@@ -1269,6 +1283,9 @@ impl Parser {
         };
 
         let expressions = self.parse_select_expressions()?;
+        let select_span = self.token_range(select_at);
+        let item_spans = std::mem::take(&mut self.select_items);
+        let list_head_span = self.token_range(list_at);
         if expressions.is_empty()
             && matches!(
                 self.config.dialect,
@@ -1365,10 +1382,14 @@ impl Parser {
             top,
             distinct,
             all,
+            distinct_span,
             distinct_on,
             kind,
             operation_modifiers,
             expressions,
+            select_span,
+            list_head_span,
+            item_spans,
             exclude,
             into,
         }))
@@ -1397,6 +1418,7 @@ impl Parser {
                     let expr = if self.check(TokenType::Select) || self.check(TokenType::With) {
                         let stmt = self.parse_statement()?;
                         Expression::Subquery(Box::new(Subquery {
+                            row_limit_span: Default::default(),
                             this: stmt,
                             alias: None,
                             column_aliases: Vec::new(),
@@ -1452,6 +1474,7 @@ impl Parser {
                     let expr = if self.check(TokenType::Select) || self.check(TokenType::With) {
                         let stmt = self.parse_statement()?;
                         Expression::Subquery(Box::new(Subquery {
+                            row_limit_span: Default::default(),
                             this: stmt,
                             alias: None,
                             column_aliases: Vec::new(),
@@ -1499,7 +1522,9 @@ impl Parser {
     pub(crate) fn parse_select_body(&mut self) -> Result<Expression> {
         let head = self.parse_select_body_head()?;
 
+        let from_at = self.current;
         let (from, joins) = self.parse_select_from_and_joins()?;
+        let alias_spans = self.aliased_names(from_at);
 
         let lateral_views = self.parse_lateral_views()?;
 
@@ -1564,8 +1589,10 @@ impl Parser {
             None
         };
 
+        let modifiers_start = self.current;
         let order_by = self.parse_select_order_by()?;
 
+        let row_limit_at = self.current;
         let limits;
         (limits, where_clause) = self.parse_select_limit_offset(where_clause)?;
         let SelectLimitClauses {
@@ -1585,6 +1612,8 @@ impl Parser {
         if limit.is_some() && fetch.is_some() {
             return Err(self.parse_error("LIMIT and FETCH cannot be combined in the same query"));
         }
+        let limited = limit.is_some() || offset.is_some() || fetch.is_some();
+        let row_limit_span = self.token_range_if(limited, row_limit_at);
 
         let sample = self.parse_sample_clause()?;
 
@@ -1602,15 +1631,23 @@ impl Parser {
             top,
             distinct,
             all,
+            distinct_span,
             distinct_on,
             kind,
             operation_modifiers,
             expressions,
+            select_span,
+            list_head_span,
+            item_spans,
             exclude,
             into,
         } = *head;
 
         let select = Select {
+            select_span,
+            item_spans,
+            list_head_span,
+            alias_spans,
             vertica: if timeseries.is_some() || match_clause.is_some() || limit_over.is_some() {
                 Some(Box::new(VerticaSelectExtensions {
                     timeseries,
@@ -1635,10 +1672,12 @@ impl Parser {
             sort_by,
             limit,
             offset,
+            row_limit_span,
             limit_by,
             fetch,
             distinct,
             all,
+            distinct_span,
             distinct_on,
             top,
             with: None,
@@ -1668,6 +1707,7 @@ impl Parser {
             table_statement: false,
             pipe_operators: Vec::new(),
         };
+        self.select_modifiers_start = modifiers_start;
 
         Ok(Expression::Select(Box::new(select)))
     }
