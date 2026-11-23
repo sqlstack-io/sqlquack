@@ -213,6 +213,7 @@ impl Parser<'_> {
     /// `singleInsertQuery`: `insertInto` and its query, or `( query ) alias`.
     pub(crate) fn insert_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("INSERT")?;
+        let keyword_span = self.token_range(self.at - 1);
         let schema_evolution: bool = self.schema_evolution();
         let overwrite: bool = self.eat_kw("OVERWRITE");
         if !overwrite {
@@ -220,6 +221,7 @@ impl Parser<'_> {
         }
         if overwrite && (self.kw("DIRECTORY") || (self.kw("LOCAL") && self.kw_at(1, "DIRECTORY"))) {
             let mut node = insert(TableRef::new(String::new()));
+            node.keyword_span = keyword_span;
             node.overwrite = true;
             node.with = with;
             node.schema_evolution = schema_evolution;
@@ -229,6 +231,7 @@ impl Parser<'_> {
         }
         let table_keyword: bool = self.eat_kw("TABLE");
         let mut node = insert(self.table_reference()?);
+        node.keyword_span = keyword_span;
         node.schema_evolution = schema_evolution;
         node.table_keyword = table_keyword;
         node.overwrite = overwrite;
@@ -480,8 +483,10 @@ impl Parser<'_> {
     /// `updateTable`: `UPDATE t [alias] SET assignments [WHERE ...]`.
     pub(crate) fn update_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("UPDATE")?;
+        let keyword_span = self.token_range(self.at - 1);
         let relation: TableRef = self.table_reference()?;
         let mut node = update(with_alias(relation, self.table_alias()?));
+        node.keyword_span = keyword_span;
         self.expect_kw("SET")?;
         node.set = self.comma_list(|parser| {
             let key: Identifier = joined(parser.multipart_identifier()?);
@@ -500,9 +505,11 @@ impl Parser<'_> {
     /// `deleteFromTable`: `DELETE FROM t [alias] [WHERE ...]`.
     pub(crate) fn delete_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("DELETE")?;
+        let keyword_span = self.token_range(self.at - 1);
         self.expect_kw("FROM")?;
         let relation: TableRef = self.table_reference()?;
         let mut node = delete(relation);
+        node.keyword_span = keyword_span;
         if let Some(alias) = self.table_alias()? {
             node.alias = Some(alias.name);
             node.alias_explicit_as = alias.explicit;

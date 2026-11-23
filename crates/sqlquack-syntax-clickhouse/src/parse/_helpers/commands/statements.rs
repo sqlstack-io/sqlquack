@@ -250,6 +250,7 @@ impl Parser<'_> {
     fn insert_statement(&mut self) -> Parsing<Expression> {
         let start: usize = self.offset();
         self.expect_kw("INSERT")?;
+        let keyword_span = self.token_range(self.at - 1);
         self.expect_kw("INTO")?;
         self.eat_kw("TABLE");
         if self.kw("FUNCTION") {
@@ -258,6 +259,7 @@ impl Parser<'_> {
             return Ok(var(""));
         }
         let mut node = insert(self.table_name()?);
+        node.keyword_span = keyword_span;
         if self.is(TokenKind::OpeningRoundBracket) {
             self.at += 1;
             node.columns = self.comma_list(|parser| parser.ident())?;
@@ -285,7 +287,9 @@ impl Parser<'_> {
     /// `ParserDeleteQuery`: `DELETE FROM name [ON CLUSTER c] [IN PARTITION p] WHERE e [SETTINGS ...]`.
     fn delete_statement(&mut self) -> Parsing<Expression> {
         self.expect_kws(&["DELETE", "FROM"])?;
+        let keyword_span = self.token_range(self.at - 2);
         let mut node = delete(self.table_name()?);
+        node.keyword_span = keyword_span;
         node.on_cluster = self.on_cluster()?;
         if self.kws(&["IN", "PARTITION"]) {
             let start: usize = self.offset();

@@ -1,0 +1,18 @@
+[package]
+name = "sqlquack-tokenize"
+description = "SQLQuack's tokenizer and lossless tokenizer, kept apart from the syntax tree"
+version.workspace = true
+edition = "2021"
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+publish.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+sqlquack-syntax.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true

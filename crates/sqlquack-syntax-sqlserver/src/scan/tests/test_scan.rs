@@ -1,7 +1,7 @@
 //! Token boundaries and faults of the lexer, as SQL Server 2022 splits its input under PARSEONLY.
 
-use sqlquack_syntax::TokenKind as LosslessKind;
 use sqlquack_syntax::tokens::models::TokenType;
+use sqlquack_tokenize::TokenKind as LosslessKind;
 
 use crate::keywords::main::keyword_status::keyword_status;
 use crate::scan::main::tokenize::tokenize;

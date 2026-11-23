@@ -58,6 +58,8 @@ fn select_clauses(select: &Select) -> Vec<String> {
         fetch,
         distinct,
         all: _,
+        distinct_span: _,
+        row_limit_span: _,
         distinct_on,
         top,
         with,
@@ -87,6 +89,10 @@ fn select_clauses(select: &Select) -> Vec<String> {
         span: _,
         table_statement: _,
         pipe_operators: _,
+        select_span: _,
+        list_head_span: _,
+        alias_spans: _,
+        item_spans: _,
     } = select;
     present(&[
         (with.is_some(), "with"),
@@ -170,6 +176,8 @@ macro_rules! set_operation_clauses {
                 with_ties,
                 keyword: _,
                 span: _,
+                operator_span: _,
+                row_limit_span: _,
             } = operation;
             present(&[
                 (*all, concat!($prefix, "_all")),
@@ -210,6 +218,9 @@ set_operation_clauses!(except_clauses, Except, "except");
 
 fn join_constructs(join: &Join) -> Vec<Construct> {
     let Join {
+        kind_span: _,
+        keyword_span: _,
+        on_span: _,
         this: _,
         on: _,
         using,

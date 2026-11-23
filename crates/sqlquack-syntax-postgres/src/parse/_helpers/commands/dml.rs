@@ -199,9 +199,11 @@ impl Parser<'_> {
 
     fn insert_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("insert")?;
+        let keyword_span = self.token_range(self.at - 1);
         self.expect_kw("into")?;
         let name: Vec<Identifier> = self.table_name()?;
         let mut target = insert(crate::parse::_helpers::tree::nodes::table(name), Vec::new());
+        target.keyword_span = keyword_span;
         if self.eat_kw("as") {
             target.alias = Some(self.name(is_col_id)?);
             target.alias_explicit_as = true;
@@ -326,13 +328,19 @@ impl Parser<'_> {
 
     fn update_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("update")?;
+        let keyword_span = self.token_range(self.at - 1);
         let (relation, _) = self.relation_with_alias(true)?;
         let mut node = update(relation);
+        node.keyword_span = keyword_span;
         self.expect_kw("set")?;
         (node.set, node.assignments) = self.set_clause_list()?;
         if self.eat_kw("from") {
-            let (items, joins) = self.parse_from_list()?;
-            node.from_clause = Some(From { expressions: items });
+            let (items, joins, comma_spans) = self.parse_from_list()?;
+            node.from_clause = Some(From {
+                keyword_span: Default::default(),
+                comma_spans,
+                expressions: items,
+            });
             node.from_joins = joins;
         }
         (node.where_clause, node.current_of) = self.where_or_current()?;
@@ -343,15 +351,17 @@ impl Parser<'_> {
 
     fn delete_statement(&mut self, with: Option<With>) -> Parsing<Expression> {
         self.expect_kw("delete")?;
+        let keyword_span = self.token_range(self.at - 1);
         self.expect_kw("from")?;
         let (mut relation, explicit) = self.relation_with_alias(false)?;
         let alias: Option<Identifier> = relation.alias.take();
         relation.alias_explicit_as = false;
         let mut node = delete(relation);
+        node.keyword_span = keyword_span;
         node.alias = alias;
         node.alias_explicit_as = explicit;
         if self.eat_kw("using") {
-            let (items, joins) = self.parse_from_list()?;
+            let (items, joins, _) = self.parse_from_list()?;
             let tables: Option<Vec<TableRef>> = match joins.is_empty() {
                 true => items
                     .iter()

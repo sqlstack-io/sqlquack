@@ -20,6 +20,7 @@ use sqlquack_syntax::expressions::types::models::IntervalQualifier;
 use sqlquack_syntax::expressions::types::models::IntervalUnit;
 use sqlquack_syntax::expressions::types::models::IntervalUnitSpec;
 use sqlquack_syntax::expressions::types::models::TableArgumentType;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::SourceSpan;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::tokens::types::Result;
@@ -60,7 +61,9 @@ impl Parser {
 
     /// Parse CASE expression
     pub(crate) fn parse_case(&mut self) -> Result<Expression> {
+        let mut keywords = SeparatorSpans::default();
         self.expect_token(TokenType::Case)?;
+        keywords.0.extend(self.token_range(self.current - 1).0);
         let case_comments = self.previous_trailing_comments().to_vec();
 
         let operand = if !self.check(TokenType::When) {
@@ -69,30 +72,44 @@ impl Parser {
             None
         };
 
+        let mut when_spans = SeparatorSpans::default();
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.match_token(TokenType::When) {
+            keywords.0.extend(self.token_range(self.current - 1).0);
+            let when_at = self.current - 1;
             let condition = self.parse_expression()?;
+            when_spans.0.extend(self.source_range(when_at).0);
             self.expect_token(TokenType::Then)?;
+            keywords.0.extend(self.token_range(self.current - 1).0);
             let result = self.parse_expression()?;
 
             whens.push((condition, result));
         }
 
+        let mut else_span = SourceSpan::default();
         let else_ = if self.match_token(TokenType::Else) {
-            Some(self.parse_expression()?)
+            let else_at = self.current - 1;
+            keywords.0.extend(self.token_range(else_at).0);
+            let value = self.parse_expression()?;
+            else_span = self.source_range(else_at);
+            Some(value)
         } else {
             None
         };
 
         self.expect_token(TokenType::End)?;
+        keywords.0.extend(self.token_range(self.current - 1).0);
 
         Ok(Expression::Case(Box::new(Case {
+            when_spans,
             operand,
             whens,
             else_,
             comments: case_comments,
             inferred_type: None,
             span: SourceSpan::default(),
+            keyword_spans: keywords,
+            else_span,
         })))
     }
 

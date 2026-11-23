@@ -4,6 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, Star};
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::types::models::{Interval, IntervalUnit, IntervalUnitSpec};
+use sqlquack_syntax::tokens::models::{SeparatorSpans, SourceSpan};
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
@@ -213,23 +214,43 @@ impl Parser<'_> {
 
     /// `CaseLayer`: `CASE [operand] WHEN a THEN b ... [ELSE c] END`.
     fn case_layer(&mut self) -> Parsing<Expression> {
+        let mut keywords = SeparatorSpans::default();
+        keywords.0.extend(self.token_range(self.at - 1).0);
         let operand: Option<Expression> = match self.kw("WHEN") {
             true => None,
             false => Some(self.element()?),
         };
+        let mut when_spans = SeparatorSpans::default();
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         while self.eat_kw("WHEN") {
+            let when_at: usize = self.at - 1;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             let condition: Expression = self.element()?;
+            when_spans.0.extend(self.source_range(when_at).0);
             self.expect_kw("THEN")?;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             let result: Expression = self.element()?;
             whens.push((condition, result));
         }
+        let mut else_span = SourceSpan::default();
         let otherwise: Option<Expression> = match self.eat_kw("ELSE") {
-            true => Some(self.element()?),
+            true => {
+                let else_at: usize = self.at - 1;
+                keywords.0.extend(self.token_range(else_at).0);
+                let value: Expression = self.element()?;
+                else_span = self.source_range(else_at);
+                Some(value)
+            }
             false => None,
         };
         self.expect_kw("END")?;
-        Ok(case(operand, whens, otherwise))
+        keywords.0.extend(self.token_range(self.at - 1).0);
+        Ok(case(
+            operand,
+            whens,
+            otherwise,
+            (keywords, when_spans, else_span),
+        ))
     }
 
     /// A name: a call when `(` follows, a qualified asterisk, or a compound identifier.

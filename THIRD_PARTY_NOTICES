@@ -60,7 +60,7 @@ polyglot
 SQLQuack's tokenizer, parser and syntax tree are a modified fork of polyglot
 (https://github.com/tobilg/polyglot), as forked at https://github.com/sqlstack-io/polyglot.
 The derived code is in crates/sqlquack-syntax-snowflake, which now holds most of it,
-crates/sqlquack-syntax and crates/sqlquack-derive. The corpus
+crates/sqlquack-syntax, crates/sqlquack-tokenize and crates/sqlquack-derive. The corpus
 corpora/polyglot-check/polyglot_tests.json holds the SQL inputs of polyglot's tests.
 DuckDB's widening of a signed integer mixed with an unsigned one, unsigned_coercion in
 crates/sqlquack-semantics/src/duckdb/profile/_helpers/duck_types.rs, is ported from polyglot's
@@ -72,8 +72,6 @@ The semantic checks in crates/sqlquack-semantics/src/lineage/_helpers/checks are
 polyglot's validation: the type families in families.rs, the built-in function signatures in
 signatures.rs and the scope rules in scope_rules.rs, and the type checks and their messages in
 node_checks.rs, relational.rs and sets.rs.
-The lint Rules' scope walk and aggregate classifier, in crates/sqlquack-lint/src/tree, are ported
-from polyglot's scope.rs and traversal.rs.
 
 polyglot is distributed under the following licence:
 

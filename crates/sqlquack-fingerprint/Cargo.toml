@@ -30,6 +30,7 @@ shared-tokenizer = []
 sha2.workspace = true
 sqlquack-parse.workspace = true
 sqlquack-syntax.workspace = true
+sqlquack-tokenize.workspace = true
 
 [dev-dependencies]
 # The tests fingerprint every dialect.

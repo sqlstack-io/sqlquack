@@ -27,7 +27,8 @@ a parameter of every entry point; Snowflake is the only one implemented.
 
 | Crate | Role |
 |---|---|
-| `sqlquack-syntax` | The shared syntax tree, lossless tokens, spans, complexity guards and parse diagnostics that every dialect parser builds on. It names no dialect. Derived from polyglot; see [syntax.md](syntax.md). |
+| `sqlquack-syntax` | The shared syntax tree, token and span types, complexity guards and parse diagnostics that every dialect parser builds on. It names no dialect and holds no tokenizer or parser, so a crate that depends on it alone (SQLClean's Rules) can read trees but never re-read SQL. Derived from polyglot; see [syntax.md](syntax.md). |
+| `sqlquack-tokenize` | The tokenizer, its dialect configuration and the lossless tokenizer (significant tokens and trivia), apart from the tree. Derived from polyglot. |
 | `sqlquack-syntax-snowflake` | The Snowflake parser, with strict and tolerant modes, building the shared tree. It also reads DuckDB, PostgreSQL and SQLite. |
 | `sqlquack-derive` | The derive that generates the tree's child traversal. |
 | `sqlquack-syntax-bigquery`, `-clickhouse`, `-databricks`, `-duckdb`, `-postgres`, `-sqlite`, `-sqlserver` | Native parsers, one per dialect, each following its engine's own grammar and building the shared `sqlquack-syntax` tree. Each README lists what it covers and its gaps. |
@@ -38,7 +39,6 @@ a parameter of every entry point; Snowflake is the only one implemented.
 | `sqlquack-blocks` | DuckDB building blocks shared by rules, and, behind the `engine` feature, DuckDB's own parse-and-bind check of every converted statement. |
 | `sqlquack-policy` | The policy file `sqlquack.toml`: schema, validation and type-pattern matching. |
 | `sqlquack-format` | The SQL formatter: lays SQL out over lines, changing only the whitespace between tokens and keyword case. A layout guide prints the authored tokens as a parse-tree pretty printer would; the output is refused unless it keeps every token, keeps comments attached and is idempotent. It reaches parsers through `sqlquack-parse`: for SQL Server the Transact-SQL scanner supplies the tokens and its parser validates the input; for BigQuery the GoogleSQL scanner does the same, as the Databricks scanner does for Databricks; and for PostgreSQL the native scanner decides keywords and its parser validates the input. |
-| `sqlquack-lint` | The lint engine and its rules over SQLQuack's tokens and syntax trees, ported from SQLClean, which uses it. |
 | `sqlquack-fingerprint` | Change fingerprints of SQL that ignore whitespace, comments and keyword case, over SQLQuack's tokenizers; SQLClean uses them. |
 | `sqlquack-compare` | The strict comparator between a recorded result and a DuckDB replay or a fresh recording. |
 | `sqlquack-evidence` | Cases, case hashes, pending files, stored results, DuckDB replay, verification and audits. |

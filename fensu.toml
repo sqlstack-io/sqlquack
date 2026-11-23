@@ -43,6 +43,18 @@ rule = "FPRSL105"
 path = "crates/sqlquack-convert/src/snowflake/session/main/configured_choices.rs"
 reason = "imported by the playground engine website/wasm, outside the root cargo workspace, which reads the user's sqlquack.toml text without a file"
 
+# SQLClean's lint engine, in its own repository, imports these two parse guards; SQLQuack's own lint
+# crate did until its Rules moved there.
+[[targets.rust.rule_exceptions]]
+rule = "FPRSL105"
+path = "crates/sqlquack-parse/src/parsing/main/call_depth_hint.rs"
+reason = "imported by SQLClean's lint engine (crates/sqlclean-lint/src/lint/_helpers/parsing.rs), outside this repository"
+
+[[targets.rust.rule_exceptions]]
+rule = "FPRSL105"
+path = "crates/sqlquack-syntax/src/guard/main/enforce_lexed_tokens.rs"
+reason = "imported by SQLClean's lint engine (crates/sqlclean-lint/src/lint/_helpers/parsing.rs), outside this repository"
+
 # The evidence policy sits at the crate root, where `cargo package` keeps it and the evidence commands
 # read it, so the constant that compiles it in reaches outside src/policy/.
 [[targets.rust.rule_exceptions]]
@@ -56,7 +68,6 @@ reason = "compiles in crates/sqlquack-policy/policy.toml, which sits at the crat
 dialect_registries = [
     "crates/sqlquack-semantics/src/dialects",
     "crates/sqlquack-format/src/dialects",
-    "crates/sqlquack-lint/src/dialects",
     "crates/sqlquack-fingerprint/src/dialects",
 ]
 

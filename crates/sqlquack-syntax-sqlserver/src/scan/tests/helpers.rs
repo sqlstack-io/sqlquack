@@ -1,6 +1,6 @@
 //! Shared helpers of the SQL Server lexer tests.
 
-use sqlquack_syntax::{LosslessToken, TokenKind as LosslessKind};
+use sqlquack_tokenize::{LosslessToken, TokenKind as LosslessKind};
 
 use crate::scan::main::scan::scan;
 use crate::scan::main::tokenize::tokenize;

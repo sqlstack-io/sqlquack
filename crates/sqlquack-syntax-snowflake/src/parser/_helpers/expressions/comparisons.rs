@@ -92,8 +92,9 @@ impl Parser {
 
         loop {
             let global_in = false;
+            let operator = self.current;
 
-            let expr = {
+            let mut expr = {
                 if self.match_token(TokenType::Eq) {
                     self.parse_quantified_comparison(left, QuantifiedOp::Eq, Expression::Eq)?
                 } else if self.match_token(TokenType::Neq) {
@@ -142,6 +143,7 @@ impl Parser {
                     expr
                 }
             };
+            self.record_operation(operator, &mut expr);
 
             left = match self.config.dialect {
                 Some(sqlquack_syntax::tokens::models::DialectType::SQLite) => {
@@ -157,7 +159,10 @@ impl Parser {
         let expr: Expression = match expr {
             Expression::In(mut in_expr) if in_expr.not => {
                 in_expr.not = false;
-                Expression::Not(Box::new(UnaryOp::new(Expression::In(in_expr))))
+                let operator_span = in_expr.operator_span;
+                let mut negation = UnaryOp::new(Expression::In(in_expr));
+                negation.operator_span = operator_span;
+                Expression::Not(Box::new(negation))
             }
             other => other,
         };
@@ -315,6 +320,7 @@ impl Parser {
         } else if self.match_token(TokenType::AtQMark) {
             let right = self.parse_bitwise_or()?;
             Expression::JSONBContains(Box::new(BinaryFunc {
+                operator_span: Default::default(),
                 original_name: Some("@?".to_string()),
                 this: left,
                 expression: right,
@@ -323,6 +329,7 @@ impl Parser {
         } else if self.match_token(TokenType::Parameter) {
             let right = self.parse_bitwise_or()?;
             Expression::JSONBContains(Box::new(BinaryFunc {
+                operator_span: Default::default(),
                 original_name: Some("?".to_string()),
                 this: left,
                 expression: right,
@@ -346,6 +353,7 @@ impl Parser {
         } else if self.match_token(TokenType::CaretAt) {
             let right = self.parse_bitwise_or()?;
             Expression::StartsWith(Box::new(BinaryFunc {
+                operator_span: Default::default(),
                 original_name: Some("^@".to_string()),
                 this: left,
                 expression: right,
@@ -611,6 +619,7 @@ impl Parser {
                 let unnest_expr = self.with_parser_depth(|parser| parser.parse_expression())?;
                 self.expect_token(TokenType::RParen)?;
                 Expression::In(Box::new(In {
+                    operator_span: Default::default(),
                     this: left,
                     expressions: Vec::new(),
                     query: None,
@@ -625,6 +634,7 @@ impl Parser {
                     let subquery = self.parse_statement()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::In(Box::new(In {
+                        operator_span: Default::default(),
                         this: left,
                         expressions: Vec::new(),
                         query: Some(subquery),
@@ -642,6 +652,7 @@ impl Parser {
                     }
                     self.skip();
                     Expression::In(Box::new(In {
+                        operator_span: Default::default(),
                         this: left,
                         expressions: Vec::new(),
                         query: None,
@@ -656,6 +667,7 @@ impl Parser {
                         self.with_parser_depth(|parser| parser.parse_expression_list())?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::In(Box::new(In {
+                        operator_span: Default::default(),
                         this: left,
                         expressions,
                         query: None,
@@ -669,6 +681,7 @@ impl Parser {
             } else {
                 let table_expr = self.parse_primary()?;
                 Expression::In(Box::new(In {
+                    operator_span: Default::default(),
                     this: left,
                     expressions: vec![table_expr],
                     query: None,
@@ -695,6 +708,7 @@ impl Parser {
             self.expect_token(TokenType::And)?;
             let high = self.parse_bitwise_or()?;
             Expression::Between(Box::new(Between {
+                operator_span: Default::default(),
                 this: left,
                 low,
                 high,
@@ -773,6 +787,7 @@ impl Parser {
                 let unnest_expr = self.with_parser_depth(|parser| parser.parse_expression())?;
                 self.expect_token(TokenType::RParen)?;
                 Expression::In(Box::new(In {
+                    operator_span: Default::default(),
                     this: left,
                     expressions: Vec::new(),
                     query: None,
@@ -787,6 +802,7 @@ impl Parser {
                     let subquery = self.parse_statement()?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::In(Box::new(In {
+                        operator_span: Default::default(),
                         this: left,
                         expressions: Vec::new(),
                         query: Some(subquery),
@@ -804,6 +820,7 @@ impl Parser {
                     }
                     self.skip();
                     Expression::In(Box::new(In {
+                        operator_span: Default::default(),
                         this: left,
                         expressions: Vec::new(),
                         query: None,
@@ -818,6 +835,7 @@ impl Parser {
                         self.with_parser_depth(|parser| parser.parse_expression_list())?;
                     self.expect_token(TokenType::RParen)?;
                     Expression::In(Box::new(In {
+                        operator_span: Default::default(),
                         this: left,
                         expressions,
                         query: None,
@@ -831,6 +849,7 @@ impl Parser {
             } else {
                 let expr = self.parse_bitwise_or()?;
                 Expression::In(Box::new(In {
+                    operator_span: Default::default(),
                     this: left,
                     expressions: vec![expr],
                     query: None,
@@ -857,6 +876,7 @@ impl Parser {
             self.expect_token(TokenType::And)?;
             let high = self.parse_bitwise_or()?;
             Expression::Between(Box::new(Between {
+                operator_span: Default::default(),
                 this: left,
                 low,
                 high,
@@ -1032,13 +1052,15 @@ impl Parser {
         mut left: Expression,
     ) -> Result<Expression> {
         loop {
-            let expr = if self.match_token(TokenType::Star) {
+            let operator = self.current;
+            let mut expr = if self.match_token(TokenType::Star) {
                 let right = self.parse_power()?;
                 Expression::Mul(Box::new(BinaryOp::new(left, right)))
             } else if self.match_duckdb_integer_division() {
                 let right = self.parse_power()?;
                 Expression::IntDiv(Box::new(
                     sqlquack_syntax::expressions::typed_functions::models::BinaryFunc {
+                        operator_span: Default::default(),
                         this: left,
                         expression: right,
                         original_name: None,
@@ -1069,6 +1091,7 @@ impl Parser {
                 let right = self.parse_power()?;
                 Expression::IntDiv(Box::new(
                     sqlquack_syntax::expressions::typed_functions::models::BinaryFunc {
+                        operator_span: Default::default(),
                         this: left,
                         expression: right,
                         original_name: None,
@@ -1078,6 +1101,7 @@ impl Parser {
             } else {
                 return Ok(left);
             };
+            self.record_operation(operator, &mut expr);
             left = expr;
         }
     }
@@ -1094,30 +1118,18 @@ impl Parser {
                 let operator_comments = self.previous_trailing_comments().to_vec();
                 let right = self.parse_at_time_zone()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
-                Expression::Add(Box::new(BinaryOp {
-                    left,
-                    right,
-                    left_comments,
-                    operator_comments,
-                    trailing_comments,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                    written_as: None,
-                }))
+                Expression::Add(Box::new(commented_operation(
+                    (left, right),
+                    (left_comments, operator_comments, trailing_comments),
+                )))
             } else if self.match_token(TokenType::Dash) {
                 let operator_comments = self.previous_trailing_comments().to_vec();
                 let right = self.parse_at_time_zone()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
-                Expression::Sub(Box::new(BinaryOp {
-                    left,
-                    right,
-                    left_comments,
-                    operator_comments,
-                    trailing_comments,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                    written_as: None,
-                }))
+                Expression::Sub(Box::new(commented_operation(
+                    (left, right),
+                    (left_comments, operator_comments, trailing_comments),
+                )))
             } else if (self.config.dialect
                 != Some(sqlquack_syntax::tokens::models::DialectType::DuckDB))
                 && self.match_token(TokenType::DPipe)
@@ -1125,16 +1137,10 @@ impl Parser {
                 let operator_comments = self.previous_trailing_comments().to_vec();
                 let right = self.parse_at_time_zone()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
-                Expression::Concat(Box::new(BinaryOp {
-                    left,
-                    right,
-                    left_comments,
-                    operator_comments,
-                    trailing_comments,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                    written_as: None,
-                }))
+                Expression::Concat(Box::new(commented_operation(
+                    (left, right),
+                    (left_comments, operator_comments, trailing_comments),
+                )))
             } else if self.match_token(TokenType::DQMark) {
                 let right = self.parse_at_time_zone()?;
                 Expression::Coalesce(Box::new(
@@ -1267,16 +1273,10 @@ impl Parser {
                 let operator_comments = self.previous_trailing_comments().to_vec();
                 let right = self.parse_addition()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
-                left = Expression::Concat(Box::new(BinaryOp {
-                    left,
-                    right,
-                    left_comments,
-                    operator_comments,
-                    trailing_comments,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                    written_as: None,
-                }));
+                left = Expression::Concat(Box::new(commented_operation(
+                    (left, right),
+                    (left_comments, operator_comments, trailing_comments),
+                )));
             } else {
                 return Ok(left);
             }
@@ -1301,30 +1301,18 @@ impl Parser {
                 let operator_comments = self.previous_trailing_comments().to_vec();
                 let right = self.parse_at_time_zone()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
-                Expression::Add(Box::new(BinaryOp {
-                    left,
-                    right,
-                    left_comments,
-                    operator_comments,
-                    trailing_comments,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                    written_as: None,
-                }))
+                Expression::Add(Box::new(commented_operation(
+                    (left, right),
+                    (left_comments, operator_comments, trailing_comments),
+                )))
             } else if self.match_token(TokenType::Dash) {
                 let operator_comments = self.previous_trailing_comments().to_vec();
                 let right = self.parse_at_time_zone()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
-                Expression::Sub(Box::new(BinaryOp {
-                    left,
-                    right,
-                    left_comments,
-                    operator_comments,
-                    trailing_comments,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                    written_as: None,
-                }))
+                Expression::Sub(Box::new(commented_operation(
+                    (left, right),
+                    (left_comments, operator_comments, trailing_comments),
+                )))
             } else if (self.config.dialect
                 != Some(sqlquack_syntax::tokens::models::DialectType::DuckDB))
                 && self.match_token(TokenType::DPipe)
@@ -1332,16 +1320,10 @@ impl Parser {
                 let operator_comments = self.previous_trailing_comments().to_vec();
                 let right = self.parse_at_time_zone()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
-                Expression::Concat(Box::new(BinaryOp {
-                    left,
-                    right,
-                    left_comments,
-                    operator_comments,
-                    trailing_comments,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                    written_as: None,
-                }))
+                Expression::Concat(Box::new(commented_operation(
+                    (left, right),
+                    (left_comments, operator_comments, trailing_comments),
+                )))
             } else if self.match_token(TokenType::DQMark) {
                 let right = self.parse_at_time_zone()?;
                 Expression::Coalesce(Box::new(
@@ -1438,16 +1420,10 @@ impl Parser {
                 let operator_comments = self.previous_trailing_comments().to_vec();
                 let right = self.parse_power()?;
                 let trailing_comments = self.previous_trailing_comments().to_vec();
-                left = Expression::Concat(Box::new(BinaryOp {
-                    left,
-                    right,
-                    left_comments,
-                    operator_comments,
-                    trailing_comments,
-                    inferred_type: None,
-                    span: SourceSpan::default(),
-                    written_as: None,
-                }));
+                left = Expression::Concat(Box::new(commented_operation(
+                    (left, right),
+                    (left_comments, operator_comments, trailing_comments),
+                )));
             } else if self.check(TokenType::Arrow)
                 || (self.check(TokenType::DArrow) && !self.applies_snowflake_context_rules())
             {
@@ -1482,13 +1458,15 @@ impl Parser {
     #[inline(never)]
     pub(crate) fn parse_multiplication_tail(&mut self, mut left: Expression) -> Result<Expression> {
         loop {
-            let expr = if self.match_token(TokenType::Star) {
+            let operator = self.current;
+            let mut expr = if self.match_token(TokenType::Star) {
                 let right = self.parse_multiplicative_operand()?;
                 Expression::Mul(Box::new(BinaryOp::new(left, right)))
             } else if self.match_duckdb_integer_division() {
                 let right = self.parse_power()?;
                 Expression::IntDiv(Box::new(
                     sqlquack_syntax::expressions::typed_functions::models::BinaryFunc {
+                        operator_span: Default::default(),
                         this: left,
                         expression: right,
                         original_name: None,
@@ -1524,6 +1502,7 @@ impl Parser {
                 let right = self.parse_power()?;
                 Expression::IntDiv(Box::new(
                     sqlquack_syntax::expressions::typed_functions::models::BinaryFunc {
+                        operator_span: Default::default(),
                         this: left,
                         expression: right,
                         original_name: None,
@@ -1533,7 +1512,7 @@ impl Parser {
             } else {
                 return Ok(left);
             };
-
+            self.record_operation(operator, &mut expr);
             left = expr;
         }
     }
@@ -1555,6 +1534,7 @@ impl Parser {
             {
                 let right = self.parse_unary()?;
                 left = Expression::Power(Box::new(BinaryFunc {
+                    operator_span: Default::default(),
                     original_name: Some("**".to_string()),
                     this: left,
                     expression: right,
@@ -1568,6 +1548,7 @@ impl Parser {
             {
                 let right = self.parse_unary()?;
                 left = Expression::Power(Box::new(BinaryFunc {
+                    operator_span: Default::default(),
                     original_name: None,
                     this: left,
                     expression: right,
@@ -1983,4 +1964,16 @@ impl Parser {
 /// FACTORIAL(x), produced by Vertica's `x!` and `!! x` operators.
 pub(crate) fn factorial(expr: Expression) -> Expression {
     Expression::Function(Box::new(Function::new("FACTORIAL".to_string(), vec![expr])))
+}
+
+/// An operation with the comments before, at and after its operator.
+fn commented_operation(
+    (left, right): (Expression, Expression),
+    (left_comments, operator_comments, trailing_comments): (Vec<String>, Vec<String>, Vec<String>),
+) -> BinaryOp {
+    let mut node = BinaryOp::new(left, right);
+    node.left_comments = left_comments;
+    node.operator_comments = operator_comments;
+    node.trailing_comments = trailing_comments;
+    node
 }

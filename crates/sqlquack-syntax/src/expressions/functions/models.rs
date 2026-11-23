@@ -1,6 +1,6 @@
 //! Data models of expressions functions.
 
-use crate::tokens::models::SourceSpan;
+use crate::tokens::models::{SourceSpan, Span};
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -103,6 +103,14 @@ pub struct Function {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub written_as: Option<OperatorSpelling>,
+    /// SQLQuack: the name's own range, without any qualifier; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub name_span: SourceSpan,
+    /// SQLQuack: a call's DISTINCT or its only one-token argument, or the last operand of an operator read as a call, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub argument_span: crate::tokens::models::SourceSpan,
 }
 
 impl Function {
@@ -121,6 +129,8 @@ impl Function {
     }
     pub fn new(name: impl Into<String>, args: Vec<Expression>) -> Self {
         Self {
+            argument_span: Default::default(),
+            name_span: Default::default(),
             source_dialect: None,
             qualified_name: Vec::new(),
             on_error: None,
@@ -183,6 +193,14 @@ pub struct AggregateFunction {
     /// DuckDB `EXPORT_STATE`: the call returns its aggregate state.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub export_state: bool,
+    /// SQLQuack: the name's own range, without any qualifier; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub name_span: SourceSpan,
+    /// SQLQuack: a call's DISTINCT or its only one-token argument, or the last operand of an operator read as a call, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub argument_span: crate::tokens::models::SourceSpan,
 }
 
 /// A window function call; `over` holds PARTITION BY, ORDER BY and the frame.
@@ -1894,4 +1912,15 @@ pub struct XMLKeyValueOption {
     pub this: Box<Expression>,
     #[serde(default)]
     pub expression: Option<Box<Expression>>,
+}
+
+/// SQLQuack: a call as written, read from a located parse.
+#[derive(Debug, Clone, PartialEq)]
+pub struct WrittenCall {
+    /// The name's own range, without any qualifier.
+    pub span: Span,
+    /// The name as written, without quotes.
+    pub name: String,
+    /// The qualifier's parts as written, without quotes; empty for an unqualified call.
+    pub qualifier: Vec<String>,
 }

@@ -374,6 +374,7 @@ fn given_a_100_000_step_chain_of_a_node_parsers_build_in_a_loop_when_dropping_on
             description: "** powers",
             step: |input| {
                 Expression::Power(Box::new(BinaryFunc {
+                    operator_span: Default::default(),
                     this: input,
                     expression: Expression::number(1),
                     original_name: None,

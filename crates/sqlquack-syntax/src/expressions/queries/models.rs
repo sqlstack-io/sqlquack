@@ -1,6 +1,6 @@
 //! Data models of expressions queries.
 
-use crate::tokens::models::SourceSpan;
+use crate::tokens::models::{SeparatorSpans, SourceSpan};
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -116,11 +116,41 @@ pub struct Select {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the DISTINCT keyword, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub distinct_span: SourceSpan,
+    /// SQLQuack: the first LIMIT, OFFSET or FETCH keyword; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub row_limit_span: SourceSpan,
+    /// SQLQuack: the SELECT keyword, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub select_span: crate::tokens::models::SourceSpan,
+    /// SQLQuack: the token after SELECT, a quantifier where one is written, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub list_head_span: crate::tokens::models::SourceSpan,
+
+    /// SQLQuack: each AS in FROM and the joins with the name after it, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub alias_spans: crate::tokens::models::SeparatorSpans,
+
+    /// SQLQuack: each select item's first token and end, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub item_spans: crate::tokens::models::ItemSpans,
 }
 
 impl Select {
     pub fn new() -> Self {
         Self {
+            select_span: Default::default(),
+            item_spans: Default::default(),
+            alias_spans: Default::default(),
+            list_head_span: Default::default(),
             vertica: None,
             expressions: Vec::new(),
             from: None,
@@ -142,6 +172,8 @@ impl Select {
             distinct: false,
             all: false,
             distinct_on: None,
+            row_limit_span: SourceSpan::default(),
+            distinct_span: SourceSpan::default(),
             top: None,
             with: None,
             sample: None,
@@ -181,6 +213,8 @@ impl Select {
     /// Set the FROM clause
     pub fn from(mut self, table: Expression) -> Self {
         self.from = Some(From {
+            keyword_span: Default::default(),
+            comma_spans: Default::default(),
             expressions: vec![table],
         });
         self
@@ -207,6 +241,7 @@ impl Select {
     /// Set ORDER BY
     pub fn order_by(mut self, expressions: Vec<Ordered>) -> Self {
         self.order_by = Some(OrderBy {
+            keyword_span: Default::default(),
             expressions,
             siblings: false,
             comments: Vec::new(),
@@ -301,6 +336,14 @@ pub struct Union {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the operator keyword's range, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub operator_span: SourceSpan,
+    /// SQLQuack: the first LIMIT, OFFSET or FETCH keyword; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub row_limit_span: SourceSpan,
 }
 
 /// Flattens the left-recursive chain iteratively so dropping deep set operations cannot overflow.
@@ -374,6 +417,14 @@ pub struct Intersect {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the operator keyword's range, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub operator_span: SourceSpan,
+    /// SQLQuack: the first LIMIT, OFFSET or FETCH keyword; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub row_limit_span: SourceSpan,
 }
 
 impl Drop for Intersect {
@@ -446,6 +497,14 @@ pub struct Except {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the operator keyword's range, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub operator_span: SourceSpan,
+    /// SQLQuack: the first LIMIT, OFFSET or FETCH keyword; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub row_limit_span: SourceSpan,
 }
 
 impl Drop for Except {
@@ -536,6 +595,10 @@ pub struct Subquery {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the first LIMIT, OFFSET or FETCH keyword; recorded by a located parse, never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub row_limit_span: SourceSpan,
 }
 
 /// Pipe syntax step `query |> transform` (BigQuery, DataFusion).
@@ -564,6 +627,10 @@ pub struct Values {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     #[ast(skip)]
     pub bare_rows: Vec<usize>,
+    /// SQLQuack: the VALUES keyword, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub keyword_span: crate::tokens::models::SourceSpan,
 }
 
 /// PIVOT/UNPIVOT, in the standard FROM-clause form or DuckDB's statement form.
@@ -693,8 +760,16 @@ pub struct RowFormat {
 /// A FROM clause; several sources are comma-separated implicit joins.
 #[derive(sqlquack_derive::AstNode, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct From {
+    /// SQLQuack: the commas between the items, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub comma_spans: SeparatorSpans,
     /// The table source expressions.
     pub expressions: Vec<Expression>,
+    /// SQLQuack: the FROM keyword, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub keyword_span: crate::tokens::models::SourceSpan,
 }
 
 /// A JOIN between two sources, with an ON predicate or a USING list.
@@ -748,6 +823,18 @@ pub struct Join {
     #[serde(default, skip_serializing_if = "SourceSpan::is_absent")]
     #[ast(skip)]
     pub span: SourceSpan,
+    /// SQLQuack: the first keyword of the join, such as CROSS or LEFT, or its comma; never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub kind_span: SourceSpan,
+    /// SQLQuack: the JOIN keyword, or a comma join's comma; never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub keyword_span: SourceSpan,
+    /// SQLQuack: the ON keyword of the join's condition; never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub on_span: SourceSpan,
 }
 
 /// Databricks: a join's `{APPROX | EXACT} NEAREST [n] BY {DISTANCE | SIMILARITY} expression`.
@@ -868,6 +955,10 @@ pub struct GroupBy {
     /// Leading comments that appeared before the GROUP BY keyword
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub comments: Vec<String>,
+    /// SQLQuack: the GROUP keyword, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub keyword_span: crate::tokens::models::SourceSpan,
 }
 
 /// Represent a HAVING clause containing a predicate over aggregate results.
@@ -894,6 +985,18 @@ pub struct OrderBy {
     /// DuckDB and Snowflake `ORDER BY ALL`, which sorts by every output column; `expressions` is then empty.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub all: Option<OrderByAll>,
+    /// SQLQuack: the ORDER keyword, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub keyword_span: crate::tokens::models::SourceSpan,
+}
+
+impl OrderBy {
+    /// SQLQuack: this clause with its ORDER keyword at `keyword`.
+    pub fn written_at(mut self, keyword: crate::tokens::models::SourceSpan) -> Self {
+        self.keyword_span = keyword;
+        self
+    }
 }
 
 /// The direction and null placement of `ORDER BY ALL`.
@@ -1381,6 +1484,14 @@ pub struct With {
     /// SEARCH/CYCLE clause for recursive CTEs (PostgreSQL)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub search: Option<Box<Expression>>,
+    /// SQLQuack: the WITH keyword, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub keyword_span: crate::tokens::models::SourceSpan,
+    /// SQLQuack: the commas between CTEs, recorded by a located parse and never serialised.
+    #[serde(skip)]
+    #[ast(skip)]
+    pub comma_spans: crate::tokens::models::SeparatorSpans,
 }
 
 /// One CTE: name, optional column list, body, and optional [NOT] MATERIALIZED hint.

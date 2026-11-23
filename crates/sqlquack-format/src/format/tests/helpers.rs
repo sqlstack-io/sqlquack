@@ -2,7 +2,7 @@
 
 use serde_json::Value;
 use sqlquack_parse::tokenize;
-use sqlquack_syntax::TokenKind;
+use sqlquack_tokenize::TokenKind;
 
 use crate::dialects::main::profile::profile;
 use crate::format::_helpers::lexemes::lex;

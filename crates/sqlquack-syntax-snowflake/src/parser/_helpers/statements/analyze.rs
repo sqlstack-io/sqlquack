@@ -740,11 +740,11 @@ impl Parser {
 
     #[cfg(test)]
     pub(crate) fn tidb_fragment_parser(&self, payload: &str) -> Result<Parser> {
-        let mut tokenizer_config = sqlquack_syntax::tokens::models::TokenizerConfig::default();
+        let mut tokenizer_config = sqlquack_tokenize::tokens::models::TokenizerConfig::default();
         tokenizer_config.identifiers.insert('`', '`');
         tokenizer_config.nested_comments = false;
-        let tokens =
-            sqlquack_syntax::tokens::models::Tokenizer::new(tokenizer_config).tokenize(payload)?;
+        let tokens = sqlquack_tokenize::tokens::models::Tokenizer::new(tokenizer_config)
+            .tokenize(payload)?;
         let mut parser = Parser::with_config(
             tokens,
             ParserConfig {

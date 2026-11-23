@@ -8,6 +8,8 @@ use sqlquack_syntax::expressions::queries::models::{
     Unpivot, Watermark,
 };
 use sqlquack_syntax::expressions::statements::models::Version;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, is_identifier, is_strict_identifier};
 use crate::parse::_helpers::tree::nodes::{
@@ -70,16 +72,22 @@ impl Parser<'_> {
     /// `fromClause`: `FROM relation, ... lateralView*`; several relations each keep their joins.
     pub(crate) fn select_from_clause(&mut self, mut select: Select) -> Parsing<Select> {
         self.expect_kw("FROM")?;
+        let keyword_span = self.token_range(self.at - 1);
+        let from_at: usize = self.at;
         let mut refs: Vec<(Expression, Vec<Join>)> = Vec::new();
+        let mut comma_spans: SeparatorSpans = SeparatorSpans::default();
         loop {
             refs.push(self.relation()?);
             if !self.eat_char(',') {
                 break;
             }
+            comma_spans.0.extend(self.token_range(self.at - 1).0);
         }
         if refs.len() == 1 {
             let (item, joins) = refs.remove(0);
             select.from = Some(From {
+                keyword_span,
+                comma_spans: Default::default(),
                 expressions: vec![item],
             });
             select.joins = joins;
@@ -88,7 +96,11 @@ impl Parser<'_> {
                 .into_iter()
                 .map(|(item, joins)| collapse(item, joins))
                 .collect();
-            select.from = Some(From { expressions: items });
+            select.from = Some(From {
+                keyword_span,
+                comma_spans,
+                expressions: items,
+            });
         }
         select.lateral_views = self.lateral_views()?;
         if self.kw_in(0, &["PIVOT", "UNPIVOT"]) {
@@ -96,6 +108,7 @@ impl Parser<'_> {
             self.pivot_or_unpivot(null())?;
             self.gap("pivot_after_lateral_view", start);
         }
+        select.alias_spans = self.aliased_names(from_at);
         Ok(select)
     }
 
@@ -107,8 +120,11 @@ impl Parser<'_> {
         loop {
             if self.at_join() {
                 let first: usize = self.at;
+                let (kind_span, keyword_span) = self.join_keywords();
                 let mut node: Join = self.deeper(|parser| parser.join_relation())?;
                 node.span = self.source_range(first);
+                node.kind_span = kind_span;
+                node.keyword_span = keyword_span;
                 joins.push(node);
             } else if self.kw_in(0, &["PIVOT", "UNPIVOT"]) {
                 let input: Expression = collapse(item, std::mem::take(&mut joins));
@@ -189,7 +205,8 @@ impl Parser<'_> {
             return Ok(join(right, kind, JoinConstraint::None, (inner, outer)));
         }
         let constraint: JoinConstraint = if self.eat_kw("ON") {
-            JoinConstraint::On(Box::new(self.expression()?))
+            let on_span: SourceSpan = self.token_range(self.at - 1);
+            JoinConstraint::On(Box::new(self.expression()?), on_span)
         } else if self.eat_kw("USING") {
             JoinConstraint::Using(self.identifier_list()?)
         } else if self.kw_in(0, &["APPROX", "EXACT"]) && self.kw_at(1, "NEAREST") {
@@ -311,6 +328,7 @@ impl Parser<'_> {
             return self.parenthesized_relation(start, is_lateral);
         }
         if self.kw("VALUES") {
+            let keyword: usize = self.at;
             self.at += 1;
             let items: Vec<Expression> = self.comma_list(|parser| parser.expression())?;
             let bare_rows: Vec<usize> = items
@@ -321,7 +339,7 @@ impl Parser<'_> {
                 .collect();
             let rows: Vec<Vec<Expression>> = items.into_iter().map(row).collect();
             let alias: Option<TableAlias> = self.table_alias()?;
-            return Ok(values(rows, bare_rows, alias));
+            return Ok(self.keyworded(keyword, values(rows, bare_rows, alias)));
         }
         if self.kw("IDENTIFIER") && self.char_at(1, '(') {
             self.at += 2;

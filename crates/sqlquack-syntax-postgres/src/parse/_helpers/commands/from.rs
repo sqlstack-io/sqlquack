@@ -4,6 +4,8 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
 use sqlquack_syntax::expressions::operators::models::Alias;
 use sqlquack_syntax::expressions::queries::models::{Join, JoinKind};
+use sqlquack_syntax::tokens::models::SeparatorSpans;
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::commands::routines::var;
 use crate::parse::_helpers::commands::tables::{clause, name_value};
@@ -48,18 +50,22 @@ fn joined_alias(left: Expression, joins: Vec<Join>, alias: Option<TableAlias>) -
 
 impl Parser<'_> {
     /// `from_list`: the items, and a lone item's joins; several items each keep their own.
-    pub(crate) fn parse_from_list(&mut self) -> Parsing<(Vec<Expression>, Vec<Join>)> {
+    pub(crate) fn parse_from_list(
+        &mut self,
+    ) -> Parsing<(Vec<Expression>, Vec<Join>, SeparatorSpans)> {
         let mut refs: Vec<(Expression, Vec<Join>)> = Vec::new();
+        let mut commas: SeparatorSpans = SeparatorSpans::default();
         loop {
             let item: Expression = self.table_ref()?;
             refs.push((item, self.joins()?));
             if !self.eat_char(',') {
                 break;
             }
+            commas.0.extend(self.token_range(self.at - 1).0);
         }
         if refs.len() == 1 {
             let (item, joins) = refs.remove(0);
-            return Ok((vec![item], joins));
+            return Ok((vec![item], joins, commas));
         }
         let items: Vec<Expression> = refs
             .into_iter()
@@ -68,7 +74,7 @@ impl Parser<'_> {
                 false => joined_table(item, joins, None),
             })
             .collect();
-        Ok((items, Vec::new()))
+        Ok((items, Vec::new(), commas))
     }
 
     /// Whether a join begins at the cursor.
@@ -86,8 +92,11 @@ impl Parser<'_> {
         let mut joins: Vec<Join> = Vec::new();
         while self.at_join() {
             let first: usize = self.at;
+            let (kind_span, keyword_span) = self.join_keywords();
             let mut node: Join = self.deeper(|parser| parser.one_join())?;
             node.span = self.source_range(first);
+            node.kind_span = kind_span;
+            node.keyword_span = keyword_span;
             joins.push(node);
         }
         Ok(joins)
@@ -138,11 +147,12 @@ impl Parser<'_> {
             right = joined_table(right, nested, None);
         }
         if self.eat_kw("on") {
+            let on_span: SourceSpan = self.token_range(self.at - 1);
             let on: Expression = self.a_expr()?;
             return Ok(join(
                 right,
                 kind,
-                JoinConstraint::On(Box::new(on)),
+                JoinConstraint::On(Box::new(on), on_span),
                 (inner, outer),
             ));
         }

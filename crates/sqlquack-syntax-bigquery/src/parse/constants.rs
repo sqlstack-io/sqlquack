@@ -420,3 +420,6 @@ pub(crate) const MAX_TREE_DEPTH: usize = 8_000;
 
 /// The stack a refused tree's drop takes per level, since the shared tree drops recursively.
 pub(crate) const TREE_DROP_FRAME: usize = 1 << 10;
+
+/// The most keywords written before a JOIN, as in `NATURAL LEFT OUTER JOIN`.
+pub(crate) const MAX_JOIN_PREFIX: usize = 4;

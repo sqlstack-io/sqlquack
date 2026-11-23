@@ -1,7 +1,7 @@
 //! `tokenize`: lossless tokens of a Transact-SQL input, typed as the shared tokenizer types them.
 
 use sqlquack_syntax::tokens::models::TokenType;
-use sqlquack_syntax::{LosslessToken, TokenKind as LosslessKind};
+use sqlquack_tokenize::{LosslessToken, TokenKind as LosslessKind};
 
 use crate::scan::_helpers::scanner::{Scanned, Scanner, TriviaKind};
 use crate::scan::errors::ScanError;

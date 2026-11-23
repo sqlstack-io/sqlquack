@@ -42,7 +42,7 @@ _REPOSITORY: Path = Path(__file__).resolve().parents[4]
         ),
         ScopeTestCase(
             description="a crate the binary is not built from replays nothing",
-            changed=("crates/sqlquack-lint/src/lib.rs",),
+            changed=("crates/sqlquack-fingerprint/src/lib.rs",),
             expected_scope="none",
         ),
         ScopeTestCase(
@@ -183,7 +183,7 @@ def test_given_an_edit_when_digesting_the_scope_then_only_forced_paths_change_it
     (
         RepositoryTestCase(
             description="every declared path is tracked, a file under each forces a full replay, "
-            "and the binary is built from the converter and the replay but not the linter",
+            "and the binary is built from the converter and the replay but not the fingerprints",
             expected_unmatched=(),
             expected_forced_scopes=frozenset({"full"}),
             expected_binary_crates=(True, True, False),
@@ -204,7 +204,7 @@ def test_given_the_repository_when_checking_the_declared_paths_then_each_is_hono
     binary_crates: tuple[bool, bool, bool] = (
         "crates/sqlquack-convert/" in binary_dirs,
         "crates/sqlquack-evidence/" in binary_dirs,
-        "crates/sqlquack-lint/" in binary_dirs,
+        "crates/sqlquack-fingerprint/" in binary_dirs,
     )
     assert (tuple(unmatched(root=_REPOSITORY)), forced_scopes, binary_crates) == (
         test_case.expected_unmatched,

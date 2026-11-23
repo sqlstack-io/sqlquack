@@ -25,6 +25,7 @@ native-scanner = []
 serde_json.workspace = true
 sqlquack-parse.workspace = true
 sqlquack-syntax.workspace = true
+sqlquack-tokenize.workspace = true
 
 [dev-dependencies]
 # The tests lay out every dialect.

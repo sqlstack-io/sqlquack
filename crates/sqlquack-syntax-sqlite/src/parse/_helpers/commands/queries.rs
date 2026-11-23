@@ -3,9 +3,11 @@
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::Identifier;
 use sqlquack_syntax::expressions::operators::models::Alias;
+use sqlquack_syntax::expressions::queries::main::values_query::values_query;
 use sqlquack_syntax::expressions::queries::models::{
     Cte, GroupBy, Having, Limit, NamedWindow, Offset, OrderBy, Ordered, Over, Select, Where, With,
 };
+use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_ids, is_nm};
 use crate::parse::_helpers::tree::nodes::{cte, set_operation, star, values};
@@ -17,6 +19,7 @@ struct Term {
     body: Expression,
     order_by: Option<OrderBy>,
     limit: Option<(Expression, Option<Expression>)>,
+    limit_span: SourceSpan,
     values: bool,
 }
 
@@ -31,7 +34,7 @@ struct Written {
 fn finished(
     body: Expression,
     order_by: Option<OrderBy>,
-    limit: Option<(Expression, Option<Expression>)>,
+    (limit, keyword): (Option<(Expression, Option<Expression>)>, SourceSpan),
 ) -> Expression {
     let (count, offset) = match limit {
         Some((count, offset)) => (Some(count), offset),
@@ -40,6 +43,7 @@ fn finished(
     macro_rules! set_operation_finished {
         ($node:expr) => {{
             $node.order_by = order_by;
+            $node.row_limit_span = keyword;
             $node.limit = count.map(Box::new);
             $node.offset = offset.map(Box::new);
         }};
@@ -48,6 +52,7 @@ fn finished(
     match &mut body {
         Expression::Select(select) => {
             select.order_by = order_by;
+            select.row_limit_span = keyword;
             select.limit = count.map(|this| Limit {
                 this,
                 percent: false,
@@ -71,6 +76,9 @@ fn new_select() -> Box<Select> {
 
 /// `body` with `with` as its common table expressions.
 fn with_ctes(mut body: Expression, with: Option<With>) -> Expression {
+    if with.is_some() && matches!(body, Expression::Values(_)) {
+        body = Expression::Select(Box::new(values_query(body)));
+    }
     match &mut body {
         Expression::Select(select) => select.with = with,
         Expression::Union(node) => node.with = with,
@@ -112,7 +120,7 @@ impl Parser<'_> {
         let mut body: Expression = term.body;
         let mut last_values: bool = term.values;
         let mut misplaced: Option<String> = None;
-        while let Some((operator, all)) = self.compound_operator() {
+        while let Some((operator, all, operator_span)) = self.compound_operator() {
             if term.order_by.is_some() || term.limit.is_some() {
                 let clause: &str = match term.order_by.is_some() {
                     true => "ORDER BY",
@@ -126,19 +134,19 @@ impl Parser<'_> {
             term = self.one_select()?;
             terms += 1;
             last_values = term.values;
-            body = set_operation(operator, body, term.body, (all, false));
+            body = set_operation((operator, operator_span), body, term.body, (all, false));
         }
         if terms > MAX_COMPOUND_SELECT && !last_values {
             self.defer(self.error_with(COMPOUND_TERMS, start, false));
         } else if let Some(message) = misplaced {
             self.defer(self.error_with(&message, start, true));
         }
-        let body: Expression = finished(body, term.order_by, term.limit);
+        let body: Expression = finished(body, term.order_by, (term.limit, term.limit_span));
         Ok(self.respanned(first, with_ctes(body, with)))
     }
 
     /// `multiselect_op`: `UNION [ALL]`, `INTERSECT` or `EXCEPT`, consumed.
-    fn compound_operator(&mut self) -> Option<(&'static str, bool)> {
+    fn compound_operator(&mut self) -> Option<(&'static str, bool, SourceSpan)> {
         let operator: &'static str = match self.kind_at(0)? {
             TokenKind::Keyword("UNION") => "UNION",
             TokenKind::Keyword("INTERSECT") => "INTERSECT",
@@ -146,35 +154,55 @@ impl Parser<'_> {
             _ => return None,
         };
         self.at += 1;
+        let operator_span: SourceSpan = self.source_range(self.at - 1);
         let all: bool = matches!(operator, "UNION") && self.eat_kw("ALL");
-        Some((operator, all))
+        Some((operator, all, operator_span))
     }
 
     /// `oneselect`: a `SELECT` with its clauses, or `VALUES` rows.
     fn one_select(&mut self) -> Parsing<Term> {
         let first: usize = self.at;
         if self.eat_kw("VALUES") {
+            let keyword: usize = self.at - 1;
             let mut rows: Vec<Vec<Expression>> = vec![self.values_row()?];
             while self.eat_op("COMMA") {
                 rows.push(self.values_row()?);
             }
             return Ok(Term {
-                body: self.respanned(first, values(rows, None)),
+                body: self.keyworded(keyword, self.respanned(first, values(rows, None))),
                 order_by: None,
                 limit: None,
+                limit_span: SourceSpan::default(),
                 values: true,
             });
         }
         self.expect_kw("SELECT")?;
         let mut select: Box<Select> = new_select();
+        select.select_span = self.token_range(self.at - 1);
+        select.list_head_span = self.token_range(self.at);
         if self.eat_kw("DISTINCT") {
             select.distinct = true;
+            select.distinct_span = self.token_range(self.at - 1);
         } else if self.eat_kw("ALL") {
             select.all = true;
         }
-        select.expressions = self.comma_list(|parser| parser.result_column())?;
+        let mut item_head: usize = self.at;
+        let mut item_spans = sqlquack_syntax::tokens::models::ItemSpans::default();
+        select.expressions = self.comma_list(|parser| {
+            let item: Expression = parser.result_column()?;
+            item_spans.0.extend(parser.item_range(item_head));
+            item_head = parser.at + 1;
+            Ok(item)
+        })?;
+        select.item_spans = item_spans;
         if self.eat_kw("FROM") {
+            let keyword_span = self.token_range(self.at - 1);
+            let from_at: usize = self.at;
             select = self.select_from(select)?;
+            select.alias_spans = self.aliased_names(from_at);
+            if let Some(from) = select.from.as_mut() {
+                from.keyword_span = keyword_span;
+            }
         }
         if self.eat_kw("WHERE") {
             select.where_clause = Some(Where {
@@ -182,9 +210,11 @@ impl Parser<'_> {
             });
         }
         if self.kw("GROUP") {
+            let keyword_span = self.token_range(self.at);
             self.at += 1;
             self.expect_kw("BY")?;
             select.group_by = Some(GroupBy {
+                keyword_span,
                 expressions: self.comma_list(|parser| parser.expression())?,
                 all: None,
                 totals: false,
@@ -202,12 +232,18 @@ impl Parser<'_> {
             select.windows = Some(self.window_definitions()?);
         }
         let order_by: Option<OrderBy> = self.order_by_clause()?;
+        let limit_at: usize = self.at;
         let limit: Option<(Expression, Option<Expression>)> = self.limit_clause()?;
+        let limit_span: SourceSpan = match limit {
+            Some(_) => self.token_range(limit_at),
+            None => SourceSpan::default(),
+        };
         let body: Expression = Expression::Select(select);
         Ok(Term {
             body: self.respanned(first, body),
             order_by,
             limit,
+            limit_span,
             values: false,
         })
     }
@@ -253,9 +289,11 @@ impl Parser<'_> {
         if !self.kw("ORDER") {
             return Ok(None);
         }
+        let keyword_span = self.token_range(self.at);
         self.at += 1;
         self.expect_kw("BY")?;
         Ok(Some(OrderBy {
+            keyword_span,
             expressions: self.sort_list()?,
             siblings: false,
             comments: Vec::new(),
@@ -313,6 +351,8 @@ impl Parser<'_> {
     /// `with`: `WITH [RECURSIVE] wqitem, ...`.
     pub(crate) fn with_clause(&mut self) -> Parsing<With> {
         self.expect_kw("WITH")?;
+        let keyword_span = self.token_range(self.at - 1);
+        let mut comma_spans = sqlquack_syntax::tokens::models::SeparatorSpans::default();
         let recursive: bool = self.eat_kw("RECURSIVE");
         let mut ctes: Vec<Cte> = Vec::new();
         loop {
@@ -330,8 +370,11 @@ impl Parser<'_> {
             if !self.eat_op("COMMA") {
                 break;
             }
+            comma_spans.0.extend(self.token_range(self.at - 1).0);
         }
         Ok(With {
+            keyword_span,
+            comma_spans,
             ctes,
             recursive,
             leading_comments: Vec::new(),

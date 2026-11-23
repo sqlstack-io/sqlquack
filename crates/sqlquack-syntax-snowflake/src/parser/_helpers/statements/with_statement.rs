@@ -1,6 +1,7 @@
 //! The statement a WITH clause prefixes, with the clause attached to it.
 
 use crate::parser::models::Parser;
+use sqlquack_syntax::expressions::queries::main::values_query::values_query;
 use sqlquack_syntax::expressions::queries::models::Cte;
 use sqlquack_syntax::expressions::queries::models::With;
 use sqlquack_syntax::expressions::tree::models::Expression;
@@ -38,6 +39,10 @@ impl Parser {
                 }
                 _ => break,
             }
+        }
+
+        if let Expression::Values(_) = main_query {
+            main_query = Expression::Select(Box::new(values_query(main_query)));
         }
 
         match &mut main_query {
@@ -79,12 +84,14 @@ impl Parser {
 
     /// Parse a WITH clause (CTEs)
     pub(crate) fn parse_with(&mut self) -> Result<Expression> {
+        let with_start = self.current;
         let with_token = self.expect_token(TokenType::With)?;
         let leading_comments = with_token.comments;
 
         let recursive = self.match_token(TokenType::Recursive);
         let mut ctes: Vec<Cte> = Vec::new();
         let mut has_procedure = false;
+        let mut comma_spans = sqlquack_syntax::tokens::models::SeparatorSpans::default();
 
         loop {
             let cte_start = self.current;
@@ -140,6 +147,7 @@ impl Parser {
                     as_omitted: false,
                 });
                 if self.match_token(TokenType::Comma) {
+                    comma_spans.0.extend(self.token_range(self.current - 1).0);
                     continue;
                 }
                 break;
@@ -194,19 +202,23 @@ impl Parser {
                 break;
             }
 
+            comma_spans.0.extend(self.token_range(self.current - 1).0);
             self.match_token(TokenType::With);
         }
 
         let search = self.parse_recursive_with_search()?;
 
-        self.parse_with_statement(
+        let statement = self.parse_with_statement(
             With {
+                keyword_span: self.token_range(with_start),
+                comma_spans,
                 ctes,
                 recursive,
                 leading_comments,
                 search,
             },
             has_procedure,
-        )
+        )?;
+        Ok(self.spanned_with_prefix(with_start, statement))
     }
 }

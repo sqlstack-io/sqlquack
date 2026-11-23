@@ -4,6 +4,7 @@ use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{BooleanLiteral, Identifier, Literal};
 use sqlquack_syntax::expressions::operators::models::{Parameter, ParameterStyle, Placeholder};
 use sqlquack_syntax::expressions::types::models::DataType;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::SourceSpan;
 
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_idj, is_ids, is_nm};
@@ -315,26 +316,46 @@ impl Parser<'_> {
     /// `CASE [operand] WHEN expr THEN expr ... [ELSE expr] END`.
     fn case_expression(&mut self) -> Parsing<Expression> {
         self.expect_kw("CASE")?;
+        let mut keywords = SeparatorSpans::default();
+        keywords.0.extend(self.token_range(self.at - 1).0);
         let operand: Option<Expression> = match self.kw("WHEN") {
             true => None,
             false => Some(self.expression()?),
         };
+        let mut when_spans = SeparatorSpans::default();
         let mut whens: Vec<(Expression, Expression)> = Vec::new();
         loop {
             self.expect_kw("WHEN")?;
+            let when_at: usize = self.at - 1;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             let condition: Expression = self.expression()?;
+            when_spans.0.extend(self.source_range(when_at).0);
             self.expect_kw("THEN")?;
+            keywords.0.extend(self.token_range(self.at - 1).0);
             whens.push((condition, self.expression()?));
             if !self.kw("WHEN") {
                 break;
             }
         }
+        let mut else_span = SourceSpan::default();
         let otherwise: Option<Expression> = match self.eat_kw("ELSE") {
-            true => Some(self.expression()?),
+            true => {
+                let else_at: usize = self.at - 1;
+                keywords.0.extend(self.token_range(else_at).0);
+                let value: Expression = self.expression()?;
+                else_span = self.source_range(else_at);
+                Some(value)
+            }
             false => None,
         };
         self.expect_kw("END")?;
-        Ok(case(operand, whens, otherwise))
+        keywords.0.extend(self.token_range(self.at - 1).0);
+        Ok(case(
+            operand,
+            whens,
+            otherwise,
+            (keywords, when_spans, else_span),
+        ))
     }
 
     /// `RAISE (...)`, which only a trigger program may run: a gap.

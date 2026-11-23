@@ -12,6 +12,7 @@ use sqlquack_syntax::expressions::queries::models::{
 use sqlquack_syntax::expressions::statements::models::Version;
 use sqlquack_syntax::expressions::tables::models::{IndexTableHint, WithTableHint};
 use sqlquack_syntax::expressions::types::models::Tuple;
+use sqlquack_syntax::tokens::models::SeparatorSpans;
 use sqlquack_syntax::tokens::models::{SourceSpan, Span};
 use sqlquack_syntax::traversal::types::AstNode;
 use sqlquack_syntax::{DataType, Expression};
@@ -96,10 +97,16 @@ impl<'sql> Parser<'sql> {
         if !self.eat_kw("WITH") {
             return Ok(None);
         }
+        let keyword_span = self.token_range(self.at - 1);
+        let list_at: usize = self.at;
+        let mut comma_spans = SeparatorSpans::default();
         if self.kw("XMLNAMESPACES") {
             return Err(self.gap("xmlnamespaces", self.offset()));
         }
         let ctes = self.comma_list(|parser| {
+            if parser.at > list_at {
+                comma_spans.0.extend(parser.token_range(parser.at - 1).0);
+            }
             let name: Identifier = parser.name()?;
             let columns: Vec<Identifier> = match parser.is_char('(') {
                 true => parser.parenthesized(Parser::name)?,
@@ -112,6 +119,8 @@ impl<'sql> Parser<'sql> {
             Ok(cte(name, columns, query))
         })?;
         Ok(Some(With {
+            keyword_span,
+            comma_spans,
             ctes,
             recursive: false,
             leading_comments: Vec::new(),
@@ -124,12 +133,18 @@ impl<'sql> Parser<'sql> {
         self.deeper(|parser| {
             let mut query: Expression = parser.union_expression()?;
             if parser.kw("ORDER") && parser.kw_at(1, "BY") {
+                let keyword_span = parser.token_range(parser.at);
                 let order = parser.order_by_clause()?;
                 let order_by: OrderBy = OrderBy {
+                    keyword_span,
                     expressions: order,
                     siblings: false,
                     comments: Vec::new(),
                     all: None,
+                };
+                let keyword: SourceSpan = match parser.kw("OFFSET") {
+                    true => parser.token_range(parser.at),
+                    false => SourceSpan::default(),
                 };
                 let (offset, fetch) = parser.offset_fetch()?;
                 let offset_node = |offset: Option<Offset>| {
@@ -140,18 +155,22 @@ impl<'sql> Parser<'sql> {
                         select.order_by = Some(order_by);
                         select.offset = offset;
                         select.fetch = fetch;
+                        select.row_limit_span = keyword;
                     }
                     Expression::Union(node) if fetch.is_none() => {
                         node.order_by = Some(order_by);
                         node.offset = offset_node(offset);
+                        node.row_limit_span = keyword;
                     }
                     Expression::Except(node) if fetch.is_none() => {
                         node.order_by = Some(order_by);
                         node.offset = offset_node(offset);
+                        node.row_limit_span = keyword;
                     }
                     Expression::Intersect(node) if fetch.is_none() => {
                         node.order_by = Some(order_by);
                         node.offset = offset_node(offset);
+                        node.row_limit_span = keyword;
                     }
                     _ => return Err(parser.gap("set_operation_order", parser.offset())),
                 }
@@ -213,9 +232,10 @@ impl<'sql> Parser<'sql> {
             };
             self.link()?;
             self.at += 1;
+            let operator_span: SourceSpan = self.range_from(self.at - 1);
             let all: bool = operator == UNION_OPERATOR && self.eat_kw("ALL");
             let right: Expression = self.intersect_expression()?;
-            left = set_operation(operator, left, right, (all, false));
+            left = set_operation((operator, operator_span), left, right, (all, false));
         }
     }
 
@@ -223,9 +243,10 @@ impl<'sql> Parser<'sql> {
         let mut left: Expression = self.query_term()?;
         let depth: usize = self.depth();
         while self.eat_kw("INTERSECT") {
+            let operator_span: SourceSpan = self.range_from(self.at - 1);
             self.link()?;
             let right: Expression = self.query_term()?;
-            left = set_operation("INTERSECT", left, right, (false, false));
+            left = set_operation(("INTERSECT", operator_span), left, right, (false, false));
         }
         self.restore_depth(depth);
         Ok(left)
@@ -244,15 +265,26 @@ impl<'sql> Parser<'sql> {
     fn select(&mut self) -> Parsing<Expression> {
         self.expect_kw("SELECT")?;
         let mut select: Select = Select::new();
+        select.select_span = self.token_range(self.at - 1);
+        select.list_head_span = self.token_range(self.at);
         if self.eat_kw("DISTINCT") {
             select.distinct = true;
+            select.distinct_span = self.token_range(self.at - 1);
         } else if self.eat_kw("ALL") {
             select.all = true;
         }
         if self.eat_kw("TOP") {
             select.top = Some(self.top()?);
         }
-        select.expressions = self.comma_list(Self::select_item)?;
+        let mut item_head: usize = self.at;
+        let mut item_spans = sqlquack_syntax::tokens::models::ItemSpans::default();
+        select.expressions = self.comma_list(|parser| {
+            let item: Expression = parser.select_item()?;
+            item_spans.0.extend(parser.item_range(item_head));
+            item_head = parser.at + 1;
+            Ok(item)
+        })?;
+        select.item_spans = item_spans;
         if self.eat_kw("INTO") {
             let name: Vec<Identifier> = self.multipart(4)?;
             if self.kw("ON") {
@@ -268,7 +300,11 @@ impl<'sql> Parser<'sql> {
             });
         }
         if self.eat_kw("FROM") {
-            let (from, joins) = self.read_sources()?;
+            let keyword_span = self.token_range(self.at - 1);
+            let from_at: usize = self.at;
+            let (mut from, joins) = self.read_sources()?;
+            from.keyword_span = keyword_span;
+            select.alias_spans = self.aliased_names(from_at);
             select.from = Some(from);
             select.joins = joins;
         }
@@ -278,6 +314,7 @@ impl<'sql> Parser<'sql> {
             });
         }
         if self.kw("GROUP") && self.kw_at(1, "BY") {
+            let keyword_span = self.token_range(self.at);
             self.at += 2;
             if self.kw_in(0, &["ROLLUP", "CUBE", "GROUPING", "ALL"])
                 || (self.is_char('(') && self.char_at(1, ')'))
@@ -289,6 +326,7 @@ impl<'sql> Parser<'sql> {
                 return Err(self.gap("group_by_extension", self.offset()));
             }
             select.group_by = Some(GroupBy {
+                keyword_span,
                 expressions,
                 all: None,
                 totals: false,
@@ -914,13 +952,22 @@ impl<'sql> Parser<'sql> {
     /// The `FROM` sources of a query, `UPDATE` or `DELETE`; several sources each keep their joins.
     pub(crate) fn read_sources(&mut self) -> Parsing<(From, Vec<Join>)> {
         let mut sources: Vec<(Expression, Vec<Join>)> = vec![self.single_source()?];
+        let mut comma_spans: SeparatorSpans = SeparatorSpans::default();
         while self.eat_char(',') {
+            comma_spans.0.extend(self.token_range(self.at - 1).0);
             sources.push(self.single_source()?);
         }
         if sources.len() == 1 {
             let (source, joins) = sources.remove(0);
             let expressions: Vec<Expression> = vec![source];
-            return Ok((From { expressions }, joins));
+            return Ok((
+                From {
+                    keyword_span: Default::default(),
+                    comma_spans,
+                    expressions,
+                },
+                joins,
+            ));
         }
         let expressions: Vec<Expression> = sources
             .into_iter()
@@ -929,7 +976,14 @@ impl<'sql> Parser<'sql> {
                 false => joined_table(source, joins, None),
             })
             .collect();
-        Ok((From { expressions }, Vec::new()))
+        Ok((
+            From {
+                keyword_span: Default::default(),
+                comma_spans,
+                expressions,
+            },
+            Vec::new(),
+        ))
     }
 
     /// One table source and the joins after it.
@@ -989,7 +1043,9 @@ impl<'sql> Parser<'sql> {
                 .checked_sub(2)
                 .and_then(|at| self.word_at(at))
                 .filter(|word| JOIN_HINTS.contains(&word.as_str()));
+            let kind_span: SourceSpan = self.token_range(self.at);
             self.at += words;
+            let keyword_span: SourceSpan = self.token_range(self.at - 1);
             let right: Expression = self.table_source()?;
             let constraint: JoinConstraint = match kind {
                 JoinKind::Cross | JoinKind::CrossApply | JoinKind::OuterApply => {
@@ -1001,11 +1057,14 @@ impl<'sql> Parser<'sql> {
                         return Err(self.gap("nested_join", self.offset()));
                     }
                     self.expect_kw("ON")?;
-                    JoinConstraint::On(Box::new(self.condition()?))
+                    let on_span: SourceSpan = self.token_range(self.at - 1);
+                    JoinConstraint::On(Box::new(self.condition()?), on_span)
                 }
             };
             let mut node: Join = join(right, kind, constraint, keywords);
             node.join_hint = hint;
+            node.kind_span = kind_span;
+            node.keyword_span = keyword_span;
             joins.push(node);
         }
     }
