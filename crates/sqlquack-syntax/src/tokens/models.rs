@@ -208,6 +208,7 @@ impl Span {
         }
     }
 
+    #[inline]
     pub fn new(start: usize, end: usize, line: usize, column: usize) -> Self {
         Self {
             start,

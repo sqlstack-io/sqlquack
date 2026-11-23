@@ -106,6 +106,7 @@ pub(crate) fn enforce_token_slice<T: GuardToken>(
     Ok(())
 }
 
+#[inline]
 pub(crate) fn is_trivia_token(token_type: TokenType) -> bool {
     matches!(
         token_type,
@@ -113,6 +114,7 @@ pub(crate) fn is_trivia_token(token_type: TokenType) -> bool {
     )
 }
 
+#[inline]
 pub(crate) fn is_function_call_name_token(token_type: TokenType) -> bool {
     matches!(
         token_type,
