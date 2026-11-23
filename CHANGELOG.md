@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.23.0](https://github.com/sqlstack-io/sqlquack/compare/v0.22.1...v0.23.0) (2026-11-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* `sqlquack-lint` is removed; its Rules now live in SQLClean. The tokenizer moved to `sqlquack-tokenize`: `sqlquack_syntax::{LosslessToken, TokenKind, TokenizeFailure}` are now `sqlquack_tokenize::{LosslessToken, TokenKind, TokenizeFailure}`, `sqlquack_syntax::lossless::*` is `sqlquack_tokenize::lossless::*`, `sqlquack_syntax::tokens::models::{Tokenizer, TokenizerConfig}` are `sqlquack_tokenize::tokens::models::{Tokenizer, TokenizerConfig}` (also `sqlquack_tokenize::{Tokenizer, TokenizerConfig}`), and `sqlquack_syntax::tokens::main::parse_dollar_string_token` is `sqlquack_tokenize::tokens::main::parse_dollar_string_token`; depend on `sqlquack-tokenize` to use them. `sqlquack_parse::tokenize` and the token, span and dialect types (`Token`, `TokenType`, `Span`, `Dialect`, `CallMode`) keep their paths. `CallMode` gains `QueriesLocated` and `AsWrittenLocated`, `TriggerBody` gains `Statements`, and tree nodes gain position fields (for example `Lateral::alias_span`, `Select::select_span`, `BinaryOp::operator_span`), so an exhaustive match on `CallMode` or `TriggerBody`, or a struct literal of those nodes, no longer compiles. A WITH before VALUES now parses as a SELECT over the VALUES carrying the WITH.
+
+### Features
+
+* give located trees every position Rules need; move the tokenizer into sqlquack-tokenize; remove sqlquack-lint ([c4acfd1](https://github.com/sqlstack-io/sqlquack/commit/c4acfd1894deb8809900105b6b1b1c0c8b32e234))
+
 ## [0.22.1](https://github.com/sqlstack-io/sqlquack/compare/v0.22.0...v0.22.1) (2026-11-19)
 
 
