@@ -6,8 +6,7 @@ use crate::blocks::constants::{
     CONVERSION_WHITESPACE_CHARS, NON_FINITE_FLOAT_WORDS, TEXT_TO_FLOAT,
 };
 
-/// The double the text converts to as text_to_float reads it, or `None` when that fails or
-/// overflows, which the block raises or makes NULL.
+/// The double the text converts to as text_to_float reads it; `None` when that fails or overflows.
 pub fn float_literal(text: &str, log: &ProvenanceLog) -> Option<String> {
     let trimmed = text.trim_matches(CONVERSION_WHITESPACE_CHARS);
     let lower = trimmed.to_ascii_lowercase();

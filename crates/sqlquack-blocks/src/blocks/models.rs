@@ -36,3 +36,14 @@ pub struct NumberTarget {
     /// What text Snowflake does not read as a number yields.
     pub unrecognised: String,
 }
+
+/// The divisor of an exact decimal division.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Divisor<'a> {
+    /// One that may be NULL or zero.
+    Checked,
+    /// A literal number, by its text.
+    Literal(&'a str),
+    /// One whose caller already makes the quotient NULL where an operand is NULL or it is zero.
+    Guarded,
+}

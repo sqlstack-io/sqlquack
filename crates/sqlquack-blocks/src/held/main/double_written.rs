@@ -5,8 +5,7 @@ use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use crate::held::_helpers::guards::bound;
 use crate::held::constants::{HELD_DOUBLE_FORMAT, VARIANT_WRITTEN};
 
-/// The JSON `sql` of a finite double held at a VARIANT's root, which `variant_double_leaf` builds,
-/// written as `%.15e`, as `variant_written` writes its only token.
+/// A finite double `variant_double_leaf` held at a VARIANT's root, written as `%.15e`.
 pub fn double_written(sql: &str, log: &ProvenanceLog) -> String {
     log.building_block(VARIANT_WRITTEN);
     bound(

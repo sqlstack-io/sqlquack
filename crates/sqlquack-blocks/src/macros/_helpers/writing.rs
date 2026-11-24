@@ -1,11 +1,15 @@
 //! The writing bodies: a VARIANT as Snowflake writes it, keys in byte order, and its escapes.
 
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
+
+use crate::held::constants::{HELD_DOUBLE_FORMAT, HELD_DOUBLE_TOKEN_PATTERN, HELD_TOKEN_PATTERN};
 use crate::macros::_helpers::guards::{bound, keys_unsorted, site_fidelity_error};
 use crate::macros::constants::{JSON_ESCAPED_V1, TEXT_PARAMETER, VALUE_PARAMETER};
 use crate::macros::main::helper_call::helper_call;
 use crate::semi_structured::constants::{
     JSON_ANY_NUMBER_PATTERN, JSON_ESCAPE_HEX_LETTERS, JSON_STRING_PATTERN,
 };
+use crate::semi_structured::main::json_escaped::json_escaped;
 
 /// The text of `json_value` with every object's keys in byte order, from DuckDB's `VARIANT`.
 const RESORTED: &str = "CAST(CAST(CAST(json_value AS VARIANT) AS JSON) AS VARCHAR)";
@@ -90,5 +94,33 @@ fn numbers(sql: &str) -> String {
         "list_sort(regexp_extract_all(regexp_replace({sql}, '{}', '\"\"', 'g'), \
          '{JSON_ANY_NUMBER_PATTERN}'))",
         JSON_STRING_PATTERN.replace('\'', "''")
+    )
+}
+
+/// variant_written_v1's body: a VARIANT-held value's JSON with doubles as `%.15e`, escaped.
+pub(crate) fn held_written_body() -> String {
+    let sql = format!("CAST({VALUE_PARAMETER} AS JSON)");
+    let token = HELD_TOKEN_PATTERN.replace('\'', "''");
+    let respelled = format!(
+        "(CASE WHEN left(held_tokens[i], 1) = '\"' THEN held_tokens[i] \
+         WHEN regexp_matches(held_tokens[i], '{HELD_DOUBLE_TOKEN_PATTERN}') \
+         THEN printf('{HELD_DOUBLE_FORMAT}', CAST(held_tokens[i] AS DOUBLE)) \
+         ELSE held_tokens[i] END)"
+    );
+    let rebuilt = bound(
+        &format!("regexp_extract_all(held_text, '{token}')"),
+        "held_tokens",
+        &format!(
+            "array_to_string(list_transform(regexp_split_to_array(held_text, '{token}'), \
+             lambda held_part, i: held_part || coalesce({respelled}, '')), '')"
+        ),
+    );
+    bound(
+        &format!("CAST({sql} AS VARCHAR)"),
+        "held_text",
+        &format!(
+            "(CASE WHEN held_text IS NULL THEN NULL ELSE {} END)",
+            json_escaped(&rebuilt, &ProvenanceLog::default())
+        ),
     )
 }

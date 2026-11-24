@@ -25,8 +25,7 @@ pub(crate) fn null_checks(left_sql: &str, right_sql: &str, constant: bool) -> St
     }
 }
 
-/// The integer quotient in units of `places` decimal places as the result type, whose cast rounds
-/// a spare place half away from zero.
+/// The integer quotient in units of `places` decimal places as the result type, rounding any spare.
 pub(crate) fn scaled(
     quotient: &str,
     (result, places): (SnowflakeType, u8),
@@ -45,8 +44,7 @@ pub(crate) fn scaled(
     }
 }
 
-/// The quotient when the scaled dividend fits 128 bits, with the places it is in units of: the
-/// result scale, or one more for the result cast to round; else `None`.
+/// The quotient and the places it is in units of, one spare when rounding, if it fits 128 bits.
 pub(crate) fn short_quotient(
     (left, right): (Operand<'_>, Operand<'_>),
     (result_scale, truncated): (u8, bool),
@@ -141,8 +139,7 @@ pub(crate) fn unscaled_literal(text: &str, scale: u8) -> Option<u128> {
     )
 }
 
-/// The scaled dividend `n` over a known non-zero divisor, truncated, or with one place spare for
-/// the result cast to round, which the dividend's 37 digits leave room for.
+/// The scaled dividend `n` over a known non-zero divisor, truncated or with one place spare.
 fn constant_quotient(n: &str, divisor: u128, truncated: bool) -> String {
     match truncated {
         true => format!("({n} // {})", integer(divisor)),
@@ -150,8 +147,7 @@ fn constant_quotient(n: &str, divisor: u128, truncated: bool) -> String {
     }
 }
 
-/// The scaled dividend `n` over the divisor `d`, with one place spare for the result cast to round
-/// when both leave a digit spare.
+/// The scaled dividend `n` over the divisor `d`, with one place spare when both leave a digit.
 fn column_quotient(n: &str, d: &str, (truncated, doubles): (bool, bool)) -> String {
     match (truncated, doubles) {
         (true, _) => format!("({n} // {d})"),

@@ -1,6 +1,7 @@
 //! Variance, standard deviation and covariance aggregates, computed the way Snowflake was recorded.
 
 use sqlquack_blocks::blocks::main::exact_decimal_divide::exact_decimal_divide;
+use sqlquack_blocks::blocks::models::Divisor;
 use sqlquack_blocks::floats::constants::FLOAT_SUM_ORDER;
 use sqlquack_blocks::floats::main::exact_float_sum::exact_float_sum;
 use sqlquack_diagnostics::classification::models::Construct;
@@ -225,8 +226,7 @@ fn exact_variance(
                 scale: result,
             },
             false,
-            None,
-            true,
+            Divisor::Checked,
         ),
         log,
     )

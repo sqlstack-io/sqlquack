@@ -15,8 +15,7 @@ pub(crate) fn largest_number(precision: u8, scale: u8) -> String {
     }
 }
 
-/// The CASE reading the text `sql` as `target`, its trimmed text bound once, accepting only
-/// spellings Snowflake reads.
+/// The CASE reading the text `sql` as `target` in the spellings Snowflake reads, trimmed once.
 pub(crate) fn read_trimmed_number(sql: &str, target: &NumberTarget) -> String {
     let wrapped =
         |(before, after): &(String, String), value: &str| format!("{before}{value}{after}");

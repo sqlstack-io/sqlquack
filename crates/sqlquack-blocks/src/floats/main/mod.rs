@@ -2,6 +2,7 @@
 
 pub mod exact_float_sum;
 pub mod exponential;
+pub mod float_literal;
 pub mod float_to_decimal;
 pub mod float_to_text;
 pub mod natural_logarithm;

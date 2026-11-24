@@ -6,6 +6,7 @@ use sqlquack_blocks::blocks::main::decimal_arithmetic::decimal_arithmetic;
 use sqlquack_blocks::blocks::main::double_arithmetic::double_arithmetic;
 use sqlquack_blocks::blocks::main::exact_decimal_divide::exact_decimal_divide;
 use sqlquack_blocks::blocks::main::string_literal::string_literal;
+use sqlquack_blocks::blocks::models::Divisor;
 use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_blocks::semi_structured::main::json_number_equal::json_number_equal;
 use sqlquack_blocks::semi_structured::main::json_output::json_output;
@@ -359,14 +360,14 @@ fn exact_arithmetic(
         return Err("exact arithmetic needs NUMBER operands".to_owned());
     };
     if operator == Arithmetic::Divide {
-        let constant = match &right.literal {
-            Some(Literal::Number(text)) => Some(text.as_str()),
-            _ => None,
+        let divisor = match &right.literal {
+            Some(Literal::Number(text)) => Divisor::Literal(text.as_str()),
+            _ => Divisor::Checked,
         };
         let (sql, guarded) = exact_decimal_divide(
             (&left.sql, left_precision, left_scale),
             (&right.sql, right_precision, right_scale),
-            (result, false, constant, true),
+            (result, false, divisor),
             log,
         )?;
         if guarded {

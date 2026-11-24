@@ -5,6 +5,7 @@ use sqlquack_blocks::blocks::constants::NANOSECOND_DIGITS;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::blocks::main::exact_decimal_divide::exact_decimal_divide;
 use sqlquack_blocks::blocks::main::string_literal::string_literal;
+use sqlquack_blocks::blocks::models::Divisor;
 use sqlquack_blocks::blocks::models::TextFailure;
 use sqlquack_blocks::temporal::constants::DATE_FORMATS;
 use sqlquack_blocks::temporal::main::date_add_amount::date_add_amount;
@@ -439,7 +440,11 @@ pub(crate) fn months_between(
     let (divided, _) = exact_decimal_divide(
         (&numerator, MAX_PRECISION, 0),
         (&month.to_string(), MAX_PRECISION, 0),
-        (MONTHS_BETWEEN_TYPE, false, Some(&month.to_string()), true),
+        (
+            MONTHS_BETWEEN_TYPE,
+            false,
+            Divisor::Literal(&month.to_string()),
+        ),
         log,
     )
     .map_err(refuse)?;
