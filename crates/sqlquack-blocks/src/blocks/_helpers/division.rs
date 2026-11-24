@@ -62,16 +62,15 @@ pub(crate) fn short_quotient(
         && fits_unscaled(right_precision, right_scale)
         && digits <= room;
     let doubles = digits <= SHORT_FORM_DIGITS && usize::from(right_precision) <= SHORT_FORM_DIGITS;
-    let spare =
-        !truncated && (constant.is_some() || doubles) && result_scale < MAX_DECIMAL_PRECISION - 1;
+    let spare = !truncated && (constant.is_some() || doubles);
     fits.then(|| {
         let quotient = once_bound(
             &unscaled(left, left_scale + shift),
             "quotient_dividend",
             |n| match constant {
-                Some(divisor) => constant_quotient(n, divisor, (truncated, spare)),
+                Some(divisor) => constant_quotient(n, divisor, truncated),
                 None => once_bound(&unscaled(right, right_scale), "quotient_divisor", |d| {
-                    column_quotient(n, d, (truncated, doubles, spare))
+                    column_quotient(n, d, (truncated, doubles))
                 }),
             },
         );
@@ -140,27 +139,19 @@ pub(crate) fn unscaled_literal(text: &str, scale: u8) -> Option<u128> {
     )
 }
 
-/// The scaled dividend `n` over a known non-zero divisor: truncated, `spare` a place, or rounded.
-fn constant_quotient(n: &str, divisor: u128, (truncated, spare): (bool, bool)) -> String {
-    match (truncated, spare) {
-        (true, _) => format!("({n} // {})", integer(divisor)),
-        (false, true) => format!("(({n} * 10) // {})", integer(divisor)),
-        (false, false) => format!(
-            "(sign({n}) * ((2 * abs({n}) + {}) // {}))",
-            integer(divisor),
-            integer(2 * divisor)
-        ),
+/// The scaled dividend `n` over a known non-zero divisor, truncated or with one place spare.
+fn constant_quotient(n: &str, divisor: u128, truncated: bool) -> String {
+    match truncated {
+        true => format!("({n} // {})", integer(divisor)),
+        false => format!("(({n} * 10) // {})", integer(divisor)),
     }
 }
 
-/// The scaled dividend `n` over the divisor `d`, rounded by doubling or with one place `spare`.
-fn column_quotient(n: &str, d: &str, (truncated, doubles, spare): (bool, bool, bool)) -> String {
+/// The scaled dividend `n` over the divisor `d`, with one place spare when both leave a digit.
+fn column_quotient(n: &str, d: &str, (truncated, doubles): (bool, bool)) -> String {
     match (truncated, doubles) {
         (true, _) => format!("({n} // {d})"),
-        (false, true) if spare => format!("(({n} * 10) // {d})"),
-        (false, true) => {
-            format!("(sign({n}) * sign({d}) * ((2 * abs({n}) + abs({d})) // (2 * abs({d}))))")
-        }
+        (false, true) => format!("(({n} * 10) // {d})"),
         (false, false) => format!(
             "({n} // {d} + (CASE WHEN abs({n} % {d}) >= abs({d}) - abs({n} % {d}) \
              THEN sign({n}) * sign({d}) ELSE 0 END))"
