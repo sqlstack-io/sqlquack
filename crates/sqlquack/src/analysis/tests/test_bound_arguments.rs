@@ -222,7 +222,7 @@ fn given_a_long_argument_when_converting_then_no_block_repeats_it() {
         },
     ];
     for test_case in test_cases {
-        let copies = argument_copies(test_case.wrapper, "' 1.5 '", long);
+        let copies = argument_copies(test_case.wrapper, "REPLACE(' 1.5 ', 'q', '')", long);
         assert!(
             copies <= test_case.expected_most_copies,
             "{}: {copies} copies",
