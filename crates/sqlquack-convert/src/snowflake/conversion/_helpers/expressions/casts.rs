@@ -3,7 +3,6 @@
 use serde_json::Value;
 use sqlquack_blocks::blocks::main::boolean_to_number::boolean_to_number;
 use sqlquack_blocks::blocks::main::cast::cast;
-use sqlquack_blocks::blocks::main::float_literal::float_literal;
 use sqlquack_blocks::blocks::main::number_to_boolean::number_to_boolean;
 use sqlquack_blocks::blocks::main::string_literal::string_literal;
 use sqlquack_blocks::blocks::main::text_to_boolean::text_to_boolean;
@@ -13,6 +12,7 @@ use sqlquack_blocks::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_blocks::blocks::main::varchar_length_try::varchar_length_try;
 use sqlquack_blocks::blocks::models::NumberText;
 use sqlquack_blocks::floats::constants::FLOAT_DECIMAL_DIGITS;
+use sqlquack_blocks::floats::main::float_literal::float_literal;
 use sqlquack_blocks::floats::main::float_to_decimal::float_to_decimal;
 use sqlquack_blocks::floats::main::float_to_text::float_to_text;
 use sqlquack_blocks::raises::main::raised::raised;
@@ -765,21 +765,14 @@ fn text_literal_cast(text: &str, to: SnowflakeType, log: &ProvenanceLog) -> Resu
     }
 }
 
-/// A proven time text as `HH:MM:SS[.f]`, its fraction cut to `precision` digits as the
-/// conversion truncates it.
+/// A proven time text as `HH:MM:SS[.f]`, its fraction truncated to `precision` digits.
 fn time_literal(text: &str, precision: u8) -> String {
     let fields: Vec<&str> = text.trim_matches(' ').split(':').collect();
     let (second, fraction) = fields.get(2).map_or(("0", ""), |second| {
         second.split_once('.').unwrap_or((second, ""))
     });
     let fraction = &fraction[..fraction.len().min(usize::from(precision))];
-    let number = |field: &str| field.parse::<u32>().unwrap_or_default();
-    let clock = format!(
-        "{:02}:{:02}:{:02}",
-        number(fields[0]),
-        number(fields[1]),
-        number(second)
-    );
+    let clock = format!("{:0>2}:{:0>2}:{second:0>2}", fields[0], fields[1]);
     match fraction.is_empty() {
         true => clock,
         false => format!("{clock}.{fraction}"),

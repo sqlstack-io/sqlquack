@@ -7,6 +7,7 @@ use sqlquack_blocks::arrays::constants::ARRAY_SORT_ORDER;
 use sqlquack_blocks::blocks::main::cast::cast;
 use sqlquack_blocks::blocks::main::exact_decimal_divide::exact_decimal_divide;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
+use sqlquack_blocks::blocks::models::Divisor;
 use sqlquack_blocks::floats::constants::FLOAT_SUM_ORDER;
 use sqlquack_blocks::floats::main::exact_float_sum::exact_float_sum;
 use sqlquack_diagnostics::classification::models::Construct;
@@ -556,7 +557,7 @@ impl AggregateCall<'_> {
         let (divided, guarded) = exact_decimal_divide(
             (&total_sql, precision, scale),
             (&counted, COUNT_PRECISION, 0),
-            (data_type, self.framed, None, false),
+            (data_type, self.framed, Divisor::Guarded),
             log,
         )
         .map_err(refuse)?;

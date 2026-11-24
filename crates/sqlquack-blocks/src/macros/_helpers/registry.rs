@@ -3,14 +3,15 @@
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::models::TextFailure;
-use crate::held::_helpers::writing::held_written;
 
 use crate::macros::_helpers::reading::{checked_body, read_body};
 use crate::macros::_helpers::scalars::{number_body, quotient_body, scalar_body};
 use crate::macros::_helpers::temporal::{
     timestamp_body, utc_zoned_body, zone_name_body, zoned_body,
 };
-use crate::macros::_helpers::writing::{escaped_body, json_text_body, text_body};
+use crate::macros::_helpers::writing::{
+    escaped_body, held_written_body, json_text_body, text_body,
+};
 use crate::macros::constants::{
     DATE_TEXT_V1, DECIMAL_QUOTIENT_V1, DIVIDEND_PARAMETER, DIVISOR_PARAMETER, HELPER_CALL_PREFIX,
     JSON_CHECKED_V1, JSON_ESCAPED_V1, JSON_READ_V1, LIMIT_PARAMETER, NUMBER_LARGEST_PARAMETER,
@@ -22,7 +23,6 @@ use crate::macros::constants::{
     ZONED_TEXT_V1,
 };
 use crate::macros::models::HelperMacro;
-use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 /// The helper macros, dependencies first.
 pub(crate) fn helper_macros() -> [HelperMacro; 21] {
@@ -227,12 +227,7 @@ pub(crate) fn helper_macros() -> [HelperMacro; 21] {
         HelperMacro {
             name: VARIANT_WRITTEN_V1,
             parameters: &[VALUE_PARAMETER],
-            body: || {
-                held_written(
-                    &format!("CAST({VALUE_PARAMETER} AS JSON)"),
-                    &ProvenanceLog::default(),
-                )
-            },
+            body: held_written_body,
             explain: "A value DuckDB holds as a VARIANT, written as Snowflake writes it as JSON: \
                       every object's keys in byte order, a number with a point or an exponent \
                       as %.15e, as Snowflake writes a FLOAT, and Snowflake's escapes.",

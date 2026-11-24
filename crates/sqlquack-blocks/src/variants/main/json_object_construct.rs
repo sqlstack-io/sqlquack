@@ -6,8 +6,7 @@ use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use crate::semi_structured::constants::{JSON_OBJECT_CONSTRUCT, KEY_EXISTS_MESSAGE};
 use crate::variants::_helpers::objects::{bound, json_error, sorted_object};
 
-/// An object of `(key, JSON value)` pairs: NULL keys skipped, NULL values skipped or kept as null.
-/// With `constant` keys, distinct literals, no key can repeat or be NULL, so none is checked.
+/// An object of `(key, JSON value)` pairs, NULLs skipped or kept; `constant` keys go unchecked.
 pub fn json_object_construct(
     pairs: &[(String, String)],
     (keep_null, constant): (bool, bool),

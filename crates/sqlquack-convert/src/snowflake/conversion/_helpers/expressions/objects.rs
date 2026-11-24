@@ -178,8 +178,7 @@ pub(crate) fn object_construct(
     constructed(name, (keys, values, constant), construct, site.context)
 }
 
-/// The object of `keys` and `values`, NULL values kept for OBJECT_CONSTRUCT_KEEP_NULL; `constant`
-/// when the keys are distinct literals.
+/// The object of `keys` and `values` (keys `constant` when distinct literals), NULLs kept by KEEP_NULL.
 fn constructed(
     name: &str,
     (keys, values, constant): (Vec<String>, Vec<Emitted>, bool),

@@ -245,6 +245,11 @@ fn given_a_released_helper_when_defined_then_its_definition_is_unchanged() {
             name: "decimal_quotient_v1",
             expected_md5: Some("d063fab5b1be26806d77b2accdd21569"),
         },
+        PinnedDefinitionTestCase {
+            description: "variant_written_v1's released definition is unchanged; a change takes a new version",
+            name: "variant_written_v1",
+            expected_md5: Some("5ccb566af0ae079182eba606e1b68cca"),
+        },
     ];
     for test_case in test_cases {
         let opening = format!("CREATE OR REPLACE MACRO sqlquack.{}(", test_case.name);
