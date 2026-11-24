@@ -359,6 +359,36 @@ fn given_qualified_columns_when_scoped_then_each_sees_the_relations_of_its_query
             sql: "SELECT util.parse_day(o.day) FROM orders o",
             expected_visible: &[("day", true)],
         },
+        QueryScopeTestCase {
+            description: "VALUES without parentheses is named by its alias",
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
+            sql: "SELECT v.a FROM VALUES (1), (2) AS v(a) WHERE v.a > 1",
+            expected_visible: &[("a", true), ("a", true)],
+        },
+        QueryScopeTestCase {
+            description: "joined VALUES without parentheses is named by its alias",
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
+            sql: "SELECT o.id, v.a FROM orders o JOIN VALUES (1), (2) v(a) ON o.id = v.a",
+            expected_visible: &[("a", true), ("a", true), ("id", true), ("id", true)],
+        },
+        QueryScopeTestCase {
+            description: "VALUES in parentheses is named by its alias",
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
+            sql: "SELECT v.a FROM (VALUES (1), (2)) AS v(a)",
+            expected_visible: &[("a", true)],
+        },
+        QueryScopeTestCase {
+            description: "VALUES does not answer to another name",
+            parse: |sql| parse_queries(sql, Dialect::DuckDB),
+            sql: "SELECT w.a FROM VALUES (1), (2) AS v(a)",
+            expected_visible: &[("a", false)],
+        },
+        QueryScopeTestCase {
+            description: "UNPIVOT is named by its alias",
+            parse: |sql| parse_queries(sql, Dialect::Snowflake),
+            sql: "SELECT u.k FROM orders UNPIVOT (val FOR k IN (a, b)) AS u",
+            expected_visible: &[("k", true)],
+        },
         #[cfg(feature = "postgres")]
         QueryScopeTestCase {
             description: "PostgreSQL nested joins",

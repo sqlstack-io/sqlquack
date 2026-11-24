@@ -109,6 +109,8 @@ fn relation(item: &Expression) -> Option<ScopedRelation<'_>> {
         Expression::Alias(node) => Some(&node.alias),
         Expression::JoinedTable(node) => node.alias.as_ref(),
         Expression::Pivot(node) => node.alias.as_ref(),
+        Expression::Unpivot(node) => node.alias.as_ref(),
+        Expression::Values(node) => node.alias.as_ref(),
         _ => None,
     };
     let (name, quoted): (&str, bool) = match (alias, item) {
