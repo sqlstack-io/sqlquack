@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.1](https://github.com/sqlstack-io/sqlquack/compare/v0.23.0...v0.23.1) (2026-11-24)
+
+
+### Bug Fixes
+
+* **syntax:** name VALUES and UNPIVOT items by their alias in query scopes ([e78032e](https://github.com/sqlstack-io/sqlquack/commit/e78032e1078597139a8f1ad4608f76f62a2a3a2e))
+
 ## [0.23.0](https://github.com/sqlstack-io/sqlquack/compare/v0.22.1...v0.23.0) (2026-11-23)
 
 
