@@ -7,14 +7,32 @@ use crate::semi_structured::constants::{JSON_OBJECT_CONSTRUCT, KEY_EXISTS_MESSAG
 use crate::variants::_helpers::objects::{bound, json_error, sorted_object};
 
 /// An object of `(key, JSON value)` pairs: NULL keys skipped, NULL values skipped or kept as null.
+/// With `constant` keys, distinct literals, no key can repeat or be NULL, so none is checked.
 pub fn json_object_construct(
     pairs: &[(String, String)],
-    keep_null: bool,
+    (keep_null, constant): (bool, bool),
     log: &ProvenanceLog,
 ) -> String {
     log.building_block(JSON_OBJECT_CONSTRUCT);
     if pairs.is_empty() {
         return "CAST('{}' AS JSON)".to_owned();
+    }
+    if constant {
+        let entries: Vec<String> = pairs
+            .iter()
+            .map(|(key, value)| match keep_null {
+                true => format!(
+                    "struct_pack(key := {key}, value := coalesce(CAST({value} AS JSON), \\
+                     CAST('null' AS JSON)))"
+                ),
+                false => format!("struct_pack(key := {key}, value := CAST({value} AS JSON))"),
+            })
+            .collect();
+        let listed = format!("[{}]", entries.join(", "));
+        return sorted_object(&match keep_null {
+            true => listed,
+            false => format!("list_filter({listed}, lambda e: e['value'] IS NOT NULL)"),
+        });
     }
     let entries: Vec<String> = pairs
         .iter()

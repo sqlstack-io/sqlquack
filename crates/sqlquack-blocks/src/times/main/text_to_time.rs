@@ -51,20 +51,14 @@ pub fn text_to_time(
         "({hour} * {} + {minute} * {NANOS_PER_MINUTE} + {second} * {NANOS_PER_SECOND} + {fraction})",
         NANOS_PER_MINUTE * 60
     );
-    let failed = format!(
-        "CAST({} AS TIME_NS)",
-        time_failure(failure, format != TimeFormat::Auto)
-    );
-    let unproven = format!(
-        "CAST({} AS TIME_NS)",
-        raised(&format!(
-            "{DATE_TEXT_SPELLING}: text spelled as no recording shows Snowflake reading or \
-             rejecting as a time"
-        ))
-    );
+    let failed = time_failure(failure, format != TimeFormat::Auto);
+    let unproven = raised(&format!(
+        "{DATE_TEXT_SPELLING}: text spelled as no recording shows Snowflake reading or rejecting \
+         as a time"
+    ));
     let submicro = match format {
         TimeFormat::Auto if precision > MICROSECOND_PRECISION => format!(
-            "WHEN {fraction} % 1000 <> 0 THEN CAST({} AS TIME_NS) ",
+            "WHEN {fraction} % 1000 <> 0 THEN {} ",
             raised(&format!(
                 "{TIME_SUBMICRO}: a TIME with a sub-microsecond part, which recordings cannot show"
             ))

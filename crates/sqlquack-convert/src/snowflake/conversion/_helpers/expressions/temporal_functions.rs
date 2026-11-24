@@ -439,7 +439,7 @@ pub(crate) fn months_between(
     let (divided, _) = exact_decimal_divide(
         (&numerator, MAX_PRECISION, 0),
         (&month.to_string(), MAX_PRECISION, 0),
-        (MONTHS_BETWEEN_TYPE, false, Some(&month.to_string())),
+        (MONTHS_BETWEEN_TYPE, false, Some(&month.to_string()), true),
         log,
     )
     .map_err(refuse)?;
@@ -785,7 +785,13 @@ pub(crate) fn convert_timezone(
                     .as_deref()
                     .is_some_and(|zone| zone == UTC_ZONE),
                 zone: Some(target.sql.clone()),
-                ..Emitted::new(zone_checked(&zoned.0, &target.sql, log), zoned.1)
+                ..Emitted::new(
+                    match target.literal {
+                        Some(_) => zoned.0,
+                        None => zone_checked(&zoned.0, &target.sql, log),
+                    },
+                    zoned.1,
+                )
             })
         }
         _ => Err(refuse("CONVERT_TIMEZONE with these arguments")),

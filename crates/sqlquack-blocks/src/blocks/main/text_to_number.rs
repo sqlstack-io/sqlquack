@@ -4,7 +4,7 @@ use sqlquack_diagnostics::failures::constants::NUMBER_NOT_RECOGNIZED;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
-use crate::blocks::_helpers::numbers::{largest_number, read_number_as};
+use crate::blocks::_helpers::numbers::{largest_number, read_number_as, read_trimmed_number};
 use crate::blocks::_helpers::text::{conversion_failure, once_bound, overflow_failure};
 use crate::blocks::_helpers::types_map::duckdb_type;
 use crate::blocks::constants::TEXT_TO_NUMBER;
@@ -39,19 +39,16 @@ fn read_number(
     failure: TextFailure,
 ) -> String {
     let largest = largest_number(precision, scale);
-    read_number_as(
+    read_trimmed_number(
         sql,
         &NumberTarget {
             cast: ("CAST(".to_owned(), format!(" AS {target})")),
             try_cast: ("TRY_CAST(".to_owned(), format!(" AS {target})")),
             largest: format!("CAST('{largest}' AS {target})"),
-            overflow: format!("CAST({} AS {target})", overflow_failure(failure)),
-            unrecognised: format!(
-                "CAST({} AS {target})",
-                conversion_failure(
-                    failure,
-                    (NUMBER_NOT_RECOGNIZED, "Numeric value is not recognized")
-                )
+            overflow: overflow_failure(failure),
+            unrecognised: conversion_failure(
+                failure,
+                (NUMBER_NOT_RECOGNIZED, "Numeric value is not recognized"),
             ),
         },
     )

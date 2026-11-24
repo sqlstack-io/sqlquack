@@ -226,6 +226,7 @@ fn exact_variance(
             },
             false,
             None,
+            true,
         ),
         log,
     )
@@ -251,7 +252,8 @@ fn float_variance(
     let total = exact_float_sum(value, "", over, log);
     let squares = exact_float_sum(&format!("({value}) * ({value})"), "", over, log);
     Ok(format!(
-        "(CASE WHEN {count} < {} THEN NULL ELSE ({values} * {squares} - {total} * {total}) / \
+        "(CASE WHEN {count} < {} THEN NULL ELSE ({values} * {squares} - \
+         list_transform([{total}], lambda float_total: float_total * float_total)[1]) / \
          ({values} * {}) END)",
         shape.fewest(),
         degrees(&values, shape)

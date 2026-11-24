@@ -366,7 +366,7 @@ fn exact_arithmetic(
         let (sql, guarded) = exact_decimal_divide(
             (&left.sql, left_precision, left_scale),
             (&right.sql, right_precision, right_scale),
-            (result, false, constant),
+            (result, false, constant, true),
             log,
         )?;
         if guarded {

@@ -15,7 +15,30 @@ pub(crate) fn largest_number(precision: u8, scale: u8) -> String {
     }
 }
 
-/// The CASE reading the text `sql` as `target`, accepting only spellings Snowflake reads.
+/// The CASE reading the text `sql` as `target`, its trimmed text bound once, accepting only
+/// spellings Snowflake reads.
+pub(crate) fn read_trimmed_number(sql: &str, target: &NumberTarget) -> String {
+    let wrapped =
+        |(before, after): &(String, String), value: &str| format!("{before}{value}{after}");
+    let trimmed = "number_trimmed";
+    let overflow = &target.overflow;
+    format!(
+        "(CASE WHEN {sql} IS NULL THEN NULL ELSE list_transform([{}], lambda {trimmed}: \
+         CASE WHEN regexp_matches({trimmed}, '[eE]') AND abs({}) > {largest} THEN {overflow} \
+         WHEN regexp_full_match({trimmed}, '{DECIMAL_TEXT_PATTERN}|{BARE_EXPONENT_PATTERN}') \
+         THEN coalesce({}, {overflow}) \
+         WHEN regexp_full_match({trimmed}, '{MANTISSA_FREE_PATTERN}') THEN {} \
+         ELSE {} END)[1] END)",
+        space_trimmed(sql),
+        wrapped(&target.try_cast, trimmed),
+        wrapped(&target.try_cast, &format!("rtrim({trimmed}, 'eE')")),
+        wrapped(&target.cast, "0"),
+        target.unrecognised,
+        largest = target.largest,
+    )
+}
+
+/// The CASE reading the text `sql` as `target` in released variant_number_v1, whose body is pinned.
 pub(crate) fn read_number_as(sql: &str, target: &NumberTarget) -> String {
     let wrapped =
         |(before, after): &(String, String), value: &str| format!("{before}{value}{after}");

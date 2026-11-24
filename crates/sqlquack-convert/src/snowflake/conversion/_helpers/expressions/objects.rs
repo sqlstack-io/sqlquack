@@ -30,6 +30,7 @@ use crate::snowflake::conversion::_helpers::support::tree::{
     node_construct, node_kind, payload_object, require_understood,
 };
 use crate::snowflake::conversion::constants::{
+    WHOLE_JSON_DIGITS,
     KEEP_NULL_CONSTRUCTOR, MICROSECOND_DIGITS, OBJECT_CONSTANT_KIND, OBJECT_CONSTRUCT_RULE,
     OBJECT_CONSTRUCTOR, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, TYPE_SUFFIX_UNREMOVED,
 };
@@ -138,7 +139,7 @@ pub(crate) fn object_construct(
             values.push(value);
         }
         let keys: Vec<String> = keys.iter().map(|key| string_literal(key, log)).collect();
-        return constructed(name, (keys, values), construct, site.context);
+        return constructed(name, (keys, values, true), construct, site.context);
     }
     if !arguments.len().is_multiple_of(2) {
         return Err(refused(
@@ -147,6 +148,7 @@ pub(crate) fn object_construct(
         ));
     }
     let mut keys: Vec<String> = Vec::new();
+    let mut texts: Vec<String> = Vec::new();
     let mut values: Vec<Emitted> = Vec::new();
     for pair in arguments.chunks(2) {
         let [key, value] = pair else {
@@ -162,23 +164,36 @@ pub(crate) fn object_construct(
                 "an OBJECT_CONSTRUCT key that is not text",
             ));
         }
+        if let Some(Literal::Text(text)) = &key.literal {
+            texts.push(text.clone());
+        }
         keys.push(key.sql);
         values.push(convert_held(value, site)?);
     }
-    constructed(name, (keys, values), construct, site.context)
+    let constant = texts.len() == keys.len()
+        && texts
+            .iter()
+            .enumerate()
+            .all(|(at, text)| !texts[..at].contains(text));
+    constructed(name, (keys, values, constant), construct, site.context)
 }
 
-/// The object of `keys` and `values`, NULL values kept for OBJECT_CONSTRUCT_KEEP_NULL.
+/// The object of `keys` and `values`, NULL values kept for OBJECT_CONSTRUCT_KEEP_NULL; `constant`
+/// when the keys are distinct literals.
 fn constructed(
     name: &str,
-    (keys, values): (Vec<String>, Vec<Emitted>),
+    (keys, values, constant): (Vec<String>, Vec<Emitted>, bool),
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<Emitted, Refusal> {
     let (values, held) = leaves(values, construct, context)?;
     let pairs: Vec<(String, String)> = keys.into_iter().zip(values).collect();
     Ok(built(
-        json_object_construct(&pairs, name == KEEP_NULL_CONSTRUCTOR, context.log),
+        json_object_construct(
+            &pairs,
+            (name == KEEP_NULL_CONSTRUCTOR, constant),
+            context.log,
+        ),
         held,
         VariantRoot::Container,
         context,
@@ -234,6 +249,10 @@ pub(crate) fn as_json(
             diverge(context, JSON_FIDELITY, construct)?;
             context.typed.enter_decimal();
             Ok(json_decimal(&sql, context.log))
+        }
+        SnowflakeType::Number { precision, .. } if precision <= WHOLE_JSON_DIGITS => {
+            diverge(context, JSON_FIDELITY, construct)?;
+            Ok(format!("json(CAST({sql} AS VARCHAR))"))
         }
         SnowflakeType::Number { .. } => {
             diverge(context, JSON_FIDELITY, construct)?;

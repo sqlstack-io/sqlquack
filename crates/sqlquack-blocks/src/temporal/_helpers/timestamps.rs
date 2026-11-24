@@ -66,11 +66,10 @@ pub(crate) fn microsecond_base(sql: &str, source: SnowflakeType) -> String {
 pub(crate) fn with_source_nanos(micros: &str, source_sql: &str, source: SnowflakeType) -> String {
     match source {
         SnowflakeType::TimestampNtz { precision } if precision > DUCKDB_FRACTIONAL_PRECISION => {
-            let nanos = epoch_units(source_sql, NANOSECOND_DIGITS);
             format!(
                 "list_transform([epoch_us({micros})], lambda result_micros: CASE WHEN \
                  abs(result_micros) > {NANOSECOND_TIMESTAMP_MICROS} THEN CAST({} AS TIMESTAMP_NS) \
-                 ELSE make_timestamp_ns(result_micros * 1000 + ((({nanos}) % 1000) + 1000) % 1000) \
+                 ELSE make_timestamp_ns(result_micros * 1000 + nanosecond({source_sql}) % 1000) \
                  END)[1]",
                 raised(&format!(
                     "{TIMESTAMP_RANGE}: a timestamp Snowflake holds outside the nanosecond range of \

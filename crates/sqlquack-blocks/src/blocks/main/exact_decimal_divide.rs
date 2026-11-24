@@ -9,10 +9,12 @@ use crate::blocks::_helpers::division::{
 use crate::blocks::constants::EXACT_DECIMAL_DIVIDE;
 
 /// Exact division, rounded or `truncated`, by a literal `constant` divisor if given; may it raise?
+/// Unless `checked`, the caller already makes the quotient NULL where an operand is NULL or the
+/// divisor zero, so the short form adds no checks of its own.
 pub fn exact_decimal_divide(
     left: (&str, u8, u8),
     right: (&str, u8, u8),
-    (result, truncated, constant): (SnowflakeType, bool, Option<&str>),
+    (result, truncated, constant, checked): (SnowflakeType, bool, Option<&str>, bool),
     log: &ProvenanceLog,
 ) -> Result<(String, bool), String> {
     log.building_block(EXACT_DECIMAL_DIVIDE);
@@ -30,12 +32,12 @@ pub fn exact_decimal_divide(
         .filter(|divisor| *divisor != 0);
     let checks = null_checks(left.0, right.0, constant.is_some());
     let rounding = (result_scale, truncated);
-    if let Some(quotient) = short_quotient((left, right), rounding, constant) {
-        let value = scaled(&quotient, (result, result_scale), log)?;
+    if let Some((quotient, places)) = short_quotient((left, right), rounding, constant) {
+        let value = scaled(&quotient, (result, places), log)?;
         return Ok((
-            match constant {
-                Some(_) => value,
-                None => format!("(CASE {checks} ELSE {value} END)"),
+            match constant.is_none() && checked {
+                false => value,
+                true => format!("(CASE {checks} ELSE {value} END)"),
             },
             false,
         ));
