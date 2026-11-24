@@ -16,11 +16,14 @@ pub fn utc_to_zone(value: &str, zone: &str, source: SnowflakeType, log: &Provena
     once(value, "utc_wall", |sql| converted(sql, zone, source))
 }
 
-/// The conversion of the plain operand `sql`: a nanosecond one directly, raising past the range
-/// whose whole microseconds the microsecond form holds.
+/// The conversion of the plain operand `sql`: a nanosecond one in a literal zone directly, raising
+/// past the range whose whole microseconds the microsecond form holds. A zone column keeps the
+/// microsecond form, as TRY would hide its NULLs and its unknown names' raise.
 fn converted(sql: &str, zone: &str, source: SnowflakeType) -> String {
     match source {
-        SnowflakeType::TimestampNtz { precision } if precision > DUCKDB_FRACTIONAL_PRECISION => {
+        SnowflakeType::TimestampNtz { precision }
+            if precision > DUCKDB_FRACTIONAL_PRECISION && is_text_literal(zone) =>
+        {
             let lowest = -NANOSECOND_TIMESTAMP_MICROS * 1000;
             let highest = NANOSECOND_TIMESTAMP_MICROS * 1000 + 999;
             format!(
@@ -43,4 +46,12 @@ fn converted(sql: &str, zone: &str, source: SnowflakeType) -> String {
             source,
         ),
     }
+}
+
+/// Whether `sql` is one string literal, as `string_literal` writes it.
+fn is_text_literal(sql: &str) -> bool {
+    sql.len() >= 2
+        && sql.starts_with('\'')
+        && sql.ends_with('\'')
+        && !sql[1..sql.len() - 1].replace("''", "").contains('\'')
 }

@@ -42,6 +42,8 @@ pub const TRY_UTC_ZONED_TEXT_V1: &str = "try_utc_zoned_text_v1";
 pub const TIME_ZONE_V1: &str = "time_zone_v1";
 /// Exact decimal division of unscaled integers, rounded half away from zero or truncated.
 pub const DECIMAL_QUOTIENT_V1: &str = "decimal_quotient_v1";
+/// A VARIANT-held value as Snowflake writes it as JSON, doubles as `%.15e`.
+pub const VARIANT_WRITTEN_V1: &str = "variant_written_v1";
 /// The full read check of JSON text.
 pub const JSON_READ_V1: &str = "json_read_v1";
 /// The fast read check of JSON text, falling back to the full one.

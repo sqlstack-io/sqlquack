@@ -3,11 +3,11 @@
 use serde_json::Value;
 use sqlquack_blocks::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_blocks::floats::constants::FLOAT_TEXT;
+use sqlquack_blocks::held::main::double_written::double_written;
 use sqlquack_blocks::held::main::variant_double::variant_double;
 use sqlquack_blocks::held::main::variant_json::variant_json;
 use sqlquack_blocks::held::main::variant_text::variant_text;
 use sqlquack_blocks::held::main::variant_type_name::variant_type_name;
-use sqlquack_blocks::held::main::double_written::double_written;
 use sqlquack_blocks::held::main::variant_written::variant_written;
 use sqlquack_blocks::semi_structured::constants::VARIANT_TYPED_VALUES;
 use sqlquack_blocks::semi_structured::constants::{JSON_FIDELITY, JSON_NULL, PATH_READ_KEYS};

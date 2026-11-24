@@ -2,7 +2,9 @@
 
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
-use crate::blocks::constants::{CONVERSION_WHITESPACE_CHARS, NON_FINITE_FLOAT_WORDS, TEXT_TO_FLOAT};
+use crate::blocks::constants::{
+    CONVERSION_WHITESPACE_CHARS, NON_FINITE_FLOAT_WORDS, TEXT_TO_FLOAT,
+};
 
 /// The double the text converts to as text_to_float reads it, or `None` when that fails or
 /// overflows, which the block raises or makes NULL.
@@ -40,5 +42,6 @@ fn is_decimal_text(text: &str) -> bool {
         None => digits(mantissa),
     };
     mantissa_ok
-        && exponent.is_none_or(|exponent| digits(exponent.strip_prefix(['+', '-']).unwrap_or(exponent)))
+        && exponent
+            .is_none_or(|exponent| digits(exponent.strip_prefix(['+', '-']).unwrap_or(exponent)))
 }
