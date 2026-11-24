@@ -5,6 +5,7 @@ pub mod decimal_arithmetic;
 pub mod double_arithmetic;
 pub mod exact_decimal_divide;
 pub mod explicit_null_order;
+pub mod float_literal;
 pub mod full_case_lower;
 pub mod full_case_upper;
 pub mod null_propagating_concat;

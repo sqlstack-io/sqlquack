@@ -1,5 +1,6 @@
 //! One building block per module.
 
+pub mod double_written;
 pub mod variant_built;
 pub mod variant_decimal_leaf;
 pub mod variant_double;

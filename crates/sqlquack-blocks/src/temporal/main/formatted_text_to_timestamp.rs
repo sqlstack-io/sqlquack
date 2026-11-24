@@ -73,13 +73,10 @@ pub fn formatted_text_to_timestamp(
         ),
         false => (
             "false".to_owned(),
-            format!(
-                "CAST({} AS TIMESTAMP_NS)",
-                raised(&tagged_message(
-                    TIMESTAMP_FORMAT_MISMATCH,
-                    UNPARSED_TIMESTAMP_MESSAGE
-                ))
-            ),
+            raised(&tagged_message(
+                TIMESTAMP_FORMAT_MISMATCH,
+                UNPARSED_TIMESTAMP_MESSAGE,
+            )),
         ),
     };
     let strict = trying
@@ -101,9 +98,9 @@ pub fn formatted_text_to_timestamp(
          coalesce(CASE WHEN {year} > 0 AND {hour} <= 23 AND {minute} <= 59 AND {second} <= 59 THEN \
          list_transform([try(make_timestamp({year}, {month}, {day}, {hour}, {minute}, {second}))], \
          lambda made: CASE WHEN made IS NULL THEN NULL ELSE coalesce(TRY_CAST(made AS TIMESTAMP_NS), \
-         CAST({range} AS TIMESTAMP_NS)) END)[1] END, \
+         {range}) END)[1] END, \
          {impossible}) \
-         ELSE CAST({misspelled} AS TIMESTAMP_NS) END)",
+         ELSE {misspelled} END)",
         day = number(TimestampField::Day),
         range = raised(&format!(
             "{TIMESTAMP_RANGE}: a timestamp Snowflake holds outside the nanosecond range of DuckDB"

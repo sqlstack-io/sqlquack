@@ -24,7 +24,7 @@ pub(crate) fn aggregated_sum(value: &str, distinct: &str, over: &str, raise: &st
          WHEN bool_or(isnan({value})){over} THEN CAST('nan' AS DOUBLE) \
          WHEN count({value}){over} <= 2 OR {} OR {dominant} \
          THEN sum({distinct}{value}){over} \
-         + 0.0 ELSE CAST({raise} AS DOUBLE) END)",
+         + 0.0 ELSE {raise} END)",
         exact.join(" OR "),
     )
 }
@@ -56,7 +56,7 @@ pub(crate) fn listed_sum(value: &str, distinct: bool, over: &str, raise: &str) -
          lambda float_sum_values: CASE WHEN len(float_sum_values) = 0 THEN NULL \
          WHEN list_bool_or({}) THEN CAST('nan' AS DOUBLE) \
          WHEN len(float_sum_values) <= 2 OR {} OR {} THEN list_sum({summed}) + 0.0 \
-         ELSE CAST({raise} AS DOUBLE) END)[1]",
+         ELSE {raise} END)[1]",
         each("isnan(float_sum_x)"),
         exact.join(" OR "),
         dominant(

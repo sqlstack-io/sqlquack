@@ -67,15 +67,12 @@ fn converted(sql: &str, (format, trying): (&DateFormat, bool)) -> String {
         ),
         false => (
             "false".to_owned(),
-            format!(
-                "CAST({} AS DATE)",
-                raised(&tagged_message(DATE_FORMAT_MISMATCH, UNPARSED_DATE_MESSAGE))
-            ),
+            raised(&tagged_message(DATE_FORMAT_MISMATCH, UNPARSED_DATE_MESSAGE)),
         ),
     };
     let foreign = match format.named_month {
         true => {
-            format!("WHEN regexp_matches({sql}, '[^\\x00-\\x7F]') THEN CAST({spelling} AS DATE) ")
+            format!("WHEN regexp_matches({sql}, '[^\\x00-\\x7F]') THEN {spelling} ")
         }
         false => String::new(),
     };
@@ -83,7 +80,7 @@ fn converted(sql: &str, (format, trying): (&DateFormat, bool)) -> String {
         "(CASE WHEN {sql} IS NULL OR {empty} THEN NULL {foreign}\
          WHEN regexp_full_match({sql}, '{pattern}') AND {year} > 0 THEN \
          coalesce(try(make_date({year}, {month}, {})), {impossible}) \
-         {rejected}ELSE CAST({spelling} AS DATE) END)",
+         {rejected}ELSE {spelling} END)",
         field(day_group)
     )
 }

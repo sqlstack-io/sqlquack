@@ -46,23 +46,18 @@ pub fn float_to_decimal(
          ELSE (2 * {significand} * CAST({unit} AS HUGEINT) + (CAST(1 AS HUGEINT) << {shift})) \
          // (CAST(1 AS HUGEINT) << ({shift} + 1)) END)"
     );
-    let overflow = format!(
-        "CAST({} AS {target})",
-        raised(&tagged_message(NUMBER_OUT_OF_RANGE, NUMBER_RANGE_MESSAGE))
-    );
-    let unproven = format!(
-        "CAST({} AS {target})",
-        raised(&format!(
-            "{FLOAT_DECIMAL_DIGITS}: a FLOAT rounded to more significant digits than recordings show"
-        ))
-    );
+    let overflow = raised(&tagged_message(NUMBER_OUT_OF_RANGE, NUMBER_RANGE_MESSAGE));
+    let unproven = raised(&format!(
+        "{FLOAT_DECIMAL_DIGITS}: a FLOAT rounded to more significant digits than recordings show"
+    ));
     let body = format!(
         "(CASE WHEN {sql} IS NULL THEN NULL \
          WHEN isnan({sql}) OR isinf({sql}) OR {magnitude} >= 1e{whole} THEN {overflow} \
-         WHEN {units} >= CAST({limit} AS HUGEINT) THEN {overflow} \
-         WHEN {units} >= CAST({FLOAT_DECIMAL_UNITS_LIMIT} AS HUGEINT) THEN {unproven} \
-         ELSE CAST(CAST(CASE WHEN {sql} < 0 THEN -{units} ELSE {units} END AS DECIMAL(38,0)) \
-         * CAST('1e-{scale}' AS DECIMAL(38,{scale})) AS {target}) END)",
+         ELSE list_transform([{units}], lambda float_units: \
+         CASE WHEN float_units >= CAST({limit} AS HUGEINT) THEN {overflow} \
+         WHEN float_units >= CAST({FLOAT_DECIMAL_UNITS_LIMIT} AS HUGEINT) THEN {unproven} \
+         ELSE CAST(CAST(CASE WHEN {sql} < 0 THEN -float_units ELSE float_units END AS DECIMAL(38,0)) \
+         * CAST('1e-{scale}' AS DECIMAL(38,{scale})) AS {target}) END)[1] END)",
         whole = precision - scale
     );
     Ok(bound(value, sql, &body))

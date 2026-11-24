@@ -7,6 +7,7 @@ use sqlquack_blocks::held::main::variant_double::variant_double;
 use sqlquack_blocks::held::main::variant_json::variant_json;
 use sqlquack_blocks::held::main::variant_text::variant_text;
 use sqlquack_blocks::held::main::variant_type_name::variant_type_name;
+use sqlquack_blocks::held::main::double_written::double_written;
 use sqlquack_blocks::held::main::variant_written::variant_written;
 use sqlquack_blocks::semi_structured::constants::VARIANT_TYPED_VALUES;
 use sqlquack_blocks::semi_structured::constants::{JSON_FIDELITY, JSON_NULL, PATH_READ_KEYS};
@@ -300,6 +301,7 @@ pub(crate) fn variant_inspect(
             let _rule = log.rule(VARIANT_INSPECT);
             diverge(site.context, JSON_FIDELITY, construct)?;
             let sql = match held {
+                true if base.root == VariantRoot::Double => double_written(&base.sql, log),
                 true => variant_written(&base.sql, log),
                 false => json_serialized(&base.sql, log),
             };

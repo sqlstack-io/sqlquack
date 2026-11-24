@@ -1387,3 +1387,6 @@ pub const VARIANT_ORDER_KEY: &str = "rule.variant_order_key";
 
 /// The select item kinds whose Snowflake name keeps quotes or a path: literals and paths into semi-structured values.
 pub(crate) const UNALIASED_QUOTED_KINDS: &[&str] = &["j_s_o_n_extract", "literal", "subscript"];
+/// The most digits of a whole NUMBER whose text JSON reads as the same 64-bit integer, so it goes
+/// into a VARIANT unchecked.
+pub const WHOLE_JSON_DIGITS: u8 = 18;
