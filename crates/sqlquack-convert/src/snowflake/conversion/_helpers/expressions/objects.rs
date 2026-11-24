@@ -30,9 +30,9 @@ use crate::snowflake::conversion::_helpers::support::tree::{
     node_construct, node_kind, payload_object, require_understood,
 };
 use crate::snowflake::conversion::constants::{
-    WHOLE_JSON_DIGITS,
     KEEP_NULL_CONSTRUCTOR, MICROSECOND_DIGITS, OBJECT_CONSTANT_KIND, OBJECT_CONSTRUCT_RULE,
     OBJECT_CONSTRUCTOR, OBJECT_DELETE_RULE, OBJECT_INSERT_RULE, TYPE_SUFFIX_UNREMOVED,
+    WHOLE_JSON_DIGITS,
 };
 use sqlquack_policy::policy::constants::SESSION_TIMEZONE_UTC;
 

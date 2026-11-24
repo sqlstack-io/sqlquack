@@ -3,6 +3,7 @@
 use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::models::TextFailure;
+use crate::held::_helpers::writing::held_written;
 
 use crate::macros::_helpers::reading::{checked_body, read_body};
 use crate::macros::_helpers::scalars::{number_body, quotient_body, scalar_body};
@@ -17,12 +18,14 @@ use crate::macros::constants::{
     TEXT_PARAMETER, TIME_ZONE_V1, TIMESTAMP_TEXT_V1, TRY_DATE_TEXT_V1, TRY_TIMESTAMP_TEXT_V1,
     TRY_UTC_ZONED_TEXT_V1, TRY_ZONED_TEXT_V1, TRYING_PARAMETER, UTC_ZONED_TEXT_V1, VALUE_PARAMETER,
     VALUES_PARAMETER, VARIANT_BOOLEAN_V1, VARIANT_DATE_V1, VARIANT_FLOAT_V1, VARIANT_JSON_TEXT_V1,
-    VARIANT_NUMBER_V1, VARIANT_TEXT_V1, VARIANT_TIMESTAMP_NTZ_V1, ZONED_TEXT_V1,
+    VARIANT_NUMBER_V1, VARIANT_TEXT_V1, VARIANT_TIMESTAMP_NTZ_V1, VARIANT_WRITTEN_V1,
+    ZONED_TEXT_V1,
 };
 use crate::macros::models::HelperMacro;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 /// The helper macros, dependencies first.
-pub(crate) fn helper_macros() -> [HelperMacro; 20] {
+pub(crate) fn helper_macros() -> [HelperMacro; 21] {
     [
         HelperMacro {
             name: TIME_ZONE_V1,
@@ -220,6 +223,19 @@ pub(crate) fn helper_macros() -> [HelperMacro; 20] {
                       NULL. Raises Snowflake's division by zero error for a zero divisor, and \
                       numeric_range for a divisor at or beyond the fifth argument, where the \
                       exact quotient needs more than DuckDB's 128 bits.",
+        },
+        HelperMacro {
+            name: VARIANT_WRITTEN_V1,
+            parameters: &[VALUE_PARAMETER],
+            body: || {
+                held_written(
+                    &format!("CAST({VALUE_PARAMETER} AS JSON)"),
+                    &ProvenanceLog::default(),
+                )
+            },
+            explain: "A value DuckDB holds as a VARIANT, written as Snowflake writes it as JSON: \
+                      every object's keys in byte order, a number with a point or an exponent \
+                      as %.15e, as Snowflake writes a FLOAT, and Snowflake's escapes.",
         },
     ]
 }

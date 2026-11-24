@@ -5,7 +5,7 @@ use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use crate::floats::constants::FLOAT_TEXT;
 use crate::floats::main::float_to_text::float_to_text;
 use crate::held::_helpers::guards::bound;
-use crate::held::_helpers::writing::held_written;
+use crate::held::_helpers::writing::held_written_call;
 use crate::held::constants::VARIANT_TEXT;
 use crate::raises::main::raised::raised;
 
@@ -28,7 +28,7 @@ pub fn variant_text(sql: &str, element: bool, log: &ProvenanceLog) -> String {
         &format!(
             "(CASE json_type(held_value) WHEN 'VARCHAR' THEN json_extract_string(held_value, '$') \
              WHEN 'NULL' THEN NULL WHEN 'DOUBLE' THEN {double} ELSE {} END)",
-            held_written("held_value", log)
+            held_written_call("held_value")
         ),
     )
 }

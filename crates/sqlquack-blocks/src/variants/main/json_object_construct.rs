@@ -22,7 +22,7 @@ pub fn json_object_construct(
             .iter()
             .map(|(key, value)| match keep_null {
                 true => format!(
-                    "struct_pack(key := {key}, value := coalesce(CAST({value} AS JSON), \\
+                    "struct_pack(key := {key}, value := coalesce(CAST({value} AS JSON), \
                      CAST('null' AS JSON)))"
                 ),
                 false => format!("struct_pack(key := {key}, value := CAST({value} AS JSON))"),

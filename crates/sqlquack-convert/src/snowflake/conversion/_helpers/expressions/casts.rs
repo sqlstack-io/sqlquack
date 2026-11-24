@@ -316,7 +316,11 @@ fn cast_sql(
                 .map_err(|refusal| refusal.reason)?;
             match literal {
                 Some(Literal::Text(text)) if proven_time_text(text) => {
-                    return cast(&string_literal(&time_literal(text, precision), log), to, log);
+                    return cast(
+                        &string_literal(&time_literal(text, precision), log),
+                        to,
+                        log,
+                    );
                 }
                 _ => diverge(context, DATE_TEXT_SPELLING, construct)
                     .map_err(|refusal| refusal.reason)?,
@@ -765,9 +769,9 @@ fn text_literal_cast(text: &str, to: SnowflakeType, log: &ProvenanceLog) -> Resu
 /// conversion truncates it.
 fn time_literal(text: &str, precision: u8) -> String {
     let fields: Vec<&str> = text.trim_matches(' ').split(':').collect();
-    let (second, fraction) = fields
-        .get(2)
-        .map_or(("0", ""), |second| second.split_once('.').unwrap_or((second, "")));
+    let (second, fraction) = fields.get(2).map_or(("0", ""), |second| {
+        second.split_once('.').unwrap_or((second, ""))
+    });
     let fraction = &fraction[..fraction.len().min(usize::from(precision))];
     let number = |field: &str| field.parse::<u32>().unwrap_or_default();
     let clock = format!(

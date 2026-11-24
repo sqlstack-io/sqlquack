@@ -4,9 +4,17 @@ use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::held::_helpers::guards::bound;
 use crate::held::constants::{HELD_DOUBLE_FORMAT, HELD_DOUBLE_TOKEN_PATTERN, HELD_TOKEN_PATTERN};
+use crate::macros::constants::VARIANT_WRITTEN_V1;
+use crate::macros::main::helper_call::helper_call;
 use crate::semi_structured::main::json_escaped::json_escaped;
 
-/// The JSON `sql` of a VARIANT-held value as Snowflake writes it: keys sorted, doubles as `%.15e`.
+/// The JSON `sql` of a VARIANT-held value as Snowflake writes it, through variant_written_v1.
+pub(crate) fn held_written_call(sql: &str) -> String {
+    helper_call(VARIANT_WRITTEN_V1, &[sql])
+}
+
+/// The JSON `sql` of a VARIANT-held value as Snowflake writes it: keys sorted, doubles as `%.15e`;
+/// variant_written_v1's body.
 pub(crate) fn held_written(sql: &str, log: &ProvenanceLog) -> String {
     let token = HELD_TOKEN_PATTERN.replace('\'', "''");
     let respelled = format!(
