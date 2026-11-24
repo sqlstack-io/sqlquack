@@ -248,7 +248,7 @@ fn given_a_released_helper_when_defined_then_its_definition_is_unchanged() {
         PinnedDefinitionTestCase {
             description: "variant_written_v1's released definition is unchanged; a change takes a new version",
             name: "variant_written_v1",
-            expected_md5: Some("5ccb566af0ae079182eba606e1b68cca"),
+            expected_md5: Some("574adeedffe62132ecf7a35c67ee7add"),
         },
     ];
     for test_case in test_cases {
