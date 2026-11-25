@@ -172,6 +172,8 @@ pub const TRUE_WORDS: &[&str] = &["true", "t", "yes", "y", "on", "1"];
 pub const FALSE_WORDS: &[&str] = &["false", "f", "no", "n", "off", "0"];
 /// DuckDB's largest DECIMAL precision.
 pub const MAX_DECIMAL_PRECISION: u8 = 38;
+/// What separates the mapped texts in an expansion lookup; `chr(31)` in the emitted SQL.
+pub const EXPANSION_SEPARATOR: &str = "\u{1f}";
 /// Characters whose full uppercase mapping has several characters.
 pub const UPPERCASE_EXPANSIONS: &[(&str, &str)] = &[
     ("\u{df}", "SS"),

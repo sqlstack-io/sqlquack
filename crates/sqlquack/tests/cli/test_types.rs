@@ -465,3 +465,18 @@ pub(crate) struct OperandCopiesTestCase {
     pub(crate) sql: &'static str,
     pub(crate) expected_copies: usize,
 }
+
+/// A statement whose conversion DuckDB must parse with `pattern` appearing `expected_copies` times.
+pub(crate) struct PatternCopiesTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) pattern: &'static str,
+    pub(crate) expected_copies: usize,
+}
+
+/// Every multi-character uppercase mapping, each after `between`, upper-cased in one statement.
+pub(crate) struct FullCaseMappingTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) between: &'static str,
+    pub(crate) expected_mappings: usize,
+}

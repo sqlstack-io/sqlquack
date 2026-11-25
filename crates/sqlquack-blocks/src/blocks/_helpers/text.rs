@@ -8,7 +8,8 @@ use sqlquack_diagnostics::failures::models::SnowflakeCode;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::constants::{
-    CONVERSION_WHITESPACE, INLINE_ARGUMENT_LIMIT, NUMBER_RANGE_MESSAGE, VARIANT_CAST_MESSAGE,
+    CONVERSION_WHITESPACE, EXPANSION_SEPARATOR, INLINE_ARGUMENT_LIMIT, NUMBER_RANGE_MESSAGE,
+    VARIANT_CAST_MESSAGE,
 };
 use crate::blocks::main::string_literal::string_literal;
 use crate::blocks::models::TextFailure;
@@ -32,21 +33,20 @@ pub(crate) fn expanded(sql: &str, expansions: &[(&str, &str)], log: &ProvenanceL
         .flat_map(|(from, _)| from.chars())
         .map(|character| format!("\\x{{{:x}}}", u32::from(character)))
         .collect();
-    let list = |texts: Vec<&str>| {
-        texts
-            .into_iter()
-            .map(|text| string_literal(text, log))
-            .collect::<Vec<String>>()
-            .join(", ")
-    };
-    let keys = list(expansions.iter().map(|(from, _)| *from).collect());
-    let values = list(expansions.iter().map(|(_, to)| *to).collect());
-    format!(
-        "list_transform([{sql}], lambda case_text: CASE WHEN regexp_matches(case_text, '[{class}]') \
-         THEN array_to_string(list_transform(string_split(case_text, ''), lambda case_character: \
-         coalesce([{values}][list_position([{keys}], case_character)], case_character)), '') \
-         ELSE case_text END)[1]"
-    )
+    let keys = string_literal(
+        &expansions.iter().map(|(from, _)| *from).collect::<String>(),
+        log,
+    );
+    let targets = expansions.iter().map(|(_, to)| *to).collect::<Vec<&str>>();
+    let targets = string_literal(&targets.join(EXPANSION_SEPARATOR), log);
+    once_bound(sql, "case_text", |text| {
+        format!(
+            "CASE WHEN regexp_matches({text}, '[{class}]') \
+             THEN array_to_string(list_transform(string_split({text}, ''), lambda case_character: \
+             coalesce(string_split({targets}, chr(31))[instr({keys}, case_character)], case_character)), '') \
+             ELSE {text} END"
+        )
+    })
 }
 
 /// What a failed conversion yields: NULL when trying, else text's error `code` or a VARIANT's.

@@ -1,6 +1,9 @@
 use crate::helpers::{converted_first_value, parsed_copies};
 use crate::test_types::{CaseSubjectTestCase, ChainValueTestCase};
 
+/// Text only an UPPER expansion holds, so its count is the copies of the CASE operand.
+const UPPER_LOOKUP_MARKER: &str = "\u{535}\u{552}";
+
 #[test]
 fn given_a_simple_case_over_a_computed_operand_when_converting_then_duckdb_binds_the_operand_once()
 {
@@ -34,12 +37,12 @@ fn given_a_simple_case_over_a_computed_operand_when_converting_then_duckdb_binds
             })
             .collect();
         let sql = format!(
-            "SELECT CASE UPPER(a || 'operand_marker') {} ELSE NULL END AS c \
+            "SELECT CASE UPPER(a || 'operand') {} ELSE NULL END AS c \
              FROM (SELECT 'x' AS a, 'y' AS b)",
             whens.join(" ")
         );
 
-        let copies = parsed_copies(&sql, "operand_marker");
+        let copies = parsed_copies(&sql, UPPER_LOOKUP_MARKER);
 
         assert_eq!(
             copies, test_case.expected_copies,
