@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.23.2](https://github.com/sqlstack-io/sqlquack/compare/v0.23.1...v0.23.2) (2026-11-25)
+
+
+### Bug Fixes
+
+* **convert:** keep doubling to round a quotient at result scale 37 ([7addacf](https://github.com/sqlstack-io/sqlquack/commit/7addacf97c6fc3cd8a2267f95801305d59d7df81))
+* **convert:** pin variant_written_v1 by its definition statement's hash ([94eb19a](https://github.com/sqlstack-io/sqlquack/commit/94eb19a65d391cb922891ad4fcad44d67f611b74))
+
 ## [0.23.1](https://github.com/sqlstack-io/sqlquack/compare/v0.23.0...v0.23.1) (2026-11-24)
 
 
