@@ -48,6 +48,8 @@ pub struct ConversionOptions {
     pub verified_overrides: BTreeMap<String, String>,
     /// Function calls nested deeper than this are a parse error; the parser's default when absent.
     pub max_call_depth: Option<usize>,
+    /// Skip DuckDB's parse-and-bind of the emitted SQL, for a caller that runs it and reports errors.
+    pub skip_bind_check: bool,
 }
 
 /// A user's DuckDB SQL standing in for a Snowflake function, written in SQLBuild's FUNCTION() format.

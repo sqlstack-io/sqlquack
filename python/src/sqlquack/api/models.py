@@ -76,3 +76,4 @@ class ConvertOptions:
     verified_overrides: Mapping[str, str] = field(default_factory=dict)
     compact: bool = False
     max_call_depth: int | None = None
+    bind_check: bool = True

@@ -9,6 +9,7 @@ import pytest
 import sqlquack
 from sqlquack import Conversion, ConvertOptions, Diagnostic
 from tests.unit.python.src.sqlquack.api.main._test_types import (
+    BindCheckTestCase,
     CommandLineTestCase,
     DeepChainTestCase,
     FailureTestCase,
@@ -42,6 +43,20 @@ DATED: str = "SELECT CURRENT_DATE() AS d"
             arguments=("--no-config", "--compact"),
             options=ConvertOptions(no_config=True, schema=SCHEMA, compact=True),
             expected_converted=True,
+        ),
+        CommandLineTestCase(
+            description="a converted query without DuckDB's bind check",
+            sql="SELECT order_id, price * 2 AS doubled FROM orders",
+            arguments=("--no-config", "--no-bind-check"),
+            options=ConvertOptions(no_config=True, schema=SCHEMA, bind_check=False),
+            expected_converted=True,
+        ),
+        CommandLineTestCase(
+            description="a refused query without DuckDB's bind check",
+            sql="SELECT a FROM customers",
+            arguments=("--no-config", "--no-bind-check"),
+            options=ConvertOptions(no_config=True, schema=SCHEMA, bind_check=False),
+            expected_converted=False,
         ),
         CommandLineTestCase(
             description="no --config and no sqlquack.toml: the defaults",
@@ -100,6 +115,48 @@ def test_given_the_same_options_when_converting_then_the_report_is_the_command_l
     assert conversion.converted is test_case.expected_converted
     assert len(conversion.diagnostics) == len(conversion.report["refusals"])
     assert conversion.divergence_failures == conversion.report["divergence_failures"]
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        BindCheckTestCase(
+            description="a converted query",
+            sql="SELECT order_id, price * 2 AS doubled FROM orders",
+            expected_converted=True,
+        ),
+        BindCheckTestCase(
+            description="a query refused for an undeclared relation",
+            sql="SELECT a FROM customers",
+            expected_converted=False,
+        ),
+        BindCheckTestCase(
+            description="HASH refused by the configuration",
+            sql=HASHED,
+            expected_converted=False,
+        ),
+        BindCheckTestCase(
+            description="CURRENT_DATE converted with the differences it relies on",
+            sql=DATED,
+            expected_converted=True,
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_the_bind_check_off_when_converting_then_the_report_is_the_same(
+    test_case: BindCheckTestCase,
+) -> None:
+    checked: Conversion = sqlquack.convert(
+        sql=test_case.sql, options=ConvertOptions(config=CONFIG, schema=SCHEMA)
+    )
+
+    unchecked: Conversion = sqlquack.convert(
+        sql=test_case.sql,
+        options=ConvertOptions(config=CONFIG, schema=SCHEMA, bind_check=False),
+    )
+
+    assert unchecked.report == checked.report
+    assert unchecked.converted is test_case.expected_converted
 
 
 @pytest.mark.parametrize(

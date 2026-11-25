@@ -3,6 +3,7 @@
 use crate::snowflake::conversion::_helpers::support::typed_leaves::checked;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::main::check_printed::check_printed;
+use sqlquack_blocks::checking::main::check_unbound::check_unbound;
 use sqlquack_blocks::checking::models::{FunctionStub, StubReturns};
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::main::missing::missing;
@@ -92,8 +93,11 @@ pub(crate) fn parameters_joined(
     )
 }
 
-/// DuckDB parses and binds the body over NULL parameters and the schema's relations.
-pub(crate) fn check_body(checked: &str, schema: &Schema) -> Result<(), Refusal> {
+/// DuckDB parses and binds the body over NULL parameters and the schema's relations, unless `skip_bind`.
+pub(crate) fn check_body(
+    checked: &str,
+    (schema, skip_bind): (&Schema, bool),
+) -> Result<(), Refusal> {
     let relation = |name: &str| -> Option<Vec<(String, SnowflakeType)>> {
         Some(
             schema
@@ -104,7 +108,11 @@ pub(crate) fn check_body(checked: &str, schema: &Schema) -> Result<(), Refusal> 
                 .collect(),
         )
     };
-    check_printed(checked, (&relation, &|name| function_stub(schema, name))).map_err(|failure| {
+    match skip_bind {
+        true => check_unbound(checked).map(drop),
+        false => check_printed(checked, (&relation, &|name| function_stub(schema, name))),
+    }
+    .map_err(|failure| {
         missing(
             node_construct("function_body"),
             format!("the emitted DuckDB SQL fails DuckDB's check: {failure}"),

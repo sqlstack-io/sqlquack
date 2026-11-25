@@ -4,5 +4,7 @@ mod helpers;
 mod test_bound_outside_lambdas;
 #[path = "tests/test_check_printed.rs"]
 mod test_check_printed;
+#[path = "tests/test_check_unbound.rs"]
+mod test_check_unbound;
 #[path = "tests/test_types.rs"]
 mod test_types;

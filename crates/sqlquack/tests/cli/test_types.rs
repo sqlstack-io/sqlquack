@@ -440,3 +440,11 @@ pub(crate) struct ChainGrowthTestCase {
     /// The bytes of laid-out SQL each further branch adds, the same from 4 to 16 as from 16 to 64.
     pub(crate) expected_bytes_per_branch: usize,
 }
+
+/// A statement whose conversion must not depend on DuckDB's bind check.
+pub(crate) struct BindCheckTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    /// Whether it converts, printing SQL on standard output.
+    pub(crate) expected_converted: bool,
+}

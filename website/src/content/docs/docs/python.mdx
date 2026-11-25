@@ -77,9 +77,12 @@ default and at most `512`. It returns a `CheckResult`:
 
 `ConvertOptions` has one field per [`convert`](/docs/cli/convert/) flag, with the same defaults:
 `project`, `config`, `no_config`, `session`, `strict`, `python_runtime`, `overrides`,
-`verified_overrides`, `compact` and `max_call_depth`. `project`, `config` and `overrides` take a path (`str` or
-`os.PathLike`), not the parsed contents. `session` and `verified_overrides` take a mapping, such as
+`verified_overrides`, `compact`, `max_call_depth` and `bind_check`. `project`, `config` and
+`overrides` take a path (`str` or `os.PathLike`), not the parsed contents. `session` and `verified_overrides` take a mapping, such as
 `session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings.
+
+`bind_check=False` is `--no-bind-check`: conversion skips DuckDB's parse and bind of its output,
+for callers that run the SQL themselves and handle DuckDB's errors. It defaults to `True`.
 
 `schema` declares tables in memory, beside the project's, as a mapping of table names to
 `[column, Snowflake type]` pairs:

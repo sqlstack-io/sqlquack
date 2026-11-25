@@ -3,6 +3,7 @@
 use crate::snowflake::conversion::_helpers::support::typed_leaves::checked;
 use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::checking::main::check_printed::check_printed;
+use sqlquack_blocks::checking::main::check_unbound::check_unbound;
 use sqlquack_blocks::held::main::variant_written::variant_written;
 use sqlquack_blocks::semi_structured::main::json_output::json_output;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
@@ -66,7 +67,11 @@ pub fn convert_statement(
     };
     let function =
         |name: &str| function_stub(schema, name).or_else(|| override_stub(options, name));
-    check_printed(&sql, (&relation, &function)).map_err(|failure| {
+    match options.skip_bind_check {
+        true => check_unbound(&sql).map(drop),
+        false => check_printed(&sql, (&relation, &function)),
+    }
+    .map_err(|failure| {
         let refusal = missing(
             node_construct("statement"),
             format!("the emitted DuckDB SQL fails DuckDB's check: {failure}"),

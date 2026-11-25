@@ -127,6 +127,9 @@ pub struct ConvertArguments {
     /// Print each converted statement on one line instead of one clause per line, in `--json` too.
     #[arg(long)]
     pub compact: bool,
+    /// Skip DuckDB's parse and bind of the converted SQL, for callers that run it and handle its errors.
+    #[arg(long)]
+    pub no_bind_check: bool,
     /// Print a warning for each use of a known difference: where it is and what allows it.
     #[arg(long)]
     pub verbose: bool,
