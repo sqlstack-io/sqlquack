@@ -661,6 +661,44 @@ pub(crate) fn shop_first_value(sql: &str) -> Result<String, Vec<String>> {
         .map_err(|error| vec![error.to_string()])
 }
 
+/// The result of `sql` converted and run on the shop rows: its column names and DuckDB types, then its rows as text, sorted.
+pub(crate) fn shop_result(sql: &str) -> Result<(Vec<String>, Vec<Vec<String>>), Vec<String>> {
+    let converted = shop_conversion(sql)?;
+    let connection = helped_connection(&converted.sql);
+    connection
+        .execute_batch(SHOP_ROWS)
+        .expect("the shop tables are created");
+    let failed = |error: duckdb::Error| vec![error.to_string()];
+    let mut described = connection
+        .prepare(&format!("DESCRIBE {}", converted.sql))
+        .map_err(failed)?;
+    let columns: Vec<String> = described
+        .query_map([], |row| {
+            Ok(format!("{} {}", row.get::<_, String>(0)?, row.get::<_, String>(1)?))
+        })
+        .map_err(failed)?
+        .collect::<Result<_, _>>()
+        .map_err(failed)?;
+    let mut statement = connection
+        .prepare(&format!(
+            "SELECT CAST(COLUMNS(*) AS VARCHAR) FROM ({}) AS t",
+            converted.sql
+        ))
+        .map_err(failed)?;
+    let width = columns.len();
+    let mut rows: Vec<Vec<String>> = statement
+        .query_map([], |row| {
+            (0..width)
+                .map(|index| Ok(row.get::<_, Option<String>>(index)?.unwrap_or_else(|| "NULL".to_owned())))
+                .collect()
+        })
+        .map_err(failed)?
+        .collect::<Result<_, _>>()
+        .map_err(failed)?;
+    rows.sort();
+    Ok((columns, rows))
+}
+
 /// The first value, or the expected fragment when a reason contains it, else every reason.
 pub(crate) fn shop_first_outcome(
     sql: &str,

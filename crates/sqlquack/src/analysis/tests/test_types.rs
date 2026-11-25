@@ -255,3 +255,12 @@ pub(crate) struct LayoutCreationTestCase {
     pub(crate) description: &'static str,
     pub(crate) expected_failures: Vec<String>,
 }
+
+pub(crate) struct SetResultTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: String,
+    /// Each result column as its name and DuckDB type.
+    pub(crate) expected_columns: Vec<&'static str>,
+    /// The rows as text, sorted.
+    pub(crate) expected_rows: Vec<Vec<String>>,
+}
