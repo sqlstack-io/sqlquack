@@ -480,3 +480,10 @@ pub(crate) struct FullCaseMappingTestCase {
     pub(crate) between: &'static str,
     pub(crate) expected_mappings: usize,
 }
+
+/// A statement and the exact compact SQL `convert` must print for it.
+pub(crate) struct ConvertedSqlTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_sql: &'static str,
+}

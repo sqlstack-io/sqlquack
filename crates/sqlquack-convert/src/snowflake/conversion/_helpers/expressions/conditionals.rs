@@ -24,7 +24,7 @@ use crate::snowflake::conversion::_helpers::support::tree::{
 };
 use crate::snowflake::conversion::constants::{
     CASE, CASE_SUBJECT, COALESCE, DECODE_RULE, DIV0_RULE, IFF, NULL_BRANCHES, NULL_IF_ZERO_RULE,
-    NVL2_RULE, SEMI_STRUCTURED_HOLDING, TEXT_BRANCHES, ZERO_IF_NULL_RULE,
+    NVL2_RULE, SEMI_STRUCTURED_HOLDING, TEXT_BRANCHES, ZERO_IF_NULL_RULE, ZERO_TESTED,
 };
 
 /// The branches cast to their unified type, and that type; text beside other types refuses.
@@ -361,6 +361,34 @@ fn plain(node: &Value) -> bool {
     }
 }
 
+/// Whether `node` is a window function over plain arguments, which DuckDB computes once however often written.
+fn plain_window(node: &Value) -> bool {
+    let Some(("window_function", payload)) = node_kind(node) else {
+        return false;
+    };
+    let operands_plain = payload
+        .get("this")
+        .and_then(node_kind)
+        .and_then(|(_, aggregate)| aggregate.as_object())
+        .is_some_and(|fields| {
+            fields.values().all(|operand| match operand {
+                Value::Array(items) => items.iter().all(plain),
+                Value::Object(_) => plain(operand),
+                _ => true,
+            })
+        });
+    let over = payload.get("over").and_then(Value::as_object);
+    let ordered = |item: &Value| {
+        node_kind(item).is_some_and(|(_, order)| order.get("this").is_some_and(plain))
+    };
+    operands_plain
+        && over.is_some_and(|over| {
+            list(over, "partition_by").iter().all(plain)
+                && list(over, "order_by").iter().all(ordered)
+                && over.get("frame").is_none_or(Value::is_null)
+        })
+}
+
 /// A simple CASE's operand packed once, as DuckDB repeats a simple CASE's operand in every WHEN.
 struct BoundWhens {
     /// The `struct_pack` fields: the operand, the WHEN values and any carried results.
@@ -599,7 +627,7 @@ pub(crate) fn div0(
     ))
 }
 
-/// NULLIFZERO of a NUMBER or FLOAT: NULL for zero, otherwise the value, of its type.
+/// NULLIFZERO of a NUMBER or FLOAT: NULL for zero, otherwise the value; a computed one bound once.
 pub(crate) fn null_if_zero(
     arguments: &[Value],
     construct: &Construct,
@@ -611,11 +639,17 @@ pub(crate) fn null_if_zero(
         return Err(refuse("NULLIFZERO with these arguments".to_owned()));
     };
     let operand = convert_expression(value, site)?;
+    let sql = match plain(value) || plain_window(value) {
+        true => format!("nullif({}, 0)", operand.sql),
+        false => format!(
+            "list_transform([{}], lambda {ZERO_TESTED}: nullif({ZERO_TESTED}, 0))[1]",
+            operand.sql
+        ),
+    };
     match operand.data_type {
-        SnowflakeType::Number { .. } | SnowflakeType::Float => Ok(Emitted::new(
-            format!("nullif({}, 0)", operand.sql),
-            operand.data_type,
-        )),
+        SnowflakeType::Number { .. } | SnowflakeType::Float => {
+            Ok(Emitted::new(sql, operand.data_type))
+        }
         other => Err(refuse(format!("NULLIFZERO of {other}"))),
     }
 }

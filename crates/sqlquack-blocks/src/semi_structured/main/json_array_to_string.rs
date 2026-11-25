@@ -23,9 +23,9 @@ pub fn json_array_to_string((sql, separator): (&str, &str), log: &ProvenanceLog)
              WHEN json_type(a) <> 'ARRAY' THEN CAST({} AS VARCHAR) \
              WHEN list_contains(list_transform({elements}, lambda e: json_type(e)), 'NULL') \
              THEN CAST({} AS VARCHAR) \
-             ELSE array_to_string(list_transform({elements}, lambda e: CASE \
+             ELSE coalesce(list_aggr(list_transform({elements}, lambda e: CASE \
              WHEN json_type(e) = 'VARCHAR' THEN json_extract_string(e, '$') \
-             ELSE {written} END), {separator}) END)",
+             ELSE {written} END), 'string_agg', {separator}), '') END)",
             raised(&tagged_message(
                 NOT_AN_ARRAY_ARGUMENT,
                 NOT_AN_ARRAY_ARGUMENT_MESSAGE

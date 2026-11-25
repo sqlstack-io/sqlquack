@@ -1375,3 +1375,44 @@ pub(crate) fn parsed_copies(sql: &str, marker: &str) -> usize {
         .expect("DuckDB parses the converted statement");
     parsed.matches(marker).count()
 }
+
+/// DuckDB's built-in macros that paste an argument twice, so a computed argument is bound twice.
+const REPEATING_MACROS: [&str; 3] = ["nullif", "array_to_string", "split_part"];
+
+/// How many arguments of DuckDB's repeating macros in converted `sql` are not a column or constant.
+pub(crate) fn computed_macro_arguments(sql: &str) -> usize {
+    let (converted, _) = convert_streams(sql, &["--no-config", "--compact"]);
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let query = after_setup(&connection, &converted);
+    let parsed: String = connection
+        .query_row("SELECT json_serialize_sql(?)", [query], |row| row.get(0))
+        .expect("DuckDB parses the converted statement");
+    let tree: serde_json::Value = serde_json::from_str(&parsed).expect("the parse is JSON");
+    computed_arguments(&tree)
+}
+
+/// The computed arguments of repeating macros at and below `node`.
+fn computed_arguments(node: &serde_json::Value) -> usize {
+    let repeating = node
+        .get("function_name")
+        .and_then(serde_json::Value::as_str)
+        .is_some_and(|name| REPEATING_MACROS.contains(&name));
+    let own: usize = node
+        .get("arguments")
+        .and_then(serde_json::Value::as_array)
+        .filter(|_| repeating)
+        .map_or(0, |arguments| {
+            arguments
+                .iter()
+                .filter_map(|argument| argument.pointer("/expression/class"))
+                .filter(|class| !matches!(class.as_str(), Some("COLUMN_REF" | "CONSTANT")))
+                .count()
+        });
+    let fields: usize = node
+        .as_object()
+        .map_or(0, |fields| fields.values().map(computed_arguments).sum());
+    let items: usize = node
+        .as_array()
+        .map_or(0, |items| items.iter().map(computed_arguments).sum());
+    own + fields + items
+}

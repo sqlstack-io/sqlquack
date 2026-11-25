@@ -39,8 +39,8 @@ pub fn title_case(value: &str, delimiters: &str, log: &ProvenanceLog) -> String 
     let body = format!(
         "(CASE WHEN {text} IS NULL THEN NULL WHEN regexp_matches({text}, {}) \
          THEN CAST({unproven} AS VARCHAR) \
-         ELSE array_to_string(list_transform(string_split({text}, ''), lambda c, i: \
-         CASE WHEN i = 1{after_delimiter} THEN upper(c) ELSE {} END), '') END)",
+         ELSE coalesce(list_aggr(list_transform(string_split({text}, ''), lambda c, i: \
+         CASE WHEN i = 1{after_delimiter} THEN upper(c) ELSE {} END), 'string_agg', ''), '') END)",
         string_literal(&unknown, log),
         full_case_lower("c", log)
     );
