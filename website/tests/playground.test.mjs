@@ -188,7 +188,7 @@ test('translated SQL and its helper macros are laid out over lines unless the co
 	assert.equal(
 		laidOut,
 		'SELECT\n    "ORDERS"."ORDER_ID" AS "ORDER_ID",\n    "ORDERS"."NOTE" AS "NOTE",\n    ' +
-			'\'a longer literal\' AS "LABEL"\nFROM "ORDERS" AS "ORDERS"\nWHERE ("ORDERS"."ORDER_ID" > CAST(1 AS DECIMAL(1, 0)))',
+			'\'a longer literal\' AS "LABEL"\nFROM "ORDERS"\nWHERE ("ORDERS"."ORDER_ID" > CAST(1 AS DECIMAL(1, 0)))',
 	);
 	// Only whitespace differs from the compact SQL.
 	const compact = translated(sql, { compact: true }).sql;
