@@ -280,11 +280,27 @@ pub(crate) fn case_expression(payload: &Value, site: Site<'_>) -> Result<Emitted
     require_understood(payload, &["operand", "whens", "else_"], &construct)?;
     let whens = list(payload, "whens");
     let operand_node = payload.get("operand").filter(|operand| !operand.is_null());
+    let otherwise_node = payload.get("else_").filter(|value| !value.is_null());
+    let mut carried: Option<Vec<String>> = None;
     let (subject, conditions, mut branches) = match operand_node {
         Some(node) if !plain(node) && whens.iter().all(|when| when.get(0).is_some_and(plain)) => {
-            let (subject, results) = bound_whens(node, whens, site)?;
-            let positions = (1..=results.len()).map(|position| position.to_string());
-            (format!(" {subject}"), positions.collect(), results)
+            let carry = whens.iter().all(|when| when.get(1).is_some_and(plain))
+                && otherwise_node.is_none_or(plain);
+            let bound = bound_whens(node, whens, carry, site)?;
+            match carry {
+                true => {
+                    carried = Some(bound.packed);
+                    (String::new(), bound.tests, bound.results)
+                }
+                false => {
+                    let positions = (1..=bound.results.len()).map(|position| position.to_string());
+                    (
+                        format!(" {}", bound.subject()),
+                        positions.collect(),
+                        bound.results,
+                    )
+                }
+            }
         }
         Some(node) => {
             let operand = convert_expression(node, site)?;
@@ -296,8 +312,12 @@ pub(crate) fn case_expression(payload: &Value, site: Site<'_>) -> Result<Emitted
             (String::new(), conditions, results)
         }
     };
-    let otherwise = match payload.get("else_").filter(|value| !value.is_null()) {
-        Some(otherwise) => Some(convert_expression(otherwise, site)?),
+    let otherwise = match otherwise_node {
+        Some(otherwise) => Some(carried_branch(
+            convert_expression(otherwise, site)?,
+            "e",
+            carried.as_mut(),
+        )),
         None => None,
     };
     branches.extend(otherwise.iter().cloned());
@@ -310,6 +330,9 @@ pub(crate) fn case_expression(payload: &Value, site: Site<'_>) -> Result<Emitted
         sql.push_str(&format!(" ELSE {last}"));
     }
     sql.push_str(" END)");
+    if let Some(packed) = carried {
+        sql = bound_subject(&packed, &sql);
+    }
     let mut values = marks(&branches);
     if otherwise.is_none() {
         values.push((SnowflakeType::Null, false));
@@ -338,12 +361,56 @@ fn plain(node: &Value) -> bool {
     }
 }
 
-/// A simple CASE's operand bound once beside its WHEN values: the first equal WHEN's position.
+/// A simple CASE's operand packed once, as DuckDB repeats a simple CASE's operand in every WHEN.
+struct BoundWhens {
+    /// The `struct_pack` fields: the operand, the WHEN values and any carried results.
+    packed: Vec<String>,
+    /// Each WHEN's test of the packed operand against its packed value.
+    tests: Vec<String>,
+    /// The results, read from the pack when carried.
+    results: Vec<Emitted>,
+}
+
+impl BoundWhens {
+    /// The first equal WHEN's position, for a CASE over the positions choosing uncarried results.
+    fn subject(&self) -> String {
+        let tests: Vec<String> = self
+            .tests
+            .iter()
+            .enumerate()
+            .map(|(position, test)| format!(" WHEN {test} THEN {}", position + 1))
+            .collect();
+        bound_subject(&self.packed, &format!("CASE{} END", tests.concat()))
+    }
+}
+
+/// `body` over the packed fields, read through the lambda parameter once per row.
+fn bound_subject(packed: &[String], body: &str) -> String {
+    format!(
+        "list_transform([struct_pack({})], lambda {CASE_SUBJECT}: {body})[1]",
+        packed.join(", ")
+    )
+}
+
+/// `branch` read from the pack as `field` when the results are carried in it.
+fn carried_branch(branch: Emitted, field: &str, packed: Option<&mut Vec<String>>) -> Emitted {
+    let Some(packed) = packed else {
+        return branch;
+    };
+    packed.push(format!("{field} := {}", branch.sql));
+    Emitted {
+        sql: format!("{CASE_SUBJECT}['{field}']"),
+        ..branch
+    }
+}
+
+/// A simple CASE's operand packed once with its WHEN values and, when `carry`, its plain results.
 fn bound_whens(
     operand: &Value,
     whens: &[Value],
+    carry: bool,
     site: Site<'_>,
-) -> Result<(String, Vec<Emitted>), Refusal> {
+) -> Result<BoundWhens, Refusal> {
     let construct = node_construct("case");
     let operand = convert_expression(operand, site)?;
     let mut packed = vec![format!("o := {}", operand.sql)];
@@ -367,25 +434,22 @@ fn bound_whens(
             ..value
         };
         let (left, right) = comparable(subject.clone(), value, &construct, site.context)?;
-        tests.push(format!(
-            " WHEN {} = {} THEN {}",
-            left.sql,
-            right.sql,
-            position + 1
+        tests.push(format!("{} = {}", left.sql, right.sql));
+        let result = convert_expression(result, site)?;
+        results.push(carried_branch(
+            result,
+            &format!("r{position}"),
+            carry.then_some(&mut packed),
         ));
-        results.push(convert_expression(result, site)?);
     }
     if tests.is_empty() {
         return Err(missing(construct, "CASE without WHEN".to_owned()));
     }
-    Ok((
-        format!(
-            "list_transform([struct_pack({})], lambda {CASE_SUBJECT}: CASE{} END)[1]",
-            packed.join(", "),
-            tests.concat()
-        ),
+    Ok(BoundWhens {
+        packed,
+        tests,
         results,
-    ))
+    })
 }
 
 fn case_whens(

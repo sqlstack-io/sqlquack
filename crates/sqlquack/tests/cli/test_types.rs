@@ -448,3 +448,13 @@ pub(crate) struct BindCheckTestCase {
     /// Whether it converts, printing SQL on standard output.
     pub(crate) expected_converted: bool,
 }
+
+/// A simple CASE over a computed operand, with `branches` WHENs choosing `result`.
+pub(crate) struct CaseSubjectTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) branches: usize,
+    /// One WHEN's result, `{i}` replaced by its position.
+    pub(crate) result: &'static str,
+    /// How many copies of the operand DuckDB parses, whatever the number of WHENs.
+    pub(crate) expected_copies: usize,
+}

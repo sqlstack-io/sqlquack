@@ -1364,3 +1364,14 @@ pub(crate) fn bracket_depth(sql: &str) -> i64 {
         .max()
         .unwrap_or_default()
 }
+
+/// How many times `marker` appears in DuckDB's parse of the converted `sql`, what DuckDB binds.
+pub(crate) fn parsed_copies(sql: &str, marker: &str) -> usize {
+    let (converted, _) = convert_streams(sql, &["--no-config", "--compact"]);
+    let connection = duckdb::Connection::open_in_memory().expect("DuckDB opens");
+    let query = after_setup(&connection, &converted);
+    let parsed: String = connection
+        .query_row("SELECT json_serialize_sql(?)", [query], |row| row.get(0))
+        .expect("DuckDB parses the converted statement");
+    parsed.matches(marker).count()
+}
