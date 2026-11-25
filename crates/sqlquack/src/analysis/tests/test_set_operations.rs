@@ -58,6 +58,25 @@ fn given_set_operations_when_converting_then_names_types_and_rows_are_snowflakes
             ]),
         },
         SetResultTestCase {
+            description: "a star before a literal in later branches keeps each column's own reading",
+            sql: format!(
+                "SELECT 1 AS a, 2 AS b, 3 AS c UNION ALL {}",
+                (1..=12)
+                    .map(|index| format!("SELECT *, 5 FROM (SELECT 7 AS p, '{index}e' AS q)"))
+                    .collect::<Vec<String>>()
+                    .join(" UNION ALL ")
+            ),
+            expected_columns: vec!["A DECIMAL(1,0)", "B DECIMAL(18,5)", "C DECIMAL(1,0)"],
+            expected_rows: {
+                let mut expected: Vec<Vec<String>> = (1..=12)
+                    .map(|index| vec!["7".to_owned(), format!("{index}.00000"), "5".to_owned()])
+                    .collect();
+                expected.push(vec!["1".to_owned(), "2.00000".to_owned(), "3".to_owned()]);
+                expected.sort();
+                expected
+            },
+        },
+        SetResultTestCase {
             description: "the result takes the first branch's names, not the second's",
             sql: "SELECT 1 AS a, 'x' AS b UNION ALL SELECT 2 AS z, 'y' AS w".to_owned(),
             expected_columns: vec!["A DECIMAL(1,0)", "B VARCHAR"],
