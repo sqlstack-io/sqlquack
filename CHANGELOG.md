@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.24.0](https://github.com/sqlstack-io/sqlquack/compare/v0.23.2...v0.24.0) (2026-11-25)
+
+
+### Features
+
+* **convert:** let callers skip DuckDB's bind check of the converted SQL ([55d45ae](https://github.com/sqlstack-io/sqlquack/commit/55d45ae660e23ee9e136bd9952d2d486bb1784f3))
+
+
+### Bug Fixes
+
+* **convert:** bind a simple CASE's computed operand once in DuckDB ([b9fd94c](https://github.com/sqlstack-io/sqlquack/commit/b9fd94cac9094abf3a315fab04b089c21d458d97))
+* **convert:** cast UNION ALL literals once only in starless chains, and meet the lint rules ([dbd7784](https://github.com/sqlstack-io/sqlquack/commit/dbd778428f848d5cfd758b4f70276b4e52cfb698))
+* **convert:** cast UNION ALL literals once only where items are columns ([25a7c2f](https://github.com/sqlstack-io/sqlquack/commit/25a7c2f547990061a1a9bfd711908e42561994a2))
+* **convert:** slice non-ASCII Snowflake source once per parse ([f0ea8e9](https://github.com/sqlstack-io/sqlquack/commit/f0ea8e96ec1fa54055894998a7ab581fffec6d4f))
+
+
+### Performance Improvements
+
+* **convert:** list a long FLOAT variance operand once for its count and sums ([0db107f](https://github.com/sqlstack-io/sqlquack/commit/0db107f3bdc55ee130969158b7d0a66824f09ce4))
+* **convert:** match a date format's groups once, drop the default frame, bind a long held cast ([c1eea2e](https://github.com/sqlstack-io/sqlquack/commit/c1eea2ebdc227b9fda3986d7f6e30425436d114a))
+* **convert:** read a constant PARSE_JSON literal with json() when the fast check would ([ed93b7b](https://github.com/sqlstack-io/sqlquack/commit/ed93b7b945eb27534d8af1846a125e5e63551b18))
+* **convert:** write UNION ALL branches once: names, parentheses and integer casts ([735e0fe](https://github.com/sqlstack-io/sqlquack/commit/735e0fe16dcb651e2331f5e9cc804f819a5e9004))
+
 ## [0.23.2](https://github.com/sqlstack-io/sqlquack/compare/v0.23.1...v0.23.2) (2026-11-25)
 
 
