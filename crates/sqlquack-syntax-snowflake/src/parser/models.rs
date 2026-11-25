@@ -443,6 +443,8 @@ pub(crate) struct Parser {
     pub(crate) eof_followed_by: Option<(TokenType, Span)>,
     /// Positions where `IF` was rejected as an if-expression, so retries stay linear.
     pub(crate) if_expr_ruled_out: HashSet<usize>,
+    /// Each character's byte offset in a non-ASCII `source`, built once, so slicing never rewalks it.
+    pub(crate) source_char_bytes: std::cell::OnceCell<Option<Vec<usize>>>,
     pub(crate) parsing_duckdb_json_path: bool,
     pub(crate) recursion: Arc<ParserRecursion>,
     /// SQLQuack: faithful calls parsed so far, by argument start token, with the token after them.

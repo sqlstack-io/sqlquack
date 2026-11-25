@@ -1353,3 +1353,14 @@ fn project_folder(files: &[ProjectFile], folder: &str, sql: &str) -> tempfile::T
     std::fs::write(directory.path().join("query.sql"), sql).expect("query written");
     directory
 }
+
+/// The deepest bracket nesting of `sql`, which must hold no brackets in quoted text.
+pub(crate) fn bracket_depth(sql: &str) -> i64 {
+    sql.chars()
+        .scan(0_i64, |depth, character| {
+            *depth += i64::from(character == '(') - i64::from(character == ')');
+            Some(*depth)
+        })
+        .max()
+        .unwrap_or_default()
+}

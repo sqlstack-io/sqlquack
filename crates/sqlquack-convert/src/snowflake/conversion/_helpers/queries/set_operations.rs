@@ -30,7 +30,7 @@ use crate::snowflake::conversion::_helpers::support::divergence::{
 use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
 use crate::snowflake::conversion::_helpers::support::tree::{
-    field, flag, node_construct, payload_object, require_understood,
+    Payload, field, flag, node_construct, node_kind, payload_object, require_understood,
 };
 use crate::snowflake::conversion::constants::DUPLICATE_VARIANTS;
 use crate::snowflake::conversion::constants::{
@@ -110,12 +110,8 @@ pub(crate) fn convert_set_operation(
     };
     let context = &context.projecting(context.free_projections && keyword == UNION_ALL);
     let (with_sql, context) = convert_with(operation.get("with"), outer, context)?;
-    let left = convert_query(
-        field(operation, "left", &construct)?,
-        outer,
-        &context,
-        named,
-    )?;
+    let left_node: &Value = field(operation, "left", &construct)?;
+    let left = convert_query(left_node, outer, &context, named)?;
     let right = convert_query(
         field(operation, "right", &construct)?,
         outer,
@@ -134,9 +130,14 @@ pub(crate) fn convert_set_operation(
         }
         false => {
             let columns = unified_columns((&left.1, &right.1), &construct, &context)?;
+            let canonical = keyword != UNION_ALL
+                && columns
+                    .iter()
+                    .any(|column| column.data_type == SnowflakeType::SemiStructured);
+            let bare = !canonical && continues_chain(left_node, kind, operation);
             (
-                conform(left, &columns, &construct, &context)?,
-                conform(right, &columns, &construct, &context)?,
+                conform(left, (&columns, bare), &construct, &context)?,
+                conform(right, (&columns, false), &construct, &context)?,
                 columns,
             )
         }
@@ -205,6 +206,23 @@ pub(crate) fn convert_set_operation(
     ))
 }
 
+/// Whether `left` is `operation`'s set operator, quantifier and nothing else, so it prints unbracketed.
+fn continues_chain(left: &Value, kind: &str, operation: &Payload) -> bool {
+    let Some((left_kind, payload)) = node_kind(left) else {
+        return false;
+    };
+    let Some(inner) = payload.as_object() else {
+        return false;
+    };
+    left_kind == kind
+        && flag(inner, "all") == flag(operation, "all")
+        && flag(inner, "distinct") == flag(operation, "distinct")
+        && !flag(inner, "by_name")
+        && ["with", "order_by", "limit", "offset"]
+            .iter()
+            .all(|clause| inner.get(*clause).is_none_or(Value::is_null))
+}
+
 /// The branches' common column types.
 fn unified_columns(
     (left, right): (&[ColumnSpec], &[ColumnSpec]),
@@ -237,9 +255,10 @@ fn unified_columns(
     Ok(columns)
 }
 
+/// `sql` cast to `target`, bracketed unless `bare`: a left operand continuing its chain, read left to right.
 fn conform(
     (sql, actual): ConvertedQuery,
-    target: &[ColumnSpec],
+    (target, bare): (&[ColumnSpec], bool),
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<String, Refusal> {
@@ -249,7 +268,7 @@ fn conform(
             && !joins_held(actual, target)
     });
     if same {
-        return Ok(format!("({sql})"));
+        return Ok(if bare { sql } else { format!("({sql})") });
     }
     let log = context.log;
     let names: Vec<String> = (1..=actual.len())
