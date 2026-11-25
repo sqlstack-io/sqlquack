@@ -12,6 +12,9 @@ use crate::raises::main::raised::raised;
 use crate::temporal::_helpers::text::{bound, digitless};
 use crate::temporal::models::{TimestampField, TimestampFormat};
 
+/// The lambda parameter holding the format's groups, matched once.
+const GROUPS: &str = "format_groups";
+
 /// `value` in `format`: misspelled raises (TRY_ YY/MON: NULL); empty or impossible NULL if `trying`.
 pub fn formatted_text_to_timestamp(
     value: &str,
@@ -21,12 +24,42 @@ pub fn formatted_text_to_timestamp(
     log.building_block(FORMATTED_TEXT_TO_TIMESTAMP);
     let sql = "t";
     let pattern = &format.pattern;
+    let plain = read(format, trying, &|group| {
+        format!("regexp_extract({sql}, '{pattern}', {group})")
+    });
+    let names: Vec<String> = (1..=format.fields.len())
+        .map(|group| format!("'g{group}'"))
+        .collect();
+    let (grouped, strict) = read(format, trying, &|group| format!("{GROUPS}['g{group}']"));
+    let grouped = bound(
+        &format!("regexp_extract({sql}, '{pattern}', [{}])", names.join(", ")),
+        GROUPS,
+        &grouped,
+    );
+    let body = match grouped.len() < plain.0.len() {
+        true => grouped,
+        false => plain.0,
+    };
+    match strict {
+        true => bound(&format!("trim({value}, ' ')"), sql, &body),
+        false => bound(value, sql, &body),
+    }
+}
+
+/// The reading of the text `t` in `format`, each group's text as `extract` writes it, and whether TRY_ trims it.
+fn read(
+    format: &TimestampFormat,
+    trying: bool,
+    extract: &dyn Fn(usize) -> String,
+) -> (String, bool) {
+    let sql = "t";
+    let pattern = &format.pattern;
     let field = |wanted: TimestampField| {
         format
             .fields
             .iter()
             .position(|field| *field == wanted)
-            .map(|index| format!("regexp_extract({sql}, '{pattern}', {})", index + 1))
+            .map(|index| extract(index + 1))
     };
     let number = |wanted: TimestampField| {
         field(wanted).map_or_else(|| "0".to_owned(), |text| format!("CAST({text} AS INTEGER)"))
@@ -106,8 +139,5 @@ pub fn formatted_text_to_timestamp(
             "{TIMESTAMP_RANGE}: a timestamp Snowflake holds outside the nanosecond range of DuckDB"
         )),
     );
-    match strict {
-        true => bound(&format!("trim({value}, ' ')"), sql, &body),
-        false => bound(value, sql, &body),
-    }
+    (body, strict)
 }

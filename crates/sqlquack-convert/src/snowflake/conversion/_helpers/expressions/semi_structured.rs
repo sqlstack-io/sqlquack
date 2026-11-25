@@ -1,6 +1,7 @@
 //! VARIANT values held as DuckDB `JSON`: parsing, paths, inspection and casts.
 
 use serde_json::Value;
+use sqlquack_blocks::blocks::constants::INLINE_ARGUMENT_LIMIT;
 use sqlquack_blocks::blocks::main::varchar_length_check::varchar_length_check;
 use sqlquack_blocks::floats::constants::FLOAT_TEXT;
 use sqlquack_blocks::held::main::double_written::double_written;
@@ -51,6 +52,9 @@ use crate::snowflake::conversion::constants::{
     VARIANT_NAME, VARIANT_PATH, VARIANT_TYPE_NAME,
 };
 use sqlquack_policy::policy::constants::{DATE_TEXT_SPELLING, TIMESTAMP_RANGE};
+
+/// The lambda parameter a long VARIANT is bound to while its kind is checked.
+const HELD_KIND: &str = "held_kind";
 
 /// PARSE_JSON or TRY_PARSE_JSON of text: raises wherever the two parsers may disagree.
 pub(crate) fn parse_json(
@@ -372,14 +376,19 @@ pub(crate) fn held_cast(
         .find(|(name, _)| *name == type_name)
     {
         let _kind = log.rule(VARIANT_KIND_CAST);
-        let checked = json_kind_cast(&variant_json(&operand.sql, log), kind, log);
-        return Ok(Emitted {
-            sql: format!(
-                "(CASE WHEN {checked} IS NULL THEN NULL ELSE {} END)",
-                operand.sql
+        let checked = |held: &str| {
+            let checked = json_kind_cast(&variant_json(held, log), kind, log);
+            format!("(CASE WHEN {checked} IS NULL THEN NULL ELSE {held} END)")
+        };
+        let sql = match operand.sql.len() > INLINE_ARGUMENT_LIMIT {
+            true => format!(
+                "list_transform([{}], lambda {HELD_KIND}: {})[1]",
+                operand.sql,
+                checked(HELD_KIND)
             ),
-            ..operand
-        });
+            false => checked(&operand.sql),
+        };
+        return Ok(Emitted { sql, ..operand });
     }
     let sql = match (target.data_type, target.max_length) {
         (SnowflakeType::Varchar, max_length) => {

@@ -45,8 +45,6 @@ use crate::snowflake::conversion::constants::{
 
 /// Snowflake's frame for FIRST_VALUE and LAST_VALUE when none is written.
 const WHOLE_PARTITION: &str = "ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING";
-/// The frame for an ordered window aggregate when none is written.
-const RUNNING_RANGE: &str = "RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW";
 /// Frame kinds and bounds as the parser names them.
 const ROWS: &str = "Rows";
 const RANGE: &str = "Range";
@@ -568,7 +566,7 @@ fn aggregate_clause(
                 )
             })?,
         ),
-        None if !over.order.is_empty() => Some(RUNNING_RANGE.to_owned()),
+        // DuckDB's frame without one written is Snowflake's: RANGE from the partition's start to the current row.
         None => None,
     };
     Ok(over.clause(frame.as_deref(), site))
