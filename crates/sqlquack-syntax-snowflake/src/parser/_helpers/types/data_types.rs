@@ -1415,14 +1415,26 @@ impl Parser {
             return String::new();
         };
 
-        if source.is_ascii() {
-            source
+        let offsets: &Option<Vec<usize>> = self.source_char_bytes.get_or_init(|| {
+            (!source.is_ascii()).then(|| {
+                source
+                    .char_indices()
+                    .map(|(byte, _)| byte)
+                    .chain([source.len()])
+                    .collect()
+            })
+        });
+        let Some(offsets) = offsets else {
+            return source
                 .get(start..end)
                 .map(ToString::to_string)
-                .unwrap_or_default()
-        } else {
-            source.chars().skip(start).take(end - start).collect()
-        }
+                .unwrap_or_default();
+        };
+        let byte = |offset: usize| offsets.get(offset).copied().unwrap_or(source.len());
+        source
+            .get(byte(start)..byte(end.max(start)))
+            .map(ToString::to_string)
+            .unwrap_or_default()
     }
 
     /// Keeps a ClickHouse `(EXPLAIN ... SELECT ...)` subquery as command text.

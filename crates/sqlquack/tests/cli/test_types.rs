@@ -414,3 +414,29 @@ pub(crate) struct SetQuantifierTestCase {
     pub(crate) expected_same_as: &'static str,
     pub(crate) expected_unlike: &'static str,
 }
+
+/// A chain of `branches` copies of `branch` joined by one set operator, and how deep its output nests.
+pub(crate) struct SetChainTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) operator: &'static str,
+    pub(crate) branch: &'static str,
+    pub(crate) branches: usize,
+    /// The deepest bracket nesting of the compact converted SQL, which must not grow with `branches`.
+    pub(crate) expected_depth: i64,
+}
+
+/// A statement whose converted SQL returns one text value on DuckDB.
+pub(crate) struct ChainValueTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_value: &'static str,
+}
+
+/// A set operator whose chains of `branch` must cost the same output for every branch added.
+pub(crate) struct ChainGrowthTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) operator: &'static str,
+    pub(crate) branch: &'static str,
+    /// The bytes of laid-out SQL each further branch adds, the same from 4 to 16 as from 16 to 64.
+    pub(crate) expected_bytes_per_branch: usize,
+}
