@@ -3,6 +3,8 @@
 use sqlquack_blocks::blocks::main::exact_decimal_divide::exact_decimal_divide;
 use sqlquack_blocks::blocks::models::Divisor;
 use sqlquack_blocks::floats::constants::FLOAT_SUM_ORDER;
+use sqlquack_blocks::blocks::constants::INLINE_ARGUMENT_LIMIT;
+use sqlquack_blocks::floats::main::exact_float_moments::exact_float_moments;
 use sqlquack_blocks::floats::main::exact_float_sum::exact_float_sum;
 use sqlquack_diagnostics::classification::models::Construct;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
@@ -247,16 +249,23 @@ fn float_variance(
     let _rule = log.rule(VARIANCE_FLOAT_RULE);
     diverge(context, FLOAT_SUM_ORDER, construct)?;
     let over = shape.over;
-    let count = format!("count({value}){over}");
-    let values = format!("CAST({count} AS DOUBLE)");
-    let total = exact_float_sum(value, "", over, log);
-    let squares = exact_float_sum(&format!("({value}) * ({value})"), "", over, log);
-    Ok(format!(
-        "(CASE WHEN {count} < {} THEN NULL ELSE ({values} * {squares} - \
-         list_transform([{total}], lambda float_total: float_total * float_total)[1]) / \
-         ({values} * {}) END)",
-        shape.fewest(),
-        degrees(&values, shape)
+    let variance = |count: &str, total: &str, squares: &str| {
+        let values = format!("CAST({count} AS DOUBLE)");
+        format!(
+            "(CASE WHEN {count} < {} THEN NULL ELSE ({values} * {squares} - \
+             list_transform([{total}], lambda float_total: float_total * float_total)[1]) / \
+             ({values} * {}) END)",
+            shape.fewest(),
+            degrees(&values, shape)
+        )
+    };
+    if value.len() > INLINE_ARGUMENT_LIMIT {
+        return Ok(exact_float_moments(value, over, variance, log));
+    }
+    Ok(variance(
+        &format!("count({value}){over}"),
+        &exact_float_sum(value, "", over, log),
+        &exact_float_sum(&format!("({value}) * ({value})"), "", over, log),
     ))
 }
 

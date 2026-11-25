@@ -31,6 +31,19 @@ pub(crate) fn aggregated_sum(value: &str, distinct: &str, over: &str, raise: &st
 
 /// The sum from one list of the values, so a long `value` is written once.
 pub(crate) fn listed_sum(value: &str, distinct: bool, over: &str, raise: &str) -> String {
+    values_sum(&listed_values(value, over), distinct, raise)
+}
+
+/// The list of a group's non-NULL `value`s as doubles.
+pub(crate) fn listed_values(value: &str, over: &str) -> String {
+    format!(
+        "list_filter(coalesce(list(CAST({value} AS DOUBLE)){over}, \
+         CAST([] AS DOUBLE[])), lambda float_sum_x: float_sum_x IS NOT NULL)"
+    )
+}
+
+/// The sum of the list `values`, which holds no NULL.
+pub(crate) fn values_sum(values: &str, distinct: bool, raise: &str) -> String {
     let each = |body: &str| format!("list_transform(float_sum_values, lambda float_sum_x: {body})");
     let exact: Vec<String> = EXACT_SUM_SCALES
         .iter()
@@ -51,8 +64,7 @@ pub(crate) fn listed_sum(value: &str, distinct: bool, over: &str, raise: &str) -
         false => "float_sum_values",
     };
     format!(
-        "list_transform([list_filter(coalesce(list(CAST({value} AS DOUBLE)){over}, \
-         CAST([] AS DOUBLE[])), lambda float_sum_x: float_sum_x IS NOT NULL)], \
+        "list_transform([{values}], \
          lambda float_sum_values: CASE WHEN len(float_sum_values) = 0 THEN NULL \
          WHEN list_bool_or({}) THEN CAST('nan' AS DOUBLE) \
          WHEN len(float_sum_values) <= 2 OR {} OR {} THEN list_sum({summed}) + 0.0 \
