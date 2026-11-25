@@ -210,7 +210,8 @@ fn convert_query_kind(
         }
         "values" => {
             let _rule = context.log.rule(VALUES_ROWS);
-            let (sql, mut columns) = convert_output(&values_rows(payload)?, outer, context, output)?;
+            let (sql, mut columns) =
+                convert_output(&values_rows(payload)?, outer, context, output)?;
             let filled = filled_columns(payload);
             for (position, column) in columns.iter_mut().enumerate() {
                 column.not_null = filled.get(position).copied().unwrap_or(false);

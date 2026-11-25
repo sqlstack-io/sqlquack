@@ -164,8 +164,20 @@ pub(crate) fn convert_set_operation(
             let columns = unified_columns((&left.1, &right.1), &construct, &context)?;
             let left_plain = plain_select(left_node) || chained(left_node, kind, operation);
             (
-                conform(left, &columns, (left_written, left_plain, bare), &construct, &context)?,
-                conform(right, &columns, (false, plain_select(right_node), bare), &construct, &context)?,
+                conform(
+                    left,
+                    &columns,
+                    (left_written, left_plain, bare),
+                    &construct,
+                    &context,
+                )?,
+                conform(
+                    right,
+                    &columns,
+                    (false, plain_select(right_node), bare),
+                    &construct,
+                    &context,
+                )?,
                 columns,
             )
         }
@@ -177,8 +189,20 @@ pub(crate) fn convert_set_operation(
             .any(|column| column.data_type == SnowflakeType::SemiStructured)
     {
         true => (
-            canonical_branch(left_sql, (&left_columns, &columns), left_written, &construct, &context)?,
-            canonical_branch(right_sql, (&right_columns, &columns), false, &construct, &context)?,
+            canonical_branch(
+                left_sql,
+                (&left_columns, &columns),
+                left_written,
+                &construct,
+                &context,
+            )?,
+            canonical_branch(
+                right_sql,
+                (&right_columns, &columns),
+                false,
+                &construct,
+                &context,
+            )?,
         ),
         false => (left_sql, right_sql),
     };
@@ -276,12 +300,16 @@ fn conform(
     context: &Context<'_>,
 ) -> Result<String, Refusal> {
     let is_bare = |index: usize| index < 64 && bare >> index & 1 == 1;
-    let same = actual.iter().zip(target).enumerate().all(|(index, (actual, target))| {
-        is_bare(index)
-            || (actual.data_type == target.data_type
-                && target.data_type != SnowflakeType::Null
-                && !joins_held(actual, target))
-    });
+    let same = actual
+        .iter()
+        .zip(target)
+        .enumerate()
+        .all(|(index, (actual, target))| {
+            is_bare(index)
+                || (actual.data_type == target.data_type
+                    && target.data_type != SnowflakeType::Null
+                    && !joins_held(actual, target))
+        });
     if same {
         return Ok(match plain {
             true => sql,
@@ -368,7 +396,12 @@ fn hoisted(operation: &Payload) -> u64 {
     let mut bare = u64::MAX;
     for branch in &branches {
         let items = list(branch, "expressions");
-        if items.len() > 64 || flag(branch, "distinct") || branch.get("connect").is_some_and(|connect| !connect.is_null()) {
+        if items.len() > 64
+            || flag(branch, "distinct")
+            || branch
+                .get("connect")
+                .is_some_and(|connect| !connect.is_null())
+        {
             return 0;
         }
         let mut literals = 0_u64;
@@ -455,7 +488,10 @@ fn cast_once(
             items.push(format!("{cast} AS {name}"));
         }
     }
-    Ok(format!("SELECT * REPLACE ({}) FROM ({sql})", items.join(", ")))
+    Ok(format!(
+        "SELECT * REPLACE ({}) FROM ({sql})",
+        items.join(", ")
+    ))
 }
 
 /// A select item, `AS name` when `written`.
@@ -478,7 +514,9 @@ fn plain_select(node: &Value) -> bool {
 
 /// Whether a left branch is the same set operation, unordered and without WITH, which DuckDB groups the same unparenthesised.
 fn chained(node: &Value, kind: &str, operation: &Payload) -> bool {
-    let Some((inner, Some(branch))) = node_kind(node).map(|(inner, branch)| (inner, branch.as_object())) else {
+    let Some((inner, Some(branch))) =
+        node_kind(node).map(|(inner, branch)| (inner, branch.as_object()))
+    else {
         return false;
     };
     inner == kind

@@ -674,7 +674,11 @@ pub(crate) fn shop_result(sql: &str) -> Result<(Vec<String>, Vec<Vec<String>>), 
         .map_err(failed)?;
     let columns: Vec<String> = described
         .query_map([], |row| {
-            Ok(format!("{} {}", row.get::<_, String>(0)?, row.get::<_, String>(1)?))
+            Ok(format!(
+                "{} {}",
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?
+            ))
         })
         .map_err(failed)?
         .collect::<Result<_, _>>()
@@ -689,7 +693,11 @@ pub(crate) fn shop_result(sql: &str) -> Result<(Vec<String>, Vec<Vec<String>>), 
     let mut rows: Vec<Vec<String>> = statement
         .query_map([], |row| {
             (0..width)
-                .map(|index| Ok(row.get::<_, Option<String>>(index)?.unwrap_or_else(|| "NULL".to_owned())))
+                .map(|index| {
+                    Ok(row
+                        .get::<_, Option<String>>(index)?
+                        .unwrap_or_else(|| "NULL".to_owned()))
+                })
                 .collect()
         })
         .map_err(failed)?
