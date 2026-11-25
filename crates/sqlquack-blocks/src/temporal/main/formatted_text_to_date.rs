@@ -34,7 +34,9 @@ pub fn formatted_text_to_date(
         let grouped = bound(
             &format!("regexp_extract({sql}, '{pattern}', [{}])", names.join(", ")),
             GROUPS,
-            &converted(sql, (format, trying), &|group| format!("{GROUPS}['g{group}']")),
+            &converted(sql, (format, trying), &|group| {
+                format!("{GROUPS}['g{group}']")
+            }),
         );
         match grouped.len() < plain.len() {
             true => grouped,
