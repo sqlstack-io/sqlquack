@@ -108,7 +108,7 @@ SELECT
         CAST(hash(CAST("ORDERS"."CUSTOMER_ID" AS HUGEINT)) AS HUGEINT)
         - 9223372036854775808 AS DECIMAL(19, 0)
     ) AS "BUCKET"
-FROM "ORDERS" AS "ORDERS"
+FROM "ORDERS"
 sqlquack convert: done, converted (1 known difference allowed: hash — sqlquack explain hash)
 ```
 

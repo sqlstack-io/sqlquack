@@ -95,7 +95,7 @@ $ sqlquack convert revenue.sql --no-config
 SELECT
     "ORDERS"."CUSTOMER_ID" AS "CUSTOMER_ID",
     CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24, 2)) AS "REVENUE"
-FROM "ORDERS" AS "ORDERS"
+FROM "ORDERS"
 WHERE ("ORDERS"."STATUS" = 'shipped')
 GROUP BY "ORDERS"."CUSTOMER_ID"
 sqlquack convert: done, converted

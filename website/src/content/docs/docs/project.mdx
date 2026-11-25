@@ -29,7 +29,7 @@ sqlquack convert: converting…
 SELECT
     "ORDERS"."STATUS" AS "STATUS",
     CAST(sum("ORDERS"."TOTAL") AS DECIMAL(24, 2)) AS "REVENUE"
-FROM "ORDERS" AS "ORDERS"
+FROM "ORDERS"
 GROUP BY "ORDERS"."STATUS"
 sqlquack convert: done, converted
 ```
