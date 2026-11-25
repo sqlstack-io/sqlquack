@@ -38,6 +38,8 @@ mod test_review;
 mod test_row_limits;
 #[path = "cli/test_run.rs"]
 mod test_run;
+#[path = "cli/test_set_chains.rs"]
+mod test_set_chains;
 #[path = "cli/test_set_quantifier.rs"]
 mod test_set_quantifier;
 #[path = "cli/test_types.rs"]
