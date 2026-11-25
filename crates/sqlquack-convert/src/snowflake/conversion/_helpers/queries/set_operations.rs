@@ -386,8 +386,9 @@ fn chain_member(operation: &Payload) -> bool {
 
 /// The positions, as bits, a UNION ALL chain writes as bare integer literals and casts once around itself.
 ///
-/// Every branch must be a plain SELECT holding an integer literal there, its first branch naming
-/// every column apart, and casting once must save more bytes than its wrapper costs.
+/// Every branch must be a plain SELECT of as many items as columns, holding an integer literal
+/// there, its first branch naming every column apart, and casting once must save more bytes than
+/// its wrapper costs.
 fn hoisted(operation: &Payload) -> u64 {
     let mut branches: Vec<&Payload> = Vec::new();
     if !chain_branches(operation, &mut branches) {
@@ -415,6 +416,14 @@ fn hoisted(operation: &Payload) -> u64 {
     let Some(names) = branches.first().and_then(|first| aliases(first)) else {
         return 0;
     };
+    // A star expands to several columns, so an item's position is its column's only when every
+    // branch has one item per column of the first.
+    if branches
+        .iter()
+        .any(|branch| list(branch, "expressions").len() != names.len())
+    {
+        return 0;
+    }
     let positions = (0..names.len()).filter(|index| bare >> index & 1 == 1);
     let cost: usize = positions
         .clone()
