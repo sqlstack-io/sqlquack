@@ -35,6 +35,7 @@ use crate::analysis::main::with_helpers::with_helpers;
 use crate::analysis::models::PipelineConverter;
 use crate::analysis::tests::test_types::{
     AnalysisSummary, CollectedSummary, DivergenceModeOutcome, EverydayCorpus, EverydayQuery,
+    ShopResult,
 };
 use crate::cli::main::convert_report::convert_report;
 use crate::cli::models::{
@@ -661,8 +662,29 @@ pub(crate) fn shop_first_value(sql: &str) -> Result<String, Vec<String>> {
         .map_err(|error| vec![error.to_string()])
 }
 
+/// `indices`' UNION ALL branches, each selecting the items `item` writes for its index.
+pub(crate) fn union_all_selects(
+    indices: std::ops::RangeInclusive<usize>,
+    item: fn(usize) -> String,
+) -> String {
+    indices
+        .map(|index| format!("SELECT {}", item(index)))
+        .collect::<Vec<String>>()
+        .join(" UNION ALL ")
+}
+
+/// Rows of text cells, sorted.
+pub(crate) fn sorted_rows(cells: &[&[&str]]) -> Vec<Vec<String>> {
+    let mut rows: Vec<Vec<String>> = cells
+        .iter()
+        .map(|row| row.iter().map(|cell| (*cell).to_owned()).collect())
+        .collect();
+    rows.sort();
+    rows
+}
+
 /// The result of `sql` converted and run on the shop rows: its column names and DuckDB types, then its rows as text, sorted.
-pub(crate) fn shop_result(sql: &str) -> Result<(Vec<String>, Vec<Vec<String>>), Vec<String>> {
+pub(crate) fn shop_result(sql: &str) -> Result<ShopResult, Vec<String>> {
     let converted = shop_conversion(sql)?;
     let connection = helped_connection(&converted.sql);
     connection

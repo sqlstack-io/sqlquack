@@ -10,9 +10,7 @@ use crate::semi_structured::_helpers::plain_json::plain_json;
 use crate::semi_structured::constants::JSON_GUARDED;
 use crate::semi_structured::models::PathStep;
 
-/// Text as DuckDB `JSON`, raising where read differently; only `reads`' paths are checked for repeats.
-///
-/// A literal the fast check would read as it is becomes `json` of the literal.
+/// Text as DuckDB `JSON`, raising where read differently, a literal the fast check clears read by `json`; only `reads`' paths are checked for repeats.
 pub fn json_guarded(
     sql: &str,
     trying: bool,

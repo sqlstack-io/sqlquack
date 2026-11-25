@@ -10,10 +10,8 @@ use crate::blocks::constants::{
 };
 use crate::raises::main::raised::raised;
 use crate::temporal::_helpers::text::{bound, digitless};
+use crate::temporal::constants::FORMAT_GROUPS;
 use crate::temporal::models::{TimestampField, TimestampFormat};
-
-/// The lambda parameter holding the format's groups, matched once.
-const GROUPS: &str = "format_groups";
 
 /// `value` in `format`: misspelled raises (TRY_ YY/MON: NULL); empty or impossible NULL if `trying`.
 pub fn formatted_text_to_timestamp(
@@ -30,10 +28,12 @@ pub fn formatted_text_to_timestamp(
     let names: Vec<String> = (1..=format.fields.len())
         .map(|group| format!("'g{group}'"))
         .collect();
-    let (grouped, strict) = read(format, trying, &|group| format!("{GROUPS}['g{group}']"));
+    let (grouped, strict) = read(format, trying, &|group| {
+        format!("{FORMAT_GROUPS}['g{group}']")
+    });
     let grouped = bound(
         &format!("regexp_extract({sql}, '{pattern}', [{}])", names.join(", ")),
-        GROUPS,
+        FORMAT_GROUPS,
         &grouped,
     );
     let body = match grouped.len() < plain.0.len() {

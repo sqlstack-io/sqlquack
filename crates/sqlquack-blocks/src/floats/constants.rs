@@ -44,3 +44,5 @@ pub const POWER_OF_TEN: &str = "duckdb.power_of_ten";
 pub const EXPONENTIAL: &str = "duckdb.exponential";
 /// SQRT, a negative number raising: `duckdb.square_root`.
 pub const SQUARE_ROOT: &str = "duckdb.square_root";
+/// The lambda parameter holding a group's non-NULL FLOAT values, listed once for its moments.
+pub const FLOAT_MOMENT_VALUES: &str = "float_moment_values";
