@@ -16,3 +16,9 @@ pub(crate) struct TryGuardedTestCase {
     pub(crate) text: &'static str,
     pub(crate) expected_null: bool,
 }
+
+pub(crate) struct FoldedLiteralTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) text: &'static str,
+    pub(crate) expected_folded: bool,
+}

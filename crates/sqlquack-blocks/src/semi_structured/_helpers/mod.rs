@@ -3,4 +3,5 @@
 pub(crate) mod guards;
 pub(crate) mod lambdas;
 pub(crate) mod paths;
+pub(crate) mod plain_json;
 pub(crate) mod writing;

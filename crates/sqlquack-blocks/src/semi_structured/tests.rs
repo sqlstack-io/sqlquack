@@ -1,5 +1,7 @@
 #[path = "tests/helpers.rs"]
 mod helpers;
+#[path = "tests/test_folded_literals.rs"]
+mod test_folded_literals;
 #[path = "tests/test_sorted_text.rs"]
 mod test_sorted_text;
 #[path = "tests/test_try_guarded.rs"]
