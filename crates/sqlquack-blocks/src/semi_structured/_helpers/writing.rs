@@ -1,6 +1,6 @@
 //! JSON text as Snowflake writes it, through the helper macros that write it.
 
-use crate::macros::constants::{JSON_ESCAPED_V1, VARIANT_JSON_TEXT_V1, VARIANT_TEXT_V1};
+use crate::macros::constants::{JSON_ESCAPED_V1, VARIANT_JSON_TEXT_V2, VARIANT_TEXT_V2};
 use crate::macros::main::helper_call::helper_call;
 use crate::raises::constants::UNIDENTIFIED_SITE;
 
@@ -16,8 +16,8 @@ pub(crate) enum Root {
 /// The VARIANT `sql` as Snowflake writes it, through its helper macro.
 pub(crate) fn sorted_text(sql: &str, root: Root) -> String {
     let name = match root {
-        Root::Json => VARIANT_JSON_TEXT_V1,
-        Root::Text => VARIANT_TEXT_V1,
+        Root::Json => VARIANT_JSON_TEXT_V2,
+        Root::Text => VARIANT_TEXT_V2,
     };
     helper_call(name, &[UNIDENTIFIED_SITE, sql])
 }

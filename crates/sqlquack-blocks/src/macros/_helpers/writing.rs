@@ -11,6 +11,15 @@ use crate::semi_structured::constants::{
 };
 use crate::semi_structured::main::json_escaped::json_escaped;
 
+/// Where the written text takes Snowflake's escapes.
+#[derive(Clone, Copy)]
+enum Escape {
+    /// On each text that may be chosen, as the released version-1 macros do.
+    EachText,
+    /// Once, on the text chosen: DuckDB pastes the escape's body in at every use.
+    Chosen,
+}
+
 /// The text of `json_value` with every object's keys in byte order, from DuckDB's `VARIANT`.
 const RESORTED: &str = "CAST(CAST(CAST(json_value AS VARIANT) AS JSON) AS VARCHAR)";
 
@@ -20,7 +29,7 @@ pub(crate) fn text_body() -> String {
         "(CASE WHEN json_value IS NULL OR json_type(json_value) = 'NULL' THEN NULL \
          WHEN json_type(json_value) = 'VARCHAR' THEN json_extract_string(json_value, '$') \
          ELSE {} END)",
-        sorted()
+        sorted(Escape::EachText)
     ))
 }
 
@@ -28,7 +37,28 @@ pub(crate) fn text_body() -> String {
 pub(crate) fn json_text_body() -> String {
     written(&format!(
         "(CASE WHEN json_value IS NULL THEN NULL ELSE {} END)",
-        sorted()
+        sorted(Escape::EachText)
+    ))
+}
+
+/// variant_text_v1's result, a number or boolean written as it is and other values escaped once.
+pub(crate) fn text_body_v2() -> String {
+    written(&format!(
+        "(CASE WHEN json_value IS NULL OR json_type(json_value) = 'NULL' THEN NULL \
+         WHEN json_type(json_value) = 'VARCHAR' THEN json_extract_string(json_value, '$') \
+         WHEN json_type(json_value) NOT IN ('OBJECT', 'ARRAY') THEN CAST(json_value AS VARCHAR) \
+         ELSE {} END)",
+        sorted(Escape::Chosen)
+    ))
+}
+
+/// variant_json_text_v1's result, a number, boolean or null written as it is, others escaped once.
+pub(crate) fn json_text_body_v2() -> String {
+    written(&format!(
+        "(CASE WHEN json_value IS NULL THEN NULL \
+         WHEN json_type(json_value) NOT IN ('OBJECT', 'ARRAY', 'VARCHAR') \
+         THEN CAST(json_value AS VARCHAR) ELSE {} END)",
+        sorted(Escape::Chosen)
     ))
 }
 
@@ -60,8 +90,11 @@ fn written(body: &str) -> String {
 }
 
 /// The JSON text of `json_value`, its objects' keys resorted through DuckDB's VARIANT if needed.
-fn sorted() -> String {
-    let escaped = |sql: &str| helper_call(JSON_ESCAPED_V1, &[sql]);
+fn sorted(escape: Escape) -> String {
+    let escaped = |sql: &str| match escape {
+        Escape::EachText => helper_call(JSON_ESCAPED_V1, &[sql]),
+        Escape::Chosen => sql.to_owned(),
+    };
     let resorted = bound(
         RESORTED,
         "json_resorted",
@@ -75,7 +108,7 @@ fn sorted() -> String {
             escaped("json_resorted"),
         ),
     );
-    bound(
+    let chosen = bound(
         &format!(
             "struct_pack(text := CAST(json_value AS VARCHAR), unsorted := {})",
             keys_unsorted("json_value")
@@ -85,7 +118,15 @@ fn sorted() -> String {
             "(CASE WHEN NOT json_written['unsorted'] THEN {} ELSE {resorted} END)",
             escaped("json_written['text']"),
         ),
-    )
+    );
+    match escape {
+        Escape::EachText => chosen,
+        Escape::Chosen => bound(
+            &chosen,
+            "json_chosen",
+            &helper_call(JSON_ESCAPED_V1, &["json_chosen"]),
+        ),
+    }
 }
 
 /// The numbers of the JSON text `sql`, outside strings, in byte order.

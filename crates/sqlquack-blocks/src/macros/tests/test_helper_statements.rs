@@ -171,6 +171,16 @@ fn given_a_released_helper_when_defined_then_its_definition_is_unchanged() {
             expected_md5: Some("7c2319469ba632f57dfa5dbc4e09577a"),
         },
         PinnedDefinitionTestCase {
+            description: "variant_text_v2's released definition is unchanged; a change takes a new version",
+            name: "variant_text_v2",
+            expected_md5: Some("657d35684ebccf15038b2125eb5ac7d2"),
+        },
+        PinnedDefinitionTestCase {
+            description: "variant_json_text_v2's released definition is unchanged; a change takes a new version",
+            name: "variant_json_text_v2",
+            expected_md5: Some("7d0d6a068917cdfc44d84174e0db7fa7"),
+        },
+        PinnedDefinitionTestCase {
             description: "variant_number_v1's released definition is unchanged; a change takes a new version",
             name: "variant_number_v1",
             expected_md5: Some("3b486bbca37aa67bdefbc7505ab7ebe6"),

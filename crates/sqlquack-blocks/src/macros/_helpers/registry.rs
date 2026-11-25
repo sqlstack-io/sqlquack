@@ -10,7 +10,7 @@ use crate::macros::_helpers::temporal::{
     timestamp_body, utc_zoned_body, zone_name_body, zoned_body,
 };
 use crate::macros::_helpers::writing::{
-    escaped_body, held_written_body, json_text_body, text_body,
+    escaped_body, held_written_body, json_text_body, json_text_body_v2, text_body, text_body_v2,
 };
 use crate::macros::constants::{
     DATE_TEXT_V1, DECIMAL_QUOTIENT_V1, DIVIDEND_PARAMETER, DIVISOR_PARAMETER, HELPER_CALL_PREFIX,
@@ -19,13 +19,13 @@ use crate::macros::constants::{
     TEXT_PARAMETER, TIME_ZONE_V1, TIMESTAMP_TEXT_V1, TRY_DATE_TEXT_V1, TRY_TIMESTAMP_TEXT_V1,
     TRY_UTC_ZONED_TEXT_V1, TRY_ZONED_TEXT_V1, TRYING_PARAMETER, UTC_ZONED_TEXT_V1, VALUE_PARAMETER,
     VALUES_PARAMETER, VARIANT_BOOLEAN_V1, VARIANT_DATE_V1, VARIANT_FLOAT_V1, VARIANT_JSON_TEXT_V1,
-    VARIANT_NUMBER_V1, VARIANT_TEXT_V1, VARIANT_TIMESTAMP_NTZ_V1, VARIANT_WRITTEN_V1,
-    ZONED_TEXT_V1,
+    VARIANT_JSON_TEXT_V2, VARIANT_NUMBER_V1, VARIANT_TEXT_V1, VARIANT_TEXT_V2,
+    VARIANT_TIMESTAMP_NTZ_V1, VARIANT_WRITTEN_V1, ZONED_TEXT_V1,
 };
 use crate::macros::models::HelperMacro;
 
 /// The helper macros, dependencies first.
-pub(crate) fn helper_macros() -> [HelperMacro; 21] {
+pub(crate) fn helper_macros() -> [HelperMacro; 23] {
     [
         HelperMacro {
             name: TIME_ZONE_V1,
@@ -157,6 +157,22 @@ pub(crate) fn helper_macros() -> [HelperMacro; 21] {
             explain: "A VARIANT as Snowflake writes it as JSON text, as TO_JSON does: every \
                       object's keys in byte order at every depth. Raises json_fidelity where \
                       DuckDB could sort the keys only by rewriting a number.",
+        },
+        HelperMacro {
+            name: VARIANT_TEXT_V2,
+            parameters: &[SITE_PARAMETER, VALUE_PARAMETER],
+            body: text_body_v2,
+            explain: "variant_text_v1's result. A number or boolean is written as it is, and \
+                      the text chosen takes Snowflake's escapes once, so DuckDB binds the escape \
+                      once a call, not twice.",
+        },
+        HelperMacro {
+            name: VARIANT_JSON_TEXT_V2,
+            parameters: &[SITE_PARAMETER, VALUE_PARAMETER],
+            body: json_text_body_v2,
+            explain: "variant_json_text_v1's result. A number, boolean or null is written as it \
+                      is, and the text chosen takes Snowflake's escapes once, so DuckDB binds \
+                      the escape once a call, not twice.",
         },
         HelperMacro {
             name: VARIANT_NUMBER_V1,
