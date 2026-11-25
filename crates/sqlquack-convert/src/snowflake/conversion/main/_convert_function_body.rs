@@ -62,7 +62,7 @@ pub(in crate::snowflake) fn convert_function_body(
             "SELECT {selected} FROM {}",
             joined(&vec!["NULL".to_owned(); held.len()])
         ),
-        schema,
+        (schema, options.skip_bind_check),
     )?;
     let body = match &spec.returns {
         FunctionReturns::Scalar(_) => format!("(SELECT {selected} FROM {})", joined(&names)),

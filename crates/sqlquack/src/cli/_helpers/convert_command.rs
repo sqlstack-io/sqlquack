@@ -152,6 +152,7 @@ fn run_printed(arguments: &RunArguments, palette: &Palette) -> RunPrinted {
         verified_overrides: arguments.verified_overrides.clone(),
         session: arguments.session.clone(),
         compact: true,
+        no_bind_check: false,
         verbose: false,
         output: OutputArguments {
             format: OutputFormat::Text,
@@ -569,7 +570,10 @@ pub(crate) fn chosen_options(
     options: ConversionOptions,
 ) -> Result<ConversionOptions, String> {
     with_overrides(
-        options,
+        ConversionOptions {
+            skip_bind_check: arguments.no_bind_check,
+            ..options
+        },
         (
             arguments.overrides.as_deref(),
             &arguments.verified_overrides,

@@ -82,3 +82,10 @@ class ProjectTestCase:
     session: dict[str, str]
     arguments: tuple[str, ...]
     expected_notes: int
+
+
+@dataclass(frozen=True)
+class BindCheckTestCase:
+    description: str
+    sql: str
+    expected_converted: bool
