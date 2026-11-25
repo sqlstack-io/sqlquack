@@ -9,8 +9,11 @@ use crate::blocks::constants::{
 };
 use crate::raises::main::raised::raised;
 use crate::temporal::_helpers::operands::once;
-use crate::temporal::_helpers::text::digitless;
+use crate::temporal::_helpers::text::{bound, digitless};
 use crate::temporal::models::DateFormat;
+
+/// The lambda parameter holding the format's groups, matched once.
+const GROUPS: &str = "format_groups";
 
 /// The date `sql` spells exactly in `format`; impossible dates are NULL when `trying`, else raise.
 pub fn formatted_text_to_date(
@@ -20,15 +23,34 @@ pub fn formatted_text_to_date(
 ) -> String {
     log.building_block(FORMATTED_TEXT_TO_DATE);
     once(value, "formatted_date", |sql| {
-        converted(sql, (format, trying))
+        let pattern = format.pattern;
+        let plain = converted(sql, (format, trying), &|group| {
+            format!("regexp_extract({sql}, '{pattern}', {group})")
+        });
+        let (year, month, day) = format.groups;
+        let names: Vec<String> = (1..=year.max(month).max(day))
+            .map(|group| format!("'g{group}'"))
+            .collect();
+        let grouped = bound(
+            &format!("regexp_extract({sql}, '{pattern}', [{}])", names.join(", ")),
+            GROUPS,
+            &converted(sql, (format, trying), &|group| format!("{GROUPS}['g{group}']")),
+        );
+        match grouped.len() < plain.len() {
+            true => grouped,
+            false => plain,
+        }
     })
 }
 
-/// The conversion of the plain operand `sql`.
-fn converted(sql: &str, (format, trying): (&DateFormat, bool)) -> String {
+/// The conversion of the plain operand `sql`, each group's text as `extract` writes it.
+fn converted(
+    sql: &str,
+    (format, trying): (&DateFormat, bool),
+    extract: &dyn Fn(u8) -> String,
+) -> String {
     let pattern = format.pattern;
-    let field =
-        |group: u8| format!("TRY_CAST(regexp_extract({sql}, '{pattern}', {group}) AS INTEGER)");
+    let field = |group: u8| format!("TRY_CAST({} AS INTEGER)", extract(group));
     let (year_group, month_group, day_group) = format.groups;
     let year = match format.two_digit_year {
         true => {
@@ -49,7 +71,8 @@ fn converted(sql: &str, (format, trying): (&DateFormat, bool)) -> String {
     let month = match format.named_month {
         true => format!(
             "list_position(['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', \
-             'nov', 'dec'], left(lower(regexp_extract({sql}, '{pattern}', {month_group})), 3))"
+             'nov', 'dec'], left(lower({}), 3))",
+            extract(month_group)
         ),
         false => field(month_group),
     };
