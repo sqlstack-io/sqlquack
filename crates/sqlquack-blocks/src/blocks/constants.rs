@@ -154,6 +154,8 @@ pub const MANTISSA_FREE_PATTERN: &str = "[eE][+-]?[0-9]+";
 pub const INLINE_ARGUMENT_LIMIT: usize = 256;
 /// Whitespace conversions ignore around a value (space, tab, line feed; not no-break space).
 pub const CONVERSION_WHITESPACE: &str = "(' ' || chr(9) || chr(10))";
+/// CONVERSION_WHITESPACE as one literal, binding no calls; pinned macro bodies keep the original.
+pub const CONVERSION_WHITESPACE_LITERAL: &str = "E' \\t\\n'";
 /// The characters of CONVERSION_WHITESPACE, for trimming a literal at compile time.
 pub const CONVERSION_WHITESPACE_CHARS: [char; 3] = [' ', '\t', '\n'];
 /// Words Snowflake reads as a non-finite FLOAT, lower-cased, with their DuckDB spelling.
