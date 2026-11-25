@@ -6,6 +6,8 @@ mod test_bind_check;
 mod test_builtin_policy;
 #[path = "cli/test_bundled.rs"]
 mod test_bundled;
+#[path = "cli/test_case_subject.rs"]
+mod test_case_subject;
 #[path = "cli/test_check.rs"]
 mod test_check;
 #[path = "cli/test_compare.rs"]
