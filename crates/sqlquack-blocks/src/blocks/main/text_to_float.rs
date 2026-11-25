@@ -4,7 +4,9 @@ use sqlquack_diagnostics::failures::constants::NUMBER_NOT_RECOGNIZED;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::blocks::_helpers::text::{conversion_failure, once_bound, space_trimmed};
-use crate::blocks::constants::{DECIMAL_TEXT_PATTERN, NON_FINITE_FLOAT_WORDS, TEXT_TO_FLOAT};
+use crate::blocks::constants::{
+    CONVERSION_WHITESPACE_LITERAL, DECIMAL_TEXT_PATTERN, NON_FINITE_FLOAT_WORDS, TEXT_TO_FLOAT,
+};
 use crate::blocks::models::TextFailure;
 
 /// Text to a double; special-value words in ASCII only; other unrecorded text fails, or is NULL trying.
@@ -16,7 +18,7 @@ pub fn text_to_float(sql: &str, failure: TextFailure, log: &ProvenanceLog) -> St
     })
 }
 
-/// The CASE reading the text `sql` as a double, its trimmed text bound once.
+/// The CASE reading the text `sql` as a double, its trimmed text bound once; numbers tested first.
 fn read_float(sql: &str, failure: TextFailure) -> String {
     let trimmed = "float_trimmed";
     let unread = conversion_failure(
@@ -26,9 +28,9 @@ fn read_float(sql: &str, failure: TextFailure) -> String {
     let infinite = "(?i:[+-]?inf|-?infinity)";
     let finite = match failure {
         TextFailure::Null | TextFailure::Variant => format!(
-            "WHEN regexp_full_match({trimmed}, '{infinite}') THEN CAST({trimmed} AS DOUBLE) \
-             WHEN regexp_full_match({trimmed}, '{DECIMAL_TEXT_PATTERN}') THEN \
-             (CASE WHEN isinf(CAST({trimmed} AS DOUBLE)) THEN NULL ELSE CAST({trimmed} AS DOUBLE) END)"
+            "WHEN regexp_full_match({trimmed}, '{DECIMAL_TEXT_PATTERN}') THEN \
+             (CASE WHEN isinf(CAST({trimmed} AS DOUBLE)) THEN NULL ELSE CAST({trimmed} AS DOUBLE) END) \
+             WHEN regexp_full_match({trimmed}, '{infinite}') THEN CAST({trimmed} AS DOUBLE)"
         ),
         TextFailure::Text => format!(
             "WHEN regexp_full_match({trimmed}, '{DECIMAL_TEXT_PATTERN}|{infinite}') \
@@ -36,10 +38,10 @@ fn read_float(sql: &str, failure: TextFailure) -> String {
         ),
     };
     format!(
-        "(CASE WHEN {sql} IS NULL THEN NULL ELSE list_transform([{}], lambda {trimmed}: \
-         CASE WHEN regexp_full_match({trimmed}, '(?i:-?nan)') THEN CAST('nan' AS DOUBLE) \
-         {finite} ELSE {unread} END)[1] END)",
-        space_trimmed(sql)
+        "(CASE WHEN {sql} IS NULL THEN NULL ELSE list_transform([trim({sql}, \
+         {CONVERSION_WHITESPACE_LITERAL})], lambda {trimmed}: CASE {finite} \
+         WHEN regexp_full_match({trimmed}, '(?i:-?nan)') THEN CAST('nan' AS DOUBLE) \
+         ELSE {unread} END)[1] END)"
     )
 }
 

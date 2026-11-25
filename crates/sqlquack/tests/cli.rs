@@ -48,5 +48,7 @@ mod test_run;
 mod test_set_chains;
 #[path = "cli/test_set_quantifier.rs"]
 mod test_set_quantifier;
+#[path = "cli/test_text_float.rs"]
+mod test_text_float;
 #[path = "cli/test_types.rs"]
 mod test_types;
