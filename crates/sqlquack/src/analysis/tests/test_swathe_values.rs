@@ -22,6 +22,18 @@ fn given_swathe_shapes_when_converting_then_proven_values_return_and_the_rest_ra
             expected_outcome: Err("float_sum_order"),
         },
         FirstValueTestCase {
+            description: "VARIANCE of text read as FLOAT, its values listed once, sums exactly",
+            sql: "SELECT VARIANCE(x) AS v FROM (SELECT '1.5' AS x UNION ALL SELECT '2.5' \
+                  UNION ALL SELECT '4') AS t",
+            expected_outcome: Ok("1.5833333333333333"),
+        },
+        FirstValueTestCase {
+            description: "VARIANCE of text read as FLOAT raises where its sum depends on order",
+            sql: "SELECT VARIANCE(x) AS v FROM (SELECT '0.1' AS x UNION ALL SELECT '0.2' \
+                  UNION ALL SELECT '0.3') AS t",
+            expected_outcome: Err("float_sum_order"),
+        },
+        FirstValueTestCase {
             description: "TRY_HEX_DECODE_STRING decodes pairs of hexadecimal digits",
             sql: "SELECT TRY_HEX_DECODE_STRING('4a4B') AS s",
             expected_outcome: Ok("JK"),

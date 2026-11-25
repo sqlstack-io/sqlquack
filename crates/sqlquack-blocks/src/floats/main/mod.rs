@@ -1,5 +1,6 @@
 //! One building block per module.
 
+pub mod exact_float_moments;
 pub mod exact_float_sum;
 pub mod exponential;
 pub mod float_literal;
