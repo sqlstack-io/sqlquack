@@ -25,6 +25,7 @@ to standard output, laid out with each clause on its own line, select items one 
 nested queries and long `CASE` expressions indented; short statements stay on one line. Progress,
 the known differences and assumptions it relies on, and refusals go to standard error.
 
+{/* example: quickstart */}
 ```console
 $ sqlquack convert revenue.sql --no-config
 SELECT
@@ -76,6 +77,7 @@ SQL that does not parse, or that Snowflake rejects, is refused with the same cod
 
 With `--json`, `convert` prints one object:
 
+{/* example: no-inputs output: echo "SELECT 1 AS total" | sqlquack convert --no-config --json */}
 ```json
 {
   "converted": true,

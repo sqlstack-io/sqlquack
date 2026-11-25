@@ -1,0 +1,15 @@
+sources:
+  - name: orders
+    columns:
+      - name: order_id
+        type: NUMBER(38,0)
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: ordered_at
+        type: TIMESTAMP_NTZ
+  - name: customers
+    columns:
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: name
+        type: VARCHAR

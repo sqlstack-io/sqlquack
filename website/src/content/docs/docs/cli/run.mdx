@@ -13,6 +13,7 @@ test. DuckDB comes with `sqlquack`, so there is nothing else to install.
 
 Take a [project](/docs/project/) with one source:
 
+{/* example: run file=sources/orders.yml */}
 ```yaml
 # sources/orders.yml
 sources:
@@ -26,6 +27,7 @@ sources:
 
 and a query in `doubled.sql`:
 
+{/* example: run file=doubled.sql */}
 ```sql
 SELECT id, amount * 2 AS doubled
 FROM orders
@@ -34,6 +36,7 @@ ORDER BY id
 
 Give `orders` two rows and run it:
 
+{/* example: run */}
 ```console
 $ sqlquack run doubled.sql --fixture 'orders=[[1, 2.5], [2, 4]]'
 ID  DOUBLED
@@ -53,6 +56,7 @@ its whole `database.schema.table` name when two sources share a name. Case does 
 Rows are a JSON list. A row is either a list of values in column order, or an object naming the
 columns it sets, the rest NULL:
 
+{/* example: run */}
 ```console
 $ sqlquack run doubled.sql --fixture 'orders=[{"id": 1, "amount": 2.5}, {"id": 2}]'
 ID  DOUBLED
@@ -64,6 +68,7 @@ sqlquack run: done, 2 rows
 A value that contains a `/` is a file instead: a CSV file with a header row, or a Parquet file.
 Its columns fill the table's columns of the same name.
 
+{/* example: run */}
 ```console
 $ cat data/orders.csv
 id,amount
@@ -83,6 +88,7 @@ Write `./orders.csv` rather than `orders.csv`, so the value holds a `/`.
 `--expect` gives the rows the result must hold, written the same way as fixture rows. Each value
 is cast to the result column's type before comparing, so `5` matches `5.00`:
 
+{/* example: run */}
 ```console
 $ sqlquack run doubled.sql --fixture 'orders=[[1, 2.5], [2, 4]]' --expect '[[1, 5], [2, 8]]'
 ID  DOUBLED
@@ -94,6 +100,7 @@ sqlquack run: done, 2 rows as expected
 When the query has an `ORDER BY`, the rows must come in the same order. Otherwise they may come
 in any order. A difference exits 1 and shows where:
 
+{/* example: run */}
 ```console
 $ sqlquack run doubled.sql --fixture 'orders=[[1, 2.5], [2, 4]]' --expect '[[1, 5], [2, 9]]'
 ID  DOUBLED

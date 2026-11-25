@@ -27,6 +27,7 @@ recognised. A directory is searched for `.sql` files. The tables they read come 
 `database.schema.table`; see [Projects](/docs/project/#naming-tables) for how
 they resolve.
 
+{/* example: census */}
 ```console
 $ sqlquack census models --no-config
 error[SQ0004]: SQLQuack doesn't know this name
@@ -45,6 +46,7 @@ error[SQ0002]: SQLQuack can't convert WEEKISO yet
 
 Converted 1 of 3 files (33%)
 Blocked: 2 files, 2 causes (SQ0002 WEEKISO, SQ0004 STG_CUSTOMERS)
+sqlquack census: done, 3 files in … s
 ```
 
 Each diagnostic has the same code, message and help that [`convert`](/docs/cli/convert/) gives
@@ -60,6 +62,7 @@ the [project](/docs/project/) declares that model's columns. When the model it r
 convert either, its diagnostic carries a note naming that model, and it isn't counted as a separate
 cause:
 
+{/* example: census-report output: sqlquack census models --no-config */}
 ```text
 error[SQ0004]: SQLQuack doesn't know this name
  --> models/marts/customer_report.sql:1:58
@@ -69,7 +72,7 @@ error[SQ0004]: SQLQuack doesn't know this name
   |
   = note: reads `customer_sounds`, which doesn't convert
   = help: declare the relation and its columns in a source file of the project (`sources/*.yml`)
-...
+…
 Converted 1 of 4 files (25%)
 Blocked: 3 files, 2 causes (SQ0002 WEEKISO, SQ0004 STG_CUSTOMERS)
 ```
@@ -79,7 +82,9 @@ name references, read by any qualifier as dbt writes it, and the files reading i
 those columns. With `--chain-models`, census also warns about each file that converts while reading
 a model that doesn't, which happens when the project already types that model:
 
+{/* example: census-chained output: sqlquack census models --no-config --chain-models */}
 ```text
+…
 warning: models/marts/customer_report.sql converts, but reads customer_sounds, which doesn't
  --> models/marts/customer_report.sql
 
@@ -109,18 +114,21 @@ refusals by category and construct, and what blocks files through the model grap
 - `--anonymous` holds counts and construct names only, never SQL text or file, model or relation
   names, so you can share it. With both flags, the report stays anonymous.
 
+{/* example: census */}
 ```console
 $ sqlquack census models --no-config --anonymous
 Census of 3 snowflake SQL files
   parsed 3 (3 statements), unparsed 0, empty 0
   distinct constructs 6 (2 fn, 4 node)
-  files refused: missing rule 2, outside type conditions 0, unresolved name 0, not expressible 0, parse fidelity 0, conversion budget 0, divergence refused 0
+  files refused: missing rule 1, outside type conditions 0, unresolved name 1, not expressible 0, parse fidelity 0, conversion budget 0, known difference not allowed 0
   convertible: strict 1 (every model upstream converts too), unit-testable 1 (the file's own SQL converts; 0 with an upstream model refused or not scanned)
   with no named assumption: strict 1, unit-testable 1 (relying on one: none)
 
 Refusals by category and construct (top 50)
-       1  missing rule: fn:SOUNDEX
        1  missing rule: fn:WEEKISO
+       1  unresolved name: statement
+…
+sqlquack census: done, 3 files in … s
 ```
 
 | Count | Meaning |

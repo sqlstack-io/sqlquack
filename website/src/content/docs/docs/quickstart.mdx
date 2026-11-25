@@ -44,6 +44,7 @@ Use `DYLD_LIBRARY_PATH` on macOS and `PATH` on Windows.
 
 `check` needs no schema. It parses the SQL and reports what Snowflake would reject.
 
+{/* example: quickstart file=orders.sql */}
 ```sql
 -- orders.sql
 SELECT customer_id, SUM(total) AS revenue
@@ -53,6 +54,7 @@ GROUP BY customer_id
 QUALIFY revenue > 100
 ```
 
+{/* example: quickstart */}
 ```console
 $ sqlquack check orders.sql
 error[SQ0203]: QUALIFY needs a window function
@@ -73,6 +75,7 @@ Conversion types every expression, so it needs the columns and Snowflake types o
 statement reads. Declare them in a source file under `sources/` in the folder you run `sqlquack`
 from (see [Projects](/docs/project/)):
 
+{/* example: quickstart file=sources/orders.yml */}
 ```yaml
 # sources/orders.yml
 sources:
@@ -90,6 +93,7 @@ sources:
         type: TIMESTAMP_NTZ
 ```
 
+{/* example: quickstart */}
 ```console
 $ sqlquack convert revenue.sql --no-config
 SELECT

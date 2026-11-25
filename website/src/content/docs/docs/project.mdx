@@ -8,6 +8,7 @@ it. You declare them once in a project folder, and every command run there reads
 
 A project is a folder holding a `sources/` folder of YAML files. Here is one:
 
+{/* example: project file=sources/shop.yml */}
 ```yaml
 # sources/shop.yml
 sources:
@@ -23,6 +24,7 @@ sources:
 
 Run `convert` in the folder and the query's table is known:
 
+{/* example: project */}
 ```console
 $ sqlquack convert revenue.sql
 sqlquack convert: converting…
@@ -48,8 +50,12 @@ A source with an `expression` is a query rather than a table, and is skipped.
 A source with a column that has no `type`, or a type SQLQuack can't read, is left out whole, so a
 `SELECT *` never misses a column. SQLQuack warns about it:
 
+{/* example: project-untyped */}
 ```console
+$ sqlquack convert revenue.sql
+…
 sqlquack convert: warning: ./sources/more.yml: the source customers is left out, because its column email has no type
+sqlquack convert: done, converted
 ```
 
 A table declared in two files is an error naming both.

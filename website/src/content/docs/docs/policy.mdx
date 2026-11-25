@@ -30,6 +30,7 @@ that runs in UTC, and the `TIMESTAMP_TZ` offsets the schema declares.
 
 A refused known difference stops the statement at the construct that needs it:
 
+{/* example: hash-policy */}
 ```console
 $ sqlquack convert due.sql --no-config
 error[SQ0008]: HASH gives a different value in DuckDB
@@ -71,6 +72,7 @@ Allowing a known difference is a decision about your data, so read its entry fir
 the converted SQL gives Snowflake's result and when it doesn't. List it under `[allow]` in
 `sqlquack.toml`, `true` to allow it and `false` to refuse it:
 
+{/* example: hash-policy file=sqlquack.toml */}
 ```toml
 [allow]
 hash = true
@@ -100,6 +102,7 @@ current_time = false
 A conversion that relies on an allowed known difference names it in its last line on standard
 error, and `--verbose` adds a warning at each use:
 
+{/* example: hash-policy */}
 ```console
 $ sqlquack convert due.sql
 SELECT

@@ -139,14 +139,15 @@
 								<p>Snowflake today: parses Snowflake SQL and reports the syntax Snowflake would reject. No schema needed. Each error has a code and the exact span; rejections also come with a fix.</p>
 								<p class="more"><a href="/docs/cli/check/">How checking works →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack check</span>
+<pre class="terminal" data-example="intersect"><span class="cmd">sqlquack check query.sql</span>
 <span class="bad">error[SQ0201]</span>: Snowflake does not support INTERSECT, EXCEPT or MINUS with ALL
- --&gt; &lt;stdin&gt;:1:29
+ --&gt; query.sql:1:29
   |
 1 | SELECT order_id FROM orders INTERSECT ALL SELECT order_id FROM orders
   |                             <span class="bad">^^^^^^^^^^^^^</span> Snowflake does not support INTERSECT with ALL
   |
-  <span class="dim">= help:</span> drop ALL to compare distinct rows; only UNION accepts ALL in Snowflake</pre>
+  <span class="dim">= help:</span> drop ALL to compare distinct rows; only UNION accepts ALL in Snowflake
+sqlquack check: found 1 problem</pre>
 						</div>
 
 						<div class="step">
@@ -156,7 +157,7 @@
 								<p>Uses your sources' types and only verified rules. NUMBER(12,2) / 3 keeps Snowflake's 8 decimal places.</p>
 								<p class="more"><a href="/docs/cli/convert/">How conversion works →</a></p>
 							</div>
-<pre class="terminal"><span class="cm">-- div.sql, with TOTAL as NUMBER(12,2) in sources/orders.yml</span>
+<pre class="terminal" data-example="division preamble=div.sql"><span class="cm">-- div.sql, with TOTAL as NUMBER(12,2) in sources/orders.yml</span>
 SELECT order_id, total / 3 AS third FROM orders
 
 <span class="cmd">sqlquack convert div.sql --no-config</span>
@@ -165,20 +166,12 @@ SELECT order_id, total / 3 AS third FROM orders
     <span class="kw">CAST</span>(
         <span class="kw">CAST</span>(
             (
-                <span class="id">sign</span>(<span class="kw">CAST</span>(<span class="kw">CAST</span>(<span class="id">"ORDERS"</span>.<span class="id">"TOTAL"</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>, <span class="num">2</span>)) * <span class="num">100000000</span> <span class="kw">AS</span> <span class="id">HUGEINT</span>))
-                * (
-                    (
-                        <span class="num">2</span>
-                        * <span class="id">abs</span>(<span class="kw">CAST</span>(<span class="kw">CAST</span>(<span class="id">"ORDERS"</span>.<span class="id">"TOTAL"</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>, <span class="num">2</span>)) * <span class="num">100000000</span> <span class="kw">AS</span> <span class="id">HUGEINT</span>))
-                        + <span class="num">3</span>
-                    )
-                    // <span class="num">6</span>
-                )
+                (<span class="kw">CAST</span>(<span class="kw">CAST</span>(<span class="id">"ORDERS"</span>.<span class="id">"TOTAL"</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>, <span class="num">2</span>)) * <span class="num">100000000</span> <span class="kw">AS</span> <span class="id">HUGEINT</span>) * <span class="num">10</span>) // <span class="num">3</span>
             ) <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">38</span>, <span class="num">0</span>)
         )
-        * <span class="num">0.00000001</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">18</span>, <span class="num">8</span>)
+        * <span class="num">0.000000001</span> <span class="kw">AS</span> <span class="id">DECIMAL</span>(<span class="num">18</span>, <span class="num">8</span>)
     ) <span class="kw">AS</span> <span class="id">"THIRD"</span>
-<span class="kw">FROM</span> <span class="id">"ORDERS"</span> <span class="kw">AS</span> <span class="id">"ORDERS"</span>
+<span class="kw">FROM</span> <span class="id">"ORDERS"</span>
 <span class="ok">sqlquack convert: done, converted</span></pre>
 						</div>
 
@@ -189,21 +182,17 @@ SELECT order_id, total / 3 AS third FROM orders
 								<p>No verified rule, no conversion. The refusal underlines the construct and says what to change.</p>
 								<p class="more"><a href="/docs/diagnostics/reference/">Every diagnostic code →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack convert due.sql --no-config</span>
+<pre class="terminal" data-example="hash-policy"><span class="cmd">sqlquack convert due.sql --no-config</span>
 <span class="bad">error[SQ0008]</span>: HASH gives a different value in DuckDB
  --&gt; due.sql:2:8
   |
 2 |        HASH(customer_id) AS bucket
-  |        <span class="bad">^^^^^^^^^^^^^^^^^</span> DuckDB computes its own hash,
-  |          never Snowflake's
+  |        <span class="bad">^^^^^^^^^^^^^^^^^</span> DuckDB computes its own hash, never Snowflake's
   |
   <span class="dim">= note:</span> Equal inputs still get equal hashes within one run.
-  <span class="dim">= note:</span> fine when: Joins, grouping, removing duplicates and
-          spotting changed rows by hash.
-  <span class="dim">= note:</span> wrong when: Storing, comparing or sorting by the hash
-          value itself: it differs, with no error.
-  <span class="dim">= help:</span> allow it in a sqlquack.toml <span class="dim">…</span>;
-          `sqlquack explain hash` says when it is safe
+  <span class="dim">= note:</span> fine when: Joins, grouping, removing duplicates <span class="dim">…</span>
+  <span class="dim">= note:</span> wrong when: Storing, comparing or sorting by the hash <span class="dim">…</span>
+  <span class="dim">= help:</span> allow it with hash = true under [allow] <span class="dim">…</span>
 sqlquack convert: refused, 1 refusal</pre>
 						</div>
 
@@ -214,17 +203,18 @@ sqlquack convert: refused, 1 refusal</pre>
 								<p>Some Snowflake behaviour has no exact match in DuckDB, like <code>HASH</code>. Each known difference says when it's fine and when it gives a wrong result. You refuse it, allow it or replace it with your own SQL.</p>
 								<p class="more"><a href="/docs/policy/">Refuse, allow or replace →</a></p>
 							</div>
-<pre class="terminal"><span class="cm"># sqlquack.toml</span>
+<pre class="terminal" data-example="hash-policy preamble=sqlquack.toml"><span class="cm"># sqlquack.toml</span>
 [allow]
 <span class="arg">hash</span> = <span class="kw">true</span>
 
 <span class="cmd">sqlquack convert due.sql</span>
 SELECT
     "ORDERS"."ORDER_ID" AS "ORDER_ID",
-    <span class="dim">…</span> AS "BUCKET"
+    CAST(
+        <span class="dim">…</span>
+    ) AS "BUCKET"
 FROM "ORDERS"
-<span class="ok">sqlquack convert: done, converted (1 known difference</span>
-<span class="ok">  allowed: hash — sqlquack explain hash)</span></pre>
+<span class="ok">sqlquack convert: done, converted (1 known difference allowed: hash <span class="dim">…</span>)</span></pre>
 						</div>
 
 						<div class="step">
@@ -234,7 +224,7 @@ FROM "ORDERS"
 								<p>Point it at a folder of compiled SQL, such as dbt's target/compiled. It shows a diagnostic for each file that doesn't convert, and how many do. It exits 1 when any file is blocked, so CI can track it.</p>
 								<p class="more"><a href="/docs/cli/census/">Run a census →</a></p>
 							</div>
-<pre class="terminal"><span class="cmd">sqlquack census models --no-config --chain-models</span>
+<pre class="terminal" data-example="census"><span class="cmd">sqlquack census models --no-config --chain-models</span>
 <span class="bad">error[SQ0002]</span>: SQLQuack can't convert SOUNDEX yet
  --&gt; models/marts/customer_sounds.sql:3:5
   |
@@ -246,7 +236,8 @@ FROM "ORDERS"
   <span class="dim">…</span>
 
 Converted 1 of 3 files (33%)
-Blocked: 2 files, 2 causes (SQ0002 SOUNDEX, SQ0002 WEEKISO)</pre>
+Blocked: 2 files, 2 causes (SQ0002 SOUNDEX, SQ0002 WEEKISO)
+<span class="ok">sqlquack census: done, 3 files in <span class="dim">…</span> s</span></pre>
 						</div>
 
 						<div class="step">
@@ -256,7 +247,7 @@ Blocked: 2 files, 2 causes (SQ0002 SOUNDEX, SQ0002 WEEKISO)</pre>
 								<p>The same engine as the CLI, with typed results and diagnostics.</p>
 								<p class="more"><a href="/docs/python/">Python API →</a></p>
 							</div>
-<pre class="terminal"><span class="kw">import</span> sqlquack
+<pre class="terminal" data-example="no-inputs python"><span class="kw">import</span> sqlquack
 
 result = sqlquack.check(<span class="arg">sql</span>=<span class="str">&quot;SELECT 1 QUALIFY TRUE&quot;</span>)
 result.diagnostics[<span class="num">0</span>].code   <span class="cm"># "SQ0203"</span>
@@ -315,7 +306,7 @@ conversion.converted          <span class="cm"># True</span></pre>
 							<li>Free and open source, Apache-2.0.</li>
 						</ul>
 					</div>
-<pre class="terminal"><span class="cmd">pip install sqlquack</span>
+<pre class="terminal" data-example="no-inputs"><span class="cmd">pip install sqlquack</span>
 <span class="cmd">echo "SELECT 1 QUALIFY TRUE" | sqlquack check</span>
 <span class="bad">error[SQ0203]</span>: QUALIFY needs a window function
 <span class="dim">…</span>

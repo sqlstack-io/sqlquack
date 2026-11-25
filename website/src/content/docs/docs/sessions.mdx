@@ -37,6 +37,7 @@ session without `TIMEZONE`, or with `TIMEZONE = "UTC"`, says. The defaults allow
 
 A `TIMEZONE` other than UTC refuses them, in every mode, and a note says so:
 
+{/* example: sessions */}
 ```console
 $ sqlquack convert orders.sql --session TIMEZONE=Europe/London
 SELECT "ORDERS"."ORDER_ID" AS "ORDER_ID"
