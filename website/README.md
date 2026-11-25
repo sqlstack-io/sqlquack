@@ -6,6 +6,9 @@ structure, styling and components with the SQLClean and SQLBuild websites.
 
 - `public/index.html` and `public/styles.css`: the homepage, plain static HTML and CSS. Its terminal
   examples are real `sqlquack` output on a small orders example, trimmed where marked `…`.
+- `examples/`: the inputs of every example the site shows, one folder each. `make website-examples`
+  (part of `make check-ci`) runs each one with the built `sqlquack` and fails where a page shows
+  anything else, so an output change can't leave a stale example. See `examples/README.md`.
 - `src/content/docs/docs/`: the documentation pages (MDX). `src/sidebar.json` holds the sidebar
   and `src/navigation.mjs` the redirects. `STYLE.md` is the style guide for these pages.
 - `src/content/docs/docs/diagnostics/reference.mdx` is generated from

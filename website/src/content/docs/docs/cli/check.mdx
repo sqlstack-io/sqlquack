@@ -21,6 +21,7 @@ echo "SELECT 1 QUALIFY TRUE" | sqlquack check --json
 
 `PATH` is a SQL file. Without one, or with `-`, `check` reads standard input.
 
+{/* example: intersect */}
 ```console
 $ sqlquack check query.sql
 error[SQ0201]: Snowflake does not support INTERSECT, EXCEPT or MINUS with ALL

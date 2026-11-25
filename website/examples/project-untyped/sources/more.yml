@@ -1,0 +1,6 @@
+sources:
+  - name: customers
+    columns:
+      - name: customer_id
+        type: NUMBER(38,0)
+      - name: email

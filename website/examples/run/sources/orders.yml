@@ -1,0 +1,7 @@
+sources:
+  - name: orders
+    columns:
+      - name: id
+        type: INTEGER
+      - name: amount
+        type: NUMBER(10,2)

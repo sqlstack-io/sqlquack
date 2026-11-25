@@ -30,7 +30,7 @@ PYTHON_TYPED := scripts tests/unit/scripts python/src $(PYTHON_API_TESTS)
 PYTHON_TESTS := tests/unit/scripts $(PYTHON_API_TESTS)
 endif
 
-.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage website-figures website-figures-update depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-obligations syntax-cases dialect-cases dialect-validate corpus-rerecord corpus-verdicts corpus-verdicts-baseline generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-build python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate check-pr-metadata evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
+.PHONY: distribution-notices format rust-lint python-check fensu syntax-coverage website-figures website-figures-update website-examples depth-probe depth-probe-debug instruction-counts instruction-baseline gate-build engine-free bundled-extensions dialect-builds generate-cases generated-cases generate-syntax-cases syntax-obligations syntax-cases dialect-cases dialect-validate corpus-rerecord corpus-verdicts corpus-verdicts-baseline generate-referee-cases referee-cases referee-pending translation-files translation-results help pending check-syntax record-syntax check-convert record-convert sql-sizes sql-size-baseline sql-benchmark check-ci check-merge test test-rust test-python python-build python-module python-api python-wheel verify-recorded verify-changed replay-scope test-crate check-pr-metadata evidence-clone evidence-refresh evidence-pin evidence-pin-check clutter-guard census-duckshop fuzz-smoke gate gate-parallel census duckshop-compiled duckshop-measure
 
 format:
 	cargo fmt --all
@@ -75,6 +75,13 @@ website-figures website-figures-update: gate-build
 	@mkdir -p target
 	$(GATE_DIR)/syntax-coverage summary --evidence $(call syntax_evidence_dir,snowflake) --json > $(SYNTAX_SUMMARY_FILE)
 	uv run python -m scripts.check_website_figures $(if $(filter website-figures-update,$@),write,check) $(SYNTAX_SUMMARY_FILE)
+
+# Fails when an example the website shows (homepage terminals and docs blocks marked as examples)
+# differs from what the built sqlquack prints for its inputs in website/examples, or when a
+# terminal or console block names no example.
+website-examples: gate-build python-module
+	PYTHONPATH=$(abspath python/src) LD_LIBRARY_PATH=$(abspath $(PYTHON_PACKAGE)) \
+	  uv run python -m scripts.check_website_examples $(GATE_DIR)/sqlquack
 
 # Fails when a native parser crashes, panics or hangs on deeply nested SQL on a 2 MiB thread and
 # coverage/deep-nesting.toml does not list it, or when a listed failure no longer happens.
@@ -249,7 +256,7 @@ referee-pending:
 	uv run python -m scripts.write_referee_pending $(REFEREE_ARGS)
 
 # The static gate, the first step of `gate`, and the Python API's tests.
-check-ci: rust-lint python-check fensu syntax-coverage website-figures depth-probe instruction-counts corpus-verdicts evidence-pin-check clutter-guard engine-free bundled-extensions dialect-builds generated-cases syntax-obligations syntax-cases dialect-cases dialect-validate referee-cases translation-files python-api distribution-notices replay-scope ## The static gate CI runs.
+check-ci: rust-lint python-check fensu syntax-coverage website-figures website-examples depth-probe instruction-counts corpus-verdicts evidence-pin-check clutter-guard engine-free bundled-extensions dialect-builds generated-cases syntax-obligations syntax-cases dialect-cases dialect-validate referee-cases translation-files python-api distribution-notices replay-scope ## The static gate CI runs.
 
 # Each distribution ships the licence and third-party notices; its copies must match the root files.
 distribution-notices:

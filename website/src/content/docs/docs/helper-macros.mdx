@@ -8,17 +8,23 @@ Converted SQL that reads a VARIANT or date and time text, or divides wide decima
 `convert` prints the statements creating the macros a query calls ahead of the query, so its
 output runs as it is in any DuckDB session:
 
+{/* example: helper-macros */}
 ```console
 $ sqlquack convert staging.sql --no-config
 CREATE SCHEMA IF NOT EXISTS sqlquack;
-CREATE OR REPLACE MACRO sqlquack.json_escaped_v1(quack_text) AS ...;
-CREATE OR REPLACE MACRO sqlquack.variant_text_v1(quack_site, quack_value) AS ...;
+CREATE OR REPLACE MACRO sqlquack.json_read_v1(
+…
+CREATE OR REPLACE MACRO sqlquack.variant_text_v1(quack_site, quack_value) AS list_transform(
+…
 SELECT
     sqlquack.variant_text_v1(
         '#0d01742fedea',
         json_extract("EVENTS"."PAYLOAD", '$."customer_id"')
     ) AS "CUSTOMER_ID"
-FROM ...
+FROM (
+…
+) AS "EVENTS"
+sqlquack convert: done, converted (1 known difference allowed: json_fidelity — sqlquack explain json_fidelity)
 ```
 
 A query that calls no helper macro prints no setup statements.

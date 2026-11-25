@@ -13,6 +13,7 @@ against results recorded on Snowflake. Anything no rule covers is refused with a
 span and a reason. Other dialects have parsers but don't convert yet; see
 [Dialects](/docs/coverage/#dialects).
 
+{/* example: no-sources */}
 ```console
 $ sqlquack convert revenue.sql --no-config
 error[SQ0004]: SQLQuack doesn't know this name
@@ -22,10 +23,12 @@ error[SQ0004]: SQLQuack doesn't know this name
   |      ^^^^^^ relation `ORDERS` has no known columns
   |
   = help: declare the relation and its columns in a source file of the project (`sources/*.yml`)
+sqlquack convert: refused, 1 refusal
 ```
 
 Once `sources/orders.yml` declares `ORDERS`, the same file converts:
 
+{/* example: quickstart */}
 ```console
 $ sqlquack convert revenue.sql --no-config
 SELECT
