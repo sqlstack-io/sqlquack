@@ -10,10 +10,8 @@ use crate::blocks::constants::{
 use crate::raises::main::raised::raised;
 use crate::temporal::_helpers::operands::once;
 use crate::temporal::_helpers::text::{bound, digitless};
+use crate::temporal::constants::FORMAT_GROUPS;
 use crate::temporal::models::DateFormat;
-
-/// The lambda parameter holding the format's groups, matched once.
-const GROUPS: &str = "format_groups";
 
 /// The date `sql` spells exactly in `format`; impossible dates are NULL when `trying`, else raise.
 pub fn formatted_text_to_date(
@@ -33,9 +31,9 @@ pub fn formatted_text_to_date(
             .collect();
         let grouped = bound(
             &format!("regexp_extract({sql}, '{pattern}', [{}])", names.join(", ")),
-            GROUPS,
+            FORMAT_GROUPS,
             &converted(sql, (format, trying), &|group| {
-                format!("{GROUPS}['g{group}']")
+                format!("{FORMAT_GROUPS}['g{group}']")
             }),
         );
         match grouped.len() < plain.len() {

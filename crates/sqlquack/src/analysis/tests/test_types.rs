@@ -264,3 +264,6 @@ pub(crate) struct SetResultTestCase {
     /// The rows as text, sorted.
     pub(crate) expected_rows: Vec<Vec<String>>,
 }
+
+/// A converted query's column names and DuckDB types, then its rows as text, sorted.
+pub(crate) type ShopResult = (Vec<String>, Vec<Vec<String>>);

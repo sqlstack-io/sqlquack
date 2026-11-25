@@ -566,7 +566,6 @@ fn aggregate_clause(
                 )
             })?,
         ),
-        // DuckDB's frame without one written is Snowflake's: RANGE from the partition's start to the current row.
         None => None,
     };
     Ok(over.clause(frame.as_deref(), site))

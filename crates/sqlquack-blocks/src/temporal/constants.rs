@@ -179,3 +179,6 @@ pub const TIMESTAMP_TRIMMED: &str = "timestamp_trimmed";
 pub const TIMESTAMP_GROUPS: &str = "timestamp_groups";
 /// The lambda parameter holding the ISO groups' rebuilt clock text.
 pub const TIMESTAMP_CLOCK: &str = "timestamp_clock";
+
+/// The lambda parameter holding a literal format's groups, matched once.
+pub const FORMAT_GROUPS: &str = "format_groups";

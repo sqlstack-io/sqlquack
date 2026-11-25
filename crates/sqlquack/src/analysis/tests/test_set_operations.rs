@@ -1,23 +1,5 @@
-use crate::analysis::tests::helpers::shop_result;
+use crate::analysis::tests::helpers::{shop_result, sorted_rows, union_all_selects};
 use crate::analysis::tests::test_types::SetResultTestCase;
-
-/// `count` UNION ALL branches, the `index`th selecting the items `item` writes for it.
-fn branches(count: usize, item: fn(usize) -> String) -> String {
-    (1..=count)
-        .map(|index| format!("SELECT {}", item(index)))
-        .collect::<Vec<String>>()
-        .join(" UNION ALL ")
-}
-
-/// Rows of text cells, sorted as the helper sorts them.
-fn rows(cells: &[&[&str]]) -> Vec<Vec<String>> {
-    let mut rows: Vec<Vec<String>> = cells
-        .iter()
-        .map(|row| row.iter().map(|cell| (*cell).to_owned()).collect())
-        .collect();
-    rows.sort();
-    rows
-}
 
 #[test]
 fn given_set_operations_when_converting_then_names_types_and_rows_are_snowflakes() {
@@ -31,18 +13,18 @@ fn given_set_operations_when_converting_then_names_types_and_rows_are_snowflakes
     let test_cases = [
         SetResultTestCase {
             description: "integer literals of one and two digits across twelve branches",
-            sql: branches(12, |index| format!("{index} AS k, 'r{index}' AS s")),
+            sql: union_all_selects(1..=12, |index| format!("{index} AS k, 'r{index}' AS s")),
             expected_columns: vec!["K DECIMAL(2,0)", "S VARCHAR"],
             expected_rows: numbered(12),
         },
         SetResultTestCase {
             description: "an 18-digit literal beside small ones, and a 19-digit one in another column",
-            sql: branches(12, |index| match index {
-                1 => "1234567890123456789 AS k, 999999999999999999 AS m".to_owned(),
-                _ => format!("{index} AS k, {index} AS m"),
-            }),
+            sql: format!(
+                "SELECT 1234567890123456789 AS k, 999999999999999999 AS m UNION ALL {}",
+                union_all_selects(2..=12, |index| format!("{index} AS k, {index} AS m"))
+            ),
             expected_columns: vec!["K DECIMAL(19,0)", "M DECIMAL(18,0)"],
-            expected_rows: rows(&[
+            expected_rows: sorted_rows(&[
                 &["1234567890123456789", "999999999999999999"],
                 &["2", "2"],
                 &["3", "3"],
@@ -61,10 +43,9 @@ fn given_set_operations_when_converting_then_names_types_and_rows_are_snowflakes
             description: "a star before a literal in later branches keeps each column's own reading",
             sql: format!(
                 "SELECT 1 AS a, 2 AS b, 3 AS c UNION ALL {}",
-                (1..=12)
-                    .map(|index| format!("SELECT *, 5 FROM (SELECT 7 AS p, '{index}e' AS q)"))
-                    .collect::<Vec<String>>()
-                    .join(" UNION ALL ")
+                union_all_selects(1..=12, |index| format!(
+                    "*, 5 FROM (SELECT 7 AS p, '{index}e' AS q)"
+                ))
             ),
             expected_columns: vec!["A DECIMAL(1,0)", "B DECIMAL(18,5)", "C DECIMAL(1,0)"],
             expected_rows: {
@@ -77,16 +58,34 @@ fn given_set_operations_when_converting_then_names_types_and_rows_are_snowflakes
             },
         },
         SetResultTestCase {
+            description: "a star expanding to no columns beside one expanding to two",
+            sql: format!(
+                "SELECT 1 AS a, 2 AS b, 3 AS c UNION ALL {}",
+                union_all_selects(1..=12, |index| format!(
+                    "* EXCLUDE (q, p), 5, * FROM (SELECT '{index}e' AS q, 7 AS p)"
+                ))
+            ),
+            expected_columns: vec!["A DECIMAL(1,0)", "B DECIMAL(18,5)", "C DECIMAL(1,0)"],
+            expected_rows: {
+                let mut expected: Vec<Vec<String>> = (1..=12)
+                    .map(|index| vec!["5".to_owned(), format!("{index}.00000"), "7".to_owned()])
+                    .collect();
+                expected.push(vec!["1".to_owned(), "2.00000".to_owned(), "3".to_owned()]);
+                expected.sort();
+                expected
+            },
+        },
+        SetResultTestCase {
             description: "the result takes the first branch's names, not the second's",
             sql: "SELECT 1 AS a, 'x' AS b UNION ALL SELECT 2 AS z, 'y' AS w".to_owned(),
             expected_columns: vec!["A DECIMAL(1,0)", "B VARCHAR"],
-            expected_rows: rows(&[&["1", "x"], &["2", "y"]]),
+            expected_rows: sorted_rows(&[&["1", "x"], &["2", "y"]]),
         },
         SetResultTestCase {
             description: "UNION ALL BY NAME matches the second branch's columns by name",
             sql: "SELECT 1 AS a, 'x' AS b UNION ALL BY NAME SELECT 'y' AS b, 2 AS a".to_owned(),
             expected_columns: vec!["A DECIMAL(1,0)", "B VARCHAR"],
-            expected_rows: rows(&[&["1", "x"], &["2", "y"]]),
+            expected_rows: sorted_rows(&[&["1", "x"], &["2", "y"]]),
         },
         SetResultTestCase {
             description: "a parenthesised UNION ALL on the right of EXCEPT stays one branch",
@@ -98,13 +97,13 @@ fn given_set_operations_when_converting_then_names_types_and_rows_are_snowflakes
             description: "a parenthesised UNION ALL on the left of INTERSECT stays one branch",
             sql: "(SELECT 1 AS x UNION ALL SELECT 2 AS x) INTERSECT SELECT 2 AS x".to_owned(),
             expected_columns: vec!["X DECIMAL(1,0)"],
-            expected_rows: rows(&[&["2"]]),
+            expected_rows: sorted_rows(&[&["2"]]),
         },
         SetResultTestCase {
             description: "a long UNION ALL as the second branch of a UNION",
             sql: format!(
                 "SELECT 100 AS k, 'r100' AS s UNION ({})",
-                branches(12, |index| format!("{index} AS k, 'r{index}' AS s"))
+                union_all_selects(1..=12, |index| format!("{index} AS k, 'r{index}' AS s"))
             ),
             expected_columns: vec!["K DECIMAL(3,0)", "S VARCHAR"],
             expected_rows: {

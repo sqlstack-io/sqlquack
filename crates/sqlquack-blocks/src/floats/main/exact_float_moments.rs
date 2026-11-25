@@ -3,11 +3,8 @@
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
 use crate::floats::_helpers::sums::{listed_values, values_sum};
-use crate::floats::constants::{EXACT_FLOAT_SUM, FLOAT_SUM_ORDER};
+use crate::floats::constants::{EXACT_FLOAT_SUM, FLOAT_MOMENT_VALUES, FLOAT_SUM_ORDER};
 use crate::raises::main::raised::raised;
-
-/// The group's non-NULL values as a lambda parameter.
-const VALUES: &str = "float_moment_values";
 
 /// `body(count, total, squares)` over `value`'s group, `value` written once; each sum raises as `exact_float_sum`'s.
 pub fn exact_float_moments(
@@ -20,14 +17,15 @@ pub fn exact_float_moments(
     let raise = raised(&format!(
         "{FLOAT_SUM_ORDER}: a FLOAT sum whose value depends on the order of addition"
     ));
-    let squares =
-        format!("list_transform({VALUES}, lambda float_moment_x: float_moment_x * float_moment_x)");
+    let squares = format!(
+        "list_transform({FLOAT_MOMENT_VALUES}, lambda float_moment_x: float_moment_x * float_moment_x)"
+    );
     format!(
-        "list_transform([{}], lambda {VALUES}: {})[1]",
+        "list_transform([{}], lambda {FLOAT_MOMENT_VALUES}: {})[1]",
         listed_values(value, over),
         body(
-            &format!("len({VALUES})"),
-            &values_sum(VALUES, false, &raise),
+            &format!("len({FLOAT_MOMENT_VALUES})"),
+            &values_sum(FLOAT_MOMENT_VALUES, false, &raise),
             &values_sum(&squares, false, &raise)
         )
     )

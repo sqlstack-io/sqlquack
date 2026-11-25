@@ -11,10 +11,7 @@ const INTEGER_DIGITS: usize = 9;
 /// The most digits after a decimal point the fast check clears.
 const FRACTION_DIGITS: usize = 5;
 
-/// Whether `text` is strict JSON of plain strings, short numbers, true, false and null, no key escaped or repeated.
-///
-/// Never looser than the fast check: it accepts only text the check's pattern clears, `json_valid`
-/// accepts and in which no object repeats a key, so `json(text)` reads it the same.
+/// Whether `text` is JSON `json_checked_v1`'s fast check reads as it is, read more strictly: no key escaped or repeated.
 pub(crate) fn plain_json(text: &str) -> bool {
     let mut reader = Reader {
         bytes: text.as_bytes(),

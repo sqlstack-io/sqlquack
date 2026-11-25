@@ -122,8 +122,18 @@ pub(crate) fn integer_item(item: &Value) -> Option<&str> {
     let integer = literal.get("literal_type").and_then(Value::as_str) == Some(LITERAL_NUMBER)
         && (1..=BARE_DIGITS).contains(&text.len())
         && text.bytes().all(|byte| byte.is_ascii_digit())
-        && (text == "0" || !text.starts_with('0'));
+        && (text.len() == 1 || !text.starts_with('0'));
     integer.then_some(text)
+}
+
+/// The bit of select-list position `index` in a set of positions; none past the 64th.
+pub(crate) fn position_bit(index: usize) -> u64 {
+    u32::try_from(index).map_or(0, |shift| 1_u64.checked_shl(shift).unwrap_or(0))
+}
+
+/// Whether the set of positions `bare` holds position `index`.
+pub(crate) fn is_bare(bare: u64, index: usize) -> bool {
+    bare & position_bit(index) != 0
 }
 
 /// A grouped VARIANT expression's SQL and the SQL it is grouped as.
@@ -326,11 +336,6 @@ fn convert_select(
     context: &Context<'_>,
     output: Output,
 ) -> Result<ConvertedQuery, Refusal> {
-    let Output {
-        named,
-        written,
-        bare,
-    } = output;
     let construct = node_construct("select");
     let select = payload_object(payload, &construct)?;
     require_understood(select, SELECT_FIELDS, &construct)?;
@@ -372,7 +377,7 @@ fn convert_select(
                 ..Placement::PROJECTION
             },
         };
-        for (name, emitted) in convert_projection(item, site, named)? {
+        for (name, emitted) in convert_projection(item, site, output.named)? {
             if emitted.suffixed {
                 suffixed_item.get_or_insert(item);
             }
@@ -403,21 +408,15 @@ fn convert_select(
                 emitted.sql = emitted.sql.replace(converted.as_str(), grouped);
             }
         }
-        let name = name.as_deref().filter(|_| written);
-        match origins
-            .get(index)
-            .filter(|_| index < 64 && bare >> index & 1 == 1)
-            .and_then(|item| integer_item(item))
-        {
-            Some(digits) => {
-                let literal = Emitted {
-                    sql: digits.to_owned(),
-                    ..emitted.clone()
-                };
-                items.push(projected_sql(name, &literal, &context));
-            }
-            None => items.push(projected_sql(name, emitted, &context)),
-        }
+        items.push(select_item(
+            emitted,
+            name.as_deref().filter(|_| output.written),
+            origins
+                .get(index)
+                .copied()
+                .filter(|_| is_bare(output.bare, index)),
+            &context,
+        ));
     }
     let plain = list(select, "joins").is_empty() && !scope.grouped;
     let columns: Vec<ColumnSpec> = outputs
@@ -434,7 +433,7 @@ fn convert_select(
             ..ColumnSpec::new(name.clone(), emitted.data_type)
         })
         .collect();
-    if named {
+    if output.named {
         let refused_because = match !context.free_projections && outer.is_none() {
             false => Some(NESTED_REPEAT),
             true if NAME_READING_CLAUSES
@@ -493,7 +492,7 @@ fn convert_select(
                     *emitted = canonical_variant(emitted.clone(), &construct, &context)?;
                 }
                 items.push(projected_sql(
-                    Some(name.as_str()).filter(|name| written && !name.is_empty()),
+                    Some(name.as_str()).filter(|name| output.written && !name.is_empty()),
                     emitted,
                     &context,
                 ));
@@ -508,7 +507,7 @@ fn convert_select(
         false => "",
     };
     if !distinct.is_empty() && outputs.iter().any(|(_, emitted)| emitted.unordered) {
-        items = distinct_checked(&outputs, written, &context)?;
+        items = distinct_checked(&outputs, output.written, &context)?;
     }
     let tail = select_tail(select, &scope, &context, (&outputs, &grouped_variants))?;
     Ok((
@@ -555,6 +554,25 @@ fn distinct_checked(
         items.push(projected_sql(name, &value, context));
     }
     Ok(items)
+}
+
+/// A select item: its integer literal `origin` written bare when there is one, else as converted.
+fn select_item(
+    emitted: &Emitted,
+    name: Option<&str>,
+    origin: Option<&Value>,
+    context: &Context<'_>,
+) -> String {
+    match origin.and_then(integer_item) {
+        Some(digits) => {
+            let literal = Emitted {
+                sql: digits.to_owned(),
+                ..emitted.clone()
+            };
+            projected_sql(name, &literal, context)
+        }
+        None => projected_sql(name, emitted, context),
+    }
 }
 
 fn projected_sql(name: Option<&str>, emitted: &Emitted, context: &Context<'_>) -> String {
