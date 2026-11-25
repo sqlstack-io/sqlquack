@@ -20,9 +20,8 @@ pub fn exact_float_moments(
     let raise = raised(&format!(
         "{FLOAT_SUM_ORDER}: a FLOAT sum whose value depends on the order of addition"
     ));
-    let squares = format!(
-        "list_transform({VALUES}, lambda float_moment_x: float_moment_x * float_moment_x)"
-    );
+    let squares =
+        format!("list_transform({VALUES}, lambda float_moment_x: float_moment_x * float_moment_x)");
     format!(
         "list_transform([{}], lambda {VALUES}: {})[1]",
         listed_values(value, over),

@@ -44,10 +44,10 @@ mod test_object_values;
 mod test_raises;
 #[path = "tests/test_session_timezone.rs"]
 mod test_session_timezone;
-#[path = "tests/test_structured_types.rs"]
-mod test_structured_types;
 #[path = "tests/test_set_operations.rs"]
 mod test_set_operations;
+#[path = "tests/test_structured_types.rs"]
+mod test_structured_types;
 #[path = "tests/test_swathe_values.rs"]
 mod test_swathe_values;
 #[path = "tests/test_typed_lambdas.rs"]
