@@ -14,6 +14,17 @@ use crate::blocks::main::string_literal::string_literal;
 use crate::blocks::models::TextFailure;
 use crate::raises::main::raised::raised;
 
+/// `sql` with each key of `expansions` replaced by its text, one `replace` per key.
+pub(crate) fn replaced(sql: &str, expansions: &[(&str, &str)], log: &ProvenanceLog) -> String {
+    expansions.iter().fold(sql.to_owned(), |text, (from, to)| {
+        format!(
+            "replace({text}, {}, {})",
+            string_literal(from, log),
+            string_literal(to, log)
+        )
+    })
+}
+
 /// `sql` with each one-character key of `expansions` spelled as its text, by a single lookup.
 pub(crate) fn expanded(sql: &str, expansions: &[(&str, &str)], log: &ProvenanceLog) -> String {
     let class: String = expansions
