@@ -665,8 +665,13 @@ fn table_source(
         true => columns,
         false => stored_columns(columns),
     };
+    let quoted_alias = quoted_identifier(&alias, log);
+    let sql = match relation == quoted_alias {
+        true => relation,
+        false => format!("{relation} AS {quoted_alias}"),
+    };
     Ok((
-        format!("{relation} AS {}", quoted_identifier(&alias, log)),
+        sql,
         ScopeRelation {
             alias,
             columns,

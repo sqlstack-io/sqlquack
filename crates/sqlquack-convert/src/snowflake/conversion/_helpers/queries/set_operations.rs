@@ -6,6 +6,7 @@ use sqlquack_blocks::blocks::main::quoted_identifier::quoted_identifier;
 use sqlquack_blocks::held::main::variant_json_branch::variant_json_branch;
 use sqlquack_blocks::semi_structured::constants::JSON_FIDELITY;
 use sqlquack_diagnostics::classification::models::Construct;
+use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
@@ -21,7 +22,8 @@ use crate::snowflake::conversion::_helpers::expressions::temporal::unified_cast;
 use crate::snowflake::conversion::_helpers::expressions::windows::canonical_variant;
 use crate::snowflake::conversion::_helpers::queries::clauses::order_and_limit;
 use crate::snowflake::conversion::_helpers::queries::query::{
-    ConvertedQuery, QueryRequest, convert_query, convert_with, require_distinct_names,
+    ConvertedQuery, Output, QueryRequest, convert_output, convert_with, integer_item,
+    require_distinct_names,
 };
 use crate::snowflake::conversion::_helpers::support::declared::merged;
 use crate::snowflake::conversion::_helpers::support::divergence::{
@@ -30,7 +32,8 @@ use crate::snowflake::conversion::_helpers::support::divergence::{
 use crate::snowflake::conversion::_helpers::support::scope::{Context, Emitted, Scope};
 use crate::snowflake::conversion::_helpers::support::site::{Placement, Site};
 use crate::snowflake::conversion::_helpers::support::tree::{
-    field, flag, node_construct, payload_object, require_understood,
+    Payload, field, flag, identifier_name, list, node_construct, node_kind, payload_object,
+    require_understood,
 };
 use crate::snowflake::conversion::constants::DUPLICATE_VARIANTS;
 use crate::snowflake::conversion::constants::{
@@ -63,7 +66,7 @@ pub(crate) fn convert_set_operation(
     let QueryRequest {
         outer,
         context,
-        named,
+        output,
     } = request;
     let construct = node_construct(kind);
     let operation = payload_object(payload, &construct)?;
@@ -110,33 +113,59 @@ pub(crate) fn convert_set_operation(
     };
     let context = &context.projecting(context.free_projections && keyword == UNION_ALL);
     let (with_sql, context) = convert_with(operation.get("with"), outer, context)?;
-    let left = convert_query(
+    let ordered = ["order_by", "limit", "offset"]
+        .iter()
+        .any(|clause| operation.get(*clause).is_some_and(|value| !value.is_null()));
+    let (left_node, right_node) = (
         field(operation, "left", &construct)?,
-        outer,
-        &context,
-        named,
-    )?;
-    let right = convert_query(
         field(operation, "right", &construct)?,
+    );
+    let chain = keyword == UNION_ALL && chain_member(operation);
+    let (bare, root) = match (chain, output.bare) {
+        (true, 0) => {
+            let bare = hoisted(operation);
+            (bare, bare != 0)
+        }
+        (true, bare) => (bare, false),
+        (false, _) => (0, false),
+    };
+    let left = convert_output(
+        left_node,
         outer,
         &context,
-        false,
+        Output {
+            written: output.written || by_name || ordered || root,
+            bare,
+            ..output
+        },
+    )?;
+    let right = convert_output(
+        right_node,
+        outer,
+        &context,
+        Output {
+            named: false,
+            written: by_name,
+            bare,
+        },
     )?;
     let (left_columns, right_columns) = (left.1.clone(), right.1.clone());
+    let left_written = output.written || ordered || root;
     let (left_sql, right_sql, columns) = match by_name {
         true => {
             let columns = named_columns((&left.1, &right.1), &construct, &context)?;
             (
-                conform_by_name(left, &columns, &construct, &context)?,
-                conform_by_name(right, &columns, &construct, &context)?,
+                conform_by_name(left, &columns, left_written, &construct, &context)?,
+                conform_by_name(right, &columns, false, &construct, &context)?,
                 columns,
             )
         }
         false => {
             let columns = unified_columns((&left.1, &right.1), &construct, &context)?;
+            let left_plain = plain_select(left_node) || chained(left_node, kind, operation);
             (
-                conform(left, &columns, &construct, &context)?,
-                conform(right, &columns, &construct, &context)?,
+                conform(left, &columns, (left_written, left_plain, bare), &construct, &context)?,
+                conform(right, &columns, (false, plain_select(right_node), bare), &construct, &context)?,
                 columns,
             )
         }
@@ -148,15 +177,16 @@ pub(crate) fn convert_set_operation(
             .any(|column| column.data_type == SnowflakeType::SemiStructured)
     {
         true => (
-            canonical_branch(left_sql, (&left_columns, &columns), &construct, &context)?,
-            canonical_branch(right_sql, (&right_columns, &columns), &construct, &context)?,
+            canonical_branch(left_sql, (&left_columns, &columns), left_written, &construct, &context)?,
+            canonical_branch(right_sql, (&right_columns, &columns), false, &construct, &context)?,
         ),
         false => (left_sql, right_sql),
     };
     let sql = format!("{with_sql}{left_sql} {keyword} {right_sql}");
-    let ordered = ["order_by", "limit", "offset"]
-        .iter()
-        .any(|clause| operation.get(*clause).is_some_and(|value| !value.is_null()));
+    let sql = match root {
+        true => cast_once(&sql, &columns, bare, &construct, &context)?,
+        false => sql,
+    };
     let wrapped = ordered
         || columns.iter().any(|column| {
             matches!(
@@ -237,27 +267,35 @@ fn unified_columns(
     Ok(columns)
 }
 
+/// A branch cast to the `target` column types, its names `written`; `plain` when it can stand unparenthesised.
 fn conform(
     (sql, actual): ConvertedQuery,
     target: &[ColumnSpec],
+    (written, plain, bare): (bool, bool, u64),
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<String, Refusal> {
-    let same = actual.iter().zip(target).all(|(actual, target)| {
-        actual.data_type == target.data_type
-            && target.data_type != SnowflakeType::Null
-            && !joins_held(actual, target)
+    let is_bare = |index: usize| index < 64 && bare >> index & 1 == 1;
+    let same = actual.iter().zip(target).enumerate().all(|(index, (actual, target))| {
+        is_bare(index)
+            || (actual.data_type == target.data_type
+                && target.data_type != SnowflakeType::Null
+                && !joins_held(actual, target))
     });
     if same {
-        return Ok(format!("({sql})"));
+        return Ok(match plain {
+            true => sql,
+            false => format!("({sql})"),
+        });
     }
     let log = context.log;
     let names: Vec<String> = (1..=actual.len())
         .map(|index| format!("C{index}"))
         .collect();
     let mut items: Vec<String> = Vec::new();
-    for ((name, column), own) in names.iter().zip(target).zip(&actual) {
+    for (index, ((name, column), own)) in names.iter().zip(target).zip(&actual).enumerate() {
         let value = match (column.data_type, own.data_type) {
+            _ if is_bare(index) => quoted_identifier(name, log),
             (SnowflakeType::SemiStructured, _) if joins_held(own, column) => {
                 variant_json_branch(&quoted_identifier(name, log), log)
             }
@@ -296,27 +334,166 @@ fn conform(
             )
             .map_err(|reason| outside_conditions(construct.clone(), reason))?,
         };
-        items.push(format!(
-            "{value} AS {}",
-            quoted_identifier(&column.name, log)
-        ));
+        items.push(named_item(value, &column.name, written, log));
     }
     let column_list: Vec<String> = names
         .iter()
         .map(|name| quoted_identifier(name, log))
         .collect();
     Ok(format!(
-        "(SELECT {} FROM ({sql}) AS {}({}))",
+        "SELECT {} FROM ({sql}) AS {}({})",
         items.join(", "),
         quoted_identifier(BRANCH, log),
         column_list.join(", ")
     ))
 }
 
+/// Whether a UNION ALL is one link of a chain: not BY NAME, not ordered or limited and without WITH.
+fn chain_member(operation: &Payload) -> bool {
+    !flag(operation, "by_name")
+        && ["with", "order_by", "limit", "offset"]
+            .iter()
+            .all(|clause| operation.get(*clause).is_none_or(Value::is_null))
+}
+
+/// The positions, as bits, a UNION ALL chain writes as bare integer literals and casts once around itself.
+///
+/// Every branch must be a plain SELECT holding an integer literal there, its first branch naming
+/// every column apart, and casting once must save more bytes than its wrapper costs.
+fn hoisted(operation: &Payload) -> u64 {
+    let mut branches: Vec<&Payload> = Vec::new();
+    if !chain_branches(operation, &mut branches) {
+        return 0;
+    }
+    let mut bare = u64::MAX;
+    for branch in &branches {
+        let items = list(branch, "expressions");
+        if items.len() > 64 || flag(branch, "distinct") || branch.get("connect").is_some_and(|connect| !connect.is_null()) {
+            return 0;
+        }
+        let mut literals = 0_u64;
+        for (index, item) in items.iter().enumerate() {
+            if integer_item(item).is_some() {
+                literals |= 1 << index;
+            }
+        }
+        bare &= literals;
+    }
+    let Some(names) = branches.first().and_then(|first| aliases(first)) else {
+        return 0;
+    };
+    let positions = (0..names.len()).filter(|index| bare >> index & 1 == 1);
+    let cost: usize = positions
+        .clone()
+        .map(|index| 2 * names[index].len() + CAST_ONCE_ITEM)
+        .sum::<usize>()
+        + CAST_ONCE_WRAPPER;
+    let saved = branches.len() * positions.count() * LITERAL_CAST;
+    match saved > cost {
+        true => bare,
+        false => 0,
+    }
+}
+
+/// The bytes a cast of an integer literal adds at the least: `CAST(`, ` AS DECIMAL(` and `1,0))`.
+const LITERAL_CAST: usize = 22;
+/// The most bytes one cast written once adds beside its name twice, quotes doubled included.
+const CAST_ONCE_ITEM: usize = 40;
+/// The bytes of `SELECT * REPLACE (`, `) FROM (` and `)`.
+const CAST_ONCE_WRAPPER: usize = 27;
+
+/// The plain SELECT branches of a UNION ALL chain, in order; false when a branch is anything else.
+fn chain_branches<'a>(operation: &'a Payload, branches: &mut Vec<&'a Payload>) -> bool {
+    ["left", "right"].iter().all(|side| {
+        let Some(node) = operation.get(*side) else {
+            return false;
+        };
+        match node_kind(node).map(|(kind, payload)| (kind, payload.as_object())) {
+            Some(("union", Some(inner))) if flag(inner, "all") && chain_member(inner) => {
+                chain_branches(inner, branches)
+            }
+            Some(("select", Some(select))) if plain_select(node) => {
+                branches.push(select);
+                true
+            }
+            _ => false,
+        }
+    })
+}
+
+/// A select's item names, each an alias and none repeated in any case; `None` otherwise.
+fn aliases(select: &Payload) -> Option<Vec<String>> {
+    let mut names: Vec<String> = Vec::new();
+    for item in list(select, "expressions") {
+        let ("alias", alias) = node_kind(item)? else {
+            return None;
+        };
+        let name = alias.get("alias").and_then(identifier_name)?;
+        if name.is_empty() || names.iter().any(|seen| seen.eq_ignore_ascii_case(&name)) {
+            return None;
+        }
+        names.push(name);
+    }
+    Some(names)
+}
+
+/// A UNION ALL chain whose `bare` columns are cast once to their unified types.
+fn cast_once(
+    sql: &str,
+    columns: &[ColumnSpec],
+    bare: u64,
+    construct: &Construct,
+    context: &Context<'_>,
+) -> Result<String, Refusal> {
+    let log = context.log;
+    let mut items: Vec<String> = Vec::new();
+    for (index, column) in columns.iter().enumerate() {
+        if index < 64 && bare >> index & 1 == 1 {
+            let name = quoted_identifier(&column.name, log);
+            let cast = cast(&name, column.data_type, log)
+                .map_err(|reason| outside_conditions(construct.clone(), reason))?;
+            items.push(format!("{cast} AS {name}"));
+        }
+    }
+    Ok(format!("SELECT * REPLACE ({}) FROM ({sql})", items.join(", ")))
+}
+
+/// A select item, `AS name` when `written`.
+fn named_item(value: String, name: &str, written: bool, log: &ProvenanceLog) -> String {
+    match written {
+        true => format!("{value} AS {}", quoted_identifier(name, log)),
+        false => value,
+    }
+}
+
+/// Whether a branch is one SELECT without WITH, ORDER BY or a row limit, which stands unparenthesised.
+fn plain_select(node: &Value) -> bool {
+    matches!(
+        node_kind(node),
+        Some(("select", select)) if ["with", "order_by", "limit", "top", "fetch", "offset"]
+            .iter()
+            .all(|clause| select.get(*clause).is_none_or(Value::is_null))
+    )
+}
+
+/// Whether a left branch is the same set operation, unordered and without WITH, which DuckDB groups the same unparenthesised.
+fn chained(node: &Value, kind: &str, operation: &Payload) -> bool {
+    let Some((inner, Some(branch))) = node_kind(node).map(|(inner, branch)| (inner, branch.as_object())) else {
+        return false;
+    };
+    inner == kind
+        && flag(branch, "all") == flag(operation, "all")
+        && !flag(branch, "by_name")
+        && ["with", "order_by", "limit", "offset"]
+            .iter()
+            .all(|clause| branch.get(*clause).is_none_or(Value::is_null))
+}
+
 /// A deduplicated branch, its JSON-held VARIANTs written as Snowflake writes them, keys sorted.
 fn canonical_branch(
     sql: String,
     (own, target): (&[ColumnSpec], &[ColumnSpec]),
+    written: bool,
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<String, Refusal> {
@@ -344,17 +521,14 @@ fn canonical_branch(
             }
             _ => value,
         };
-        items.push(format!(
-            "{value} AS {}",
-            quoted_identifier(&column.name, log)
-        ));
+        items.push(named_item(value, &column.name, written, log));
     }
     let column_list: Vec<String> = names
         .iter()
         .map(|name| quoted_identifier(name, log))
         .collect();
     Ok(format!(
-        "(SELECT {} FROM {sql} AS {}({}))",
+        "(SELECT {} FROM ({sql}) AS {}({}))",
         items.join(", "),
         quoted_identifier(BRANCH, log),
         column_list.join(", ")
@@ -422,6 +596,7 @@ fn named_columns<'a>(
 fn conform_by_name(
     (sql, actual): ConvertedQuery,
     target: &[ColumnSpec],
+    written: bool,
     construct: &Construct,
     context: &Context<'_>,
 ) -> Result<String, Refusal> {
@@ -464,10 +639,7 @@ fn conform_by_name(
             )
             .map_err(|reason| outside_conditions(construct.clone(), reason))?,
         };
-        items.push(format!(
-            "{value} AS {}",
-            quoted_identifier(&column.name, log)
-        ));
+        items.push(named_item(value, &column.name, written, log));
     }
     Ok(format!(
         "(SELECT {} FROM ({sql}) AS {})",

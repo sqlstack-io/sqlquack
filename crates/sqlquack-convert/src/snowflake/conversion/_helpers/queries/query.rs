@@ -87,12 +87,43 @@ const SELECT_FIELDS: &[&str] = &[
 /// A converted query and its result columns.
 pub(crate) type ConvertedQuery = (String, Vec<ColumnSpec>);
 
-/// Where a query is converted: the enclosing query's scope, the context and whether names matter.
+/// Where a query is converted: the enclosing query's scope, the context and how its columns are written.
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct QueryRequest<'a> {
     pub(crate) outer: Option<&'a Scope<'a>>,
     pub(crate) context: &'a Context<'a>,
+    pub(crate) output: Output,
+}
+
+/// How a query's result columns are named.
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct Output {
+    /// Whether every result column must have a Snowflake name.
     pub(crate) named: bool,
+    /// Whether the select list writes its names: a later set operation branch takes the first's.
+    pub(crate) written: bool,
+    /// The select-list positions, as bits, whose integer literals a UNION ALL casts once around itself.
+    pub(crate) bare: u64,
+}
+
+/// The most digits of an integer literal written bare, so DuckDB reads it as at most a BIGINT.
+const BARE_DIGITS: usize = 18;
+
+/// A select item's integer literal text, when it is one of at most 18 digits without a leading zero.
+pub(crate) fn integer_item(item: &Value) -> Option<&str> {
+    let this = match node_kind(item)? {
+        ("alias", alias) => alias.get("this")?,
+        _ => item,
+    };
+    let ("literal", literal) = node_kind(this)? else {
+        return None;
+    };
+    let text = literal.get("value")?.as_str()?;
+    let integer = literal.get("literal_type").and_then(Value::as_str) == Some(LITERAL_NUMBER)
+        && (1..=BARE_DIGITS).contains(&text.len())
+        && text.bytes().all(|byte| byte.is_ascii_digit())
+        && (text == "0" || !text.starts_with('0'));
+    integer.then_some(text)
 }
 
 /// A grouped VARIANT expression's SQL and the SQL it is grouped as.
@@ -108,8 +139,23 @@ pub(crate) fn convert_query(
     context: &Context<'_>,
     named: bool,
 ) -> Result<ConvertedQuery, Refusal> {
+    let output = Output {
+        named,
+        written: true,
+        bare: 0,
+    };
+    convert_output(node, outer, context, output)
+}
+
+/// Converts a query whose result columns are named as `output` says.
+pub(crate) fn convert_output(
+    node: &Value,
+    outer: Option<&Scope<'_>>,
+    context: &Context<'_>,
+    output: Output,
+) -> Result<ConvertedQuery, Refusal> {
     context.log.enter(QUERY_CONSTRUCT, true);
-    let converted = convert_query_kind(node, outer, context, named);
+    let converted = convert_query_kind(node, outer, context, output);
     let argument = match &converted {
         Ok(_) => Some(ShapeArgument {
             family: QUERY_CONSTRUCT.to_owned(),
@@ -128,8 +174,9 @@ fn convert_query_kind(
     node: &Value,
     outer: Option<&Scope<'_>>,
     context: &Context<'_>,
-    named: bool,
+    output: Output,
 ) -> Result<ConvertedQuery, Refusal> {
+    let named = output.named;
     let Some((kind, payload)) = node_kind(node) else {
         return Err(missing(
             node_construct("unknown"),
@@ -137,12 +184,12 @@ fn convert_query_kind(
         ));
     };
     match kind {
-        "select" => convert_select(payload, outer, context, named),
+        "select" => convert_select(payload, outer, context, output),
         "union" | "except" | "intersect" => {
             let request = QueryRequest {
                 outer,
                 context,
-                named,
+                output,
             };
             convert_set_operation(kind, payload, request)
         }
@@ -159,11 +206,11 @@ fn convert_query_kind(
             let _rule = context.log.rule(COMMENT);
             let payload = payload_object(payload, &construct)?;
             require_understood(payload, &["this", "trailing_comments"], &construct)?;
-            convert_query(field(payload, "this", &construct)?, outer, context, named)
+            convert_output(field(payload, "this", &construct)?, outer, context, output)
         }
         "values" => {
             let _rule = context.log.rule(VALUES_ROWS);
-            let (sql, mut columns) = convert_query(&values_rows(payload)?, outer, context, named)?;
+            let (sql, mut columns) = convert_output(&values_rows(payload)?, outer, context, output)?;
             let filled = filled_columns(payload);
             for (position, column) in columns.iter_mut().enumerate() {
                 column.not_null = filled.get(position).copied().unwrap_or(false);
@@ -276,8 +323,13 @@ fn convert_select(
     payload: &Value,
     outer: Option<&Scope<'_>>,
     context: &Context<'_>,
-    named: bool,
+    output: Output,
 ) -> Result<ConvertedQuery, Refusal> {
+    let Output {
+        named,
+        written,
+        bare,
+    } = output;
     let construct = node_construct("select");
     let select = payload_object(payload, &construct)?;
     require_understood(select, SELECT_FIELDS, &construct)?;
@@ -350,7 +402,21 @@ fn convert_select(
                 emitted.sql = emitted.sql.replace(converted.as_str(), grouped);
             }
         }
-        items.push(projected_sql(name.as_deref(), emitted, &context));
+        let name = name.as_deref().filter(|_| written);
+        match origins
+            .get(index)
+            .filter(|_| index < 64 && bare >> index & 1 == 1)
+            .and_then(|item| integer_item(item))
+        {
+            Some(digits) => {
+                let literal = Emitted {
+                    sql: digits.to_owned(),
+                    ..emitted.clone()
+                };
+                items.push(projected_sql(name, &literal, &context));
+            }
+            None => items.push(projected_sql(name, emitted, &context)),
+        }
     }
     let plain = list(select, "joins").is_empty() && !scope.grouped;
     let columns: Vec<ColumnSpec> = outputs
@@ -426,7 +492,7 @@ fn convert_select(
                     *emitted = canonical_variant(emitted.clone(), &construct, &context)?;
                 }
                 items.push(projected_sql(
-                    Some(name.as_str()).filter(|name| !name.is_empty()),
+                    Some(name.as_str()).filter(|name| written && !name.is_empty()),
                     emitted,
                     &context,
                 ));
@@ -441,7 +507,7 @@ fn convert_select(
         false => "",
     };
     if !distinct.is_empty() && outputs.iter().any(|(_, emitted)| emitted.unordered) {
-        items = distinct_checked(&outputs, &context)?;
+        items = distinct_checked(&outputs, written, &context)?;
     }
     let tail = select_tail(select, &scope, &context, (&outputs, &grouped_variants))?;
     Ok((
@@ -456,6 +522,7 @@ fn convert_select(
 /// SELECT DISTINCT items where an unordered array of several distinct elements in a repeated row raises.
 fn distinct_checked(
     outputs: &[(String, Emitted)],
+    written: bool,
     context: &Context<'_>,
 ) -> Result<Vec<String>, Refusal> {
     let windowed = outputs
@@ -468,7 +535,7 @@ fn distinct_checked(
     let repeated = format!("count(*) OVER (PARTITION BY {}) > 1", partition.join(", "));
     let mut items: Vec<String> = Vec::with_capacity(outputs.len());
     for (name, emitted) in outputs {
-        let name = Some(name.as_str()).filter(|name| !name.is_empty());
+        let name = Some(name.as_str()).filter(|name| written && !name.is_empty());
         if !emitted.unordered {
             items.push(projected_sql(name, emitted, context));
             continue;
