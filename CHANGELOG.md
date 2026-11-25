@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.24.1](https://github.com/sqlstack-io/sqlquack/compare/v0.24.0...v0.24.1) (2026-11-25)
+
+
+### Performance Improvements
+
+* **convert:** bind a computed SPLIT operand once in DuckDB ([01b4e4e](https://github.com/sqlstack-io/sqlquack/commit/01b4e4e759068005597e74c5e7bc1186de5388c5))
+* **convert:** keep computed arguments out of DuckDB's repeating macros ([43bc619](https://github.com/sqlstack-io/sqlquack/commit/43bc6196e4a684c488a7e99e3075fe5e9b94b50b))
+* **convert:** look up UPPER's multi-character mappings in two strings ([be4d4fc](https://github.com/sqlstack-io/sqlquack/commit/be4d4fc690f8328bd55f8db2b4ba51239089472d))
+* **convert:** read text as FLOAT with one literal for its whitespace, numbers first ([da5adcf](https://github.com/sqlstack-io/sqlquack/commit/da5adcf21211f152024274e85f0be26e37109e83))
+* **convert:** write VARIANT text through version-2 macros that escape once ([7ce81e2](https://github.com/sqlstack-io/sqlquack/commit/7ce81e27510078f45ad5cf3f40b4728a185515d0))
+
 ## [0.24.0](https://github.com/sqlstack-io/sqlquack/compare/v0.23.2...v0.24.0) (2026-11-25)
 
 
