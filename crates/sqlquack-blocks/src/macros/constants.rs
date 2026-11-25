@@ -12,6 +12,10 @@ pub const JSON_ESCAPED_V1: &str = "json_escaped_v1";
 pub const VARIANT_TEXT_V1: &str = "variant_text_v1";
 /// A VARIANT as JSON text, as Snowflake writes it.
 pub const VARIANT_JSON_TEXT_V1: &str = "variant_json_text_v1";
+/// A VARIANT cast to VARCHAR as variant_text_v1 writes it, with one escape a call.
+pub const VARIANT_TEXT_V2: &str = "variant_text_v2";
+/// A VARIANT as JSON text as variant_json_text_v1 writes it, with one escape a call.
+pub const VARIANT_JSON_TEXT_V2: &str = "variant_json_text_v2";
 /// A VARIANT cast to a NUMBER.
 pub const VARIANT_NUMBER_V1: &str = "variant_number_v1";
 /// A VARIANT cast to FLOAT.

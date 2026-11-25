@@ -4,7 +4,7 @@ description: "The versioned DuckDB macros converted SQL calls, and how to create
 ---
 
 Converted SQL that reads a VARIANT or date and time text, or divides wide decimals, calls small DuckDB macros in a `sqlquack` schema, such as
-`sqlquack.variant_text_v1`, instead of repeating the same long expression at every use.
+`sqlquack.variant_text_v2`, instead of repeating the same long expression at every use.
 `convert` prints the statements creating the macros a query calls ahead of the query, so its
 output runs as it is in any DuckDB session:
 
@@ -14,11 +14,11 @@ $ sqlquack convert staging.sql --no-config
 CREATE SCHEMA IF NOT EXISTS sqlquack;
 CREATE OR REPLACE MACRO sqlquack.json_read_v1(
 …
-CREATE OR REPLACE MACRO sqlquack.variant_text_v1(quack_site, quack_value) AS list_transform(
+CREATE OR REPLACE MACRO sqlquack.variant_text_v2(quack_site, quack_value) AS list_transform(
 …
 SELECT
-    sqlquack.variant_text_v1(
-        '#0d01742fedea',
+    sqlquack.variant_text_v2(
+        '#4e58bb5a4ce8',
         json_extract("EVENTS"."PAYLOAD", '$."customer_id"')
     ) AS "CUSTOMER_ID"
 FROM (
@@ -53,7 +53,7 @@ changed macro gets a new version and a new name.
 `sqlquack explain <name>` prints a macro's arguments, what it computes and its definition:
 
 ```bash
-sqlquack explain variant_text_v1
+sqlquack explain variant_text_v2
 ```
 
 | Macro | What it computes |
@@ -61,8 +61,10 @@ sqlquack explain variant_text_v1
 | `json_read_v1` | JSON text read as a VARIANT, raising `json_fidelity` where DuckDB might read it differently from Snowflake. |
 | `json_checked_v1` | The same read, faster: plain JSON is read as it is, anything else goes through `json_read_v1`. |
 | `json_escaped_v1` | JSON text with Snowflake's escapes. |
-| `variant_text_v1` | A VARIANT cast to `VARCHAR`, as Snowflake writes it. |
-| `variant_json_text_v1` | A VARIANT as Snowflake writes it as JSON text. |
+| `variant_text_v2` | A VARIANT cast to `VARCHAR`, as Snowflake writes it. |
+| `variant_json_text_v2` | A VARIANT as Snowflake writes it as JSON text. |
+| `variant_text_v1` | What `variant_text_v2` computes, from a larger definition. Kept for SQL converted by 0.24.0 and earlier. |
+| `variant_json_text_v1` | What `variant_json_text_v2` computes, from a larger definition. Kept for SQL converted by 0.24.0 and earlier. |
 | `variant_written_v1` | A FLOAT held in a VARIANT, or a value built around one, as Snowflake writes it as JSON text. |
 | `variant_number_v1` | A VARIANT cast to `NUMBER(p, s)`, with Snowflake's errors. |
 | `variant_float_v1` | A VARIANT cast to `FLOAT`, with Snowflake's errors. |
@@ -80,5 +82,5 @@ sqlquack explain variant_text_v1
 | `time_zone_v1` | A time zone name passed through when NULL or a name Snowflake was recorded accepting, case included; raises `time_zone_spelling` for any other name. |
 | `decimal_quotient_v1` | The exact quotient of two unscaled decimals at the result scale, rounded half away from zero or truncated; raises Snowflake's division by zero error and `numeric_range` where the quotient needs more than 128 bits. |
 
-A raising macro takes the raise site first, such as `'#0d01742fedea'`, so its error names the
+A raising macro takes the raise site first, such as `'#4e58bb5a4ce8'`, so its error names the
 place in your SQL it came from, as an inline raise does.
