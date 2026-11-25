@@ -458,3 +458,10 @@ pub(crate) struct CaseSubjectTestCase {
     /// How many copies of the operand DuckDB parses, whatever the number of WHENs.
     pub(crate) expected_copies: usize,
 }
+
+/// A statement whose marked operand DuckDB must parse `expected_copies` times after conversion.
+pub(crate) struct OperandCopiesTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) sql: &'static str,
+    pub(crate) expected_copies: usize,
+}
