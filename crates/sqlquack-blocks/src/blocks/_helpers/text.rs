@@ -26,7 +26,7 @@ pub(crate) fn replaced(sql: &str, expansions: &[(&str, &str)], log: &ProvenanceL
     })
 }
 
-/// `sql` with each one-character key of `expansions` spelled as its text, by a single lookup.
+/// `sql` with each key of `expansions` spelled out; list_aggr joins, as array_to_string pastes twice.
 pub(crate) fn expanded(sql: &str, expansions: &[(&str, &str)], log: &ProvenanceLog) -> String {
     let class: String = expansions
         .iter()
@@ -42,8 +42,8 @@ pub(crate) fn expanded(sql: &str, expansions: &[(&str, &str)], log: &ProvenanceL
     once_bound(sql, "case_text", |text| {
         format!(
             "CASE WHEN regexp_matches({text}, '[{class}]') \
-             THEN array_to_string(list_transform(string_split({text}, ''), lambda case_character: \
-             coalesce(string_split({targets}, chr(31))[instr({keys}, case_character)], case_character)), '') \
+             THEN list_aggr(list_transform(string_split({text}, ''), lambda case_character: \
+             coalesce(string_split({targets}, chr(31))[instr({keys}, case_character)], case_character)), 'string_agg', '') \
              ELSE {text} END"
         )
     })

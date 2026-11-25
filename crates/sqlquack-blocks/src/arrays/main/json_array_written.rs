@@ -20,16 +20,16 @@ pub fn json_array_written(
     log.building_block(JSON_ARRAY_WRITTEN);
     let body = match separator {
         None => format!(
-            "('[' || array_to_string(list_transform(a, lambda e: CASE WHEN e IS NULL THEN \
-             '{UNDEFINED_TEXT}' ELSE {} END), ',') || ']')",
+            "('[' || coalesce(list_aggr(list_transform(a, lambda e: CASE WHEN e IS NULL THEN \
+             '{UNDEFINED_TEXT}' ELSE {} END), 'string_agg', ','), '') || ']')",
             json_serialized("e", log)
         ),
         Some(separator) => format!(
             "(CASE WHEN {separator} IS NULL THEN NULL \
              WHEN list_contains(list_transform(a, lambda e: json_type(e)), 'NULL') \
              THEN CAST({} AS VARCHAR) \
-             ELSE array_to_string(list_transform(a, lambda e: \
-             CASE WHEN e IS NULL THEN '' ELSE {} END), {separator}) END)",
+             ELSE coalesce(list_aggr(list_transform(a, lambda e: \
+             CASE WHEN e IS NULL THEN '' ELSE {} END), 'string_agg', {separator}), '') END)",
             raised(&tagged_message(
                 VARIANT_NOT_CAST,
                 ARRAY_ELEMENT_NOT_TEXT_MESSAGE

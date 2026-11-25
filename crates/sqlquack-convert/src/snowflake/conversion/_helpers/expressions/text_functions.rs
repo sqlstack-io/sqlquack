@@ -251,12 +251,24 @@ pub(crate) fn split_part(
             )),
         };
     }
-    let part = integer_operand(part, construct, site)?;
+    let literal = convert_expression(part, site)?.literal;
+    let part = match literal.as_ref().map(literal_index) {
+        Some(Ok(index)) => index.to_string(),
+        _ => integer_operand(part, construct, site)?,
+    };
     let delimiter = string_literal(&delimiter, site.context.log);
     Ok(Emitted::new(
         split_text_part(&text, (&delimiter, &part), site.context.log),
         SnowflakeType::Varchar,
     ))
+}
+
+/// The integer a SPLIT_PART part literal spells, or why it is not one.
+fn literal_index(literal: &Literal) -> Result<i64, String> {
+    match literal {
+        Literal::Number(number) => number.parse::<i64>().map_err(|error| error.to_string()),
+        Literal::Text(_) => Err("a text part".to_owned()),
+    }
 }
 
 /// SPLIT_PART with a delimiter from a column: an empty delimiter leaves the text as its one part.

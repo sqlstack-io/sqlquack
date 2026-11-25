@@ -415,6 +415,8 @@ pub const TABLE_WRAPPER: &str = "TABLE";
 pub const SEMI_STRUCTURED_HOLDING: &str = "JSON";
 /// The lambda parameter a simple CASE binds its computed operand and WHEN values to.
 pub const CASE_SUBJECT: &str = "case_subject";
+/// The lambda parameter NULLIFZERO binds a computed operand to: DuckDB's nullif pastes it twice.
+pub const ZERO_TESTED: &str = "zero_tested";
 /// OBJECT_PICK.
 pub const OBJECT_PICK_RULE: &str = "rule.object_pick";
 /// OBJECT_KEYS.

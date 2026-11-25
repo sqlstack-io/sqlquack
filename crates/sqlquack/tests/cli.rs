@@ -22,6 +22,8 @@ mod test_coverage;
 mod test_divergence;
 #[path = "cli/test_division.rs"]
 mod test_division;
+#[path = "cli/test_duckdb_macros.rs"]
+mod test_duckdb_macros;
 #[path = "cli/test_error_check.rs"]
 mod test_error_check;
 #[path = "cli/test_evidence_commands.rs"]

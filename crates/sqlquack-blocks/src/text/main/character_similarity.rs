@@ -22,8 +22,8 @@ pub fn character_similarity(left: &str, right: &str, log: &ProvenanceLog) -> Str
     };
     let encoded = |side: &str| {
         format!(
-            "array_to_string(list_transform(string_split(lower(p['{side}']), ''), \
-             lambda c: chr(list_position(a, c))), '')"
+            "list_aggr(list_transform(string_split(lower(p['{side}']), ''), \
+             lambda c: chr(list_position(a, c))), 'string_agg', '')"
         )
     };
     format!(
