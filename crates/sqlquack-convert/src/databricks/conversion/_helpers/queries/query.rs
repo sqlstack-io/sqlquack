@@ -4,10 +4,10 @@ use serde_json::Value;
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::databricks::conversion::_helpers::expressions::expression;
-use crate::databricks::conversion::_helpers::operators::{as_type, common_type};
-use crate::databricks::conversion::_helpers::scope::{Columns, Scope, Site};
-use crate::databricks::conversion::_helpers::tree::{
+use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
+use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
+use crate::databricks::conversion::_helpers::support::scope::{Columns, Scope, Site};
+use crate::databricks::conversion::_helpers::support::tree::{
     digits_value, field, flag, identifier, list, node_kind, quoted, refused, understood,
 };
 use crate::databricks::conversion::constants::{FIXTURE_RULE, ORDER_RULE, SELECT_RULE};

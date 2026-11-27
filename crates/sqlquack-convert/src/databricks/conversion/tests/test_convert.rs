@@ -52,6 +52,45 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Double, DatabricksType::Int],
         },
         ConvertTestCase {
+            description: "^ is XOR in Databricks, so it becomes xor rather than DuckDB's power",
+            query: "SELECT x1 ^ 2 AS r FROM input",
+            expected_sql: &["xor(\"x1\", 2) AS \"r\""],
+            expected_types: &[DatabricksType::Int],
+        },
+        ConvertTestCase {
+            description: "LIKE ANY is an OR of LIKEs, and a simple CASE compares its operand",
+            query: "SELECT s LIKE ANY ('a%', 'b') AS l, CASE x1 WHEN 1 THEN 'one' ELSE 'other' END AS c FROM input",
+            expected_sql: &[
+                "((\"s\" LIKE 'a%') OR (\"s\" LIKE 'b')) AS \"l\"",
+                "CASE WHEN (\"x1\" = 1) THEN 'one' ELSE 'other' END AS \"c\"",
+            ],
+            expected_types: &[DatabricksType::Boolean, DatabricksType::String],
+        },
+        ConvertTestCase {
+            description: "a literal cast to FLOAT converts only when no rounding happens",
+            query: "SELECT CAST(-2.5 AS FLOAT) AS f FROM input",
+            expected_sql: &["CAST(CAST(-2.5 AS DECIMAL(2, 1)) AS FLOAT) AS \"f\""],
+            expected_types: &[DatabricksType::Float],
+        },
+        ConvertTestCase {
+            description: "LEFT of a zero or negative length is '', where DuckDB counts from the end",
+            query: "SELECT left(s, x1) AS l FROM input",
+            expected_sql: &["WHEN \"x1\" <= 0 THEN ''"],
+            expected_types: &[DatabricksType::String],
+        },
+        ConvertTestCase {
+            description: "TRY_MOD by -1 is 0, where DuckDB overflows on the smallest integer",
+            query: "SELECT try_mod(x1, x1) AS m FROM input",
+            expected_sql: &["CASE WHEN \"x1\" = -1 THEN \"x1\" * 0 ELSE try(\"x1\" % \"x1\") END"],
+            expected_types: &[DatabricksType::Int],
+        },
+        ConvertTestCase {
+            description: "TRY_DIVIDE by zero is NULL, where DuckDB's DOUBLE division gives NaN",
+            query: "SELECT try_divide(x1, 0) AS q FROM input",
+            expected_sql: &["CASE WHEN CAST(0 AS DOUBLE) = 0 THEN NULL ELSE"],
+            expected_types: &[DatabricksType::Double],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
@@ -81,11 +120,6 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
 #[test]
 fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
     let test_cases = [
-        RefuseTestCase {
-            description: "^ is XOR in Databricks and a power in DuckDB",
-            query: "SELECT x1 ^ 2 AS r FROM input",
-            expected_reason: "bitwise_xor",
-        },
         RefuseTestCase {
             description: "dayofweek numbers days from Sunday = 1",
             query: "SELECT dayofweek(x1) AS r FROM input",
@@ -135,6 +169,21 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "a string compared with an integer",
             query: "SELECT s = x1 AS r FROM input",
             expected_reason: "compares",
+        },
+        RefuseTestCase {
+            description: "0.1 is no binary fraction, so engines may round its FLOAT differently",
+            query: "SELECT CAST(0.1 AS FLOAT) AS f FROM input",
+            expected_reason: "FLOAT",
+        },
+        RefuseTestCase {
+            description: "shifts wrap in Databricks and raise in DuckDB",
+            query: "SELECT shiftleft(x1, 31) AS r FROM input",
+            expected_reason: "SHIFTLEFT",
+        },
+        RefuseTestCase {
+            description: "SHA2 of a length DuckDB has no digest for",
+            query: "SELECT sha2(s, 384) AS h FROM input",
+            expected_reason: "SHA2",
         },
         RefuseTestCase {
             description: "an OFFSET no rule reads",

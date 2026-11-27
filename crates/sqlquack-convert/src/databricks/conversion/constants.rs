@@ -28,14 +28,24 @@ pub const BETWEEN_RULE: &str = "rule.databricks.between";
 pub const IN_LIST_RULE: &str = "rule.databricks.in_list";
 /// A searched `CASE` whose branches share one type.
 pub const CASE_RULE: &str = "rule.databricks.case";
-/// `[NOT] LIKE` and `ILIKE` with a constant pattern holding no backslash, Databricks's escape.
+/// `[NOT] LIKE`, `LIKE ANY` and `LIKE ALL` with constant patterns holding no backslash.
 pub const LIKE_RULE: &str = "rule.databricks.like";
 /// `ORDER BY` with the null ordering written out: Databricks puts NULLs first ascending.
 pub const ORDER_RULE: &str = "rule.databricks.order";
 /// `CONCAT` of strings as `||`, NULL when any argument is NULL.
 pub const CONCAT_RULE: &str = "rule.databricks.concat";
+/// `TRIM ... FROM` as DuckDB's trim, ltrim or rtrim with the characters written out.
+pub const TRIM_RULE: &str = "rule.databricks.trim";
+/// `&`, `|`, `~`, and `^`, which is XOR in Databricks and DuckDB's `xor`.
+pub const BITWISE_RULE: &str = "rule.databricks.bitwise";
 /// A function DuckDB has under the same or another name with the same results.
 pub const SAME_FUNCTION_RULE: &str = "rule.databricks.same_function";
+/// A function rewritten for DuckDB, such as NVL2 as a CASE or LEFT with its zero length written out.
+pub const REWRITE_RULE: &str = "rule.databricks.rewrite";
+/// The digest length SHA2 reads as SHA-256.
+pub const SHA2_SHA256_BITS: &str = "256";
+/// The digest length SHA2 also reads as SHA-256.
+pub const SHA2_DEFAULT_BITS: &str = "0";
 /// An aggregate DuckDB computes the same way.
 pub const AGGREGATE_RULE: &str = "rule.databricks.aggregate";
 
@@ -45,14 +55,20 @@ pub const COUNT_NAME: &str = "COUNT";
 pub const MIN_LIST_ARGUMENTS: usize = 2;
 /// The most digits a literal has for one rounding to DOUBLE to match Databricks's exact conversion.
 pub const DOUBLE_EXACT_DIGITS: usize = 15;
-/// The most digits an integer literal has to convert to FLOAT exactly.
-pub const FLOAT_EXACT_DIGITS: usize = 7;
 /// The length of `YYYY-MM-DD`.
 pub const DATE_TEXT_LENGTH: usize = 10;
 /// The length of `HH:MM:SS`.
 pub const CLOCK_TEXT_LENGTH: usize = 8;
 /// The most fraction digits of a second both engines keep: microseconds.
 pub const MAX_FRACTION_DIGITS: usize = 6;
+/// The type the parser keeps as a custom name: a wall-clock timestamp.
+pub const TIMESTAMP_NTZ_NAME: &str = "TIMESTAMP_NTZ";
+/// The text values both engines read as DOUBLE's special values.
+pub const SPECIAL_DOUBLE_TEXTS: &[&str] = &["NaN", "Infinity", "-Infinity"];
+/// The most significant bits a FLOAT holds.
+pub const FLOAT_MANTISSA_BITS: u32 = 24;
+/// The most significant bits a DOUBLE holds.
+pub const DOUBLE_MANTISSA_BITS: u32 = 53;
 /// How deep a tree may nest for conversion, which recurses once per level.
 pub const MAX_TREE_DEPTH: usize = 128;
 /// The most digits a Databricks decimal holds.

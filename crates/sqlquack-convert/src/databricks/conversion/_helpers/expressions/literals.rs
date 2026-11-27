@@ -3,13 +3,14 @@
 use serde_json::Value;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::databricks::conversion::_helpers::expressions::expression;
-use crate::databricks::conversion::_helpers::scope::Site;
-use crate::databricks::conversion::_helpers::tree::{field, refused, understood};
-use crate::databricks::conversion::_helpers::typing::{databricks_type, same_cast};
+use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
+use crate::databricks::conversion::_helpers::support::scope::Site;
+use crate::databricks::conversion::_helpers::support::tree::{field, refused, understood};
+use crate::databricks::conversion::_helpers::support::typing::{databricks_type, same_cast};
 use crate::databricks::conversion::constants::{
-    CAST_RULE, CLOCK_TEXT_LENGTH, DATE_TEXT_LENGTH, DOUBLE_EXACT_DIGITS, FLOAT_EXACT_DIGITS,
-    LITERAL_RULE, MAX_DECIMAL_PRECISION, MAX_FRACTION_DIGITS,
+    CAST_RULE, CLOCK_TEXT_LENGTH, DATE_TEXT_LENGTH, DOUBLE_EXACT_DIGITS, DOUBLE_MANTISSA_BITS,
+    FLOAT_MANTISSA_BITS, LITERAL_RULE, MAX_DECIMAL_PRECISION, MAX_FRACTION_DIGITS,
+    SPECIAL_DOUBLE_TEXTS,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
@@ -88,7 +89,7 @@ pub(crate) fn negated(operand: Emitted) -> Result<Emitted, Refusal> {
             number(&format!("-{digits}"))
         }
         (_, data_type) if data_type.is_numeric() => {
-            Ok(typed(format!("(-{})", operand.sql), data_type))
+            Ok(typed(format!("(- {})", operand.sql), data_type))
         }
         _ => Err(refused(
             "neg",
@@ -194,10 +195,12 @@ fn number_fits(number: &str, target: DatabricksType) -> bool {
     let (whole, fraction) = unsigned.split_once('.').unwrap_or((unsigned, ""));
     match target {
         target if target.is_integral() => !exponent && fraction.is_empty(),
-        DatabricksType::Double => exponent || whole.len() + fraction.len() <= DOUBLE_EXACT_DIGITS,
-        DatabricksType::Float => {
-            !exponent && fraction.is_empty() && whole.len() <= FLOAT_EXACT_DIGITS
+        DatabricksType::Double => {
+            exponent
+                || whole.len() + fraction.len() <= DOUBLE_EXACT_DIGITS
+                || exactly_binary(whole, fraction, DOUBLE_MANTISSA_BITS)
         }
+        DatabricksType::Float => !exponent && exactly_binary(whole, fraction, FLOAT_MANTISSA_BITS),
         DatabricksType::Decimal { scale, .. } => {
             !exponent && fraction.len() <= usize::from(scale) && !whole.is_empty()
         }
@@ -206,10 +209,44 @@ fn number_fits(number: &str, target: DatabricksType) -> bool {
     }
 }
 
+/// Whether `whole.fraction` is a binary fraction of at most `bits` significant bits, so no cast rounds it.
+fn exactly_binary(whole: &str, fraction: &str, bits: u32) -> bool {
+    let Some(digits) = digits_u128(&format!("{whole}{fraction}")) else {
+        return false;
+    };
+    let Ok(scale) = u32::try_from(fraction.len()) else {
+        return false;
+    };
+    let Some(fives) = 5u128.checked_pow(scale) else {
+        return false;
+    };
+    match digits % fives {
+        0 => {
+            let mantissa = digits / fives;
+            mantissa == 0
+                || u128::BITS - mantissa.leading_zeros() - mantissa.trailing_zeros() <= bits
+        }
+        _ => false,
+    }
+}
+
+/// The value of a string of ASCII digits that fits 128 bits.
+fn digits_u128(text: &str) -> Option<u128> {
+    if text.is_empty() || !text.bytes().all(|byte| byte.is_ascii_digit()) {
+        return None;
+    }
+    text.bytes().try_fold(0u128, |value, byte| {
+        value.checked_mul(10)?.checked_add(u128::from(byte - b'0'))
+    })
+}
+
 /// Whether casting the string `value` to `target` gives the same value in both engines.
 fn text_fits(value: &str, target: DatabricksType) -> bool {
     match target {
         DatabricksType::String => true,
+        DatabricksType::Double | DatabricksType::Float => {
+            SPECIAL_DOUBLE_TEXTS.contains(&value) || plain_decimal(value)
+        }
         DatabricksType::Date => is_date(value),
         DatabricksType::Timestamp | DatabricksType::TimestampNtz => {
             is_date(value) || is_timestamp(value)
@@ -221,6 +258,17 @@ fn text_fits(value: &str, target: DatabricksType) -> bool {
         }
         _ => false,
     }
+}
+
+/// An optionally negative decimal such as `-2.50`, which both engines parse correctly rounded.
+fn plain_decimal(value: &str) -> bool {
+    let digits = value.strip_prefix('-').unwrap_or(value);
+    let (whole, fraction) = digits.split_once('.').unwrap_or((digits, ""));
+    let plain = |text: &str| text.bytes().all(|byte| byte.is_ascii_digit());
+    !whole.is_empty()
+        && plain(whole)
+        && plain(fraction)
+        && (fraction.is_empty() || digits.ends_with(|c: char| c.is_ascii_digit()))
 }
 
 /// `YYYY-MM-DD`; both engines raise alike on an impossible date.

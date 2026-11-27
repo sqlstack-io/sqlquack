@@ -3,13 +3,19 @@
 use serde_json::Value;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::databricks::conversion::_helpers::functions::call;
-use crate::databricks::conversion::_helpers::literals::{boolean, cast, literal, negated, null};
-use crate::databricks::conversion::_helpers::operators::{
-    arithmetic, between, case, comparison, division, in_list, like, logical, not, null_test,
+use crate::databricks::conversion::_helpers::expressions::bitwise::{
+    bitwise, bitwise_not, concat_operator, plus, truth_test,
 };
-use crate::databricks::conversion::_helpers::scope::Site;
-use crate::databricks::conversion::_helpers::tree::{
+use crate::databricks::conversion::_helpers::expressions::functions::call;
+use crate::databricks::conversion::_helpers::expressions::literals::{
+    boolean, cast, literal, negated, null,
+};
+use crate::databricks::conversion::_helpers::expressions::operators::{
+    arithmetic, between, case, comparison, division, in_list, logical, not, null_test,
+};
+use crate::databricks::conversion::_helpers::expressions::patterns::{like, trim};
+use crate::databricks::conversion::_helpers::support::scope::Site;
+use crate::databricks::conversion::_helpers::support::tree::{
     field, identifier, node_kind, quoted, refused, understood,
 };
 use crate::databricks::conversion::constants::COLUMN_RULE;
@@ -53,6 +59,12 @@ pub(crate) fn expression(node: &Value, site: Site<'_>) -> Result<Emitted, Refusa
         "in" => in_list(payload, site),
         "case" => case(payload, site),
         "like" => like(payload, site),
+        "trim" => trim(payload, site),
+        "bitwise_and" | "bitwise_or" | "bitwise_xor" => bitwise(kind, payload, site),
+        "bitwise_not" => bitwise_not(payload, site),
+        "pos" => plus(payload, site),
+        "concat" => concat_operator(payload, site),
+        "is_true" | "is_false" => truth_test(kind, payload, site),
         "function" | "aggregate_function" => call(kind, payload, site),
         _ => Err(refused(kind, format!("no rule converts {kind}"))),
     }

@@ -3,11 +3,12 @@
 use serde_json::Value;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::databricks::conversion::_helpers::expressions::expression;
-use crate::databricks::conversion::_helpers::literals::typed;
-use crate::databricks::conversion::_helpers::operators::{as_type, common_type};
-use crate::databricks::conversion::_helpers::scope::Site;
-use crate::databricks::conversion::_helpers::tree::{
+use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
+use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
+use crate::databricks::conversion::_helpers::expressions::rewrites::{applied, rewrite};
+use crate::databricks::conversion::_helpers::support::scope::Site;
+use crate::databricks::conversion::_helpers::support::tree::{
     field, list, node_kind, refused_function, understood,
 };
 use crate::databricks::conversion::constants::{
@@ -40,7 +41,10 @@ pub(crate) fn call(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
             format!("{name} is no aggregate DISTINCT applies to"),
         )),
         "CONCAT" => concat(args, site),
-        _ => same_function(&name, args, site),
+        _ => match rewrite(&name) {
+            Some(rewrite) => applied(&name, rewrite, &arguments(args, site)?, site),
+            None => same_function(&name, args, site),
+        },
     }
 }
 

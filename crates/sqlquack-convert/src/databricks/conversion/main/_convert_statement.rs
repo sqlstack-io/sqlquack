@@ -5,8 +5,8 @@ use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 use sqlquack_diagnostics::refusals::models::{Refusal, RefusalCategory};
 use sqlquack_syntax::{Expression, ExpressionWalk};
 
-use crate::databricks::conversion::_helpers::query::statement;
-use crate::databricks::conversion::_helpers::tree::refused;
+use crate::databricks::conversion::_helpers::queries::query::statement;
+use crate::databricks::conversion::_helpers::support::tree::refused;
 use crate::databricks::conversion::constants::MAX_TREE_DEPTH;
 use crate::databricks::conversion::models::Converted;
 

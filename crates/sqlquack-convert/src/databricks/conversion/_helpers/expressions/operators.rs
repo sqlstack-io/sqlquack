@@ -3,16 +3,16 @@
 use serde_json::Value;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::databricks::conversion::_helpers::expressions::expression;
-use crate::databricks::conversion::_helpers::literals::{quoted_text, typed};
-use crate::databricks::conversion::_helpers::scope::Site;
-use crate::databricks::conversion::_helpers::tree::{
+use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
+use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::support::scope::Site;
+use crate::databricks::conversion::_helpers::support::tree::{
     digits_value, field, flag, list, refused, understood,
 };
-use crate::databricks::conversion::_helpers::typing::wider_integer;
+use crate::databricks::conversion::_helpers::support::typing::wider_integer;
 use crate::databricks::conversion::constants::{
     ARITHMETIC_RULE, BETWEEN_RULE, BOOLEAN_RULE, CASE_RULE, COMPARISON_RULE, DIVISION_RULE,
-    IN_LIST_RULE, LIKE_RULE, NULL_TEST_RULE,
+    IN_LIST_RULE, NULL_TEST_RULE,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
@@ -201,9 +201,13 @@ pub(crate) fn in_list(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusa
     ))
 }
 
-/// A searched `CASE` whose results share one type, integers widened to the widest.
+/// A `CASE`, simple or searched, whose results share one type, integers widened to the widest.
 pub(crate) fn case(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
-    let case = understood(payload, "case", &["whens", "else_"])?;
+    let case = understood(payload, "case", &["operand", "whens", "else_"])?;
+    let operand = match field(case, "operand") {
+        Value::Null => None,
+        node => Some(expression(node, site)?),
+    };
     let mut conditions: Vec<String> = Vec::new();
     let mut results: Vec<Emitted> = Vec::new();
     for when in list(case, "whens") {
@@ -213,7 +217,15 @@ pub(crate) fn case(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> 
                 "a WHEN is not a condition and a result".to_owned(),
             ));
         };
-        conditions.push(boolean(&expression(condition, site)?, "case")?);
+        let condition = expression(condition, site)?;
+        conditions.push(match &operand {
+            Some(operand) => {
+                let (left, right) = comparable(operand, &condition)
+                    .ok_or_else(|| uncomparable("case", operand, &condition))?;
+                format!("({left} = {right})")
+            }
+            None => boolean(&condition, "case")?,
+        });
         results.push(expression(result, site)?);
     }
     let otherwise = match field(case, "else_") {
@@ -243,34 +255,6 @@ pub(crate) fn case(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> 
     Ok(typed(sql, common))
 }
 
-/// `[NOT] LIKE` a constant pattern without a backslash, Databricks's escape and no escape in DuckDB.
-pub(crate) fn like(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
-    let like = understood(payload, "like", &["left", "right", "negated"])?;
-    let subject = expression(field(like, "left"), site)?;
-    let pattern = expression(field(like, "right"), site)?;
-    let _rule = site.log.rule(LIKE_RULE);
-    let constant = match &pattern.literal {
-        Some(Literal::Text(text)) if !text.contains('\\') => Some(text),
-        _ => None,
-    };
-    match (subject.data_type, constant) {
-        (DatabricksType::String, Some(text)) => {
-            let not = match flag(like, "negated") {
-                true => " NOT",
-                false => "",
-            };
-            Ok(typed(
-                format!("({}{not} LIKE {})", subject.sql, quoted_text(text)),
-                DatabricksType::Boolean,
-            ))
-        }
-        _ => Err(refused(
-            "like",
-            "only a string LIKE a constant pattern without a backslash converts".to_owned(),
-        )),
-    }
-}
-
 /// The type a list of values compares or unifies as: one shared type, or the widest integer.
 pub(crate) fn common_type(values: &[Emitted]) -> Option<DatabricksType> {
     let mut common = DatabricksType::Null;
@@ -294,7 +278,7 @@ pub(crate) fn as_type(value: &Emitted, data_type: DatabricksType) -> String {
 }
 
 /// Both sides as DuckDB compares them as Databricks does: exact numbers by value, DOUBLE as DOUBLE.
-fn comparable(left: &Emitted, right: &Emitted) -> Option<(String, String)> {
+pub(crate) fn comparable(left: &Emitted, right: &Emitted) -> Option<(String, String)> {
     use DatabricksType as T;
     let exact = |data_type: T| data_type.is_integral() || matches!(data_type, T::Decimal { .. });
     match (left.data_type, right.data_type) {
@@ -316,7 +300,7 @@ fn comparable(left: &Emitted, right: &Emitted) -> Option<(String, String)> {
     }
 }
 
-fn uncomparable(kind: &str, left: &Emitted, right: &Emitted) -> Refusal {
+pub(crate) fn uncomparable(kind: &str, left: &Emitted, right: &Emitted) -> Refusal {
     refused(
         kind,
         format!(
@@ -328,7 +312,7 @@ fn uncomparable(kind: &str, left: &Emitted, right: &Emitted) -> Refusal {
 }
 
 /// A boolean operand's SQL, refusing any other type.
-fn boolean(operand: &Emitted, kind: &str) -> Result<String, Refusal> {
+pub(crate) fn boolean(operand: &Emitted, kind: &str) -> Result<String, Refusal> {
     match operand.data_type {
         DatabricksType::Boolean | DatabricksType::Null => Ok(operand.sql.clone()),
         other => Err(refused(
@@ -339,7 +323,11 @@ fn boolean(operand: &Emitted, kind: &str) -> Result<String, Refusal> {
 }
 
 /// The two operands of a binary operator.
-fn operands(kind: &str, payload: &Value, site: Site<'_>) -> Result<(Emitted, Emitted), Refusal> {
+pub(crate) fn operands(
+    kind: &str,
+    payload: &Value,
+    site: Site<'_>,
+) -> Result<(Emitted, Emitted), Refusal> {
     let operator = understood(payload, kind, &["left", "right"])?;
     Ok((
         expression(field(operator, "left"), site)?,

@@ -5,8 +5,10 @@ use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
 use sqlquack_diagnostics::refusals::main::missing::missing;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::databricks::conversion::_helpers::tree::{field, understood};
-use crate::databricks::conversion::constants::{DEFAULT_DECIMAL, MAX_DECIMAL_PRECISION};
+use crate::databricks::conversion::_helpers::support::tree::{field, understood};
+use crate::databricks::conversion::constants::{
+    DEFAULT_DECIMAL, MAX_DECIMAL_PRECISION, TIMESTAMP_NTZ_NAME,
+};
 use crate::databricks::conversion::models::DatabricksType;
 
 /// The Databricks type a serialised data type names, or a refusal for a type no rule maps.
@@ -30,6 +32,10 @@ pub(crate) fn databricks_type(node: &Value) -> Result<DatabricksType, Refusal> {
         "float" | "double" => &["data_type", "precision", "scale", "real_spelling"],
         "decimal" => &["data_type", "precision", "scale", "spelling"],
         "timestamp" => &["data_type", "timezone"],
+        "custom" if node.get("name").and_then(Value::as_str) == Some(TIMESTAMP_NTZ_NAME) => {
+            return understood(node, "data_type", &["data_type", "name"])
+                .map(|_| DatabricksType::TimestampNtz);
+        }
         _ => return Err(refusal("no rule maps this type to DuckDB")),
     };
     let payload = understood(node, "data_type", fields)?;
