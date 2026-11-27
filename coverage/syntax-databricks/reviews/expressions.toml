@@ -1343,3 +1343,86 @@ note = "Re-binds db-expressions-067, not a re-read: that exclusion was bound to 
 [[review.exclusion]]
 form = "db.expressions.object-type"
 reason = "output-only type. The page (doc.data-types.object-type, page_sha256 bb2353b8cf2213122635372bfbe0177c7a19da940f0138ce38766f0368c5546a) says: \"The OBJECT cannot be stored in a table column. It is only exposed when calling schema_of_variant or schema_of_variant_agg.\" The pinned engine (2026.45) and the local parser both refuse OBJECT as input. Reconsider if the page changes or the engine starts accepting OBJECT as input."
+
+[[review]]
+id = "db-expressions-069"
+family = "expressions"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "approved"
+resolves = ["db-expressions-049", "db-expressions-050", "db-expressions-053", "db-expressions-054", "db-expressions-055"]
+forms = [
+  "db.expressions.collation.order-by-collate-utf8-lcase",
+  "db.expressions.collation.order-by-lower-collate",
+  "db.expressions.identifiers.subscript-dot",
+  "db.expressions.identifiers.subscript-dot.syntax",
+  "db.expressions.names.syntax",
+  "db.expressions.object-type",
+  "db.expressions.window-functions",
+  "db.expressions.window-functions-frame",
+]
+note = "Read in full at c0cf1d70b under review brief v3 by eight independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.45), the local documentation pages, the obligations with the limits and hand rows, and the parse trees of every case. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria; no two cases of a form with different SQL give one tree. It resolves the changes_requested records it lists, each checked against the current trees: dropping a ( ... ) pair, wrapping one token in a new pair or adding a comma, in each accepted case of these forms, gives no variant with the case's tree (2,526 of 13,334 such variants parse), and syntax-coverage screen flags none of 22,019 variants; WITH PROPERTIES and WITH DBPROPERTIES, a VALUES alias with and without AS, and backquoted hint names and hinted relations give different trees; ! NULL on a column and a comma before the end of a hint are refused."
+
+[review.fingerprints]
+"db.expressions.collation.order-by-collate-utf8-lcase" = "cd3b1b09c8b4a1f9ceab5d4c3a9e7c45a7480806f88cf358e92dbac8dc87bcc1"
+"db.expressions.collation.order-by-lower-collate" = "2790a770da2e94eaefc7da3a680354fbdf5af61ce2fd1408762933b3c2502ffd"
+"db.expressions.identifiers.subscript-dot" = "6983567e11561b24c2df74cd66ee5fbe9088f5889c95ecd3a657ac887c4e758e"
+"db.expressions.identifiers.subscript-dot.syntax" = "4f87bcc088a279a7fc42a5ea7f18054fdaf93bf4614a0c4440a4fd63e839445b"
+"db.expressions.names.syntax" = "57c4e9e2f95e068046d5c9ed028d93c4001800fe040b40fee2f901011852cd5e"
+"db.expressions.object-type" = "515ac67d0dccf4844f695ceef6e32970554cdad765e5c475ba3f9b3c018615c8"
+"db.expressions.window-functions" = "50632f7602349ad1d283290764b26802ae25ffaf9525c463c715bddd8e451ef5"
+"db.expressions.window-functions-frame" = "c33cee068dd9cd682f4c1e8c62670edea59ec1986fa37a15214c4a964cb322a9"
+
+[review.definitions]
+"db.expressions.collation.order-by-collate-utf8-lcase" = "c5b904885d664b09fefaf33e2bbd55d5af664c2d8d918830b05d47c3118d9adf"
+"db.expressions.collation.order-by-lower-collate" = "8956818fd573a9f97c4996b14f25db35a0d40363e79063a68c7ee202bedabbad"
+"db.expressions.identifiers.subscript-dot" = "c01c968323ddc7f294aebe3823014d97f7ef6afbf0899381aa3ad8f10bce6d48"
+"db.expressions.identifiers.subscript-dot.syntax" = "f38732875a5091608d0d490a6a1768de1d5166fe6470fb950bb996f5f7ca342e"
+"db.expressions.names.syntax" = "7bf76f01ab15f18677c226018804c6f70d9c1bc6e2e768236d64bbf6a2c717e6"
+"db.expressions.object-type" = "4b26b0b84831b45f53cde61f8c781d2fb2a0225462499751f15fd4ee63ea141b"
+"db.expressions.window-functions" = "8d8b5f177789ba363b04161b506230cb79610400a28fa923e130299ea0793ad7"
+"db.expressions.window-functions-frame" = "5b6c018d85db0f3efa9750186323ca6f89130488198b57537d14d7e4b8e8bae5"
+
+[[review]]
+id = "db-expressions-070"
+family = "expressions"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "changes_requested"
+forms = [
+  "db.expressions.geography-type",
+  "db.expressions.geometry-type",
+  "db.expressions.int-type",
+  "db.expressions.names.identifier-2",
+  "db.expressions.names.subscript-dot-3",
+  "db.expressions.smallint-type",
+  "db.expressions.string-type",
+  "db.expressions.time-type.time",
+  "db.expressions.tinyint-type",
+  "db.expressions.variant-type",
+]
+note = "Read in the same review as the approvals at this parser tree, under review brief v3, by the same eight read-only reviewers; these forms are held. Form by form: geography-type: (d) o003 SELECT CAST ( NULL AS GEOGRAPHY ( ANY ) ) gives {data_type:geography,srid:null}: ANY leaves no mark, only absent srid stands for it. Stricter reading taken (bare GEOGRAPHY is refused, so no accepted text collides today). geometry-type: (d), stricter reading: o003 GEOMETRY ( ANY ) gives srid:null, the same shape as a geometry with no srid; ANY leaves no mark of its own in the tree. Grammar, coverage and outcomes are fine. int-type: (b), stricter reading: o001/o002/o003 SELECT ( INT ) and SELECT ( INTEGER ) never use a type; trees are column{name:\"INT\"}/column{name:\"INTEGER\"}, so neither alternative of the type is exercised. Needs a type position, e.g. CAST ( NULL AS INT ). names.identifier-2: (b), stricter reading: suppress of required_operand_missing <identifier_clause> (SELECT * FROM IDENTIFIER) gives an expression reason (\"lone word is a column reference\") for a FROM position, where the word is a table name; no receipt cited. Rest is sound. names.subscript-dot-3: (d) the trees invent an empty alias name: SELECT explode ( map ( 1 , 2 ) ) ( c1 ) gives alias {\"name\":\"\",\"quoted\":false} beside column_aliases [c1] (same in o002, o012, o014); an omitted name must be absent, not an empty name. smallint-type: (b)/(d): o002/o003 never put the type in a type position: SELECT ( SMALLINT ) and SELECT ( SHORT ) parse as column{name:SMALLINT/SHORT} (receipts semantic_error), so neither type branch is exercised (e.g. CAST(1 AS SHORT)). Stricter reading taken. string-type: (b) stricter reading: o001's only case SELECT ( STRING ) puts STRING in expression position, and the tree is column {name:\"STRING\"}, a column reference, not the type; no case uses STRING where a type goes (e.g. CAST ( 1 AS STRING )), so the documented form is never exercised. time-type.time: (a) page Syntax is 'TIME | TIME(p)', catalogue is 'TIME' with no [[reading]]; (b)/(d) o001 SELECT ( TIME ) puts TIME in an expression slot, tree is column{name:TIME}, so the type is never parsed as a type. tinyint-type: (b) stricter reading: o001-o003 SELECT ( TINYINT ) / SELECT ( BYTE ) never put the type in a type position; tree is column{name:TINYINT}, so neither alternative's branch (the type) is exercised and no tree shows the TINYINT/BYTE type synonym. variant-type: (b) o001 positive SELECT ( VARIANT ) never puts VARIANT where a type is read; tree is {\"paren\":{\"this\":{\"column\":{\"name\":{\"name\":\"VARIANT\"}}}}}, a column reference, so the type form is not exercised (stricter reading; cf. object-type's CAST reading)."
+
+[review.fingerprints]
+"db.expressions.geography-type" = "6f09a793793d90e456b9c6fecf81d7776ffb37a2e84bdb53d672aa4049a43297"
+"db.expressions.geometry-type" = "164baf1d344c94a8eee60787ea8c5ecf960c8fb3785697a98861a4dc56a17100"
+"db.expressions.int-type" = "2f0fbe1061d48c2676c828d21ada6d016b97303b8202136173ef7c7ce457ffe3"
+"db.expressions.names.identifier-2" = "28ac6725404f471c537687829c9800d6fe99a69ded606c3a893584b359527d14"
+"db.expressions.names.subscript-dot-3" = "9cbe654d9f8acdd77427110b105bc632db840273a93e9990872cbc964f10f13b"
+"db.expressions.smallint-type" = "43097afa315acc219ac3186d700e6fa66265f0124d7537b1991bcaba1f6bb3ab"
+"db.expressions.string-type" = "adabdf61bbed6945689ecafd2fbefb8cbb074742122c44d24448a68081b5946d"
+"db.expressions.time-type.time" = "6b669a959010ad8ccedd1936bd00b0c0d787260394491e8618fb248ca914e1ae"
+"db.expressions.tinyint-type" = "400449c9998012b27fb0ffb1dfe996efb71611c51e6a92fc73d06b321f9263a0"
+"db.expressions.variant-type" = "f637597e71c570abeaecc295c43febdeebe350a77255a21c4ba6e792141c7dab"
+
+[review.definitions]
+"db.expressions.geography-type" = "2c23e30498830495c2b78307067f752a2480c5b79ec25c87dae63e4f359f9c03"
+"db.expressions.geometry-type" = "f94e39103c70f6ef2c37a7d156a9ee2094ec892bcf09fff5896f278d04950784"
+"db.expressions.int-type" = "3569598cbdcc3ae701b6879e335e6af53a04cc52f5cf1bc6c54e6cf1091237de"
+"db.expressions.names.identifier-2" = "ddec66de9ded585f47ccf7e934add2c314746c0173bdd07eefb8a67a3b64ecad"
+"db.expressions.names.subscript-dot-3" = "d6ad0859887458aa7a2ca606b1ef275aa6ab0f1094a5d12287f6c346fc740600"
+"db.expressions.smallint-type" = "2b16197a83420acc608c29a228955f744b02708bb1f14da6372070e57cb5f667"
+"db.expressions.string-type" = "9700a781e040a52173b1a377ee0d73a73442bf580254cf610f24363d5cd7734e"
+"db.expressions.time-type.time" = "5c6837877273ad8628b95806c4517e0c8c186746f0190d10d2d5d5db8d8e7921"
+"db.expressions.tinyint-type" = "0cdccf14b5f1f15099107cfd0cec82b887dc334ed9c2e02d07728747b7fda574"
+"db.expressions.variant-type" = "c94d94b9bb1f4b169303a7e215d15087208426a85196ef9f42a1fbf92c49843e"

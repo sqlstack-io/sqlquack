@@ -281,3 +281,20 @@ note = "Re-read in full on 17 Nov 2026 at 312903a4b (parser tree 880c142a) again
 
 [review.definitions]
 "db.security_admin.alter-group" = "723efe6d90faea0fd300a8aad2bd90a46f473b10459e359bc9c9ac2acd126b64"
+
+[[review]]
+id = "db-security_admin-015"
+family = "security_admin"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "approved"
+forms = [
+  "db.security_admin.alter-group",
+]
+note = "Read in full at c0cf1d70b under review brief v3 by eight independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.45), the local documentation pages, the obligations with the limits and hand rows, and the parse trees of every case. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria; no two cases of a form with different SQL give one tree."
+
+[review.fingerprints]
+"db.security_admin.alter-group" = "973bdd9665a7f5b119ed880a742b4bc0ef93352636042d3e3ef4bd84d8160b02"
+
+[review.definitions]
+"db.security_admin.alter-group" = "b11659a93c95476b2ba142e91adb00a0842f691f45b69d8214129fc5c98597b4"

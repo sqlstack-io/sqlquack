@@ -410,3 +410,23 @@ note = "Re-read on 17 Nov 2026 at 0f34dd46f against the existing 2026.45 receipt
 
 [review.definitions]
 "db.scripting.execute-immediate" = "68acd2680b5122a062cf7a293f02b39b2839d2eef3ec6e2516305a28a77d0806"
+
+[[review]]
+id = "db-scripting-022"
+family = "scripting"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "approved"
+forms = [
+  "db.scripting.compound-stmt",
+  "db.scripting.execute-immediate",
+]
+note = "Read in full at c0cf1d70b under review brief v3 by eight independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.45), the local documentation pages, the obligations with the limits and hand rows, and the parse trees of every case. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria; no two cases of a form with different SQL give one tree."
+
+[review.fingerprints]
+"db.scripting.compound-stmt" = "6d766b77168bff79d5370ad48b563b4d4065641ef6afc5de211200aff23f25d3"
+"db.scripting.execute-immediate" = "a2d7e34342d3907afb0cba905046c0062dab193792ff304640c01fd52f5e29fe"
+
+[review.definitions]
+"db.scripting.compound-stmt" = "43fbea02f7205f2b38750a7a0201df1ad7d61d9cf2c091393b190d59b7c45bae"
+"db.scripting.execute-immediate" = "b0f999a9a27637dbf4c9816eae784f2ee1f55ea5308dac9ec87bbec58d6db15a"

@@ -391,3 +391,27 @@ note = "Withdrawn by the paren-pair screen kind (drop a matching ( ... ) pair, o
 
 [review.definitions]
 "db.dml.insert-overwrite-directory" = "cf7d61dcfc0a14da22b6006a83f9aecb963171ba49e82213b349b89a6cd6069c"
+
+[[review]]
+id = "db-dml-022"
+family = "dml"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "approved"
+resolves = ["db-dml-021"]
+forms = [
+  "db.dml.insert-into.into-replace-on",
+  "db.dml.insert-overwrite-directory",
+  "db.dml.merge-into",
+]
+note = "Read in full at c0cf1d70b under review brief v3 by eight independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.45), the local documentation pages, the obligations with the limits and hand rows, and the parse trees of every case. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria; no two cases of a form with different SQL give one tree. It resolves the changes_requested records it lists, each checked against the current trees: dropping a ( ... ) pair, wrapping one token in a new pair or adding a comma, in each accepted case of these forms, gives no variant with the case's tree (2,526 of 13,334 such variants parse), and syntax-coverage screen flags none of 22,019 variants; WITH PROPERTIES and WITH DBPROPERTIES, a VALUES alias with and without AS, and backquoted hint names and hinted relations give different trees; ! NULL on a column and a comma before the end of a hint are refused."
+
+[review.fingerprints]
+"db.dml.insert-into.into-replace-on" = "295dfa490f474a4943df027d3a6eb80579815e77f47c5f05faa6c09a078d862e"
+"db.dml.insert-overwrite-directory" = "af6fb502f93f0d589e7010b7077b0fc0e24409a00ae7e78f239ca65bf68c5bde"
+"db.dml.merge-into" = "8693854f60ef08ae5a9022c2eca1de95ab93b91423a1e5ac83e2be533d0fc910"
+
+[review.definitions]
+"db.dml.insert-into.into-replace-on" = "2bd582d6024a9e89adb31d3d63f4f4d719255b580ee0b0792517f3c5c3cc3480"
+"db.dml.insert-overwrite-directory" = "cf7d61dcfc0a14da22b6006a83f9aecb963171ba49e82213b349b89a6cd6069c"
+"db.dml.merge-into" = "07710d52448fcf6fb46d0a78960f144607c8f14d3500d9a01d7c6a4f562b0176"

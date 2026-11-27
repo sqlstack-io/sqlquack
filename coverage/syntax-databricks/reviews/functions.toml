@@ -6547,3 +6547,103 @@ note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tre
 
 [review.definitions]
 "db.functions.event-log" = "b97849444997b460ce0f088f02a46d1b96b2175bc7120d75ea3896cd52fc24b4"
+
+[[review]]
+id = "db-functions-095"
+family = "functions"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "approved"
+forms = [
+  "db.functions.bangsign",
+  "db.functions.between",
+  "db.functions.date-add3",
+  "db.functions.dateadd",
+  "db.functions.datediff3",
+  "db.functions.extract",
+  "db.functions.ilike.ilike",
+  "db.functions.in.in",
+  "db.functions.isdistinct",
+  "db.functions.isfalse",
+  "db.functions.isnullop",
+  "db.functions.istrue",
+  "db.functions.like.like",
+  "db.functions.not",
+  "db.functions.read-kafka",
+  "db.functions.regexp",
+  "db.functions.rlike",
+  "db.functions.timediff",
+  "db.functions.timestampadd",
+  "db.functions.timestampdiff",
+]
+note = "Read in full at c0cf1d70b under review brief v3 by eight independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.45), the local documentation pages, the obligations with the limits and hand rows, and the parse trees of every case. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria; no two cases of a form with different SQL give one tree."
+
+[review.fingerprints]
+"db.functions.bangsign" = "d580459a8d23e8ed3fe43af5578a5cd019a57380c86a027a8162f9d16fc076ff"
+"db.functions.between" = "ed0458d481ce65b6f3493d0626d98578844bd32f112415e15facab46213b6459"
+"db.functions.date-add3" = "23b1bdf4df833f8815786d1240b8b10852b4f7a060c55b44f16eca974a48df0e"
+"db.functions.dateadd" = "8d1ad235cea28e0ba6a2f2d81811c74ec6118ba0c904387fa23a41fab60c34ba"
+"db.functions.datediff3" = "6b72ec25162085580bd0540dc3050c4cde0e60558d53c34a1d8daec195f759f9"
+"db.functions.extract" = "e1033541f833e947a67ea072e4d62eebb40d59ff0d145ece892bf729b52fc4ab"
+"db.functions.ilike.ilike" = "3d0dcdc63a278f5a96776410c6953c6a7973661aa40eaf58e61a0e7adb2867a8"
+"db.functions.in.in" = "a92d92b451416a6a442f5dffc70e61153ea2347e433c6bba27c0a5e3cc7de001"
+"db.functions.isdistinct" = "6a25f4675f20b4e7908a43ac95cffa4da6cba1cc20cdf880bf2079e93f408471"
+"db.functions.isfalse" = "9108fb8bd813c6a840d89b17befe10625d78651665365e305a2c50c0090d6770"
+"db.functions.isnullop" = "954e3ccd6322a97438c683e2f2779271f40eeb2132adef541834c6580560434c"
+"db.functions.istrue" = "b7ec33f82b992181edea513d20aa5d2111eca3105a9726c2d62021888dedcfa9"
+"db.functions.like.like" = "ff366e76cbb4fe9874c7db70cdcbe4f36de72b49e6b8d0a40a711ba05f598f15"
+"db.functions.not" = "55ac34d1fbf34f56eb695aea6a816c94804620c00ea4f167496448ce964d6d85"
+"db.functions.read-kafka" = "f6e0de72b8a26e18653311f5b34b98b169d1a46ff30b015de03ed29c1e0bfcc7"
+"db.functions.regexp" = "14b87485296bba44430b419573232adb216d2e363a904ecc640c8f9b391ba502"
+"db.functions.rlike" = "4acc9ab5474ba3e1dac4c5bc2dbd844704e4b94e849d2009d7a89a39444c38b5"
+"db.functions.timediff" = "b2e7b7445331cad68ec3b8b8dcf321e7085eb04415b6d86f2025ca5cc6549630"
+"db.functions.timestampadd" = "65b100d51e9ee51994dd64a834ba3f34a55f3a3b86eb73c2293a8146273c12e2"
+"db.functions.timestampdiff" = "095f9d2c21575985256c2af1986e220062bd50520261756131d6f7fa54537469"
+
+[review.definitions]
+"db.functions.bangsign" = "b4da4a3c6b7511d693a150abbda23890a1353cc10a5961918f5414f74f54d79b"
+"db.functions.between" = "8fc50f7a2b6e59c459e081ebd7d149d82bd7b007cf5a49a8e02f8a8df2edc0e7"
+"db.functions.date-add3" = "f23c56753f66432a350b2db8611716be10c77d2a518131c0c041f2eafb6f02d4"
+"db.functions.dateadd" = "9bb95e7cefe8ccd0f4559853b771d31105c6b8efc2ffec87383ce40b478e08ba"
+"db.functions.datediff3" = "027a64b51ea1c587ecda658d00858e8c942e184b292e99523ad53fd2db29d5ec"
+"db.functions.extract" = "71d25575030065e09305b099545ac41f8380400ef0f7949117c1d6828e6b320a"
+"db.functions.ilike.ilike" = "d149a826a61cc0b5224184ad340d9edc6834ce2950271d649ace81d8a381aa8a"
+"db.functions.in.in" = "96fb22786daae40fe0dd68280c2ad793ea8122bacab62c97fe116809102d8be5"
+"db.functions.isdistinct" = "54e400c93f8a21741be63f2ea46c71388e3e11a5a12844be0d8dde73aa86bdad"
+"db.functions.isfalse" = "7274f1d53c185cac680bc414a7b296e441022e633e449a0821f309fc320d9eae"
+"db.functions.isnullop" = "f02640a3e9842c91b0f3e5aa3e83f9def9b9885895fcd2c7034c921d97208a1d"
+"db.functions.istrue" = "585aca6d6bbe967c2f9d6b002759c1266dcf31a0579fe5bc7931b2cc09b328b6"
+"db.functions.like.like" = "f27637727ce85595f28fce5f34c4024e7bd055763e77e376fff16cdd297138f0"
+"db.functions.not" = "71568e8cb33998b8610d089ea5477cf27287130ab724a1c64d53bbd1d791530d"
+"db.functions.read-kafka" = "f043bd1b94222c4bd77f7c6cdceb7537873adec6e20fa31a77e6f02e667d21b6"
+"db.functions.regexp" = "8734f2a490ad7645acfb3993df4544479c54c0e83866977a1c7cadc1e1513d6c"
+"db.functions.rlike" = "a7b543d79200335f13696fa146b518c216733ed2428436c969f7338e3bc37d71"
+"db.functions.timediff" = "d6f316518c5e302a52086a24f5f3b3d59c87a5064bf7bc55195ab1e0feefdecf"
+"db.functions.timestampadd" = "f58c107de2b542ebd2767fa0a8d4d40eed3a25eb1e34ec72ea3b71fa04d43f9f"
+"db.functions.timestampdiff" = "63e6885bc6c689197f96a8cad97b1853bf8fadfd19740d8e49ba23df6f4f5ce7"
+
+[[review]]
+id = "db-functions-096"
+family = "functions"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "changes_requested"
+forms = [
+  "db.functions.current-timestamp",
+  "db.functions.http-request",
+  "db.functions.ilike.ilike-any-some-all",
+  "db.functions.like.like-any-some-all",
+]
+note = "Read in the same review as the approvals at this parser tree, under review brief v3, by the same eight read-only reviewers; these forms are held. Form by form: current-timestamp: (a): the page Syntax block is current_timestamp( [ precision ] ), but the catalogue has CURRENT_TIMESTAMP [ ( [ <precision> ] ) ], making the parentheses optional. No [[reading]] row states this; it is only in the page prose ('parentheses are optional'). http-request: (a) the page Syntax prints the list tail as [, ..] (two dots) but the catalogue writes [ , ... ]; quirks are to be copied as printed, and no [[reading]] row states this change. Trees and outcomes are otherwise fine. ilike.ilike-any-some-all: (a) page writes 'ilike { ANY | SOME | ALL } ( [ pattern [, ...] ] )' (pattern list optional); catalogue has '( <pattern> [ , ... ] )' with the outer [ ] dropped and no [[reading]] row stating it (o019 syntax_error receipt could support one, but none exists). like.like-any-some-all: (a) page Syntax is 'like { ANY | SOME | ALL } ( [ pattern [, ...] ] )' with the pattern list optional; catalogue writes '( <pattern> [ , ... ] )' and no [[reading]] row states the difference (o019 LIKE ANY ( ) receipt syntax_error would support one)."
+
+[review.fingerprints]
+"db.functions.current-timestamp" = "a204a76594733a68f04c98d0238b84e3259cc27dc0ed23fb926333a3a1ea5234"
+"db.functions.http-request" = "b19b924c6d3b4a3d914a50da9680f0160891b4abf4d36e29f0e8ca0598fa4cbc"
+"db.functions.ilike.ilike-any-some-all" = "7640a287cf8d5dff0526111142317aaf287f6b1fd6e6a614aa758b7642b3cbc8"
+"db.functions.like.like-any-some-all" = "626fcd3144c9ce10b696c4b8a819d11ebef24b2ea1a443e75d29d42c970a3ef6"
+
+[review.definitions]
+"db.functions.current-timestamp" = "374f0ee3d52ef1ea1476c3f707942fcad5c526faf88758c7c94566fef3a62252"
+"db.functions.http-request" = "b1ca217798d1a061a18b5a116ad292177c1928e53b6ed255d5f256c2517cb729"
+"db.functions.ilike.ilike-any-some-all" = "7dfb2bcb49d6905a71423a64084fb67ecf09fa4df214af8d91ca96a31934f4df"
+"db.functions.like.like-any-some-all" = "c9432bd581b1e5d764dea2de7ba1f6f2549603bf99e8c389977b42b3863c1dd1"
