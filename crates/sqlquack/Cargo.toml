@@ -31,12 +31,12 @@ serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
 sqlquack-compare.workspace = true
-sqlquack-convert = { workspace = true, features = ["engine", "snowflake"] }
+sqlquack-convert = { workspace = true, features = ["databricks", "engine", "snowflake"] }
 sqlquack-diagnostics = { workspace = true, features = ["snowflake"] }
-sqlquack-parse.workspace = true
+sqlquack-parse = { workspace = true, features = ["databricks"] }
 sqlquack-blocks = { workspace = true, features = ["engine"] }
 sqlquack-format = { workspace = true, features = ["duckdb"] }
-sqlquack-evidence.workspace = true
+sqlquack-evidence = { workspace = true, features = ["databricks"] }
 sqlquack-policy.workspace = true
 sqlquack-semantics = { workspace = true, features = ["snowflake"] }
 sqlquack-syntax.workspace = true

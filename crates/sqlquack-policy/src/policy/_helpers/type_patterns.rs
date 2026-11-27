@@ -1,4 +1,4 @@
-//! Parsing type patterns such as `NUMBER(p,s)`.
+//! Parsing type patterns such as `NUMBER(p,s)` and `ARRAY<INT>`.
 
 use crate::policy::models::{PatternArgument, TypePattern};
 
@@ -10,7 +10,9 @@ pub(crate) fn parse_type_pattern(text: &str) -> Result<TypePattern, String> {
     };
     if base.is_empty()
         || !base.chars().all(|character| {
-            character.is_ascii_uppercase() || character == '_' || character.is_ascii_digit()
+            character.is_ascii_uppercase()
+                || character.is_ascii_digit()
+                || matches!(character, '_' | '<' | '>')
         })
     {
         return Err(format!(
