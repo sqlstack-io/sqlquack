@@ -903,7 +903,12 @@ impl Parser<'_> {
                 }))
             }
             "TAGS" => {
-                let (pairs, without_equals) = self.valued_properties()?;
+                let spelled: Vec<(Expression, bool)> = self.spelled_property_list()?;
+                let without_equals: Vec<usize> = flagged(&spelled);
+                let pairs: Vec<(Expression, Expression)> = spelled
+                    .into_iter()
+                    .map(|(property, _)| property_pair(property))
+                    .collect();
                 let spellings: KeySpellings = key_spellings(pairs.iter().map(|(key, _)| key));
                 let expressions: Vec<(String, Expression)> = pairs
                     .into_iter()
