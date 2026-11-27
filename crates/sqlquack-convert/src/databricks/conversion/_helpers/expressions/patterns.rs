@@ -10,8 +10,8 @@ use crate::databricks::conversion::_helpers::support::tree::{
     field, flag, list, node_kind, refused, understood,
 };
 use crate::databricks::conversion::constants::{
-    CASE_FOLD_ERROR, FOLDABLE_CHARACTERS, ILIKE_KIND, ILIKE_RULE, LIKE_ESCAPE_ERROR, LIKE_ESCAPES,
-    LIKE_RULE, TRIM_RULE,
+    CASE_MAPPING_ERROR, ILIKE_KIND, ILIKE_RULE, LIKE_ESCAPE_ERROR, LIKE_ESCAPES, LIKE_RULE,
+    LOWERED_CHARACTERS, TRIM_RULE,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
@@ -113,11 +113,16 @@ pub(crate) fn like(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
     }
 }
 
-/// Text lowered by DuckDB, raising for a character outside those whose lowering Java and DuckDB were seen to agree on.
+/// `text` lowered by DuckDB, raising for a character outside those whose lowering Java and DuckDB were seen to agree on.
 fn folded(text: String) -> String {
+    case_mapped(&text, "lower", LOWERED_CHARACTERS)
+}
+
+/// `text` mapped by DuckDB's `function`, raising for a character outside `characters`, the class body it maps as Java does.
+pub(crate) fn case_mapped(text: &str, function: &str, characters: &str) -> String {
     format!(
-        "(CASE WHEN regexp_matches({text}, '[^{FOLDABLE_CHARACTERS}]') THEN error('{CASE_FOLD_ERROR}') \
-         ELSE lower({text}) END)"
+        "(CASE WHEN regexp_matches({text}, '[^{characters}]') THEN error('{CASE_MAPPING_ERROR}') \
+         ELSE {function}({text}) END)"
     )
 }
 

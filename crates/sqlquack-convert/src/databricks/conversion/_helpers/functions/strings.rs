@@ -1,9 +1,12 @@
 //! String functions, with Databricks's handling of empty, NULL and out-of-range arguments written out.
 
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::expressions::patterns::case_mapped;
 use crate::databricks::conversion::_helpers::functions::numbers::wrapped;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
-use crate::databricks::conversion::constants::{CHR_MODULUS, DEFAULT_PAD, SUBSTRING_LENGTH};
+use crate::databricks::conversion::constants::{
+    CHR_MODULUS, DEFAULT_PAD, LOWERED_CHARACTERS, SUBSTRING_LENGTH, UPPERED_CHARACTERS,
+};
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
 /// The rewrite of the string function `name`, `None` when none handles it; lengths count code points in both engines.
@@ -34,6 +37,8 @@ pub(crate) fn string_rewrite(name: &str) -> Option<Rewrite> {
         "BTRIM" => btrim,
         "CONCAT_WS" => concat_ws,
         "FIND_IN_SET" => find_in_set,
+        "LOWER" | "LCASE" => |values| case_function(values, "lower", LOWERED_CHARACTERS),
+        "UPPER" | "UCASE" => |values| case_function(values, "upper", UPPERED_CHARACTERS),
         _ => return None,
     };
     Some(rewrite)
@@ -314,4 +319,15 @@ fn strings<const N: usize>(values: &[Emitted]) -> Option<[&Emitted; N]> {
             .iter()
             .all(|value| value.data_type == DatabricksType::String);
     strings.then(|| std::array::from_fn(|index| &values[index]))
+}
+
+/// `LOWER` or `UPPER` of a string, raising for a character whose mapping DuckDB was not seen to share with Java.
+fn case_function(values: &[Emitted], function: &str, characters: &str) -> Option<Emitted> {
+    let [text] = values else { return None };
+    (text.data_type == DatabricksType::String).then(|| {
+        typed(
+            case_mapped(&text.sql, function, characters),
+            DatabricksType::String,
+        )
+    })
 }

@@ -250,12 +250,22 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             description: "ILIKE lowers both sides, raising on a character whose case no rule folds",
             query: "SELECT s ILIKE 'A\\\\%' AS c, s NOT ILIKE ANY (s, 'b_') AS a FROM input",
             expected_sql: &[
-                "THEN error('the text holds a character whose case no rule folds as Databricks does') ELSE lower(\"s\") END)",
+                "THEN error('the text holds a character whose case no rule maps as Databricks does') ELSE lower(\"s\") END)",
                 "LIKE (CASE WHEN regexp_matches('A\\%', '[^\\x{0}-\\x{12f}\\x{131}-",
                 "ESCAPE '\\')",
                 "THEN error('the LIKE pattern has an escape Databricks rejects')",
             ],
             expected_types: &[DatabricksType::Boolean, DatabricksType::Boolean],
+        },
+        ConvertTestCase {
+            description: "UPPER and LCASE map case, raising on a character DuckDB was not seen to map as Java does",
+            query: "SELECT upper(s) AS u, lcase(s) AS l FROM input",
+            expected_sql: &[
+                "ELSE upper(\"s\") END) AS \"u\"",
+                "ELSE lower(\"s\") END) AS \"l\"",
+                "[^\\x{0}-\\x{de}\\x{e0}-\\x{148}\\x{14a}-",
+            ],
+            expected_types: &[DatabricksType::String, DatabricksType::String],
         },
         ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
@@ -293,9 +303,9 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             expected_reason: "DAYOFWEEK of (INT)",
         },
         RefuseTestCase {
-            description: "case mapping differs on some characters",
-            query: "SELECT upper(s) AS r FROM input",
-            expected_reason: "UPPER",
+            description: "title-casing, whose word breaks no rule shows DuckDB sharing",
+            query: "SELECT initcap(s) AS r FROM input",
+            expected_reason: "INITCAP",
         },
         RefuseTestCase {
             description: "a decimal quotient, which Databricks keeps exact and DOUBLE would round",
