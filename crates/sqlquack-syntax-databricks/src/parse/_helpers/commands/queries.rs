@@ -881,8 +881,9 @@ impl Parser<'_> {
         Ok(select)
     }
 
-    /// `|> PIVOT` or `|> UNPIVOT`: the pivoted input as the one FROM item.
+    /// `|> PIVOT` or `|> UNPIVOT`: the pivoted input as the one FROM item, keeping how a bare input was written.
     fn pipe_pivot(&mut self, left: Expression) -> Parsing<Select> {
+        let mut marks: (bool, bool) = (false, false);
         let input: Expression = match pipe_input(left, true) {
             select
                 if select.joins.is_empty()
@@ -893,6 +894,7 @@ impl Parser<'_> {
                         .as_ref()
                         .is_some_and(|from| from.expressions.len() == 1) =>
             {
+                marks = (select.from_first, select.table_statement);
                 select
                     .from
                     .map(|mut from| from.expressions.remove(0))
@@ -902,6 +904,7 @@ impl Parser<'_> {
         };
         let pivoted: Expression = self.pivot_or_unpivot(input)?;
         let mut select: Select = Select::new();
+        (select.from_first, select.table_statement) = marks;
         select.expressions = vec![Expression::Star(Box::new(star(None, None)))];
         select.from = Some(From {
             keyword_span: Default::default(),
