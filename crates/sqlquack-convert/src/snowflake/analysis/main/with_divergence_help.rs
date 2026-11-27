@@ -52,8 +52,12 @@ fn divergence_help(
         );
     }
     let file = choices.config_file.as_deref().unwrap_or(NEW_CONFIG_FILE);
+    let allowances: String = choices
+        .allow_location
+        .clone()
+        .unwrap_or_else(|| format!("[allow] in {file}"));
     if choices.allow.get(id) == Some(&false) {
-        return format!("{id} = false under [allow] in {file} refuses it");
+        return format!("{id} = false under {allowances} refuses it");
     }
     if choices.strict {
         return STRICT_REFUSES.to_owned();
@@ -64,8 +68,8 @@ fn divergence_help(
              the project's functions"
         ),
         _ => format!(
-            "allow it with {id} = true under [allow] in {file}; `sqlquack explain {id}` says \
-             when it is safe"
+            "allow it with {id} = true under {allowances}; `sqlquack explain {id}` says when it \
+             is safe"
         ),
     }
 }

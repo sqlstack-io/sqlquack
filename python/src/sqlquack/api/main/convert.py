@@ -24,6 +24,8 @@ def convert(
         "session": dict(chosen.session),
         "strict": chosen.strict,
         "python_runtime": chosen.python_runtime,
+        "allow": dict(chosen.allow),
+        "allow_location": chosen.allow_location,
         "overrides": path_argument(chosen.overrides),
         "verified_overrides": dict(chosen.verified_overrides),
         "compact": chosen.compact,

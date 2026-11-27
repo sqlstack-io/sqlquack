@@ -52,6 +52,8 @@ pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<Str
             no_config: request.no_config,
             strict: request.strict,
             python_runtime: request.python_runtime,
+            allow: request.allow,
+            allow_location: request.allow_location,
             parse: ParseArguments {
                 max_call_depth: request
                     .max_call_depth

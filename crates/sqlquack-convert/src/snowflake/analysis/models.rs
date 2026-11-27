@@ -27,8 +27,10 @@ pub struct Analysis {
 pub struct ConversionChoices {
     /// The configuration file help names, such as `sqlquack.toml`; none without one.
     pub config_file: Option<String>,
-    /// The configuration's `[allow]`: known differences it allows (`true`) or refuses (`false`).
+    /// The configuration's `[allow]` with the caller's allowances over it: known differences allowed (`true`) or refused (`false`).
     pub allow: BTreeMap<String, bool>,
+    /// Where help and reports say the allowances are set, such as `[testing.local] allow in project.toml`; the configuration file's `[allow]` when absent.
+    pub allow_location: Option<String>,
     /// Refuse every known difference.
     pub strict: bool,
     /// A Python runtime registers the project's Python functions.

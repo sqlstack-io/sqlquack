@@ -26,6 +26,7 @@ pub fn configured_choices(
     let choices = ConversionChoices {
         config_file: Some(CONFIG_FILE_NAME.to_owned()),
         allow: config.allow,
+        allow_location: None,
         strict,
         python_runtime: config.project.python_runtime,
         max_call_depth: None,

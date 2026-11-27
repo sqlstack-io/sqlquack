@@ -63,7 +63,7 @@ class Conversion:
 
 @dataclass(frozen=True)
 class ConvertOptions:
-    """The `sqlquack convert` flags, one field each, and `schema`, declarations held in memory."""
+    """The `sqlquack convert` flags, one field each, and the API-only `schema` and `allow`."""
 
     project: str | os.PathLike[str] | None = None
     schema: Mapping[str, Any] | None = None
@@ -72,6 +72,8 @@ class ConvertOptions:
     session: Mapping[str, str] = field(default_factory=dict)
     strict: bool = False
     python_runtime: bool = False
+    allow: Mapping[str, bool] = field(default_factory=dict)
+    allow_location: str | None = None
     overrides: str | os.PathLike[str] | None = None
     verified_overrides: Mapping[str, str] = field(default_factory=dict)
     compact: bool = False

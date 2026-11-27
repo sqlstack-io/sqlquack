@@ -56,7 +56,13 @@ pub(crate) fn conversion_choices(
 ) -> ConversionChoices {
     ConversionChoices {
         config_file: config_file.map(|path| path.display().to_string()),
-        allow: config.allow.clone(),
+        allow: config
+            .allow
+            .iter()
+            .chain(&arguments.allow)
+            .map(|(name, allowed)| (name.clone(), *allowed))
+            .collect(),
+        allow_location: arguments.allow_location.clone(),
         strict: arguments.strict,
         python_runtime: arguments.python_runtime || config.project.python_runtime,
         max_call_depth: arguments.parse.max_call_depth,

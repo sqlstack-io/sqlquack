@@ -1017,6 +1017,8 @@ fn everyday_arguments(root: &std::path::Path, no_config: bool) -> ConvertArgumen
             no_config,
             strict: false,
             python_runtime: false,
+            allow: std::collections::BTreeMap::new(),
+            allow_location: None,
             parse: ParseArguments::default(),
         },
     }

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -9,8 +10,10 @@ import pytest
 import sqlquack
 from sqlquack import Conversion, ConvertOptions, Diagnostic
 from tests.unit.python.src.sqlquack.api.main._test_types import (
+    AllowTestCase,
     BindCheckTestCase,
     CommandLineTestCase,
+    ConfiguredAllowTestCase,
     DeepChainTestCase,
     FailureTestCase,
     ProjectTestCase,
@@ -195,6 +198,32 @@ def test_given_a_refusal_when_converting_then_the_diagnostic_is_typed(
             expected_message="no configuration file at missing.toml",
         ),
         FailureTestCase(
+            description="an allowance naming no known difference, near one",
+            sql="SELECT 1 AS one",
+            options=ConvertOptions(no_config=True, allow={"hsah": True}),
+            expected_message=(
+                r"the allow option names no known difference `hsah`; did you mean `hash`\?"
+            ),
+        ),
+        FailureTestCase(
+            description="an allowance's error names where the caller keeps it",
+            sql="SELECT 1 AS one",
+            options=ConvertOptions(
+                no_config=True,
+                allow={"hsah": True},
+                allow_location="[testing.local] allow in project.toml",
+            ),
+            expected_message=(
+                r"\[testing.local\] allow in project.toml names no known difference `hsah`"
+            ),
+        ),
+        FailureTestCase(
+            description="Python functions are allowed by the runtime, not an allowance",
+            sql="SELECT 1 AS one",
+            options=ConvertOptions(no_config=True, allow={"project_udf": True}),
+            expected_message="the allow option cannot allow `project_udf`: pass python_runtime",
+        ),
+        FailureTestCase(
             description="input holding no statement",
             sql="-- nothing here",
             options=ConvertOptions(no_config=True),
@@ -288,3 +317,88 @@ def test_given_a_project_folder_when_converting_then_its_sources_and_settings_ap
     assert conversion.converted is True
     assert conversion.report == command_report(sql, test_case.arguments, project)
     assert len(conversion.notes) == test_case.expected_notes
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        AllowTestCase(
+            description="refused by default, help names the configuration's [allow]",
+            options=ConvertOptions(no_config=True, schema=SCHEMA),
+            expected_converted=False,
+            expected_help=(
+                "allow it with hash = true under [allow] in a sqlquack.toml in the project folder; "
+                "`sqlquack explain hash` says when it is safe"
+            ),
+            expected_allowed_by=None,
+        ),
+        AllowTestCase(
+            description="refused by default, help names where the caller keeps allowances",
+            options=ConvertOptions(
+                no_config=True,
+                schema=SCHEMA,
+                allow_location="[testing.local] allow in project.toml",
+            ),
+            expected_converted=False,
+            expected_help=(
+                "allow it with hash = true under [testing.local] allow in project.toml; "
+                "`sqlquack explain hash` says when it is safe"
+            ),
+            expected_allowed_by=None,
+        ),
+        AllowTestCase(
+            description="the caller's allowance converts it, allowed by where it is kept",
+            options=ConvertOptions(
+                no_config=True,
+                schema=SCHEMA,
+                allow={"hash": True},
+                allow_location="[testing.local] allow in project.toml",
+            ),
+            expected_converted=True,
+            expected_help=None,
+            expected_allowed_by="[testing.local] allow in project.toml",
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_allowances_when_converting_then_they_apply_and_help_names_where_they_are_kept(
+    test_case: AllowTestCase,
+) -> None:
+    conversion: Conversion = sqlquack.convert(sql=HASHED, options=test_case.options)
+    helps: tuple[str | None, ...] = tuple(found.help for found in conversion.diagnostics)
+    allowed_by: dict[str, object] = {
+        use["name"]: use["allowed_by"] for use in conversion.report["known_differences"]
+    }
+
+    assert conversion.converted is test_case.expected_converted
+    assert helps == tuple(filter(None, (test_case.expected_help,)))
+    assert allowed_by.get("hash") == test_case.expected_allowed_by
+
+
+@pytest.mark.parametrize(
+    "test_case",
+    (
+        ConfiguredAllowTestCase(
+            description="the caller's refusal overrides the configuration's allowance",
+            config_text="[allow]\nhash = true\n",
+            options=ConvertOptions(
+                schema=SCHEMA,
+                allow={"hash": False},
+                allow_location="[testing.local] allow in project.toml",
+            ),
+            expected_helps=("hash = false under [testing.local] allow in project.toml refuses it",),
+        ),
+    ),
+    ids=lambda case: case.description,
+)
+def test_given_a_configuration_when_the_caller_allows_over_it_then_the_caller_wins(
+    test_case: ConfiguredAllowTestCase, tmp_path: Path
+) -> None:
+    config: Path = tmp_path / "sqlquack.toml"
+    config.write_text(test_case.config_text)
+
+    conversion: Conversion = sqlquack.convert(
+        sql=HASHED, options=replace(test_case.options, config=config)
+    )
+
+    assert tuple(found.help for found in conversion.diagnostics) == test_case.expected_helps
