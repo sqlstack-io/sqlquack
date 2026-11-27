@@ -183,7 +183,7 @@ pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
     (SAME_FUNCTION_RULE, &[OVERFLOW]),
     (DIVISION_RULE, &[DIVISION, OVERFLOW]),
     (AGGREGATE_RULE, &[OVERFLOW]),
-    (DATE_FUNCTION_RULE, &[OVERFLOW]),
+    (DATE_FUNCTION_RULE, &[OVERFLOW, ARGUMENT]),
     (STRING_FUNCTION_RULE, &[OVERFLOW]),
     (NUMBER_FUNCTION_RULE, &[OVERFLOW, DIVISION]),
     (INDEX_RULE, &[ARGUMENT]),
@@ -206,6 +206,12 @@ pub const CHR_MODULUS: u16 = 256;
 pub const DEFAULT_PAD: &str = "' '";
 /// The length SUBSTR takes when none is given, INT's largest.
 pub const SUBSTRING_LENGTH: &str = "2147483647";
+/// The years whose every day both engines hold as a date, well inside DuckDB's and Java's day counts.
+pub const DATE_YEARS: (i32, i32) = (-5_000_000, 5_000_000);
+/// The largest year Java's dates take; Databricks raises for a field past it.
+pub const JAVA_YEAR_MAX: i64 = 999_999_999;
+/// What a raise for a date or time field out of bounds says after the rejected-argument fragment.
+pub const FIELD_BOUNDS_ERROR: &str = "a date or time field is out of bounds";
 /// The years whose every second both engines hold as a timestamp; the year on each side holds only part.
 pub const TIMESTAMP_YEARS: (i32, i32) = (-290_307, 294_246);
 /// Microseconds per second.

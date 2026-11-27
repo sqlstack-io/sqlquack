@@ -49,6 +49,13 @@ fn given_a_recorded_databricks_error_when_read_then_its_class_names_the_kind() {
             expected_kind: Some(ErrorKind::InvalidArgument),
         },
         FailureKindTestCase {
+            description: "a date field out of bounds is an invalid argument",
+            message: Some(
+                "[DATETIME_FIELD_OUT_OF_BOUNDS.WITHOUT_SUGGESTION] Invalid value for MonthOfYear (valid values 1 - 12): -7.  SQLSTATE: 22023",
+            ),
+            expected_kind: Some(ErrorKind::InvalidArgument),
+        },
+        FailureKindTestCase {
             description: "a class no kind is known for",
             message: Some("[H3_INVALID_CELL_ID] -7 is not a valid H3 cell ID SQLSTATE: 22023"),
             expected_kind: None,

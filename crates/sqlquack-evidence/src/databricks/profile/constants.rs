@@ -58,4 +58,5 @@ pub const ERROR_CLASS_KINDS: &[(&str, ErrorKind)] = &[
         "INVALID_ARRAY_INDEX_IN_ELEMENT_AT",
         ErrorKind::InvalidArgument,
     ),
+    ("DATETIME_FIELD_OUT_OF_BOUNDS", ErrorKind::InvalidArgument),
 ];

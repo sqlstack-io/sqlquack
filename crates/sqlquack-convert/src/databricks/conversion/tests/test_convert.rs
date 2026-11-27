@@ -286,6 +286,16 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::String],
         },
         ConvertTestCase {
+            description: "MAKE_DATE and MAKE_TIMESTAMP raise for a field out of bounds or a day the month lacks",
+            query: "SELECT make_date(x1, x1, x1) AS d, make_timestamp(x1, x1, x1, x1, x1, x1) AS t FROM input",
+            expected_sql: &[
+                "abs(CAST(\"x1\" AS BIGINT)) > 999999999 THEN error('argument rejected: a date or time field is out of bounds')",
+                "THEN coalesce(try(make_date(CAST(\"x1\" AS BIGINT)",
+                "THEN coalesce(try(make_timestamp(CAST(\"x1\" AS BIGINT)",
+            ],
+            expected_types: &[DatabricksType::Date, DatabricksType::Timestamp],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],

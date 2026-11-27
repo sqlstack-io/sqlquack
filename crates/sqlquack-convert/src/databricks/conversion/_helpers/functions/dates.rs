@@ -1,12 +1,14 @@
 //! Date and timestamp functions: fields such as DAY and HOUR, and arithmetic in whole days and months.
 
+use sqlquack_diagnostics::failures::constants::ARGUMENT_REJECTED;
+
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::operators::as_type;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::constants::{
-    DATE_TRUNC_UNITS, EPOCH_DATE, INT_RANGE, INT_SPAN, MICROS_PER_MILLI, MICROS_PER_SECOND,
-    MONTHS_BETWEEN_SCALE, SECONDS_PER_DAY, SECONDS_PER_MONTH, TIMESTAMP_TRUNC_UNITS,
-    TIMESTAMP_YEARS,
+    DATE_TRUNC_UNITS, DATE_YEARS, EPOCH_DATE, FIELD_BOUNDS_ERROR, INT_RANGE, INT_SPAN,
+    JAVA_YEAR_MAX, MICROS_PER_MILLI, MICROS_PER_SECOND, MONTHS_BETWEEN_SCALE, SECONDS_PER_DAY,
+    SECONDS_PER_MONTH, TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -43,9 +45,16 @@ pub(crate) fn date_rewrite(name: &str) -> Option<Rewrite> {
         "DATE_TRUNC" => |values| truncated(values, true),
         "TRUNC" => |values| truncated(values, false),
         "TRY_MAKE_TIMESTAMP" | "TRY_MAKE_TIMESTAMP_LTZ" => {
-            |values| made_timestamp(values, DatabricksType::Timestamp)
+            |values| made_timestamp(values, DatabricksType::Timestamp, false)
         }
-        "TRY_MAKE_TIMESTAMP_NTZ" => |values| made_timestamp(values, DatabricksType::TimestampNtz),
+        "TRY_MAKE_TIMESTAMP_NTZ" => {
+            |values| made_timestamp(values, DatabricksType::TimestampNtz, false)
+        }
+        "MAKE_TIMESTAMP" | "MAKE_TIMESTAMP_LTZ" => {
+            |values| made_timestamp(values, DatabricksType::Timestamp, true)
+        }
+        "MAKE_TIMESTAMP_NTZ" => |values| made_timestamp(values, DatabricksType::TimestampNtz, true),
+        "MAKE_DATE" => made_date,
         _ => return None,
     };
     Some(rewrite)
@@ -123,30 +132,69 @@ fn days_added(values: &[Emitted], sign: &str) -> Option<Emitted> {
 }
 
 /// `TRY_MAKE_TIMESTAMP` of integers: NULL for an invalid field, raising only in the edge years DuckDB holds less of.
-fn made_timestamp(values: &[Emitted], result: DatabricksType) -> Option<Emitted> {
+fn made_timestamp(values: &[Emitted], result: DatabricksType, strict: bool) -> Option<Emitted> {
     let [year, month, day, hour, minute, second] = values else {
         return None;
     };
     if !values.iter().all(|value| small_integer(value.data_type)) {
         return None;
     }
-    let (y, h, mi, s) = (&year.sql, &hour.sql, &minute.sql, &second.sql);
+    let (y, m, d, h, mi, s) = (
+        &year.sql,
+        &month.sql,
+        &day.sql,
+        &hour.sql,
+        &minute.sql,
+        &second.sql,
+    );
     let made = format!(
-        "make_timestamp(CAST({y} AS BIGINT), CAST({} AS BIGINT), CAST({} AS BIGINT), CAST({h} AS BIGINT), \
-         CAST({mi} AS BIGINT), CAST({s} AS DOUBLE))",
-        month.sql, day.sql
+        "make_timestamp(CAST({y} AS BIGINT), CAST({m} AS BIGINT), CAST({d} AS BIGINT), CAST({h} AS BIGINT), \
+         CAST({mi} AS BIGINT), CAST({s} AS DOUBLE))"
     );
     let (first, last) = TIMESTAMP_YEARS;
+    let sql = match strict {
+        false => format!(
+            "CASE WHEN NOT ({h} BETWEEN 0 AND 23 AND {mi} BETWEEN 0 AND 59 AND {s} BETWEEN 0 AND 60) \
+             OR {y} < {} OR {y} > {} THEN NULL WHEN {y} BETWEEN {first} AND {last} THEN try({made}) \
+             ELSE {made} END",
+            first - 1,
+            last + 1
+        ),
+        true => format!(
+            "CASE WHEN {y} IS NULL OR {m} IS NULL OR {d} IS NULL OR {h} IS NULL OR {mi} IS NULL OR {s} IS NULL THEN NULL \
+             WHEN NOT ({m} BETWEEN 1 AND 12 AND {d} BETWEEN 1 AND 31 AND {h} BETWEEN 0 AND 23 \
+             AND {mi} BETWEEN 0 AND 59 AND {s} BETWEEN 0 AND 60) OR abs(CAST({y} AS BIGINT)) > {JAVA_YEAR_MAX} \
+             THEN error('{ARGUMENT_REJECTED}: {FIELD_BOUNDS_ERROR}') \
+             WHEN {y} BETWEEN {first} AND {last} THEN coalesce(try({made}), error('{ARGUMENT_REJECTED}: {FIELD_BOUNDS_ERROR}')) \
+             ELSE {made} END"
+        ),
+    };
+    Some(typed(
+        format!("CAST({sql} AS {})", result.duckdb_name()),
+        result,
+    ))
+}
+
+/// `MAKE_DATE(y, m, d)`, raising for a field out of bounds or a day its month lacks, as Databricks does.
+fn made_date(values: &[Emitted]) -> Option<Emitted> {
+    let [year, month, day] = values else {
+        return None;
+    };
+    if !values.iter().all(|value| small_integer(value.data_type)) {
+        return None;
+    }
+    let (y, m, d) = (&year.sql, &month.sql, &day.sql);
+    let made = format!("make_date(CAST({y} AS BIGINT), CAST({m} AS BIGINT), CAST({d} AS BIGINT))");
+    let (first, last) = DATE_YEARS;
     Some(typed(
         format!(
-            "CAST(CASE WHEN NOT ({h} BETWEEN 0 AND 23 AND {mi} BETWEEN 0 AND 59 AND {s} BETWEEN 0 AND 60) \
-             OR {y} < {} OR {y} > {} THEN NULL WHEN {y} BETWEEN {first} AND {last} THEN try({made}) \
-             ELSE {made} END AS {})",
-            first - 1,
-            last + 1,
-            result.duckdb_name()
+            "CASE WHEN {y} IS NULL OR {m} IS NULL OR {d} IS NULL THEN NULL \
+             WHEN NOT ({m} BETWEEN 1 AND 12 AND {d} BETWEEN 1 AND 31) OR abs(CAST({y} AS BIGINT)) > {JAVA_YEAR_MAX} \
+             THEN error('{ARGUMENT_REJECTED}: {FIELD_BOUNDS_ERROR}') \
+             WHEN {y} BETWEEN {first} AND {last} THEN coalesce(try({made}), error('{ARGUMENT_REJECTED}: {FIELD_BOUNDS_ERROR}')) \
+             ELSE {made} END"
         ),
-        result,
+        DatabricksType::Date,
     ))
 }
 
