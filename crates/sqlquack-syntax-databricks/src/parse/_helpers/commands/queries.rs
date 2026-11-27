@@ -465,6 +465,7 @@ impl Parser<'_> {
     fn leading_from_query(&mut self) -> Parsing<Expression> {
         let first: usize = self.at;
         let mut select: Select = self.select_from_clause(Select::new())?;
+        select.from_first = true;
         if self.kw("SELECT") {
             select = self.select_clause(select)?;
             select = self.select_tail(select)?;

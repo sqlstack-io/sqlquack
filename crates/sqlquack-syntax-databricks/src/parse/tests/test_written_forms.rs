@@ -47,6 +47,18 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 5,
         },
         DistinctTreesTestCase {
+            description: "a query written FROM first and SELECT first, with and without a pipe",
+            written: &[
+                "FROM t1 |> WHERE 1 = 1",
+                "SELECT * FROM t1 |> WHERE 1 = 1",
+                "FROM t1 SELECT c1",
+                "SELECT c1 FROM t1",
+                "FROM t1 SELECT *",
+                "FROM t1 |> SELECT *",
+            ],
+            expected_distinct_trees: 6,
+        },
+        DistinctTreesTestCase {
             description: "a table tag's value written after = and without it",
             written: &[
                 "ALTER TABLE t1 SET TAGS ( 'k' = 'v' )",

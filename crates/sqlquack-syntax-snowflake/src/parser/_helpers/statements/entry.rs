@@ -1709,6 +1709,7 @@ impl Parser {
             exclude,
             span: SourceSpan::default(),
             table_statement: false,
+            from_first: false,
             pipe_operators: Vec::new(),
         };
         self.select_modifiers_start = modifiers_start;

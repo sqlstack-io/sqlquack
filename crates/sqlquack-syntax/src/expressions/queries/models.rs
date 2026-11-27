@@ -96,6 +96,9 @@ pub struct Select {
     /// Databricks: a TABLE statement, which reads every column of its table
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub table_statement: bool,
+    /// Databricks: a query written FROM first, such as `FROM t1 SELECT c1` or `FROM t1 |> WHERE c1`
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub from_first: bool,
     /// Databricks: the pipe operators as written (`|> WHERE`, `| WHERE`, `|>`), already applied above
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     #[ast(skip)]
@@ -195,6 +198,7 @@ impl Select {
             post_select_comments: Vec::new(),
             kind: None,
             table_statement: false,
+            from_first: false,
             pipe_operators: Vec::new(),
             operation_modifiers: Vec::new(),
             qualify_after_window: false,
