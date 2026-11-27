@@ -2890,6 +2890,7 @@ reason = "withdrawn after review, each by a [[suppress]] row in limits.toml that
 ids = [
   "db.expressions.identifiers.subscript-dot.o004",
   "db.functions.date-add3.o008",
+  "db.functions.extract.o006",
   "db.functions.dateadd.o008",
   "db.functions.datediff3.o008",
   "db.functions.read-kafka.o007",

@@ -64,7 +64,7 @@ reason = "the page's Syntax names each clause by the text of its link (NEAREST B
 form = "db.query.select-watermark"
 grammar_sha256 = "b05082faf3f7666880628693ea53020f29f07e1219f70c8067e599bab4114ecb"
 grammar = ["{ <table_name> [ TABLESAMPLE <tablesample_clause> ] [ <watermark_clause> ] [ <table_alias> ] | <table_reference> JOIN <join_clause> | [ LATERAL ] <table_valued_function> [ <table_alias> ] | VALUES <values_clause> | [ LATERAL ] ( <query> ) [ TABLESAMPLE <tablesample_clause> ] [ <watermark_clause> ] [ <table_alias> ] }"]
-reason = "the from_item list names the JOIN clause and the VALUE clause in prose; the table-reference page writes the same items as table_reference JOIN clause (linked to the JOIN page, whose syntax needs the left table reference) and VALUES clause (linked to the VALUES page, whose syntax begins with VALUES)"
+reason = "the from_item list names the JOIN clause and the VALUE clause in prose; the table-reference page writes the same items as table_reference JOIN clause (linked to the JOIN page, whose syntax needs the left table reference) and VALUES clause (linked to the VALUES page, whose syntax begins with VALUES); the receipts agree: SELECT * FROM VALUES 1 is accepted and SELECT * FROM JOIN t2 ON 1 = 1 is refused with a syntax error on 2026.44 and 2026.45"
 
 [[reading]]
 form = "db.dml.insert-overwrite-directory"
@@ -1800,7 +1800,7 @@ form = "db.expressions.names.identifier-2"
 kind = "required_operand_missing"
 target = "<identifier_clause>"
 note = "omit <identifier_clause>"
-reason = "in an expression a lone word is a column reference: Databricks formally disallows no literal as an identifier (reserved-words page), so the keyword left without its operand reads as a column name and the text parses; the name is resolved in analysis"
+reason = "after FROM a lone word is a table name: Databricks formally disallows no literal as an identifier (reserved-words page), so SELECT * FROM IDENTIFIER reads IDENTIFIER as the name of the table and the text parses; the observed [[limit]] 'SELECT * FROM IDENTIFIER' records the warehouse's answer"
 
 [[suppress]]
 form = "db.expressions.names.identifier-3"
@@ -8234,5 +8234,72 @@ kind = "negative_neighbour"
 note = "! in place of NOT before MATCHED BY SOURCE, outside the prefix operator, which Spark 4's parser discontinued in some places"
 anchor = "doc.delta-merge-into / Syntax"
 sql = "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1 WHEN ! MATCHED BY SOURCE THEN DELETE"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.expressions.time-type.time.literals"
+kind = "required_operand_missing"
+target = "<time_string>"
+note = "omit <time_string>"
+reason = "without its string the text is SELECT ( TIME ): in an expression a lone word is a column reference (the reserved-words page disallows no literal as an identifier), so TIME reads as a column name and the text parses; its 2026.45 receipt is semantic_error (42703, the unresolved column), not a syntax error"
+
+[[reading]]
+form = "db.functions.like.like-any-some-all"
+grammar_sha256 = "b03dda31eb7a8666c2fadfd3f1764f83721cacfdfab3d4462eb0abc239fcee1d"
+grammar = ["<str> [ NOT ] LIKE { ANY | SOME | ALL } ( <pattern> [ , ... ] )"]
+reason = "the page prints the pattern list as optional, ( [ pattern [, ...] ] ), but the warehouse refuses the empty list: SELECT ( v1 LIKE ANY ( ) ) answers syntax_error on 2026.44 and 2026.45, so the reading requires at least one pattern"
+
+[[reading]]
+form = "db.functions.ilike.ilike-any-some-all"
+grammar_sha256 = "983dae375f2ba5f9f6d3d9f594c5e2aec2c4b3757191c13077336d77f5688214"
+grammar = ["<str> [ NOT ] ILIKE { ANY | SOME | ALL } ( <pattern> [ , ... ] )"]
+reason = "the page prints the pattern list as optional, ( [ pattern [, ...] ] ), but the warehouse refuses the empty list: SELECT ( v1 ILIKE ANY ( ) ) answers syntax_error on 2026.44 and 2026.45, so the reading requires at least one pattern"
+
+[[reading]]
+form = "db.functions.current-timestamp"
+grammar_sha256 = "dd1f9dcbca60f0a966e7a278bfd8ccf814b8c9903f0acd01032be949af2f4b20"
+grammar = ["CURRENT_TIMESTAMP [ ( [ <precision> ] ) ]"]
+reason = "the Syntax block prints current_timestamp( [ precision ] ), and the page's prose says the parentheses are optional when you omit precision, with the example SELECT current_timestamp; SELECT ( CURRENT_TIMESTAMP ) is accepted on 2026.45, so the reading makes the parentheses optional"
+
+[[reading]]
+form = "db.functions.http-request"
+grammar_sha256 = "b5b507288e96a190bd4e918c44c10a4d8d42b9d70e44afdcd2380fcb974b164a"
+grammar = ["HTTP_REQUEST ( { CONN => <connection_name> | METHOD => <http_method> | PATH => <path> | HEADERS => <header_map> | PARAMS => <param_map> | JSON => <json_str> } [ , ... ] )"]
+reason = "the Syntax block prints the list's repetition as [, ..], with two dots, where the reference writes every other repetition as [, ...]; the reading uses [ , ... ], and two named arguments (SELECT ( HTTP_REQUEST ( CONN => 'c1' , METHOD => 'GET' ) )) get past the parser on 2026.45 (semantic_error)"
+
+[[suppress]]
+form = "db.functions.extract"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "the derived case SELECT ( EXTRACT 1 FROM v1 ) replaces the field keyword YEAR as well as dropping the (, so it does not isolate the missing (; the [[limit]] 'SELECT ( EXTRACT YEAR FROM v1 )' keeps the field and isolates it, and its 2026.45 receipt is syntax_error"
+
+[[limit]]
+form = "db.expressions.names.identifier-2"
+kind = "negative_neighbour"
+note = "FROM followed by IDENTIFIER without its ( ... ), the text the suppressed omission derives"
+anchor = "doc.sql-ref-names / Syntax"
+sql = "SELECT * FROM IDENTIFIER"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-constraint.foreign-key-references"
+kind = "option_present"
+target = "<constraint_option> → DEFERRABLE"
+note = "a PRIMARY KEY with the constraint option DEFERRABLE, which constraint_option shares with FOREIGN KEY"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , PRIMARY KEY ( c1 ) DEFERRABLE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-constraint.foreign-key-references"
+kind = "option_present"
+target = "<constraint_option> → INITIALLY DEFERRED"
+note = "a UNIQUE key with the constraint option INITIALLY DEFERRED, which constraint_option shares with FOREIGN KEY"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , UNIQUE ( c1 ) INITIALLY DEFERRED )"
 context = "raw"
 expect = "observe"

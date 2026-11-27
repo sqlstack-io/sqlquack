@@ -2363,6 +2363,13 @@ anchor = "doc.sql-ref-names / Syntax"
 note = "omit <view_identifier>; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
+id = "db.expressions.names.identifier-2.o029"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql-ref-names / Syntax"
+note = "FROM followed by IDENTIFIER without its ( ... ), the text the suppressed omission derives"
+
+[[obligation]]
 id = "db.expressions.names.identifier-3.o001"
 kind = "positive"
 required = true

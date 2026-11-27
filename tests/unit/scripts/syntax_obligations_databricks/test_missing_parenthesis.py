@@ -40,9 +40,9 @@ def test_given_the_built_cases_when_a_required_open_parenthesis_is_dropped_then_
     "test_case",
     (
         BareFormTestCase(
-            description="a field keyword is replaced, so the operand cannot read as an alias",
-            form="db.functions.extract",
-            expected_sql="SELECT ( EXTRACT 1 FROM v1 )",
+            description="a name operand is replaced, so the call's name cannot read as a column with an alias",
+            form="db.functions.position.position-in",
+            expected_sql="SELECT ( POSITION 1 IN v1 )",
         ),
         BareFormTestCase(
             description="a keyword outside a choice stays as written",

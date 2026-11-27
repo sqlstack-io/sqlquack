@@ -18639,6 +18639,22 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
 note = "a FOREIGN KEY with the documented constraint option INITIALLY DEFERRED, which the local parser refuses"
 
 [[obligation]]
+id = "db.ddl.create-table-constraint.foreign-key-references.o083"
+kind = "option_present"
+required = true
+target = "<constraint_option> → DEFERRABLE"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "a PRIMARY KEY with the constraint option DEFERRABLE, which constraint_option shares with FOREIGN KEY"
+
+[[obligation]]
+id = "db.ddl.create-table-constraint.foreign-key-references.o084"
+kind = "option_present"
+required = true
+target = "<constraint_option> → INITIALLY DEFERRED"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "a UNIQUE key with the constraint option INITIALLY DEFERRED, which constraint_option shares with FOREIGN KEY"
+
+[[obligation]]
 id = "db.ddl.create-table-constraint.references.o001"
 kind = "positive"
 required = true
