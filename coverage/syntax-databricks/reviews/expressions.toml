@@ -1426,3 +1426,62 @@ note = "Read in the same review as the approvals at this parser tree, under revi
 "db.expressions.time-type.time" = "5c6837877273ad8628b95806c4517e0c8c186746f0190d10d2d5d5db8d8e7921"
 "db.expressions.tinyint-type" = "0cdccf14b5f1f15099107cfd0cec82b887dc334ed9c2e02d07728747b7fda574"
 "db.expressions.variant-type" = "c94d94b9bb1f4b169303a7e215d15087208426a85196ef9f42a1fbf92c49843e"
+
+[[review]]
+id = "db-expressions-071"
+family = "expressions"
+parser_tree = "ed42bbd7837c3f18f40d0760f101830b6cebf239"
+reviewed_utc = "2026-11-27T14:53:47Z"
+verdict = "approved"
+forms = [
+  "db.expressions.geography-type",
+  "db.expressions.geometry-type",
+  "db.expressions.names.subscript-dot-3",
+]
+resolves = ["db-expressions-040", "db-expressions-042", "db-expressions-070"]
+note = "Read in full at 870649879 under review brief v3 by three independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.44 and 2026.45), the local documentation pages, the obligations with the limits, hand and reading rows, and the parse trees of every case; the trees of these forms are unchanged at 43103978f. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria, and no two cases of a form with different SQL give one tree. Two tree conventions answer the changes_requested records this review resolves: in a Databricks tree, a GEOGRAPHY or GEOMETRY with no srid is the documented ANY (bare GEOGRAPHY and GEOMETRY are refused on both sides, so no accepted text shares that tree, and a translation reads it as ANY); and the column aliases of a generator with no table alias, as in explode ( map ( 1 , 2 ) ) ( c1 ), keep the shared alias node with an empty name, which stands for the name the page leaves out."
+
+[review.fingerprints]
+"db.expressions.geography-type" = "6f09a793793d90e456b9c6fecf81d7776ffb37a2e84bdb53d672aa4049a43297"
+"db.expressions.geometry-type" = "164baf1d344c94a8eee60787ea8c5ecf960c8fb3785697a98861a4dc56a17100"
+"db.expressions.names.subscript-dot-3" = "9cbe654d9f8acdd77427110b105bc632db840273a93e9990872cbc964f10f13b"
+
+[review.definitions]
+"db.expressions.geography-type" = "2c23e30498830495c2b78307067f752a2480c5b79ec25c87dae63e4f359f9c03"
+"db.expressions.geometry-type" = "f94e39103c70f6ef2c37a7d156a9ee2094ec892bcf09fff5896f278d04950784"
+"db.expressions.names.subscript-dot-3" = "d6ad0859887458aa7a2ca606b1ef275aa6ab0f1094a5d12287f6c346fc740600"
+
+[[review]]
+id = "db-expressions-072"
+family = "expressions"
+parser_tree = "ed42bbd7837c3f18f40d0760f101830b6cebf239"
+reviewed_utc = "2026-11-27T14:53:47Z"
+verdict = "approved"
+forms = [
+  "db.expressions.int-type",
+  "db.expressions.names.identifier-2",
+  "db.expressions.smallint-type",
+  "db.expressions.string-type",
+  "db.expressions.time-type.time",
+  "db.expressions.tinyint-type",
+  "db.expressions.variant-type",
+]
+note = "Read in full at 870649879 under review brief v3 by three independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.44 and 2026.45), the local documentation pages, the obligations with the limits, hand and reading rows, and the parse trees of every case; the trees of these forms are unchanged at 43103978f. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria, and no two cases of a form with different SQL give one tree. Type forms are read in a CAST type position; the page readings of optional parentheses, required pattern lists and the two-dot list tail each cite the page prose or a receipt."
+
+[review.fingerprints]
+"db.expressions.int-type" = "e366f62faa66969008c1a3a9c4db6ec3a683ab272faed2f4ad0215176a5e7ff6"
+"db.expressions.names.identifier-2" = "44e7d666666be9674561c8ca6b665631217c11f0234ac5692cd4702ff385a47d"
+"db.expressions.smallint-type" = "1c905332a8ec7142b6807a3627ae10ef1e16dc7a870e4c173cba1f4dede46ba2"
+"db.expressions.string-type" = "c8c1efa6f55787434690136cc12988cae162ee3b398f60e0344de1d6db06f13a"
+"db.expressions.time-type.time" = "4df1073877f52ecf2ce3a94f47de57fc626c187a197a689a75abefd1b196f94f"
+"db.expressions.tinyint-type" = "f92871249d382e498b428c9f4613d529e0f1f211f4b52c6c8de239948423c44a"
+"db.expressions.variant-type" = "bb5c4b2eafd148b06b0762bd3c4d3a3ecfbcc07fdcdda7e6b12fb2f8076a1d66"
+
+[review.definitions]
+"db.expressions.int-type" = "3569598cbdcc3ae701b6879e335e6af53a04cc52f5cf1bc6c54e6cf1091237de"
+"db.expressions.names.identifier-2" = "a55f9c5a70e95e6ec475207a29b9c2e7ea6b7568aff70da2effaba8ba1078188"
+"db.expressions.smallint-type" = "2b16197a83420acc608c29a228955f744b02708bb1f14da6372070e57cb5f667"
+"db.expressions.string-type" = "9700a781e040a52173b1a377ee0d73a73442bf580254cf610f24363d5cd7734e"
+"db.expressions.time-type.time" = "5c6837877273ad8628b95806c4517e0c8c186746f0190d10d2d5d5db8d8e7921"
+"db.expressions.tinyint-type" = "0cdccf14b5f1f15099107cfd0cec82b887dc334ed9c2e02d07728747b7fda574"
+"db.expressions.variant-type" = "c94d94b9bb1f4b169303a7e215d15087208426a85196ef9f42a1fbf92c49843e"

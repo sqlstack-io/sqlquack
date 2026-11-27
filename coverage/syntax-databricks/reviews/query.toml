@@ -1263,3 +1263,43 @@ note = "Read in the same review as the approvals at this parser tree, under revi
 [review.definitions]
 "db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
 "db.query.select-watermark" = "f7848a7ca823a2825c8b15df53dc7eed9d8906e0047df793440ce859e57939a6"
+
+[[review]]
+id = "db-query-058"
+family = "query"
+parser_tree = "ed42bbd7837c3f18f40d0760f101830b6cebf239"
+reviewed_utc = "2026-11-27T14:53:47Z"
+verdict = "approved"
+forms = [
+  "db.query.pipeline.table",
+  "db.query.pipeline.table.syntax",
+  "db.query.select-watermark",
+]
+note = "Read in full at 870649879 under review brief v3 by three independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.44 and 2026.45), the local documentation pages, the obligations with the limits, hand and reading rows, and the parse trees of every case; the trees of these forms are unchanged at 43103978f. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria, and no two cases of a form with different SQL give one tree. Type forms are read in a CAST type position; the page readings of optional parentheses, required pattern lists and the two-dot list tail each cite the page prose or a receipt."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "65a91fb640bbc7492f582421fc43eb782d694775f44e13e784afcfe63491a155"
+"db.query.pipeline.table.syntax" = "b18ace681fe843e43c3a0128704a2b5e19c8486c33217033ac7d9dac2a62e1f9"
+"db.query.select-watermark" = "8644e1026473b4be6c9843ad09086b0ac8d1ca2a6ecc91e0c9440b3fcfe76dfd"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+"db.query.select-watermark" = "82744f04c3f3dde9a1d6055071fdf7147ba92824639e8a8e656a35c433092983"
+
+[[review]]
+id = "db-query-059"
+family = "query"
+parser_tree = "ed42bbd7837c3f18f40d0760f101830b6cebf239"
+reviewed_utc = "2026-11-27T14:55:07Z"
+verdict = "approved"
+forms = [
+  "db.query.select-pipeop",
+]
+note = "Read in full at 870649879 under review brief v3 by an independent read-only reviewer, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.44 and 2026.45), the local documentation page, the obligations with the limits, hand and reading rows, and the parse trees of every case; held there under (d) because FROM t1 |> PIVOT and FROM t1 |> UNPIVOT lost the FROM-first mark. At 43103978f a PIVOT or UNPIVOT pipe keeps the bare input's from_first and table_statement marks; the same reviewer checked that only those two trees changed, each by the mark alone, and that no two accepted cases with different SQL give one tree. Grammar, coverage, wrong-kind fills and outcomes pass as read."
+
+[review.fingerprints]
+"db.query.select-pipeop" = "6b9e920555546317c9881a20b63374870ec1c192925c7019dd4543b8bf7a191f"
+
+[review.definitions]
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"

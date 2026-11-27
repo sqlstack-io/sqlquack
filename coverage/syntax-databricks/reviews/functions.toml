@@ -6647,3 +6647,32 @@ note = "Read in the same review as the approvals at this parser tree, under revi
 "db.functions.http-request" = "b1ca217798d1a061a18b5a116ad292177c1928e53b6ed255d5f256c2517cb729"
 "db.functions.ilike.ilike-any-some-all" = "7dfb2bcb49d6905a71423a64084fb67ecf09fa4df214af8d91ca96a31934f4df"
 "db.functions.like.like-any-some-all" = "c9432bd581b1e5d764dea2de7ba1f6f2549603bf99e8c389977b42b3863c1dd1"
+
+[[review]]
+id = "db-functions-097"
+family = "functions"
+parser_tree = "ed42bbd7837c3f18f40d0760f101830b6cebf239"
+reviewed_utc = "2026-11-27T14:53:47Z"
+verdict = "approved"
+forms = [
+  "db.functions.current-timestamp",
+  "db.functions.extract",
+  "db.functions.http-request",
+  "db.functions.ilike.ilike-any-some-all",
+  "db.functions.like.like-any-some-all",
+]
+note = "Read in full at 870649879 under review brief v3 by three independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.44 and 2026.45), the local documentation pages, the obligations with the limits, hand and reading rows, and the parse trees of every case; the trees of these forms are unchanged at 43103978f. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria, and no two cases of a form with different SQL give one tree. Type forms are read in a CAST type position; the page readings of optional parentheses, required pattern lists and the two-dot list tail each cite the page prose or a receipt."
+
+[review.fingerprints]
+"db.functions.current-timestamp" = "a204a76594733a68f04c98d0238b84e3259cc27dc0ed23fb926333a3a1ea5234"
+"db.functions.extract" = "085f8d181ba69f5325ce31d2a163be60fa09f84aac835aa03225a038485e57bc"
+"db.functions.http-request" = "b19b924c6d3b4a3d914a50da9680f0160891b4abf4d36e29f0e8ca0598fa4cbc"
+"db.functions.ilike.ilike-any-some-all" = "7640a287cf8d5dff0526111142317aaf287f6b1fd6e6a614aa758b7642b3cbc8"
+"db.functions.like.like-any-some-all" = "626fcd3144c9ce10b696c4b8a819d11ebef24b2ea1a443e75d29d42c970a3ef6"
+
+[review.definitions]
+"db.functions.current-timestamp" = "168a0b1872e4caeb3138fe7c8e546fbf546fb3ad13f4bcd4676500227b0240f3"
+"db.functions.extract" = "79537a677e5497207d3fc9f6568842c1bd224adc57f7ac49a52a4da0ce652b58"
+"db.functions.http-request" = "2b92d2e6ed5d18ab8be898147365994d0653b21bad7d855f48c413bba543cfb6"
+"db.functions.ilike.ilike-any-some-all" = "7071256be98f3897a42ce3d0ae56e90c0ae4297b50891b847584c4d497a2f95e"
+"db.functions.like.like-any-some-all" = "2b2fadda061df1fd94a70ecfb6e72d0ea2523816d9aa71ac3b1eeca328c0cef2"
