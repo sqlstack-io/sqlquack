@@ -4,7 +4,7 @@ use serde_json::Value;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::databricks::conversion::_helpers::expressions::bitwise::{
-    bitwise, bitwise_not, concat_operator, plus, truth_test,
+    bitwise, bitwise_not, concat_operator, plus, shift, truth_test,
 };
 use crate::databricks::conversion::_helpers::expressions::literals::{
     boolean, cast, literal, negated, null,
@@ -62,6 +62,7 @@ pub(crate) fn expression(node: &Value, site: Site<'_>) -> Result<Emitted, Refusa
         "trim" => trim(payload, site),
         "bitwise_and" | "bitwise_or" | "bitwise_xor" => bitwise(kind, payload, site),
         "bitwise_not" => bitwise_not(payload, site),
+        "bitwise_left_shift" | "bitwise_right_shift" => shift(kind, payload, site),
         "pos" => plus(payload, site),
         "concat" => concat_operator(payload, site),
         "is_true" | "is_false" => truth_test(kind, payload, site),

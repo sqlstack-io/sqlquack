@@ -2,7 +2,7 @@
 
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
-use crate::databricks::conversion::constants::{CHR_MODULUS, DEFAULT_PAD};
+use crate::databricks::conversion::constants::{CHR_MODULUS, DEFAULT_PAD, SUBSTRING_LENGTH};
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
 /// The rewrite of the string function `name`, `None` when none handles it; lengths count code points in both engines.
@@ -20,6 +20,7 @@ pub(crate) fn string_rewrite(name: &str) -> Option<Rewrite> {
         "STARTSWITH" => |values| tested(values, "starts_with"),
         "ENDSWITH" => |values| tested(values, "ends_with"),
         "RIGHT" => right,
+        "SUBSTR" | "SUBSTRING" => substring,
         "LPAD" => |values| padded(values, "lpad"),
         "RPAD" => |values| padded(values, "rpad"),
         "SPACE" => space,
@@ -76,6 +77,33 @@ fn right(values: &[Emitted]) -> Option<Emitted> {
             "CASE WHEN {s} IS NULL OR {n} IS NULL THEN NULL WHEN {n} <= 0 THEN '' ELSE right({s}, {n}) END",
             s = text.sql,
             n = length.sql
+        ),
+        DatabricksType::String,
+    ))
+}
+
+/// `SUBSTR(s, pos[, len])` as Spark's substringSQL: a negative `pos` counts from the end, 0 is 1, `len` defaults to INT's largest.
+fn substring(values: &[Emitted]) -> Option<Emitted> {
+    let (text, position, length) = match values {
+        [text, position] => (text, position, SUBSTRING_LENGTH.to_owned()),
+        [text, position, length] if small_integer(length.data_type) => {
+            (text, position, format!("CAST({} AS BIGINT)", length.sql))
+        }
+        _ => return None,
+    };
+    if text.data_type != DatabricksType::String || !small_integer(position.data_type) {
+        return None;
+    }
+    let (s, p) = (&text.sql, &position.sql);
+    let start = format!(
+        "(CASE WHEN {p} > 0 THEN CAST({p} AS BIGINT) - 1 WHEN {p} < 0 THEN length({s}) + {p} ELSE 0 END)"
+    );
+    let end = format!("({start} + {length})");
+    let from = format!("greatest({start}, 0)");
+    Some(typed(
+        format!(
+            "CASE WHEN {s} IS NULL OR {p} IS NULL OR {length} IS NULL THEN NULL WHEN {from} >= {end} THEN '' \
+             ELSE substring({s}, {from} + 1, {end} - {from}) END"
         ),
         DatabricksType::String,
     ))

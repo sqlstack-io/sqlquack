@@ -199,3 +199,14 @@ pub enum Signature {
     /// One string in, spaces trimmed: Databricks trims only U+0020, so DuckDB is told the same.
     TrimSpaces,
 }
+
+/// Which way a shift moves bits.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Shift {
+    /// `<<` and SHIFTLEFT.
+    Left,
+    /// `>>` and SHIFTRIGHT, keeping the sign.
+    Right,
+    /// `>>>` and SHIFTRIGHTUNSIGNED, filling with zeros.
+    RightUnsigned,
+}

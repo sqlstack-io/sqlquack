@@ -155,6 +155,33 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Date],
         },
         ConvertTestCase {
+            description: "a left shift wraps through BIGINT with its count masked, where DuckDB raises",
+            query: "SELECT x1 << 31 AS l, substr(s, -2) AS t FROM input",
+            expected_sql: &[
+                "(((CAST(\"x1\" AS BIGINT) & CAST('4294967295' AS BIGINT)) << (CAST(31 AS INTEGER) & 31))",
+                "WHEN -2 < 0 THEN length(\"s\") + -2 ELSE 0 END",
+            ],
+            expected_types: &[DatabricksType::Int, DatabricksType::String],
+        },
+        ConvertTestCase {
+            description: "TYPEOF is the type's lower-case name, and TRY_MAKE_TIMESTAMP checks the hour DuckDB would roll over",
+            query: "SELECT typeof(x1) AS t, try_make_timestamp(x1, 1, 1, x1, 0, 0) AS m FROM input",
+            expected_sql: &[
+                "'int' AS \"t\"",
+                "NOT (\"x1\" BETWEEN 0 AND 23 AND 0 BETWEEN 0 AND 59",
+            ],
+            expected_types: &[DatabricksType::String, DatabricksType::Timestamp],
+        },
+        ConvertTestCase {
+            description: "PMOD wraps its INT sum as Java does, and UNIX_SECONDS rounds before 1970 down",
+            query: "SELECT pmod(x1, x1) AS p, unix_seconds(TIMESTAMP'1969-12-31 23:59:59.5') AS u FROM input",
+            expected_sql: &[
+                "% CAST('4294967296' AS BIGINT) - CAST('2147483648' AS BIGINT))",
+                "% 1000000) + 1000000) % 1000000) // 1000000)",
+            ],
+            expected_types: &[DatabricksType::Int, DatabricksType::BigInt],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
@@ -235,8 +262,8 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             expected_reason: "FLOAT",
         },
         RefuseTestCase {
-            description: "shifts wrap in Databricks and raise in DuckDB",
-            query: "SELECT shiftleft(x1, 31) AS r FROM input",
+            description: "a shift by a BIGINT count, which Databricks would narrow",
+            query: "SELECT shiftleft(x1, CAST(x1 AS BIGINT)) AS r FROM input",
             expected_reason: "SHIFTLEFT",
         },
         RefuseTestCase {

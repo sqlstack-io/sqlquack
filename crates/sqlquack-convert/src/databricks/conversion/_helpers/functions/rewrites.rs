@@ -56,6 +56,7 @@ fn own_rewrite(name: &str) -> Option<Rewrite> {
         },
         "TRY_DIVIDE" => try_divide,
         "TRY_MOD" => try_mod,
+        "TYPEOF" => type_name,
         _ => return None,
     };
     Some(rewrite)
@@ -224,6 +225,13 @@ fn try_mod(values: &[Emitted]) -> Option<Emitted> {
         ),
         wider,
     ))
+}
+
+/// `TYPEOF(x)`: the argument's type in Databricks's lower-case spelling, whatever its value.
+fn type_name(values: &[Emitted]) -> Option<Emitted> {
+    let [value] = values else { return None };
+    let name = value.data_type.name().to_ascii_lowercase();
+    Some(typed(format!("'{name}'"), DatabricksType::String))
 }
 
 /// A count argument Databricks takes as INT without a cast.

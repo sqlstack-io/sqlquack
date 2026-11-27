@@ -10,7 +10,7 @@ use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{field, flag, refused, understood};
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
 use crate::databricks::conversion::constants::{BITWISE_RULE, BOOLEAN_RULE, CONCAT_RULE};
-use crate::databricks::conversion::models::{DatabricksType, Emitted};
+use crate::databricks::conversion::models::{DatabricksType, Emitted, Shift};
 
 /// `&`, `|` or `^` on integers; `^` is XOR in Databricks, so it becomes DuckDB's `xor`.
 pub(crate) fn bitwise(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
@@ -26,6 +26,58 @@ pub(crate) fn bitwise(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emi
         _ => format!("xor({left}, {right})"),
     };
     Ok(typed(sql, wider))
+}
+
+/// `<<` or `>>` on an integer by an INT count, wrapping and masking the count as Java does.
+pub(crate) fn shift(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let (value, count) = operands(kind, payload, site)?;
+    let _rule = site.log.rule(BITWISE_RULE);
+    let direction = match kind {
+        "bitwise_left_shift" => Shift::Left,
+        _ => Shift::Right,
+    };
+    shifted(&value, &count, direction).ok_or_else(|| {
+        refused(
+            kind,
+            format!(
+                "no rule converts {} {kind} {}",
+                value.data_type.name(),
+                count.data_type.name()
+            ),
+        )
+    })
+}
+
+/// `value` shifted by `count` as Java shifts an int or long: the count masked to the width, bits wrapping.
+pub(crate) fn shifted(value: &Emitted, count: &Emitted, direction: Shift) -> Option<Emitted> {
+    use DatabricksType as T;
+    let count_fits = matches!(count.data_type, T::TinyInt | T::SmallInt | T::Int);
+    let (result, wide, bits) = match value.data_type {
+        T::TinyInt | T::SmallInt | T::Int => (T::Int, "BIGINT", 32_u32),
+        T::BigInt => (T::BigInt, "HUGEINT", 64),
+        _ => return None,
+    };
+    if !count_fits {
+        return None;
+    }
+    let x = as_type(value, result);
+    let s = format!("(CAST({} AS INTEGER) & {})", count.sql, bits - 1);
+    let mask = format!("CAST('{}' AS {wide})", (1_u128 << bits) - 1);
+    let unsigned = match direction {
+        Shift::Right => return Some(typed(format!("({x} >> {s})"), result)),
+        Shift::Left => format!("(((CAST({x} AS {wide}) & {mask}) << {s}) & {mask})"),
+        Shift::RightUnsigned => format!("((CAST({x} AS {wide}) & {mask}) >> {s})"),
+    };
+    Some(typed(
+        format!(
+            "CAST({unsigned} - CASE WHEN {unsigned} >= CAST('{sign}' AS {wide}) THEN CAST('{span}' AS {wide}) \
+             ELSE 0 END AS {})",
+            result.duckdb_name(),
+            sign = 1_u128 << (bits - 1),
+            span = 1_u128 << bits
+        ),
+        result,
+    ))
 }
 
 /// `~` on an integer.

@@ -1,5 +1,6 @@
 //! Number functions: remainders and quotients raising on zero, rounding, signs and NaN tests.
 
+use crate::databricks::conversion::_helpers::expressions::bitwise::shifted;
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, comparable};
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
@@ -7,7 +8,7 @@ use crate::databricks::conversion::_helpers::support::typing::{same_cast, wider_
 use crate::databricks::conversion::constants::{
     BIGINT_MAX, BIGINT_MIN, FACTORIAL_MAX, MAX_DECIMAL_PRECISION,
 };
-use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
+use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal, Shift};
 
 /// The rewrite of the number function `name`, `None` when no rewrite handles it.
 pub(crate) fn number_rewrite(name: &str) -> Option<Rewrite> {
@@ -31,6 +32,11 @@ pub(crate) fn number_rewrite(name: &str) -> Option<Rewrite> {
         "SQRT" => square_root,
         "FACTORIAL" => factorial,
         "BIT_COUNT" => bit_count,
+        "PMOD" => positive_modulo,
+        "BIN" => binary_text,
+        "SHIFTLEFT" => |values| shift_function(values, Shift::Left),
+        "SHIFTRIGHT" => |values| shift_function(values, Shift::Right),
+        "SHIFTRIGHTUNSIGNED" => |values| shift_function(values, Shift::RightUnsigned),
         _ => return None,
     };
     Some(rewrite)
@@ -94,6 +100,42 @@ fn raising_on_zero(dividend: &str, divisor: &str, result: &str) -> String {
 fn modulo(values: &[Emitted]) -> Option<Emitted> {
     let [left, right] = values else { return None };
     remainder(left, right)
+}
+
+/// `PMOD(a, n)` of integers as Java computes it: `(r + n) % n` for a negative `r`, the sum wrapping in INT or BIGINT.
+fn positive_modulo(values: &[Emitted]) -> Option<Emitted> {
+    let [left, right] = values else { return None };
+    let wider = wider_integer(left.data_type, right.data_type)?;
+    let (a, n) = (as_type(left, wider), as_type(right, wider));
+    let r = format!("(CASE WHEN {n} = -1 THEN {a} * 0 ELSE {a} % {n} END)");
+    let sum = match wider {
+        DatabricksType::Int => wrapped(&format!("(CAST({r} AS BIGINT) + {n})"), 32, "BIGINT"),
+        DatabricksType::BigInt => wrapped(&format!("(CAST({r} AS HUGEINT) + {n})"), 64, "HUGEINT"),
+        _ => format!("(CAST({r} AS INTEGER) + {n})"),
+    };
+    let wide = wider.duckdb_name();
+    Some(typed(
+        format!("CASE WHEN {r} < 0 THEN CAST(CAST({sum} AS {wide}) % {n} AS {wide}) ELSE {r} END"),
+        wider,
+    ))
+}
+
+/// `value`, of a type wider than `bits`, wrapped into the `bits`-bit two's complement range.
+fn wrapped(value: &str, bits: u32, wide: &str) -> String {
+    let half = format!("CAST('{}' AS {wide})", 1_u128 << (bits - 1));
+    let span = format!("CAST('{}' AS {wide})", 1_u128 << bits);
+    format!("((({value} + {half}) % {span} + {span}) % {span} - {half})")
+}
+
+/// `BIN(x)`: the binary digits of the integer's 64-bit two's complement.
+fn binary_text(values: &[Emitted]) -> Option<Emitted> {
+    let [value] = values else { return None };
+    value.data_type.is_integral().then(|| {
+        typed(
+            format!("bin({})", as_type(value, DatabricksType::BigInt)),
+            DatabricksType::String,
+        )
+    })
 }
 
 /// `a DIV b` of integers: the quotient truncated toward zero as BIGINT, raising on zero and overflow.
@@ -332,6 +374,12 @@ fn bit_count(values: &[Emitted]) -> Option<Emitted> {
             DatabricksType::Int,
         )
     })
+}
+
+/// `SHIFTLEFT`, `SHIFTRIGHT` or `SHIFTRIGHTUNSIGNED(x, n)`, the shift operators' function forms.
+fn shift_function(values: &[Emitted], direction: Shift) -> Option<Emitted> {
+    let [value, count] = values else { return None };
+    shifted(value, count, direction)
 }
 
 /// A value's SQL as DOUBLE when DuckDB converts it exactly as Databricks does.

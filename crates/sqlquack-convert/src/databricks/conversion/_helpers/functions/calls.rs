@@ -19,7 +19,11 @@ use crate::databricks::conversion::models::{DatabricksType, Emitted, Signature};
 
 /// A call the parser kept as a function or an aggregate function.
 pub(crate) fn call(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
-    let call = understood(payload, kind, &["name", "args", "set_quantifier"])?;
+    let call = understood(
+        payload,
+        kind,
+        &["name", "args", "set_quantifier", "from_separator"],
+    )?;
     let name = field(call, "name")
         .as_str()
         .unwrap_or_default()

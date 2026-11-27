@@ -38,7 +38,7 @@ pub const ORDER_RULE: &str = "rule.databricks.order";
 pub const CONCAT_RULE: &str = "rule.databricks.concat";
 /// `TRIM ... FROM` as DuckDB's trim, ltrim or rtrim with the characters written out.
 pub const TRIM_RULE: &str = "rule.databricks.trim";
-/// `&`, `|`, `~`, and `^`, which is XOR in Databricks and DuckDB's `xor`.
+/// `&`, `|`, `~`, `^`, which is XOR in Databricks and DuckDB's `xor`, and shifts, which wrap as in Java.
 pub const BITWISE_RULE: &str = "rule.databricks.bitwise";
 /// A function DuckDB has under the same or another name with the same results.
 pub const SAME_FUNCTION_RULE: &str = "rule.databricks.same_function";
@@ -162,6 +162,34 @@ pub const FACTORIAL_MAX: u8 = 20;
 pub const CHR_MODULUS: u16 = 256;
 /// The pad LPAD and RPAD use when none is given, a space.
 pub const DEFAULT_PAD: &str = "' '";
+/// The length SUBSTR takes when none is given, INT's largest.
+pub const SUBSTRING_LENGTH: &str = "2147483647";
+/// The years whose every second both engines hold as a timestamp; the year on each side holds only part.
+pub const TIMESTAMP_YEARS: (i32, i32) = (-290_307, 294_246);
+/// Microseconds per second.
+pub const MICROS_PER_SECOND: i64 = 1_000_000;
+/// Microseconds per millisecond.
+pub const MICROS_PER_MILLI: i64 = 1_000;
+/// The units TRUNC takes, by DuckDB's date part; weeks start on Monday in both engines.
+pub const DATE_TRUNC_UNITS: &[(&str, &[&str])] = &[
+    ("year", &["YEAR", "YYYY", "YY"]),
+    ("quarter", &["QUARTER"]),
+    ("month", &["MONTH", "MM", "MON"]),
+    ("week", &["WEEK"]),
+];
+/// The units DATE_TRUNC takes, by DuckDB's date part.
+pub const TIMESTAMP_TRUNC_UNITS: &[(&str, &[&str])] = &[
+    ("year", &["YEAR", "YYYY", "YY"]),
+    ("quarter", &["QUARTER"]),
+    ("month", &["MONTH", "MM", "MON"]),
+    ("week", &["WEEK"]),
+    ("day", &["DAY", "DD"]),
+    ("hour", &["HOUR"]),
+    ("minute", &["MINUTE"]),
+    ("second", &["SECOND"]),
+    ("millisecond", &["MILLISECOND"]),
+    ("microsecond", &["MICROSECOND"]),
+];
 /// The date day counts start from.
 pub const EPOCH_DATE: &str = "1970-01-01";
 /// 2^31: an INT day count wraps past it, as Databricks's DATE_ADD does.
