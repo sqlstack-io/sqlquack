@@ -9,7 +9,7 @@ use arrow::ipc::writer::FileWriter;
 use sqlquack_compare::values::models::ResultSet;
 use sqlquack_policy::policy::main::evidence_policy::evidence_policy;
 use sqlquack_policy::policy::main::load_policy::load_policy;
-use sqlquack_policy::policy::models::Policy;
+use sqlquack_policy::policy::models::{EvidenceDialect, Policy};
 
 use crate::cases::main::load_cases::load_cases;
 use crate::cases::models::{CaseRole, LoadedCase};
@@ -86,10 +86,10 @@ description = "UTC"
 duckdb_time_zone = "UTC"
 
 [session_profiles.utc-v1.snowflake]
-TIMEZONE = "UTC"
 
 [session_profiles.utc-v1.pinned]
 DATE_OUTPUT_FORMAT = "YYYY-MM-DD"
+TIMEZONE = "UTC"
 
 [divergences.timestamp_range]
 constructs = ["node:cast"]
@@ -152,7 +152,7 @@ fn warehouse_column(name: &str, data_type: &DataType) -> WarehouseColumn {
         .expect("every fixture result type is described");
     WarehouseColumn {
         name: name.to_ascii_uppercase(),
-        type_code: 0,
+        type_code: Some(0),
         type_name: type_name.to_owned(),
         precision: Some(precision),
         scale: Some(scale),
@@ -276,13 +276,16 @@ pub(crate) fn recorded_before_pinning(results: &Path, hash: &str) {
     });
 }
 
-/// Account defaults with `DATE_OUTPUT_FORMAT` set to `value`.
-pub(crate) fn defaults_with_date_format(value: &str) -> SessionDefaults {
+/// Account defaults with `DATE_OUTPUT_FORMAT` and `TIMEZONE` set to these values.
+pub(crate) fn defaults_with((date_format, time_zone): (&str, &str)) -> SessionDefaults {
     SessionDefaults {
         format: 1,
         recorder: STAND_IN_RECORDER.to_owned(),
         recorded_at: "1970-01-01T00:00:00Z".to_owned(),
-        parameters: BTreeMap::from([("DATE_OUTPUT_FORMAT".to_owned(), value.to_owned())]),
+        parameters: BTreeMap::from([
+            ("DATE_OUTPUT_FORMAT".to_owned(), date_format.to_owned()),
+            ("TIMEZONE".to_owned(), time_zone.to_owned()),
+        ]),
         parameters_sha256: STAND_IN_PARAMETERS_SHA256.to_owned(),
     }
 }
@@ -349,6 +352,7 @@ fn record_stand_in(pending: &PendingCase, results: &Path) {
         ),
         arrow_sha256,
         error: None,
+        source_dialect: EvidenceDialect::default(),
     };
     std::fs::write(
         results.join(format!("{}.json", pending.case_hash)),
@@ -489,6 +493,7 @@ pub(crate) fn compile_error_judgement_for(
         setup: Vec::new(),
         inputs: Vec::new(),
         row_sources: Vec::new(),
+        source_dialect: Default::default(),
     };
     let recorded = RecordedFailure {
         errno: Some(1003),

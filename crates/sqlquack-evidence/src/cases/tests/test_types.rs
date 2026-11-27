@@ -15,6 +15,7 @@ pub(crate) struct LoadTestCase {
 pub(crate) struct SourceSqlTestCase {
     pub(crate) description: &'static str,
     pub(crate) reference: &'static str,
+    pub(crate) dialect: &'static str,
     pub(crate) expected_sql: &'static str,
 }
 

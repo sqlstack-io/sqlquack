@@ -142,10 +142,10 @@ pub enum ErrorCheck {
         /// DuckDB's error.
         error: String,
     },
-    /// No rule the conversion used declares the recorded Snowflake error.
+    /// No rule the conversion used declares the recorded warehouse error.
     Undeclared {
-        /// Its number.
-        errno: i64,
+        /// Its number, when the warehouse numbers its errors.
+        errno: Option<i64>,
         /// Its SQLSTATE.
         sqlstate: String,
     },
@@ -252,7 +252,7 @@ pub struct VerifyReport {
 pub enum RecordingMatch {
     /// Every name, declared type and value matches.
     Matches,
-    /// The recording kept declared nanosecond columns in microseconds; the replay matches there.
+    /// The recording kept a time column coarser than its type declares; the replay matches there.
     MatchesAtMicroseconds,
     /// The first difference.
     Differs(Mismatch),

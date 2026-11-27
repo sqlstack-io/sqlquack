@@ -427,9 +427,9 @@ fn microsecond_verdict(
 ) -> Option<Verdict> {
     match differs_below_microseconds(recorded, replayed, case.order, &policy.comparator) {
         Ok(true) => Some(Verdict::Unproven {
-            reason: "the connector stored the declared nanosecond columns in microseconds, which \
-                     it does for a whole column when any row lies outside the nanosecond range, \
-                     and DuckDB's values differ only below a microsecond"
+            reason: "the connector stored a time column in a coarser unit than its type declares, \
+                     as Snowflake's does with nanoseconds outside their range and Databricks's JSON \
+                     results do with every timestamp, and DuckDB's values differ only below it"
                 .to_owned(),
         }),
         Ok(false) => None,

@@ -4,7 +4,7 @@ use std::collections::BTreeSet;
 use std::path::Path;
 
 use crate::cases::models::LoadedCase;
-use crate::constants::{CASE_HASH_LENGTH, EVIDENCE_FORMAT, METADATA_EXTENSION, SOURCE_DIALECT};
+use crate::constants::{CASE_HASH_LENGTH, EVIDENCE_FORMAT, METADATA_EXTENSION};
 use crate::errors::EvidenceError;
 use crate::pending::models::{PendingCase, PendingSummary};
 
@@ -28,7 +28,7 @@ pub fn write_pending(
             format: EVIDENCE_FORMAT,
             case_hash: case.hash.clone(),
             case_reference: case.reference.clone(),
-            source_dialect: SOURCE_DIALECT.to_owned(),
+            source_dialect: case.source_dialect.name().to_owned(),
             session_parameters: case.session_parameters.clone(),
             pinned_parameters: case.pinned_parameters.clone(),
             source_sql: case.source_sql.clone(),
