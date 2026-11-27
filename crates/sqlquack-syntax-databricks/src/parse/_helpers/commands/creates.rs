@@ -89,6 +89,15 @@ fn order_unsaid(written: &[String]) -> bool {
     distinct.len() < written.len() || between
 }
 
+/// The deferral options a constraint reads: both on a primary or foreign key, `DEFERRABLE` alone on a `UNIQUE`
+/// key (the warehouse refuses `INITIALLY DEFERRED` there), and neither on a `CHECK`, which documents none.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Deferral {
+    Both,
+    Deferrable,
+    Neither,
+}
+
 impl Parser<'_> {
     /// `CREATE ...` or `REPLACE TABLE ...`; any other `CREATE` is an opaque gap.
     pub(crate) fn create_statement(&mut self) -> Parsing<Expression> {
@@ -738,12 +747,17 @@ impl Parser<'_> {
                         .push(ColumnConstraint::References(Box::new(reference)));
                     ConstraintType::References
                 };
+                let deferral: Deferral = match &kind {
+                    ConstraintType::PrimaryKey | ConstraintType::References => Deferral::Both,
+                    ConstraintType::Unique => Deferral::Deferrable,
+                    _ => Deferral::Neither,
+                };
                 let index: usize = column.constraint_order.len();
                 column.constraint_order.push(kind);
                 column
                     .constraint_names
                     .extend(name.map(|name| (index, name)));
-                let modifiers: ConstraintModifiers = self.constraint_characteristics(true)?;
+                let modifiers: ConstraintModifiers = self.constraint_characteristics(deferral)?;
                 if modifiers != ConstraintModifiers::default() {
                     column.constraint_modifiers.push((index, modifiers));
                 }
@@ -886,16 +900,15 @@ impl Parser<'_> {
         })
     }
 
-    /// `constraintCharacteristic*`: `[NOT] ENFORCED`, `DEFERRABLE`, `INITIALLY DEFERRED` (unless `deferred`
-    /// is false, as for a table `UNIQUE` key, which the warehouse refuses it on), `RELY` and `NORELY`.
-    fn constraint_characteristics(&mut self, deferred: bool) -> Parsing<ConstraintModifiers> {
+    /// `constraintCharacteristic*`: `[NOT] ENFORCED`, `RELY`, `NORELY`, and the deferral options `deferral` allows.
+    fn constraint_characteristics(&mut self, deferral: Deferral) -> Parsing<ConstraintModifiers> {
         let mut modifiers: ConstraintModifiers = ConstraintModifiers::default();
         let mut written: Vec<String> = Vec::new();
         loop {
-            if self.eat_kw("DEFERRABLE") {
+            if deferral != Deferral::Neither && self.eat_kw("DEFERRABLE") {
                 modifiers.deferrable = Some(true);
                 written.push("DEFERRABLE".to_owned());
-            } else if deferred && self.eat_kws(&["INITIALLY", "DEFERRED"]) {
+            } else if deferral == Deferral::Both && self.eat_kws(&["INITIALLY", "DEFERRED"]) {
                 modifiers.initially_deferred = Some(true);
                 written.push("INITIALLY DEFERRED".to_owned());
             } else if self.eat_kw("ENFORCED") {
@@ -970,7 +983,8 @@ impl Parser<'_> {
         };
         if self.kw("CHECK") {
             let expression: Expression = self.check_constraint()?;
-            let modifiers: ConstraintModifiers = self.constraint_characteristics(true)?;
+            let modifiers: ConstraintModifiers =
+                self.constraint_characteristics(Deferral::Neither)?;
             return Ok(TableConstraint::Check {
                 name,
                 expression,
@@ -982,7 +996,7 @@ impl Parser<'_> {
             let columns: Vec<Identifier> = self.identifier_list()?;
             let mut reference: ForeignKeyRef = self.reference_spec()?;
             reference.has_foreign_key_keywords = true;
-            let modifiers: ConstraintModifiers = self.constraint_characteristics(true)?;
+            let modifiers: ConstraintModifiers = self.constraint_characteristics(Deferral::Both)?;
             return Ok(TableConstraint::ForeignKey {
                 name,
                 columns,
@@ -1014,7 +1028,11 @@ impl Parser<'_> {
                 false,
             ));
         }
-        let modifiers: ConstraintModifiers = self.constraint_characteristics(primary)?;
+        let deferral: Deferral = match primary {
+            true => Deferral::Both,
+            false => Deferral::Deferrable,
+        };
+        let modifiers: ConstraintModifiers = self.constraint_characteristics(deferral)?;
         Ok(match primary {
             true => TableConstraint::PrimaryKey {
                 name,

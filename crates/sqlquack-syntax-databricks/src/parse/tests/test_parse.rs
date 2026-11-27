@@ -211,6 +211,26 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
+            description: "a column UNIQUE refuses INITIALLY DEFERRED, as a table UNIQUE key does",
+            sql: "CREATE TABLE t3 ( c1 INT UNIQUE INITIALLY DEFERRED )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a table UNIQUE key keeps the documented DEFERRABLE",
+            sql: "CREATE TABLE t3 ( c1 INT , UNIQUE ( c1 ) DEFERRABLE )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a CHECK constraint, which documents no constraint option, refuses DEFERRABLE",
+            sql: "CREATE TABLE t3 ( c1 INT , CONSTRAINT c CHECK ( c1 > 0 ) DEFERRABLE )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a table tag written as a key alone is kept, as a column tag is",
+            sql: "ALTER TABLE t1 SET TAGS ( 'k' )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "a FOREIGN KEY keeps INITIALLY DEFERRED",
             sql: "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 INITIALLY DEFERRED )",
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
