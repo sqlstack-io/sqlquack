@@ -232,7 +232,7 @@ fn sorted(array: &Emitted, order: &str) -> Option<Emitted> {
 }
 
 /// The element type of an array argument, `None` for any other argument.
-fn element(value: &Emitted) -> Option<Element> {
+pub(crate) fn element(value: &Emitted) -> Option<Element> {
     match value.data_type {
         DatabricksType::Array(element) => Some(element),
         _ => None,
@@ -258,7 +258,7 @@ fn array_repeat(values: &[Emitted]) -> Option<Emitted> {
 }
 
 /// An element type other than VOID, whose single values have a type.
-fn known(element: Element) -> Option<Element> {
+pub(crate) fn known(element: Element) -> Option<Element> {
     match element {
         Element::Null => None,
         element => Some(element),
@@ -266,7 +266,7 @@ fn known(element: Element) -> Option<Element> {
 }
 
 /// An index Databricks takes as INT without a cast.
-fn small_index(index: &Emitted) -> Option<()> {
+pub(crate) fn small_index(index: &Emitted) -> Option<()> {
     match index.data_type {
         DatabricksType::TinyInt | DatabricksType::SmallInt | DatabricksType::Int => Some(()),
         _ => None,

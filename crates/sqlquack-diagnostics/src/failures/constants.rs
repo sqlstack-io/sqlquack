@@ -12,6 +12,8 @@ pub const UNIDENTIFIED_RAISE: &str = "?";
 pub const RAISE_ID_DIGITS: usize = 12;
 /// What ends a raised error's tag, before its message.
 pub const TAG_END: &str = ": ";
+/// What starts the message of an error converted SQL raises for an argument the source function rejects.
+pub const ARGUMENT_REJECTED: &str = "argument rejected";
 
 /// Numeric value out of representable range.
 pub const NUMBER_OUT_OF_RANGE: SnowflakeCode = SnowflakeCode {
@@ -210,6 +212,7 @@ pub const SNOWFLAKE_ERRORS: &[(SnowflakeCode, ErrorKind)] = &[
 
 /// Fragments of DuckDB's own messages, in the order they are tried, and their kinds.
 pub const DUCKDB_MESSAGE_KINDS: &[(&str, ErrorKind)] = &[
+    (ARGUMENT_REJECTED, ErrorKind::InvalidArgument),
     ("date field value out of range", ErrorKind::DateText),
     ("Overflow", ErrorKind::NumericOverflow),
     ("out of range", ErrorKind::NumericOverflow),

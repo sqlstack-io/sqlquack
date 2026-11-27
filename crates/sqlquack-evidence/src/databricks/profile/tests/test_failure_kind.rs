@@ -35,6 +35,20 @@ fn given_a_recorded_databricks_error_when_read_then_its_class_names_the_kind() {
             expected_kind: Some(ErrorKind::NumericOverflow),
         },
         FailureKindTestCase {
+            description: "an index of 0 is an invalid argument",
+            message: Some(
+                "[INVALID_INDEX_OF_ZERO] The index 0 is invalid. An index shall be either < 0 or > 0 (the first element has index 1). SQLSTATE: 22003",
+            ),
+            expected_kind: Some(ErrorKind::InvalidArgument),
+        },
+        FailureKindTestCase {
+            description: "an ELEMENT_AT index out of bounds is an invalid argument, not an overflow",
+            message: Some(
+                "[INVALID_ARRAY_INDEX_IN_ELEMENT_AT] The index -7 is out of bounds. The array has 3 elements. SQLSTATE: 22003",
+            ),
+            expected_kind: Some(ErrorKind::InvalidArgument),
+        },
+        FailureKindTestCase {
             description: "a class no kind is known for",
             message: Some("[H3_INVALID_CELL_ID] -7 is not a valid H3 cell ID SQLSTATE: 22023"),
             expected_kind: None,

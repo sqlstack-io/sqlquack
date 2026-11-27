@@ -60,6 +60,12 @@ pub const DATE_FUNCTION_RULE: &str = "rule.databricks.date_function";
 pub const STRING_FUNCTION_RULE: &str = "rule.databricks.string_function";
 /// A number function such as MOD, CEIL or SIGN, typed and bounded as Databricks types and bounds it.
 pub const NUMBER_FUNCTION_RULE: &str = "rule.databricks.number_function";
+/// A function taking a 1-based index, such as ELEMENT_AT or SPLIT_PART, raising where Databricks raises.
+pub const INDEX_RULE: &str = "rule.databricks.index";
+/// What a raise for an index of 0 says after the rejected-argument fragment.
+pub const INDEX_ZERO_ERROR: &str = "the index 0 is invalid, as the first element has index 1";
+/// What a raise for an index past either end of an array says after the rejected-argument fragment.
+pub const INDEX_BOUNDS_ERROR: &str = "the index is outside the array";
 
 /// COUNT, the one aggregate with a `*` argument and a DISTINCT form that changes its result.
 pub const COUNT_NAME: &str = "COUNT";
@@ -144,6 +150,11 @@ const TIMESTAMP_TEXT: FailureMode = FailureMode {
     kind: ErrorKind::TimestampText,
     snowflake: &[],
 };
+/// An argument the function rejects, such as an index of 0.
+const ARGUMENT: FailureMode = FailureMode {
+    kind: ErrorKind::InvalidArgument,
+    snowflake: &[],
+};
 /// How each rule's DuckDB SQL may fail as Databricks does; Databricks errors carry no Snowflake code.
 pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
     (ARITHMETIC_RULE, &[OVERFLOW]),
@@ -153,6 +164,7 @@ pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
     (DATE_FUNCTION_RULE, &[OVERFLOW]),
     (STRING_FUNCTION_RULE, &[OVERFLOW]),
     (NUMBER_FUNCTION_RULE, &[OVERFLOW, DIVISION]),
+    (INDEX_RULE, &[ARGUMENT]),
     (
         CAST_RULE,
         &[OVERFLOW, NUMBER_TEXT, DATE_TEXT, TIMESTAMP_TEXT],

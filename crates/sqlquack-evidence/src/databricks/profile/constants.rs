@@ -53,4 +53,9 @@ pub const ERROR_CLASS_KINDS: &[(&str, ErrorKind)] = &[
     ("ARITHMETIC_OVERFLOW", ErrorKind::NumericOverflow),
     ("NUMERIC_VALUE_OUT_OF_RANGE", ErrorKind::NumericOverflow),
     ("CAST_OVERFLOW", ErrorKind::NumericOverflow),
+    ("INVALID_INDEX_OF_ZERO", ErrorKind::InvalidArgument),
+    (
+        "INVALID_ARRAY_INDEX_IN_ELEMENT_AT",
+        ErrorKind::InvalidArgument,
+    ),
 ];

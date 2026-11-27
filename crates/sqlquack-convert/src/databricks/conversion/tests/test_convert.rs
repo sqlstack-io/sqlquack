@@ -211,6 +211,22 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Array(Element::String)],
         },
         ConvertTestCase {
+            description: "an index of 0 raises; SPLIT_PART is empty and TRY_ELEMENT_AT NULL out of bounds",
+            query: "SELECT split_part(s, s, x1) AS p, element_at(array(x1), x1) AS e, \
+                    try_element_at(array(s), x1) AS t FROM input",
+            expected_sql: &[
+                "WHEN \"x1\" = 0 THEN error('argument rejected: the index 0 is invalid",
+                "coalesce(list_extract(CASE WHEN \"s\" = '' THEN [\"s\"] ELSE string_split(\"s\", \"s\") END, \"x1\"), '')",
+                "THEN error('argument rejected: the index is outside the array')",
+                "> len([\"s\"]) THEN NULL ELSE list_extract([\"s\"], \"x1\") END",
+            ],
+            expected_types: &[
+                DatabricksType::String,
+                DatabricksType::Int,
+                DatabricksType::String,
+            ],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
