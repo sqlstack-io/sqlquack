@@ -58,7 +58,7 @@ pub(crate) fn expression(node: &Value, site: Site<'_>) -> Result<Emitted, Refusa
         "between" => between(payload, site),
         "in" => in_list(payload, site),
         "case" => case(payload, site),
-        "like" => like(payload, site),
+        "like" | "i_like" => like(kind, payload, site),
         "trim" => trim(payload, site),
         "bitwise_and" | "bitwise_or" | "bitwise_xor" => bitwise(kind, payload, site),
         "bitwise_not" => bitwise_not(payload, site),

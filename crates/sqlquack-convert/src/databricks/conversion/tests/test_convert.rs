@@ -247,6 +247,17 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::BigInt],
         },
         ConvertTestCase {
+            description: "ILIKE lowers both sides, raising on a character whose case no rule folds",
+            query: "SELECT s ILIKE 'A\\\\%' AS c, s NOT ILIKE ANY (s, 'b_') AS a FROM input",
+            expected_sql: &[
+                "THEN error('the text holds a character whose case no rule folds as Databricks does') ELSE lower(\"s\") END)",
+                "LIKE (CASE WHEN regexp_matches('A\\%', '[^\\x{0}-\\x{12f}\\x{131}-",
+                "ESCAPE '\\')",
+                "THEN error('the LIKE pattern has an escape Databricks rejects')",
+            ],
+            expected_types: &[DatabricksType::Boolean, DatabricksType::Boolean],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],

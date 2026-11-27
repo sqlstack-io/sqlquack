@@ -10,15 +10,20 @@ use crate::databricks::conversion::_helpers::support::tree::{
     field, flag, list, node_kind, refused, understood,
 };
 use crate::databricks::conversion::constants::{
-    LIKE_ESCAPE_ERROR, LIKE_ESCAPES, LIKE_RULE, TRIM_RULE,
+    CASE_FOLD_ERROR, FOLDABLE_CHARACTERS, ILIKE_KIND, ILIKE_RULE, LIKE_ESCAPE_ERROR, LIKE_ESCAPES,
+    LIKE_RULE, TRIM_RULE,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
-/// `[NOT] LIKE` a constant pattern, or `LIKE ANY` or `ALL` constant patterns as an `OR` or `AND`.
-pub(crate) fn like(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
-    let like = understood(payload, "like", &["left", "right", "negated", "quantifier"])?;
+/// `[NOT] LIKE` or `ILIKE` a pattern, or `ANY` or `ALL` of patterns as an `OR` or `AND`; `ILIKE` lowers both sides first.
+pub(crate) fn like(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let like = understood(payload, kind, &["left", "right", "negated", "quantifier"])?;
+    let folds = kind == ILIKE_KIND;
     let subject = expression(field(like, "left"), site)?;
-    let _rule = site.log.rule(LIKE_RULE);
+    let _rule = site.log.rule(match folds {
+        true => ILIKE_RULE,
+        false => LIKE_RULE,
+    });
     if subject.data_type != DatabricksType::String {
         return Err(refused(
             "like",
@@ -49,10 +54,24 @@ pub(crate) fn like(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> 
         true => "NOT ",
         false => "",
     };
+    let subject = match folds {
+        true => Emitted {
+            sql: folded(subject.sql.clone()),
+            ..subject
+        },
+        false => subject,
+    };
     let mut tests: Vec<String> = Vec::with_capacity(patterns.len());
     for pattern in patterns {
         let pattern = expression(pattern, site)?;
         let test = match (&pattern.literal, pattern.data_type) {
+            (Some(Literal::Text(text)), _) if folds && escapes_well(text) => {
+                format!(
+                    "({not}{} LIKE {} ESCAPE '\\')",
+                    subject.sql,
+                    folded(quoted_text(text))
+                )
+            }
             (Some(Literal::Text(text)), _) if !text.contains('\\') => {
                 format!("({not}{} LIKE {})", subject.sql, quoted_text(text))
             }
@@ -68,8 +87,12 @@ pub(crate) fn like(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> 
             (_, DatabricksType::Null) => format!("({not}{} LIKE NULL)", subject.sql),
             (_, DatabricksType::String) => format!(
                 "(CASE WHEN NOT regexp_full_match({p}, '{LIKE_ESCAPES}') THEN error('{LIKE_ESCAPE_ERROR}') \
-                 ELSE ({not}{s} LIKE {p} ESCAPE '\\') END)",
+                 ELSE ({not}{s} LIKE {f} ESCAPE '\\') END)",
                 p = pattern.sql,
+                f = match folds {
+                    true => folded(pattern.sql.clone()),
+                    false => pattern.sql.clone(),
+                },
                 s = subject.sql
             ),
             _ => {
@@ -88,6 +111,14 @@ pub(crate) fn like(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> 
             DatabricksType::Boolean,
         )),
     }
+}
+
+/// Text lowered by DuckDB, raising for a character outside those whose lowering Java and DuckDB were seen to agree on.
+fn folded(text: String) -> String {
+    format!(
+        "(CASE WHEN regexp_matches({text}, '[^{FOLDABLE_CHARACTERS}]') THEN error('{CASE_FOLD_ERROR}') \
+         ELSE lower({text}) END)"
+    )
 }
 
 /// Whether every backslash in `pattern` escapes `_`, `%` or a backslash, as Databricks requires.
