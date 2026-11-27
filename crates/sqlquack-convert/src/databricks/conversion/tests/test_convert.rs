@@ -305,6 +305,16 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::String],
         },
         ConvertTestCase {
+            description: "a string compared with an INT reads as BIGINT, raising for text that is not plain digits",
+            query: "SELECT s = x1 AS e, x1 BETWEEN s AND 3 AS b FROM input",
+            expected_sql: &[
+                "(CASE WHEN regexp_full_match(\"s\", '-?[0-9]{1,18}') THEN CAST(\"s\" AS BIGINT)",
+                "THEN CAST(error('text rejected as a number: the text compared with an integer is not a number') AS BIGINT)",
+                "= CAST(\"x1\" AS BIGINT)",
+            ],
+            expected_types: &[DatabricksType::Boolean, DatabricksType::Boolean],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
@@ -380,8 +390,8 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             expected_reason: "position",
         },
         RefuseTestCase {
-            description: "a string compared with an integer",
-            query: "SELECT s = x1 AS r FROM input",
+            description: "a string compared with a DOUBLE, whose reading of the text no rule shows",
+            query: "SELECT s = CAST(x1 AS DOUBLE) AS r FROM input",
             expected_reason: "compares",
         },
         RefuseTestCase {

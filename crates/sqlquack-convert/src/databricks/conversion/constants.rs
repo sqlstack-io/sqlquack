@@ -30,6 +30,15 @@ pub const BETWEEN_RULE: &str = "rule.databricks.between";
 pub const IN_LIST_RULE: &str = "rule.databricks.in_list";
 /// A searched `CASE` whose branches share one type.
 pub const CASE_RULE: &str = "rule.databricks.case";
+/// Text Databricks reads as BIGINT the way DuckDB does: an optional minus and at most 18 digits.
+pub const WHOLE_NUMBER_TEXT: &str = "-?[0-9]{1,18}";
+/// A character no number Databricks reads holds, outside digits, signs, the point, whitespace and controls.
+pub const NOT_NUMBER_CHARACTER: &str = r"[^0-9+\-.\s\pZ\pC]";
+/// What a raise for text holding no number says after the text-not-a-number fragment.
+pub const MALFORMED_NUMBER_ERROR: &str = "the text compared with an integer is not a number";
+/// The error text compared with an integer raises when no rule shows how Databricks reads it.
+pub const UNREAD_NUMBER_ERROR: &str =
+    "the text compared with an integer is not one no rule reads as Databricks does";
 /// `[NOT] LIKE`, `LIKE ANY` and `LIKE ALL`, a backslash escaping and raising on an escape Databricks rejects.
 pub const LIKE_RULE: &str = "rule.databricks.like";
 /// The patterns whose every backslash escapes `_`, `%` or a backslash, as an RE2 expression.
@@ -184,6 +193,9 @@ pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
     (DIVISION_RULE, &[DIVISION, OVERFLOW]),
     (AGGREGATE_RULE, &[OVERFLOW]),
     (DATE_FUNCTION_RULE, &[OVERFLOW, ARGUMENT]),
+    (COMPARISON_RULE, &[NUMBER_TEXT]),
+    (BETWEEN_RULE, &[NUMBER_TEXT]),
+    (CASE_RULE, &[NUMBER_TEXT]),
     (STRING_FUNCTION_RULE, &[OVERFLOW]),
     (NUMBER_FUNCTION_RULE, &[OVERFLOW, DIVISION]),
     (INDEX_RULE, &[ARGUMENT]),

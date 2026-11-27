@@ -1,6 +1,7 @@
 //! Operators: arithmetic, comparisons, boolean logic, null tests, `BETWEEN`, `IN`, `CASE` and `LIKE`.
 
 use serde_json::Value;
+use sqlquack_diagnostics::failures::constants::TEXT_NOT_A_NUMBER;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
@@ -13,7 +14,8 @@ use crate::databricks::conversion::_helpers::support::tree::{
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
 use crate::databricks::conversion::constants::{
     ARITHMETIC_RULE, BETWEEN_RULE, BOOLEAN_RULE, CASE_RULE, COMPARISON_RULE, DIVISION_RULE,
-    IN_LIST_RULE, NULL_TEST_RULE,
+    IN_LIST_RULE, MALFORMED_NUMBER_ERROR, NOT_NUMBER_CHARACTER, NULL_TEST_RULE,
+    UNREAD_NUMBER_ERROR, WHOLE_NUMBER_TEXT,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
@@ -299,6 +301,8 @@ pub(crate) fn comparable(left: &Emitted, right: &Emitted) -> Option<(String, Str
         (left_type, right_type) if left_type == right_type => {
             Some((left.sql.clone(), right.sql.clone()))
         }
+        (T::String, T::Int | T::BigInt) => Some((whole_text(&left.sql), as_type(right, T::BigInt))),
+        (T::Int | T::BigInt, T::String) => Some((as_type(left, T::BigInt), whole_text(&right.sql))),
         (left_type, right_type) if left_type.is_integral() && right_type.is_integral() => {
             let wider = wider_integer(left_type, right_type)?;
             Some((as_type(left, wider), as_type(right, wider)))
@@ -311,6 +315,16 @@ pub(crate) fn comparable(left: &Emitted, right: &Emitted) -> Option<(String, Str
         }
         _ => None,
     }
+}
+
+/// Text read as BIGINT as Databricks reads it against an integer: plain digits convert, and other text raises.
+fn whole_text(text: &str) -> String {
+    format!(
+        "(CASE WHEN regexp_full_match({text}, '{WHOLE_NUMBER_TEXT}') THEN CAST({text} AS BIGINT) \
+         WHEN {text} = '' OR regexp_matches({text}, '{NOT_NUMBER_CHARACTER}') \
+         THEN CAST(error('{TEXT_NOT_A_NUMBER}: {MALFORMED_NUMBER_ERROR}') AS BIGINT) \
+         ELSE CAST(error('{UNREAD_NUMBER_ERROR}') AS BIGINT) END)"
+    )
 }
 
 pub(crate) fn uncomparable(kind: &str, left: &Emitted, right: &Emitted) -> Refusal {
