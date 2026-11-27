@@ -36,7 +36,7 @@ sqlquack-diagnostics = { workspace = true, features = ["snowflake"] }
 sqlquack-parse.workspace = true
 sqlquack-blocks = { workspace = true, features = ["engine"] }
 sqlquack-format = { workspace = true, features = ["duckdb"] }
-sqlquack-evidence.workspace = true
+sqlquack-evidence = { workspace = true, features = ["databricks"] }
 sqlquack-policy.workspace = true
 sqlquack-semantics = { workspace = true, features = ["snowflake"] }
 sqlquack-syntax.workspace = true

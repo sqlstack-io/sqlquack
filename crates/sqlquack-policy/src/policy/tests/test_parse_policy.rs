@@ -90,6 +90,20 @@ fn given_policy_text_when_parsing_then_schema_and_rules_are_enforced() {
             ),
         },
         PolicyTestCase {
+            description: "a session profile may pin UTC rather than set it",
+            replace: "TIMEZONE = \"UTC\"\nWEEK_START = 0",
+            with: "WEEK_START = 0\n\n[session_profiles.utc-v1.pinned]\nTIMEZONE = \"UTC\"",
+            expected_error: None,
+        },
+        PolicyTestCase {
+            description: "a pinned time zone must be UTC too",
+            replace: "TIMEZONE = \"UTC\"\nWEEK_START = 0",
+            with: "WEEK_START = 0\n\n[session_profiles.utc-v1.pinned]\nTIMEZONE = \"Europe/London\"",
+            expected_error: Some(
+                "the policy file is invalid: session profile `utc-v1` needs TIMEZONE = \"UTC\"",
+            ),
+        },
+        PolicyTestCase {
             description: "a session profile must run Snowflake in UTC, spelled canonically",
             replace: "TIMEZONE = \"UTC\"",
             with: "TIMEZONE = \"utc\"",

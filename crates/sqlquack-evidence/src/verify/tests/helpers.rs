@@ -9,7 +9,7 @@ use arrow::ipc::writer::FileWriter;
 use sqlquack_compare::values::models::ResultSet;
 use sqlquack_policy::policy::main::evidence_policy::evidence_policy;
 use sqlquack_policy::policy::main::load_policy::load_policy;
-use sqlquack_policy::policy::models::Policy;
+use sqlquack_policy::policy::models::{EvidenceDialect, Policy};
 
 use crate::cases::main::load_cases::load_cases;
 use crate::cases::models::{CaseRole, LoadedCase};
@@ -152,7 +152,7 @@ fn warehouse_column(name: &str, data_type: &DataType) -> WarehouseColumn {
         .expect("every fixture result type is described");
     WarehouseColumn {
         name: name.to_ascii_uppercase(),
-        type_code: 0,
+        type_code: Some(0),
         type_name: type_name.to_owned(),
         precision: Some(precision),
         scale: Some(scale),
@@ -349,6 +349,7 @@ fn record_stand_in(pending: &PendingCase, results: &Path) {
         ),
         arrow_sha256,
         error: None,
+        source_dialect: EvidenceDialect::default(),
     };
     std::fs::write(
         results.join(format!("{}.json", pending.case_hash)),

@@ -50,6 +50,11 @@ impl EvidenceDialect {
             Self::Databricks => "databricks",
         }
     }
+
+    /// Whether this is Snowflake, the dialect a result names by leaving its dialect out.
+    pub fn is_snowflake(&self) -> bool {
+        *self == Self::Snowflake
+    }
 }
 
 /// How long converting one statement may take and how much SQL it may emit, before it is refused.

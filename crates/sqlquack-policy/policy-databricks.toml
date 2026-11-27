@@ -88,7 +88,12 @@ reason = "Both are wall-clock timestamps with microsecond precision and no zone.
 description = "Databricks SQL warehouse defaults: the session in UTC with ANSI mode on."
 duckdb_time_zone = "UTC"
 
+# A case sets no parameter, so its hash names only its SQL.
 [session_profiles.dbx-default-v1.snowflake]
+
+# The warehouse defaults a result depends on. A result without effective values for them proves
+# them only through the account defaults recorded in session_defaults.json.
+[session_profiles.dbx-default-v1.pinned]
 TIMEZONE = "UTC"
 ANSI_MODE = true
 

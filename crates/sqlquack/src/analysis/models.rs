@@ -26,7 +26,7 @@ use sqlquack_syntax::{DataType, Dialect};
 use crate::analysis::_helpers::case_functions::case_functions;
 use crate::analysis::_helpers::override_definition::load_override;
 use crate::analysis::constants::{
-    CASE_SETUP_UNREPLAYED, PYTHON_RUNTIME_MISSING, STATEMENT_REFUSAL,
+    CASE_SETUP_UNREPLAYED, PYTHON_RUNTIME_MISSING, SOURCE_DIALECT_UNCONVERTED, STATEMENT_REFUSAL,
 };
 use crate::analysis::main::override_macros::override_macros;
 use crate::analysis::main::refused_construct::refused_construct;
@@ -56,6 +56,15 @@ pub struct CaseFunctions {
 
 impl CaseConverter for PipelineConverter {
     fn convert(&self, case: &LoadedCase) -> Conversion {
+        if !case.source_dialect.is_snowflake() {
+            return Conversion::Refused {
+                reasons: vec![format!(
+                    "{SOURCE_DIALECT_UNCONVERTED} {}",
+                    case.source_dialect.name()
+                )],
+                constructs: vec![STATEMENT_REFUSAL.to_owned()],
+            };
+        }
         if !case.setup.is_empty() {
             return Conversion::Refused {
                 reasons: vec![CASE_SETUP_UNREPLAYED.to_owned()],

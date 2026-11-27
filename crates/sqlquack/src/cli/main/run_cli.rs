@@ -15,7 +15,7 @@ use crate::cli::_helpers::convert_command::{
 };
 use crate::cli::_helpers::function_command::function_command;
 use crate::cli::_helpers::index_command::index_command;
-use crate::cli::_helpers::pending_command::pending_command;
+use crate::cli::_helpers::pending_command::{import_databricks_command, pending_command};
 use crate::cli::_helpers::review_command::review_command;
 use crate::cli::_helpers::verify_command::{compare_command, verify_command};
 use crate::cli::models::{Cli, Command};
@@ -50,6 +50,7 @@ fn run_command(
     match command {
         Command::Census(arguments) => census_command(arguments, stdout, stderr),
         Command::Pending(arguments) => pending_command(arguments, stderr),
+        Command::ImportDatabricks(arguments) => import_databricks_command(arguments, stderr),
         Command::Verify(arguments) => verify_command(arguments, stdout, stderr),
         Command::Index(arguments) => index_command(arguments, stdout, stderr),
         Command::Review(arguments) => review_command(arguments, stderr),
