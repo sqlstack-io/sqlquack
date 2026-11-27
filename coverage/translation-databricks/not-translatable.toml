@@ -1,0 +1,4 @@
+# Catalogue forms that are not meaningfully translatable to DuckDB, each group with its reason.
+# A group leaves the result-matching measure's denominator only once a reviewer signs it off
+# (reviews/results.toml binds its reason and forms). No group is signed off yet, so every
+# catalogued Databricks form counts.

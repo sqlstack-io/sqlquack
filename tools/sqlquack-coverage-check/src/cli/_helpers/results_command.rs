@@ -3,9 +3,10 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use crate::cli::_helpers::commands::snowflake_only;
 use crate::cli::_helpers::output::{print, say};
 use crate::cli::models::Common;
+use crate::formats::constants::SNOWFLAKE_DIALECT;
+use crate::formats::main::current_dialect::current_dialect;
 use crate::formats::main::load_coverage::load_coverage;
 use crate::results::constants::{BASELINE_FILE, PROBLEMS_PRINTED, WORK_PRINTED};
 use crate::results::main::diff_results::diff_results;
@@ -67,7 +68,7 @@ fn report_lines(report: &ResultsReport) -> Vec<String> {
     let mut lines: Vec<String> = vec![
         format!(
             "forms: {} of {} translatable catalogue forms translate to DuckDB with results matching \
-             Snowflake ({}); {} syntax only, {} refused, {} differ, {} with no recorded statement",
+             the recordings ({}); {} syntax only, {} refused, {} differ, {} with no recorded statement",
             report.forms.matching,
             report.forms.translatable,
             percent(report.forms.matching, report.forms.translatable),
@@ -77,8 +78,8 @@ fn report_lines(report: &ResultsReport) -> Vec<String> {
             report.forms.unmeasured,
         ),
         format!(
-            "statements (our recorded Snowflake statements, not a sample of real-world SQL): {} of \
-             {} return rows matching Snowflake ({}); {} more raise the same kind of error, or are \
+            "statements (our recorded statements, not a sample of real-world SQL): {} of \
+             {} return rows matching the recordings ({}); {} more raise the same kind of error, or are \
              refused by both sides ({}); {} link to no form",
             statements.matching_rows,
             statements.recorded,
@@ -190,6 +191,16 @@ fn against_target(path: &Path, head: &ResultsBaseline) -> Result<Vec<String>, St
     })
 }
 
+/// The translation files beside `root`: `translation` for Snowflake, `translation-<dialect>` for another dialect.
+fn translation_directory(root: &Path) -> PathBuf {
+    let dialect = current_dialect();
+    let name = match dialect.name == SNOWFLAKE_DIALECT {
+        true => TRANSLATION_DIR.to_owned(),
+        false => format!("{TRANSLATION_DIR}-{}", dialect.name),
+    };
+    root.parent().unwrap_or(Path::new(".")).join(name)
+}
+
 /// The measure of `statements` over the cases under `cases`, or without them the files alone.
 pub(crate) fn results(
     (statements, cases): (Option<&Path>, &Path),
@@ -205,9 +216,7 @@ pub(crate) fn results(
     ));
     let coverage = load_coverage(&common.root, common.evidence.as_deref())
         .map_err(|problems| fail(&problems))?;
-    snowflake_only("results")?;
-    let coverage_root: &Path = common.root.parent().unwrap_or(Path::new("."));
-    let directory: PathBuf = coverage_root.join(TRANSLATION_DIR);
+    let directory: PathBuf = translation_directory(&common.root);
     let files =
         load_results_files((&directory, cases), &coverage).map_err(|problems| fail(&problems))?;
     let Some(statements) = statements else {

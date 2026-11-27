@@ -150,7 +150,7 @@ bundled-extensions:
 
 # The crates whose features include dialects, as consumers build them one dialect at a time.
 DIALECT_CRATES ?= sqlquack-semantics sqlquack-parse sqlquack-fingerprint sqlquack-format \
-  sqlquack-convert sqlquack-diagnostics
+  sqlquack-convert sqlquack-diagnostics sqlquack-evidence
 
 # Fails when a DIALECT_CRATES library does not build with one of its dialect features alone. The
 # other targets build every feature together, so they cannot see library code that needs another
@@ -515,11 +515,17 @@ sql-benchmark:
 # The two roots `syntax-coverage results` reads cases from, and the only ones: Snowflake's recorded
 # syntax cases and the recorded translation cases its obligations cite, both in the pinned evidence.
 RESULTS_ROOTS = --evidence $(call syntax_evidence_dir,snowflake) --cases $(call convert_dir,snowflake,cases)
+# The same for Databricks, whose translation files are coverage/translation-databricks; its
+# obligations are rebuilt from the cases and must equal the committed ones.
+DATABRICKS_RESULTS_ROOTS = --root $(call suite_dir,syntax,databricks) \
+  --evidence $(call syntax_evidence_dir,databricks) --cases $(call convert_dir,databricks,cases)
 
 # The translation files and every case they cite, read from RESULTS_ROOTS as translation-results
 # reads them, without a replay; check-ci runs it so a gate without verify-recorded still reads them.
 translation-files: gate-build
 	$(GATE_DIR)/syntax-coverage results --files-only $(RESULTS_ROOTS)
+	$(GATE_DIR)/syntax-coverage results --files-only $(DATABRICKS_RESULTS_ROOTS)
+	uv run python -m scripts.build_translation_obligations_databricks --check --cases $(call convert_dir,databricks,cases)
 
 # The result-matching measure over the statements verify wrote; see verify-recorded.
 translation-results: gate-build
