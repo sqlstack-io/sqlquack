@@ -279,6 +279,11 @@ pub const UNIX_SECONDS_YEARS_1_TO_9999: (i64, i64) = (-62_135_596_800, 253_402_3
 /// The error FROM_UNIXTIME raises for a time whose year no rule shows Databricks writing.
 pub const UNFORMATTED_YEAR_ERROR: &str =
     "the year of the time is outside those no rule shows Databricks writing";
+/// 2^53, below which a sum of integers as DOUBLE is exact in any order, as Databricks sums them.
+pub const DOUBLE_EXACT_INTEGERS: &str = "9007199254740992";
+/// The error AVG of integers raises for a total too large to sum exactly as DOUBLE.
+pub const INEXACT_SUM_ERROR: &str =
+    "the total is too large for an exact DOUBLE sum no rule shows Databricks matching";
 /// The date day counts start from.
 pub const EPOCH_DATE: &str = "1970-01-01";
 /// 2^31: an INT day count wraps past it, as Databricks's DATE_ADD does.
@@ -298,6 +303,10 @@ pub const AGGREGATES: &[(&str, &str)] = &[
     ("SOME", "bool_or"),
     ("ANY", "bool_or"),
     ("COUNT_IF", "count_if"),
+    ("AVG", "avg"),
+    ("MEAN", "avg"),
+    ("TRY_AVG", "avg"),
+    ("MEDIAN", "median"),
     ("BIT_AND", "bit_and"),
     ("BIT_OR", "bit_or"),
     ("BIT_XOR", "bit_xor"),

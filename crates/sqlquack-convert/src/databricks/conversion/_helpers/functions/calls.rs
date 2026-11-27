@@ -13,7 +13,8 @@ use crate::databricks::conversion::_helpers::support::tree::{
 };
 use crate::databricks::conversion::constants::{
     AGGREGATE_RULE, AGGREGATES, CAST_FUNCTIONS, CAST_RULE, CONCAT_RULE, COUNT_NAME,
-    MAX_DECIMAL_PRECISION, MIN_LIST_ARGUMENTS, SAME_FUNCTION_RULE, SAME_FUNCTIONS,
+    DOUBLE_EXACT_INTEGERS, INEXACT_SUM_ERROR, MAX_DECIMAL_PRECISION, MIN_LIST_ARGUMENTS,
+    SAME_FUNCTION_RULE, SAME_FUNCTIONS,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Signature};
 
@@ -108,6 +109,25 @@ fn aggregate(
             };
             Some(typed(format!("CAST({call} AS {})", sum.duckdb_name()), sum))
         }
+        ("AVG" | "MEAN" | "TRY_AVG", data_type) if data_type.is_integral() && !distinct => {
+            let x = &value.sql;
+            Some(typed(
+                format!(
+                    "CASE WHEN count({x}) = 0 THEN NULL \
+                     WHEN sum(abs(CAST({x} AS HUGEINT))) >= {DOUBLE_EXACT_INTEGERS} \
+                     THEN CAST(error('{INEXACT_SUM_ERROR}') AS DOUBLE) \
+                     ELSE CAST(sum(CAST({x} AS BIGINT)) AS DOUBLE) / CAST(count({x}) AS DOUBLE) END"
+                ),
+                T::Double,
+            ))
+        }
+        ("MEDIAN", T::TinyInt | T::SmallInt | T::Int) if !distinct => Some(typed(
+            format!(
+                "CAST(quantile_cont(CAST({} AS DOUBLE), 0.5) AS DOUBLE)",
+                value.sql
+            ),
+            T::Double,
+        )),
         ("BOOL_AND" | "EVERY" | "BOOL_OR" | "SOME" | "ANY", T::Boolean) => {
             Some(typed(call, T::Boolean))
         }

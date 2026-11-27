@@ -337,6 +337,16 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::String, DatabricksType::String],
         },
         ConvertTestCase {
+            description: "AVG of integers is the exact sum over the count, raising past 2^53; MEDIAN of INT interpolates exactly",
+            query: "SELECT avg(x1) AS a, median(x1) AS m FROM input",
+            expected_sql: &[
+                "WHEN sum(abs(CAST(\"x1\" AS HUGEINT))) >= 9007199254740992",
+                "ELSE CAST(sum(CAST(\"x1\" AS BIGINT)) AS DOUBLE) / CAST(count(\"x1\") AS DOUBLE) END",
+                "CAST(quantile_cont(CAST(\"x1\" AS DOUBLE), 0.5) AS DOUBLE)",
+            ],
+            expected_types: &[DatabricksType::Double, DatabricksType::Double],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
