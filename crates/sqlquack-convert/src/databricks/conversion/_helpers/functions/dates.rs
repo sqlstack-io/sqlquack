@@ -9,8 +9,8 @@ use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, smal
 use crate::databricks::conversion::constants::{
     DATE_TRUNC_UNITS, DATE_YEARS, EPOCH_DATE, FIELD_BOUNDS_ERROR, INT_RANGE, INT_SPAN,
     JAVA_YEAR_MAX, MICROS_PER_MILLI, MICROS_PER_SECOND, MONTHS_BETWEEN_SCALE, SECONDS_PER_DAY,
-    SECONDS_PER_MONTH, TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS, UPPERED_CHARACTERS, WEEKDAY_ERROR,
-    WEEKDAY_NAMES,
+    SECONDS_PER_MONTH, TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS, UNFORMATTED_YEAR_ERROR,
+    UNIX_SECONDS_YEARS_1_TO_9999, UPPERED_CHARACTERS, WEEKDAY_ERROR, WEEKDAY_NAMES,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -58,6 +58,7 @@ pub(crate) fn date_rewrite(name: &str) -> Option<Rewrite> {
         "MAKE_TIMESTAMP_NTZ" => |values| made_timestamp(values, DatabricksType::TimestampNtz, true),
         "MAKE_DATE" => made_date,
         "NEXT_DAY" => next_day,
+        "FROM_UNIXTIME" => from_unixtime,
         _ => return None,
     };
     Some(rewrite)
@@ -381,5 +382,23 @@ fn next_day(values: &[Emitted]) -> Option<Emitted> {
             n = name.sql
         ),
         DatabricksType::Date,
+    ))
+}
+
+/// `FROM_UNIXTIME(n)` of an integer in Databricks's default `yyyy-MM-dd HH:mm:ss` and UTC session, raising past year 9999.
+fn from_unixtime(values: &[Emitted]) -> Option<Emitted> {
+    let [seconds] = values else { return None };
+    if !seconds.data_type.is_integral() {
+        return None;
+    }
+    let (first, last) = UNIX_SECONDS_YEARS_1_TO_9999;
+    let n = as_type(seconds, DatabricksType::BigInt);
+    Some(typed(
+        format!(
+            "CASE WHEN {n} IS NULL THEN NULL WHEN {n} BETWEEN {first} AND {last} \
+             THEN strftime(make_timestamp({n} * {MICROS_PER_SECOND}), '%Y-%m-%d %H:%M:%S') \
+             ELSE CAST(error('{UNFORMATTED_YEAR_ERROR}') AS VARCHAR) END"
+        ),
+        DatabricksType::String,
     ))
 }

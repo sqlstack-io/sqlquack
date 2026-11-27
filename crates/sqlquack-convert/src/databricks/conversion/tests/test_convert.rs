@@ -326,6 +326,17 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::TinyInt, DatabricksType::Date],
         },
         ConvertTestCase {
+            description: "ARRAY_JOIN of integers by a column delimiter; FROM_UNIXTIME writes Databricks's default format",
+            query: "SELECT array_join(array(x1), s) AS j, from_unixtime(x1) AS u FROM input",
+            expected_sql: &[
+                "ELSE substr(list_reduce(list_prepend('', list_filter(list_transform([\"x1\"], lambda element: CAST(element AS VARCHAR))",
+                "lambda joined, element: joined || \"s\" || element), length(\"s\") + 1) END",
+                "THEN strftime(make_timestamp(CAST(\"x1\" AS BIGINT) * 1000000), '%Y-%m-%d %H:%M:%S')",
+                "ELSE CAST(error('the year of the time is outside those no rule shows Databricks writing') AS VARCHAR) END",
+            ],
+            expected_types: &[DatabricksType::String, DatabricksType::String],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],

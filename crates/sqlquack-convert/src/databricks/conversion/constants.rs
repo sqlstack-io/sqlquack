@@ -120,6 +120,8 @@ pub const FLOAT_MANTISSA_BITS: u32 = 24;
 pub const DOUBLE_MANTISSA_BITS: u32 = 53;
 /// The parameter name of the lambdas array rewrites emit.
 pub const LAMBDA_ELEMENT: &str = "element";
+/// The parameter name of the text joined so far in the lambdas that join array elements.
+pub const JOINED: &str = "joined";
 /// The array elements whose text DuckDB writes as Databricks returns it; strings raise on control characters.
 pub const RENDERED_ELEMENTS: &[Element] = &[
     Element::String,
@@ -272,6 +274,11 @@ pub const WEEKDAY_NAMES: &[&[&str]] = &[
 pub const WEEKDAY_ERROR: &str = "the text names no day of the week";
 /// What a raise for a bit position outside the value's width says after the rejected-argument fragment.
 pub const BIT_POSITION_ERROR: &str = "the bit position is outside the value";
+/// The seconds since 1970 of 0001-01-01 00:00:00 and 9999-12-31 23:59:59, whose years Java writes as four digits.
+pub const UNIX_SECONDS_YEARS_1_TO_9999: (i64, i64) = (-62_135_596_800, 253_402_300_799);
+/// The error FROM_UNIXTIME raises for a time whose year no rule shows Databricks writing.
+pub const UNFORMATTED_YEAR_ERROR: &str =
+    "the year of the time is outside those no rule shows Databricks writing";
 /// The date day counts start from.
 pub const EPOCH_DATE: &str = "1970-01-01";
 /// 2^31: an INT day count wraps past it, as Databricks's DATE_ADD does.

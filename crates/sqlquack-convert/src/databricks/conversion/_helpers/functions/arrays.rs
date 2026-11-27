@@ -4,7 +4,7 @@ use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
 use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
-use crate::databricks::conversion::constants::LAMBDA_ELEMENT;
+use crate::databricks::conversion::constants::{JOINED, LAMBDA_ELEMENT};
 use crate::databricks::conversion::models::{DatabricksType, Element, Emitted};
 
 /// The rewrite of the array function `name`, `None` when no rewrite handles it.
@@ -85,7 +85,7 @@ fn get(values: &[Emitted]) -> Option<Emitted> {
     ))
 }
 
-/// `ARRAY_JOIN(a, d[, r])`: NULL elements skipped or replaced, NULL for a NULL `d` or `r`.
+/// `ARRAY_JOIN(a, d[, r])` of strings or integers: NULL elements skipped or replaced, NULL for a NULL `a`, `d` or `r`.
 fn array_join(values: &[Emitted]) -> Option<Emitted> {
     let (array, delimiter, replacement) = match values {
         [array, delimiter] => (array, delimiter, None),
@@ -98,26 +98,39 @@ fn array_join(values: &[Emitted]) -> Option<Emitted> {
             DatabricksType::String | DatabricksType::Null
         )
     };
-    let strings = matches!(element(array)?, Element::String | Element::Null);
-    if !strings || !text(delimiter) || !replacement.is_none_or(text) {
+    let element = element(array)?;
+    let joinable =
+        matches!(element, Element::String | Element::Null) || element.scalar().is_integral();
+    if !joinable || !text(delimiter) || !replacement.is_none_or(text) {
         return None;
     }
-    let sql = match replacement {
-        None => format!(
-            "CASE WHEN {delimiter} IS NULL THEN NULL ELSE array_to_string({array}, {delimiter}) END",
-            delimiter = delimiter.sql,
-            array = array.sql
+    let texts = format!(
+        "list_transform({}, lambda {LAMBDA_ELEMENT}: CAST({LAMBDA_ELEMENT} AS VARCHAR))",
+        array.sql
+    );
+    let (nulls, parts) = match replacement {
+        None => (
+            String::new(),
+            format!("list_filter({texts}, lambda {LAMBDA_ELEMENT}: {LAMBDA_ELEMENT} IS NOT NULL)"),
         ),
-        Some(replacement) => format!(
-            "CASE WHEN {delimiter} IS NULL OR {replacement} IS NULL THEN NULL \
-             ELSE array_to_string(list_transform({array}, lambda {LAMBDA_ELEMENT}: \
-             coalesce({LAMBDA_ELEMENT}, {replacement})), {delimiter}) END",
-            delimiter = delimiter.sql,
-            replacement = replacement.sql,
-            array = array.sql
+        Some(replacement) => (
+            format!(" OR {} IS NULL", replacement.sql),
+            format!(
+                "list_transform({texts}, lambda {LAMBDA_ELEMENT}: coalesce({LAMBDA_ELEMENT}, {}))",
+                replacement.sql
+            ),
         ),
     };
-    Some(typed(sql, DatabricksType::String))
+    Some(typed(
+        format!(
+            "CASE WHEN {a} IS NULL OR {d} IS NULL{nulls} THEN NULL \
+             ELSE substr(list_reduce(list_prepend('', {parts}), lambda {JOINED}, {LAMBDA_ELEMENT}: \
+             {JOINED} || {d} || {LAMBDA_ELEMENT}), length({d}) + 1) END",
+            a = array.sql,
+            d = delimiter.sql
+        ),
+        DatabricksType::String,
+    ))
 }
 
 /// `ARRAYS_OVERLAP(a, b)`: TRUE on a shared element, else NULL if both are non-empty and one holds NULL.
