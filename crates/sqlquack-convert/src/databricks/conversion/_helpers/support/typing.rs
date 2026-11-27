@@ -9,7 +9,7 @@ use crate::databricks::conversion::_helpers::support::tree::{field, understood};
 use crate::databricks::conversion::constants::{
     DEFAULT_DECIMAL, MAX_DECIMAL_PRECISION, TIMESTAMP_NTZ_NAME,
 };
-use crate::databricks::conversion::models::DatabricksType;
+use crate::databricks::conversion::models::{DatabricksType, Element};
 
 /// The Databricks type a serialised data type names, or a refusal for a type no rule maps.
 pub(crate) fn databricks_type(node: &Value) -> Result<DatabricksType, Refusal> {
@@ -32,6 +32,16 @@ pub(crate) fn databricks_type(node: &Value) -> Result<DatabricksType, Refusal> {
         "float" | "double" => &["data_type", "precision", "scale", "real_spelling"],
         "decimal" => &["data_type", "precision", "scale", "spelling"],
         "timestamp" => &["data_type", "timezone"],
+        "array" => {
+            let payload = understood(node, "data_type", &["data_type", "element_type"])?;
+            let element = databricks_type(field(payload, "element_type"))?;
+            return match Element::of(element) {
+                Some(element) if element != Element::Null => Ok(DatabricksType::Array(element)),
+                _ => Err(refusal(
+                    "no rule maps arrays of this element type to DuckDB",
+                )),
+            };
+        }
         "custom" if node.get("name").and_then(Value::as_str) == Some(TIMESTAMP_NTZ_NAME) => {
             return understood(node, "data_type", &["data_type", "name"])
                 .map(|_| DatabricksType::TimestampNtz);
@@ -97,6 +107,8 @@ pub(crate) fn same_cast(from: DatabricksType, to: DatabricksType) -> bool {
             .is_some_and(|digits| precision - scale >= digits),
         (T::Int | T::BigInt | T::SmallInt | T::TinyInt, T::String) => true,
         (T::Date, T::Timestamp | T::TimestampNtz) => true,
+        (T::Array(Element::Null), T::Array(_)) => true,
+        (T::Array(from), T::Array(to)) => same_cast(from.scalar(), to.scalar()),
         _ => false,
     }
 }

@@ -2,6 +2,7 @@
 
 use sqlquack_diagnostics::refusals::models::Refusal;
 
+use crate::databricks::conversion::_helpers::expressions::arrays::array_rewrite;
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
 use crate::databricks::conversion::_helpers::support::scope::Site;
@@ -29,7 +30,7 @@ pub(crate) fn rewrite(name: &str) -> Option<Rewrite> {
         },
         "TRY_DIVIDE" => try_divide,
         "TRY_MOD" => try_mod,
-        _ => return None,
+        _ => return array_rewrite(name),
     };
     Some(rewrite)
 }

@@ -282,6 +282,7 @@ pub(crate) fn comparable(left: &Emitted, right: &Emitted) -> Option<(String, Str
     use DatabricksType as T;
     let exact = |data_type: T| data_type.is_integral() || matches!(data_type, T::Decimal { .. });
     match (left.data_type, right.data_type) {
+        (T::Array(_), _) | (_, T::Array(_)) => None,
         (T::Null, _) | (_, T::Null) => Some((left.sql.clone(), right.sql.clone())),
         (left_type, right_type) if left_type == right_type => {
             Some((left.sql.clone(), right.sql.clone()))

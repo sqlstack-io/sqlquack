@@ -91,6 +91,15 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Double],
         },
         ConvertTestCase {
+            description: "GET is 0-based and NULL for a negative index, where DuckDB counts from the end",
+            query: "SELECT get(array(1, 2147483648), x1) AS g, size(array()) AS n FROM input",
+            expected_sql: &[
+                "CASE WHEN \"x1\" < 0 THEN NULL ELSE [CAST(1 AS BIGINT), CAST(2147483648 AS BIGINT)][CAST(\"x1\" AS BIGINT) + 1] END AS \"g\"",
+                "CAST(len([]) AS INTEGER) AS \"n\"",
+            ],
+            expected_types: &[DatabricksType::BigInt, DatabricksType::Int],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
@@ -158,7 +167,7 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
         RefuseTestCase {
             description: "a NULL result column, VOID in Databricks",
             query: "SELECT NULL AS r FROM input",
-            expected_reason: "NULL result column",
+            expected_reason: "VOID result column",
         },
         RefuseTestCase {
             description: "ORDER BY a position",
@@ -184,6 +193,11 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "SHA2 of a length DuckDB has no digest for",
             query: "SELECT sha2(s, 384) AS h FROM input",
             expected_reason: "SHA2",
+        },
+        RefuseTestCase {
+            description: "an array result, whose text no rule writes as Databricks does yet",
+            query: "SELECT array(x1) AS a FROM input",
+            expected_reason: "ARRAY<INT> result column",
         },
         RefuseTestCase {
             description: "an OFFSET no rule reads",

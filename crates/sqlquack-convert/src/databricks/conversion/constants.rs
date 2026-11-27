@@ -69,6 +69,8 @@ pub const SPECIAL_DOUBLE_TEXTS: &[&str] = &["NaN", "Infinity", "-Infinity"];
 pub const FLOAT_MANTISSA_BITS: u32 = 24;
 /// The most significant bits a DOUBLE holds.
 pub const DOUBLE_MANTISSA_BITS: u32 = 53;
+/// The parameter name of the lambdas array rewrites emit.
+pub const LAMBDA_ELEMENT: &str = "element";
 /// How deep a tree may nest for conversion, which recurses once per level.
 pub const MAX_TREE_DEPTH: usize = 128;
 /// The most digits a Databricks decimal holds.

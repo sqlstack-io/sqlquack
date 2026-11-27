@@ -402,13 +402,19 @@ fn projected(item: &Value, site: Site<'_>) -> Result<Vec<(String, Emitted)>, Ref
             ));
         }
     };
-    match named
-        .iter()
-        .find(|(_, emitted)| emitted.data_type == DatabricksType::Null)
-    {
-        Some((name, _)) => Err(refused(
+    let untyped = named.iter().find(|(_, emitted)| {
+        matches!(
+            emitted.data_type,
+            DatabricksType::Null | DatabricksType::Array(_)
+        )
+    });
+    match untyped {
+        Some((name, emitted)) => Err(refused(
             "select",
-            format!("no rule types the NULL result column `{name}`"),
+            format!(
+                "no rule writes the {} result column `{name}` as Databricks returns it",
+                emitted.data_type.name()
+            ),
         )),
         None => Ok(named),
     }

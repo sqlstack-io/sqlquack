@@ -38,6 +38,57 @@ pub enum DatabricksType {
     TimestampNtz,
     /// The type of a bare `NULL`, `VOID`.
     Null,
+    /// `ARRAY<T>` of a scalar element type.
+    Array(Element),
+}
+
+/// The element types an array conversion handles: those whose text both engines write alike.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Element {
+    /// `BOOLEAN`.
+    Boolean,
+    /// `TINYINT`.
+    TinyInt,
+    /// `SMALLINT`.
+    SmallInt,
+    /// `INT`.
+    Int,
+    /// `BIGINT`.
+    BigInt,
+    /// `STRING`.
+    String,
+    /// The elements of `array()` or `array(NULL)`, `VOID`.
+    Null,
+}
+
+impl Element {
+    /// The scalar type of the elements.
+    pub fn scalar(self) -> DatabricksType {
+        match self {
+            Self::Boolean => DatabricksType::Boolean,
+            Self::TinyInt => DatabricksType::TinyInt,
+            Self::SmallInt => DatabricksType::SmallInt,
+            Self::Int => DatabricksType::Int,
+            Self::BigInt => DatabricksType::BigInt,
+            Self::String => DatabricksType::String,
+            Self::Null => DatabricksType::Null,
+        }
+    }
+
+    /// The element type holding values of `data_type`, `None` for a type arrays do not hold here.
+    pub fn of(data_type: DatabricksType) -> Option<Self> {
+        match data_type {
+            DatabricksType::Boolean => Some(Self::Boolean),
+            DatabricksType::TinyInt => Some(Self::TinyInt),
+            DatabricksType::SmallInt => Some(Self::SmallInt),
+            DatabricksType::Int => Some(Self::Int),
+            DatabricksType::BigInt => Some(Self::BigInt),
+            DatabricksType::String => Some(Self::String),
+            DatabricksType::Null => Some(Self::Null),
+            _ => None,
+        }
+    }
 }
 
 impl DatabricksType {
@@ -57,6 +108,7 @@ impl DatabricksType {
             Self::Timestamp => "TIMESTAMPTZ".to_owned(),
             Self::TimestampNtz => "TIMESTAMP".to_owned(),
             Self::Null => "\"NULL\"".to_owned(),
+            Self::Array(element) => format!("{}[]", element.scalar().duckdb_name()),
         }
     }
 
@@ -81,6 +133,7 @@ impl DatabricksType {
             Self::Timestamp => "TIMESTAMP".to_owned(),
             Self::TimestampNtz => "TIMESTAMP_NTZ".to_owned(),
             Self::Null => "VOID".to_owned(),
+            Self::Array(element) => format!("ARRAY<{}>", element.scalar().name()),
         }
     }
 
