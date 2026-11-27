@@ -3,8 +3,10 @@
 use sqlquack_diagnostics::failures::constants::ARGUMENT_REJECTED;
 
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::expressions::operators::as_type;
 use crate::databricks::conversion::_helpers::functions::arrays::{element, known, small_index};
 use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
+use crate::databricks::conversion::_helpers::support::typing::same_cast;
 use crate::databricks::conversion::constants::{INDEX_BOUNDS_ERROR, INDEX_ZERO_ERROR};
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -14,6 +16,7 @@ pub(crate) fn index_rewrite(name: &str) -> Option<Rewrite> {
         "SPLIT_PART" => split_part,
         "ELEMENT_AT" => element_at,
         "TRY_ELEMENT_AT" => try_element_at,
+        "ELT" => elt,
         _ => return None,
     };
     Some(rewrite)
@@ -68,4 +71,37 @@ fn indexed(values: &[Emitted], beyond: &str) -> Option<Emitted> {
         ),
         element.scalar(),
     ))
+}
+
+/// `ELT(n, a, b, ...)`: the `n`th argument as a string, NULL for a NULL `n`, raising for `n` outside the arguments.
+fn elt(values: &[Emitted]) -> Option<Emitted> {
+    let [index, choices @ ..] = values else {
+        return None;
+    };
+    small_index(index)?;
+    let texts = choices
+        .iter()
+        .map(|choice| {
+            same_cast(choice.data_type, DatabricksType::String)
+                .then(|| as_type(choice, DatabricksType::String))
+        })
+        .collect::<Option<Vec<String>>>()?;
+    if texts.is_empty() {
+        return None;
+    }
+    let mut sql = format!(
+        "CASE WHEN {n} IS NULL THEN NULL WHEN {n} < 1 OR {n} > {count} \
+         THEN error('{ARGUMENT_REJECTED}: {INDEX_BOUNDS_ERROR}')",
+        n = index.sql,
+        count = texts.len()
+    );
+    for (position, text) in texts.iter().enumerate() {
+        sql.push_str(&format!(
+            " WHEN {} = {} THEN {text}",
+            index.sql,
+            position + 1
+        ));
+    }
+    sql.push_str(" END");
+    Some(typed(sql, DatabricksType::String))
 }

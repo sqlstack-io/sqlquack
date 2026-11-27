@@ -296,6 +296,15 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Date, DatabricksType::Timestamp],
         },
         ConvertTestCase {
+            description: "ELT picks an argument as a string, raising for an index outside them",
+            query: "SELECT elt(x1, x1, s) AS e FROM input",
+            expected_sql: &[
+                "WHEN \"x1\" < 1 OR \"x1\" > 2 THEN error('argument rejected: the index is outside the array')",
+                "WHEN \"x1\" = 1 THEN CAST(\"x1\" AS VARCHAR) WHEN \"x1\" = 2 THEN \"s\" END",
+            ],
+            expected_types: &[DatabricksType::String],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
