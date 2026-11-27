@@ -205,9 +205,6 @@ fn same_function(name: &str, args: &[Value], site: Site<'_>) -> Result<Emitted, 
     let _rule = site.log.rule(SAME_FUNCTION_RULE);
     let types: Vec<DatabricksType> = values.iter().map(|value| value.data_type).collect();
     let (sqls, data_type) = match (signature, types.as_slice()) {
-        (Signature::StringToString, [DatabricksType::String]) => {
-            (vec![values[0].sql.clone()], DatabricksType::String)
-        }
         (Signature::TrimSpaces, [DatabricksType::String]) => (
             vec![values[0].sql.clone(), "' '".to_owned()],
             DatabricksType::String,

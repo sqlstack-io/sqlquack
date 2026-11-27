@@ -182,6 +182,20 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Int, DatabricksType::BigInt],
         },
         ConvertTestCase {
+            description: "a hex literal is a BLOB, whose LENGTH counts bytes and ARRAY_REPEAT of a NULL count is NULL",
+            query: "SELECT md5(X'0102') AS m, length(X'0102') AS n, array_repeat(x1, x1) AS a FROM input",
+            expected_sql: &[
+                "md5(from_hex('0102')) AS \"m\"",
+                "CAST(octet_length(from_hex('0102')) AS INTEGER) AS \"n\"",
+                "CASE WHEN \"x1\" IS NULL THEN NULL ELSE list_transform(range(",
+            ],
+            expected_types: &[
+                DatabricksType::String,
+                DatabricksType::Int,
+                DatabricksType::Array(Element::Int),
+            ],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
@@ -280,6 +294,11 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "text DuckDB reads as an infinite date, where Databricks raises",
             query: "SELECT CAST('inf' AS DATE) AS d FROM input",
             expected_reason: "DATE",
+        },
+        RefuseTestCase {
+            description: "LEVENSHTEIN, which DuckDB counts in bytes and Databricks in characters",
+            query: "SELECT levenshtein(s, s) AS r FROM input",
+            expected_reason: "LEVENSHTEIN",
         },
         RefuseTestCase {
             description: "an OFFSET no rule reads",

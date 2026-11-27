@@ -7,7 +7,7 @@ use crate::databricks::conversion::_helpers::expressions::operators::{as_type, c
 use crate::databricks::conversion::_helpers::functions::arrays::array_rewrite;
 use crate::databricks::conversion::_helpers::functions::dates::date_rewrite;
 use crate::databricks::conversion::_helpers::functions::numbers::number_rewrite;
-use crate::databricks::conversion::_helpers::functions::strings::string_rewrite;
+use crate::databricks::conversion::_helpers::functions::strings::{digest, string_rewrite};
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::refused_function;
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
@@ -144,11 +144,11 @@ fn repeat(values: &[Emitted]) -> Option<Emitted> {
     }
 }
 
-/// `HEX` of a string's UTF-8 bytes, or of an integer as 64-bit two's complement, upper case.
+/// `HEX` of a string's UTF-8 bytes or a byte string, or of an integer as 64-bit two's complement, upper case.
 fn hex(values: &[Emitted]) -> Option<Emitted> {
     let [value] = values else { return None };
     let sql = match value.data_type {
-        DatabricksType::String => value.sql.clone(),
+        DatabricksType::String | DatabricksType::Binary => value.sql.clone(),
         data_type if data_type.is_integral() => as_type(value, DatabricksType::BigInt),
         _ => return None,
     };
@@ -162,15 +162,9 @@ fn sha2(values: &[Emitted]) -> Option<Emitted> {
         Some(Literal::Number(bits)) => bits.as_str(),
         _ => return None,
     };
-    match (
-        text.data_type,
-        [SHA2_SHA256_BITS, SHA2_DEFAULT_BITS].contains(&bits),
-    ) {
-        (DatabricksType::String, true) => Some(typed(
-            format!("sha256({})", text.sql),
-            DatabricksType::String,
-        )),
-        _ => None,
+    match [SHA2_SHA256_BITS, SHA2_DEFAULT_BITS].contains(&bits) {
+        true => digest(std::slice::from_ref(text), "sha256"),
+        false => None,
     }
 }
 

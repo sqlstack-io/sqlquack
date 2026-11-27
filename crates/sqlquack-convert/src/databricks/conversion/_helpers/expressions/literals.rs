@@ -22,6 +22,15 @@ pub(crate) fn literal(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusa
     match field(literal, "literal_type").as_str() {
         Some("number") => number(value),
         Some("string") => Ok(text(value)),
+        Some("hex_string")
+            if value.len().is_multiple_of(2)
+                && value.bytes().all(|byte| byte.is_ascii_hexdigit()) =>
+        {
+            Ok(typed(
+                format!("from_hex({})", quoted_text(value)),
+                DatabricksType::Binary,
+            ))
+        }
         Some("date") if is_date(value) => Ok(typed(
             format!("DATE {}", quoted_text(value)),
             DatabricksType::Date,

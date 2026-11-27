@@ -23,6 +23,7 @@ pub(crate) fn array_rewrite(name: &str) -> Option<Rewrite> {
         "REVERSE" => array_reverse,
         "SORT_ARRAY" => sort_array,
         "ARRAY_SORT" => array_sort,
+        "ARRAY_REPEAT" => array_repeat,
         _ => return None,
     };
     Some(rewrite)
@@ -236,6 +237,24 @@ fn element(value: &Emitted) -> Option<Element> {
         DatabricksType::Array(element) => Some(element),
         _ => None,
     }
+}
+
+/// `ARRAY_REPEAT(x, n)` by an INT count: empty for `n` of zero or less, NULL for a NULL `n`.
+fn array_repeat(values: &[Emitted]) -> Option<Emitted> {
+    let [value, count] = values else { return None };
+    if count.data_type != DatabricksType::Int {
+        return None;
+    }
+    let element = known(Element::of(value.data_type)?)?;
+    Some(typed(
+        format!(
+            "CASE WHEN {n} IS NULL THEN NULL ELSE list_transform(range(greatest(CAST({n} AS BIGINT), 0)), \
+             lambda {LAMBDA_ELEMENT}: {x}) END",
+            n = count.sql,
+            x = value.sql
+        ),
+        DatabricksType::Array(element),
+    ))
 }
 
 /// An element type other than VOID, whose single values have a type.

@@ -25,7 +25,7 @@ pub(crate) fn databricks_type(node: &Value) -> Result<DatabricksType, Refusal> {
         )
     };
     let fields: &[&str] = match name.as_str() {
-        "boolean" | "date" => &["data_type"],
+        "boolean" | "date" | "binary" => &["data_type", "length"],
         "tiny_int" | "small_int" | "int" | "big_int" | "string" => {
             &["data_type", "length", "spelling"]
         }
@@ -56,6 +56,7 @@ pub(crate) fn databricks_type(node: &Value) -> Result<DatabricksType, Refusal> {
     match name.as_str() {
         "boolean" => Ok(DatabricksType::Boolean),
         "date" => Ok(DatabricksType::Date),
+        "binary" => Ok(DatabricksType::Binary),
         "tiny_int" => Ok(DatabricksType::TinyInt),
         "small_int" => Ok(DatabricksType::SmallInt),
         "int" => Ok(DatabricksType::Int),

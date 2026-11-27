@@ -104,10 +104,8 @@ pub const SAME_FUNCTIONS: &[(&str, &str, Signature)] = &[
     ("GREATEST", "greatest", Signature::SameType),
     ("LEAST", "least", Signature::SameType),
     ("LTRIM", "ltrim", Signature::TrimSpaces),
-    ("MD5", "md5", Signature::StringToString),
     ("NULLIF", "nullif", Signature::TwoOfOneType),
     ("RTRIM", "rtrim", Signature::TrimSpaces),
-    ("SHA1", "sha1", Signature::StringToString),
     ("TRIM", "trim", Signature::TrimSpaces),
 ];
 

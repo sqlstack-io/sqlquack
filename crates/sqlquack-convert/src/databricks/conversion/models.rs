@@ -30,6 +30,8 @@ pub enum DatabricksType {
     },
     /// `STRING`.
     String,
+    /// `BINARY`, a byte string.
+    Binary,
     /// `DATE`.
     Date,
     /// `TIMESTAMP`, an instant shown in the session time zone, pinned to UTC.
@@ -104,6 +106,7 @@ impl DatabricksType {
             Self::Double => "DOUBLE".to_owned(),
             Self::Decimal { precision, scale } => format!("DECIMAL({precision}, {scale})"),
             Self::String => "VARCHAR".to_owned(),
+            Self::Binary => "BLOB".to_owned(),
             Self::Date => "DATE".to_owned(),
             Self::Timestamp => "TIMESTAMPTZ".to_owned(),
             Self::TimestampNtz => "TIMESTAMP".to_owned(),
@@ -129,6 +132,7 @@ impl DatabricksType {
             Self::Double => "DOUBLE".to_owned(),
             Self::Decimal { precision, scale } => format!("DECIMAL({precision},{scale})"),
             Self::String => "STRING".to_owned(),
+            Self::Binary => "BINARY".to_owned(),
             Self::Date => "DATE".to_owned(),
             Self::Timestamp => "TIMESTAMP".to_owned(),
             Self::TimestampNtz => "TIMESTAMP_NTZ".to_owned(),
@@ -188,8 +192,6 @@ pub(crate) enum Literal {
 /// What a function's arguments may be and what it returns.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Signature {
-    /// One string in, one string out.
-    StringToString,
     /// One number in, the same type out.
     SameNumber,
     /// Two or more values of one type in, that type out.

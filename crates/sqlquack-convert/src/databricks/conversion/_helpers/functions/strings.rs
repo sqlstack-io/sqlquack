@@ -9,10 +9,12 @@ use crate::databricks::conversion::models::{DatabricksType, Emitted};
 pub(crate) fn string_rewrite(name: &str) -> Option<Rewrite> {
     let rewrite: Rewrite = match name {
         "LENGTH" | "LEN" | "CHAR_LENGTH" | "CHARACTER_LENGTH" => {
-            |values| counted(values, "length({s})")
+            |values| sized(values, "length({s})", 1)
         }
-        "OCTET_LENGTH" => |values| counted(values, "strlen({s})"),
-        "BIT_LENGTH" => |values| counted(values, "strlen({s}) * 8"),
+        "OCTET_LENGTH" => |values| sized(values, "strlen({s})", 1),
+        "BIT_LENGTH" => |values| sized(values, "strlen({s})", 8),
+        "MD5" => |values| digest(values, "md5"),
+        "SHA" | "SHA1" => |values| digest(values, "sha1"),
         "ASCII" => |values| counted(values, "ascii({s})"),
         "INSTR" => |values| found(values, false),
         "LOCATE" | "POSITION" | "CHARINDEX" => |values| found(values, true),
@@ -42,6 +44,34 @@ fn counted(values: &[Emitted], template: &str) -> Option<Emitted> {
         format!("CAST({} AS INTEGER)", template.replace("{s}", &text.sql)),
         DatabricksType::Int,
     ))
+}
+
+/// A length of a string as INT, or of a byte string its bytes times `bits`, as Databricks counts both.
+fn sized(values: &[Emitted], template: &str, bits: u8) -> Option<Emitted> {
+    let [value] = values else { return None };
+    let count = match value.data_type {
+        DatabricksType::String => template.replace("{s}", &value.sql),
+        DatabricksType::Binary => format!("octet_length({})", value.sql),
+        _ => return None,
+    };
+    let scaled = match bits {
+        1 => count,
+        bits => format!("{count} * {bits}"),
+    };
+    Some(typed(
+        format!("CAST({scaled} AS INTEGER)"),
+        DatabricksType::Int,
+    ))
+}
+
+/// A digest of a string's UTF-8 bytes or of a byte string, in lower-case hex as both engines write it.
+pub(crate) fn digest(values: &[Emitted], function: &str) -> Option<Emitted> {
+    let [value] = values else { return None };
+    matches!(
+        value.data_type,
+        DatabricksType::String | DatabricksType::Binary
+    )
+    .then(|| typed(format!("{function}({})", value.sql), DatabricksType::String))
 }
 
 /// `INSTR(s, t)`, or with `swapped` `LOCATE(t, s)`: the 1-based character position of `t` in `s`, 0 if absent.
