@@ -1,5 +1,7 @@
 //! The Databricks conversion rules and the functions they accept.
 
+use sqlquack_diagnostics::failures::models::{ErrorKind, FailureMode};
+
 use crate::databricks::conversion::models::{DatabricksType, Element, Signature};
 
 /// A query block: its source, filter, grouping, ordering and limit.
@@ -101,4 +103,40 @@ pub const SAME_FUNCTIONS: &[(&str, &str, Signature)] = &[
     ("RTRIM", "rtrim", Signature::TrimSpaces),
     ("SHA1", "sha1", Signature::StringToString),
     ("TRIM", "trim", Signature::TrimSpaces),
+];
+
+/// An overflow, which Databricks raises as `ARITHMETIC_OVERFLOW` or `CAST_OVERFLOW`.
+const OVERFLOW: FailureMode = FailureMode {
+    kind: ErrorKind::NumericOverflow,
+    snowflake: &[],
+};
+/// A division by zero, which Databricks raises as `DIVIDE_BY_ZERO` or `REMAINDER_BY_ZERO`.
+const DIVISION: FailureMode = FailureMode {
+    kind: ErrorKind::DivisionByZero,
+    snowflake: &[],
+};
+/// Text no number reads, a malformed cast to a number.
+const NUMBER_TEXT: FailureMode = FailureMode {
+    kind: ErrorKind::NumberText,
+    snowflake: &[],
+};
+/// Text no date reads, a malformed cast to DATE.
+const DATE_TEXT: FailureMode = FailureMode {
+    kind: ErrorKind::DateText,
+    snowflake: &[],
+};
+/// Text no timestamp reads, a malformed cast to a timestamp.
+const TIMESTAMP_TEXT: FailureMode = FailureMode {
+    kind: ErrorKind::TimestampText,
+    snowflake: &[],
+};
+/// How each rule's DuckDB SQL may fail as Databricks does; Databricks errors carry no Snowflake code.
+pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
+    (ARITHMETIC_RULE, &[OVERFLOW]),
+    (SAME_FUNCTION_RULE, &[OVERFLOW]),
+    (DIVISION_RULE, &[DIVISION]),
+    (
+        CAST_RULE,
+        &[OVERFLOW, NUMBER_TEXT, DATE_TEXT, TIMESTAMP_TEXT],
+    ),
 ];

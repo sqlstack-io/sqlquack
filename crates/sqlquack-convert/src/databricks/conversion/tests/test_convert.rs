@@ -108,6 +108,12 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Array(Element::Int)],
         },
         ConvertTestCase {
+            description: "text without a digit fails an integer cast in both engines, so it converts",
+            query: "SELECT CAST('x' AS INT) AS i FROM input",
+            expected_sql: &["CAST('x' AS INTEGER) AS \"i\""],
+            expected_types: &[DatabricksType::Int],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
@@ -206,6 +212,11 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "an array of strings, whose escapes the engines may write differently",
             query: "SELECT array(s) AS a FROM input",
             expected_reason: "ARRAY<STRING> result column",
+        },
+        RefuseTestCase {
+            description: "text DuckDB reads as an infinite date, where Databricks raises",
+            query: "SELECT CAST('inf' AS DATE) AS d FROM input",
+            expected_reason: "DATE",
         },
         RefuseTestCase {
             description: "an OFFSET no rule reads",

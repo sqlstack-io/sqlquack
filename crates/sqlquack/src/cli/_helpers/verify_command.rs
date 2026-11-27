@@ -463,9 +463,16 @@ fn error_note(check: &ErrorCheck) -> String {
                 |kind| kind.to_string()
             )
         ),
-        ErrorCheck::Undeclared { errno, sqlstate } => format!(
+        ErrorCheck::Undeclared {
+            errno: Some(errno),
+            sqlstate,
+        } => format!(
             "; error check: no rule used declares Snowflake error {errno} (SQLSTATE {sqlstate})"
         ),
+        ErrorCheck::Undeclared {
+            errno: None,
+            sqlstate,
+        } => format!("; error check: no rule used declares the error (SQLSTATE {sqlstate})"),
     }
 }
 

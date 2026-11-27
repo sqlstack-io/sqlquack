@@ -142,10 +142,10 @@ pub enum ErrorCheck {
         /// DuckDB's error.
         error: String,
     },
-    /// No rule the conversion used declares the recorded Snowflake error.
+    /// No rule the conversion used declares the recorded warehouse error.
     Undeclared {
-        /// Its number.
-        errno: i64,
+        /// Its number, when the warehouse numbers its errors.
+        errno: Option<i64>,
         /// Its SQLSTATE.
         sqlstate: String,
     },

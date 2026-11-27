@@ -215,6 +215,8 @@ pub const DUCKDB_MESSAGE_KINDS: &[(&str, ErrorKind)] = &[
     ("out of range", ErrorKind::NumericOverflow),
     ("Out of Range Error", ErrorKind::NumericOverflow),
     ("to BOOL", ErrorKind::BooleanText),
+    ("invalid date field format", ErrorKind::DateText),
+    ("invalid timestamp field format", ErrorKind::TimestampText),
     ("to DATE", ErrorKind::DateText),
     ("to TIMESTAMP", ErrorKind::TimestampText),
     ("to TIME", ErrorKind::TimeText),

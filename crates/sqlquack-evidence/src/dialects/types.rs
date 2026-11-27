@@ -5,7 +5,8 @@ use sqlquack_compare::values::models::ResultSet;
 
 use crate::cases::models::{CaseDefinition, Spelling};
 use crate::errors::EvidenceError;
-use crate::results::models::ResultMetadata;
+use crate::results::models::{RecordedFailure, ResultMetadata};
+use sqlquack_diagnostics::failures::models::ErrorKind;
 
 /// How one warehouse writes its cases and stores its rows where they differ from the shared form.
 pub trait EvidenceProfile: std::fmt::Debug + Sync {
@@ -25,6 +26,11 @@ pub trait EvidenceProfile: std::fmt::Debug + Sync {
         _metadata: &ResultMetadata,
         _rows: &ResultSet,
     ) -> Option<Result<RecordedResult, EvidenceError>> {
+        None
+    }
+
+    /// The kind of a recorded error the warehouse names its own way; `None` to read Snowflake's codes.
+    fn failure_kind(&self, _failure: &RecordedFailure) -> Option<Option<ErrorKind>> {
         None
     }
 }

@@ -240,7 +240,7 @@ fn digits_u128(text: &str) -> Option<u128> {
     })
 }
 
-/// Whether casting the string `value` to `target` gives the same value in both engines.
+/// Whether casting the string `value` to `target` gives the same value, or raises, in both engines.
 fn text_fits(value: &str, target: DatabricksType) -> bool {
     match target {
         DatabricksType::String => true,
@@ -254,7 +254,8 @@ fn text_fits(value: &str, target: DatabricksType) -> bool {
         DatabricksType::Boolean => matches!(value.to_ascii_lowercase().as_str(), "true" | "false"),
         target if target.is_integral() => {
             let digits = value.strip_prefix('-').unwrap_or(value);
-            !digits.is_empty() && digits.bytes().all(|byte| byte.is_ascii_digit())
+            let integer = !digits.is_empty() && digits.bytes().all(|byte| byte.is_ascii_digit());
+            integer || !value.bytes().any(|byte| byte.is_ascii_digit())
         }
         _ => false,
     }
