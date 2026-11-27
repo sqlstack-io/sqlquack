@@ -3,5 +3,7 @@
 #![forbid(unsafe_code)]
 
 pub mod analysis;
+#[cfg(feature = "databricks")]
+pub mod databricks;
 #[cfg(feature = "snowflake")]
 pub mod snowflake;

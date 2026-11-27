@@ -31,7 +31,7 @@ serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
 sqlquack-compare.workspace = true
-sqlquack-convert = { workspace = true, features = ["engine", "snowflake"] }
+sqlquack-convert = { workspace = true, features = ["databricks", "engine", "snowflake"] }
 sqlquack-diagnostics = { workspace = true, features = ["snowflake"] }
 sqlquack-parse.workspace = true
 sqlquack-blocks = { workspace = true, features = ["engine"] }
