@@ -1,0 +1,323 @@
+# How a recorded Databricks statement's constructs link to catalogue forms in coverage/syntax-databricks,
+# for the result-matching measure. Function calls link by name to the function forms whose grammar calls
+# that name, in the same shape. This file links everything else. A [[link]] applies when the statement
+# uses every one of its constructs. A [[no_form]] construct is part of other forms' grammar and names no
+# form itself. Every construct a recorded statement uses must be accounted for here or by a function
+# name, or the checker fails. The parser reads `=` and `==`, and `NOT` and `!`, as one construct, so
+# each links to both forms. A reviewer reads this file in full before a figure is published.
+
+# The query shell every case runs in: a WITH of a VALUES list, selected and ordered.
+[[link]]
+constructs = ["clause:with"]
+forms = ["db.query.select-cte"]
+
+[[link]]
+constructs = ["node:values"]
+forms = ["db.query.select-values.values"]
+
+[[link]]
+constructs = ["node:select"]
+forms = ["db.query.select"]
+
+[[link]]
+constructs = ["node:star"]
+forms = ["db.query.select"]
+
+[[link]]
+constructs = ["node:table"]
+forms = ["db.query.select-table-reference"]
+
+[[link]]
+constructs = ["clause:order_by"]
+forms = ["db.query.select-orderby"]
+
+[[link]]
+constructs = ["clause:group_by"]
+forms = ["db.query.select-groupby.group-by"]
+
+[[link]]
+constructs = ["fn:ROLLUP"]
+forms = ["db.query.select-groupby.group-by-rollup-cube"]
+
+[[link]]
+constructs = ["clause:union_all"]
+forms = ["db.query.select-setops"]
+
+[[link]]
+constructs = ["node:union"]
+forms = ["db.query.select-setops"]
+
+# Operators and predicates.
+[[link]]
+constructs = ["node:add"]
+forms = ["db.functions.plussign"]
+
+[[link]]
+constructs = ["node:sub"]
+forms = ["db.functions.minussign"]
+
+[[link]]
+constructs = ["node:mul"]
+forms = ["db.functions.asterisksign"]
+
+[[link]]
+constructs = ["node:div"]
+forms = ["db.functions.slashsign"]
+
+[[link]]
+constructs = ["fn:DIV"]
+forms = ["db.functions.div"]
+
+[[link]]
+constructs = ["node:mod"]
+forms = ["db.functions.percentsign"]
+
+[[link]]
+constructs = ["node:neg"]
+forms = ["db.functions.minussignunary"]
+
+[[link]]
+constructs = ["node:pos"]
+forms = ["db.functions.plussignunary"]
+
+[[link]]
+constructs = ["node:eq"]
+forms = ["db.functions.eqsign", "db.functions.eqeqsign"]
+
+[[link]]
+constructs = ["node:neq", "spelling:neq_angle"]
+forms = ["db.functions.ltgtsign"]
+
+[[link]]
+constructs = ["node:neq", "spelling:neq_bang"]
+forms = ["db.functions.bangeqsign"]
+
+[[link]]
+constructs = ["node:null_safe_eq"]
+forms = ["db.functions.lteqgtsign"]
+
+[[link]]
+constructs = ["node:gt"]
+forms = ["db.functions.gtsign"]
+
+[[link]]
+constructs = ["node:gte"]
+forms = ["db.functions.gteqsign"]
+
+[[link]]
+constructs = ["node:lt"]
+forms = ["db.functions.ltsign"]
+
+[[link]]
+constructs = ["node:lte"]
+forms = ["db.functions.lteqsign"]
+
+[[link]]
+constructs = ["node:and"]
+forms = ["db.functions.and"]
+
+[[link]]
+constructs = ["node:or"]
+forms = ["db.functions.or"]
+
+[[link]]
+constructs = ["node:not"]
+forms = ["db.functions.not", "db.functions.bangsign"]
+
+[[link]]
+constructs = ["node:between"]
+forms = ["db.functions.between"]
+
+[[link]]
+constructs = ["node:in", "node:tuple"]
+forms = ["db.functions.in.in.syntax"]
+
+[[link]]
+constructs = ["node:in"]
+forms = ["db.functions.in.in.syntax"]
+
+[[link]]
+constructs = ["node:is_null"]
+forms = ["db.functions.isnullop"]
+
+[[link]]
+constructs = ["node:is_true"]
+forms = ["db.functions.istrue"]
+
+[[link]]
+constructs = ["node:is_false"]
+forms = ["db.functions.isfalse"]
+
+[[link]]
+constructs = ["node:like"]
+forms = ["db.functions.like.like"]
+
+[[link]]
+constructs = ["node:like", "node:tuple"]
+forms = ["db.functions.like.like-any-some-all"]
+
+[[link]]
+constructs = ["node:i_like"]
+forms = ["db.functions.ilike.ilike"]
+
+[[link]]
+constructs = ["node:i_like", "node:tuple"]
+forms = ["db.functions.ilike.ilike-any-some-all"]
+
+[[link]]
+constructs = ["fn:RLIKE", "spelling:rlike"]
+forms = ["db.functions.rlike"]
+
+[[link]]
+constructs = ["fn:RLIKE", "spelling:regexp"]
+forms = ["db.functions.regexp"]
+
+[[link]]
+constructs = ["node:concat"]
+forms = ["db.functions.pipepipesign"]
+
+[[link]]
+constructs = ["node:bitwise_and"]
+forms = ["db.functions.ampersandsign"]
+
+[[link]]
+constructs = ["node:bitwise_xor"]
+forms = ["db.functions.caretsign"]
+
+[[link]]
+constructs = ["node:bitwise_not"]
+forms = ["db.functions.tildesign"]
+
+[[link]]
+constructs = ["node:bitwise_left_shift"]
+forms = ["db.functions.ltltsign"]
+
+[[link]]
+constructs = ["node:bitwise_right_shift"]
+forms = ["db.functions.gtgtsign"]
+
+[[link]]
+constructs = ["node:case", "spelling:case_simple"]
+forms = ["db.functions.case.end"]
+
+[[link]]
+constructs = ["node:case", "spelling:case_searched"]
+forms = ["db.functions.case.end.syntax"]
+
+[[link]]
+constructs = ["node:subscript", "spelling:subscript_index"]
+forms = ["db.functions.bracketsign"]
+
+[[link]]
+constructs = ["node:subscript", "spelling:subscript_key"]
+forms = ["db.functions.bracketsign"]
+
+[[link]]
+constructs = ["node:window_function"]
+forms = ["db.expressions.window-functions"]
+
+[[link]]
+constructs = ["node:lambda"]
+forms = ["db.expressions.lambda-functions"]
+
+# Casts, their spellings, and the data types they name.
+[[link]]
+constructs = ["node:cast"]
+forms = ["db.functions.cast"]
+
+[[link]]
+constructs = ["node:try_cast"]
+forms = ["db.functions.try-cast"]
+
+[[link]]
+constructs = ["syntax:double_colon_cast"]
+forms = ["db.functions.coloncolonsign"]
+
+[[link]]
+constructs = ["cast:ARRAY"]
+forms = ["db.expressions.array-type"]
+
+[[link]]
+constructs = ["cast:BIGINT"]
+forms = ["db.expressions.bigint-type"]
+
+[[link]]
+constructs = ["cast:BINARY"]
+forms = ["db.expressions.binary-type"]
+
+[[link]]
+constructs = ["cast:BOOLEAN"]
+forms = ["db.expressions.boolean-type"]
+
+[[link]]
+constructs = ["cast:DATE"]
+forms = ["db.expressions.date-type"]
+
+[[link]]
+constructs = ["cast:DECIMAL"]
+forms = ["db.expressions.decimal-type"]
+
+[[link]]
+constructs = ["cast:DOUBLE"]
+forms = ["db.expressions.double-type"]
+
+[[link]]
+constructs = ["cast:FLOAT"]
+forms = ["db.expressions.float-type"]
+
+[[link]]
+constructs = ["cast:INT"]
+forms = ["db.expressions.int-type"]
+
+[[link]]
+constructs = ["cast:INTERVAL"]
+forms = ["db.expressions.interval-type"]
+
+[[link]]
+constructs = ["cast:MAP"]
+forms = ["db.expressions.map-type"]
+
+[[link]]
+constructs = ["cast:OBJECT"]
+forms = ["db.expressions.struct-type"]
+
+[[link]]
+constructs = ["cast:SMALLINT"]
+forms = ["db.expressions.smallint-type"]
+
+[[link]]
+constructs = ["cast:STRING"]
+forms = ["db.expressions.string-type"]
+
+[[link]]
+constructs = ["cast:TIMESTAMP"]
+forms = ["db.expressions.timestamp-type.timestamp"]
+
+[[link]]
+constructs = ["cast:TIMESTAMPTZ"]
+forms = ["db.expressions.timestamp-type.timestamp"]
+
+[[link]]
+constructs = ["cast:TIMESTAMPNTZ"]
+forms = ["db.expressions.timestamp-ntz-type.timestamp-ntz"]
+
+[[link]]
+constructs = ["cast:TINYINT"]
+forms = ["db.expressions.tinyint-type"]
+
+[[link]]
+constructs = ["cast:VARIANT"]
+forms = ["db.expressions.variant-type"]
+
+# Literals.
+[[link]]
+constructs = ["node:interval"]
+forms = ["db.expressions.interval-type.interval", "db.expressions.interval-type.interval.literals"]
+
+[[no_form]]
+constructs = ["node:column", "node:alias", "node:null", "node:boolean", "node:paren", "node:literal", "spelling:number", "spelling:quoted_string", "spelling:datetime_literal"]
+reason = "Column references, aliases, NULL, TRUE and FALSE, parentheses and literals in a case's input rows are part of every form's grammar rather than forms of their own."
+
+[[no_form]]
+constructs = ["node:within_group", "node:trim"]
+reason = "WITHIN GROUP belongs to the aggregate that takes it, and TRIM's keyword forms link by name."
