@@ -1,6 +1,6 @@
 # Databricks SQL syntax catalogue
 
-The documented SQL syntax of Databricks SQL 2026.45 as stable form IDs `db.<family>.<slug>`,
+The documented SQL syntax of Databricks SQL as stable form IDs `db.<family>.<slug>`,
 with the same layout and checker as the Snowflake root in `coverage/syntax`, the PostgreSQL
 root in `coverage/syntax-postgres` and the DuckDB root in `coverage/syntax-duckdb`.
 `dialect.toml` names the dialect for `syntax-coverage`.
@@ -20,8 +20,10 @@ root in `coverage/syntax-postgres` and the DuckDB root in `coverage/syntax-duckd
   outside the grammar (`AstBuilder.scala`, `DataTypeAstBuilder.scala`, `SparkSqlParser.scala`).
   Databricks SQL's parser is not published; the Spark grammar it extends is the independent
   check the omission audit reads.
-- Engine: a Databricks SQL serverless warehouse whose `current_version()` reports
-  `dbsql_version` 2026.45. Every receipt records that value.
+- Engine: a Databricks SQL serverless warehouse. Every receipt records the `dbsql_version` that
+  `current_version()` reported: 2026.44, 2026.45 or 2026.47. `engine_pin` in `dialect.toml` is
+  2026.47: of a case's receipts, the checker reads those of the newest release in the pin's year,
+  and fails the case when another release of that year gives a different phase.
 
 ## Regenerating
 
@@ -55,8 +57,8 @@ builder reuses `scripts/syntax_obligations`, by import.
 
 ## Catalogue
 
-1,230 forms: query 42, dml 13, ddl 107, transaction_session 28, security_admin 15, utility 80,
-scripting 18, functions 847, expressions 80. Statement forms come from each page's Syntax
+1,232 forms: query 42, dml 13, ddl 107, transaction_session 28, security_admin 15, utility 80,
+scripting 18, functions 849, expressions 80. Statement forms come from each page's Syntax
 blocks, read in the pages' own notation (`[ ]` optional, `{ | }` choice, `[ , ... ]` a
 separated repetition); a page's Literals blocks give the literal forms. Functions are one form
 per documented function page. `hand.toml` holds the reviewed readings of Syntax lines the
@@ -252,9 +254,9 @@ numbers, so they are never issued again, and fails if a retired id reappears in 
 or if a rebuild drops an id that `retired.toml` does not list, so a changed meaning always takes
 a new id. `tests/unit/scripts/syntax_obligations_databricks/test_tombstones.py` checks both.
 
-14,568 obligations and 9,612 cases: query 859/449, dml 560/341, ddl 3,820/2,759,
-transaction_session 199/133, security_admin 291/205, utility 1,089/786, scripting 359/237,
-functions 6,673/4,388, expressions 718/314.
+14,936 obligations and 10,172 cases: query 893/479, dml 565/351, ddl 4,047/2,983,
+transaction_session 198/139, security_admin 316/223, utility 1,077/792, scripting 358/242,
+functions 6,801/4,498, expressions 681/465.
 
 Syntax documented for Databricks Runtime only is observed, not expected, on the warehouse. In the
 query, dml and ddl families every positive case of a form whose page's applies-to banner leaves
@@ -280,6 +282,8 @@ Every family is recorded. Each run is repeated in a shuffled order; every repeat
 differences except the sequential phase's: five of its cases have no repeat receipt, because a
 lost reply made their setup run twice before their statement ran. The core run replaced three
 earlier core runs, whose receipts were all either re-recorded or of SQL texts no case now has.
+The cases added or changed since the 2026.45 runs were recorded on 2026.47, each run with its
+repeat; those repeats compare with 0 differences.
 
 The referee runs each case through the SQL Statement Execution API in a schema of its own in
 catalog `workspace`: it creates the schema, runs the setup (`SETUP` in
@@ -524,35 +528,20 @@ verdict of `crates/sqlquack-syntax-databricks`'s `parse_strict`:
 
 ```sh
 cargo build -p sqlquack-coverage-check --bin syntax-coverage
-target/debug/syntax-coverage validate --root coverage/syntax-databricks
-target/debug/syntax-coverage summary --root coverage/syntax-databricks
+evidence="$(scripts/evidence.sh path)/syntax/databricks"
+target/debug/syntax-coverage validate --root coverage/syntax-databricks --evidence "$evidence"
+target/debug/syntax-coverage summary --root coverage/syntax-databricks --evidence "$evidence"
 ```
 
-`validate` prints `valid, 1230 forms, 9622 receipts (0 superseded or withdrawn)`. A form
+`validate` prints `valid, 1232 forms, 19817 receipts (0 superseded or withdrawn)`. A form
 verifies only when every required obligation is met and a current family review covers its
-fingerprint. The family reviews in `reviews/<family>.toml` cover 909 forms, so
-`summary` prints `checked 1230 forms, 0 problems` and `909 of 1219 forms verified (74.57%)`, with
-obligations 11666/14572. The 11 forms without obligations are not counted.
+fingerprint. Every form that meets every obligation has a current approval, so `summary` prints
+`checked 1232 forms, 0 problems` and `1199 of 1219 forms verified (98.36%)`, with obligations
+14715/14936. The 13 retired forms, absent from the pinned pages, are not counted. The other 20:
 
-- 966 forms meet every obligation. The reviews approve 909 of them and withhold 57 until their
-  cases are fixed; the scripting family has no form ready for review.
-- 150 forms have a receipt that disagrees with the case's expectation (`UnexpectedOutcome`).
-- 146 forms have an opaque case: the parser gaps the statement into a `Command` node.
-- 12 forms await an observation, and 12 have a case the parser and the engine disagree on.
-- 2 forms lack a receipt. One is `db.ddl.create-recipient`: its cases
-  `db.ddl.create-recipient.k6af5ffd8d13d` and `k86915abb1b06` (`CREATE RECIPIENT v1 PROPERTIES
-  ( v1 )` and `( 'v' )`) ran to the 300 s deadline in both sequential runs. Retried with a 900 s
-  deadline, both answered after about 610 s with an internal engine error (`Cannot invoke
-  "java.lang.CharSequence.length()" because "sequence" is null`, SQLSTATE 42000, with no parser
-  excerpt). That error proves no phase, so no reviewed row maps it, and the form stays
-  unverified. The referee leaves a case that answers exactly this message undecided as "no phase
-  proven", like a deadline cancel, so the rest of its run keeps its receipts; any other unmapped
-  error still refuses the run.
-  Another is `db.scripting.iterate-stmt` (o001, o003): its case `k1d3a5a4a6874`, a LOOP ITERATE
-  with no LEAVE, runs to the 300 s deadline, so no phase can be observed, and it is left out of
-  its run.
-
-A form counts once even when several reasons apply, so the reasons overlap.
+- 13 forms await an observation: their positive cases are Runtime-only syntax or need a feature
+  the warehouse has not enabled, which it refuses as `unsupported_feature`.
+- 7 forms have an opaque case: the parser gaps the statement into a `Command` node.
 
 ### Trees of written forms
 
@@ -572,7 +561,8 @@ others:
 - a raw string (`r'c'` or `R'c'`) against a plain one, and adjacent strings (`'c' 'c'`) against
   the one string they join to, in a `joined_string` literal that keeps each piece;
 - the operator written for a construct another documented form shares: `==` against `=`, `!=`
-  against `<>`, `IS [NOT] DISTINCT FROM` against `<=>`, `REGEXP` and `RLIKE` against the `rlike` call, and `>>>`
+  against `<>`, `!` against `NOT` in `SET NOT NULL`, `DROP NOT NULL` and `WHEN NOT MATCHED` (the
+  `not_written_as` field), `IS [NOT] DISTINCT FROM` against `<=>`, `REGEXP` and `RLIKE` against the `rlike` call, and `>>>`
   against the `shiftrightunsigned` call, in a `written_as` field that analysis ignores;
 - the parentheses of a `VALUES` row and of a `STREAM` source, which the Syntax blocks write as
   alternatives (`expression | ( expression [, ...] )` and `STREAM ( name ) | STREAM name`).
@@ -582,7 +572,8 @@ others:
 - `FROM` against a comma after the first argument of `SUBSTR` and `SUBSTRING`, in the call's
   `from_separator`, as `TRIM` keeps its SQL-standard spelling;
 - a `CACHE TABLE` option's value written without `=`, which the page marks optional, in the cache
-  node's `options_without_equals`;
+  node's `options_without_equals`, and a `SET TAGS` value written without `=`, in the tag's
+  `without_equals`;
 - `INSERT INTO TABLE` against `INSERT INTO` (the insert's `table_keyword`), and a `REPLACE ON`
   query in parentheses against one without, as the page writes `( query ) [ alias ] | query`;
 - an `INSERT OVERWRITE DIRECTORY` option's value written without `=`, in the directory's
@@ -595,6 +586,9 @@ others:
 - a join's `NEAREST BY`: `APPROX` against `EXACT`, `DISTANCE` against `SIMILARITY`, and the number
   of results written or not; a `WATERMARK` expression bare, with an alias, with `AS` and with
   `AS ( aliases )`;
+- a query written `FROM` first against one written `SELECT` first, in the select's `from_first`,
+  which a `PIVOT` or `UNPIVOT` pipe keeps as it keeps `TABLE t1`'s `table_statement`; `FROM t1`
+  and `FROM t1 SELECT *` still give one tree;
 - each pipe operator with the pipe written before it (`|>` or `|`), in the `pipe_operators` of
   the select it amounts to, so `FROM t1 |> AGGREGATE sum ( c1 )` keeps `|> AGGREGATE` apart from
   `SELECT sum ( c1 ) FROM t1` and from `FROM t1 | AGGREGATE sum ( c1 )`; a trailing `|>` with
