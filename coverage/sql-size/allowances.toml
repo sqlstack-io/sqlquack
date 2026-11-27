@@ -18,3 +18,219 @@
 # bytes = 3000
 # reason = "..."
 # ruling = "the review that accepted the growth"
+
+[[total]]
+from = 9057744
+bytes = 1430
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "aggregate/grouped.toml#avg"
+from = 1033
+to = 1282
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "aggregate/grouped.toml#empty_input"
+from = 1019
+to = 1268
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "conversion/cast_batch.toml#float_to_varchar_fractions"
+from = 1243
+to = 1383
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "conversion/cast_batch.toml#float_varchar_fractions"
+from = 1243
+to = 1383
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "generated/numeric_arithmetic/divide.toml#n10_2_divide_n10_2"
+from = 1523
+to = 1744
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "generated/numeric_arithmetic/divide.toml#n10_2_divide_n5_0"
+from = 1293
+to = 1454
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "generated/numeric_arithmetic/divide.toml#n5_0_divide_n10_2"
+from = 1370
+to = 1568
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "generated/numeric_arithmetic/divide.toml#n5_0_divide_n5_0"
+from = 1222
+to = 1360
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "imported/sqlglot_conditional.toml#div0"
+from = 1109
+to = 1336
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "imported/sqlglot_conditional.toml#div0null"
+from = 1140
+to = 1367
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "numeric/division.toml#decimal_division"
+from = 941
+to = 1162
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "numeric/division.toml#half_way_at_result_scale"
+from = 1016
+to = 1154
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "numeric/division.toml#high_scale_dividend"
+from = 885
+to = 1111
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "numeric/division.toml#large_divisor_scale"
+from = 877
+to = 1116
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "numeric/division.toml#literal_divisor"
+from = 500
+to = 581
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "numeric/round_modes.toml#round_half_to_even_wide_ratio"
+from = 1183
+to = 1435
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "numeric/small_functions_batch3.toml#nullifzero_and_logs"
+from = 1557
+to = 1789
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "relational/unaliased_output_names.toml#unaliased_aggregates"
+from = 934
+to = 1183
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "relational/unaliased_playground_basics.toml#playground_literal_basics"
+from = 488
+to = 558
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "translation/expressions/operators-arithmetic.divide.toml#t003_num_num_102124"
+from = 687
+to = 914
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "translation/expressions/operators-arithmetic.divide.toml#t007_null_a"
+from = 580
+to = 801
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "translation/expressions/operators-arithmetic.divide.toml#t008_null_b"
+from = 580
+to = 801
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "translation/expressions/operators-arithmetic.divide.toml#t009_scale_12"
+from = 730
+to = 979
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "translation/functions/avg.avg.toml#t002_decimal"
+from = 564
+to = 813
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "translation/functions/div0.toml#t002_dec"
+from = 782
+to = 1003
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "translation/functions/div0null.toml#t002_dec"
+from = 805
+to = 1026
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "translation/functions/div0null.toml#t006_neg_zero"
+from = 913
+to = 1134
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "translation/functions/ratio-to-report.toml#t003_zero_sum"
+from = 875
+to = 1238
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "window/avg_frames.toml#avg_running_with_peers"
+from = 960
+to = 1337
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
+
+[[case]]
+case = "window/ratio_to_report.toml#ratio_to_report_decimals"
+from = 1678
+to = 2404
+reason = "rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast, which DuckDB runs slowly"
+ruling = "Accepted: 100 cases grow by 8,384 bytes in total (0.09%) because rounded decimal quotients use integer doubling again instead of a narrowing DECIMAL cast. The cast cost ~4,350 instructions per row in DuckDB; the change halves decimal_divide's instructions (7,489 to 3,593 per row) with identical results across the full replay. Reviewed by the release orchestrator."
