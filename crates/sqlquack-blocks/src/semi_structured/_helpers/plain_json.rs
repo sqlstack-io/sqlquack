@@ -1,4 +1,4 @@
-//! Whether a JSON literal is one `json_checked_v1`'s fast check reads as it is, checked in Rust.
+//! Whether a JSON literal is one `json_checked_v2`'s fast check reads as it is, checked in Rust.
 
 use std::collections::HashSet;
 
@@ -11,7 +11,7 @@ const INTEGER_DIGITS: usize = 9;
 /// The most digits after a decimal point the fast check clears.
 const FRACTION_DIGITS: usize = 5;
 
-/// Whether `text` is JSON `json_checked_v1`'s fast check reads as it is, read more strictly: no key escaped or repeated.
+/// Whether `text` is JSON `json_checked_v2`'s fast check reads as it is, read more strictly: no key escaped or repeated.
 pub(crate) fn plain_json(text: &str) -> bool {
     let mut reader = Reader {
         bytes: text.as_bytes(),

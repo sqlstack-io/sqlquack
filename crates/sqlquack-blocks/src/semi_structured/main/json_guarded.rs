@@ -2,7 +2,7 @@
 
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
-use crate::macros::constants::JSON_CHECKED_V1;
+use crate::macros::constants::JSON_CHECKED_V2;
 use crate::macros::main::helper_call::helper_call;
 use crate::raises::constants::UNIDENTIFIED_SITE;
 use crate::semi_structured::_helpers::paths::{path_list, plain_step, scoped_paths};
@@ -26,7 +26,7 @@ pub fn json_guarded(
         _ => (Vec::new(), vec!["$".to_owned()]),
     };
     helper_call(
-        JSON_CHECKED_V1,
+        JSON_CHECKED_V2,
         &[
             UNIDENTIFIED_SITE,
             &format!("CAST({sql} AS VARCHAR)"),

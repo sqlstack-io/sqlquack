@@ -12,7 +12,7 @@ output runs as it is in any DuckDB session:
 ```console
 $ sqlquack convert staging.sql --no-config
 CREATE SCHEMA IF NOT EXISTS sqlquack;
-CREATE OR REPLACE MACRO sqlquack.json_read_v1(
+CREATE OR REPLACE MACRO sqlquack.json_read_v2(
 …
 CREATE OR REPLACE MACRO sqlquack.variant_text_v2(quack_site, quack_value) AS list_transform(
 …
@@ -58,8 +58,10 @@ sqlquack explain variant_text_v2
 
 | Macro | What it computes |
 |-------|------------------|
-| `json_read_v1` | JSON text read as a VARIANT, raising `json_fidelity` where DuckDB might read it differently from Snowflake. |
-| `json_checked_v1` | The same read, faster: plain JSON is read as it is, anything else goes through `json_read_v1`. |
+| `json_read_v2` | JSON text read as a VARIANT, raising `json_fidelity` where DuckDB might read it differently from Snowflake. |
+| `json_checked_v2` | The same read, faster: plain JSON is read as it is, anything else goes through `json_read_v2`. |
+| `json_read_v1` | What `json_read_v2` computes, except that `TRY_PARSE_JSON` of text without brackets can raise DuckDB's `list_reduce` error. Kept for SQL converted by 0.24.1 and earlier. |
+| `json_checked_v1` | What `json_checked_v2` computes, through `json_read_v1`. Kept for SQL converted by 0.24.1 and earlier. |
 | `json_escaped_v1` | JSON text with Snowflake's escapes. |
 | `variant_text_v2` | A VARIANT cast to `VARCHAR`, as Snowflake writes it. |
 | `variant_json_text_v2` | A VARIANT as Snowflake writes it as JSON text. |

@@ -44,3 +44,11 @@ pub(crate) struct EscapeCallsTestCase {
     pub(crate) name: &'static str,
     pub(crate) expected_calls: usize,
 }
+
+/// Text a TRY_PARSE_JSON read checks, and what every version of the read check gives for it.
+pub(crate) struct JsonReadTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) text: &'static str,
+    /// The JSON read, NULL, or the tagged message raised.
+    pub(crate) expected_outcome: Result<Option<&'static str>, &'static str>,
+}

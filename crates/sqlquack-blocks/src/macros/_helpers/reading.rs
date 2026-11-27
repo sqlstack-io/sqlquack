@@ -5,10 +5,11 @@ use crate::macros::_helpers::guards::{
     zero_fractions_whole,
 };
 use crate::macros::constants::{
-    JSON_READ_V1, OBJECTS_PARAMETER, SITE_PARAMETER, TEXT_PARAMETER, TRYING_PARAMETER,
-    VALUES_PARAMETER,
+    JSON_READ_V1, JSON_READ_V2, OBJECTS_PARAMETER, SITE_PARAMETER, TEXT_PARAMETER,
+    TRYING_PARAMETER, VALUES_PARAMETER,
 };
 use crate::macros::main::helper_call::helper_call;
+use crate::macros::models::BracketCount;
 use crate::semi_structured::constants::{
     JSON_NUMBER_PATTERN, JSON_STRING_PATTERN, JSON_SURROGATE_PATTERN, JSON_UNSAFE_TOKEN_PATTERN,
     JSON_WORD_PATTERN,
@@ -21,8 +22,28 @@ const PLAIN_STRING: &str = r#""(?:[^"\\\x00-\x1f]|\\["/bfnrt]|\\u(?:[0-9a-cA-Cef
 /// An integer of up to 18 digits but -0, or a decimal of up to 9 + 5 digits not all zero after the point.
 const PLAIN_NUMBER: &str = r"-?[1-9][0-9]{0,17}|0|-?(?:0|[1-9][0-9]{0,8})\.(?:[0-9]{0,4}[1-9]|[0-9]{0,3}[1-9]0|[0-9]{0,2}[1-9]00|[0-9]?[1-9]000|[1-9]0000)";
 
-/// The full check: the text as DuckDB `JSON`, blank text NULL, raising where Snowflake may differ.
+/// `json_read_v1`'s body.
 pub(crate) fn read_body() -> String {
+    full_read(BracketCount::FirstBracket)
+}
+
+/// `json_read_v2`'s body: `json_read_v1`'s, counting brackets from an initial value.
+pub(crate) fn read_body_v2() -> String {
+    full_read(BracketCount::InitialValue)
+}
+
+/// `json_checked_v1`'s body, falling back to `json_read_v1`.
+pub(crate) fn checked_body() -> String {
+    fast_read(JSON_READ_V1)
+}
+
+/// `json_checked_v2`'s body, falling back to `json_read_v2`.
+pub(crate) fn checked_body_v2() -> String {
+    fast_read(JSON_READ_V2)
+}
+
+/// The full check: the text as DuckDB `JSON`, blank text NULL, raising where Snowflake may differ.
+fn full_read(count: BracketCount) -> String {
     let tokens = outside_strings("r['t']");
     let written_numbers = format!(
         "regexp_extract_all({}, '{JSON_NUMBER_PATTERN}')",
@@ -41,7 +62,7 @@ pub(crate) fn read_body() -> String {
          WHEN regexp_matches(r['t'], '{surrogate}') THEN {surrogates} \
          WHEN r['repeated'] THEN {repeated} \
          ELSE json(r['t']) END)",
-        unreadable = unreadable("json_source"),
+        unreadable = unreadable("json_source", count),
         invalid = site_fidelity_error("text DuckDB does not read as JSON, which Snowflake may read"),
         unsafe = quoted(JSON_UNSAFE_TOKEN_PATTERN),
         long = long_decimal_pattern(),
@@ -67,8 +88,8 @@ pub(crate) fn read_body() -> String {
     )
 }
 
-/// The fast check, binding the text as a lambda parameter so DuckDB never folds `json` of it.
-pub(crate) fn checked_body() -> String {
+/// The fast check, binding the text as a lambda parameter so DuckDB never folds `json` of it, falling back to the macro `full`.
+fn fast_read(full: &str) -> String {
     let t = "json_text";
     let unique_keys = format!(
         "coalesce(len(json_keys({t}, quack_path)) = \
@@ -87,7 +108,7 @@ pub(crate) fn checked_body() -> String {
              AND len(list_filter({VALUES_PARAMETER}, lambda quack_path: {unique_within} IS NOT TRUE)) = 0 \
              THEN json({t}) ELSE {full} END)",
             pattern = quoted(&cleared_pattern()),
-            full = helper_call(JSON_READ_V1, &[SITE_PARAMETER, t, TRYING_PARAMETER]),
+            full = helper_call(full, &[SITE_PARAMETER, t, TRYING_PARAMETER]),
         ),
     )
 }

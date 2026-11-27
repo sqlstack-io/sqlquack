@@ -156,6 +156,16 @@ fn given_a_released_helper_when_defined_then_its_definition_is_unchanged() {
             expected_md5: Some("5cc2d500d81eb99fc4836b29432df627"),
         },
         PinnedDefinitionTestCase {
+            description: "json_read_v2's released definition is unchanged; a change takes a new version",
+            name: "json_read_v2",
+            expected_md5: Some("c5fc40f7f73d9c0e1066ac3dbe4f3d81"),
+        },
+        PinnedDefinitionTestCase {
+            description: "json_checked_v2's released definition is unchanged; a change takes a new version",
+            name: "json_checked_v2",
+            expected_md5: Some("53cf81c8d91c413369ab5dbc652d8e7e"),
+        },
+        PinnedDefinitionTestCase {
             description: "json_escaped_v1's released definition is unchanged; a change takes a new version",
             name: "json_escaped_v1",
             expected_md5: Some("bddb8bb9d55a3c90b994bdda90d47a60"),

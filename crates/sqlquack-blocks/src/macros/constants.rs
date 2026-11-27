@@ -52,6 +52,10 @@ pub const VARIANT_WRITTEN_V1: &str = "variant_written_v1";
 pub const JSON_READ_V1: &str = "json_read_v1";
 /// The fast read check of JSON text, falling back to the full one.
 pub const JSON_CHECKED_V1: &str = "json_checked_v1";
+/// The full read check of JSON text, counting brackets from an initial value.
+pub const JSON_READ_V2: &str = "json_read_v2";
+/// The fast read check of JSON text, falling back to `json_read_v2`.
+pub const JSON_CHECKED_V2: &str = "json_checked_v2";
 /// The statement creating the schema, before any helper macro.
 pub const CREATE_HELPER_SCHEMA: &str = "CREATE SCHEMA IF NOT EXISTS sqlquack";
 /// The parameter holding the VARIANT a writing or casting macro reads.
