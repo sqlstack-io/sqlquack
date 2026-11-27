@@ -22,9 +22,6 @@ pub const AUDIT_RESULTS_DIR: &str = "evidence/audit/results";
 /// The version of the case, pending and result file formats.
 pub const EVIDENCE_FORMAT: u32 = 1;
 
-/// The source dialect name recorded in hashes and pending files.
-pub const SOURCE_DIALECT: &str = "snowflake";
-
 /// The input column holding the row number; expression results are ordered by it.
 pub const ORDINAL_COLUMN: &str = "ordinal";
 

@@ -62,9 +62,10 @@ order = "ordered"
 tags = []
 "#;
 
-fn policy(directory: &Path) -> Policy {
+fn policy(directory: &Path, dialect: &str) -> Policy {
     let path = directory.join("sqlquack.toml");
-    std::fs::write(&path, POLICY).expect("policy written");
+    let text: String = format!("source_dialect = \"{dialect}\"\n{POLICY}");
+    std::fs::write(&path, text).expect("policy written");
     load_policy(&path).expect("the test policy is valid")
 }
 
@@ -73,6 +74,14 @@ pub(crate) fn load_variant(
     replace: &str,
     with: &str,
 ) -> Result<Vec<LoadedCase>, String> {
+    load_in_dialect(directory, (replace, with), "snowflake")
+}
+
+fn load_in_dialect(
+    directory: &Path,
+    (replace, with): (&str, &str),
+    dialect: &str,
+) -> Result<Vec<LoadedCase>, String> {
     let cases = directory.join("cases");
     std::fs::create_dir_all(cases.join("string")).expect("cases directory");
     std::fs::write(
@@ -80,7 +89,7 @@ pub(crate) fn load_variant(
         CASE_FILE.replacen(replace, with, 1),
     )
     .expect("case file written");
-    load_cases(&cases, &policy(directory)).map_err(|error| error.to_string())
+    load_cases(&cases, &policy(directory, dialect)).map_err(|error| error.to_string())
 }
 
 pub(crate) fn hashes(replace: &str, with: &str) -> Vec<String> {
@@ -106,13 +115,14 @@ pub(crate) fn observed_problem(
     )
 }
 
-pub(crate) fn source_sql_of(reference: &str) -> Option<String> {
+/// The source SQL and hash of the case `reference` when its policy names `dialect`.
+pub(crate) fn source_sql_of(reference: &str, dialect: &str) -> Option<(String, String)> {
     let directory = tempfile::tempdir().expect("temporary directory");
-    load_variant(directory.path(), "", "")
+    load_in_dialect(directory.path(), ("", ""), dialect)
         .expect("the case file loads")
         .into_iter()
         .find(|case| case.reference == reference)
-        .map(|case| case.source_sql)
+        .map(|case| (case.source_sql, case.hash))
 }
 
 /// The ordinal the single-row source `row` of the case `reference` gives its row.

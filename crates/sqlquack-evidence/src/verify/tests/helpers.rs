@@ -489,6 +489,7 @@ pub(crate) fn compile_error_judgement_for(
         setup: Vec::new(),
         inputs: Vec::new(),
         row_sources: Vec::new(),
+        source_dialect: Default::default(),
     };
     let recorded = RecordedFailure {
         errno: Some(1003),
