@@ -1,7 +1,7 @@
 //! Databricks statements converted to DuckDB, and the ones refused.
 
 use crate::databricks::analysis::main::analyze::analyze;
-use crate::databricks::conversion::models::DatabricksType;
+use crate::databricks::conversion::models::{DatabricksType, Element};
 use crate::databricks::conversion::tests::test_types::{ConvertTestCase, RefuseTestCase};
 
 const FIXTURE: &str = "WITH input AS (SELECT * FROM VALUES (1, CAST(-7 AS INT), CAST('a' AS STRING)), \
@@ -100,6 +100,14 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::BigInt, DatabricksType::Int],
         },
         ConvertTestCase {
+            description: "an array result is written as Databricks's text, each element a string",
+            query: "SELECT array(x1, NULL) AS a FROM input",
+            expected_sql: &[
+                "CAST(to_json(list_transform([\"x1\", NULL], lambda element: CAST(element AS VARCHAR))) AS VARCHAR) AS \"a\"",
+            ],
+            expected_types: &[DatabricksType::Array(Element::Int)],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
@@ -195,9 +203,9 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             expected_reason: "SHA2",
         },
         RefuseTestCase {
-            description: "an array result, whose text no rule writes as Databricks does yet",
-            query: "SELECT array(x1) AS a FROM input",
-            expected_reason: "ARRAY<INT> result column",
+            description: "an array of strings, whose escapes the engines may write differently",
+            query: "SELECT array(s) AS a FROM input",
+            expected_reason: "ARRAY<STRING> result column",
         },
         RefuseTestCase {
             description: "an OFFSET no rule reads",

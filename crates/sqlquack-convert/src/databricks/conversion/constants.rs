@@ -1,6 +1,6 @@
 //! The Databricks conversion rules and the functions they accept.
 
-use crate::databricks::conversion::models::{DatabricksType, Signature};
+use crate::databricks::conversion::models::{DatabricksType, Element, Signature};
 
 /// A query block: its source, filter, grouping, ordering and limit.
 pub const SELECT_RULE: &str = "rule.databricks.select";
@@ -71,6 +71,14 @@ pub const FLOAT_MANTISSA_BITS: u32 = 24;
 pub const DOUBLE_MANTISSA_BITS: u32 = 53;
 /// The parameter name of the lambdas array rewrites emit.
 pub const LAMBDA_ELEMENT: &str = "element";
+/// The array elements whose text DuckDB writes as Databricks returns it; strings may escape differently.
+pub const RENDERED_ELEMENTS: &[Element] = &[
+    Element::Boolean,
+    Element::TinyInt,
+    Element::SmallInt,
+    Element::Int,
+    Element::BigInt,
+];
 /// How deep a tree may nest for conversion, which recurses once per level.
 pub const MAX_TREE_DEPTH: usize = 128;
 /// The most digits a Databricks decimal holds.

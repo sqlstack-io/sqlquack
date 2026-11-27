@@ -10,7 +10,9 @@ use crate::databricks::conversion::_helpers::support::scope::{Columns, Scope, Si
 use crate::databricks::conversion::_helpers::support::tree::{
     digits_value, field, flag, identifier, list, node_kind, quoted, refused, understood,
 };
-use crate::databricks::conversion::constants::{FIXTURE_RULE, ORDER_RULE, SELECT_RULE};
+use crate::databricks::conversion::constants::{
+    FIXTURE_RULE, LAMBDA_ELEMENT, ORDER_RULE, RENDERED_ELEMENTS, SELECT_RULE,
+};
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
 /// A common table expression: its name as written, its DuckDB definition and its columns.
@@ -88,7 +90,7 @@ fn select(
     }
     let items: Vec<String> = outputs
         .iter()
-        .map(|(name, emitted)| format!("{} AS {}", emitted.sql, quoted(name)))
+        .map(|(name, emitted)| format!("{} AS {}", rendered(emitted), quoted(name)))
         .collect();
     sql.push_str(&items.join(", "));
     if let Some(relation) = &scope.relation {
@@ -146,6 +148,17 @@ fn select(
         sql.push_str(&format!(" LIMIT {}", row_limit(limit)?));
     }
     Ok((sql, columns))
+}
+
+/// A result column as Databricks returns it: an array as a JSON list of each element's text.
+fn rendered(emitted: &Emitted) -> String {
+    match emitted.data_type {
+        DatabricksType::Array(_) => format!(
+            "CAST(to_json(list_transform({}, lambda {LAMBDA_ELEMENT}: CAST({LAMBDA_ELEMENT} AS VARCHAR))) AS VARCHAR)",
+            emitted.sql
+        ),
+        _ => emitted.sql.clone(),
+    }
 }
 
 /// A clause holding one expression, such as `WHERE` or `HAVING`.
@@ -402,11 +415,10 @@ fn projected(item: &Value, site: Site<'_>) -> Result<Vec<(String, Emitted)>, Ref
             ));
         }
     };
-    let untyped = named.iter().find(|(_, emitted)| {
-        matches!(
-            emitted.data_type,
-            DatabricksType::Null | DatabricksType::Array(_)
-        )
+    let untyped = named.iter().find(|(_, emitted)| match emitted.data_type {
+        DatabricksType::Null => true,
+        DatabricksType::Array(element) => !RENDERED_ELEMENTS.contains(&element),
+        _ => false,
     });
     match untyped {
         Some((name, emitted)) => Err(refused(
@@ -428,6 +440,12 @@ fn order(order_by: &Value, site: Site<'_>) -> Result<String, Refusal> {
     for ordered in list(order_by, "expressions") {
         let ordered = understood(ordered, "ordered", &["this", "desc", "nulls_first"])?;
         let key = not_positional(expression(field(ordered, "this"), site)?, "order_by")?;
+        if let DatabricksType::Array(_) = key.data_type {
+            return Err(refused(
+                "order_by",
+                "no rule orders by an array as Databricks does".to_owned(),
+            ));
+        }
         let desc = flag(ordered, "desc");
         let nulls_first = field(ordered, "nulls_first").as_bool().unwrap_or(!desc);
         items.push(format!(

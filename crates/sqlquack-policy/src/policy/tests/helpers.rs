@@ -1,4 +1,5 @@
 use crate::policy::_helpers::parsing::parse_policy;
+use crate::policy::main::load_policy::load_policy;
 use crate::policy::main::matching_type_equality::matching_type_equality;
 use crate::policy::models::Policy;
 
@@ -62,6 +63,13 @@ pub(crate) fn observed_error(replace: &str, with: &str, fragment: Option<&str>) 
 
 pub(crate) fn valid_policy() -> Policy {
     parse_policy(VALID_POLICY).expect("the base test policy is valid")
+}
+
+pub(crate) fn databricks_equality_reason(databricks: &str, duckdb: &str) -> Option<String> {
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("policy-databricks.toml");
+    let policy = load_policy(&path).expect("the Databricks policy is valid");
+    matching_type_equality(&policy.comparator.type_equality, databricks, duckdb)
+        .map(|equality| equality.reason.clone())
 }
 
 pub(crate) fn equality_reason(snowflake: &str, duckdb: &str) -> Option<String> {

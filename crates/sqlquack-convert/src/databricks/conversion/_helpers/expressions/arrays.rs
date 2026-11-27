@@ -17,6 +17,12 @@ pub(crate) fn array_rewrite(name: &str) -> Option<Rewrite> {
         "GET" => get,
         "ARRAY_JOIN" => array_join,
         "ARRAYS_OVERLAP" => arrays_overlap,
+        "ARRAY_APPEND" => array_append,
+        "ARRAY_PREPEND" => array_prepend,
+        "ARRAY_COMPACT" => array_compact,
+        "REVERSE" => array_reverse,
+        "SORT_ARRAY" => sort_array,
+        "ARRAY_SORT" => array_sort,
         _ => return None,
     };
     Some(rewrite)
@@ -133,6 +139,94 @@ fn arrays_overlap(values: &[Emitted]) -> Option<Emitted> {
              THEN NULL ELSE FALSE END"
         ),
         DatabricksType::Boolean,
+    ))
+}
+
+fn array_append(values: &[Emitted]) -> Option<Emitted> {
+    added(values, |array, value| {
+        format!("list_append({array}, {value})")
+    })
+}
+
+fn array_prepend(values: &[Emitted]) -> Option<Emitted> {
+    added(values, |array, value| {
+        format!("list_prepend({value}, {array})")
+    })
+}
+
+/// `ARRAY_APPEND` or `ARRAY_PREPEND`: NULL for a NULL array, where DuckDB starts a new list.
+fn added(values: &[Emitted], list: fn(&str, &str) -> String) -> Option<Emitted> {
+    let [array, value] = values else { return None };
+    let element = known(element(array)?)?;
+    let fits = value.data_type == DatabricksType::Null
+        || wider_integer(element.scalar(), value.data_type) == Some(element.scalar())
+        || value.data_type == element.scalar();
+    if !fits {
+        return None;
+    }
+    let value = as_type(value, element.scalar());
+    Some(typed(
+        format!(
+            "CASE WHEN {array} IS NULL THEN NULL ELSE {} END",
+            list(&array.sql, &value),
+            array = array.sql
+        ),
+        array.data_type,
+    ))
+}
+
+/// `ARRAY_COMPACT(a)`: the array without its NULL elements.
+fn array_compact(values: &[Emitted]) -> Option<Emitted> {
+    let [array] = values else { return None };
+    element(array)?;
+    Some(typed(
+        format!(
+            "list_filter({}, lambda {LAMBDA_ELEMENT}: {LAMBDA_ELEMENT} IS NOT NULL)",
+            array.sql
+        ),
+        array.data_type,
+    ))
+}
+
+/// `REVERSE` of an array; a string's reversal is left to a later rule.
+fn array_reverse(values: &[Emitted]) -> Option<Emitted> {
+    let [array] = values else { return None };
+    element(array)?;
+    Some(typed(
+        format!("list_reverse({})", array.sql),
+        array.data_type,
+    ))
+}
+
+/// `SORT_ARRAY(a[, asc])`: NULLs first ascending, last descending, the order a constant chooses.
+fn sort_array(values: &[Emitted]) -> Option<Emitted> {
+    let (array, ascending) = match values {
+        [array] => (array, true),
+        [array, order] => match order.sql.as_str() {
+            "TRUE" => (array, true),
+            "FALSE" => (array, false),
+            _ => return None,
+        },
+        _ => return None,
+    };
+    let order = match ascending {
+        true => "'ASC', 'NULLS FIRST'",
+        false => "'DESC', 'NULLS LAST'",
+    };
+    sorted(array, order)
+}
+
+/// `ARRAY_SORT(a)` without a comparator: ascending with NULLs last.
+fn array_sort(values: &[Emitted]) -> Option<Emitted> {
+    let [array] = values else { return None };
+    sorted(array, "'ASC', 'NULLS LAST'")
+}
+
+fn sorted(array: &Emitted, order: &str) -> Option<Emitted> {
+    known(element(array)?)?;
+    Some(typed(
+        format!("list_sort({}, {order})", array.sql),
+        array.data_type,
     ))
 }
 

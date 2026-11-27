@@ -80,6 +80,31 @@ duckdb = "TIMESTAMPTZ"
 reason = "A Databricks TIMESTAMP is an instant shown in the session zone, as DuckDB's TIMESTAMPTZ."
 
 [[comparator.type_equality]]
+snowflake = "ARRAY<BOOLEAN>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list with each element written as a string."
+
+[[comparator.type_equality]]
+snowflake = "ARRAY<TINYINT>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list with each element written as a string."
+
+[[comparator.type_equality]]
+snowflake = "ARRAY<SMALLINT>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list with each element written as a string."
+
+[[comparator.type_equality]]
+snowflake = "ARRAY<INT>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list with each element written as a string."
+
+[[comparator.type_equality]]
+snowflake = "ARRAY<BIGINT>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list with each element written as a string."
+
+[[comparator.type_equality]]
 snowflake = "TIMESTAMP_NTZ"
 duckdb = "TIMESTAMP"
 reason = "Both are wall-clock timestamps with microsecond precision and no zone."
