@@ -59,6 +59,18 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 6,
         },
         DistinctTreesTestCase {
+            description: "a PIVOT and UNPIVOT pipe after FROM t1, TABLE t1 and SELECT * FROM t1",
+            written: &[
+                "FROM t1 |> PIVOT ( sum ( c1 ) FOR c2 IN ( 1 , 2 ) )",
+                "TABLE t1 |> PIVOT ( sum ( c1 ) FOR c2 IN ( 1 , 2 ) )",
+                "SELECT * FROM t1 |> PIVOT ( sum ( c1 ) FOR c2 IN ( 1 , 2 ) )",
+                "FROM t1 |> UNPIVOT ( v FOR k IN ( c1 , c2 ) )",
+                "TABLE t1 |> UNPIVOT ( v FOR k IN ( c1 , c2 ) )",
+                "SELECT * FROM t1 |> UNPIVOT ( v FOR k IN ( c1 , c2 ) )",
+            ],
+            expected_distinct_trees: 6,
+        },
+        DistinctTreesTestCase {
             description: "a table tag's value written after = and without it",
             written: &[
                 "ALTER TABLE t1 SET TAGS ( 'k' = 'v' )",
