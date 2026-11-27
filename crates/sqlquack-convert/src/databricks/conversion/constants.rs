@@ -70,6 +70,10 @@ pub const REWRITE_RULE: &str = "rule.databricks.rewrite";
 pub const SHA2_SHA256_BITS: &str = "256";
 /// The digest length SHA2 also reads as SHA-256.
 pub const SHA2_DEFAULT_BITS: &str = "0";
+/// The digest lengths SHA2 computes that DuckDB has no function for.
+pub const SHA2_MISSING_BITS: &str = "224, 384, 512";
+/// The error SHA2 raises for a digest length DuckDB has no function for.
+pub const DIGEST_ERROR: &str = "the SHA2 digest length has no DuckDB function";
 /// An aggregate DuckDB computes the same way, its result cast to the type Databricks gives it.
 pub const AGGREGATE_RULE: &str = "rule.databricks.aggregate";
 /// A date or timestamp function: a field such as DAY or HOUR, or date arithmetic in whole days.

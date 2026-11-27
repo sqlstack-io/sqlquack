@@ -13,8 +13,8 @@ use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::refused_function;
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
 use crate::databricks::conversion::constants::{
-    DATE_FUNCTION_RULE, INDEX_RULE, NUMBER_FUNCTION_RULE, REWRITE_RULE, SHA2_DEFAULT_BITS,
-    SHA2_SHA256_BITS, STRING_FUNCTION_RULE,
+    DATE_FUNCTION_RULE, DIGEST_ERROR, INDEX_RULE, NUMBER_FUNCTION_RULE, REWRITE_RULE,
+    SHA2_DEFAULT_BITS, SHA2_MISSING_BITS, SHA2_SHA256_BITS, STRING_FUNCTION_RULE,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
@@ -157,17 +157,26 @@ fn hex(values: &[Emitted]) -> Option<Emitted> {
     Some(typed(format!("hex({sql})"), DatabricksType::String))
 }
 
-/// `SHA2(s, 256)` and `SHA2(s, 0)`: DuckDB's lower-case `sha256`.
+/// `SHA2(s, n)`: SHA-256 for 256 or 0, NULL for a length Databricks does not name, raising for 224, 384 and 512, which DuckDB lacks.
 fn sha2(values: &[Emitted]) -> Option<Emitted> {
     let [text, bits] = values else { return None };
-    let bits = match &bits.literal {
-        Some(Literal::Number(bits)) => bits.as_str(),
+    let hashed = digest(std::slice::from_ref(text), "sha256")?;
+    let sql = match &bits.literal {
+        Some(Literal::Number(bits))
+            if [SHA2_SHA256_BITS, SHA2_DEFAULT_BITS].contains(&bits.as_str()) =>
+        {
+            hashed.sql
+        }
+        Some(Literal::Number(_)) => return None,
+        _ if bits.data_type.is_integral() => format!(
+            "CASE WHEN {n} IS NULL THEN NULL WHEN {n} IN ({SHA2_SHA256_BITS}, {SHA2_DEFAULT_BITS}) THEN {h} \
+             WHEN {n} IN ({SHA2_MISSING_BITS}) THEN error('{DIGEST_ERROR}') END",
+            n = bits.sql,
+            h = hashed.sql
+        ),
         _ => return None,
     };
-    match [SHA2_SHA256_BITS, SHA2_DEFAULT_BITS].contains(&bits) {
-        true => digest(std::slice::from_ref(text), "sha256"),
-        false => None,
-    }
+    Some(typed(sql, DatabricksType::String))
 }
 
 fn try_add(values: &[Emitted]) -> Option<Emitted> {

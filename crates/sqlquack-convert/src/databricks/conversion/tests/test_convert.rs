@@ -277,6 +277,15 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Boolean, DatabricksType::Boolean],
         },
         ConvertTestCase {
+            description: "SHA2 of a column length: SHA-256 for 256 or 0, raising for a length DuckDB lacks, else NULL",
+            query: "SELECT sha2(s, x1) AS h FROM input",
+            expected_sql: &[
+                "WHEN \"x1\" IN (256, 0) THEN sha256(\"s\")",
+                "WHEN \"x1\" IN (224, 384, 512) THEN error('the SHA2 digest length has no DuckDB function') END",
+            ],
+            expected_types: &[DatabricksType::String],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
