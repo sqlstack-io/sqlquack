@@ -47,6 +47,13 @@ pub const UPPERED_CHARACTERS: &str = r"\x{0}-\x{de}\x{e0}-\x{148}\x{14a}-\x{1ef}
 /// The error a case mapping raises for text holding a character outside the code points it maps as Databricks does.
 pub const CASE_MAPPING_ERROR: &str =
     "the text holds a character whose case no rule maps as Databricks does";
+/// The characters with a meaning in a Java regular expression outside a class, and `]` and `}`; a pattern without them is text.
+pub const REGEX_METACHARACTERS: &str = r"\.^$|?*+()[]{}";
+/// [`REGEX_METACHARACTERS`] as an RE2 class body.
+pub const REGEX_METACHARACTER_CLASS: &str = r"\\.^$|?*+()\[\]{}";
+/// The error `RLIKE` raises for a pattern holding a metacharacter, whose Java meaning no rule shows RE2 sharing.
+pub const PATTERN_ERROR: &str =
+    "the pattern holds a regular-expression metacharacter no rule converts";
 /// `ORDER BY` with the null ordering written out: Databricks puts NULLs first ascending.
 pub const ORDER_RULE: &str = "rule.databricks.order";
 /// `CONCAT` of strings as `||`, NULL when any argument is NULL.

@@ -268,6 +268,15 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::String, DatabricksType::String],
         },
         ConvertTestCase {
+            description: "RLIKE of text finds it; a column pattern raises for a metacharacter",
+            query: "SELECT rlike(s, 'a,b') AS t, s RLIKE s AS c FROM input",
+            expected_sql: &[
+                "contains(\"s\", 'a,b') AS \"t\"",
+                "WHEN regexp_matches(\"s\", '[\\\\.^$|?*+()\\[\\]{}]') THEN error(",
+            ],
+            expected_types: &[DatabricksType::Boolean, DatabricksType::Boolean],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
@@ -301,6 +310,11 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "a date field of an integer, which Databricks would read as text",
             query: "SELECT dayofweek(x1) AS r FROM input",
             expected_reason: "DAYOFWEEK of (INT)",
+        },
+        RefuseTestCase {
+            description: "a constant regular expression, whose Java meaning no rule shows RE2 sharing",
+            query: "SELECT regexp_like(s, 'a.c$') AS r FROM input",
+            expected_reason: "REGEXP_LIKE",
         },
         RefuseTestCase {
             description: "title-casing, whose word breaks no rule shows DuckDB sharing",
