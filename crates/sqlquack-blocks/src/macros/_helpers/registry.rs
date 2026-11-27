@@ -4,7 +4,7 @@ use sqlquack_semantics::snowflake::typing::models::SnowflakeType;
 
 use crate::blocks::models::TextFailure;
 
-use crate::macros::_helpers::reading::{checked_body, read_body};
+use crate::macros::_helpers::reading::{checked_body, checked_body_v2, read_body, read_body_v2};
 use crate::macros::_helpers::scalars::{number_body, quotient_body, scalar_body};
 use crate::macros::_helpers::temporal::{
     timestamp_body, utc_zoned_body, zone_name_body, zoned_body,
@@ -14,18 +14,19 @@ use crate::macros::_helpers::writing::{
 };
 use crate::macros::constants::{
     DATE_TEXT_V1, DECIMAL_QUOTIENT_V1, DIVIDEND_PARAMETER, DIVISOR_PARAMETER, HELPER_CALL_PREFIX,
-    JSON_CHECKED_V1, JSON_ESCAPED_V1, JSON_READ_V1, LIMIT_PARAMETER, NUMBER_LARGEST_PARAMETER,
-    NUMBER_TYPE_PARAMETER, OBJECTS_PARAMETER, POWER_PARAMETER, ROUNDED_PARAMETER, SITE_PARAMETER,
-    TEXT_PARAMETER, TIME_ZONE_V1, TIMESTAMP_TEXT_V1, TRY_DATE_TEXT_V1, TRY_TIMESTAMP_TEXT_V1,
-    TRY_UTC_ZONED_TEXT_V1, TRY_ZONED_TEXT_V1, TRYING_PARAMETER, UTC_ZONED_TEXT_V1, VALUE_PARAMETER,
-    VALUES_PARAMETER, VARIANT_BOOLEAN_V1, VARIANT_DATE_V1, VARIANT_FLOAT_V1, VARIANT_JSON_TEXT_V1,
-    VARIANT_JSON_TEXT_V2, VARIANT_NUMBER_V1, VARIANT_TEXT_V1, VARIANT_TEXT_V2,
-    VARIANT_TIMESTAMP_NTZ_V1, VARIANT_WRITTEN_V1, ZONED_TEXT_V1,
+    JSON_CHECKED_V1, JSON_CHECKED_V2, JSON_ESCAPED_V1, JSON_READ_V1, JSON_READ_V2, LIMIT_PARAMETER,
+    NUMBER_LARGEST_PARAMETER, NUMBER_TYPE_PARAMETER, OBJECTS_PARAMETER, POWER_PARAMETER,
+    ROUNDED_PARAMETER, SITE_PARAMETER, TEXT_PARAMETER, TIME_ZONE_V1, TIMESTAMP_TEXT_V1,
+    TRY_DATE_TEXT_V1, TRY_TIMESTAMP_TEXT_V1, TRY_UTC_ZONED_TEXT_V1, TRY_ZONED_TEXT_V1,
+    TRYING_PARAMETER, UTC_ZONED_TEXT_V1, VALUE_PARAMETER, VALUES_PARAMETER, VARIANT_BOOLEAN_V1,
+    VARIANT_DATE_V1, VARIANT_FLOAT_V1, VARIANT_JSON_TEXT_V1, VARIANT_JSON_TEXT_V2,
+    VARIANT_NUMBER_V1, VARIANT_TEXT_V1, VARIANT_TEXT_V2, VARIANT_TIMESTAMP_NTZ_V1,
+    VARIANT_WRITTEN_V1, ZONED_TEXT_V1,
 };
 use crate::macros::models::HelperMacro;
 
 /// The helper macros, dependencies first.
-pub(crate) fn helper_macros() -> [HelperMacro; 23] {
+pub(crate) fn helper_macros() -> [HelperMacro; 25] {
     [
         HelperMacro {
             name: TIME_ZONE_V1,
@@ -60,6 +61,26 @@ pub(crate) fn helper_macros() -> [HelperMacro; 23] {
                       strings, short numbers, true, false and null, where no object at a path \
                       in the fourth argument and no value at a path in the fifth repeats a key, \
                       is read as it is. Any other text goes through json_read_v1.",
+        },
+        HelperMacro {
+            name: JSON_READ_V2,
+            parameters: &[SITE_PARAMETER, TEXT_PARAMETER, TRYING_PARAMETER],
+            body: read_body_v2,
+            explain: "json_read_v1's result, counting the brackets of unfinished text from an \
+                      initial value, so text holding none never raises DuckDB's list_reduce \
+                      error.",
+        },
+        HelperMacro {
+            name: JSON_CHECKED_V2,
+            parameters: &[
+                SITE_PARAMETER,
+                TEXT_PARAMETER,
+                TRYING_PARAMETER,
+                OBJECTS_PARAMETER,
+                VALUES_PARAMETER,
+            ],
+            body: checked_body_v2,
+            explain: "json_checked_v1's fast read, falling back to json_read_v2.",
         },
         HelperMacro {
             name: JSON_ESCAPED_V1,

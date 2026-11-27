@@ -55,3 +55,18 @@ pub(crate) fn calls_in_definition(name: &str, callee: &str) -> Option<usize> {
         .find(|statement| statement.starts_with(&opening))
         .map(|statement| statement.matches(&format!("sqlquack.{callee}(")).count())
 }
+
+/// What the read check call `call`, holding `?` for the text, gives for `text` as VARCHAR, or the tagged message it raises.
+pub(crate) fn read(connection: &duckdb::Connection, (call, text): (&str, &str)) -> Outcome {
+    connection
+        .query_row(&format!("SELECT CAST({call} AS VARCHAR)"), [text], |row| {
+            row.get::<_, Option<String>>(0)
+        })
+        .map_err(|error| {
+            let message = error.to_string();
+            message
+                .split_once("string '")
+                .and_then(|(_, rest)| rest.split_once("' to "))
+                .map_or(message.clone(), |(tagged, _)| tagged.to_owned())
+        })
+}

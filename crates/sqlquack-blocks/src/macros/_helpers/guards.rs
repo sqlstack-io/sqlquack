@@ -1,6 +1,7 @@
 //! Run-time checks the helper macros' bodies raise on, where DuckDB's JSON could differ from Snowflake's.
 
 use crate::macros::constants::SITE_PARAMETER;
+use crate::macros::models::BracketCount;
 use crate::raises::main::raised::raised;
 use crate::raises::main::site_raised::site_raised;
 use crate::semi_structured::constants::{
@@ -63,7 +64,7 @@ pub(crate) fn zero_fractions_whole(sql: &str) -> String {
 }
 
 /// Whether `sql` is markup, or a document cut off before it closes with no lenient quoting.
-pub(crate) fn unreadable(sql: &str) -> String {
+pub(crate) fn unreadable(sql: &str, count: BracketCount) -> String {
     let strings = JSON_STRING_PATTERN.replace('\'', "''");
     let outside = format!("regexp_replace({sql}, '(?s){strings}', '', 'g')");
     let before_open_string = bound(
@@ -72,14 +73,25 @@ pub(crate) fn unreadable(sql: &str) -> String {
         "(CASE WHEN strpos(unquoted, '\"') > 0 \
          THEN left(unquoted, strpos(unquoted, '\"') - 1) ELSE unquoted END)",
     );
+    let reduced: &str = match count {
+        BracketCount::FirstBracket => {
+            "lambda depth, step: CASE WHEN depth <= 0 THEN -1 ELSE depth + step END"
+        }
+        BracketCount::InitialValue => {
+            "lambda depth, step: CASE WHEN depth = -2 THEN step WHEN depth <= 0 THEN -1 \
+             ELSE depth + step END, -2"
+        }
+    };
     let unfinished = bound(
         &before_open_string,
         "head",
-        "(regexp_full_match(head, '(?s)\\s*[\\[{][^''`/#\\\\]*') \
-         AND list_reduce(list_transform(\
-         string_split(regexp_replace(head, '[^\\[\\]{}]', '', 'g'), ''), \
-         lambda c: CASE WHEN c IN ('[', '{') THEN 1 ELSE -1 END), \
-         lambda depth, step: CASE WHEN depth <= 0 THEN -1 ELSE depth + step END) > 0)",
+        &format!(
+            "(regexp_full_match(head, '(?s)\\s*[\\[{{][^''`/#\\\\]*') \
+             AND list_reduce(list_transform(\
+             string_split(regexp_replace(head, '[^\\[\\]{{}}]', '', 'g'), ''), \
+             lambda c: CASE WHEN c IN ('[', '{{') THEN 1 ELSE -1 END), \
+             {reduced}) > 0)"
+        ),
     );
     format!("(regexp_matches({sql}, '^\\s*<') OR {unfinished})")
 }

@@ -1,6 +1,6 @@
 use sqlquack_diagnostics::provenance::models::ProvenanceLog;
 
-use crate::macros::constants::JSON_CHECKED_V1;
+use crate::macros::constants::JSON_CHECKED_V2;
 use crate::semi_structured::main::json_guarded::json_guarded;
 use crate::semi_structured::tests::helpers::evaluated;
 use crate::semi_structured::tests::test_types::FoldedLiteralTestCase;
@@ -96,7 +96,7 @@ fn given_json_literals_when_guarding_then_only_text_the_fast_check_clears_folds_
         let folded = json_guarded(&literal, false, None, &log);
         let checked = json_guarded(&format!("CAST({literal} AS VARCHAR)"), false, None, &log);
         assert_eq!(
-            !folded.contains(JSON_CHECKED_V1),
+            !folded.contains(JSON_CHECKED_V2),
             test_case.expected_folded,
             "{}: {folded}",
             test_case.description
