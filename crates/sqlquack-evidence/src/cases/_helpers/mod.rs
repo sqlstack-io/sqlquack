@@ -1,4 +1,3 @@
-pub(crate) mod databricks_source_sql;
 pub(crate) mod files;
 pub(crate) mod functions;
 pub(crate) mod hashing;

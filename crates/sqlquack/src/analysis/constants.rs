@@ -14,6 +14,8 @@ pub const VARIANT_ABI: &str = "variant-json-v1";
 pub const VARIANT_TEXT_TYPE: &str = "VARCHAR";
 /// Why a case with setup statements refuses: DuckDB does not replay case setup yet.
 pub const CASE_SETUP_UNREPLAYED: &str = "case setup statements are not replayed on DuckDB yet";
+/// Why a case recorded on a warehouse other than Snowflake is refused: no converter reads its SQL.
+pub const SOURCE_DIALECT_UNCONVERTED: &str = "no converter reads SQL recorded on";
 /// Why a case calling Python functions refuses when no interpreter is given.
 pub const PYTHON_RUNTIME_MISSING: &str =
     "a Python function, which needs a Python runtime to register it: verify with --python";

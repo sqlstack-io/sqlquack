@@ -1465,6 +1465,7 @@ name = "sqlquack-evidence"
 version = "0.25.0"
 dependencies = [
  "arrow",
+ "base64",
  "duckdb",
  "rayon",
  "serde",
@@ -1472,6 +1473,7 @@ dependencies = [
  "sha2",
  "sqlquack-compare",
  "sqlquack-diagnostics",
+ "sqlquack-evidence",
  "sqlquack-policy",
  "sqlquack-syntax",
  "tempfile",

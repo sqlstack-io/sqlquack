@@ -108,7 +108,8 @@ fn profile_problems(name: &str, profile: &SessionProfile) -> Vec<String> {
             "session profile `{name}` needs duckdb_time_zone = \"{SESSION_TIME_ZONE}\""
         ));
     }
-    if profile.snowflake.get(TIMEZONE_PARAMETER)
+    let time_zone = profile.snowflake.get(TIMEZONE_PARAMETER);
+    if time_zone.or_else(|| profile.pinned.get(TIMEZONE_PARAMETER))
         != Some(&SessionValue::Text(SESSION_TIME_ZONE.to_owned()))
     {
         found.push(format!(

@@ -386,7 +386,10 @@ pub(crate) fn run_verification(
     python: Option<&Path>,
 ) -> Result<(Evidence, VerifyReport), String> {
     let evidence = load_evidence(paths)?;
-    let problems = check_equivalence_cases(&evidence.cases);
+    let problems = match evidence.policy.source_dialect.is_snowflake() {
+        true => check_equivalence_cases(&evidence.cases),
+        false => Vec::new(),
+    };
     if !problems.is_empty() {
         return Err(problems.join("; "));
     }

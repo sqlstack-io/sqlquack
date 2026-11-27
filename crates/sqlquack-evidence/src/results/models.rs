@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 use sqlquack_compare::comparison::models::RecordedResult;
-use sqlquack_policy::policy::models::SessionValue;
+use sqlquack_policy::policy::models::{EvidenceDialect, SessionValue};
 
 /// The metadata file beside each recorded result. Unknown keys are rejected.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -44,6 +44,9 @@ pub struct ResultMetadata {
     pub arrow_sha256: Option<String>,
     /// The warehouse error, for error outcomes.
     pub error: Option<RecordedFailure>,
+    /// The warehouse recorded on, whose evidence profile reads the Arrow file; absent for Snowflake.
+    #[serde(default, skip_serializing_if = "EvidenceDialect::is_snowflake")]
+    pub source_dialect: EvidenceDialect,
 }
 
 /// Whether the warehouse returned rows or an error.
@@ -58,15 +61,15 @@ pub enum RecordedOutcome {
     Types,
 }
 
-/// One result column as the Snowflake connector describes it.
+/// One result column as the warehouse client describes it.
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct WarehouseColumn {
     /// The column name.
     pub name: String,
-    /// The connector's numeric type code.
-    pub type_code: i64,
-    /// The connector's type name, such as `FIXED` or `TEXT`.
+    /// The connector's numeric type code; Databricks has none.
+    pub type_code: Option<i64>,
+    /// The connector's type name, such as `FIXED` or `TEXT`, or a full type such as `ARRAY<INT>`.
     pub type_name: String,
     /// Precision, for numbers.
     pub precision: Option<i64>,

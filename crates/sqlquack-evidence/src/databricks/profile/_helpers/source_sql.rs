@@ -4,7 +4,7 @@ use crate::cases::models::{CaseDefinition, Spelling};
 use crate::constants::{INPUT_RELATION, ORDINAL_COLUMN, VALUE_COLUMN};
 
 /// `WITH input AS (SELECT * FROM VALUES (1, CAST(v AS T)), ... AS input(ordinal, ...)) <query>`.
-pub(crate) fn databricks_source_sql(case: &CaseDefinition, spelling: Spelling) -> String {
+pub(crate) fn values_source_sql(case: &CaseDefinition, spelling: Spelling) -> String {
     let written = match spelling {
         Spelling::Source => case.expression.as_ref().or(case.query.as_ref()),
         Spelling::Canonical => case.canonical.as_ref(),
@@ -19,23 +19,16 @@ pub(crate) fn databricks_source_sql(case: &CaseDefinition, spelling: Spelling) -
     if case.rows.is_empty() {
         return body;
     }
-    let names: Vec<&str> = std::iter::once(ORDINAL_COLUMN)
-        .chain(case.columns.iter().map(|column| column.name.as_str()))
-        .collect();
-    let rows: Vec<String> =
-        case.rows
-            .iter()
-            .enumerate()
-            .map(|(index, row)| {
-                let cells: Vec<String> =
-                    std::iter::once((index + 1).to_string())
-                        .chain(row.iter().zip(&case.columns).map(|(value, column)| {
-                            format!("CAST({value} AS {})", column.data_type)
-                        }))
-                        .collect();
-                format!("({})", cells.join(", "))
-            })
-            .collect();
+    let mut names: Vec<&str> = vec![ORDINAL_COLUMN];
+    names.extend(case.columns.iter().map(|column| column.name.as_str()));
+    let mut rows: Vec<String> = Vec::with_capacity(case.rows.len());
+    for (index, row) in case.rows.iter().enumerate() {
+        let mut cells: Vec<String> = vec![(index + 1).to_string()];
+        for (value, column) in row.iter().zip(&case.columns) {
+            cells.push(format!("CAST({value} AS {})", column.data_type));
+        }
+        rows.push(format!("({})", cells.join(", ")));
+    }
     format!(
         "WITH {INPUT_RELATION} AS (SELECT * FROM VALUES {} AS {INPUT_RELATION}({})) {body}",
         rows.join(", "),

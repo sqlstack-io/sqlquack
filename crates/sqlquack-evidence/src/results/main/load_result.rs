@@ -2,6 +2,7 @@
 
 use std::path::Path;
 
+use crate::dialects::main::evidence_profile::evidence_profile;
 use crate::errors::EvidenceError;
 use crate::results::_helpers::reading::{read_arrow, read_metadata, recorded_result, sha256_hex};
 use crate::results::models::{RecordedOutcome, StoredResult};
@@ -51,12 +52,18 @@ pub fn load_result(directory: &Path, hash: &str) -> Result<Option<StoredResult>,
                     "{hash}: the Arrow file does not match the hash in its metadata"
                 )));
             }
-            Some(recorded_result(
-                &metadata.case_hash,
-                &metadata.columns,
-                metadata.row_count,
-                read_arrow(hash, bytes)?,
-            )?)
+            let profile = evidence_profile(metadata.source_dialect)
+                .map_err(|reason| EvidenceError::InvalidResult(format!("{hash}: {reason}")))?;
+            let rows = read_arrow(hash, bytes)?;
+            match profile.recorded_result(&metadata, &rows) {
+                Some(stored) => Some(stored?),
+                None => Some(recorded_result(
+                    &metadata.case_hash,
+                    &metadata.columns,
+                    metadata.row_count,
+                    rows,
+                )?),
+            }
         }
     };
     Ok(Some(StoredResult { metadata, rows }))

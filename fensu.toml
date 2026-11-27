@@ -62,17 +62,19 @@ rule = "FPRSL106"
 path = "crates/sqlquack-policy/src/policy/constants.rs"
 reason = "compiles in crates/sqlquack-policy/policy.toml, which sits at the crate root for `cargo package` and the evidence commands"
 
-# Format, lint and fingerprint take a dialect at run time, so each keeps one registry that maps
+# Format, lint, fingerprint and evidence take a dialect at run time, so each keeps one registry that maps
 # a dialect value to its src/<dialect>/ profile, with every line behind that dialect's feature.
 [targets.rust.rule_options.XSQ007]
 dialect_registries = [
     "crates/sqlquack-semantics/src/dialects",
     "crates/sqlquack-format/src/dialects",
     "crates/sqlquack-fingerprint/src/dialects",
+    "crates/sqlquack-evidence/src/dialects",
 ]
 
 # A crate that is also a Python distribution keeps its pyproject.toml and shipped notices beside Cargo.toml,
-# and sqlquack-policy keeps the policy.toml it compiles in, so `cargo package` includes it.
+# and sqlquack-policy keeps the policy.toml it compiles in, so `cargo package` includes it, beside
+# the Databricks policy the evidence commands read.
 [targets.rust.rule_options.FPRSR311]
 allowed_entries = [
     "Cargo.toml",
@@ -86,6 +88,7 @@ allowed_entries = [
     "THIRD_PARTY_NOTICES",
     "pyproject.toml",
     "policy.toml",
+    "policy-databricks.toml",
 ]
 
 # Layer: only the command-line crates may depend on the conversion rules and pipeline.

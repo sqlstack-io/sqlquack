@@ -41,6 +41,8 @@ pub enum Command {
     Census(CensusArguments),
     /// Write a pending case file for every case without a recorded result.
     Pending(PendingArguments),
+    /// Write the results of pending Databricks cases from a Databricks recording journal.
+    ImportDatabricks(ImportDatabricksArguments),
     /// Replay every recorded case on DuckDB and compare with the recorded result.
     Verify(VerifyArguments),
     /// Sample recorded cases for re-recording, or compare re-recorded results with stored ones.
@@ -232,6 +234,23 @@ pub struct PendingArguments {
     /// Where pending case files are written.
     #[arg(long, default_value = PENDING_DIR)]
     pub out: PathBuf,
+}
+
+/// Arguments of `sqlquack import-databricks`.
+#[derive(Debug, Args)]
+pub struct ImportDatabricksArguments {
+    /// A journal of statements and their answers, as the Databricks recording tool writes it.
+    #[arg(long, required = true)]
+    pub journal: Vec<PathBuf>,
+    /// The pending case files the journal's statements answer.
+    #[arg(long, default_value = PENDING_DIR)]
+    pub pending: PathBuf,
+    /// Where results are written; an existing result is never replaced.
+    #[arg(long, default_value = RESULTS_DIR)]
+    pub results: PathBuf,
+    /// The Databricks SQL release the journal was recorded on, such as `2026.45`.
+    #[arg(long)]
+    pub warehouse_version: String,
 }
 
 /// Arguments of `sqlquack verify`.
