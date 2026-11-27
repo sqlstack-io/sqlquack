@@ -112,18 +112,6 @@ required = true
 note = "the form without its required { ADD | DROP }"
 
 [[obligation]]
-id = "db.security_admin.alter-group.o018"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required GROUP after DROP"
-
-[[obligation]]
-id = "db.security_admin.alter-group.o019"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required USER after DROP"
-
-[[obligation]]
 id = "db.security_admin.alter-group.o020"
 kind = "negative_neighbour"
 required = true
@@ -144,6 +132,20 @@ required = true
 target = "[ ... ]"
 anchor = "doc.security-alter-group / Syntax"
 note = "the ADD or DROP group repeated as a whole"
+
+[[obligation]]
+id = "db.security_admin.alter-group.o018"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.security-alter-group / Syntax"
+note = "the form without its required GROUP after DROP"
+
+[[obligation]]
+id = "db.security_admin.alter-group.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.security-alter-group / Syntax"
+note = "the form without its required USER after DROP"
 
 [[obligation]]
 id = "db.security_admin.create-group.o001"

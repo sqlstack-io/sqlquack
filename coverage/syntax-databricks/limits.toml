@@ -311,6 +311,26 @@ context = "raw"
 expect = "observe"
 
 [[limit]]
+form = "db.ddl.create-table-constraint.foreign-key-references"
+kind = "option_present"
+target = "DEFERRABLE"
+note = "a FOREIGN KEY with the documented constraint option DEFERRABLE, which the local parser refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 DEFERRABLE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-constraint.foreign-key-references"
+kind = "option_present"
+target = "INITIALLY DEFERRED"
+note = "a FOREIGN KEY with the documented constraint option INITIALLY DEFERRED, which the local parser refuses"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 INITIALLY DEFERRED )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
 form = "db.query.query"
 kind = "option_present"
 target = "|> after the query's clauses"
@@ -427,6 +447,16 @@ target = "CHANGE UNSET TAGS"
 note = "UNSET TAGS after CHANGE COLUMN, which the warehouse refuses"
 anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
 sql = "ALTER TABLE t1 CHANGE COLUMN c1 UNSET TAGS ( 'k' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-set-mask"
+kind = "option_absent"
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+note = "SET TAGS on a column with no = between a tag's name and value"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ALTER COLUMN c1 SET TAGS ( 'k' 'v' )"
 context = "raw"
 expect = "observe"
 
@@ -911,6 +941,46 @@ anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
 sql = "SELECT * FROM t1 FOR SYSTEM_VERSION AS OF 1"
 context = "raw"
 expect = "observe"
+
+[[limit]]
+form = "db.query.select-table-reference"
+kind = "option_present"
+target = "STREAM ( <table_valued_function> )"
+note = "a table-valued function call inside STREAM ( ), which SqlBaseParser allows (STREAM ( tableFunctionCall ) identifiedByClause? watermarkClause? tableAlias)"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+sql = "SELECT * FROM STREAM ( range ( 1 ) )"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.query.select-table-reference"
+kind = "option_present"
+target = "STREAM ( <table_valued_function> ) <table_alias>"
+note = "a table-valued function call inside STREAM ( ) with a table alias after the parenthesis"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+sql = "SELECT * FROM STREAM ( read_files ( '/x' ) ) a1"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.query.select-table-reference"
+kind = "option_present"
+target = "STREAM ( IDENTIFIER ( <name> ) )"
+note = "an IDENTIFIER clause inside STREAM ( ), which SqlBaseParser reads as a table function call"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+sql = "SELECT * FROM STREAM ( IDENTIFIER ( 't1' ) )"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.query.select-table-reference"
+kind = "negative_neighbour"
+target = "STREAM ( <table_name> )"
+note = "a table alias inside STREAM ( ): the alias belongs after the parenthesis (STREAM ( table_name ) [ table_alias ])"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+sql = "SELECT * FROM STREAM ( t1 a1 )"
+context = "raw"
+expect = "reject"
 
 [[limit]]
 form = "db.query.select-sampling"
@@ -2498,6 +2568,16 @@ kind = "negative_neighbour"
 target = "<clustering_columns> in [ ( <clustering_columns> ) | AUTO ]"
 note = "a string literal in place of <clustering_columns>; the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers unsupported_feature (DELTA_CLUSTER_BY_EXPRESSIONS_NOT_SUPPORTED), so the answer is recorded rather than expected"
 sql = "ALTER TABLE t1 REPLACE PARTITIONED BY WITH CLUSTER BY ( 'v1' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table"
+kind = "option_absent"
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+note = "SET TAGS on a table with no = between a tag's name and value"
+anchor = "doc.sql-ref-syntax-ddl-alter-table / Syntax"
+sql = "ALTER TABLE t1 SET TAGS ( 'k' 'v' )"
 context = "raw"
 expect = "observe"
 
@@ -5747,6 +5827,26 @@ context = "raw"
 expect = "reject"
 
 [[limit]]
+form = "db.scripting.compound-stmt"
+kind = "option_present"
+target = "SET <config_key> = <value>"
+note = "SET of a dotted configuration key inside a compound, which the local parser reads as a variable assignment"
+anchor = "doc.control-flow.compound-stmt / Syntax"
+sql = "BEGIN SET spark.sql.ansi.enabled = true ; END"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.scripting.compound-stmt"
+kind = "option_present"
+target = "SET ( <variable> [ , ... ] ) = ( <query> )"
+note = "SET of a variable list from a query inside a compound, as SqlBaseParser setStatementInsideSqlScript allows; the variables are not declared"
+anchor = "doc.control-flow.compound-stmt / Syntax"
+sql = "BEGIN SET ( c1 , c2 ) = ( SELECT 1 , 2 ) ; END"
+context = "raw"
+expect = "observe"
+
+[[limit]]
 form = "db.functions.like.like"
 kind = "option_present"
 target = "[ ESCAPE <escape> ] inside the parentheses"
@@ -6447,6 +6547,26 @@ context = "raw"
 expect = "observe"
 
 [[limit]]
+form = "db.ddl.create-table-constraint.references"
+kind = "option_present"
+target = "ON DELETE NO ACTION"
+note = "a column REFERENCES with ON DELETE NO ACTION"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT REFERENCES t2 ON DELETE NO ACTION )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-table-constraint.references"
+kind = "option_present"
+target = "ON UPDATE NO ACTION"
+note = "a column REFERENCES with ON UPDATE NO ACTION"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT REFERENCES t2 ON UPDATE NO ACTION )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
 form = "db.dml.insert-into.values-default"
 kind = "identifier_class"
 target = "DEFAULT"
@@ -6863,6 +6983,16 @@ sql = "ALTER MATERIALIZED VIEW v1 ALTER c1 COMMENT 'x'"
 context = "raw"
 expect = "observe"
 
+[[limit]]
+form = "db.ddl.alter-materialized-view.materialized-view-add-alter"
+kind = "option_absent"
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+note = "SET TAGS on a materialized view with no = between a tag's name and value"
+anchor = "doc.sql-ref-syntax-ddl-alter-materialized-view / Syntax"
+sql = "ALTER MATERIALIZED VIEW v1 SET TAGS ( 'k' 'v' )"
+context = "raw"
+expect = "observe"
+
 [[suppress]]
 form = "db.ddl.alter-recipient"
 kind = "negative_neighbour"
@@ -6911,6 +7041,16 @@ target = "the form without its required COLUMN"
 note = "the form without its required COLUMN; the warehouse parses the text, so its answer is recorded rather than expected"
 anchor = "doc.sql-ref-syntax-ddl-alter-streaming-table / Syntax"
 sql = "ALTER STREAMING TABLE t1 ALTER c1 COMMENT 'x'"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-streaming-table.streaming-table-add-alter"
+kind = "option_absent"
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+note = "SET TAGS on a streaming table with no = between a tag's name and value"
+anchor = "doc.sql-ref-syntax-ddl-alter-streaming-table / Syntax"
+sql = "ALTER STREAMING TABLE t1 SET TAGS ( 'k' 'v' )"
 context = "raw"
 expect = "observe"
 
@@ -7081,6 +7221,26 @@ target = "<sql_string>"
 note = "an unquoted identifier in place of <sql_string>; the warehouse parses the text, so its answer is recorded rather than expected"
 anchor = "doc.sql-ref-syntax-aux-execute-immediate / Syntax"
 sql = "EXECUTE IMMEDIATE m1"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.scripting.execute-immediate"
+kind = "negative_neighbour"
+target = "USING { <arg_expr> [ AS ] [ <alias> ] }"
+note = "AS written as a list item inside a parenthesised USING list, which the local parser reads as a column named AS"
+anchor = "doc.sql-ref-syntax-aux-execute-immediate / Syntax"
+sql = "EXECUTE IMMEDIATE 'SELECT 1' USING ( 1 , AS , x )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.scripting.execute-immediate"
+kind = "negative_neighbour"
+target = "USING { <arg_expr> [ AS ] [ <alias> ] }"
+note = "AS with no alias after a USING argument"
+anchor = "doc.sql-ref-syntax-aux-execute-immediate / Syntax"
+sql = "EXECUTE IMMEDIATE 'SELECT 1' USING 1 AS"
 context = "raw"
 expect = "observe"
 
@@ -7535,3 +7695,544 @@ anchor = "doc.control-flow.iterate-stmt / Syntax"
 sql = "BEGIN DECLARE c1 INT DEFAULT 0 ; l1 : LOOP SET c1 = c1 + 1 ; IF c1 > 1 THEN LEAVE l1 ; END IF ; ITERATE l1 ; END LOOP l1 ; END"
 context = "raw"
 expect = "accept"
+
+[[limit]]
+form = "db.dml.insert-into.into-replace-on"
+kind = "positive"
+target = ""
+note = "the page's REPLACE ON example with a parenthesised source query and its alias, run on its own students and people tables"
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+sql = "INSERT INTO TABLE students AS t REPLACE ON t.name <=> s.name ( SELECT * FROM people ) AS s"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.dml.insert-into.into-replace-on"
+kind = "positive"
+target = ""
+note = "a column list before the target alias with a parenthesised source query and its alias, run on the page's students and people tables; observed, since the page notes column lists for REPLACE ON apply to Databricks Runtime 19 and above"
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+sql = "INSERT INTO TABLE students ( row_origin , name ) AS t REPLACE ON t.name <=> s.name ( SELECT * FROM people ) AS s"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.dml.insert-into.into-replace-on"
+kind = "option_present"
+target = "BY NAME"
+note = "the page's REPLACE ON example inserting by name, with the target alias before BY NAME as the page writes it; observed, since the page notes BY NAME for REPLACE ON applies to Databricks Runtime 18.1 and above"
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+sql = "INSERT INTO TABLE students AS t BY NAME REPLACE ON t.name <=> s.name SELECT * FROM ( VALUES ( 'query' , 'Bob' ) , ( 'query' , 'Charlie' ) ) AS s ( row_origin , name )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.dml.insert-into.into-replace-on"
+kind = "option_present"
+target = "( <column_name> [ , ... ] )"
+note = "the page's REPLACE ON example with a column list and an unparenthesised source query; observed, since the page notes column lists for REPLACE ON apply to Databricks Runtime 19 and above"
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+sql = "INSERT INTO TABLE students ( row_origin , name ) AS t REPLACE ON t.name <=> s.name SELECT * FROM ( VALUES ( 'queryColumnList' , 'Alice' ) , ( 'queryColumnList' , 'Eve' ) ) AS s ( row_origin , name )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.scripting.loop-stmt"
+kind = "negative_neighbour"
+target = "[ <label> ]"
+note = "an end label that differs from the begin label; Spark's parser refuses mismatched labels, while the local parser accepts them"
+anchor = "doc.control-flow.loop-stmt / Syntax"
+sql = "BEGIN l1 : LOOP LEAVE l1 ; END LOOP l2 ; END"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.tblproperties.unset-tblproperties"
+kind = "option_present"
+target = "<property_key>"
+note = "an unquoted property key on a table"
+anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
+sql = "ALTER TABLE t1 UNSET TBLPROPERTIES ( k )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.tblproperties.unset-tblproperties"
+kind = "option_present"
+target = "IF EXISTS"
+note = "UNSET TBLPROPERTIES IF EXISTS on a view"
+anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
+sql = "ALTER VIEW v1 UNSET TBLPROPERTIES IF EXISTS ( 'k' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.tblproperties.unset-tblproperties"
+kind = "option_present"
+target = "<property_key>"
+note = "a dotted unquoted property key on a table"
+anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
+sql = "ALTER TABLE t1 UNSET TBLPROPERTIES ( a.b )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-view"
+kind = "option_present"
+target = "SET TBLPROPERTIES <set_tblproperties_clause>"
+note = "a view property with an unquoted key and an integer value"
+anchor = "doc.sql-ref-syntax-ddl-alter-view / Syntax"
+sql = "ALTER VIEW v1 SET TBLPROPERTIES ( k = 1 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-view"
+kind = "option_absent"
+target = "SET TBLPROPERTIES <set_tblproperties_clause>"
+note = "a view property without = between its key and value"
+anchor = "doc.sql-ref-syntax-ddl-alter-view / Syntax"
+sql = "ALTER VIEW v1 SET TBLPROPERTIES ( 'k' 'v' )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.functions.date-add3"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "without its ( the text reads as the column DATE_ADD aliased by the unit, inside a parenthesised list of three expressions, so no text isolates the missing (; the derived case also left out the unit. The observed [[limit]] 'SELECT ( DATE_ADD MICROSECOND , 1 , 1 )' keeps the unit, and its receipt shows what the warehouse makes of it"
+
+[[limit]]
+form = "db.functions.date-add3"
+kind = "negative_neighbour"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
+anchor = "doc.functions.date_add3 / Syntax"
+sql = "SELECT ( DATE_ADD MICROSECOND , 1 , 1 )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.functions.dateadd"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "without its ( the text reads as the column DATEADD aliased by the unit, inside a parenthesised list of three expressions, so no text isolates the missing (; the derived case also left out the unit. The observed [[limit]] 'SELECT ( DATEADD MICROSECOND , 1 , 1 )' keeps the unit, and its receipt shows what the warehouse makes of it"
+
+[[limit]]
+form = "db.functions.dateadd"
+kind = "negative_neighbour"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
+anchor = "doc.functions.dateadd / Syntax"
+sql = "SELECT ( DATEADD MICROSECOND , 1 , 1 )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.functions.datediff3"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "without its ( the text reads as the column DATEDIFF aliased by the unit, inside a parenthesised list of three expressions, so no text isolates the missing (; the derived case also left out the unit. The observed [[limit]] 'SELECT ( DATEDIFF MICROSECOND , 1 , 1 )' keeps the unit, and its receipt shows what the warehouse makes of it"
+
+[[limit]]
+form = "db.functions.datediff3"
+kind = "negative_neighbour"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
+anchor = "doc.functions.datediff3 / Syntax"
+sql = "SELECT ( DATEDIFF MICROSECOND , 1 , 1 )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.functions.timediff"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "without its ( the text reads as the column TIMEDIFF aliased by the unit, inside a parenthesised list of three expressions, so no text isolates the missing (; the derived case also left out the unit. The observed [[limit]] 'SELECT ( TIMEDIFF MICROSECOND , 1 , 1 )' keeps the unit, and its receipt shows what the warehouse makes of it"
+
+[[limit]]
+form = "db.functions.timediff"
+kind = "negative_neighbour"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
+anchor = "doc.functions.timediff / Syntax"
+sql = "SELECT ( TIMEDIFF MICROSECOND , 1 , 1 )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.functions.timestampadd"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "without its ( the text reads as the column TIMESTAMPADD aliased by the unit, inside a parenthesised list of three expressions, so no text isolates the missing (; the derived case also left out the unit. The observed [[limit]] 'SELECT ( TIMESTAMPADD MICROSECOND , 1 , 1 )' keeps the unit, and its receipt shows what the warehouse makes of it"
+
+[[limit]]
+form = "db.functions.timestampadd"
+kind = "negative_neighbour"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
+anchor = "doc.functions.timestampadd / Syntax"
+sql = "SELECT ( TIMESTAMPADD MICROSECOND , 1 , 1 )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.functions.timestampdiff"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required ("
+reason = "without its ( the text reads as the column TIMESTAMPDIFF aliased by the unit, inside a parenthesised list of three expressions, so no text isolates the missing (; the derived case also left out the unit. The observed [[limit]] 'SELECT ( TIMESTAMPDIFF MICROSECOND , 1 , 1 )' keeps the unit, and its receipt shows what the warehouse makes of it"
+
+[[limit]]
+form = "db.functions.timestampdiff"
+kind = "negative_neighbour"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
+anchor = "doc.functions.timestampdiff / Syntax"
+sql = "SELECT ( TIMESTAMPDIFF MICROSECOND , 1 , 1 )"
+context = "raw"
+expect = "observe"
+
+[[suppress]]
+form = "db.functions.read-kafka"
+kind = "option_absent"
+target = "[ , ... ]"
+note = ""
+reason = "the derived case READ_KAFKA ( ) drops the first option with the repetition; the existing [[limit]] 'SELECT * FROM READ_KAFKA ( k1 => 'v' )' (one option pair with the list not continued) is the case without the repetition"
+
+[[suppress]]
+form = "db.expressions.identifiers.subscript-dot"
+kind = "alternative"
+target = "{ <letter> | <digit> | '_' } → '_'"
+note = ""
+reason = "the derived case writes '_' as a string literal, not as an identifier made of the underscore the alternative names; the [[limit]] 'SELECT ( _ )' takes that branch"
+
+[[limit]]
+form = "db.expressions.identifiers.subscript-dot"
+kind = "alternative"
+target = "{ <letter> | <digit> | '_' } → '_'"
+note = "an identifier made of the underscore alone"
+anchor = "doc.sql-ref-identifiers / Syntax"
+sql = "SELECT ( _ )"
+context = "raw"
+expect = "accept"
+
+[[suppress]]
+form = "db.security_admin.alter-group"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required GROUP after DROP"
+reason = "the derived case ALTER GROUP v1 ADD v1 leaves the keyword out after ADD, not after DROP; the [[limit]] 'ALTER GROUP v1 DROP v1' leaves GROUP out after DROP"
+
+[[limit]]
+form = "db.security_admin.alter-group"
+kind = "negative_neighbour"
+note = "the form without its required GROUP after DROP"
+anchor = "doc.security-alter-group / Syntax"
+sql = "ALTER GROUP v1 DROP v1"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "db.security_admin.alter-group"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required USER after DROP"
+reason = "the derived case ALTER GROUP v1 ADD v1 leaves the keyword out after ADD, not after DROP; the [[limit]] 'ALTER GROUP v1 DROP v1' leaves USER out after DROP"
+
+[[limit]]
+form = "db.security_admin.alter-group"
+kind = "negative_neighbour"
+note = "the form without its required USER after DROP"
+anchor = "doc.security-alter-group / Syntax"
+sql = "ALTER GROUP v1 DROP v1"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "db.query.select-match-recognize"
+kind = "operand_type_class"
+target = "<row_pattern_definition_list>"
+note = "a valid string_literal"
+reason = "<row_pattern_definition_list> is a list of <variable> AS <condition> definitions (the page's Parameters), not a string, so neither a string fill nor DEFINE m1, which fails for the missing AS <condition>, is its kind; the positive's DEFINE A AS TRUE is its valid fill and the [[limit]] DEFINE 'v1' its wrong kind"
+
+[[suppress]]
+form = "db.query.select-match-recognize"
+kind = "negative_neighbour"
+target = "<row_pattern_definition_list>"
+note = "an unquoted identifier in place of <row_pattern_definition_list>"
+reason = "<row_pattern_definition_list> is a list of <variable> AS <condition> definitions (the page's Parameters), not a string, so neither a string fill nor DEFINE m1, which fails for the missing AS <condition>, is its kind; the positive's DEFINE A AS TRUE is its valid fill and the [[limit]] DEFINE 'v1' its wrong kind"
+
+[[limit]]
+form = "db.query.select-match-recognize"
+kind = "negative_neighbour"
+target = "<row_pattern_definition_list>"
+note = "a string literal in place of <row_pattern_definition_list>"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize / Syntax"
+sql = "SELECT * FROM t1 MATCH_RECOGNIZE ( PATTERN ( A ) DEFINE 'v1' )"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "db.query.query"
+kind = "alternative"
+target = "[ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY… → { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ] }"
+note = ""
+reason = "the derived case is SELECT 1, the text of the option_absent case, so it takes neither branch; the existing [[limit]] 'SELECT c1 FROM t1 DISTRIBUTE BY c1 SORT BY c1' (the DISTRIBUTE BY and SORT BY branch taken) takes it"
+
+[[suppress]]
+form = "db.query.query"
+kind = "alternative"
+target = "{ [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY… → [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ]"
+note = ""
+reason = "the derived case is SELECT 1, the text of the option_absent case, so it takes neither branch; the existing [[limit]] 'SELECT c1 FROM t1 DISTRIBUTE BY c1 SORT BY c1' (the DISTRIBUTE BY and SORT BY branch taken) takes it"
+
+[[suppress]]
+form = "db.utility.describe-table"
+kind = "alternative"
+target = "{ [ PARTITION <partition_clause> ] | [ <column_name> ] } → [ PARTITION <partition_clause> ]"
+note = ""
+reason = "the derived case is the bare DESC t1 or DESCRIBE t1, which takes neither branch; the existing [[limit]] 'DESC t1 PARTITION ( c1 = 1 )' (the PARTITION clause alone) takes this one"
+
+[[suppress]]
+form = "db.utility.describe-table"
+kind = "alternative"
+target = "{ [ PARTITION <partition_clause> ] | [ <column_name> ] } → [ <column_name> ]"
+note = ""
+reason = "the derived case is the bare DESC t1 or DESCRIBE t1, which takes neither branch; the existing [[limit]] 'DESC t1 c1' (a column name, without AS JSON) takes this one"
+
+[[limit]]
+form = "db.ddl.create-table-constraint.references"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+sql = "CREATE TABLE t3 ( c1 INT ! NULL UNIQUE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-comment-first"
+kind = "negative_neighbour"
+note = "! in place of NOT in SET NOT NULL outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ALTER c1 SET ! NULL"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-comment-first"
+kind = "negative_neighbour"
+note = "! in place of NOT in DROP NOT NULL outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 CHANGE c1.c1 DROP ! NULL"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.dml.merge-into"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.delta-merge-into / Syntax"
+sql = "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1 WHEN ! MATCHED THEN INSERT *"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.between"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.functions.between / Syntax"
+sql = "SELECT ( 1 ! BETWEEN 1 AND 1 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.ilike.ilike"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.functions.ilike / Syntax"
+sql = "SELECT ( v1 ! ILIKE ( 'm' ) ESCAPE '!' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.ilike.ilike-any-some-all"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.functions.ilike / Syntax"
+sql = "SELECT ( v1 ! ILIKE ANY ( 'm' , 'm' ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.like.like"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.functions.like / Syntax"
+sql = "SELECT ( v1 ! LIKE ( 'm' ) ESCAPE '!' )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.like.like-any-some-all"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.functions.like / Syntax"
+sql = "SELECT ( v1 ! LIKE ANY ( 'm' , 'm' ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.isdistinct"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.functions.isdistinct / Syntax"
+sql = "SELECT ( 1 IS ! DISTINCT FROM 1 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.isfalse"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.functions.isfalse / Syntax"
+sql = "SELECT ( 1 IS ! FALSE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.isnullop"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.functions.isnullop / Syntax"
+sql = "SELECT ( 1 IS ! NULL )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.istrue"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.functions.istrue / Syntax"
+sql = "SELECT ( 1 IS ! TRUE )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.regexp"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.functions.regexp / Syntax"
+sql = "SELECT ( v1 ! REGEXP v1 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.rlike"
+kind = "negative_neighbour"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+anchor = "doc.functions.rlike / Syntax"
+sql = "SELECT ( v1 ! RLIKE v1 )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.functions.bangsign"
+kind = "positive"
+note = "the prefix ! before a parenthesised condition, the control for the refused infix !"
+anchor = "doc.functions.bangsign / Syntax"
+sql = "SELECT ( ! ( 1 = 1 ) )"
+context = "raw"
+expect = "accept"
+
+[[limit]]
+form = "db.query.select-hints"
+kind = "negative_neighbour"
+note = "a trailing comma inside a hint"
+anchor = "doc.sql-ref-syntax-qry-select-hints / Syntax"
+sql = "SELECT /*+ MAPJOIN ( t1 ) , */ c1 FROM t1"
+context = "raw"
+expect = "reject"
+
+[[suppress]]
+form = "db.ddl.create-recipient"
+kind = "required_operand_missing"
+target = "<property_identifier> in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } […"
+note = "omit <property_identifier>"
+reason = "the generator derived PROPERTIES ( 'v' ) by dropping an operand; the page never writes a property without its value (property_key [ = ] property_value, with property_value a string_literal), but Spark 4.2.0's SqlBaseParser reads a property written without = as a key whose value is optional (property #propertyWithKeyNoEquals: key=propertyKeyOrStringLitNoCoalesce value=propertyValue?), so the text is not a syntax negative; it has no receipt, because running it holds the statement past the referee's 300 s deadline on this account"
+
+[[suppress]]
+form = "db.ddl.create-recipient"
+kind = "required_operand_missing"
+target = "<property_value> in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } [ = ]…"
+note = "omit <property_value>"
+reason = "the generator derived PROPERTIES ( v1 ) by dropping an operand; the page never writes a property without its value (property_key [ = ] property_value, with property_value a string_literal), but Spark 4.2.0's SqlBaseParser reads a property written without = as a key whose value is optional (property #propertyWithKeyNoEquals: key=propertyKeyOrStringLitNoCoalesce value=propertyValue?), so the text is not a syntax negative; it has no receipt, because running it holds the statement past the referee's 300 s deadline on this account"
+
+[[suppress]]
+form = "db.ddl.create-recipient"
+kind = "negative_neighbour"
+target = ""
+note = "the form without its required { <property_identifier> [ . <property_identifier> ... ] | <property_string> } in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } [ = ] <property_value> [ ,…"
+reason = "the generator derived PROPERTIES ( 'v' ) by dropping an operand; the page never writes a property without its value (property_key [ = ] property_value, with property_value a string_literal), but Spark 4.2.0's SqlBaseParser reads a property written without = as a key whose value is optional (property #propertyWithKeyNoEquals: key=propertyKeyOrStringLitNoCoalesce value=propertyValue?), so the text is not a syntax negative; it has no receipt, because running it holds the statement past the referee's 300 s deadline on this account"
+
+[[limit]]
+form = "db.functions.in.in"
+kind = "negative_neighbour"
+note = "! in place of NOT before IN, outside the prefix operator, which Spark 4's parser discontinued in some places"
+anchor = "doc.functions.in / Syntax"
+sql = "SELECT ( 1 ! IN ( 1 ) )"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-table-add-column"
+kind = "negative_neighbour"
+note = "! in place of NOT in an added column's NOT NULL, outside the prefix operator, which Spark 4's parser discontinued in some places"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 ADD COLUMN c3 INT ! NULL"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-sql-function"
+kind = "negative_neighbour"
+note = "! in place of NOT in a parameter's NOT NULL, outside the prefix operator, which Spark 4's parser discontinued in some places"
+anchor = "doc.sql-ref-syntax-ddl-create-sql-function / Syntax"
+sql = "CREATE FUNCTION f1 ( x INT ! NULL ) RETURNS INT RETURN x"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.create-sql-function"
+kind = "negative_neighbour"
+note = "a parameter with NOT NULL, which the page does not document, the control for its ! spelling"
+anchor = "doc.sql-ref-syntax-ddl-create-sql-function / Syntax"
+sql = "CREATE FUNCTION f1 ( x INT NOT NULL ) RETURNS INT RETURN x"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-comment-first"
+kind = "negative_neighbour"
+note = "! in place of NOT in a Hive CHANGE column type's NOT NULL, outside the prefix operator, which Spark 4's parser discontinued in some places"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 CHANGE c1 c1 INT ! NULL"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.ddl.alter-table-manage-column.alter-change-comment-first"
+kind = "negative_neighbour"
+note = "a Hive CHANGE column type with NOT NULL, the control for its ! spelling"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+sql = "ALTER TABLE t1 CHANGE c1 c1 INT NOT NULL"
+context = "raw"
+expect = "observe"
+
+[[limit]]
+form = "db.dml.merge-into"
+kind = "negative_neighbour"
+note = "! in place of NOT before MATCHED BY SOURCE, outside the prefix operator, which Spark 4's parser discontinued in some places"
+anchor = "doc.delta-merge-into / Syntax"
+sql = "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1 WHEN ! MATCHED BY SOURCE THEN DELETE"
+context = "raw"
+expect = "observe"

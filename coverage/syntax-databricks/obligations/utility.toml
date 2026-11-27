@@ -2648,18 +2648,6 @@ target = "<table_name>"
 note = "a string literal in place of <table_name>"
 
 [[obligation]]
-id = "db.utility.describe-table.o011"
-kind = "alternative"
-required = true
-target = "{ [ PARTITION <partition_clause> ] | [ <column_name> ] } → [ PARTITION <partition_clause> ]"
-
-[[obligation]]
-id = "db.utility.describe-table.o012"
-kind = "alternative"
-required = true
-target = "{ [ PARTITION <partition_clause> ] | [ <column_name> ] } → [ <column_name> ]"
-
-[[obligation]]
 id = "db.utility.describe-table.o013"
 kind = "option_present"
 required = true

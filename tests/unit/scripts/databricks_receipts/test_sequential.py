@@ -1074,7 +1074,7 @@ def test_given_a_version_check_that_is_never_answered_when_run_then_the_run_stop
         StopTestCase(
             description="a lost version-check reply, then another release",
             sql="2026.46",
-            expected_error="not Databricks SQL 2026.45",
+            expected_error="not Databricks SQL 2026.47",
         ),
     ),
     ids=lambda case: case.description,

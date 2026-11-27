@@ -497,6 +497,22 @@ anchor = "doc.control-flow.compound-stmt / Parameters"
 note = "a label on a top-level compound statement: 'label must not be specified for a top level compound statement'"
 
 [[obligation]]
+id = "db.scripting.compound-stmt.o058"
+kind = "option_present"
+required = true
+target = "SET <config_key> = <value>"
+anchor = "doc.control-flow.compound-stmt / Syntax"
+note = "SET of a dotted configuration key inside a compound, which the local parser reads as a variable assignment"
+
+[[obligation]]
+id = "db.scripting.compound-stmt.o059"
+kind = "option_present"
+required = true
+target = "SET ( <variable> [ , ... ] ) = ( <query> )"
+anchor = "doc.control-flow.compound-stmt / Syntax"
+note = "SET of a variable list from a query inside a compound, as SqlBaseParser setStatementInsideSqlScript allows; the variables are not declared"
+
+[[obligation]]
 id = "db.scripting.execute-immediate.o001"
 kind = "positive"
 required = true
@@ -702,6 +718,22 @@ required = true
 target = "<sql_string>"
 anchor = "doc.sql-ref-syntax-aux-execute-immediate / Syntax"
 note = "an unquoted identifier in place of <sql_string>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.scripting.execute-immediate.o035"
+kind = "negative_neighbour"
+required = true
+target = "USING { <arg_expr> [ AS ] [ <alias> ] }"
+anchor = "doc.sql-ref-syntax-aux-execute-immediate / Syntax"
+note = "AS written as a list item inside a parenthesised USING list, which the local parser reads as a column named AS"
+
+[[obligation]]
+id = "db.scripting.execute-immediate.o036"
+kind = "negative_neighbour"
+required = true
+target = "USING { <arg_expr> [ AS ] [ <alias> ] }"
+anchor = "doc.sql-ref-syntax-aux-execute-immediate / Syntax"
+note = "AS with no alias after a USING argument"
 
 [[obligation]]
 id = "db.scripting.fetch-stmt.o001"
@@ -1665,6 +1697,14 @@ required = true
 target = "<label>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.scripting.loop-stmt.o022"
+kind = "negative_neighbour"
+required = true
+target = "[ <label> ]"
+anchor = "doc.control-flow.loop-stmt / Syntax"
+note = "an end label that differs from the begin label; Spark's parser refuses mismatched labels, while the local parser accepts them"
 
 [[obligation]]
 id = "db.scripting.open-stmt.o001"

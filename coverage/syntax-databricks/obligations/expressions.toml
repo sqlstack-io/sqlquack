@@ -1477,12 +1477,6 @@ required = true
 target = "{ <letter> | <digit> | '_' } → <digit>"
 
 [[obligation]]
-id = "db.expressions.identifiers.subscript-dot.o004"
-kind = "alternative"
-required = true
-target = "{ <letter> | <digit> | '_' } → '_'"
-
-[[obligation]]
 id = "db.expressions.identifiers.subscript-dot.o005"
 kind = "operand_type_class"
 required = true
@@ -1503,6 +1497,14 @@ required = true
 target = "'_'"
 anchor = "doc.sql-ref-identifiers / Syntax"
 note = "an identifier containing an underscore, the character the page lists"
+
+[[obligation]]
+id = "db.expressions.identifiers.subscript-dot.o008"
+kind = "alternative"
+required = true
+target = "{ <letter> | <digit> | '_' } → '_'"
+anchor = "doc.sql-ref-identifiers / Syntax"
+note = "an identifier made of the underscore alone"
 
 [[obligation]]
 id = "db.expressions.identifiers.subscript-dot.syntax.o001"

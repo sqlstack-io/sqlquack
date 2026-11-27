@@ -7,12 +7,12 @@ import re
 from scripts.databricks_receipts.models import SnapshotKind
 
 ENGINE: str = "databricks"
-ENGINE_VERSION: str = "2026.45"
+ENGINE_VERSION: str = "2026.47"
 RECEIPT_FORMAT: str = "sqlquack-syntax-receipt/2"
 RUN_AUDIT_FORMAT: str = "sqlquack-databricks-run-audit/1"
 CAPTURE: str = "execute_autocommit_in_throwaway_database"
 PARSER_CHECK: str = "whole_text"
-RUN_PREFIX: str = "databricks-2026.45-"
+RUN_PREFIX: str = "databricks-2026.47-"
 CATALOG: str = "workspace"
 SCHEMA_PREFIX: str = "sqlquack_referee_"
 
@@ -124,8 +124,11 @@ PARSER_CLASSES: frozenset[str] = frozenset(
         "INVALID_STATEMENT_OR_CLAUSE",
         "INVALID_TYPED_LITERAL",
         "UNSUPPORTED_TYPED_LITERAL",
+        "SYNTAX_DISCONTINUED.BANG_EQUALS_NOT",
     }
 )
+# Parser classes reviewed with one SQLSTATE only; any other SQLSTATE leaves the class unreviewed.
+PARSER_CLASS_SQLSTATES: dict[str, str] = {"SYNTAX_DISCONTINUED.BANG_EQUALS_NOT": "42601"}
 EXCERPT_RUNTIME_CLASSES: frozenset[str] = frozenset(
     {
         "CAST_INVALID_INPUT",
@@ -160,6 +163,8 @@ LATER_PHASES: dict[str, str] = {
     "UNRESOLVED_INSERT_REPLACE_USING_COLUMN": SEMANTIC_ERROR,
     "UNRESOLVED_ROUTINE": SEMANTIC_ERROR,
     "UNSUPPORTED_GROUPING_EXPRESSION": SEMANTIC_ERROR,
+    "LABELS_MISMATCH": SEMANTIC_ERROR,
+    "USER_DEFINED_FUNCTIONS.NOT_NULL_ON_FUNCTION_PARAMETERS": SEMANTIC_ERROR,
     "WRONG_NUM_ARGS.WITHOUT_SUGGESTION": SEMANTIC_ERROR,
     "WRONG_NUM_ARGS.WITH_SUGGESTION": SEMANTIC_ERROR,
     "REQUIRED_PARAMETER_NOT_FOUND": SEMANTIC_ERROR,

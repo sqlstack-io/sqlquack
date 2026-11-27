@@ -5094,6 +5094,13 @@ target = "<expr>"
 note = "a valid expression"
 
 [[obligation]]
+id = "db.functions.bangsign.o004"
+kind = "positive"
+required = true
+anchor = "doc.functions.bangsign / Syntax"
+note = "the prefix ! before a parenthesised condition, the control for the refused infix !"
+
+[[obligation]]
 id = "db.functions.base64.o001"
 kind = "positive"
 required = true
@@ -5189,6 +5196,13 @@ id = "db.functions.between.o018"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required AND"
+
+[[obligation]]
+id = "db.functions.between.o019"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.between / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
 
 [[obligation]]
 id = "db.functions.bigint.o001"
@@ -9346,12 +9360,6 @@ target = "<expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.date-add3.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.date-add3.o021"
 kind = "negative_neighbour"
 required = true
@@ -9370,6 +9378,13 @@ required = true
 target = "<unit>"
 anchor = "doc.functions.date_add3 / Syntax"
 note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
+id = "db.functions.date-add3.o023"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.date_add3 / Syntax"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
 
 [[obligation]]
 id = "db.functions.date-diff.o001"
@@ -9829,12 +9844,6 @@ target = "<expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.dateadd.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.dateadd.o021"
 kind = "negative_neighbour"
 required = true
@@ -9853,6 +9862,13 @@ required = true
 target = "<unit>"
 anchor = "doc.functions.dateadd / Syntax"
 note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
+id = "db.functions.dateadd.o023"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.dateadd / Syntax"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
 
 [[obligation]]
 id = "db.functions.dateadd2.o001"
@@ -10041,12 +10057,6 @@ target = "<end>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.datediff3.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.datediff3.o020"
 kind = "negative_neighbour"
 required = true
@@ -10065,6 +10075,13 @@ required = true
 target = "<unit>"
 anchor = "doc.functions.datediff3 / Syntax"
 note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
+id = "db.functions.datediff3.o022"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.datediff3 / Syntax"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
 
 [[obligation]]
 id = "db.functions.day.o001"
@@ -15392,6 +15409,13 @@ anchor = "doc.functions.ilike / Syntax"
 note = "ESCAPE inside the parentheses, as the page's Syntax line writes it, which the warehouse refuses"
 
 [[obligation]]
+id = "db.functions.ilike.ilike.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.ilike / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+
+[[obligation]]
 id = "db.functions.ilike.ilike-any-some-all.o001"
 kind = "positive"
 required = true
@@ -15493,6 +15517,13 @@ required = true
 note = "every independent option of one production together"
 
 [[obligation]]
+id = "db.functions.ilike.ilike-any-some-all.o021"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.ilike / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+
+[[obligation]]
 id = "db.functions.in.in.o001"
 kind = "positive"
 required = true
@@ -15543,6 +15574,13 @@ id = "db.functions.in.in.o009"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required )"
+
+[[obligation]]
+id = "db.functions.in.in.o010"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.in / Syntax"
+note = "! in place of NOT before IN, outside the prefix operator, which Spark 4's parser discontinued in some places"
 
 [[obligation]]
 id = "db.functions.in.in-2.o001"
@@ -16276,6 +16314,13 @@ required = true
 note = "the form without its required FROM"
 
 [[obligation]]
+id = "db.functions.isdistinct.o020"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.isdistinct / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+
+[[obligation]]
 id = "db.functions.isearch.o001"
 kind = "positive"
 required = true
@@ -16403,6 +16448,13 @@ required = true
 note = "the form without its required FALSE"
 
 [[obligation]]
+id = "db.functions.isfalse.o015"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.isfalse / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+
+[[obligation]]
 id = "db.functions.isnan.o001"
 kind = "positive"
 required = true
@@ -16522,6 +16574,13 @@ required = true
 note = "the form without its required NULL"
 
 [[obligation]]
+id = "db.functions.isnullop.o015"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.isnullop / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+
+[[obligation]]
 id = "db.functions.istrue.o001"
 kind = "positive"
 required = true
@@ -16564,6 +16623,13 @@ id = "db.functions.istrue.o014"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required TRUE"
+
+[[obligation]]
+id = "db.functions.istrue.o015"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.istrue / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
 
 [[obligation]]
 id = "db.functions.jaro-winkler-similarity.o001"
@@ -18666,6 +18732,13 @@ anchor = "doc.functions.like / Syntax"
 note = "ESCAPE inside the parentheses, as the page's Syntax line writes it, which the warehouse refuses"
 
 [[obligation]]
+id = "db.functions.like.like.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.like / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+
+[[obligation]]
 id = "db.functions.like.like-any-some-all.o001"
 kind = "positive"
 required = true
@@ -18765,6 +18838,13 @@ id = "db.functions.like.like-any-some-all.o018"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "db.functions.like.like-any-some-all.o021"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.like / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
 
 [[obligation]]
 id = "db.functions.list-files.o001"
@@ -25478,12 +25558,6 @@ target = "[ , ... ]"
 note = "the list continued at least once"
 
 [[obligation]]
-id = "db.functions.read-kafka.o007"
-kind = "option_absent"
-required = true
-target = "[ , ... ]"
-
-[[obligation]]
 id = "db.functions.read-kafka.o009"
 kind = "negative_neighbour"
 required = true
@@ -26011,6 +26085,13 @@ id = "db.functions.regexp.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required REGEXP"
+
+[[obligation]]
+id = "db.functions.regexp.o011"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.regexp / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
 
 [[obligation]]
 id = "db.functions.regexp-count.o001"
@@ -27769,6 +27850,13 @@ id = "db.functions.rlike.o010"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required RLIKE"
+
+[[obligation]]
+id = "db.functions.rlike.o011"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.rlike / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
 
 [[obligation]]
 id = "db.functions.round.o001"
@@ -35599,12 +35687,6 @@ target = "<end>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.timediff.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.timediff.o020"
 kind = "negative_neighbour"
 required = true
@@ -35623,6 +35705,13 @@ required = true
 target = "<unit>"
 anchor = "doc.functions.timediff / Syntax"
 note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
+id = "db.functions.timediff.o022"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.timediff / Syntax"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
 
 [[obligation]]
 id = "db.functions.timestamp.o001"
@@ -35850,12 +35939,6 @@ target = "<expr>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.timestampadd.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.timestampadd.o021"
 kind = "negative_neighbour"
 required = true
@@ -35874,6 +35957,13 @@ required = true
 target = "<unit>"
 anchor = "doc.functions.timestampadd / Syntax"
 note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
+id = "db.functions.timestampadd.o023"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.timestampadd / Syntax"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
 
 [[obligation]]
 id = "db.functions.timestampdiff.o001"
@@ -35970,12 +36060,6 @@ target = "<end>"
 note = "a valid expression"
 
 [[obligation]]
-id = "db.functions.timestampdiff.o008"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.timestampdiff.o020"
 kind = "negative_neighbour"
 required = true
@@ -35994,6 +36078,13 @@ required = true
 target = "<unit>"
 anchor = "doc.functions.timestampdiff / Syntax"
 note = "the unit written as a quoted string rather than its keyword, recorded to show how the warehouse reads it"
+
+[[obligation]]
+id = "db.functions.timestampdiff.o022"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.functions.timestampdiff / Syntax"
+note = "the form without its required ( and with its unit, which can read as a column with an alias"
 
 [[obligation]]
 id = "db.functions.tinyint.o001"
