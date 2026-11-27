@@ -46,6 +46,7 @@ fn case(inputs: &[(&str, &[&str])]) -> LoadedCase {
             })
             .collect(),
         row_sources: Vec::new(),
+        source_dialect: Default::default(),
     }
 }
 

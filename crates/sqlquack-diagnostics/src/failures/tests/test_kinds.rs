@@ -53,6 +53,17 @@ fn given_duckdb_message_when_classifying_then_tag_or_fragment_gives_kind() {
             expected_failure: untagged(ErrorKind::NumericOverflow),
         },
         DuckdbMessageTestCase {
+            description: "a raise for a rejected argument, even one naming a range",
+            message: "Invalid Input Error: argument rejected: the index is out of range".to_owned(),
+            expected_failure: untagged(ErrorKind::InvalidArgument),
+        },
+        DuckdbMessageTestCase {
+            description: "a raise for text read as no number",
+            message: "Invalid Input Error: text rejected as a number: the text is not a number"
+                .to_owned(),
+            expected_failure: untagged(ErrorKind::NumberText),
+        },
+        DuckdbMessageTestCase {
             description: "a catalog error has no kind",
             message: "Catalog Error: Table with name t does not exist".to_owned(),
             expected_failure: None,

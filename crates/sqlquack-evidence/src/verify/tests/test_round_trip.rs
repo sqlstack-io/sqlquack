@@ -1,7 +1,7 @@
 use crate::verify::tests::helpers::{
-    TAMPERED_CANONICAL, TAMPERED_CASE, TAMPERED_TYPING, arrow_edited, defaults_with_date_format,
-    errored, pinned_value_changed, recorded_before_pinning, round_trip, round_trip_with_defaults,
-    untouched, value_changed, values_dropped,
+    TAMPERED_CANONICAL, TAMPERED_CASE, TAMPERED_TYPING, arrow_edited, defaults_with, errored,
+    pinned_value_changed, recorded_before_pinning, round_trip, round_trip_with_defaults, untouched,
+    value_changed, values_dropped,
 };
 use crate::verify::tests::test_types::{RoundTrip, RoundTripTestCase, SessionTestCase};
 
@@ -145,13 +145,25 @@ fn given_recorded_session_parameters_when_verifying_then_only_the_profile_s_valu
         SessionTestCase {
             description: "a result recorded before pinning passes when the account defaults match",
             tampering: recorded_before_pinning,
-            defaults: Some(defaults_with_date_format("YYYY-MM-DD")),
+            defaults: Some(defaults_with(("YYYY-MM-DD", "UTC"))),
             expected_round_trip: round_trip_of("passed", 0),
         },
         SessionTestCase {
             description: "a result recorded before pinning fails when an account default differs",
             tampering: recorded_before_pinning,
-            defaults: Some(defaults_with_date_format("DD/MM/YYYY")),
+            defaults: Some(defaults_with(("DD/MM/YYYY", "UTC"))),
+            expected_round_trip: round_trip_of("failed", 0),
+        },
+        SessionTestCase {
+            description: "an account default of Etc/UTC proves a session pinned to UTC",
+            tampering: recorded_before_pinning,
+            defaults: Some(defaults_with(("YYYY-MM-DD", "Etc/UTC"))),
+            expected_round_trip: round_trip_of("passed", 0),
+        },
+        SessionTestCase {
+            description: "an account default in another zone does not prove a session pinned to UTC",
+            tampering: recorded_before_pinning,
+            defaults: Some(defaults_with(("YYYY-MM-DD", "Etc/GMT+1"))),
             expected_round_trip: round_trip_of("failed", 0),
         },
     ];

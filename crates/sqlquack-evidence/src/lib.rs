@@ -6,6 +6,9 @@ pub mod audit;
 pub mod cases;
 pub mod constants;
 pub mod coverage;
+#[cfg(feature = "databricks")]
+pub mod databricks;
+pub mod dialects;
 pub mod errors;
 pub mod pending;
 pub mod replay;

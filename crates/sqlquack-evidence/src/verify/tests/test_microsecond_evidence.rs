@@ -47,6 +47,20 @@ fn given_a_recording_in_a_coarser_unit_than_declared_when_checked_then_only_sub_
             expected_floored: None,
         },
         MicrosecondEvidenceTestCase {
+            description: "a Databricks TIMESTAMP stored in milliseconds drops a replay's microseconds",
+            declared: "TIMESTAMP",
+            stored_unit: TimeUnit::Millisecond,
+            replayed_nanos: 1_000_999_000,
+            expected_floored: Some(1_000_000_000),
+        },
+        MicrosecondEvidenceTestCase {
+            description: "a Databricks TIMESTAMP stored in microseconds is full evidence",
+            declared: "TIMESTAMP",
+            stored_unit: TimeUnit::Microsecond,
+            replayed_nanos: 1_000_999_000,
+            expected_floored: None,
+        },
+        MicrosecondEvidenceTestCase {
             description: "a microsecond column stored in microseconds is full evidence",
             declared: "TIMESTAMP_NTZ(6)",
             stored_unit: TimeUnit::Microsecond,

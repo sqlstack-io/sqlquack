@@ -207,6 +207,8 @@ pub struct LoadedCase {
     pub inputs: Vec<CaseInput>,
     /// The source SQL of each input row alone, where result rows follow input rows one for one.
     pub row_sources: Vec<String>,
+    /// The warehouse its result was recorded on.
+    pub source_dialect: sqlquack_policy::policy::models::EvidenceDialect,
 }
 
 /// One input column of a loaded case and its cells, source-dialect literals in row order.

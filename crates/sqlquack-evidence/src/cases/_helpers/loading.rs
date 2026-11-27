@@ -1,9 +1,9 @@
 //! Validating one case file and expanding its cases.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 use sqlquack_compare::comparison::models::RowOrder;
-use sqlquack_policy::policy::models::{Policy, SessionValue};
+use sqlquack_policy::policy::models::{EvidenceDialect, Policy, SessionProfile};
 
 use crate::cases::_helpers::functions::{create_function, function_problems};
 use crate::cases::_helpers::hashing::case_hash;
@@ -14,8 +14,10 @@ use crate::cases::models::{
     QueryOrder, Spelling,
 };
 use crate::constants::{
-    CANONICAL_SUFFIX, ERROR_TAG, EVIDENCE_FORMAT, ORDINAL_COLUMN, SOURCE_DIALECT, VALUE_COLUMN,
+    CANONICAL_SUFFIX, ERROR_TAG, EVIDENCE_FORMAT, ORDINAL_COLUMN, VALUE_COLUMN,
 };
+use crate::dialects::main::evidence_profile::evidence_profile;
+use crate::dialects::types::EvidenceProfile;
 
 pub(crate) fn load_file(
     relative: &str,
@@ -67,13 +69,15 @@ pub(crate) fn load_file(
     problems.extend(file.cases.iter().flat_map(|case| {
         profile_session_problems(&format!("{relative}#{}", case.id), case, &profiled)
     }));
-    if !problems.is_empty() {
+    let warehouse = evidence_profile(policy.source_dialect);
+    problems.extend(warehouse.as_ref().err().cloned());
+    let (Ok(warehouse), true) = (warehouse, problems.is_empty()) else {
         return Err(problems);
-    }
+    };
     let mut loaded: Vec<LoadedCase> = Vec::new();
     for case in &file.cases {
         let reference = format!("{relative}#{}", case.id);
-        let parameters = (&profile.snowflake, &profile.pinned);
+        let parameters = (profile, (policy.source_dialect, warehouse));
         let source = expand(file, case, Spelling::Source, parameters);
         let Some(equivalence) = &file.equivalence else {
             let role = match evidence(file, case) {
@@ -111,18 +115,18 @@ fn expand(
     file: &CaseFile,
     case: &CaseDefinition,
     spelling: Spelling,
-    (parameters, pinned): (
-        &BTreeMap<String, SessionValue>,
-        &BTreeMap<String, SessionValue>,
-    ),
+    (profile, (dialect, warehouse)): (&SessionProfile, (EvidenceDialect, &dyn EvidenceProfile)),
 ) -> LoadedCase {
-    let sql = source_sql(case, spelling);
+    let (parameters, pinned) = (&profile.snowflake, &profile.pinned);
+    let sql = warehouse
+        .source_sql(case, spelling)
+        .unwrap_or_else(|| source_sql(case, spelling));
     let setup_sql: Vec<String> = case.functions.iter().map(create_function).collect();
     let hashed_setup: Vec<String> = setup_sql.iter().chain(&case.setup).cloned().collect();
     let values = case.values.unwrap_or(true);
     let hash = case_hash(&HashedContent {
         format: EVIDENCE_FORMAT,
-        source_dialect: SOURCE_DIALECT,
+        source_dialect: dialect.name(),
         session_parameters: parameters,
         source_sql: &sql,
         values: (!values).then_some(false),
@@ -149,7 +153,11 @@ fn expand(
         setup_sql,
         setup: case.setup.clone(),
         inputs: inputs(case),
-        row_sources: row_sources(case, spelling),
+        row_sources: match warehouse.records_rows_alone() {
+            true => row_sources(case, spelling),
+            false => Vec::new(),
+        },
+        source_dialect: dialect,
     }
 }
 

@@ -10,6 +10,9 @@ pub const SESSION_DEFAULTS_NAME: &str = "session_defaults.json";
 /// The session defaults file in the default layout.
 pub const SESSION_DEFAULTS_FILE: &str = "evidence/session_defaults.json";
 
+/// The IANA names of the UTC zone; an account default of either proves a session pinned to UTC.
+pub const UTC_ZONE_NAMES: &[&str] = &["UTC", "Etc/UTC"];
+
 /// Pending case files for the recorder; derived, never committed.
 pub const PENDING_DIR: &str = "evidence/pending";
 
@@ -21,9 +24,6 @@ pub const AUDIT_RESULTS_DIR: &str = "evidence/audit/results";
 
 /// The version of the case, pending and result file formats.
 pub const EVIDENCE_FORMAT: u32 = 1;
-
-/// The source dialect name recorded in hashes and pending files.
-pub const SOURCE_DIALECT: &str = "snowflake";
 
 /// The input column holding the row number; expression results are ordered by it.
 pub const ORDINAL_COLUMN: &str = "ordinal";
@@ -118,6 +118,11 @@ pub const ROW_COUPLING_WORDS: &[&str] = &[
 
 /// SQLSTATE classes of a Snowflake compile error, which the recorder's pre-check stops on.
 pub const COMPILE_ERROR_SQLSTATE_CLASSES: &[&str] = &["0A", "42"];
+
+/// SQLSTATE classes of a warehouse error that belongs to its case and is recorded as its outcome.
+pub const RECORDABLE_SQLSTATE_CLASSES: &[&str] = &["0A", "21", "22", "42"];
+/// SQLSTATEs that depend on the recording account rather than the case, never recorded.
+pub const SESSION_DEPENDENT_SQLSTATES: &[&str] = &["42501"];
 
 /// The sidecar outcome of a recording that holds rows.
 pub(crate) const ROWS_OUTCOME: &str = "rows";
