@@ -870,6 +870,7 @@ impl Parser {
                 source,
                 condition,
                 then: Box::new(then),
+                not_written_as: None,
             })));
         }
 

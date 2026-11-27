@@ -7,6 +7,7 @@ use sqlquack_syntax::expressions::columns::models::{
     MaskingPolicyColumnConstraint,
 };
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
+use sqlquack_syntax::expressions::operators::models::OperatorSpelling;
 use sqlquack_syntax::expressions::schema_objects::models::{
     AlterObject, AlterView, AlterViewAction,
 };
@@ -752,6 +753,7 @@ impl Parser<'_> {
             if let Some(keyed) = keyed {
                 altered.push(keyed);
             } else {
+                let bang_not: bool = self.kw_in(0, &["SET", "DROP"]) && self.char_at(1, '!');
                 match self.column_action()? {
                     Some((action, comment_written)) => {
                         altered.push(AlterTableAction::AlterColumn {
@@ -762,6 +764,7 @@ impl Parser<'_> {
                             column_keyword,
                             action_words: None,
                             keyword: change.then(|| "CHANGE".to_owned()),
+                            not_written_as: bang_not.then_some(OperatorSpelling::Bang),
                         })
                     }
                     None if self.opaque => {}
@@ -900,11 +903,7 @@ impl Parser<'_> {
                 }))
             }
             "TAGS" => {
-                let pairs: Vec<(Expression, Expression)> = self
-                    .property_list()?
-                    .into_iter()
-                    .map(property_pair)
-                    .collect();
+                let (pairs, without_equals) = self.valued_properties()?;
                 let spellings: KeySpellings = key_spellings(pairs.iter().map(|(key, _)| key));
                 let expressions: Vec<(String, Expression)> = pairs
                     .into_iter()
@@ -915,6 +914,7 @@ impl Parser<'_> {
                     quoted_keys: spellings.quoted,
                     string_keys: spellings.strings,
                     written_keys: spellings.written,
+                    without_equals,
                 }))
             }
             "OWNER" => {

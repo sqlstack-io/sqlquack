@@ -886,12 +886,18 @@ impl Parser<'_> {
         })
     }
 
-    /// `constraintCharacteristic*`: `[NOT] ENFORCED`, `RELY` and `NORELY`.
+    /// `constraintCharacteristic*`: `[NOT] ENFORCED`, `DEFERRABLE`, `INITIALLY DEFERRED`, `RELY` and `NORELY`.
     fn constraint_characteristics(&mut self) -> Parsing<ConstraintModifiers> {
         let mut modifiers: ConstraintModifiers = ConstraintModifiers::default();
         let mut written: Vec<String> = Vec::new();
         loop {
-            if self.eat_kw("ENFORCED") {
+            if self.eat_kw("DEFERRABLE") {
+                modifiers.deferrable = Some(true);
+                written.push("DEFERRABLE".to_owned());
+            } else if self.eat_kws(&["INITIALLY", "DEFERRED"]) {
+                modifiers.initially_deferred = Some(true);
+                written.push("INITIALLY DEFERRED".to_owned());
+            } else if self.eat_kw("ENFORCED") {
                 modifiers.enforced = Some(true);
                 written.push("ENFORCED".to_owned());
             } else if self.kw("NOT") && self.kw_at(1, "ENFORCED") {

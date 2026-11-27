@@ -24,6 +24,37 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 3,
         },
         DistinctTreesTestCase {
+            description: "the NOT of SET NOT NULL, DROP NOT NULL and WHEN NOT MATCHED written as NOT and as !",
+            written: &[
+                "ALTER TABLE t1 ALTER c1 SET NOT NULL",
+                "ALTER TABLE t1 ALTER c1 SET ! NULL",
+                "ALTER TABLE t1 CHANGE c1 DROP NOT NULL",
+                "ALTER TABLE t1 CHANGE c1 DROP ! NULL",
+                "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1 WHEN NOT MATCHED BY SOURCE THEN DELETE",
+                "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1 WHEN ! MATCHED BY SOURCE THEN DELETE",
+            ],
+            expected_distinct_trees: 6,
+        },
+        DistinctTreesTestCase {
+            description: "a FOREIGN KEY with and without the constraint options DEFERRABLE and INITIALLY DEFERRED",
+            written: &[
+                "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 )",
+                "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 DEFERRABLE )",
+                "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 INITIALLY DEFERRED )",
+                "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 DEFERRABLE INITIALLY DEFERRED )",
+                "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 INITIALLY DEFERRED DEFERRABLE )",
+            ],
+            expected_distinct_trees: 5,
+        },
+        DistinctTreesTestCase {
+            description: "a table tag's value written after = and without it",
+            written: &[
+                "ALTER TABLE t1 SET TAGS ( 'k' = 'v' )",
+                "ALTER TABLE t1 SET TAGS ( 'k' 'v' )",
+            ],
+            expected_distinct_trees: 2,
+        },
+        DistinctTreesTestCase {
             description: "a resource written unquoted, backquoted and as a string",
             written: &["ADD FILE v1", "ADD FILE `v1`", "ADD FILE 'v1'"],
             expected_distinct_trees: 3,

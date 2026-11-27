@@ -2,6 +2,7 @@
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, TableRef};
+use sqlquack_syntax::expressions::operators::models::OperatorSpelling;
 use sqlquack_syntax::expressions::queries::models::{RowFormat, Where, With};
 use sqlquack_syntax::expressions::statements::models::{
     DirectoryInsert, Insert, Merge, When, Whens,
@@ -415,6 +416,7 @@ impl Parser<'_> {
     /// One `WHEN` clause of a `MERGE`, and the stage it belongs to.
     fn merge_when(&mut self) -> Parsing<(Expression, MergeStage)> {
         self.expect_kw("WHEN")?;
+        let bang: bool = self.is_char('!');
         let not: bool = self.eat_kw("NOT") || self.eat_char('!');
         self.expect_kw("MATCHED")?;
         let mut source: Option<bool> = None;
@@ -476,6 +478,7 @@ impl Parser<'_> {
             source: source.map(|source| Box::new(boolean(source))),
             condition,
             then: Box::new(then),
+            not_written_as: (not && bang).then_some(OperatorSpelling::Bang),
         }));
         Ok((when, stage))
     }

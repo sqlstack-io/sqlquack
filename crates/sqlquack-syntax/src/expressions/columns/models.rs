@@ -745,6 +745,10 @@ pub enum AlterTableAction {
         /// The keyword as written when it is a synonym, such as COLUMNS for COLUMN or CHANGE for ALTER
         #[serde(default, skip_serializing_if = "Option::is_none")]
         keyword: Option<String>,
+        /// Databricks: the NOT of `SET NOT NULL` or `DROP NOT NULL` as written, when another documented spelling shares this node
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[ast(skip)]
+        not_written_as: Option<crate::expressions::operators::models::OperatorSpelling>,
     },
     /// MySQL/TiDB `MODIFY [COLUMN]` with a complete replacement column definition.
     ModifyColumn {
@@ -817,6 +821,9 @@ pub enum AlterTableAction {
         /// Databricks: the keys written as a raw string or as adjacent strings, by position, as written
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         written_keys: Vec<(usize, Literal)>,
+        /// Databricks: the positions of the values written without the optional `=`
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        without_equals: Vec<usize>,
     },
     /// UNSET TAG action (Snowflake): ALTER TABLE t UNSET TAG key1, key2
     UnsetTag {
@@ -955,6 +962,7 @@ impl AlterTableAction {
             quoted_keys: Vec::new(),
             string_keys: Vec::new(),
             written_keys: Vec::new(),
+            without_equals: Vec::new(),
         }
     }
 

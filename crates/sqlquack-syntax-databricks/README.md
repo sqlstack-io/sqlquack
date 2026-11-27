@@ -146,7 +146,7 @@ next top-level `;` is not checked further; every other gap's text is checked.
 | `pivot_after_lateral_view`, `identifier_clause_function` | `PIVOT` after `LATERAL VIEW`, `IDENTIFIER(…)(…)` calls |
 | `change_column_position`, `change_column_not_null`, `replace_columns`, `partition_change_column`, `view_partition`, `alter_column_without_action` | column moves with `CHANGE`, `REPLACE COLUMNS`, Hive column changes in a partition, partitions of a view, a column named with no action after an action kept as a tree |
 | `show_create_table_serde` | `SHOW CREATE TABLE … AS SERDE` |
-| `declare_cursor`, `function_credentials`, `function_secrets` | `DECLARE … CURSOR`, a function's `CREDENTIALS` and `SECRETS` |
+| `declare_cursor`, `function_credentials`, `function_secrets`, `function_parameter_not_null` | `DECLARE … CURSOR`, a function's `CREDENTIALS` and `SECRETS`, `NOT NULL` on a SQL function's parameter |
 
 ## Lossy mappings
 
