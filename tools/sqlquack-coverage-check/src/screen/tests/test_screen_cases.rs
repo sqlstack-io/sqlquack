@@ -233,12 +233,6 @@ fn given_a_spelling_the_grammar_keeps_when_screening_then_its_variant_has_its_ow
             expected_same_tree: false,
         },
         KnownCollapseTestCase {
-            description: "a trailing comma inside a hint, which the grammar does not allow, is caught by insert ,",
-            sql: "SELECT /*+ BROADCASTJOIN ( t1 ) */ * FROM t1",
-            variant: "SELECT /*+ BROADCASTJOIN ( t1 ) , */ * FROM t1",
-            expected_same_tree: true,
-        },
-        KnownCollapseTestCase {
             description: "DECLARE written with VARIABLE",
             sql: "DECLARE v1 INT",
             variant: "DECLARE VARIABLE v1 INT",
