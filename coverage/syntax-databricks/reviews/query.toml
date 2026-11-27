@@ -1105,3 +1105,161 @@ note = "Withdrawn by the insert , screen kind (a comma written before each token
 
 [review.definitions]
 "db.query.select-hints.join-hint-alias" = "4aa02c2a49b11e126ba14477f62aa8856796fe6143adee3dc7d7fdc5add9918b"
+
+[[review]]
+id = "db-query-055"
+family = "query"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "approved"
+resolves = ["db-query-025", "db-query-029", "db-query-031", "db-query-032", "db-query-033", "db-query-034", "db-query-035", "db-query-036", "db-query-037", "db-query-038", "db-query-039", "db-query-040", "db-query-041", "db-query-042", "db-query-043", "db-query-044", "db-query-045", "db-query-046", "db-query-047", "db-query-048", "db-query-049", "db-query-050", "db-query-051", "db-query-052", "db-query-054"]
+forms = [
+  "db.query.pipeline.table",
+  "db.query.query",
+  "db.query.select",
+  "db.query.select-clusterby",
+  "db.query.select-column-list",
+  "db.query.select-distributeby",
+  "db.query.select-groupby.group-by",
+  "db.query.select-groupby.group-by-all",
+  "db.query.select-groupby.group-by-rollup-cube",
+  "db.query.select-groupby.hive-grouping-sets",
+  "db.query.select-groupby.nested-grouping-sets",
+  "db.query.select-groupby.subscript-dot",
+  "db.query.select-having",
+  "db.query.select-hints",
+  "db.query.select-hints.join-hint-alias",
+  "db.query.select-join",
+  "db.query.select-lateral-view",
+  "db.query.select-limit",
+  "db.query.select-match-recognize",
+  "db.query.select-match-recognize-define",
+  "db.query.select-match-recognize-measures",
+  "db.query.select-match-recognize-pattern",
+  "db.query.select-named-window",
+  "db.query.select-nearest-by",
+  "db.query.select-offset",
+  "db.query.select-orderby",
+  "db.query.select-pipeop",
+  "db.query.select-pivot",
+  "db.query.select-qualify",
+  "db.query.select-sortby",
+  "db.query.select-table-reference",
+  "db.query.select-unpivot",
+  "db.query.select-values.values",
+  "db.query.select-where",
+  "db.query.star",
+]
+note = "Read in full at c0cf1d70b under review brief v3 by eight independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.45), the local documentation pages, the obligations with the limits and hand rows, and the parse trees of every case. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria; no two cases of a form with different SQL give one tree. It resolves the changes_requested records it lists, each checked against the current trees: dropping a ( ... ) pair, wrapping one token in a new pair or adding a comma, in each accepted case of these forms, gives no variant with the case's tree (2,526 of 13,334 such variants parse), and syntax-coverage screen flags none of 22,019 variants; WITH PROPERTIES and WITH DBPROPERTIES, a VALUES alias with and without AS, and backquoted hint names and hinted relations give different trees; ! NULL on a column and a comma before the end of a hint are refused."
+
+[review.fingerprints]
+"db.query.pipeline.table" = "2858125f06064ea0fed04851b3277709e3f6c3e2eea3f58a3511f181b2f9f379"
+"db.query.query" = "0e7a3e724f5ee5f228fc0f5e063ebd4f871274edb4715e99221b46622291c565"
+"db.query.select" = "046d7c0f6e436d5d9ad10e8e50452153b2db42a9082d605eaf1de82cbca12b01"
+"db.query.select-clusterby" = "a1088dd15b83e7d613023f03e23f9d0182a9c5916e1116dec0333c0d0919521e"
+"db.query.select-column-list" = "2cd57bb65f3713b85a2612441403a8041c9ea030cb182b5d15c217f714400cc4"
+"db.query.select-distributeby" = "44ad96d51b1305ac280948802017c8de4f80e76359cd7e2b1f595486b4742105"
+"db.query.select-groupby.group-by" = "f769770e14d9143991846e9b823c031406cad33e43d7aba94ff5b85081384ff8"
+"db.query.select-groupby.group-by-all" = "fa2805d24cb225a8f7eb442ec3de681cec7b2633ac57d51be5a0890a6a22e2f4"
+"db.query.select-groupby.group-by-rollup-cube" = "ee4538e7e24137701d09a62f3744f05c017da69a645d39c9fcf3d38bc2874e0d"
+"db.query.select-groupby.hive-grouping-sets" = "005802566a3db7cf9be09d6c49c09a5da04d7a12846fed1cc88a86170c11e6d4"
+"db.query.select-groupby.nested-grouping-sets" = "5aa7a243a56e827c572dd2503f33ce9ecad8fad1f68a68efd621b38e1170b7e5"
+"db.query.select-groupby.subscript-dot" = "13aed3cfc3a79926508279e702e8e3eaf453b297293bb32978d90fd1cd5cbde3"
+"db.query.select-having" = "8ee4a722a65a0a6b46899c6f27c90abc855b72cb1b21f64c4ae5f9ca8e1aa25b"
+"db.query.select-hints" = "39ad28312c756a8b9a6212e45886df440bfae62690dbd4adb249a3627aa301da"
+"db.query.select-hints.join-hint-alias" = "8bb21d2de4edec3c71558ddea04a15484aa5810ce8d7bd125d6672cb06807573"
+"db.query.select-join" = "80eb206116cffac9373588006678f43bb0bc245c82977a25cfb57906863e017f"
+"db.query.select-lateral-view" = "38e7ae2bb54a3228726451898da527c2acf05555d34eca7e317e957d4cd56c89"
+"db.query.select-limit" = "ed39b1fffb5b68fb62819aaf7ea4b2fcc54036f03f1827e0fc1bf0b5e17d2833"
+"db.query.select-match-recognize" = "0db1659ded723ab66f59d814e3b15360616dc8110676dd5cee021a12575038cb"
+"db.query.select-match-recognize-define" = "2ea3281ccd806ccb2b9c168ad73ff56b363a364de330d954add7948bb1e65479"
+"db.query.select-match-recognize-measures" = "e3c843c151c5d56b6836fd501d3c86a2775fe0496954a4129d6047fc6bede6c1"
+"db.query.select-match-recognize-pattern" = "69b93255b62ed9a3edf8e7bbbe34f3cf3c2e2ff5c2c8d9826f36ea2c1dcc398b"
+"db.query.select-named-window" = "33a149b002fa1b100c3ed9410ecb0f43deb725bdb6918bf7c82a7189b8ce6d11"
+"db.query.select-nearest-by" = "19d82814ca09eaf7937ca9850c6a917adf2744c25b538dbcc1611fe6d875be45"
+"db.query.select-offset" = "e41b4351f7a532318b3af05ae4fb8ab46219a4688aa2143eb4778900e154ba81"
+"db.query.select-orderby" = "9293920d52389e8e6ec74980cd179a76d7aeb9a6c34d80db315517b7dcd92429"
+"db.query.select-pipeop" = "7a6e18f771214e6d696569a7336428f19994edf21eddd90d5a3a61dd42539da7"
+"db.query.select-pivot" = "af41e1f41a592426154b560797a17f03a0a049538a06e615f5669fc419034666"
+"db.query.select-qualify" = "4d74995957b31247e37216c25d1e3442102c05dc61085424a739626f541b3f96"
+"db.query.select-sortby" = "f11455f232465727b071e9a46ea46e01ca550f437a6e69d5925b018921c6318c"
+"db.query.select-table-reference" = "5aa6127aff317c02b95fc8e8fcc2736b2dcddca1f1d2e6795b66fa392e51a888"
+"db.query.select-unpivot" = "414412ea633fb1b33d1ab2c613af98723a117373e08471df96c6599a192cbd0e"
+"db.query.select-values.values" = "747d1d4b00b3cc00da44d5da74f105652039db660679c0a857ed68b9753302b0"
+"db.query.select-where" = "1cd68ce81f4ed162738fbc41d814ed13b3adc78975ddded20cc13ad1c5dad981"
+"db.query.star" = "ff6b5e7c8eeefde4efef4fbf47cf39028e9dafcfc1b97cbdd5db37c2d0d88c6d"
+
+[review.definitions]
+"db.query.pipeline.table" = "5c55e86be057cce2b5ff7a855224c21874b3a3c65cd303f6c17b00271283bd79"
+"db.query.query" = "4c26c8a2817370be96ecf3eab5fa4bb55de7b6b2fc4c9c58c90e01cc7621dccf"
+"db.query.select" = "fcd9b40d1fc28db0f7e428cb6540faa5805aee233e8526a0011dd44ecc1489a3"
+"db.query.select-clusterby" = "38fe8efe128232ce2782263687cd4dfb92089b732949e7c16c775ac0ecb64cc9"
+"db.query.select-column-list" = "e4f949af985da9abcd0595503f4d46814cfe5912a85a7d7dc5a55a7d5a811ba0"
+"db.query.select-distributeby" = "64638d47badc45e7856b65200d10962f063836f74b7dfc5140b754a9140f7f85"
+"db.query.select-groupby.group-by" = "466e6081b946b74b6accb69b8307427b364773a8b63e68176861331c001adaee"
+"db.query.select-groupby.group-by-all" = "fd02a9e674ca8c80d6fcd5c5cbcc833b0708bbb955f0066d71a50a2d2e0dc52b"
+"db.query.select-groupby.group-by-rollup-cube" = "082253722d146a7c94983c8f75d09a73c6fa0babb503871a4f451ac54ed0cce8"
+"db.query.select-groupby.hive-grouping-sets" = "85bfba731332bf9f53018fc6044b84ed9b34be412986814337225d7a3bfe7943"
+"db.query.select-groupby.nested-grouping-sets" = "bfcad8d728918fb014efe9913a078941efab771931173b89c9d6e85306590033"
+"db.query.select-groupby.subscript-dot" = "d48fa943701abfff4856461d7cd0dd852594ee4e236ab764f5464e5dd90d8f1f"
+"db.query.select-having" = "e317eca079db2b0c88124bebc89dde607cd15e7569cd884bc65eba18747170f1"
+"db.query.select-hints" = "88ad5ce6bf16bc053087ae650f297a2b0dd3363b112d0244225f33b9a61e46b6"
+"db.query.select-hints.join-hint-alias" = "4aa02c2a49b11e126ba14477f62aa8856796fe6143adee3dc7d7fdc5add9918b"
+"db.query.select-join" = "0068b52cad866084c03603f121e60ca7c7e49460e53c606e20d28b53305901d5"
+"db.query.select-lateral-view" = "69f85a97bb1c2ee38d1bfcce70c281aaf6185ec8b2851d427a912643ad19563e"
+"db.query.select-limit" = "c3a6537b389984ab892dc6c2d0ad4b6cb535b1d38b99e78742309981c3ae4e4f"
+"db.query.select-match-recognize" = "3152e3a37dc7dce5a9e0c9c9c0b3edec0df5c6ebcbbf8e960b18ec499b9aa017"
+"db.query.select-match-recognize-define" = "286148bb6ea73adb7fa607d51d8ffe5c15a2c89e2357521cc21ff776e3e60be9"
+"db.query.select-match-recognize-measures" = "5108ed9bf7cc6a9a9e6e128dae8976b711fb1809b5ebe8bd0bf42059ac90f801"
+"db.query.select-match-recognize-pattern" = "692a9e4d948c3e059a2f6a31e82a1e14b4e3e5a4a687c7091ad4f6a640065bc2"
+"db.query.select-named-window" = "2bad67d99f5d696b1627c74c3f10eef466c261bf28787c3d89023f95e1598dd6"
+"db.query.select-nearest-by" = "e4af8a94c4e1f52762ad8dd6d15ca7de9d30e79ef57b67af7eeaeb27fac9e399"
+"db.query.select-offset" = "401e6aa4032dec5110939c96f00de46d43aa52d534ab11c99d99f20d34243a87"
+"db.query.select-orderby" = "374d9122ae8429cf93e52daae8d62c969899928ed17032f71295bfc1c9d38018"
+"db.query.select-pipeop" = "ad1f8276ad1fdef0a4aea1866421af90ea361f8caac9f7ba1770cfe4948a0cd3"
+"db.query.select-pivot" = "d3197b6aa0ebe2d38ba40b2e5936295f348d2fcb646ea41bd1925898a384792c"
+"db.query.select-qualify" = "545f31bd3569f4bdc680db7f907ab7fcbea5f329fd081a7d05bf9cb0916a66eb"
+"db.query.select-sortby" = "293c1a2b4c2cdb5150ffe0d6069a8d726a89e6e3c896455b48af66895f9f9865"
+"db.query.select-table-reference" = "23a224c5bc9a16c01f4c76489294f4eebd322d1512c4ed5847064c969df16652"
+"db.query.select-unpivot" = "c4483ed982988ccee93409f263f27d32118fbe4ce84c5d8e83c6e43e219d07bf"
+"db.query.select-values.values" = "900853f1f1a0a1c114635211640df146f9df2ff21e217a5e83db4f94cfbd010f"
+"db.query.select-where" = "32d7e89d16ae3d1fdc2feff947b56067135d7d39e06a48285fbcc0b1b4a02571"
+"db.query.star" = "164b0d09702bed1e4f3243bf557f5ea71a523e969996d731243fb5ef7519b02a"
+
+[[review]]
+id = "db-query-056"
+family = "query"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "approved"
+resolves = ["db-query-023"]
+forms = [
+  "db.query.select-column-list",
+]
+note = "Approves db.query.select-column-list as db-query-055 does, read in the same review, and resolves db-query-023 for this form: a backquoted hint name, /*+ `REPARTITION` ( 1 ) */, now gives a different tree from the bare name, and adding or wrapping tokens in its accepted cases gives no variant with the case's tree. db-query-023's other forms are not resolved here."
+
+[review.fingerprints]
+"db.query.select-column-list" = "2cd57bb65f3713b85a2612441403a8041c9ea030cb182b5d15c217f714400cc4"
+
+[review.definitions]
+"db.query.select-column-list" = "e4f949af985da9abcd0595503f4d46814cfe5912a85a7d7dc5a55a7d5a811ba0"
+
+[[review]]
+id = "db-query-057"
+family = "query"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "changes_requested"
+forms = [
+  "db.query.pipeline.table.syntax",
+  "db.query.select-watermark",
+]
+note = "Read in the same review as the approvals at this parser tree, under review brief v3, by the same eight read-only reviewers; these forms are held. Form by form: pipeline.table.syntax: (d) stricter reading: FROM t1 | WHERE 1 = 1 gives a select with an invented star projection (no span) and no FROM-first flag (TABLE gets table_statement:true), so it cannot be told apart from SELECT * FROM t1 | WHERE 1 = 1. select-watermark: (a), stricter reading: the [[reading]] turns VALUE into VALUES and adds <table_reference> before JOIN, but its reason rests on other pages; this page's text supports neither and the reason cites no receipt. Trees and outcomes are fine."
+
+[review.fingerprints]
+"db.query.pipeline.table.syntax" = "6c768709f68a7a1b99790cd91c8223af8506ba90e93939edbffbe84135551e3b"
+"db.query.select-watermark" = "8644e1026473b4be6c9843ad09086b0ac8d1ca2a6ecc91e0c9440b3fcfe76dfd"
+
+[review.definitions]
+"db.query.pipeline.table.syntax" = "02d70304922c1b0a37a826e63381f5b975ef0421522135568f2093f1477ea88b"
+"db.query.select-watermark" = "f7848a7ca823a2825c8b15df53dc7eed9d8906e0047df793440ce859e57939a6"

@@ -460,3 +460,23 @@ note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tre
 
 [review.definitions]
 "db.transaction_session.declare-variable" = "6ba55f226593ba2ead11a8ffdd0bf65e0900f5c01b15e234b2f15d38771454ea"
+
+[[review]]
+id = "db-transaction_session-022"
+family = "transaction_session"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "approved"
+forms = [
+  "db.transaction_session.begin-atomic",
+  "db.transaction_session.drop-variable",
+]
+note = "Read in full at c0cf1d70b under review brief v3 by eight independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.45), the local documentation pages, the obligations with the limits and hand rows, and the parse trees of every case. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria; no two cases of a form with different SQL give one tree."
+
+[review.fingerprints]
+"db.transaction_session.begin-atomic" = "4fc4b1c20aae1c3876e5deb1262f58c24299eea0c2cf8627facdde635faf5b1c"
+"db.transaction_session.drop-variable" = "70c176e20ccc956ce2f9915054126b0024164686d4a883f762e6c57c3e249462"
+
+[review.definitions]
+"db.transaction_session.begin-atomic" = "94ad1f9b9a3227580ff81082f800ddb247264ee44685ea914b6de2a0f8e33477"
+"db.transaction_session.drop-variable" = "9b37ade6b1ada2a860dcf5a4e0f461de4a33c5ddcc82eb05afa03224363de615"

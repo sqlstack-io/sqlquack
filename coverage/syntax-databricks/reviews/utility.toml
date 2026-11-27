@@ -898,3 +898,86 @@ note = "Re-read on 18 Nov 2026 after the optional-parentheses fix, at parser tre
 
 [review.definitions]
 "db.utility.optimize" = "eedc05c6514793ae2c8230ab6705e6daf66be667d140e5ca9f0a7848023f91e9"
+
+[[review]]
+id = "db-utility-043"
+family = "utility"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "approved"
+forms = [
+  "db.utility.analyze-compute-statistics.tables-compute-statistics",
+  "db.utility.analyze-drop-statistics",
+  "db.utility.cache-clear-cache",
+  "db.utility.cache-refresh-function",
+  "db.utility.call.call",
+  "db.utility.call.call.syntax",
+  "db.utility.describe-credential",
+  "db.utility.describe-function",
+  "db.utility.describe-governed-tag",
+  "db.utility.describe-location",
+  "db.utility.describe-table",
+  "db.utility.show-all-in-share",
+  "db.utility.show-connections",
+  "db.utility.show-credentials",
+  "db.utility.show-governed-tags",
+  "db.utility.show-groups",
+  "db.utility.show-locations",
+  "db.utility.show-providers",
+  "db.utility.show-recipients",
+  "db.utility.show-shares",
+  "db.utility.show-shares-in-provider",
+  "db.utility.show-users",
+  "db.utility.show-volumes",
+]
+note = "Read in full at c0cf1d70b under review brief v3 by eight independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.45), the local documentation pages, the obligations with the limits and hand rows, and the parse trees of every case. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria; no two cases of a form with different SQL give one tree."
+
+[review.fingerprints]
+"db.utility.analyze-compute-statistics.tables-compute-statistics" = "c54ef3b0c095bc42212d6b04b139259bcc92405d300ab9b9beb9c3de894908fc"
+"db.utility.analyze-drop-statistics" = "cca572de102a3313ad461ed15a6c7610d662ff1fe3b875e3da773ac3662a0869"
+"db.utility.cache-clear-cache" = "81e329fe6ffedd85f62ff7511f05bdfb14afe77aa9b63dc3de1c5fe2c7488874"
+"db.utility.cache-refresh-function" = "976e5c4f90e6b3b9d259c74ef605b6e99099c618a19d0aa8d2fd471c1eb669d3"
+"db.utility.call.call" = "addba8efd11463efe9b32c3d494604ff410d2ec3409dca3996e260b72893aca7"
+"db.utility.call.call.syntax" = "60bd7b4f6556558b788783028b1d3a64896c77c89043dc3412d7df4696f3aa50"
+"db.utility.describe-credential" = "a89f6476a3663679f7abf244aabef60a5433911e4e36d05b464b46d0c8f8c167"
+"db.utility.describe-function" = "07394f612fc760c767a75e0828602c3de6de019686e72146dc89f8b4de5f72c4"
+"db.utility.describe-governed-tag" = "cc2684af6cfa0363b5198f99de78cc734dbd0e9dda0eea2684a18232189599bb"
+"db.utility.describe-location" = "9ff5474c90a86c26d63e6530e61bc6e3b3c7a4d0ea473ed85d101897d9321d2c"
+"db.utility.describe-table" = "d03c9d3e4da265dc7b1e0d74ccdbf0576af2b0a546f3046a1ccea756177638de"
+"db.utility.show-all-in-share" = "ca58e007f9b5eaa30a7cca13fb3660499bff06ff09b538a01170398ff588d047"
+"db.utility.show-connections" = "9970c24da0016d5e541959dfd55055e878e8977d7551b82710cd22ac552be4ca"
+"db.utility.show-credentials" = "7a82d28da778117e3c731e035f5bfd6eda5cac0e67ffd30b264f07fc49306aba"
+"db.utility.show-governed-tags" = "8a11ac5ff2285050a8c9c04b1496322fb85ec0632cabed757a6996fb64dc92cb"
+"db.utility.show-groups" = "367151d2de709947a1fc4377c7f0388e833a5e2ae6fae85a11b8f09d40e5a768"
+"db.utility.show-locations" = "b9d8f502c1cf22ad46b44769d4970de69a30e8f8708099160f0ca0624da38f81"
+"db.utility.show-providers" = "ec771dad129341d4044ea92df3e7419aa0f8a60e7d31a02a3ef747cd6a4cf9f8"
+"db.utility.show-recipients" = "44c3701eb8b7a96b1f2fff12c05c5f5f4cdce547a2c3c0d8c954dfef57da1640"
+"db.utility.show-shares" = "7d8588a0661185df2f9f12fc7eb63a46d1a6a18f3aa79a1d48fab03672777791"
+"db.utility.show-shares-in-provider" = "baa01848c6400bc3daa79ed03f3a6347fd228aaf272b8d1174f84c4d302cea23"
+"db.utility.show-users" = "4472c3267aaa5502602943d5a633944fa9c825eb277fbf50dbcff95a56d96c4e"
+"db.utility.show-volumes" = "02355b057fb61a79a53f892d1c7fc4782a81e9d5cffa5bff1c5fe6e10da9c2ef"
+
+[review.definitions]
+"db.utility.analyze-compute-statistics.tables-compute-statistics" = "b7b337c879badb2a9ff2a8c010785ee53f26fa49288e0809b275ef3f3dc92963"
+"db.utility.analyze-drop-statistics" = "cb7110d8c73b24d9a230119a741bab91456f7800b6563f22ce9df99580ad2af4"
+"db.utility.cache-clear-cache" = "49242ab176acf3c49dcfdf90f1fc93dcc5acca14bc7897c51a22ef32783b123d"
+"db.utility.cache-refresh-function" = "877b52ca39da8e1d80e42c12b0348d234aec5cd86d73254e1aa9d3c8c9bed824"
+"db.utility.call.call" = "babe199a0f8e7f7ec2fbc6de91f47541d4ffc3e4ea1ac111d7236ee5cf9c69c1"
+"db.utility.call.call.syntax" = "43de4547d6873aff3b0f69e66f8b230221902f94e1918bef9f6d91e671b6b60c"
+"db.utility.describe-credential" = "9b9e0c0c704d2b12167077a711dfe56333143bbdd1f214f89a8c51d7b9bf860e"
+"db.utility.describe-function" = "07e0e0f62c6fbe2dbcae56380ab484e0f929c75581b1f13d52311a62c19a5cee"
+"db.utility.describe-governed-tag" = "cea86ae28e755b0e3196f023dec71a28d26478b937541a8f24bdac308d1e30ef"
+"db.utility.describe-location" = "4f6340d969d48719f7b96608d81e9937da4514cef7d0b42fc49e4f412a04707a"
+"db.utility.describe-table" = "8a3cbbf96801ca72fe29fed711ca2ee6b954758dc094f66047037b183103ce16"
+"db.utility.show-all-in-share" = "169ee6118fa74e1a2b9e960da4897785dab8bc9b4d41aa6e124a172ba1de20f8"
+"db.utility.show-connections" = "13e780ba9f6f90ee3cc25a9c70c817956705043c03d6cf2ab25ee788a32ee722"
+"db.utility.show-credentials" = "b1edbc5c94af34ea289a8843cc874e0f948fc0eb686c5743a081595e2d116ec1"
+"db.utility.show-governed-tags" = "d3a8414c8120c1c5aaa43b635353ec058889a6749fa08dfc7e376b7fe01375b1"
+"db.utility.show-groups" = "fe9d6e5c4e068ff6c6acbb92a813a059aaf82df55f32e870a026de1d23653112"
+"db.utility.show-locations" = "f271737b7b94f086224db1c1f0ba6e5ba4c46beef5e9e9826876b1e973adcca8"
+"db.utility.show-providers" = "6349eac925bc00084a47303456f89d6e5521779f628e8800f10ba893e02d0a3d"
+"db.utility.show-recipients" = "29f8873685fe35c9fafc0be9c8e275a0582786afc99a7cfcb8c7d9f6cd631d1b"
+"db.utility.show-shares" = "589e9913b9a1b2a6ae83ca3aadee8603ecd3958dd4afb6adcf57ca0141010cb0"
+"db.utility.show-shares-in-provider" = "fcef1dc9b08ca73f28bde76344b3c2dbffa9b4704d0d7c5e83d83b03403df088"
+"db.utility.show-users" = "df97d59e5a4ec09be074a4c37519ab216e8426d0672468958f56a783a19fc2c7"
+"db.utility.show-volumes" = "085e98842817aa7d82cf57b205953f5065305a040f6e9d605108cc17dc45b388"

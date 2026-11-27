@@ -2082,3 +2082,108 @@ note = "Re-read on 18 Nov 2026 at parser tree dafbc1c0 from the existing 2026.45
 
 [review.definitions]
 "db.ddl.alter-table" = "45f8d3c275e44a178729e82ee86a7ddf4b83d6b1a93ca41cd0a895c42ad47906"
+
+[[review]]
+id = "db-ddl-107"
+family = "ddl"
+parser_tree = "b7634d626424139ce9e7537508435eda0e7ddaf9"
+reviewed_utc = "2026-11-27T14:01:15Z"
+verdict = "approved"
+resolves = ["db-ddl-077", "db-ddl-078", "db-ddl-079"]
+forms = [
+  "db.ddl.alter-credential",
+  "db.ddl.alter-materialized-view.materialized-view-add-alter",
+  "db.ddl.alter-provider",
+  "db.ddl.alter-streaming-table.streaming-table-add-alter",
+  "db.ddl.alter-table",
+  "db.ddl.alter-table-add-constraint",
+  "db.ddl.alter-table-manage-column.alter-change-set-mask",
+  "db.ddl.alter-table-manage-column.alter-table-add-column",
+  "db.ddl.alter-view",
+  "db.ddl.alter-volume",
+  "db.ddl.create-database",
+  "db.ddl.create-recipient",
+  "db.ddl.create-schema",
+  "db.ddl.create-share",
+  "db.ddl.create-table-constraint.enable-novalidate",
+  "db.ddl.create-table-constraint.foreign-key-references",
+  "db.ddl.create-table-constraint.references",
+  "db.ddl.create-volume",
+  "db.ddl.drop-connection",
+  "db.ddl.drop-credential",
+  "db.ddl.drop-governed-tag",
+  "db.ddl.drop-location",
+  "db.ddl.drop-procedure",
+  "db.ddl.drop-provider",
+  "db.ddl.drop-recipient",
+  "db.ddl.drop-share",
+  "db.ddl.drop-view",
+  "db.ddl.drop-volume",
+  "db.ddl.refresh-foreign",
+  "db.ddl.tblproperties.unset-tblproperties",
+]
+note = "Read in full at c0cf1d70b under review brief v3 by eight independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.45), the local documentation pages, the obligations with the limits and hand rows, and the parse trees of every case. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria; no two cases of a form with different SQL give one tree. It resolves the changes_requested records it lists, each checked against the current trees: dropping a ( ... ) pair, wrapping one token in a new pair or adding a comma, in each accepted case of these forms, gives no variant with the case's tree (2,526 of 13,334 such variants parse), and syntax-coverage screen flags none of 22,019 variants; WITH PROPERTIES and WITH DBPROPERTIES, a VALUES alias with and without AS, and backquoted hint names and hinted relations give different trees; ! NULL on a column and a comma before the end of a hint are refused."
+
+[review.fingerprints]
+"db.ddl.alter-credential" = "957df62b6479e614272041958ce8d0fa595fe0e0156d3d725bd51710bb3308bd"
+"db.ddl.alter-materialized-view.materialized-view-add-alter" = "da64f371dad53f1f98ef4292cd6098273f5f201a860241ca533badd6028fa377"
+"db.ddl.alter-provider" = "5b90fd3680a7641494c56e4dd658375e941fd5829c052daf425cf5c4f8ebf284"
+"db.ddl.alter-streaming-table.streaming-table-add-alter" = "b6dd3918fcbee36ee092cbff2feab585f1349ed0ed69dcf5d6cd57a149143fcc"
+"db.ddl.alter-table" = "10171b289853c9c253513bff198350781eaa47b686471d0cf1cfad1b379ecc1e"
+"db.ddl.alter-table-add-constraint" = "d174012d6043bbd3f3eb11701781f55eea2e37aa09d9a97719e42e39f67eeade"
+"db.ddl.alter-table-manage-column.alter-change-set-mask" = "02ba28353c9d392c833ff22783b0bdb92c9becc4dae4f5c70e7e37be415b4740"
+"db.ddl.alter-table-manage-column.alter-table-add-column" = "2901f56c702c16515485d665dd099c8c8c04071756c5fda9d7494cab06481c89"
+"db.ddl.alter-view" = "2b3136d39c978399ae023c669d50445e5a75ea4923dba670548962f588c7a3bd"
+"db.ddl.alter-volume" = "aa0793a305935b8f4a9f817f937ded2986b1a7e8d4ee4c1aa223b29dde906f13"
+"db.ddl.create-database" = "906049676a33d114d24ec9957ebc7b27f01ae2b7bf1bd81c507eea410b659222"
+"db.ddl.create-recipient" = "537d0d59e30a3ab4620bee9ae7fc3694744b681eb6b380c8b4e53d6bc12d4dec"
+"db.ddl.create-schema" = "c0df196844ef6f2584b2cd90a16959317458165ba8920749f4d286590284fefe"
+"db.ddl.create-share" = "a03a92f273ee028d5450e7f69f9bcca34b2713717a6dedd474844d2f77197b1f"
+"db.ddl.create-table-constraint.enable-novalidate" = "a4c9676f3f49f09effb3d930870e8ead8eee3156cc284bf2ce8cca4af74cae76"
+"db.ddl.create-table-constraint.foreign-key-references" = "a75f544267a458524512f991afd8df99ba962d9ad599a677822607baa437a3b9"
+"db.ddl.create-table-constraint.references" = "489ac14b7d0300ac4c7057df88075f6463ff02ae84e915c61343d789c08f224e"
+"db.ddl.create-volume" = "c150d8d7415c653b1992ba4673ed603c3e000797a272f25d3fb0a88fd13094c1"
+"db.ddl.drop-connection" = "81b8d9f49d9c6e72e71445fa93a9450f2cdb4a9d2eb0f28218a2a2f72755e785"
+"db.ddl.drop-credential" = "d854ea2319a32e36ebcf5a4eece04a6d09f30b0b227651d01d4cfc70b4343577"
+"db.ddl.drop-governed-tag" = "d69d5451dec4af2b428b55ad5a0881ea203759d88221e2fa0e878e568d6fa312"
+"db.ddl.drop-location" = "2a28e83614411f32f9aae4b627ac12788bc1338322ef6ea36f51ffcd0f7fdaa3"
+"db.ddl.drop-procedure" = "e30bcaff54add496d375a0be79688e35823b3d47da60469e598e70f958d86c36"
+"db.ddl.drop-provider" = "bdd42e2463bc26d956f32847be45f4e1bdd84758f6ad6b5520c29df12b3123b8"
+"db.ddl.drop-recipient" = "f9632b62d09b411228e6676aceb152a4d81c7c318d98846be61bf2f4c0382a59"
+"db.ddl.drop-share" = "609908afa914ba65f71437558b1433fe3353a48324ab350b3910e9201f2e863c"
+"db.ddl.drop-view" = "4f3a4de964ebf6d360aa21ec4b83c9650374d22042172488cc1b4f5dca3f7787"
+"db.ddl.drop-volume" = "9d5d682f14b2c4f863a13825e6efefa6e4590682f05d5b1e7bca4f0840f6547b"
+"db.ddl.refresh-foreign" = "dfa07a5e69f9ba43da8c79d16adefd8d531261a3b81ce6bc3e02df8ee1e8b789"
+"db.ddl.tblproperties.unset-tblproperties" = "5b7ce4120b90215a0b992c40dcfb367ae2f79e9591f9af19f6712302b83c6c1c"
+
+[review.definitions]
+"db.ddl.alter-credential" = "dddfbc7988cf75c7cf34c280bc1be19e24957b126c678c299144c228b3d88828"
+"db.ddl.alter-materialized-view.materialized-view-add-alter" = "da45950c6e8a4c84ffd26708f887adbe1b2fde23c0cb8718905b1ae24923566f"
+"db.ddl.alter-provider" = "b09247e6e3832c98e9d150ae68ff910b530f33f9f12f58bc87e830dd73b638c7"
+"db.ddl.alter-streaming-table.streaming-table-add-alter" = "bd54d3d33992b1432046943b6980fdd95e35f7463b18f846770623346966bdd1"
+"db.ddl.alter-table" = "7b1b78672a7aaed18ebac8a55e1f1f67c2d6830967a348784bb7d8a32fd365f8"
+"db.ddl.alter-table-add-constraint" = "11ba73fad6f6e6268269efed0b8870df7738d36b2f816e544db9799929879617"
+"db.ddl.alter-table-manage-column.alter-change-set-mask" = "46441e783c41bc842e19c49362f6a8ff0a139f34dc6e4cc2f482ca9be79aba8b"
+"db.ddl.alter-table-manage-column.alter-table-add-column" = "2bce1feba8137fd2c095b6acc44b82b3e4ca86d4a9f505ced089ac8692df35b2"
+"db.ddl.alter-view" = "05ed4596c09351e0e4475babced12457ef00d1c1d40257f80b4bcc80b0c4f47b"
+"db.ddl.alter-volume" = "305c71ce34f2985eab6125cc9d8365d999885f541d0e0b8e2de9ed5be5623dde"
+"db.ddl.create-database" = "26f34aeba313ad48ff98fc9a1ef1fcabe7c49126f456d2ccb91a5624018005f1"
+"db.ddl.create-recipient" = "05d8e16a25e621905c97d0c841509c9e3c7958c0a5584372f7a477bd78c4f49d"
+"db.ddl.create-schema" = "82f3b1ae9d14f3a03ba974c1ccc77685354e395844f7701cfc9f410419b9438f"
+"db.ddl.create-share" = "2b5af567116b24cd46a1342eff7b6ac8668e6bd6428f37eb21837366cecf9939"
+"db.ddl.create-table-constraint.enable-novalidate" = "37fcc7fd37e5a289a01554b2178afcc17535d250119d0c95ffb4a1cd84d475d7"
+"db.ddl.create-table-constraint.foreign-key-references" = "9edccbc5b20abdfb3d8b1f483051b67207364b5499704f589426600d56631101"
+"db.ddl.create-table-constraint.references" = "e5722398696442c943f2ba47b967980db23180046ca444e744f03d1efd82de29"
+"db.ddl.create-volume" = "2e6921148bad90e48b14b1f8fffde0dd94fc038a5add0d03de5f2c14b3869af8"
+"db.ddl.drop-connection" = "b00978078731670be013907602ceef100e7c7d9f3e12cd09a1ddf4f2c0d191cb"
+"db.ddl.drop-credential" = "300f61b0652be202741c57ed40e0bdada2d770269f4ac436dce9f0e74ea03c69"
+"db.ddl.drop-governed-tag" = "4141ae80c29f71dd663a8bb8ad161ebddccad2a4b08ffd04c549f37565129017"
+"db.ddl.drop-location" = "fb371101f25d3f8223c97ac1d8a342ac84360ceded1b12d7b9ee954b8598e33a"
+"db.ddl.drop-procedure" = "1488dc3fbeb59c4d63166bccf5cb7709f2e17dc93585bd5563425e1cd44bfea5"
+"db.ddl.drop-provider" = "adc0ecf1c72a44827b9d4480768f213f4d901acfb51bf848f899022b75e24eb4"
+"db.ddl.drop-recipient" = "c03b17602ee18200efd1f27974d4881b2be4abc07c36aea36f39fc4c5c8fd104"
+"db.ddl.drop-share" = "dccfd95843dcfb14a1bbcb88abc534605cf16161d7ef3463b6833fd252129610"
+"db.ddl.drop-view" = "12ea9796d254284b7344f919df8770a8e85536b3625049ebaf84e9e360510a40"
+"db.ddl.drop-volume" = "4bc68af1d329e7959d2e51018d9fa6b72fac598e6795609c47acae80edda5cf1"
+"db.ddl.refresh-foreign" = "643ee98e2f5208f9a17c848f646463c08c3cb15b5d981b1de94dfb7c85d9486c"
+"db.ddl.tblproperties.unset-tblproperties" = "5aa8525cd177be89fa1a2fc73fdef4f61d34378cd963616ce40106135a0c11f3"
