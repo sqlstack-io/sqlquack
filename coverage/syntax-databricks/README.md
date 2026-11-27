@@ -377,8 +377,10 @@ Reading a refusal:
   receipt's message is the first line of the engine's message, with URLs, addresses, request
   ids, these names and the per-case schema masked.
 - `PARSER_CLASSES` lists each class the parser raises, by its full class and subclass. Any other
-  parser class stops the run, so a new one is reviewed before it is counted. Beside the parser's
-  own classes, it lists:
+  parser class stops the run, so a new one is reviewed before it is counted.
+  `PARSER_CLASS_SQLSTATES` reviews a class with one SQLSTATE only, as
+  `SYNTAX_DISCONTINUED.BANG_EQUALS_NOT` with 42601; any other SQLSTATE leaves it unreviewed. Beside
+  the parser's own classes, it lists:
   - classes by which the parse-tree builder refuses a statement that the grammar admits;
   - `INVALID_TABLESAMPLE_FRACTION` and `TEMP_VIEW_IF_NOT_EXISTS_NOT_ALLOWED`: Databricks' parser
     refuses a sample fraction outside [0, 100] and IF NOT EXISTS on a temporary view. Both

@@ -127,7 +127,6 @@ PARSER_CLASSES: frozenset[str] = frozenset(
         "SYNTAX_DISCONTINUED.BANG_EQUALS_NOT",
     }
 )
-# Parser classes reviewed with one SQLSTATE only; any other SQLSTATE leaves the class unreviewed.
 PARSER_CLASS_SQLSTATES: dict[str, str] = {"SYNTAX_DISCONTINUED.BANG_EQUALS_NOT": "42601"}
 EXCERPT_RUNTIME_CLASSES: frozenset[str] = frozenset(
     {

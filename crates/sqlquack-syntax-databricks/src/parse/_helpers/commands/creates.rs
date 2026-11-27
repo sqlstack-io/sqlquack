@@ -89,8 +89,7 @@ fn order_unsaid(written: &[String]) -> bool {
     distinct.len() < written.len() || between
 }
 
-/// The deferral options a constraint reads: both on a primary or foreign key, `DEFERRABLE` alone on a `UNIQUE`
-/// key (the warehouse refuses `INITIALLY DEFERRED` there), and neither on a `CHECK`, which documents none.
+/// The deferral options a constraint reads: both on a primary or foreign key, `DEFERRABLE` on `UNIQUE`, none on `CHECK`.
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Deferral {
     Both,
