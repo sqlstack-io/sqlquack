@@ -2187,3 +2187,20 @@ note = "Read in full at c0cf1d70b under review brief v3 by eight independent rea
 "db.ddl.drop-volume" = "4bc68af1d329e7959d2e51018d9fa6b72fac598e6795609c47acae80edda5cf1"
 "db.ddl.refresh-foreign" = "643ee98e2f5208f9a17c848f646463c08c3cb15b5d981b1de94dfb7c85d9486c"
 "db.ddl.tblproperties.unset-tblproperties" = "5aa8525cd177be89fa1a2fc73fdef4f61d34378cd963616ce40106135a0c11f3"
+
+[[review]]
+id = "db-ddl-108"
+family = "ddl"
+parser_tree = "ed42bbd7837c3f18f40d0760f101830b6cebf239"
+reviewed_utc = "2026-11-27T14:53:47Z"
+verdict = "approved"
+forms = [
+  "db.ddl.create-table-constraint.foreign-key-references",
+]
+note = "Read in full at 870649879 under review brief v3 by three independent read-only reviewers, from the Databricks SQL 2026.47 receipts (earlier cases from 2026.44 and 2026.45), the local documentation pages, the obligations with the limits, hand and reading rows, and the parse trees of every case; the trees of these forms are unchanged at 43103978f. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria, and no two cases of a form with different SQL give one tree. Type forms are read in a CAST type position; the page readings of optional parentheses, required pattern lists and the two-dot list tail each cite the page prose or a receipt."
+
+[review.fingerprints]
+"db.ddl.create-table-constraint.foreign-key-references" = "60e07c376dcb5366bd4c15e5c811b52e7f458a93d7e5c20d7542002db854fad3"
+
+[review.definitions]
+"db.ddl.create-table-constraint.foreign-key-references" = "3c7337d1f5ed5e2646201e79f4e7bd05a29fb67c5afc5101ee35843eccddb05b"
