@@ -854,13 +854,10 @@ impl Parser {
                     return Err(self.parse_error("Expected NOTHING after DO"));
                 }
             } else {
-                if let Some(var) = self.parse_var()? {
-                    var
-                } else {
-                    return Err(
-                        self.parse_error("Expected INSERT, UPDATE, DELETE, or action keyword")
-                    );
-                }
+                let var: Option<Expression> = self.parse_var()?;
+                var.ok_or_else(|| {
+                    self.parse_error("Expected INSERT, UPDATE, DELETE, or action keyword")
+                })?
             };
 
             whens.push(Expression::When(Box::new(When {

@@ -66,8 +66,7 @@ impl Parser<'_> {
         Ok(self.operated(operator, tested))
     }
 
-    /// `errorCapturingNot` in a predicate: `NOT` only, as Spark 4 refuses `!` there
-    /// (`SYNTAX_DISCONTINUED.BANG_EQUALS_NOT`); `!` is `NOT` only as the prefix operator.
+    /// `errorCapturingNot` in a predicate: `NOT` only, as the warehouse refuses `!` there.
     fn eat_not(&mut self) -> bool {
         self.eat_kw("NOT")
     }
