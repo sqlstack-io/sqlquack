@@ -23,3 +23,12 @@ pub(crate) struct ConstructsTestCase {
     pub(crate) compile_error_line: &'static str,
     pub(crate) expected_ok: bool,
 }
+
+pub(crate) struct DatabricksConstructsTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) query: &'static str,
+    /// The keys looked for in its constructs.
+    pub(crate) probed: &'static [&'static str],
+    /// The probed keys its constructs hold.
+    pub(crate) expected_keys: &'static [&'static str],
+}

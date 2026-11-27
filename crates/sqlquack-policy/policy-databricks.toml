@@ -1,0 +1,132 @@
+# SQLQuack evidence policy for cases recorded on Databricks SQL: how they replay on DuckDB and
+# compare, and the session they were recorded in. It follows `policy.toml`'s schema and rules; the
+# `snowflake` keys name the recording warehouse's side, whichever warehouse that is.
+#
+# Read by the evidence commands with `--evidence crates/sqlquack-policy/policy-databricks.toml`.
+# It declares no known divergences.
+
+schema_version = 2
+source_dialect = "databricks"
+
+[comparator]
+# Databricks keeps a result column's name as written, as DuckDB does.
+column_names = "exact"
+# Databricks sorts NULLs first ascending and last descending.
+null_order = "nulls_first_on_asc_last_on_desc"
+timestamp_tz = "instant"
+
+[comparator.float_ulps]
+float32 = 0
+float64 = 0
+
+[[comparator.type_equality]]
+snowflake = "TINYINT"
+duckdb = "TINYINT"
+reason = "Both are 8-bit signed integers."
+
+[[comparator.type_equality]]
+snowflake = "SMALLINT"
+duckdb = "SMALLINT"
+reason = "Both are 16-bit signed integers."
+
+[[comparator.type_equality]]
+snowflake = "INT"
+duckdb = "INTEGER"
+reason = "Both are 32-bit signed integers."
+
+[[comparator.type_equality]]
+snowflake = "BIGINT"
+duckdb = "BIGINT"
+reason = "Both are 64-bit signed integers."
+
+[[comparator.type_equality]]
+snowflake = "DECIMAL(p,s)"
+duckdb = "DECIMAL(p,s)"
+reason = "Fixed-point numbers with the same precision and scale hold the same values."
+
+[[comparator.type_equality]]
+snowflake = "FLOAT"
+duckdb = "FLOAT"
+reason = "Both are 32-bit IEEE 754 floats."
+
+[[comparator.type_equality]]
+snowflake = "DOUBLE"
+duckdb = "DOUBLE"
+reason = "Both are 64-bit IEEE 754 doubles."
+
+[[comparator.type_equality]]
+snowflake = "STRING"
+duckdb = "VARCHAR"
+reason = "Text values compare bytewise."
+
+[[comparator.type_equality]]
+snowflake = "BOOLEAN"
+duckdb = "BOOLEAN"
+reason = "Same type."
+
+[[comparator.type_equality]]
+snowflake = "DATE"
+duckdb = "DATE"
+reason = "Same type."
+
+[[comparator.type_equality]]
+snowflake = "BINARY"
+duckdb = "BLOB"
+reason = "Both are byte strings."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP"
+duckdb = "TIMESTAMPTZ"
+reason = "A Databricks TIMESTAMP is an instant shown in the session zone, as DuckDB's TIMESTAMPTZ."
+
+[[comparator.type_equality]]
+snowflake = "ARRAY<BOOLEAN>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list with each element written as a string."
+
+[[comparator.type_equality]]
+snowflake = "ARRAY<TINYINT>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list with each element written as a string."
+
+[[comparator.type_equality]]
+snowflake = "ARRAY<SMALLINT>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list with each element written as a string."
+
+[[comparator.type_equality]]
+snowflake = "ARRAY<INT>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list with each element written as a string."
+
+[[comparator.type_equality]]
+snowflake = "ARRAY<BIGINT>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list with each element written as a string."
+
+[[comparator.type_equality]]
+snowflake = "ARRAY<STRING>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list of the strings, with quotes and backslashes escaped."
+
+[[comparator.type_equality]]
+snowflake = "TIMESTAMP_NTZ"
+duckdb = "TIMESTAMP"
+reason = "Both are wall-clock timestamps with microsecond precision and no zone."
+
+[session_profiles.dbx-default-v1]
+description = "Databricks SQL warehouse defaults: the session in UTC with ANSI mode on."
+duckdb_time_zone = "UTC"
+
+# A case sets no parameter, so its hash names only its SQL.
+[session_profiles.dbx-default-v1.snowflake]
+
+# The warehouse defaults a result depends on. A result without effective values for them proves
+# them only through the account defaults recorded in session_defaults.json.
+[session_profiles.dbx-default-v1.pinned]
+TIMEZONE = "UTC"
+ANSI_MODE = true
+
+[edge_cases.translation]
+description = "Per-form translation obligations: each documented form's cases, measured against Databricks SQL's recorded results."
+required = ["type-combination"]
