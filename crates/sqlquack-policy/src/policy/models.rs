@@ -26,6 +26,30 @@ pub struct Policy {
     /// Limits on converting one statement; absent, the built-in defaults apply.
     #[serde(default)]
     pub conversion_budget: Option<ConversionBudgetPolicy>,
+    /// The warehouse the cases were recorded on; absent, Snowflake.
+    #[serde(default)]
+    pub source_dialect: EvidenceDialect,
+}
+
+/// The warehouse a policy's cases were recorded on, which fixes how a case's source SQL is written.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum EvidenceDialect {
+    /// Snowflake: input rows as a `UNION ALL` of typed `SELECT`s.
+    #[default]
+    Snowflake,
+    /// Databricks SQL: input rows as one `VALUES` list of `CAST` literals.
+    Databricks,
+}
+
+impl EvidenceDialect {
+    /// The name a case hash and a pending file record.
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Snowflake => "snowflake",
+            Self::Databricks => "databricks",
+        }
+    }
 }
 
 /// How long converting one statement may take and how much SQL it may emit, before it is refused.

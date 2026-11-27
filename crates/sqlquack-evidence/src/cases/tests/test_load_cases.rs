@@ -191,6 +191,7 @@ fn given_case_when_expanding_then_inputs_become_typed_rows_before_the_case_sql()
         SourceSqlTestCase {
             description: "an expression is evaluated per row in input order",
             reference: "string/concat.toml#concat",
+            dialect: "snowflake",
             expected_sql: "WITH input AS (\n  \
                 SELECT 1 AS ordinal, CAST('gift' AS VARCHAR) AS a, CAST(NULL AS VARCHAR) AS b\n  \
                 UNION ALL\n  \
@@ -200,22 +201,45 @@ fn given_case_when_expanding_then_inputs_become_typed_rows_before_the_case_sql()
         SourceSqlTestCase {
             description: "a query follows the input relation unchanged",
             reference: "string/concat.toml#sorted",
+            dialect: "snowflake",
             expected_sql: "WITH input AS (\n  \
                 SELECT 1 AS ordinal, CAST('b' AS VARCHAR) AS a\n  \
                 UNION ALL\n  \
                 SELECT 2 AS ordinal, CAST('a' AS VARCHAR) AS a\n)\n\
                 SELECT a FROM input ORDER BY a",
         },
+        SourceSqlTestCase {
+            description: "on Databricks the input rows are one VALUES list of CAST literals, as recorded",
+            reference: "string/concat.toml#sorted",
+            dialect: "databricks",
+            expected_sql: "WITH input AS (SELECT * FROM VALUES (1, CAST('b' AS VARCHAR)), \
+                (2, CAST('a' AS VARCHAR)) AS input(ordinal, a)) SELECT a FROM input ORDER BY a",
+        },
+        SourceSqlTestCase {
+            description: "on Databricks an expression is selected over that VALUES list",
+            reference: "string/concat.toml#concat",
+            dialect: "databricks",
+            expected_sql: "WITH input AS (SELECT * FROM VALUES (1, CAST('gift' AS VARCHAR), \
+                CAST(NULL AS VARCHAR)), (2, CAST('' AS VARCHAR), CAST('wrap' AS VARCHAR)) \
+                AS input(ordinal, a, b)) SELECT CONCAT(a, b) AS value FROM input ORDER BY ordinal",
+        },
     ];
 
     for test_case in test_cases {
         assert_eq!(
-            source_sql_of(test_case.reference).as_deref(),
-            Some(test_case.expected_sql),
+            source_sql_of(test_case.reference, test_case.dialect).map(|(sql, _)| sql),
+            Some(test_case.expected_sql.to_owned()),
             "{}",
             test_case.description
         );
     }
+    let hash =
+        |dialect: &str| source_sql_of("string/concat.toml#sorted", dialect).map(|(_, hash)| hash);
+    assert_ne!(
+        hash("snowflake"),
+        hash("databricks"),
+        "a case recorded on another warehouse has its own hash"
+    );
 }
 
 #[test]

@@ -3,8 +3,9 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use sqlquack_compare::comparison::models::RowOrder;
-use sqlquack_policy::policy::models::{Policy, SessionValue};
+use sqlquack_policy::policy::models::{EvidenceDialect, Policy, SessionValue};
 
+use crate::cases::_helpers::databricks_source_sql::databricks_source_sql;
 use crate::cases::_helpers::functions::{create_function, function_problems};
 use crate::cases::_helpers::hashing::case_hash;
 use crate::cases::_helpers::setup::{profile_session_problems, setup_problems};
@@ -14,7 +15,7 @@ use crate::cases::models::{
     QueryOrder, Spelling,
 };
 use crate::constants::{
-    CANONICAL_SUFFIX, ERROR_TAG, EVIDENCE_FORMAT, ORDINAL_COLUMN, SOURCE_DIALECT, VALUE_COLUMN,
+    CANONICAL_SUFFIX, ERROR_TAG, EVIDENCE_FORMAT, ORDINAL_COLUMN, VALUE_COLUMN,
 };
 
 pub(crate) fn load_file(
@@ -73,7 +74,7 @@ pub(crate) fn load_file(
     let mut loaded: Vec<LoadedCase> = Vec::new();
     for case in &file.cases {
         let reference = format!("{relative}#{}", case.id);
-        let parameters = (&profile.snowflake, &profile.pinned);
+        let parameters = (&profile.snowflake, &profile.pinned, policy.source_dialect);
         let source = expand(file, case, Spelling::Source, parameters);
         let Some(equivalence) = &file.equivalence else {
             let role = match evidence(file, case) {
@@ -111,18 +112,22 @@ fn expand(
     file: &CaseFile,
     case: &CaseDefinition,
     spelling: Spelling,
-    (parameters, pinned): (
+    (parameters, pinned, dialect): (
         &BTreeMap<String, SessionValue>,
         &BTreeMap<String, SessionValue>,
+        EvidenceDialect,
     ),
 ) -> LoadedCase {
-    let sql = source_sql(case, spelling);
+    let sql = match dialect {
+        EvidenceDialect::Snowflake => source_sql(case, spelling),
+        EvidenceDialect::Databricks => databricks_source_sql(case, spelling),
+    };
     let setup_sql: Vec<String> = case.functions.iter().map(create_function).collect();
     let hashed_setup: Vec<String> = setup_sql.iter().chain(&case.setup).cloned().collect();
     let values = case.values.unwrap_or(true);
     let hash = case_hash(&HashedContent {
         format: EVIDENCE_FORMAT,
-        source_dialect: SOURCE_DIALECT,
+        source_dialect: dialect.name(),
         session_parameters: parameters,
         source_sql: &sql,
         values: (!values).then_some(false),
@@ -149,7 +154,11 @@ fn expand(
         setup_sql,
         setup: case.setup.clone(),
         inputs: inputs(case),
-        row_sources: row_sources(case, spelling),
+        row_sources: match dialect {
+            EvidenceDialect::Snowflake => row_sources(case, spelling),
+            EvidenceDialect::Databricks => Vec::new(),
+        },
+        source_dialect: dialect,
     }
 }
 
