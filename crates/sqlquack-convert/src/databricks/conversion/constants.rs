@@ -16,7 +16,7 @@ pub const LITERAL_RULE: &str = "rule.databricks.literal";
 pub const CAST_RULE: &str = "rule.databricks.cast";
 /// `+`, `-` and `*` on numbers, which raise on integer overflow in both engines.
 pub const ARITHMETIC_RULE: &str = "rule.databricks.arithmetic";
-/// `/` and `%` by a constant other than zero, so Databricks never raises where DuckDB returns NULL.
+/// `/`, `%` and `DIV` on numbers, raising on a zero divisor as Databricks does in ANSI mode.
 pub const DIVISION_RULE: &str = "rule.databricks.division";
 /// `=`, `<>`, `<`, `<=`, `>`, `>=` and `<=>` on values of one type family.
 pub const COMPARISON_RULE: &str = "rule.databricks.comparison";
@@ -48,8 +48,14 @@ pub const REWRITE_RULE: &str = "rule.databricks.rewrite";
 pub const SHA2_SHA256_BITS: &str = "256";
 /// The digest length SHA2 also reads as SHA-256.
 pub const SHA2_DEFAULT_BITS: &str = "0";
-/// An aggregate DuckDB computes the same way.
+/// An aggregate DuckDB computes the same way, its result cast to the type Databricks gives it.
 pub const AGGREGATE_RULE: &str = "rule.databricks.aggregate";
+/// A date or timestamp function: a field such as DAY or HOUR, or date arithmetic in whole days.
+pub const DATE_FUNCTION_RULE: &str = "rule.databricks.date_function";
+/// A string function, with Databricks's handling of empty, NULL and out-of-range arguments written out.
+pub const STRING_FUNCTION_RULE: &str = "rule.databricks.string_function";
+/// A number function such as MOD, CEIL or SIGN, typed and bounded as Databricks types and bounds it.
+pub const NUMBER_FUNCTION_RULE: &str = "rule.databricks.number_function";
 
 /// COUNT, the one aggregate with a `*` argument and a DISTINCT form that changes its result.
 pub const COUNT_NAME: &str = "COUNT";
@@ -134,9 +140,63 @@ const TIMESTAMP_TEXT: FailureMode = FailureMode {
 pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
     (ARITHMETIC_RULE, &[OVERFLOW]),
     (SAME_FUNCTION_RULE, &[OVERFLOW]),
-    (DIVISION_RULE, &[DIVISION]),
+    (DIVISION_RULE, &[DIVISION, OVERFLOW]),
+    (AGGREGATE_RULE, &[OVERFLOW]),
+    (DATE_FUNCTION_RULE, &[OVERFLOW]),
+    (STRING_FUNCTION_RULE, &[OVERFLOW]),
+    (NUMBER_FUNCTION_RULE, &[OVERFLOW, DIVISION]),
     (
         CAST_RULE,
         &[OVERFLOW, NUMBER_TEXT, DATE_TEXT, TIMESTAMP_TEXT],
     ),
+];
+
+/// The largest BIGINT, where Java's cast of a larger DOUBLE saturates.
+pub const BIGINT_MAX: &str = "9223372036854775807";
+/// The smallest BIGINT, where Java's cast of a smaller DOUBLE saturates.
+pub const BIGINT_MIN: &str = "-9223372036854775808";
+/// The largest argument FACTORIAL takes; it returns NULL above it, as 21! exceeds BIGINT.
+pub const FACTORIAL_MAX: u8 = 20;
+
+/// The modulus CHR takes its code by: it returns the character of the code's low byte.
+pub const CHR_MODULUS: u16 = 256;
+/// The pad LPAD and RPAD use when none is given, a space.
+pub const DEFAULT_PAD: &str = "' '";
+/// The date day counts start from.
+pub const EPOCH_DATE: &str = "1970-01-01";
+/// 2^31: an INT day count wraps past it, as Databricks's DATE_ADD does.
+pub const INT_RANGE: u64 = 2_147_483_648;
+/// 2^32, the span of INT values.
+pub const INT_SPAN: u64 = 4_294_967_296;
+
+/// The aggregates converted, with the DuckDB function computing each.
+pub const AGGREGATES: &[(&str, &str)] = &[
+    ("COUNT", "count"),
+    ("MIN", "min"),
+    ("MAX", "max"),
+    ("SUM", "sum"),
+    ("BOOL_AND", "bool_and"),
+    ("EVERY", "bool_and"),
+    ("BOOL_OR", "bool_or"),
+    ("SOME", "bool_or"),
+    ("ANY", "bool_or"),
+    ("COUNT_IF", "count_if"),
+    ("BIT_AND", "bit_and"),
+    ("BIT_OR", "bit_or"),
+    ("BIT_XOR", "bit_xor"),
+];
+
+/// The functions named after a type, which cast their one argument to it.
+pub const CAST_FUNCTIONS: &[(&str, DatabricksType)] = &[
+    ("BOOLEAN", DatabricksType::Boolean),
+    ("TINYINT", DatabricksType::TinyInt),
+    ("SMALLINT", DatabricksType::SmallInt),
+    ("INT", DatabricksType::Int),
+    ("BIGINT", DatabricksType::BigInt),
+    ("FLOAT", DatabricksType::Float),
+    ("DOUBLE", DatabricksType::Double),
+    ("DECIMAL", DEFAULT_DECIMAL),
+    ("STRING", DatabricksType::String),
+    ("DATE", DatabricksType::Date),
+    ("TIMESTAMP", DatabricksType::Timestamp),
 ];

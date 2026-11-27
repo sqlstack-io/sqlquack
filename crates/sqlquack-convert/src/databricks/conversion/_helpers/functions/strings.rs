@@ -1,0 +1,209 @@
+//! String functions, with Databricks's handling of empty, NULL and out-of-range arguments written out.
+
+use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
+use crate::databricks::conversion::constants::{CHR_MODULUS, DEFAULT_PAD};
+use crate::databricks::conversion::models::{DatabricksType, Emitted};
+
+/// The rewrite of the string function `name`, `None` when none handles it; lengths count code points in both engines.
+pub(crate) fn string_rewrite(name: &str) -> Option<Rewrite> {
+    let rewrite: Rewrite = match name {
+        "LENGTH" | "LEN" | "CHAR_LENGTH" | "CHARACTER_LENGTH" => {
+            |values| counted(values, "length({s})")
+        }
+        "OCTET_LENGTH" => |values| counted(values, "strlen({s})"),
+        "BIT_LENGTH" => |values| counted(values, "strlen({s}) * 8"),
+        "ASCII" => |values| counted(values, "ascii({s})"),
+        "INSTR" => |values| found(values, false),
+        "LOCATE" | "POSITION" | "CHARINDEX" => |values| found(values, true),
+        "CONTAINS" => |values| tested(values, "contains"),
+        "STARTSWITH" => |values| tested(values, "starts_with"),
+        "ENDSWITH" => |values| tested(values, "ends_with"),
+        "RIGHT" => right,
+        "LPAD" => |values| padded(values, "lpad"),
+        "RPAD" => |values| padded(values, "rpad"),
+        "SPACE" => space,
+        "CHR" | "CHAR" => chr,
+        "REPLACE" => replace,
+        "TRANSLATE" => translate,
+        "BTRIM" => btrim,
+        "CONCAT_WS" => concat_ws,
+        "FIND_IN_SET" => find_in_set,
+        _ => return None,
+    };
+    Some(rewrite)
+}
+
+/// A count over one string as INT.
+fn counted(values: &[Emitted], template: &str) -> Option<Emitted> {
+    let [text] = strings::<1>(values)?;
+    Some(typed(
+        format!("CAST({} AS INTEGER)", template.replace("{s}", &text.sql)),
+        DatabricksType::Int,
+    ))
+}
+
+/// `INSTR(s, t)`, or with `swapped` `LOCATE(t, s)`: the 1-based character position of `t` in `s`, 0 if absent.
+fn found(values: &[Emitted], swapped: bool) -> Option<Emitted> {
+    let [first, second] = strings::<2>(values)?;
+    let (haystack, needle) = match swapped {
+        true => (second, first),
+        false => (first, second),
+    };
+    Some(typed(
+        format!("CAST(instr({}, {}) AS INTEGER)", haystack.sql, needle.sql),
+        DatabricksType::Int,
+    ))
+}
+
+/// A string test of two strings, TRUE for an empty second string.
+fn tested(values: &[Emitted], function: &str) -> Option<Emitted> {
+    let [text, part] = strings::<2>(values)?;
+    Some(typed(
+        format!("{function}({}, {})", text.sql, part.sql),
+        DatabricksType::Boolean,
+    ))
+}
+
+/// `RIGHT(s, n)`: '' for a zero or negative length, where DuckDB counts from the start.
+fn right(values: &[Emitted]) -> Option<Emitted> {
+    let [text, length] = values else { return None };
+    if text.data_type != DatabricksType::String || !small_integer(length.data_type) {
+        return None;
+    }
+    Some(typed(
+        format!(
+            "CASE WHEN {s} IS NULL OR {n} IS NULL THEN NULL WHEN {n} <= 0 THEN '' ELSE right({s}, {n}) END",
+            s = text.sql,
+            n = length.sql
+        ),
+        DatabricksType::String,
+    ))
+}
+
+/// `LPAD` or `RPAD(s, n[, pad])`: '' for `n` of zero or less, `s` cut to `n` for an empty pad.
+fn padded(values: &[Emitted], function: &str) -> Option<Emitted> {
+    let (text, length, pad) = match values {
+        [text, length] => (text, length, DEFAULT_PAD.to_owned()),
+        [text, length, pad] if pad.data_type == DatabricksType::String => {
+            (text, length, pad.sql.clone())
+        }
+        _ => return None,
+    };
+    if text.data_type != DatabricksType::String || !small_integer(length.data_type) {
+        return None;
+    }
+    Some(typed(
+        format!(
+            "CASE WHEN {s} IS NULL OR {n} IS NULL OR {pad} IS NULL THEN NULL WHEN {n} <= 0 THEN '' \
+             WHEN {pad} = '' THEN left({s}, {n}) ELSE {function}({s}, {n}, {pad}) END",
+            s = text.sql,
+            n = length.sql
+        ),
+        DatabricksType::String,
+    ))
+}
+
+/// `SPACE(n)`: `n` spaces, '' for zero or less, as `repeat` gives.
+fn space(values: &[Emitted]) -> Option<Emitted> {
+    let [count] = values else { return None };
+    small_integer(count.data_type).then(|| {
+        typed(
+            format!("repeat({DEFAULT_PAD}, {})", count.sql),
+            DatabricksType::String,
+        )
+    })
+}
+
+/// `CHR(n)`: '' for a negative `n`, else the character of `n` modulo 256.
+fn chr(values: &[Emitted]) -> Option<Emitted> {
+    let [code] = values else { return None };
+    code.data_type.is_integral().then(|| {
+        typed(
+            format!(
+                "CASE WHEN {n} < 0 THEN '' ELSE chr(CAST({n} % {CHR_MODULUS} AS INTEGER)) END",
+                n = code.sql
+            ),
+            DatabricksType::String,
+        )
+    })
+}
+
+/// `REPLACE(s, search[, by])`: every `search` replaced, `s` unchanged for an empty `search`.
+fn replace(values: &[Emitted]) -> Option<Emitted> {
+    let (text, search, by) = match values {
+        [text, search] => (text, search, "''".to_owned()),
+        [text, search, by] if by.data_type == DatabricksType::String => {
+            (text, search, by.sql.clone())
+        }
+        _ => return None,
+    };
+    strings::<2>(&[text.clone(), search.clone()])?;
+    Some(typed(
+        format!("replace({}, {}, {by})", text.sql, search.sql),
+        DatabricksType::String,
+    ))
+}
+
+/// `TRANSLATE(s, from, to)`: the first mapping of a repeated character wins in both engines.
+fn translate(values: &[Emitted]) -> Option<Emitted> {
+    let [text, from, to] = strings::<3>(values)?;
+    Some(typed(
+        format!("translate({}, {}, {})", text.sql, from.sql, to.sql),
+        DatabricksType::String,
+    ))
+}
+
+/// `BTRIM(s)`: spaces trimmed from both ends.
+fn btrim(values: &[Emitted]) -> Option<Emitted> {
+    let [text] = strings::<1>(values)?;
+    Some(typed(
+        format!("trim({}, {DEFAULT_PAD})", text.sql),
+        DatabricksType::String,
+    ))
+}
+
+/// `CONCAT_WS(sep, s, ...)` of strings: NULLs skipped, '' with no strings, NULL for a NULL `sep`.
+fn concat_ws(values: &[Emitted]) -> Option<Emitted> {
+    let text = |value: &Emitted| {
+        matches!(
+            value.data_type,
+            DatabricksType::String | DatabricksType::Null
+        )
+    };
+    if values.is_empty() || !values.iter().all(text) {
+        return None;
+    }
+    let separator = &values[0].sql;
+    let sql = match values {
+        [_] => format!("CASE WHEN {separator} IS NULL THEN NULL ELSE '' END"),
+        _ => {
+            let parts: Vec<&str> = values.iter().map(|value| value.sql.as_str()).collect();
+            format!("concat_ws({})", parts.join(", "))
+        }
+    };
+    Some(typed(sql, DatabricksType::String))
+}
+
+/// `FIND_IN_SET(s, list)`: the 1-based place of `s` among `list`'s comma-separated items, 0 if absent or `s` has a comma.
+fn find_in_set(values: &[Emitted]) -> Option<Emitted> {
+    let [item, items] = strings::<2>(values)?;
+    Some(typed(
+        format!(
+            "CASE WHEN {s} IS NULL OR {list} IS NULL THEN NULL WHEN contains({s}, ',') THEN 0 \
+             ELSE CAST(coalesce(list_position(string_split({list}, ','), {s}), 0) AS INTEGER) END",
+            s = item.sql,
+            list = items.sql
+        ),
+        DatabricksType::Int,
+    ))
+}
+
+/// Exactly `N` arguments, all strings.
+fn strings<const N: usize>(values: &[Emitted]) -> Option<[&Emitted; N]> {
+    let strings = values.len() == N
+        && values
+            .iter()
+            .all(|value| value.data_type == DatabricksType::String);
+    strings.then(|| std::array::from_fn(|index| &values[index]))
+}

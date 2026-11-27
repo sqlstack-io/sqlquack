@@ -4,15 +4,16 @@ use serde_json::Value;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
-use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::expressions::literals::{cast_value, typed};
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
-use crate::databricks::conversion::_helpers::expressions::rewrites::{applied, rewrite};
+use crate::databricks::conversion::_helpers::functions::rewrites::{applied, rewrite};
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{
     field, list, node_kind, refused_function, understood,
 };
 use crate::databricks::conversion::constants::{
-    AGGREGATE_RULE, CONCAT_RULE, COUNT_NAME, MIN_LIST_ARGUMENTS, SAME_FUNCTION_RULE, SAME_FUNCTIONS,
+    AGGREGATE_RULE, AGGREGATES, CAST_FUNCTIONS, CAST_RULE, CONCAT_RULE, COUNT_NAME,
+    MAX_DECIMAL_PRECISION, MIN_LIST_ARGUMENTS, SAME_FUNCTION_RULE, SAME_FUNCTIONS,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Signature};
 
@@ -35,12 +36,17 @@ pub(crate) fn call(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
     };
     let args = list(call, "args");
     match name.as_str() {
-        "COUNT" | "MIN" | "MAX" => aggregate(&name, args, distinct, site),
+        _ if AGGREGATES.iter().any(|(aggregate, _)| *aggregate == name) => {
+            aggregate(&name, args, distinct, site)
+        }
         _ if distinct => Err(refused_function(
             &name,
             format!("{name} is no aggregate DISTINCT applies to"),
         )),
         "CONCAT" => concat(args, site),
+        _ if CAST_FUNCTIONS.iter().any(|(function, _)| *function == name) => {
+            cast_function(&name, args, site)
+        }
         _ => match rewrite(&name) {
             Some(rewrite) => applied(&name, rewrite, &arguments(args, site)?, site),
             None => same_function(&name, args, site),
@@ -48,7 +54,7 @@ pub(crate) fn call(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
     }
 }
 
-/// `COUNT(*)`, `COUNT([DISTINCT] x)`, `MIN(x)` and `MAX(x)`, whose extremes DISTINCT leaves alone.
+/// An aggregate of one argument or `COUNT(*)`, typed as Databricks types it: an INT SUM as BIGINT, COUNT_IF 0 over NULLs.
 fn aggregate(
     name: &str,
     args: &[Value],
@@ -73,24 +79,82 @@ fn aggregate(
         return Ok(typed("count(*)".to_owned(), DatabricksType::BigInt));
     }
     let value = expression(argument, site.without_aggregates())?;
-    match (name, value.data_type) {
-        ("COUNT", _) => {
-            let distinct = match distinct {
-                true => "DISTINCT ",
-                false => "",
-            };
-            Ok(typed(
-                format!("count({distinct}{})", value.sql),
-                DatabricksType::BigInt,
-            ))
+    let function = AGGREGATES
+        .iter()
+        .find(|(databricks, _)| *databricks == name)
+        .map_or("", |(_, duckdb)| *duckdb);
+    let quantified = match distinct {
+        true => format!("DISTINCT {}", value.sql),
+        false => value.sql.clone(),
+    };
+    let call = format!("{function}({quantified})");
+    use DatabricksType as T;
+    let result = match (name, value.data_type) {
+        ("COUNT", _) => Some(typed(call, T::BigInt)),
+        (_, T::Null) => None,
+        ("MIN" | "MAX", data_type) => Some(typed(call, data_type)),
+        ("SUM", T::TinyInt | T::SmallInt | T::Int) => {
+            Some(typed(format!("CAST({call} AS BIGINT)"), T::BigInt))
         }
-        (_, DatabricksType::Null) => Err(refused_function(
-            name,
-            format!("no rule types {name} of a bare NULL"),
+        ("SUM", T::Decimal { precision, scale }) => {
+            let sum = T::Decimal {
+                precision: (precision + 10).min(MAX_DECIMAL_PRECISION),
+                scale,
+            };
+            Some(typed(format!("CAST({call} AS {})", sum.duckdb_name()), sum))
+        }
+        ("BOOL_AND" | "EVERY" | "BOOL_OR" | "SOME" | "ANY", T::Boolean) => {
+            Some(typed(call, T::Boolean))
+        }
+        ("COUNT_IF", T::Boolean) if !distinct => Some(typed(
+            format!("CAST(coalesce({call}, 0) AS BIGINT)"),
+            T::BigInt,
         )),
-        (_, data_type) => Ok(typed(
-            format!("{}({})", name.to_ascii_lowercase(), value.sql),
-            data_type,
+        ("BIT_AND" | "BIT_OR", data_type) if data_type.is_integral() => {
+            Some(typed(call, data_type))
+        }
+        ("BIT_XOR", data_type) if data_type.is_integral() && !distinct => {
+            Some(typed(call, data_type))
+        }
+        _ => None,
+    };
+    result.ok_or_else(|| {
+        refused_function(
+            name,
+            format!(
+                "no rule converts {name} of {}{}",
+                value.data_type.name(),
+                match distinct {
+                    true => " with DISTINCT",
+                    false => "",
+                }
+            ),
+        )
+    })
+}
+
+/// A function named after a type, such as `BIGINT(x)`: a cast of its one argument to that type.
+fn cast_function(name: &str, args: &[Value], site: Site<'_>) -> Result<Emitted, Refusal> {
+    let target = CAST_FUNCTIONS
+        .iter()
+        .find(|(function, _)| *function == name)
+        .map(|(_, target)| *target);
+    let values = arguments(args, site)?;
+    let _rule = site.log.rule(CAST_RULE);
+    match (target, values.as_slice()) {
+        (Some(target), [value]) => cast_value(value, target).ok_or_else(|| {
+            refused_function(
+                name,
+                format!(
+                    "no rule shows DuckDB casts {} to {} as Databricks does",
+                    value.data_type.name(),
+                    target.name()
+                ),
+            )
+        }),
+        _ => Err(refused_function(
+            name,
+            format!("only {name} of one argument converts"),
         )),
     }
 }

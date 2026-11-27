@@ -2,7 +2,7 @@
 
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
-use crate::databricks::conversion::_helpers::expressions::rewrites::Rewrite;
+use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
 use crate::databricks::conversion::constants::LAMBDA_ELEMENT;
 use crate::databricks::conversion::models::{DatabricksType, Element, Emitted};

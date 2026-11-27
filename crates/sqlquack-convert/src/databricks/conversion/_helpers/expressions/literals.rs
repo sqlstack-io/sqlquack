@@ -61,25 +61,31 @@ pub(crate) fn cast(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> 
     let target = databricks_type(field(cast, "to"))?;
     let source = expression(field(cast, "this"), site)?;
     let _rule = site.log.rule(CAST_RULE);
-    let exact = match (&source.literal, source.data_type) {
-        (Some(Literal::Number(number)), _) => number_fits(number, target),
-        (Some(Literal::Text(value)), _) => text_fits(value, target),
-        (None, from) => same_cast(from, target),
-    };
-    match exact {
-        true => Ok(typed(
-            format!("CAST({} AS {})", source.sql, target.duckdb_name()),
-            target,
-        )),
-        false => Err(refused(
+    cast_value(&source, target).ok_or_else(|| {
+        refused(
             "cast",
             format!(
                 "no rule shows DuckDB casts {} to {} as Databricks does",
                 source.sql,
                 target.duckdb_name()
             ),
-        )),
-    }
+        )
+    })
+}
+
+/// `source` cast to `target`, `None` unless DuckDB converts it as Databricks does.
+pub(crate) fn cast_value(source: &Emitted, target: DatabricksType) -> Option<Emitted> {
+    let exact = match (&source.literal, source.data_type) {
+        (Some(Literal::Number(number)), _) => number_fits(number, target),
+        (Some(Literal::Text(value)), _) => text_fits(value, target),
+        (None, from) => same_cast(from, target),
+    };
+    exact.then(|| {
+        typed(
+            format!("CAST({} AS {})", source.sql, target.duckdb_name()),
+            target,
+        )
+    })
 }
 
 /// A unary minus; on a literal number it folds into the literal, typed by its digits alone.

@@ -7,7 +7,7 @@ use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::databricks::conversion::_helpers::support::tree::{field, understood};
 use crate::databricks::conversion::constants::{
-    DEFAULT_DECIMAL, MAX_DECIMAL_PRECISION, TIMESTAMP_NTZ_NAME,
+    DEFAULT_DECIMAL, DOUBLE_EXACT_DIGITS, MAX_DECIMAL_PRECISION, TIMESTAMP_NTZ_NAME,
 };
 use crate::databricks::conversion::models::{DatabricksType, Element};
 
@@ -94,7 +94,7 @@ fn decimal(precision: Option<u64>, scale: Option<u64>) -> Option<DatabricksType>
     }
 }
 
-/// Whether DuckDB casts every value of `from` to `to` exactly as Databricks does, raising on overflow alike.
+/// Whether DuckDB casts every value of `from` to `to` as Databricks does; a decimal of 15 digits becomes DOUBLE by one exact division.
 pub(crate) fn same_cast(from: DatabricksType, to: DatabricksType) -> bool {
     use DatabricksType as T;
     match (from, to) {
@@ -102,6 +102,7 @@ pub(crate) fn same_cast(from: DatabricksType, to: DatabricksType) -> bool {
         (from, to) if from == to => true,
         (from, to) if from.is_integral() && to.is_integral() => true,
         (from, T::Double) if from.is_integral() => true,
+        (T::Decimal { precision, .. }, T::Double) => usize::from(precision) <= DOUBLE_EXACT_DIGITS,
         (from, T::Decimal { precision, scale }) if from.is_integral() => from
             .integer_digits()
             .is_some_and(|digits| precision - scale >= digits),

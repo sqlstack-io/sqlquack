@@ -2,20 +2,46 @@
 
 use sqlquack_diagnostics::refusals::models::Refusal;
 
-use crate::databricks::conversion::_helpers::expressions::arrays::array_rewrite;
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
+use crate::databricks::conversion::_helpers::functions::arrays::array_rewrite;
+use crate::databricks::conversion::_helpers::functions::dates::date_rewrite;
+use crate::databricks::conversion::_helpers::functions::numbers::number_rewrite;
+use crate::databricks::conversion::_helpers::functions::strings::string_rewrite;
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::refused_function;
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
-use crate::databricks::conversion::constants::{REWRITE_RULE, SHA2_DEFAULT_BITS, SHA2_SHA256_BITS};
+use crate::databricks::conversion::constants::{
+    DATE_FUNCTION_RULE, NUMBER_FUNCTION_RULE, REWRITE_RULE, SHA2_DEFAULT_BITS, SHA2_SHA256_BITS,
+    STRING_FUNCTION_RULE,
+};
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
 /// A rewrite: the DuckDB expression for the converted arguments, `None` when they are outside it.
 pub(crate) type Rewrite = fn(&[Emitted]) -> Option<Emitted>;
 
-/// The rewrite of the function `name`, `None` when no rewrite handles it.
-pub(crate) fn rewrite(name: &str) -> Option<Rewrite> {
+/// The rewrites of one family of functions, by name.
+type Family = fn(&str) -> Option<Rewrite>;
+
+/// The rule and rewrite of the function `name`, `None` when no rewrite handles it.
+pub(crate) fn rewrite(name: &str) -> Option<(&'static str, Rewrite)> {
+    let families: [(&str, Family); 5] = [
+        (REWRITE_RULE, own_rewrite),
+        (REWRITE_RULE, array_rewrite),
+        (DATE_FUNCTION_RULE, date_rewrite),
+        (STRING_FUNCTION_RULE, string_rewrite),
+        (NUMBER_FUNCTION_RULE, number_rewrite),
+    ];
+    for (rule, family) in families {
+        if let Some(rewrite) = family(name) {
+            return Some((rule, rewrite));
+        }
+    }
+    None
+}
+
+/// The rewrites of this module: NULL handling, string bounds and the TRY_ arithmetic.
+fn own_rewrite(name: &str) -> Option<Rewrite> {
     let rewrite: Rewrite = match name {
         "NVL" | "IFNULL" => first_not_null,
         "NVL2" => nvl2,
@@ -30,7 +56,7 @@ pub(crate) fn rewrite(name: &str) -> Option<Rewrite> {
         },
         "TRY_DIVIDE" => try_divide,
         "TRY_MOD" => try_mod,
-        _ => return array_rewrite(name),
+        _ => return None,
     };
     Some(rewrite)
 }
@@ -38,11 +64,20 @@ pub(crate) fn rewrite(name: &str) -> Option<Rewrite> {
 /// `rewrite` applied to the converted arguments of `name`, or the refusal of arguments outside it.
 pub(crate) fn applied(
     name: &str,
-    rewrite: Rewrite,
+    (rule, rewrite): (&'static str, Rewrite),
     values: &[Emitted],
     site: Site<'_>,
 ) -> Result<Emitted, Refusal> {
-    let _rule = site.log.rule(REWRITE_RULE);
+    let _rule = site.log.rule(rule);
+    let untyped = values
+        .iter()
+        .any(|value| value.data_type == DatabricksType::Null);
+    if untyped && rule != REWRITE_RULE {
+        return Err(refused_function(
+            name,
+            format!("no rule types {name} of a bare NULL"),
+        ));
+    }
     rewrite(values).ok_or_else(|| {
         let names: Vec<String> = values.iter().map(|value| value.data_type.name()).collect();
         refused_function(
@@ -192,7 +227,7 @@ fn try_mod(values: &[Emitted]) -> Option<Emitted> {
 }
 
 /// A count argument Databricks takes as INT without a cast.
-fn small_integer(data_type: DatabricksType) -> bool {
+pub(crate) fn small_integer(data_type: DatabricksType) -> bool {
     matches!(
         data_type,
         DatabricksType::TinyInt | DatabricksType::SmallInt | DatabricksType::Int

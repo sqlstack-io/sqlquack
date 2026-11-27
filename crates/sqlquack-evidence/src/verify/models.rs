@@ -252,7 +252,7 @@ pub struct VerifyReport {
 pub enum RecordingMatch {
     /// Every name, declared type and value matches.
     Matches,
-    /// The recording kept declared nanosecond columns in microseconds; the replay matches there.
+    /// The recording kept a time column coarser than its type declares; the replay matches there.
     MatchesAtMicroseconds,
     /// The first difference.
     Differs(Mismatch),

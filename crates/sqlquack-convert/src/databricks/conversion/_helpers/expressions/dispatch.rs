@@ -6,7 +6,6 @@ use sqlquack_diagnostics::refusals::models::Refusal;
 use crate::databricks::conversion::_helpers::expressions::bitwise::{
     bitwise, bitwise_not, concat_operator, plus, truth_test,
 };
-use crate::databricks::conversion::_helpers::expressions::functions::call;
 use crate::databricks::conversion::_helpers::expressions::literals::{
     boolean, cast, literal, negated, null,
 };
@@ -14,6 +13,7 @@ use crate::databricks::conversion::_helpers::expressions::operators::{
     arithmetic, between, case, comparison, division, in_list, logical, not, null_test,
 };
 use crate::databricks::conversion::_helpers::expressions::patterns::{like, trim};
+use crate::databricks::conversion::_helpers::functions::calls::call;
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{
     field, identifier, node_kind, quoted, refused, understood,

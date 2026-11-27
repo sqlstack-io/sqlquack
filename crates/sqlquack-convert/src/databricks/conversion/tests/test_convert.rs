@@ -114,6 +114,47 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Int],
         },
         ConvertTestCase {
+            description: "division by a column raises on zero, where DuckDB's DOUBLE division gives infinity",
+            query: "SELECT x1 / x1 AS q, x1 % -3 AS m FROM input",
+            expected_sql: &[
+                "WHEN CAST(\"x1\" AS DOUBLE) = 0 THEN CAST(0 % CAST(CAST(\"x1\" AS DOUBLE) AS INTEGER) AS DOUBLE)",
+                "CASE WHEN -3 = -1 THEN \"x1\" * 0 ELSE \"x1\" % -3 END AS \"m\"",
+            ],
+            expected_types: &[DatabricksType::Double, DatabricksType::Int],
+        },
+        ConvertTestCase {
+            description: "MOD of a decimal stays an exact decimal, typed as Databricks types it",
+            query: "SELECT mod(CAST(x1 AS DECIMAL(12,2)), 3) AS m FROM input",
+            expected_sql: &[
+                "CAST(CAST(\"x1\" AS DECIMAL(12, 2)) % CAST(3 AS DECIMAL(10, 0)) AS DECIMAL(12, 2))",
+            ],
+            expected_types: &[DatabricksType::Decimal {
+                precision: 12,
+                scale: 2,
+            }],
+        },
+        ConvertTestCase {
+            description: "DAYOFWEEK counts Sunday as 1, one more than DuckDB's dayofweek",
+            query: "SELECT dayofweek(DATE'2016-07-30') AS d FROM input",
+            expected_sql: &["CAST(dayofweek(DATE '2016-07-30') + 1 AS INTEGER) AS \"d\""],
+            expected_types: &[DatabricksType::Int],
+        },
+        ConvertTestCase {
+            description: "COUNT_IF over only NULLs is 0, where DuckDB gives NULL; SUM of INT is BIGINT",
+            query: "SELECT count_if(x1 > 0) AS c, sum(x1) AS t FROM input",
+            expected_sql: &[
+                "CAST(coalesce(count_if((\"x1\" > 0)), 0) AS BIGINT) AS \"c\"",
+                "CAST(sum(\"x1\") AS BIGINT) AS \"t\"",
+            ],
+            expected_types: &[DatabricksType::BigInt, DatabricksType::BigInt],
+        },
+        ConvertTestCase {
+            description: "DATE_ADD wraps its day count as an INT, as Databricks does",
+            query: "SELECT date_add(DATE'2016-07-30', x1) AS d FROM input",
+            expected_sql: &["% 4294967296 + 4294967296) % 4294967296 - 2147483648"],
+            expected_types: &[DatabricksType::Date],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
@@ -144,9 +185,9 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
 fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
     let test_cases = [
         RefuseTestCase {
-            description: "dayofweek numbers days from Sunday = 1",
+            description: "a date field of an integer, which Databricks would read as text",
             query: "SELECT dayofweek(x1) AS r FROM input",
-            expected_reason: "DAYOFWEEK",
+            expected_reason: "DAYOFWEEK of (INT)",
         },
         RefuseTestCase {
             description: "case mapping differs on some characters",
@@ -154,14 +195,9 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             expected_reason: "UPPER",
         },
         RefuseTestCase {
-            description: "division by a column may divide by zero",
-            query: "SELECT x1 / x1 AS r FROM input",
-            expected_reason: "by a constant",
-        },
-        RefuseTestCase {
-            description: "modulo by a negative constant",
-            query: "SELECT x1 % -3 AS r FROM input",
-            expected_reason: "by a constant",
+            description: "a decimal quotient, which Databricks keeps exact and DOUBLE would round",
+            query: "SELECT CAST(x1 AS DECIMAL(12,2)) / x1 AS r FROM input",
+            expected_reason: "DECIMAL(12,2) div INT",
         },
         RefuseTestCase {
             description: "a LIKE pattern holding Databricks's escape",

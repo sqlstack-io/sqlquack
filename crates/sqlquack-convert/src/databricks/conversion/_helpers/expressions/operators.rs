@@ -5,6 +5,7 @@ use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::functions::numbers::{quotient, remainder};
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{
     digits_value, field, flag, list, refused, understood,
@@ -45,7 +46,7 @@ pub(crate) fn arithmetic(kind: &str, payload: &Value, site: Site<'_>) -> Result<
     ))
 }
 
-/// `/` or `%` of integers by a constant: `/` divides as DOUBLE, `%` keeps the dividend's sign.
+/// `/` or `%`: by a nonzero integer constant directly, else raising on a zero divisor as Databricks does.
 pub(crate) fn division(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let (left, right) = operands(kind, payload, site)?;
     let _rule = site.log.rule(DIVISION_RULE);
@@ -75,15 +76,26 @@ pub(crate) fn division(kind: &str, payload: &Value, site: Site<'_>) -> Result<Em
             format!("({} % {})", as_type(&left, wider), as_type(&right, wider)),
             wider,
         )),
-        _ => Err(refused(
-            kind,
-            format!(
-                "no rule converts {} {kind} {}: only integers by a constant DuckDB never \
-                 divides by zero convert",
-                left.data_type.name(),
-                right.data_type.name()
-            ),
-        )),
+        _ => {
+            let untyped = [&left, &right]
+                .iter()
+                .any(|value| value.data_type == DatabricksType::Null);
+            let general = match (untyped, kind) {
+                (true, _) => None,
+                (false, "div") => quotient(&left, &right),
+                (false, _) => remainder(&left, &right),
+            };
+            general.ok_or_else(|| {
+                refused(
+                    kind,
+                    format!(
+                        "no rule converts {} {kind} {}",
+                        left.data_type.name(),
+                        right.data_type.name()
+                    ),
+                )
+            })
+        }
     }
 }
 
