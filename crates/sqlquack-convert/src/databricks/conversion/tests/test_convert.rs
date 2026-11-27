@@ -196,11 +196,11 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             ],
         },
         ConvertTestCase {
-            description: "a column pattern raises on an escape Databricks rejects; OVERLAY wraps p - 1 as an INT",
+            description: "a column pattern raises on an escape Databricks rejects; OVERLAY's p - 1 never wraps",
             query: "SELECT s LIKE s AS l, overlay(s PLACING s FROM x1) AS o FROM input",
             expected_sql: &[
                 "THEN error('the LIKE pattern has an escape Databricks rejects') ELSE (\"s\" LIKE \"s\" ESCAPE '\\')",
-                "(((CAST(\"x1\" AS BIGINT) - 1) + CAST('2147483648' AS BIGINT))",
+                "ELSE 0 END) + (CAST(\"x1\" AS BIGINT) - 1)) THEN ''",
             ],
             expected_types: &[DatabricksType::Boolean, DatabricksType::String],
         },
@@ -305,10 +305,11 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::String],
         },
         ConvertTestCase {
-            description: "a string compared with an INT reads as BIGINT, raising for text that is not plain digits",
+            description: "a string compared with an INT reads as BIGINT, raising for text that is not signed digits",
             query: "SELECT s = x1 AS e, x1 BETWEEN s AND 3 AS b FROM input",
             expected_sql: &[
-                "(CASE WHEN regexp_full_match(\"s\", '-?[0-9]{1,18}') THEN CAST(\"s\" AS BIGINT)",
+                "(CASE WHEN regexp_full_match(\"s\", ' *[+-]?[0-9]{1,18} *') THEN CAST(trim(\"s\", ' ') AS BIGINT)",
+                "OR regexp_full_match(\"s\", ' *[+-]?([0-9]+\\.[0-9]+|0*[1-9][0-9]{19,}) *')",
                 "THEN CAST(error('text rejected as a number: the text compared with an integer is not a number') AS BIGINT)",
                 "= CAST(\"x1\" AS BIGINT)",
             ],

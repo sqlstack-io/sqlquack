@@ -30,8 +30,10 @@ pub const BETWEEN_RULE: &str = "rule.databricks.between";
 pub const IN_LIST_RULE: &str = "rule.databricks.in_list";
 /// A searched `CASE` whose branches share one type.
 pub const CASE_RULE: &str = "rule.databricks.case";
-/// Text Databricks reads as BIGINT the way DuckDB does: an optional minus and at most 18 digits.
-pub const WHOLE_NUMBER_TEXT: &str = "-?[0-9]{1,18}";
+/// Text Databricks reads as BIGINT the way DuckDB does: a sign and at most 18 digits, between spaces.
+pub const WHOLE_NUMBER_TEXT: &str = " *[+-]?[0-9]{1,18} *";
+/// Number-like text Databricks rejects as malformed: a fraction, or more digits than a BIGINT holds.
+pub const MALFORMED_NUMBER_TEXT: &str = r" *[+-]?([0-9]+\.[0-9]+|0*[1-9][0-9]{19,}) *";
 /// A character no number Databricks reads holds, outside digits, signs, the point, whitespace and controls.
 pub const NOT_NUMBER_CHARACTER: &str = r"[^0-9+\-.\s\pZ\pC]";
 /// What a raise for text holding no number says after the text-not-a-number fragment.

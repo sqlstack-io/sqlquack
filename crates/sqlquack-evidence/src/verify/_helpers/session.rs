@@ -3,6 +3,7 @@
 use sqlquack_policy::policy::models::SessionValue;
 
 use crate::cases::models::LoadedCase;
+use crate::constants::UTC_ZONE_NAMES;
 use crate::results::models::{ResultMetadata, SessionDefaults};
 
 /// How a result's recorded session compares with its profile.
@@ -58,7 +59,16 @@ pub(crate) fn session_check(
     SessionCheck::Matches
 }
 
-/// Whether a reported value is the profile's, ignoring case and surrounding space.
+/// Whether a reported value is the profile's, ignoring case and surrounding space; every UTC zone name is one value.
 fn same(actual: &str, value: &SessionValue) -> bool {
-    actual.trim().eq_ignore_ascii_case(value.text().trim())
+    let expected = value.text();
+    let (actual, expected) = (actual.trim(), expected.trim());
+    actual.eq_ignore_ascii_case(expected) || (utc_zone(actual) && utc_zone(expected))
+}
+
+/// Whether `name` is one of the UTC zone's names.
+fn utc_zone(name: &str) -> bool {
+    UTC_ZONE_NAMES
+        .iter()
+        .any(|utc| utc.eq_ignore_ascii_case(name))
 }

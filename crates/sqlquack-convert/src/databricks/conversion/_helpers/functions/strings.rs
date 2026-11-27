@@ -2,7 +2,6 @@
 
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::patterns::case_mapped;
-use crate::databricks::conversion::_helpers::functions::numbers::wrapped;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::constants::{
     CHR_MODULUS, DEFAULT_PAD, LOWERED_CHARACTERS, PATTERN_ERROR, REGEX_METACHARACTER_CLASS,
@@ -155,7 +154,7 @@ fn substring_sql(s: &str, p: &str, length: &str) -> String {
     )
 }
 
-/// `OVERLAY(s PLACING r FROM p [FOR n])` as Spark computes it: `p - 1` and `p + n` wrap as INTs.
+/// `OVERLAY(s PLACING r FROM p [FOR n])` as Databricks computes it: `p - 1` and `p + n` never wrap.
 fn overlay(values: &[Emitted]) -> Option<Emitted> {
     let (text, replacement, position, length) = match values {
         [text, replacement, position] => (text, replacement, position, None),
@@ -178,8 +177,8 @@ fn overlay(values: &[Emitted]) -> Option<Emitted> {
         ),
         None => format!("length({r})"),
     };
-    let before = wrapped(&format!("(CAST({p} AS BIGINT) - 1)"), 32, "BIGINT");
-    let after = wrapped(&format!("(CAST({p} AS BIGINT) + {skipped})"), 32, "BIGINT");
+    let before = format!("(CAST({p} AS BIGINT) - 1)");
+    let after = format!("(CAST({p} AS BIGINT) + {skipped})");
     let nulls = std::iter::once(&text.sql)
         .chain([r, p])
         .chain(length.map(|length| &length.sql))

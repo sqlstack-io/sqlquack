@@ -14,8 +14,8 @@ use crate::databricks::conversion::_helpers::support::tree::{
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
 use crate::databricks::conversion::constants::{
     ARITHMETIC_RULE, BETWEEN_RULE, BOOLEAN_RULE, CASE_RULE, COMPARISON_RULE, DIVISION_RULE,
-    IN_LIST_RULE, MALFORMED_NUMBER_ERROR, NOT_NUMBER_CHARACTER, NULL_TEST_RULE,
-    UNREAD_NUMBER_ERROR, WHOLE_NUMBER_TEXT,
+    IN_LIST_RULE, MALFORMED_NUMBER_ERROR, MALFORMED_NUMBER_TEXT, NOT_NUMBER_CHARACTER,
+    NULL_TEST_RULE, UNREAD_NUMBER_ERROR, WHOLE_NUMBER_TEXT,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
@@ -317,11 +317,12 @@ pub(crate) fn comparable(left: &Emitted, right: &Emitted) -> Option<(String, Str
     }
 }
 
-/// Text read as BIGINT as Databricks reads it against an integer: plain digits convert, and other text raises.
+/// Text read as BIGINT as Databricks reads it against an integer: signed digits between spaces convert, and other text raises.
 fn whole_text(text: &str) -> String {
     format!(
-        "(CASE WHEN regexp_full_match({text}, '{WHOLE_NUMBER_TEXT}') THEN CAST({text} AS BIGINT) \
+        "(CASE WHEN regexp_full_match({text}, '{WHOLE_NUMBER_TEXT}') THEN CAST(trim({text}, ' ') AS BIGINT) \
          WHEN {text} = '' OR regexp_matches({text}, '{NOT_NUMBER_CHARACTER}') \
+         OR regexp_full_match({text}, '{MALFORMED_NUMBER_TEXT}') \
          THEN CAST(error('{TEXT_NOT_A_NUMBER}: {MALFORMED_NUMBER_ERROR}') AS BIGINT) \
          ELSE CAST(error('{UNREAD_NUMBER_ERROR}') AS BIGINT) END)"
     )

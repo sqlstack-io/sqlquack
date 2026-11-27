@@ -10,6 +10,9 @@ pub const SESSION_DEFAULTS_NAME: &str = "session_defaults.json";
 /// The session defaults file in the default layout.
 pub const SESSION_DEFAULTS_FILE: &str = "evidence/session_defaults.json";
 
+/// The IANA names of the UTC zone; an account default of either proves a session pinned to UTC.
+pub const UTC_ZONE_NAMES: &[&str] = &["UTC", "Etc/UTC"];
+
 /// Pending case files for the recorder; derived, never committed.
 pub const PENDING_DIR: &str = "evidence/pending";
 
