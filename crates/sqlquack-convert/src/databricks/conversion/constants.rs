@@ -197,7 +197,7 @@ pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
     (BETWEEN_RULE, &[NUMBER_TEXT]),
     (CASE_RULE, &[NUMBER_TEXT]),
     (STRING_FUNCTION_RULE, &[OVERFLOW]),
-    (NUMBER_FUNCTION_RULE, &[OVERFLOW, DIVISION]),
+    (NUMBER_FUNCTION_RULE, &[OVERFLOW, DIVISION, ARGUMENT]),
     (INDEX_RULE, &[ARGUMENT]),
     (
         CAST_RULE,
@@ -258,6 +258,20 @@ pub const SECONDS_PER_MONTH: &str = "2.6784e6";
 pub const MONTHS_BETWEEN_SCALE: &str = "1e8";
 /// 2^63, at or above which a Java cast of a DOUBLE to BIGINT saturates.
 pub const BIGINT_SPAN_DOUBLE: &str = "9.223372036854775808e18";
+/// The names NEXT_DAY reads, upper-cased, for each weekday from Monday, ISO day 1.
+pub const WEEKDAY_NAMES: &[&[&str]] = &[
+    &["MO", "MON", "MONDAY"],
+    &["TU", "TUE", "TUESDAY"],
+    &["WE", "WED", "WEDNESDAY"],
+    &["TH", "THU", "THURSDAY"],
+    &["FR", "FRI", "FRIDAY"],
+    &["SA", "SAT", "SATURDAY"],
+    &["SU", "SUN", "SUNDAY"],
+];
+/// What a raise for a weekday name NEXT_DAY does not read says after the rejected-argument fragment.
+pub const WEEKDAY_ERROR: &str = "the text names no day of the week";
+/// What a raise for a bit position outside the value's width says after the rejected-argument fragment.
+pub const BIT_POSITION_ERROR: &str = "the bit position is outside the value";
 /// The date day counts start from.
 pub const EPOCH_DATE: &str = "1970-01-01";
 /// 2^31: an INT day count wraps past it, as Databricks's DATE_ADD does.

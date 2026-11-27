@@ -4,11 +4,13 @@ use sqlquack_diagnostics::failures::constants::ARGUMENT_REJECTED;
 
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::operators::as_type;
+use crate::databricks::conversion::_helpers::expressions::patterns::case_mapped;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::constants::{
     DATE_TRUNC_UNITS, DATE_YEARS, EPOCH_DATE, FIELD_BOUNDS_ERROR, INT_RANGE, INT_SPAN,
     JAVA_YEAR_MAX, MICROS_PER_MILLI, MICROS_PER_SECOND, MONTHS_BETWEEN_SCALE, SECONDS_PER_DAY,
-    SECONDS_PER_MONTH, TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS,
+    SECONDS_PER_MONTH, TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS, UPPERED_CHARACTERS, WEEKDAY_ERROR,
+    WEEKDAY_NAMES,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -55,6 +57,7 @@ pub(crate) fn date_rewrite(name: &str) -> Option<Rewrite> {
         }
         "MAKE_TIMESTAMP_NTZ" => |values| made_timestamp(values, DatabricksType::TimestampNtz, true),
         "MAKE_DATE" => made_date,
+        "NEXT_DAY" => next_day,
         _ => return None,
     };
     Some(rewrite)
@@ -352,5 +355,31 @@ fn months_between(values: &[Emitted]) -> Option<Emitted> {
              THEN {months} ELSE {fraction} END"
         ),
         DatabricksType::Double,
+    ))
+}
+
+/// `NEXT_DAY(d, w)`: the first date after `d` on the weekday `w` names, read without case; raising for another name.
+fn next_day(values: &[Emitted]) -> Option<Emitted> {
+    let [date, name] = values else { return None };
+    if date.data_type != DatabricksType::Date || name.data_type != DatabricksType::String {
+        return None;
+    }
+    let upper = case_mapped(&name.sql, "upper", UPPERED_CHARACTERS);
+    let mut weekday = format!("CASE {upper}");
+    for (day, names) in WEEKDAY_NAMES.iter().enumerate() {
+        for name in *names {
+            weekday.push_str(&format!(" WHEN '{name}' THEN {}", day + 1));
+        }
+    }
+    weekday.push_str(" END");
+    Some(typed(
+        format!(
+            "CASE WHEN {d} IS NULL OR {n} IS NULL THEN NULL \
+             WHEN {weekday} IS NULL THEN CAST(error('{ARGUMENT_REJECTED}: {WEEKDAY_ERROR}') AS DATE) \
+             ELSE CAST({d} + CAST(((({weekday}) - isodow({d}) + 6) % 7) + 1 AS INTEGER) AS DATE) END",
+            d = date.sql,
+            n = name.sql
+        ),
+        DatabricksType::Date,
     ))
 }

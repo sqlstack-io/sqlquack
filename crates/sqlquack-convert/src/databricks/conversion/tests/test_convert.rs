@@ -315,6 +315,17 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Boolean, DatabricksType::Boolean],
         },
         ConvertTestCase {
+            description: "BIT_GET raises outside the width; NEXT_DAY reads weekday names without case",
+            query: "SELECT bit_get(x1, x1) AS b, next_day(DATE'2016-07-30', s) AS n FROM input",
+            expected_sql: &[
+                "WHEN \"x1\" < 0 OR \"x1\" >= 32 THEN CAST(error('argument rejected: the bit position is outside the value') AS TINYINT)",
+                "ELSE CAST((\"x1\" >> CAST(\"x1\" AS INTEGER)) & 1 AS TINYINT) END",
+                "WHEN 'SU' THEN 7 WHEN 'SUN' THEN 7 WHEN 'SUNDAY' THEN 7 END",
+                "THEN CAST(error('argument rejected: the text names no day of the week') AS DATE)",
+            ],
+            expected_types: &[DatabricksType::TinyInt, DatabricksType::Date],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],

@@ -1,12 +1,15 @@
 //! Number functions: remainders and quotients raising on zero, rounding, signs and NaN tests.
 
+use sqlquack_diagnostics::failures::constants::ARGUMENT_REJECTED;
+
 use crate::databricks::conversion::_helpers::expressions::bitwise::shifted;
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, comparable};
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::_helpers::support::typing::{same_cast, wider_integer};
 use crate::databricks::conversion::constants::{
-    BIGINT_MAX, BIGINT_MIN, BIGINT_SPAN_DOUBLE, FACTORIAL_MAX, MAX_DECIMAL_PRECISION,
+    BIGINT_MAX, BIGINT_MIN, BIGINT_SPAN_DOUBLE, BIT_POSITION_ERROR, FACTORIAL_MAX,
+    MAX_DECIMAL_PRECISION,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal, Shift};
 
@@ -35,6 +38,7 @@ pub(crate) fn number_rewrite(name: &str) -> Option<Rewrite> {
         "PMOD" => positive_modulo,
         "BIN" => binary_text,
         "WIDTH_BUCKET" => width_bucket,
+        "BIT_GET" | "GETBIT" => bit_get,
         "SHIFTLEFT" => |values| shift_function(values, Shift::Left),
         "SHIFTRIGHT" => |values| shift_function(values, Shift::Right),
         "SHIFTRIGHTUNSIGNED" => |values| shift_function(values, Shift::RightUnsigned),
@@ -412,6 +416,33 @@ fn width_bucket(values: &[Emitted]) -> Option<Emitted> {
             falling = bucket(&format!("{a} - {v}"))
         ),
         DatabricksType::BigInt,
+    ))
+}
+
+/// `BIT_GET(x, p)`: bit `p` of an integer counting from the lowest as TINYINT, raising for `p` outside its width.
+fn bit_get(values: &[Emitted]) -> Option<Emitted> {
+    let [value, position] = values else {
+        return None;
+    };
+    let width = match value.data_type {
+        DatabricksType::TinyInt => 8,
+        DatabricksType::SmallInt => 16,
+        DatabricksType::Int => 32,
+        DatabricksType::BigInt => 64,
+        _ => return None,
+    };
+    if !small_integer(position.data_type) {
+        return None;
+    }
+    Some(typed(
+        format!(
+            "CASE WHEN {x} IS NULL OR {p} IS NULL THEN NULL \
+             WHEN {p} < 0 OR {p} >= {width} THEN CAST(error('{ARGUMENT_REJECTED}: {BIT_POSITION_ERROR}') AS TINYINT) \
+             ELSE CAST(({x} >> CAST({p} AS INTEGER)) & 1 AS TINYINT) END",
+            x = value.sql,
+            p = position.sql
+        ),
+        DatabricksType::TinyInt,
     ))
 }
 

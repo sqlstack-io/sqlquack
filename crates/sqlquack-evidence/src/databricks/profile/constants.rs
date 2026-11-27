@@ -60,4 +60,6 @@ pub const ERROR_CLASS_KINDS: &[(&str, ErrorKind)] = &[
     ),
     ("DATETIME_FIELD_OUT_OF_BOUNDS", ErrorKind::InvalidArgument),
     ("INVALID_ARRAY_INDEX", ErrorKind::InvalidArgument),
+    ("INVALID_PARAMETER_VALUE", ErrorKind::InvalidArgument),
+    ("ILLEGAL_DAY_OF_WEEK", ErrorKind::InvalidArgument),
 ];
