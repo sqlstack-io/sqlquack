@@ -227,6 +227,26 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             ],
         },
         ConvertTestCase {
+            description: "MONTHS_BETWEEN counts whole seconds over 31-day months, rounded half up to 8 places",
+            query: "SELECT months_between(DATE'1997-02-28', DATE'1996-10-30') AS m, \
+                    months_between(DATE'1997-02-28', DATE'1996-10-30', false) AS u FROM input",
+            expected_sql: &[
+                "AS DOUBLE) / 2.6784e6) * 1e8)) + CASE WHEN",
+                ">= 0.5 THEN 1 ELSE 0 END) / 1e8)",
+                "AS DATE) = last_day(CAST(CAST(",
+            ],
+            expected_types: &[DatabricksType::Double, DatabricksType::Double],
+        },
+        ConvertTestCase {
+            description: "WIDTH_BUCKET is NULL for BIGINT's largest count and wraps a saturated bucket to BIGINT's smallest",
+            query: "SELECT width_bucket(x1, 0, 10, x1) AS w FROM input",
+            expected_sql: &[
+                "= 9223372036854775807 OR isnan(CAST(\"x1\" AS DOUBLE))",
+                ">= 9.223372036854775808e18 THEN CAST(-9223372036854775808 AS BIGINT)",
+            ],
+            expected_types: &[DatabricksType::BigInt],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],

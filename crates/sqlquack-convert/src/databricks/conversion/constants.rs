@@ -210,6 +210,14 @@ pub const TIMESTAMP_TRUNC_UNITS: &[(&str, &[&str])] = &[
     ("millisecond", &["MILLISECOND"]),
     ("microsecond", &["MICROSECOND"]),
 ];
+/// Seconds per day.
+pub const SECONDS_PER_DAY: i64 = 86_400;
+/// The seconds MONTHS_BETWEEN counts a month's fraction by, 31 days, as a DOUBLE.
+pub const SECONDS_PER_MONTH: &str = "2.6784e6";
+/// What MONTHS_BETWEEN scales its result by before rounding it to a whole number: 8 places.
+pub const MONTHS_BETWEEN_SCALE: &str = "1e8";
+/// 2^63, at or above which a Java cast of a DOUBLE to BIGINT saturates.
+pub const BIGINT_SPAN_DOUBLE: &str = "9.223372036854775808e18";
 /// The date day counts start from.
 pub const EPOCH_DATE: &str = "1970-01-01";
 /// 2^31: an INT day count wraps past it, as Databricks's DATE_ADD does.

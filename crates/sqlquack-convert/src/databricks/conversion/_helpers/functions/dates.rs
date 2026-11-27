@@ -5,7 +5,8 @@ use crate::databricks::conversion::_helpers::expressions::operators::as_type;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::constants::{
     DATE_TRUNC_UNITS, EPOCH_DATE, INT_RANGE, INT_SPAN, MICROS_PER_MILLI, MICROS_PER_SECOND,
-    TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS,
+    MONTHS_BETWEEN_SCALE, SECONDS_PER_DAY, SECONDS_PER_MONTH, TIMESTAMP_TRUNC_UNITS,
+    TIMESTAMP_YEARS,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -30,6 +31,7 @@ pub(crate) fn date_rewrite(name: &str) -> Option<Rewrite> {
         "DATE_ADD" | "DATEADD" => |values| days_added(values, ""),
         "DATE_SUB" => |values| days_added(values, "- "),
         "ADD_MONTHS" => add_months,
+        "MONTHS_BETWEEN" => months_between,
         "UNIX_SECONDS" => |values| since_epoch(values, MICROS_PER_SECOND),
         "UNIX_MILLIS" => |values| since_epoch(values, MICROS_PER_MILLI),
         "UNIX_MICROS" => |values| since_epoch(values, 1),
@@ -256,5 +258,51 @@ fn add_months(values: &[Emitted]) -> Option<Emitted> {
             as_type(months, DatabricksType::Int)
         ),
         DatabricksType::Date,
+    ))
+}
+
+/// `MONTHS_BETWEEN(a, b[, round])`: whole months on the same or both last days, else plus 31-day months of seconds, rounded to 8 places as Java's `Math.round` does.
+fn months_between(values: &[Emitted]) -> Option<Emitted> {
+    let (later, earlier, rounded) = match values {
+        [later, earlier] => (later, earlier, true),
+        [later, earlier, round] => match round.sql.as_str() {
+            "TRUE" => (later, earlier, true),
+            "FALSE" => (later, earlier, false),
+            _ => return None,
+        },
+        _ => return None,
+    };
+    let local = |value: &Emitted| match value.data_type {
+        DatabricksType::Date | DatabricksType::Timestamp | DatabricksType::TimestampNtz => {
+            Some(as_type(value, DatabricksType::TimestampNtz))
+        }
+        _ => None,
+    };
+    let (a, b) = (local(later)?, local(earlier)?);
+    let (da, db) = (format!("CAST({a} AS DATE)"), format!("CAST({b} AS DATE)"));
+    let months = format!(
+        "CAST((year({da}) * 12 + month({da})) - (year({db}) * 12 + month({db})) AS DOUBLE)"
+    );
+    let seconds = |t: &str| format!("(hour({t}) * 3600 + minute({t}) * 60 + second({t}))");
+    let fraction = format!(
+        "({months} + CAST((day({da}) - day({db})) * {SECONDS_PER_DAY} + {sa} - {sb} AS DOUBLE) / {SECONDS_PER_MONTH})",
+        sa = seconds(&a),
+        sb = seconds(&b)
+    );
+    let fraction = match rounded {
+        true => {
+            let scaled = format!("({fraction} * {MONTHS_BETWEEN_SCALE})");
+            format!(
+                "((floor({scaled}) + CASE WHEN {scaled} - floor({scaled}) >= 0.5 THEN 1 ELSE 0 END) / {MONTHS_BETWEEN_SCALE})"
+            )
+        }
+        false => fraction,
+    };
+    Some(typed(
+        format!(
+            "CASE WHEN day({da}) = day({db}) OR ({da} = last_day({da}) AND {db} = last_day({db})) \
+             THEN {months} ELSE {fraction} END"
+        ),
+        DatabricksType::Double,
     ))
 }

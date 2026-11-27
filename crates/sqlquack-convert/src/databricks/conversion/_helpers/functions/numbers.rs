@@ -6,7 +6,7 @@ use crate::databricks::conversion::_helpers::expressions::operators::{as_type, c
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::_helpers::support::typing::{same_cast, wider_integer};
 use crate::databricks::conversion::constants::{
-    BIGINT_MAX, BIGINT_MIN, FACTORIAL_MAX, MAX_DECIMAL_PRECISION,
+    BIGINT_MAX, BIGINT_MIN, BIGINT_SPAN_DOUBLE, FACTORIAL_MAX, MAX_DECIMAL_PRECISION,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal, Shift};
 
@@ -34,6 +34,7 @@ pub(crate) fn number_rewrite(name: &str) -> Option<Rewrite> {
         "BIT_COUNT" => bit_count,
         "PMOD" => positive_modulo,
         "BIN" => binary_text,
+        "WIDTH_BUCKET" => width_bucket,
         "SHIFTLEFT" => |values| shift_function(values, Shift::Left),
         "SHIFTRIGHT" => |values| shift_function(values, Shift::Right),
         "SHIFTRIGHTUNSIGNED" => |values| shift_function(values, Shift::RightUnsigned),
@@ -380,6 +381,38 @@ fn bit_count(values: &[Emitted]) -> Option<Emitted> {
 fn shift_function(values: &[Emitted], direction: Shift) -> Option<Emitted> {
     let [value, count] = values else { return None };
     shifted(value, count, direction)
+}
+
+/// `WIDTH_BUCKET(v, min, max, n)` as DOUBLEs: NULL for `n` below 1 or BIGINT's largest, equal or non-finite bounds, or a NaN `v`; Java's DOUBLE-to-BIGINT cast of the bucket.
+fn width_bucket(values: &[Emitted]) -> Option<Emitted> {
+    let [value, low, high, count] = values else {
+        return None;
+    };
+    if !count.data_type.is_integral() {
+        return None;
+    }
+    let (v, a, b) = (double(value)?, double(low)?, double(high)?);
+    let n = as_type(count, DatabricksType::BigInt);
+    let bucket = |offset: &str| {
+        let quotient =
+            format!("(CAST({n} AS DOUBLE) * ({offset}) / (greatest({a}, {b}) - least({a}, {b})))");
+        format!(
+            "CASE WHEN isnan({quotient}) THEN 1 WHEN {quotient} >= {BIGINT_SPAN_DOUBLE} THEN CAST({BIGINT_MIN} AS BIGINT) \
+             ELSE CAST(trunc({quotient}) AS BIGINT) + 1 END"
+        )
+    };
+    Some(typed(
+        format!(
+            "CASE WHEN {v} IS NULL OR {a} IS NULL OR {b} IS NULL OR {n} IS NULL THEN NULL \
+             WHEN {n} <= 0 OR {n} = {BIGINT_MAX} OR isnan({v}) OR {a} = {b} \
+             OR isnan({a}) OR isinf({a}) OR isnan({b}) OR isinf({b}) THEN NULL \
+             WHEN {a} < {b} THEN CASE WHEN {v} < {a} THEN 0 WHEN {v} >= {b} THEN {n} + 1 ELSE {rising} END \
+             ELSE CASE WHEN {v} > {a} THEN 0 WHEN {v} <= {b} THEN {n} + 1 ELSE {falling} END END",
+            rising = bucket(&format!("{v} - {a}")),
+            falling = bucket(&format!("{a} - {v}"))
+        ),
+        DatabricksType::BigInt,
+    ))
 }
 
 /// A value's SQL as DOUBLE when DuckDB converts it exactly as Databricks does.
