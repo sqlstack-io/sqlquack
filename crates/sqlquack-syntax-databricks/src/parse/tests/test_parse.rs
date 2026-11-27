@@ -206,6 +206,21 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
+            description: "a table UNIQUE key refuses INITIALLY DEFERRED, as the warehouse does",
+            sql: "CREATE TABLE t3 ( c1 INT , UNIQUE ( c1 ) INITIALLY DEFERRED )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "a FOREIGN KEY keeps INITIALLY DEFERRED",
+            sql: "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 INITIALLY DEFERRED )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a table UNIQUE key keeps NOT ENFORCED",
+            sql: "CREATE TABLE t3 ( c1 INT , c2 INT , CONSTRAINT n1 UNIQUE ( c1 , c2 ) NOT ENFORCED )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
             description: "a statement the shared tree has no node for is kept as a gap",
             sql: "REPAIR PRIVILEGES t1",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },

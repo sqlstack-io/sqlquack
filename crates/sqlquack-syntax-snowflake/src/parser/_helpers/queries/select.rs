@@ -538,6 +538,7 @@ impl Parser {
             exclude: None,
             span: SourceSpan::default(),
             table_statement: false,
+            from_first: false,
             pipe_operators: Vec::new(),
         };
 

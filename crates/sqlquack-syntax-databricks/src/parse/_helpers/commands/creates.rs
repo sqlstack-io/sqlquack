@@ -743,7 +743,7 @@ impl Parser<'_> {
                 column
                     .constraint_names
                     .extend(name.map(|name| (index, name)));
-                let modifiers: ConstraintModifiers = self.constraint_characteristics()?;
+                let modifiers: ConstraintModifiers = self.constraint_characteristics(true)?;
                 if modifiers != ConstraintModifiers::default() {
                     column.constraint_modifiers.push((index, modifiers));
                 }
@@ -886,15 +886,16 @@ impl Parser<'_> {
         })
     }
 
-    /// `constraintCharacteristic*`: `[NOT] ENFORCED`, `DEFERRABLE`, `INITIALLY DEFERRED`, `RELY` and `NORELY`.
-    fn constraint_characteristics(&mut self) -> Parsing<ConstraintModifiers> {
+    /// `constraintCharacteristic*`: `[NOT] ENFORCED`, `DEFERRABLE`, `INITIALLY DEFERRED` (unless `deferred`
+    /// is false, as for a table `UNIQUE` key, which the warehouse refuses it on), `RELY` and `NORELY`.
+    fn constraint_characteristics(&mut self, deferred: bool) -> Parsing<ConstraintModifiers> {
         let mut modifiers: ConstraintModifiers = ConstraintModifiers::default();
         let mut written: Vec<String> = Vec::new();
         loop {
             if self.eat_kw("DEFERRABLE") {
                 modifiers.deferrable = Some(true);
                 written.push("DEFERRABLE".to_owned());
-            } else if self.eat_kws(&["INITIALLY", "DEFERRED"]) {
+            } else if deferred && self.eat_kws(&["INITIALLY", "DEFERRED"]) {
                 modifiers.initially_deferred = Some(true);
                 written.push("INITIALLY DEFERRED".to_owned());
             } else if self.eat_kw("ENFORCED") {
@@ -969,7 +970,7 @@ impl Parser<'_> {
         };
         if self.kw("CHECK") {
             let expression: Expression = self.check_constraint()?;
-            let modifiers: ConstraintModifiers = self.constraint_characteristics()?;
+            let modifiers: ConstraintModifiers = self.constraint_characteristics(true)?;
             return Ok(TableConstraint::Check {
                 name,
                 expression,
@@ -981,7 +982,7 @@ impl Parser<'_> {
             let columns: Vec<Identifier> = self.identifier_list()?;
             let mut reference: ForeignKeyRef = self.reference_spec()?;
             reference.has_foreign_key_keywords = true;
-            let modifiers: ConstraintModifiers = self.constraint_characteristics()?;
+            let modifiers: ConstraintModifiers = self.constraint_characteristics(true)?;
             return Ok(TableConstraint::ForeignKey {
                 name,
                 columns,
@@ -1013,7 +1014,7 @@ impl Parser<'_> {
                 false,
             ));
         }
-        let modifiers: ConstraintModifiers = self.constraint_characteristics()?;
+        let modifiers: ConstraintModifiers = self.constraint_characteristics(primary)?;
         Ok(match primary {
             true => TableConstraint::PrimaryKey {
                 name,

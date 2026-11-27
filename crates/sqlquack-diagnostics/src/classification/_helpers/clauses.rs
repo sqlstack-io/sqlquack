@@ -88,6 +88,7 @@ fn select_clauses(select: &Select) -> Vec<String> {
         source_dialect: _,
         span: _,
         table_statement: _,
+        from_first: _,
         pipe_operators: _,
         select_span: _,
         list_head_span: _,
