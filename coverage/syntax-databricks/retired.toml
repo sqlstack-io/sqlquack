@@ -2883,3 +2883,32 @@ ids = [
 retired_in = "086cab96efcfbb1407b1ce54605bad1da651030e"
 reason = "an observed [[limit]] that re-claimed exactly what the suppressed o179 of create-streaming-table-auto-cdc suppresses (the same SQL, kind, target and required flag): any text that omits <order_by_column> reads the non-reserved SYSTEM as the operand, so no text writes the omission and nothing replaces it"
 ids = ["db.ddl.create-streaming-table-auto-cdc.o278"]
+
+[[retired]]
+retired_in = "9d74b31a8d4cb14aa98d994345d3c90167646c75"
+reason = "withdrawn after review, each by a [[suppress]] row in limits.toml that gives the reason: a derived case that did not do what its obligation says (the unit forms' missing ( also dropped the unit, and the text with the unit reads as a column with an alias; READ_KAFKA ( ) dropped the first option; '_' was a string; the DISTRIBUTE BY, SORT BY, PARTITION and column branches were bare texts; a definition list was filled as a string), replaced where a case can isolate the obligation by a [[limit]] row"
+ids = [
+  "db.expressions.identifiers.subscript-dot.o004",
+  "db.functions.date-add3.o008",
+  "db.functions.dateadd.o008",
+  "db.functions.datediff3.o008",
+  "db.functions.read-kafka.o007",
+  "db.functions.timediff.o008",
+  "db.functions.timestampadd.o008",
+  "db.functions.timestampdiff.o008",
+  "db.query.query.o014",
+  "db.query.query.o018",
+  "db.query.select-match-recognize.o029",
+  "db.query.select-match-recognize.o030",
+  "db.utility.describe-table.o011",
+  "db.utility.describe-table.o012",
+]
+
+[[retired]]
+retired_in = "9d74b31a8d4cb14aa98d994345d3c90167646c75"
+reason = "withdrawn by [[suppress]] rows in limits.toml: a property written without = takes an optional value in Spark's grammar, so a key alone is no syntax negative"
+ids = [
+  "db.ddl.create-recipient.o064",
+  "db.ddl.create-recipient.o070",
+  "db.ddl.create-recipient.o073",
+]

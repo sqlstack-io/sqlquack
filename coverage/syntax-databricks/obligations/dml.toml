@@ -1427,6 +1427,36 @@ depths = [
 note = "query operands nested; no documented bound"
 
 [[obligation]]
+id = "db.dml.insert-into.into-replace-on.o062"
+kind = "positive"
+required = true
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+note = "the page's REPLACE ON example with a parenthesised source query and its alias, run on its own students and people tables"
+
+[[obligation]]
+id = "db.dml.insert-into.into-replace-on.o063"
+kind = "positive"
+required = true
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+note = "a column list before the target alias with a parenthesised source query and its alias, run on the page's students and people tables; observed, since the page notes column lists for REPLACE ON apply to Databricks Runtime 19 and above"
+
+[[obligation]]
+id = "db.dml.insert-into.into-replace-on.o064"
+kind = "option_present"
+required = true
+target = "BY NAME"
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+note = "the page's REPLACE ON example inserting by name, with the target alias before BY NAME as the page writes it; observed, since the page notes BY NAME for REPLACE ON applies to Databricks Runtime 18.1 and above"
+
+[[obligation]]
+id = "db.dml.insert-into.into-replace-on.o065"
+kind = "option_present"
+required = true
+target = "( <column_name> [ , ... ] )"
+anchor = "doc.sql-ref-syntax-dml-insert-into / Examples"
+note = "the page's REPLACE ON example with a column list and an unparenthesised source query; observed, since the page notes column lists for REPLACE ON apply to Databricks Runtime 19 and above"
+
+[[obligation]]
 id = "db.dml.insert-into.into.syntax.o001"
 kind = "positive"
 required = true
@@ -3399,6 +3429,20 @@ required = true
 target = "<source_alias>"
 anchor = "doc.identifiers-syntax"
 note = "reserved: ANTI, which the reserved-words page reserves as a table alias, unquoted (expected rejection) and in backticks (expected acceptance)"
+
+[[obligation]]
+id = "db.dml.merge-into.o076"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.delta-merge-into / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
+
+[[obligation]]
+id = "db.dml.merge-into.o077"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.delta-merge-into / Syntax"
+note = "! in place of NOT before MATCHED BY SOURCE, outside the prefix operator, which Spark 4's parser discontinued in some places"
 
 [[obligation]]
 id = "db.dml.update.o001"

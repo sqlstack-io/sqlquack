@@ -540,6 +540,9 @@ impl Parser<'_> {
                 });
                 comma = self.eat_char(',');
                 if self.is_kind(TokenKind::HintEnd) {
+                    if comma {
+                        return Err(self.error());
+                    }
                     break;
                 }
             }

@@ -23,6 +23,7 @@ from scripts.databricks_receipts.constants import (
     EXCERPT_UNSUPPORTED_CLASSES,
     LATER_PHASES,
     LATER_WITHOUT_SQLSTATE,
+    PARSER_CLASS_SQLSTATES,
     PARSER_CLASSES,
     PARSER_MARK,
     PARSER_MESSAGE_CODE,
@@ -87,7 +88,8 @@ def phase_of(failure: Failure) -> str | None:
     ):
         return None
     if failure.parser:
-        if failure.error_class in PARSER_CLASSES:
+        pinned: str = PARSER_CLASS_SQLSTATES.get(failure.error_class, failure.sqlstate)
+        if failure.error_class in PARSER_CLASSES and pinned == failure.sqlstate:
             return SYNTAX_ERROR
         if failure.error_class in EXCERPT_RUNTIME_CLASSES:
             return RUNTIME_ERROR

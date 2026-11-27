@@ -950,6 +950,86 @@ fn given_documented_statements_when_parsing_then_the_verdict_is_the_warehouse_re
             sql: "UNSET TAG ON VOLUME v1",
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
+        VerdictTestCase {
+            description: "! is NOT only as the prefix operator, so not before BETWEEN",
+            sql: "SELECT ( 1 ! BETWEEN 1 AND 1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "nor before LIKE",
+            sql: "SELECT ( v1 ! LIKE ( 'm' ) ESCAPE '!' )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "nor before ILIKE ANY",
+            sql: "SELECT ( v1 ! ILIKE ANY ( 'm' , 'm' ) )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "nor before RLIKE",
+            sql: "SELECT ( v1 ! RLIKE v1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "nor before REGEXP",
+            sql: "SELECT ( v1 ! REGEXP v1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "nor after IS before NULL",
+            sql: "SELECT ( 1 IS ! NULL )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "nor after IS before TRUE",
+            sql: "SELECT ( 1 IS ! TRUE )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "nor after IS before DISTINCT FROM",
+            sql: "SELECT ( 1 IS ! DISTINCT FROM 1 )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "nor in a created column's NOT NULL",
+            sql: "CREATE TABLE t3 ( c1 INT ! NULL UNIQUE )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "nor before IN",
+            sql: "SELECT ( 1 ! IN ( 1 ) )",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "nor in an added column's NOT NULL",
+            sql: "ALTER TABLE t1 ADD COLUMN c3 INT ! NULL",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
+        VerdictTestCase {
+            description: "MERGE still reads ! in WHEN NOT MATCHED BY SOURCE",
+            sql: "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1 WHEN ! MATCHED BY SOURCE THEN DELETE",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "the prefix ! before a parenthesised condition stays NOT",
+            sql: "SELECT ( ! ( 1 = 1 ) )",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "ALTER COLUMN still reads ! in SET NOT NULL",
+            sql: "ALTER TABLE t1 ALTER c1 SET ! NULL",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "MERGE still reads ! in WHEN NOT MATCHED",
+            sql: "MERGE INTO t1 USING t2 ON t1.c1 = t2.c1 WHEN ! MATCHED THEN INSERT *",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a hint takes no trailing comma",
+            sql: "SELECT /*+ MAPJOIN ( t1 ) , */ c1 FROM t1",
+            expected_verdict: ExpectedVerdict::Rejected { syntax: true },
+        },
     ];
     for test_case in test_cases {
         let verdict: ExpectedVerdict = parse(test_case.sql)

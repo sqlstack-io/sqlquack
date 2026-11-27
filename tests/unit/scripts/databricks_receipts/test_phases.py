@@ -41,6 +41,25 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             expected_parse_only="42601",
         ),
         PhaseTestCase(
+            description="the parser refuses ! outside the prefix operator",
+            message="\n[SYNTAX_DISCONTINUED.BANG_EQUALS_NOT] Support of the clause or keyword: ! has "
+            "been discontinued in this context. The '!' keyword is only supported as an alias for "
+            "the prefix operator 'NOT'.\nUse the 'NOT' keyword instead for infix clauses such as "
+            "`NOT LIKE`, `NOT IN`, `NOT BETWEEN`, etc. SQLSTATE: 42601\n== SQL (line 1, position "
+            "13) ==\nSELECT ( 1 ! BETWEEN 1 AND 1 )\n           ^\n",
+            sqlstate="42601",
+            expected_phase="syntax_error",
+            expected_parse_only="42601",
+        ),
+        PhaseTestCase(
+            description="the class of a refused infix ! with another SQLSTATE stops the run",
+            message="[SYNTAX_DISCONTINUED.BANG_EQUALS_NOT] Support of the clause or keyword: ! has "
+            f"been discontinued in this context. SQLSTATE: 0A000 {PARSER_EXCERPT}",
+            sqlstate="0A000",
+            expected_phase=None,
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
             description="an ANSI runtime error carries the excerpt with its line and position",
             message="[DIVIDE_BY_ZERO] Division by zero. Use `try_divide` to tolerate divisor being "
             "0 and return NULL instead. SQLSTATE: 22012\n== SQL (line 1, position 8) ==\n"
@@ -71,6 +90,31 @@ PARSER_EXCERPT: str = "(line 1, pos 0)\n\n== SQL ==\nSELEC 1\n^^^\n"
             "expression in the MEASURES clause. SQLSTATE: 42601; line 1 pos 17",
             sqlstate="42601",
             expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a script whose end label differs from its begin label parsed",
+            message="[LABELS_MISMATCH] Begin label `l1` does not match the end label `l2`. "
+            "SQLSTATE: 42K0L",
+            sqlstate="42K0L",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="a SQL function parameter's NOT NULL parsed and is refused after parsing",
+            message="[USER_DEFINED_FUNCTIONS.NOT_NULL_ON_FUNCTION_PARAMETERS] User defined "
+            "function is invalid: Cannot specify NOT NULL on SQL function parameters: x INT NOT "
+            "NULL SQLSTATE: 42601",
+            sqlstate="42601",
+            expected_phase="semantic_error",
+            expected_parse_only=None,
+        ),
+        PhaseTestCase(
+            description="the same refusal from the parser, with its excerpt, stops the run",
+            message="[USER_DEFINED_FUNCTIONS.NOT_NULL_ON_FUNCTION_PARAMETERS] User defined "
+            f"function is invalid. SQLSTATE: 42601 {PARSER_EXCERPT}",
+            sqlstate="42601",
+            expected_phase=None,
             expected_parse_only=None,
         ),
         PhaseTestCase(

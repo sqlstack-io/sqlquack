@@ -2558,6 +2558,14 @@ anchor = "doc.sql-ref-syntax-ddl-alter-materialized-view / Syntax"
 note = "the form without its required COLUMN; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
+id = "db.ddl.alter-materialized-view.materialized-view-add-alter.o056"
+kind = "option_absent"
+required = true
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+anchor = "doc.sql-ref-syntax-ddl-alter-materialized-view / Syntax"
+note = "SET TAGS on a materialized view with no = between a tag's name and value"
+
+[[obligation]]
 id = "db.ddl.alter-provider.o001"
 kind = "positive"
 required = true
@@ -4721,6 +4729,14 @@ anchor = "doc.sql-ref-syntax-ddl-alter-streaming-table / Syntax"
 note = "the form without its required COLUMN; the warehouse parses the text, so its answer is recorded rather than expected"
 
 [[obligation]]
+id = "db.ddl.alter-streaming-table.streaming-table-add-alter.o057"
+kind = "option_absent"
+required = true
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+anchor = "doc.sql-ref-syntax-ddl-alter-streaming-table / Syntax"
+note = "SET TAGS on a streaming table with no = between a tag's name and value"
+
+[[obligation]]
 id = "db.ddl.alter-table.o001"
 kind = "positive"
 required = true
@@ -5721,6 +5737,14 @@ kind = "negative_neighbour"
 required = true
 target = "<clustering_columns> in [ ( <clustering_columns> ) | AUTO ]"
 note = "a string literal in place of <clustering_columns>; the warehouse (DBSQL 2026.44, run databricks-2026.44-20261107T021841.979538Z) answers unsupported_feature (DELTA_CLUSTER_BY_EXPRESSIONS_NOT_SUPPORTED), so the answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.ddl.alter-table.o228"
+kind = "option_absent"
+required = true
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+anchor = "doc.sql-ref-syntax-ddl-alter-table / Syntax"
+note = "SET TAGS on a table with no = between a tag's name and value"
 
 [[obligation]]
 id = "db.ddl.alter-table-add-constraint.o001"
@@ -7060,6 +7084,34 @@ anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
 
 [[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-comment-first.o057"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+note = "! in place of NOT in SET NOT NULL outside the prefix operator, which Spark 4's parser discontinued"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-comment-first.o058"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+note = "! in place of NOT in DROP NOT NULL outside the prefix operator, which Spark 4's parser discontinued"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-comment-first.o059"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+note = "! in place of NOT in a Hive CHANGE column type's NOT NULL, outside the prefix operator, which Spark 4's parser discontinued in some places"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-comment-first.o060"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+note = "a Hive CHANGE column type with NOT NULL, the control for its ! spelling"
+
+[[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o001"
 kind = "positive"
 required = true
@@ -7416,6 +7468,14 @@ anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
 note = "UNSET TAGS after CHANGE COLUMN, which the warehouse refuses"
 
 [[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-change-set-mask.o075"
+kind = "option_absent"
+required = true
+target = "SET TAGS ( <tag_name> = <tag_value> [ , ... ] )"
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+note = "SET TAGS on a column with no = between a tag's name and value"
+
+[[obligation]]
 id = "db.ddl.alter-table-manage-column.alter-table-add-column.o001"
 kind = "positive"
 required = true
@@ -7591,6 +7651,13 @@ required = true
 target = "<table_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.ddl.alter-table-manage-column.alter-table-add-column.o046"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql-ref-syntax-ddl-alter-table-manage-column / Syntax"
+note = "! in place of NOT in an added column's NOT NULL, outside the prefix operator, which Spark 4's parser discontinued in some places"
 
 [[obligation]]
 id = "db.ddl.alter-table-manage-column.drop.o001"
@@ -9027,6 +9094,22 @@ required = true
 target = "<view_name>"
 anchor = "doc.identifiers-syntax"
 note = "keyword: the SQL keyword SELECT, which the reserved-words page does not disallow as an identifier, unquoted and in backticks (both expected acceptance)"
+
+[[obligation]]
+id = "db.ddl.alter-view.o046"
+kind = "option_present"
+required = true
+target = "SET TBLPROPERTIES <set_tblproperties_clause>"
+anchor = "doc.sql-ref-syntax-ddl-alter-view / Syntax"
+note = "a view property with an unquoted key and an integer value"
+
+[[obligation]]
+id = "db.ddl.alter-view.o047"
+kind = "option_absent"
+required = true
+target = "SET TBLPROPERTIES <set_tblproperties_clause>"
+anchor = "doc.sql-ref-syntax-ddl-alter-view / Syntax"
+note = "a view property without = between its key and value"
 
 [[obligation]]
 id = "db.ddl.alter-view-set-managed.o001"
@@ -13722,13 +13805,6 @@ required = true
 target = "{ <property_identifier> [ . <property_identifier> ... ] | <property_string> } → <property_string>"
 
 [[obligation]]
-id = "db.ddl.create-recipient.o064"
-kind = "required_operand_missing"
-required = true
-target = "<property_identifier> in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } […"
-note = "omit <property_identifier>"
-
-[[obligation]]
 id = "db.ddl.create-recipient.o065"
 kind = "operand_type_class"
 required = true
@@ -13766,13 +13842,6 @@ id = "db.ddl.create-recipient.o022"
 kind = "option_absent"
 required = true
 target = "[ = ]"
-
-[[obligation]]
-id = "db.ddl.create-recipient.o070"
-kind = "required_operand_missing"
-required = true
-target = "<property_value> in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } [ = ]…"
-note = "omit <property_value>"
 
 [[obligation]]
 id = "db.ddl.create-recipient.o071"
@@ -13823,12 +13892,6 @@ id = "db.ddl.create-recipient.o072"
 kind = "negative_neighbour"
 required = true
 note = "the form without its required ( in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } [ = ] <property_value> [ ,…"
-
-[[obligation]]
-id = "db.ddl.create-recipient.o073"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required { <property_identifier> [ . <property_identifier> ... ] | <property_string> } in [ PROPERTIES ( { <property_identifier> [ . <property_identifier> ... ] | <property_string> } [ = ] <property_value> [ ,…"
 
 [[obligation]]
 id = "db.ddl.create-recipient.o074"
@@ -15742,6 +15805,20 @@ required = true
 target = "<query> #2"
 anchor = "doc.sql-ref-syntax-ddl-create-sql-function / Syntax"
 note = "a bare literal in place of <query>; the warehouse parses the text, so its answer is recorded rather than expected"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o223"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql-ref-syntax-ddl-create-sql-function / Syntax"
+note = "! in place of NOT in a parameter's NOT NULL, outside the prefix operator, which Spark 4's parser discontinued in some places"
+
+[[obligation]]
+id = "db.ddl.create-sql-function.o224"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql-ref-syntax-ddl-create-sql-function / Syntax"
+note = "a parameter with NOT NULL, which the page does not document, the control for its ! spelling"
 
 [[obligation]]
 id = "db.ddl.create-streaming-table.o001"
@@ -18546,6 +18623,22 @@ anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
 note = "TIMESERIES on two primary key columns, as the page's line allows, which the warehouse refuses"
 
 [[obligation]]
+id = "db.ddl.create-table-constraint.foreign-key-references.o081"
+kind = "option_present"
+required = true
+target = "DEFERRABLE"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "a FOREIGN KEY with the documented constraint option DEFERRABLE, which the local parser refuses"
+
+[[obligation]]
+id = "db.ddl.create-table-constraint.foreign-key-references.o082"
+kind = "option_present"
+required = true
+target = "INITIALLY DEFERRED"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "a FOREIGN KEY with the documented constraint option INITIALLY DEFERRED, which the local parser refuses"
+
+[[obligation]]
 id = "db.ddl.create-table-constraint.references.o001"
 kind = "positive"
 required = true
@@ -18837,6 +18930,29 @@ required = true
 target = "FOREIGN KEY"
 anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
 note = "the optional FOREIGN KEY written alone, beside the case without it"
+
+[[obligation]]
+id = "db.ddl.create-table-constraint.references.o050"
+kind = "option_present"
+required = true
+target = "ON DELETE NO ACTION"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "a column REFERENCES with ON DELETE NO ACTION"
+
+[[obligation]]
+id = "db.ddl.create-table-constraint.references.o051"
+kind = "option_present"
+required = true
+target = "ON UPDATE NO ACTION"
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "a column REFERENCES with ON UPDATE NO ACTION"
+
+[[obligation]]
+id = "db.ddl.create-table-constraint.references.o052"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql-ref-syntax-ddl-create-table-constraint / Syntax"
+note = "! in place of NOT outside the prefix operator, which Spark 4's parser discontinued"
 
 [[obligation]]
 id = "db.ddl.create-table-hiveformat.o001"
@@ -25846,6 +25962,30 @@ id = "db.ddl.tblproperties.unset-tblproperties.o012"
 kind = "interaction_all_options"
 required = true
 note = "every independent option of one production together"
+
+[[obligation]]
+id = "db.ddl.tblproperties.unset-tblproperties.o013"
+kind = "option_present"
+required = true
+target = "<property_key>"
+anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
+note = "an unquoted property key on a table"
+
+[[obligation]]
+id = "db.ddl.tblproperties.unset-tblproperties.o014"
+kind = "option_present"
+required = true
+target = "IF EXISTS"
+anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
+note = "UNSET TBLPROPERTIES IF EXISTS on a view"
+
+[[obligation]]
+id = "db.ddl.tblproperties.unset-tblproperties.o015"
+kind = "option_present"
+required = true
+target = "<property_key>"
+anchor = "doc.sql-ref-syntax-ddl-tblproperties / Syntax"
+note = "a dotted unquoted property key on a table"
 
 [[obligation]]
 id = "db.ddl.truncate-table.o001"

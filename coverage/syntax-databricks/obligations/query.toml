@@ -261,12 +261,6 @@ required = true
 target = "[ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY… → ORDER BY <order_by_clause>"
 
 [[obligation]]
-id = "db.query.query.o014"
-kind = "alternative"
-required = true
-target = "[ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY… → { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ] }"
-
-[[obligation]]
 id = "db.query.query.o015"
 kind = "alternative"
 required = true
@@ -285,12 +279,6 @@ kind = "operand_type_class"
 required = true
 target = "<order_by_clause> in [ ORDER BY <order_by_clause> | { [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY…"
 note = "a valid operand"
-
-[[obligation]]
-id = "db.query.query.o018"
-kind = "alternative"
-required = true
-target = "{ [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY… → [ DISTRIBUTE BY <distribute_by_clause> ] [ SORT BY <sort_by_clause> ]"
 
 [[obligation]]
 id = "db.query.query.o019"
@@ -1481,6 +1469,13 @@ anchor = "doc.sql-ref-syntax-qry-select-hints / Examples"
 note = "the page's example /*+ BROADCAST(t1), MERGE(t1, t2) */: a join hint list continued with a different hint"
 
 [[obligation]]
+id = "db.query.select-hints.o016"
+kind = "negative_neighbour"
+required = true
+anchor = "doc.sql-ref-syntax-qry-select-hints / Syntax"
+note = "a trailing comma inside a hint"
+
+[[obligation]]
 id = "db.query.select-hints.join-hint-alias.o001"
 kind = "positive"
 required = true
@@ -2082,20 +2077,6 @@ target = "<row_pattern_definition_list>"
 note = "omit <row_pattern_definition_list>"
 
 [[obligation]]
-id = "db.query.select-match-recognize.o029"
-kind = "operand_type_class"
-required = true
-target = "<row_pattern_definition_list>"
-note = "a valid string_literal"
-
-[[obligation]]
-id = "db.query.select-match-recognize.o030"
-kind = "negative_neighbour"
-required = true
-target = "<row_pattern_definition_list>"
-note = "an unquoted identifier in place of <row_pattern_definition_list>"
-
-[[obligation]]
 id = "db.query.select-match-recognize.o031"
 kind = "negative_neighbour"
 required = true
@@ -2170,6 +2151,14 @@ required = true
 target = "<row_pattern_rows_per_match>"
 anchor = "doc.sql-ref-syntax-qry-select-match-recognize / Syntax"
 note = "ALL ROWS PER MATCH SHOW EMPTY MATCHES"
+
+[[obligation]]
+id = "db.query.select-match-recognize.o049"
+kind = "negative_neighbour"
+required = true
+target = "<row_pattern_definition_list>"
+anchor = "doc.sql-ref-syntax-qry-select-match-recognize / Syntax"
+note = "a string literal in place of <row_pattern_definition_list>"
 
 [[obligation]]
 id = "db.query.select-match-recognize-define.o001"
@@ -4877,6 +4866,38 @@ required = true
 target = "FOR SYSTEM_VERSION AS OF"
 anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
 note = "a table name with FOR SYSTEM_VERSION AS OF; the names page writes SYSTEM_TIMESTAMP and SYSTEM_VERSION, SqlBaseParser temporalClause SYSTEM_TIME and SYSTEM_VERSION; observed, so that a receipt settles which the warehouse takes"
+
+[[obligation]]
+id = "db.query.select-table-reference.o128"
+kind = "option_present"
+required = true
+target = "STREAM ( <table_valued_function> )"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+note = "a table-valued function call inside STREAM ( ), which SqlBaseParser allows (STREAM ( tableFunctionCall ) identifiedByClause? watermarkClause? tableAlias)"
+
+[[obligation]]
+id = "db.query.select-table-reference.o129"
+kind = "option_present"
+required = true
+target = "STREAM ( <table_valued_function> ) <table_alias>"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+note = "a table-valued function call inside STREAM ( ) with a table alias after the parenthesis"
+
+[[obligation]]
+id = "db.query.select-table-reference.o130"
+kind = "option_present"
+required = true
+target = "STREAM ( IDENTIFIER ( <name> ) )"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+note = "an IDENTIFIER clause inside STREAM ( ), which SqlBaseParser reads as a table function call"
+
+[[obligation]]
+id = "db.query.select-table-reference.o131"
+kind = "negative_neighbour"
+required = true
+target = "STREAM ( <table_name> )"
+anchor = "doc.sql-ref-syntax-qry-select-table-reference / Parameters"
+note = "a table alias inside STREAM ( ): the alias belongs after the parenthesis (STREAM ( table_name ) [ table_alias ])"
 
 [[obligation]]
 id = "db.query.select-tvf.o001"

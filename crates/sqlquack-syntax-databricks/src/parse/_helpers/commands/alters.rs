@@ -509,7 +509,7 @@ impl Parser<'_> {
         let mut position: Option<ColumnPosition> = None;
         loop {
             let start: usize = self.offset();
-            if (self.kw("NOT") || self.is_char('!')) && self.kw_at(1, "NULL") {
+            if self.kw("NOT") && self.kw_at(1, "NULL") {
                 self.at += 2;
                 column.nullable = Some(false);
             } else if self.eat_kw("DEFAULT") {
