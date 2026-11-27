@@ -105,6 +105,11 @@ duckdb = "VARCHAR"
 reason = "Compared by Databricks's text: a JSON list with each element written as a string."
 
 [[comparator.type_equality]]
+snowflake = "ARRAY<STRING>"
+duckdb = "VARCHAR"
+reason = "Compared by Databricks's text: a JSON list of the strings, with quotes and backslashes escaped."
+
+[[comparator.type_equality]]
 snowflake = "TIMESTAMP_NTZ"
 duckdb = "TIMESTAMP"
 reason = "Both are wall-clock timestamps with microsecond precision and no zone."

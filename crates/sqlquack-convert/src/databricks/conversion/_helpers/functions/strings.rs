@@ -1,6 +1,7 @@
 //! String functions, with Databricks's handling of empty, NULL and out-of-range arguments written out.
 
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::functions::numbers::wrapped;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::constants::{CHR_MODULUS, DEFAULT_PAD, SUBSTRING_LENGTH};
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
@@ -23,6 +24,7 @@ pub(crate) fn string_rewrite(name: &str) -> Option<Rewrite> {
         "ENDSWITH" => |values| tested(values, "ends_with"),
         "RIGHT" => right,
         "SUBSTR" | "SUBSTRING" => substring,
+        "OVERLAY" => overlay,
         "LPAD" => |values| padded(values, "lpad"),
         "RPAD" => |values| padded(values, "rpad"),
         "SPACE" => space,
@@ -125,15 +127,63 @@ fn substring(values: &[Emitted]) -> Option<Emitted> {
         return None;
     }
     let (s, p) = (&text.sql, &position.sql);
+    Some(typed(
+        format!(
+            "CASE WHEN {s} IS NULL OR {p} IS NULL OR {length} IS NULL THEN NULL ELSE {} END",
+            substring_sql(s, p, &length)
+        ),
+        DatabricksType::String,
+    ))
+}
+
+/// Spark's substringSQL of non-NULL `s` from `p` for `length` characters, as BIGINT arithmetic.
+fn substring_sql(s: &str, p: &str, length: &str) -> String {
     let start = format!(
         "(CASE WHEN {p} > 0 THEN CAST({p} AS BIGINT) - 1 WHEN {p} < 0 THEN length({s}) + {p} ELSE 0 END)"
     );
     let end = format!("({start} + {length})");
     let from = format!("greatest({start}, 0)");
+    format!(
+        "(CASE WHEN {from} >= {end} THEN '' ELSE substring({s}, {from} + 1, {end} - {from}) END)"
+    )
+}
+
+/// `OVERLAY(s PLACING r FROM p [FOR n])` as Spark computes it: `p - 1` and `p + n` wrap as INTs.
+fn overlay(values: &[Emitted]) -> Option<Emitted> {
+    let (text, replacement, position, length) = match values {
+        [text, replacement, position] => (text, replacement, position, None),
+        [text, replacement, position, length] => (text, replacement, position, Some(length)),
+        _ => return None,
+    };
+    let strings = [text, replacement]
+        .iter()
+        .all(|value| value.data_type == DatabricksType::String);
+    let counts = small_integer(position.data_type)
+        && length.is_none_or(|length| small_integer(length.data_type));
+    if !strings || !counts {
+        return None;
+    }
+    let (s, r, p) = (&text.sql, &replacement.sql, &position.sql);
+    let skipped = match length {
+        Some(length) => format!(
+            "CASE WHEN {n} >= 0 THEN CAST({n} AS BIGINT) ELSE length({r}) END",
+            n = length.sql
+        ),
+        None => format!("length({r})"),
+    };
+    let before = wrapped(&format!("(CAST({p} AS BIGINT) - 1)"), 32, "BIGINT");
+    let after = wrapped(&format!("(CAST({p} AS BIGINT) + {skipped})"), 32, "BIGINT");
+    let nulls = std::iter::once(&text.sql)
+        .chain([r, p])
+        .chain(length.map(|length| &length.sql))
+        .map(|sql| format!("{sql} IS NULL"))
+        .collect::<Vec<_>>()
+        .join(" OR ");
     Some(typed(
         format!(
-            "CASE WHEN {s} IS NULL OR {p} IS NULL OR {length} IS NULL THEN NULL WHEN {from} >= {end} THEN '' \
-             ELSE substring({s}, {from} + 1, {end} - {from}) END"
+            "CASE WHEN {nulls} THEN NULL ELSE {} || {r} || {} END",
+            substring_sql(s, "1", &before),
+            substring_sql(s, &after, SUBSTRING_LENGTH)
         ),
         DatabricksType::String,
     ))

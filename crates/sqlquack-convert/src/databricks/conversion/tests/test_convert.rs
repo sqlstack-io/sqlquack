@@ -196,6 +196,21 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             ],
         },
         ConvertTestCase {
+            description: "a column pattern raises on an escape Databricks rejects; OVERLAY wraps p - 1 as an INT",
+            query: "SELECT s LIKE s AS l, overlay(s PLACING s FROM x1) AS o FROM input",
+            expected_sql: &[
+                "THEN error('the LIKE pattern has an escape Databricks rejects') ELSE (\"s\" LIKE \"s\" ESCAPE '\\')",
+                "(((CAST(\"x1\" AS BIGINT) - 1) + CAST('2147483648' AS BIGINT))",
+            ],
+            expected_types: &[DatabricksType::Boolean, DatabricksType::String],
+        },
+        ConvertTestCase {
+            description: "a string array is DuckDB's JSON, raising on a control character no recording shows",
+            query: "SELECT array(s) AS a FROM input",
+            expected_sql: &["regexp_matches(element, '[\\x00-\\x1f]'))) THEN error("],
+            expected_types: &[DatabricksType::Array(Element::String)],
+        },
+        ConvertTestCase {
             description: "trim is told to trim only spaces, as Databricks does",
             query: "SELECT trim(s) AS t FROM input",
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
@@ -242,7 +257,7 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
         },
         RefuseTestCase {
             description: "a LIKE pattern holding Databricks's escape",
-            query: "SELECT s LIKE 'a\\\\%' AS r FROM input",
+            query: "SELECT s LIKE 'a\\\\b' AS r FROM input",
             expected_reason: "backslash",
         },
         RefuseTestCase {
@@ -284,11 +299,6 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "SHA2 of a length DuckDB has no digest for",
             query: "SELECT sha2(s, 384) AS h FROM input",
             expected_reason: "SHA2",
-        },
-        RefuseTestCase {
-            description: "an array of strings, whose escapes the engines may write differently",
-            query: "SELECT array(s) AS a FROM input",
-            expected_reason: "ARRAY<STRING> result column",
         },
         RefuseTestCase {
             description: "text DuckDB reads as an infinite date, where Databricks raises",

@@ -9,7 +9,9 @@ use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{
     field, flag, list, node_kind, refused, understood,
 };
-use crate::databricks::conversion::constants::{LIKE_RULE, TRIM_RULE};
+use crate::databricks::conversion::constants::{
+    LIKE_ESCAPE_ERROR, LIKE_ESCAPES, LIKE_RULE, TRIM_RULE,
+};
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
 /// `[NOT] LIKE` a constant pattern, or `LIKE ANY` or `ALL` constant patterns as an `OR` or `AND`.
@@ -50,18 +52,31 @@ pub(crate) fn like(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> 
     let mut tests: Vec<String> = Vec::with_capacity(patterns.len());
     for pattern in patterns {
         let pattern = expression(pattern, site)?;
-        let pattern_sql = match (&pattern.literal, pattern.data_type) {
-            (Some(Literal::Text(text)), _) if !text.contains('\\') => quoted_text(text),
-            (_, DatabricksType::Null) => pattern.sql,
-            _ => {
+        let test = match (&pattern.literal, pattern.data_type) {
+            (Some(Literal::Text(text)), _) if !text.contains('\\') => {
+                format!("({not}{} LIKE {})", subject.sql, quoted_text(text))
+            }
+            (Some(Literal::Text(text)), _) if !escapes_well(text) => {
                 return Err(refused(
                     "like",
-                    "only constant patterns without a backslash, Databricks's escape, convert"
-                        .to_owned(),
+                    "a constant pattern whose backslash Databricks rejects".to_owned(),
                 ));
             }
+            (Some(Literal::Text(_)), _) => {
+                format!("({not}{} LIKE {} ESCAPE '\\')", subject.sql, pattern.sql)
+            }
+            (_, DatabricksType::Null) => format!("({not}{} LIKE NULL)", subject.sql),
+            (_, DatabricksType::String) => format!(
+                "(CASE WHEN NOT regexp_full_match({p}, '{LIKE_ESCAPES}') THEN error('{LIKE_ESCAPE_ERROR}') \
+                 ELSE ({not}{s} LIKE {p} ESCAPE '\\') END)",
+                p = pattern.sql,
+                s = subject.sql
+            ),
+            _ => {
+                return Err(refused("like", "only a string pattern converts".to_owned()));
+            }
         };
-        tests.push(format!("({not}{} LIKE {pattern_sql})", subject.sql));
+        tests.push(test);
     }
     match tests.is_empty() {
         true => Err(refused(
@@ -73,6 +88,17 @@ pub(crate) fn like(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> 
             DatabricksType::Boolean,
         )),
     }
+}
+
+/// Whether every backslash in `pattern` escapes `_`, `%` or a backslash, as Databricks requires.
+fn escapes_well(pattern: &str) -> bool {
+    let mut characters = pattern.chars();
+    while let Some(character) = characters.next() {
+        if character == '\\' && !matches!(characters.next(), Some('_' | '%' | '\\')) {
+            return false;
+        }
+    }
+    true
 }
 
 /// `TRIM([BOTH | LEADING | TRAILING] [chars] FROM s)`: every character of `chars`, spaces by default.

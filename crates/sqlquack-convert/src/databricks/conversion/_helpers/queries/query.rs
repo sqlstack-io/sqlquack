@@ -11,9 +11,10 @@ use crate::databricks::conversion::_helpers::support::tree::{
     digits_value, field, flag, identifier, list, node_kind, quoted, refused, understood,
 };
 use crate::databricks::conversion::constants::{
-    FIXTURE_RULE, LAMBDA_ELEMENT, ORDER_RULE, RENDERED_ELEMENTS, SELECT_RULE,
+    CONTROL_CHARACTERS, CONTROL_ERROR, FIXTURE_RULE, LAMBDA_ELEMENT, ORDER_RULE, RENDERED_ELEMENTS,
+    SELECT_RULE,
 };
-use crate::databricks::conversion::models::{DatabricksType, Emitted};
+use crate::databricks::conversion::models::{DatabricksType, Element, Emitted};
 
 /// A common table expression: its name as written, its DuckDB definition and its columns.
 struct Table {
@@ -153,6 +154,12 @@ fn select(
 /// A result column as Databricks returns it: an array as a JSON list of each element's text.
 fn rendered(emitted: &Emitted) -> String {
     match emitted.data_type {
+        DatabricksType::Array(Element::String) => format!(
+            "CASE WHEN list_bool_or(list_transform({x}, lambda {LAMBDA_ELEMENT}: \
+             regexp_matches({LAMBDA_ELEMENT}, '{CONTROL_CHARACTERS}'))) THEN error('{CONTROL_ERROR}') \
+             ELSE CAST(to_json({x}) AS VARCHAR) END",
+            x = emitted.sql
+        ),
         DatabricksType::Array(_) => format!(
             "CAST(to_json(list_transform({}, lambda {LAMBDA_ELEMENT}: CAST({LAMBDA_ELEMENT} AS VARCHAR))) AS VARCHAR)",
             emitted.sql

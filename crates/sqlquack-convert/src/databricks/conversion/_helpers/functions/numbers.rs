@@ -121,7 +121,7 @@ fn positive_modulo(values: &[Emitted]) -> Option<Emitted> {
 }
 
 /// `value`, of a type wider than `bits`, wrapped into the `bits`-bit two's complement range.
-fn wrapped(value: &str, bits: u32, wide: &str) -> String {
+pub(crate) fn wrapped(value: &str, bits: u32, wide: &str) -> String {
     let half = format!("CAST('{}' AS {wide})", 1_u128 << (bits - 1));
     let span = format!("CAST('{}' AS {wide})", 1_u128 << bits);
     format!("((({value} + {half}) % {span} + {span}) % {span} - {half})")

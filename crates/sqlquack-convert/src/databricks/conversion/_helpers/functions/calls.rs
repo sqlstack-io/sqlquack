@@ -48,6 +48,7 @@ pub(crate) fn call(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
             format!("{name} is no aggregate DISTINCT applies to"),
         )),
         "CONCAT" => concat(args, site),
+        "REGR_COUNT" => pair_count(args, site),
         _ if CAST_FUNCTIONS.iter().any(|(function, _)| *function == name) => {
             cast_function(&name, args, site)
         }
@@ -135,6 +136,28 @@ fn aggregate(
             ),
         )
     })
+}
+
+/// `REGR_COUNT(y, x)` of numbers: the rows where neither is NULL, as BIGINT.
+fn pair_count(args: &[Value], site: Site<'_>) -> Result<Emitted, Refusal> {
+    let refusal = |reason: &str| refused_function("REGR_COUNT", reason.to_owned());
+    if !site.aggregates {
+        return Err(refusal(
+            "no rule converts REGR_COUNT where an aggregate cannot appear",
+        ));
+    }
+    let values = arguments(args, site.without_aggregates())?;
+    let _rule = site.log.rule(AGGREGATE_RULE);
+    match values.as_slice() {
+        [y, x] if y.data_type.is_numeric() && x.data_type.is_numeric() => Ok(typed(
+            format!(
+                "count(CASE WHEN {} IS NOT NULL AND {} IS NOT NULL THEN 1 END)",
+                y.sql, x.sql
+            ),
+            DatabricksType::BigInt,
+        )),
+        _ => Err(refusal("only REGR_COUNT of two numbers converts")),
+    }
 }
 
 /// A function named after a type, such as `BIGINT(x)`: a cast of its one argument to that type.

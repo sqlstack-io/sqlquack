@@ -30,8 +30,12 @@ pub const BETWEEN_RULE: &str = "rule.databricks.between";
 pub const IN_LIST_RULE: &str = "rule.databricks.in_list";
 /// A searched `CASE` whose branches share one type.
 pub const CASE_RULE: &str = "rule.databricks.case";
-/// `[NOT] LIKE`, `LIKE ANY` and `LIKE ALL` with constant patterns holding no backslash.
+/// `[NOT] LIKE`, `LIKE ANY` and `LIKE ALL`, a backslash escaping and raising on an escape Databricks rejects.
 pub const LIKE_RULE: &str = "rule.databricks.like";
+/// The patterns whose every backslash escapes `_`, `%` or a backslash, as an RE2 expression.
+pub const LIKE_ESCAPES: &str = r"([^\\]|\\[_%\\])*";
+/// The error a pattern Databricks rejects for its escapes raises in DuckDB.
+pub const LIKE_ESCAPE_ERROR: &str = "the LIKE pattern has an escape Databricks rejects";
 /// `ORDER BY` with the null ordering written out: Databricks puts NULLs first ascending.
 pub const ORDER_RULE: &str = "rule.databricks.order";
 /// `CONCAT` of strings as `||`, NULL when any argument is NULL.
@@ -79,14 +83,20 @@ pub const FLOAT_MANTISSA_BITS: u32 = 24;
 pub const DOUBLE_MANTISSA_BITS: u32 = 53;
 /// The parameter name of the lambdas array rewrites emit.
 pub const LAMBDA_ELEMENT: &str = "element";
-/// The array elements whose text DuckDB writes as Databricks returns it; strings may escape differently.
+/// The array elements whose text DuckDB writes as Databricks returns it; strings raise on control characters.
 pub const RENDERED_ELEMENTS: &[Element] = &[
+    Element::String,
     Element::Boolean,
     Element::TinyInt,
     Element::SmallInt,
     Element::Int,
     Element::BigInt,
 ];
+/// The characters below U+0020, whose JSON escapes no recording shows Databricks writing.
+pub const CONTROL_CHARACTERS: &str = r"[\x00-\x1f]";
+/// The error a string array holding a control character raises in DuckDB.
+pub const CONTROL_ERROR: &str =
+    "no recording shows how Databricks writes a control character in an array";
 /// How deep a tree may nest for conversion, which recurses once per level.
 pub const MAX_TREE_DEPTH: usize = 128;
 /// The most digits a Databricks decimal holds.
