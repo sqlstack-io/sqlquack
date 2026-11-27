@@ -58,3 +58,5 @@ mod test_typed_leaves;
 mod test_types;
 #[path = "tests/test_utc_offsets.rs"]
 mod test_utc_offsets;
+#[path = "tests/test_with_overrides.rs"]
+mod test_with_overrides;

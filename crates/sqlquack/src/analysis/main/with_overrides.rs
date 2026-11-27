@@ -1,6 +1,7 @@
 //! `with_overrides`: conversion options with the user overrides a command reads.
 
-use std::path::Path;
+use std::collections::BTreeMap;
+use std::path::{Path, PathBuf};
 
 use sqlquack_convert::snowflake::conversion::models::ConversionOptions;
 use walkdir::WalkDir;
@@ -8,7 +9,7 @@ use walkdir::WalkDir;
 use crate::analysis::_helpers::override_definition::{load_override, verified_override};
 use crate::analysis::constants::OVERRIDE_EXTENSION;
 
-/// `options` with the overrides at `path`, a `.sql` file or a directory, and `NAME=<sha256>` verified.
+/// `options` with the overrides at `path`, a `.sql` file or a directory, and `NAME=<sha256>` verified; errors name the files.
 pub fn with_overrides(
     mut options: ConversionOptions,
     (path, verified): (Option<&Path>, &[String]),
@@ -32,6 +33,7 @@ pub fn with_overrides(
         })
         .collect();
     files.sort();
+    let mut read_from: BTreeMap<String, PathBuf> = BTreeMap::new();
     for file in files {
         let text = std::fs::read_to_string(&file)
             .map_err(|error| format!("cannot read {}: {error}", file.display()))?;
@@ -39,13 +41,16 @@ pub fn with_overrides(
             .file_stem()
             .and_then(|stem| stem.to_str())
             .unwrap_or_default();
-        let (replaces, replacement) = load_override(name, &text)?;
-        if let Some(earlier) = options.overrides.insert(replaces.clone(), replacement) {
+        let (replaces, replacement) =
+            load_override(name, &text).map_err(|error| format!("{}: {error}", file.display()))?;
+        if let Some(earlier) = read_from.insert(replaces.clone(), file.clone()) {
             return Err(format!(
-                "overrides {} and {name} both replace {replaces}",
-                earlier.name
+                "overrides {} and {} both replace {replaces}",
+                earlier.display(),
+                file.display()
             ));
         }
+        options.overrides.insert(replaces, replacement);
     }
     Ok(options)
 }
