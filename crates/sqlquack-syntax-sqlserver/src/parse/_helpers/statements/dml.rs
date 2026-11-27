@@ -289,6 +289,7 @@ impl<'sql> Parser<'sql> {
                 source,
                 condition,
                 then: Box::new(then),
+                not_written_as: None,
             })));
         }
         if whens.is_empty() {

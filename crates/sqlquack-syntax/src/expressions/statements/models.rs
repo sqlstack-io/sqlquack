@@ -1507,6 +1507,10 @@ pub struct When {
     #[serde(default)]
     pub condition: Option<Box<Expression>>,
     pub then: Box<Expression>,
+    /// Databricks: the NOT of `WHEN NOT MATCHED` as written, when another documented spelling shares this node
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub not_written_as: Option<crate::expressions::operators::models::OperatorSpelling>,
 }
 
 /// Wraps around one or more WHEN [NOT] MATCHED [...] clauses.

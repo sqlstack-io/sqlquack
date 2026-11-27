@@ -81,6 +81,7 @@ impl Parser {
                     column_keyword: column_keyword && self.is_snowflake(),
                     action_words,
                     keyword: None,
+                    not_written_as: None,
                 });
                 if !self.match_token(TokenType::Comma) {
                     break;

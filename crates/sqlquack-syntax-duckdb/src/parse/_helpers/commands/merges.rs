@@ -106,6 +106,7 @@ impl Parser<'_> {
             source: by_source.then(|| Box::new(boolean(true))),
             condition,
             then: Box::new(then),
+            not_written_as: None,
         }));
         Ok((when, kind))
     }

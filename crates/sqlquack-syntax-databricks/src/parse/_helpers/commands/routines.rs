@@ -115,7 +115,9 @@ impl Parser<'_> {
         let mut comment: Option<(String, Option<Literal>)> = None;
         loop {
             if (self.kw("NOT") || self.is_char('!')) && self.kw_at(1, "NULL") {
+                let start: usize = self.offset();
                 self.at += 2;
+                self.gap("function_parameter_not_null", start);
             } else if self.eat_kw("DEFAULT") {
                 default = Some(self.expression()?);
             } else if self.eat_kw("COMMENT") {
