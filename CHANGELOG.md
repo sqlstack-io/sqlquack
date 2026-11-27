@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.25.0](https://github.com/sqlstack-io/sqlquack/compare/v0.24.1...v0.25.0) (2026-11-27)
+
+
+### Features
+
+* **api:** allow and allow_location on ConvertOptions ([583440b](https://github.com/sqlstack-io/sqlquack/commit/583440bc17286c638cbbca8285b8c5ead4e0b0bb))
+
+
+### Bug Fixes
+
+* **convert:** TRY_PARSE_JSON of text without brackets no longer raises list_reduce's error ([a9bd593](https://github.com/sqlstack-io/sqlquack/commit/a9bd5937f3f2d02eb9460cf4e82a1189d1d8119e))
+* **overrides:** errors loading override files name the files ([aa77f06](https://github.com/sqlstack-io/sqlquack/commit/aa77f06bb03b3cc5d5a11efaf7feb4d23eecbb27))
+
 ## [0.24.1](https://github.com/sqlstack-io/sqlquack/compare/v0.24.0...v0.24.1) (2026-11-25)
 
 
