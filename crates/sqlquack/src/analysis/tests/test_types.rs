@@ -267,3 +267,11 @@ pub(crate) struct SetResultTestCase {
 
 /// A converted query's column names and DuckDB types, then its rows as text, sorted.
 pub(crate) type ShopResult = (Vec<String>, Vec<Vec<String>>);
+
+/// Override files in one folder, by file name, and the error loading them names.
+pub(crate) struct WithOverridesTestCase {
+    pub(crate) description: &'static str,
+    pub(crate) files: &'static [(&'static str, &'static str)],
+    /// The error with the folder written `<dir>`.
+    pub(crate) expected_error: &'static str,
+}
