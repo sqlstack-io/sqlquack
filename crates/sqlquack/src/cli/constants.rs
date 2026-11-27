@@ -7,3 +7,9 @@ pub const EXIT_STATUS_HELP: &str = "Exit status of check, convert, function and 
     2  the command could not run: bad arguments, an unreadable file, or input without SQL\n\
     census exits 0 when every file converts, 1 when any is blocked, and 2 when it cannot run.\n\
     index exits 0 when it finishes, refused files included, and 2 when it cannot run.";
+
+/// What allowance errors call the caller's `allow` when it names no place for them.
+pub const ALLOW_OPTION: &str = "the allow option";
+/// What allows the project's Python functions in place of an allowance.
+pub const PYTHON_RUNTIME_OPTION: &str =
+    "pass python_runtime when a Python runtime registers the project's functions";

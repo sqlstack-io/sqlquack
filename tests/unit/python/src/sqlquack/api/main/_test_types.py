@@ -89,3 +89,20 @@ class BindCheckTestCase:
     description: str
     sql: str
     expected_converted: bool
+
+
+@dataclass(frozen=True)
+class AllowTestCase:
+    description: str
+    options: ConvertOptions
+    expected_converted: bool
+    expected_help: str | None
+    expected_allowed_by: str | None
+
+
+@dataclass(frozen=True)
+class ConfiguredAllowTestCase:
+    description: str
+    config_text: str
+    options: ConvertOptions
+    expected_helps: tuple[str, ...]

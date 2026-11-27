@@ -728,8 +728,12 @@ fn convert_refusal((refusal, diagnostic): (&Refusal, Diagnostic)) -> ConvertRefu
 
 /// What allows the known difference `name`: the configuration file, the Python runtime, or the defaults.
 fn allowed_by(choices: &ConversionChoices, name: &str) -> String {
-    match (&choices.config_file, choices.allow.get(name)) {
-        (Some(file), Some(true)) => file.clone(),
+    let allowances = choices
+        .allow_location
+        .as_ref()
+        .or(choices.config_file.as_ref());
+    match (allowances, choices.allow.get(name)) {
+        (Some(place), Some(true)) => place.clone(),
         _ if name == PROJECT_UDF && choices.python_runtime => ALLOWED_BY_RUNTIME.to_owned(),
         _ => ALLOWED_BY_DEFAULT.to_owned(),
     }

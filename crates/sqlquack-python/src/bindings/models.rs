@@ -30,6 +30,10 @@ pub struct ConvertRequest {
     pub strict: bool,
     /// `--python-runtime`.
     pub python_runtime: bool,
+    /// Known differences allowed (`true`) or refused (`false`) over the configuration's `[allow]`.
+    pub allow: BTreeMap<String, bool>,
+    /// Where those allowances are written, for help to name.
+    pub allow_location: Option<String>,
     /// `--overrides`.
     pub overrides: Option<PathBuf>,
     /// `--verified-override NAME=SHA256`, by name.

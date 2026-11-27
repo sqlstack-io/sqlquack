@@ -401,6 +401,12 @@ pub struct PolicyArguments {
     /// Confirm a Python runtime registers the project's Python functions with SQLQuack's runtime.
     #[arg(long)]
     pub python_runtime: bool,
+    /// Known differences a caller allows (`true`) or refuses (`false`) over the configuration's `[allow]`, as the Python API passes them.
+    #[arg(skip)]
+    pub allow: BTreeMap<String, bool>,
+    /// Where the caller's allowances are written, for help and reports to name; the configuration file when absent.
+    #[arg(skip)]
+    pub allow_location: Option<String>,
     /// How deep the SQL may nest.
     #[command(flatten)]
     pub parse: ParseArguments,

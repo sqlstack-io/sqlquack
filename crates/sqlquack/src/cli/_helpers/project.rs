@@ -5,12 +5,14 @@ use std::path::{Path, PathBuf};
 
 use sqlquack_convert::snowflake::analysis::models::ConversionChoices;
 use sqlquack_policy::config::constants::CONFIG_FILE_NAME;
+use sqlquack_policy::config::main::check_allow::check_allow;
 use sqlquack_policy::config::main::load_config::load_config;
 use sqlquack_policy::config::models::UserConfig;
 use sqlquack_policy::policy::main::evidence_policy::evidence_policy;
 use sqlquack_semantics::snowflake::typing::types::Schema;
 
 use crate::cli::_helpers::evidence::conversion_choices;
+use crate::cli::constants::{ALLOW_OPTION, PYTHON_RUNTIME_OPTION};
 use crate::cli::models::{PolicyArguments, ProjectChoices};
 use crate::project::constants::OVERRIDES_FOLDER;
 use crate::project::main::project_folder::project_folder;
@@ -48,6 +50,12 @@ pub(crate) fn project_choices(
         Some(path) => load_config(path, evidence_policy()).map_err(|error| error.to_string())?,
         None => UserConfig::default(),
     };
+    let place: &str = conversion.allow_location.as_deref().unwrap_or(ALLOW_OPTION);
+    check_allow(
+        &conversion.allow,
+        evidence_policy(),
+        (place, PYTHON_RUNTIME_OPTION),
+    )?;
     let mut conversion = conversion.clone();
     conversion.python_runtime |= config.project.python_runtime;
     let given: BTreeSet<String> = session

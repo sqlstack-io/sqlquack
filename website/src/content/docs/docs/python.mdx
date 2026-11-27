@@ -82,6 +82,24 @@ default and at most `512`. It returns a `CheckResult`:
 `overrides` take a path (`str` or `os.PathLike`), not the parsed contents. `session` and `verified_overrides` take a mapping, such as
 `session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings.
 
+Two fields have no flag, for a tool that keeps SQLQuack's settings in its own configuration:
+
+- `allow` allows (`True`) or refuses (`False`) [known differences](/docs/policy/), as
+  `[allow]` in `sqlquack.toml` does, over the configuration's own `[allow]`. A name that is no
+  known difference raises `SqlQuackError`, and so does `project_udf`, which `python_runtime`
+  allows instead.
+- `allow_location` names where the tool keeps those allowances, such as
+  `"[testing.local] allow in project.toml"`. Help and the report's `allowed_by` name it instead of
+  the configuration file.
+
+```python
+options = sqlquack.ConvertOptions(
+    no_config=True,
+    allow={"hash": True},
+    allow_location="[testing.local] allow in project.toml",
+)
+```
+
 `bind_check=False` is `--no-bind-check`: conversion skips DuckDB's parse and bind of its output,
 for callers that run the SQL themselves and handle DuckDB's errors. It defaults to `True`.
 
