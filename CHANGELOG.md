@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.25.1](https://github.com/sqlstack-io/sqlquack/compare/v0.25.0...v0.25.1) (2026-11-27)
+
+
+### Bug Fixes
+
+* **databricks:** keep FROM-first and TABLE marks through a PIVOT pipe ([d4a9a0d](https://github.com/sqlstack-io/sqlquack/commit/d4a9a0d1206b82934166a18eb3a4252c0fbcdb38))
+* **databricks:** read deferral options only where constraints document them ([3143419](https://github.com/sqlstack-io/sqlquack/commit/31434195d3ad08e47d9c74921c7a7ff3a7dedfd4))
+
 ## [0.25.0](https://github.com/sqlstack-io/sqlquack/compare/v0.24.1...v0.25.0) (2026-11-27)
 
 
