@@ -11290,12 +11290,6 @@ target = "<source>"
 note = "a valid operand"
 
 [[obligation]]
-id = "db.functions.extract.o006"
-kind = "negative_neighbour"
-required = true
-note = "the form without its required ("
-
-[[obligation]]
 id = "db.functions.extract.o007"
 kind = "negative_neighbour"
 required = true
