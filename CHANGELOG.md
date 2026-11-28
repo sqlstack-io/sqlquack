@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.27.0](https://github.com/sqlstack-io/sqlquack/compare/v0.26.0...v0.27.0) (2026-11-28)
+
+
+### Features
+
+* **convert:** add a Databricks dialect option ([1d2de48](https://github.com/sqlstack-io/sqlquack/commit/1d2de48b7d11a1102bc6c8c71e09829a71d792a2))
+* **coverage:** sign off Databricks forms with nothing in DuckDB to translate to ([6cc8b86](https://github.com/sqlstack-io/sqlquack/commit/6cc8b86faf8291c8a11dea1a314cad34030695c6))
+* **databricks:** convert CONV and DATE_FORMAT with a constant pattern ([728da59](https://github.com/sqlstack-io/sqlquack/commit/728da593170c96041278d180d62a6c1b16a6c678))
+* **databricks:** convert functions whose arguments Databricks casts or narrows ([f1618a2](https://github.com/sqlstack-io/sqlquack/commit/f1618a21d0e198e55e8b992be4ddd754cee99a58))
+* **databricks:** convert mixed-type IN lists and TO_DATE, TRY_TO_DATE and TO_TIMESTAMP ([f9814ab](https://github.com/sqlstack-io/sqlquack/commit/f9814ab10923b84fa139f5df6f4280526f7a8a87))
+* **databricks:** convert more string, timestamp and boolean forms ([269bc8c](https://github.com/sqlstack-io/sqlquack/commit/269bc8c0b3f5c2bb008aedda363aea328e99fdaa))
+* **databricks:** convert PERCENTILE_CONT and PERCENTILE_DISC WITHIN GROUP ([4ad436c](https://github.com/sqlstack-io/sqlquack/commit/4ad436c683608f46346d18bdab55d9f99c27d0f5))
+* **databricks:** convert the REGEXP functions for constant patterns RE2 reads as Java does ([5abb009](https://github.com/sqlstack-io/sqlquack/commit/5abb009152f057527e310fba8aba43c7b33ca7f5))
+* **databricks:** read STRING arguments and casts as Databricks casts them ([d8c1d8b](https://github.com/sqlstack-io/sqlquack/commit/d8c1d8bf2c3c82ff1ee10e74539c2313d020e438))
+
+
+### Bug Fixes
+
+* **coverage:** keep two Databricks groups unsigned until their reasons are checked ([6264c67](https://github.com/sqlstack-io/sqlquack/commit/6264c678c68529807c71c04c59e33d7f890beaac))
+* **coverage:** state what two not-translatable Databricks groups call, and sign them off ([f53fd28](https://github.com/sqlstack-io/sqlquack/commit/f53fd28a05a05002e1ccdc15234821342822ac53))
+* **databricks:** match what the new Databricks recordings show ([03bdd0c](https://github.com/sqlstack-io/sqlquack/commit/03bdd0c7ae1b683737468eccca4827c8f5ad465b))
+* **databricks:** refuse or raise where Databricks reads the arguments differently ([4f87534](https://github.com/sqlstack-io/sqlquack/commit/4f87534e75822d888b9cb90b21c0937a58c07b9d))
+
 ## [0.26.0](https://github.com/sqlstack-io/sqlquack/compare/v0.25.1...v0.26.0) (2026-11-28)
 
 
