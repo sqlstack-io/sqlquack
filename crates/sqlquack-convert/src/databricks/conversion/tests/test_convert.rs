@@ -2,7 +2,11 @@
 
 use crate::databricks::analysis::main::analyze::analyze;
 use crate::databricks::conversion::models::{DatabricksType, Element};
-use crate::databricks::conversion::tests::test_types::{ConvertTestCase, RefuseTestCase};
+use sqlquack_diagnostics::refusals::models::RefusalCategory;
+
+use crate::databricks::conversion::tests::test_types::{
+    CategoryTestCase, ConvertTestCase, RefuseTestCase,
+};
 
 const FIXTURE: &str = "WITH input AS (SELECT * FROM VALUES (1, CAST(-7 AS INT), CAST('a' AS STRING)), \
      (2, CAST(NULL AS INT), CAST(NULL AS STRING)) AS input(ordinal, x1, s)) ";
@@ -200,6 +204,15 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
                 DatabricksType::Double,
                 DatabricksType::Double,
             ],
+        },
+        ConvertTestCase {
+            description: "a STRING argument to a date field reads as DATE, raising for digitless text as Databricks does",
+            query: "SELECT year(s) AS y FROM input",
+            expected_sql: &[
+                "WHEN regexp_full_match(\"s\", '[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}') THEN CAST(\"s\" AS DATE)",
+                "THEN CAST(error('invalid date field format: the text cast to DATE holds no date') AS DATE)",
+            ],
+            expected_types: &[DatabricksType::Int],
         },
         ConvertTestCase {
             description: "PMOD of TINYINT adds in INT before narrowing, so pmod(-1Y, -128Y) stays -1",
@@ -524,6 +537,32 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
         assert!(
             reason.contains(test_case.expected_reason),
             "{}: {reason}",
+            test_case.description
+        );
+    }
+}
+
+#[test]
+fn given_arguments_outside_a_rule_when_converted_then_the_refusal_is_a_type_condition() {
+    let test_cases = [
+        CategoryTestCase {
+            description: "an array where a string function takes text, which Databricks rejects at compile time",
+            query: "SELECT upper(array(x1)) AS r FROM input",
+            expected_category: RefusalCategory::TypeCondition,
+        },
+        CategoryTestCase {
+            description: "a function no rule converts at all",
+            query: "SELECT sin(x1) AS r FROM input",
+            expected_category: RefusalCategory::MissingRule,
+        },
+    ];
+    for test_case in test_cases {
+        let category = analyze(&format!("{FIXTURE}{}", test_case.query))
+            .expect_err(test_case.description)
+            .category;
+        assert_eq!(
+            category, test_case.expected_category,
+            "{}",
             test_case.description
         );
     }

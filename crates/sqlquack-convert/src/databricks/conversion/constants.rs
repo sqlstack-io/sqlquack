@@ -106,26 +106,43 @@ pub const COUNT_NAME: &str = "COUNT";
 pub const MIN_LIST_ARGUMENTS: usize = 2;
 /// Same-type functions that order their arguments, refused for arrays, whose NULL elements the engines order apart.
 pub const ORDERING_FUNCTIONS: &[&str] = &["GREATEST", "LEAST"];
-/// Functions whose STRING arguments Databricks casts, with the type the recorded cast errors name.
-pub const TEXT_READINGS: &[(&str, DatabricksType)] = &[
-    ("EXP", DatabricksType::Double),
-    ("DEGREES", DatabricksType::Double),
-    ("RADIANS", DatabricksType::Double),
-    ("LN", DatabricksType::Double),
-    ("LOG", DatabricksType::Double),
-    ("SQRT", DatabricksType::Double),
-    ("CEIL", DatabricksType::Double),
-    ("CEILING", DatabricksType::Double),
-    ("FLOOR", DatabricksType::Double),
-    ("ROUND", DatabricksType::Double),
-    ("BROUND", DatabricksType::Double),
-    ("ISNAN", DatabricksType::Double),
-    ("NANVL", DatabricksType::Double),
-    ("BIN", DatabricksType::BigInt),
-    ("CHAR", DatabricksType::BigInt),
-    ("CHR", DatabricksType::BigInt),
-    ("MOD", DatabricksType::BigInt),
-    ("FROM_UNIXTIME", DatabricksType::BigInt),
+/// Functions whose STRING arguments Databricks casts: the type the recorded cast errors name, and the argument positions it casts.
+pub const TEXT_READINGS: &[(&str, DatabricksType, &[usize])] = &[
+    ("EXP", DatabricksType::Double, &[0]),
+    ("DEGREES", DatabricksType::Double, &[0]),
+    ("RADIANS", DatabricksType::Double, &[0]),
+    ("LN", DatabricksType::Double, &[0]),
+    ("SQRT", DatabricksType::Double, &[0]),
+    ("CEIL", DatabricksType::Double, &[0]),
+    ("CEILING", DatabricksType::Double, &[0]),
+    ("FLOOR", DatabricksType::Double, &[0]),
+    ("ROUND", DatabricksType::Double, &[0]),
+    ("BROUND", DatabricksType::Double, &[0]),
+    ("ISNAN", DatabricksType::Double, &[0]),
+    ("LOG", DatabricksType::Double, &[0, 1]),
+    ("NANVL", DatabricksType::Double, &[0, 1]),
+    ("BIN", DatabricksType::BigInt, &[0]),
+    ("CHAR", DatabricksType::BigInt, &[0]),
+    ("CHR", DatabricksType::BigInt, &[0]),
+    ("FROM_UNIXTIME", DatabricksType::BigInt, &[0]),
+    ("MOD", DatabricksType::BigInt, &[0, 1]),
+    ("YEAR", DatabricksType::Date, &[0]),
+    ("QUARTER", DatabricksType::Date, &[0]),
+    ("DAY", DatabricksType::Date, &[0]),
+    ("DAYOFMONTH", DatabricksType::Date, &[0]),
+    ("DAYOFYEAR", DatabricksType::Date, &[0]),
+    ("DAYOFWEEK", DatabricksType::Date, &[0]),
+    ("WEEKDAY", DatabricksType::Date, &[0]),
+    ("WEEKOFYEAR", DatabricksType::Date, &[0]),
+    ("DAYNAME", DatabricksType::Date, &[0]),
+    ("LAST_DAY", DatabricksType::Date, &[0]),
+    ("ADD_MONTHS", DatabricksType::Date, &[0]),
+    ("NEXT_DAY", DatabricksType::Date, &[0]),
+    ("DATEDIFF", DatabricksType::Date, &[0, 1]),
+    ("HOUR", DatabricksType::Timestamp, &[0]),
+    ("SECOND", DatabricksType::Timestamp, &[0]),
+    ("MONTHS_BETWEEN", DatabricksType::Timestamp, &[0, 1]),
+    ("DATE_DIFF", DatabricksType::Date, &[0, 1]),
 ];
 /// Text DuckDB reads as the DOUBLE Databricks casts it to: a signed decimal of at most 30 digits and a two-digit exponent, between spaces.
 pub const PLAIN_DOUBLE_TEXT: &str =
@@ -137,6 +154,25 @@ pub const DIGITLESS_NUMBER_ERROR: &str = "the text cast to DOUBLE holds no numbe
 /// The error text cast to DOUBLE raises when no rule shows how Databricks reads it.
 pub const NUMBER_READING_ERROR: &str =
     "the text cast to DOUBLE is not one no rule reads as Databricks does";
+/// Text DuckDB reads as the DATE Databricks casts it to: `YYYY-MM-DD` with a year from 1000.
+pub const PLAIN_DATE_TEXT: &str = "[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}";
+/// Text DuckDB reads as the timestamp Databricks casts it to: `YYYY-MM-DD HH:MM:SS` with up to six fraction digits.
+pub const PLAIN_TIMESTAMP_TEXT: &str =
+    "[1-9][0-9]{3}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?";
+/// What a raise for text with no digit cast to a timestamp says after the timestamp-text fragment.
+pub const DIGITLESS_TIMESTAMP_ERROR: &str = "the text cast to TIMESTAMP holds no timestamp";
+/// The error text cast to a timestamp raises when no rule shows how Databricks reads it.
+pub const TIMESTAMP_READING_ERROR: &str =
+    "the text cast to TIMESTAMP is not one no rule reads as Databricks does";
+/// The error fragment a malformed date raises, which the evidence reads as malformed date text.
+pub const DATE_TEXT_FRAGMENT: &str = "invalid date field format";
+/// The error fragment a malformed timestamp raises, which the evidence reads as malformed timestamp text.
+pub const TIMESTAMP_TEXT_FRAGMENT: &str = "invalid timestamp field format";
+/// What a raise for text with no digit cast to DATE says after the date-text fragment.
+pub const DIGITLESS_DATE_ERROR: &str = "the text cast to DATE holds no date";
+/// The error text cast to DATE raises when no rule shows how Databricks reads it.
+pub const DATE_READING_ERROR: &str =
+    "the text cast to DATE is not one no rule reads as Databricks does";
 /// The most digits a literal has for one rounding to DOUBLE to match Databricks's exact conversion.
 pub const DOUBLE_EXACT_DIGITS: usize = 15;
 /// The length of `YYYY-MM-DD`.

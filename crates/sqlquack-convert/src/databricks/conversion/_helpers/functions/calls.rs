@@ -10,7 +10,7 @@ use crate::databricks::conversion::_helpers::expressions::texts::text_arguments;
 use crate::databricks::conversion::_helpers::functions::rewrites::{applied, rewrite};
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{
-    field, list, node_kind, refused_function, understood,
+    field, list, node_kind, outside_function, refused_function, understood,
 };
 use crate::databricks::conversion::constants::{
     AGGREGATE_RULE, AGGREGATES, CAST_FUNCTIONS, CAST_RULE, CONCAT_RULE, COUNT_NAME,
@@ -291,9 +291,10 @@ fn same_function(name: &str, args: &[Value], site: Site<'_>) -> Result<Emitted, 
     Ok(typed(format!("{duckdb}({})", sqls.join(", ")), data_type))
 }
 
+/// A refusal of a same-named function whose arguments fall outside its signature.
 fn mismatched(name: &str, types: &[DatabricksType]) -> Refusal {
     let names: Vec<String> = types.iter().map(|data_type| data_type.name()).collect();
-    refused_function(
+    outside_function(
         name,
         format!(
             "no rule converts {name} of ({}): the arguments are outside its signature",

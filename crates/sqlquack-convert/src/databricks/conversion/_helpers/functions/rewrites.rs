@@ -11,7 +11,7 @@ use crate::databricks::conversion::_helpers::functions::maths::math_rewrite;
 use crate::databricks::conversion::_helpers::functions::numbers::number_rewrite;
 use crate::databricks::conversion::_helpers::functions::strings::{digest, string_rewrite};
 use crate::databricks::conversion::_helpers::support::scope::Site;
-use crate::databricks::conversion::_helpers::support::tree::refused_function;
+use crate::databricks::conversion::_helpers::support::tree::{outside_function, refused_function};
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
 use crate::databricks::conversion::constants::{
     DATE_FUNCTION_RULE, DIGEST_ERROR, INDEX_RULE, NUMBER_FUNCTION_RULE, REWRITE_RULE,
@@ -85,7 +85,7 @@ pub(crate) fn applied(
     }
     rewrite(values).ok_or_else(|| {
         let names: Vec<String> = values.iter().map(|value| value.data_type.name()).collect();
-        refused_function(
+        outside_function(
             name,
             format!(
                 "no rule converts {name} of ({}): the arguments are outside its rewrite",

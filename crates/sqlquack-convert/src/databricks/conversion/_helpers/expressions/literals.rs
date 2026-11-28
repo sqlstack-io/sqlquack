@@ -4,6 +4,7 @@ use serde_json::Value;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
+use crate::databricks::conversion::_helpers::expressions::texts::read_text;
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{field, refused, understood};
 use crate::databricks::conversion::_helpers::support::typing::{databricks_type, same_cast};
@@ -84,6 +85,10 @@ pub(crate) fn cast(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> 
 
 /// `source` cast to `target`, `None` unless DuckDB converts it as Databricks does.
 pub(crate) fn cast_value(source: &Emitted, target: DatabricksType) -> Option<Emitted> {
+    let text_column = source.literal.is_none() && source.data_type == DatabricksType::String;
+    if let Some(read) = read_text(source, target).filter(|_| text_column) {
+        return Some(read);
+    }
     let exact = match (&source.literal, source.data_type) {
         (Some(Literal::Number(number)), _) => number_fits(number, target),
         (Some(Literal::Text(value)), _) => text_fits(value, target),
