@@ -83,6 +83,12 @@ pub const CHARSETS: &[&str] = &[
 ];
 /// How many arguments `DECODE` takes in its charset form; more name search values and results.
 pub const DECODE_CHARSET_ARGUMENTS: usize = 2;
+/// A well-formed UTF-8 sequence, in upper-case hex.
+pub const UTF8_SEQUENCE: &str = "[0-7][0-9A-F]|C[2-9A-F][89AB][0-9A-F]|D[0-9A-F][89AB][0-9A-F]|E0[AB][0-9A-F][89AB][0-9A-F]|E[1-9A-CEF][89AB][0-9A-F][89AB][0-9A-F]|ED[89][0-9A-F][89AB][0-9A-F]|F0[9AB][0-9A-F](?:[89AB][0-9A-F]){2}|F[1-3](?:[89AB][0-9A-F]){3}|F48[0-9A-F](?:[89AB][0-9A-F]){2}";
+/// The bytes Java's UTF-8 decoder replaces with one U+FFFD: a truncated sequence, or a surrogate's lead and its continuation.
+pub const UTF8_MALFORMED: &str = "E0[AB][0-9A-F]|E[1-9A-CEF][89AB][0-9A-F]|ED[89][0-9A-F]|F0[9AB][0-9A-F](?:[89AB][0-9A-F])?|F[1-3](?:[89AB][0-9A-F]){1,2}|F48[0-9A-F](?:[89AB][0-9A-F])?|ED[AB][0-9A-F](?:[89AB][0-9A-F])?";
+/// The code point Java writes for bytes it cannot decode.
+pub const REPLACEMENT_CHARACTER: u32 = 0xFFFD;
 /// The one charset of `CHARSETS` DuckDB codes.
 pub const UTF8_CHARSET: &str = "utf-8";
 /// What a raise for a charset Databricks does not name says after the rejected-argument fragment.
@@ -173,6 +179,10 @@ pub const INDEX_BOUNDS_ERROR: &str = "the index is outside the array";
 pub const COUNT_NAME: &str = "COUNT";
 /// The fewest arguments a variadic function such as COALESCE takes.
 pub const MIN_LIST_ARGUMENTS: usize = 2;
+/// The node kind of an ordered-set aggregate's `WITHIN GROUP (ORDER BY ...)`.
+pub const WITHIN_GROUP_KIND: &str = "within_group";
+/// The steps a percentile fraction moves in for both engines to interpolate integers up to INT exactly.
+pub const EXACT_FRACTION_STEPS: u32 = 1024;
 /// The one list function Databricks also takes with a single argument, which it returns.
 pub const COALESCE_NAME: &str = "COALESCE";
 /// Same-type functions that order their arguments, refused for arrays, whose NULL elements the engines order apart.

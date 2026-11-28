@@ -13,7 +13,7 @@ use crate::databricks::conversion::_helpers::expressions::operators::{
     arithmetic, between, case, comparison, division, in_list, logical, not, null_test,
 };
 use crate::databricks::conversion::_helpers::expressions::patterns::{like, trim};
-use crate::databricks::conversion::_helpers::functions::calls::call;
+use crate::databricks::conversion::_helpers::functions::calls::{call, within_group};
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{
     field, identifier, node_kind, quoted, refused, understood,
@@ -67,6 +67,7 @@ pub(crate) fn expression(node: &Value, site: Site<'_>) -> Result<Emitted, Refusa
         "concat" => concat_operator(payload, site),
         "is_true" | "is_false" => truth_test(kind, payload, site),
         "function" | "aggregate_function" => call(kind, payload, site),
+        "within_group" => within_group(payload, site),
         _ => Err(refused(kind, format!("no rule converts {kind}"))),
     }
 }

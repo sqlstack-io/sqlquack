@@ -399,6 +399,32 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Date, DatabricksType::Timestamp],
         },
         ConvertTestCase {
+            description: "PERCENTILE_DISC WITHIN GROUP in descending order of an INT as DOUBLE",
+            query: "SELECT percentile_disc(0.875) WITHIN GROUP (ORDER BY x1 DESC) AS r FROM input",
+            expected_sql: &[
+                "CAST(percentile_disc(0.875) WITHIN GROUP (ORDER BY CAST(\"x1\" AS DOUBLE) DESC) AS DOUBLE)",
+            ],
+            expected_types: &[DatabricksType::Double],
+        },
+        ConvertTestCase {
+            description: "DECODE of bytes in UTF-8 writes U+FFFD for each sequence Java reads as malformed",
+            query: "SELECT decode(unhex(s), 'UTF-8') AS r FROM input",
+            expected_sql: &[
+                "ELSE chr(65533) END), '') END)",
+                "WHEN lower('UTF-8') = 'utf-8' THEN",
+            ],
+            expected_types: &[DatabricksType::String],
+        },
+        ConvertTestCase {
+            description: "MASK of empty text stays empty rather than masking one empty character",
+            query: "SELECT mask(s, 'U', 'l', 'D', '*') AS r FROM input",
+            expected_sql: &[
+                "WHEN \"s\" = '' THEN '' ELSE array_to_string(",
+                "ELSE '*' END), '')",
+            ],
+            expected_types: &[DatabricksType::String],
+        },
+        ConvertTestCase {
             description: "INITCAP breaks words at spaces only, raising where Java's title case is not DuckDB's upper",
             query: "SELECT initcap(s) AS r FROM input",
             expected_sql: &[
@@ -617,6 +643,16 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "nested repeat counts whose product RE2 rejects",
             query: "SELECT regexp_like(s, '(?:a{1000}){2}') AS r FROM input",
             expected_reason: "REGEXP_LIKE",
+        },
+        RefuseTestCase {
+            description: "PERCENTILE_CONT of a fraction in steps both engines need not interpolate alike",
+            query: "SELECT percentile_cont(0.3) WITHIN GROUP (ORDER BY x1) AS r FROM input",
+            expected_reason: "steps of 1/1024",
+        },
+        RefuseTestCase {
+            description: "PERCENTILE_CONT of a DOUBLE, whose interpolation may round differently",
+            query: "SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY CAST(x1 AS DOUBLE)) AS r FROM input",
+            expected_reason: "DOUBLE",
         },
         RefuseTestCase {
             description: "~ of text, which Databricks rejects as no integer",

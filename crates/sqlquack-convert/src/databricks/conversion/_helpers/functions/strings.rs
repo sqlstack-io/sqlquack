@@ -406,7 +406,7 @@ fn mask(values: &[Emitted]) -> Option<Emitted> {
     Some(typed(
         format!(
             "(CASE WHEN regexp_matches({t}, '[^{KINDED_CHARACTERS}]') THEN error('{CHARACTER_KIND_ERROR}') \
-             ELSE array_to_string(list_transform(string_split({t}, ''), \
+             WHEN {t} = '' THEN '' ELSE array_to_string(list_transform(string_split({t}, ''), \
              lambda {e}: CASE {kinds}ELSE {other} END), '') END)"
         ),
         DatabricksType::String,

@@ -7,8 +7,9 @@ use crate::databricks::conversion::_helpers::functions::arrays::captured;
 use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
 use crate::databricks::conversion::constants::{
     BASE64_ALPHABET, BASE64_LINE, BASE64_READING_ERROR, BASE64_UNIT_ERROR, BASE64_UNITS,
-    BASE64_UNPADDED, CHARSET_ERROR, CHARSETS, HEX_TEXT, LAMBDA_ELEMENT, UNCODED_CHARSET_ERROR,
-    URL_DIGIT_ERROR, URL_ESCAPE_ERROR, URL_JAVA_DIGITS, URL_MALFORMED_ESCAPE, UTF8_CHARSET,
+    BASE64_UNPADDED, CHARSET_ERROR, CHARSETS, HEX_TEXT, LAMBDA_ELEMENT, REPLACEMENT_CHARACTER,
+    UNCODED_CHARSET_ERROR, URL_DIGIT_ERROR, URL_ESCAPE_ERROR, URL_JAVA_DIGITS,
+    URL_MALFORMED_ESCAPE, UTF8_CHARSET, UTF8_MALFORMED, UTF8_SEQUENCE,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -129,7 +130,7 @@ fn charset_coded(values: &[Emitted], encode: bool) -> Option<Emitted> {
     };
     let sql = match (value.data_type, encode) {
         (DatabricksType::String, true) => format!("encode({})", value.sql),
-        (DatabricksType::Binary, false) => format!("decode({})", value.sql),
+        (DatabricksType::Binary, false) if !captured(&value.sql) => replaced_utf8(&value.sql),
         (DatabricksType::String, false) => value.sql.clone(),
         _ => return None,
     };
@@ -152,4 +153,15 @@ fn charset_coded(values: &[Emitted], encode: bool) -> Option<Emitted> {
         ),
         data_type,
     ))
+}
+
+/// The text of `bytes` as Java decodes UTF-8: each sequence Java reads as malformed, or each other byte, as U+FFFD.
+fn replaced_utf8(bytes: &str) -> String {
+    let e = LAMBDA_ELEMENT;
+    format!(
+        "(CASE WHEN regexp_full_match(hex({bytes}), '(?:{UTF8_SEQUENCE})*') THEN decode({bytes}) \
+         ELSE array_to_string(list_transform(regexp_extract_all(hex({bytes}), '{UTF8_SEQUENCE}|{UTF8_MALFORMED}|[0-9A-F]{{2}}'), \
+         lambda {e}: CASE WHEN regexp_full_match({e}, '{UTF8_SEQUENCE}') THEN decode(from_hex({e})) \
+         ELSE chr({REPLACEMENT_CHARACTER}) END), '') END)"
+    )
 }
