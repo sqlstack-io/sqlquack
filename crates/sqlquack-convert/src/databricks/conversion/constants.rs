@@ -97,6 +97,10 @@ pub const NUMBER_FUNCTION_RULE: &str = "rule.databricks.number_function";
 pub const INDEX_RULE: &str = "rule.databricks.index";
 /// What a raise for an index of 0 says after the rejected-argument fragment.
 pub const INDEX_ZERO_ERROR: &str = "the index 0 is invalid, as the first element has index 1";
+/// What a raise for a SLICE start of 0 says after the rejected-argument fragment.
+pub const SLICE_START_ERROR: &str = "the slice start is 0, as the first element has index 1";
+/// What a raise for a negative SLICE length says after the rejected-argument fragment.
+pub const SLICE_LENGTH_ERROR: &str = "the slice length is negative";
 /// What a raise for an index past either end of an array says after the rejected-argument fragment.
 pub const INDEX_BOUNDS_ERROR: &str = "the index is outside the array";
 
@@ -108,6 +112,36 @@ pub const MIN_LIST_ARGUMENTS: usize = 2;
 pub const ORDERING_FUNCTIONS: &[&str] = &["GREATEST", "LEAST"];
 /// Functions whose STRING arguments Databricks casts: the type the recorded cast errors name, and the argument positions it casts; a BIGINT reading of several arguments needs an integer beside the text.
 pub const TEXT_READINGS: &[(&str, DatabricksType, &[usize])] = &[
+    ("MINUTE", DatabricksType::Timestamp, &[0]),
+    ("MONTH", DatabricksType::Date, &[0]),
+    ("MONTHNAME", DatabricksType::Date, &[0]),
+    ("DATE_TRUNC", DatabricksType::Timestamp, &[1]),
+    ("TRUNC", DatabricksType::Date, &[0]),
+    ("NVL", DatabricksType::BigInt, &[0, 1]),
+    ("IFNULL", DatabricksType::BigInt, &[0, 1]),
+    ("NVL2", DatabricksType::BigInt, &[1, 2]),
+    ("ZEROIFNULL", DatabricksType::BigInt, &[0]),
+    ("PMOD", DatabricksType::BigInt, &[0, 1]),
+    ("FACTORIAL", DatabricksType::Int, &[0]),
+    ("ELT", DatabricksType::Int, &[0]),
+    ("MAKE_DATE", DatabricksType::Int, &[0, 1, 2]),
+    ("MAKE_TIMESTAMP", DatabricksType::Int, &[0, 1, 2, 3, 4]),
+    ("MAKE_TIMESTAMP_LTZ", DatabricksType::Int, &[0, 1, 2, 3, 4]),
+    ("MAKE_TIMESTAMP_NTZ", DatabricksType::Int, &[0, 1, 2, 3, 4]),
+    ("TRY_MAKE_TIMESTAMP", DatabricksType::Int, &[0, 1, 2, 3, 4]),
+    (
+        "TRY_MAKE_TIMESTAMP_LTZ",
+        DatabricksType::Int,
+        &[0, 1, 2, 3, 4],
+    ),
+    (
+        "TRY_MAKE_TIMESTAMP_NTZ",
+        DatabricksType::Int,
+        &[0, 1, 2, 3, 4],
+    ),
+    ("SHIFTLEFT", DatabricksType::Int, &[0, 1]),
+    ("SHIFTRIGHT", DatabricksType::Int, &[0, 1]),
+    ("SHIFTRIGHTUNSIGNED", DatabricksType::Int, &[0, 1]),
     ("DEGREES", DatabricksType::Double, &[0]),
     ("RADIANS", DatabricksType::Double, &[0]),
     ("SQRT", DatabricksType::Double, &[0]),
@@ -141,6 +175,66 @@ pub const TEXT_READINGS: &[(&str, DatabricksType, &[usize])] = &[
     ("MONTHS_BETWEEN", DatabricksType::Timestamp, &[0, 1]),
     ("DATE_DIFF", DatabricksType::Date, &[0, 1]),
 ];
+/// Functions with INT parameters a BIGINT argument narrows to, raising when it does not fit: the argument positions.
+pub const INT_PARAMETERS: &[(&str, &[usize])] = &[
+    ("FACTORIAL", &[0]),
+    ("ELT", &[0]),
+    ("MAKE_DATE", &[0, 1, 2]),
+    ("MAKE_TIMESTAMP", &[0, 1, 2, 3, 4]),
+    ("MAKE_TIMESTAMP_LTZ", &[0, 1, 2, 3, 4]),
+    ("MAKE_TIMESTAMP_NTZ", &[0, 1, 2, 3, 4]),
+    ("TRY_MAKE_TIMESTAMP", &[0, 1, 2, 3, 4]),
+    ("TRY_MAKE_TIMESTAMP_LTZ", &[0, 1, 2, 3, 4]),
+    ("TRY_MAKE_TIMESTAMP_NTZ", &[0, 1, 2, 3, 4]),
+    ("SHIFTLEFT", &[1]),
+    ("SHIFTRIGHT", &[1]),
+    ("SHIFTRIGHTUNSIGNED", &[1]),
+    ("BIT_GET", &[1]),
+    ("GETBIT", &[1]),
+    ("SUBSTR", &[1, 2]),
+    ("SUBSTRING", &[1, 2]),
+    ("LEFT", &[1]),
+    ("RIGHT", &[1]),
+    ("SPLIT_PART", &[2]),
+    ("SLICE", &[1, 2]),
+];
+/// The error text read as an integer type raises when it is a whole number outside that type.
+pub const NARROW_NUMBER_ERROR: &str = "the text read as an integer is outside its type";
+/// Text Databricks reads as TRUE in a cast to BOOLEAN, after lowering it.
+pub const TRUE_TEXTS: &[&str] = &["t", "true", "y", "yes", "1"];
+/// Text Databricks reads as FALSE in a cast to BOOLEAN, after lowering it.
+pub const FALSE_TEXTS: &[&str] = &["f", "false", "n", "no", "0"];
+/// What a raise for text that no trimming makes a boolean says; it names the cast to BOOLEAN.
+pub const BOOLEAN_TEXT_ERROR: &str = "the text cast to BOOLEAN is not a boolean";
+/// Text whose ends Databricks's trimming leaves alone: no space or control character first or last.
+pub const UNTRIMMED_TEXT: &str = r"(?s)[^\s\pZ\pC](.*[^\s\pZ\pC])?";
+/// The error text cast to BOOLEAN raises when no rule shows how Databricks reads it.
+pub const BOOLEAN_READING_ERROR: &str = "no rule reads this text as Databricks reads a boolean";
+/// Characters outside the base64 alphabet and padding, which Java's MIME decoder skips.
+pub const BASE64_ALPHABET: &str = "[^A-Za-z0-9+/=]";
+/// Whole base64 units, the last possibly padded.
+pub const BASE64_UNITS: &str = "([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?";
+/// Base64 without padding whose last unit holds at least one byte.
+pub const BASE64_UNPADDED: &str = "([A-Za-z0-9+/]{4})*[A-Za-z0-9+/]{2,3}";
+/// The error base64 text of any other shape raises.
+pub const BASE64_READING_ERROR: &str = "no rule reads this base64 text as Databricks decodes it";
+/// Text of hex digits only, which UNHEX reads.
+pub const HEX_TEXT: &str = "[0-9A-Fa-f]*";
+/// A `%` not followed by two hex digits, which Java's URLDecoder rejects.
+pub const URL_MALFORMED_ESCAPE: &str = "%([^0-9A-Fa-f]|.[^0-9A-Fa-f]|.?$)";
+/// The error a malformed URL escape raises.
+pub const URL_ESCAPE_ERROR: &str = "the text holds a URL escape Databricks cannot decode";
+/// The largest finite FLOAT; a DOUBLE beyond it is one no rule narrows as Databricks does.
+pub const FLOAT_MAX: &str = "3.4028234663852886e38";
+/// The error a DOUBLE beyond FLOAT's range raises when cast to FLOAT.
+pub const FLOAT_RANGE_ERROR: &str =
+    "no rule narrows a DOUBLE beyond FLOAT's range as Databricks does";
+/// The seconds from the epoch within which a BIGINT, DECIMAL or DOUBLE count converts: about 31,000 years, well inside both engines' timestamps.
+pub const EPOCH_SECONDS_BOUND: i64 = 1_000_000_000_000;
+/// The error an epoch count beyond the bound raises; Databricks reaches further, and saturates DOUBLE seconds.
+pub const EPOCH_RANGE_ERROR: &str = "no rule reads an epoch count beyond 31,000 years from 1970";
+/// The most fraction digits a DECIMAL count of seconds may have: microseconds, which Databricks keeps exactly.
+pub const EPOCH_DECIMAL_SCALE: u8 = 6;
 /// Text DuckDB reads as the DOUBLE Databricks casts it to: a signed decimal of at most 30 digits and a two-digit exponent, between spaces.
 pub const PLAIN_DOUBLE_TEXT: &str =
     r" *[+-]?([0-9]{1,30}|[0-9]{0,30}\.[0-9]{1,30})([eE][+-]?[0-9]{1,2})? *";
@@ -221,7 +315,6 @@ pub const SAME_FUNCTIONS: &[(&str, &str, Signature)] = &[
     ("GREATEST", "greatest", Signature::SameType),
     ("LEAST", "least", Signature::SameType),
     ("LTRIM", "ltrim", Signature::TrimSpaces),
-    ("NULLIF", "nullif", Signature::TwoOfOneType),
     ("RTRIM", "rtrim", Signature::TrimSpaces),
     ("TRIM", "trim", Signature::TrimSpaces),
 ];
@@ -251,6 +344,11 @@ const TIMESTAMP_TEXT: FailureMode = FailureMode {
     kind: ErrorKind::TimestampText,
     snowflake: &[],
 };
+/// Text no boolean reads, a malformed cast to BOOLEAN.
+const BOOLEAN_TEXT: FailureMode = FailureMode {
+    kind: ErrorKind::BooleanText,
+    snowflake: &[],
+};
 /// An argument the function rejects, such as an index of 0.
 const ARGUMENT: FailureMode = FailureMode {
     kind: ErrorKind::InvalidArgument,
@@ -271,7 +369,13 @@ pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
     (INDEX_RULE, &[ARGUMENT]),
     (
         CAST_RULE,
-        &[OVERFLOW, NUMBER_TEXT, DATE_TEXT, TIMESTAMP_TEXT],
+        &[
+            OVERFLOW,
+            NUMBER_TEXT,
+            DATE_TEXT,
+            TIMESTAMP_TEXT,
+            BOOLEAN_TEXT,
+        ],
     ),
 ];
 

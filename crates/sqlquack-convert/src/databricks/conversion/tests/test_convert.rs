@@ -397,6 +397,45 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_sql: &["trim(\"s\", ' ') AS \"t\""],
             expected_types: &[DatabricksType::String],
         },
+        ConvertTestCase {
+            description: "NULLIF keeps its first argument's type, comparing text with an integer as BIGINT",
+            query: "SELECT nullif(s, x1) AS t, nullif(x1, CAST(x1 AS BIGINT)) AS n FROM input",
+            expected_sql: &["ELSE \"s\" END) AS \"t\""],
+            expected_types: &[DatabricksType::String, DatabricksType::Int],
+        },
+        ConvertTestCase {
+            description: "a BIGINT shift count narrows to INT, as Databricks's implicit cast does",
+            query: "SELECT shiftleft(x1, CAST(x1 AS BIGINT)) AS r FROM input",
+            expected_sql: &["CAST(CAST(\"x1\" AS BIGINT) AS INTEGER)"],
+            expected_types: &[DatabricksType::Int],
+        },
+        ConvertTestCase {
+            description: "text read as a DATE for MONTH and as a BOOLEAN for BOOLEAN, by Databricks's words",
+            query: "SELECT month(s) AS m, boolean(s) AS b FROM input",
+            expected_sql: &["lower(\"s\") IN ('t', 'true', 'y', 'yes', '1') THEN TRUE"],
+            expected_types: &[DatabricksType::Int, DatabricksType::Boolean],
+        },
+        ConvertTestCase {
+            description: "REVERSE of a string reverses code points, not DuckDB's grapheme clusters",
+            query: "SELECT reverse(s) AS r FROM input",
+            expected_sql: &["list_reverse(regexp_extract_all(\"s\", '(?s).'))"],
+            expected_types: &[DatabricksType::String],
+        },
+        ConvertTestCase {
+            description: "ZEROIFNULL widens a decimal to hold an INT 0, PMOD keeps the remainder's type",
+            query: "SELECT zeroifnull(CAST(x1 AS DECIMAL(12,2))) AS z, pmod(CAST(x1 AS DECIMAL(12,2)), 7) AS p FROM input",
+            expected_sql: &["< 0 THEN CAST((CAST("],
+            expected_types: &[
+                DatabricksType::Decimal {
+                    precision: 12,
+                    scale: 2,
+                },
+                DatabricksType::Decimal {
+                    precision: 12,
+                    scale: 2,
+                },
+            ],
+        },
     ];
     for test_case in test_cases {
         let converted = analyze(&format!("{FIXTURE}{}", test_case.query))
@@ -477,9 +516,9 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             expected_reason: "FLOAT",
         },
         RefuseTestCase {
-            description: "a shift by a BIGINT count, which Databricks would narrow",
-            query: "SELECT shiftleft(x1, CAST(x1 AS BIGINT)) AS r FROM input",
-            expected_reason: "SHIFTLEFT",
+            description: "seconds finer than a microsecond, which Databricks's exact conversion rejects",
+            query: "SELECT timestamp_seconds(CAST(x1 AS DECIMAL(17,7))) AS r FROM input",
+            expected_reason: "TIMESTAMP_SECONDS",
         },
         RefuseTestCase {
             description: "SHA2 of a length DuckDB has no digest for",

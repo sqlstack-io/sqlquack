@@ -3,12 +3,15 @@
 use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
-use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
+use crate::databricks::conversion::_helpers::expressions::operators::{
+    as_type, common_type, comparable,
+};
 use crate::databricks::conversion::_helpers::functions::arrays::array_rewrite;
 use crate::databricks::conversion::_helpers::functions::dates::date_rewrite;
+use crate::databricks::conversion::_helpers::functions::encodings::encoding_rewrite;
 use crate::databricks::conversion::_helpers::functions::indexes::index_rewrite;
 use crate::databricks::conversion::_helpers::functions::maths::math_rewrite;
-use crate::databricks::conversion::_helpers::functions::numbers::number_rewrite;
+use crate::databricks::conversion::_helpers::functions::numbers::{number_rewrite, remainder};
 use crate::databricks::conversion::_helpers::functions::strings::{digest, string_rewrite};
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{outside_function, refused_function};
@@ -27,11 +30,12 @@ type Family = fn(&str) -> Option<Rewrite>;
 
 /// The rule and rewrite of the function `name`, `None` when no rewrite handles it.
 pub(crate) fn rewrite(name: &str) -> Option<(&'static str, Rewrite)> {
-    let families: [(&str, Family); 7] = [
+    let families: [(&str, Family); 8] = [
         (REWRITE_RULE, own_rewrite),
         (REWRITE_RULE, array_rewrite),
         (DATE_FUNCTION_RULE, date_rewrite),
         (STRING_FUNCTION_RULE, string_rewrite),
+        (STRING_FUNCTION_RULE, encoding_rewrite),
         (NUMBER_FUNCTION_RULE, number_rewrite),
         (NUMBER_FUNCTION_RULE, math_rewrite),
         (INDEX_RULE, index_rewrite),
@@ -49,6 +53,7 @@ fn own_rewrite(name: &str) -> Option<Rewrite> {
     let rewrite: Rewrite = match name {
         "NVL" | "IFNULL" => first_not_null,
         "NVL2" => nvl2,
+        "NULLIF" => null_if,
         "LEFT" => left,
         "REPEAT" => repeat,
         "HEX" => hex,
@@ -101,6 +106,17 @@ fn first_not_null(values: &[Emitted]) -> Option<Emitted> {
     let common = known(common_type(values)?)?;
     let sqls: Vec<String> = values.iter().map(|value| as_type(value, common)).collect();
     Some(typed(format!("coalesce({})", sqls.join(", ")), common))
+}
+
+/// `NULLIF(a, b)`: NULL when `a` equals `b` as Databricks compares them, else `a` with its own type.
+fn null_if(values: &[Emitted]) -> Option<Emitted> {
+    let [left, right] = values else { return None };
+    let result = known(left.data_type)?;
+    let (a, b) = comparable(left, right)?;
+    Some(typed(
+        format!("(CASE WHEN {a} = {b} THEN NULL ELSE {} END)", left.sql),
+        result,
+    ))
 }
 
 /// `NVL2(a, b, c)`: `b` when `a` is not NULL, else `c`.
@@ -239,10 +255,19 @@ fn try_divide(values: &[Emitted]) -> Option<Emitted> {
     ))
 }
 
-/// `TRY_MOD` of integers: NULL for a zero divisor, and 0 by -1, where DuckDB overflows on the minimum; an argument's own error still raises.
+/// `TRY_MOD`: NULL for a zero divisor, and 0 by -1, where DuckDB overflows on the minimum; an argument's own error still raises.
 fn try_mod(values: &[Emitted]) -> Option<Emitted> {
     let [left, right] = values else { return None };
-    let wider = wider_integer(left.data_type, right.data_type)?;
+    let Some(wider) = wider_integer(left.data_type, right.data_type) else {
+        let rest = remainder(left, right)?;
+        return Some(typed(
+            format!(
+                "(CASE WHEN {} = 0 THEN NULL ELSE {} END)",
+                right.sql, rest.sql
+            ),
+            rest.data_type,
+        ));
+    };
     let (dividend, divisor) = (as_type(left, wider), as_type(right, wider));
     Some(typed(
         format!(

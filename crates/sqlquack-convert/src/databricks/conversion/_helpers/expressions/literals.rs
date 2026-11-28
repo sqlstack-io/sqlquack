@@ -10,8 +10,8 @@ use crate::databricks::conversion::_helpers::support::tree::{field, refused, und
 use crate::databricks::conversion::_helpers::support::typing::{databricks_type, same_cast};
 use crate::databricks::conversion::constants::{
     CAST_RULE, CLOCK_TEXT_LENGTH, DATE_TEXT_LENGTH, DOUBLE_EXACT_DIGITS, DOUBLE_MANTISSA_BITS,
-    FLOAT_MANTISSA_BITS, LITERAL_RULE, MAX_DECIMAL_PRECISION, MAX_FRACTION_DIGITS,
-    SPECIAL_DOUBLE_TEXTS,
+    FLOAT_MANTISSA_BITS, FLOAT_MAX, FLOAT_RANGE_ERROR, LITERAL_RULE, MAX_DECIMAL_PRECISION,
+    MAX_FRACTION_DIGITS, SPECIAL_DOUBLE_TEXTS,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
@@ -88,6 +88,18 @@ pub(crate) fn cast_value(source: &Emitted, target: DatabricksType) -> Option<Emi
     let text_column = source.literal.is_none() && source.data_type == DatabricksType::String;
     if let Some(read) = read_text(source, target).filter(|_| text_column) {
         return Some(read);
+    }
+    if source.literal.is_none()
+        && (source.data_type, target) == (DatabricksType::Double, DatabricksType::Float)
+    {
+        return Some(typed(
+            format!(
+                "(CASE WHEN isfinite({x}) AND abs({x}) > {FLOAT_MAX} \
+                 THEN CAST(error('{FLOAT_RANGE_ERROR}') AS FLOAT) ELSE CAST({x} AS FLOAT) END)",
+                x = source.sql
+            ),
+            target,
+        ));
     }
     let exact = match (&source.literal, source.data_type) {
         (Some(Literal::Number(number)), _) => number_fits(number, target),

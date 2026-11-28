@@ -108,6 +108,8 @@ pub(crate) fn same_cast(from: DatabricksType, to: DatabricksType) -> bool {
             .integer_digits()
             .is_some_and(|digits| precision - scale >= digits),
         (T::Int | T::BigInt | T::SmallInt | T::TinyInt, T::String) => true,
+        (from, T::Boolean) if from.is_integral() => true,
+        (T::Decimal { .. }, T::Decimal { .. }) | (T::Float, T::Double) => true,
         (T::Date, T::Timestamp | T::TimestampNtz) => true,
         (T::Array(Element::Null), T::Array(_)) => true,
         (T::Array(from), T::Array(to)) => same_cast(from.scalar(), to.scalar()),

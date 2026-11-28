@@ -1,0 +1,104 @@
+//! Encodings of strings and byte strings: base64, hex and URL escapes, as Java's encoders and decoders write and read them.
+
+use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
+use crate::databricks::conversion::constants::{
+    BASE64_ALPHABET, BASE64_READING_ERROR, BASE64_UNITS, BASE64_UNPADDED, HEX_TEXT,
+    URL_ESCAPE_ERROR, URL_MALFORMED_ESCAPE,
+};
+use crate::databricks::conversion::models::{DatabricksType, Emitted};
+
+/// The rewrite of the encoding function `name`, `None` when none handles it.
+pub(crate) fn encoding_rewrite(name: &str) -> Option<Rewrite> {
+    let rewrite: Rewrite = match name {
+        "BASE64" => base64,
+        "UNBASE64" => unbase64,
+        "UNHEX" => unhex,
+        "URL_ENCODE" => url_encode,
+        "URL_DECODE" => |values| url_decode(values, false),
+        "TRY_URL_DECODE" => |values| url_decode(values, true),
+        _ => return None,
+    };
+    Some(rewrite)
+}
+
+/// `BASE64` of a string's UTF-8 bytes or of a byte string, unchunked, as Java's basic encoder writes it.
+fn base64(values: &[Emitted]) -> Option<Emitted> {
+    let [value] = values else { return None };
+    let bytes = match value.data_type {
+        DatabricksType::String => format!("encode({})", value.sql),
+        DatabricksType::Binary => value.sql.clone(),
+        _ => return None,
+    };
+    Some(typed(format!("to_base64({bytes})"), DatabricksType::String))
+}
+
+/// `UNBASE64(s)` as Java's MIME decoder reads it: characters outside the alphabet are skipped, padding may be left off; other shapes raise.
+fn unbase64(values: &[Emitted]) -> Option<Emitted> {
+    let [text] = values else { return None };
+    if text.data_type != DatabricksType::String {
+        return None;
+    }
+    let kept = format!("regexp_replace({}, '{BASE64_ALPHABET}', '', 'g')", text.sql);
+    Some(typed(
+        format!(
+            "(CASE WHEN {kept} IS NULL THEN NULL \
+             WHEN regexp_full_match({kept}, '{BASE64_UNITS}') THEN from_base64({kept}) \
+             WHEN regexp_full_match({kept}, '{BASE64_UNPADDED}') \
+             THEN from_base64({kept} || repeat('=', (4 - length({kept}) % 4) % 4)) \
+             ELSE CAST(error('{BASE64_READING_ERROR}') AS BLOB) END)"
+        ),
+        DatabricksType::Binary,
+    ))
+}
+
+/// `UNHEX(s)`: the bytes of hex digits, a leading 0 added to an odd count, NULL for any other character.
+fn unhex(values: &[Emitted]) -> Option<Emitted> {
+    let [text] = values else { return None };
+    if text.data_type != DatabricksType::String {
+        return None;
+    }
+    let s = &text.sql;
+    Some(typed(
+        format!(
+            "(CASE WHEN regexp_full_match({s}, '{HEX_TEXT}') \
+             THEN unhex(CASE WHEN length({s}) % 2 = 1 THEN '0' || {s} ELSE {s} END) END)"
+        ),
+        DatabricksType::Binary,
+    ))
+}
+
+/// `URL_ENCODE(s)` as Java's URLEncoder: DuckDB's escapes, with a space as `+`, `*` kept and `~` escaped.
+fn url_encode(values: &[Emitted]) -> Option<Emitted> {
+    let [text] = values else { return None };
+    if text.data_type != DatabricksType::String {
+        return None;
+    }
+    Some(typed(
+        format!(
+            "replace(replace(replace(url_encode({}), '%20', '+'), '%2A', '*'), '~', '%7E')",
+            text.sql
+        ),
+        DatabricksType::String,
+    ))
+}
+
+/// `URL_DECODE(s)` as Java's URLDecoder: `+` is a space; a malformed escape raises, or with `try` gives NULL.
+fn url_decode(values: &[Emitted], try_decode: bool) -> Option<Emitted> {
+    let [text] = values else { return None };
+    if text.data_type != DatabricksType::String {
+        return None;
+    }
+    let s = &text.sql;
+    let malformed = match try_decode {
+        true => "NULL".to_owned(),
+        false => format!("CAST(error('{URL_ESCAPE_ERROR}') AS VARCHAR)"),
+    };
+    Some(typed(
+        format!(
+            "(CASE WHEN regexp_matches({s}, '{URL_MALFORMED_ESCAPE}') THEN {malformed} \
+             ELSE url_decode(replace({s}, '+', ' ')) END)"
+        ),
+        DatabricksType::String,
+    ))
+}
