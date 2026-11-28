@@ -5,5 +5,6 @@ pub(crate) mod encodings;
 pub(crate) mod indexes;
 pub(crate) mod maths;
 pub(crate) mod numbers;
+pub(crate) mod regexes;
 pub(crate) mod rewrites;
 pub(crate) mod strings;

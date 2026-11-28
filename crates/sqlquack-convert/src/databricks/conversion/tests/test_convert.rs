@@ -320,6 +320,37 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Boolean, DatabricksType::Boolean],
         },
         ConvertTestCase {
+            description: "REGEXP_REPLACE writes Java's . without its line terminators and $1 as \\1",
+            query: "SELECT regexp_replace(s, 'a.(b)', '[$1]') AS r, regexp_like(s, '[\\\\s]x$') AS e FROM input",
+            expected_sql: &[
+                "regexp_replace(\"s\", 'a[^\\n\\r\\x{85}\\x{2028}\\x{2029}](b)', '[\\1]', 'g') AS \"r\"",
+                "WHEN suffix(\"s\", chr(13) || chr(10)) THEN error(",
+                "regexp_matches(\"s\", '[ \\t\\n\\x0B\\f\\r]x(?:\\r\\n|[\\n\\r\\x{85}\\x{2028}\\x{2029}])?$')",
+            ],
+            expected_types: &[DatabricksType::String, DatabricksType::Boolean],
+        },
+        ConvertTestCase {
+            description: "REGEXP_EXTRACT raises for a match with too few groups; EXTRACT_ALL gives '' for an idle group",
+            query: "SELECT regexp_extract(s, 'a+') AS e, regexp_extract_all(s, '(a)|b', 1) AS l FROM input",
+            expected_sql: &[
+                "WHEN regexp_matches(\"s\", 'a+') THEN error('argument rejected: the group index is outside the pattern''s groups')",
+                "list_transform(regexp_extract_all(\"s\", '(a)|b', 1), lambda element: coalesce(element, ''))",
+            ],
+            expected_types: &[
+                DatabricksType::String,
+                DatabricksType::Array(Element::String),
+            ],
+        },
+        ConvertTestCase {
+            description: "REGEXP_COUNT of '' and REGEXP_INSTR count UTF-16 units as Java does",
+            query: "SELECT regexp_count(s, '') AS c, regexp_instr(s, '[0-9]+') AS i FROM input",
+            expected_sql: &[
+                "CAST(length(\"s\") + length(regexp_replace(\"s\", '[^\\x{10000}-\\x{10FFFF}]', '', 'g')) + 1 AS INTEGER) AS \"c\"",
+                "regexp_extract(\"s\", '^((?s:.*?))(?:[0-9]+)', 1)",
+            ],
+            expected_types: &[DatabricksType::Int, DatabricksType::Int],
+        },
+        ConvertTestCase {
             description: "SHA2 of a column length: SHA-256 for 256 or 0, raising for a length DuckDB lacks, else NULL",
             query: "SELECT sha2(s, x1) AS h FROM input",
             expected_sql: &[
@@ -466,9 +497,19 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             expected_reason: "DAYOFWEEK of (INT)",
         },
         RefuseTestCase {
-            description: "a constant regular expression, whose Java meaning no rule shows RE2 sharing",
-            query: "SELECT regexp_like(s, 'a.c$') AS r FROM input",
+            description: "a regular expression with an inline flag, whose Java meaning no rule shows RE2 sharing",
+            query: "SELECT regexp_like(s, '(?i)ab') AS r FROM input",
             expected_reason: "REGEXP_LIKE",
+        },
+        RefuseTestCase {
+            description: "a replacement after a pattern that can match empty, where Java and RE2 step on differently",
+            query: "SELECT regexp_replace(s, 'a*', '-') AS r FROM input",
+            expected_reason: "REGEXP_REPLACE",
+        },
+        RefuseTestCase {
+            description: "a word boundary, which Java and RE2 draw differently",
+            query: "SELECT regexp_substr(s, '\\\\bab') AS r FROM input",
+            expected_reason: "REGEXP_SUBSTR",
         },
         RefuseTestCase {
             description: "title-casing, whose word breaks no rule shows DuckDB sharing",
