@@ -335,7 +335,7 @@ fn substr(values: &[Emitted]) -> Option<Emitted> {
     Some(typed(sql, DatabricksType::String))
 }
 
-/// `REGEXP_INSTR(s, p)`: the 1-based UTF-16 position where the first match starts, as Java counts, 0 if none.
+/// `REGEXP_INSTR(s, p)`: the 1-based character position where the first match starts, 0 if none.
 fn instr(values: &[Emitted]) -> Option<Emitted> {
     let [text, value] = strings::<2>(values)?;
     let pattern = pattern(value)?;
@@ -351,10 +351,9 @@ fn instr(values: &[Emitted]) -> Option<Emitted> {
         ),
     };
     let position = format!(
-        "CAST(CASE {nulls}WHEN {found} THEN length({before}) + {units} + 1 ELSE 0 END AS INTEGER)",
+        "CAST(CASE {nulls}WHEN {found} THEN length({before}) + 1 ELSE 0 END AS INTEGER)",
         nulls = null_when(&[text, value]),
-        found = pattern.found(s),
-        units = supplementary(&before)
+        found = pattern.found(s)
     );
     Some(typed(
         guarded(&[text, value], &pattern.raises(s, false), position),
