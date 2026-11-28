@@ -4,7 +4,7 @@
 
 [[group]]
 id = "ai-and-hosted-services"
-reason = "AI and ML functions (language model calls, classification, prediction, forecasting and anomaly detection), vector search and HTTP requests call or train models with Databricks's own hosted services and algorithms, or call search indexes and web services Databricks hosts. DuckDB has no hosted models, algorithms or services to match, and the language-model results are not deterministic."
+reason = "AI and ML functions (language model calls, classification, prediction, forecasting and anomaly detection), vector search and HTTP requests call or train models with Databricks's own hosted services and algorithms, call Databricks-hosted search indexes, or call external web services through Unity Catalog connections. DuckDB has no hosted models, algorithms, indexes or Unity Catalog connections to match, the language-model results are not deterministic, and web responses cannot be reproduced."
 forms = [
   "db.functions.ai-analyze-sentiment",
   "db.functions.ai-classify",
@@ -53,7 +53,7 @@ forms = [
 
 [[group]]
 id = "files-and-streams"
-reason = "Stream and state readers (the Kafka, Kinesis, Pub/Sub and Pulsar readers, Auto Loader and streaming state, pipeline event logs), input file block metadata and FILE values read services and storage state Databricks manages. DuckDB has no counterpart for these sources."
+reason = "Stream readers for Kafka, Kinesis, Pub/Sub and Pulsar read external message services. The Auto Loader and streaming-state readers, pipeline event logs and FILE values read storage state Databricks manages, and input file block metadata describes the files a Databricks scan reads. DuckDB has no counterpart for these sources."
 forms = [
   "db.functions.cloud-files-state",
   "db.functions.event-log",

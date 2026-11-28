@@ -18,3 +18,15 @@ subject = "not-translatable:pipeline-snapshot-state"
 sha256 = "8123f357ed9765f37dcddc43a71bef04d4ce3d142e90f1a29eb702bf2aaa8c83"
 scope = "full"
 reviewed_utc = "2026-11-28T02:09:19Z"
+
+[[signoff]]
+subject = "not-translatable:ai-and-hosted-services"
+sha256 = "f498b3eae8a78b7708dd83cef61045f8ae02fc103eee44b443dd64d7c1661914"
+scope = "full"
+reviewed_utc = "2026-11-28T05:32:18Z"
+
+[[signoff]]
+subject = "not-translatable:files-and-streams"
+sha256 = "56ccbc0b3f02203ecb9a6ec7c1aa7b624a6eb7baa2cf64b86c93c61a8b01bd8a"
+scope = "full"
+reviewed_utc = "2026-11-28T05:32:18Z"
