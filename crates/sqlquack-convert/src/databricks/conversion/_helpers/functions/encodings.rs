@@ -1,10 +1,12 @@
 //! Encodings of strings and byte strings: base64, hex and URL escapes, as Java's encoders and decoders write and read them.
 
+use sqlquack_diagnostics::failures::constants::ARGUMENT_REJECTED;
+
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
 use crate::databricks::conversion::constants::{
-    BASE64_ALPHABET, BASE64_LINE, BASE64_READING_ERROR, BASE64_UNITS, BASE64_UNPADDED, HEX_TEXT,
-    LAMBDA_ELEMENT, URL_ESCAPE_ERROR, URL_MALFORMED_ESCAPE,
+    BASE64_ALPHABET, BASE64_LINE, BASE64_READING_ERROR, BASE64_UNIT_ERROR, BASE64_UNITS,
+    BASE64_UNPADDED, HEX_TEXT, LAMBDA_ELEMENT, URL_ESCAPE_ERROR, URL_MALFORMED_ESCAPE,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -53,6 +55,8 @@ fn unbase64(values: &[Emitted]) -> Option<Emitted> {
              WHEN regexp_full_match({kept}, '{BASE64_UNITS}') THEN from_base64({kept}) \
              WHEN regexp_full_match({kept}, '{BASE64_UNPADDED}') \
              THEN from_base64({kept} || repeat('=', (4 - length({kept}) % 4) % 4)) \
+             WHEN regexp_matches({kept}, '=[^=]') OR (NOT contains({kept}, '=') AND length({kept}) % 4 = 1) \
+             THEN CAST(error('{ARGUMENT_REJECTED}: {BASE64_UNIT_ERROR}') AS BLOB) \
              ELSE CAST(error('{BASE64_READING_ERROR}') AS BLOB) END)"
         ),
         DatabricksType::Binary,
@@ -99,7 +103,7 @@ fn url_decode(values: &[Emitted], try_decode: bool) -> Option<Emitted> {
     let s = &text.sql;
     let malformed = match try_decode {
         true => "NULL".to_owned(),
-        false => format!("CAST(error('{URL_ESCAPE_ERROR}') AS VARCHAR)"),
+        false => format!("CAST(error('{ARGUMENT_REJECTED}: {URL_ESCAPE_ERROR}') AS VARCHAR)"),
     };
     Some(typed(
         format!(

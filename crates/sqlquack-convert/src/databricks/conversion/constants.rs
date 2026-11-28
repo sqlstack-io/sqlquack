@@ -243,6 +243,9 @@ pub const BASE64_LINE: u8 = 76;
 pub const BASE64_UNITS: &str = "([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?";
 /// Base64 without padding whose last unit holds at least one byte.
 pub const BASE64_UNPADDED: &str = "([A-Za-z0-9+/]{4})*[A-Za-z0-9+/]{2,3}";
+/// The error base64 text raises when Java's decoder rejects it: one character left over, or data after padding.
+pub const BASE64_UNIT_ERROR: &str =
+    "the base64 text ends in a lone character or holds data after its padding";
 /// The error base64 text of any other shape raises.
 pub const BASE64_READING_ERROR: &str = "no rule reads this base64 text as Databricks decodes it";
 /// Text of hex digits only, which UNHEX reads.
@@ -396,7 +399,7 @@ pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
     (BETWEEN_RULE, &[NUMBER_TEXT]),
     (IN_LIST_RULE, &[NUMBER_TEXT]),
     (CASE_RULE, &[NUMBER_TEXT]),
-    (STRING_FUNCTION_RULE, &[OVERFLOW]),
+    (STRING_FUNCTION_RULE, &[OVERFLOW, ARGUMENT]),
     (REGEX_RULE, &[ARGUMENT]),
     (NUMBER_FUNCTION_RULE, &[OVERFLOW, DIVISION, ARGUMENT]),
     (INDEX_RULE, &[ARGUMENT]),
