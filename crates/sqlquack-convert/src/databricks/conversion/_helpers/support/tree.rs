@@ -97,6 +97,11 @@ pub(crate) fn refused(kind: &str, reason: String) -> Refusal {
     missing(Construct::new(ConstructFamily::Node, kind), reason)
 }
 
+/// A refusal of the node `kind` whose rule covers it, for operands outside the rule's types.
+pub(crate) fn outside(kind: &str, reason: String) -> Refusal {
+    outside_conditions(Construct::new(ConstructFamily::Node, kind), reason)
+}
+
 /// A missing-rule refusal of the function `name`.
 pub(crate) fn refused_function(name: &str, reason: String) -> Refusal {
     missing(Construct::new(ConstructFamily::Function, name), reason)

@@ -22,6 +22,7 @@ pub(crate) fn regex_rewrite(name: &str) -> Option<Rewrite> {
         "REGEXP_SUBSTR" => substr,
         "REGEXP_INSTR" => instr,
         "REGEXP_COUNT" => count,
+        "SPLIT" => split,
         _ => return None,
     };
     Some(rewrite)
@@ -333,6 +334,25 @@ fn substr(values: &[Emitted]) -> Option<Emitted> {
         ),
     );
     Some(typed(sql, DatabricksType::String))
+}
+
+/// `SPLIT(s, p)`: the text around each match, keeping empty ends; an empty pattern splits each character, as Databricks does.
+fn split(values: &[Emitted]) -> Option<Emitted> {
+    let [text, value] = strings::<2>(values)?;
+    let pattern = pattern(value)?;
+    if !pattern.steps_alike() {
+        return None;
+    }
+    let function = match pattern {
+        Pattern::Text { .. } => "string_split",
+        Pattern::Regex(_) => "regexp_split_to_array",
+    };
+    let sql = guarded(
+        &[text, value],
+        &pattern.raises(&text.sql, false),
+        format!("{function}({}, {})", text.sql, pattern.sql()),
+    );
+    Some(typed(sql, DatabricksType::Array(Element::String)))
 }
 
 /// `REGEXP_INSTR(s, p)`: the 1-based character position where the first match starts, 0 if none.

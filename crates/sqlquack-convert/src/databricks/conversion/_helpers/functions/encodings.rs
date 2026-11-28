@@ -7,8 +7,8 @@ use crate::databricks::conversion::_helpers::functions::arrays::captured;
 use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
 use crate::databricks::conversion::constants::{
     BASE64_ALPHABET, BASE64_LINE, BASE64_READING_ERROR, BASE64_UNIT_ERROR, BASE64_UNITS,
-    BASE64_UNPADDED, HEX_TEXT, LAMBDA_ELEMENT, URL_DIGIT_ERROR, URL_ESCAPE_ERROR, URL_JAVA_DIGITS,
-    URL_MALFORMED_ESCAPE,
+    BASE64_UNPADDED, CHARSET_ERROR, CHARSETS, HEX_TEXT, LAMBDA_ELEMENT, UNCODED_CHARSET_ERROR,
+    URL_DIGIT_ERROR, URL_ESCAPE_ERROR, URL_JAVA_DIGITS, URL_MALFORMED_ESCAPE, UTF8_CHARSET,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -21,6 +21,8 @@ pub(crate) fn encoding_rewrite(name: &str) -> Option<Rewrite> {
         "URL_ENCODE" => url_encode,
         "URL_DECODE" => |values| url_decode(values, false),
         "TRY_URL_DECODE" => |values| url_decode(values, true),
+        "ENCODE" => |values| charset_coded(values, true),
+        "DECODE" => |values| charset_coded(values, false),
         _ => return None,
     };
     Some(rewrite)
@@ -117,5 +119,37 @@ fn url_decode(values: &[Emitted], try_decode: bool) -> Option<Emitted> {
              ELSE url_decode(replace({s}, '+', ' ')) END)"
         ),
         DatabricksType::String,
+    ))
+}
+
+/// `ENCODE(s, charset)` with `encode`, else `DECODE(b, charset)`, in UTF-8: NULL before the charset is read, raising for any other charset.
+fn charset_coded(values: &[Emitted], encode: bool) -> Option<Emitted> {
+    let [value, charset] = values else {
+        return None;
+    };
+    let sql = match (value.data_type, encode) {
+        (DatabricksType::String, true) => format!("encode({})", value.sql),
+        (DatabricksType::Binary, false) => format!("decode({})", value.sql),
+        (DatabricksType::String, false) => value.sql.clone(),
+        _ => return None,
+    };
+    if charset.data_type != DatabricksType::String {
+        return None;
+    }
+    let (v, c) = (&value.sql, &charset.sql);
+    let named: Vec<String> = CHARSETS.iter().map(|name| format!("'{name}'")).collect();
+    let data_type = match encode {
+        true => DatabricksType::Binary,
+        false => DatabricksType::String,
+    };
+    Some(typed(
+        format!(
+            "(CASE WHEN {v} IS NULL OR {c} IS NULL THEN NULL \
+             WHEN lower({c}) = '{UTF8_CHARSET}' THEN {sql} \
+             WHEN lower({c}) IN ({}) THEN error('{UNCODED_CHARSET_ERROR}') \
+             ELSE error('{ARGUMENT_REJECTED}: {CHARSET_ERROR}') END)",
+            named.join(", ")
+        ),
+        data_type,
     ))
 }

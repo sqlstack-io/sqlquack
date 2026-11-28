@@ -55,6 +55,46 @@ pub const ILIKE_KIND: &str = "i_like";
 pub const LOWERED_CHARACTERS: &str = r"\x{0}-\x{12f}\x{131}-\x{377}\x{37a}-\x{37f}\x{384}-\x{38a}\x{38c}\x{38e}-\x{3a1}\x{3a4}-\x{52f}\x{531}-\x{556}\x{559}-\x{58a}\x{58d}-\x{58f}\x{591}-\x{5c7}\x{5d0}-\x{5ea}\x{5ef}-\x{5f4}\x{600}-\x{61c}\x{61e}-\x{70d}\x{70f}-\x{74a}\x{74d}-\x{7b1}\x{7c0}-\x{7fa}\x{7fd}-\x{7ff}\x{1f300}-\x{1f6d7}\x{1f6e0}-\x{1f6ec}\x{1f6f0}-\x{1f6fc}\x{1f700}-\x{1f773}\x{1f780}-\x{1f7d8}\x{1f7e0}-\x{1f7eb}\x{1f800}-\x{1f80b}\x{1f810}-\x{1f847}\x{1f850}-\x{1f859}\x{1f860}-\x{1f887}\x{1f890}-\x{1f8ad}\x{1f8b0}-\x{1f8b1}\x{1f900}-\x{1f978}\x{1f97a}-\x{1f9cb}\x{1f9cd}-\x{1fa53}\x{1fa60}-\x{1fa6d}\x{1fa70}-\x{1fa74}\x{1fa78}-\x{1fa7a}\x{1fa80}-\x{1fa86}\x{1fa90}-\x{1faa8}\x{1fab0}-\x{1fab6}\x{1fac0}-\x{1fac2}\x{1fad0}-\x{1fad6}";
 /// The code points below U+0800 and in the emoji blocks that DuckDB's `upper` maps as Java 17's does, as an RE2 class body.
 pub const UPPERED_CHARACTERS: &str = r"\x{0}-\x{de}\x{e0}-\x{148}\x{14a}-\x{1ef}\x{1f1}-\x{377}\x{37a}-\x{37f}\x{384}-\x{38a}\x{38c}\x{38e}-\x{38f}\x{391}-\x{3a1}\x{3a3}-\x{3af}\x{3b1}-\x{52f}\x{531}-\x{556}\x{559}-\x{586}\x{588}-\x{58a}\x{58d}-\x{58f}\x{591}-\x{5c7}\x{5d0}-\x{5ea}\x{5ef}-\x{5f4}\x{600}-\x{61c}\x{61e}-\x{70d}\x{70f}-\x{74a}\x{74d}-\x{7b1}\x{7c0}-\x{7fa}\x{7fd}-\x{7ff}\x{1f300}-\x{1f6d7}\x{1f6e0}-\x{1f6ec}\x{1f6f0}-\x{1f6fc}\x{1f700}-\x{1f773}\x{1f780}-\x{1f7d8}\x{1f7e0}-\x{1f7eb}\x{1f800}-\x{1f80b}\x{1f810}-\x{1f847}\x{1f850}-\x{1f859}\x{1f860}-\x{1f887}\x{1f890}-\x{1f8ad}\x{1f8b0}-\x{1f8b1}\x{1f900}-\x{1f978}\x{1f97a}-\x{1f9cb}\x{1f9cd}-\x{1fa53}\x{1fa60}-\x{1fa6d}\x{1fa70}-\x{1fa74}\x{1fa78}-\x{1fa7a}\x{1fa80}-\x{1fa86}\x{1fa90}-\x{1faa8}\x{1fab0}-\x{1fab6}\x{1fac0}-\x{1fac2}\x{1fad0}-\x{1fad6}";
+/// The code points below U+0800 whose Java 17 title case is not DuckDB's `upper`: ß and the Latin digraphs, as an RE2 class body.
+pub const UNTITLED_CHARACTERS: &str = r"\x{df}\x{1c4}-\x{1cc}\x{1f1}-\x{1f3}";
+/// The code points below U+0800 and in the emoji blocks whose Java 17 general category RE2 reads alike, as an RE2 class body.
+pub const KINDED_CHARACTERS: &str = r"\x{0}-\x{7ff}\x{1f300}-\x{1faff}";
+/// The RE2 classes `MASK` replaces, in its argument order: upper-case letters, lower-case letters and decimal digits.
+pub const MASKED_KINDS: [&str; 3] = [r"\p{Lu}", r"\p{Ll}", r"\p{Nd}"];
+/// The masks `MASK` uses by default, in the order of `MASKED_KINDS` and then other characters, which stay as they are.
+pub const DEFAULT_MASKS: [Option<&str>; 4] = [Some("X"), Some("x"), Some("n"), None];
+/// The error a mask raises for text holding a character whose kind no rule reads as Databricks does.
+pub const CHARACTER_KIND_ERROR: &str =
+    "the text holds a character whose kind no rule reads as Databricks does";
+/// How many distinct characters `LEVENSHTEIN` writes as ASCII, from U+0001, for DuckDB's byte distance to count characters.
+pub const ASCII_ALPHABET: usize = 127;
+/// The error `LEVENSHTEIN` raises for two texts holding more distinct characters than ASCII has.
+pub const ALPHABET_ERROR: &str =
+    "the two texts hold more distinct characters than a rule counts edits between";
+/// The charsets `ENCODE` and `DECODE` name, in lower case; a name is matched in any case.
+pub const CHARSETS: &[&str] = &[
+    "us-ascii",
+    "iso-8859-1",
+    "utf-8",
+    "utf-16be",
+    "utf-16le",
+    "utf-16",
+    "utf-32",
+];
+/// How many arguments `DECODE` takes in its charset form; more name search values and results.
+pub const DECODE_CHARSET_ARGUMENTS: usize = 2;
+/// The one charset of `CHARSETS` DuckDB codes.
+pub const UTF8_CHARSET: &str = "utf-8";
+/// What a raise for a charset Databricks does not name says after the rejected-argument fragment.
+pub const CHARSET_ERROR: &str = "the charset is not one Databricks codes";
+/// The error a charset Databricks codes and no rule does raises.
+pub const UNCODED_CHARSET_ERROR: &str = "no rule codes text in this charset as Databricks does";
+/// The ASCII lower-case letters, which `SOUNDEX` alone upper-cases.
+pub const ASCII_LOWER: &str = "abcdefghijklmnopqrstuvwxyz";
+/// The ASCII upper-case letters, in the order of `SOUNDEX_CODES`.
+pub const ASCII_UPPER: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+/// The American Soundex code of each letter A to Z: 0 for a vowel, Y or a separator, 7 for H and W, which do not separate.
+pub const SOUNDEX_CODES: &str = "01230127022455012623017202";
 /// The error a case mapping raises for text holding a character outside the code points it maps as Databricks does.
 pub const CASE_MAPPING_ERROR: &str =
     "the text holds a character whose case no rule maps as Databricks does";
@@ -133,6 +173,8 @@ pub const INDEX_BOUNDS_ERROR: &str = "the index is outside the array";
 pub const COUNT_NAME: &str = "COUNT";
 /// The fewest arguments a variadic function such as COALESCE takes.
 pub const MIN_LIST_ARGUMENTS: usize = 2;
+/// The one list function Databricks also takes with a single argument, which it returns.
+pub const COALESCE_NAME: &str = "COALESCE";
 /// Same-type functions that order their arguments, refused for arrays, whose NULL elements the engines order apart.
 pub const ORDERING_FUNCTIONS: &[&str] = &["GREATEST", "LEAST"];
 /// Functions whose STRING arguments Databricks casts: the type the recorded cast errors name, and the argument positions it casts; a BIGINT reading of several arguments needs an integer beside the text.
