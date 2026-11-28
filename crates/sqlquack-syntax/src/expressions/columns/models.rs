@@ -880,6 +880,13 @@ pub enum AlterTableAction {
         comment_written: Option<Literal>,
         #[serde(default)]
         cascade: bool,
+        /// Databricks: `NOT NULL` after the column's type
+        #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+        not_null: bool,
+        /// Databricks: the NOT of that `NOT NULL` as written, when it is `!`
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        #[ast(skip)]
+        not_written_as: Option<crate::expressions::operators::models::OperatorSpelling>,
     },
     /// Redshift ALTER [COMPOUND] SORTKEY AUTO|NONE|(cols).
     AlterSortKey {

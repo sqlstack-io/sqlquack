@@ -61,7 +61,7 @@ their documented syntax (`parse/_helpers/commands/documented.rs`, in the notatio
   `DROP SCHEMA`, `DROP FUNCTION`, `UNDROP TABLE | MATERIALIZED VIEW | VOLUME`.
 - `ALTER TABLE` (`AlterTable`): `ADD COLUMN[S]`, `DROP COLUMN[S]`, `RENAME [COLUMN]`,
   `ALTER | CHANGE [COLUMN]` with `TYPE`, `COMMENT`, `SET | DROP NOT NULL`, `SET DEFAULT`,
-  `DROP DEFAULT`, Hive's `CHANGE old new type`, `ADD | DROP PARTITION`, `PARTITION (…) SET
+  `DROP DEFAULT`, Hive's `CHANGE old new type [NOT NULL]`, `ADD | DROP PARTITION`, `PARTITION (…) SET
   LOCATION`, `ADD CONSTRAINT`, `DROP CONSTRAINT` (with `CASCADE`), `DROP PARTITION` (with
   `PURGE`), `SET | UNSET TBLPROPERTIES` (with `IF EXISTS`), `SET | UNSET TAGS`, `SET LOCATION`,
   `CLUSTER BY`. `ALTER VIEW` (`AlterView`): `AS query`, `RENAME TO`, `SET | UNSET TBLPROPERTIES`,
@@ -89,7 +89,8 @@ their documented syntax (`parse/_helpers/commands/documented.rs`, in the notatio
   `MethodCall` on the column `@name` (a dotted `@name.a.f()` qualifies the column), the shape
   Polyglot gives it; its arguments are expressions.
 - `SET` (`SetStatement`) of a configuration (matched as Spark matches the text after `SET`), the
-  time zone, the path, the catalog and variables; `USE [CATALOG | SCHEMA | DATABASE]`;
+  time zone, the path, the catalog, variables and query tags (each `QUERY_TAGS['key']` a
+  `Subscript` set to a string, `NULL` or the keyword `UNSET`); `USE [CATALOG | SCHEMA | DATABASE]`;
   `COMMENT ON`; `TRUNCATE TABLE`; `GRANT` and `REVOKE`; `DECLARE [OR REPLACE] [VARIABLE]`;
   `CACHE [LAZY] TABLE` and `UNCACHE TABLE`.
 
@@ -136,7 +137,7 @@ next top-level `;` is not checked further; every other gap's text is checked.
 | `alter_owner` | `ALTER name [SET] OWNER TO principal`, a securable named without its kind |
 | `optimize`, `vacuum`, `repair`, `msck` | `OPTIMIZE`, `VACUUM`, `[MSCK] REPAIR TABLE`: checked, but the shared tree has no node |
 | `alter`, `create`, `drop`, `describe` | those statements of any other object kind with no documented form above, such as a group |
-| `set` | `SET ROLE`, `SET RECIPIENT name`, `SET COLLATION name` and `SET QUERY_TAGS[key] = value`; any other `SET` text Spark's patterns do not read is refused (`INVALID_SET_SYNTAX`), as are `SET QUERY_TAGS` without a key, `SET PATH` with a one-part schema and `SET TIME ZONE` with no zone |
+| `set` | `SET ROLE`, `SET RECIPIENT name` and `SET COLLATION name`; any other `SET` text Spark's patterns do not read is refused (`INVALID_SET_SYNTAX`), as are `SET QUERY_TAGS` without a key, `SET PATH` with a one-part schema and `SET TIME ZONE` with no zone |
 | `bucket_spec`, `skew_spec` | the Hive `CLUSTERED BY … INTO … BUCKETS` and `SKEWED BY` table clauses |
 | `insert_options`, `insert_replace_on`, `insert_replace_using`, `schema_evolution` | `INSERT … WITH (options)`, `REPLACE ON`/`REPLACE USING`, `WITH SCHEMA EVOLUTION` |
 | `copy_by_position`, `copy_target_credential` | `COPY INTO t BY POSITION`, a credential on `COPY INTO`'s target |
@@ -144,9 +145,9 @@ next top-level `;` is not checked further; every other gap's text is checked.
 | `changes`, `relation_options`, `watermark`, `identified_by`, `nearest_by`, `subquery_sample`, `parenthesized_relation_sample` | `CHANGES`, `WITH (options)` on a relation, `WATERMARK … DELAY OF INTERVAL …` (checked), `IDENTIFIED BY`, `NEAREST BY`, a sample or later relation clause after a parenthesized subquery or relation |
 | `table_argument_partitioning` | `TABLE t PARTITION BY … ORDER BY …` as a function argument |
 | `pivot_after_lateral_view`, `identifier_clause_function` | `PIVOT` after `LATERAL VIEW`, `IDENTIFIER(…)(…)` calls |
-| `change_column_position`, `change_column_not_null`, `replace_columns`, `partition_change_column`, `view_partition`, `alter_column_without_action` | column moves with `CHANGE`, `REPLACE COLUMNS`, Hive column changes in a partition, partitions of a view, a column named with no action after an action kept as a tree |
+| `change_column_position`, `replace_columns`, `partition_change_column`, `view_partition`, `alter_column_without_action` | column moves with `CHANGE`, `REPLACE COLUMNS`, Hive column changes in a partition, partitions of a view, a column named with no action after an action kept as a tree |
 | `show_create_table_serde` | `SHOW CREATE TABLE … AS SERDE` |
-| `declare_cursor`, `function_credentials`, `function_secrets`, `function_parameter_not_null` | `DECLARE … CURSOR`, a function's `CREDENTIALS` and `SECRETS`, `NOT NULL` on a SQL function's parameter |
+| `declare_cursor`, `function_credentials`, `function_secrets`, `function_parameter_not_null` | `DECLARE … CURSOR`, a function's `CREDENTIALS` and `SECRETS`, a second `NOT NULL` on a SQL function's parameter |
 
 ## Lossy mappings
 
@@ -166,7 +167,7 @@ These parse without a gap, but the shared tree keeps less than the source said:
 - `COPY *` on a view becomes `copy_grants`.
 - A function's `RETURNS TABLE (columns)` keeps the column list as `returns_table_body`, its
   tokens separated by single spaces; its `COMMENT`, `SPECIFIC` and `DEFAULT COLLATION` become
-  `options` properties, and parameter comments and `NOT NULL` are dropped.
+  `options` properties, and parameter comments are dropped.
 - `SHOW TBLPROPERTIES t (key)` holds the key as the `scope` of `scope_kind` `PROPERTY`, a key
   written as a string literal as a string and any other as its dotted identifier: the shared `Show` has no field for
   a property key.

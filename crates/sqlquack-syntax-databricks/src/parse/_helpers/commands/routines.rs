@@ -3,6 +3,7 @@
 use sqlquack_syntax::DataType;
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
+use sqlquack_syntax::expressions::operators::models::OperatorSpelling;
 use sqlquack_syntax::expressions::schema_objects::models::{
     CreateFunction, CreateSchema, DropFunction, DropSchema, FunctionBody, FunctionParameter,
     FunctionSecurity, FunctionUsingResource, SqlDataAccess,
@@ -113,8 +114,13 @@ impl Parser<'_> {
         let data_type: DataType = self.data_type()?;
         let mut default: Option<Expression> = None;
         let mut comment: Option<(String, Option<Literal>)> = None;
+        let mut not_null: Option<bool> = None;
         loop {
-            if (self.kw("NOT") || self.is_char('!')) && self.kw_at(1, "NULL") {
+            if not_null.is_none() && (self.kw("NOT") || self.is_char('!')) && self.kw_at(1, "NULL")
+            {
+                not_null = Some(self.is_char('!'));
+                self.at += 2;
+            } else if (self.kw("NOT") || self.is_char('!')) && self.kw_at(1, "NULL") {
                 let start: usize = self.offset();
                 self.at += 2;
                 self.gap("function_parameter_not_null", start);
@@ -127,6 +133,10 @@ impl Parser<'_> {
             }
         }
         Ok(FunctionParameter {
+            not_null: not_null.is_some(),
+            not_written_as: not_null
+                .filter(|bang| *bang)
+                .map(|_| OperatorSpelling::Bang),
             name: Some(name),
             data_type,
             mode: None,

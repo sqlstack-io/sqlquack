@@ -703,6 +703,13 @@ pub struct FunctionParameter {
     /// Original text of the mode keyword for case-preserving output (e.g., "inout", "VARIADIC")
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mode_text: Option<String>,
+    /// Databricks: `NOT NULL` on the parameter
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub not_null: bool,
+    /// Databricks: the NOT of that `NOT NULL` as written, when it is `!`
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[ast(skip)]
+    pub not_written_as: Option<crate::expressions::operators::models::OperatorSpelling>,
     /// Databricks: the parameter's COMMENT
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub comment: Option<String>,

@@ -170,6 +170,8 @@ impl Parser {
             };
 
             params.push(FunctionParameter {
+                not_null: false,
+                not_written_as: None,
                 comment: None,
                 comment_written: None,
                 name,
@@ -227,6 +229,8 @@ impl Parser {
                 None
             };
             params.push(FunctionParameter {
+                not_null: false,
+                not_written_as: None,
                 comment: None,
                 comment_written: None,
                 name: Some(Identifier::new(name)),
