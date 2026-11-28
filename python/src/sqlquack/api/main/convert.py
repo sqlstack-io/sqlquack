@@ -31,6 +31,7 @@ def convert(
         "compact": chosen.compact,
         "max_call_depth": chosen.max_call_depth,
         "no_bind_check": not chosen.bind_check,
+        "dialect": chosen.dialect,
     }
     result: dict[str, Any] = loaded(lambda: convert_json(sql, json.dumps(request), path))
     report: dict[str, Any] = result["report"]

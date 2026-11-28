@@ -997,6 +997,7 @@ fn rerecord(root: &std::path::Path, queries: &[EverydayQuery]) {
 fn everyday_arguments(root: &std::path::Path, no_config: bool) -> ConvertArguments {
     ConvertArguments {
         path: None,
+        dialect: crate::cli::models::SourceDialect::Snowflake,
         schema: None,
         overrides: None,
         verified_overrides: Vec::new(),

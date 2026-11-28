@@ -34,6 +34,7 @@ pub(crate) fn convert_json(sql: &str, request: &str, path: &str) -> PyResult<Str
         .map_err(PyValueError::new_err)?;
     let arguments = ConvertArguments {
         path: None,
+        dialect: request.dialect,
         schema,
         overrides: request.overrides,
         verified_overrides: pairs(request.verified_overrides),

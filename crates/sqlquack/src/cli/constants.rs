@@ -13,3 +13,7 @@ pub const ALLOW_OPTION: &str = "the allow option";
 /// What allows the project's Python functions in place of an allowance.
 pub const PYTHON_RUNTIME_OPTION: &str =
     "pass python_runtime when a Python runtime registers the project's functions";
+/// The session profile a Databricks conversion runs under: UTC, ANSI mode, as the recorded results.
+pub const DATABRICKS_PROFILE: &str = "dbx-default-v1";
+/// Why `--dialect databricks` exits 2 with a Snowflake-only option.
+pub const DATABRICKS_OPTIONS_ERROR: &str = "--dialect databricks takes no project, schema, session, override, verified-override, python-runtime or allow option";

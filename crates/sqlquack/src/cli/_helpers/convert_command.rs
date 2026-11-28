@@ -38,7 +38,7 @@ use crate::cli::_helpers::project::project_choices;
 use crate::cli::models::{
     CheckArguments, CheckReport, ColorArguments, ConvertArguments, ConvertRefusal, ConvertReport,
     ExplainArguments, KnownDifferenceUse, OutputArguments, OutputFormat, OverrideListing,
-    RunArguments, RunPrinted,
+    RunArguments, RunPrinted, SourceDialect,
 };
 use crate::run::main::run_query::run_query;
 use crate::run::models::RunInputs;
@@ -47,7 +47,9 @@ use sqlquack_convert::snowflake::analysis::main::assumption_id::assumption_id;
 use sqlquack_convert::snowflake::analysis::models::{Analysis, ConversionChoices};
 use sqlquack_convert::snowflake::session::main::configured_options::configured_options;
 
+use crate::cli::constants::{DATABRICKS_OPTIONS_ERROR, DATABRICKS_PROFILE};
 use crate::cli::main::convert_report::convert_report;
+use sqlquack_convert::databricks::analysis::main::analyze::analyze as analyze_databricks;
 use sqlquack_convert::snowflake::analysis::main::with_divergence_help::with_divergence_help;
 
 /// What allows a known difference that the configuration does not allow, in `convert --json`.
@@ -147,6 +149,7 @@ fn run_printed(arguments: &RunArguments, palette: &Palette) -> RunPrinted {
     };
     let convert = ConvertArguments {
         path: arguments.path.clone(),
+        dialect: SourceDialect::Snowflake,
         schema: None,
         overrides: arguments.overrides.clone(),
         verified_overrides: arguments.verified_overrides.clone(),
@@ -540,9 +543,6 @@ pub(crate) fn check_command(
 /// The report when the session parameters match no recorded profile.
 pub(crate) fn refused_session(reason: String) -> ConvertReport {
     ConvertReport {
-        converted: false,
-        profile: String::new(),
-        sql: String::new(),
         refusals: vec![ConvertRefusal {
             category: "session parameters".to_owned(),
             construct: "statement".to_owned(),
@@ -551,6 +551,17 @@ pub(crate) fn refused_session(reason: String) -> ConvertReport {
             diagnostic: unplaced_diagnostic(SESSION_PARAMETERS, reason.clone()),
             reason,
         }],
+        ..empty_report()
+    }
+}
+
+/// A report converting nothing and refusing nothing, which the other reports fill in.
+fn empty_report() -> ConvertReport {
+    ConvertReport {
+        converted: false,
+        profile: String::new(),
+        sql: String::new(),
+        refusals: Vec::new(),
         divergences: BTreeMap::new(),
         assumptions: Vec::new(),
         divergence_failures: BTreeMap::new(),
@@ -712,6 +723,39 @@ fn known_difference_uses(
         }
     }
     uses
+}
+
+/// The report of Databricks `sql`: converted by the Databricks rules or refused; the Snowflake options do not apply.
+pub(crate) fn databricks_report(
+    arguments: &ConvertArguments,
+    sql: &str,
+) -> Result<ConvertReport, String> {
+    let policy = &arguments.conversion;
+    let snowflake_options = arguments.schema.is_some()
+        || policy.project.is_some()
+        || policy.python_runtime
+        || !policy.allow.is_empty()
+        || arguments.overrides.is_some()
+        || !arguments.session.is_empty()
+        || !arguments.verified_overrides.is_empty();
+    if snowflake_options {
+        return Err(DATABRICKS_OPTIONS_ERROR.to_owned());
+    }
+    let (converted_sql, refusals) = match analyze_databricks(sql) {
+        Ok(converted) => (converted.sql, Vec::new()),
+        Err(refusal) => (String::new(), vec![refusal]),
+    };
+    Ok(ConvertReport {
+        converted: refusals.is_empty(),
+        profile: DATABRICKS_PROFILE.to_owned(),
+        sql: converted_sql,
+        refusals: refusals
+            .iter()
+            .zip(diagnose(&refusals, sql))
+            .map(convert_refusal)
+            .collect(),
+        ..empty_report()
+    })
 }
 
 /// A refusal as `convert` reports it, with its diagnostic.
