@@ -1,2 +1,32 @@
-# Sign-offs of the result-matching measure's link map and not-translatable groups. None yet: the
-# link map in form-links.toml and the function links are unreviewed.
+# Sign-offs of the result-matching measure's link map and not-translatable groups. The link map
+# in form-links.toml and the function links are unreviewed.
+
+[[signoff]]
+subject = "not-translatable:ai-and-hosted-services"
+sha256 = "dd86b94c2a4734951d1dde97f1e271432343d6e7bc5da9542e5d696f46f83589"
+scope = "full"
+reviewed_utc = "2026-11-28T02:09:19Z"
+
+[[signoff]]
+subject = "not-translatable:account-context-functions"
+sha256 = "e7d32b04c84dae30c69c4abbf66d4d086bda687d50b046853fc84429b196125a"
+scope = "full"
+reviewed_utc = "2026-11-28T02:09:19Z"
+
+[[signoff]]
+subject = "not-translatable:files-and-streams"
+sha256 = "4b8c39c6ff683f52d759983d5bc09ce8dcd51843ec0df6ccf71222f1d6ad3b53"
+scope = "full"
+reviewed_utc = "2026-11-28T02:09:19Z"
+
+[[signoff]]
+subject = "not-translatable:table-history-and-change-feed"
+sha256 = "5a0eef5439d3a272d28adb0faccf6214e286b9c3a677710bef87dc9e47f1a8c7"
+scope = "full"
+reviewed_utc = "2026-11-28T02:09:19Z"
+
+[[signoff]]
+subject = "not-translatable:pipeline-snapshot-state"
+sha256 = "8123f357ed9765f37dcddc43a71bef04d4ce3d142e90f1a29eb702bf2aaa8c83"
+scope = "full"
+reviewed_utc = "2026-11-28T02:09:19Z"
