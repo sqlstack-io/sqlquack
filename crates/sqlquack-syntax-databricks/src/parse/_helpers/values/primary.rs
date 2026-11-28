@@ -7,7 +7,7 @@ use sqlquack_syntax::expressions::functions::models::{
 };
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal};
 use sqlquack_syntax::expressions::operators::models::{
-    CollationExpr, MethodCall, Subscript, UnaryOp,
+    CollationExpr, MethodCall, OperatorSpelling, Subscript, UnaryOp,
 };
 use sqlquack_syntax::expressions::typed_functions::models::{
     DateTimeField, ExtractFunc, TrimFunc, TrimPosition,
@@ -20,7 +20,7 @@ use sqlquack_syntax::tokens::models::{SeparatorSpans, SourceSpan};
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
     aggregate, binary, boolean, call, case, cast, column_from, dot, function, joined, lambda,
-    literal, null, parameter, paren, star, string, subquery, tuple, var,
+    literal, null, parameter, paren, star, string, subquery, tuple, var, written_as,
 };
 use crate::parse::constants::{
     CURRENT_LIKE, DATETIME_UNITS, DAY_SEGMENT, IDENTIFIER_CLAUSE, INTERVAL_UNITS, LITERAL_TYPES,
@@ -717,7 +717,10 @@ impl Parser<'_> {
                 parser.expect_kw("IN")?;
                 let text: Expression = parser.value_expression(0)?;
                 parser.expect_char(')')?;
-                Ok(call("position", vec![substring, text]))
+                Ok(written_as(
+                    call("position", vec![substring, text]),
+                    OperatorSpelling::In,
+                ))
             }),
             "EXTRACT" => self.attempt(|parser| {
                 parser.at += 2;
@@ -784,7 +787,7 @@ impl Parser<'_> {
                     args.push(parser.value_expression(0)?);
                 }
                 parser.expect_char(')')?;
-                Ok(call("overlay", args))
+                Ok(written_as(call("overlay", args), OperatorSpelling::Placing))
             }),
             unit_call
                 if TIMESTAMP_ADD_NAMES.contains(&unit_call)

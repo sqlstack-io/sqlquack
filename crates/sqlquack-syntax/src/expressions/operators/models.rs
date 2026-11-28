@@ -227,6 +227,15 @@ pub enum OperatorSpelling {
     /// The `>>>` operator for the `shiftrightunsigned` call.
     #[serde(rename = ">>>")]
     ShiftRightUnsigned,
+    /// The `DIV` operator for the `div` call.
+    #[serde(rename = "DIV")]
+    Div,
+    /// Databricks: `POSITION ( substr IN str )` for the `position` call.
+    #[serde(rename = "IN")]
+    In,
+    /// Databricks: `OVERLAY ( input PLACING replace FROM pos )` for the `overlay` call.
+    #[serde(rename = "PLACING")]
+    Placing,
     /// Databricks: no `=` written between a property's key and its value.
     #[serde(rename = "omitted")]
     Omitted,
