@@ -3,6 +3,7 @@
 use serde_json::{Map, Value};
 use sqlquack_diagnostics::classification::models::{Construct, ConstructFamily};
 use sqlquack_diagnostics::refusals::main::missing::missing;
+use sqlquack_diagnostics::refusals::main::outside_conditions::outside_conditions;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
 /// Fields that only record how the source was spelled or where it was.
@@ -99,6 +100,11 @@ pub(crate) fn refused(kind: &str, reason: String) -> Refusal {
 /// A missing-rule refusal of the function `name`.
 pub(crate) fn refused_function(name: &str, reason: String) -> Refusal {
     missing(Construct::new(ConstructFamily::Function, name), reason)
+}
+
+/// A refusal of the function `name` whose rule covers it, for arguments outside the rule's types.
+pub(crate) fn outside_function(name: &str, reason: String) -> Refusal {
+    outside_conditions(Construct::new(ConstructFamily::Function, name), reason)
 }
 
 /// A field's value, `Null` when absent.
