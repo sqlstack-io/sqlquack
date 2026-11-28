@@ -1,0 +1,26 @@
+# Translation obligations of family query: per form, the generated cases' type
+# combinations, NULL arguments and error parity, each met by its one case. Written by
+# scripts/build_translation_obligations_databricks.py from the published cases' tags;
+# boundary cases are uncited. See README.md.
+
+[[obligation]]
+id = "db.query.select-qualify.t001"
+form = "db.query.select-qualify"
+kind = "type_combination"
+target = "INT, INT"
+note = "QUALIFY keeping each partition's first row by a projected window column. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/query/select-qualify.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.query.select-qualify.t002"
+form = "db.query.select-qualify"
+kind = "type_combination"
+target = "INT, INT"
+note = "QUALIFY over a window function it holds itself, with ties. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/query/select-qualify.pd2.hand.toml#p001"]
+required = true
