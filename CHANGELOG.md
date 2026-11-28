@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.28.0](https://github.com/sqlstack-io/sqlbabel/compare/v0.27.0...v0.28.0) (2026-11-28)
+
+
+### Features
+
+* **databricks-syntax:** tree query tags and NOT NULL on Hive CHANGE and parameters ([38b908f](https://github.com/sqlstack-io/sqlbabel/commit/38b908fa67eab303852b84949dd4855acb87df57))
+* **databricks:** convert window functions and QUALIFY ([596d8f5](https://github.com/sqlstack-io/sqlbabel/commit/596d8f5f89d860e093503bf48c1c51956fad2e98))
+
 ## [0.27.0](https://github.com/sqlstack-io/sqlquack/compare/v0.26.0...v0.27.0) (2026-11-28)
 
 
