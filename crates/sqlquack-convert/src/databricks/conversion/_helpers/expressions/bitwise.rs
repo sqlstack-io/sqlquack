@@ -4,18 +4,36 @@ use serde_json::Value;
 use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
-use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::expressions::literals::{cast_value, typed};
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, boolean, operands};
+use crate::databricks::conversion::_helpers::expressions::texts::read_text;
 use crate::databricks::conversion::_helpers::support::scope::Site;
-use crate::databricks::conversion::_helpers::support::tree::{field, flag, refused, understood};
+use crate::databricks::conversion::_helpers::support::tree::{
+    field, flag, outside, refused, understood,
+};
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
 use crate::databricks::conversion::constants::{BITWISE_RULE, BOOLEAN_RULE, CONCAT_RULE};
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Shift};
 
-/// `&`, `|` or `^` on integers; `^` is XOR in Databricks, so it becomes DuckDB's `xor`.
+/// `&`, `|` or `^` on integers, text read as BIGINT as Databricks casts it; `^` is XOR in Databricks, so it becomes DuckDB's `xor`.
 pub(crate) fn bitwise(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let (left, right) = operands(kind, payload, site)?;
     let _rule = site.log.rule(BITWISE_RULE);
+    let (left, right) = match (left.data_type, right.data_type) {
+        (DatabricksType::String, other) | (other, DatabricksType::String)
+            if other == DatabricksType::String || other.is_integral() =>
+        {
+            let read = |value: Emitted| match value.data_type {
+                DatabricksType::String => cast_value(&value, DatabricksType::BigInt),
+                _ => Some(value),
+            };
+            match (read(left), read(right)) {
+                (Some(left), Some(right)) => (left, right),
+                _ => return Err(refused(kind, format!("no rule reads text for {kind}"))),
+            }
+        }
+        _ => (left, right),
+    };
     let Some(wider) = wider_integer(left.data_type, right.data_type) else {
         return Err(refused(kind, format!("only {kind} of integers converts")));
     };
@@ -86,9 +104,12 @@ pub(crate) fn bitwise_not(payload: &Value, site: Site<'_>) -> Result<Emitted, Re
     let _rule = site.log.rule(BITWISE_RULE);
     match operand.data_type.is_integral() {
         true => Ok(typed(format!("(~ {})", operand.sql), operand.data_type)),
-        false => Err(refused(
+        false => Err(outside(
             "bitwise_not",
-            "only ~ of an integer converts".to_owned(),
+            format!(
+                "only ~ of an integer converts, which Databricks requires, not of {}",
+                operand.data_type.name()
+            ),
         )),
     }
 }
@@ -102,24 +123,37 @@ pub(crate) fn plus(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> 
     }
 }
 
-/// `a || b` on strings, NULL when either is NULL in both engines.
+/// `a || b` on strings, another scalar cast to STRING as Databricks casts it; NULL when either is NULL in both engines.
 pub(crate) fn concat_operator(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let (left, right) = operands("concat", payload, site)?;
     let _rule = site.log.rule(CONCAT_RULE);
-    let text = |data_type| matches!(data_type, DatabricksType::String | DatabricksType::Null);
-    match text(left.data_type) && text(right.data_type) {
-        true => Ok(typed(
-            format!("({} || {})", left.sql, right.sql),
+    let text = |value: &Emitted| match value.data_type {
+        DatabricksType::String | DatabricksType::Null => Some(value.sql.clone()),
+        DatabricksType::Array(_) | DatabricksType::Binary => None,
+        _ => cast_value(value, DatabricksType::String).map(|cast| cast.sql),
+    };
+    match (text(&left), text(&right)) {
+        (Some(left), Some(right)) => Ok(typed(
+            format!("({left} || {right})"),
             DatabricksType::String,
         )),
-        false => Err(refused("concat", "only || of strings converts".to_owned())),
+        _ => Err(refused(
+            "concat",
+            "only || of strings and scalars cast to strings converts".to_owned(),
+        )),
     }
 }
 
 /// `x IS [NOT] TRUE` or `x IS [NOT] FALSE`, never NULL.
 pub(crate) fn truth_test(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> {
     let test = understood(payload, kind, &["this", "not"])?;
-    let operand = boolean(&expression(field(test, "this"), site)?, kind)?;
+    let operand = expression(field(test, "this"), site)?;
+    let operand = match operand.data_type {
+        DatabricksType::String => read_text(&operand, DatabricksType::Boolean)
+            .map(|read| read.sql)
+            .ok_or_else(|| refused(kind, "no rule reads a STRING as a boolean".to_owned()))?,
+        _ => boolean(&operand, kind)?,
+    };
     let _rule = site.log.rule(BOOLEAN_RULE);
     let not = match flag(test, "not") {
         true => " NOT",
