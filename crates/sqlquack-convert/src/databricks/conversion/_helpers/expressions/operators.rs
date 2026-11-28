@@ -223,7 +223,7 @@ fn mixed_in_list(values: &[Emitted], not: bool) -> Result<Emitted, Refusal> {
     let [operand, items @ ..] = values else {
         return Err(refused("in", "an IN list holds no values".to_owned()));
     };
-    let mut tests = Vec::new();
+    let mut tests: Vec<String> = Vec::new();
     for item in items {
         let (left, right) = comparable(operand, item).ok_or_else(|| {
             refused(
