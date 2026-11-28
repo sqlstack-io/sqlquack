@@ -19,7 +19,7 @@ use crate::databricks::conversion::constants::{
     AGGREGATE_RULE, AGGREGATES, CAST_FUNCTIONS, CAST_RULE, COALESCE_NAME, CONCAT_RULE, COUNT_NAME,
     DECODE_CHARSET_ARGUMENTS, DOUBLE_EXACT_INTEGERS, EXACT_FRACTION_STEPS, INEXACT_SUM_ERROR,
     MAX_DECIMAL_PRECISION, MIN_LIST_ARGUMENTS, ORDERING_FUNCTIONS, SAME_FUNCTION_RULE,
-    SAME_FUNCTIONS, WITHIN_GROUP_KIND,
+    SAME_FUNCTIONS, WHOLE_AGGREGATES, WITHIN_GROUP_KIND,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal, Signature};
 
@@ -47,7 +47,13 @@ pub(crate) fn call(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
     let args = list(call, "args");
     match name.as_str() {
         _ if AGGREGATES.iter().any(|(aggregate, _)| *aggregate == name) => {
-            aggregate(&name, args, distinct, site)
+            let call = Aggregate {
+                name: &name,
+                args,
+                distinct,
+                over: None,
+            };
+            aggregate(&call, site)
         }
         _ if distinct => Err(refused_function(
             &name,
@@ -74,13 +80,22 @@ pub(crate) fn call(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
     }
 }
 
+/// An aggregate call: its name, arguments, set quantifier, and `OVER` clause when it is a window function.
+pub(crate) struct Aggregate<'a> {
+    pub(crate) name: &'a str,
+    pub(crate) args: &'a [Value],
+    pub(crate) distinct: bool,
+    pub(crate) over: Option<&'a str>,
+}
+
 /// An aggregate of one argument or `COUNT(*)`, typed as Databricks types it: an INT SUM as BIGINT, COUNT_IF 0 over NULLs.
-fn aggregate(
-    name: &str,
-    args: &[Value],
-    distinct: bool,
-    site: Site<'_>,
-) -> Result<Emitted, Refusal> {
+pub(crate) fn aggregate(call: &Aggregate<'_>, site: Site<'_>) -> Result<Emitted, Refusal> {
+    let Aggregate {
+        name,
+        args,
+        distinct,
+        over,
+    } = *call;
     if !site.aggregates {
         return Err(refused_function(
             name,
@@ -93,10 +108,19 @@ fn aggregate(
             format!("only {name} of one argument converts"),
         ));
     };
+    if over.is_some() && WHOLE_AGGREGATES.contains(&name) {
+        return Err(refused_function(
+            name,
+            format!("no rule converts {name} as a window function"),
+        ));
+    }
     let _rule = site.log.rule(AGGREGATE_RULE);
     if let (true, Some(("star", star))) = (name == COUNT_NAME && !distinct, node_kind(argument)) {
         understood(star, "star", &[])?;
-        return Ok(typed("count(*)".to_owned(), DatabricksType::BigInt));
+        return Ok(typed(
+            format!("count(*){}", over.unwrap_or_default()),
+            DatabricksType::BigInt,
+        ));
     }
     let value = expression(argument, site.without_aggregates())?;
     let function = AGGREGATES
@@ -107,7 +131,7 @@ fn aggregate(
         true => format!("DISTINCT {}", value.sql),
         false => value.sql.clone(),
     };
-    let call = format!("{function}({quantified})");
+    let call = format!("{function}({quantified}){}", over.unwrap_or_default());
     use DatabricksType as T;
     let result = match (name, value.data_type) {
         ("COUNT", _) => Some(typed(call, T::BigInt)),

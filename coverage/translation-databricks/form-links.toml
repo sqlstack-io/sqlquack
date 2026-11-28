@@ -36,6 +36,10 @@ constructs = ["clause:group_by"]
 forms = ["db.query.select-groupby.group-by"]
 
 [[link]]
+constructs = ["clause:qualify"]
+forms = ["db.query.select-qualify"]
+
+[[link]]
 constructs = ["fn:ROLLUP"]
 forms = ["db.query.select-groupby.group-by-rollup-cube"]
 
@@ -215,6 +219,41 @@ forms = ["db.functions.bracketsign"]
 [[link]]
 constructs = ["node:window_function"]
 forms = ["db.expressions.window-functions"]
+
+# Ranking functions, and FIRST_VALUE and LAST_VALUE over a window, whose forms' grammar has no OVER
+# and so cannot link by call shape.
+
+[[link]]
+constructs = ["fn:ROW_NUMBER", "call_over:ROW_NUMBER"]
+forms = ["db.functions.row-number"]
+
+[[link]]
+constructs = ["fn:RANK", "call_over:RANK"]
+forms = ["db.functions.rank"]
+
+[[link]]
+constructs = ["fn:DENSE_RANK", "call_over:DENSE_RANK"]
+forms = ["db.functions.dense-rank"]
+
+[[link]]
+constructs = ["fn:PERCENT_RANK", "call_over:PERCENT_RANK"]
+forms = ["db.functions.percent-rank"]
+
+[[link]]
+constructs = ["fn:CUME_DIST", "call_over:CUME_DIST"]
+forms = ["db.functions.cume-dist"]
+
+[[link]]
+constructs = ["fn:NTILE", "call_over:NTILE"]
+forms = ["db.functions.ntile"]
+
+[[link]]
+constructs = ["fn:FIRST_VALUE", "call_over:FIRST_VALUE"]
+forms = ["db.functions.first-value"]
+
+[[link]]
+constructs = ["fn:LAST_VALUE", "call_over:LAST_VALUE"]
+forms = ["db.functions.last-value"]
 
 [[link]]
 constructs = ["node:lambda"]

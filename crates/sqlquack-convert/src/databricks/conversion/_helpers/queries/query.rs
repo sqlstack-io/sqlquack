@@ -6,13 +6,14 @@ use sqlquack_diagnostics::refusals::models::Refusal;
 
 use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
+use crate::databricks::conversion::_helpers::expressions::windows::spelled;
 use crate::databricks::conversion::_helpers::support::scope::{Columns, Scope, Site};
 use crate::databricks::conversion::_helpers::support::tree::{
     digits_value, field, flag, identifier, list, node_kind, quoted, refused, understood,
 };
 use crate::databricks::conversion::constants::{
     CONTROL_CHARACTERS, CONTROL_ERROR, FIXTURE_RULE, LAMBDA_ELEMENT, ORDER_RULE, RENDERED_ELEMENTS,
-    SELECT_RULE,
+    SELECT_RULE, WINDOW_KIND,
 };
 use crate::databricks::conversion::models::{DatabricksType, Element, Emitted};
 
@@ -59,6 +60,7 @@ fn select(
             "limit",
             "distinct",
             "with",
+            "qualify",
         ],
     )?;
     let _rule = log.rule(SELECT_RULE);
@@ -76,6 +78,9 @@ fn select(
         true => "SELECT DISTINCT ",
         false => "SELECT ",
     });
+    let windows = [field(select, "group_by"), field(select, "having")]
+        .iter()
+        .all(|clause| clause.is_null());
     let mut outputs: Vec<(String, Emitted)> = Vec::new();
     for item in list(select, "expressions") {
         let projection = Site {
@@ -83,6 +88,7 @@ fn select(
             scope: &scope,
             aggregates: true,
             outputs: false,
+            windows,
         };
         outputs.extend(projected(item, projection)?);
     }
@@ -109,6 +115,7 @@ fn select(
         scope: &scope,
         aggregates: false,
         outputs: false,
+        windows: false,
     };
     if let Some(filter) = clause(select, "where_clause")? {
         sql.push_str(&format!(" WHERE {}", condition(filter, row, "where")?));
@@ -136,12 +143,34 @@ fn select(
         .map(|(name, emitted)| (name.clone(), emitted.data_type))
         .collect();
     scope.outputs = outputs;
+    if let Some(qualify) = clause(select, "qualify")? {
+        let windowed = windowed(qualify) || list(select, "expressions").iter().any(windowed);
+        if !windows || !windowed {
+            return Err(refused(
+                "qualify",
+                "no rule converts QUALIFY without a window function, or in a block with GROUP BY or HAVING"
+                    .to_owned(),
+            ));
+        }
+        let filtering = Site {
+            log,
+            scope: &scope,
+            aggregates: false,
+            outputs: true,
+            windows: true,
+        };
+        sql.push_str(&format!(
+            " QUALIFY {}",
+            condition(qualify, filtering, "qualify")?
+        ));
+    }
     if let Some(order_by) = select.get("order_by").filter(|order| !order.is_null()) {
         let ordering = Site {
             log,
             scope: &scope,
             aggregates: true,
             outputs: true,
+            windows: false,
         };
         sql.push_str(&format!(" ORDER BY {}", order(order_by, ordering)?));
     }
@@ -165,6 +194,17 @@ fn rendered(emitted: &Emitted) -> String {
             emitted.sql
         ),
         _ => emitted.sql.clone(),
+    }
+}
+
+/// Whether `node` holds a window function anywhere in it.
+fn windowed(node: &Value) -> bool {
+    match node {
+        Value::Object(fields) => fields
+            .iter()
+            .any(|(key, value)| key == WINDOW_KIND || windowed(value)),
+        Value::Array(items) => items.iter().any(windowed),
+        _ => false,
     }
 }
 
@@ -268,6 +308,7 @@ fn fixture(name: &str, node: &Value, log: &ProvenanceLog) -> Result<Table, Refus
         scope: &empty,
         aggregates: false,
         outputs: false,
+        windows: false,
     };
     let mut rows: Vec<Vec<Emitted>> = Vec::new();
     for tuple in list(values, "expressions") {
@@ -415,6 +456,15 @@ fn projected(item: &Value, site: Site<'_>) -> Result<Vec<(String, Emitted)>, Ref
                 }
             }
         }
+        Some(("window_function", _)) => match spelled(item, site.scope)? {
+            Some(name) => vec![(name, expression(item, site)?)],
+            None => {
+                return Err(refused(
+                    "window_function",
+                    "no rule names an unaliased window column as Databricks does".to_owned(),
+                ));
+            }
+        },
         _ => {
             return Err(refused(
                 "select",
@@ -442,9 +492,14 @@ fn projected(item: &Value, site: Site<'_>) -> Result<Vec<(String, Emitted)>, Ref
 /// `ORDER BY` with each item's null ordering written out as Databricks applies it.
 fn order(order_by: &Value, site: Site<'_>) -> Result<String, Refusal> {
     let order_by = understood(order_by, "order_by", &["expressions"])?;
+    ordering(list(order_by, "expressions"), site)
+}
+
+/// Ordering items, each with its null ordering written out as Databricks applies it.
+pub(crate) fn ordering(orders: &[Value], site: Site<'_>) -> Result<String, Refusal> {
     let _rule = site.log.rule(ORDER_RULE);
     let mut items: Vec<String> = Vec::new();
-    for ordered in list(order_by, "expressions") {
+    for ordered in orders {
         let ordered = understood(ordered, "ordered", &["this", "desc", "nulls_first"])?;
         let key = not_positional(expression(field(ordered, "this"), site)?, "order_by")?;
         if let DatabricksType::Array(_) = key.data_type {
