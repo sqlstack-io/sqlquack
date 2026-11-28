@@ -106,8 +106,27 @@ pub const COUNT_NAME: &str = "COUNT";
 pub const MIN_LIST_ARGUMENTS: usize = 2;
 /// Same-type functions that order their arguments, refused for arrays, whose NULL elements the engines order apart.
 pub const ORDERING_FUNCTIONS: &[&str] = &["GREATEST", "LEAST"];
-/// Functions whose every parameter is DOUBLE, so Databricks casts a STRING argument to DOUBLE.
-pub const DOUBLE_ARGUMENT_FUNCTIONS: &[&str] = &["EXP", "DEGREES", "RADIANS", "LN", "LOG", "SQRT"];
+/// Functions whose STRING arguments Databricks casts, with the type the recorded cast errors name.
+pub const TEXT_READINGS: &[(&str, DatabricksType)] = &[
+    ("EXP", DatabricksType::Double),
+    ("DEGREES", DatabricksType::Double),
+    ("RADIANS", DatabricksType::Double),
+    ("LN", DatabricksType::Double),
+    ("LOG", DatabricksType::Double),
+    ("SQRT", DatabricksType::Double),
+    ("CEIL", DatabricksType::Double),
+    ("CEILING", DatabricksType::Double),
+    ("FLOOR", DatabricksType::Double),
+    ("ROUND", DatabricksType::Double),
+    ("BROUND", DatabricksType::Double),
+    ("ISNAN", DatabricksType::Double),
+    ("NANVL", DatabricksType::Double),
+    ("BIN", DatabricksType::BigInt),
+    ("CHAR", DatabricksType::BigInt),
+    ("CHR", DatabricksType::BigInt),
+    ("MOD", DatabricksType::BigInt),
+    ("FROM_UNIXTIME", DatabricksType::BigInt),
+];
 /// Text DuckDB reads as the DOUBLE Databricks casts it to: a signed decimal of at most 30 digits and a two-digit exponent, between spaces.
 pub const PLAIN_DOUBLE_TEXT: &str =
     r" *[+-]?([0-9]{1,30}|[0-9]{0,30}\.[0-9]{1,30})([eE][+-]?[0-9]{1,2})? *";

@@ -37,9 +37,13 @@ fn logarithm(values: &[Emitted], function: &str) -> Option<Emitted> {
     ))
 }
 
-/// `LOG(base, x)` as Databricks computes it, `ln(x) / ln(base)`, NULL when either is at or below zero.
+/// `LOG(x)`, the natural logarithm where DuckDB's one-argument `log` is base 10, or `LOG(base, x)` as `ln(x) / ln(base)`, NULL at or below zero.
 fn base_logarithm(values: &[Emitted]) -> Option<Emitted> {
-    let [base, value] = values else { return None };
+    let (base, value) = match values {
+        [value] => return logarithm(values, "ln").filter(|_| value.data_type.is_numeric()),
+        [base, value] => (base, value),
+        _ => return None,
+    };
     let (b, x) = (double(base)?, double(value)?);
     Some(typed(
         format!("CASE WHEN {b} <= 0 OR {x} <= 0 THEN NULL ELSE ln({x}) / ln({b}) END"),

@@ -1,12 +1,13 @@
-//! Text read as DOUBLE the way Databricks casts a STRING argument in ANSI mode: plain numbers convert, digitless text raises, the rest raises loudly.
+//! STRING arguments read as DOUBLE or BIGINT the way Databricks casts them in ANSI mode: plain numbers convert, other text raises.
 
 use sqlquack_diagnostics::failures::constants::TEXT_NOT_A_NUMBER;
 
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::expressions::operators::whole_text;
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::constants::{
-    CAST_RULE, DIGITLESS_NUMBER_ERROR, DOUBLE_ARGUMENT_FUNCTIONS, NUMBER_READING_ERROR,
-    NUMBER_SHAPED_TEXT, PLAIN_DOUBLE_TEXT,
+    CAST_RULE, DIGITLESS_NUMBER_ERROR, NUMBER_READING_ERROR, NUMBER_SHAPED_TEXT, PLAIN_DOUBLE_TEXT,
+    TEXT_READINGS,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -25,20 +26,25 @@ fn text_as_double(text: &Emitted) -> Emitted {
     )
 }
 
-/// The arguments of `name`, each STRING column read as DOUBLE when `name` takes only DOUBLE parameters.
+/// The arguments of `name`, each STRING column read as the type Databricks casts it to for `name`.
 pub(crate) fn text_arguments(name: &str, values: Vec<Emitted>, site: Site<'_>) -> Vec<Emitted> {
-    let reads = DOUBLE_ARGUMENT_FUNCTIONS.contains(&name)
-        && values
-            .iter()
-            .any(|value| value.data_type == DatabricksType::String && value.literal.is_none());
+    let Some((_, target)) = TEXT_READINGS.iter().find(|(function, _)| *function == name) else {
+        return values;
+    };
+    let reads = values
+        .iter()
+        .any(|value| value.data_type == DatabricksType::String && value.literal.is_none());
     if !reads {
         return values;
     }
     let _rule = site.log.rule(CAST_RULE);
     values
         .into_iter()
-        .map(|value| match (value.data_type, &value.literal) {
-            (DatabricksType::String, None) => text_as_double(&value),
+        .map(|value| match (value.data_type, &value.literal, target) {
+            (DatabricksType::String, None, DatabricksType::Double) => text_as_double(&value),
+            (DatabricksType::String, None, _) => {
+                typed(whole_text(&value.sql), DatabricksType::BigInt)
+            }
             _ => value,
         })
         .collect()

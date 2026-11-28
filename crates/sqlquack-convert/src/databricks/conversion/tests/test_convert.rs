@@ -187,13 +187,15 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
         },
         ConvertTestCase {
             description: "LN is NULL at or below zero, LOG divides the logarithms, and a STRING argument reads as DOUBLE",
-            query: "SELECT ln(x1) AS l, log(2, x1) AS b, exp(s) AS e FROM input",
+            query: "SELECT ln(x1) AS l, log(2, x1) AS b, exp(s) AS e, log(x1) AS n FROM input",
             expected_sql: &[
                 "CASE WHEN CAST(\"x1\" AS DOUBLE) <= 0 THEN NULL ELSE ln(CAST(\"x1\" AS DOUBLE)) END AS \"l\"",
                 "ELSE ln(CAST(\"x1\" AS DOUBLE)) / ln(CAST(2 AS DOUBLE)) END AS \"b\"",
+                "CASE WHEN CAST(\"x1\" AS DOUBLE) <= 0 THEN NULL ELSE ln(CAST(\"x1\" AS DOUBLE)) END AS \"n\"",
                 "WHEN NOT regexp_matches(\"s\", '(?i)[0-9]|inf|nan') THEN CAST(error('text rejected as a number: the text cast to DOUBLE holds no number') AS DOUBLE)",
             ],
             expected_types: &[
+                DatabricksType::Double,
                 DatabricksType::Double,
                 DatabricksType::Double,
                 DatabricksType::Double,
