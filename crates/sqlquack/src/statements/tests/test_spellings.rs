@@ -1,5 +1,6 @@
 use std::collections::BTreeSet;
 
+use sqlquack_policy::policy::models::EvidenceDialect;
 use sqlquack_syntax::{Dialect, ParseOptions};
 use sqlquack_syntax_snowflake::parse_statements;
 
@@ -34,7 +35,10 @@ fn given_calls_when_reading_spellings_then_each_call_keys_its_full_name_and_shap
         let statements =
             parse_statements(test_case.sql, Dialect::Snowflake, &ParseOptions::default())
                 .expect("the SQL parses");
-        let keys: BTreeSet<String> = statements.iter().flat_map(tree_spellings).collect();
+        let keys: BTreeSet<String> = statements
+            .iter()
+            .flat_map(|statement| tree_spellings(statement, EvidenceDialect::Snowflake))
+            .collect();
         let calls: Vec<&str> = keys
             .iter()
             .map(String::as_str)

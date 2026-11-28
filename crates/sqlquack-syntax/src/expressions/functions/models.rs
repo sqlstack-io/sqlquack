@@ -99,7 +99,7 @@ pub struct Function {
     /// FROM, not a comma, separates the first two arguments, as in Snowflake's `DATE_PART(YEAR FROM d)`.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub from_separator: bool,
-    /// Databricks: the operator written for this call, such as `>>>` for `shiftrightunsigned`
+    /// Databricks: the operator or keyword syntax written for this call, such as `>>>` for `shiftrightunsigned`
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[ast(skip)]
     pub written_as: Option<OperatorSpelling>,

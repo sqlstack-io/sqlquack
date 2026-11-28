@@ -204,9 +204,9 @@ impl Parser<'_> {
             TokenKind::Char('*') => (MULTIPLY, 1, |l, r| binary(Expression::Mul, l, r)),
             TokenKind::Char('/') => (MULTIPLY, 1, |l, r| binary(Expression::Div, l, r)),
             TokenKind::Char('%') => (MULTIPLY, 1, |l, r| binary(Expression::Mod, l, r)),
-            TokenKind::Word if text.eq_ignore_ascii_case("DIV") => {
-                (MULTIPLY, 1, |l, r| call("div", vec![l, r]))
-            }
+            TokenKind::Word if text.eq_ignore_ascii_case("DIV") => (MULTIPLY, 1, |l, r| {
+                written_as(call("div", vec![l, r]), OperatorSpelling::Div)
+            }),
             TokenKind::Char('+') => (ADD, 1, |l, r| binary(Expression::Add, l, r)),
             TokenKind::Char('-') => (ADD, 1, |l, r| binary(Expression::Sub, l, r)),
             TokenKind::Op if text == CONCAT_OPERATOR => {
