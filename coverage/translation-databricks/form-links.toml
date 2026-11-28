@@ -40,6 +40,14 @@ constructs = ["clause:qualify"]
 forms = ["db.query.select-qualify"]
 
 [[link]]
+constructs = ["clause:where"]
+forms = ["db.query.select-where"]
+
+[[link]]
+constructs = ["clause:distinct"]
+forms = ["db.query.select-column-list"]
+
+[[link]]
 constructs = ["fn:ROLLUP"]
 forms = ["db.query.select-groupby.group-by-rollup-cube"]
 

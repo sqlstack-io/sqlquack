@@ -1,0 +1,59 @@
+# Translation obligations of family expressions: per form, the generated cases' type
+# combinations, NULL arguments and error parity, each met by its one case. Written by
+# scripts/build_translation_obligations_databricks.py from the published cases' tags;
+# boundary cases are uncited. See README.md.
+
+[[obligation]]
+id = "db.expressions.window-functions.t001"
+form = "db.expressions.window-functions"
+kind = "type_combination"
+target = "INT, INT"
+note = "sum per partition, and counts over the default frame, which takes peers. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/window-functions.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.window-functions.t002"
+form = "db.expressions.window-functions"
+kind = "type_combination"
+target = "INT"
+note = "min, max and count_if over sliding frames, one of them a single earlier row. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/window-functions.pd2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.window-functions.t003"
+form = "db.expressions.window-functions"
+kind = "type_combination"
+target = "INT, INT, DECIMAL(5,2)"
+note = "sum of INT past INT's range over the default frame, and of a decimal per partition. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/window-functions.pd3.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.window-functions.t004"
+form = "db.expressions.window-functions"
+kind = "type_combination"
+target = "INT, INT"
+note = "DISTINCT over a windowed count. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/window-functions.pd4.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.window-functions.t005"
+form = "db.expressions.window-functions"
+kind = "type_combination"
+target = "INT, INT"
+note = "an outer ORDER BY naming a window column. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/window-functions.pd5.hand.toml#p001"]
+required = true

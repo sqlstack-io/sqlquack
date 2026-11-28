@@ -6340,6 +6340,17 @@ cases = ["cases/translation/functions/cume-dist.hand.toml#t001_window"]
 required = true
 
 [[obligation]]
+id = "db.functions.cume-dist.t002"
+form = "db.functions.cume-dist"
+kind = "type_combination"
+target = "INT, INT"
+note = "cume_dist per partition counting peers. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/cume-dist.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
 id = "db.functions.date.t001"
 form = "db.functions.date"
 kind = "type_combination"
@@ -7448,6 +7459,28 @@ note = "degrees with a STRING value where the page documents INT."
 catches = "a value returned where Databricks rejects the arguments, or another error kind"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/degrees.toml#t007_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.dense-rank.t001"
+form = "db.functions.dense-rank"
+kind = "type_combination"
+target = "INT, INT"
+note = "dense_rank over ties with NULLs first descending. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/dense-rank.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.dense-rank.t002"
+form = "db.functions.dense-rank"
+kind = "type_combination"
+target = "INT, INT"
+note = "dense_rank unaliased. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/dense-rank.pd2.hand.toml#p001"]
 required = true
 
 [[obligation]]
@@ -8676,6 +8709,17 @@ id = "db.functions.first-value.t001"
 form = "db.functions.first-value"
 kind = "type_combination"
 target = "INT"
+note = "first_value over the default frame, ignoring NULLs by flag and by clause, over a frame ahead. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/first-value.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.first-value.t002"
+form = "db.functions.first-value"
+kind = "type_combination"
+target = "INT"
 note = "first-value with arguments of type INT."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
@@ -8683,7 +8727,7 @@ cases = ["cases/translation/functions/first-value.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.first-value.t002"
+id = "db.functions.first-value.t003"
 form = "db.functions.first-value"
 kind = "type_combination"
 target = "STRING"
@@ -8694,7 +8738,7 @@ cases = ["cases/translation/functions/first-value.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.first-value.t003"
+id = "db.functions.first-value.t004"
 form = "db.functions.first-value"
 kind = "null_argument"
 target = "INT"
@@ -8705,7 +8749,7 @@ cases = ["cases/translation/functions/first-value.toml#t003_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.first-value.t004"
+id = "db.functions.first-value.t005"
 form = "db.functions.first-value"
 kind = "error_parity"
 target = "STRING"
@@ -16518,6 +16562,28 @@ required = true
 id = "db.functions.lag.t001"
 form = "db.functions.lag"
 kind = "type_combination"
+target = "INT"
+note = "lag by the default, two with a default, a negative offset and zero. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/lag.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.lag.t002"
+form = "db.functions.lag"
+kind = "type_combination"
+target = "INT, STRING"
+note = "lag of text per partition with a text default, a NULL value kept. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/lag.pd2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.lag.t003"
+form = "db.functions.lag"
+kind = "type_combination"
 target = "INT, INT"
 note = "lag with arguments of type INT, INT."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -16526,7 +16592,7 @@ cases = ["cases/translation/functions/lag.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.lag.t002"
+id = "db.functions.lag.t004"
 form = "db.functions.lag"
 kind = "type_combination"
 target = "STRING, INT"
@@ -16537,7 +16603,7 @@ cases = ["cases/translation/functions/lag.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.lag.t003"
+id = "db.functions.lag.t005"
 form = "db.functions.lag"
 kind = "type_combination"
 target = "INT, BIGINT"
@@ -16548,7 +16614,7 @@ cases = ["cases/translation/functions/lag.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.lag.t004"
+id = "db.functions.lag.t006"
 form = "db.functions.lag"
 kind = "type_combination"
 target = "INT, SMALLINT"
@@ -16559,7 +16625,7 @@ cases = ["cases/translation/functions/lag.toml#t004_types_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.lag.t005"
+id = "db.functions.lag.t007"
 form = "db.functions.lag"
 kind = "null_argument"
 target = "INT, INT"
@@ -16570,7 +16636,7 @@ cases = ["cases/translation/functions/lag.toml#t005_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.lag.t006"
+id = "db.functions.lag.t008"
 form = "db.functions.lag"
 kind = "null_argument"
 target = "INT, INT"
@@ -16581,7 +16647,7 @@ cases = ["cases/translation/functions/lag.toml#t006_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.lag.t007"
+id = "db.functions.lag.t009"
 form = "db.functions.lag"
 kind = "error_parity"
 target = "STRING, INT"
@@ -16672,6 +16738,28 @@ required = true
 id = "db.functions.last-value.t001"
 form = "db.functions.last-value"
 kind = "type_combination"
+target = "INT, INT"
+note = "last_value over the default frame, which reaches the last peer, and to the end. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/last-value.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.last-value.t002"
+form = "db.functions.last-value"
+kind = "type_combination"
+target = "INT"
+note = "last_value over a sliding frame, and ignoring NULLs over a running one. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/last-value.pd2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.last-value.t003"
+form = "db.functions.last-value"
+kind = "type_combination"
 target = "INT"
 note = "last-value with arguments of type INT."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -16680,7 +16768,7 @@ cases = ["cases/translation/functions/last-value.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.last-value.t002"
+id = "db.functions.last-value.t004"
 form = "db.functions.last-value"
 kind = "type_combination"
 target = "STRING"
@@ -16691,7 +16779,7 @@ cases = ["cases/translation/functions/last-value.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.last-value.t003"
+id = "db.functions.last-value.t005"
 form = "db.functions.last-value"
 kind = "null_argument"
 target = "INT"
@@ -16702,7 +16790,7 @@ cases = ["cases/translation/functions/last-value.toml#t003_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.last-value.t004"
+id = "db.functions.last-value.t006"
 form = "db.functions.last-value"
 kind = "error_parity"
 target = "STRING"
@@ -16750,6 +16838,17 @@ id = "db.functions.lead.t001"
 form = "db.functions.lead"
 kind = "type_combination"
 target = "INT, INT"
+note = "lead per partition with a default, past the end, and a negative offset. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/lead.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.lead.t002"
+form = "db.functions.lead"
+kind = "type_combination"
+target = "INT, INT"
 note = "lead with arguments of type INT, INT."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
@@ -16757,7 +16856,7 @@ cases = ["cases/translation/functions/lead.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.lead.t002"
+id = "db.functions.lead.t003"
 form = "db.functions.lead"
 kind = "type_combination"
 target = "STRING, INT"
@@ -16768,7 +16867,7 @@ cases = ["cases/translation/functions/lead.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.lead.t003"
+id = "db.functions.lead.t004"
 form = "db.functions.lead"
 kind = "type_combination"
 target = "INT, BIGINT"
@@ -16779,7 +16878,7 @@ cases = ["cases/translation/functions/lead.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.lead.t004"
+id = "db.functions.lead.t005"
 form = "db.functions.lead"
 kind = "type_combination"
 target = "INT, SMALLINT"
@@ -16790,7 +16889,7 @@ cases = ["cases/translation/functions/lead.toml#t004_types_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.lead.t005"
+id = "db.functions.lead.t006"
 form = "db.functions.lead"
 kind = "null_argument"
 target = "INT, INT"
@@ -16801,7 +16900,7 @@ cases = ["cases/translation/functions/lead.toml#t005_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.lead.t006"
+id = "db.functions.lead.t007"
 form = "db.functions.lead"
 kind = "null_argument"
 target = "INT, INT"
@@ -16812,7 +16911,7 @@ cases = ["cases/translation/functions/lead.toml#t006_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.lead.t007"
+id = "db.functions.lead.t008"
 form = "db.functions.lead"
 kind = "error_parity"
 target = "STRING, INT"
@@ -20156,6 +20255,17 @@ cases = ["cases/translation/functions/nth-value.hand.toml#t002_ignore_nulls"]
 required = true
 
 [[obligation]]
+id = "db.functions.nth-value.t003"
+form = "db.functions.nth-value"
+kind = "type_combination"
+target = "INT"
+note = "nth_value over the whole partition, and ignoring NULLs over the default frame. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/nth-value.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
 id = "db.functions.ntile.t001"
 form = "db.functions.ntile"
 kind = "type_combination"
@@ -20175,6 +20285,28 @@ note = "ntile(3) over four rows. Hand-written."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/ntile.hand.toml#t002_uneven"]
+required = true
+
+[[obligation]]
+id = "db.functions.ntile.t003"
+form = "db.functions.ntile"
+kind = "type_combination"
+target = "INT, INT"
+note = "ntile with more buckets than some partitions have rows. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/ntile.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.ntile.t004"
+form = "db.functions.ntile"
+kind = "type_combination"
+target = "INT"
+note = "ntile of an odd count. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/ntile.pd2.hand.toml#p001"]
 required = true
 
 [[obligation]]
@@ -20890,6 +21022,28 @@ note = "parse-url with a ARRAY<INT> value where the page documents STRING."
 catches = "a value returned where Databricks rejects the arguments, or another error kind"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/parse-url.toml#t008_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.percent-rank.t001"
+form = "db.functions.percent-rank"
+kind = "type_combination"
+target = "INT, INT"
+note = "percent_rank per partition, a one-row partition included. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/percent-rank.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.percent-rank.t002"
+form = "db.functions.percent-rank"
+kind = "type_combination"
+target = "INT, INT"
+note = "percent_rank unaliased. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/percent-rank.pd2.hand.toml#p001"]
 required = true
 
 [[obligation]]
@@ -22774,6 +22928,28 @@ cases = ["cases/translation/functions/range.toml#t007_wrong_kind"]
 required = true
 
 [[obligation]]
+id = "db.functions.rank.t001"
+form = "db.functions.rank"
+kind = "type_combination"
+target = "INT, INT"
+note = "rank over ties and NULLs. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/rank.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.rank.t002"
+form = "db.functions.rank"
+kind = "type_combination"
+target = "INT, INT"
+note = "rank unaliased with a partition, in descending order. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/rank.pd2.hand.toml#p001"]
+required = true
+
+[[obligation]]
 id = "db.functions.reduce.t001"
 form = "db.functions.reduce"
 kind = "type_combination"
@@ -24487,6 +24663,39 @@ note = "round with a STRING value where the page documents INT."
 catches = "a value returned where Databricks rejects the arguments, or another error kind"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/round.toml#t007_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.row-number.t001"
+form = "db.functions.row-number"
+kind = "type_combination"
+target = "INT, INT"
+note = "row_number per partition in descending order, NULLs last. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/row-number.pd.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.row-number.t002"
+form = "db.functions.row-number"
+kind = "type_combination"
+target = "INT"
+note = "row_number unaliased, named as Databricks names it, NULLs first. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/row-number.pd2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.row-number.t003"
+form = "db.functions.row-number"
+kind = "type_combination"
+target = "INT, INT"
+note = "row_number in an expression, counted after WHERE. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/row-number.pd3.hand.toml#p001"]
 required = true
 
 [[obligation]]
