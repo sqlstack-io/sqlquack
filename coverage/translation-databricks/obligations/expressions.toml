@@ -4,6 +4,182 @@
 # boundary cases are uncited. See README.md.
 
 [[obligation]]
+id = "db.expressions.array-type.t001"
+form = "db.expressions.array-type"
+kind = "type_combination"
+target = "ARRAY<INT>"
+note = "an ARRAY<INT> cast to ARRAY<BIGINT>. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/array-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.bigint-type.t001"
+form = "db.expressions.bigint-type"
+kind = "type_combination"
+target = "INT"
+note = "INT values cast to BIGINT. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/bigint-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.binary-type.t001"
+form = "db.expressions.binary-type"
+kind = "type_combination"
+target = "STRING"
+note = "strings cast to BINARY as UTF-8 bytes. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/binary-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.boolean-type.t001"
+form = "db.expressions.boolean-type"
+kind = "type_combination"
+target = "INT"
+note = "INT values cast to BOOLEAN, zero and not. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/boolean-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.date-type.t001"
+form = "db.expressions.date-type"
+kind = "type_combination"
+target = "STRING"
+note = "date strings cast to DATE. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/date-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.decimal-type.t001"
+form = "db.expressions.decimal-type"
+kind = "type_combination"
+target = "INT"
+note = "INT values cast to DECIMAL(10,2). Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/decimal-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.double-type.t001"
+form = "db.expressions.double-type"
+kind = "type_combination"
+target = "INT"
+note = "INT values cast to DOUBLE. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/double-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.float-type.t001"
+form = "db.expressions.float-type"
+kind = "type_combination"
+target = "INT"
+note = "small INT values cast to FLOAT, exact in its precision. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/float-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.interval-type.t001"
+form = "db.expressions.interval-type"
+kind = "type_combination"
+target = "INTERVAL DAY"
+note = "INTERVAL DAY values cast to INTERVAL DAY TO SECOND. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/interval-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.interval-type.interval.t001"
+form = "db.expressions.interval-type.interval"
+kind = "type_combination"
+target = "DATE"
+note = "a year-month interval literal added to dates. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/interval-type.interval.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.interval-type.interval.literals.t001"
+form = "db.expressions.interval-type.interval.literals"
+kind = "type_combination"
+target = "DATE"
+note = "a day-time interval literal added to dates. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/interval-type.interval.literals.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.map-type.t001"
+form = "db.expressions.map-type"
+kind = "type_combination"
+target = "MAP<STRING,INT>"
+note = "a MAP<STRING,INT> cast to MAP<STRING,BIGINT>. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/map-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.smallint-type.t001"
+form = "db.expressions.smallint-type"
+kind = "type_combination"
+target = "INT"
+note = "INT values in range cast to SMALLINT. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/smallint-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.struct-type.t001"
+form = "db.expressions.struct-type"
+kind = "type_combination"
+target = "STRUCT<a:INT,b:STRING>"
+note = "a STRUCT<a:INT,b:STRING> cast to STRUCT<a:BIGINT,b:STRING>. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/struct-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.tinyint-type.t001"
+form = "db.expressions.tinyint-type"
+kind = "type_combination"
+target = "INT"
+note = "INT values in range cast to TINYINT. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/tinyint-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.expressions.variant-type.t001"
+form = "db.expressions.variant-type"
+kind = "type_combination"
+target = "INT"
+note = "INT values cast to VARIANT. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/expressions/variant-type.pe.hand.toml#p001"]
+required = true
+
+[[obligation]]
 id = "db.expressions.window-functions.t001"
 form = "db.expressions.window-functions"
 kind = "type_combination"
