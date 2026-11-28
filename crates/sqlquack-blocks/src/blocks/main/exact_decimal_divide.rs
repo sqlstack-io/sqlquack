@@ -32,8 +32,8 @@ pub fn exact_decimal_divide(
     };
     let checks = null_checks(left.0, right.0, constant.is_some());
     let rounding = (result_scale, truncated);
-    if let Some((quotient, places)) = short_quotient((left, right), rounding, constant) {
-        let value = scaled(&quotient, (result, places), log)?;
+    if let Some(quotient) = short_quotient((left, right), rounding, constant) {
+        let value = scaled(&quotient, (result, result_scale), log)?;
         return Ok((
             match constant.is_none() && divisor != Divisor::Guarded {
                 false => value,
