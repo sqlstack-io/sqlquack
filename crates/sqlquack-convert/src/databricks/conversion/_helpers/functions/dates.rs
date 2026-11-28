@@ -5,13 +5,14 @@ use sqlquack_diagnostics::failures::constants::ARGUMENT_REJECTED;
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::operators::as_type;
 use crate::databricks::conversion::_helpers::expressions::patterns::case_mapped;
+use crate::databricks::conversion::_helpers::expressions::texts::read_text;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::constants::{
-    DATE_TRUNC_UNITS, DATE_YEARS, EPOCH_DATE, EPOCH_DECIMAL_SCALE, EPOCH_RANGE_ERROR,
-    EPOCH_SECONDS_BOUND, FIELD_BOUNDS_ERROR, INT_RANGE, INT_SPAN, JAVA_YEAR_MAX, MICROS_PER_MILLI,
-    MICROS_PER_SECOND, MONTHS_BETWEEN_SCALE, SECONDS_PER_DAY, SECONDS_PER_MONTH,
-    TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS, UNFORMATTED_YEAR_ERROR, UNIX_SECONDS_YEARS_1_TO_9999,
-    UPPERED_CHARACTERS, WEEKDAY_ERROR, WEEKDAY_NAMES,
+    DATE_READING_ERROR, DATE_TRUNC_UNITS, DATE_YEARS, EPOCH_DATE, EPOCH_DECIMAL_SCALE,
+    EPOCH_RANGE_ERROR, EPOCH_SECONDS_BOUND, FIELD_BOUNDS_ERROR, INT_RANGE, INT_SPAN, JAVA_YEAR_MAX,
+    MICROS_PER_MILLI, MICROS_PER_SECOND, MONTHS_BETWEEN_SCALE, PLAIN_DATE_TEXT, SECONDS_PER_DAY,
+    SECONDS_PER_MONTH, TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS, UNFORMATTED_YEAR_ERROR,
+    UNIX_SECONDS_YEARS_1_TO_9999, UPPERED_CHARACTERS, WEEKDAY_ERROR, WEEKDAY_NAMES,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -60,6 +61,9 @@ pub(crate) fn date_rewrite(name: &str) -> Option<Rewrite> {
         "MAKE_DATE" => made_date,
         "NEXT_DAY" => next_day,
         "FROM_UNIXTIME" => from_unixtime,
+        "TO_DATE" => |values| to_date(values, false),
+        "TRY_TO_DATE" => |values| to_date(values, true),
+        "TO_TIMESTAMP" => to_timestamp,
         _ => return None,
     };
     Some(rewrite)
@@ -281,6 +285,43 @@ fn from_epoch(values: &[Emitted], unit: i64) -> Option<Emitted> {
              WHEN abs({x}) < {bound} THEN CAST(trunc({x} * {unit}) AS BIGINT) \
              ELSE CAST(error('{EPOCH_RANGE_ERROR}') AS BIGINT) END)"
         ))),
+        _ => None,
+    }
+}
+
+/// `TO_DATE(x)` or `TRY_TO_DATE(x)` without a format: text read as a date, a timestamp's date; TRY gives NULL for text holding no date, and raises for text no rule reads.
+fn to_date(values: &[Emitted], try_read: bool) -> Option<Emitted> {
+    let [value] = values else { return None };
+    let x = &value.sql;
+    match value.data_type {
+        DatabricksType::Date => Some(typed(x.clone(), DatabricksType::Date)),
+        DatabricksType::Timestamp | DatabricksType::TimestampNtz => {
+            Some(typed(format!("CAST({x} AS DATE)"), DatabricksType::Date))
+        }
+        DatabricksType::String if try_read => Some(typed(
+            format!(
+                "(CASE WHEN {x} IS NULL OR NOT regexp_matches({x}, '[0-9]') THEN CAST(NULL AS DATE) \
+                 WHEN regexp_full_match({x}, '{PLAIN_DATE_TEXT}') THEN TRY_CAST({x} AS DATE) \
+                 ELSE CAST(error('{DATE_READING_ERROR}') AS DATE) END)"
+            ),
+            DatabricksType::Date,
+        )),
+        DatabricksType::String => read_text(value, DatabricksType::Date),
+        _ => None,
+    }
+}
+
+/// `TO_TIMESTAMP(x)` without a format: an INT as seconds from the epoch, text read as a timestamp, a date at midnight UTC.
+fn to_timestamp(values: &[Emitted]) -> Option<Emitted> {
+    let [value] = values else { return None };
+    match value.data_type {
+        DatabricksType::Timestamp => Some(value.clone()),
+        DatabricksType::Date | DatabricksType::TimestampNtz => Some(typed(
+            as_type(value, DatabricksType::Timestamp),
+            DatabricksType::Timestamp,
+        )),
+        DatabricksType::String => read_text(value, DatabricksType::Timestamp),
+        data_type if small_integer(data_type) => from_epoch(values, MICROS_PER_SECOND),
         _ => None,
     }
 }
