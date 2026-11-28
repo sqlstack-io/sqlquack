@@ -186,6 +186,20 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Int, DatabricksType::BigInt],
         },
         ConvertTestCase {
+            description: "LN is NULL at or below zero, LOG divides the logarithms, and a STRING argument reads as DOUBLE",
+            query: "SELECT ln(x1) AS l, log(2, x1) AS b, exp(s) AS e FROM input",
+            expected_sql: &[
+                "CASE WHEN CAST(\"x1\" AS DOUBLE) <= 0 THEN NULL ELSE ln(CAST(\"x1\" AS DOUBLE)) END AS \"l\"",
+                "ELSE ln(CAST(\"x1\" AS DOUBLE)) / ln(CAST(2 AS DOUBLE)) END AS \"b\"",
+                "WHEN NOT regexp_matches(\"s\", '(?i)[0-9]|inf|nan') THEN CAST(error('text rejected as a number: the text cast to DOUBLE holds no number') AS DOUBLE)",
+            ],
+            expected_types: &[
+                DatabricksType::Double,
+                DatabricksType::Double,
+                DatabricksType::Double,
+            ],
+        },
+        ConvertTestCase {
             description: "PMOD of TINYINT adds in INT before narrowing, so pmod(-1Y, -128Y) stays -1",
             query: "SELECT pmod(CAST(x1 AS TINYINT), CAST(x1 AS TINYINT)) AS p FROM input",
             expected_sql: &[
@@ -489,6 +503,11 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "an exponent literal just above DOUBLE's largest, which rounds to it but Databricks rejects",
             query: "SELECT 1.7976931348623158e308 AS f FROM input",
             expected_reason: "1.7976931348623158e308",
+        },
+        RefuseTestCase {
+            description: "SIN, whose last bit Databricks rounds unlike DuckDB's libm",
+            query: "SELECT sin(x1) AS r FROM input",
+            expected_reason: "SIN",
         },
         RefuseTestCase {
             description: "an OFFSET no rule reads",

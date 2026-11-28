@@ -7,6 +7,7 @@ use crate::databricks::conversion::_helpers::expressions::operators::{as_type, c
 use crate::databricks::conversion::_helpers::functions::arrays::array_rewrite;
 use crate::databricks::conversion::_helpers::functions::dates::date_rewrite;
 use crate::databricks::conversion::_helpers::functions::indexes::index_rewrite;
+use crate::databricks::conversion::_helpers::functions::maths::math_rewrite;
 use crate::databricks::conversion::_helpers::functions::numbers::number_rewrite;
 use crate::databricks::conversion::_helpers::functions::strings::{digest, string_rewrite};
 use crate::databricks::conversion::_helpers::support::scope::Site;
@@ -26,12 +27,13 @@ type Family = fn(&str) -> Option<Rewrite>;
 
 /// The rule and rewrite of the function `name`, `None` when no rewrite handles it.
 pub(crate) fn rewrite(name: &str) -> Option<(&'static str, Rewrite)> {
-    let families: [(&str, Family); 6] = [
+    let families: [(&str, Family); 7] = [
         (REWRITE_RULE, own_rewrite),
         (REWRITE_RULE, array_rewrite),
         (DATE_FUNCTION_RULE, date_rewrite),
         (STRING_FUNCTION_RULE, string_rewrite),
         (NUMBER_FUNCTION_RULE, number_rewrite),
+        (NUMBER_FUNCTION_RULE, math_rewrite),
         (INDEX_RULE, index_rewrite),
     ];
     for (rule, family) in families {

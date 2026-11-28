@@ -453,7 +453,7 @@ fn bit_get(values: &[Emitted]) -> Option<Emitted> {
 }
 
 /// A value's SQL as DOUBLE when DuckDB converts it exactly as Databricks does.
-fn double(value: &Emitted) -> Option<String> {
+pub(crate) fn double(value: &Emitted) -> Option<String> {
     match same_cast(value.data_type, DatabricksType::Double) {
         true => Some(as_type(value, DatabricksType::Double)),
         false => None,

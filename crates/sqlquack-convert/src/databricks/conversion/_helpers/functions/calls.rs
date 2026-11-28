@@ -6,6 +6,7 @@ use sqlquack_diagnostics::refusals::models::Refusal;
 use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
 use crate::databricks::conversion::_helpers::expressions::literals::{cast_value, typed};
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
+use crate::databricks::conversion::_helpers::expressions::texts::text_arguments;
 use crate::databricks::conversion::_helpers::functions::rewrites::{applied, rewrite};
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{
@@ -54,7 +55,12 @@ pub(crate) fn call(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
             cast_function(&name, args, site)
         }
         _ => match rewrite(&name) {
-            Some(rewrite) => applied(&name, rewrite, &arguments(args, site)?, site),
+            Some(rewrite) => applied(
+                &name,
+                rewrite,
+                &text_arguments(&name, arguments(args, site)?, site),
+                site,
+            ),
             None => same_function(&name, args, site),
         },
     }

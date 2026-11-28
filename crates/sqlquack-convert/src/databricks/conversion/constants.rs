@@ -106,6 +106,18 @@ pub const COUNT_NAME: &str = "COUNT";
 pub const MIN_LIST_ARGUMENTS: usize = 2;
 /// Same-type functions that order their arguments, refused for arrays, whose NULL elements the engines order apart.
 pub const ORDERING_FUNCTIONS: &[&str] = &["GREATEST", "LEAST"];
+/// Functions whose every parameter is DOUBLE, so Databricks casts a STRING argument to DOUBLE.
+pub const DOUBLE_ARGUMENT_FUNCTIONS: &[&str] = &["EXP", "DEGREES", "RADIANS", "LN", "LOG", "SQRT"];
+/// Text DuckDB reads as the DOUBLE Databricks casts it to: a signed decimal of at most 30 digits and a two-digit exponent, between spaces.
+pub const PLAIN_DOUBLE_TEXT: &str =
+    r" *[+-]?([0-9]{1,30}|[0-9]{0,30}\.[0-9]{1,30})([eE][+-]?[0-9]{1,2})? *";
+/// Text that may hold a number Databricks reads: a digit, or the words of infinity and NaN.
+pub const NUMBER_SHAPED_TEXT: &str = "(?i)[0-9]|inf|nan";
+/// What a raise for text with no digit says after the text-not-a-number fragment.
+pub const DIGITLESS_NUMBER_ERROR: &str = "the text cast to DOUBLE holds no number";
+/// The error text cast to DOUBLE raises when no rule shows how Databricks reads it.
+pub const NUMBER_READING_ERROR: &str =
+    "the text cast to DOUBLE is not one no rule reads as Databricks does";
 /// The most digits a literal has for one rounding to DOUBLE to match Databricks's exact conversion.
 pub const DOUBLE_EXACT_DIGITS: usize = 15;
 /// The length of `YYYY-MM-DD`.
