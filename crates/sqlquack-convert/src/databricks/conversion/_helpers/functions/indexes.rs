@@ -7,7 +7,9 @@ use crate::databricks::conversion::_helpers::expressions::operators::as_type;
 use crate::databricks::conversion::_helpers::functions::arrays::{element, known, small_index};
 use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
 use crate::databricks::conversion::_helpers::support::typing::same_cast;
-use crate::databricks::conversion::constants::{INDEX_BOUNDS_ERROR, INDEX_ZERO_ERROR};
+use crate::databricks::conversion::constants::{
+    INDEX_BOUNDS_ERROR, INDEX_ZERO_ERROR, SLICE_LENGTH_ERROR, SLICE_START_ERROR,
+};
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
 /// The rewrite of the indexing function `name`, `None` when no rewrite handles it.
@@ -17,6 +19,7 @@ pub(crate) fn index_rewrite(name: &str) -> Option<Rewrite> {
         "ELEMENT_AT" => element_at,
         "TRY_ELEMENT_AT" => try_element_at,
         "ELT" => elt,
+        "SLICE" => slice,
         _ => return None,
     };
     Some(rewrite)
@@ -41,6 +44,30 @@ fn split_part(values: &[Emitted]) -> Option<Emitted> {
             n = index.sql
         ),
         DatabricksType::String,
+    ))
+}
+
+/// `SLICE(a, start, length)` as Spark slices: a negative `start` counts from the end, a start outside the array gives `[]`; a `start` of 0 or a negative `length` raises.
+fn slice(values: &[Emitted]) -> Option<Emitted> {
+    let [array, start, length] = values else {
+        return None;
+    };
+    element(array)?;
+    small_index(start)?;
+    small_index(length)?;
+    let (a, s, l) = (&array.sql, &start.sql, &length.sql);
+    let from = format!(
+        "(CASE WHEN {s} < 0 THEN CAST({s} AS BIGINT) + len({a}) ELSE CAST({s} AS BIGINT) - 1 END)"
+    );
+    Some(typed(
+        format!(
+            "(CASE WHEN {a} IS NULL OR {s} IS NULL OR {l} IS NULL THEN NULL \
+             WHEN {s} = 0 THEN error('{ARGUMENT_REJECTED}: {SLICE_START_ERROR}') \
+             WHEN {l} < 0 THEN error('{ARGUMENT_REJECTED}: {SLICE_LENGTH_ERROR}') \
+             WHEN {from} < 0 OR {from} >= len({a}) THEN list_slice({a}, 1, 0) \
+             ELSE list_slice({a}, {from} + 1, least({from} + {l}, len({a}))) END)"
+        ),
+        array.data_type,
     ))
 }
 

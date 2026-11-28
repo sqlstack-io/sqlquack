@@ -6,7 +6,9 @@ use sqlquack_diagnostics::refusals::models::Refusal;
 use crate::databricks::conversion::_helpers::expressions::dispatch::expression;
 use crate::databricks::conversion::_helpers::expressions::literals::{cast_value, typed};
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
-use crate::databricks::conversion::_helpers::expressions::texts::text_arguments;
+use crate::databricks::conversion::_helpers::expressions::texts::{
+    narrowed_arguments, text_arguments,
+};
 use crate::databricks::conversion::_helpers::functions::rewrites::{applied, rewrite};
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{
@@ -58,7 +60,7 @@ pub(crate) fn call(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
             Some(rewrite) => applied(
                 &name,
                 rewrite,
-                &text_arguments(&name, arguments(args, site)?, site),
+                &narrowed_arguments(&name, text_arguments(&name, arguments(args, site)?, site)),
                 site,
             ),
             None => same_function(&name, args, site),
@@ -151,7 +153,7 @@ fn aggregate(
         _ => None,
     };
     result.ok_or_else(|| {
-        refused_function(
+        outside_function(
             name,
             format!(
                 "no rule converts {name} of {}{}",

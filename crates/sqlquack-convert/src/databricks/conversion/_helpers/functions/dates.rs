@@ -7,10 +7,11 @@ use crate::databricks::conversion::_helpers::expressions::operators::as_type;
 use crate::databricks::conversion::_helpers::expressions::patterns::case_mapped;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::constants::{
-    DATE_TRUNC_UNITS, DATE_YEARS, EPOCH_DATE, FIELD_BOUNDS_ERROR, INT_RANGE, INT_SPAN,
-    JAVA_YEAR_MAX, MICROS_PER_MILLI, MICROS_PER_SECOND, MONTHS_BETWEEN_SCALE, SECONDS_PER_DAY,
-    SECONDS_PER_MONTH, TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS, UNFORMATTED_YEAR_ERROR,
-    UNIX_SECONDS_YEARS_1_TO_9999, UPPERED_CHARACTERS, WEEKDAY_ERROR, WEEKDAY_NAMES,
+    DATE_TRUNC_UNITS, DATE_YEARS, EPOCH_DATE, EPOCH_DECIMAL_SCALE, EPOCH_RANGE_ERROR,
+    EPOCH_SECONDS_BOUND, FIELD_BOUNDS_ERROR, INT_RANGE, INT_SPAN, JAVA_YEAR_MAX, MICROS_PER_MILLI,
+    MICROS_PER_SECOND, MONTHS_BETWEEN_SCALE, SECONDS_PER_DAY, SECONDS_PER_MONTH,
+    TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS, UNFORMATTED_YEAR_ERROR, UNIX_SECONDS_YEARS_1_TO_9999,
+    UPPERED_CHARACTERS, WEEKDAY_ERROR, WEEKDAY_NAMES,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -242,18 +243,46 @@ fn unix_date(values: &[Emitted]) -> Option<Emitted> {
     })
 }
 
-/// `TIMESTAMP_SECONDS`, `_MILLIS` or `_MICROS` of an INT, whose every value both engines hold.
+/// `TIMESTAMP_SECONDS`, `_MILLIS` or `_MICROS` of an INT; of a BIGINT, and for seconds a DECIMAL to microseconds or a truncated DOUBLE, within the epoch bound.
 fn from_epoch(values: &[Emitted], unit: i64) -> Option<Emitted> {
     let [count] = values else { return None };
-    small_integer(count.data_type).then(|| {
+    let x = &count.sql;
+    let timestamp = |micros: String| {
         typed(
-            format!(
-                "CAST(make_timestamp(CAST({} AS BIGINT) * {unit}) AS TIMESTAMPTZ)",
-                count.sql
-            ),
+            format!("CAST(make_timestamp({micros}) AS TIMESTAMPTZ)"),
             DatabricksType::Timestamp,
         )
-    })
+    };
+    if small_integer(count.data_type) {
+        return Some(timestamp(format!("CAST({x} AS BIGINT) * {unit}")));
+    }
+    let bound = EPOCH_SECONDS_BOUND * (MICROS_PER_SECOND / unit);
+    let bounded = |test: String, micros: String| {
+        timestamp(format!(
+            "(CASE WHEN {x} IS NULL THEN NULL WHEN {test} THEN {micros} \
+             ELSE CAST(error('{EPOCH_RANGE_ERROR}') AS BIGINT) END)"
+        ))
+    };
+    match count.data_type {
+        DatabricksType::BigInt if unit > 1 => Some(bounded(
+            format!("{x} BETWEEN -{bound} AND {bound}"),
+            format!("{x} * {unit}"),
+        )),
+        DatabricksType::Decimal { scale, .. }
+            if unit == MICROS_PER_SECOND && scale <= EPOCH_DECIMAL_SCALE =>
+        {
+            Some(bounded(
+                format!("{x} BETWEEN -{bound} AND {bound}"),
+                format!("CAST({x} * {unit} AS BIGINT)"),
+            ))
+        }
+        DatabricksType::Double if unit == MICROS_PER_SECOND => Some(timestamp(format!(
+            "(CASE WHEN {x} IS NULL OR isnan({x}) OR isinf({x}) THEN NULL \
+             WHEN abs({x}) < {bound} THEN CAST(trunc({x} * {unit}) AS BIGINT) \
+             ELSE CAST(error('{EPOCH_RANGE_ERROR}') AS BIGINT) END)"
+        ))),
+        _ => None,
+    }
 }
 
 /// `DATE_FROM_UNIX_DATE(n)` of a SMALLINT or TINYINT; DuckDB's dates end a day short of INT's range.

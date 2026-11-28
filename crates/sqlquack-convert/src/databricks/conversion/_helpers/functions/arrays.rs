@@ -21,6 +21,7 @@ pub(crate) fn array_rewrite(name: &str) -> Option<Rewrite> {
         "ARRAY_PREPEND" => array_prepend,
         "ARRAY_COMPACT" => array_compact,
         "REVERSE" => array_reverse,
+        "ARRAY_DISTINCT" => array_distinct,
         "SORT_ARRAY" => sort_array,
         "ARRAY_SORT" => array_sort,
         "ARRAY_REPEAT" => array_repeat,
@@ -202,12 +203,34 @@ fn array_compact(values: &[Emitted]) -> Option<Emitted> {
     ))
 }
 
-/// `REVERSE` of an array; a string's reversal is left to a later rule.
+/// `REVERSE` of an array, or of a string by code points as Spark reverses it, where DuckDB keeps grapheme clusters whole.
 fn array_reverse(values: &[Emitted]) -> Option<Emitted> {
     let [array] = values else { return None };
+    if array.data_type == DatabricksType::String {
+        return Some(typed(
+            format!(
+                "array_to_string(list_reverse(regexp_extract_all({}, '(?s).')), '')",
+                array.sql
+            ),
+            DatabricksType::String,
+        ));
+    }
     element(array)?;
     Some(typed(
         format!("list_reverse({})", array.sql),
+        array.data_type,
+    ))
+}
+
+/// `ARRAY_DISTINCT(a)`: each element at its first position, one NULL kept, as Spark keeps them.
+fn array_distinct(values: &[Emitted]) -> Option<Emitted> {
+    let [array] = values else { return None };
+    element(array)?;
+    Some(typed(
+        format!(
+            "list_filter({a}, lambda {LAMBDA_ELEMENT}, i: list_position({a}, {LAMBDA_ELEMENT}) = i)",
+            a = array.sql
+        ),
         array.data_type,
     ))
 }

@@ -4,7 +4,9 @@ use sqlquack_diagnostics::failures::constants::ARGUMENT_REJECTED;
 
 use crate::databricks::conversion::_helpers::expressions::bitwise::shifted;
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
-use crate::databricks::conversion::_helpers::expressions::operators::{as_type, comparable};
+use crate::databricks::conversion::_helpers::expressions::operators::{
+    as_type, comparable, whole_text,
+};
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::_helpers::support::typing::{same_cast, wider_integer};
 use crate::databricks::conversion::constants::{
@@ -110,7 +112,9 @@ fn modulo(values: &[Emitted]) -> Option<Emitted> {
 /// `PMOD(a, n)` of integers as Java computes it: `(r + n) % n` for a negative `r`, the sum wrapping in INT or BIGINT and computed in INT for narrower types.
 fn positive_modulo(values: &[Emitted]) -> Option<Emitted> {
     let [left, right] = values else { return None };
-    let wider = wider_integer(left.data_type, right.data_type)?;
+    let Some(wider) = wider_integer(left.data_type, right.data_type) else {
+        return exact_positive_modulo(left, right);
+    };
     let (a, n) = (as_type(left, wider), as_type(right, wider));
     let r = format!("(CASE WHEN {n} = -1 THEN {a} * 0 ELSE {a} % {n} END)");
     let wide = wider.duckdb_name();
@@ -128,6 +132,19 @@ fn positive_modulo(values: &[Emitted]) -> Option<Emitted> {
     Some(typed(
         format!("CASE WHEN {r} < 0 THEN {positive} ELSE {r} END"),
         wider,
+    ))
+}
+
+/// `PMOD(a, n)` of decimals or DOUBLEs as Spark computes it: `(r + n) % n` for a negative remainder `r`, in the remainder's type.
+fn exact_positive_modulo(left: &Emitted, right: &Emitted) -> Option<Emitted> {
+    let rest = remainder(left, right)?;
+    let (r, n) = (&rest.sql, &right.sql);
+    Some(typed(
+        format!(
+            "(CASE WHEN {r} < 0 THEN CAST(({r} + {n}) % {n} AS {name}) ELSE {r} END)",
+            name = rest.data_type.duckdb_name()
+        ),
+        rest.data_type,
     ))
 }
 
@@ -215,6 +232,19 @@ fn null_test(values: &[Emitted], test: &str) -> Option<Emitted> {
 /// `ZEROIFNULL(x)` of an integer or DOUBLE: 0 of its type for NULL.
 fn zero_if_null(values: &[Emitted]) -> Option<Emitted> {
     let [value] = values else { return None };
+    if let DatabricksType::Decimal { precision, scale } = value.data_type {
+        let digits = DatabricksType::Int.integer_digits()?;
+        let precision = (precision - scale).max(digits) + scale;
+        if precision > MAX_DECIMAL_PRECISION {
+            return None;
+        }
+        let wider = DatabricksType::Decimal { precision, scale };
+        let name = wider.duckdb_name();
+        return Some(typed(
+            format!("CAST(coalesce(CAST({} AS {name}), 0) AS {name})", value.sql),
+            wider,
+        ));
+    }
     whole_or_double(value.data_type)?;
     Some(typed(
         format!(
@@ -229,6 +259,19 @@ fn zero_if_null(values: &[Emitted]) -> Option<Emitted> {
 /// `NULLIFZERO(x)` of an integer or DOUBLE: NULL for 0.
 fn null_if_zero(values: &[Emitted]) -> Option<Emitted> {
     let [value] = values else { return None };
+    if value.data_type == DatabricksType::String {
+        return Some(typed(
+            format!(
+                "(CASE WHEN {} = 0 THEN NULL ELSE {} END)",
+                whole_text(&value.sql),
+                value.sql
+            ),
+            DatabricksType::String,
+        ));
+    }
+    if matches!(value.data_type, DatabricksType::Decimal { .. }) {
+        return Some(typed(format!("nullif({}, 0)", value.sql), value.data_type));
+    }
     whole_or_double(value.data_type)?;
     Some(typed(format!("nullif({}, 0)", value.sql), value.data_type))
 }
@@ -376,6 +419,12 @@ fn factorial(values: &[Emitted]) -> Option<Emitted> {
 /// `BIT_COUNT(x)` of an integer: the set bits of its 64-bit two's complement, as Java's Long.bitCount, as INT.
 fn bit_count(values: &[Emitted]) -> Option<Emitted> {
     let [value] = values else { return None };
+    if value.data_type == DatabricksType::Boolean {
+        return Some(typed(
+            format!("CAST({} AS INTEGER)", value.sql),
+            DatabricksType::Int,
+        ));
+    }
     value.data_type.is_integral().then(|| {
         typed(
             format!(
