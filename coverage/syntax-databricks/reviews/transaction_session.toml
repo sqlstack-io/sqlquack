@@ -480,3 +480,20 @@ note = "Read in full at c0cf1d70b under review brief v3 by eight independent rea
 [review.definitions]
 "db.transaction_session.begin-atomic" = "94ad1f9b9a3227580ff81082f800ddb247264ee44685ea914b6de2a0f8e33477"
 "db.transaction_session.drop-variable" = "9b37ade6b1ada2a860dcf5a4e0f461de4a33c5ddcc82eb05afa03224363de615"
+
+[[review]]
+id = "db-transaction_session-023"
+family = "transaction_session"
+parser_tree = "27ee55dbc17de0f1cc6891ed064eec3ac40280ba"
+reviewed_utc = "2026-11-28T09:30:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.transaction_session.conf-mgmt-set-query-tags.query-tags",
+]
+note = "Read in full at 987bbba34 under review brief v3 by three independent read-only reviewers, from the Databricks SQL 2026.47 receipts, the local documentation pages, the obligations with the limits and hand rows, and the parse trees of every case; no tree keeps a gap and every scored case agrees with its receipt. Held for these reasons, form by form: query-tags (b), one of three reviewers, taken as the stricter reading: the two [[suppress]] rows withdraw the cases that leave out <tag_value> because a generic configuration SET would take the text, but no receipt shows that, o009 SET [ 'k' ] = 'v' is refused with INVALID_SET_SYNTAX and o011, o015 and o018 show QUERY_TAGS text gets its own check; a recorded case for SET QUERY_TAGS [ 'k' ] = answers it. The other two approved: the grammar and reading hold, and each item is a QUERY_TAGS subscript by its key with a string, NULL or UNSET value."
+
+[review.fingerprints]
+"db.transaction_session.conf-mgmt-set-query-tags.query-tags" = "328e48a79a4afe9fa05b945af5ba915281ae58c6846319b4d8be06e0d36074c3"
+
+[review.definitions]
+"db.transaction_session.conf-mgmt-set-query-tags.query-tags" = "ae7ef4d05993daa85db947923e00b82bf6422c1dee6915d7498b1053acea9537"
