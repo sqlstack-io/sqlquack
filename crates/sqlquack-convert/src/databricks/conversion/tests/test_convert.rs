@@ -570,6 +570,42 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
                 },
             ],
         },
+        ConvertTestCase {
+            description: "ranking as INT with the null ordering written out, unaliased ones named as Databricks names them",
+            query: "SELECT x1, row_number() OVER (PARTITION BY s ORDER BY x1 DESC) AS r, cume_dist() OVER (ORDER BY x1) FROM input",
+            expected_sql: &[
+                "CAST(row_number() OVER (PARTITION BY \"s\" ORDER BY \"x1\" DESC NULLS LAST) AS INTEGER) AS \"r\"",
+                "AS \"cume_dist() OVER (ORDER BY x1 ASC NULLS FIRST RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)\"",
+            ],
+            expected_types: &[
+                DatabricksType::Int,
+                DatabricksType::Int,
+                DatabricksType::Double,
+            ],
+        },
+        ConvertTestCase {
+            description: "value functions over Databricks's default frame or a written one, IGNORE NULLS inside the call",
+            query: "SELECT first_value(x1, true) OVER (ORDER BY ordinal) AS f, lag(s, 1, 'z') OVER (ORDER BY ordinal) AS l, \
+                    sum(x1) OVER (ORDER BY ordinal ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS t FROM input",
+            expected_sql: &[
+                "first_value(\"x1\" IGNORE NULLS) OVER (ORDER BY \"ordinal\" ASC NULLS FIRST RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)",
+                "lag(\"s\", 1, 'z') OVER (ORDER BY \"ordinal\" ASC NULLS FIRST)",
+                "CAST(sum(\"x1\") OVER (ORDER BY \"ordinal\" ASC NULLS FIRST ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS BIGINT)",
+            ],
+            expected_types: &[
+                DatabricksType::Int,
+                DatabricksType::String,
+                DatabricksType::BigInt,
+            ],
+        },
+        ConvertTestCase {
+            description: "QUALIFY over a projected window column and over a window it holds itself",
+            query: "SELECT x1, rank() OVER (ORDER BY x1) AS r FROM input QUALIFY r = 1 AND row_number() OVER (ORDER BY ordinal) > 0",
+            expected_sql: &[
+                " QUALIFY ((\"r\" = 1) AND (CAST(row_number() OVER (ORDER BY \"ordinal\" ASC NULLS FIRST) AS INTEGER) > 0))",
+            ],
+            expected_types: &[DatabricksType::Int, DatabricksType::Int],
+        },
     ];
     for test_case in test_cases {
         let converted = analyze(&format!("{FIXTURE}{}", test_case.query))
@@ -758,6 +794,51 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "an OFFSET no rule reads",
             query: "SELECT x1 AS r FROM input LIMIT 1 OFFSET 1",
             expected_reason: "offset",
+        },
+        RefuseTestCase {
+            description: "a ranking over a window without ORDER BY, whose row order neither engine fixes",
+            query: "SELECT row_number() OVER (PARTITION BY s) AS r FROM input",
+            expected_reason: "without ORDER BY",
+        },
+        RefuseTestCase {
+            description: "a window function in a grouped block, which reads the groups rather than the rows",
+            query: "SELECT rank() OVER (ORDER BY s) AS r FROM input GROUP BY s",
+            expected_reason: "outside the projection",
+        },
+        RefuseTestCase {
+            description: "a frame running backwards, which Databricks rejects",
+            query: "SELECT last_value(x1) OVER (ORDER BY ordinal ROWS BETWEEN CURRENT ROW AND 1 PRECEDING) AS r FROM input",
+            expected_reason: "over a frame other than",
+        },
+        RefuseTestCase {
+            description: "an average over a window, which converts as several DuckDB aggregates",
+            query: "SELECT avg(x1) OVER (ORDER BY ordinal) AS r FROM input",
+            expected_reason: "AVG as a window function",
+        },
+        RefuseTestCase {
+            description: "a RANGE frame with a literal offset, even of 0",
+            query: "SELECT sum(x1) OVER (ORDER BY ordinal RANGE BETWEEN 0 PRECEDING AND CURRENT ROW) AS r FROM input",
+            expected_reason: "over a frame other than",
+        },
+        RefuseTestCase {
+            description: "a window in QUALIFY ordered by a SELECT alias, which no recording shows Databricks resolving",
+            query: "SELECT x1 AS y FROM input QUALIFY row_number() OVER (ORDER BY y) = 1",
+            expected_reason: "`y` names no column",
+        },
+        RefuseTestCase {
+            description: "QUALIFY without a window function, which Databricks rejects",
+            query: "SELECT x1 FROM input QUALIFY x1 > 1",
+            expected_reason: "QUALIFY without a window function",
+        },
+        RefuseTestCase {
+            description: "a window function in WHERE, which Databricks rejects",
+            query: "SELECT x1 FROM input WHERE rank() OVER (ORDER BY x1) = 1",
+            expected_reason: "outside the projection",
+        },
+        RefuseTestCase {
+            description: "an unaliased LAG, whose column name Databricks spells with its offset frame",
+            query: "SELECT lag(x1) OVER (ORDER BY ordinal) FROM input",
+            expected_reason: "unaliased window column",
         },
     ];
     for test_case in test_cases {

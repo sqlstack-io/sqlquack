@@ -55,13 +55,16 @@ pub(crate) struct Site<'a> {
     pub(crate) aggregates: bool,
     /// Whether a bare name may be one of the block's output names, as in `ORDER BY`.
     pub(crate) outputs: bool,
+    /// Whether a window function may appear: in the projection of a block without GROUP BY or HAVING.
+    pub(crate) windows: bool,
 }
 
 impl Site<'_> {
-    /// The same site, where aggregates may not appear: inside another aggregate's arguments.
+    /// The same site, where aggregates and windows may not appear: inside an aggregate's arguments.
     pub(crate) fn without_aggregates(self) -> Self {
         Site {
             aggregates: false,
+            windows: false,
             ..self
         }
     }

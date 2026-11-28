@@ -134,6 +134,34 @@ pub const SUPPLEMENTARY_CHARACTERS: &str = r"[\x{10000}-\x{10FFFF}]";
 pub const MAX_REPEAT: u32 = 1000;
 /// The largest group index DuckDB's regexp_extract and replacements take.
 pub const MAX_GROUP: usize = 9;
+/// A window function over an ordered window, its null ordering and frame written out as Databricks applies them.
+pub const WINDOW_RULE: &str = "rule.databricks.window";
+/// The node kind of a window function call.
+pub const WINDOW_KIND: &str = "window_function";
+/// The window functions without arguments that return INT, which DuckDB returns as BIGINT.
+pub const INTEGER_WINDOWS: &[&str] = &["ROW_NUMBER", "RANK", "DENSE_RANK"];
+/// The window functions without arguments that return a DOUBLE fraction of the partition.
+pub const FRACTION_WINDOWS: &[&str] = &["PERCENT_RANK", CUME_DIST_NAME];
+/// The ranking functions Databricks spells in capitals in a column name.
+pub const RANK_WINDOWS: &[&str] = &["RANK", "DENSE_RANK", "PERCENT_RANK"];
+/// The ranking function that splits the partition into a given number of buckets.
+pub const NTILE_NAME: &str = "NTILE";
+/// The value function whose default frame Databricks names in its column name.
+pub const NTH_VALUE_NAME: &str = "NTH_VALUE";
+/// The window functions reading a row a given offset away, which take no frame.
+pub const OFFSET_WINDOWS: &[&str] = &["LAG", "LEAD"];
+/// The largest offset, bucket count or frame bound a rule converts: the largest INT.
+pub const MAX_WINDOW_COUNT: u64 = 2_147_483_647;
+/// The one ranking function whose frame Databricks names RANGE rather than ROWS.
+pub const CUME_DIST_NAME: &str = "CUME_DIST";
+/// The aggregates converted as several DuckDB aggregates, which no rule converts over a window.
+pub const WHOLE_AGGREGATES: &[&str] = &["AVG", "MEAN", "TRY_AVG", "MEDIAN"];
+/// The frame bound at the current row, which is no offset.
+pub const CURRENT_ROW: &str = "CURRENT ROW";
+/// The frame kind counting rows.
+pub const ROWS_FRAME: &str = "ROWS";
+/// The frame kind counting peers of equal ordering.
+pub const RANGE_FRAME: &str = "RANGE";
 /// `ORDER BY` with the null ordering written out: Databricks puts NULLs first ascending.
 pub const ORDER_RULE: &str = "rule.databricks.order";
 /// `CONCAT` of strings as `||`, NULL when any argument is NULL.
