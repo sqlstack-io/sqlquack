@@ -873,6 +873,72 @@ cases = ["cases/translation/functions/approx-top-k.toml#t008_wrong_kind"]
 required = true
 
 [[obligation]]
+id = "db.functions.approx-top-k-accumulate.t001"
+form = "db.functions.approx-top-k-accumulate"
+kind = "type_combination"
+target = "BOOLEAN"
+note = "approx-top-k-accumulate with arguments of type BOOLEAN."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/approx-top-k-accumulate.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.approx-top-k-accumulate.t002"
+form = "db.functions.approx-top-k-accumulate"
+kind = "type_combination"
+target = "TINYINT"
+note = "approx-top-k-accumulate with arguments of type TINYINT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/approx-top-k-accumulate.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.approx-top-k-accumulate.t003"
+form = "db.functions.approx-top-k-accumulate"
+kind = "type_combination"
+target = "SMALLINT"
+note = "approx-top-k-accumulate with arguments of type SMALLINT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/approx-top-k-accumulate.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.approx-top-k-accumulate.t004"
+form = "db.functions.approx-top-k-accumulate"
+kind = "type_combination"
+target = "INT"
+note = "approx-top-k-accumulate with arguments of type INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/approx-top-k-accumulate.toml#t004_types_4"]
+required = true
+
+[[obligation]]
+id = "db.functions.approx-top-k-accumulate.t005"
+form = "db.functions.approx-top-k-accumulate"
+kind = "null_argument"
+target = "BOOLEAN"
+note = "approx-top-k-accumulate with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/approx-top-k-accumulate.toml#t005_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.approx-top-k-accumulate.t006"
+form = "db.functions.approx-top-k-accumulate"
+kind = "error_parity"
+target = "DATE"
+note = "approx-top-k-accumulate with a DATE value where the page documents BOOLEAN."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/approx-top-k-accumulate.toml#t006_wrong_kind"]
+required = true
+
+[[obligation]]
 id = "db.functions.approx-top-k-combine.t001"
 form = "db.functions.approx-top-k-combine"
 kind = "type_combination"
@@ -1156,6 +1222,72 @@ note = "array-compact with a STRING value where the page documents ARRAY<INT>."
 catches = "a value returned where Databricks rejects the arguments, or another error kind"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/array-compact.toml#t006_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.array-contains.t001"
+form = "db.functions.array-contains"
+kind = "type_combination"
+target = "ARRAY<INT>, INT"
+note = "array-contains with arguments of type ARRAY<INT>, INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/array-contains.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.array-contains.t002"
+form = "db.functions.array-contains"
+kind = "type_combination"
+target = "ARRAY<STRING>, INT"
+note = "array-contains with arguments of type ARRAY<STRING>, INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/array-contains.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.array-contains.t003"
+form = "db.functions.array-contains"
+kind = "type_combination"
+target = "ARRAY<INT>, STRING"
+note = "array-contains with arguments of type ARRAY<INT>, STRING."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/array-contains.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.array-contains.t004"
+form = "db.functions.array-contains"
+kind = "null_argument"
+target = "ARRAY<INT>, INT"
+note = "array-contains with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/array-contains.toml#t004_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.array-contains.t005"
+form = "db.functions.array-contains"
+kind = "null_argument"
+target = "ARRAY<INT>, INT"
+note = "array-contains with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/array-contains.toml#t005_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.array-contains.t006"
+form = "db.functions.array-contains"
+kind = "error_parity"
+target = "STRING, INT"
+note = "array-contains with a STRING value where the page documents ARRAY<INT>."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/array-contains.toml#t010_wrong_kind"]
 required = true
 
 [[obligation]]
@@ -14777,6 +14909,72 @@ cases = ["cases/translation/functions/is-variant-null.toml#t004_wrong_kind"]
 required = true
 
 [[obligation]]
+id = "db.functions.isdistinct.t001"
+form = "db.functions.isdistinct"
+kind = "type_combination"
+target = "INT, INT"
+note = "isdistinct with arguments of type INT, INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/isdistinct.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.isdistinct.t002"
+form = "db.functions.isdistinct"
+kind = "type_combination"
+target = "STRING, INT"
+note = "isdistinct with arguments of type STRING, INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/isdistinct.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.isdistinct.t003"
+form = "db.functions.isdistinct"
+kind = "type_combination"
+target = "INT, STRING"
+note = "isdistinct with arguments of type INT, STRING."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/isdistinct.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.isdistinct.t004"
+form = "db.functions.isdistinct"
+kind = "null_argument"
+target = "INT, INT"
+note = "isdistinct with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/isdistinct.toml#t004_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.isdistinct.t005"
+form = "db.functions.isdistinct"
+kind = "null_argument"
+target = "INT, INT"
+note = "isdistinct with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/isdistinct.toml#t005_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.isdistinct.t006"
+form = "db.functions.isdistinct"
+kind = "error_parity"
+target = "STRING, INT"
+note = "isdistinct with a STRING value where the page documents INT."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/isdistinct.toml#t010_wrong_kind"]
+required = true
+
+[[obligation]]
 id = "db.functions.isfalse.t001"
 form = "db.functions.isfalse"
 kind = "type_combination"
@@ -18877,6 +19075,50 @@ note = "map_concat with a duplicate key. Hand-written."
 catches = "a value returned where Databricks rejects the arguments, or another error kind"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/map-concat.hand.toml#t003_duplicate"]
+required = true
+
+[[obligation]]
+id = "db.functions.map-contains-key.t001"
+form = "db.functions.map-contains-key"
+kind = "type_combination"
+target = "MAP<STRING,INT>, STRING"
+note = "map-contains-key with arguments of type MAP<STRING,INT>, STRING."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/map-contains-key.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.map-contains-key.t002"
+form = "db.functions.map-contains-key"
+kind = "null_argument"
+target = "MAP<STRING,INT>, STRING"
+note = "map-contains-key with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/map-contains-key.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.map-contains-key.t003"
+form = "db.functions.map-contains-key"
+kind = "null_argument"
+target = "MAP<STRING,INT>, STRING"
+note = "map-contains-key with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/map-contains-key.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.map-contains-key.t004"
+form = "db.functions.map-contains-key"
+kind = "error_parity"
+target = "STRING, STRING"
+note = "map-contains-key with a STRING value where the page documents MAP<STRING,INT>."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/map-contains-key.toml#t007_wrong_kind"]
 required = true
 
 [[obligation]]
@@ -26778,6 +27020,644 @@ cases = ["cases/translation/functions/sqrt.toml#t007_wrong_kind"]
 required = true
 
 [[obligation]]
+id = "db.functions.st-addpoint.t001"
+form = "db.functions.st-addpoint"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), GEOGRAPHY(4326)"
+note = "st-addpoint with arguments of type GEOGRAPHY(4326), GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-addpoint.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-addpoint.t002"
+form = "db.functions.st-addpoint"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOGRAPHY(4326)"
+note = "st-addpoint with arguments of type GEOMETRY(0), GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-addpoint.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-addpoint.t003"
+form = "db.functions.st-addpoint"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), GEOMETRY(0)"
+note = "st-addpoint with arguments of type GEOGRAPHY(4326), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-addpoint.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-addpoint.t004"
+form = "db.functions.st-addpoint"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), GEOGRAPHY(4326)"
+note = "st-addpoint with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-addpoint.toml#t004_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-addpoint.t005"
+form = "db.functions.st-addpoint"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), GEOGRAPHY(4326)"
+note = "st-addpoint with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-addpoint.toml#t005_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-addpoint.t006"
+form = "db.functions.st-addpoint"
+kind = "error_parity"
+target = "STRING, GEOGRAPHY(4326)"
+note = "st-addpoint with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-addpoint.toml#t006_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-area.t001"
+form = "db.functions.st-area"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-area with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-area.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-area.t002"
+form = "db.functions.st-area"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-area with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-area.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-area.t003"
+form = "db.functions.st-area"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-area with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-area.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-area.t004"
+form = "db.functions.st-area"
+kind = "error_parity"
+target = "STRING"
+note = "st-area with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-area.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asbinary.t001"
+form = "db.functions.st-asbinary"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-asbinary with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asbinary.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asbinary.t002"
+form = "db.functions.st-asbinary"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-asbinary with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asbinary.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asbinary.t003"
+form = "db.functions.st-asbinary"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-asbinary with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asbinary.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asbinary.t004"
+form = "db.functions.st-asbinary"
+kind = "error_parity"
+target = "STRING"
+note = "st-asbinary with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asbinary.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asewkb.t001"
+form = "db.functions.st-asewkb"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-asewkb with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asewkb.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asewkb.t002"
+form = "db.functions.st-asewkb"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-asewkb with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asewkb.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asewkb.t003"
+form = "db.functions.st-asewkb"
+kind = "error_parity"
+target = "STRING"
+note = "st-asewkb with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asewkb.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asewkt.t001"
+form = "db.functions.st-asewkt"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-asewkt with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asewkt.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asewkt.t002"
+form = "db.functions.st-asewkt"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-asewkt with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asewkt.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asewkt.t003"
+form = "db.functions.st-asewkt"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-asewkt with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asewkt.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asewkt.t004"
+form = "db.functions.st-asewkt"
+kind = "error_parity"
+target = "STRING"
+note = "st-asewkt with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asewkt.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asgeojson.t001"
+form = "db.functions.st-asgeojson"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-asgeojson with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asgeojson.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asgeojson.t002"
+form = "db.functions.st-asgeojson"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-asgeojson with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asgeojson.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asgeojson.t003"
+form = "db.functions.st-asgeojson"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-asgeojson with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asgeojson.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-asgeojson.t004"
+form = "db.functions.st-asgeojson"
+kind = "error_parity"
+target = "STRING"
+note = "st-asgeojson with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-asgeojson.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-astext.t001"
+form = "db.functions.st-astext"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-astext with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-astext.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-astext.t002"
+form = "db.functions.st-astext"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-astext with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-astext.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-astext.t003"
+form = "db.functions.st-astext"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-astext with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-astext.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-astext.t004"
+form = "db.functions.st-astext"
+kind = "error_parity"
+target = "STRING"
+note = "st-astext with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-astext.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-aswkb.t001"
+form = "db.functions.st-aswkb"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-aswkb with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-aswkb.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-aswkb.t002"
+form = "db.functions.st-aswkb"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-aswkb with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-aswkb.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-aswkb.t003"
+form = "db.functions.st-aswkb"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-aswkb with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-aswkb.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-aswkb.t004"
+form = "db.functions.st-aswkb"
+kind = "error_parity"
+target = "STRING"
+note = "st-aswkb with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-aswkb.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-aswkt.t001"
+form = "db.functions.st-aswkt"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-aswkt with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-aswkt.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-aswkt.t002"
+form = "db.functions.st-aswkt"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-aswkt with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-aswkt.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-aswkt.t003"
+form = "db.functions.st-aswkt"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-aswkt with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-aswkt.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-aswkt.t004"
+form = "db.functions.st-aswkt"
+kind = "error_parity"
+target = "STRING"
+note = "st-aswkt with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-aswkt.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-azimuth.t001"
+form = "db.functions.st-azimuth"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), GEOGRAPHY(4326)"
+note = "st-azimuth with arguments of type GEOGRAPHY(4326), GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-azimuth.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-azimuth.t002"
+form = "db.functions.st-azimuth"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOGRAPHY(4326)"
+note = "st-azimuth with arguments of type GEOMETRY(0), GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-azimuth.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-azimuth.t003"
+form = "db.functions.st-azimuth"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), GEOMETRY(0)"
+note = "st-azimuth with arguments of type GEOGRAPHY(4326), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-azimuth.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-azimuth.t004"
+form = "db.functions.st-azimuth"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), GEOGRAPHY(4326)"
+note = "st-azimuth with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-azimuth.toml#t004_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-azimuth.t005"
+form = "db.functions.st-azimuth"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), GEOGRAPHY(4326)"
+note = "st-azimuth with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-azimuth.toml#t005_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-azimuth.t006"
+form = "db.functions.st-azimuth"
+kind = "error_parity"
+target = "STRING, GEOGRAPHY(4326)"
+note = "st-azimuth with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-azimuth.toml#t006_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-boundary.t001"
+form = "db.functions.st-boundary"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-boundary with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-boundary.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-boundary.t002"
+form = "db.functions.st-boundary"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-boundary with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-boundary.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-boundary.t003"
+form = "db.functions.st-boundary"
+kind = "error_parity"
+target = "STRING"
+note = "st-boundary with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-boundary.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-buffer.t001"
+form = "db.functions.st-buffer"
+kind = "type_combination"
+target = "GEOMETRY(0), DOUBLE"
+note = "st-buffer with arguments of type GEOMETRY(0), DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-buffer.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-buffer.t002"
+form = "db.functions.st-buffer"
+kind = "type_combination"
+target = "GEOMETRY(0), FLOAT"
+note = "st-buffer with arguments of type GEOMETRY(0), FLOAT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-buffer.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-buffer.t003"
+form = "db.functions.st-buffer"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE"
+note = "st-buffer with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-buffer.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-buffer.t004"
+form = "db.functions.st-buffer"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE"
+note = "st-buffer with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-buffer.toml#t004_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-buffer.t005"
+form = "db.functions.st-buffer"
+kind = "error_parity"
+target = "STRING, DOUBLE"
+note = "st-buffer with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-buffer.toml#t007_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-centroid.t001"
+form = "db.functions.st-centroid"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-centroid with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-centroid.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-centroid.t002"
+form = "db.functions.st-centroid"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-centroid with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-centroid.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-centroid.t003"
+form = "db.functions.st-centroid"
+kind = "error_parity"
+target = "STRING"
+note = "st-centroid with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-centroid.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-closestpoint.t001"
+form = "db.functions.st-closestpoint"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-closestpoint with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-closestpoint.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-closestpoint.t002"
+form = "db.functions.st-closestpoint"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-closestpoint with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-closestpoint.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-closestpoint.t003"
+form = "db.functions.st-closestpoint"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-closestpoint with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-closestpoint.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-closestpoint.t004"
+form = "db.functions.st-closestpoint"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-closestpoint with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-closestpoint.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
 id = "db.functions.st-collect.t001"
 form = "db.functions.st-collect"
 kind = "type_combination"
@@ -26841,6 +27721,721 @@ note = "st_concavehull of NULL. Hand-written."
 catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/st-concavehull.hand.toml#t002_null"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-contains.t001"
+form = "db.functions.st-contains"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-contains with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-contains.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-contains.t002"
+form = "db.functions.st-contains"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-contains with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-contains.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-contains.t003"
+form = "db.functions.st-contains"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-contains with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-contains.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-contains.t004"
+form = "db.functions.st-contains"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-contains with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-contains.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-convexhull.t001"
+form = "db.functions.st-convexhull"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-convexhull with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-convexhull.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-convexhull.t002"
+form = "db.functions.st-convexhull"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-convexhull with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-convexhull.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-convexhull.t003"
+form = "db.functions.st-convexhull"
+kind = "error_parity"
+target = "STRING"
+note = "st-convexhull with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-convexhull.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-covers.t001"
+form = "db.functions.st-covers"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-covers with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-covers.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-covers.t002"
+form = "db.functions.st-covers"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-covers with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-covers.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-covers.t003"
+form = "db.functions.st-covers"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-covers with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-covers.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-covers.t004"
+form = "db.functions.st-covers"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-covers with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-covers.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-difference.t001"
+form = "db.functions.st-difference"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-difference with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-difference.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-difference.t002"
+form = "db.functions.st-difference"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-difference with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-difference.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-difference.t003"
+form = "db.functions.st-difference"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-difference with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-difference.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-difference.t004"
+form = "db.functions.st-difference"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-difference with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-difference.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-dimension.t001"
+form = "db.functions.st-dimension"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-dimension with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-dimension.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-dimension.t002"
+form = "db.functions.st-dimension"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-dimension with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-dimension.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-dimension.t003"
+form = "db.functions.st-dimension"
+kind = "error_parity"
+target = "STRING"
+note = "st-dimension with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-dimension.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-disjoint.t001"
+form = "db.functions.st-disjoint"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-disjoint with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-disjoint.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-disjoint.t002"
+form = "db.functions.st-disjoint"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-disjoint with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-disjoint.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-disjoint.t003"
+form = "db.functions.st-disjoint"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-disjoint with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-disjoint.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-disjoint.t004"
+form = "db.functions.st-disjoint"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-disjoint with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-disjoint.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distance.t001"
+form = "db.functions.st-distance"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-distance with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distance.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distance.t002"
+form = "db.functions.st-distance"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-distance with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distance.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distance.t003"
+form = "db.functions.st-distance"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-distance with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distance.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distance.t004"
+form = "db.functions.st-distance"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-distance with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distance.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distancesphere.t001"
+form = "db.functions.st-distancesphere"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-distancesphere with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distancesphere.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distancesphere.t002"
+form = "db.functions.st-distancesphere"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-distancesphere with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distancesphere.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distancesphere.t003"
+form = "db.functions.st-distancesphere"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-distancesphere with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distancesphere.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distancesphere.t004"
+form = "db.functions.st-distancesphere"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-distancesphere with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distancesphere.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distancespheroid.t001"
+form = "db.functions.st-distancespheroid"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-distancespheroid with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distancespheroid.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distancespheroid.t002"
+form = "db.functions.st-distancespheroid"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-distancespheroid with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distancespheroid.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distancespheroid.t003"
+form = "db.functions.st-distancespheroid"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-distancespheroid with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distancespheroid.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-distancespheroid.t004"
+form = "db.functions.st-distancespheroid"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-distancespheroid with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-distancespheroid.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-dump.t001"
+form = "db.functions.st-dump"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-dump with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-dump.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-dump.t002"
+form = "db.functions.st-dump"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-dump with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-dump.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-dump.t003"
+form = "db.functions.st-dump"
+kind = "error_parity"
+target = "STRING"
+note = "st-dump with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-dump.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-endpoint.t001"
+form = "db.functions.st-endpoint"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-endpoint with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-endpoint.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-endpoint.t002"
+form = "db.functions.st-endpoint"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-endpoint with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-endpoint.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-endpoint.t003"
+form = "db.functions.st-endpoint"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-endpoint with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-endpoint.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-endpoint.t004"
+form = "db.functions.st-endpoint"
+kind = "error_parity"
+target = "STRING"
+note = "st-endpoint with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-endpoint.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-envelope.t001"
+form = "db.functions.st-envelope"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-envelope with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-envelope.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-envelope.t002"
+form = "db.functions.st-envelope"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-envelope with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-envelope.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-envelope.t003"
+form = "db.functions.st-envelope"
+kind = "error_parity"
+target = "STRING"
+note = "st-envelope with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-envelope.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-envelope-agg.t001"
+form = "db.functions.st-envelope-agg"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-envelope-agg with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-envelope-agg.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-envelope-agg.t002"
+form = "db.functions.st-envelope-agg"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-envelope-agg with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-envelope-agg.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-envelope-agg.t003"
+form = "db.functions.st-envelope-agg"
+kind = "error_parity"
+target = "STRING"
+note = "st-envelope-agg with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-envelope-agg.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-equals.t001"
+form = "db.functions.st-equals"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-equals with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-equals.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-equals.t002"
+form = "db.functions.st-equals"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-equals with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-equals.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-equals.t003"
+form = "db.functions.st-equals"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-equals with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-equals.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-equals.t004"
+form = "db.functions.st-equals"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-equals with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-equals.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-estimatesrid.t001"
+form = "db.functions.st-estimatesrid"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-estimatesrid with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-estimatesrid.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-estimatesrid.t002"
+form = "db.functions.st-estimatesrid"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-estimatesrid with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-estimatesrid.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-estimatesrid.t003"
+form = "db.functions.st-estimatesrid"
+kind = "error_parity"
+target = "STRING"
+note = "st-estimatesrid with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-estimatesrid.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-exteriorring.t001"
+form = "db.functions.st-exteriorring"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-exteriorring with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-exteriorring.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-exteriorring.t002"
+form = "db.functions.st-exteriorring"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-exteriorring with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-exteriorring.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-exteriorring.t003"
+form = "db.functions.st-exteriorring"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-exteriorring with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-exteriorring.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-exteriorring.t004"
+form = "db.functions.st-exteriorring"
+kind = "error_parity"
+target = "STRING"
+note = "st-exteriorring with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-exteriorring.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-flipcoordinates.t001"
+form = "db.functions.st-flipcoordinates"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-flipcoordinates with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-flipcoordinates.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-flipcoordinates.t002"
+form = "db.functions.st-flipcoordinates"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-flipcoordinates with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-flipcoordinates.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-flipcoordinates.t003"
+form = "db.functions.st-flipcoordinates"
+kind = "error_parity"
+target = "STRING"
+note = "st-flipcoordinates with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-flipcoordinates.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-force2d.t001"
+form = "db.functions.st-force2d"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-force2d with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-force2d.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-force2d.t002"
+form = "db.functions.st-force2d"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-force2d with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-force2d.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-force2d.t003"
+form = "db.functions.st-force2d"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-force2d with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-force2d.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-force2d.t004"
+form = "db.functions.st-force2d"
+kind = "error_parity"
+target = "STRING"
+note = "st-force2d with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-force2d.toml#t004_wrong_kind"]
 required = true
 
 [[obligation]]
@@ -27006,6 +28601,83 @@ note = "st-geogfromwkt with a ARRAY<INT> value where the page documents STRING."
 catches = "a value returned where Databricks rejects the arguments, or another error kind"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/st-geogfromwkt.toml#t005_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-geohash.t001"
+form = "db.functions.st-geohash"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-geohash with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-geohash.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-geohash.t002"
+form = "db.functions.st-geohash"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-geohash with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-geohash.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-geohash.t003"
+form = "db.functions.st-geohash"
+kind = "error_parity"
+target = "STRING"
+note = "st-geohash with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-geohash.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-geometrytype.t001"
+form = "db.functions.st-geometrytype"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-geometrytype with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-geometrytype.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-geometrytype.t002"
+form = "db.functions.st-geometrytype"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-geometrytype with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-geometrytype.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-geometrytype.t003"
+form = "db.functions.st-geometrytype"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-geometrytype with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-geometrytype.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-geometrytype.t004"
+form = "db.functions.st-geometrytype"
+kind = "error_parity"
+target = "STRING"
+note = "st-geometrytype with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-geometrytype.toml#t004_wrong_kind"]
 required = true
 
 [[obligation]]
@@ -27240,6 +28912,325 @@ cases = ["cases/translation/functions/st-geomfromwkt.toml#t005_wrong_kind"]
 required = true
 
 [[obligation]]
+id = "db.functions.st-interiorringn.t001"
+form = "db.functions.st-interiorringn"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), INT"
+note = "st-interiorringn with arguments of type GEOGRAPHY(4326), INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-interiorringn.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-interiorringn.t002"
+form = "db.functions.st-interiorringn"
+kind = "type_combination"
+target = "GEOMETRY(0), INT"
+note = "st-interiorringn with arguments of type GEOMETRY(0), INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-interiorringn.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-interiorringn.t003"
+form = "db.functions.st-interiorringn"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), BIGINT"
+note = "st-interiorringn with arguments of type GEOGRAPHY(4326), BIGINT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-interiorringn.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-interiorringn.t004"
+form = "db.functions.st-interiorringn"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), SMALLINT"
+note = "st-interiorringn with arguments of type GEOGRAPHY(4326), SMALLINT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-interiorringn.toml#t004_types_4"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-interiorringn.t005"
+form = "db.functions.st-interiorringn"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), INT"
+note = "st-interiorringn with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-interiorringn.toml#t005_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-interiorringn.t006"
+form = "db.functions.st-interiorringn"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), INT"
+note = "st-interiorringn with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-interiorringn.toml#t006_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-interiorringn.t007"
+form = "db.functions.st-interiorringn"
+kind = "error_parity"
+target = "STRING, INT"
+note = "st-interiorringn with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-interiorringn.toml#t009_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-intersection.t001"
+form = "db.functions.st-intersection"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-intersection with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-intersection.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-intersection.t002"
+form = "db.functions.st-intersection"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-intersection with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-intersection.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-intersection.t003"
+form = "db.functions.st-intersection"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-intersection with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-intersection.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-intersection.t004"
+form = "db.functions.st-intersection"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-intersection with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-intersection.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-intersects.t001"
+form = "db.functions.st-intersects"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-intersects with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-intersects.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-intersects.t002"
+form = "db.functions.st-intersects"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-intersects with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-intersects.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-intersects.t003"
+form = "db.functions.st-intersects"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-intersects with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-intersects.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-intersects.t004"
+form = "db.functions.st-intersects"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-intersects with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-intersects.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-isempty.t001"
+form = "db.functions.st-isempty"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-isempty with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-isempty.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-isempty.t002"
+form = "db.functions.st-isempty"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-isempty with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-isempty.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-isempty.t003"
+form = "db.functions.st-isempty"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-isempty with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-isempty.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-isempty.t004"
+form = "db.functions.st-isempty"
+kind = "error_parity"
+target = "STRING"
+note = "st-isempty with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-isempty.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-isvalid.t001"
+form = "db.functions.st-isvalid"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-isvalid with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-isvalid.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-isvalid.t002"
+form = "db.functions.st-isvalid"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-isvalid with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-isvalid.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-isvalid.t003"
+form = "db.functions.st-isvalid"
+kind = "error_parity"
+target = "STRING"
+note = "st-isvalid with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-isvalid.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-length.t001"
+form = "db.functions.st-length"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-length with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-length.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-length.t002"
+form = "db.functions.st-length"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-length with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-length.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-length.t003"
+form = "db.functions.st-length"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-length with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-length.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-length.t004"
+form = "db.functions.st-length"
+kind = "error_parity"
+target = "STRING"
+note = "st-length with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-length.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-m.t001"
+form = "db.functions.st-m"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-m with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-m.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-m.t002"
+form = "db.functions.st-m"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-m with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-m.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-m.t003"
+form = "db.functions.st-m"
+kind = "error_parity"
+target = "STRING"
+note = "st-m with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-m.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
 id = "db.functions.st-makeenvelope.t001"
 form = "db.functions.st-makeenvelope"
 kind = "type_combination"
@@ -27449,6 +29440,380 @@ cases = ["cases/translation/functions/st-makepoint.toml#t010_wrong_kind"]
 required = true
 
 [[obligation]]
+id = "db.functions.st-makepolygon.t001"
+form = "db.functions.st-makepolygon"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-makepolygon with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-makepolygon.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-makepolygon.t002"
+form = "db.functions.st-makepolygon"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-makepolygon with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-makepolygon.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-makepolygon.t003"
+form = "db.functions.st-makepolygon"
+kind = "error_parity"
+target = "STRING"
+note = "st-makepolygon with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-makepolygon.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-multi.t001"
+form = "db.functions.st-multi"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-multi with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-multi.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-multi.t002"
+form = "db.functions.st-multi"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-multi with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-multi.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-multi.t003"
+form = "db.functions.st-multi"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-multi with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-multi.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-multi.t004"
+form = "db.functions.st-multi"
+kind = "error_parity"
+target = "STRING"
+note = "st-multi with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-multi.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-ndims.t001"
+form = "db.functions.st-ndims"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-ndims with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-ndims.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-ndims.t002"
+form = "db.functions.st-ndims"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-ndims with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-ndims.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-ndims.t003"
+form = "db.functions.st-ndims"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-ndims with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-ndims.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-ndims.t004"
+form = "db.functions.st-ndims"
+kind = "error_parity"
+target = "STRING"
+note = "st-ndims with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-ndims.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-npoints.t001"
+form = "db.functions.st-npoints"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-npoints with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-npoints.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-npoints.t002"
+form = "db.functions.st-npoints"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-npoints with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-npoints.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-npoints.t003"
+form = "db.functions.st-npoints"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-npoints with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-npoints.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-npoints.t004"
+form = "db.functions.st-npoints"
+kind = "error_parity"
+target = "STRING"
+note = "st-npoints with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-npoints.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-nrings.t001"
+form = "db.functions.st-nrings"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-nrings with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-nrings.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-nrings.t002"
+form = "db.functions.st-nrings"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-nrings with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-nrings.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-nrings.t003"
+form = "db.functions.st-nrings"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-nrings with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-nrings.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-nrings.t004"
+form = "db.functions.st-nrings"
+kind = "error_parity"
+target = "STRING"
+note = "st-nrings with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-nrings.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-numgeometries.t001"
+form = "db.functions.st-numgeometries"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-numgeometries with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-numgeometries.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-numgeometries.t002"
+form = "db.functions.st-numgeometries"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-numgeometries with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-numgeometries.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-numgeometries.t003"
+form = "db.functions.st-numgeometries"
+kind = "error_parity"
+target = "STRING"
+note = "st-numgeometries with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-numgeometries.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-numinteriorrings.t001"
+form = "db.functions.st-numinteriorrings"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-numinteriorrings with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-numinteriorrings.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-numinteriorrings.t002"
+form = "db.functions.st-numinteriorrings"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-numinteriorrings with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-numinteriorrings.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-numinteriorrings.t003"
+form = "db.functions.st-numinteriorrings"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-numinteriorrings with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-numinteriorrings.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-numinteriorrings.t004"
+form = "db.functions.st-numinteriorrings"
+kind = "error_parity"
+target = "STRING"
+note = "st-numinteriorrings with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-numinteriorrings.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-numpoints.t001"
+form = "db.functions.st-numpoints"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-numpoints with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-numpoints.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-numpoints.t002"
+form = "db.functions.st-numpoints"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-numpoints with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-numpoints.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-numpoints.t003"
+form = "db.functions.st-numpoints"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-numpoints with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-numpoints.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-numpoints.t004"
+form = "db.functions.st-numpoints"
+kind = "error_parity"
+target = "STRING"
+note = "st-numpoints with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-numpoints.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-perimeter.t001"
+form = "db.functions.st-perimeter"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-perimeter with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-perimeter.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-perimeter.t002"
+form = "db.functions.st-perimeter"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-perimeter with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-perimeter.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-perimeter.t003"
+form = "db.functions.st-perimeter"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-perimeter with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-perimeter.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-perimeter.t004"
+form = "db.functions.st-perimeter"
+kind = "error_parity"
+target = "STRING"
+note = "st-perimeter with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-perimeter.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
 id = "db.functions.st-point.t001"
 form = "db.functions.st-point"
 kind = "type_combination"
@@ -27545,6 +29910,1238 @@ note = "st-pointfromgeohash with a ARRAY<INT> value where the page documents STR
 catches = "a value returned where Databricks rejects the arguments, or another error kind"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/st-pointfromgeohash.toml#t005_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-pointn.t001"
+form = "db.functions.st-pointn"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), INT"
+note = "st-pointn with arguments of type GEOGRAPHY(4326), INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-pointn.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-pointn.t002"
+form = "db.functions.st-pointn"
+kind = "type_combination"
+target = "GEOMETRY(0), INT"
+note = "st-pointn with arguments of type GEOMETRY(0), INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-pointn.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-pointn.t003"
+form = "db.functions.st-pointn"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), BIGINT"
+note = "st-pointn with arguments of type GEOGRAPHY(4326), BIGINT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-pointn.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-pointn.t004"
+form = "db.functions.st-pointn"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), SMALLINT"
+note = "st-pointn with arguments of type GEOGRAPHY(4326), SMALLINT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-pointn.toml#t004_types_4"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-pointn.t005"
+form = "db.functions.st-pointn"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), INT"
+note = "st-pointn with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-pointn.toml#t005_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-pointn.t006"
+form = "db.functions.st-pointn"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), INT"
+note = "st-pointn with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-pointn.toml#t006_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-pointn.t007"
+form = "db.functions.st-pointn"
+kind = "error_parity"
+target = "STRING, INT"
+note = "st-pointn with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-pointn.toml#t009_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-pointonsurface.t001"
+form = "db.functions.st-pointonsurface"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-pointonsurface with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-pointonsurface.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-pointonsurface.t002"
+form = "db.functions.st-pointonsurface"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-pointonsurface with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-pointonsurface.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-pointonsurface.t003"
+form = "db.functions.st-pointonsurface"
+kind = "error_parity"
+target = "STRING"
+note = "st-pointonsurface with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-pointonsurface.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-removepoint.t001"
+form = "db.functions.st-removepoint"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), INT"
+note = "st-removepoint with arguments of type GEOGRAPHY(4326), INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-removepoint.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-removepoint.t002"
+form = "db.functions.st-removepoint"
+kind = "type_combination"
+target = "GEOMETRY(0), INT"
+note = "st-removepoint with arguments of type GEOMETRY(0), INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-removepoint.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-removepoint.t003"
+form = "db.functions.st-removepoint"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), BIGINT"
+note = "st-removepoint with arguments of type GEOGRAPHY(4326), BIGINT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-removepoint.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-removepoint.t004"
+form = "db.functions.st-removepoint"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), SMALLINT"
+note = "st-removepoint with arguments of type GEOGRAPHY(4326), SMALLINT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-removepoint.toml#t004_types_4"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-removepoint.t005"
+form = "db.functions.st-removepoint"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), INT"
+note = "st-removepoint with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-removepoint.toml#t005_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-removepoint.t006"
+form = "db.functions.st-removepoint"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), INT"
+note = "st-removepoint with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-removepoint.toml#t006_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-removepoint.t007"
+form = "db.functions.st-removepoint"
+kind = "error_parity"
+target = "STRING, INT"
+note = "st-removepoint with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-removepoint.toml#t009_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-reverse.t001"
+form = "db.functions.st-reverse"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-reverse with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-reverse.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-reverse.t002"
+form = "db.functions.st-reverse"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-reverse with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-reverse.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-reverse.t003"
+form = "db.functions.st-reverse"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-reverse with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-reverse.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-reverse.t004"
+form = "db.functions.st-reverse"
+kind = "error_parity"
+target = "STRING"
+note = "st-reverse with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-reverse.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-rotate.t001"
+form = "db.functions.st-rotate"
+kind = "type_combination"
+target = "GEOMETRY(0), DOUBLE"
+note = "st-rotate with arguments of type GEOMETRY(0), DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-rotate.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-rotate.t002"
+form = "db.functions.st-rotate"
+kind = "type_combination"
+target = "GEOMETRY(0), FLOAT"
+note = "st-rotate with arguments of type GEOMETRY(0), FLOAT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-rotate.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-rotate.t003"
+form = "db.functions.st-rotate"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE"
+note = "st-rotate with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-rotate.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-rotate.t004"
+form = "db.functions.st-rotate"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE"
+note = "st-rotate with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-rotate.toml#t004_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-rotate.t005"
+form = "db.functions.st-rotate"
+kind = "error_parity"
+target = "STRING, DOUBLE"
+note = "st-rotate with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-rotate.toml#t007_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-scale.t001"
+form = "db.functions.st-scale"
+kind = "type_combination"
+target = "GEOMETRY(0), DOUBLE, DOUBLE"
+note = "st-scale with arguments of type GEOMETRY(0), DOUBLE, DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-scale.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-scale.t002"
+form = "db.functions.st-scale"
+kind = "type_combination"
+target = "GEOMETRY(0), FLOAT, DOUBLE"
+note = "st-scale with arguments of type GEOMETRY(0), FLOAT, DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-scale.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-scale.t003"
+form = "db.functions.st-scale"
+kind = "type_combination"
+target = "GEOMETRY(0), DOUBLE, FLOAT"
+note = "st-scale with arguments of type GEOMETRY(0), DOUBLE, FLOAT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-scale.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-scale.t004"
+form = "db.functions.st-scale"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE, DOUBLE"
+note = "st-scale with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-scale.toml#t004_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-scale.t005"
+form = "db.functions.st-scale"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE, DOUBLE"
+note = "st-scale with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-scale.toml#t005_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-scale.t006"
+form = "db.functions.st-scale"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE, DOUBLE"
+note = "st-scale with NULL as argument 3."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-scale.toml#t006_null_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-scale.t007"
+form = "db.functions.st-scale"
+kind = "error_parity"
+target = "STRING, DOUBLE, DOUBLE"
+note = "st-scale with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-scale.toml#t011_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setpoint.t001"
+form = "db.functions.st-setpoint"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), INT, GEOGRAPHY(4326)"
+note = "st-setpoint with arguments of type GEOGRAPHY(4326), INT, GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setpoint.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setpoint.t002"
+form = "db.functions.st-setpoint"
+kind = "type_combination"
+target = "GEOMETRY(0), INT, GEOGRAPHY(4326)"
+note = "st-setpoint with arguments of type GEOMETRY(0), INT, GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setpoint.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setpoint.t003"
+form = "db.functions.st-setpoint"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), BIGINT, GEOGRAPHY(4326)"
+note = "st-setpoint with arguments of type GEOGRAPHY(4326), BIGINT, GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setpoint.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setpoint.t004"
+form = "db.functions.st-setpoint"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), SMALLINT, GEOGRAPHY(4326)"
+note = "st-setpoint with arguments of type GEOGRAPHY(4326), SMALLINT, GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setpoint.toml#t004_types_4"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setpoint.t005"
+form = "db.functions.st-setpoint"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), INT, GEOGRAPHY(4326)"
+note = "st-setpoint with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setpoint.toml#t005_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setpoint.t006"
+form = "db.functions.st-setpoint"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), INT, GEOGRAPHY(4326)"
+note = "st-setpoint with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setpoint.toml#t006_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setpoint.t007"
+form = "db.functions.st-setpoint"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), INT, GEOGRAPHY(4326)"
+note = "st-setpoint with NULL as argument 3."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setpoint.toml#t007_null_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setpoint.t008"
+form = "db.functions.st-setpoint"
+kind = "error_parity"
+target = "STRING, INT, GEOGRAPHY(4326)"
+note = "st-setpoint with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setpoint.toml#t010_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setsrid.t001"
+form = "db.functions.st-setsrid"
+kind = "type_combination"
+target = "GEOGRAPHY(4326), GEOMETRY(0)"
+note = "st-setsrid with arguments of type GEOGRAPHY(4326), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setsrid.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setsrid.t002"
+form = "db.functions.st-setsrid"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-setsrid with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setsrid.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setsrid.t003"
+form = "db.functions.st-setsrid"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), GEOMETRY(0)"
+note = "st-setsrid with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setsrid.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setsrid.t004"
+form = "db.functions.st-setsrid"
+kind = "null_argument"
+target = "GEOGRAPHY(4326), GEOMETRY(0)"
+note = "st-setsrid with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setsrid.toml#t004_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-setsrid.t005"
+form = "db.functions.st-setsrid"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-setsrid with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-setsrid.toml#t005_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-simplify.t001"
+form = "db.functions.st-simplify"
+kind = "type_combination"
+target = "GEOMETRY(0), DOUBLE"
+note = "st-simplify with arguments of type GEOMETRY(0), DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-simplify.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-simplify.t002"
+form = "db.functions.st-simplify"
+kind = "type_combination"
+target = "GEOMETRY(0), FLOAT"
+note = "st-simplify with arguments of type GEOMETRY(0), FLOAT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-simplify.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-simplify.t003"
+form = "db.functions.st-simplify"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE"
+note = "st-simplify with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-simplify.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-simplify.t004"
+form = "db.functions.st-simplify"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE"
+note = "st-simplify with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-simplify.toml#t004_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-simplify.t005"
+form = "db.functions.st-simplify"
+kind = "error_parity"
+target = "STRING, DOUBLE"
+note = "st-simplify with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-simplify.toml#t007_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-srid.t001"
+form = "db.functions.st-srid"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-srid with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-srid.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-srid.t002"
+form = "db.functions.st-srid"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-srid with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-srid.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-srid.t003"
+form = "db.functions.st-srid"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-srid with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-srid.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-srid.t004"
+form = "db.functions.st-srid"
+kind = "error_parity"
+target = "STRING"
+note = "st-srid with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-srid.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-startpoint.t001"
+form = "db.functions.st-startpoint"
+kind = "type_combination"
+target = "GEOGRAPHY(4326)"
+note = "st-startpoint with arguments of type GEOGRAPHY(4326)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-startpoint.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-startpoint.t002"
+form = "db.functions.st-startpoint"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-startpoint with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-startpoint.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-startpoint.t003"
+form = "db.functions.st-startpoint"
+kind = "null_argument"
+target = "GEOGRAPHY(4326)"
+note = "st-startpoint with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-startpoint.toml#t003_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-startpoint.t004"
+form = "db.functions.st-startpoint"
+kind = "error_parity"
+target = "STRING"
+note = "st-startpoint with a STRING value where the page documents GEOGRAPHY(4326)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-startpoint.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-touches.t001"
+form = "db.functions.st-touches"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-touches with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-touches.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-touches.t002"
+form = "db.functions.st-touches"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-touches with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-touches.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-touches.t003"
+form = "db.functions.st-touches"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-touches with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-touches.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-touches.t004"
+form = "db.functions.st-touches"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-touches with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-touches.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-transform.t001"
+form = "db.functions.st-transform"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-transform with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-transform.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-transform.t002"
+form = "db.functions.st-transform"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-transform with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-transform.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-transform.t003"
+form = "db.functions.st-transform"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-transform with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-transform.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-transform.t004"
+form = "db.functions.st-transform"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-transform with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-transform.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-translate.t001"
+form = "db.functions.st-translate"
+kind = "type_combination"
+target = "GEOMETRY(0), DOUBLE, DOUBLE"
+note = "st-translate with arguments of type GEOMETRY(0), DOUBLE, DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-translate.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-translate.t002"
+form = "db.functions.st-translate"
+kind = "type_combination"
+target = "GEOMETRY(0), FLOAT, DOUBLE"
+note = "st-translate with arguments of type GEOMETRY(0), FLOAT, DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-translate.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-translate.t003"
+form = "db.functions.st-translate"
+kind = "type_combination"
+target = "GEOMETRY(0), DOUBLE, FLOAT"
+note = "st-translate with arguments of type GEOMETRY(0), DOUBLE, FLOAT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-translate.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-translate.t004"
+form = "db.functions.st-translate"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE, DOUBLE"
+note = "st-translate with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-translate.toml#t004_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-translate.t005"
+form = "db.functions.st-translate"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE, DOUBLE"
+note = "st-translate with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-translate.toml#t005_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-translate.t006"
+form = "db.functions.st-translate"
+kind = "null_argument"
+target = "GEOMETRY(0), DOUBLE, DOUBLE"
+note = "st-translate with NULL as argument 3."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-translate.toml#t006_null_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-translate.t007"
+form = "db.functions.st-translate"
+kind = "error_parity"
+target = "STRING, DOUBLE, DOUBLE"
+note = "st-translate with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-translate.toml#t011_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-union.t001"
+form = "db.functions.st-union"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-union with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-union.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-union.t002"
+form = "db.functions.st-union"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-union with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-union.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-union.t003"
+form = "db.functions.st-union"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-union with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-union.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-union.t004"
+form = "db.functions.st-union"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-union with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-union.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-union-agg.t001"
+form = "db.functions.st-union-agg"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-union-agg with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-union-agg.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-union-agg.t002"
+form = "db.functions.st-union-agg"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-union-agg with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-union-agg.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-union-agg.t003"
+form = "db.functions.st-union-agg"
+kind = "error_parity"
+target = "STRING"
+note = "st-union-agg with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-union-agg.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-within.t001"
+form = "db.functions.st-within"
+kind = "type_combination"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-within with arguments of type GEOMETRY(0), GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-within.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-within.t002"
+form = "db.functions.st-within"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-within with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-within.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-within.t003"
+form = "db.functions.st-within"
+kind = "null_argument"
+target = "GEOMETRY(0), GEOMETRY(0)"
+note = "st-within with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-within.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-within.t004"
+form = "db.functions.st-within"
+kind = "error_parity"
+target = "STRING, GEOMETRY(0)"
+note = "st-within with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-within.toml#t004_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-x.t001"
+form = "db.functions.st-x"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-x with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-x.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-x.t002"
+form = "db.functions.st-x"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-x with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-x.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-x.t003"
+form = "db.functions.st-x"
+kind = "error_parity"
+target = "STRING"
+note = "st-x with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-x.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-xmax.t001"
+form = "db.functions.st-xmax"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-xmax with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-xmax.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-xmax.t002"
+form = "db.functions.st-xmax"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-xmax with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-xmax.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-xmax.t003"
+form = "db.functions.st-xmax"
+kind = "error_parity"
+target = "STRING"
+note = "st-xmax with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-xmax.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-xmin.t001"
+form = "db.functions.st-xmin"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-xmin with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-xmin.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-xmin.t002"
+form = "db.functions.st-xmin"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-xmin with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-xmin.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-xmin.t003"
+form = "db.functions.st-xmin"
+kind = "error_parity"
+target = "STRING"
+note = "st-xmin with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-xmin.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-y.t001"
+form = "db.functions.st-y"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-y with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-y.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-y.t002"
+form = "db.functions.st-y"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-y with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-y.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-y.t003"
+form = "db.functions.st-y"
+kind = "error_parity"
+target = "STRING"
+note = "st-y with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-y.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-ymax.t001"
+form = "db.functions.st-ymax"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-ymax with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-ymax.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-ymax.t002"
+form = "db.functions.st-ymax"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-ymax with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-ymax.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-ymax.t003"
+form = "db.functions.st-ymax"
+kind = "error_parity"
+target = "STRING"
+note = "st-ymax with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-ymax.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-ymin.t001"
+form = "db.functions.st-ymin"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-ymin with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-ymin.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-ymin.t002"
+form = "db.functions.st-ymin"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-ymin with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-ymin.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-ymin.t003"
+form = "db.functions.st-ymin"
+kind = "error_parity"
+target = "STRING"
+note = "st-ymin with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-ymin.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-z.t001"
+form = "db.functions.st-z"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-z with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-z.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-z.t002"
+form = "db.functions.st-z"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-z with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-z.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-z.t003"
+form = "db.functions.st-z"
+kind = "error_parity"
+target = "STRING"
+note = "st-z with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-z.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-zmax.t001"
+form = "db.functions.st-zmax"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-zmax with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-zmax.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-zmax.t002"
+form = "db.functions.st-zmax"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-zmax with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-zmax.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-zmax.t003"
+form = "db.functions.st-zmax"
+kind = "error_parity"
+target = "STRING"
+note = "st-zmax with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-zmax.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-zmin.t001"
+form = "db.functions.st-zmin"
+kind = "type_combination"
+target = "GEOMETRY(0)"
+note = "st-zmin with arguments of type GEOMETRY(0)."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-zmin.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-zmin.t002"
+form = "db.functions.st-zmin"
+kind = "null_argument"
+target = "GEOMETRY(0)"
+note = "st-zmin with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-zmin.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.st-zmin.t003"
+form = "db.functions.st-zmin"
+kind = "error_parity"
+target = "STRING"
+note = "st-zmin with a STRING value where the page documents GEOMETRY(0)."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/st-zmin.toml#t003_wrong_kind"]
 required = true
 
 [[obligation]]
@@ -28274,6 +31871,94 @@ cases = ["cases/translation/functions/substr.substr-from.toml#t011_wrong_kind"]
 required = true
 
 [[obligation]]
+id = "db.functions.substring-index.t001"
+form = "db.functions.substring-index"
+kind = "type_combination"
+target = "STRING, STRING, INT"
+note = "substring-index with arguments of type STRING, STRING, INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/substring-index.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.substring-index.t002"
+form = "db.functions.substring-index"
+kind = "type_combination"
+target = "BINARY, STRING, INT"
+note = "substring-index with arguments of type BINARY, STRING, INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/substring-index.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.substring-index.t003"
+form = "db.functions.substring-index"
+kind = "type_combination"
+target = "STRING, BINARY, INT"
+note = "substring-index with arguments of type STRING, BINARY, INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/substring-index.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.substring-index.t004"
+form = "db.functions.substring-index"
+kind = "type_combination"
+target = "STRING, STRING, BIGINT"
+note = "substring-index with arguments of type STRING, STRING, BIGINT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/substring-index.toml#t004_types_4"]
+required = true
+
+[[obligation]]
+id = "db.functions.substring-index.t005"
+form = "db.functions.substring-index"
+kind = "null_argument"
+target = "STRING, STRING, INT"
+note = "substring-index with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/substring-index.toml#t005_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.substring-index.t006"
+form = "db.functions.substring-index"
+kind = "null_argument"
+target = "STRING, STRING, INT"
+note = "substring-index with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/substring-index.toml#t006_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.substring-index.t007"
+form = "db.functions.substring-index"
+kind = "null_argument"
+target = "STRING, STRING, INT"
+note = "substring-index with NULL as argument 3."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/substring-index.toml#t007_null_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.substring-index.t008"
+form = "db.functions.substring-index"
+kind = "error_parity"
+target = "ARRAY<INT>, STRING, INT"
+note = "substring-index with a ARRAY<INT> value where the page documents STRING."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/substring-index.toml#t012_wrong_kind"]
+required = true
+
+[[obligation]]
 id = "db.functions.substring.substring.t001"
 form = "db.functions.substring.substring"
 kind = "type_combination"
@@ -28802,6 +32487,72 @@ cases = ["cases/translation/functions/theta-intersection-agg.toml#t004_wrong_kin
 required = true
 
 [[obligation]]
+id = "db.functions.theta-sketch-agg.t001"
+form = "db.functions.theta-sketch-agg"
+kind = "type_combination"
+target = "INT"
+note = "theta-sketch-agg with arguments of type INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/theta-sketch-agg.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.theta-sketch-agg.t002"
+form = "db.functions.theta-sketch-agg"
+kind = "type_combination"
+target = "BIGINT"
+note = "theta-sketch-agg with arguments of type BIGINT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/theta-sketch-agg.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.theta-sketch-agg.t003"
+form = "db.functions.theta-sketch-agg"
+kind = "type_combination"
+target = "FLOAT"
+note = "theta-sketch-agg with arguments of type FLOAT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/theta-sketch-agg.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.theta-sketch-agg.t004"
+form = "db.functions.theta-sketch-agg"
+kind = "type_combination"
+target = "DOUBLE"
+note = "theta-sketch-agg with arguments of type DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/theta-sketch-agg.toml#t004_types_4"]
+required = true
+
+[[obligation]]
+id = "db.functions.theta-sketch-agg.t005"
+form = "db.functions.theta-sketch-agg"
+kind = "null_argument"
+target = "INT"
+note = "theta-sketch-agg with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/theta-sketch-agg.toml#t005_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.theta-sketch-agg.t006"
+form = "db.functions.theta-sketch-agg"
+kind = "error_parity"
+target = "STRING"
+note = "theta-sketch-agg with a STRING value where the page documents INT."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/theta-sketch-agg.toml#t008_wrong_kind"]
+required = true
+
+[[obligation]]
 id = "db.functions.theta-sketch-estimate.t001"
 form = "db.functions.theta-sketch-estimate"
 kind = "type_combination"
@@ -29327,6 +33078,149 @@ note = "time-from-seconds with a STRING value where the page documents INT."
 catches = "a value returned where Databricks rejects the arguments, or another error kind"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/time-from-seconds.toml#t007_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-to-micros.t001"
+form = "db.functions.time-to-micros"
+kind = "type_combination"
+target = "TIME"
+note = "time-to-micros with arguments of type TIME."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-to-micros.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-to-micros.t002"
+form = "db.functions.time-to-micros"
+kind = "null_argument"
+target = "TIME"
+note = "time-to-micros with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-to-micros.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-to-micros.t003"
+form = "db.functions.time-to-micros"
+kind = "error_parity"
+target = "STRING"
+note = "time-to-micros with a STRING value where the page documents TIME."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-to-micros.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-to-millis.t001"
+form = "db.functions.time-to-millis"
+kind = "type_combination"
+target = "TIME"
+note = "time-to-millis with arguments of type TIME."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-to-millis.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-to-millis.t002"
+form = "db.functions.time-to-millis"
+kind = "null_argument"
+target = "TIME"
+note = "time-to-millis with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-to-millis.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-to-millis.t003"
+form = "db.functions.time-to-millis"
+kind = "error_parity"
+target = "STRING"
+note = "time-to-millis with a STRING value where the page documents TIME."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-to-millis.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-to-seconds.t001"
+form = "db.functions.time-to-seconds"
+kind = "type_combination"
+target = "TIME"
+note = "time-to-seconds with arguments of type TIME."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-to-seconds.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-to-seconds.t002"
+form = "db.functions.time-to-seconds"
+kind = "null_argument"
+target = "TIME"
+note = "time-to-seconds with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-to-seconds.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-to-seconds.t003"
+form = "db.functions.time-to-seconds"
+kind = "error_parity"
+target = "STRING"
+note = "time-to-seconds with a STRING value where the page documents TIME."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-to-seconds.toml#t003_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-trunc.t001"
+form = "db.functions.time-trunc"
+kind = "type_combination"
+target = "STRING, TIME"
+note = "time-trunc with arguments of type STRING, TIME."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-trunc.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-trunc.t002"
+form = "db.functions.time-trunc"
+kind = "null_argument"
+target = "STRING, TIME"
+note = "time-trunc with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-trunc.toml#t002_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-trunc.t003"
+form = "db.functions.time-trunc"
+kind = "null_argument"
+target = "STRING, TIME"
+note = "time-trunc with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-trunc.toml#t003_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.time-trunc.t004"
+form = "db.functions.time-trunc"
+kind = "error_parity"
+target = "ARRAY<INT>, TIME"
+note = "time-trunc with a ARRAY<INT> value where the page documents STRING."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/time-trunc.toml#t006_wrong_kind"]
 required = true
 
 [[obligation]]
@@ -33925,6 +37819,160 @@ note = "tuple-intersection-theta-integer with a STRING value where the page docu
 catches = "a value returned where Databricks rejects the arguments, or another error kind"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/tuple-intersection-theta-integer.toml#t006_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-double.t001"
+form = "db.functions.tuple-sketch-agg-double"
+kind = "type_combination"
+target = "INT, DOUBLE"
+note = "tuple-sketch-agg-double with arguments of type INT, DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-double.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-double.t002"
+form = "db.functions.tuple-sketch-agg-double"
+kind = "type_combination"
+target = "BIGINT, DOUBLE"
+note = "tuple-sketch-agg-double with arguments of type BIGINT, DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-double.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-double.t003"
+form = "db.functions.tuple-sketch-agg-double"
+kind = "type_combination"
+target = "FLOAT, DOUBLE"
+note = "tuple-sketch-agg-double with arguments of type FLOAT, DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-double.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-double.t004"
+form = "db.functions.tuple-sketch-agg-double"
+kind = "type_combination"
+target = "DOUBLE, DOUBLE"
+note = "tuple-sketch-agg-double with arguments of type DOUBLE, DOUBLE."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-double.toml#t004_types_4"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-double.t005"
+form = "db.functions.tuple-sketch-agg-double"
+kind = "null_argument"
+target = "INT, DOUBLE"
+note = "tuple-sketch-agg-double with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-double.toml#t005_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-double.t006"
+form = "db.functions.tuple-sketch-agg-double"
+kind = "null_argument"
+target = "INT, DOUBLE"
+note = "tuple-sketch-agg-double with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-double.toml#t006_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-double.t007"
+form = "db.functions.tuple-sketch-agg-double"
+kind = "error_parity"
+target = "STRING, DOUBLE"
+note = "tuple-sketch-agg-double with a STRING value where the page documents INT."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-double.toml#t011_wrong_kind"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-integer.t001"
+form = "db.functions.tuple-sketch-agg-integer"
+kind = "type_combination"
+target = "INT, INT"
+note = "tuple-sketch-agg-integer with arguments of type INT, INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-integer.toml#t001_types_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-integer.t002"
+form = "db.functions.tuple-sketch-agg-integer"
+kind = "type_combination"
+target = "BIGINT, INT"
+note = "tuple-sketch-agg-integer with arguments of type BIGINT, INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-integer.toml#t002_types_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-integer.t003"
+form = "db.functions.tuple-sketch-agg-integer"
+kind = "type_combination"
+target = "FLOAT, INT"
+note = "tuple-sketch-agg-integer with arguments of type FLOAT, INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-integer.toml#t003_types_3"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-integer.t004"
+form = "db.functions.tuple-sketch-agg-integer"
+kind = "type_combination"
+target = "DOUBLE, INT"
+note = "tuple-sketch-agg-integer with arguments of type DOUBLE, INT."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-integer.toml#t004_types_4"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-integer.t005"
+form = "db.functions.tuple-sketch-agg-integer"
+kind = "null_argument"
+target = "INT, INT"
+note = "tuple-sketch-agg-integer with NULL as argument 1."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-integer.toml#t005_null_1"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-integer.t006"
+form = "db.functions.tuple-sketch-agg-integer"
+kind = "null_argument"
+target = "INT, INT"
+note = "tuple-sketch-agg-integer with NULL as argument 2."
+catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-integer.toml#t006_null_2"]
+required = true
+
+[[obligation]]
+id = "db.functions.tuple-sketch-agg-integer.t007"
+form = "db.functions.tuple-sketch-agg-integer"
+kind = "error_parity"
+target = "STRING, INT"
+note = "tuple-sketch-agg-integer with a STRING value where the page documents INT."
+catches = "a value returned where Databricks rejects the arguments, or another error kind"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/tuple-sketch-agg-integer.toml#t011_wrong_kind"]
 required = true
 
 [[obligation]]
