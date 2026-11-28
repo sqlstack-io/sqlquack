@@ -65,6 +65,29 @@ pub const REGEX_METACHARACTER_CLASS: &str = r"\\.^$|?*+()\[\]{}";
 /// The error `RLIKE` raises for a pattern holding a metacharacter, whose Java meaning no rule shows RE2 sharing.
 pub const PATTERN_ERROR: &str =
     "the pattern holds a regular-expression metacharacter no rule converts";
+/// The error a column replacement raises for `$` or `\`, which Java reads as group references and escapes.
+pub const REPLACEMENT_ERROR: &str =
+    "the replacement holds $ or \\, which no rule reads as Java does";
+/// The error an empty pattern raises over a character above U+FFFF, which Java steps through as two UTF-16 units.
+pub const SURROGATE_ERROR: &str =
+    "an empty pattern steps through a character above U+FFFF as Java's two UTF-16 units";
+/// The error REGEXP_EXTRACT and REGEXP_EXTRACT_ALL raise for a match when the group index is outside the pattern's groups.
+pub const GROUP_INDEX_ERROR: &str = "the group index is outside the pattern's groups";
+/// The error a pattern ending in `$` raises over text ending in CR LF, where Java's `$` does not match between the two.
+pub const LINE_END_ERROR: &str =
+    "the text ends in a carriage return and line feed, between which Java's $ does not match";
+/// Java's `.`, which matches any character but these line terminators, as an RE2 class.
+pub const JAVA_DOT: &str = r"[^\n\r\x{85}\x{2028}\x{2029}]";
+/// Java's `\s`, ASCII whitespace including the vertical tab RE2's leaves out, as an RE2 class body.
+pub const JAVA_SPACE: &str = r" \t\n\x0B\f\r";
+/// Java's final `$`, which also matches before a final line terminator, as RE2 that tests the same text.
+pub const JAVA_END: &str = r"(?:\r\n|[\n\r\x{85}\x{2028}\x{2029}])?$";
+/// The characters above U+FFFF, which Java counts as two UTF-16 units, as an RE2 class.
+pub const SUPPLEMENTARY_CHARACTERS: &str = r"[\x{10000}-\x{10FFFF}]";
+/// The largest repeat count RE2 takes.
+pub const MAX_REPEAT: u32 = 1000;
+/// The largest group index DuckDB's regexp_extract and replacements take.
+pub const MAX_GROUP: usize = 9;
 /// `ORDER BY` with the null ordering written out: Databricks puts NULLs first ascending.
 pub const ORDER_RULE: &str = "rule.databricks.order";
 /// `CONCAT` of strings as `||`, NULL when any argument is NULL.
@@ -91,6 +114,8 @@ pub const AGGREGATE_RULE: &str = "rule.databricks.aggregate";
 pub const DATE_FUNCTION_RULE: &str = "rule.databricks.date_function";
 /// A string function, with Databricks's handling of empty, NULL and out-of-range arguments written out.
 pub const STRING_FUNCTION_RULE: &str = "rule.databricks.string_function";
+/// A regular-expression function of text or of a constant pattern in the part of Java's syntax RE2 reads alike.
+pub const REGEX_RULE: &str = "rule.databricks.regex";
 /// A number function such as MOD, CEIL or SIGN, typed and bounded as Databricks types and bounds it.
 pub const NUMBER_FUNCTION_RULE: &str = "rule.databricks.number_function";
 /// A function taking a 1-based index, such as ELEMENT_AT or SPLIT_PART, raising where Databricks raises.
@@ -369,6 +394,7 @@ pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
     (IN_LIST_RULE, &[NUMBER_TEXT]),
     (CASE_RULE, &[NUMBER_TEXT]),
     (STRING_FUNCTION_RULE, &[OVERFLOW]),
+    (REGEX_RULE, &[ARGUMENT]),
     (NUMBER_FUNCTION_RULE, &[OVERFLOW, DIVISION, ARGUMENT]),
     (INDEX_RULE, &[ARGUMENT]),
     (
