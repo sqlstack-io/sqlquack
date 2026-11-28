@@ -318,7 +318,7 @@ pub(crate) fn comparable(left: &Emitted, right: &Emitted) -> Option<(String, Str
 }
 
 /// Text read as BIGINT as Databricks reads it against an integer: NULL stays NULL, signed digits between spaces convert, and other text raises.
-fn whole_text(text: &str) -> String {
+pub(crate) fn whole_text(text: &str) -> String {
     format!(
         "(CASE WHEN {text} IS NULL THEN CAST(NULL AS BIGINT) \
          WHEN regexp_full_match({text}, '{WHOLE_NUMBER_TEXT}') THEN CAST(trim({text}, ' ') AS BIGINT) \
