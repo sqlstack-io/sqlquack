@@ -413,6 +413,16 @@ pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
 pub const BIGINT_MAX: &str = "9223372036854775807";
 /// The smallest BIGINT, where Java's cast of a smaller DOUBLE saturates.
 pub const BIGINT_MIN: &str = "-9223372036854775808";
+/// The digits CONV reads and writes, upper case, by value.
+pub const BASE_DIGITS: &str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+/// [`BASE_DIGITS`] with lower-case letters, which CONV also reads.
+pub const LOWER_BASE_DIGITS: &str = "0123456789abcdefghijklmnopqrstuvwxyz";
+/// 2^64, one more than the largest unsigned 64-bit value CONV computes in.
+pub const UNSIGNED_SPAN: &str = "18446744073709551616";
+/// 2^63, from which CONV's unsigned 64-bit value is negative as a signed one.
+pub const SIGN_BIT: &str = "9223372036854775808";
+/// The lambda parameter of a running total, such as CONV's value as it reads each digit.
+pub const LAMBDA_TOTAL: &str = "total";
 /// The largest argument FACTORIAL takes; it returns NULL above it, as 21! exceeds BIGINT.
 pub const FACTORIAL_MAX: u8 = 20;
 
@@ -478,6 +488,32 @@ pub const WEEKDAY_ERROR: &str = "the text names no day of the week";
 pub const BIT_POSITION_ERROR: &str = "the bit position is outside the value";
 /// The seconds since 1970 of 0001-01-01 00:00:00 and 9999-12-31 23:59:59, whose years Java writes as four digits.
 pub const UNIX_SECONDS_YEARS_1_TO_9999: (i64, i64) = (-62_135_596_800, 253_402_300_799);
+/// The Java datetime pattern letters DATE_FORMAT takes, by count, with the `strftime` field that writes them alike.
+pub const DATE_PATTERN_LETTERS: &[(&str, &str)] = &[
+    ("yyyy", "%Y"),
+    ("yy", "%y"),
+    ("MMMM", "%B"),
+    ("MMM", "%b"),
+    ("MM", "%m"),
+    ("M", "%-m"),
+    ("dd", "%d"),
+    ("d", "%-d"),
+    ("DDD", "%j"),
+    ("EEEE", "%A"),
+    ("EEE", "%a"),
+    ("E", "%a"),
+    ("a", "%p"),
+    ("HH", "%H"),
+    ("H", "%-H"),
+    ("hh", "%I"),
+    ("h", "%-I"),
+    ("mm", "%M"),
+    ("m", "%-M"),
+    ("ss", "%S"),
+    ("s", "%-S"),
+    ("SSS", "%g"),
+    ("SSSSSS", "%f"),
+];
 /// The error FROM_UNIXTIME raises for a time whose year no rule shows Databricks writing.
 pub const UNFORMATTED_YEAR_ERROR: &str =
     "the year of the time is outside those no rule shows Databricks writing";
