@@ -2,8 +2,10 @@
 
 use std::collections::BTreeSet;
 
+use sqlquack_policy::policy::models::EvidenceDialect;
 use sqlquack_syntax::expressions::names::models::Literal;
-use sqlquack_syntax::expressions::operators::models::ParameterStyle;
+use sqlquack_syntax::expressions::operators::models::{OperatorSpelling, ParameterStyle};
+use sqlquack_syntax::expressions::typed_functions::models::TrimPosition;
 use sqlquack_syntax::tokens::models::TokenType;
 use sqlquack_syntax::{Dialect, Expression, ExpressionWalk};
 use sqlquack_syntax_snowflake::tokenize;
@@ -44,8 +46,8 @@ pub(crate) fn token_spellings(sql: &str) -> BTreeSet<String> {
     keys
 }
 
-/// The spelling and call-shape keys of the nodes under `statement`.
-pub(crate) fn tree_spellings(statement: &Expression) -> BTreeSet<String> {
+/// The spelling and call-shape keys of the nodes under `statement`, as read in `dialect`.
+pub(crate) fn tree_spellings(statement: &Expression, dialect: EvidenceDialect) -> BTreeSet<String> {
     let mut keys: BTreeSet<String> = BTreeSet::new();
     let mut pending: Vec<(&Expression, bool)> = vec![(statement, false)];
     while let Some((node, windowed)) = pending.pop() {
@@ -54,7 +56,11 @@ pub(crate) fn tree_spellings(statement: &Expression) -> BTreeSet<String> {
             Expression::WithinGroup(within) if windowed => Some(&within.this),
             _ => None,
         };
-        if let Some(key) = node_key(node, windowed) {
+        let keyword = match dialect {
+            EvidenceDialect::Snowflake => None,
+            EvidenceDialect::Databricks => keyword_spelling(node),
+        };
+        if let Some(key) = keyword.or_else(|| node_key(node, windowed)) {
             keys.insert(key);
         }
         pending.extend(node.children().into_iter().map(|child| {
@@ -65,6 +71,35 @@ pub(crate) fn tree_spellings(statement: &Expression) -> BTreeSet<String> {
         }));
     }
     keys
+}
+
+/// Databricks: the key of a call or TRIM written with an operator or keywords, used in place of its call shape.
+fn keyword_spelling(node: &Expression) -> Option<String> {
+    let spelling: String = match node {
+        Expression::Function(function) => match function.written_as {
+            Some(OperatorSpelling::ShiftRightUnsigned) => "shift_right_unsigned".to_owned(),
+            Some(OperatorSpelling::Div) => "div_operator".to_owned(),
+            Some(OperatorSpelling::In) => "position_in".to_owned(),
+            Some(OperatorSpelling::Placing) => "overlay_placing".to_owned(),
+            _ if function.from_separator => format!("{}_from", function.name.to_ascii_lowercase()),
+            _ => return None,
+        },
+        Expression::Trim(trim) if trim.sql_standard_syntax => {
+            let position: &str = match (trim.position_explicit, &trim.position) {
+                (false, _) => "",
+                (true, TrimPosition::Both) => "both_",
+                (true, TrimPosition::Leading) => "leading_",
+                (true, TrimPosition::Trailing) => "trailing_",
+            };
+            let characters: &str = match trim.characters {
+                Some(_) => "characters_",
+                None => "",
+            };
+            format!("trim_{position}{characters}from")
+        }
+        _ => return None,
+    };
+    Some(format!("{SPELLING}{spelling}"))
 }
 
 /// The key one node adds: its call shape (qualified or not), CASE form, subscript, literal or parameter.

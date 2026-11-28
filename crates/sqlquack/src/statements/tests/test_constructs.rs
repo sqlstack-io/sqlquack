@@ -14,6 +14,24 @@ const PROBED: &[&str] = &[
     "node:values",
 ];
 
+/// Keys of calls that Databricks also writes with keywords or an operator, and of TRIM's keyword forms.
+const KEYWORD_PROBED: &[&str] = &[
+    "call:POSITION",
+    "call:SHIFTRIGHTUNSIGNED",
+    "call:SUBSTR",
+    "spelling:div_operator",
+    "spelling:overlay_placing",
+    "spelling:position_in",
+    "spelling:shift_right_unsigned",
+    "spelling:substr_from",
+    "spelling:substring_from",
+    "spelling:trim_both_characters_from",
+    "spelling:trim_both_from",
+    "spelling:trim_characters_from",
+    "spelling:trim_leading_from",
+    "spelling:trim_trailing_characters_from",
+];
+
 #[test]
 fn given_a_statement_snowflake_cannot_parse_when_reading_constructs_then_only_a_declared_compile_error_passes()
  {
@@ -62,6 +80,47 @@ fn given_a_databricks_case_when_reading_constructs_then_the_databricks_parser_re
             query: "SELECT x1 DIV x1 AS r FROM input ORDER BY ordinal",
             probed: PROBED,
             expected_keys: &["clause:order_by", "fn:DIV", "node:select"],
+        },
+        DatabricksConstructsTestCase {
+            description: "SUBSTR and SUBSTRING written with FROM key their own spellings, not the comma call's shape",
+            query: "SELECT SUBSTR ( x1 FROM 2 ) AS r , SUBSTRING ( x1 FROM 2 FOR 3 ) AS s FROM input ORDER BY ordinal",
+            probed: KEYWORD_PROBED,
+            expected_keys: &["spelling:substr_from", "spelling:substring_from"],
+        },
+        DatabricksConstructsTestCase {
+            description: "SUBSTR written with a comma keeps the call's shape",
+            query: "SELECT SUBSTR ( x1 , 2 ) AS r FROM input ORDER BY ordinal",
+            probed: KEYWORD_PROBED,
+            expected_keys: &["call:SUBSTR"],
+        },
+        DatabricksConstructsTestCase {
+            description: "the >>> operator keys its spelling, not SHIFTRIGHTUNSIGNED's call",
+            query: "SELECT x1 >>> 2 AS r FROM input ORDER BY ordinal",
+            probed: KEYWORD_PROBED,
+            expected_keys: &["spelling:shift_right_unsigned"],
+        },
+        DatabricksConstructsTestCase {
+            description: "DIV and OVERLAY written with keywords key their spellings",
+            query: "SELECT x1 DIV 2 AS r , OVERLAY ( x1 PLACING 'a' FROM 2 ) AS s FROM input ORDER BY ordinal",
+            probed: KEYWORD_PROBED,
+            expected_keys: &["spelling:div_operator", "spelling:overlay_placing"],
+        },
+        DatabricksConstructsTestCase {
+            description: "POSITION written with IN keys its spelling, the comma call its shape",
+            query: "SELECT POSITION ( 'a' IN x1 ) AS r , position ( 'a' , x1 ) AS s FROM input ORDER BY ordinal",
+            probed: KEYWORD_PROBED,
+            expected_keys: &["call:POSITION", "spelling:position_in"],
+        },
+        DatabricksConstructsTestCase {
+            description: "TRIM keys its position and whether it names the characters to trim",
+            query: "SELECT TRIM ( BOTH 'a' FROM x1 ) AS r , TRIM ( LEADING FROM x1 ) AS s , TRIM ( 'a' FROM x1 ) AS t , TRIM ( TRAILING 'a' FROM x1 ) AS u FROM input ORDER BY ordinal",
+            probed: KEYWORD_PROBED,
+            expected_keys: &[
+                "spelling:trim_both_characters_from",
+                "spelling:trim_characters_from",
+                "spelling:trim_leading_from",
+                "spelling:trim_trailing_characters_from",
+            ],
         },
         DatabricksConstructsTestCase {
             description: "a statement the parser cannot read holds no tree construct, so it links to no form",
