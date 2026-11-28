@@ -80,7 +80,7 @@ fn text_as_narrow(text: &Emitted, target: DatabricksType) -> Option<Emitted> {
     ))
 }
 
-/// A STRING column read as BOOLEAN as Databricks casts it: the words of truth in any case, other text with untrimmed ends raises as malformed.
+/// A STRING column read as BOOLEAN as Databricks casts it: the words of truth in any case between spaces; other untrimmed text raises as malformed.
 fn text_as_boolean(text: &Emitted) -> Emitted {
     let t = &text.sql;
     let words = |texts: &[&str]| {
@@ -93,7 +93,7 @@ fn text_as_boolean(text: &Emitted) -> Emitted {
     typed(
         format!(
             "(CASE WHEN {t} IS NULL THEN CAST(NULL AS BOOLEAN) \
-             WHEN lower({t}) IN ({}) THEN TRUE WHEN lower({t}) IN ({}) THEN FALSE \
+             WHEN lower(trim({t}, ' ')) IN ({}) THEN TRUE WHEN lower(trim({t}, ' ')) IN ({}) THEN FALSE \
              WHEN {t} = '' OR regexp_full_match({t}, '{UNTRIMMED_TEXT}') \
              THEN CAST(error('{BOOLEAN_TEXT_ERROR}') AS BOOLEAN) \
              ELSE CAST(error('{BOOLEAN_READING_ERROR}') AS BOOLEAN) END)",

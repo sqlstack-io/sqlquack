@@ -250,7 +250,7 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
         ConvertTestCase {
             description: "a string array is DuckDB's JSON, raising on a control character no recording shows",
             query: "SELECT array(s) AS a FROM input",
-            expected_sql: &["regexp_matches(element, '[\\x00-\\x1f]'))) THEN error("],
+            expected_sql: &["regexp_matches(element, '[\\x00\\x08\\x0c\\x0d]'))) THEN error("],
             expected_types: &[DatabricksType::Array(Element::String)],
         },
         ConvertTestCase {
@@ -461,7 +461,7 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
         ConvertTestCase {
             description: "text read as a DATE for MONTH and as a BOOLEAN for BOOLEAN, by Databricks's words",
             query: "SELECT month(s) AS m, boolean(s) AS b FROM input",
-            expected_sql: &["lower(\"s\") IN ('t', 'true', 'y', 'yes', '1') THEN TRUE"],
+            expected_sql: &["lower(trim(\"s\", ' ')) IN ('t', 'true', 'y', 'yes', '1') THEN TRUE"],
             expected_types: &[DatabricksType::Int, DatabricksType::Boolean],
         },
         ConvertTestCase {

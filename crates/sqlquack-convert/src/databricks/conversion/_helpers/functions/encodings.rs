@@ -3,8 +3,8 @@
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
 use crate::databricks::conversion::constants::{
-    BASE64_ALPHABET, BASE64_READING_ERROR, BASE64_UNITS, BASE64_UNPADDED, HEX_TEXT,
-    URL_ESCAPE_ERROR, URL_MALFORMED_ESCAPE,
+    BASE64_ALPHABET, BASE64_LINE, BASE64_READING_ERROR, BASE64_UNITS, BASE64_UNPADDED, HEX_TEXT,
+    LAMBDA_ELEMENT, URL_ESCAPE_ERROR, URL_MALFORMED_ESCAPE,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -22,7 +22,7 @@ pub(crate) fn encoding_rewrite(name: &str) -> Option<Rewrite> {
     Some(rewrite)
 }
 
-/// `BASE64` of a string's UTF-8 bytes or of a byte string, unchunked, as Java's basic encoder writes it.
+/// `BASE64` of a string's UTF-8 bytes or of a byte string, in lines of 76 characters broken with CR LF.
 fn base64(values: &[Emitted]) -> Option<Emitted> {
     let [value] = values else { return None };
     let bytes = match value.data_type {
@@ -30,7 +30,14 @@ fn base64(values: &[Emitted]) -> Option<Emitted> {
         DatabricksType::Binary => value.sql.clone(),
         _ => return None,
     };
-    Some(typed(format!("to_base64({bytes})"), DatabricksType::String))
+    let encoded = format!("to_base64({bytes})");
+    Some(typed(
+        format!(
+            "array_to_string(list_transform(range(0, length({encoded}), {BASE64_LINE}), \
+             lambda {LAMBDA_ELEMENT}: substr({encoded}, {LAMBDA_ELEMENT} + 1, {BASE64_LINE})), chr(13) || chr(10))"
+        ),
+        DatabricksType::String,
+    ))
 }
 
 /// `UNBASE64(s)` as Java's MIME decoder reads it: characters outside the alphabet are skipped, padding may be left off; other shapes raise.
