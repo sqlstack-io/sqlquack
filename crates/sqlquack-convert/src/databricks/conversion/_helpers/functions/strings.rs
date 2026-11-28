@@ -4,10 +4,9 @@ use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::patterns::case_mapped;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::constants::{
-    CHR_MODULUS, DEFAULT_PAD, LOWERED_CHARACTERS, PATTERN_ERROR, REGEX_METACHARACTER_CLASS,
-    REGEX_METACHARACTERS, SUBSTRING_LENGTH, UPPERED_CHARACTERS,
+    CHR_MODULUS, DEFAULT_PAD, LOWERED_CHARACTERS, SUBSTRING_LENGTH, UPPERED_CHARACTERS,
 };
-use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
+use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
 /// The rewrite of the string function `name`, `None` when none handles it; lengths count code points in both engines.
 pub(crate) fn string_rewrite(name: &str) -> Option<Rewrite> {
@@ -37,7 +36,6 @@ pub(crate) fn string_rewrite(name: &str) -> Option<Rewrite> {
         "BTRIM" => btrim,
         "CONCAT_WS" => concat_ws,
         "FIND_IN_SET" => find_in_set,
-        "RLIKE" | "REGEXP" | "REGEXP_LIKE" => literal_pattern,
         "LOWER" | "LCASE" => |values| case_function(values, "lower", LOWERED_CHARACTERS),
         "UPPER" | "UCASE" => |values| case_function(values, "upper", UPPERED_CHARACTERS),
         _ => return None,
@@ -314,7 +312,7 @@ fn find_in_set(values: &[Emitted]) -> Option<Emitted> {
 }
 
 /// Exactly `N` arguments, all strings.
-fn strings<const N: usize>(values: &[Emitted]) -> Option<[&Emitted; N]> {
+pub(crate) fn strings<const N: usize>(values: &[Emitted]) -> Option<[&Emitted; N]> {
     let strings = values.len() == N
         && values
             .iter()
@@ -331,24 +329,4 @@ fn case_function(values: &[Emitted], function: &str, characters: &str) -> Option
             DatabricksType::String,
         )
     })
-}
-
-/// `RLIKE(s, p)` of a pattern without a regular-expression metacharacter, which finds `p` as text; a column pattern raises for one.
-fn literal_pattern(values: &[Emitted]) -> Option<Emitted> {
-    let [text, pattern] = strings::<2>(values)?;
-    let found = format!("contains({}, {})", text.sql, pattern.sql);
-    let sql = match &pattern.literal {
-        Some(Literal::Text(literal))
-            if literal.contains(|character| REGEX_METACHARACTERS.contains(character)) =>
-        {
-            return None;
-        }
-        Some(_) => found,
-        None => format!(
-            "(CASE WHEN regexp_matches({}, '[{REGEX_METACHARACTER_CLASS}]') THEN error('{PATTERN_ERROR}') \
-             ELSE {found} END)",
-            pattern.sql
-        ),
-    };
-    Some(typed(sql, DatabricksType::Boolean))
 }
