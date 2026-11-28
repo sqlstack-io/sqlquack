@@ -155,7 +155,9 @@ These parse without a gap, but the shared tree keeps less than the source said:
 
 - Suffixed numbers (`1L`, `2BD`) become a `Cast` of the number to the suffix's type.
 - `IS [NOT] DISTINCT FROM` becomes `NullSafeEq` (negated for `DISTINCT`), `RLIKE` and `REGEXP`
-  become the `rlike` call, `DIV` becomes the `div` call, and `?::` becomes `TryCast`.
+  become the `rlike` call, and `?::` becomes `TryCast`. (`DIV`, `>>>`, `POSITION … IN` and
+  `OVERLAY … PLACING` become the `div`, `shiftrightunsigned`, `position` and `overlay` calls marked
+  with what was written, so they keep their spelling.)
 - `ROLLUP`, `CUBE` and `GROUPING SETS` become calls of those names; `WITH ROLLUP` and `WITH CUBE`
   become the same calls.
 - `MINUS` becomes `EXCEPT`.

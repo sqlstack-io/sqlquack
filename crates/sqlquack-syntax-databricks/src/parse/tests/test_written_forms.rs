@@ -48,6 +48,18 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 6,
         },
         DistinctTreesTestCase {
+            description: "POSITION with IN and with a comma, OVERLAY with PLACING and with commas, and DIV as an operator and as a call, each called in lower case",
+            written: &[
+                "SELECT POSITION ( 'a' IN c1 )",
+                "SELECT position ( 'a' , c1 )",
+                "SELECT OVERLAY ( c1 PLACING 'b' FROM 2 )",
+                "SELECT overlay ( c1 , 'b' , 2 )",
+                "SELECT c1 DIV 2",
+                "SELECT div ( c1 , 2 )",
+            ],
+            expected_distinct_trees: 6,
+        },
+        DistinctTreesTestCase {
             description: "a FOREIGN KEY with and without the constraint options DEFERRABLE and INITIALLY DEFERRED",
             written: &[
                 "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 )",

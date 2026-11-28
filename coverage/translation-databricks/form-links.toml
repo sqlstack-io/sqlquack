@@ -77,7 +77,7 @@ constructs = ["node:div"]
 forms = ["db.functions.slashsign"]
 
 [[link]]
-constructs = ["fn:DIV"]
+constructs = ["fn:DIV", "spelling:div_operator"]
 forms = ["db.functions.div"]
 
 [[link]]
@@ -207,6 +207,57 @@ forms = ["db.functions.ltltsign"]
 [[link]]
 constructs = ["node:bitwise_right_shift"]
 forms = ["db.functions.gtgtsign"]
+
+# Calls Databricks also writes with an operator or keywords. Each spelling keys its node in place of
+# the call's shape, so the comma call's form does not claim it.
+[[link]]
+constructs = ["fn:SHIFTRIGHTUNSIGNED", "spelling:shift_right_unsigned"]
+forms = ["db.functions.gtgtgtsign"]
+
+[[link]]
+constructs = ["fn:POSITION", "spelling:position_in"]
+forms = ["db.functions.position.position-in"]
+
+[[link]]
+constructs = ["fn:OVERLAY", "spelling:overlay_placing"]
+forms = ["db.functions.overlay.overlay-placing-from"]
+
+[[link]]
+constructs = ["fn:SUBSTR", "spelling:substr_from"]
+forms = ["db.functions.substr.substr-from"]
+
+[[link]]
+constructs = ["fn:SUBSTRING", "spelling:substring_from"]
+forms = ["db.functions.substring.substring-from"]
+
+# TRIM's keyword forms, by the position written and whether the characters to trim are named.
+[[link]]
+constructs = ["node:trim", "spelling:trim_characters_from"]
+forms = ["db.functions.trim.trim-from"]
+
+[[link]]
+constructs = ["node:trim", "spelling:trim_both_from"]
+forms = ["db.functions.trim.trim-both-from"]
+
+[[link]]
+constructs = ["node:trim", "spelling:trim_both_characters_from"]
+forms = ["db.functions.trim.trim-both-from.syntax"]
+
+[[link]]
+constructs = ["node:trim", "spelling:trim_leading_from"]
+forms = ["db.functions.trim.trim-leading-from"]
+
+[[link]]
+constructs = ["node:trim", "spelling:trim_leading_characters_from"]
+forms = ["db.functions.trim.trim-leading-from.syntax"]
+
+[[link]]
+constructs = ["node:trim", "spelling:trim_trailing_from"]
+forms = ["db.functions.trim.trim-trailing-from"]
+
+[[link]]
+constructs = ["node:trim", "spelling:trim_trailing_characters_from"]
+forms = ["db.functions.trim.trim-trailing-from.syntax"]
 
 [[link]]
 constructs = ["node:case", "spelling:case_simple"]
@@ -366,5 +417,5 @@ constructs = ["node:column", "node:alias", "node:null", "node:boolean", "node:pa
 reason = "Column references, aliases, NULL, TRUE and FALSE, parentheses and literals in a case's input rows are part of every form's grammar rather than forms of their own."
 
 [[no_form]]
-constructs = ["node:within_group", "node:trim"]
-reason = "WITHIN GROUP belongs to the aggregate that takes it, and TRIM's keyword forms link by name."
+constructs = ["node:within_group"]
+reason = "WITHIN GROUP belongs to the aggregate that takes it."

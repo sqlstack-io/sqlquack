@@ -53,7 +53,7 @@ pub(crate) fn constructs(case: &LoadedCase, own: &BTreeSet<String>) -> Result<Ve
     };
     let mut keys: BTreeSet<String> = token_spellings(sql);
     for statement in &statements {
-        keys.extend(tree_spellings(statement));
+        keys.extend(tree_spellings(statement, case.source_dialect));
         for occurrence in classify(statement, &lines, cast_type_name) {
             keys.insert(project_key(occurrence.construct.key(), own));
         }
