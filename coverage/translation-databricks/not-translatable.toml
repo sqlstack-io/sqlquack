@@ -1,4 +1,85 @@
 # Catalogue forms that are not meaningfully translatable to DuckDB, each group with its reason.
 # A group leaves the result-matching measure's denominator only once a reviewer signs it off
-# (reviews/results.toml binds its reason and forms). No group is signed off yet, so every
-# catalogued Databricks form counts.
+# (reviews/results.toml binds its reason and forms). Every other catalogued Databricks form counts.
+
+[[group]]
+id = "ai-and-hosted-services"
+reason = "AI and ML functions (language model calls, classification, prediction, forecasting and anomaly detection), vector search and HTTP requests call or train models with Databricks's own hosted services and algorithms, or call search indexes and web services Databricks hosts. DuckDB has no hosted models, algorithms or services to match, and the language-model results are not deterministic."
+forms = [
+  "db.functions.ai-analyze-sentiment",
+  "db.functions.ai-classify",
+  "db.functions.ai-decide",
+  "db.functions.ai-detect-anomalies",
+  "db.functions.ai-enrich",
+  "db.functions.ai-extract",
+  "db.functions.ai-fix-grammar",
+  "db.functions.ai-forecast",
+  "db.functions.ai-gen",
+  "db.functions.ai-generate-text",
+  "db.functions.ai-mask",
+  "db.functions.ai-parse-document",
+  "db.functions.ai-predict-class",
+  "db.functions.ai-predict-value",
+  "db.functions.ai-prep-search",
+  "db.functions.ai-query",
+  "db.functions.ai-search",
+  "db.functions.ai-similarity",
+  "db.functions.ai-summarize",
+  "db.functions.ai-transcribe",
+  "db.functions.ai-translate",
+  "db.functions.http-request",
+  "db.functions.vector-search.query-num-results",
+  "db.functions.vector-search.query-text-query-vector",
+]
+
+[[group]]
+id = "account-context-functions"
+reason = "Context functions about the metastore, user, groups, recipients, identity claims, secrets and the Databricks version. DuckDB has no metastore, users, groups or secrets service, so their values cannot match."
+forms = [
+  "db.functions.current-metastore",
+  "db.functions.current-oauth-custom-identity-claim",
+  "db.functions.current-recipient",
+  "db.functions.current-user",
+  "db.functions.current-version",
+  "db.functions.is-account-group-member",
+  "db.functions.is-member",
+  "db.functions.list-secrets",
+  "db.functions.secret",
+  "db.functions.session-user",
+  "db.functions.try-secret",
+  "db.functions.user",
+  "db.functions.version",
+]
+
+[[group]]
+id = "files-and-streams"
+reason = "Stream and state readers (the Kafka, Kinesis, Pub/Sub and Pulsar readers, Auto Loader and streaming state, pipeline event logs), input file block metadata and FILE values read services and storage state Databricks manages. DuckDB has no counterpart for these sources."
+forms = [
+  "db.functions.cloud-files-state",
+  "db.functions.event-log",
+  "db.functions.input-file-block-length",
+  "db.functions.input-file-block-start",
+  "db.functions.read-kafka",
+  "db.functions.read-kinesis",
+  "db.functions.read-pubsub",
+  "db.functions.read-pulsar",
+  "db.functions.read-state-metadata",
+  "db.functions.read-statestore",
+  "db.functions.to-file",
+  "db.functions.try-to-file",
+]
+
+[[group]]
+id = "table-history-and-change-feed"
+reason = "TABLE_CHANGES reads the change data feed of a Delta table's history. DuckDB keeps no table history."
+forms = [
+  "db.functions.table-changes",
+]
+
+[[group]]
+id = "pipeline-snapshot-state"
+reason = "CURRENT_SNAPSHOT_VERSION and LAST_SNAPSHOT_VERSION exist only inside an AUTO CDC FROM SNAPSHOT pipeline flow, where they read the flow's snapshot state, and raise anywhere else. DuckDB has no pipelines."
+forms = [
+  "db.functions.current-snapshot-version",
+  "db.functions.last-snapshot-version",
+]
