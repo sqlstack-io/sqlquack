@@ -6676,3 +6676,26 @@ note = "Read in full at 870649879 under review brief v3 by three independent rea
 "db.functions.http-request" = "2b92d2e6ed5d18ab8be898147365994d0653b21bad7d855f48c413bba543cfb6"
 "db.functions.ilike.ilike-any-some-all" = "7071256be98f3897a42ce3d0ae56e90c0ae4297b50891b847584c4d497a2f95e"
 "db.functions.like.like-any-some-all" = "2b2fadda061df1fd94a70ecfb6e72d0ea2523816d9aa71ac3b1eeca328c0cef2"
+
+[[review]]
+id = "db-functions-098"
+family = "functions"
+parser_tree = "0c95dfb2282647499746039f2eeace4caffafd5b"
+reviewed_utc = "2026-11-28T10:06:20Z"
+verdict = "approved"
+forms = [
+  "db.functions.div",
+  "db.functions.overlay.overlay-placing-from",
+  "db.functions.position.position-in",
+]
+note = "Read in full at 15bed7618 under review brief v3 by three independent read-only reviewers, from the Databricks SQL 2026.47 receipts, the local documentation pages, the obligations and the parse trees of every case. Each approved form passes the grammar, coverage, wrong-kind, tree and outcome criteria, and no two cases of a form with different SQL give one tree. The trees changed only by the call's written_as mark (DIV, PLACING, IN), so the comma calls div ( a , b ), overlay ( a , b , c ) and position ( a , b ) written in lower case give different trees; syntax-coverage screen flags none of 272 variants."
+
+[review.fingerprints]
+"db.functions.div" = "8d8adf0e268d24be2490e5e1cce8c70342700c03a1fa5c5b206797977c4bbf65"
+"db.functions.overlay.overlay-placing-from" = "92ce9929e8939d01cd8019ff844639d032b15d8362c364e8783e99dd48f819dc"
+"db.functions.position.position-in" = "83a77ad2a65ed688a1dee6b14db77f54d75b5496e71cbc0914228d4bd9d2c54d"
+
+[review.definitions]
+"db.functions.div" = "41d62eb22d19f59ccd90f2adc23f5be0ff3949555641c8c52100a8b407503749"
+"db.functions.overlay.overlay-placing-from" = "b846fd8d714e1c6ebaa53c98e5a7b92c0b28a1d690aea9797b86d4dfd2859ba3"
+"db.functions.position.position-in" = "6b5a31f35c20397680642dd44cee62994cd0f83ec36bdc0e742c53bf96f3f534"
