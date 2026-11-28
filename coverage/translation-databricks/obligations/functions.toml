@@ -381,6 +381,17 @@ required = true
 id = "db.functions.ampersandsign.t001"
 form = "db.functions.ampersandsign"
 kind = "type_combination"
+target = "STRING, INT"
+note = "& of numeric text and an INT. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/ampersandsign.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.ampersandsign.t002"
+form = "db.functions.ampersandsign"
+kind = "type_combination"
 target = "INT, INT"
 note = "ampersandsign with arguments of type INT, INT."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -389,7 +400,7 @@ cases = ["cases/translation/functions/ampersandsign.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.ampersandsign.t002"
+id = "db.functions.ampersandsign.t003"
 form = "db.functions.ampersandsign"
 kind = "type_combination"
 target = "BIGINT, INT"
@@ -400,7 +411,7 @@ cases = ["cases/translation/functions/ampersandsign.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.ampersandsign.t003"
+id = "db.functions.ampersandsign.t004"
 form = "db.functions.ampersandsign"
 kind = "type_combination"
 target = "SMALLINT, INT"
@@ -411,7 +422,7 @@ cases = ["cases/translation/functions/ampersandsign.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.ampersandsign.t004"
+id = "db.functions.ampersandsign.t005"
 form = "db.functions.ampersandsign"
 kind = "type_combination"
 target = "INT, BIGINT"
@@ -422,7 +433,7 @@ cases = ["cases/translation/functions/ampersandsign.toml#t004_types_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.ampersandsign.t005"
+id = "db.functions.ampersandsign.t006"
 form = "db.functions.ampersandsign"
 kind = "null_argument"
 target = "INT, INT"
@@ -433,7 +444,7 @@ cases = ["cases/translation/functions/ampersandsign.toml#t005_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.ampersandsign.t006"
+id = "db.functions.ampersandsign.t007"
 form = "db.functions.ampersandsign"
 kind = "null_argument"
 target = "INT, INT"
@@ -444,7 +455,7 @@ cases = ["cases/translation/functions/ampersandsign.toml#t006_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.ampersandsign.t007"
+id = "db.functions.ampersandsign.t008"
 form = "db.functions.ampersandsign"
 kind = "error_parity"
 target = "STRING, INT"
@@ -4231,6 +4242,17 @@ required = true
 id = "db.functions.caretsign.t001"
 form = "db.functions.caretsign"
 kind = "type_combination"
+target = "STRING, BIGINT"
+note = "^ of numeric text and a BIGINT. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/caretsign.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.caretsign.t002"
+form = "db.functions.caretsign"
+kind = "type_combination"
 target = "INT, INT"
 note = "caretsign with arguments of type INT, INT."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -4239,7 +4261,7 @@ cases = ["cases/translation/functions/caretsign.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.caretsign.t002"
+id = "db.functions.caretsign.t003"
 form = "db.functions.caretsign"
 kind = "type_combination"
 target = "BIGINT, INT"
@@ -4250,7 +4272,7 @@ cases = ["cases/translation/functions/caretsign.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.caretsign.t003"
+id = "db.functions.caretsign.t004"
 form = "db.functions.caretsign"
 kind = "type_combination"
 target = "SMALLINT, INT"
@@ -4261,7 +4283,7 @@ cases = ["cases/translation/functions/caretsign.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.caretsign.t004"
+id = "db.functions.caretsign.t005"
 form = "db.functions.caretsign"
 kind = "type_combination"
 target = "INT, BIGINT"
@@ -4272,7 +4294,7 @@ cases = ["cases/translation/functions/caretsign.toml#t004_types_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.caretsign.t005"
+id = "db.functions.caretsign.t006"
 form = "db.functions.caretsign"
 kind = "null_argument"
 target = "INT, INT"
@@ -4283,7 +4305,7 @@ cases = ["cases/translation/functions/caretsign.toml#t005_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.caretsign.t006"
+id = "db.functions.caretsign.t007"
 form = "db.functions.caretsign"
 kind = "null_argument"
 target = "INT, INT"
@@ -4294,7 +4316,7 @@ cases = ["cases/translation/functions/caretsign.toml#t006_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.caretsign.t007"
+id = "db.functions.caretsign.t008"
 form = "db.functions.caretsign"
 kind = "error_parity"
 target = "STRING, INT"
@@ -5144,6 +5166,28 @@ required = true
 id = "db.functions.contains.t001"
 form = "db.functions.contains"
 kind = "type_combination"
+target = "BINARY, BINARY"
+note = "contains of byte strings at whole bytes. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/contains.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.contains.t002"
+form = "db.functions.contains"
+kind = "type_combination"
+target = "STRING, BINARY"
+note = "contains of text and bytes. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/contains.pc2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.contains.t003"
+form = "db.functions.contains"
+kind = "type_combination"
 target = "STRING, STRING"
 note = "contains with arguments of type STRING, STRING."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -5152,7 +5196,7 @@ cases = ["cases/translation/functions/contains.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.contains.t002"
+id = "db.functions.contains.t004"
 form = "db.functions.contains"
 kind = "type_combination"
 target = "BINARY, STRING"
@@ -5163,7 +5207,7 @@ cases = ["cases/translation/functions/contains.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.contains.t003"
+id = "db.functions.contains.t005"
 form = "db.functions.contains"
 kind = "type_combination"
 target = "STRING, BINARY"
@@ -5174,7 +5218,7 @@ cases = ["cases/translation/functions/contains.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.contains.t004"
+id = "db.functions.contains.t006"
 form = "db.functions.contains"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -5185,7 +5229,7 @@ cases = ["cases/translation/functions/contains.toml#t004_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.contains.t005"
+id = "db.functions.contains.t007"
 form = "db.functions.contains"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -5196,7 +5240,7 @@ cases = ["cases/translation/functions/contains.toml#t005_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.contains.t006"
+id = "db.functions.contains.t008"
 form = "db.functions.contains"
 kind = "error_parity"
 target = "ARRAY<INT>, STRING"
@@ -7289,6 +7333,28 @@ required = true
 id = "db.functions.decode-cs.t001"
 form = "db.functions.decode-cs"
 kind = "type_combination"
+target = "BINARY"
+note = "decode of UTF-8 bytes. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/decode-cs.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.decode-cs.t002"
+form = "db.functions.decode-cs"
+kind = "type_combination"
+target = "BINARY"
+note = "decode of a byte that is no UTF-8. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/decode-cs.pc2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.decode-cs.t003"
+form = "db.functions.decode-cs"
+kind = "type_combination"
 target = "BINARY, STRING"
 note = "decode-cs with arguments of type BINARY, STRING."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -7297,7 +7363,7 @@ cases = ["cases/translation/functions/decode-cs.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.decode-cs.t002"
+id = "db.functions.decode-cs.t004"
 form = "db.functions.decode-cs"
 kind = "null_argument"
 target = "BINARY, STRING"
@@ -7308,7 +7374,7 @@ cases = ["cases/translation/functions/decode-cs.toml#t002_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.decode-cs.t003"
+id = "db.functions.decode-cs.t005"
 form = "db.functions.decode-cs"
 kind = "null_argument"
 target = "BINARY, STRING"
@@ -7319,7 +7385,7 @@ cases = ["cases/translation/functions/decode-cs.toml#t003_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.decode-cs.t004"
+id = "db.functions.decode-cs.t006"
 form = "db.functions.decode-cs"
 kind = "error_parity"
 target = "STRING, STRING"
@@ -7696,6 +7762,28 @@ required = true
 id = "db.functions.encode.t001"
 form = "db.functions.encode"
 kind = "type_combination"
+target = "STRING"
+note = "encode in UTF-8. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/encode.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.encode.t002"
+form = "db.functions.encode"
+kind = "type_combination"
+target = "STRING"
+note = "encode naming the charset in lower case. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/encode.pc2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.encode.t003"
+form = "db.functions.encode"
+kind = "type_combination"
 target = "STRING, STRING"
 note = "encode with arguments of type STRING, STRING."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -7704,7 +7792,7 @@ cases = ["cases/translation/functions/encode.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.encode.t002"
+id = "db.functions.encode.t004"
 form = "db.functions.encode"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -7715,7 +7803,7 @@ cases = ["cases/translation/functions/encode.toml#t002_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.encode.t003"
+id = "db.functions.encode.t005"
 form = "db.functions.encode"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -7726,7 +7814,7 @@ cases = ["cases/translation/functions/encode.toml#t003_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.encode.t004"
+id = "db.functions.encode.t006"
 form = "db.functions.encode"
 kind = "error_parity"
 target = "ARRAY<INT>, STRING"
@@ -7740,6 +7828,17 @@ required = true
 id = "db.functions.endswith.t001"
 form = "db.functions.endswith"
 kind = "type_combination"
+target = "BINARY, BINARY"
+note = "endswith of byte strings. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/endswith.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.endswith.t002"
+form = "db.functions.endswith"
+kind = "type_combination"
 target = "STRING, STRING"
 note = "endswith with arguments of type STRING, STRING."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -7748,7 +7847,7 @@ cases = ["cases/translation/functions/endswith.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.endswith.t002"
+id = "db.functions.endswith.t003"
 form = "db.functions.endswith"
 kind = "type_combination"
 target = "BINARY, STRING"
@@ -7759,7 +7858,7 @@ cases = ["cases/translation/functions/endswith.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.endswith.t003"
+id = "db.functions.endswith.t004"
 form = "db.functions.endswith"
 kind = "type_combination"
 target = "STRING, BINARY"
@@ -7770,7 +7869,7 @@ cases = ["cases/translation/functions/endswith.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.endswith.t004"
+id = "db.functions.endswith.t005"
 form = "db.functions.endswith"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -7781,7 +7880,7 @@ cases = ["cases/translation/functions/endswith.toml#t004_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.endswith.t005"
+id = "db.functions.endswith.t006"
 form = "db.functions.endswith"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -7792,7 +7891,7 @@ cases = ["cases/translation/functions/endswith.toml#t005_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.endswith.t006"
+id = "db.functions.endswith.t007"
 form = "db.functions.endswith"
 kind = "error_parity"
 target = "ARRAY<INT>, STRING"
@@ -13780,6 +13879,17 @@ id = "db.functions.initcap.t001"
 form = "db.functions.initcap"
 kind = "type_combination"
 target = "STRING"
+note = "initcap breaking words at spaces only, over tabs, newlines, hyphens, digits and accents. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/initcap.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.initcap.t002"
+form = "db.functions.initcap"
+kind = "type_combination"
+target = "STRING"
 note = "initcap with arguments of type STRING."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
@@ -13787,7 +13897,7 @@ cases = ["cases/translation/functions/initcap.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.initcap.t002"
+id = "db.functions.initcap.t003"
 form = "db.functions.initcap"
 kind = "null_argument"
 target = "STRING"
@@ -13798,7 +13908,7 @@ cases = ["cases/translation/functions/initcap.toml#t002_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.initcap.t003"
+id = "db.functions.initcap.t004"
 form = "db.functions.initcap"
 kind = "error_parity"
 target = "ARRAY<INT>"
@@ -14627,6 +14737,17 @@ id = "db.functions.isfalse.t001"
 form = "db.functions.isfalse"
 kind = "type_combination"
 target = "STRING"
+note = "IS NOT FALSE of text Databricks reads as a boolean. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/isfalse.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.isfalse.t002"
+form = "db.functions.isfalse"
+kind = "type_combination"
+target = "STRING"
 note = "isfalse with arguments of type STRING."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
@@ -14634,7 +14755,7 @@ cases = ["cases/translation/functions/isfalse.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.isfalse.t002"
+id = "db.functions.isfalse.t003"
 form = "db.functions.isfalse"
 kind = "type_combination"
 target = "BOOLEAN"
@@ -14645,7 +14766,7 @@ cases = ["cases/translation/functions/isfalse.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.isfalse.t003"
+id = "db.functions.isfalse.t004"
 form = "db.functions.isfalse"
 kind = "null_argument"
 target = "STRING"
@@ -14656,7 +14777,7 @@ cases = ["cases/translation/functions/isfalse.toml#t003_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.isfalse.t004"
+id = "db.functions.isfalse.t005"
 form = "db.functions.isfalse"
 kind = "error_parity"
 target = "ARRAY<INT>"
@@ -14858,6 +14979,28 @@ id = "db.functions.istrue.t001"
 form = "db.functions.istrue"
 kind = "type_combination"
 target = "STRING"
+note = "IS TRUE of text Databricks reads as a boolean. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/istrue.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.istrue.t002"
+form = "db.functions.istrue"
+kind = "type_combination"
+target = "STRING"
+note = "IS TRUE of text that is no boolean. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/istrue.pc2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.istrue.t003"
+form = "db.functions.istrue"
+kind = "type_combination"
+target = "STRING"
 note = "istrue with arguments of type STRING."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
@@ -14865,7 +15008,7 @@ cases = ["cases/translation/functions/istrue.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.istrue.t002"
+id = "db.functions.istrue.t004"
 form = "db.functions.istrue"
 kind = "type_combination"
 target = "BOOLEAN"
@@ -14876,7 +15019,7 @@ cases = ["cases/translation/functions/istrue.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.istrue.t003"
+id = "db.functions.istrue.t005"
 form = "db.functions.istrue"
 kind = "null_argument"
 target = "STRING"
@@ -14887,7 +15030,7 @@ cases = ["cases/translation/functions/istrue.toml#t003_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.istrue.t004"
+id = "db.functions.istrue.t006"
 form = "db.functions.istrue"
 kind = "error_parity"
 target = "ARRAY<INT>"
@@ -16871,6 +17014,17 @@ id = "db.functions.levenshtein.t001"
 form = "db.functions.levenshtein"
 kind = "type_combination"
 target = "STRING, STRING"
+note = "levenshtein counting characters, not bytes. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/levenshtein.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.levenshtein.t002"
+form = "db.functions.levenshtein"
+kind = "type_combination"
+target = "STRING, STRING"
 note = "levenshtein with arguments of type STRING, STRING."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
@@ -16878,7 +17032,7 @@ cases = ["cases/translation/functions/levenshtein.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.levenshtein.t002"
+id = "db.functions.levenshtein.t003"
 form = "db.functions.levenshtein"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -16889,7 +17043,7 @@ cases = ["cases/translation/functions/levenshtein.toml#t002_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.levenshtein.t003"
+id = "db.functions.levenshtein.t004"
 form = "db.functions.levenshtein"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -16900,7 +17054,7 @@ cases = ["cases/translation/functions/levenshtein.toml#t003_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.levenshtein.t004"
+id = "db.functions.levenshtein.t005"
 form = "db.functions.levenshtein"
 kind = "error_parity"
 target = "ARRAY<INT>, STRING"
@@ -17806,6 +17960,17 @@ id = "db.functions.luhn-check.t001"
 form = "db.functions.luhn-check"
 kind = "type_combination"
 target = "STRING"
+note = "luhn_check of valid and invalid numbers, a padded one and zeros. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/luhn-check.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.luhn-check.t002"
+form = "db.functions.luhn-check"
+kind = "type_combination"
+target = "STRING"
 note = "luhn-check with arguments of type STRING."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
@@ -17813,7 +17978,7 @@ cases = ["cases/translation/functions/luhn-check.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.luhn-check.t002"
+id = "db.functions.luhn-check.t003"
 form = "db.functions.luhn-check"
 kind = "null_argument"
 target = "STRING"
@@ -17824,7 +17989,7 @@ cases = ["cases/translation/functions/luhn-check.toml#t002_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.luhn-check.t003"
+id = "db.functions.luhn-check.t004"
 form = "db.functions.luhn-check"
 kind = "error_parity"
 target = "ARRAY<INT>"
@@ -17882,6 +18047,17 @@ required = true
 id = "db.functions.make-date.t005"
 form = "db.functions.make-date"
 kind = "type_combination"
+target = "INT"
+note = "make_date of literal fields with a month past 12. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/make-date.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.make-date.t006"
+form = "db.functions.make-date"
+kind = "type_combination"
 target = "INT, INT, INT"
 note = "make-date with arguments of type INT, INT, INT."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -17890,7 +18066,7 @@ cases = ["cases/translation/functions/make-date.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.make-date.t006"
+id = "db.functions.make-date.t007"
 form = "db.functions.make-date"
 kind = "type_combination"
 target = "BIGINT, INT, INT"
@@ -17901,7 +18077,7 @@ cases = ["cases/translation/functions/make-date.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.make-date.t007"
+id = "db.functions.make-date.t008"
 form = "db.functions.make-date"
 kind = "type_combination"
 target = "SMALLINT, INT, INT"
@@ -17912,7 +18088,7 @@ cases = ["cases/translation/functions/make-date.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.make-date.t008"
+id = "db.functions.make-date.t009"
 form = "db.functions.make-date"
 kind = "type_combination"
 target = "INT, BIGINT, INT"
@@ -17923,7 +18099,7 @@ cases = ["cases/translation/functions/make-date.toml#t004_types_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.make-date.t009"
+id = "db.functions.make-date.t010"
 form = "db.functions.make-date"
 kind = "null_argument"
 target = "INT, INT, INT"
@@ -17934,7 +18110,7 @@ cases = ["cases/translation/functions/make-date.toml#t005_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.make-date.t010"
+id = "db.functions.make-date.t011"
 form = "db.functions.make-date"
 kind = "null_argument"
 target = "INT, INT, INT"
@@ -17945,7 +18121,7 @@ cases = ["cases/translation/functions/make-date.toml#t006_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.make-date.t011"
+id = "db.functions.make-date.t012"
 form = "db.functions.make-date"
 kind = "null_argument"
 target = "INT, INT, INT"
@@ -17956,7 +18132,7 @@ cases = ["cases/translation/functions/make-date.toml#t007_null_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.make-date.t012"
+id = "db.functions.make-date.t013"
 form = "db.functions.make-date"
 kind = "error_parity"
 target = "STRING, INT, INT"
@@ -18873,6 +19049,39 @@ id = "db.functions.mask.t001"
 form = "db.functions.mask"
 kind = "type_combination"
 target = "STRING"
+note = "mask with every mask given, other characters included. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/mask.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.mask.t002"
+form = "db.functions.mask"
+kind = "type_combination"
+target = "STRING"
+note = "mask whose upper-case mask is a lower-case letter, which is not masked again. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/mask.pc2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.mask.t003"
+form = "db.functions.mask"
+kind = "type_combination"
+target = "STRING"
+note = "mask of accented and title-case letters by their Unicode kind. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/mask.pc3.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.mask.t004"
+form = "db.functions.mask"
+kind = "type_combination"
+target = "STRING"
 note = "mask with arguments of type STRING."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
@@ -18880,7 +19089,7 @@ cases = ["cases/translation/functions/mask.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.mask.t002"
+id = "db.functions.mask.t005"
 form = "db.functions.mask"
 kind = "null_argument"
 target = "STRING"
@@ -18891,7 +19100,7 @@ cases = ["cases/translation/functions/mask.toml#t002_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.mask.t003"
+id = "db.functions.mask.t006"
 form = "db.functions.mask"
 kind = "error_parity"
 target = "ARRAY<INT>"
@@ -21138,6 +21347,28 @@ required = true
 id = "db.functions.percentile-cont.t010"
 form = "db.functions.percentile-cont"
 kind = "type_combination"
+target = "INT"
+note = "percentile_cont between two values. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/percentile-cont.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.percentile-cont.t011"
+form = "db.functions.percentile-cont"
+kind = "type_combination"
+target = "INT, INT"
+note = "percentile_cont in descending order per group, over INT's extremes. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/percentile-cont.pc2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.percentile-cont.t012"
+form = "db.functions.percentile-cont"
+kind = "type_combination"
 target = "INT, INT"
 note = "percentile-cont with arguments of type INT, INT."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -21146,7 +21377,7 @@ cases = ["cases/translation/functions/percentile-cont.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-cont.t011"
+id = "db.functions.percentile-cont.t013"
 form = "db.functions.percentile-cont"
 kind = "type_combination"
 target = "ARRAY<INT>, INT"
@@ -21157,7 +21388,7 @@ cases = ["cases/translation/functions/percentile-cont.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-cont.t012"
+id = "db.functions.percentile-cont.t014"
 form = "db.functions.percentile-cont"
 kind = "type_combination"
 target = "DECIMAL(10,2), INT"
@@ -21168,7 +21399,7 @@ cases = ["cases/translation/functions/percentile-cont.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-cont.t013"
+id = "db.functions.percentile-cont.t015"
 form = "db.functions.percentile-cont"
 kind = "type_combination"
 target = "ARRAY<STRING>, INT"
@@ -21179,7 +21410,7 @@ cases = ["cases/translation/functions/percentile-cont.toml#t004_types_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-cont.t014"
+id = "db.functions.percentile-cont.t016"
 form = "db.functions.percentile-cont"
 kind = "null_argument"
 target = "INT, INT"
@@ -21190,7 +21421,7 @@ cases = ["cases/translation/functions/percentile-cont.toml#t005_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-cont.t015"
+id = "db.functions.percentile-cont.t017"
 form = "db.functions.percentile-cont"
 kind = "null_argument"
 target = "INT, INT"
@@ -21201,7 +21432,7 @@ cases = ["cases/translation/functions/percentile-cont.toml#t006_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-cont.t016"
+id = "db.functions.percentile-cont.t018"
 form = "db.functions.percentile-cont"
 kind = "error_parity"
 target = "STRING, INT"
@@ -21314,6 +21545,28 @@ required = true
 id = "db.functions.percentile-disc.t010"
 form = "db.functions.percentile-disc"
 kind = "type_combination"
+target = "INT"
+note = "percentile_disc where ceil(n * p) and the interpolated position pick different values. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/percentile-disc.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.percentile-disc.t011"
+form = "db.functions.percentile-disc"
+kind = "type_combination"
+target = "INT"
+note = "percentile_disc in descending order, ignoring a NULL. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/percentile-disc.pc2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.percentile-disc.t012"
+form = "db.functions.percentile-disc"
+kind = "type_combination"
 target = "INT, INT"
 note = "percentile-disc with arguments of type INT, INT."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -21322,7 +21575,7 @@ cases = ["cases/translation/functions/percentile-disc.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-disc.t011"
+id = "db.functions.percentile-disc.t013"
 form = "db.functions.percentile-disc"
 kind = "type_combination"
 target = "ARRAY<INT>, INT"
@@ -21333,7 +21586,7 @@ cases = ["cases/translation/functions/percentile-disc.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-disc.t012"
+id = "db.functions.percentile-disc.t014"
 form = "db.functions.percentile-disc"
 kind = "type_combination"
 target = "DECIMAL(10,2), INT"
@@ -21344,7 +21597,7 @@ cases = ["cases/translation/functions/percentile-disc.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-disc.t013"
+id = "db.functions.percentile-disc.t015"
 form = "db.functions.percentile-disc"
 kind = "type_combination"
 target = "ARRAY<STRING>, INT"
@@ -21355,7 +21608,7 @@ cases = ["cases/translation/functions/percentile-disc.toml#t004_types_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-disc.t014"
+id = "db.functions.percentile-disc.t016"
 form = "db.functions.percentile-disc"
 kind = "null_argument"
 target = "INT, INT"
@@ -21366,7 +21619,7 @@ cases = ["cases/translation/functions/percentile-disc.toml#t005_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-disc.t015"
+id = "db.functions.percentile-disc.t017"
 form = "db.functions.percentile-disc"
 kind = "null_argument"
 target = "INT, INT"
@@ -21377,7 +21630,7 @@ cases = ["cases/translation/functions/percentile-disc.toml#t006_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.percentile-disc.t016"
+id = "db.functions.percentile-disc.t018"
 form = "db.functions.percentile-disc"
 kind = "error_parity"
 target = "STRING, INT"
@@ -21495,6 +21748,17 @@ note = "|| with NULL. Hand-written."
 catches = "a NULL argument returning a value, or raising where Databricks returns NULL"
 reading = "the argument types the generator read from the function's page"
 cases = ["cases/translation/functions/pipepipesign.hand.toml#t003_null"]
+required = true
+
+[[obligation]]
+id = "db.functions.pipepipesign.t004"
+form = "db.functions.pipepipesign"
+kind = "type_combination"
+target = "STRING, INT"
+note = "|| of text and an INT. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/pipepipesign.pc.hand.toml#p001"]
 required = true
 
 [[obligation]]
@@ -25979,6 +26243,17 @@ id = "db.functions.soundex.t001"
 form = "db.functions.soundex"
 kind = "type_combination"
 target = "STRING"
+note = "soundex with a first H or W, H between equal codes, and non-ASCII bytes. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/soundex.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.soundex.t002"
+form = "db.functions.soundex"
+kind = "type_combination"
+target = "STRING"
 note = "soundex with arguments of type STRING."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
@@ -25986,7 +26261,7 @@ cases = ["cases/translation/functions/soundex.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.soundex.t002"
+id = "db.functions.soundex.t003"
 form = "db.functions.soundex"
 kind = "null_argument"
 target = "STRING"
@@ -25997,7 +26272,7 @@ cases = ["cases/translation/functions/soundex.toml#t002_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.soundex.t003"
+id = "db.functions.soundex.t004"
 form = "db.functions.soundex"
 kind = "error_parity"
 target = "ARRAY<INT>"
@@ -26066,6 +26341,50 @@ required = true
 id = "db.functions.split.t001"
 form = "db.functions.split"
 kind = "type_combination"
+target = "STRING"
+note = "split by a constant pattern, keeping empty ends. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/split.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.split.t002"
+form = "db.functions.split"
+kind = "type_combination"
+target = "STRING"
+note = "split by a text pattern with empty parts. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/split.pc2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.split.t003"
+form = "db.functions.split"
+kind = "type_combination"
+target = "STRING"
+note = "split by an empty pattern into characters. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/split.pc3.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.split.t004"
+form = "db.functions.split"
+kind = "type_combination"
+target = "STRING, STRING"
+note = "split by a column pattern without metacharacters. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/split.pc4.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.split.t005"
+form = "db.functions.split"
+kind = "type_combination"
 target = "STRING, STRING"
 note = "split with arguments of type STRING, STRING."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -26074,7 +26393,7 @@ cases = ["cases/translation/functions/split.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.split.t002"
+id = "db.functions.split.t006"
 form = "db.functions.split"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -26085,7 +26404,7 @@ cases = ["cases/translation/functions/split.toml#t002_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.split.t003"
+id = "db.functions.split.t007"
 form = "db.functions.split"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -26096,7 +26415,7 @@ cases = ["cases/translation/functions/split.toml#t003_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.split.t004"
+id = "db.functions.split.t008"
 form = "db.functions.split"
 kind = "error_parity"
 target = "ARRAY<INT>, STRING"
@@ -27199,6 +27518,17 @@ required = true
 id = "db.functions.startswith.t001"
 form = "db.functions.startswith"
 kind = "type_combination"
+target = "BINARY, STRING"
+note = "startswith of bytes and text. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/startswith.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.startswith.t002"
+form = "db.functions.startswith"
+kind = "type_combination"
 target = "STRING, STRING"
 note = "startswith with arguments of type STRING, STRING."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -27207,7 +27537,7 @@ cases = ["cases/translation/functions/startswith.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.startswith.t002"
+id = "db.functions.startswith.t003"
 form = "db.functions.startswith"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -27218,7 +27548,7 @@ cases = ["cases/translation/functions/startswith.toml#t002_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.startswith.t003"
+id = "db.functions.startswith.t004"
 form = "db.functions.startswith"
 kind = "null_argument"
 target = "STRING, STRING"
@@ -27229,7 +27559,7 @@ cases = ["cases/translation/functions/startswith.toml#t003_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.startswith.t004"
+id = "db.functions.startswith.t005"
 form = "db.functions.startswith"
 kind = "error_parity"
 target = "ARRAY<INT>, STRING"
@@ -29916,6 +30246,17 @@ required = true
 id = "db.functions.to-timestamp-ltz.t001"
 form = "db.functions.to-timestamp-ltz"
 kind = "type_combination"
+target = "STRING"
+note = "to_timestamp_ltz of plain timestamp text. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/to-timestamp-ltz.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.to-timestamp-ltz.t002"
+form = "db.functions.to-timestamp-ltz"
+kind = "type_combination"
 target = "INT"
 note = "to-timestamp-ltz with arguments of type INT."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -29924,7 +30265,7 @@ cases = ["cases/translation/functions/to-timestamp-ltz.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.to-timestamp-ltz.t002"
+id = "db.functions.to-timestamp-ltz.t003"
 form = "db.functions.to-timestamp-ltz"
 kind = "type_combination"
 target = "STRING"
@@ -29935,7 +30276,7 @@ cases = ["cases/translation/functions/to-timestamp-ltz.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.to-timestamp-ltz.t003"
+id = "db.functions.to-timestamp-ltz.t004"
 form = "db.functions.to-timestamp-ltz"
 kind = "type_combination"
 target = "DATE"
@@ -29946,7 +30287,7 @@ cases = ["cases/translation/functions/to-timestamp-ltz.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.to-timestamp-ltz.t004"
+id = "db.functions.to-timestamp-ltz.t005"
 form = "db.functions.to-timestamp-ltz"
 kind = "type_combination"
 target = "TIMESTAMP"
@@ -29957,7 +30298,7 @@ cases = ["cases/translation/functions/to-timestamp-ltz.toml#t004_types_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.to-timestamp-ltz.t005"
+id = "db.functions.to-timestamp-ltz.t006"
 form = "db.functions.to-timestamp-ltz"
 kind = "null_argument"
 target = "INT"
@@ -29968,7 +30309,7 @@ cases = ["cases/translation/functions/to-timestamp-ltz.toml#t005_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.to-timestamp-ltz.t006"
+id = "db.functions.to-timestamp-ltz.t007"
 form = "db.functions.to-timestamp-ltz"
 kind = "error_parity"
 target = "STRING"
@@ -29983,6 +30324,17 @@ id = "db.functions.to-timestamp-ntz.t001"
 form = "db.functions.to-timestamp-ntz"
 kind = "type_combination"
 target = "STRING"
+note = "to_timestamp_ntz of plain timestamp and date text. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/to-timestamp-ntz.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.to-timestamp-ntz.t002"
+form = "db.functions.to-timestamp-ntz"
+kind = "type_combination"
+target = "STRING"
 note = "to-timestamp-ntz with arguments of type STRING."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
@@ -29990,7 +30342,7 @@ cases = ["cases/translation/functions/to-timestamp-ntz.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.to-timestamp-ntz.t002"
+id = "db.functions.to-timestamp-ntz.t003"
 form = "db.functions.to-timestamp-ntz"
 kind = "type_combination"
 target = "DATE"
@@ -30001,7 +30353,7 @@ cases = ["cases/translation/functions/to-timestamp-ntz.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.to-timestamp-ntz.t003"
+id = "db.functions.to-timestamp-ntz.t004"
 form = "db.functions.to-timestamp-ntz"
 kind = "type_combination"
 target = "TIMESTAMP"
@@ -30012,7 +30364,7 @@ cases = ["cases/translation/functions/to-timestamp-ntz.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.to-timestamp-ntz.t004"
+id = "db.functions.to-timestamp-ntz.t005"
 form = "db.functions.to-timestamp-ntz"
 kind = "type_combination"
 target = "TIMESTAMP_NTZ"
@@ -30023,7 +30375,7 @@ cases = ["cases/translation/functions/to-timestamp-ntz.toml#t004_types_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.to-timestamp-ntz.t005"
+id = "db.functions.to-timestamp-ntz.t006"
 form = "db.functions.to-timestamp-ntz"
 kind = "null_argument"
 target = "STRING"
@@ -30034,7 +30386,7 @@ cases = ["cases/translation/functions/to-timestamp-ntz.toml#t005_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.to-timestamp-ntz.t006"
+id = "db.functions.to-timestamp-ntz.t007"
 form = "db.functions.to-timestamp-ntz"
 kind = "error_parity"
 target = "ARRAY<INT>"
@@ -31490,6 +31842,28 @@ id = "db.functions.try-make-timestamp.t001"
 form = "db.functions.try-make-timestamp"
 kind = "type_combination"
 target = "INT, INT, INT, INT, INT, INT"
+note = "try_make_timestamp of a day its month lacks, a leap day and a month past 12. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/try-make-timestamp.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.try-make-timestamp.t002"
+form = "db.functions.try-make-timestamp"
+kind = "type_combination"
+target = "STRING"
+note = "try_make_timestamp of a year read from text. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/try-make-timestamp.pc2.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.try-make-timestamp.t003"
+form = "db.functions.try-make-timestamp"
+kind = "type_combination"
+target = "INT, INT, INT, INT, INT, INT"
 note = "try-make-timestamp with arguments of type INT, INT, INT, INT, INT, INT."
 catches = "the argument types read another way, or the result typed otherwise"
 reading = "the argument types the generator read from the function's page"
@@ -31497,7 +31871,7 @@ cases = ["cases/translation/functions/try-make-timestamp.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-make-timestamp.t002"
+id = "db.functions.try-make-timestamp.t004"
 form = "db.functions.try-make-timestamp"
 kind = "type_combination"
 target = "BIGINT, INT, INT, INT, INT, INT"
@@ -31508,7 +31882,7 @@ cases = ["cases/translation/functions/try-make-timestamp.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-make-timestamp.t003"
+id = "db.functions.try-make-timestamp.t005"
 form = "db.functions.try-make-timestamp"
 kind = "type_combination"
 target = "SMALLINT, INT, INT, INT, INT, INT"
@@ -31519,7 +31893,7 @@ cases = ["cases/translation/functions/try-make-timestamp.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-make-timestamp.t004"
+id = "db.functions.try-make-timestamp.t006"
 form = "db.functions.try-make-timestamp"
 kind = "type_combination"
 target = "INT, BIGINT, INT, INT, INT, INT"
@@ -31530,7 +31904,7 @@ cases = ["cases/translation/functions/try-make-timestamp.toml#t004_types_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-make-timestamp.t005"
+id = "db.functions.try-make-timestamp.t007"
 form = "db.functions.try-make-timestamp"
 kind = "null_argument"
 target = "INT, INT, INT, INT, INT, INT"
@@ -31541,7 +31915,7 @@ cases = ["cases/translation/functions/try-make-timestamp.toml#t005_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-make-timestamp.t006"
+id = "db.functions.try-make-timestamp.t008"
 form = "db.functions.try-make-timestamp"
 kind = "null_argument"
 target = "INT, INT, INT, INT, INT, INT"
@@ -31552,7 +31926,7 @@ cases = ["cases/translation/functions/try-make-timestamp.toml#t006_null_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-make-timestamp.t007"
+id = "db.functions.try-make-timestamp.t009"
 form = "db.functions.try-make-timestamp"
 kind = "null_argument"
 target = "INT, INT, INT, INT, INT, INT"
@@ -31563,7 +31937,7 @@ cases = ["cases/translation/functions/try-make-timestamp.toml#t007_null_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-make-timestamp.t008"
+id = "db.functions.try-make-timestamp.t010"
 form = "db.functions.try-make-timestamp"
 kind = "null_argument"
 target = "INT, INT, INT, INT, INT, INT"
@@ -31574,7 +31948,7 @@ cases = ["cases/translation/functions/try-make-timestamp.toml#t008_null_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-make-timestamp.t009"
+id = "db.functions.try-make-timestamp.t011"
 form = "db.functions.try-make-timestamp"
 kind = "null_argument"
 target = "INT, INT, INT, INT, INT, INT"
@@ -31585,7 +31959,7 @@ cases = ["cases/translation/functions/try-make-timestamp.toml#t009_null_5"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-make-timestamp.t010"
+id = "db.functions.try-make-timestamp.t012"
 form = "db.functions.try-make-timestamp"
 kind = "null_argument"
 target = "INT, INT, INT, INT, INT, INT"
@@ -31596,7 +31970,7 @@ cases = ["cases/translation/functions/try-make-timestamp.toml#t010_null_6"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-make-timestamp.t011"
+id = "db.functions.try-make-timestamp.t013"
 form = "db.functions.try-make-timestamp"
 kind = "error_parity"
 target = "STRING, INT, INT, INT, INT, INT"
@@ -32622,6 +32996,17 @@ required = true
 id = "db.functions.try-to-timestamp.t001"
 form = "db.functions.try-to-timestamp"
 kind = "type_combination"
+target = "STRING"
+note = "try_to_timestamp of an invalid day, digitless text and a plain timestamp. Hand-written for the phase-2 recording."
+catches = "the argument types read another way, or the result typed otherwise"
+reading = "the argument types the generator read from the function's page"
+cases = ["cases/translation/functions/try-to-timestamp.pc.hand.toml#p001"]
+required = true
+
+[[obligation]]
+id = "db.functions.try-to-timestamp.t002"
+form = "db.functions.try-to-timestamp"
+kind = "type_combination"
 target = "INT"
 note = "try-to-timestamp with arguments of type INT."
 catches = "the argument types read another way, or the result typed otherwise"
@@ -32630,7 +33015,7 @@ cases = ["cases/translation/functions/try-to-timestamp.toml#t001_types_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-to-timestamp.t002"
+id = "db.functions.try-to-timestamp.t003"
 form = "db.functions.try-to-timestamp"
 kind = "type_combination"
 target = "STRING"
@@ -32641,7 +33026,7 @@ cases = ["cases/translation/functions/try-to-timestamp.toml#t002_types_2"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-to-timestamp.t003"
+id = "db.functions.try-to-timestamp.t004"
 form = "db.functions.try-to-timestamp"
 kind = "type_combination"
 target = "DATE"
@@ -32652,7 +33037,7 @@ cases = ["cases/translation/functions/try-to-timestamp.toml#t003_types_3"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-to-timestamp.t004"
+id = "db.functions.try-to-timestamp.t005"
 form = "db.functions.try-to-timestamp"
 kind = "type_combination"
 target = "TIMESTAMP"
@@ -32663,7 +33048,7 @@ cases = ["cases/translation/functions/try-to-timestamp.toml#t004_types_4"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-to-timestamp.t005"
+id = "db.functions.try-to-timestamp.t006"
 form = "db.functions.try-to-timestamp"
 kind = "null_argument"
 target = "INT"
@@ -32674,7 +33059,7 @@ cases = ["cases/translation/functions/try-to-timestamp.toml#t005_null_1"]
 required = true
 
 [[obligation]]
-id = "db.functions.try-to-timestamp.t006"
+id = "db.functions.try-to-timestamp.t007"
 form = "db.functions.try-to-timestamp"
 kind = "error_parity"
 target = "STRING"
