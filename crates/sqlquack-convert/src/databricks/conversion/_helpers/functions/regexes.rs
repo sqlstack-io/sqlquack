@@ -407,7 +407,7 @@ fn translated(pattern: &str) -> Option<Translated> {
         depth: 0,
         anchored_end: false,
     };
-    let (re2, nullable) = parser.alternation()?;
+    let (re2, nullable, _) = parser.alternation()?;
     (parser.at == parser.characters.len()).then_some(Translated {
         re2,
         groups: parser.groups,
@@ -443,22 +443,24 @@ impl Parser {
         Some(character)
     }
 
-    /// Branches separated by `|`, and whether any can match empty text.
-    fn alternation(&mut self) -> Option<(String, bool)> {
-        let (mut written, mut nullable) = self.sequence()?;
+    /// Branches separated by `|`, whether any can match empty text, and their largest nested repeat count.
+    fn alternation(&mut self) -> Option<(String, bool, u32)> {
+        let (mut written, mut nullable, mut weight) = self.sequence()?;
         while self.peek(0) == Some('|') {
             self.at += 1;
-            let (branch, empty) = self.sequence()?;
+            let (branch, empty, heavy) = self.sequence()?;
             written = format!("{written}|{branch}");
             nullable |= empty;
+            weight = weight.max(heavy);
         }
-        Some((written, nullable))
+        Some((written, nullable, weight))
     }
 
-    /// Quantified atoms up to `|`, `)` or the end, and whether they can all match empty text.
-    fn sequence(&mut self) -> Option<(String, bool)> {
+    /// Quantified atoms up to `|`, `)` or the end, whether all can match empty, and their largest nested repeat count.
+    fn sequence(&mut self) -> Option<(String, bool, u32)> {
         let mut written = String::new();
         let mut nullable = true;
+        let mut weight = 1;
         while let Some(character) = self.peek(0) {
             match character {
                 '|' | ')' => break,
@@ -468,32 +470,38 @@ impl Parser {
                     written.push_str(JAVA_END);
                 }
                 _ => {
-                    let (atom, empty) = self.atom()?;
-                    let (quantifier, empty) = self.quantifier(empty)?;
+                    let (atom, empty, inner) = self.atom()?;
+                    let (quantifier, empty, count) = self.quantifier(empty)?;
+                    let nested = inner * count;
+                    if nested > MAX_REPEAT {
+                        return None;
+                    }
                     written.push_str(&atom);
                     written.push_str(&quantifier);
                     nullable &= empty;
+                    weight = weight.max(nested);
                 }
             }
         }
-        Some((written, nullable))
+        Some((written, nullable, weight))
     }
 
-    /// One atom, and whether it can match empty text.
-    fn atom(&mut self) -> Option<(String, bool)> {
-        match self.next()? {
-            '(' => self.group(),
-            '[' => Some((self.class()?, false)),
-            '.' => Some((JAVA_DOT.to_owned(), false)),
-            '^' => Some(("^".to_owned(), true)),
-            '\\' => Some((self.escape(false)?, false)),
-            character if REGEX_METACHARACTERS.contains(character) => None,
-            character => Some((character.to_string(), false)),
-        }
+    /// One atom, whether it can match empty text, and its largest nested repeat count.
+    fn atom(&mut self) -> Option<(String, bool, u32)> {
+        let (written, nullable) = match self.next()? {
+            '(' => return self.group(),
+            '[' => (self.class()?, false),
+            '.' => (JAVA_DOT.to_owned(), false),
+            '^' => ("^".to_owned(), true),
+            '\\' => (self.escape(false)?, false),
+            character if REGEX_METACHARACTERS.contains(character) => return None,
+            character => (character.to_string(), false),
+        };
+        Some((written, nullable, 1))
     }
 
     /// A group after its `(`: capturing, or non-capturing with `?:`; other `(?` constructs are refused.
-    fn group(&mut self) -> Option<(String, bool)> {
+    fn group(&mut self) -> Option<(String, bool, u32)> {
         let capturing = match self.peek(0) {
             Some('?') => {
                 self.at += 1;
@@ -508,26 +516,26 @@ impl Parser {
         if self.depth > MAX_TREE_DEPTH {
             return None;
         }
-        let (inner, nullable) = self.alternation()?;
+        let (inner, nullable, weight) = self.alternation()?;
         self.depth -= 1;
         (self.next()? == ')').then_some(())?;
         let opening = if capturing { "(" } else { "(?:" };
-        Some((format!("{opening}{inner})"), nullable))
+        Some((format!("{opening}{inner})"), nullable, weight))
     }
 
-    /// A greedy or lazy quantifier after an atom and whether the result can match empty; possessive ones are refused.
-    fn quantifier(&mut self, atom_nullable: bool) -> Option<(String, bool)> {
-        let (mut written, nullable) = match self.peek(0) {
+    /// A greedy or lazy quantifier, whether the result can match empty, and the count RE2 bounds nesting by.
+    fn quantifier(&mut self, atom_nullable: bool) -> Option<(String, bool, u32)> {
+        let (mut written, nullable, count) = match self.peek(0) {
             Some(character @ ('*' | '+' | '?')) => {
                 self.at += 1;
-                (character.to_string(), character != '+')
+                (character.to_string(), character != '+', 1)
             }
             Some('{') => {
                 self.at += 1;
-                let (written, least) = self.bounds()?;
-                (written, least == 0)
+                let (written, least, count) = self.bounds()?;
+                (written, least == 0, count)
             }
-            _ => return Some((String::new(), atom_nullable)),
+            _ => return Some((String::new(), atom_nullable, 1)),
         };
         if atom_nullable {
             return None;
@@ -540,22 +548,22 @@ impl Parser {
             Some('+') => return None,
             _ => {}
         }
-        Some((written, nullable))
+        Some((written, nullable, count))
     }
 
-    /// `{n}`, `{n,}` or `{n,m}` after its `{`, with its least count.
-    fn bounds(&mut self) -> Option<(String, u32)> {
+    /// `{n}`, `{n,}` or `{n,m}` after its `{`, its least count, and the count RE2 bounds nesting by.
+    fn bounds(&mut self) -> Option<(String, u32, u32)> {
         let least = self.number()?;
         match self.next()? {
-            '}' => Some((format!("{{{least}}}"), least)),
+            '}' => Some((format!("{{{least}}}"), least, least.max(1))),
             ',' if self.peek(0) == Some('}') => {
                 self.at += 1;
-                Some((format!("{{{least},}}"), least))
+                Some((format!("{{{least},}}"), least, least.max(1)))
             }
             ',' => {
                 let most = self.number()?;
                 (self.next()? == '}' && most >= least)
-                    .then(|| (format!("{{{least},{most}}}"), least))
+                    .then(|| (format!("{{{least},{most}}}"), least, most.max(1)))
             }
             _ => None,
         }
