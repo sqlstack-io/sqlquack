@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.26.0](https://github.com/sqlstack-io/sqlquack/compare/v0.25.1...v0.26.0) (2026-11-28)
+
+
+### Features
+
+* **coverage:** measure Databricks translation against recorded results ([d2c43cb](https://github.com/sqlstack-io/sqlquack/commit/d2c43cb8ce25917bfd1fd99f7d5bbaa0d25f90b9))
+* **databricks:** translate Databricks SQL to DuckDB with fail-closed rules ([20e410b](https://github.com/sqlstack-io/sqlquack/commit/20e410bf30d8ba09c415991ffdba1ff717070506))
+* **evidence:** load and verify cases recorded on Databricks SQL ([0483c16](https://github.com/sqlstack-io/sqlquack/commit/0483c16fafbf4c15ed1a2ad74d13434afdf7f1cf))
+
 ## [0.25.1](https://github.com/sqlstack-io/sqlquack/compare/v0.25.0...v0.25.1) (2026-11-27)
 
 
