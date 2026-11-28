@@ -237,10 +237,15 @@ pub const UNTRIMMED_TEXT: &str = r"(?s)[^\s\pZ\pC](.*[^\s\pZ\pC])?";
 pub const BOOLEAN_READING_ERROR: &str = "no rule reads this text as Databricks reads a boolean";
 /// Characters outside the base64 alphabet and padding, which Java's MIME decoder skips.
 pub const BASE64_ALPHABET: &str = "[^A-Za-z0-9+/=]";
+/// The characters of each line BASE64 writes, as Java's MIME encoder breaks them with CR LF.
+pub const BASE64_LINE: u8 = 76;
 /// Whole base64 units, the last possibly padded.
 pub const BASE64_UNITS: &str = "([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?";
 /// Base64 without padding whose last unit holds at least one byte.
 pub const BASE64_UNPADDED: &str = "([A-Za-z0-9+/]{4})*[A-Za-z0-9+/]{2,3}";
+/// The error base64 text raises when Java's decoder rejects it: one character left over, or data after padding.
+pub const BASE64_UNIT_ERROR: &str =
+    "the base64 text ends in a lone character or holds data after its padding";
 /// The error base64 text of any other shape raises.
 pub const BASE64_READING_ERROR: &str = "no rule reads this base64 text as Databricks decodes it";
 /// Text of hex digits only, which UNHEX reads.
@@ -251,9 +256,11 @@ pub const URL_MALFORMED_ESCAPE: &str = "%([^0-9A-Fa-f]|.[^0-9A-Fa-f]|.?$)";
 pub const URL_ESCAPE_ERROR: &str = "the text holds a URL escape Databricks cannot decode";
 /// The largest finite FLOAT; a DOUBLE beyond it is one no rule narrows as Databricks does.
 pub const FLOAT_MAX: &str = "3.4028234663852886e38";
+/// The midpoint between FLOAT's largest value and 2^128, from which Java's cast of a DOUBLE rounds to infinity.
+pub const FLOAT_OVERFLOW: &str = "3.4028235677973366e38";
 /// The error a DOUBLE beyond FLOAT's range raises when cast to FLOAT.
 pub const FLOAT_RANGE_ERROR: &str =
-    "no rule narrows a DOUBLE beyond FLOAT's range as Databricks does";
+    "no rule narrows a DOUBLE just beyond FLOAT's range as Databricks does";
 /// The seconds from the epoch within which a BIGINT, DECIMAL or DOUBLE count converts: about 31,000 years, well inside both engines' timestamps.
 pub const EPOCH_SECONDS_BOUND: i64 = 1_000_000_000_000;
 /// The error an epoch count beyond the bound raises; Databricks reaches further, and saturates DOUBLE seconds.
@@ -318,11 +325,10 @@ pub const RENDERED_ELEMENTS: &[Element] = &[
     Element::Int,
     Element::BigInt,
 ];
-/// The characters below U+0020, whose JSON escapes no recording shows Databricks writing.
-pub const CONTROL_CHARACTERS: &str = r"[\x00-\x1f]";
+/// The control characters whose JSON escapes in an array no recording shows Databricks writing.
+pub const CONTROL_CHARACTERS: &str = r"[\x00\x08\x0c\x0d]";
 /// The error a string array holding a control character raises in DuckDB.
-pub const CONTROL_ERROR: &str =
-    "no recording shows how Databricks writes a control character in an array";
+pub const CONTROL_ERROR: &str = "no recording shows how Databricks writes NUL, backspace, form feed or carriage return in an array";
 /// How deep a tree may nest for conversion, which recurses once per level.
 pub const MAX_TREE_DEPTH: usize = 128;
 /// The most digits a Databricks decimal holds.
@@ -393,7 +399,7 @@ pub const FAILURE_MODES: &[(&str, &[FailureMode])] = &[
     (BETWEEN_RULE, &[NUMBER_TEXT]),
     (IN_LIST_RULE, &[NUMBER_TEXT]),
     (CASE_RULE, &[NUMBER_TEXT]),
-    (STRING_FUNCTION_RULE, &[OVERFLOW]),
+    (STRING_FUNCTION_RULE, &[OVERFLOW, ARGUMENT]),
     (REGEX_RULE, &[ARGUMENT]),
     (NUMBER_FUNCTION_RULE, &[OVERFLOW, DIVISION, ARGUMENT]),
     (INDEX_RULE, &[ARGUMENT]),
