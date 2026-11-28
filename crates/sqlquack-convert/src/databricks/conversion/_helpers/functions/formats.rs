@@ -9,14 +9,16 @@ use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
 /// The rewrite of the formatting function `name`, `None` when none handles it.
 pub(crate) fn format_rewrite(name: &str) -> Option<Rewrite> {
-    match name {
-        "DATE_FORMAT" | "TO_CHAR" | "TO_VARCHAR" => Some(date_format),
-        _ => None,
-    }
+    let rewrite: Rewrite = match name {
+        "DATE_FORMAT" => |values| date_format(values, true),
+        "TO_CHAR" | "TO_VARCHAR" => |values| date_format(values, false),
+        _ => return None,
+    };
+    Some(rewrite)
 }
 
-/// `DATE_FORMAT(x, pattern)`: `x` written by the pattern, raising for a year outside 1 to 9999.
-fn date_format(values: &[Emitted]) -> Option<Emitted> {
+/// `DATE_FORMAT(x, pattern)` of a date, timestamp or, with `text`, text: `x` written by the pattern, raising past year 9999.
+fn date_format(values: &[Emitted], text: bool) -> Option<Emitted> {
     let [value, pattern] = values else {
         return None;
     };
@@ -27,7 +29,7 @@ fn date_format(values: &[Emitted]) -> Option<Emitted> {
         DatabricksType::Date | DatabricksType::Timestamp | DatabricksType::TimestampNtz => {
             value.clone()
         }
-        DatabricksType::String => cast_value(value, DatabricksType::Timestamp)?,
+        DatabricksType::String if text => cast_value(value, DatabricksType::Timestamp)?,
         _ => return None,
     };
     let format = strftime_format(pattern)?;

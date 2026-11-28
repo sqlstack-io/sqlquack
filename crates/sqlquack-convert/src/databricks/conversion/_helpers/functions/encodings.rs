@@ -3,10 +3,12 @@
 use sqlquack_diagnostics::failures::constants::ARGUMENT_REJECTED;
 
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::functions::arrays::captured;
 use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
 use crate::databricks::conversion::constants::{
     BASE64_ALPHABET, BASE64_LINE, BASE64_READING_ERROR, BASE64_UNIT_ERROR, BASE64_UNITS,
-    BASE64_UNPADDED, HEX_TEXT, LAMBDA_ELEMENT, URL_ESCAPE_ERROR, URL_MALFORMED_ESCAPE,
+    BASE64_UNPADDED, HEX_TEXT, LAMBDA_ELEMENT, URL_DIGIT_ERROR, URL_ESCAPE_ERROR, URL_JAVA_DIGITS,
+    URL_MALFORMED_ESCAPE,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -32,6 +34,9 @@ fn base64(values: &[Emitted]) -> Option<Emitted> {
         DatabricksType::Binary => value.sql.clone(),
         _ => return None,
     };
+    if captured(&value.sql) {
+        return None;
+    }
     let encoded = format!("to_base64({bytes})");
     Some(typed(
         format!(
@@ -107,7 +112,8 @@ fn url_decode(values: &[Emitted], try_decode: bool) -> Option<Emitted> {
     };
     Some(typed(
         format!(
-            "(CASE WHEN regexp_matches({s}, '{URL_MALFORMED_ESCAPE}') THEN {malformed} \
+            "(CASE WHEN regexp_matches({s}, '{URL_JAVA_DIGITS}') THEN CAST(error('{URL_DIGIT_ERROR}') AS VARCHAR) \
+             WHEN regexp_matches({s}, '{URL_MALFORMED_ESCAPE}') THEN {malformed} \
              ELSE url_decode(replace({s}, '+', ' ')) END)"
         ),
         DatabricksType::String,

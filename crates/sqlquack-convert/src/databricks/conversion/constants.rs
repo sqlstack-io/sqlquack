@@ -252,6 +252,11 @@ pub const BASE64_READING_ERROR: &str = "no rule reads this base64 text as Databr
 pub const HEX_TEXT: &str = "[0-9A-Fa-f]*";
 /// A `%` not followed by two hex digits, which Java's URLDecoder rejects.
 pub const URL_MALFORMED_ESCAPE: &str = "%([^0-9A-Fa-f]|.[^0-9A-Fa-f]|.?$)";
+/// URL escapes whose digits Java reads with a sign or as non-ASCII digits, which DuckDB does not.
+pub const URL_JAVA_DIGITS: &str = r"%(\+|-|[^\x00-\x7f]|.[^\x00-\x7f])";
+/// The error an escape in [`URL_JAVA_DIGITS`] raises.
+pub const URL_DIGIT_ERROR: &str =
+    "the text holds a URL escape whose digits no rule reads as Java does";
 /// The error a malformed URL escape raises.
 pub const URL_ESCAPE_ERROR: &str = "the text holds a URL escape Databricks cannot decode";
 /// The largest finite FLOAT; a DOUBLE beyond it is one no rule narrows as Databricks does.
@@ -314,6 +319,8 @@ pub const FLOAT_MANTISSA_BITS: u32 = 24;
 pub const DOUBLE_MANTISSA_BITS: u32 = 53;
 /// The parameter name of the lambdas array rewrites emit.
 pub const LAMBDA_ELEMENT: &str = "element";
+/// The lambda parameter of an element's 1-based place, such as ARRAY_DISTINCT's.
+pub const LAMBDA_INDEX: &str = "slot";
 /// The parameter name of the text joined so far in the lambdas that join array elements.
 pub const JOINED: &str = "joined";
 /// The array elements whose text DuckDB writes as Databricks returns it; strings raise on control characters.

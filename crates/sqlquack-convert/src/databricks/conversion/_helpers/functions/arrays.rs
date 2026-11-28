@@ -4,7 +4,9 @@ use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::expressions::operators::{as_type, common_type};
 use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
-use crate::databricks::conversion::constants::{JOINED, LAMBDA_ELEMENT};
+use crate::databricks::conversion::constants::{
+    JOINED, LAMBDA_ELEMENT, LAMBDA_INDEX, LAMBDA_TOTAL,
+};
 use crate::databricks::conversion::models::{DatabricksType, Element, Emitted};
 
 /// The rewrite of the array function `name`, `None` when no rewrite handles it.
@@ -226,9 +228,12 @@ fn array_reverse(values: &[Emitted]) -> Option<Emitted> {
 fn array_distinct(values: &[Emitted]) -> Option<Emitted> {
     let [array] = values else { return None };
     element(array)?;
+    if captured(&array.sql) {
+        return None;
+    }
     Some(typed(
         format!(
-            "list_filter({a}, lambda {LAMBDA_ELEMENT}, i: list_position({a}, {LAMBDA_ELEMENT}) = i)",
+            "list_filter({a}, lambda {LAMBDA_ELEMENT}, {LAMBDA_INDEX}: list_position({a}, {LAMBDA_ELEMENT}) = {LAMBDA_INDEX})",
             a = array.sql
         ),
         array.data_type,
@@ -299,6 +304,14 @@ pub(crate) fn known(element: Element) -> Option<Element> {
         Element::Null => None,
         element => Some(element),
     }
+}
+
+/// Whether `sql` may name a lambda parameter, which a lambda holding it would capture.
+pub(crate) fn captured(sql: &str) -> bool {
+    let sql = sql.to_lowercase();
+    [LAMBDA_ELEMENT, LAMBDA_INDEX, LAMBDA_TOTAL]
+        .iter()
+        .any(|name| sql.contains(name))
 }
 
 /// An index Databricks takes as INT without a cast.

@@ -342,7 +342,7 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             ],
         },
         ConvertTestCase {
-            description: "REGEXP_COUNT of '' and REGEXP_INSTR count UTF-16 units as Java does",
+            description: "REGEXP_COUNT of '' counts UTF-16 units as Java does; REGEXP_INSTR counts characters",
             query: "SELECT regexp_count(s, '') AS c, regexp_instr(s, '[0-9]+') AS i FROM input",
             expected_sql: &[
                 "CAST(length(\"s\") + length(regexp_replace(\"s\", '[^\\x{10000}-\\x{10FFFF}]', '', 'g')) + 1 AS INTEGER) AS \"c\"",
@@ -356,6 +356,7 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_sql: &[
                 "WHEN 16 NOT BETWEEN 2 AND 36 OR (\"x1\" NOT BETWEEN 2 AND 36 AND \"x1\" NOT BETWEEN -36 AND -2) THEN NULL",
                 "AS UBIGINT) AS HUGEINT)",
+                "starts_with(trim(\"s\", ' '), '-')",
             ],
             expected_types: &[DatabricksType::String],
         },
@@ -365,6 +366,14 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_sql: &[
                 "THEN strftime((CASE WHEN \"s\" IS NULL",
                 "'%b %-d, %Y at %-I %p')",
+            ],
+            expected_types: &[DatabricksType::String],
+        },
+        ConvertTestCase {
+            description: "URL_DECODE raises for an escape Java reads with a sign or non-ASCII digits",
+            query: "SELECT try_url_decode(s) AS r FROM input",
+            expected_sql: &[
+                "THEN CAST(error('the text holds a URL escape whose digits no rule reads as Java does') AS VARCHAR)",
             ],
             expected_types: &[DatabricksType::String],
         },
@@ -538,6 +547,26 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "a DOUBLE number for CONV, whose text Java writes differently",
             query: "SELECT conv(CAST(x1 AS DOUBLE), 10, 2) AS r FROM input",
             expected_reason: "CONV",
+        },
+        RefuseTestCase {
+            description: "TO_CHAR of text, which Databricks formats as a number",
+            query: "SELECT to_char(s, 'yyyy') AS r FROM input",
+            expected_reason: "TO_CHAR",
+        },
+        RefuseTestCase {
+            description: "a text operand IN text and a number, which Databricks compares as numbers",
+            query: "SELECT s IN ('1', 2) AS r FROM input",
+            expected_reason: "as numbers",
+        },
+        RefuseTestCase {
+            description: "an integer IN text and a DOUBLE, which Databricks compares as DOUBLE",
+            query: "SELECT x1 IN ('5', 0.5D) AS r FROM input",
+            expected_reason: "as DOUBLE",
+        },
+        RefuseTestCase {
+            description: "nested repeat counts whose product RE2 rejects",
+            query: "SELECT regexp_like(s, '(?:a{1000}){2}') AS r FROM input",
+            expected_reason: "REGEXP_LIKE",
         },
         RefuseTestCase {
             description: "title-casing, whose word breaks no rule shows DuckDB sharing",

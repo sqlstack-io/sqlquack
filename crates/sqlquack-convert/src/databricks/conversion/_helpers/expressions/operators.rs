@@ -223,6 +223,26 @@ fn mixed_in_list(values: &[Emitted], not: bool) -> Result<Emitted, Refusal> {
     let [operand, items @ ..] = values else {
         return Err(refused("in", "an IN list holds no values".to_owned()));
     };
+    let text = |value: &Emitted| value.data_type == DatabricksType::String;
+    let inexact = |value: &Emitted| {
+        matches!(
+            value.data_type,
+            DatabricksType::Float | DatabricksType::Double | DatabricksType::Decimal { .. }
+        )
+    };
+    if text(operand) && items.iter().any(text) {
+        return Err(refused(
+            "in",
+            "Databricks compares a text operand and text items as numbers when the IN list also holds a number".to_owned(),
+        ));
+    }
+    if values.iter().any(text) && values.iter().any(inexact) {
+        return Err(refused(
+            "in",
+            "Databricks compares text with every value as DOUBLE when the IN list holds a fraction"
+                .to_owned(),
+        ));
+    }
     let mut tests: Vec<String> = Vec::new();
     for item in items {
         let (left, right) = comparable(operand, item).ok_or_else(|| {

@@ -7,6 +7,7 @@ use crate::databricks::conversion::_helpers::expressions::literals::{cast_value,
 use crate::databricks::conversion::_helpers::expressions::operators::{
     as_type, comparable, whole_text,
 };
+use crate::databricks::conversion::_helpers::functions::arrays::captured;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::_helpers::support::typing::{same_cast, wider_integer};
 use crate::databricks::conversion::constants::{
@@ -168,7 +169,7 @@ fn binary_text(values: &[Emitted]) -> Option<Emitted> {
     })
 }
 
-/// `CONV(n, from, to)` as Spark's NumberConverter: unsigned 64-bit, NULL for a base outside 2 to 36, raising on overflow.
+/// `CONV(n, from, to)` of `n` without end spaces, as Spark's NumberConverter: unsigned 64-bit, NULL for a base outside 2 to 36, raising on overflow.
 fn convert_base(values: &[Emitted]) -> Option<Emitted> {
     let [number, from, to] = values else {
         return None;
@@ -176,18 +177,16 @@ fn convert_base(values: &[Emitted]) -> Option<Emitted> {
     if !small_integer(from.data_type) || !small_integer(to.data_type) {
         return None;
     }
-    let captured = [LAMBDA_ELEMENT, LAMBDA_TOTAL]
-        .iter()
-        .any(|name| from.sql.to_lowercase().contains(name));
     let text = match number.data_type {
         DatabricksType::String => number.clone(),
         data_type if data_type.is_integral() => cast_value(number, DatabricksType::String)?,
         _ => return None,
     };
-    if captured {
+    if captured(&from.sql) {
         return None;
     }
-    let (s, f, t) = (&text.sql, &from.sql, &to.sql);
+    let trimmed = format!("trim({}, ' ')", text.sql);
+    let (s, f, t) = (&trimmed, &from.sql, &to.sql);
     let digit = format!(
         "greatest(instr('{BASE_DIGITS}', {LAMBDA_ELEMENT}), instr('{LOWER_BASE_DIGITS}', {LAMBDA_ELEMENT})) - 1"
     );
