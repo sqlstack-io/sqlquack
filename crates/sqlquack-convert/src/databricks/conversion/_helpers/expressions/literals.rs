@@ -10,8 +10,8 @@ use crate::databricks::conversion::_helpers::support::tree::{field, refused, und
 use crate::databricks::conversion::_helpers::support::typing::{databricks_type, same_cast};
 use crate::databricks::conversion::constants::{
     CAST_RULE, CLOCK_TEXT_LENGTH, DATE_TEXT_LENGTH, DOUBLE_EXACT_DIGITS, DOUBLE_MANTISSA_BITS,
-    FLOAT_MANTISSA_BITS, FLOAT_MAX, FLOAT_RANGE_ERROR, LITERAL_RULE, MAX_DECIMAL_PRECISION,
-    MAX_FRACTION_DIGITS, SPECIAL_DOUBLE_TEXTS,
+    FLOAT_MANTISSA_BITS, FLOAT_MAX, FLOAT_OVERFLOW, FLOAT_RANGE_ERROR, LITERAL_RULE,
+    MAX_DECIMAL_PRECISION, MAX_FRACTION_DIGITS, SPECIAL_DOUBLE_TEXTS,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
@@ -94,8 +94,11 @@ pub(crate) fn cast_value(source: &Emitted, target: DatabricksType) -> Option<Emi
     {
         return Some(typed(
             format!(
-                "(CASE WHEN isfinite({x}) AND abs({x}) > {FLOAT_MAX} \
-                 THEN CAST(error('{FLOAT_RANGE_ERROR}') AS FLOAT) ELSE CAST({x} AS FLOAT) END)",
+                "(CASE WHEN isfinite({x}) AND abs({x}) >= {FLOAT_OVERFLOW} \
+                 THEN CAST(CASE WHEN {x} > 0 THEN 'Infinity' ELSE '-Infinity' END AS FLOAT) \
+                 WHEN isfinite({x}) AND abs({x}) > {FLOAT_MAX} \
+                 THEN CAST(error({}) AS FLOAT) ELSE CAST({x} AS FLOAT) END)",
+                quoted_text(FLOAT_RANGE_ERROR),
                 x = source.sql
             ),
             target,

@@ -44,13 +44,13 @@ fn text_as_date(text: &Emitted) -> Emitted {
     )
 }
 
-/// A STRING column read as a timestamp as Databricks casts it: NULL stays NULL, `YYYY-MM-DD HH:MM:SS[.ffffff]` converts, digitless text raises.
+/// A STRING column read as a timestamp as Databricks casts it: `YYYY-MM-DD[ HH:MM:SS[.ffffff]]` converts, digitless text raises.
 fn text_as_timestamp(text: &Emitted, target: DatabricksType) -> Emitted {
     let (t, name) = (&text.sql, target.duckdb_name());
     typed(
         format!(
             "(CASE WHEN {t} IS NULL THEN CAST(NULL AS {name}) \
-             WHEN regexp_full_match({t}, '{PLAIN_TIMESTAMP_TEXT}') \
+             WHEN regexp_full_match({t}, '{PLAIN_TIMESTAMP_TEXT}') OR regexp_full_match({t}, '{PLAIN_DATE_TEXT}') \
              THEN coalesce(TRY_CAST({t} AS {name}), CAST(error('{TIMESTAMP_TEXT_FRAGMENT}: {INVALID_TIMESTAMP_ERROR}') AS {name})) \
              WHEN NOT regexp_matches({t}, '[0-9]') \
              THEN CAST(error('{TIMESTAMP_TEXT_FRAGMENT}: {DIGITLESS_TIMESTAMP_ERROR}') AS {name}) \
@@ -80,7 +80,7 @@ fn text_as_narrow(text: &Emitted, target: DatabricksType) -> Option<Emitted> {
     ))
 }
 
-/// A STRING column read as BOOLEAN as Databricks casts it: the words of truth in any case, other text with untrimmed ends raises as malformed.
+/// A STRING column read as BOOLEAN as Databricks casts it: the words of truth in any case between spaces; other untrimmed text raises as malformed.
 fn text_as_boolean(text: &Emitted) -> Emitted {
     let t = &text.sql;
     let words = |texts: &[&str]| {
@@ -93,7 +93,7 @@ fn text_as_boolean(text: &Emitted) -> Emitted {
     typed(
         format!(
             "(CASE WHEN {t} IS NULL THEN CAST(NULL AS BOOLEAN) \
-             WHEN lower({t}) IN ({}) THEN TRUE WHEN lower({t}) IN ({}) THEN FALSE \
+             WHEN lower(trim({t}, ' ')) IN ({}) THEN TRUE WHEN lower(trim({t}, ' ')) IN ({}) THEN FALSE \
              WHEN {t} = '' OR regexp_full_match({t}, '{UNTRIMMED_TEXT}') \
              THEN CAST(error('{BOOLEAN_TEXT_ERROR}') AS BOOLEAN) \
              ELSE CAST(error('{BOOLEAN_READING_ERROR}') AS BOOLEAN) END)",

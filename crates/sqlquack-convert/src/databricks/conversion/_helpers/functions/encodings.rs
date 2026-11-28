@@ -1,10 +1,12 @@
 //! Encodings of strings and byte strings: base64, hex and URL escapes, as Java's encoders and decoders write and read them.
 
+use sqlquack_diagnostics::failures::constants::ARGUMENT_REJECTED;
+
 use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::functions::rewrites::Rewrite;
 use crate::databricks::conversion::constants::{
-    BASE64_ALPHABET, BASE64_READING_ERROR, BASE64_UNITS, BASE64_UNPADDED, HEX_TEXT,
-    URL_ESCAPE_ERROR, URL_MALFORMED_ESCAPE,
+    BASE64_ALPHABET, BASE64_LINE, BASE64_READING_ERROR, BASE64_UNIT_ERROR, BASE64_UNITS,
+    BASE64_UNPADDED, HEX_TEXT, LAMBDA_ELEMENT, URL_ESCAPE_ERROR, URL_MALFORMED_ESCAPE,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -22,7 +24,7 @@ pub(crate) fn encoding_rewrite(name: &str) -> Option<Rewrite> {
     Some(rewrite)
 }
 
-/// `BASE64` of a string's UTF-8 bytes or of a byte string, unchunked, as Java's basic encoder writes it.
+/// `BASE64` of a string's UTF-8 bytes or of a byte string, in lines of 76 characters broken with CR LF.
 fn base64(values: &[Emitted]) -> Option<Emitted> {
     let [value] = values else { return None };
     let bytes = match value.data_type {
@@ -30,7 +32,14 @@ fn base64(values: &[Emitted]) -> Option<Emitted> {
         DatabricksType::Binary => value.sql.clone(),
         _ => return None,
     };
-    Some(typed(format!("to_base64({bytes})"), DatabricksType::String))
+    let encoded = format!("to_base64({bytes})");
+    Some(typed(
+        format!(
+            "array_to_string(list_transform(range(0, length({encoded}), {BASE64_LINE}), \
+             lambda {LAMBDA_ELEMENT}: substr({encoded}, {LAMBDA_ELEMENT} + 1, {BASE64_LINE})), chr(13) || chr(10))"
+        ),
+        DatabricksType::String,
+    ))
 }
 
 /// `UNBASE64(s)` as Java's MIME decoder reads it: characters outside the alphabet are skipped, padding may be left off; other shapes raise.
@@ -46,6 +55,8 @@ fn unbase64(values: &[Emitted]) -> Option<Emitted> {
              WHEN regexp_full_match({kept}, '{BASE64_UNITS}') THEN from_base64({kept}) \
              WHEN regexp_full_match({kept}, '{BASE64_UNPADDED}') \
              THEN from_base64({kept} || repeat('=', (4 - length({kept}) % 4) % 4)) \
+             WHEN regexp_matches({kept}, '=[^=]') OR (NOT contains({kept}, '=') AND length({kept}) % 4 = 1) \
+             THEN CAST(error('{ARGUMENT_REJECTED}: {BASE64_UNIT_ERROR}') AS BLOB) \
              ELSE CAST(error('{BASE64_READING_ERROR}') AS BLOB) END)"
         ),
         DatabricksType::Binary,
@@ -92,7 +103,7 @@ fn url_decode(values: &[Emitted], try_decode: bool) -> Option<Emitted> {
     let s = &text.sql;
     let malformed = match try_decode {
         true => "NULL".to_owned(),
-        false => format!("CAST(error('{URL_ESCAPE_ERROR}') AS VARCHAR)"),
+        false => format!("CAST(error('{ARGUMENT_REJECTED}: {URL_ESCAPE_ERROR}') AS VARCHAR)"),
     };
     Some(typed(
         format!(
