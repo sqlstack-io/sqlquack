@@ -9,6 +9,7 @@ use crate::databricks::conversion::_helpers::expressions::operators::{
 use crate::databricks::conversion::_helpers::functions::arrays::array_rewrite;
 use crate::databricks::conversion::_helpers::functions::dates::date_rewrite;
 use crate::databricks::conversion::_helpers::functions::encodings::encoding_rewrite;
+use crate::databricks::conversion::_helpers::functions::formats::format_rewrite;
 use crate::databricks::conversion::_helpers::functions::indexes::index_rewrite;
 use crate::databricks::conversion::_helpers::functions::maths::math_rewrite;
 use crate::databricks::conversion::_helpers::functions::numbers::{number_rewrite, remainder};
@@ -31,10 +32,11 @@ type Family = fn(&str) -> Option<Rewrite>;
 
 /// The rule and rewrite of the function `name`, `None` when no rewrite handles it.
 pub(crate) fn rewrite(name: &str) -> Option<(&'static str, Rewrite)> {
-    let families: [(&str, Family); 9] = [
+    let families: [(&str, Family); 10] = [
         (REWRITE_RULE, own_rewrite),
         (REWRITE_RULE, array_rewrite),
         (DATE_FUNCTION_RULE, date_rewrite),
+        (DATE_FUNCTION_RULE, format_rewrite),
         (REGEX_RULE, regex_rewrite),
         (STRING_FUNCTION_RULE, string_rewrite),
         (STRING_FUNCTION_RULE, encoding_rewrite),

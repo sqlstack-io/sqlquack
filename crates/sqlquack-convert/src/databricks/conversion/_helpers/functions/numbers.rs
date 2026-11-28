@@ -3,15 +3,16 @@
 use sqlquack_diagnostics::failures::constants::ARGUMENT_REJECTED;
 
 use crate::databricks::conversion::_helpers::expressions::bitwise::shifted;
-use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::expressions::literals::{cast_value, typed};
 use crate::databricks::conversion::_helpers::expressions::operators::{
     as_type, comparable, whole_text,
 };
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::_helpers::support::typing::{same_cast, wider_integer};
 use crate::databricks::conversion::constants::{
-    BIGINT_MAX, BIGINT_MIN, BIGINT_SPAN_DOUBLE, BIT_POSITION_ERROR, FACTORIAL_MAX,
-    MAX_DECIMAL_PRECISION,
+    BASE_DIGITS, BIGINT_MAX, BIGINT_MIN, BIGINT_SPAN_DOUBLE, BIT_POSITION_ERROR, FACTORIAL_MAX,
+    LAMBDA_ELEMENT, LAMBDA_TOTAL, LOWER_BASE_DIGITS, MAX_DECIMAL_PRECISION, SIGN_BIT,
+    UNSIGNED_SPAN,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal, Shift};
 
@@ -39,6 +40,7 @@ pub(crate) fn number_rewrite(name: &str) -> Option<Rewrite> {
         "BIT_COUNT" => bit_count,
         "PMOD" => positive_modulo,
         "BIN" => binary_text,
+        "CONV" => convert_base,
         "WIDTH_BUCKET" => width_bucket,
         "BIT_GET" | "GETBIT" => bit_get,
         "SHIFTLEFT" => |values| shift_function(values, Shift::Left),
@@ -164,6 +166,65 @@ fn binary_text(values: &[Emitted]) -> Option<Emitted> {
             DatabricksType::String,
         )
     })
+}
+
+/// `CONV(n, from, to)` as Spark's NumberConverter: unsigned 64-bit, NULL for a base outside 2 to 36, raising on overflow.
+fn convert_base(values: &[Emitted]) -> Option<Emitted> {
+    let [number, from, to] = values else {
+        return None;
+    };
+    if !small_integer(from.data_type) || !small_integer(to.data_type) {
+        return None;
+    }
+    let captured = [LAMBDA_ELEMENT, LAMBDA_TOTAL]
+        .iter()
+        .any(|name| from.sql.to_lowercase().contains(name));
+    let text = match number.data_type {
+        DatabricksType::String => number.clone(),
+        data_type if data_type.is_integral() => cast_value(number, DatabricksType::String)?,
+        _ => return None,
+    };
+    if captured {
+        return None;
+    }
+    let (s, f, t) = (&text.sql, &from.sql, &to.sql);
+    let digit = format!(
+        "greatest(instr('{BASE_DIGITS}', {LAMBDA_ELEMENT}), instr('{LOWER_BASE_DIGITS}', {LAMBDA_ELEMENT})) - 1"
+    );
+    let digits = format!(
+        "list_transform(string_split(CASE WHEN starts_with({s}, '-') THEN substr({s}, 2) ELSE {s} END, ''), \
+         lambda {LAMBDA_ELEMENT}: CASE WHEN {digit} >= 0 AND {digit} < {f} THEN {digit} ELSE -1 END)"
+    );
+    let read = format!(
+        "list_slice({digits}, 1, coalesce(list_position({digits}, -1), len({digits}) + 1) - 1)"
+    );
+    let value = format!(
+        "CAST(CAST(list_reduce({read}, lambda {LAMBDA_TOTAL}, {LAMBDA_ELEMENT}: \
+         least({LAMBDA_TOTAL}, {UNSIGNED_SPAN}) * {f} + {LAMBDA_ELEMENT}, CAST(0 AS HUGEINT)) AS UBIGINT) AS HUGEINT)"
+    );
+    let negative = format!("starts_with({s}, '-')");
+    let written = format!(
+        "CASE WHEN {t} > 0 AND {negative} THEN (CASE WHEN {value} >= {SIGN_BIT} THEN {UNSIGNED_SPAN} - 1 \
+         ELSE ({UNSIGNED_SPAN} - {value}) % {UNSIGNED_SPAN} END) \
+         WHEN {t} < 0 AND {value} >= {SIGN_BIT} THEN {UNSIGNED_SPAN} - {value} ELSE {value} END"
+    );
+    let radix = format!("(CASE WHEN {t} < 0 THEN -{t} ELSE {t} END)");
+    let digit_of =
+        |place: String| format!("substr('{BASE_DIGITS}', CAST({place} AS INTEGER) + 1, 1)");
+    let encoded = format!(
+        "CASE WHEN {written} < {radix} THEN {low} ELSE to_base(CAST(({written}) // {radix} AS BIGINT), {radix}) || {low} END",
+        low = digit_of(format!("({written}) % {radix}"))
+    );
+    let sign =
+        format!("CASE WHEN {t} < 0 AND ({negative} OR {value} >= {SIGN_BIT}) THEN '-' ELSE '' END");
+    Some(typed(
+        format!(
+            "(CASE WHEN {s} IS NULL OR {f} IS NULL OR {t} IS NULL THEN NULL \
+             WHEN {f} NOT BETWEEN 2 AND 36 OR ({t} NOT BETWEEN 2 AND 36 AND {t} NOT BETWEEN -36 AND -2) THEN NULL \
+             WHEN {s} = '' THEN NULL ELSE {sign} || ({encoded}) END)"
+        ),
+        DatabricksType::String,
+    ))
 }
 
 /// `a DIV b` of integers: the quotient truncated toward zero as BIGINT, raising on zero and overflow.
