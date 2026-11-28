@@ -2204,3 +2204,23 @@ note = "Read in full at 870649879 under review brief v3 by three independent rea
 
 [review.definitions]
 "db.ddl.create-table-constraint.foreign-key-references" = "3c7337d1f5ed5e2646201e79f4e7bd05a29fb67c5afc5101ee35843eccddb05b"
+
+[[review]]
+id = "db-ddl-109"
+family = "ddl"
+parser_tree = "27ee55dbc17de0f1cc6891ed064eec3ac40280ba"
+reviewed_utc = "2026-11-28T09:30:20Z"
+verdict = "changes_requested"
+forms = [
+  "db.ddl.alter-table-manage-column.alter-change-comment-first",
+  "db.ddl.create-sql-function",
+]
+note = "Read in full at 987bbba34 under review brief v3 by three independent read-only reviewers, from the Databricks SQL 2026.47 receipts, the local documentation pages, the obligations with the limits and hand rows, and the parse trees of every case; no tree keeps a gap and every scored case agrees with its receipt. Held for these reasons, form by form: alter-change-comment-first (d), all three reviewers: a field path is kept as one raw identifier, as in o053 ALTER TABLE t1 ALTER c1.`c1 Q` COMMENT 'x' giving the unquoted name \"c1.`c1 Q`\" (also o011, o056), while o024 CHANGE c1.c1 AFTER c1 splits the same path into a column; NOT NULL and ! NULL on a Hive CHANGE column now give different trees. create-sql-function (d) and (a), all three reviewers: the RETURNS TABLE column list is kept as the raw string returns_table_body (o204, o213, o220), and the [[reading]] keeps RETURNS TABLE only for LANGUAGE SQL, though the page also allows it for LANGUAGE PYTHON polymorphic UDTFs; a parameter's NOT NULL and ! NULL now give different trees."
+
+[review.fingerprints]
+"db.ddl.alter-table-manage-column.alter-change-comment-first" = "99f701d0412b84230575cfef1863060ae9c34691ee8eb9ad5163f34883408964"
+"db.ddl.create-sql-function" = "08790d122d5569b23a5d9284b696553620d14363e00d434e86d032a4e4ab9830"
+
+[review.definitions]
+"db.ddl.alter-table-manage-column.alter-change-comment-first" = "6152b71005c1fdbb4c07abe7d2d60e8bc973e39598d1ec27dae830c12e9250b0"
+"db.ddl.create-sql-function" = "1c2908b1f42ecf278f6d00ab4008005680eca183b281f369065cc33a8e732f37"
