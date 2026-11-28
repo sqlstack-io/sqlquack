@@ -194,6 +194,9 @@ pub(crate) fn in_list(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusa
         values.push(expression(item, site)?);
     }
     let _rule = site.log.rule(IN_LIST_RULE);
+    if common_type(&values).is_none() {
+        return mixed_in_list(&values, flag(test, "not"));
+    }
     let common = common_type(&values).ok_or_else(|| {
         refused(
             "in",
@@ -211,6 +214,31 @@ pub(crate) fn in_list(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusa
             "({operand_sql}{not} IN ({}))",
             sqls.collect::<Vec<_>>().join(", ")
         ),
+        DatabricksType::Boolean,
+    ))
+}
+
+/// `[NOT] IN` a list whose values Databricks compares with the operand by casting, such as text with integers: one equality each, which keeps IN's NULLs.
+fn mixed_in_list(values: &[Emitted], not: bool) -> Result<Emitted, Refusal> {
+    let [operand, items @ ..] = values else {
+        return Err(refused("in", "an IN list holds no values".to_owned()));
+    };
+    let mut tests = Vec::new();
+    for item in items {
+        let (left, right) = comparable(operand, item).ok_or_else(|| {
+            refused(
+                "in",
+                "no rule shows DuckDB compares the IN list's values as Databricks does".to_owned(),
+            )
+        })?;
+        tests.push(format!("({left} = {right})"));
+    }
+    let any = format!("({})", tests.join(" OR "));
+    Ok(typed(
+        match not {
+            true => format!("(NOT {any})"),
+            false => any,
+        },
         DatabricksType::Boolean,
     ))
 }
