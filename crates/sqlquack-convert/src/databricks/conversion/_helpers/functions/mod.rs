@@ -2,6 +2,7 @@ pub(crate) mod arrays;
 pub(crate) mod calls;
 pub(crate) mod dates;
 pub(crate) mod encodings;
+pub(crate) mod formats;
 pub(crate) mod indexes;
 pub(crate) mod maths;
 pub(crate) mod numbers;

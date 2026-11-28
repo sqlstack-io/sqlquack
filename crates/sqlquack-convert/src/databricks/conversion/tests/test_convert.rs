@@ -351,6 +351,24 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             expected_types: &[DatabricksType::Int, DatabricksType::Int],
         },
         ConvertTestCase {
+            description: "CONV reads digits up to the first invalid one in unsigned 64 bits, NULL for a base outside 2 to 36",
+            query: "SELECT conv(s, 16, x1) AS r FROM input",
+            expected_sql: &[
+                "WHEN 16 NOT BETWEEN 2 AND 36 OR (\"x1\" NOT BETWEEN 2 AND 36 AND \"x1\" NOT BETWEEN -36 AND -2) THEN NULL",
+                "AS UBIGINT) AS HUGEINT)",
+            ],
+            expected_types: &[DatabricksType::String],
+        },
+        ConvertTestCase {
+            description: "DATE_FORMAT writes Java's pattern letters and quoted text with strftime",
+            query: "SELECT date_format(CAST(s AS DATE), 'MMM d, yyyy ''at'' h a') AS r FROM input",
+            expected_sql: &[
+                "THEN strftime((CASE WHEN \"s\" IS NULL",
+                "'%b %-d, %Y at %-I %p')",
+            ],
+            expected_types: &[DatabricksType::String],
+        },
+        ConvertTestCase {
             description: "SHA2 of a column length: SHA-256 for 256 or 0, raising for a length DuckDB lacks, else NULL",
             query: "SELECT sha2(s, x1) AS h FROM input",
             expected_sql: &[
@@ -510,6 +528,16 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "a word boundary, which Java and RE2 draw differently",
             query: "SELECT regexp_substr(s, '\\\\bab') AS r FROM input",
             expected_reason: "REGEXP_SUBSTR",
+        },
+        RefuseTestCase {
+            description: "a week-based year, which Spark rejects and strftime would write",
+            query: "SELECT date_format(CAST(s AS DATE), 'YYYY') AS r FROM input",
+            expected_reason: "DATE_FORMAT",
+        },
+        RefuseTestCase {
+            description: "a DOUBLE number for CONV, whose text Java writes differently",
+            query: "SELECT conv(CAST(x1 AS DOUBLE), 10, 2) AS r FROM input",
+            expected_reason: "CONV",
         },
         RefuseTestCase {
             description: "title-casing, whose word breaks no rule shows DuckDB sharing",
