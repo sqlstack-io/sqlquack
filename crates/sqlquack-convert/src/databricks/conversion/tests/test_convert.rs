@@ -391,10 +391,59 @@ fn given_a_query_over_the_fixture_when_converted_then_duckdb_sql_keeps_databrick
             query: "SELECT make_date(x1, x1, x1) AS d, make_timestamp(x1, x1, x1, x1, x1, x1) AS t FROM input",
             expected_sql: &[
                 "abs(CAST(\"x1\" AS BIGINT)) > 999999999 THEN error('argument rejected: a date or time field is out of bounds')",
-                "THEN coalesce(try(make_date(CAST(\"x1\" AS BIGINT)",
-                "THEN coalesce(try(make_timestamp(CAST(\"x1\" AS BIGINT)",
+                "least(greatest(CAST(\"x1\" AS BIGINT), 1), 12), 1))) \
+                 THEN error('argument rejected: a date or time field is out of bounds') ELSE make_date(",
+                "ELSE make_timestamp(CAST(\"x1\" AS BIGINT)",
             ],
             expected_types: &[DatabricksType::Date, DatabricksType::Timestamp],
+        },
+        ConvertTestCase {
+            description: "INITCAP breaks words at spaces only, raising where Java's title case is not DuckDB's upper",
+            query: "SELECT initcap(s) AS r FROM input",
+            expected_sql: &[
+                "'(^| )[\\x{df}\\x{1c4}-\\x{1cc}\\x{1f1}-\\x{1f3}]'",
+                "string_split((CASE WHEN regexp_matches(\"s\"",
+                "lambda element: upper(left(element, 1)) || substr(element, 2)), ' ')",
+            ],
+            expected_types: &[DatabricksType::String],
+        },
+        ConvertTestCase {
+            description: "LEVENSHTEIN counts code points by writing each distinct one as its own ASCII character",
+            query: "SELECT levenshtein(s, 'é') AS r FROM input",
+            expected_sql: &[
+                "translate(\"s\" || 'é', array_to_string(list_sort(list_distinct(string_split(\"s\" || 'é', ''))), '')",
+                "THEN CAST(error('the two texts hold more distinct characters than a rule counts edits between') AS INTEGER)",
+            ],
+            expected_types: &[DatabricksType::Int],
+        },
+        ConvertTestCase {
+            description: "SPLIT by a column reads the pattern as text, raising for a metacharacter, and keeps empty ends",
+            query: "SELECT split(s, s) AS r FROM input",
+            expected_sql: &["THEN error(", "ELSE string_split(\"s\", \"s\") END)"],
+            expected_types: &[DatabricksType::Array(Element::String)],
+        },
+        ConvertTestCase {
+            description: "IS TRUE of text reads it as Databricks casts text to BOOLEAN, and & of text reads BIGINT",
+            query: "SELECT s IS TRUE AS t, s & x1 AS b, x1 || s AS c FROM input",
+            expected_sql: &[
+                "WHEN lower(trim(\"s\", ' ')) IN (",
+                "CAST(\"x1\" AS VARCHAR) || \"s\"",
+            ],
+            expected_types: &[
+                DatabricksType::Boolean,
+                DatabricksType::BigInt,
+                DatabricksType::String,
+            ],
+        },
+        ConvertTestCase {
+            description: "TRY_MAKE_TIMESTAMP over an expression that may raise, checking the month's end without DuckDB's try",
+            query: "SELECT try_make_timestamp(x1 + 1, 2, 30, 0, 0, 0) AS m FROM input",
+            expected_sql: &[
+                "OR NOT (2 BETWEEN 1 AND 12 AND 30 BETWEEN 1 AND 31)",
+                "THEN CASE WHEN 30 > day(last_day(make_date(least(greatest(CAST((\"x1\" + 1) AS BIGINT), -290307), 294246), \
+                 least(greatest(CAST(2 AS BIGINT), 1), 12), 1))) THEN NULL",
+            ],
+            expected_types: &[DatabricksType::Timestamp],
         },
         ConvertTestCase {
             description: "ELT picks an argument as a string, raising for an index outside them",
@@ -569,9 +618,14 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             expected_reason: "REGEXP_LIKE",
         },
         RefuseTestCase {
-            description: "title-casing, whose word breaks no rule shows DuckDB sharing",
-            query: "SELECT initcap(s) AS r FROM input",
-            expected_reason: "INITCAP",
+            description: "~ of text, which Databricks rejects as no integer",
+            query: "SELECT ~s AS r FROM input",
+            expected_reason: "Databricks requires",
+        },
+        RefuseTestCase {
+            description: "SPLIT by a constant pattern that can match empty, where Java and RE2 step on differently",
+            query: "SELECT split(s, 'a*') AS r FROM input",
+            expected_reason: "SPLIT",
         },
         RefuseTestCase {
             description: "a decimal quotient, which Databricks keeps exact and DOUBLE would round",
@@ -627,16 +681,6 @@ fn given_a_hazard_or_unknown_construct_when_converted_then_it_is_refused() {
             description: "text DuckDB reads as an infinite date, where Databricks raises",
             query: "SELECT CAST('inf' AS DATE) AS d FROM input",
             expected_reason: "DATE",
-        },
-        RefuseTestCase {
-            description: "LEVENSHTEIN, which DuckDB counts in bytes and Databricks in characters",
-            query: "SELECT levenshtein(s, s) AS r FROM input",
-            expected_reason: "LEVENSHTEIN",
-        },
-        RefuseTestCase {
-            description: "TRY_MAKE_TIMESTAMP over an expression, whose own error DuckDB's try would hide",
-            query: "SELECT try_make_timestamp(x1 + 1, 1, 1, 0, 0, 0) AS m FROM input",
-            expected_reason: "MAKE_TIMESTAMP",
         },
         RefuseTestCase {
             description: "MAX of arrays, whose NULL elements DuckDB orders above values",

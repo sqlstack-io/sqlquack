@@ -1,12 +1,16 @@
 //! String functions, with Databricks's handling of empty, NULL and out-of-range arguments written out.
 
-use crate::databricks::conversion::_helpers::expressions::literals::typed;
+use crate::databricks::conversion::_helpers::expressions::literals::{quoted_text, typed};
 use crate::databricks::conversion::_helpers::expressions::patterns::case_mapped;
+use crate::databricks::conversion::_helpers::functions::arrays::captured;
 use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, small_integer};
 use crate::databricks::conversion::constants::{
-    CHR_MODULUS, DEFAULT_PAD, LOWERED_CHARACTERS, SUBSTRING_LENGTH, UPPERED_CHARACTERS,
+    ALPHABET_ERROR, ASCII_ALPHABET, ASCII_LOWER, ASCII_UPPER, CASE_MAPPING_ERROR,
+    CHARACTER_KIND_ERROR, CHR_MODULUS, DEFAULT_MASKS, DEFAULT_PAD, KINDED_CHARACTERS,
+    LAMBDA_ELEMENT, LAMBDA_INDEX, LOWERED_CHARACTERS, MASKED_KINDS, SOUNDEX_CODES,
+    SUBSTRING_LENGTH, UNTITLED_CHARACTERS, UPPERED_CHARACTERS,
 };
-use crate::databricks::conversion::models::{DatabricksType, Emitted};
+use crate::databricks::conversion::models::{DatabricksType, Emitted, Literal};
 
 /// The rewrite of the string function `name`, `None` when none handles it; lengths count code points in both engines.
 pub(crate) fn string_rewrite(name: &str) -> Option<Rewrite> {
@@ -38,6 +42,15 @@ pub(crate) fn string_rewrite(name: &str) -> Option<Rewrite> {
         "FIND_IN_SET" => find_in_set,
         "LOWER" | "LCASE" => |values| case_function(values, "lower", LOWERED_CHARACTERS),
         "UPPER" | "UCASE" => |values| case_function(values, "upper", UPPERED_CHARACTERS),
+        "INITCAP" => initcap,
+        "MASK" => mask,
+        "LUHN_CHECK" => luhn_check,
+        "LEVENSHTEIN" => levenshtein,
+        "SOUNDEX" => soundex,
+        "IS_VALID_UTF8" => |values| valid_text(values, true),
+        "VALIDATE_UTF8" | "TRY_VALIDATE_UTF8" | "MAKE_VALID_UTF8" => {
+            |values| valid_text(values, false)
+        }
         _ => return None,
     };
     Some(rewrite)
@@ -93,13 +106,26 @@ fn found(values: &[Emitted], swapped: bool) -> Option<Emitted> {
     ))
 }
 
-/// A string test of two strings, TRUE for an empty second string.
+/// A test of two strings, or of byte strings and the UTF-8 bytes of strings compared as hex at whole bytes; TRUE for an empty second argument.
 fn tested(values: &[Emitted], function: &str) -> Option<Emitted> {
-    let [text, part] = strings::<2>(values)?;
-    Some(typed(
-        format!("{function}({}, {})", text.sql, part.sql),
-        DatabricksType::Boolean,
-    ))
+    let [text, part] = values else { return None };
+    let sql = match (text.data_type, part.data_type) {
+        (DatabricksType::String, DatabricksType::String) => {
+            format!("{function}({}, {})", text.sql, part.sql)
+        }
+        (
+            DatabricksType::String | DatabricksType::Binary,
+            DatabricksType::String | DatabricksType::Binary,
+        ) => {
+            let (a, b) = (format!("hex({})", text.sql), format!("hex({})", part.sql));
+            match function {
+                "contains" => format!("regexp_matches({a}, '^(..)*' || {b})"),
+                _ => format!("{function}({a}, {b})"),
+            }
+        }
+        _ => return None,
+    };
+    Some(typed(sql, DatabricksType::Boolean))
 }
 
 /// `RIGHT(s, n)`: '' for a zero or negative length, where DuckDB counts from the start.
@@ -329,4 +355,133 @@ fn case_function(values: &[Emitted], function: &str, characters: &str) -> Option
             DatabricksType::String,
         )
     })
+}
+
+/// `INITCAP(s)`: `s` lowered, then its first character and each after a space in title case, raising where Java's title case is not DuckDB's `upper`.
+fn initcap(values: &[Emitted]) -> Option<Emitted> {
+    let [text] = strings::<1>(values)?;
+    let (t, e) = (&text.sql, LAMBDA_ELEMENT);
+    let lowered = case_mapped(t, "lower", LOWERED_CHARACTERS);
+    Some(typed(
+        format!(
+            "(CASE WHEN regexp_matches(lower({t}), '(^| )[{UNTITLED_CHARACTERS}]') THEN error('{CASE_MAPPING_ERROR}') \
+             ELSE array_to_string(list_transform(string_split({lowered}, ' '), \
+             lambda {e}: upper(left({e}, 1)) || substr({e}, 2)), ' ') END)"
+        ),
+        DatabricksType::String,
+    ))
+}
+
+/// `MASK(s[, upper[, lower[, digit[, other]]]])`: each character as the one-character mask of its kind, raising for one whose kind RE2 may read otherwise.
+fn mask(values: &[Emitted]) -> Option<Emitted> {
+    let (text, given) = values.split_first()?;
+    if text.data_type != DatabricksType::String || given.len() > DEFAULT_MASKS.len() {
+        return None;
+    }
+    let mut masks: Vec<Option<String>> = DEFAULT_MASKS
+        .iter()
+        .map(|mask| mask.map(quoted_text))
+        .collect();
+    for (slot, value) in masks.iter_mut().zip(given) {
+        match &value.literal {
+            Some(Literal::Text(mask)) if mask.chars().count() == 1 => {
+                *slot = Some(quoted_text(mask))
+            }
+            _ => return None,
+        }
+    }
+    let e = LAMBDA_ELEMENT;
+    let mut kinds = String::new();
+    for (kind, mask) in MASKED_KINDS.iter().zip(&masks) {
+        if let Some(mask) = mask {
+            kinds.push_str(&format!("WHEN regexp_matches({e}, '{kind}') THEN {mask} "));
+        }
+    }
+    let other = masks
+        .last()
+        .cloned()
+        .flatten()
+        .unwrap_or_else(|| e.to_owned());
+    let t = &text.sql;
+    Some(typed(
+        format!(
+            "(CASE WHEN regexp_matches({t}, '[^{KINDED_CHARACTERS}]') THEN error('{CHARACTER_KIND_ERROR}') \
+             ELSE array_to_string(list_transform(string_split({t}, ''), \
+             lambda {e}: CASE {kinds}ELSE {other} END), '') END)"
+        ),
+        DatabricksType::String,
+    ))
+}
+
+/// `LUHN_CHECK(s)`: whether `s` is ASCII digits whose Luhn sum ends in 0, false for other text; raising for another script's digit, which no rule reads.
+fn luhn_check(values: &[Emitted]) -> Option<Emitted> {
+    let [text] = strings::<1>(values)?;
+    let (t, c, i) = (&text.sql, LAMBDA_ELEMENT, LAMBDA_INDEX);
+    Some(typed(
+        format!(
+            "(CASE WHEN {t} IS NULL THEN NULL \
+             WHEN regexp_matches(regexp_replace({t}, '[0-9]', '', 'g'), '\\p{{Nd}}') THEN error('{CHARACTER_KIND_ERROR}') \
+             WHEN NOT regexp_full_match({t}, '[0-9]+') THEN FALSE \
+             ELSE list_sum(list_transform(string_split(reverse({t}), ''), lambda {c}, {i}: \
+             CASE WHEN {i} % 2 = 0 THEN (CAST({c} AS INTEGER) * 2) % 10 + (CAST({c} AS INTEGER) * 2) // 10 \
+             ELSE CAST({c} AS INTEGER) END)) % 10 = 0 END)"
+        ),
+        DatabricksType::Boolean,
+    ))
+}
+
+/// `LEVENSHTEIN(a, b)`: DuckDB's byte distance once each distinct character is one ASCII byte, raising for more than ASCII holds.
+fn levenshtein(values: &[Emitted]) -> Option<Emitted> {
+    let [left, right] = strings::<2>(values)?;
+    let (a, b, e) = (&left.sql, &right.sql, LAMBDA_ELEMENT);
+    let characters = format!("list_sort(list_distinct(string_split({a} || {b}, '')))");
+    let encoded = format!(
+        "translate({a} || {b}, array_to_string({characters}, ''), \
+         array_to_string(list_transform(range(1, {}), lambda {e}: chr(CAST({e} AS INTEGER))), ''))",
+        ASCII_ALPHABET + 1
+    );
+    Some(typed(
+        format!(
+            "(CASE WHEN {a} IS NULL OR {b} IS NULL THEN NULL \
+             WHEN len({characters}) > {ASCII_ALPHABET} THEN CAST(error('{ALPHABET_ERROR}') AS INTEGER) \
+             ELSE CAST(levenshtein(left({encoded}, length({a})), substr({encoded}, length({a}) + 1)) AS INTEGER) END)"
+        ),
+        DatabricksType::Int,
+    ))
+}
+
+/// `IS_VALID_UTF8(s)` with `test`, else `VALIDATE_UTF8`, `TRY_VALIDATE_UTF8` or `MAKE_VALID_UTF8`: DuckDB holds only valid UTF-8 in a string, so each converted string is valid and kept.
+fn valid_text(values: &[Emitted], test: bool) -> Option<Emitted> {
+    let [text] = strings::<1>(values)?;
+    Some(match test {
+        true => typed(
+            format!("({} IS NOT NULL OR NULL)", text.sql),
+            DatabricksType::Boolean,
+        ),
+        false => typed(text.sql.clone(), DatabricksType::String),
+    })
+}
+
+/// `SOUNDEX(s)` of text starting with an ASCII letter, read byte by byte with H and W skipped after the first, and other text as it is.
+fn soundex(values: &[Emitted]) -> Option<Emitted> {
+    let [text] = strings::<1>(values)?;
+    if captured(&text.sql) {
+        return None;
+    }
+    let (t, e, i) = (&text.sql, LAMBDA_ELEMENT, LAMBDA_INDEX);
+    let mapped = format!(
+        "translate(regexp_replace(translate({t}, '{ASCII_LOWER}', '{ASCII_UPPER}'), '[^A-Z]', '0', 'g'), \
+         '{ASCII_UPPER}', '{SOUNDEX_CODES}')"
+    );
+    let codes = format!(
+        "string_split(translate(left({mapped}, 1), '7', 'x') || replace(substr({mapped}, 2), '7', ''), '')"
+    );
+    Some(typed(
+        format!(
+            "(CASE WHEN {t} IS NULL THEN NULL WHEN NOT regexp_matches({t}, '^[A-Za-z]') THEN {t} \
+             ELSE upper(left({t}, 1)) || rpad(left(replace(array_to_string(\
+             list_filter({codes}, lambda {e}, {i}: {i} = 1 OR {e} <> {codes}[{i} - 1])[2:], ''), '0', ''), 3), 3, '0') END)"
+        ),
+        DatabricksType::String,
+    ))
 }

@@ -10,9 +10,10 @@ use crate::databricks::conversion::_helpers::functions::rewrites::{Rewrite, smal
 use crate::databricks::conversion::constants::{
     DATE_READING_ERROR, DATE_TRUNC_UNITS, DATE_YEARS, EPOCH_DATE, EPOCH_DECIMAL_SCALE,
     EPOCH_RANGE_ERROR, EPOCH_SECONDS_BOUND, FIELD_BOUNDS_ERROR, INT_RANGE, INT_SPAN, JAVA_YEAR_MAX,
-    MICROS_PER_MILLI, MICROS_PER_SECOND, MONTHS_BETWEEN_SCALE, PLAIN_DATE_TEXT, SECONDS_PER_DAY,
-    SECONDS_PER_MONTH, TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS, UNFORMATTED_YEAR_ERROR,
-    UNIX_SECONDS_YEARS_1_TO_9999, UPPERED_CHARACTERS, WEEKDAY_ERROR, WEEKDAY_NAMES,
+    MICROS_PER_MILLI, MICROS_PER_SECOND, MONTHS_BETWEEN_SCALE, PLAIN_DATE_TEXT,
+    PLAIN_TIMESTAMP_TEXT, SECONDS_PER_DAY, SECONDS_PER_MONTH, TIMESTAMP_READING_ERROR,
+    TIMESTAMP_TRUNC_UNITS, TIMESTAMP_YEARS, UNFORMATTED_YEAR_ERROR, UNIX_SECONDS_YEARS_1_TO_9999,
+    UPPERED_CHARACTERS, WEEKDAY_ERROR, WEEKDAY_NAMES,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted};
 
@@ -63,7 +64,9 @@ pub(crate) fn date_rewrite(name: &str) -> Option<Rewrite> {
         "FROM_UNIXTIME" => from_unixtime,
         "TO_DATE" => |values| to_date(values, false),
         "TRY_TO_DATE" => |values| to_date(values, true),
-        "TO_TIMESTAMP" => to_timestamp,
+        "TO_TIMESTAMP" | "TO_TIMESTAMP_LTZ" => |values| to_timestamp(values, false),
+        "TRY_TO_TIMESTAMP" => |values| to_timestamp(values, true),
+        "TO_TIMESTAMP_NTZ" => to_timestamp_ntz,
         _ => return None,
     };
     Some(rewrite)
@@ -140,24 +143,29 @@ fn days_added(values: &[Emitted], sign: &str) -> Option<Emitted> {
     ))
 }
 
-/// Whether `value` is a literal or a column, so DuckDB's `try` around it can hide no error of its own.
-fn plain_argument(value: &Emitted) -> bool {
-    let sql = value.sql.as_str();
-    let inner = sql
-        .strip_prefix('"')
-        .and_then(|rest| rest.strip_suffix('"'));
-    value.literal.is_some() || inner.is_some_and(|name| !name.contains('"'))
+/// Whether any of `fields` is NULL, evaluating each, so an argument's own error raises before a NULL or bounds result, as in Databricks.
+fn any_null(fields: &[&str]) -> String {
+    let sum: Vec<String> = fields
+        .iter()
+        .map(|field| format!("CAST({field} AS BIGINT)"))
+        .collect();
+    format!("({}) IS NULL", sum.join(" + "))
 }
 
-/// `TRY_MAKE_TIMESTAMP` of integers, refused unless each argument is a literal or a column: NULL for an invalid field, raising only in the edge years DuckDB holds less of.
+/// Whether day `d` lies past the end of month `m` of year `y` without DuckDB's `try`, the year and month clamped so a folded literal cannot raise.
+fn past_month_end(y: &str, m: &str, d: &str, (first, last): (i32, i32)) -> String {
+    format!(
+        "{d} > day(last_day(make_date(least(greatest(CAST({y} AS BIGINT), {first}), {last}), \
+         least(greatest(CAST({m} AS BIGINT), 1), 12), 1)))"
+    )
+}
+
+/// `MAKE_TIMESTAMP` of integers, raising for an invalid field, or with `TRY_` NULL, which raises only in the edge years DuckDB holds less of.
 fn made_timestamp(values: &[Emitted], result: DatabricksType, strict: bool) -> Option<Emitted> {
     let [year, month, day, hour, minute, second] = values else {
         return None;
     };
     if !values.iter().all(|value| small_integer(value.data_type)) {
-        return None;
-    }
-    if !strict && !values.iter().all(plain_argument) {
         return None;
     }
     let (y, m, d, h, mi, s) = (
@@ -173,20 +181,24 @@ fn made_timestamp(values: &[Emitted], result: DatabricksType, strict: bool) -> O
          CAST({mi} AS BIGINT), CAST({s} AS DOUBLE))"
     );
     let (first, last) = TIMESTAMP_YEARS;
+    let past_end = past_month_end(y, m, d, TIMESTAMP_YEARS);
+    let nulls = any_null(&[y, m, d, h, mi, s]);
     let sql = match strict {
         false => format!(
-            "CASE WHEN NOT ({h} BETWEEN 0 AND 23 AND {mi} BETWEEN 0 AND 59 AND {s} BETWEEN 0 AND 60) \
-             OR {y} < {} OR {y} > {} THEN NULL WHEN {y} BETWEEN {first} AND {last} THEN try({made}) \
+            "CASE WHEN {nulls} THEN NULL WHEN NOT ({h} BETWEEN 0 AND 23 AND {mi} BETWEEN 0 AND 59 AND {s} BETWEEN 0 AND 60) \
+             OR NOT ({m} BETWEEN 1 AND 12 AND {d} BETWEEN 1 AND 31) OR {y} < {} OR {y} > {} THEN NULL \
+             WHEN {y} BETWEEN {first} AND {last} THEN CASE WHEN {past_end} THEN NULL ELSE {made} END \
              ELSE {made} END",
             first - 1,
             last + 1
         ),
         true => format!(
-            "CASE WHEN {y} IS NULL OR {m} IS NULL OR {d} IS NULL OR {h} IS NULL OR {mi} IS NULL OR {s} IS NULL THEN NULL \
+            "CASE WHEN {nulls} THEN NULL \
              WHEN NOT ({m} BETWEEN 1 AND 12 AND {d} BETWEEN 1 AND 31 AND {h} BETWEEN 0 AND 23 \
              AND {mi} BETWEEN 0 AND 59 AND {s} BETWEEN 0 AND 60) OR abs(CAST({y} AS BIGINT)) > {JAVA_YEAR_MAX} \
              THEN error('{ARGUMENT_REJECTED}: {FIELD_BOUNDS_ERROR}') \
-             WHEN {y} BETWEEN {first} AND {last} THEN coalesce(try({made}), error('{ARGUMENT_REJECTED}: {FIELD_BOUNDS_ERROR}')) \
+             WHEN {y} BETWEEN {first} AND {last} \
+             THEN CASE WHEN {past_end} THEN error('{ARGUMENT_REJECTED}: {FIELD_BOUNDS_ERROR}') ELSE {made} END \
              ELSE {made} END"
         ),
     };
@@ -207,12 +219,15 @@ fn made_date(values: &[Emitted]) -> Option<Emitted> {
     let (y, m, d) = (&year.sql, &month.sql, &day.sql);
     let made = format!("make_date(CAST({y} AS BIGINT), CAST({m} AS BIGINT), CAST({d} AS BIGINT))");
     let (first, last) = DATE_YEARS;
+    let past_end = past_month_end(y, m, d, DATE_YEARS);
+    let nulls = any_null(&[y, m, d]);
     Some(typed(
         format!(
-            "CASE WHEN {y} IS NULL OR {m} IS NULL OR {d} IS NULL THEN NULL \
+            "CASE WHEN {nulls} THEN NULL \
              WHEN NOT ({m} BETWEEN 1 AND 12 AND {d} BETWEEN 1 AND 31) OR abs(CAST({y} AS BIGINT)) > {JAVA_YEAR_MAX} \
              THEN error('{ARGUMENT_REJECTED}: {FIELD_BOUNDS_ERROR}') \
-             WHEN {y} BETWEEN {first} AND {last} THEN coalesce(try({made}), error('{ARGUMENT_REJECTED}: {FIELD_BOUNDS_ERROR}')) \
+             WHEN {y} BETWEEN {first} AND {last} \
+             THEN CASE WHEN {past_end} THEN error('{ARGUMENT_REJECTED}: {FIELD_BOUNDS_ERROR}') ELSE {made} END \
              ELSE {made} END"
         ),
         DatabricksType::Date,
@@ -311,8 +326,8 @@ fn to_date(values: &[Emitted], try_read: bool) -> Option<Emitted> {
     }
 }
 
-/// `TO_TIMESTAMP(x)` without a format: an INT as seconds from the epoch, text read as a timestamp, a date at midnight UTC.
-fn to_timestamp(values: &[Emitted]) -> Option<Emitted> {
+/// `TO_TIMESTAMP(x)` without a format, an INT as epoch seconds and a date at midnight UTC; with `try_read` NULL for text without a digit or an invalid field.
+fn to_timestamp(values: &[Emitted], try_read: bool) -> Option<Emitted> {
     let [value] = values else { return None };
     match value.data_type {
         DatabricksType::Timestamp => Some(value.clone()),
@@ -320,8 +335,34 @@ fn to_timestamp(values: &[Emitted]) -> Option<Emitted> {
             as_type(value, DatabricksType::Timestamp),
             DatabricksType::Timestamp,
         )),
+        DatabricksType::String if try_read => {
+            let x = &value.sql;
+            Some(typed(
+                format!(
+                    "(CASE WHEN {x} IS NULL OR NOT regexp_matches({x}, '[0-9]') THEN CAST(NULL AS TIMESTAMPTZ) \
+                     WHEN regexp_full_match({x}, '{PLAIN_TIMESTAMP_TEXT}') OR regexp_full_match({x}, '{PLAIN_DATE_TEXT}') \
+                     THEN TRY_CAST({x} AS TIMESTAMPTZ) \
+                     ELSE CAST(error('{TIMESTAMP_READING_ERROR}') AS TIMESTAMPTZ) END)"
+                ),
+                DatabricksType::Timestamp,
+            ))
+        }
         DatabricksType::String => read_text(value, DatabricksType::Timestamp),
         data_type if small_integer(data_type) => from_epoch(values, MICROS_PER_SECOND),
+        _ => None,
+    }
+}
+
+/// `TO_TIMESTAMP_NTZ(x)` without a format: text read as a timestamp, a date at midnight, a timestamp's wall time in the UTC session.
+fn to_timestamp_ntz(values: &[Emitted]) -> Option<Emitted> {
+    let [value] = values else { return None };
+    match value.data_type {
+        DatabricksType::TimestampNtz => Some(value.clone()),
+        DatabricksType::Date | DatabricksType::Timestamp => Some(typed(
+            as_type(value, DatabricksType::TimestampNtz),
+            DatabricksType::TimestampNtz,
+        )),
+        DatabricksType::String => read_text(value, DatabricksType::TimestampNtz),
         _ => None,
     }
 }

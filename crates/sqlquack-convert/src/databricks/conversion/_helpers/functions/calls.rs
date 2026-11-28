@@ -15,9 +15,9 @@ use crate::databricks::conversion::_helpers::support::tree::{
     field, list, node_kind, outside_function, refused_function, understood,
 };
 use crate::databricks::conversion::constants::{
-    AGGREGATE_RULE, AGGREGATES, CAST_FUNCTIONS, CAST_RULE, CONCAT_RULE, COUNT_NAME,
-    DOUBLE_EXACT_INTEGERS, INEXACT_SUM_ERROR, MAX_DECIMAL_PRECISION, MIN_LIST_ARGUMENTS,
-    ORDERING_FUNCTIONS, SAME_FUNCTION_RULE, SAME_FUNCTIONS,
+    AGGREGATE_RULE, AGGREGATES, CAST_FUNCTIONS, CAST_RULE, COALESCE_NAME, CONCAT_RULE, COUNT_NAME,
+    DECODE_CHARSET_ARGUMENTS, DOUBLE_EXACT_INTEGERS, INEXACT_SUM_ERROR, MAX_DECIMAL_PRECISION,
+    MIN_LIST_ARGUMENTS, ORDERING_FUNCTIONS, SAME_FUNCTION_RULE, SAME_FUNCTIONS,
 };
 use crate::databricks::conversion::models::{DatabricksType, Emitted, Signature};
 
@@ -53,6 +53,10 @@ pub(crate) fn call(kind: &str, payload: &Value, site: Site<'_>) -> Result<Emitte
         )),
         "CONCAT" => concat(args, site),
         "REGR_COUNT" => pair_count(args, site),
+        "DECODE" if args.len() != DECODE_CHARSET_ARGUMENTS => Err(refused_function(
+            &name,
+            "no rule converts DECODE of a value and its search results".to_owned(),
+        )),
         _ if CAST_FUNCTIONS.iter().any(|(function, _)| *function == name) => {
             cast_function(&name, args, site)
         }
@@ -262,6 +266,11 @@ fn same_function(name: &str, args: &[Value], site: Site<'_>) -> Result<Emitted, 
             DatabricksType::String,
         ),
         (Signature::SameNumber, [data_type]) if data_type.is_numeric() => {
+            (vec![values[0].sql.clone()], *data_type)
+        }
+        (Signature::SameType, [data_type])
+            if name == COALESCE_NAME && *data_type != DatabricksType::Null =>
+        {
             (vec![values[0].sql.clone()], *data_type)
         }
         (Signature::SameType, types) if types.len() >= MIN_LIST_ARGUMENTS => {

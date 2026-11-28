@@ -9,7 +9,7 @@ use crate::databricks::conversion::_helpers::expressions::literals::typed;
 use crate::databricks::conversion::_helpers::functions::numbers::{quotient, remainder};
 use crate::databricks::conversion::_helpers::support::scope::Site;
 use crate::databricks::conversion::_helpers::support::tree::{
-    digits_value, field, flag, list, refused, understood,
+    digits_value, field, flag, list, outside, refused, understood,
 };
 use crate::databricks::conversion::_helpers::support::typing::wider_integer;
 use crate::databricks::conversion::constants::{
@@ -286,6 +286,12 @@ pub(crate) fn case(payload: &Value, site: Site<'_>) -> Result<Emitted, Refusal> 
                     .ok_or_else(|| uncomparable("case", operand, &condition))?;
                 format!("({left} = {right})")
             }
+            None if condition.data_type == DatabricksType::String => {
+                return Err(outside(
+                    "case",
+                    "no rule reads a STRING condition, which Databricks rejects".to_owned(),
+                ));
+            }
             None => boolean(&condition, "case")?,
         });
         results.push(expression(result, site)?);
@@ -388,14 +394,14 @@ pub(crate) fn uncomparable(kind: &str, left: &Emitted, right: &Emitted) -> Refus
     )
 }
 
-/// A boolean operand's SQL, refusing any other type.
+/// A boolean operand's SQL, refusing any other type: a string, which no rule shows Databricks reads here, or a type Databricks reads as no boolean.
 pub(crate) fn boolean(operand: &Emitted, kind: &str) -> Result<String, Refusal> {
+    let reason =
+        |data_type: DatabricksType| format!("no rule reads a {} as a boolean", data_type.name());
     match operand.data_type {
         DatabricksType::Boolean | DatabricksType::Null => Ok(operand.sql.clone()),
-        other => Err(refused(
-            kind,
-            format!("no rule reads a {} as a boolean", other.name()),
-        )),
+        DatabricksType::String => Err(refused(kind, reason(DatabricksType::String))),
+        other => Err(outside(kind, reason(other))),
     }
 }
 
