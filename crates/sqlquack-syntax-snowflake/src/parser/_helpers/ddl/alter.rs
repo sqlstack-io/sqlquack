@@ -199,6 +199,8 @@ impl Parser {
             data_type,
             comment,
             cascade,
+            not_null: false,
+            not_written_as: None,
         })
     }
 

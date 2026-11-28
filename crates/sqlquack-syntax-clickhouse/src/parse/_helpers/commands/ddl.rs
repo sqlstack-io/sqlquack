@@ -417,6 +417,8 @@ impl Parser<'_> {
             .parameters
             .iter()
             .map(|parameter| FunctionParameter {
+                not_null: false,
+                not_written_as: None,
                 comment: None,
                 comment_written: None,
                 name: Some(parameter.clone()),

@@ -127,6 +127,8 @@ impl<'sql> Parser<'sql> {
             return Err(self.gap("procedure_parameter_option", self.offset()));
         }
         Ok(FunctionParameter {
+            not_null: false,
+            not_written_as: None,
             comment: None,
             comment_written: None,
             name: Some(identifier(&token)),
@@ -380,6 +382,8 @@ impl<'sql> Parser<'sql> {
                     return Err(parser.gap("function_parameter_option", parser.offset()));
                 }
                 Ok(FunctionParameter {
+                    not_null: false,
+                    not_written_as: None,
                     comment: None,
                     comment_written: None,
                     name: Some(identifier(&token)),

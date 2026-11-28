@@ -289,6 +289,8 @@ impl Parser<'_> {
             false => None,
         };
         Ok(FunctionParameter {
+            not_null: false,
+            not_written_as: None,
             comment: None,
             comment_written: None,
             name,

@@ -36,6 +36,18 @@ fn given_one_form_written_in_different_ways_when_parsing_then_each_tree_keeps_wh
             expected_distinct_trees: 6,
         },
         DistinctTreesTestCase {
+            description: "a Hive CHANGE column and a SQL function parameter with no NOT NULL, NOT NULL and ! NULL",
+            written: &[
+                "ALTER TABLE t1 CHANGE c1 c1 INT",
+                "ALTER TABLE t1 CHANGE c1 c1 INT NOT NULL",
+                "ALTER TABLE t1 CHANGE c1 c1 INT ! NULL",
+                "CREATE FUNCTION f1 ( x INT ) RETURNS INT RETURN x",
+                "CREATE FUNCTION f1 ( x INT NOT NULL ) RETURNS INT RETURN x",
+                "CREATE FUNCTION f1 ( x INT ! NULL ) RETURNS INT RETURN x",
+            ],
+            expected_distinct_trees: 6,
+        },
+        DistinctTreesTestCase {
             description: "a FOREIGN KEY with and without the constraint options DEFERRABLE and INITIALLY DEFERRED",
             written: &[
                 "CREATE TABLE t3 ( c1 INT , CONSTRAINT k1 FOREIGN KEY ( c1 ) REFERENCES t2 )",

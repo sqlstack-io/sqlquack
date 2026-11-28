@@ -809,10 +809,9 @@ impl Parser<'_> {
         let start: usize = self.offset();
         let new_name: Identifier = self.ident()?;
         let data_type: DataType = self.data_type()?;
-        if (self.kw("NOT") || self.is_char('!')) && self.kw_at(1, "NULL") {
-            self.at += 2;
-            self.gap("change_column_not_null", start);
-        }
+        let bang: bool = self.is_char('!');
+        let not_null: bool = (self.kw("NOT") || bang) && self.kw_at(1, "NULL");
+        self.at += 2 * usize::from(not_null);
         let (comment, comment_written) = match self.eat_kw("COMMENT") {
             true => {
                 let (comment, written) = self.written_string()?;
@@ -831,6 +830,8 @@ impl Parser<'_> {
             data_type: Some(data_type),
             comment,
             cascade: false,
+            not_null,
+            not_written_as: (not_null && bang).then_some(OperatorSpelling::Bang),
         })
     }
 

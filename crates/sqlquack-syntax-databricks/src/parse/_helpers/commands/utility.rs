@@ -2,6 +2,7 @@
 
 use sqlquack_syntax::Expression;
 use sqlquack_syntax::expressions::names::models::{Identifier, Literal, TableRef};
+use sqlquack_syntax::expressions::operators::models::Subscript;
 use sqlquack_syntax::expressions::schema_objects::models::{
     Grant, GrantPrincipal, Privilege, Revoke,
 };
@@ -15,7 +16,7 @@ use crate::parse::_helpers::commands::alters::partition;
 use crate::parse::_helpers::commands::queries::limit;
 use crate::parse::_helpers::tree::cursor::{Parser, Parsing, identifier, is_identifier};
 use crate::parse::_helpers::tree::nodes::{
-    alias, call, column, column_from, dot, joined, null, property, qualified, table,
+    alias, call, column, column_from, dot, joined, literal, null, property, qualified, table,
     too_deep_to_keep, tuple, utility, var,
 };
 use crate::parse::constants::{
@@ -516,10 +517,8 @@ impl Parser<'_> {
             ));
         }
         if self.kw("QUERY_TAGS") && self.char_at(1, '[') {
-            let start: usize = self.tokens[self.at - 1].start;
-            self.comma_list(|parser| parser.query_tag(set_at))?;
-            self.gap("set", start);
-            return Ok(null());
+            let items: Vec<SetItem> = self.comma_list(|parser| parser.query_tag(set_at))?;
+            return Ok(set_statement(items));
         }
         if self.kw("CATALOG") && !self.ends_at(1) && !self.char_at(1, '=') {
             self.at += 1;
@@ -585,23 +584,41 @@ impl Parser<'_> {
         Ok(set_statement(items))
     }
 
-    /// `QUERY_TAGS [ 'key' ] = { 'value' | NULL | UNSET }`; any other spelling is Databricks' own error.
-    fn query_tag(&mut self, set_at: usize) -> Parsing<()> {
-        let keyed: bool = self.eat_kw("QUERY_TAGS") && self.eat_char('[') && self.string_at(0);
-        self.at += usize::from(keyed);
-        let valued: bool = keyed
-            && self.eat_char(']')
-            && self.eat_char('=')
-            && (self.string_at(0) || self.kw_in(0, &["NULL", "UNSET"]));
-        if !valued {
-            return Err(self.error_with(
+    /// `QUERY_TAGS [ 'key' ] = { 'value' | NULL | UNSET }` as a set of `QUERY_TAGS['key']`, UNSET a keyword.
+    fn query_tag(&mut self, set_at: usize) -> Parsing<SetItem> {
+        let invalid = |parser: &Self| {
+            parser.error_with(
                 "[SET_QUERY_TAGS_SYNTAX_INVALID] Invalid QUERY_TAGS syntax.",
                 set_at,
                 true,
-            ));
+            )
+        };
+        if !(self.eat_kw("QUERY_TAGS") && self.eat_char('[') && self.string_at(0)) {
+            return Err(invalid(self));
         }
-        self.at += 1;
-        Ok(())
+        let key: Expression = literal(self.one_string()?);
+        if !(self.eat_char(']') && self.eat_char('=')) {
+            return Err(invalid(self));
+        }
+        let value: Expression = if self.string_at(0) {
+            literal(self.one_string()?)
+        } else if self.eat_kw("NULL") {
+            null()
+        } else if self.eat_kw("UNSET") {
+            var("UNSET")
+        } else {
+            return Err(invalid(self));
+        };
+        let name: Expression = Expression::Subscript(Box::new(Subscript {
+            this: Expression::Identifier(Identifier::new("QUERY_TAGS")),
+            index: key,
+        }));
+        Ok(SetItem {
+            name,
+            value,
+            kind: None,
+            no_equals: false,
+        })
     }
 
     /// `SET key [= value]`, `SET -v` or `SET`, as Spark matches the text after `SET`.

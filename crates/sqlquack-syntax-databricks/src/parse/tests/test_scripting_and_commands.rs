@@ -233,7 +233,7 @@ fn given_recorded_statements_when_parsing_then_the_verdict_matches_the_warehouse
         VerdictTestCase {
             description: "each query tag names QUERY_TAGS and a key",
             sql: "SET QUERY_TAGS [ 'k' ] = 'v' , QUERY_TAGS [ 'k2' ] = UNSET",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
             description: "a query tag needs a key",

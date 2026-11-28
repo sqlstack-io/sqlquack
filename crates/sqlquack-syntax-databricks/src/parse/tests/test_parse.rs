@@ -191,13 +191,18 @@ fn given_sql_when_parsing_then_the_verdict_is_databricks() {
             expected_verdict: ExpectedVerdict::Rejected { syntax: true },
         },
         VerdictTestCase {
-            description: "a SQL function parameter's NOT NULL, which the parameter's tree cannot hold, is kept as a gap",
+            description: "a SQL function parameter's NOT NULL is a tree",
             sql: "CREATE FUNCTION f1 ( x INT NOT NULL ) RETURNS INT RETURN x",
-            expected_verdict: ExpectedVerdict::Accepted { opaque: true },
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
         },
         VerdictTestCase {
-            description: "a SQL function parameter's NOT NULL written with ! is kept as a gap",
+            description: "a SQL function parameter's NOT NULL written with ! is a tree",
             sql: "CREATE FUNCTION f1 ( x INT ! NULL ) RETURNS INT RETURN x",
+            expected_verdict: ExpectedVerdict::Accepted { opaque: false },
+        },
+        VerdictTestCase {
+            description: "a SQL function parameter's repeated NOT NULL, which the parameter's tree cannot hold, is kept as a gap",
+            sql: "CREATE FUNCTION f1 ( x INT NOT NULL NOT NULL ) RETURNS INT RETURN x",
             expected_verdict: ExpectedVerdict::Accepted { opaque: true },
         },
         VerdictTestCase {
