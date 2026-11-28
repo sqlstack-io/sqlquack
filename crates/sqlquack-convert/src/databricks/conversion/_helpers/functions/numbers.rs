@@ -208,7 +208,7 @@ fn convert_base(values: &[Emitted]) -> Option<Emitted> {
          ELSE ({UNSIGNED_SPAN} - {value}) % {UNSIGNED_SPAN} END) \
          WHEN {t} < 0 AND {value} >= {SIGN_BIT} THEN {UNSIGNED_SPAN} - {value} ELSE {value} END"
     );
-    let radix = format!("(CASE WHEN {t} < 0 THEN -{t} ELSE {t} END)");
+    let radix = format!("(CASE WHEN {t} < 0 THEN 0 - {t} ELSE {t} END)");
     let digit_of =
         |place: String| format!("substr('{BASE_DIGITS}', CAST({place} AS INTEGER) + 1, 1)");
     let encoded = format!(
