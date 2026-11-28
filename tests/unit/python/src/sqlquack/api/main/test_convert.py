@@ -103,6 +103,20 @@ DATED: str = "SELECT CURRENT_DATE() AS d"
             options=ConvertOptions(config=CONFIG, schema=SCHEMA, strict=True),
             expected_converted=False,
         ),
+        CommandLineTestCase(
+            description="a Databricks query the Databricks rules prove",
+            sql="SELECT abs(-7) AS r",
+            arguments=("--no-config", "--dialect", "databricks"),
+            options=ConvertOptions(no_config=True, dialect="databricks"),
+            expected_converted=True,
+        ),
+        CommandLineTestCase(
+            description="a Databricks query no Databricks rule proves",
+            sql="SELECT sin(1.0) AS r",
+            arguments=("--no-config", "--dialect", "databricks"),
+            options=ConvertOptions(no_config=True, dialect="databricks"),
+            expected_converted=False,
+        ),
     ),
     ids=lambda case: case.description,
 )
@@ -234,6 +248,14 @@ def test_given_a_refusal_when_converting_then_the_diagnostic_is_typed(
             sql="SELECT 1",
             options=ConvertOptions(no_config=True, schema={"ORDERS": "order_id"}),
             expected_message="the schema option is not a schema",
+        ),
+        FailureTestCase(
+            description="a Snowflake option with the Databricks dialect",
+            sql="SELECT 1 AS r",
+            options=ConvertOptions(
+                no_config=True, dialect="databricks", session={"TIMEZONE": "UTC"}
+            ),
+            expected_message="--dialect databricks takes no project, schema, session",
         ),
     ),
     ids=lambda case: case.description,

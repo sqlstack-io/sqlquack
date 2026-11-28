@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
+use sqlquack::cli::models::SourceDialect;
 
 /// A report as `--json` prints it, with its diagnostics rendered as the command line shows them.
 #[derive(Debug, Serialize)]
@@ -18,6 +19,9 @@ pub struct Rendered<T: Serialize> {
 #[derive(Debug, Default, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct ConvertRequest {
+    /// `--dialect`; Snowflake when absent.
+    #[serde(default)]
+    pub dialect: SourceDialect,
     /// `--project`.
     pub project: Option<PathBuf>,
     /// Relations and functions declared in memory, in addition to the project's.

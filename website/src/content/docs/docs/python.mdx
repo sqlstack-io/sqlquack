@@ -78,7 +78,7 @@ default and at most `512`. It returns a `CheckResult`:
 
 `ConvertOptions` has one field per [`convert`](/docs/cli/convert/) flag, with the same defaults:
 `project`, `config`, `no_config`, `session`, `strict`, `python_runtime`, `overrides`,
-`verified_overrides`, `compact`, `max_call_depth` and `bind_check`. `project`, `config` and
+`verified_overrides`, `compact`, `max_call_depth`, `bind_check` and `dialect`. `project`, `config` and
 `overrides` take a path (`str` or `os.PathLike`), not the parsed contents. `session` and `verified_overrides` take a mapping, such as
 `session={"TIMEZONE": "UTC"}`, not a list of `NAME=VALUE` strings.
 

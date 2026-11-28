@@ -18,6 +18,8 @@ mod test_compare;
 mod test_convert;
 #[path = "cli/test_coverage.rs"]
 mod test_coverage;
+#[path = "cli/test_dialect.rs"]
+mod test_dialect;
 #[path = "cli/test_divergence.rs"]
 mod test_divergence;
 #[path = "cli/test_division.rs"]

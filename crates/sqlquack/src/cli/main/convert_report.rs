@@ -2,15 +2,20 @@
 
 use sqlquack_convert::snowflake::catalogue::main::builtin_catalogue::builtin_catalogue;
 
-use crate::cli::_helpers::convert_command::{analysis_report, chosen_options, refused_session};
+use crate::cli::_helpers::convert_command::{
+    analysis_report, chosen_options, databricks_report, refused_session,
+};
 use crate::cli::_helpers::project::project_choices;
-use crate::cli::models::{ConvertArguments, ConvertReport};
+use crate::cli::models::{ConvertArguments, ConvertReport, SourceDialect};
 use sqlquack_convert::snowflake::analysis::main::analyze::analyze;
 use sqlquack_convert::snowflake::session::main::parse_session::parse_session;
 use sqlquack_convert::snowflake::session::main::session_conversion_options::session_conversion_options;
 
 /// The report `convert` prints for `sql` under `arguments`, or why it cannot be made (exit 2).
 pub fn convert_report(arguments: &ConvertArguments, sql: &str) -> Result<ConvertReport, String> {
+    if arguments.dialect == SourceDialect::Databricks {
+        return databricks_report(arguments, sql);
+    }
     let project = project_choices(
         &arguments.conversion,
         (

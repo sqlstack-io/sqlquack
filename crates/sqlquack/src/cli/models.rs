@@ -53,7 +53,7 @@ pub enum Command {
     Review(ReviewArguments),
     /// Convert a SQL project function's body into a DuckDB macro body, printed as JSON.
     Function(FunctionArguments),
-    /// Convert Snowflake SQL from a file or standard input into DuckDB SQL, or refuse it.
+    /// Convert Snowflake SQL, or with `--dialect databricks` Databricks SQL, into DuckDB SQL, or refuse it.
     Convert(ConvertArguments),
     /// Convert a query and run it on DuckDB over small fixtures, optionally checking its rows.
     Run(RunArguments),
@@ -114,6 +114,9 @@ pub struct CheckArguments {
 pub struct ConvertArguments {
     /// The SQL file; standard input when absent or `-`.
     pub path: Option<PathBuf>,
+    /// The source dialect. Databricks support is partial: it converts only what recorded Databricks results prove and refuses the rest, and takes none of the Snowflake options.
+    #[arg(long, value_enum, default_value_t = SourceDialect::Snowflake)]
+    pub dialect: SourceDialect,
     /// Declarations a caller passes in memory, as the Python API does, beside the project's.
     #[arg(skip)]
     pub schema: Option<Schema>,
@@ -437,6 +440,17 @@ pub struct ParseArguments {
     /// Refuse function calls nested deeper than this; 256 by default, at most 512.
     #[arg(long, value_name = "DEPTH", value_parser = parse_call_depth)]
     pub max_call_depth: Option<usize>,
+}
+
+/// The SQL dialect `convert` reads.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, ValueEnum, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum SourceDialect {
+    /// Snowflake SQL, with every option `convert` takes.
+    #[default]
+    Snowflake,
+    /// Databricks SQL: partial support, refusing anything no recorded result proves.
+    Databricks,
 }
 
 /// How a report is printed.

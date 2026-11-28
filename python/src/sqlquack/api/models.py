@@ -79,3 +79,4 @@ class ConvertOptions:
     compact: bool = False
     max_call_depth: int | None = None
     bind_check: bool = True
+    dialect: str = "snowflake"

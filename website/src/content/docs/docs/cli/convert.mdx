@@ -37,6 +37,26 @@ GROUP BY "ORDERS"."CUSTOMER_ID"
 sqlquack convert: done, converted
 ```
 
+## Converting Databricks SQL
+
+`--dialect databricks` reads Databricks SQL instead. Databricks support is partial: `convert`
+converts only what recorded Databricks results prove and refuses the rest with a coded diagnostic.
+It reads no project, and `--project`, `--session`, `--overrides`, `--verified-override` and
+`--python-runtime` exit 2.
+
+{/* example: no-inputs */}
+```console
+$ echo "SELECT abs(-7) AS total" | sqlquack convert --dialect databricks
+SELECT abs(-7) AS "total"
+sqlquack convert: done, converted
+$ echo "SELECT sin(1.0) AS total" | sqlquack convert --dialect databricks
+error[SQ0002]: SQLQuack can't convert SIN yet
+ --> <stdin>
+  |
+  = note: no rule converts the function SIN
+sqlquack convert: refused, 1 refusal
+```
+
 ## Refusals
 
 A refused statement prints its refusals instead, each as a coded diagnostic, and `convert` exits 1.
@@ -60,6 +80,7 @@ SQL that does not parse, or that Snowflake rejects, is refused with the same cod
 
 | Option | Meaning |
 |--------|---------|
+| `--dialect snowflake\|databricks` | The SQL's dialect. Default `snowflake`. See [Converting Databricks SQL](#converting-databricks-sql). |
 | `--project <folder>` | The [project](/docs/project/) declaring the tables and functions the SQL reads. Default the current folder. |
 | `--session NAME=VALUE` | A Snowflake session parameter of your session, replacing the project's. Repeatable. See [Sessions](/docs/sessions/). |
 | `--overrides <path>` | [Replacements](/docs/policy/#replace): a `FUNCTION()` file, or a directory of them, each with `replaces` and `dialect duckdb`. Replaces the project's `overrides/` folder. |
